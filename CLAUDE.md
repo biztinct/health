@@ -77,6 +77,33 @@ The initial implementation follows an MVP approach addressing operational, regul
 - **Revenue reporting** and invoice submission timelines
 - **Performance dashboards** for operational metrics
 
+## Development Guidelines
+
+### Core Principle: Modularity & Non-Invasive Development
+**CRITICAL**: Do NOT modify any core Odoo files or existing repository core modules. All development must be contained within custom modules starting with `health_*`. You CAN freely create, modify, and update any `health_*` modules as needed. This ensures:
+- **Modularity**: Modules can be added or removed independently
+- **Maintainability**: Core Odoo functionality remains intact
+- **Upgradeability**: Odoo core updates won't break our customizations
+- **Portability**: Healthcare modules can be deployed to any Odoo instance
+
+### Development Rules
+1. **Create and modify modules** in the `addons/` directory with `health_` prefix freely
+2. **Never modify core Odoo files** or existing repository modules outside `health_*`
+3. **Extend existing Odoo models** using inheritance, never modify core files directly
+4. **Use Odoo's extension mechanisms**: model inheritance, view inheritance, controller extension
+5. **All customizations** must be self-contained within healthcare modules
+6. **Dependencies** should only reference standard Odoo modules or other `health_*` modules
+
+### Escalation Protocol
+**IMPORTANT**: If a requirement cannot be achieved without modifying core Odoo files or existing repository modules, you MUST:
+1. **Stop development** and do not proceed with core modifications
+2. **Inform the user immediately** with a detailed explanation of:
+   - What you're trying to achieve
+   - Why it requires core modifications
+   - Proposed design/approach for the core changes
+   - Alternative solutions (if any) that avoid core modifications
+3. **Wait for explicit approval** before making any core changes
+
 ## Development Commands
 
 Since this is an Odoo-based project, typical commands will include:
@@ -92,8 +119,8 @@ python3 odoo-bin -d database_name -i module_name -u module_name
 python3 odoo-bin -d test_database --test-enable --stop-after-init
 
 # Linting (when configured)
-flake8 addons/custom_modules/
-pylint addons/custom_modules/
+flake8 addons/health_*/
+pylint addons/health_*/
 ```
 
 ## Architecture
