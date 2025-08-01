@@ -1,0 +1,339 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Patient Tree View -->
+    <record id="view_health_patient_tree" model="ir.ui.view">
+        <field name="name">health.patient.list</field>
+        <field name="model">health.patient</field>
+        <field name="arch" type="xml">
+            <list string="Patients" decoration-warning="patient_status=='new'" decoration-danger="patient_status=='deceased'" decoration-info="patient_category_id.name=='VIP Patient'">
+                <field name="patient_id"/>
+                <field name="name"/>
+                <field name="age_display"/>
+                <field name="gender"/>
+                <field name="phone"/>
+                <field name="mobile"/>
+                <field name="patient_category_id"/>
+                <field name="patient_status"/>
+                <field name="source_type"/>
+                <field name="primary_facility_id"/>
+                <field name="last_visit_date"/>
+                <field name="next_visit_date"/>
+                <field name="visit_count"/>
+                <button name="action_create_appointment" type="object" icon="fa-calendar-plus-o" title="Create Appointment"/>
+                <button name="action_view_appointments" type="object" icon="fa-calendar" title="View Appointments"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Patient Form View -->
+    <record id="view_health_patient_form" model="ir.ui.view">
+        <field name="name">health.patient.form</field>
+        <field name="model">health.patient</field>
+        <field name="arch" type="xml">
+            <form string="Patient">
+                <header>
+                    <field name="patient_status" widget="statusbar" statusbar_visible="new,active,inactive"/>
+                    <button name="action_create_appointment" string="Create Appointment" type="object" class="btn-primary"/>
+                    <button name="action_view_appointments" string="View Appointments" type="object"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_appointments" type="object" class="oe_stat_button" icon="fa-calendar">
+                            <field name="visit_count" string="Visits" widget="statinfo"/>
+                        </button>
+                    </div>
+                    
+                    <div class="health-card-header">
+                        <div class="oe_title">
+                            <h1 class="health-title">
+                                <field name="display_name" readonly="1"/>
+                            </h1>
+                            <div class="health-subtitle">
+                                <field name="patient_id" readonly="1"/>
+                                <span class="health-badge health-badge-info ml-2">
+                                    <field name="age_display"/>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="oe_avatar">
+                            <field name="image_1920" widget="image" class="oe_avatar" options="{'size': [90, 90]}"/>
+                        </div>
+                    </div>
+
+                    <notebook>
+                        <page string="Personal Information" name="personal_info">
+                            <group>
+                                <group name="basic_info" string="Basic Information">
+                                    <field name="name" required="1"/>
+                                    <field name="first_name"/>
+                                    <field name="last_name"/>
+                                    <field name="middle_name"/>
+                                    <field name="vietnamese_name"/>
+                                    <field name="gender"/>
+                                    <field name="birth_date"/>
+                                    <field name="age" readonly="1"/>
+                                </group>
+                                <group name="contact_info" string="Contact Information">
+                                    <field name="phone" widget="phone"/>
+                                    <field name="mobile" widget="phone"/>
+                                    <field name="email" widget="email"/>
+                                    <field name="national_id"/>
+                                </group>
+                            </group>
+                            
+                            <group name="address" string="Address">
+                                <field name="street"/>
+                                <field name="street2"/>
+                                <field name="city"/>
+                                <field name="state_id"/>
+                                <field name="zip"/>
+                                <field name="country_id"/>
+                            </group>
+                        </page>
+
+                        <page string="Healthcare Information" name="healthcare_info">
+                            <group>
+                                <group name="medical_info" string="Medical Information">
+                                    <field name="patient_category_id"/>
+                                    <field name="blood_group"/>
+                                    <field name="primary_facility_id"/>
+                                </group>
+                                <group name="emergency_contact" string="Emergency Contact">
+                                    <field name="emergency_contact_name"/>
+                                    <field name="emergency_contact_phone" widget="phone"/>
+                                    <field name="emergency_contact_relation"/>
+                                </group>
+                            </group>
+                            
+                            <group>
+                                <field name="allergies" placeholder="Known allergies, medications, foods, etc."/>
+                                <field name="medical_history" placeholder="Brief medical history summary"/>
+                            </group>
+                        </page>
+
+                        <page string="Insurance &amp; Payment" name="insurance">
+                            <group>
+                                <group name="insurance_info" string="Insurance Information">
+                                    <field name="insurance_provider"/>
+                                    <field name="insurance_number"/>
+                                    <field name="insurance_expiry"/>
+                                </group>
+                                <group name="payment_info" string="Payment Information">
+                                    <field name="payment_method"/>
+                                </group>
+                            </group>
+                        </page>
+
+                        <page string="Source &amp; Tracking" name="source_tracking">
+                            <group>
+                                <group name="source_info" string="Patient Source">
+                                    <field name="source_type"/>
+                                    <field name="source_details"/>
+                                    <field name="referral_source"/>
+                                </group>
+                                <group name="tracking_info" string="Tracking Information">
+                                    <field name="registration_date" readonly="1"/>
+                                    <field name="last_visit_date" readonly="1"/>
+                                    <field name="next_visit_date"/>
+                                </group>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" widget="mail_followers"/>
+                    <field name="activity_ids" widget="mail_activity"/>
+                    <field name="message_ids" widget="mail_thread"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <!-- Patient Kanban View -->
+    <record id="view_health_patient_kanban" model="ir.ui.view">
+        <field name="name">health.patient.kanban</field>
+        <field name="model">health.patient</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="patient_category_id">
+                <field name="id"/>
+                <field name="name"/>
+                <field name="patient_id"/>
+                <field name="age_display"/>
+                <field name="gender"/>
+                <field name="phone"/>
+                <field name="mobile"/>
+                <field name="patient_status"/>
+                <field name="patient_category_id"/>
+                <field name="last_visit_date"/>
+                <field name="next_visit_date"/>
+                <field name="source_type"/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div class="health-card health-patient-card">
+                            <div class="health-card-header">
+                                <div class="health-status-indicator" t-att-class="record.patient_status.raw_value"/>
+                                <strong class="health-card-title">
+                                    <field name="name"/>
+                                </strong>
+                                <div class="dropdown">
+                                    <a class="dropdown-toggle o_dropdown_kanban" data-toggle="dropdown" href="#" role="button" aria-label="Dropdown menu" title="Dropdown menu">
+                                        <span class="fa fa-ellipsis-v"/>
+                                    </a>
+                                    <div class="dropdown-menu" role="menu">
+                                        <a t-if="widget.editable" type="edit" class="dropdown-item">Edit</a>
+                                        <a t-if="widget.deletable" type="delete" class="dropdown-item">Delete</a>
+                                        <a name="action_create_appointment" type="object" class="dropdown-item">Create Appointment</a>
+                                        <a name="action_view_appointments" type="object" class="dropdown-item">View Appointments</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="health-card-body">
+                                <div class="row">
+                                    <div class="col-6">
+                                        <small class="health-text-xs">Patient ID</small><br/>
+                                        <span class="health-badge health-badge-neutral">
+                                            <field name="patient_id"/>
+                                        </span>
+                                    </div>
+                                    <div class="col-6">
+                                        <small class="health-text-xs">Age/Gender</small><br/>
+                                        <field name="age_display"/> • <field name="gender"/>
+                                    </div>
+                                </div>
+                                <div class="row mt-2">
+                                    <div class="col-12">
+                                        <small class="health-text-xs">Contact</small><br/>
+                                        <field name="phone" widget="phone"/>
+                                        <t t-if="record.mobile.value"> • <field name="mobile" widget="phone"/></t>
+                                    </div>
+                                </div>
+                                <div class="row mt-2" t-if="record.next_visit_date.value">
+                                    <div class="col-12">
+                                        <small class="health-text-xs">Next Visit</small><br/>
+                                        <field name="next_visit_date"/>
+                                    </div>
+                                </div>
+                                <div class="row mt-2" t-if="record.source_type.value">
+                                    <div class="col-12">
+                                        <small class="health-text-xs">Source</small><br/>
+                                        <span class="health-badge health-badge-info">
+                                            <field name="source_type"/>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- Patient Search View -->
+    <record id="view_health_patient_search" model="ir.ui.view">
+        <field name="name">health.patient.search</field>
+        <field name="model">health.patient</field>
+        <field name="arch" type="xml">
+            <search string="Patients">
+                <field name="name" string="Patient Name"/>
+                <field name="patient_id" string="Patient ID"/>
+                <field name="phone" string="Phone"/>
+                <field name="mobile" string="Mobile"/>
+                <field name="email" string="Email"/>
+                <field name="national_id" string="National ID"/>
+                <separator/>
+                <filter name="active_patients" string="Active Patients" domain="[('patient_status', '=', 'active')]"/>
+                <filter name="new_patients" string="New Patients" domain="[('patient_status', '=', 'new')]"/>
+                <filter name="vip_patients" string="VIP Patients" domain="[('patient_category_id.name', '=', 'VIP Patient')]"/>
+                <filter name="emergency_patients" string="Emergency Patients" domain="[('patient_category_id.name', '=', 'Emergency Patient')]"/>
+                <separator/>
+                <filter name="has_upcoming_visits" string="Upcoming Visits" domain="[('next_visit_date', '>=', context_today().strftime('%Y-%m-%d'))]"/>
+                <filter name="overdue_visits" string="Overdue Visits" domain="[('next_visit_date', '&lt;', context_today().strftime('%Y-%m-%d'))]"/>
+                <separator/>
+                <filter name="facebook_source" string="Facebook Source" domain="[('source_type', '=', 'facebook')]"/>
+                <filter name="zalo_source" string="Zalo Source" domain="[('source_type', '=', 'zalo')]"/>
+                <filter name="website_source" string="Website Source" domain="[('source_type', '=', 'website')]"/>
+                <filter name="referral_source" string="Referral Source" domain="[('source_type', '=', 'referral')]"/>
+                <separator/>
+                <group expand="0" string="Group By">
+                    <filter string="Patient Category" name="group_category" context="{'group_by': 'patient_category_id'}"/>
+                    <filter string="Status" name="group_status" context="{'group_by': 'patient_status'}"/>
+                    <filter string="Source Type" name="group_source" context="{'group_by': 'source_type'}"/>
+                    <filter string="Primary Facility" name="group_facility" context="{'group_by': 'primary_facility_id'}"/>
+                    <filter string="Gender" name="group_gender" context="{'group_by': 'gender'}"/>
+                    <filter string="Age Group" name="group_age" context="{'group_by': 'age'}"/>
+                    <filter string="Registration Date" name="group_registration_date" context="{'group_by': 'registration_date:month'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Patient Action -->
+    <record id="action_health_patient" model="ir.actions.act_window">
+        <field name="name">Patients</field>
+        <field name="res_model">health.patient</field>
+        <field name="view_mode">kanban,list,form</field>
+        <field name="view_id" ref="view_health_patient_kanban"/>
+        <field name="search_view_id" ref="view_health_patient_search"/>
+        <field name="context">{
+            'search_default_active_patients': 1
+        }</field>
+        <field name="help" type="html">
+            <div class="health-empty-state">
+                <img src="/health_base/static/src/img/patient-icon.png" alt="No patients" class="health-empty-icon"/>
+                <h3 class="health-title">No patients found</h3>
+                <p class="health-text-sm">Create your first patient record to get started with the VAFHS healthcare management system.</p>
+                <a type="action" class="health-btn health-btn-primary">Create Patient</a>
+            </div>
+        </field>
+    </record>
+
+    <!-- Patient Category Views -->
+    <record id="view_health_patient_category_tree" model="ir.ui.view">
+        <field name="name">health.patient.category.list</field>
+        <field name="model">health.patient.category</field>
+        <field name="arch" type="xml">
+            <list string="Patient Categories" editable="bottom">
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="description"/>
+                <field name="price_multiplier"/>
+                <field name="color" widget="color"/>
+                <field name="active"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_health_patient_category_form" model="ir.ui.view">
+        <field name="name">health.patient.category.form</field>
+        <field name="model">health.patient.category</field>
+        <field name="arch" type="xml">
+            <form string="Patient Category">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="sequence"/>
+                            <field name="active"/>
+                        </group>
+                        <group>
+                            <field name="price_multiplier"/>
+                            <field name="color" widget="color"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="description"/>
+                        <field name="special_requirements"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_health_patient_category" model="ir.actions.act_window">
+        <field name="name">Patient Categories</field>
+        <field name="res_model">health.patient.category</field>
+        <field name="view_mode">list,form</field>
+        <field name="view_id" ref="view_health_patient_category_tree"/>
+    </record>
+</odoo>

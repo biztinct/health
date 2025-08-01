@@ -1,0 +1,259 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Vietnamese Districts for Home Visit Coverage -->
+    
+    <!-- Ho Chi Minh City Districts -->
+    <record id="district_district_1" model="health.vietnamese.district">
+        <field name="name">District 1</field>
+        <field name="province_name">Ho Chi Minh City</field>
+        <field name="region">south</field>
+        <field name="travel_zone">zone_1</field>
+        <field name="base_travel_fee">50000</field>
+        <field name="average_travel_time">20</field>
+    </record>
+    
+    <record id="district_district_2" model="health.vietnamese.district">
+        <field name="name">District 2</field>
+        <field name="province_name">Ho Chi Minh City</field>
+        <field name="region">south</field>
+        <field name="travel_zone">zone_2</field>
+        <field name="base_travel_fee">75000</field>
+        <field name="average_travel_time">35</field>
+    </record>
+    
+    <record id="district_district_3" model="health.vietnamese.district">
+        <field name="name">District 3</field>
+        <field name="province_name">Ho Chi Minh City</field>
+        <field name="region">south</field>
+        <field name="travel_zone">zone_1</field>
+        <field name="base_travel_fee">50000</field>
+        <field name="average_travel_time">25</field>
+    </record>
+    
+    <record id="district_district_4" model="health.vietnamese.district">
+        <field name="name">District 4</field>
+        <field name="province_name">Ho Chi Minh City</field>
+        <field name="region">south</field>
+        <field name="travel_zone">zone_1</field>
+        <field name="base_travel_fee">50000</field>
+        <field name="average_travel_time">30</field>
+    </record>
+    
+    <record id="district_district_5" model="health.vietnamese.district">
+        <field name="name">District 5</field>
+        <field name="province_name">Ho Chi Minh City</field>
+        <field name="region">south</field>
+        <field name="travel_zone">zone_1</field>
+        <field name="base_travel_fee">50000</field>
+        <field name="average_travel_time">25</field>
+    </record>
+    
+    <record id="district_district_6" model="health.vietnamese.district">
+        <field name="name">District 6</field>
+        <field name="province_name">Ho Chi Minh City</field>
+        <field name="region">south</field>
+        <field name="travel_zone">zone_2</field>
+        <field name="base_travel_fee">75000</field>
+        <field name="average_travel_time">35</field>
+    </record>
+    
+    <record id="district_district_7" model="health.vietnamese.district">
+        <field name="name">District 7</field>
+        <field name="province_name">Ho Chi Minh City</field>
+        <field name="region">south</field>
+        <field name="travel_zone">zone_2</field>
+        <field name="base_travel_fee">100000</field>
+        <field name="average_travel_time">45</field>
+    </record>
+    
+    <record id="district_district_8" model="health.vietnamese.district">
+        <field name="name">District 8</field>
+        <field name="province_name">Ho Chi Minh City</field>
+        <field name="region">south</field>
+        <field name="travel_zone">zone_2</field>
+        <field name="base_travel_fee">75000</field>
+        <field name="average_travel_time">40</field>
+    </record>
+    
+    <record id="district_district_10" model="health.vietnamese.district">
+        <field name="name">District 10</field>
+        <field name="province_name">Ho Chi Minh City</field>
+        <field name="region">south</field>
+        <field name="travel_zone">zone_1</field>
+        <field name="base_travel_fee">50000</field>
+        <field name="average_travel_time">30</field>
+    </record>
+    
+    <record id="district_district_11" model="health.vietnamese.district">
+        <field name="name">District 11</field>
+        <field name="province_name">Ho Chi Minh City</field>
+        <field name="region">south</field>
+        <field name="travel_zone">zone_2</field>
+        <field name="base_travel_fee">75000</field>
+        <field name="average_travel_time">35</field>
+    </record>
+    
+    <record id="district_district_12" model="health.vietnamese.district">
+        <field name="name">District 12</field>
+        <field name="province_name">Ho Chi Minh City</field>
+        <field name="region">south</field>
+        <field name="travel_zone">zone_3</field>
+        <field name="base_travel_fee">125000</field>
+        <field name="average_travel_time">50</field>
+    </record>
+    
+    <record id="district_binh_thanh" model="health.vietnamese.district">
+        <field name="name">Binh Thanh District</field>
+        <field name="province_name">Ho Chi Minh City</field>
+        <field name="region">south</field>
+        <field name="travel_zone">zone_2</field>
+        <field name="base_travel_fee">75000</field>
+        <field name="average_travel_time">35</field>
+    </record>
+    
+    <record id="district_tan_binh" model="health.vietnamese.district">
+        <field name="name">Tan Binh District</field>
+        <field name="province_name">Ho Chi Minh City</field>
+        <field name="region">south</field>
+        <field name="travel_zone">zone_2</field>
+        <field name="base_travel_fee">75000</field>
+        <field name="average_travel_time">30</field>
+    </record>
+    
+    <record id="district_phu_nhuan" model="health.vietnamese.district">
+        <field name="name">Phu Nhuan District</field>
+        <field name="province_name">Ho Chi Minh City</field>
+        <field name="region">south</field>
+        <field name="travel_zone">zone_1</field>
+        <field name="base_travel_fee">50000</field>
+        <field name="average_travel_time">25</field>
+    </record>
+    
+    <record id="district_go_vap" model="health.vietnamese.district">
+        <field name="name">Go Vap District</field>
+        <field name="province_name">Ho Chi Minh City</field>
+        <field name="region">south</field>
+        <field name="travel_zone">zone_2</field>
+        <field name="base_travel_fee">75000</field>
+        <field name="average_travel_time">40</field>
+    </record>
+    
+    <record id="district_thu_duc" model="health.vietnamese.district">
+        <field name="name">Thu Duc City</field>
+        <field name="province_name">Ho Chi Minh City</field>
+        <field name="region">south</field>
+        <field name="travel_zone">zone_2</field>
+        <field name="base_travel_fee">100000</field>
+        <field name="average_travel_time">45</field>
+    </record>
+    
+    <!-- Hanoi Districts -->
+    <record id="district_ba_dinh" model="health.vietnamese.district">
+        <field name="name">Ba Dinh District</field>
+        <field name="province_name">Hanoi</field>
+        <field name="region">north</field>
+        <field name="travel_zone">zone_1</field>
+        <field name="base_travel_fee">50000</field>
+        <field name="average_travel_time">25</field>
+    </record>
+    
+    <record id="district_hoan_kiem" model="health.vietnamese.district">
+        <field name="name">Hoan Kiem District</field>
+        <field name="province_name">Hanoi</field>
+        <field name="region">north</field>
+        <field name="travel_zone">zone_1</field>
+        <field name="base_travel_fee">50000</field>
+        <field name="average_travel_time">20</field>
+    </record>
+    
+    <record id="district_dong_da" model="health.vietnamese.district">
+        <field name="name">Dong Da District</field>
+        <field name="province_name">Hanoi</field>
+        <field name="region">north</field>
+        <field name="travel_zone">zone_1</field>
+        <field name="base_travel_fee">50000</field>
+        <field name="average_travel_time">30</field>
+    </record>
+    
+    <record id="district_hai_ba_trung" model="health.vietnamese.district">
+        <field name="name">Hai Ba Trung District</field>
+        <field name="province_name">Hanoi</field>
+        <field name="region">north</field>
+        <field name="travel_zone">zone_1</field>
+        <field name="base_travel_fee">50000</field>
+        <field name="average_travel_time">25</field>
+    </record>
+    
+    <record id="district_cau_giay" model="health.vietnamese.district">
+        <field name="name">Cau Giay District</field>
+        <field name="province_name">Hanoi</field>
+        <field name="region">north</field>
+        <field name="travel_zone">zone_2</field>
+        <field name="base_travel_fee">75000</field>
+        <field name="average_travel_time">35</field>
+    </record>
+    
+    <record id="district_thanh_xuan" model="health.vietnamese.district">
+        <field name="name">Thanh Xuan District</field>
+        <field name="province_name">Hanoi</field>
+        <field name="region">north</field>
+        <field name="travel_zone">zone_2</field>
+        <field name="base_travel_fee">75000</field>
+        <field name="average_travel_time">35</field>
+    </record>
+    
+    <!-- Da Nang Districts -->
+    <record id="district_hai_chau" model="health.vietnamese.district">
+        <field name="name">Hai Chau District</field>
+        <field name="province_name">Da Nang</field>
+        <field name="region">central</field>
+        <field name="travel_zone">zone_1</field>
+        <field name="base_travel_fee">50000</field>
+        <field name="average_travel_time">20</field>
+    </record>
+    
+    <record id="district_thanh_khe" model="health.vietnamese.district">
+        <field name="name">Thanh Khe District</field>
+        <field name="province_name">Da Nang</field>
+        <field name="region">central</field>
+        <field name="travel_zone">zone_1</field>
+        <field name="base_travel_fee">50000</field>
+        <field name="average_travel_time">25</field>
+    </record>
+    
+    <record id="district_son_tra" model="health.vietnamese.district">
+        <field name="name">Son Tra District</field>
+        <field name="province_name">Da Nang</field>
+        <field name="region">central</field>
+        <field name="travel_zone">zone_2</field>
+        <field name="base_travel_fee">75000</field>
+        <field name="average_travel_time">35</field>
+    </record>
+    
+    <record id="district_ngu_hanh_son" model="health.vietnamese.district">
+        <field name="name">Ngu Hanh Son District</field>
+        <field name="province_name">Da Nang</field>
+        <field name="region">central</field>
+        <field name="travel_zone">zone_2</field>
+        <field name="base_travel_fee">75000</field>
+        <field name="average_travel_time">30</field>
+    </record>
+    
+    <record id="district_lien_chieu" model="health.vietnamese.district">
+        <field name="name">Lien Chieu District</field>
+        <field name="province_name">Da Nang</field>
+        <field name="region">central</field>
+        <field name="travel_zone">zone_2</field>
+        <field name="base_travel_fee">75000</field>
+        <field name="average_travel_time">40</field>
+    </record>
+    
+    <record id="district_cam_le" model="health.vietnamese.district">
+        <field name="name">Cam Le District</field>
+        <field name="province_name">Da Nang</field>
+        <field name="region">central</field>
+        <field name="travel_zone">zone_2</field>
+        <field name="base_travel_fee">75000</field>
+        <field name="average_travel_time">35</field>
+    </record>
+</odoo>

@@ -1,0 +1,400 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Service Type Views -->
+    <record id="view_health_service_type_list" model="ir.ui.view">
+        <field name="name">health.service.type.list</field>
+        <field name="model">health.service.type</field>
+        <field name="arch" type="xml">
+            <list string="Service Types" decoration-muted="not active">
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="code"/>
+                <field name="category"/>
+                <field name="base_price" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                <field name="duration_minutes"/>
+                <field name="available_home" widget="boolean_toggle"/>
+                <field name="available_clinic" widget="boolean_toggle"/>
+                <field name="available_telemedicine" widget="boolean_toggle"/>
+                <field name="requires_doctor" widget="boolean_toggle"/>
+                <field name="requires_nurse" widget="boolean_toggle"/>
+                <field name="active" widget="boolean_toggle"/>
+                <field name="currency_id" invisible="1"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_health_service_type_form" model="ir.ui.view">
+        <field name="name">health.service.type.form</field>
+        <field name="model">health.service.type</field>
+        <field name="arch" type="xml">
+            <form string="Service Type">
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="toggle_active" type="object" class="oe_stat_button" icon="fa-archive">
+                            <field name="active" widget="boolean_button" options="{'terminology': 'archive'}"/>
+                        </button>
+                    </div>
+
+                    <div class="health-card-header">
+                        <div class="oe_title">
+                            <h1 class="health-title">
+                                <field name="name" placeholder="Service name..."/>
+                            </h1>
+                            <div class="health-subtitle">
+                                <field name="code" placeholder="Service code..."/>
+                            </div>
+                        </div>
+                    </div>
+
+                    <notebook>
+                        <page string="Basic Information" name="basic_info">
+                            <group>
+                                <group name="service_details" string="Service Details">
+                                    <field name="category"/>
+                                    <field name="base_price" widget="monetary"/>
+                                    <field name="duration_minutes"/>
+                                    <field name="sequence"/>
+                                    <field name="color" widget="color"/>
+                                </group>
+                                <group name="logistics" string="Logistics">
+                                    <field name="requires_travel" widget="boolean_toggle"/>
+                                    <field name="travel_time_minutes" invisible="not requires_travel"/>
+                                    <field name="staff_count"/>
+                                </group>
+                            </group>
+                            
+                            <group name="description" string="description">
+                                <field name="description"/>
+                                <field name="equipment_required"/>
+                            </group>
+                        </page>
+
+                        <page string="Availability" name="availability">
+                            <group name="service_locations" string="Service Locations">
+                                <field name="available_home" widget="boolean_toggle"/>
+                                <field name="available_clinic" widget="boolean_toggle"/>
+                                <field name="available_telemedicine" widget="boolean_toggle"/>
+                            </group>
+
+                            <group name="staff_requirements" string="Staff Requirements">
+                                <field name="requires_doctor" widget="boolean_toggle"/>
+                                <field name="requires_nurse" widget="boolean_toggle"/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_health_service_type" model="ir.actions.act_window">
+        <field name="name">Service Types</field>
+        <field name="res_model">health.service.type</field>
+        <field name="view_mode">list,form</field>
+        <field name="view_id" ref="view_health_service_type_list"/>
+    </record>
+
+    <!-- Medical Specialty Views -->
+    <record id="view_health_medical_specialty_list" model="ir.ui.view">
+        <field name="name">health.medical.specialty.list</field>
+        <field name="model">health.medical.specialty</field>
+        <field name="arch" type="xml">
+            <list string="Medical Specialties" editable="bottom">
+                <field name="name"/>
+                <field name="code"/>
+                <field name="description"/>
+                <field name="active" widget="boolean_toggle"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_health_medical_specialty" model="ir.actions.act_window">
+        <field name="name">Medical Specialties</field>
+        <field name="res_model">health.medical.specialty</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- Symptom Views -->
+    <record id="view_health_symptom_list" model="ir.ui.view">
+        <field name="name">health.symptom.list</field>
+        <field name="model">health.symptom</field>
+        <field name="arch" type="xml">
+            <list string="Symptoms" decoration-danger="urgency_level=='emergency'" decoration-warning="urgency_level=='high'">
+                <field name="name"/>
+                <field name="code"/>
+                <field name="category"/>
+                <field name="urgency_level"/>
+                <field name="severity_levels"/>
+                <field name="color" widget="color"/>
+                <field name="active" widget="boolean_toggle"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_health_symptom_form" model="ir.ui.view">
+        <field name="name">health.symptom.form</field>
+        <field name="model">health.symptom</field>
+        <field name="arch" type="xml">
+            <form string="Symptom">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="code"/>
+                            <field name="category"/>
+                        </group>
+                        <group>
+                            <field name="urgency_level"/>
+                            <field name="color" widget="color"/>
+                            <field name="active"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="description"/>
+                        <field name="severity_levels"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_health_symptom" model="ir.actions.act_window">
+        <field name="name">Symptoms</field>
+        <field name="res_model">health.symptom</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- Referral Source Views -->
+    <record id="view_health_referral_source_list" model="ir.ui.view">
+        <field name="name">health.referral.source.list</field>
+        <field name="model">health.referral.source</field>
+        <field name="arch" type="xml">
+            <list string="Referral Sources" decoration-info="is_paid_source==True">
+                <field name="name"/>
+                <field name="source_type"/>
+                <field name="contact_person"/>
+                <field name="contact_phone"/>
+                <field name="is_paid_source" widget="boolean_toggle"/>
+                <field name="cost_per_lead" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                <field name="conversion_rate"/>
+                <field name="active" widget="boolean_toggle"/>
+                <field name="currency_id" invisible="1"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_health_referral_source_form" model="ir.ui.view">
+        <field name="name">health.referral.source.form</field>
+        <field name="model">health.referral.source</field>
+        <field name="arch" type="xml">
+            <form string="Referral Source">
+                <sheet>
+                    <group>
+                        <group name="basic_info" string="Basic Information">
+                            <field name="name"/>
+                            <field name="source_type"/>
+                            <field name="active"/>
+                        </group>
+                        <group name="contact_info" string="Contact Information">
+                            <field name="contact_person"/>
+                            <field name="contact_phone" widget="phone"/>
+                            <field name="contact_email" widget="email"/>
+                        </group>
+                    </group>
+                    
+                    <group name="tracking_info" string="Marketing Tracking">
+                        <group>
+                            <field name="is_paid_source" widget="boolean_toggle"/>
+                            <field name="cost_per_lead" widget="monetary" invisible="not is_paid_source"/>
+                        </group>
+                        <group>
+                            <field name="conversion_rate"/>
+                        </group>
+                    </group>
+                    
+                    <group>
+                        <field name="description"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_health_referral_source" model="ir.actions.act_window">
+        <field name="name">Referral Sources</field>
+        <field name="res_model">health.referral.source</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- Insurance Provider Views -->
+    <record id="view_health_insurance_provider_list" model="ir.ui.view">
+        <field name="name">health.insurance.provider.list</field>
+        <field name="model">health.insurance.provider</field>
+        <field name="arch" type="xml">
+            <list string="Insurance Providers">
+                <field name="name"/>
+                <field name="code"/>
+                <field name="coverage_percentage"/>
+                <field name="deductible_amount" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                <field name="max_coverage_annual" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                <field name="covers_home_visits" widget="boolean_toggle"/>
+                <field name="covers_clinic_visits" widget="boolean_toggle"/>
+                <field name="covers_telemedicine" widget="boolean_toggle"/>
+                <field name="active" widget="boolean_toggle"/>
+                <field name="currency_id" invisible="1"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_health_insurance_provider_form" model="ir.ui.view">
+        <field name="name">health.insurance.provider.form</field>
+        <field name="model">health.insurance.provider</field>
+        <field name="arch" type="xml">
+            <form string="Insurance Provider">
+                <sheet>
+                    <group>
+                        <group name="basic_info" string="Basic Information">
+                            <field name="name"/>
+                            <field name="code"/>
+                            <field name="active"/>
+                        </group>
+                        <group name="contact_info" string="Contact Information">
+                            <field name="contact_phone" widget="phone"/>
+                            <field name="contact_email" widget="email"/>
+                            <field name="website" widget="url"/>
+                        </group>
+                    </group>
+                    
+                    <group name="coverage_info" string="Coverage Details">
+                        <group>
+                            <field name="coverage_percentage"/>
+                            <field name="deductible_amount" widget="monetary"/>
+                            <field name="max_coverage_annual" widget="monetary"/>
+                        </group>
+                        <group>
+                            <field name="covers_home_visits" widget="boolean_toggle"/>
+                            <field name="covers_clinic_visits" widget="boolean_toggle"/>
+                            <field name="covers_telemedicine" widget="boolean_toggle"/>
+                            <field name="covers_emergency" widget="boolean_toggle"/>
+                        </group>
+                    </group>
+                    
+                    <group>
+                        <field name="notes"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_health_insurance_provider" model="ir.actions.act_window">
+        <field name="name">Insurance Providers</field>
+        <field name="res_model">health.insurance.provider</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- Urgency Level Views -->
+    <record id="view_health_urgency_level_list" model="ir.ui.view">
+        <field name="name">health.urgency.level.list</field>
+        <field name="model">health.urgency.level</field>
+        <field name="arch" type="xml">
+            <list string="Urgency Levels" decoration-danger="code=='EMERG'" decoration-warning="code=='HIGH'">
+                <field name="name"/>
+                <field name="code"/>
+                <field name="priority_score"/>
+                <field name="response_time_hours"/>
+                <field name="auto_assign" widget="boolean_toggle"/>
+                <field name="send_alerts" widget="boolean_toggle"/>
+                <field name="requires_approval" widget="boolean_toggle"/>
+                <field name="color" widget="color"/>
+                <field name="active" widget="boolean_toggle"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_health_urgency_level_form" model="ir.ui.view">
+        <field name="name">health.urgency.level.form</field>
+        <field name="model">health.urgency.level</field>
+        <field name="arch" type="xml">
+            <form string="Urgency Level">
+                <sheet>
+                    <group>
+                        <group name="basic_info" string="Basic Information">
+                            <field name="name"/>
+                            <field name="code"/>
+                            <field name="priority_score"/>
+                            <field name="response_time_hours"/>
+                        </group>
+                        <group name="automation" string="Automation Settings">
+                            <field name="auto_assign" widget="boolean_toggle"/>
+                            <field name="send_alerts" widget="boolean_toggle"/>
+                            <field name="requires_approval" widget="boolean_toggle"/>
+                            <field name="color" widget="color"/>
+                            <field name="active"/>
+                        </group>
+                    </group>
+                    
+                    <group>
+                        <field name="description"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_health_urgency_level" model="ir.actions.act_window">
+        <field name="name">Urgency Levels</field>
+        <field name="res_model">health.urgency.level</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- Vietnamese District Views -->
+    <record id="view_health_vietnamese_district_list" model="ir.ui.view">
+        <field name="name">health.vietnamese.district.list</field>
+        <field name="model">health.vietnamese.district</field>
+        <field name="arch" type="xml">
+            <list string="Vietnamese Districts" decoration-info="supports_home_visits==True">
+                <field name="name"/>
+                <field name="province_name"/>
+                <field name="region"/>
+                <field name="travel_zone"/>
+                <field name="base_travel_fee" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                <field name="average_travel_time"/>
+                <field name="supports_home_visits" widget="boolean_toggle"/>
+                <field name="active" widget="boolean_toggle"/>
+                <field name="currency_id" invisible="1"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_health_vietnamese_district_form" model="ir.ui.view">
+        <field name="name">health.vietnamese.district.form</field>
+        <field name="model">health.vietnamese.district</field>
+        <field name="arch" type="xml">
+            <form string="Vietnamese District">
+                <sheet>
+                    <group>
+                        <group name="location_info" string="Location Information">
+                            <field name="name"/>
+                            <field name="province_name"/>
+                            <field name="region"/>
+                            <field name="active"/>
+                        </group>
+                        <group name="service_info" string="Service Delivery">
+                            <field name="supports_home_visits" widget="boolean_toggle"/>
+                            <field name="travel_zone"/>
+                            <field name="base_travel_fee" widget="monetary"/>
+                            <field name="average_travel_time"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_health_vietnamese_district" model="ir.actions.act_window">
+        <field name="name">Vietnamese Districts</field>
+        <field name="res_model">health.vietnamese.district</field>
+        <field name="view_mode">list,form</field>
+    </record>
+</odoo>

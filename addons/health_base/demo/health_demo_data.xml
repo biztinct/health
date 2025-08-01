@@ -1,0 +1,306 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Demo Healthcare Facilities -->
+    <record id="demo_facility_main_clinic" model="health.facility">
+        <field name="name">VAFHS Main Clinic</field>
+        <field name="code">MAIN001</field>
+        <field name="facility_type">main_clinic</field>
+        <field name="street">123 Nguyen Hue Street</field>
+        <field name="city">Ho Chi Minh City</field>
+        <field name="state_id" ref="base.state_vn_79"/>
+        <field name="zip">700000</field>
+        <field name="country_id" ref="base.vn"/>
+        <field name="phone">+84 28 1234 5678</field>
+        <field name="email">main@vafhs.com</field>
+        <field name="website">https://vafhs.com</field>
+        <field name="facility_status">operational</field>
+        <field name="max_daily_patients">100</field>
+        <field name="total_beds">20</field>
+        <field name="consultation_rooms">8</field>
+        <field name="parking_spaces">30</field>
+        <field name="wheelchair_accessible">True</field>
+        <field name="has_emergency_services">True</field>
+        <field name="has_laboratory">True</field>
+        <field name="has_imaging">True</field>
+        <field name="has_pharmacy">True</field>
+        <field name="covers_home_visits">True</field>
+        <field name="home_visit_radius_km">25.0</field>
+        <field name="base_home_visit_fee">100000</field>
+        <field name="accepts_insurance">True</field>
+        <field name="business_license_number">BL-HCMC-2024-001</field>
+        <field name="health_license_number">HL-VAFHS-2024-001</field>
+        <field name="license_expiry_date">2025-12-31</field>
+        <field name="operating_hours">Monday-Friday: 8:00-18:00
+Saturday: 8:00-12:00
+Sunday: Emergency only</field>
+    </record>
+
+    <record id="demo_facility_branch_d2" model="health.facility">
+        <field name="name">VAFHS District 2 Branch</field>
+        <field name="code">BR002</field>
+        <field name="facility_type">branch_clinic</field>
+        <field name="street">456 Tran Hung Dao Street</field>
+        <field name="city">Ho Chi Minh City</field>
+        <field name="state_id" ref="base.state_vn_79"/>
+        <field name="zip">700000</field>
+        <field name="country_id" ref="base.vn"/>
+        <field name="phone">+84 28 9876 5432</field>
+        <field name="email">district2@vafhs.com</field>
+        <field name="facility_status">operational</field>
+        <field name="max_daily_patients">50</field>
+        <field name="total_beds">8</field>
+        <field name="consultation_rooms">4</field>
+        <field name="parking_spaces">15</field>
+        <field name="wheelchair_accessible">True</field>
+        <field name="has_emergency_services">False</field>
+        <field name="has_laboratory">False</field>
+        <field name="has_imaging">False</field>
+        <field name="has_pharmacy">True</field>
+        <field name="covers_home_visits">True</field>
+        <field name="home_visit_radius_km">15.0</field>
+        <field name="base_home_visit_fee">80000</field>
+        <field name="accepts_insurance">True</field>
+        <field name="business_license_number">BL-HCMC-2024-002</field>
+        <field name="health_license_number">HL-VAFHS-2024-002</field>
+        <field name="license_expiry_date">2025-12-31</field>
+    </record>
+
+    <record id="demo_facility_home_care" model="health.facility">
+        <field name="name">VAFHS Home Care Center</field>
+        <field name="code">HOME001</field>
+        <field name="facility_type">home_care_center</field>
+        <field name="street">789 Le Van Sy Street</field>
+        <field name="city">Ho Chi Minh City</field>
+        <field name="state_id" ref="base.state_vn_79"/>
+        <field name="zip">700000</field>
+        <field name="country_id" ref="base.vn"/>
+        <field name="phone">+84 28 5555 6666</field>
+        <field name="email">homecare@vafhs.com</field>
+        <field name="facility_status">operational</field>
+        <field name="max_daily_patients">80</field>
+        <field name="total_beds">0</field>
+        <field name="consultation_rooms">2</field>
+        <field name="parking_spaces">10</field>
+        <field name="wheelchair_accessible">True</field>
+        <field name="has_emergency_services">False</field>
+        <field name="has_laboratory">False</field>
+        <field name="has_imaging">False</field>
+        <field name="has_pharmacy">False</field>
+        <field name="covers_home_visits">True</field>
+        <field name="home_visit_radius_km">35.0</field>
+        <field name="base_home_visit_fee">120000</field>
+        <field name="accepts_insurance">True</field>
+        <field name="business_license_number">BL-HCMC-2024-003</field>
+        <field name="health_license_number">HL-VAFHS-2024-003</field>
+        <field name="license_expiry_date">2025-12-31</field>
+    </record>
+
+    <!-- Demo Patients -->
+    <record id="demo_patient_1" model="health.patient">
+        <field name="name">Nguyen Van A</field>
+        <field name="vietnamese_name">Nguyễn Văn A</field>
+        <field name="first_name">Van A</field>
+        <field name="last_name">Nguyen</field>
+        <field name="gender">male</field>
+        <field name="birth_date">1985-03-15</field>
+        <field name="phone">+84 90 123 4567</field>
+        <field name="mobile">+84 90 123 4567</field>
+        <field name="email">nguyenvana@email.com</field>
+        <field name="national_id">123456789012</field>
+        <field name="street">123 ABC Street</field>
+        <field name="city">Ho Chi Minh City</field>
+        <field name="state_id" ref="base.state_vn_79"/>
+        <field name="country_id" ref="base.vn"/>
+        <field name="patient_category_id" ref="patient_category_regular"/>
+        <field name="blood_group">o+</field>
+        <field name="patient_status">active</field>
+        <field name="source_type">facebook</field>
+        <field name="source_details">Facebook Ad Campaign - Healthcare Services</field>
+        <field name="primary_facility_id" ref="demo_facility_main_clinic"/>
+        <field name="emergency_contact_name">Tran Thi B</field>
+        <field name="emergency_contact_phone">+84 91 234 5678</field>
+        <field name="emergency_contact_relation">Wife</field>
+        <field name="insurance_provider">Vietnam Social Insurance</field>
+        <field name="insurance_number">VSI123456789</field>
+        <field name="insurance_expiry">2025-12-31</field>
+        <field name="payment_method">insurance</field>
+        <field name="medical_history">No significant medical history. Regular check-ups.</field>
+        <field name="allergies">No known allergies.</field>
+    </record>
+
+    <record id="demo_patient_2" model="health.patient">
+        <field name="name">Le Thi C</field>
+        <field name="vietnamese_name">Lê Thị C</field>
+        <field name="first_name">Thi C</field>
+        <field name="last_name">Le</field>
+        <field name="gender">female</field>
+        <field name="birth_date">1978-07-22</field>
+        <field name="phone">+84 90 987 6543</field>
+        <field name="mobile">+84 90 987 6543</field>
+        <field name="email">lethic@email.com</field>
+        <field name="national_id">987654321098</field>
+        <field name="street">456 XYZ Street</field>
+        <field name="city">Ho Chi Minh City</field>
+        <field name="state_id" ref="base.state_vn_79"/>
+        <field name="country_id" ref="base.vn"/>
+        <field name="patient_category_id" ref="patient_category_vip"/>
+        <field name="blood_group">a+</field>
+        <field name="patient_status">active</field>
+        <field name="source_type">referral</field>
+        <field name="source_details">Referred by Dr. Tran at Cho Ray Hospital</field>
+        <field name="referral_source">Dr. Tran - Cho Ray Hospital</field>
+        <field name="primary_facility_id" ref="demo_facility_main_clinic"/>
+        <field name="emergency_contact_name">Pham Van D</field>
+        <field name="emergency_contact_phone">+84 91 876 5432</field>
+        <field name="emergency_contact_relation">Husband</field>
+        <field name="insurance_provider">Bao Viet Insurance</field>
+        <field name="insurance_number">BVI987654321</field>
+        <field name="insurance_expiry">2025-06-30</field>
+        <field name="payment_method">insurance</field>
+        <field name="medical_history">Hypertension, well controlled with medication. Diabetes Type 2.</field>
+        <field name="allergies">Allergic to penicillin.</field>
+    </record>
+
+    <record id="demo_patient_3" model="health.patient">
+        <field name="name">Hoang Van E</field>
+        <field name="vietnamese_name">Hoàng Văn E</field>
+        <field name="first_name">Van E</field>
+        <field name="last_name">Hoang</field>
+        <field name="gender">male</field>
+        <field name="birth_date">1950-12-05</field>
+        <field name="phone">+84 90 555 7777</field>
+        <field name="mobile">+84 90 555 7777</field>
+        <field name="email">hoangvane@email.com</field>
+        <field name="national_id">555777999111</field>
+        <field name="street">789 Senior Street</field>
+        <field name="city">Ho Chi Minh City</field>
+        <field name="state_id" ref="base.state_vn_79"/>
+        <field name="country_id" ref="base.vn"/>
+        <field name="patient_category_id" ref="patient_category_senior"/>
+        <field name="blood_group">b+</field>
+        <field name="patient_status">active</field>
+        <field name="source_type">website</field>
+        <field name="source_details">VAFHS website contact form</field>
+        <field name="primary_facility_id" ref="demo_facility_home_care"/>
+        <field name="emergency_contact_name">Hoang Thi F</field>
+        <field name="emergency_contact_phone">+84 91 555 8888</field>
+        <field name="emergency_contact_relation">Daughter</field>
+        <field name="insurance_provider">Vietnam Social Insurance</field>
+        <field name="insurance_number">VSI555777999</field>
+        <field name="insurance_expiry">2025-12-31</field>
+        <field name="payment_method">insurance</field>
+        <field name="medical_history">Chronic heart condition, arthritis. Regular home visits preferred.</field>
+        <field name="allergies">Allergic to aspirin and shellfish.</field>
+    </record>
+
+    <record id="demo_patient_4" model="health.patient">
+        <field name="name">Nguyen Thi G</field>
+        <field name="vietnamese_name">Nguyễn Thị G</field>
+        <field name="first_name">Thi G</field>
+        <field name="last_name">Nguyen</field>
+        <field name="gender">female</field>
+        <field name="birth_date">2010-04-18</field>
+        <field name="phone">+84 90 111 2222</field>
+        <field name="mobile">+84 90 111 2222</field>
+        <field name="email">parent.g@email.com</field>
+        <field name="national_id">111222333444</field>
+        <field name="street">321 Kids Street</field>
+        <field name="city">Ho Chi Minh City</field>
+        <field name="state_id" ref="base.state_vn_79"/>
+        <field name="country_id" ref="base.vn"/>
+        <field name="patient_category_id" ref="patient_category_pediatric"/>
+        <field name="blood_group">ab+</field>
+        <field name="patient_status">active</field>
+        <field name="source_type">zalo</field>
+        <field name="source_details">Zalo Official Account inquiry</field>
+        <field name="primary_facility_id" ref="demo_facility_branch_d2"/>
+        <field name="emergency_contact_name">Le Van H</field>
+        <field name="emergency_contact_phone">+84 91 111 3333</field>
+        <field name="emergency_contact_relation">Father</field>
+        <field name="insurance_provider">Vietnam Social Insurance</field>
+        <field name="insurance_number">VSI111222333</field>
+        <field name="insurance_expiry">2025-12-31</field>
+        <field name="payment_method">insurance</field>
+        <field name="medical_history">Healthy child, regular check-ups and vaccinations up to date.</field>
+        <field name="allergies">No known allergies.</field>
+    </record>
+
+    <!-- Add admin user to healthcare groups -->
+    <record id="base.user_admin" model="res.users">
+        <field name="groups_id" eval="[(4, ref('health_base.group_healthcare_owner'))]"/>
+    </record>
+
+    <!-- Demo Staff Users -->
+    <record id="demo_user_doctor" model="res.users">
+        <field name="name">Dr. Tran Van Doctor</field>
+        <field name="login">doctor@vafhs.com</field>
+        <field name="email">doctor@vafhs.com</field>
+        <field name="is_healthcare_staff">True</field>
+        <field name="staff_type">doctor</field>
+        <field name="primary_facility_id" ref="demo_facility_main_clinic"/>
+        <field name="professional_license_number">MD-2024-001</field>
+        <field name="license_expiry_date">2025-12-31</field>
+        <field name="can_do_home_visits">True</field>
+        <field name="can_do_telemedicine">True</field>
+        <field name="max_daily_appointments">15</field>
+        <field name="max_home_visits_per_day">6</field>
+        <field name="has_vehicle">True</field>
+        <field name="vehicle_type">car</field>
+        <field name="groups_id" eval="[(6, 0, [ref('health_base.group_healthcare_doctor')])]"/>
+    </record>
+
+    <record id="demo_user_head_nurse" model="res.users">
+        <field name="name">Head Nurse Pham Thi Nurse</field>
+        <field name="login">headnurse@vafhs.com</field>
+        <field name="email">headnurse@vafhs.com</field>
+        <field name="is_healthcare_staff">True</field>
+        <field name="staff_type">head_nurse</field>
+        <field name="primary_facility_id" ref="demo_facility_main_clinic"/>
+        <field name="professional_license_number">RN-2024-001</field>
+        <field name="license_expiry_date">2025-12-31</field>
+        <field name="can_do_home_visits">True</field>
+        <field name="max_daily_appointments">20</field>
+        <field name="max_home_visits_per_day">8</field>
+        <field name="has_vehicle">True</field>
+        <field name="vehicle_type">motorbike</field>
+        <field name="groups_id" eval="[(6, 0, [ref('health_base.group_healthcare_head_nurse')])]"/>
+    </record>
+
+    <record id="demo_user_manager" model="res.users">
+        <field name="name">Manager Le Van Manager</field>
+        <field name="login">manager@vafhs.com</field>
+        <field name="email">manager@vafhs.com</field>
+        <field name="is_healthcare_staff">True</field>
+        <field name="staff_type">manager</field>
+        <field name="primary_facility_id" ref="demo_facility_main_clinic"/>
+        <field name="groups_id" eval="[(6, 0, [ref('health_base.group_healthcare_manager')])]"/>
+    </record>
+
+    <!-- Link Facilities with Managers -->
+    <record id="demo_facility_main_clinic" model="health.facility">
+        <field name="facility_manager_id" ref="demo_user_manager"/>
+        <field name="head_nurse_id" ref="demo_user_head_nurse"/>
+    </record>
+
+    <!-- Link Facilities with Services -->
+    <record id="demo_facility_main_clinic" model="health.facility">
+        <field name="services_offered" eval="[(6, 0, [ref('service_type_consultation'), ref('service_type_home_visit'), ref('service_type_nursing_care'), ref('service_type_telemedicine'), ref('service_type_physiotherapy')])]"/>
+        <field name="specialties" eval="[(6, 0, [ref('specialty_general_medicine'), ref('specialty_internal_medicine'), ref('specialty_cardiology')])]"/>
+        <field name="home_visit_districts" eval="[(6, 0, [ref('district_district_1'), ref('district_district_2'), ref('district_district_3'), ref('district_binh_thanh')])]"/>
+        <field name="accepted_insurance_providers" eval="[(6, 0, [ref('insurance_vietnam_social'), ref('insurance_bao_viet')])]"/>
+    </record>
+
+    <record id="demo_facility_branch_d2" model="health.facility">
+        <field name="services_offered" eval="[(6, 0, [ref('service_type_consultation'), ref('service_type_home_visit'), ref('service_type_nursing_care')])]"/>
+        <field name="specialties" eval="[(6, 0, [ref('specialty_general_medicine'), ref('specialty_pediatrics')])]"/>
+        <field name="home_visit_districts" eval="[(6, 0, [ref('district_district_2'), ref('district_district_7'), ref('district_thu_duc')])]"/>
+        <field name="accepted_insurance_providers" eval="[(6, 0, [ref('insurance_vietnam_social')])]"/>
+    </record>
+
+    <record id="demo_facility_home_care" model="health.facility">
+        <field name="services_offered" eval="[(6, 0, [ref('service_type_home_visit'), ref('service_type_nursing_care'), ref('service_type_physiotherapy')])]"/>
+        <field name="specialties" eval="[(6, 0, [ref('specialty_nursing'), ref('specialty_geriatrics')])]"/>
+        <field name="home_visit_districts" eval="[(6, 0, [ref('district_district_1'), ref('district_district_2'), ref('district_district_3'), ref('district_district_4'), ref('district_district_5'), ref('district_binh_thanh'), ref('district_phu_nhuan')])]"/>
+        <field name="accepted_insurance_providers" eval="[(6, 0, [ref('insurance_vietnam_social'), ref('insurance_bao_viet')])]"/>
+    </record>
+</odoo>

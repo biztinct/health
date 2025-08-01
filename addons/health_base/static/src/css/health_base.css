@@ -1,0 +1,533 @@
+/* ============================================================================
+   VAFHS Healthcare Management System - Base Styles
+   Professional, mobile-first responsive design system
+   Inspired by: Epic MyChart, Salesforce Health Cloud, Stripe Dashboard
+   ============================================================================ */
+
+:root {
+    /* Healthcare Color Palette */
+    --health-primary: #2563eb;          /* Medical Blue */
+    --health-primary-light: #3b82f6;    /* Light Blue */
+    --health-primary-dark: #1d4ed8;     /* Dark Blue */
+    --health-secondary: #059669;        /* Medical Green */
+    --health-secondary-light: #10b981;  /* Light Green */
+    --health-secondary-dark: #047857;   /* Dark Green */
+    
+    /* Status Colors */
+    --health-success: #10b981;          /* Success Green */
+    --health-warning: #f59e0b;          /* Warning Orange */
+    --health-error: #ef4444;            /* Error Red */
+    --health-info: #3b82f6;             /* Info Blue */
+    
+    /* Neutral Colors */
+    --health-gray-50: #f9fafb;
+    --health-gray-100: #f3f4f6;
+    --health-gray-200: #e5e7eb;
+    --health-gray-300: #d1d5db;
+    --health-gray-400: #9ca3af;
+    --health-gray-500: #6b7280;
+    --health-gray-600: #4b5563;
+    --health-gray-700: #374151;
+    --health-gray-800: #1f2937;
+    --health-gray-900: #111827;
+    
+    /* Typography */
+    --health-font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --health-font-size-xs: 0.75rem;     /* 12px */
+    --health-font-size-sm: 0.875rem;    /* 14px */
+    --health-font-size-base: 1rem;      /* 16px */
+    --health-font-size-lg: 1.125rem;    /* 18px */
+    --health-font-size-xl: 1.25rem;     /* 20px */
+    --health-font-size-2xl: 1.5rem;     /* 24px */
+    --health-font-size-3xl: 1.875rem;   /* 30px */
+    
+    /* Spacing */
+    --health-space-1: 0.25rem;   /* 4px */
+    --health-space-2: 0.5rem;    /* 8px */
+    --health-space-3: 0.75rem;   /* 12px */
+    --health-space-4: 1rem;      /* 16px */
+    --health-space-5: 1.25rem;   /* 20px */
+    --health-space-6: 1.5rem;    /* 24px */
+    --health-space-8: 2rem;      /* 32px */
+    --health-space-10: 2.5rem;   /* 40px */
+    --health-space-12: 3rem;     /* 48px */
+    
+    /* Border Radius */
+    --health-radius-sm: 0.25rem;  /* 4px */
+    --health-radius: 0.375rem;    /* 6px */
+    --health-radius-md: 0.5rem;   /* 8px */
+    --health-radius-lg: 0.75rem;  /* 12px */
+    --health-radius-xl: 1rem;     /* 16px */
+    
+    /* Shadows */
+    --health-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --health-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+    --health-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    --health-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    --health-shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    
+    /* Transitions */
+    --health-transition: all 0.2s ease-in-out;
+    --health-transition-fast: all 0.1s ease-in-out;
+    --health-transition-slow: all 0.3s ease-in-out;
+}
+
+/* ============================================================================
+   Base Typography & Layout
+   ============================================================================ */
+
+body {
+    font-family: var(--health-font-family);
+    font-size: var(--health-font-size-base);
+    line-height: 1.6;
+    color: var(--health-gray-700);
+    background-color: var(--health-gray-50);
+}
+
+/* Healthcare-specific typography */
+.health-title {
+    font-size: var(--health-font-size-2xl);
+    font-weight: 700;
+    color: var(--health-gray-900);
+    margin-bottom: var(--health-space-4);
+}
+
+.health-subtitle {
+    font-size: var(--health-font-size-lg);
+    font-weight: 600;
+    color: var(--health-gray-800);
+    margin-bottom: var(--health-space-3);
+}
+
+.health-text-sm {
+    font-size: var(--health-font-size-sm);
+    color: var(--health-gray-600);
+}
+
+.health-text-xs {
+    font-size: var(--health-font-size-xs);
+    color: var(--health-gray-500);
+}
+
+/* ============================================================================
+   Healthcare Cards & Containers
+   ============================================================================ */
+
+.health-card {
+    background: white;
+    border-radius: var(--health-radius-lg);
+    box-shadow: var(--health-shadow);
+    border: 1px solid var(--health-gray-200);
+    padding: var(--health-space-6);
+    margin-bottom: var(--health-space-4);
+    transition: var(--health-transition);
+}
+
+.health-card:hover {
+    box-shadow: var(--health-shadow-md);
+    transform: translateY(-1px);
+}
+
+.health-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: var(--health-space-4);
+    padding-bottom: var(--health-space-3);
+    border-bottom: 1px solid var(--health-gray-200);
+}
+
+.health-card-title {
+    font-size: var(--health-font-size-lg);
+    font-weight: 600;
+    color: var(--health-gray-900);
+    margin: 0;
+}
+
+.health-card-body {
+    color: var(--health-gray-700);
+}
+
+/* Patient/Client Cards */
+.health-patient-card {
+    border-left: 4px solid var(--health-primary);
+}
+
+.health-patient-card.urgent {
+    border-left-color: var(--health-error);
+}
+
+.health-patient-card.vip {
+    border-left-color: var(--health-warning);
+    background: linear-gradient(135deg, #fff7ed 0%, #ffffff 100%);
+}
+
+/* ============================================================================
+   Buttons & Interactive Elements
+   ============================================================================ */
+
+/* Remove custom button styling - let Odoo handle button colors */
+.health-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    min-height: 44px; /* Touch-friendly minimum */
+}
+
+.health-btn-sm {
+    padding: var(--health-space-2) var(--health-space-4);
+    font-size: var(--health-font-size-xs);
+    min-height: 36px;
+}
+
+.health-btn-lg {
+    padding: var(--health-space-4) var(--health-space-8);
+    font-size: var(--health-font-size-base);
+    min-height: 52px;
+}
+
+/* ============================================================================
+   Forms & Inputs
+   ============================================================================ */
+
+.health-form-group {
+    margin-bottom: var(--health-space-4);
+}
+
+.health-label {
+    display: block;
+    font-size: var(--health-font-size-sm);
+    font-weight: 500;
+    color: var(--health-gray-700);
+    margin-bottom: var(--health-space-2);
+}
+
+.health-input {
+    width: 100%;
+    padding: var(--health-space-3);
+    font-size: var(--health-font-size-base);
+    border: 1px solid var(--health-gray-300);
+    border-radius: var(--health-radius);
+    background-color: white;
+    transition: var(--health-transition);
+    min-height: 44px; /* Touch-friendly */
+}
+
+.health-input:focus {
+    outline: none;
+    border-color: var(--health-primary);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.health-input.error {
+    border-color: var(--health-error);
+}
+
+.health-input.success {
+    border-color: var(--health-success);
+}
+
+.health-textarea {
+    min-height: 100px;
+    resize: vertical;
+}
+
+.health-select {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+    background-position: right var(--health-space-3) center;
+    background-repeat: no-repeat;
+    background-size: 16px 12px;
+    padding-right: var(--health-space-10);
+}
+
+/* ============================================================================
+   Status Badges & Labels
+   ============================================================================ */
+
+.health-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: var(--health-space-1) var(--health-space-3);
+    font-size: var(--health-font-size-xs);
+    font-weight: 500;
+    border-radius: var(--health-radius-xl);
+    text-transform: uppercase;
+    letter-spacing: 0.025em;
+}
+
+.health-badge-success {
+    background-color: rgba(16, 185, 129, 0.1);
+    color: var(--health-success);
+}
+
+.health-badge-warning {
+    background-color: rgba(245, 158, 11, 0.1);
+    color: var(--health-warning);
+}
+
+.health-badge-error {
+    background-color: rgba(239, 68, 68, 0.1);
+    color: var(--health-error);
+}
+
+.health-badge-info {
+    background-color: rgba(59, 130, 246, 0.1);
+    color: var(--health-info);
+}
+
+.health-badge-neutral {
+    background-color: var(--health-gray-100);
+    color: var(--health-gray-600);
+}
+
+/* ============================================================================
+   Mobile-First Responsive Design
+   No duplication - styles work on both desktop and mobile
+   ============================================================================ */
+
+/* Base mobile styles (default) */
+.health-container {
+    width: 100%;
+    padding-left: var(--health-space-4);
+    padding-right: var(--health-space-4);
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.health-grid {
+    display: grid;
+    gap: var(--health-space-4);
+    grid-template-columns: 1fr; /* Single column on mobile */
+}
+
+/* Tablet and up */
+@media (min-width: 768px) {
+    .health-container {
+        max-width: 768px;
+        padding-left: var(--health-space-6);
+        padding-right: var(--health-space-6);
+    }
+    
+    .health-grid {
+        grid-template-columns: repeat(2, 1fr); /* Two columns on tablet */
+        gap: var(--health-space-6);
+    }
+    
+    .health-grid-3 {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+/* Desktop and up */
+@media (min-width: 1024px) {
+    .health-container {
+        max-width: 1024px;
+        padding-left: var(--health-space-8);
+        padding-right: var(--health-space-8);
+    }
+    
+    .health-grid {
+        grid-template-columns: repeat(3, 1fr); /* Three columns on desktop */
+        gap: var(--health-space-8);
+    }
+    
+    .health-grid-4 {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+/* Large desktop */
+@media (min-width: 1280px) {
+    .health-container {
+        max-width: 1280px;
+    }
+}
+
+/* ============================================================================
+   Healthcare-Specific Components
+   ============================================================================ */
+
+/* Patient Status Indicators */
+.health-status-indicator {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    margin-right: var(--health-space-2);
+}
+
+.health-status-indicator.active {
+    background-color: var(--health-success);
+}
+
+.health-status-indicator.inactive {
+    background-color: var(--health-gray-400);
+}
+
+.health-status-indicator.urgent {
+    background-color: var(--health-error);
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+/* Appointment Time Slots */
+.health-time-slot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--health-space-3);
+    border: 1px solid var(--health-gray-200);
+    border-radius: var(--health-radius);
+    margin-bottom: var(--health-space-2);
+    cursor: pointer;
+    transition: var(--health-transition);
+    min-height: 44px; /* Touch-friendly */
+}
+
+.health-time-slot:hover {
+    border-color: var(--health-primary);
+    background-color: rgba(37, 99, 235, 0.05);
+}
+
+.health-time-slot.selected {
+    border-color: var(--health-primary);
+    background-color: rgba(37, 99, 235, 0.1);
+}
+
+.health-time-slot.unavailable {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background-color: var(--health-gray-50);
+}
+
+/* Staff Avatar */
+.health-avatar {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: var(--health-primary);
+    color: white;
+    font-weight: 500;
+    font-size: var(--health-font-size-base);
+}
+
+.health-avatar-sm {
+    width: 32px;
+    height: 32px;
+    font-size: var(--health-font-size-sm);
+}
+
+.health-avatar-lg {
+    width: 56px;
+    height: 56px;
+    font-size: var(--health-font-size-xl);
+}
+
+/* Quick Actions */
+.health-quick-actions {
+    display: flex;
+    gap: var(--health-space-2);
+    flex-wrap: wrap;
+    margin-top: var(--health-space-4);
+}
+
+/* Emergency Alert */
+.health-alert-emergency {
+    background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+    border: 1px solid var(--health-error);
+    border-radius: var(--health-radius-lg);
+    padding: var(--health-space-4);
+    margin-bottom: var(--health-space-4);
+    animation: pulse 2s infinite;
+}
+
+/* Progress Indicators */
+.health-progress {
+    width: 100%;
+    height: 8px;
+    background-color: var(--health-gray-200);
+    border-radius: var(--health-radius-xl);
+    overflow: hidden;
+    margin: var(--health-space-2) 0;
+}
+
+.health-progress-bar {
+    height: 100%;
+    background-color: var(--health-primary);
+    border-radius: var(--health-radius-xl);
+    transition: width 0.3s ease;
+}
+
+/* ============================================================================
+   Dark Mode Support (for night shift staff)
+   ============================================================================ */
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --health-gray-50: #111827;
+        --health-gray-100: #1f2937;
+        --health-gray-200: #374151;
+        --health-gray-300: #4b5563;
+        --health-gray-400: #6b7280;
+        --health-gray-500: #9ca3af;
+        --health-gray-600: #d1d5db;
+        --health-gray-700: #e5e7eb;
+        --health-gray-800: #f3f4f6;
+        --health-gray-900: #f9fafb;
+    }
+    
+    body {
+        background-color: var(--health-gray-50);
+        color: var(--health-gray-700);
+    }
+    
+    .health-card {
+        background-color: var(--health-gray-100);
+        border-color: var(--health-gray-200);
+    }
+    
+    .health-input {
+        background-color: var(--health-gray-100);
+        border-color: var(--health-gray-300);
+        color: var(--health-gray-700);
+    }
+}
+
+/* ============================================================================
+   Accessibility Enhancements
+   ============================================================================ */
+
+/* Focus indicators for keyboard navigation */
+*:focus-visible {
+    outline: 2px solid var(--health-primary);
+    outline-offset: 2px;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+    .health-card {
+        border-width: 2px;
+    }
+    
+    .health-btn {
+        border-width: 2px;
+    }
+}
+
+/* Reduced motion for accessibility */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}

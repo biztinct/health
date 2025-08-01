@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Main Healthcare Menu -->
+    <menuitem 
+        id="menu_healthcare_root" 
+        name="Healthcare" 
+        sequence="5"
+        web_icon="health_base,static/description/icon.png"/>
+
+    <!-- Patient Management Menu -->
+    <menuitem 
+        id="menu_healthcare_patients" 
+        name="Patient Management" 
+        parent="menu_healthcare_root" 
+        sequence="10"/>
+
+    <menuitem 
+        id="menu_health_patient" 
+        name="Patients" 
+        parent="menu_healthcare_patients" 
+        action="action_health_patient" 
+        sequence="10"/>
+
+    <menuitem 
+        id="menu_health_patient_category" 
+        name="Patient Categories" 
+        parent="menu_healthcare_patients" 
+        action="action_health_patient_category" 
+        sequence="20"/>
+
+    <!-- Facility Management Menu -->
+    <menuitem 
+        id="menu_healthcare_facilities" 
+        name="Facility Management" 
+        parent="menu_healthcare_root" 
+        sequence="20"/>
+
+    <menuitem 
+        id="menu_health_facility" 
+        name="Healthcare Facilities" 
+        parent="menu_healthcare_facilities" 
+        action="action_health_facility" 
+        sequence="10"/>
+
+    <!-- Configuration Menu -->
+    <menuitem 
+        id="menu_healthcare_configuration" 
+        name="Configuration" 
+        parent="menu_healthcare_root" 
+        sequence="90"/>
+
+    <!-- Services Submenu -->
+    <menuitem 
+        id="menu_healthcare_services" 
+        name="Services &amp; Specialties" 
+        parent="menu_healthcare_configuration" 
+        sequence="10"/>
+
+    <menuitem 
+        id="menu_health_service_type" 
+        name="Service Types" 
+        parent="menu_healthcare_services" 
+        action="action_health_service_type" 
+        sequence="10"/>
+
+    <menuitem 
+        id="menu_health_medical_specialty" 
+        name="Medical Specialties" 
+        parent="menu_healthcare_services" 
+        action="action_health_medical_specialty" 
+        sequence="20"/>
+
+    <!-- Clinical Configuration Submenu -->
+    <menuitem 
+        id="menu_healthcare_clinical_config" 
+        name="Clinical Configuration" 
+        parent="menu_healthcare_configuration" 
+        sequence="20"/>
+
+    <menuitem 
+        id="menu_health_symptom" 
+        name="Symptoms" 
+        parent="menu_healthcare_clinical_config" 
+        action="action_health_symptom" 
+        sequence="10"/>
+
+    <menuitem 
+        id="menu_health_urgency_level" 
+        name="Urgency Levels" 
+        parent="menu_healthcare_clinical_config" 
+        action="action_health_urgency_level" 
+        sequence="20"/>
+
+    <!-- Marketing & Sources Submenu -->
+    <menuitem 
+        id="menu_healthcare_marketing" 
+        name="Marketing &amp; Sources" 
+        parent="menu_healthcare_configuration" 
+        sequence="30"/>
+
+    <menuitem 
+        id="menu_health_referral_source" 
+        name="Referral Sources" 
+        parent="menu_healthcare_marketing" 
+        action="action_health_referral_source" 
+        sequence="10"/>
+
+    <!-- Insurance & Payment Submenu -->
+    <menuitem 
+        id="menu_healthcare_insurance" 
+        name="Insurance &amp; Payment" 
+        parent="menu_healthcare_configuration" 
+        sequence="40"/>
+
+    <menuitem 
+        id="menu_health_insurance_provider" 
+        name="Insurance Providers" 
+        parent="menu_healthcare_insurance" 
+        action="action_health_insurance_provider" 
+        sequence="10"/>
+
+    <!-- Location Configuration Submenu -->
+    <menuitem 
+        id="menu_healthcare_locations" 
+        name="Location Configuration" 
+        parent="menu_healthcare_configuration" 
+        sequence="50"/>
+
+    <menuitem 
+        id="menu_health_vietnamese_district" 
+        name="Vietnamese Districts" 
+        parent="menu_healthcare_locations" 
+        action="action_health_vietnamese_district" 
+        sequence="10"/>
+
+    <!-- Quick Access Menu Items (Dashboard-style) -->
+    <menuitem 
+        id="menu_healthcare_dashboard" 
+        name="Dashboard" 
+        parent="menu_healthcare_root" 
+        sequence="5"/>
+
+    <!-- Reports Menu -->
+    <menuitem 
+        id="menu_healthcare_reports" 
+        name="Reports" 
+        parent="menu_healthcare_root" 
+        sequence="80"/>
+
+    <!-- Patient Reports Submenu -->
+    <menuitem 
+        id="menu_healthcare_patient_reports" 
+        name="Patient Reports" 
+        parent="menu_healthcare_reports" 
+        sequence="10"/>
+
+    <!-- Facility Reports Submenu -->
+    <menuitem 
+        id="menu_healthcare_facility_reports" 
+        name="Facility Reports" 
+        parent="menu_healthcare_reports" 
+        sequence="20"/>
+
+    <!-- Financial Reports Submenu -->
+    <menuitem 
+        id="menu_healthcare_financial_reports" 
+        name="Financial Reports" 
+        parent="menu_healthcare_reports" 
+        sequence="30"/>
+
+    <!-- Compliance Reports Submenu -->
+    <menuitem 
+        id="menu_healthcare_compliance_reports" 
+        name="Compliance Reports" 
+        parent="menu_healthcare_reports" 
+        sequence="40"/>
+</odoo>

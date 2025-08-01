@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Healthcare Page Templates -->
+    
+    <!-- Patient Portal Layout -->
+    <template id="health_patient_portal_layout" name="Patient Portal Layout">
+        <t t-call="web.layout">
+            <t t-set="head_website">
+                <meta name="description" content="VAFHS Patient Portal - Access your healthcare records, book appointments, and manage your health information securely."/>
+                <meta name="keywords" content="healthcare, patient portal, VAFHS, Vietnam Australia, medical records, appointments"/>
+            </t>
+            
+            <div class="health-app-header">
+                <nav class="health-app-nav">
+                    <a href="/" class="health-logo">VAFHS Healthcare</a>
+                    
+                    <div class="health-nav-menu" id="healthNavMenu">
+                        <a href="/patients/portal" class="health-nav-link">My Records</a>
+                        <a href="/appointments/book" class="health-nav-link">Book Appointment</a>
+                        <a href="/services" class="health-nav-link">Services</a>
+                        <a href="/contact" class="health-nav-link">Contact</a>
+                        <a href="/my/account" class="health-nav-link">Account</a>
+                    </div>
+                    
+                    <button class="health-menu-toggle" onclick="toggleMobileMenu()">
+                        <span class="fa fa-bars"></span>
+                    </button>
+                </nav>
+            </div>
+            
+            <main class="health-main-content">
+                <t t-raw="0"/>
+            </main>
+        </t>
+    </template>
+
+    <!-- Healthcare Dashboard Template -->
+    <template id="health_dashboard_template" name="Healthcare Dashboard">
+        <div class="health-container">
+            <div class="health-dashboard-header">
+                <h1 class="health-title">Healthcare Dashboard</h1>
+                <p class="health-subtitle">Welcome to VAFHS Healthcare Management System</p>
+            </div>
+            
+            <div class="health-grid health-grid-4">
+                <!-- Quick Stats Cards -->
+                <div class="health-card">
+                    <div class="health-card-header">
+                        <h3 class="health-card-title">Total Patients</h3>
+                        <span class="fa fa-users"></span>
+                    </div>
+                    <div class="health-card-body">
+                        <div class="health-stat-number">1,247</div>
+                        <div class="health-stat-change health-text-success">+12% this month</div>
+                    </div>
+                </div>
+                
+                <div class="health-card">
+                    <div class="health-card-header">
+                        <h3 class="health-card-title">Today's Appointments</h3>
+                        <span class="fa fa-calendar"></span>
+                    </div>
+                    <div class="health-card-body">
+                        <div class="health-stat-number">24</div>
+                        <div class="health-stat-change health-text-info">6 pending</div>
+                    </div>
+                </div>
+                
+                <div class="health-card">
+                    <div class="health-card-header">
+                        <h3 class="health-card-title">Home Visits</h3>
+                        <span class="fa fa-home"></span>
+                    </div>
+                    <div class="health-card-body">
+                        <div class="health-stat-number">18</div>
+                        <div class="health-stat-change health-text-warning">3 in progress</div>
+                    </div>
+                </div>
+                
+                <div class="health-card">
+                    <div class="health-card-header">
+                        <h3 class="health-card-title">Revenue (MTD)</h3>
+                        <span class="fa fa-chart-line"></span>
+                    </div>
+                    <div class="health-card-body">
+                        <div class="health-stat-number">₫45.2M</div>
+                        <div class="health-stat-change health-text-success">+8.5% vs last month</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Quick Actions -->
+            <div class="health-card">
+                <div class="health-card-header">
+                    <h3 class="health-card-title">Quick Actions</h3>
+                </div>
+                <div class="health-card-body">
+                    <div class="health-quick-actions">
+                        <a href="/web#action=health_base.action_health_patient&amp;view_type=form" class="health-btn health-btn-primary">
+                            <span class="fa fa-plus mr-2"></span>New Patient
+                        </a>
+                        <a href="/web#action=health_calendar.action_health_appointment&amp;view_type=form" class="health-btn health-btn-secondary">
+                            <span class="fa fa-calendar-plus mr-2"></span>Book Appointment
+                        </a>
+                        <a href="/web#action=health_base.action_health_facility" class="health-btn health-btn-outline">
+                            <span class="fa fa-hospital-o mr-2"></span>Facilities
+                        </a>
+                        <a href="/web#action=health_reporting.action_health_reports" class="health-btn health-btn-outline">
+                            <span class="fa fa-chart-bar mr-2"></span>Reports
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <script>
+            function toggleMobileMenu() {
+                const menu = document.getElementById('healthNavMenu');
+                menu.classList.toggle('active');
+            }
+            
+            // Initialize healthcare dashboard
+            document.addEventListener('DOMContentLoaded', function() {
+                // Add mobile-friendly touch interactions
+                const cards = document.querySelectorAll('.health-card');
+                cards.forEach(card => {
+                    card.addEventListener('touchstart', function() {
+                        this.style.transform = 'scale(0.98)';
+                    });
+                    
+                    card.addEventListener('touchend', function() {
+                        setTimeout(() => {
+                            this.style.transform = '';
+                        }, 150);
+                    });
+                });
+            });
+        </script>
+    </template>
+
+    <!-- Empty State Template -->
+    <template id="health_empty_state" name="Healthcare Empty State">
+        <div class="health-empty-state">
+            <div class="health-empty-icon">
+                <span class="fa fa-inbox fa-4x"></span>
+            </div>
+            <h3 class="health-title">No data found</h3>
+            <p class="health-text-sm">Get started by creating your first record.</p>
+            <t t-if="create_action">
+                <a t-att-href="create_action" class="health-btn health-btn-primary">
+                    <span class="fa fa-plus mr-2"></span>Create New
+                </a>
+            </t>
+        </div>
+    </template>
+
+    <!-- Loading State Template -->
+    <template id="health_loading_state" name="Healthcare Loading State">
+        <div class="health-loading">
+            <div class="health-spinner"></div>
+            <p class="health-text-sm mt-3">Loading...</p>
+        </div>
+    </template>
+
+    <!-- Error State Template -->
+    <template id="health_error_state" name="Healthcare Error State">
+        <div class="health-error-state">
+            <div class="health-error-icon">
+                <span class="fa fa-exclamation-triangle fa-3x"></span>
+            </div>
+            <h3 class="health-title">Something went wrong</h3>
+            <p class="health-text-sm">Please try again or contact support if the problem persists.</p>
+            <button class="health-btn health-btn-primary" onclick="location.reload()">
+                <span class="fa fa-refresh mr-2"></span>Try Again
+            </button>
+        </div>
+    </template>
+</odoo>

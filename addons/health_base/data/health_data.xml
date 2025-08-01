@@ -1,0 +1,327 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Patient ID Sequence -->
+    <record id="sequence_health_patient" model="ir.sequence">
+        <field name="name">Patient ID</field>
+        <field name="code">health.patient</field>
+        <field name="prefix">P</field>
+        <field name="suffix">%(year)s</field>
+        <field name="padding">4</field>
+        <field name="number_next">1001</field>
+        <field name="number_increment">1</field>
+        <field name="implementation">standard</field>
+    </record>
+    
+    <!-- Default Patient Categories -->
+    <record id="patient_category_regular" model="health.patient.category">
+        <field name="name">Regular Patient</field>
+        <field name="description">Standard healthcare patient</field>
+        <field name="color">1</field>
+        <field name="sequence">10</field>
+        <field name="price_multiplier">1.0</field>
+    </record>
+    
+    <record id="patient_category_vip" model="health.patient.category">
+        <field name="name">VIP Patient</field>
+        <field name="description">VIP patient with premium services</field>
+        <field name="color">5</field>
+        <field name="sequence">5</field>
+        <field name="price_multiplier">1.5</field>
+        <field name="special_requirements">Priority scheduling, private rooms, dedicated staff</field>
+    </record>
+    
+    <record id="patient_category_senior" model="health.patient.category">
+        <field name="name">Senior Citizen</field>
+        <field name="description">Senior citizen (65+ years)</field>
+        <field name="color">3</field>
+        <field name="sequence">15</field>
+        <field name="price_multiplier">0.9</field>
+        <field name="special_requirements">Extra assistance, longer appointment times</field>
+    </record>
+    
+    <record id="patient_category_pediatric" model="health.patient.category">
+        <field name="name">Pediatric Patient</field>
+        <field name="description">Children under 18 years</field>
+        <field name="color">2</field>
+        <field name="sequence">20</field>
+        <field name="price_multiplier">1.1</field>
+        <field name="special_requirements">Parent/guardian presence required, child-friendly environment</field>
+    </record>
+    
+    <record id="patient_category_emergency" model="health.patient.category">
+        <field name="name">Emergency Patient</field>
+        <field name="description">Emergency or urgent care patient</field>
+        <field name="color">1</field>
+        <field name="sequence">1</field>
+        <field name="price_multiplier">1.8</field>
+        <field name="special_requirements">Immediate attention, 24/7 availability</field>
+    </record>
+    
+    <!-- Healthcare Service Types -->
+    <record id="service_type_consultation" model="health.service.type">
+        <field name="name">General Consultation</field>
+        <field name="code">CONSULT</field>
+        <field name="description">General medical consultation</field>
+        <field name="category">consultation</field>
+        <field name="base_price">500000</field>
+        <field name="duration_minutes">30</field>
+        <field name="available_home">True</field>
+        <field name="available_clinic">True</field>
+        <field name="available_telemedicine">True</field>
+        <field name="requires_doctor">True</field>
+        <field name="requires_nurse">False</field>
+        <field name="staff_count">1</field>
+        <field name="sequence">10</field>
+    </record>
+    
+    <record id="service_type_home_visit" model="health.service.type">
+        <field name="name">Home Visit</field>
+        <field name="code">HOME</field>
+        <field name="description">Medical consultation at patient's home</field>
+        <field name="category">home_visit</field>
+        <field name="base_price">800000</field>
+        <field name="duration_minutes">45</field>
+        <field name="travel_time_minutes">30</field>
+        <field name="available_home">True</field>
+        <field name="available_clinic">False</field>
+        <field name="available_telemedicine">False</field>
+        <field name="requires_travel">True</field>
+        <field name="requires_doctor">True</field>
+        <field name="requires_nurse">False</field>
+        <field name="staff_count">1</field>
+        <field name="equipment_required">Mobile medical kit, blood pressure monitor, thermometer</field>
+        <field name="sequence">5</field>
+    </record>
+    
+    <record id="service_type_nursing_care" model="health.service.type">
+        <field name="name">Nursing Care</field>
+        <field name="code">NURSE</field>
+        <field name="description">Professional nursing care services</field>
+        <field name="category">nursing_care</field>
+        <field name="base_price">400000</field>
+        <field name="duration_minutes">60</field>
+        <field name="available_home">True</field>
+        <field name="available_clinic">True</field>
+        <field name="available_telemedicine">False</field>
+        <field name="requires_doctor">False</field>
+        <field name="requires_nurse">True</field>
+        <field name="staff_count">1</field>
+        <field name="sequence">15</field>
+    </record>
+    
+    <record id="service_type_telemedicine" model="health.service.type">
+        <field name="name">Telemedicine Consultation</field>
+        <field name="code">TELE</field>
+        <field name="description">Online medical consultation via Zalo/Messenger</field>
+        <field name="category">telemedicine</field>
+        <field name="base_price">300000</field>
+        <field name="duration_minutes">20</field>
+        <field name="available_home">False</field>
+        <field name="available_clinic">False</field>
+        <field name="available_telemedicine">True</field>
+        <field name="requires_doctor">True</field>
+        <field name="requires_nurse">False</field>
+        <field name="staff_count">1</field>
+        <field name="sequence">20</field>
+    </record>
+    
+    <record id="service_type_physiotherapy" model="health.service.type">
+        <field name="name">Physiotherapy</field>
+        <field name="code">PHYSIO</field>
+        <field name="description">Physical therapy and rehabilitation</field>
+        <field name="category">physiotherapy</field>
+        <field name="base_price">600000</field>
+        <field name="duration_minutes">60</field>
+        <field name="available_home">True</field>
+        <field name="available_clinic">True</field>
+        <field name="available_telemedicine">False</field>
+        <field name="requires_doctor">False</field>
+        <field name="requires_nurse">True</field>
+        <field name="staff_count">1</field>
+        <field name="equipment_required">Portable physiotherapy equipment</field>
+        <field name="sequence">25</field>
+    </record>
+    
+    <!-- Medical Specialties -->
+    <record id="specialty_general_medicine" model="health.medical.specialty">
+        <field name="name">General Medicine</field>
+        <field name="code">GM</field>
+        <field name="description">General medical practice</field>
+    </record>
+    
+    <record id="specialty_internal_medicine" model="health.medical.specialty">
+        <field name="name">Internal Medicine</field>
+        <field name="code">IM</field>
+        <field name="description">Internal medicine and adult healthcare</field>
+    </record>
+    
+    <record id="specialty_pediatrics" model="health.medical.specialty">
+        <field name="name">Pediatrics</field>
+        <field name="code">PED</field>
+        <field name="description">Children's healthcare</field>
+    </record>
+    
+    <record id="specialty_geriatrics" model="health.medical.specialty">
+        <field name="name">Geriatrics</field>
+        <field name="code">GER</field>
+        <field name="description">Elderly care and geriatric medicine</field>
+    </record>
+    
+    <record id="specialty_cardiology" model="health.medical.specialty">
+        <field name="name">Cardiology</field>
+        <field name="code">CARD</field>
+        <field name="description">Heart and cardiovascular care</field>
+    </record>
+    
+    <record id="specialty_nursing" model="health.medical.specialty">
+        <field name="name">Nursing</field>
+        <field name="code">NURS</field>
+        <field name="description">Professional nursing care</field>
+    </record>
+    
+    <!-- Common Symptoms -->
+    <record id="symptom_fever" model="health.symptom">
+        <field name="name">Fever</field>
+        <field name="code">FEVER</field>
+        <field name="category">general</field>
+        <field name="urgency_level">medium</field>
+        <field name="description">Elevated body temperature</field>
+    </record>
+    
+    <record id="symptom_cough" model="health.symptom">
+        <field name="name">Cough</field>
+        <field name="code">COUGH</field>
+        <field name="category">respiratory</field>
+        <field name="urgency_level">low</field>
+        <field name="description">Persistent coughing</field>
+    </record>
+    
+    <record id="symptom_chest_pain" model="health.symptom">
+        <field name="name">Chest Pain</field>
+        <field name="code">CHEST</field>
+        <field name="category">cardiovascular</field>
+        <field name="urgency_level">high</field>
+        <field name="description">Pain or discomfort in chest area</field>
+    </record>
+    
+    <record id="symptom_shortness_breath" model="health.symptom">
+        <field name="name">Shortness of Breath</field>
+        <field name="code">SOB</field>
+        <field name="category">respiratory</field>
+        <field name="urgency_level">high</field>
+        <field name="description">Difficulty breathing or breathlessness</field>
+    </record>
+    
+    <record id="symptom_headache" model="health.symptom">
+        <field name="name">Headache</field>
+        <field name="code">HEAD</field>
+        <field name="category">neurological</field>
+        <field name="urgency_level">low</field>
+        <field name="description">Head pain or discomfort</field>
+    </record>
+    
+    <!-- Referral Sources -->
+    <record id="referral_facebook" model="health.referral.source">
+        <field name="name">Facebook Ads</field>
+        <field name="source_type">facebook</field>
+        <field name="description">Facebook advertising campaigns</field>
+        <field name="is_paid_source">True</field>
+        <field name="cost_per_lead">50000</field>
+    </record>
+    
+    <record id="referral_zalo" model="health.referral.source">
+        <field name="name">Zalo Official Account</field>
+        <field name="source_type">zalo</field>
+        <field name="description">Zalo messaging platform</field>
+        <field name="is_paid_source">False</field>
+    </record>
+    
+    <record id="referral_website" model="health.referral.source">
+        <field name="name">VAFHS Website</field>
+        <field name="source_type">website</field>
+        <field name="description">Company website contact form</field>
+        <field name="is_paid_source">False</field>
+    </record>
+    
+    <record id="referral_google_ads" model="health.referral.source">
+        <field name="name">Google Ads</field>
+        <field name="source_type">google</field>
+        <field name="description">Google advertising campaigns</field>
+        <field name="is_paid_source">True</field>
+        <field name="cost_per_lead">75000</field>
+    </record>
+    
+    <!-- Insurance Providers -->
+    <record id="insurance_vietnam_social" model="health.insurance.provider">
+        <field name="name">Vietnam Social Insurance</field>
+        <field name="code">VSI</field>
+        <field name="coverage_percentage">80.0</field>
+        <field name="deductible_amount">0</field>
+        <field name="max_coverage_annual">50000000</field>
+        <field name="covers_home_visits">True</field>
+        <field name="covers_clinic_visits">True</field>
+        <field name="covers_telemedicine">False</field>
+        <field name="covers_emergency">True</field>
+    </record>
+    
+    <record id="insurance_bao_viet" model="health.insurance.provider">
+        <field name="name">Bao Viet Insurance</field>
+        <field name="code">BVI</field>
+        <field name="coverage_percentage">70.0</field>
+        <field name="deductible_amount">500000</field>
+        <field name="max_coverage_annual">100000000</field>
+        <field name="covers_home_visits">True</field>
+        <field name="covers_clinic_visits">True</field>
+        <field name="covers_telemedicine">True</field>
+        <field name="covers_emergency">True</field>
+    </record>
+    
+    <!-- Urgency Levels -->
+    <record id="urgency_emergency" model="health.urgency.level">
+        <field name="name">Emergency</field>
+        <field name="code">EMERG</field>
+        <field name="description">Life-threatening condition requiring immediate attention</field>
+        <field name="priority_score">100</field>
+        <field name="response_time_hours">0.5</field>
+        <field name="color">1</field>
+        <field name="auto_assign">True</field>
+        <field name="send_alerts">True</field>
+        <field name="requires_approval">False</field>
+    </record>
+    
+    <record id="urgency_high" model="health.urgency.level">
+        <field name="name">High Priority</field>
+        <field name="code">HIGH</field>
+        <field name="description">Urgent medical condition requiring prompt attention</field>
+        <field name="priority_score">75</field>
+        <field name="response_time_hours">2.0</field>
+        <field name="color">5</field>
+        <field name="auto_assign">True</field>
+        <field name="send_alerts">True</field>
+        <field name="requires_approval">False</field>
+    </record>
+    
+    <record id="urgency_medium" model="health.urgency.level">
+        <field name="name">Medium Priority</field>
+        <field name="code">MED</field>
+        <field name="description">Standard medical appointment</field>
+        <field name="priority_score">50</field>
+        <field name="response_time_hours">24.0</field>
+        <field name="color">3</field>
+        <field name="auto_assign">False</field>
+        <field name="send_alerts">False</field>
+        <field name="requires_approval">False</field>
+    </record>
+    
+    <record id="urgency_low" model="health.urgency.level">
+        <field name="name">Low Priority</field>
+        <field name="code">LOW</field>
+        <field name="description">Routine check-up or non-urgent consultation</field>
+        <field name="priority_score">25</field>
+        <field name="response_time_hours">72.0</field>
+        <field name="color">10</field>
+        <field name="auto_assign">False</field>
+        <field name="send_alerts">False</field>
+        <field name="requires_approval">False</field>
+    </record>
+</odoo>

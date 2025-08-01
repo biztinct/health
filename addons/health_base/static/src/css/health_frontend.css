@@ -1,0 +1,425 @@
+/* ============================================================================
+   VAFHS Healthcare Management System - Frontend Styles
+   PWA-optimized styles for patient portal and public-facing pages
+   ============================================================================ */
+
+/* Import base health styles */
+@import url('health_base.css');
+
+/* ============================================================================
+   PWA-Specific Styles
+   ============================================================================ */
+
+/* App-like navigation */
+.health-app-header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: white;
+    border-bottom: 1px solid var(--health-gray-200);
+    box-shadow: var(--health-shadow-sm);
+    padding: var(--health-space-4);
+}
+
+.health-app-nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    max-width: 1280px;
+    margin: 0 auto;
+}
+
+.health-logo {
+    font-size: var(--health-font-size-xl);
+    font-weight: 700;
+    color: var(--health-primary);
+    text-decoration: none;
+}
+
+.health-nav-menu {
+    display: flex;
+    gap: var(--health-space-6);
+    align-items: center;
+}
+
+.health-nav-link {
+    color: var(--health-gray-600);
+    text-decoration: none;
+    font-weight: 500;
+    transition: var(--health-transition);
+    padding: var(--health-space-2) var(--health-space-3);
+    border-radius: var(--health-radius);
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+}
+
+.health-nav-link:hover {
+    color: var(--health-primary);
+    background-color: rgba(37, 99, 235, 0.05);
+}
+
+.health-nav-link.active {
+    color: var(--health-primary);
+    background-color: rgba(37, 99, 235, 0.1);
+}
+
+/* Mobile menu toggle */
+.health-menu-toggle {
+    display: none;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: var(--health-space-2);
+    border-radius: var(--health-radius);
+}
+
+@media (max-width: 768px) {
+    .health-nav-menu {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: white;
+        border-top: 1px solid var(--health-gray-200);
+        box-shadow: var(--health-shadow-lg);
+        flex-direction: column;
+        padding: var(--health-space-4);
+        gap: var(--health-space-2);
+    }
+    
+    .health-nav-menu.active {
+        display: flex;
+    }
+    
+    .health-menu-toggle {
+        display: block;
+    }
+    
+    .health-nav-link {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+/* ============================================================================
+   Patient Portal Styles
+   ============================================================================ */
+
+.health-portal-welcome {
+    background: linear-gradient(135deg, var(--health-primary) 0%, var(--health-primary-light) 100%);
+    color: white;
+    padding: var(--health-space-8) var(--health-space-4);
+    text-align: center;
+    margin-bottom: var(--health-space-8);
+}
+
+.health-portal-welcome h1 {
+    font-size: var(--health-font-size-3xl);
+    font-weight: 700;
+    margin-bottom: var(--health-space-4);
+}
+
+.health-portal-welcome p {
+    font-size: var(--health-font-size-lg);
+    opacity: 0.9;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+/* Service Cards */
+.health-service-grid {
+    display: grid;
+    gap: var(--health-space-6);
+    grid-template-columns: 1fr;
+    margin-bottom: var(--health-space-8);
+}
+
+@media (min-width: 768px) {
+    .health-service-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (min-width: 1024px) {
+    .health-service-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+.health-service-card {
+    background: white;
+    border-radius: var(--health-radius-xl);
+    box-shadow: var(--health-shadow);
+    overflow: hidden;
+    transition: var(--health-transition);
+    cursor: pointer;
+}
+
+.health-service-card:hover {
+    box-shadow: var(--health-shadow-lg);
+    transform: translateY(-4px);
+}
+
+.health-service-icon {
+    width: 100%;
+    height: 200px;
+    background: linear-gradient(135deg, var(--health-primary-light) 0%, var(--health-secondary-light) 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3rem;
+    color: white;
+}
+
+.health-service-content {
+    padding: var(--health-space-6);
+}
+
+.health-service-title {
+    font-size: var(--health-font-size-xl);
+    font-weight: 600;
+    color: var(--health-gray-900);
+    margin-bottom: var(--health-space-2);
+}
+
+.health-service-description {
+    color: var(--health-gray-600);
+    margin-bottom: var(--health-space-4);
+    line-height: 1.6;
+}
+
+.health-service-price {
+    font-size: var(--health-font-size-lg);
+    font-weight: 600;
+    color: var(--health-primary);
+    margin-bottom: var(--health-space-4);
+}
+
+/* Booking Form */
+.health-booking-form {
+    background: white;
+    border-radius: var(--health-radius-xl);
+    box-shadow: var(--health-shadow-lg);
+    padding: var(--health-space-8);
+    margin: var(--health-space-8) auto;
+    max-width: 600px;
+}
+
+.health-booking-steps {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: var(--health-space-8);
+    position: relative;
+}
+
+.health-booking-steps::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: var(--health-gray-200);
+    z-index: 1;
+}
+
+.health-booking-step {
+    background: white;
+    border: 2px solid var(--health-gray-200);
+    color: var(--health-gray-400);
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    z-index: 2;
+    position: relative;
+}
+
+.health-booking-step.active {
+    border-color: var(--health-primary);
+    background: var(--health-primary);
+    color: white;
+}
+
+.health-booking-step.completed {
+    border-color: var(--health-success);
+    background: var(--health-success);
+    color: white;
+}
+
+/* Date & Time Picker */
+.health-date-picker {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: var(--health-space-2);
+    margin-bottom: var(--health-space-6);
+}
+
+.health-date-cell {
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--health-gray-200);
+    border-radius: var(--health-radius);
+    cursor: pointer;
+    transition: var(--health-transition);
+    font-weight: 500;
+    min-height: 44px;
+}
+
+.health-date-cell:hover {
+    border-color: var(--health-primary);
+    background-color: rgba(37, 99, 235, 0.05);
+}
+
+.health-date-cell.selected {
+    background: var(--health-primary);
+    color: white;
+    border-color: var(--health-primary);
+}
+
+.health-date-cell.unavailable {
+    opacity: 0.3;
+    cursor: not-allowed;
+    background: var(--health-gray-50);
+}
+
+.health-time-slots {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: var(--health-space-3);
+    margin-bottom: var(--health-space-6);
+}
+
+/* Contact Form */
+.health-contact-form {
+    background: var(--health-gray-50);
+    padding: var(--health-space-8);
+    border-radius: var(--health-radius-xl);
+    margin-top: var(--health-space-8);
+}
+
+.health-contact-info {
+    display: grid;
+    gap: var(--health-space-6);
+    margin-bottom: var(--health-space-8);
+}
+
+@media (min-width: 768px) {
+    .health-contact-info {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+.health-contact-item {
+    display: flex;
+    align-items: center;
+    gap: var(--health-space-4);
+}
+
+.health-contact-icon {
+    width: 48px;
+    height: 48px;
+    background: var(--health-primary);
+    color: white;
+    border-radius: var(--health-radius-lg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: var(--health-font-size-xl);
+}
+
+/* ============================================================================
+   Loading & Offline States
+   ============================================================================ */
+
+.health-loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--health-space-8);
+}
+
+.health-spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid var(--health-gray-200);
+    border-top: 4px solid var(--health-primary);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.health-offline-banner {
+    background: var(--health-warning);
+    color: white;
+    padding: var(--health-space-3);
+    text-align: center;
+    font-weight: 500;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    transform: translateY(-100%);
+    transition: transform 0.3s ease;
+}
+
+.health-offline-banner.show {
+    transform: translateY(0);
+}
+
+/* ============================================================================
+   Vietnamese Language Support
+   ============================================================================ */
+
+[lang="vi"] .health-form-group {
+    /* Vietnamese text typically needs more vertical space */
+    margin-bottom: calc(var(--health-space-4) * 1.2);
+}
+
+[lang="vi"] .health-title {
+    /* Vietnamese titles may need slightly larger font */
+    font-size: calc(var(--health-font-size-2xl) * 1.1);
+}
+
+/* ============================================================================
+   Print Styles (for appointment confirmations, etc.)
+   ============================================================================ */
+
+@media print {
+    .health-app-header,
+    .health-nav-menu,
+    .health-btn,
+    .health-quick-actions {
+        display: none !important;
+    }
+    
+    .health-card {
+        box-shadow: none !important;
+        border: 1px solid var(--health-gray-300) !important;
+        break-inside: avoid;
+    }
+    
+    body {
+        background: white !important;
+        color: black !important;
+        font-size: 12pt;
+    }
+    
+    .health-title {
+        color: black !important;
+        font-size: 18pt;
+    }
+}

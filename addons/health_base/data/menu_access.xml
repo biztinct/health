@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Ensure admin user has healthcare access -->
+    <record id="base.user_admin" model="res.users">
+        <field name="groups_id" eval="[(4, ref('group_healthcare_owner'))]"/>
+    </record>
+    
+    <!-- Give base users healthcare access for debugging -->
+    <record id="base.group_user" model="res.groups">
+        <field name="implied_ids" eval="[(4, ref('group_healthcare_base'))]"/>
+    </record>
+</odoo>

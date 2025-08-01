@@ -1,0 +1,338 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Facility Tree View -->
+    <record id="view_health_facility_list" model="ir.ui.view">
+        <field name="name">health.facility.list</field>
+        <field name="model">health.facility</field>
+        <field name="arch" type="xml">
+            <list string="Healthcare Facilities" decoration-warning="facility_status=='maintenance'" decoration-danger="facility_status in ['closed_temporary', 'closed_permanent']">
+                <field name="name"/>
+                <field name="code"/>
+                <field name="facility_type"/>
+                <field name="city"/>
+                <field name="state_id"/>
+                <field name="facility_status"/>
+                <field name="max_daily_patients"/>
+                <field name="total_beds"/>
+                <field name="available_beds"/>
+                <field name="covers_home_visits" widget="boolean_toggle"/>
+                <field name="home_visit_radius_km"/>
+                <field name="facility_manager_id"/>
+                <field name="patient_count"/>
+                <button name="action_view_patients" type="object" icon="fa-users" title="View Patients" class="health-btn health-btn-sm"/>
+                <button name="action_view_appointments" type="object" icon="fa-calendar" title="View Appointments" class="health-btn health-btn-outline health-btn-sm"/>
+                <button name="action_check_license_expiry" type="object" icon="fa-certificate" title="Check License" class="health-btn health-btn-sm"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Facility Form View -->
+    <record id="view_health_facility_form" model="ir.ui.view">
+        <field name="name">health.facility.form</field>
+        <field name="model">health.facility</field>
+        <field name="arch" type="xml">
+            <form string="Healthcare Facility">
+                <header>
+                    <field name="facility_status" widget="statusbar" statusbar_visible="planning,construction,operational,maintenance"/>
+                    <button name="action_check_license_expiry" string="Check License" type="object" class="health-btn health-btn-primary"/>
+                    <button name="action_view_patients" string="View Patients" type="object" class="health-btn health-btn-outline"/>
+                    <button name="action_view_appointments" string="View Appointments" type="object" class="health-btn health-btn-outline"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_patients" type="object" class="oe_stat_button" icon="fa-users">
+                            <field name="patient_count" string="Patients" widget="statinfo"/>
+                        </button>
+                        <button name="action_view_appointments" type="object" class="oe_stat_button" icon="fa-calendar">
+                            <div class="o_field_widget o_stat_info">
+                                <span class="o_stat_value">
+                                    <field name="total_beds"/>/<field name="available_beds"/>
+                                </span>
+                                <span class="o_stat_text">Beds</span>
+                            </div>
+                        </button>
+                    </div>
+                    
+                    <div class="health-card-header">
+                        <div class="oe_title">
+                            <h1 class="health-title">
+                                <field name="name" placeholder="Facility name..."/>
+                            </h1>
+                            <div class="health-subtitle">
+                                <field name="code" placeholder="Facility code..."/>
+                                <span class="health-badge health-badge-info ml-2">
+                                    <field name="facility_type"/>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <notebook>
+                        <page string="Basic Information" name="basic_info">
+                            <group>
+                                <group name="facility_details" string="Facility Details">
+                                    <field name="facility_type"/>
+                                    <field name="phone" widget="phone"/>
+                                    <field name="email" widget="email"/>
+                                    <field name="website" widget="url"/>
+                                    <field name="timezone"/>
+                                </group>
+                                <group name="management" string="Management">
+                                    <field name="facility_manager_id"/>
+                                    <field name="head_nurse_id"/>
+                                    <field name="total_staff_count"/>
+                                    <field name="active"/>
+                                </group>
+                            </group>
+                            
+                            <group name="address" string="Address">
+                                <field name="street"/>
+                                <field name="street2"/>
+                                <field name="city"/>
+                                <field name="state_id"/>
+                                <field name="zip"/>
+                                <field name="country_id"/>
+                            </group>
+                            
+                            <group name="operating_hours" string="Operating Hours">
+                                <field name="operating_hours"/>
+                            </group>
+                        </page>
+
+                        <page string="Services &amp; Capabilities" name="services">
+                            <group>
+                                <group name="capacity" string="Capacity">
+                                    <field name="max_daily_patients"/>
+                                    <field name="total_beds"/>
+                                    <field name="available_beds" readonly="1"/>
+                                    <field name="consultation_rooms"/>
+                                    <field name="parking_spaces"/>
+                                    <field name="wheelchair_accessible" widget="boolean_toggle"/>
+                                </group>
+                                <group name="capabilities" string="Capabilities">
+                                    <field name="has_emergency_services" widget="boolean_toggle"/>
+                                    <field name="has_laboratory" widget="boolean_toggle"/>
+                                    <field name="has_imaging" widget="boolean_toggle"/>
+                                    <field name="has_pharmacy" widget="boolean_toggle"/>
+                                </group>
+                            </group>
+                            
+                            <group name="services_offered" string="Services Offered">
+                                <field name="services_offered" widget="many2many_tags"/>
+                            </group>
+                            
+                            <group name="specialties" string="Medical Specialties">
+                                <field name="specialties" widget="many2many_tags"/>
+                            </group>
+                        </page>
+
+                        <page string="Home Visit Coverage" name="home_visits">
+                            <group>
+                                <group name="home_visit_settings" string="Home Visit Settings">
+                                    <field name="covers_home_visits" widget="boolean_toggle"/>
+                                    <field name="home_visit_radius_km" invisible="not covers_home_visits"/>
+                                    <field name="base_home_visit_fee" widget="monetary" invisible="not covers_home_visits"/>
+                                </group>
+                            </group>
+                            
+                            <group name="coverage_areas" string="Coverage Areas" invisible="not covers_home_visits">
+                                <field name="home_visit_districts" widget="many2many_tags"/>
+                            </group>
+                        </page>
+
+                        <page string="Financial &amp; Insurance" name="financial">
+                            <group>
+                                <group name="financial_settings" string="Financial Settings">
+                                    <field name="default_currency_id"/>
+                                    <field name="accepts_insurance" widget="boolean_toggle"/>
+                                </group>
+                                <group name="statistics" string="Statistics">
+                                    <field name="monthly_revenue" widget="monetary" readonly="1"/>
+                                </group>
+                            </group>
+                            
+                            <group name="accepted_insurance" string="Accepted Insurance Providers" invisible="not accepts_insurance">
+                                <field name="accepted_insurance_providers" widget="many2many_tags"/>
+                            </group>
+                        </page>
+
+                        <page string="Licensing &amp; Compliance" name="compliance">
+                            <group>
+                                <group name="licensing" string="Licensing">
+                                    <field name="business_license_number"/>
+                                    <field name="health_license_number"/>
+                                    <field name="license_expiry_date"/>
+                                </group>
+                                <group name="inspections" string="Inspections">
+                                    <field name="last_inspection_date"/>
+                                    <field name="next_inspection_date"/>
+                                </group>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" widget="mail_followers"/>
+                    <field name="activity_ids" widget="mail_activity"/>
+                    <field name="message_ids" widget="mail_thread"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <!-- Facility Kanban View -->
+    <record id="view_health_facility_kanban" model="ir.ui.view">
+        <field name="name">health.facility.kanban</field>
+        <field name="model">health.facility</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="facility_type">
+                <field name="id"/>
+                <field name="name"/>
+                <field name="code"/>
+                <field name="facility_type"/>
+                <field name="facility_status"/>
+                <field name="city"/>
+                <field name="state_id"/>
+                <field name="max_daily_patients"/>
+                <field name="total_beds"/>
+                <field name="available_beds"/>
+                <field name="covers_home_visits"/>
+                <field name="home_visit_radius_km"/>
+                <field name="patient_count"/>
+                <field name="monthly_revenue"/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div class="health-card health-facility-card">
+                            <div class="health-card-header">
+                                <div class="health-status-indicator" t-att-class="record.facility_status.raw_value"/>
+                                <strong class="health-card-title">
+                                    <field name="name"/>
+                                </strong>
+                                <div class="dropdown">
+                                    <a class="dropdown-toggle o_dropdown_kanban" data-toggle="dropdown" href="#" role="button" aria-label="Dropdown menu" title="Dropdown menu">
+                                        <span class="fa fa-ellipsis-v"/>
+                                    </a>
+                                    <div class="dropdown-menu" role="menu">
+                                        <a t-if="widget.editable" type="edit" class="dropdown-item">Edit</a>
+                                        <a t-if="widget.deletable" type="delete" class="dropdown-item">Delete</a>
+                                        <a name="action_view_patients" type="object" class="dropdown-item">View Patients</a>
+                                        <a name="action_view_appointments" type="object" class="dropdown-item">View Appointments</a>
+                                        <a name="action_check_license_expiry" type="object" class="dropdown-item">Check License</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="health-card-body">
+                                <div class="row">
+                                    <div class="col-6">
+                                        <small class="health-text-xs">Facility Code</small><br/>
+                                        <span class="health-badge health-badge-neutral">
+                                            <field name="code"/>
+                                        </span>
+                                    </div>
+                                    <div class="col-6">
+                                        <small class="health-text-xs">Type</small><br/>
+                                        <field name="facility_type"/>
+                                    </div>
+                                </div>
+                                <div class="row mt-2">
+                                    <div class="col-12">
+                                        <small class="health-text-xs">Location</small><br/>
+                                        <field name="city"/>, <field name="state_id"/>
+                                    </div>
+                                </div>
+                                <div class="row mt-2">
+                                    <div class="col-6">
+                                        <small class="health-text-xs">Capacity</small><br/>
+                                        <field name="max_daily_patients"/> patients/day
+                                    </div>
+                                    <div class="col-6">
+                                        <small class="health-text-xs">Beds</small><br/>
+                                        <field name="available_beds"/>/<field name="total_beds"/> available
+                                    </div>
+                                </div>
+                                <div class="row mt-2" t-if="record.covers_home_visits.raw_value">
+                                    <div class="col-12">
+                                        <small class="health-text-xs">Home Visits</small><br/>
+                                        <span class="health-badge health-badge-success">
+                                            <field name="home_visit_radius_km"/> km radius
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="row mt-2">
+                                    <div class="col-6">
+                                        <small class="health-text-xs">Patients</small><br/>
+                                        <field name="patient_count"/>
+                                    </div>
+                                    <div class="col-6">
+                                        <small class="health-text-xs">Monthly Revenue</small><br/>
+                                        <field name="monthly_revenue" widget="monetary"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- Facility Search View -->
+    <record id="view_health_facility_search" model="ir.ui.view">
+        <field name="name">health.facility.search</field>
+        <field name="model">health.facility</field>
+        <field name="arch" type="xml">
+            <search string="Healthcare Facilities">
+                <field name="name" string="Facility Name"/>
+                <field name="code" string="Facility Code"/>
+                <field name="city" string="City"/>
+                <field name="state_id" string="State"/>
+                <field name="facility_manager_id" string="Manager"/>
+                <field name="head_nurse_id" string="Head Nurse"/>
+                <separator/>
+                <filter name="operational" string="Operational" domain="[('facility_status', '=', 'operational')]"/>
+                <filter name="maintenance" string="Under Maintenance" domain="[('facility_status', '=', 'maintenance')]"/>
+                <filter name="closed" string="Closed" domain="[('facility_status', 'in', ['closed_temporary', 'closed_permanent'])]"/>
+                <separator/>
+                <filter name="main_clinic" string="Main Clinics" domain="[('facility_type', '=', 'main_clinic')]"/>
+                <filter name="branch_clinic" string="Branch Clinics" domain="[('facility_type', '=', 'branch_clinic')]"/>
+                <filter name="home_care_center" string="Home Care Centers" domain="[('facility_type', '=', 'home_care_center')]"/>
+                <separator/>
+                <filter name="covers_home_visits" string="Home Visits Available" domain="[('covers_home_visits', '=', True)]"/>
+                <filter name="has_emergency" string="Emergency Services" domain="[('has_emergency_services', '=', True)]"/>
+                <filter name="has_laboratory" string="Laboratory Services" domain="[('has_laboratory', '=', True)]"/>
+                <filter name="has_imaging" string="Imaging Services" domain="[('has_imaging', '=', True)]"/>
+                <filter name="wheelchair_accessible" string="Wheelchair Accessible" domain="[('wheelchair_accessible', '=', True)]"/>
+                <separator/>
+                <filter name="license_expiring" string="License Expiring Soon" domain="[('license_expiry_date', '&lt;=', (context_today() + datetime.timedelta(days=30)).strftime('%Y-%m-%d'))]"/>
+                <separator/>
+                <group expand="0" string="Group By">
+                    <filter string="Facility Type" name="group_type" context="{'group_by': 'facility_type'}"/>
+                    <filter string="Status" name="group_status" context="{'group_by': 'facility_status'}"/>
+                    <filter string="State/Province" name="group_state" context="{'group_by': 'state_id'}"/>
+                    <filter string="Manager" name="group_manager" context="{'group_by': 'facility_manager_id'}"/>
+                    <filter string="Home Visit Coverage" name="group_home_visits" context="{'group_by': 'covers_home_visits'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Facility Action -->
+    <record id="action_health_facility" model="ir.actions.act_window">
+        <field name="name">Healthcare Facilities</field>
+        <field name="res_model">health.facility</field>
+        <field name="view_mode">kanban,list,form</field>
+        <field name="view_id" ref="view_health_facility_kanban"/>
+        <field name="search_view_id" ref="view_health_facility_search"/>
+        <field name="context">{
+            'search_default_operational': 1
+        }</field>
+        <field name="help" type="html">
+            <div class="health-empty-state">
+                <img src="/health_base/static/src/img/facility-icon.png" alt="No facilities" class="health-empty-icon"/>
+                <h3 class="health-title">No healthcare facilities found</h3>
+                <p class="health-text-sm">Create your first healthcare facility to start managing locations and services.</p>
+                <a type="action" class="health-btn health-btn-primary">Create Facility</a>
+            </div>
+        </field>
+    </record>
+</odoo>
