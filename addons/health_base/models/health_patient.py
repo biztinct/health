@@ -198,14 +198,18 @@ class HealthPatient(models.Model):
         return patients
     
     def action_view_appointments(self):
-        """Action to view patient appointments (to be implemented in health_calendar)"""
+        """Action to view patient appointments"""
         return {
             'type': 'ir.actions.act_window',
             'name': _('Patient Appointments'),
-            'res_model': 'calendar.event',  # Will be health.appointment later
-            'view_mode': 'tree,form',
-            'domain': [('partner_ids', 'in', [self.partner_id.id])],
-            'context': {'default_partner_ids': [(4, self.partner_id.id)]}
+            'res_model': 'calendar.event',
+            'view_mode': 'calendar,tree,form',
+            'views': [(False, 'calendar'), (False, 'tree'), (False, 'form')],
+            'domain': [('partner_ids', 'in', [self.partner_id.id])] if self.partner_id else [],
+            'context': {
+                'default_partner_ids': [(4, self.partner_id.id)] if self.partner_id else [],
+                'default_name': f'Appointment for {self.name}',
+            }
         }
     
     def action_create_appointment(self):

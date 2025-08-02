@@ -191,10 +191,14 @@ class HealthFacility(models.Model):
         return {
             'type': 'ir.actions.act_window',
             'name': _('Facility Appointments'),
-            'res_model': 'calendar.event',  # Will be health.appointment later
-            'view_mode': 'tree,form,calendar',
-            'domain': [],  # Will be implemented with appointment model
-            'context': {'default_facility_id': self.id}
+            'res_model': 'calendar.event',
+            'view_mode': 'calendar,tree,form',
+            'views': [(False, 'calendar'), (False, 'tree'), (False, 'form')],
+            'domain': [],
+            'context': {
+                'default_name': f'Appointment at {self.name}',
+                'search_default_mymeetings': 1,
+            }
         }
     
     def action_check_license_expiry(self):
