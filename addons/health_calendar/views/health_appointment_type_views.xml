@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<data>
+    <!-- Extend Service Type List View for Appointment Fields -->
+    <record id="health_service_type_appointment_list_view" model="ir.ui.view">
+        <field name="name">health.service.type.appointment.list</field>
+        <field name="model">health.service.type</field>
+        <field name="inherit_id" ref="health_base.view_health_service_type_list"/>
+        <field name="arch" type="xml">
+            <field name="base_price" position="after">
+                <field name="allow_online_booking" widget="boolean_toggle"/>
+                <field name="location_type"/>
+            </field>
+        </field>
+    </record>
+
+    <!-- Extend Service Type Form View for Appointment Fields -->
+    <record id="health_service_type_appointment_form_view" model="ir.ui.view">
+        <field name="name">health.service.type.appointment.form</field>
+        <field name="model">health.service.type</field>
+        <field name="inherit_id" ref="health_base.view_health_service_type_form"/>
+        <field name="arch" type="xml">
+            <!-- Add appointment booking tab -->
+            <notebook position="inside">
+                <page string="Appointment Booking" name="appointment_booking">
+                    <group name="online_booking" string="Online Booking Configuration">
+                        <group>
+                            <field name="allow_online_booking"/>
+                            <field name="advance_booking_days" invisible="not allow_online_booking"/>
+                            <field name="min_advance_hours" invisible="not allow_online_booking"/>
+                        </group>
+                        <group>
+                            <field name="max_concurrent" invisible="not allow_online_booking"/>
+                            <field name="auto_confirm" invisible="not allow_online_booking"/>
+                        </group>
+                    </group>
+
+                    <group name="working_hours" string="Default Working Hours" invisible="not allow_online_booking">
+                        <group>
+                            <field name="working_hours_start" widget="float_time"/>
+                            <field name="working_hours_end" widget="float_time"/>
+                        </group>
+                        <group>
+                            <field name="buffer_time_before"/>
+                            <field name="buffer_time_after"/>
+                        </group>
+                    </group>
+
+                    <group name="location_settings" string="Location & Travel">
+                        <group>
+                            <field name="location_type"/>
+                            <field name="service_radius_km" invisible="location_type != 'home'"/>
+                        </group>
+                        <group>
+                            <field name="platform" invisible="location_type != 'online'"/>
+                        </group>
+                    </group>
+
+                    <group name="form_configuration" string="Booking Form Settings">
+                        <group name="booking_form_fields">
+                            <field name="show_symptoms_field"/>
+                            <field name="show_urgency_field"/>
+                            <field name="show_special_requirements"/>
+                        </group>
+                        <group name="automation">
+                            <field name="send_reminder"/>
+                            <field name="reminder_hours_before" invisible="not send_reminder"/>
+                        </group>
+                    </group>
+                </page>
+            </notebook>
+        </field>
+    </record>
+
+    <!-- Service Types Action for Appointment Management -->
+    <record id="action_health_service_type_appointments" model="ir.actions.act_window">
+        <field name="name">Service Types & Booking</field>
+        <field name="res_model">health.service.type</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('allow_online_booking', '=', True)]</field>
+        <field name="context">{'search_default_allow_online_booking': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Configure appointment booking for your services!
+            </p>
+            <p>
+                Enable online booking for your healthcare services. Configure pricing, duration,
+                working hours, and booking settings for each service type.
+            </p>
+        </field>
+    </record>
+
+</data>
+</odoo>

@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Healthcare Module Category -->
+        <record id="module_category_healthcare" model="ir.module.category">
+            <field name="name">Healthcare</field>
+            <field name="description">Healthcare management applications</field>
+            <field name="sequence">5</field>
+        </record>
+
+        <!-- Main Healthcare Menu -->
+        <menuitem 
+            id="health_main_menu" 
+            name="Healthcare"
+            sequence="10"
+            web_icon="health_calendar,static/description/icon.png"/>
+
+        <!-- Calendar & Appointments Submenu -->
+        <menuitem 
+            id="health_calendar_menu" 
+            name="Calendar &amp; Appointments"
+            parent="health_main_menu"
+            sequence="10"/>
+
+        <!-- Appointments Menu Items -->
+        <menuitem 
+            id="menu_health_appointments" 
+            name="Appointments"
+            parent="health_calendar_menu"
+            action="action_health_appointment"
+            sequence="10"/>
+
+        <menuitem 
+            id="menu_health_appointment_calendar" 
+            name="Calendar View"
+            parent="health_calendar_menu"
+            action="action_health_appointment_calendar"
+            sequence="20"/>
+
+        <menuitem 
+            id="menu_health_appointment_types" 
+            name="Service Types & Booking"
+            parent="health_calendar_menu"
+            action="action_health_service_type_appointments"
+            sequence="30"/>
+
+        <!-- Patients Submenu -->
+        <menuitem 
+            id="health_patients_menu" 
+            name="Patients"
+            parent="health_main_menu"
+            sequence="20"/>
+
+        <menuitem 
+            id="menu_health_patients" 
+            name="All Patients"
+            parent="health_patients_menu"
+            action="action_health_patient"
+            sequence="10"/>
+
+        <menuitem 
+            id="menu_health_patients_new" 
+            name="New Patients"
+            parent="health_patients_menu"
+            action="action_health_patient_new"
+            sequence="20"/>
+
+        <!-- Reports Submenu -->
+        <menuitem 
+            id="health_reports_menu" 
+            name="Reports"
+            parent="health_main_menu"
+            sequence="90"/>
+
+        <!-- Configuration Submenu -->
+        <menuitem 
+            id="health_config_menu" 
+            name="Configuration"
+            parent="health_main_menu"
+            sequence="100"/>
+    </data>
+</odoo>

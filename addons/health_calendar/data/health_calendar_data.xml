@@ -1,0 +1,280 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <!-- Sequences -->
+    <record id="seq_health_appointment" model="ir.sequence">
+        <field name="name">Health Appointment</field>
+        <field name="code">health.appointment</field>
+        <field name="prefix">APPT</field>
+        <field name="padding">4</field>
+        <field name="number_next">1001</field>
+        <field name="number_increment">1</field>
+        <field name="company_id" eval="False"/>
+    </record>
+    
+    <record id="seq_health_patient" model="ir.sequence">
+        <field name="name">Health Patient</field>
+        <field name="code">health.patient</field>
+        <field name="prefix">P</field>
+        <field name="padding">4</field>
+        <field name="number_next">1001</field>
+        <field name="number_increment">1</field>
+        <field name="company_id" eval="False"/>
+    </record>
+
+    <!-- Default Service Types with Appointment Booking -->
+    <record id="appointment_type_general_consultation" model="health.service.type">
+        <field name="name">General Consultation</field>
+        <field name="code">GEN_CONSULT</field>
+        <field name="description">Comprehensive health check-up and consultation with our healthcare professionals</field>
+        <field name="icon">fa-stethoscope</field>
+        <field name="color">1</field>
+        <field name="duration_minutes">30</field>
+        <field name="location_type">clinic</field>
+        <field name="base_price">200000</field>
+        <field name="allow_online_booking" eval="True"/>
+        <field name="advance_booking_days">30</field>
+        <field name="sequence">10</field>
+    </record>
+
+    <record id="appointment_type_home_visit" model="health.service.type">
+        <field name="name">Home Visit Consultation</field>
+        <field name="code">HOME_VISIT</field>
+        <field name="description">Professional healthcare service delivered to your home in Ho Chi Minh City</field>
+        <field name="icon">fa-home</field>
+        <field name="color">2</field>
+        <field name="duration_minutes">45</field>
+        <field name="location_type">home</field>
+        <field name="base_price">350000</field>
+        <field name="travel_fee">50000</field>
+        <field name="allow_online_booking" eval="True"/>
+        <field name="advance_booking_days">14</field>
+        <field name="sequence">20</field>
+    </record>
+
+    <record id="appointment_type_telemedicine" model="health.service.type">
+        <field name="name">Telemedicine Consultation</field>
+        <field name="code">TELEMEDICINE</field>
+        <field name="description">Online video consultation with our healthcare professionals from the comfort of your home</field>
+        <field name="icon">fa-video-camera</field>
+        <field name="color">3</field>
+        <field name="duration_minutes">20</field>
+        <field name="location_type">online</field>
+        <field name="base_price">150000</field>
+        <field name="allow_online_booking" eval="True"/>
+        <field name="advance_booking_days">7</field>
+        <field name="platform">zoom</field>
+        <field name="sequence">30</field>
+    </record>
+
+    <record id="appointment_type_specialist_consultation" model="health.service.type">
+        <field name="name">Specialist Consultation</field>
+        <field name="code">SPECIALIST</field>
+        <field name="description">Specialized medical consultation with our expert doctors</field>
+        <field name="icon">fa-user-md</field>
+        <field name="color">4</field>
+        <field name="duration_minutes">45</field>
+        <field name="location_type">clinic</field>
+        <field name="base_price">400000</field>
+        <field name="allow_online_booking" eval="True"/>
+        <field name="advance_booking_days">21</field>
+        <field name="requires_doctor" eval="True"/>
+        <field name="sequence">40</field>
+    </record>
+
+    <record id="appointment_type_health_screening" model="health.service.type">
+        <field name="name">Health Screening Package</field>
+        <field name="code">SCREENING</field>
+        <field name="description">Comprehensive health screening including blood tests, vitals check, and consultation</field>
+        <field name="icon">fa-heartbeat</field>
+        <field name="color">5</field>
+        <field name="duration_minutes">60</field>
+        <field name="location_type">clinic</field>
+        <field name="base_price">500000</field>
+        <field name="allow_online_booking" eval="True"/>
+        <field name="advance_booking_days">14</field>
+        <field name="requires_nurse" eval="True"/>
+        <field name="sequence">50</field>
+    </record>
+
+
+    <!-- Website Menu Items -->
+    <record id="website_menu_book_appointment" model="website.menu">
+        <field name="name">Book Appointment</field>
+        <field name="url">/book-appointment</field>
+        <field name="parent_id" ref="website.main_menu"/>
+        <field name="sequence">40</field>
+        <field name="website_id" ref="website.default_website"/>
+    </record>
+
+
+    <!-- Email Templates -->
+    <record id="email_template_booking_confirmation" model="mail.template">
+        <field name="name">Appointment Booking Confirmation</field>
+        <field name="model_id" ref="model_health_appointment"/>
+        <field name="subject">Appointment Confirmation - ${object.name} - VAFHS Healthcare</field>
+        <field name="email_from">${user.email or ''}</field>
+        <field name="email_to">${object.patient_id.email}</field>
+        <field name="body_html"><![CDATA[
+            <div style="font-family: 'Inter', Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: #ffffff;">
+                <!-- Header -->
+                <div style="background: linear-gradient(135deg, #2563eb 0%, #059669 100%); padding: 40px 20px; text-align: center;">
+                    <h1 style="color: white; margin: 0; font-size: 28px; font-weight: 700;">
+                        Appointment Confirmed
+                    </h1>
+                    <p style="color: rgba(255,255,255,0.9); margin: 10px 0 0 0; font-size: 16px;">
+                        VAFHS Healthcare - Professional Care You Can Trust
+                    </p>
+                </div>
+
+                <!-- Content -->
+                <div style="padding: 40px 20px;">
+                    <p style="font-size: 16px; color: #374151; margin-bottom: 30px;">
+                        Dear ${object.patient_id.name},
+                    </p>
+                    
+                    <p style="font-size: 16px; color: #374151; line-height: 1.6; margin-bottom: 30px;">
+                        Your appointment has been successfully confirmed. We look forward to providing you with exceptional healthcare service.
+                    </p>
+
+                    <!-- Appointment Details -->
+                    <div style="background-color: #f9fafb; border-radius: 12px; padding: 30px; margin-bottom: 30px;">
+                        <h2 style="color: #2563eb; margin: 0 0 20px 0; font-size: 20px; font-weight: 600;">
+                            Appointment Details
+                        </h2>
+                        
+                        <table style="width: 100%; border-spacing: 0;">
+                            <tr>
+                                <td style="padding: 10px 0; color: #6b7280; font-weight: 500; width: 30%;">Reference:</td>
+                                <td style="padding: 10px 0; color: #111827; font-weight: 600;">${object.name}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 10px 0; color: #6b7280; font-weight: 500;">Service:</td>
+                                <td style="padding: 10px 0; color: #111827; font-weight: 600;">${object.appointment_type_id.name}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 10px 0; color: #6b7280; font-weight: 500;">Date:</td>
+                                <td style="padding: 10px 0; color: #111827; font-weight: 600;">${object.appointment_date}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 10px 0; color: #6b7280; font-weight: 500;">Time:</td>
+                                <td style="padding: 10px 0; color: #111827; font-weight: 600;">
+                                    ${'{:02d}:{:02d}'.format(int(object.appointment_time), int((object.appointment_time % 1) * 60))}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 10px 0; color: #6b7280; font-weight: 500;">Duration:</td>
+                                <td style="padding: 10px 0; color: #111827; font-weight: 600;">${object.appointment_type_id.duration_minutes} minutes</td>
+                            </tr>
+                            % if object.facility_id:
+                            <tr>
+                                <td style="padding: 10px 0; color: #6b7280; font-weight: 500;">Location:</td>
+                                <td style="padding: 10px 0; color: #111827; font-weight: 600;">${object.facility_id.name}</td>
+                            </tr>
+                            % endif
+                            % if object.visit_address:
+                            <tr>
+                                <td style="padding: 10px 0; color: #6b7280; font-weight: 500;">Visit Address:</td>
+                                <td style="padding: 10px 0; color: #111827; font-weight: 600;">${object.visit_address}</td>
+                            </tr>
+                            % endif
+                        </table>
+                    </div>
+
+                    <!-- Next Steps -->
+                    <div style="margin-bottom: 30px;">
+                        <h3 style="color: #374151; margin: 0 0 15px 0; font-size: 18px; font-weight: 600;">
+                            What Happens Next?
+                        </h3>
+                        <ol style="padding-left: 20px; color: #6b7280; line-height: 1.8;">
+                            <li>Our team will review and confirm your appointment within 2 hours</li>
+                            <li>You'll receive appointment reminders via SMS and email</li>
+                            <li>Our healthcare professional will provide your service as scheduled</li>
+                        </ol>
+                    </div>
+
+                    <!-- Important Notes -->
+                    <div style="background-color: #fef3c7; border-left: 4px solid #f59e0b; padding: 20px; margin-bottom: 30px; border-radius: 0 8px 8px 0;">
+                        <h4 style="color: #92400e; margin: 0 0 10px 0; font-size: 16px; font-weight: 600;">
+                            Important Information
+                        </h4>
+                        <ul style="margin: 0; padding-left: 20px; color: #92400e; font-size: 14px; line-height: 1.6;">
+                            <li>Please arrive 10 minutes before your appointment time</li>
+                            <li>Bring a valid ID and your health insurance card (if applicable)</li>
+                            <li>If you need to reschedule, please contact us at least 24 hours in advance</li>
+                        </ul>
+                    </div>
+
+                    <!-- Contact Information -->
+                    <div style="text-align: center; padding: 20px; background-color: #f3f4f6; border-radius: 8px;">
+                        <p style="color: #6b7280; margin: 0 0 10px 0; font-size: 14px;">
+                            Need to make changes or have questions?
+                        </p>
+                        <p style="color: #2563eb; font-weight: 600; margin: 0; font-size: 16px;">
+                            Call us at <a href="tel:+842812345678" style="color: #2563eb; text-decoration: none;">+84 28 1234 5678</a>
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Footer -->
+                <div style="background-color: #111827; padding: 30px 20px; text-align: center;">
+                    <p style="color: #9ca3af; margin: 0 0 10px 0; font-size: 14px;">
+                        Vietnam-Australia Family Health Service Company Limited
+                    </p>
+                    <p style="color: #6b7280; margin: 0; font-size: 12px;">
+                        Professional Healthcare • Trusted Service • Your Health, Our Priority
+                    </p>
+                </div>
+            </div>
+        ]]></field>
+        <field name="auto_delete" eval="False"/>
+    </record>
+
+    <record id="email_template_appointment_reminder" model="mail.template">
+        <field name="name">Appointment Reminder</field>
+        <field name="model_id" ref="model_health_appointment"/>
+        <field name="subject">Appointment Reminder - ${object.name} Tomorrow - VAFHS Healthcare</field>
+        <field name="email_from">${user.email or ''}</field>
+        <field name="email_to">${object.patient_id.email}</field>
+        <field name="body_html"><![CDATA[
+            <div style="font-family: 'Inter', Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: #ffffff;">
+                <!-- Header -->
+                <div style="background: linear-gradient(135deg, #2563eb 0%, #059669 100%); padding: 30px 20px; text-align: center;">
+                    <h1 style="color: white; margin: 0; font-size: 24px; font-weight: 700;">
+                        Appointment Reminder
+                    </h1>
+                    <p style="color: rgba(255,255,255,0.9); margin: 10px 0 0 0; font-size: 16px;">
+                        Don't forget your appointment tomorrow
+                    </p>
+                </div>
+
+                <!-- Content -->
+                <div style="padding: 30px 20px;">
+                    <p style="font-size: 16px; color: #374151; margin-bottom: 20px;">
+                        Dear ${object.patient_id.name},
+                    </p>
+                    
+                    <p style="font-size: 16px; color: #374151; line-height: 1.6; margin-bottom: 30px;">
+                        This is a friendly reminder about your appointment with VAFHS Healthcare tomorrow.
+                    </p>
+
+                    <!-- Quick Details -->
+                    <div style="background-color: #dbeafe; border-radius: 8px; padding: 20px; margin-bottom: 20px; text-align: center;">
+                        <h3 style="color: #1d4ed8; margin: 0 0 15px 0; font-size: 18px;">
+                            ${object.appointment_type_id.name}
+                        </h3>
+                        <p style="color: #1e40af; font-size: 16px; font-weight: 600; margin: 0;">
+                            ${object.appointment_date} at ${'{:02d}:{:02d}'.format(int(object.appointment_time), int((object.appointment_time % 1) * 60))}
+                        </p>
+                    </div>
+
+                    <div style="text-align: center;">
+                        <a href="tel:+842812345678" style="display: inline-block; background-color: #2563eb; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: 500;">
+                            Call to Confirm: +84 28 1234 5678
+                        </a>
+                    </div>
+                </div>
+            </div>
+        ]]></field>
+        <field name="auto_delete" eval="True"/>
+    </record>
+</odoo>

@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<data>
+    <!-- Patient List View -->
+    <record id="health_patient_view_list" model="ir.ui.view">
+        <field name="name">health.patient.list</field>
+        <field name="model">health.patient</field>
+        <field name="arch" type="xml">
+            <list string="Patients" default_order="name">
+                <field name="name"/>
+                <field name="email"/>
+                <field name="mobile"/>
+                <field name="age"/>
+                <field name="patient_status" widget="badge" 
+                       decoration-info="patient_status == 'new'"
+                       decoration-success="patient_status == 'active'"
+                       decoration-muted="patient_status == 'inactive'"/>
+                <field name="appointment_count"/>
+                <field name="source_type" optional="hide"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Patient Form View -->
+    <record id="health_patient_view_form" model="ir.ui.view">
+        <field name="name">health.patient.form</field>
+        <field name="model">health.patient</field>
+        <field name="arch" type="xml">
+            <form string="Patient">
+                <header>
+                    <button name="action_activate_patient" type="object" string="Activate" 
+                            invisible="patient_status == 'active'" class="oe_highlight"/>
+                    <button name="action_mark_inactive" type="object" string="Mark Inactive" 
+                            invisible="patient_status == 'inactive'"/>
+                    <field name="patient_status" widget="statusbar" statusbar_visible="new,active,inactive"/>
+                </header>
+                
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_appointments" type="object"
+                                class="oe_stat_button" icon="fa-calendar">
+                            <field name="appointment_count" widget="statinfo" string="Appointments"/>
+                        </button>
+                    </div>
+
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="Patient Full Name"/>
+                        </h1>
+                    </div>
+
+                    <group>
+                        <group name="personal_info">
+                            <field name="first_name"/>
+                            <field name="last_name"/>
+                            <field name="birth_date"/>
+                            <field name="age"/>
+                            <field name="gender"/>
+                            <field name="national_id"/>
+                        </group>
+                        <group name="contact_info">
+                            <field name="email"/>
+                            <field name="mobile"/>
+                            <field name="phone"/>
+                        </group>
+                    </group>
+
+                    <group name="address" string="Address">
+                        <group>
+                            <field name="street"/>
+                            <field name="street2"/>
+                            <field name="city"/>
+                        </group>
+                        <group>
+                            <field name="state_id"/>
+                            <field name="zip"/>
+                            <field name="country_id"/>
+                        </group>
+                    </group>
+
+                    <group name="source_info" string="Source Information">
+                        <group>
+                            <field name="source_type"/>
+                            <field name="source_details"/>
+                        </group>
+                        <group>
+                            <field name="partner_id" readonly="True"/>
+                        </group>
+                    </group>
+                </sheet>
+                
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- Patient Search View -->
+    <record id="health_patient_view_search" model="ir.ui.view">
+        <field name="name">health.patient.search</field>
+        <field name="model">health.patient</field>
+        <field name="arch" type="xml">
+            <search string="Search Patients">
+                <field name="name" string="Patient Name"/>
+                <field name="email" string="Email"/>
+                <field name="mobile" string="Mobile"/>
+                <field name="national_id" string="National ID"/>
+                
+                <filter string="New Patients" name="new" domain="[('patient_status', '=', 'new')]"/>
+                <filter string="Active Patients" name="active" domain="[('patient_status', '=', 'active')]"/>
+                <filter string="Inactive Patients" name="inactive" domain="[('patient_status', '=', 'inactive')]"/>
+                
+                <separator/>
+                <filter string="Has Email" name="has_email" domain="[('email', '!=', False)]"/>
+                <filter string="Has Mobile" name="has_mobile" domain="[('mobile', '!=', False)]"/>
+                
+                <group expand="0" string="Group By">
+                    <filter string="Status" name="group_status" context="{'group_by': 'patient_status'}"/>
+                    <filter string="Source" name="group_source" context="{'group_by': 'source_type'}"/>
+                    <filter string="Gender" name="group_gender" context="{'group_by': 'gender'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Patient Action -->
+    <record id="action_health_patient" model="ir.actions.act_window">
+        <field name="name">Patients</field>
+        <field name="res_model">health.patient</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="health_patient_view_search"/>
+        <field name="context">{}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first patient record!
+            </p>
+            <p>
+                Manage patient information, contact details, and medical records.
+                Patients can book appointments through the online portal.
+            </p>
+        </field>
+    </record>
+
+    <!-- Menu Items -->
+    <menuitem id="menu_health_patient"
+              name="Patients"
+              parent="menu_health_calendar_root"
+              action="action_health_patient"
+              sequence="5"/>
+</data>
+</odoo>
