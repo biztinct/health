@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<data>
+
+    <!-- Minimal Health Appointment Extension - Only Essential Fields -->
+    <record id="view_health_appointment_assignment_minimal" model="ir.ui.view">
+        <field name="name">health.appointment.assignment.minimal</field>
+        <field name="model">health.appointment</field>
+        <field name="inherit_id" ref="health_calendar.health_appointment_view_form"/>
+        <field name="arch" type="xml">
+            
+            <!-- Add Assignment State to Header -->
+            <xpath expr="//header" position="inside">
+                <field name="assignment_state" widget="statusbar" readonly="1" 
+                       statusbar_visible="draft,sales_review,ops_manager_review,head_nurse_assign,staff_assigned,staff_confirmed,ready"/>
+            </xpath>
+
+            <!-- Add Basic Staff Assignment Fields -->
+            <xpath expr="//sheet" position="inside">
+                <group string="Staff Assignment (Basic)" name="staff_assignment_basic">
+                    <field name="assigned_staff_ids" widget="many2many_tags" readonly="1"/>
+                    <field name="assignment_priority" readonly="1"/>
+                    <field name="real_time_status" readonly="1"/>
+                </group>
+            </xpath>
+
+        </field>
+    </record>
+
+</data>
+</odoo>

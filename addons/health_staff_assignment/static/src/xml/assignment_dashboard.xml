@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <!-- Assignment Kanban Record Template -->
+    <t t-name="health_staff_assignment.AssignmentKanbanRecord">
+        <div class="oe_kanban_card o_assignment_card" 
+             t-att-data-assignment-id="record.id.raw_value"
+             t-att-data-priority="record.priority.raw_value"
+             t-att-data-score="record.assignment_score.raw_value">
+            
+            <!-- Card Header -->
+            <div class="o_assignment_card_header">
+                <div class="o_assignment_priority">
+                    <t t-if="record.priority.raw_value == '4'">
+                        <span class="fa fa-exclamation-triangle text-danger" title="Emergency"/>
+                    </t>
+                    <t t-elif="record.priority.raw_value == '3'">
+                        <span class="fa fa-exclamation-circle text-warning" title="Urgent"/>
+                    </t>
+                    <t t-elif="record.priority.raw_value == '2'">
+                        <span class="fa fa-arrow-up text-info" title="High Priority"/>
+                    </t>
+                </div>
+                
+                <div class="o_assignment_score">
+                    <span class="badge" t-att-class="record.assignment_score.raw_value >= 80 ? 'badge-success' : record.assignment_score.raw_value >= 60 ? 'badge-warning' : 'badge-danger'">
+                        <t t-esc="Math.round(record.assignment_score.raw_value || 0)"/>%
+                    </span>
+                </div>
+            </div>
+
+            <!-- Patient Information -->
+            <div class="o_assignment_patient_info">
+                <div class="o_patient_details">
+                    <strong class="o_patient_name">
+                        <field name="appointment_id"/>
+                    </strong>
+                    <div class="o_service_type text-muted">
+                        <i class="fa fa-stethoscope mr-1"/>
+                        <t t-if="record.appointment_id.value">
+                            <t t-esc="record.appointment_id.value.split(' - ')[0]"/>
+                        </t>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Assignment Details -->
+            <div class="o_assignment_details">
+                <!-- Date and Time -->
+                <div class="o_assignment_datetime">
+                    <i class="fa fa-calendar text-primary mr-2"/>
+                    <span class="o_assignment_date">
+                        <field name="assignment_date"/>
+                    </span>
+                </div>
+
+                <!-- Assigned Staff -->
+                <div class="o_assigned_staff" t-if="record.assigned_staff_ids.raw_value and record.assigned_staff_ids.raw_value.length > 0">
+                    <i class="fa fa-user-md text-success mr-2"/>
+                    <field name="assigned_staff_ids" widget="many2many_tags"/>
+                </div>
+
+                <!-- Location Info -->
+                <div class="o_assignment_location" t-if="record.location_type">
+                    <i class="fa fa-map-marker text-info mr-2"/>
+                    <t t-if="record.location_type.raw_value === 'home'">
+                        <span class="badge badge-info">Home Visit</span>
+                    </t>
+                    <t t-elif="record.location_type.raw_value === 'clinic'">
+                        <span class="badge badge-secondary">Clinic</span>
+                    </t>
+                    <t t-else="">
+                        <span class="badge badge-primary">Online</span>
+                    </t>
+                </div>
+            </div>
+
+            <!-- Real-time Status Indicator -->
+            <div class="o_realtime_status">
+                <div class="o_status_indicator" 
+                     t-att-class="'o_status_' + (record.state.raw_value || 'draft')">
+                    <span class="o_status_dot"></span>
+                    <span class="o_status_text">
+                        <t t-esc="(record.state.value || 'Draft').replace('_', ' ')"/>
+                    </span>
+                </div>
+            </div>
+
+        </div>
+    </t>
+
+</templates>

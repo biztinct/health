@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<data>
+
+    <!-- =====================================================================
+         Staff Assignment Main Menu Structure
+         ===================================================================== -->
+
+    <!-- Main Healthcare Staff Assignment Menu -->
+    <record id="menu_health_staff_assignment_root" model="ir.ui.menu">
+        <field name="name">Staff Assignment</field>
+        <field name="sequence">15</field>
+        <field name="web_icon">health_staff_assignment,static/description/icon.png</field>
+    </record>
+
+    <!-- Assignment Dashboard Menu -->
+    <record id="menu_assignment_dashboard" model="ir.ui.menu">
+        <field name="name">Assignment Dashboard</field>
+        <field name="parent_id" ref="menu_health_staff_assignment_root"/>
+        <field name="action" ref="action_assignment_dashboard"/>
+        <field name="sequence">10</field>
+    </record>
+
+    <!-- Staff Assignments Menu -->
+    <record id="menu_health_staff_assignment" model="ir.ui.menu">
+        <field name="name">Staff Assignments</field>
+        <field name="parent_id" ref="menu_health_staff_assignment_root"/>
+        <field name="action" ref="action_health_staff_assignment"/>
+        <field name="sequence">20</field>
+    </record>
+
+    <!-- Staff Availability Menu -->
+    <record id="menu_staff_availability" model="ir.ui.menu">
+        <field name="name">Staff Availability</field>
+        <field name="parent_id" ref="menu_health_staff_assignment_root"/>
+        <field name="action" ref="action_health_staff_availability"/>
+        <field name="sequence">30</field>
+    </record>
+
+    <!-- Configuration Submenu -->
+    <record id="menu_assignment_configuration" model="ir.ui.menu">
+        <field name="name">Configuration</field>
+        <field name="parent_id" ref="menu_health_staff_assignment_root"/>
+        <field name="sequence">90</field>
+    </record>
+
+    <!-- Healthcare Skills Menu -->
+    <record id="menu_healthcare_skills" model="ir.ui.menu">
+        <field name="name">Healthcare Skills</field>
+        <field name="parent_id" ref="menu_assignment_configuration"/>
+        <field name="action" ref="action_healthcare_skills"/>
+        <field name="sequence">10</field>
+    </record>
+
+    <!-- Service Areas Menu -->
+    <record id="menu_service_areas" model="ir.ui.menu">
+        <field name="name">Service Areas</field>
+        <field name="parent_id" ref="menu_assignment_configuration"/>
+        <field name="action" ref="action_service_areas"/>
+        <field name="sequence">20</field>
+    </record>
+
+</data>
+</odoo>

@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<data>
+
+    <!-- =====================================================================
+         Staff Assignment Dashboard - Mobile-First Kanban Interface
+         Inspired by: Monday.com, Asana, Uber Driver Dashboard
+         ===================================================================== -->
+
+    <!-- Mobile-First Kanban Board View -->
+    <record id="view_assignment_dashboard_kanban" model="ir.ui.view">
+        <field name="name">health.staff.assignment.dashboard.kanban</field>
+        <field name="model">health.staff.assignment</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="state" class="o_kanban_dashboard o_assignment_dashboard" 
+                    quick_create="false" create="true" edit="true" delete="true">
+                
+                <!-- Kanban Column Progressbar -->
+                <progressbar field="priority" colors='{"0": "success", "1": "info", "2": "warning", "3": "danger", "4": "danger"}'/>
+                
+                <!-- Simplified Kanban Template - Odoo 18 Compatible -->
+                <field name="name"/>
+                <field name="appointment_id"/>
+                <field name="assigned_staff_ids"/>
+                <field name="assignment_date"/>
+                <field name="state"/>
+                <field name="priority"/>
+                <field name="assignment_score"/>
+                
+                <templates>
+                    <t t-name="card">
+                        <div class="oe_kanban_card o_assignment_card">
+                            <div class="oe_kanban_content">
+                                <div class="o_kanban_record_title">
+                                    <strong><field name="name"/></strong>
+                                    <span class="badge float-right" t-att-class="record.priority.raw_value >= 3 ? 'badge-danger' : 'badge-info'">
+                                        <field name="priority"/>
+                                    </span>
+                                </div>
+                                <div class="o_kanban_record_body">
+                                    <div><strong>Patient:</strong> <field name="appointment_id"/></div>
+                                    <div><strong>Date:</strong> <field name="assignment_date"/></div>
+                                    <div t-if="record.assigned_staff_ids.raw_value">
+                                        <strong>Staff:</strong> <field name="assigned_staff_ids" widget="many2many_tags"/>
+                                    </div>
+                                    <div t-if="record.assignment_score.raw_value > 0">
+                                        <strong>Score:</strong> 
+                                        <span class="badge" t-att-class="record.assignment_score.raw_value >= 80 ? 'badge-success' : 'badge-warning'">
+                                            <field name="assignment_score"/>%
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="o_kanban_record_bottom">
+                                    <div class="oe_kanban_bottom_left">
+                                        <button name="action_confirm_assignment" type="object" class="btn btn-sm btn-primary" t-if="record.state.raw_value == 'assigned'">
+                                            Confirm
+                                        </button>
+                                        <button name="action_start_assignment" type="object" class="btn btn-sm btn-success" t-if="record.state.raw_value == 'confirmed'">
+                                            Start
+                                        </button>
+                                        <button name="action_complete_assignment" type="object" class="btn btn-sm btn-info" t-if="record.state.raw_value == 'in_progress'">
+                                            Complete
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- Assignment Dashboard Action -->
+    <record id="action_assignment_dashboard" model="ir.actions.act_window">
+        <field name="name">Staff Assignment Dashboard</field>
+        <field name="res_model">health.staff.assignment</field>
+        <field name="view_mode">kanban,calendar,list,form</field>
+        <field name="view_id" ref="view_assignment_dashboard_kanban"/>
+        <field name="domain">[]</field>
+        <field name="context">{
+            'default_state': 'draft',
+            'group_by': ['state'],
+            'kanban_column_progressbar': 'true'
+        }</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Welcome to the Staff Assignment Dashboard!
+            </p>
+            <p>
+                This is your command center for managing healthcare staff assignments.
+                Drag and drop assignments between workflow stages, get AI-powered suggestions,
+                and track real-time status updates.
+            </p>
+        </field>
+    </record>
+
+    <!-- Assignment Calendar View -->
+    <record id="view_assignment_calendar" model="ir.ui.view">
+        <field name="name">health.staff.assignment.calendar</field>
+        <field name="model">health.staff.assignment</field>
+        <field name="arch" type="xml">
+            <calendar string="Staff Assignment Calendar" 
+                      date_start="assignment_date" 
+                      color="state"
+                      mode="week">
+                
+                <field name="name"/>
+                <field name="state"/>
+                <field name="priority"/>
+            </calendar>
+        </field>
+    </record>
+
+    <!-- Assignment List View -->
+    <record id="view_assignment_list" model="ir.ui.view">
+        <field name="name">health.staff.assignment.list</field>
+        <field name="model">health.staff.assignment</field>
+        <field name="arch" type="xml">
+            <list string="Staff Assignments" create="true" edit="true" delete="true" 
+                  decoration-success="state == 'completed'" 
+                  decoration-warning="state in ('assigned', 'confirmed')"
+                  decoration-danger="priority in ('3', '4')"
+                  decoration-info="state == 'in_progress'">
+                
+                <field name="name"/>
+                <field name="appointment_id"/>
+                <field name="assigned_staff_ids" widget="many2many_tags"/>
+                <field name="assignment_date"/>
+                <field name="state" decoration-bf="1"/>
+                <field name="priority" widget="priority"/>
+                <field name="assignment_score" widget="progressbar"/>
+                <field name="current_location" optional="hide"/>
+                <field name="estimated_travel_time" optional="hide"/>
+                
+                <!-- Context Menu -->
+                <button name="action_confirm_assignment" 
+                        type="object" 
+                        icon="fa-check" 
+                        string="Confirm Assignment"
+                        invisible="state != 'assigned'"/>
+                
+                <button name="action_start_assignment" 
+                        type="object" 
+                        icon="fa-play" 
+                        string="Start Assignment"
+                        invisible="state != 'confirmed'"/>
+                
+                <button name="optimize_route" 
+                        type="object" 
+                        icon="fa-route" 
+                        string="Optimize Route"
+                        invisible="state in ('completed', 'cancelled')"/>
+                
+            </list>
+        </field>
+    </record>
+
+</data>
+</odoo>

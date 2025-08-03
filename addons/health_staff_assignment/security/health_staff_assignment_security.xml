@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<data noupdate="1">
+
+    <!-- Staff Assignment Module Category -->
+    <record id="module_category_health_staff_assignment" model="ir.module.category">
+        <field name="name">Healthcare Staff Assignment</field>
+        <field name="description">Manage healthcare staff assignments and scheduling</field>
+        <field name="sequence">20</field>
+    </record>
+
+    <!-- =====================================================================
+         Staff Assignment User Groups
+         ===================================================================== -->
+
+    <!-- Sales Team - Can approve appointments for operations review -->
+    <record id="group_sales_user" model="res.groups">
+        <field name="name">Healthcare Sales User</field>
+        <field name="category_id" ref="module_category_health_staff_assignment"/>
+        <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+        <field name="comment">Can approve appointments for operations manager review</field>
+    </record>
+
+    <!-- Operations Manager - Can review and approve for head nurse assignment -->
+    <record id="group_ops_manager" model="res.groups">
+        <field name="name">Operations Manager</field>
+        <field name="category_id" ref="module_category_health_staff_assignment"/>
+        <field name="implied_ids" eval="[(4, ref('group_sales_user'))]"/>
+        <field name="comment">Can review appointments and approve for staff assignment</field>
+    </record>
+
+    <!-- Head Nurse - Can assign staff to appointments -->
+    <record id="group_head_nurse" model="res.groups">
+        <field name="name">Head Nurse</field>
+        <field name="category_id" ref="module_category_health_staff_assignment"/>
+        <field name="implied_ids" eval="[(4, ref('group_ops_manager'))]"/>
+        <field name="comment">Can assign healthcare staff to appointments</field>
+    </record>
+
+    <!-- Healthcare Staff - Can view and update their assignments -->
+    <record id="group_healthcare_staff" model="res.groups">
+        <field name="name">Healthcare Staff</field>
+        <field name="category_id" ref="module_category_health_staff_assignment"/>
+        <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+        <field name="comment">Healthcare professionals who receive assignments</field>
+    </record>
+
+    <!-- Assignment Manager - Full access to assignment system -->
+    <record id="group_assignment_manager" model="res.groups">
+        <field name="name">Assignment System Manager</field>
+        <field name="category_id" ref="module_category_health_staff_assignment"/>
+        <field name="implied_ids" eval="[(4, ref('group_head_nurse'))]"/>
+        <field name="comment">Full access to staff assignment system and analytics</field>
+    </record>
+
+    <!-- =====================================================================
+         Record Rules for Staff Assignments
+         ===================================================================== -->
+
+    <!-- Sales Users: Can only see appointments in sales_review state -->
+    <record id="rule_appointment_sales_user" model="ir.rule">
+        <field name="name">Appointment Sales User Access</field>
+        <field name="model_id" ref="health_calendar.model_health_appointment"/>
+        <field name="groups" eval="[(4, ref('group_sales_user'))]"/>
+        <field name="domain_force">[('assignment_state', 'in', ['draft', 'sales_review'])]</field>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+    <!-- Operations Managers: Can see appointments in ops review state -->
+    <record id="rule_appointment_ops_manager" model="ir.rule">
+        <field name="name">Appointment Operations Manager Access</field>
+        <field name="model_id" ref="health_calendar.model_health_appointment"/>
+        <field name="groups" eval="[(4, ref('group_ops_manager'))]"/>
+        <field name="domain_force">[('assignment_state', 'in', ['sales_review', 'ops_manager_review'])]</field>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+    <!-- Head Nurses: Can see appointments ready for assignment -->
+    <record id="rule_appointment_head_nurse" model="ir.rule">
+        <field name="name">Appointment Head Nurse Access</field>
+        <field name="model_id" ref="health_calendar.model_health_appointment"/>
+        <field name="groups" eval="[(4, ref('group_head_nurse'))]"/>
+        <field name="domain_force">[('assignment_state', 'in', ['ops_manager_review', 'head_nurse_assign', 'staff_assigned'])]</field>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+    <!-- Healthcare Staff: Can only see their own assignments -->
+    <record id="rule_assignment_healthcare_staff" model="ir.rule">
+        <field name="name">Staff Assignment Healthcare Staff Access</field>
+        <field name="model_id" ref="model_health_staff_assignment"/>
+        <field name="groups" eval="[(4, ref('group_healthcare_staff'))]"/>
+        <field name="domain_force">[('assigned_staff_ids', 'in', [user.employee_id.id])]</field>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+    <!-- Healthcare Staff: Can only see appointments assigned to them -->
+    <record id="rule_appointment_healthcare_staff" model="ir.rule">
+        <field name="name">Appointment Healthcare Staff Access</field>
+        <field name="model_id" ref="health_calendar.model_health_appointment"/>
+        <field name="groups" eval="[(4, ref('group_healthcare_staff'))]"/>
+        <field name="domain_force">[('assigned_staff_ids', 'in', [user.employee_id.id])]</field>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+    <!-- Healthcare Staff: Can only see their own availability -->
+    <record id="rule_availability_healthcare_staff" model="ir.rule">
+        <field name="name">Availability Matrix Healthcare Staff Access</field>
+        <field name="model_id" ref="model_health_staff_availability_matrix"/>
+        <field name="groups" eval="[(4, ref('group_healthcare_staff'))]"/>
+        <field name="domain_force">[('staff_id', '=', user.employee_id.id)]</field>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+    <!-- Assignment Managers: Can see everything -->
+    <record id="rule_assignment_manager_all" model="ir.rule">
+        <field name="name">Assignment Manager Full Access</field>
+        <field name="model_id" ref="model_health_staff_assignment"/>
+        <field name="groups" eval="[(4, ref('group_assignment_manager'))]"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="True"/>
+    </record>
+
+    <!-- =====================================================================
+         Portal and Public Access Rules
+         ===================================================================== -->
+
+    <!-- Portal Users: Can see their own appointment assignments -->
+    <record id="rule_appointment_portal" model="ir.rule">
+        <field name="name">Appointment Portal User Access</field>
+        <field name="model_id" ref="health_calendar.model_health_appointment"/>
+        <field name="groups" eval="[(4, ref('base.group_portal'))]"/>
+        <field name="domain_force">[('patient_id.partner_id', '=', user.partner_id.id)]</field>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+</data>
+</odoo>

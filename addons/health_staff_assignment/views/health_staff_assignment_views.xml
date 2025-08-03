@@ -1,0 +1,367 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<data>
+
+    <!-- =====================================================================
+         Staff Assignment Form View - Professional Interface
+         ===================================================================== -->
+
+    <record id="view_health_staff_assignment_form" model="ir.ui.view">
+        <field name="name">health.staff.assignment.form</field>
+        <field name="model">health.staff.assignment</field>
+        <field name="arch" type="xml">
+            <form string="Staff Assignment" class="o_staff_assignment_form">
+                
+                <!-- Header with Status Bar -->
+                <header>
+                    <button name="action_confirm_assignment" 
+                            type="object" 
+                            string="Confirm Assignment" 
+                            class="btn-primary" 
+                            invisible="state != 'assigned'"/>
+                    
+                    <button name="action_start_assignment" 
+                            type="object" 
+                            string="Start Assignment" 
+                            class="btn-success" 
+                            invisible="state != 'confirmed'"/>
+                    
+                    <button name="action_complete_assignment" 
+                            type="object" 
+                            string="Complete Assignment" 
+                            class="btn-info" 
+                            invisible="state != 'in_progress'"/>
+                    
+                    <button name="optimize_route" 
+                            type="object" 
+                            string="Optimize Route" 
+                            class="btn-secondary"
+                            invisible="state in ('completed', 'cancelled')"/>
+                    
+                    <button name="action_reschedule_assignment" 
+                            type="object" 
+                            string="Reschedule" 
+                            class="btn-warning"/>
+                    
+                    <button name="action_cancel_assignment" 
+                            type="object" 
+                            string="Cancel" 
+                            class="btn-danger"
+                            confirm="Are you sure you want to cancel this assignment?"/>
+                    
+                    <field name="state" widget="statusbar" statusbar_visible="draft,assigned,confirmed,in_progress,completed"/>
+                </header>
+
+                <sheet>
+                    <!-- Alert Banner for High Priority -->
+                    <div class="alert alert-warning" role="alert" invisible="priority not in ('3', '4')">
+                        <h4 class="alert-heading">
+                            <i class="fa fa-exclamation-triangle mr-2"/>
+                            <span invisible="priority != '4'">EMERGENCY ASSIGNMENT</span>
+                            <span invisible="priority != '3'">URGENT ASSIGNMENT</span>
+                        </h4>
+                        <p class="mb-0">This assignment requires immediate attention and priority handling.</p>
+                    </div>
+
+                    <!-- Assignment Overview -->
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" readonly="1"/>
+                        </h1>
+                    </div>
+
+                    <!-- Key Metrics Dashboard -->
+                    <div class="o_assignment_metrics_dashboard">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <div class="o_metric_card text-center">
+                                    <div class="o_metric_value">
+                                        <field name="assignment_score" widget="gauge" 
+                                               options="{'max_field': 100, 'style': 'width:120px; height: 90px;'}"
+                                               class="o_assignment_gauge"/>
+                                    </div>
+                                    <div class="o_metric_label">Overall Score</div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="o_metric_card text-center">
+                                    <div class="o_metric_value text-success">
+                                        <field name="skill_match_score" widget="integer"/>%
+                                    </div>
+                                    <div class="o_metric_label">Skill Match</div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="o_metric_card text-center">
+                                    <div class="o_metric_value text-info">
+                                        <field name="proximity_score" widget="integer"/>%
+                                    </div>
+                                    <div class="o_metric_label">Proximity</div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="o_metric_card text-center">
+                                    <div class="o_metric_value text-warning">
+                                        <field name="workload_score" widget="integer"/>%
+                                    </div>
+                                    <div class="o_metric_label">Workload Balance</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Main Form Content -->
+                    <group>
+                        <group string="Assignment Details">
+                            <field name="appointment_id" options="{'no_create': True, 'no_open': True}"/>
+                            <field name="assignment_date"/>
+                            <field name="assigned_by" readonly="1"/>
+                            <field name="priority" widget="priority"/>
+                        </group>
+                        
+                        <group string="Staff Assignment">
+                            <field name="assigned_staff_ids" widget="many2many_tags" 
+                                   options="{'color_field': 'color', 'no_create': True}"/>
+                            <field name="lead_staff_id" domain="[('id', 'in', assigned_staff_ids)]"
+                                   options="{'no_create': True}"/>
+                            <field name="staff_confirmed_date" readonly="1" 
+                                   invisible="not staff_confirmed_date"/>
+                        </group>
+                    </group>
+
+                    <!-- Notebook with Detailed Information -->
+                    <notebook>
+                        <!-- Assignment Intelligence Tab -->
+                        <page string="Assignment Intelligence" name="intelligence">
+                            <group>
+                                <group string="Score Breakdown">
+                                    <field name="skill_match_score" widget="progressbar"/>
+                                    <field name="proximity_score" widget="progressbar"/>
+                                    <field name="workload_score" widget="progressbar"/>
+                                    <field name="availability_score" widget="progressbar"/>
+                                </group>
+                                
+                                <group string="Skills Analysis">
+                                    <field name="required_skills_json" readonly="1"/>
+                                    <field name="staff_skills_match" readonly="1"/>
+                                </group>
+                            </group>
+                            
+                            <!-- AI Suggestions Panel -->
+                            <div class="o_ai_suggestions_panel">
+                                <h3>AI Recommendations</h3>
+                                <div class="alert alert-info">
+                                    <p><strong>Optimal Assignment Factors:</strong></p>
+                                    <ul>
+                                        <li>High skill compatibility with service requirements</li>
+                                        <li>Optimal geographic location for efficient service delivery</li>
+                                        <li>Balanced workload distribution among staff</li>
+                                        <li>Adequate availability buffer for quality service</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </page>
+
+                        <!-- Geographic Optimization Tab -->
+                        <page string="Route Optimization" name="routing" 
+                              invisible="not appointment_id">
+                            <group>
+                                <group string="Location Data">
+                                    <field name="origin_location"/>
+                                    <field name="destination_location"/>
+                                    <field name="current_location" readonly="1"/>
+                                    <field name="location_last_updated" readonly="1"/>
+                                </group>
+                                
+                                <group string="Travel Estimates">
+                                    <field name="estimated_travel_time" widget="float_time"/>
+                                    <field name="estimated_travel_distance"/>
+                                    <field name="traffic_factor"/>
+                                </group>
+                            </group>
+                            
+                            <group>
+                                <group string="Timing">
+                                    <field name="departure_time"/>
+                                    <field name="arrival_time"/>
+                                    <field name="actual_departure_time" readonly="1"/>
+                                    <field name="actual_arrival_time" readonly="1"/>
+                                </group>
+                                
+                                <group string="Buffer Management">
+                                    <field name="buffer_before"/>
+                                    <field name="buffer_after"/>
+                                </group>
+                            </group>
+                            
+                            <!-- Route Visualization Placeholder -->
+                            <div class="o_route_map_container">
+                                <h4>Route Visualization</h4>
+                                <div class="alert alert-secondary">
+                                    <i class="fa fa-map mr-2"/>
+                                    Interactive route map will be displayed here with Google Maps integration.
+                                </div>
+                            </div>
+                        </page>
+
+                        <!-- Workload Analytics Tab -->
+                        <page string="Workload Analytics" name="workload">
+                            <group>
+                                <group string="Current Load">
+                                    <field name="staff_current_load" widget="progressbar"/>
+                                    <field name="daily_assignment_count"/>
+                                    <field name="weekly_assignment_count"/>
+                                </group>
+                                
+                                <group string="Performance Metrics">
+                                    <field name="assignment_efficiency" widget="progressbar"/>
+                                    <field name="planning_accuracy" widget="progressbar"/>
+                                    <field name="time_variance_minutes"/>
+                                </group>
+                            </group>
+                            
+                            <!-- Staff Workload Chart Placeholder -->
+                            <div class="o_workload_chart_container">
+                                <h4>Staff Workload Distribution</h4>
+                                <div class="alert alert-info">
+                                    <i class="fa fa-chart-bar mr-2"/>
+                                    Interactive workload charts and analytics will be displayed here.
+                                </div>
+                            </div>
+                        </page>
+
+                        <!-- Real-time Tracking Tab -->
+                        <page string="Real-time Tracking" name="tracking">
+                            <group>
+                                <group string="Assignment Timeline">
+                                    <field name="assignment_date" readonly="1"/>
+                                    <field name="staff_confirmed_date" readonly="1"/>
+                                    <field name="actual_departure_time" readonly="1"/>
+                                    <field name="actual_arrival_time" readonly="1"/>
+                                    <field name="actual_completion_time" readonly="1"/>
+                                </group>
+                                
+                                <group string="Quality Metrics">
+                                    <field name="patient_satisfaction" widget="float" digits="[3,1]"/>
+                                    <field name="staff_performance_rating" widget="float" digits="[3,1]"/>
+                                </group>
+                            </group>
+                            
+                            <!-- Real-time Status Display -->
+                            <div class="o_realtime_status_container">
+                                <h4>Real-time Status</h4>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="card">
+                                            <div class="card-header">
+                                                <h5>Assignment Status</h5>
+                                            </div>
+                                            <div class="card-body">
+                                                <field name="state" widget="state_selection" readonly="1"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="card">
+                                            <div class="card-header">
+                                                <h5>Location Tracking</h5>
+                                            </div>
+                                            <div class="card-body">
+                                                <p><strong>Current Location:</strong> <field name="current_location" readonly="1"/></p>
+                                                <p><strong>Last Updated:</strong> <field name="location_last_updated" readonly="1"/></p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </page>
+                    </notebook>
+
+                </sheet>
+
+                <!-- Chatter -->
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- Search View -->
+    <record id="view_health_staff_assignment_search" model="ir.ui.view">
+        <field name="name">health.staff.assignment.search</field>
+        <field name="model">health.staff.assignment</field>
+        <field name="arch" type="xml">
+            <search string="Staff Assignment Search">
+                <!-- Search Fields -->
+                <field name="name" string="Assignment Reference"/>
+                <field name="appointment_id" string="Appointment"/>
+                <field name="assigned_staff_ids" string="Assigned Staff"/>
+                <field name="lead_staff_id" string="Lead Staff"/>
+                
+                <!-- Filters -->
+                <filter string="My Assignments" name="my_assignments" 
+                        domain="[('assigned_staff_ids', 'in', [uid])]"/>
+                <filter string="High Priority" name="high_priority" 
+                        domain="[('priority', 'in', ['2', '3', '4'])]"/>
+                <filter string="Emergency" name="emergency" 
+                        domain="[('priority', '=', '4')]"/>
+                <filter string="Today" name="today" 
+                        domain="[('assignment_date', '>=', datetime.datetime.combine(context_today(), datetime.time(0,0,0))), 
+                                 ('assignment_date', '&lt;', datetime.datetime.combine(context_today() + datetime.timedelta(days=1), datetime.time(0,0,0)))]"/>
+                <filter string="This Week" name="this_week" 
+                        domain="[('assignment_date', '&gt;=', (context_today() - datetime.timedelta(days=context_today().weekday())).strftime('%Y-%m-%d')),
+                                 ('assignment_date', '&lt;', (context_today() + datetime.timedelta(days=7-context_today().weekday())).strftime('%Y-%m-%d'))]"/>
+                
+                <separator/>
+                
+                <!-- State Filters -->
+                <filter string="Draft" name="draft" domain="[('state', '=', 'draft')]"/>
+                <filter string="Assigned" name="assigned" domain="[('state', '=', 'assigned')]"/>
+                <filter string="Confirmed" name="confirmed" domain="[('state', '=', 'confirmed')]"/>
+                <filter string="In Progress" name="in_progress" domain="[('state', '=', 'in_progress')]"/>
+                <filter string="Completed" name="completed" domain="[('state', '=', 'completed')]"/>
+                
+                <separator/>
+                
+                <!-- Score Filters -->
+                <filter string="High Score (≥80%)" name="high_score" 
+                        domain="[('assignment_score', '>=', 80)]"/>
+                <filter string="Medium Score (60-79%)" name="medium_score" 
+                        domain="[('assignment_score', '>=', 60), ('assignment_score', '&lt;', 80)]"/>
+                <filter string="Low Score (&lt;60%)" name="low_score" 
+                        domain="[('assignment_score', '&lt;', 60)]"/>
+                
+                <!-- Group By -->
+                <group expand="0" string="Group By">
+                    <filter string="State" name="group_by_state" context="{'group_by': 'state'}"/>
+                    <filter string="Priority" name="group_by_priority" context="{'group_by': 'priority'}"/>
+                    <filter string="Assigned Staff" name="group_by_staff" context="{'group_by': 'assigned_staff_ids'}"/>
+                    <filter string="Assignment Date" name="group_by_date" context="{'group_by': 'assignment_date:day'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Action for Staff Assignment -->
+    <record id="action_health_staff_assignment" model="ir.actions.act_window">
+        <field name="name">Staff Assignments</field>
+        <field name="res_model">health.staff.assignment</field>
+        <field name="view_mode">kanban,calendar,list,form</field>
+        <field name="view_id" ref="view_assignment_dashboard_kanban"/>
+        <field name="search_view_id" ref="view_health_staff_assignment_search"/>
+        <field name="context">{
+            'search_default_today': 1,
+        }</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No staff assignments found!
+            </p>
+            <p>
+                Staff assignments are automatically created when appointments are approved 
+                through the multi-role workflow. Use the assignment dashboard to manage 
+                and optimize staff assignments with AI-powered suggestions.
+            </p>
+        </field>
+    </record>
+
+</data>
+</odoo>

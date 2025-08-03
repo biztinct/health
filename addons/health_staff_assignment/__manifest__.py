@@ -1,0 +1,82 @@
+{
+    'name': 'VAFHS Staff Assignment System',
+    'version': '18.0.1.0.0',
+    'category': 'Healthcare/Staff Management',
+    'summary': 'State-of-the-art staff assignment system with intelligent routing and mobile-first UI',
+    'description': """
+        VAFHS Healthcare Staff Assignment System
+        =====================================
+        
+        Advanced staff assignment system inspired by Uber Driver, DoorDash, and ServiceTitan:
+        
+        Core Features:
+        - Intelligent staff assignment with AI-powered suggestions
+        - Multi-role approval workflow (Sales → Ops Manager → Head Nurse → Staff)
+        - Real-time availability matrix and conflict detection
+        - Geographic optimization for home visits
+        - Mobile-first assignment dashboard (Kanban board style)
+        - Real-time status tracking with GPS integration
+        - Performance analytics and workload balancing
+        
+        UI/UX Inspiration:
+        - Uber Driver app for real-time tracking
+        - Monday.com/Asana for drag-and-drop assignment
+        - Slack workflow builder for approval processes
+        - ServiceTitan for field service management
+        
+        Vietnamese Healthcare Compliance:
+        - MOH staff assignment requirements
+        - Healthcare professional licensing validation
+        - Audit trail for regulatory compliance
+    """,
+    'author': 'I Am Dream Catcher Ltd',
+    'website': 'https://vafhs.com',
+    'license': 'LGPL-3',
+    'depends': [
+        'base',
+        'mail',
+        'calendar',
+        'hr',
+        'contacts',
+        'web',
+        'health_calendar',  # Inherit from our appointment system
+    ],
+    'data': [
+        # Security
+        'security/health_staff_assignment_security.xml',
+        'security/ir.model.access.csv',
+        
+        # Data  
+        # 'data/health_staff_assignment_data.xml',  # Temporarily commented out for basic installation
+        
+        # Views - Load order matters
+        'views/assignment_dashboard_views.xml',  # Load dashboard views first (contains kanban view referenced by actions)
+        'views/health_staff_availability_views.xml',
+        'views/health_staff_assignment_views.xml',
+        
+        # Extended appointment views (inherit from health_calendar)
+        'views/health_appointment_minimal.xml',  # Minimal extension first
+        
+        # Menus - Load after views
+        'views/health_staff_assignment_menus.xml',
+    ],
+    'assets': {
+        'web.assets_backend': [
+            'health_staff_assignment/static/src/css/assignment_dashboard.css',
+            'health_staff_assignment/static/src/js/assignment_dashboard.js',
+            'health_staff_assignment/static/src/js/assignment_kanban.js',
+            'health_staff_assignment/static/src/xml/assignment_dashboard.xml',
+        ],
+        # 'web.assets_frontend': [
+        #     'health_staff_assignment/static/src/css/mobile_assignment.css',
+        #     'health_staff_assignment/static/src/js/mobile_assignment.js',
+        # ],
+    },
+    # 'demo': [
+    #     'demo/health_staff_assignment_demo.xml',
+    # ],
+    'installable': True,
+    'auto_install': False,
+    'application': False,  # This extends health_calendar
+    'sequence': 105,
+}

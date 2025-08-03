@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<data>
+
+    <!-- =====================================================================
+         Staff Availability Matrix Views
+         ===================================================================== -->
+
+    <!-- List View -->
+    <record id="view_health_staff_availability_list" model="ir.ui.view">
+        <field name="name">health.staff.availability.matrix.list</field>
+        <field name="model">health.staff.availability.matrix</field>
+        <field name="arch" type="xml">
+            <list string="Staff Availability Matrix" create="true" edit="true" delete="true"
+                  decoration-success="status == 'available'"
+                  decoration-warning="status in ('tentative', 'break')"
+                  decoration-danger="status in ('booked', 'blocked')"
+                  decoration-info="status == 'travel'">
+                
+                <field name="staff_id"/>
+                <field name="availability_date"/>
+                <field name="start_time" widget="float_time"/>
+                <field name="end_time" widget="float_time"/>
+                <field name="status"/>
+                <field name="capacity"/>
+                <field name="booked_count"/>
+                <field name="remaining_capacity"/>
+                <field name="conflict_detected" optional="hide"/>
+                <field name="location_type" optional="hide"/>
+                
+            </list>
+        </field>
+    </record>
+
+    <!-- Form View -->
+    <record id="view_health_staff_availability_form" model="ir.ui.view">
+        <field name="name">health.staff.availability.matrix.form</field>
+        <field name="model">health.staff.availability.matrix</field>
+        <field name="arch" type="xml">
+            <form string="Staff Availability">
+                <sheet>
+                    <group>
+                        <group string="Basic Information">
+                            <field name="staff_id"/>
+                            <field name="availability_date"/>
+                            <field name="status"/>
+                        </group>
+                        <group string="Time Slot">
+                            <field name="start_time" widget="float_time"/>
+                            <field name="end_time" widget="float_time"/>
+                            <field name="capacity"/>
+                            <field name="booked_count"/>
+                            <field name="remaining_capacity"/>
+                        </group>
+                    </group>
+                    
+                    <group>
+                        <group string="Assignment Details" invisible="status not in ('booked', 'tentative')">
+                            <field name="appointment_id"/>
+                            <field name="assignment_id"/>
+                            <field name="location_type"/>
+                        </group>
+                        <group string="Buffer Management">
+                            <field name="buffer_before"/>
+                            <field name="buffer_after"/>
+                            <field name="conflict_detected"/>
+                        </group>
+                    </group>
+                    
+                    <group string="Travel Information" invisible="location_type != 'home'">
+                        <field name="travel_time_from_previous"/>
+                        <field name="travel_time_to_next"/>
+                    </group>
+                    
+                    <group string="Conflict Details" invisible="not conflict_detected">
+                        <field name="conflict_details" readonly="1"/>
+                    </group>
+                    
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Calendar View - Temporarily disabled due to field type compatibility issues -->
+    <!-- <record id="view_health_staff_availability_calendar" model="ir.ui.view">
+        <field name="name">health.staff.availability.matrix.calendar</field>
+        <field name="model">health.staff.availability.matrix</field>
+        <field name="arch" type="xml">
+            <calendar string="Staff Availability Calendar" 
+                      date_start="availability_date" 
+                      color="status"
+                      mode="week">
+                <field name="staff_id"/>
+                <field name="start_time"/>
+                <field name="end_time"/>
+                <field name="status"/>
+            </calendar>
+        </field>
+    </record> -->
+
+    <!-- Search View -->
+    <record id="view_health_staff_availability_search" model="ir.ui.view">
+        <field name="name">health.staff.availability.matrix.search</field>
+        <field name="model">health.staff.availability.matrix</field>
+        <field name="arch" type="xml">
+            <search string="Staff Availability Search">
+                <field name="staff_id"/>
+                <field name="availability_date"/>
+                <field name="status"/>
+                
+                <filter string="Available" name="available" domain="[('status', '=', 'available')]"/>
+                <filter string="Booked" name="booked" domain="[('status', '=', 'booked')]"/>
+                <filter string="Conflicts" name="conflicts" domain="[('conflict_detected', '=', True)]"/>
+                <filter string="Today" name="today" 
+                        domain="[('availability_date', '=', context_today())]"/>
+                
+                <group expand="0" string="Group By">
+                    <filter string="Staff" name="group_by_staff" context="{'group_by': 'staff_id'}"/>
+                    <filter string="Date" name="group_by_date" context="{'group_by': 'availability_date'}"/>
+                    <filter string="Status" name="group_by_status" context="{'group_by': 'status'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="action_health_staff_availability" model="ir.actions.act_window">
+        <field name="name">Staff Availability</field>
+        <field name="res_model">health.staff.availability.matrix</field>
+        <field name="view_mode">calendar,list,form</field>
+        <field name="context">{'search_default_today': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No availability records found!
+            </p>
+            <p>
+                Staff availability is automatically managed by the assignment system.
+                You can manually block time slots or adjust capacity as needed.
+            </p>
+        </field>
+    </record>
+
+    <!-- Healthcare Skills Views -->
+    <record id="view_health_staff_skill_list" model="ir.ui.view">
+        <field name="name">health.staff.skill.list</field>
+        <field name="model">health.staff.skill</field>
+        <field name="arch" type="xml">
+            <list string="Healthcare Skills" create="true" edit="true">
+                <field name="name"/>
+                <field name="category"/>
+                <field name="required_certification"/>
+                <field name="active"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_health_staff_skill_form" model="ir.ui.view">
+        <field name="name">health.staff.skill.form</field>
+        <field name="model">health.staff.skill</field>
+        <field name="arch" type="xml">
+            <form string="Healthcare Skill">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="category"/>
+                            <field name="required_certification"/>
+                            <field name="active"/>
+                        </group>
+                        <group>
+                            <field name="description"/>
+                        </group>
+                    </group>
+                    
+                    <field name="service_type_ids">
+                        <list>
+                            <field name="name"/>
+                            <field name="description"/>
+                        </list>
+                    </field>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_healthcare_skills" model="ir.actions.act_window">
+        <field name="name">Healthcare Skills</field>
+        <field name="res_model">health.staff.skill</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- Service Areas Views -->
+    <record id="view_health_service_area_list" model="ir.ui.view">
+        <field name="name">health.service.area.list</field>
+        <field name="model">health.service.area</field>
+        <field name="arch" type="xml">
+            <list string="Service Areas" create="true" edit="true">
+                <field name="name"/>
+                <field name="code"/>
+                <field name="district"/>
+                <field name="city"/>
+                <field name="radius_km"/>
+                <field name="travel_fee"/>
+                <field name="active"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_health_service_area_form" model="ir.ui.view">
+        <field name="name">health.service.area.form</field>
+        <field name="model">health.service.area</field>
+        <field name="arch" type="xml">
+            <form string="Service Area">
+                <sheet>
+                    <group>
+                        <group string="Basic Information">
+                            <field name="name"/>
+                            <field name="code"/>
+                            <field name="district"/>
+                            <field name="city"/>
+                            <field name="active"/>
+                        </group>
+                        <group string="Geographic Details">
+                            <field name="center_latitude"/>
+                            <field name="center_longitude"/>
+                            <field name="radius_km"/>
+                            <field name="postal_codes"/>
+                        </group>
+                    </group>
+                    
+                    <group string="Service Configuration">
+                        <field name="travel_fee"/>
+                        <field name="additional_fee_per_km"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_service_areas" model="ir.actions.act_window">
+        <field name="name">Service Areas</field>
+        <field name="res_model">health.service.area</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+</data>
+</odoo>

@@ -1,0 +1,288 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<data noupdate="1">
+
+    <!-- =====================================================================
+         Sequences for Assignment System
+         ===================================================================== -->
+
+    <!-- Staff Assignment Sequence -->
+    <record id="seq_health_staff_assignment" model="ir.sequence">
+        <field name="name">Staff Assignment Sequence</field>
+        <field name="code">health.staff.assignment</field>
+        <field name="prefix">SA</field>
+        <field name="padding">6</field>
+        <field name="company_id" eval="False"/>
+    </record>
+
+    <!-- =====================================================================
+         Default Healthcare Skills
+         ===================================================================== -->
+
+    <!-- Medical Skills -->
+    <record id="skill_general_medicine" model="health.staff.skill">
+        <field name="name">General Medicine</field>
+        <field name="category">medical</field>
+        <field name="description">General medical examination and consultation</field>
+        <field name="required_certification" eval="True"/>
+    </record>
+
+    <record id="skill_pediatrics" model="health.staff.skill">
+        <field name="name">Pediatrics</field>
+        <field name="category">medical</field>
+        <field name="description">Specialized care for children and infants</field>
+        <field name="required_certification" eval="True"/>
+    </record>
+
+    <record id="skill_cardiology" model="health.staff.skill">
+        <field name="name">Cardiology</field>
+        <field name="category">specialty</field>
+        <field name="description">Heart and cardiovascular system expertise</field>
+        <field name="required_certification" eval="True"/>
+    </record>
+
+    <!-- Nursing Skills -->
+    <record id="skill_wound_care" model="health.staff.skill">
+        <field name="name">Wound Care</field>
+        <field name="category">nursing</field>
+        <field name="description">Professional wound assessment and treatment</field>
+        <field name="required_certification" eval="False"/>
+    </record>
+
+    <record id="skill_injection_administration" model="health.staff.skill">
+        <field name="name">Injection Administration</field>
+        <field name="category">nursing</field>
+        <field name="description">Safe administration of injections and vaccines</field>
+        <field name="required_certification" eval="True"/>
+    </record>
+
+    <record id="skill_vital_signs" model="health.staff.skill">
+        <field name="name">Vital Signs Monitoring</field>
+        <field name="category">nursing</field>
+        <field name="description">Blood pressure, temperature, pulse monitoring</field>
+        <field name="required_certification" eval="False"/>
+    </record>
+
+    <!-- Technical Skills -->
+    <record id="skill_ecg" model="health.staff.skill">
+        <field name="name">ECG/EKG</field>
+        <field name="category">technical</field>
+        <field name="description">Electrocardiogram operation and basic interpretation</field>
+        <field name="required_certification" eval="True"/>
+    </record>
+
+    <record id="skill_ultrasound" model="health.staff.skill">
+        <field name="name">Ultrasound</field>
+        <field name="category">technical</field>
+        <field name="description">Ultrasound examination and imaging</field>
+        <field name="required_certification" eval="True"/>
+    </record>
+
+    <!-- Language Skills -->
+    <record id="skill_vietnamese" model="health.staff.skill">
+        <field name="name">Vietnamese (Native)</field>
+        <field name="category">language</field>
+        <field name="description">Native Vietnamese language skills</field>
+        <field name="required_certification" eval="False"/>
+    </record>
+
+    <record id="skill_english" model="health.staff.skill">
+        <field name="name">English (Professional)</field>
+        <field name="category">language</field>
+        <field name="description">Professional level English communication</field>
+        <field name="required_certification" eval="False"/>
+    </record>
+
+    <!-- Soft Skills -->
+    <record id="skill_elderly_care" model="health.staff.skill">
+        <field name="name">Elderly Care</field>
+        <field name="category">soft</field>
+        <field name="description">Specialized approach for elderly patients</field>
+        <field name="required_certification" eval="False"/>
+    </record>
+
+    <record id="skill_patient_communication" model="health.staff.skill">
+        <field name="name">Patient Communication</field>
+        <field name="category">soft</field>
+        <field name="description">Excellent patient communication and empathy</field>
+        <field name="required_certification" eval="False"/>
+    </record>
+
+    <!-- =====================================================================
+         Default Service Areas (Ho Chi Minh City)
+         ===================================================================== -->
+
+    <!-- District 1 - Central Business District -->
+    <record id="service_area_district_1" model="health.service.area">
+        <field name="name">District 1</field>
+        <field name="code">D1</field>
+        <field name="district">District 1</field>
+        <field name="city">Ho Chi Minh City</field>
+        <field name="center_latitude">10.7769</field>
+        <field name="center_longitude">106.7009</field>
+        <field name="radius_km">3.0</field>
+        <field name="travel_fee">50000</field>
+        <field name="additional_fee_per_km">10000</field>
+        <field name="postal_codes">700000, 710000</field>
+    </record>
+
+    <!-- District 3 - Residential Area -->
+    <record id="service_area_district_3" model="health.service.area">
+        <field name="name">District 3</field>
+        <field name="code">D3</field>
+        <field name="district">District 3</field>
+        <field name="city">Ho Chi Minh City</field>
+        <field name="center_latitude">10.7756</field>
+        <field name="center_longitude">106.6878</field>
+        <field name="radius_km">4.0</field>
+        <field name="travel_fee">40000</field>
+        <field name="additional_fee_per_km">8000</field>
+        <field name="postal_codes">730000</field>
+    </record>
+
+    <!-- District 7 - Modern Residential -->
+    <record id="service_area_district_7" model="health.service.area">
+        <field name="name">District 7</field>
+        <field name="code">D7</field>
+        <field name="district">District 7</field>
+        <field name="city">Ho Chi Minh City</field>
+        <field name="center_latitude">10.7378</field>
+        <field name="center_longitude">106.7219</field>
+        <field name="radius_km">5.0</field>
+        <field name="travel_fee">60000</field>
+        <field name="additional_fee_per_km">12000</field>
+        <field name="postal_codes">700000</field>
+    </record>
+
+    <!-- Binh Thanh District -->
+    <record id="service_area_binh_thanh" model="health.service.area">
+        <field name="name">Binh Thanh District</field>
+        <field name="code">BT</field>
+        <field name="district">Binh Thanh</field>
+        <field name="city">Ho Chi Minh City</field>
+        <field name="center_latitude">10.8022</field>
+        <field name="center_longitude">106.7100</field>
+        <field name="radius_km">6.0</field>
+        <field name="travel_fee">45000</field>
+        <field name="additional_fee_per_km">9000</field>
+        <field name="postal_codes">740000</field>
+    </record>
+
+    <!-- Thu Duc City (New Administrative Unit) -->
+    <record id="service_area_thu_duc" model="health.service.area">
+        <field name="name">Thu Duc City</field>
+        <field name="code">TD</field>
+        <field name="district">Thu Duc</field>
+        <field name="city">Ho Chi Minh City</field>
+        <field name="center_latitude">10.8142</field>
+        <field name="center_longitude">106.7621</field>
+        <field name="radius_km">8.0</field>
+        <field name="travel_fee">70000</field>
+        <field name="additional_fee_per_km">15000</field>
+        <field name="postal_codes">750000, 760000</field>
+    </record>
+
+    <!-- =====================================================================
+         Email Templates for Notifications
+         ===================================================================== -->
+
+    <!-- Assignment Confirmation Email -->
+    <record id="email_template_assignment_confirmed" model="mail.template">
+        <field name="name">Staff Assignment Confirmed</field>
+        <field name="model_id" ref="model_health_staff_assignment"/>
+        <field name="subject">Assignment Confirmed - {{ object.appointment_id.name }}</field>
+        <field name="email_to">{{ object.appointment_id.patient_id.email }}</field>
+        <field name="body_html" type="html">
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+                <div style="background: linear-gradient(135deg, #2563eb, #059669); color: white; padding: 30px; text-align: center;">
+                    <h1 style="margin: 0; font-size: 28px;">Assignment Confirmed</h1>
+                    <p style="margin: 10px 0 0 0; font-size: 16px;">Your healthcare appointment has been assigned</p>
+                </div>
+                
+                <div style="padding: 30px; background: #f8fafc;">
+                    <h2 style="color: #1e293b; margin-bottom: 20px;">Hello {{ object.appointment_id.patient_id.name }},</h2>
+                    
+                    <p style="font-size: 16px; line-height: 1.6; color: #475569;">
+                        Great news! Your appointment has been confirmed and assigned to our healthcare professional.
+                    </p>
+                    
+                    <div style="background: white; padding: 25px; border-radius: 10px; margin: 25px 0; border-left: 4px solid #059669;">
+                        <h3 style="color: #059669; margin-top: 0;">Appointment Details</h3>
+                        <table style="width: 100%; border-collapse: collapse;">
+                            <tr>
+                                <td style="padding: 8px 0; font-weight: bold; color: #374151;">Service:</td>
+                                <td style="padding: 8px 0; color: #6b7280;">{{ object.appointment_id.appointment_type_id.name }}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 8px 0; font-weight: bold; color: #374151;">Date &amp; Time:</td>
+                                <td style="padding: 8px 0; color: #6b7280;">{{ object.appointment_id.appointment_date.strftime('%A, %B %d, %Y at %I:%M %p') }}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 8px 0; font-weight: bold; color: #374151;">Assigned Staff:</td>
+                                <td style="padding: 8px 0; color: #6b7280;">{{ ', '.join(object.assigned_staff_ids.mapped('name')) }}</td>
+                            </tr>
+                            <tr t-if="object.appointment_id.appointment_type_id.location_type == 'home'">
+                                <td style="padding: 8px 0; font-weight: bold; color: #374151;">Visit Address:</td>
+                                <td style="padding: 8px 0; color: #6b7280;">{{ object.appointment_id.visit_address }}</td>
+                            </tr>
+                        </table>
+                    </div>
+                    
+                    <div style="background: #dbeafe; padding: 20px; border-radius: 8px; margin: 25px 0;">
+                        <h4 style="color: #1e40af; margin-top: 0;">What happens next?</h4>
+                        <ul style="color: #1e40af; margin: 0; padding-left: 20px;">
+                            <li>Our healthcare professional will confirm they can handle your appointment</li>
+                            <li>You'll receive updates as your appointment status changes</li>
+                            <li>On the day of service, you'll get real-time tracking updates</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div style="background: #374151; color: white; padding: 20px; text-align: center;">
+                    <p style="margin: 0; font-size: 14px;">
+                        Questions? Contact us at <a href="tel:+842812345678" style="color: #60a5fa;">+84 28 1234 5678</a>
+                    </p>
+                    <p style="margin: 10px 0 0 0; font-size: 12px; color: #9ca3af;">
+                        Vietnam-Australia Family Health Service (VAFHS)
+                    </p>
+                </div>
+            </div>
+        </field>
+    </record>
+
+    <!-- Status Update Email Template -->
+    <record id="email_template_status_update" model="mail.template">
+        <field name="name">Appointment Status Update</field>
+        <field name="model_id" ref="health_calendar.model_health_appointment"/>
+        <field name="subject">Appointment Update - {{ object.name }}</field>
+        <field name="email_to">{{ object.patient_id.email }}</field>
+        <field name="body_html" type="html">
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+                <div style="background: #2563eb; color: white; padding: 20px; text-align: center;">
+                    <h1 style="margin: 0;">Appointment Status Update</h1>
+                </div>
+                
+                <div style="padding: 30px;">
+                    <h2>Hello {{ object.patient_id.name }},</h2>
+                    
+                    <p style="font-size: 16px; line-height: 1.6;">
+                        Your appointment status has been updated to: <strong>{{ object.real_time_status.title() }}</strong>
+                    </p>
+                    
+                    <div style="background: #f1f5f9; padding: 20px; border-radius: 8px; margin: 20px 0;">
+                        <h3>Appointment: {{ object.name }}</h3>
+                        <p><strong>Service:</strong> {{ object.appointment_type_id.name }}</p>
+                        <p><strong>Date:</strong> {{ object.appointment_date.strftime('%A, %B %d, %Y at %I:%M %p') }}</p>
+                        <p><strong>Current Status:</strong> {{ object.real_time_status.title() }}</p>
+                    </div>
+                    
+                    <p style="color: #6b7280; font-size: 14px;">
+                        This is an automated update from VAFHS Healthcare System.
+                    </p>
+                </div>
+            </div>
+        </field>
+    </record>
+
+</data>
+</odoo>
