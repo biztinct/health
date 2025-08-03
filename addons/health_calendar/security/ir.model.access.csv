@@ -9,3 +9,11 @@ access_health_patient_public,health.patient.public,model_health_patient,base.gro
 access_health_appointment_public,health.appointment.public,model_health_appointment,base.group_public,0,0,1,0
 access_health_patient_all,health.patient.all,model_health_patient,,1,0,0,0
 access_health_appointment_all,health.appointment.all,model_health_appointment,,1,0,0,0
+access_health_staff_user,health.staff.user,model_health_staff,group_health_appointment_user,1,1,1,0
+access_health_staff_manager,health.staff.manager,model_health_staff,group_health_appointment_manager,1,1,1,1
+access_health_staff_availability_user,health.staff.availability.user,model_health_staff_availability,group_health_appointment_user,1,1,1,0
+access_health_staff_availability_manager,health.staff.availability.manager,model_health_staff_availability,group_health_appointment_manager,1,1,1,1
+access_health_specialization_user,health.specialization.user,model_health_specialization,group_health_appointment_user,1,1,1,0
+access_health_specialization_manager,health.specialization.manager,model_health_specialization,group_health_appointment_manager,1,1,1,1
+access_health_staff_all,health.staff.all,model_health_staff,,1,0,0,0
+access_health_specialization_all,health.specialization.all,model_health_specialization,,1,0,0,0

@@ -7,7 +7,31 @@
             <t t-set="title">Book Your Appointment - VAFHS Healthcare</t>
             <t t-set="additional_title">Professional Healthcare at Your Convenience</t>
             
-            <div class="booking-portal-main">
+            <!-- Debug: Test if JavaScript runs at all -->
+            <t t-set="head">
+                <link rel="stylesheet" type="text/css" href="/health_calendar/static/src/css/booking_portal.css"/>
+                <script type="text/javascript">
+                    console.log('VAFHS DEBUG: Inline script loaded');
+                    document.addEventListener('DOMContentLoaded', function() {
+                        console.log('VAFHS DEBUG: DOM ready');
+                        console.log('VAFHS DEBUG: Found cards:', document.querySelectorAll('.appointment-type-card').length);
+                        console.log('VAFHS DEBUG: Found buttons:', document.querySelectorAll('.btn-select-type').length);
+                        
+                        // Add simple click handlers for testing
+                        document.querySelectorAll('.btn-select-type').forEach(function(btn) {
+                            btn.addEventListener('click', function(e) {
+                                e.preventDefault();
+                                const typeId = this.getAttribute('data-type-id');
+                                console.log('VAFHS DEBUG: Inline click handler - Type ID:', typeId);
+                                window.location.href = '/book-appointment/step2?appointment_type_id=' + typeId;
+                            });
+                        });
+                    });
+                </script>
+                <script type="text/javascript" src="/health_calendar/static/src/js/booking_portal.js"></script>
+            </t>
+            
+            <div class="booking-portal-main" t-att-data-page="page_name">
                 <!-- Hero Section -->
                 <section class="booking-hero">
                     <div class="container">
@@ -58,7 +82,7 @@
                         <div class="appointment-types-grid">
                             <t t-foreach="appointment_types" t-as="apt_type">
                                 <div class="appointment-type-card" 
-                                     data-type-id="#{apt_type.id}"
+                                     t-att-data-type-id="apt_type.id"
                                      t-att-data-color="apt_type.color">
                                     <div class="card-icon">
                                         <i t-att-class="apt_type.icon or 'fa fa-stethoscope'"></i>
@@ -156,7 +180,19 @@
         <t t-call="website.layout">
             <t t-set="title">Select Date and Time - VAFHS Booking</t>
             
-            <div class="booking-step-container">
+            <!-- Ensure our assets are loaded -->
+            <t t-set="head">
+                <link rel="stylesheet" type="text/css" href="/health_calendar/static/src/css/booking_portal.css"/>
+                <script type="text/javascript">
+                    console.log('VAFHS DEBUG: Step 2 inline script loaded');
+                    document.addEventListener('DOMContentLoaded', function() {
+                        console.log('VAFHS DEBUG: Step 2 DOM ready');
+                    });
+                </script>
+                <script type="text/javascript" src="/health_calendar/static/src/js/booking_portal.js"></script>
+            </t>
+            
+            <div class="booking-step-container" t-att-data-page="page_name">
                 <!-- Progress Bar -->
                 <div class="booking-progress">
                     <div class="container">

@@ -54,6 +54,7 @@ while maintaining full integration with VAFHS clinical and billing systems.
         'views/health_appointment_views.xml',
         'views/health_patient_views.xml',
         'views/health_appointment_type_views.xml',
+        'views/health_staff_views.xml',
         'views/health_calendar_menus.xml',
         
         # Views - Portal & Website
@@ -61,6 +62,10 @@ while maintaining full integration with VAFHS clinical and billing systems.
     ],
     'assets': {
         'web.assets_frontend': [
+            'health_calendar/static/src/css/booking_portal.css',
+            'health_calendar/static/src/js/booking_portal.js',
+        ],
+        'website.assets_frontend': [
             'health_calendar/static/src/css/booking_portal.css',
             'health_calendar/static/src/js/booking_portal.js',
         ],

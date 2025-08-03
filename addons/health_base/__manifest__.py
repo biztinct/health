@@ -28,6 +28,7 @@ This module serves as the foundation for all other health_* modules and must be 
         'web',
         'mail',
         'calendar',
+        'portal',
     ],
     'data': [
         # Security

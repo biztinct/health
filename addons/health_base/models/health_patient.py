@@ -8,7 +8,7 @@ class Patient(models.Model):
     """Patient/Client model for healthcare management"""
     _name = 'health.patient'
     _description = 'Healthcare Patient'
-    _inherit = ['mail.thread', 'mail.activity.mixin']
+    _inherit = ['portal.mixin', 'mail.thread', 'mail.activity.mixin']
     _order = 'name, patient_id'
     _rec_name = 'display_name'
 

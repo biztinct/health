@@ -20,6 +20,16 @@
         <field name="number_increment">1</field>
         <field name="company_id" eval="False"/>
     </record>
+    
+    <record id="seq_health_staff" model="ir.sequence">
+        <field name="name">Health Staff</field>
+        <field name="code">health.staff</field>
+        <field name="prefix">STAFF</field>
+        <field name="padding">4</field>
+        <field name="number_next">1001</field>
+        <field name="number_increment">1</field>
+        <field name="company_id" eval="False"/>
+    </record>
 
     <!-- Default Service Types with Appointment Booking -->
     <record id="appointment_type_general_consultation" model="health.service.type">
@@ -102,6 +112,37 @@
         <field name="allow_online_booking" eval="True"/>
         <field name="advance_booking_days">14</field>
         <field name="sequence">50</field>
+    </record>
+
+    <!-- Default Medical Specializations -->
+    <record id="specialization_general_medicine" model="health.specialization">
+        <field name="name">General Medicine</field>
+        <field name="code">GEN_MED</field>
+        <field name="description">General practice and primary care</field>
+    </record>
+
+    <record id="specialization_cardiology" model="health.specialization">
+        <field name="name">Cardiology</field>
+        <field name="code">CARDIO</field>
+        <field name="description">Heart and cardiovascular system</field>
+    </record>
+
+    <record id="specialization_pediatrics" model="health.specialization">
+        <field name="name">Pediatrics</field>
+        <field name="code">PEDIA</field>
+        <field name="description">Children's healthcare</field>
+    </record>
+
+    <record id="specialization_nursing" model="health.specialization">
+        <field name="name">General Nursing</field>
+        <field name="code">NURSING</field>
+        <field name="description">General nursing care</field>
+    </record>
+
+    <record id="specialization_home_care" model="health.specialization">
+        <field name="name">Home Care</field>
+        <field name="code">HOME_CARE</field>
+        <field name="description">Home visit healthcare services</field>
     </record>
 
 

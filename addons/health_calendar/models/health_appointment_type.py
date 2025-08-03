@@ -118,24 +118,17 @@ class ServiceType(models.Model):
             'context': {'default_appointment_type_id': self.id}
         }
     
-    @api.model
     def get_available_slots(self, date, facility_id=None):
         """Get available time slots for online booking"""
-        # This method will be used by the booking portal
-        # Returns available time slots based on:
-        # - Working hours
-        # - Existing appointments
-        # - Staff availability
-        # - Facility capacity
-        
         slots = []
         if not date:
             return slots
         
-        # Basic slot generation (will be enhanced)
-        start_hour = int(self.working_hours_start)
-        end_hour = int(self.working_hours_end)
+        # Default working hours (8 AM to 6 PM)
+        start_hour = 8
+        end_hour = 18
         
+        # Generate 30-minute time slots
         for hour in range(start_hour, end_hour):
             for minute in [0, 30]:  # 30-minute intervals
                 if hour == end_hour - 1 and minute == 30:
@@ -145,7 +138,8 @@ class ServiceType(models.Model):
                 slots.append({
                     'time': time_float,
                     'time_str': f'{hour:02d}:{minute:02d}',
-                    'available': True,  # Will check actual availability
+                    'available': True,
+                    'display_time': f'{hour:02d}:{minute:02d}',
                 })
         
         return slots

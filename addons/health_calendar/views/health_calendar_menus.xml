@@ -78,5 +78,27 @@
             name="Configuration"
             parent="health_main_menu"
             sequence="100"/>
+
+        <!-- Staff Management Menu Items -->
+        <menuitem 
+            id="menu_health_staff" 
+            name="Healthcare Staff"
+            parent="health_config_menu"
+            action="action_health_staff"
+            sequence="10"/>
+
+        <menuitem 
+            id="menu_health_staff_availability" 
+            name="Staff Availability"
+            parent="health_config_menu"
+            action="action_health_staff_availability"
+            sequence="20"/>
+
+        <menuitem 
+            id="menu_health_specializations" 
+            name="Medical Specializations"
+            parent="health_config_menu"
+            action="action_health_specialization"
+            sequence="30"/>
     </data>
 </odoo>

@@ -9,6 +9,8 @@
     --primary-color: #2563eb;
     --primary-hover: #1d4ed8;
     --primary-light: #dbeafe;
+    --primary-color-light: #dbeafe;
+    --accent-color: #f59e0b;
     --secondary-color: #059669;
     --secondary-light: #d1fae5;
     
@@ -387,6 +389,118 @@
     border-radius: var(--radius-lg);
     padding: var(--space-6);
     min-height: 400px;
+}
+
+/* Modern Calendar Grid Layout */
+.modern-calendar {
+    background: white;
+    border-radius: var(--radius-md);
+    padding: var(--space-4);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.calendar-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: var(--space-4);
+    padding: 0 var(--space-2);
+}
+
+.calendar-month-year {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--gray-900);
+}
+
+.calendar-nav-btn {
+    background: none;
+    border: none;
+    padding: var(--space-2);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    color: var(--gray-600);
+    transition: all 0.2s ease;
+}
+
+.calendar-nav-btn:hover {
+    background: var(--gray-100);
+    color: var(--primary-color);
+}
+
+.calendar-weekdays {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 1px;
+    margin-bottom: var(--space-2);
+}
+
+.weekday {
+    text-align: center;
+    padding: var(--space-2);
+    font-weight: 600;
+    font-size: 0.875rem;
+    color: var(--gray-600);
+    background: var(--gray-50);
+}
+
+.calendar-days {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 1px;
+    background: var(--gray-200);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+}
+
+.calendar-day {
+    background: white;
+    padding: var(--space-3);
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 500;
+}
+
+.calendar-day:hover {
+    background: var(--primary-color-light);
+    color: var(--primary-color);
+}
+
+.calendar-day.selected {
+    background: var(--primary-color);
+    color: white;
+}
+
+.calendar-day.disabled {
+    background: var(--gray-100);
+    color: var(--gray-400);
+    cursor: not-allowed;
+}
+
+.calendar-day.disabled:hover {
+    background: var(--gray-100);
+    color: var(--gray-400);
+}
+
+.calendar-day.other-month {
+    color: var(--gray-400);
+    background: var(--gray-50);
+}
+
+.calendar-day.today {
+    background: var(--accent-color);
+    color: white;
+    font-weight: 600;
+}
+
+.calendar-day.today.selected {
+    background: var(--primary-color);
 }
 
 .calendar-loading {

@@ -63,6 +63,9 @@
         const typeCards = document.querySelectorAll('.appointment-type-card');
         const selectButtons = document.querySelectorAll('.btn-select-type');
 
+        console.log('VAFHS Booking Portal: Found', typeCards.length, 'type cards');
+        console.log('VAFHS Booking Portal: Found', selectButtons.length, 'select buttons');
+
         // Add click handlers to type cards
         typeCards.forEach(card => {
             card.addEventListener('click', function() {
@@ -88,16 +91,19 @@
             button.addEventListener('click', function(e) {
                 e.stopPropagation();
                 const typeId = this.dataset.typeId;
+                console.log('VAFHS Booking Portal: Button clicked! Type ID:', typeId);
                 selectAppointmentType(typeId);
             });
         });
     }
 
     function selectAppointmentType(typeId) {
+        console.log('VAFHS Booking Portal: selectAppointmentType called with ID:', typeId);
         selectedAppointmentType = typeId;
         
         // Add visual feedback
         const selectedCard = document.querySelector(`[data-type-id="${typeId}"]`);
+        console.log('VAFHS Booking Portal: Selected card found:', selectedCard);
         if (selectedCard) {
             // Remove previous selections
             document.querySelectorAll('.appointment-type-card').forEach(card => {
@@ -108,7 +114,9 @@
             
             // Smooth transition to next step
             setTimeout(() => {
-                window.location.href = `/book-appointment/step2?appointment_type_id=${typeId}`;
+                const nextUrl = `/book-appointment/step2?appointment_type_id=${typeId}`;
+                console.log('VAFHS Booking Portal: Redirecting to:', nextUrl);
+                window.location.href = nextUrl;
             }, 300);
         }
     }
@@ -118,11 +126,20 @@
     // ============================================================================
 
     function initDateTimeSelection() {
+        console.log('VAFHS DEBUG: initDateTimeSelection called');
+        
         const calendarWidget = document.querySelector('.calendar-widget');
         const timeSlotsContainer = document.querySelector('.time-slots-container');
         const continueBtn = document.getElementById('continueBtn');
 
-        if (!calendarWidget) return;
+        console.log('VAFHS DEBUG: Calendar widget found:', calendarWidget);
+        console.log('VAFHS DEBUG: Time slots container found:', timeSlotsContainer);
+        console.log('VAFHS DEBUG: Continue button found:', continueBtn);
+
+        if (!calendarWidget) {
+            console.log('VAFHS DEBUG: No calendar widget found, exiting');
+            return;
+        }
 
         const appointmentTypeId = calendarWidget.dataset.appointmentType;
         const minDate = calendarWidget.dataset.minDate;
@@ -307,23 +324,34 @@
             timeSlotsContainer.style.display = 'block';
             showLoading(timeSlotsGrid);
 
+            console.log('VAFHS DEBUG: Loading time slots for date:', dateString);
+            console.log('VAFHS DEBUG: Appointment type ID:', this.appointmentTypeId);
+
             try {
+                const requestData = {
+                    jsonrpc: '2.0',
+                    method: 'call',
+                    params: {
+                        appointment_type_id: parseInt(this.appointmentTypeId),
+                        date: dateString,
+                    }
+                };
+                
+                console.log('VAFHS DEBUG: Request data:', requestData);
+                
                 const response = await fetch('/book-appointment/api/available-slots', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({
-                        jsonrpc: '2.0',
-                        method: 'call',
-                        params: {
-                            appointment_type_id: parseInt(this.appointmentTypeId),
-                            date: dateString,
-                        }
-                    })
+                    body: JSON.stringify(requestData)
                 });
 
+                console.log('VAFHS DEBUG: Response status:', response.status);
+                console.log('VAFHS DEBUG: Response headers:', response.headers);
+
                 const result = await response.json();
+                console.log('VAFHS DEBUG: Response result:', result);
                 
                 if (result.error) {
                     showError(timeSlotsGrid, 'Failed to load available times');
@@ -334,7 +362,30 @@
                 this.renderTimeSlots();
 
             } catch (error) {
-                console.error('Error loading time slots:', error);
+                console.error('VAFHS DEBUG: Error loading time slots:', error);
+                console.error('VAFHS DEBUG: Error details:', error.message);
+                console.error('VAFHS DEBUG: Error stack:', error.stack);
+                
+                // Try the simple HTTP endpoint as fallback
+                console.log('VAFHS DEBUG: Trying simple HTTP endpoint as fallback');
+                try {
+                    const fallbackUrl = `/book-appointment/api/slots/${this.appointmentTypeId}/${dateString}`;
+                    console.log('VAFHS DEBUG: Fallback URL:', fallbackUrl);
+                    
+                    const fallbackResponse = await fetch(fallbackUrl);
+                    const fallbackResult = await fallbackResponse.json();
+                    
+                    console.log('VAFHS DEBUG: Fallback result:', fallbackResult);
+                    
+                    if (fallbackResult.slots) {
+                        availableSlots = fallbackResult.slots;
+                        this.renderTimeSlots();
+                        return;
+                    }
+                } catch (fallbackError) {
+                    console.error('VAFHS DEBUG: Fallback also failed:', fallbackError);
+                }
+                
                 showError(timeSlotsGrid, 'Failed to load available times');
             }
         }
@@ -644,17 +695,28 @@
     // ============================================================================
 
     document.addEventListener('DOMContentLoaded', function() {
+        console.log('VAFHS Booking Portal: JavaScript loaded');
+        
         // Initialize based on current page
-        const currentPage = document.body.getAttribute('data-page') || 
+        const portalMain = document.querySelector('.booking-portal-main');
+        const currentPage = (portalMain && portalMain.getAttribute('data-page')) || 
+                           document.body.getAttribute('data-page') || 
                            window.location.pathname.split('/').pop();
+
+        console.log('VAFHS Booking Portal: Current page detected as:', currentPage);
+        console.log('VAFHS Booking Portal: Portal main element:', portalMain);
 
         switch (currentPage) {
             case 'book-appointment':
+            case 'book_appointment':
             case 'booking_portal_main':
+                console.log('VAFHS Booking Portal: Initializing appointment type selection');
                 initAppointmentTypeSelection();
                 break;
             case 'step2':
+            case 'book_appointment_step2':
             case 'booking_portal_step2':
+                console.log('VAFHS Booking Portal: Initializing date time selection');
                 initDateTimeSelection();
                 break;
             case 'step3':
@@ -665,6 +727,18 @@
 
         // Always initialize general enhancements
         initGeneralEnhancements();
+        
+        // Test function - let's make sure we can find elements
+        setTimeout(() => {
+            const testCards = document.querySelectorAll('.appointment-type-card');
+            const testButtons = document.querySelectorAll('.btn-select-type');
+            console.log('VAFHS Booking Portal: Test after 1s - Cards:', testCards.length, 'Buttons:', testButtons.length);
+            
+            if (testButtons.length > 0) {
+                const firstButton = testButtons[0];
+                console.log('VAFHS Booking Portal: First button data-type-id:', firstButton.getAttribute('data-type-id'));
+            }
+        }, 1000);
     });
 
     // ============================================================================
