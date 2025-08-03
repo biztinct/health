@@ -98,11 +98,10 @@ class ResUsers(models.Model):
         """View appointments assigned to this staff member"""
         return {
             'type': 'ir.actions.act_window',
-            'name': f'Appointments - {self.name}',
-            'res_model': 'calendar.event',  # Will be health.appointment later
-            'view_mode': 'tree,form,calendar',
-            'domain': [('user_id', '=', self.id)],
-            'context': {'default_user_id': self.id}
+            'name': 'My Appointments',
+            'res_model': 'calendar.event',
+            'view_mode': 'calendar,list,form',
+            'target': 'current',
         }
     
     def action_view_patients(self):
@@ -111,7 +110,7 @@ class ResUsers(models.Model):
             'type': 'ir.actions.act_window',
             'name': f'Patients - {self.name}',
             'res_model': 'health.patient',
-            'view_mode': 'tree,form',
+            'view_mode': 'list,form',
             'domain': [],  # Will be implemented with patient assignment
             'context': {}
         }

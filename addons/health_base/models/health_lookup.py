@@ -1,7 +1,7 @@
 from odoo import models, fields, api, _
 
 
-class HealthServiceType(models.Model):
+class ServiceType(models.Model):
     """Healthcare service types"""
     _name = 'health.service.type'
     _description = 'Healthcare Service Type'
@@ -56,7 +56,7 @@ class HealthServiceType(models.Model):
     ]
 
 
-class HealthMedicalSpecialty(models.Model):
+class MedicalSpecialty(models.Model):
     """Medical specialties for healthcare professionals"""
     _name = 'health.medical.specialty'
     _description = 'Medical Specialty'
@@ -72,7 +72,7 @@ class HealthMedicalSpecialty(models.Model):
     ]
 
 
-class HealthSymptom(models.Model):
+class Symptom(models.Model):
     """Common symptoms for initial patient assessment"""
     _name = 'health.symptom'
     _description = 'Health Symptom'
@@ -106,7 +106,7 @@ class HealthSymptom(models.Model):
     color = fields.Integer('Color Index', default=0)
 
 
-class HealthReferralSource(models.Model):
+class ReferralSource(models.Model):
     """Referral sources for patient tracking"""
     _name = 'health.referral.source'
     _description = 'Referral Source'
@@ -145,7 +145,7 @@ class HealthReferralSource(models.Model):
     ]
 
 
-class HealthInsuranceProvider(models.Model):
+class InsuranceProvider(models.Model):
     """Insurance providers for patient coverage"""
     _name = 'health.insurance.provider'
     _description = 'Insurance Provider'
@@ -180,7 +180,7 @@ class HealthInsuranceProvider(models.Model):
     ]
 
 
-class HealthUrgencyLevel(models.Model):
+class UrgencyLevel(models.Model):
     """Urgency levels for appointments and cases"""
     _name = 'health.urgency.level'
     _description = 'Urgency Level'
@@ -208,7 +208,7 @@ class HealthUrgencyLevel(models.Model):
     ]
 
 
-class HealthVietnameseDistricts(models.Model):
+class VietnameseDistricts(models.Model):
     """Vietnamese districts for location tracking"""
     _name = 'health.vietnamese.district'
     _description = 'Vietnamese District'

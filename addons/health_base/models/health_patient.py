@@ -4,7 +4,7 @@ from datetime import date, datetime
 import re
 
 
-class HealthPatient(models.Model):
+class Patient(models.Model):
     """Patient/Client model for healthcare management"""
     _name = 'health.patient'
     _description = 'Healthcare Patient'
@@ -121,9 +121,9 @@ class HealthPatient(models.Model):
     
     @api.model
     def _generate_patient_id(self):
-        """Generate unique patient ID with VAFHS prefix"""
+        """Generate unique patient ID"""
         sequence = self.env['ir.sequence'].next_by_code('health.patient') or '0001'
-        return f'VAFHS-{sequence}'
+        return f'P{sequence}'
     
     @api.depends('name', 'patient_id')
     def _compute_display_name(self):
@@ -201,15 +201,10 @@ class HealthPatient(models.Model):
         """Action to view patient appointments"""
         return {
             'type': 'ir.actions.act_window',
-            'name': _('Patient Appointments'),
+            'name': 'Patient Appointments',
             'res_model': 'calendar.event',
-            'view_mode': 'calendar,tree,form',
-            'views': [(False, 'calendar'), (False, 'tree'), (False, 'form')],
-            'domain': [('partner_ids', 'in', [self.partner_id.id])] if self.partner_id else [],
-            'context': {
-                'default_partner_ids': [(4, self.partner_id.id)] if self.partner_id else [],
-                'default_name': f'Appointment for {self.name}',
-            }
+            'view_mode': 'calendar,list,form',
+            'target': 'current',
         }
     
     def action_create_appointment(self):
@@ -225,9 +220,35 @@ class HealthPatient(models.Model):
                 'default_name': f'Appointment - {self.name}'
             }
         }
+    
+    def action_activate_patient(self):
+        """Activate patient - change status to active"""
+        self.patient_status = 'active'
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'display_notification',
+            'params': {
+                'title': 'Patient Activated',
+                'message': f'{self.name} has been marked as active.',
+                'type': 'success'
+            }
+        }
+    
+    def action_mark_inactive(self):
+        """Mark patient as inactive"""
+        self.patient_status = 'inactive'
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'display_notification',
+            'params': {
+                'title': 'Patient Deactivated',
+                'message': f'{self.name} has been marked as inactive.',
+                'type': 'warning'
+            }
+        }
 
 
-class HealthPatientCategory(models.Model):
+class PatientCategory(models.Model):
     """Patient categories for classification"""
     _name = 'health.patient.category'
     _description = 'Patient Category'

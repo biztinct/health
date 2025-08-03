@@ -35,6 +35,10 @@
                     <field name="patient_status" widget="statusbar" statusbar_visible="new,active,inactive"/>
                     <button name="action_create_appointment" string="Create Appointment" type="object" class="btn-primary"/>
                     <button name="action_view_appointments" string="View Appointments" type="object"/>
+                    <button name="action_activate_patient" string="Activate Patient" type="object" class="btn-success" 
+                            invisible="patient_status == 'active'"/>
+                    <button name="action_mark_inactive" string="Mark Inactive" type="object" class="btn-warning" 
+                            invisible="patient_status != 'active'"/>
                 </header>
                 <sheet>
                     <div class="oe_button_box" name="button_box">

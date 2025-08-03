@@ -2,7 +2,7 @@ from odoo import models, fields, api, _
 from odoo.exceptions import ValidationError
 
 
-class HealthFacility(models.Model):
+class Facility(models.Model):
     """Healthcare facilities/clinics"""
     _name = 'health.facility'
     _description = 'Healthcare Facility'
@@ -181,7 +181,7 @@ class HealthFacility(models.Model):
             'type': 'ir.actions.act_window',
             'name': _('Facility Patients'),
             'res_model': 'health.patient',
-            'view_mode': 'tree,form',
+            'view_mode': 'list,form',
             'domain': [('primary_facility_id', '=', self.id)],
             'context': {'default_primary_facility_id': self.id}
         }
@@ -190,15 +190,10 @@ class HealthFacility(models.Model):
         """View appointments for this facility"""
         return {
             'type': 'ir.actions.act_window',
-            'name': _('Facility Appointments'),
+            'name': 'Facility Appointments',
             'res_model': 'calendar.event',
-            'view_mode': 'calendar,tree,form',
-            'views': [(False, 'calendar'), (False, 'tree'), (False, 'form')],
-            'domain': [],
-            'context': {
-                'default_name': f'Appointment at {self.name}',
-                'search_default_mymeetings': 1,
-            }
+            'view_mode': 'calendar,list,form',
+            'target': 'current',
         }
     
     def action_check_license_expiry(self):

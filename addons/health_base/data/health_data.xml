@@ -4,8 +4,8 @@
     <record id="sequence_health_patient" model="ir.sequence">
         <field name="name">Patient ID</field>
         <field name="code">health.patient</field>
-        <field name="prefix">P</field>
-        <field name="suffix">%(year)s</field>
+        <field name="prefix"></field>
+        <field name="suffix"></field>
         <field name="padding">4</field>
         <field name="number_next">1001</field>
         <field name="number_increment">1</field>
