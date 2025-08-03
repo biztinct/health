@@ -252,20 +252,13 @@ class HealthBookingPortal(CustomerPortal):
     @http.route('/book-appointment/api/available-slots', type='json', auth="public")
     def get_available_slots(self, appointment_type_id, date, facility_id=None):
         """Get available time slots for a specific date"""
-        import logging
-        _logger = logging.getLogger(__name__)
-        
         try:
-            _logger.info(f"VAFHS DEBUG: Available slots requested - Type: {appointment_type_id}, Date: {date}")
-            
             appointment_type = request.env['health.service.type'].sudo().browse(appointment_type_id)
             if not appointment_type.exists():
-                _logger.error(f"VAFHS DEBUG: Invalid appointment type ID: {appointment_type_id}")
                 return {'error': 'Invalid appointment type'}
             
             # Get basic slots from appointment type
             slots = appointment_type.get_available_slots(date, facility_id)
-            _logger.info(f"VAFHS DEBUG: Generated {len(slots)} slots")
             
             # Filter out booked slots
             existing_appointments = request.env['health.appointment'].sudo().search([
@@ -281,38 +274,27 @@ class HealthBookingPortal(CustomerPortal):
                 if slot['time'] in booked_times:
                     slot['available'] = False
             
-            _logger.info(f"VAFHS DEBUG: Returning {len(slots)} slots, {len(booked_times)} booked times")
             return {'slots': slots}
             
         except Exception as e:
-            _logger.error(f"VAFHS DEBUG: Error getting available slots: {str(e)}")
-            import traceback
-            _logger.error(f"VAFHS DEBUG: Traceback: {traceback.format_exc()}")
             return {'error': f'Server error: {str(e)}'}
     
-    # Alternative simple HTTP endpoint for testing
+    # Alternative simple HTTP endpoint for fallback
     @http.route('/book-appointment/api/slots/<int:appointment_type_id>/<string:date>', 
                 type='http', auth="public", methods=['GET'], csrf=False)
     def get_available_slots_simple(self, appointment_type_id, date, **kw):
         """Simple HTTP GET endpoint for available slots"""
-        import logging
         import json
-        _logger = logging.getLogger(__name__)
         
         try:
-            _logger.info(f"VAFHS DEBUG: Simple slots endpoint - Type: {appointment_type_id}, Date: {date}")
-            
             appointment_type = request.env['health.service.type'].sudo().browse(appointment_type_id)
             if not appointment_type.exists():
                 return json.dumps({'error': 'Invalid appointment type'})
             
             slots = appointment_type.get_available_slots(date, None)
-            _logger.info(f"VAFHS DEBUG: Simple endpoint generated {len(slots)} slots")
-            
             return json.dumps({'slots': slots})
             
         except Exception as e:
-            _logger.error(f"VAFHS DEBUG: Simple endpoint error: {str(e)}")
             return json.dumps({'error': f'Server error: {str(e)}'})
     
     @http.route('/book-appointment/api/validate-slot', type='json', auth="public")
