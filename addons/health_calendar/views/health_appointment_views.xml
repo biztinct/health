@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-        <record id="appointment_view_list" model="ir.ui.view">
+<data>
+    <!-- Appointment List View -->
+    <record id="health_appointment_view_list" model="ir.ui.view">
         <field name="name">health.appointment.list</field>
         <field name="model">health.appointment</field>
         <field name="arch" type="xml">
@@ -272,4 +274,14 @@
         </field>
     </record>
 
+    <!-- Calendar Action -->
+    <record id="action_health_appointment_calendar" model="ir.actions.act_window">
+        <field name="name">Appointment Calendar</field>
+        <field name="res_model">health.appointment</field>
+        <field name="view_mode">calendar,list,form</field>
+        <field name="search_view_id" ref="health_appointment_view_search"/>
+        <field name="context">{}</field>
+    </record>
+
+</data>
 </odoo>

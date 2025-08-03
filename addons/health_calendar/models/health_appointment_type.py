@@ -5,6 +5,9 @@ class ServiceType(models.Model):
     """Extend base service type with appointment booking functionality"""
     _inherit = 'health.service.type'
     
+    # UI and Display
+    icon = fields.Char('Icon', help='Font Awesome icon class (e.g., fa-stethoscope)')
+    
     # Location type for appointments
     location_type = fields.Selection([
         ('clinic', 'Clinic Visit'),
@@ -30,6 +33,8 @@ class ServiceType(models.Model):
     # Home visit enhancements (extends base travel settings)
     service_radius_km = fields.Float('Service Radius (KM)', default=0.0,
                                     help='Maximum distance for home visits')
+    travel_fee = fields.Float('Travel Fee (VND)', default=0.0,
+                             help='Additional fee for home visit travel')
     
     # Telemedicine platform (extends base telemedicine availability)
     platform = fields.Selection([

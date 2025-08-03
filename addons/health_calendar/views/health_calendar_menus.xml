@@ -39,7 +39,7 @@
 
         <menuitem 
             id="menu_health_appointment_types" 
-            name="Service Types & Booking"
+            name="Service Types &amp; Booking"
             parent="health_calendar_menu"
             action="action_health_service_type_appointments"
             sequence="30"/>

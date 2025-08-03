@@ -46,7 +46,7 @@
                         </group>
                     </group>
 
-                    <group name="location_settings" string="Location & Travel">
+                    <group name="location_settings" string="Location &amp; Travel">
                         <group>
                             <field name="location_type"/>
                             <field name="service_radius_km" invisible="location_type != 'home'"/>
@@ -74,7 +74,7 @@
 
     <!-- Service Types Action for Appointment Management -->
     <record id="action_health_service_type_appointments" model="ir.actions.act_window">
-        <field name="name">Service Types & Booking</field>
+        <field name="name">Service Types &amp; Booking</field>
         <field name="res_model">health.service.type</field>
         <field name="view_mode">list,form</field>
         <field name="domain">[('allow_online_booking', '=', True)]</field>

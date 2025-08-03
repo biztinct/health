@@ -35,7 +35,7 @@ while maintaining full integration with VAFHS clinical and billing systems.
     'website': 'https://vafhs.com',
     'license': 'LGPL-3',
     'depends': [
-        'health_base',  # Must inherit from base healthcare models
+        'health_base',  # Required for base health.patient model
         'calendar',
         'portal',
         'website',
@@ -50,7 +50,7 @@ while maintaining full integration with VAFHS clinical and billing systems.
         # Data
         'data/health_calendar_data.xml',
         
-        # Views - Backend
+        # Views - Backend (actions first, then menus that reference them)
         'views/health_appointment_views.xml',
         'views/health_patient_views.xml',
         'views/health_appointment_type_views.xml',

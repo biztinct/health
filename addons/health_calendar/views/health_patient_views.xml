@@ -140,11 +140,23 @@
         </field>
     </record>
 
-    <!-- Menu Items -->
-    <menuitem id="menu_health_patient"
-              name="Patients"
-              parent="menu_health_calendar_root"
-              action="action_health_patient"
-              sequence="5"/>
+    <!-- New Patients Action -->
+    <record id="action_health_patient_new" model="ir.actions.act_window">
+        <field name="name">New Patients</field>
+        <field name="res_model">health.patient</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="health_patient_view_search"/>
+        <field name="domain">[('patient_status', '=', 'new')]</field>
+        <field name="context">{'default_patient_status': 'new'}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No new patients to review!
+            </p>
+            <p>
+                Here you can view and manage newly registered patients who need activation.
+            </p>
+        </field>
+    </record>
+
 </data>
 </odoo>
