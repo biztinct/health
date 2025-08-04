@@ -2,77 +2,57 @@
 <templates>
     <t t-name="health_staff_assignment.AssignmentTimelineView" owl="1">
         <div class="o_assignment_timeline_view" t-ref="timeline">
-            <!-- Timeline Header Controls -->
+            <!-- Ultra-Compact Professional Timeline Header -->
             <div class="o_timeline_controls">
-                <div class="o_controls_left">
-                    <h2 class="o_timeline_title">
-                        <i class="fa fa-calendar-o me-2"/>
-                        Assignment Timeline
-                    </h2>
-                </div>
-                
-                <div class="o_controls_center">
-                    <!-- View Mode Selector -->
-                    <div class="btn-group" role="group">
-                        <button type="button" 
-                                class="btn btn-outline-primary"
-                                t-att-class="state.viewMode === 'day' ? 'btn-primary' : 'btn-outline-primary'"
-                                t-on-click="() => this.onViewModeChange('day')">
-                            Day
-                        </button>
-                        <button type="button" 
-                                class="btn btn-outline-primary"
-                                t-att-class="state.viewMode === 'week' ? 'btn-primary' : 'btn-outline-primary'"
-                                t-on-click="() => this.onViewModeChange('week')">
-                            Week
-                        </button>
-                        <button type="button" 
-                                class="btn btn-outline-primary"
-                                t-att-class="state.viewMode === 'month' ? 'btn-primary' : 'btn-outline-primary'"
-                                t-on-click="() => this.onViewModeChange('month')">
-                            Month
-                        </button>
+                <div class="o_controls_compact_row">
+                    <!-- Title -->
+                    <div class="o_timeline_title_compact">
+                        <i class="fa fa-calendar-o"/>
+                        <span>Timeline</span>
+                    </div>
+                    
+                    <!-- View Mode Pills -->
+                    <div class="o_view_mode_pills">
+                        <span class="o_pill" 
+                              t-att-class="state.viewMode === 'day' ? 'o_pill_active' : ''"
+                              t-on-click="() => this.onViewModeChange('day')">Day</span>
+                        <span class="o_pill" 
+                              t-att-class="state.viewMode === 'week' ? 'o_pill_active' : ''"
+                              t-on-click="() => this.onViewModeChange('week')">Week</span>
+                        <span class="o_pill" 
+                              t-att-class="state.viewMode === 'month' ? 'o_pill_active' : ''"
+                              t-on-click="() => this.onViewModeChange('month')">Month</span>
                     </div>
                     
                     <!-- Navigation -->
-                    <div class="o_timeline_navigation">
-                        <button class="btn btn-outline-secondary" t-on-click="() => this.onNavigate('prev')">
+                    <div class="o_nav_compact">
+                        <button class="o_nav_btn" t-on-click="() => this.onNavigate('prev')">
                             <i class="fa fa-chevron-left"/>
                         </button>
-                        <span class="o_current_period">
+                        <span class="o_current_date">
                             <t t-esc="state.currentDate.toLocaleDateString('en-US', { 
-                                year: 'numeric', 
-                                month: 'long', 
-                                day: state.viewMode === 'day' ? 'numeric' : undefined 
+                                month: 'short', 
+                                day: state.viewMode === 'day' ? 'numeric' : undefined,
+                                year: '2-digit'
                             })"/>
                         </span>
-                        <button class="btn btn-outline-secondary" t-on-click="() => this.onNavigate('next')">
+                        <button class="o_nav_btn" t-on-click="() => this.onNavigate('next')">
                             <i class="fa fa-chevron-right"/>
                         </button>
-                        <button class="btn btn-outline-secondary ms-2" t-on-click="() => this.onNavigate('today')">
-                            Today
-                        </button>
-                    </div>
-                </div>
-                
-                <div class="o_controls_right">
-                    <!-- Zoom Controls -->
-                    <div class="o_zoom_controls">
-                        <button class="btn btn-sm btn-outline-secondary" t-on-click="() => this.onZoomChange(state.zoomLevel * 0.8)">
-                            <i class="fa fa-search-minus"/>
-                        </button>
-                        <span class="o_zoom_level">
-                            <t t-esc="Math.round(state.zoomLevel * 100)"/>%
-                        </span>
-                        <button class="btn btn-sm btn-outline-secondary" t-on-click="() => this.onZoomChange(state.zoomLevel * 1.2)">
-                            <i class="fa fa-search-plus"/>
-                        </button>
+                        <button class="o_today_btn" t-on-click="() => this.onNavigate('today')">Today</button>
                     </div>
                     
-                    <button class="btn btn-primary ms-2" t-on-click="loadData">
-                        <i class="fa fa-refresh me-1"/>
-                        Refresh
-                    </button>
+                    <!-- Zoom & Actions -->
+                    <div class="o_actions_compact">
+                        <div class="o_zoom_compact">
+                            <button class="o_zoom_btn" t-on-click="() => this.onZoomChange(state.zoomLevel * 0.8)">−</button>
+                            <span class="o_zoom_text"><t t-esc="Math.round(state.zoomLevel * 100)"/>%</span>
+                            <button class="o_zoom_btn" t-on-click="() => this.onZoomChange(state.zoomLevel * 1.2)">+</button>
+                        </div>
+                        <button class="o_refresh_btn" t-on-click="loadData">
+                            <i class="fa fa-refresh"/>
+                        </button>
+                    </div>
                 </div>
             </div>
 
@@ -164,6 +144,8 @@
                                         <div class="o_timeline_slot" 
                                              t-att-data-staff-id="staff.id"
                                              t-att-data-time-slot="timeSlot.time"
+                                             t-att-data-slot-index="timeSlot_index"
+                                             t-att-data-slot-datetime="timeSlot.datetime ? timeSlot.datetime.toISOString() : ''"
                                              t-att-style="'left: ' + (timeSlot_index * this.timelineConfig.hourWidth * this.state.zoomLevel) + 'px; width: ' + (this.timelineConfig.hourWidth * this.state.zoomLevel) + 'px; height: ' + this.timelineConfig.rowHeight + 'px'">
                                         </div>
                                     </t>
@@ -174,9 +156,9 @@
                                         <div class="o_timeline_assignment" 
                                              t-att-data-assignment-id="assignment.id"
                                              t-att-class="'o_priority_' + assignment.priority + ' o_state_' + assignment.state"
-                                             t-att-style="'left: ' + this.getAssignmentPosition(assignment).left + 'px; width: ' + this.getAssignmentPosition(assignment).width + 'px; height: ' + (this.timelineConfig.rowHeight - 10) + 'px; top: 5px'"
+                                             t-att-style="'left: ' + this.getAssignmentPosition(assignment, staff.id).left + 'px; width: ' + this.getAssignmentPosition(assignment, staff.id).width + 'px; height: ' + this.getAssignmentPosition(assignment, staff.id).height + 'px; top: ' + this.getAssignmentPosition(assignment, staff.id).top + 'px'"
                                              draggable="true"
-                                             t-on-click="() => this.openAssignmentDetails(assignment.id)">
+                                             title="Click to open details, drag to move">
                                             
                                             <!-- Assignment Content -->
                                             <div class="o_assignment_block">

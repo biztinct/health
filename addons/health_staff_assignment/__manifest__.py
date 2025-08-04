@@ -54,8 +54,7 @@
         'views/assignment_scheduler_grid.xml',   # Visual date/time grid scheduler
         'views/assignment_timeline_views.xml',   # Professional timeline/Gantt view
         'views/healthcare_skill_views.xml',      # Healthcare skills and service areas
-        'views/health_staff_availability_views.xml',
-        'views/health_staff_simple_availability_views.xml',  # Simple staff availability views
+        'views/health_staff_availability_views.xml',  # Staff availability views
         'views/health_staff_assignment_views.xml',
         'views/staff_workload_dashboard_views.xml',  # Visual workload management dashboard
         

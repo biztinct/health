@@ -41,7 +41,7 @@
     <record id="menu_staff_availability" model="ir.ui.menu">
         <field name="name">Staff Availability</field>
         <field name="parent_id" ref="menu_health_staff_assignment_root"/>
-        <field name="action" ref="action_health_staff_simple_availability"/>
+        <field name="action" ref="action_health_staff_availability"/>
         <field name="sequence">30</field>
     </record>
 

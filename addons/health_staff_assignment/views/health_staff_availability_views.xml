@@ -1,32 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+
 <data>
 
     <!-- =====================================================================
-         Staff Availability Matrix Views
+         Staff Availability Views (health.staff.availability)
          ===================================================================== -->
 
     <!-- List View -->
     <record id="view_health_staff_availability_list" model="ir.ui.view">
-        <field name="name">health.staff.availability.matrix.list</field>
-        <field name="model">health.staff.availability.matrix</field>
+        <field name="name">health.staff.availability.list</field>
+        <field name="model">health.staff.availability</field>
         <field name="arch" type="xml">
-            <list string="Staff Availability Matrix" create="true" edit="true" delete="true"
-                  decoration-success="status == 'available'"
-                  decoration-warning="status in ('tentative', 'break')"
-                  decoration-danger="status in ('booked', 'blocked')"
-                  decoration-info="status == 'travel'">
+            <list string="Staff Availability" create="true" edit="true" delete="true"
+                  decoration-success="availability_type == 'available'"
+                  decoration-warning="availability_type in ('busy', 'training')"
+                  decoration-danger="availability_type in ('off', 'sick_leave')"
+                  decoration-info="availability_type == 'vacation'">
                 
+                <field name="name"/>
                 <field name="staff_id"/>
-                <field name="availability_date"/>
-                <field name="start_time" widget="float_time"/>
-                <field name="end_time" widget="float_time"/>
-                <field name="status"/>
-                <field name="capacity"/>
-                <field name="booked_count"/>
-                <field name="remaining_capacity"/>
-                <field name="conflict_detected" optional="hide"/>
-                <field name="location_type" optional="hide"/>
+                <field name="date_start"/>
+                <field name="date_end"/>
+                <field name="availability_type"/>
+                <field name="recurring" optional="hide"/>
+                <field name="recurring_rule" optional="hide"/>
                 
             </list>
         </field>
@@ -34,90 +32,147 @@
 
     <!-- Form View -->
     <record id="view_health_staff_availability_form" model="ir.ui.view">
-        <field name="name">health.staff.availability.matrix.form</field>
-        <field name="model">health.staff.availability.matrix</field>
+        <field name="name">health.staff.availability.form</field>
+        <field name="model">health.staff.availability</field>
         <field name="arch" type="xml">
             <form string="Staff Availability">
+                <header>
+                    <field name="availability_type" widget="statusbar" 
+                           statusbar_visible="available,busy,off,vacation,sick_leave,training"
+                           clickable="1"/>
+                </header>
                 <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" readonly="1" class="text-break"/>
+                        </h1>
+                        <h2 class="text-muted">
+                            <field name="staff_id" required="1" options="{'no_create': True}"/>
+                        </h2>
+                    </div>
+
+                    <div class="o_row">
+                        <div class="o_col">
+                            <div class="alert alert-info" role="alert" invisible="availability_type != 'available'">
+                                <i class="fa fa-calendar-check-o"/> Staff will be available for appointments during this period
+                            </div>
+                            <div class="alert alert-warning" role="alert" invisible="availability_type not in ('off', 'vacation', 'sick_leave')">
+                                <i class="fa fa-exclamation-triangle"/> Staff will not be available during this period
+                            </div>
+                            <div class="alert alert-secondary" role="alert" invisible="availability_type not in ('busy', 'training')">
+                                <i class="fa fa-clock-o"/> Staff has limited availability during this period
+                            </div>
+                        </div>
+                    </div>
+
                     <group>
-                        <group string="Basic Information">
-                            <field name="staff_id"/>
-                            <field name="availability_date"/>
-                            <field name="status"/>
+                        <group string="📅 Schedule Details" class="o_label_nowrap">
+                            <field name="date_start" required="1" 
+                                   widget="datetime" string="From"/>
+                            <field name="date_end" required="1" 
+                                   widget="datetime" string="To"/>
+                            <field name="facility_id" 
+                                   invisible="availability_type not in ('available', 'busy')" 
+                                   options="{'no_create': True}"
+                                   string="Location"/>
                         </group>
-                        <group string="Time Slot">
-                            <field name="start_time" widget="float_time"/>
-                            <field name="end_time" widget="float_time"/>
-                            <field name="capacity"/>
-                            <field name="booked_count"/>
-                            <field name="remaining_capacity"/>
-                        </group>
-                    </group>
-                    
-                    <group>
-                        <group string="Assignment Details" invisible="status not in ('booked', 'tentative')">
-                            <field name="appointment_id"/>
-                            <field name="assignment_id"/>
-                            <field name="location_type"/>
-                        </group>
-                        <group string="Buffer Management">
-                            <field name="buffer_before"/>
-                            <field name="buffer_after"/>
-                            <field name="conflict_detected"/>
+                        <group string="📊 Summary" class="o_label_nowrap">
+                            <field name="color" widget="color"/>
                         </group>
                     </group>
                     
-                    <group string="Travel Information" invisible="location_type != 'home'">
-                        <field name="travel_time_from_previous"/>
-                        <field name="travel_time_to_next"/>
-                    </group>
-                    
-                    <group string="Conflict Details" invisible="not conflict_detected">
-                        <field name="conflict_details" readonly="1"/>
-                    </group>
-                    
+                    <notebook>
+                        <page string="🔄 Recurring Schedule" name="recurring">
+                            <div class="alert alert-info" role="alert" invisible="not recurring">
+                                <strong><i class="fa fa-repeat"/> Recurring Schedule Active</strong><br/>
+                                This availability will automatically create multiple occurrences based on your settings.
+                            </div>
+                            
+                            <group>
+                                <group string="Recurrence Settings">
+                                    <field name="recurring" string="Enable Recurring"/>
+                                    <field name="recurring_rule" 
+                                           invisible="not recurring"
+                                           required="recurring"
+                                           widget="radio" 
+                                           options="{'horizontal': true}"
+                                           string="Repeat Every"/>
+                                </group>
+                                <group string="End Conditions" invisible="not recurring">
+                                    <label for="recurring_until" string="Stop Recurring"/>
+                                    <div class="o_row">
+                                        <field name="recurring_until" 
+                                               placeholder="Until specific date" 
+                                               class="oe_inline" nolabel="1"/>
+                                        <span class="mx-2 text-muted font-weight-bold">OR</span>
+                                        <field name="recurring_count" 
+                                               placeholder="# of times" 
+                                               class="oe_inline" nolabel="1"/>
+                                        <span class="text-muted ml-1">occurrences</span>
+                                    </div>
+                                    <div class="text-muted small mt-2" invisible="not recurring">
+                                        💡 <em>Specify either an end date OR number of occurrences</em>
+                                    </div>
+                                </group>
+                            </group>
+                        </page>
+                        
+                        <page string="📝 Notes" name="notes">
+                            <group>
+                                <field name="notes" nolabel="1" 
+                                       placeholder="Add any special instructions, requirements, or notes about this availability period..."
+                                       widget="text"/>
+                            </group>
+                        </page>
+                    </notebook>
                 </sheet>
+                <chatter/>
             </form>
         </field>
     </record>
 
-    <!-- Calendar View - Temporarily disabled due to field type compatibility issues -->
-     <record id="view_health_staff_availability_calendar" model="ir.ui.view">
-        <field name="name">health.staff.availability.matrix.calendar</field>
-        <field name="model">health.staff.availability.matrix</field>
+    <!-- Calendar View -->
+    <record id="view_health_staff_availability_calendar" model="ir.ui.view">
+        <field name="name">health.staff.availability.calendar</field>
+        <field name="model">health.staff.availability</field>
         <field name="arch" type="xml">
             <calendar string="Staff Availability Calendar" 
-                      date_start="availability_date" 
-                      color="status"
-                      mode="week">
+                      date_start="date_start" 
+                      date_stop="date_end"
+                      color="color"
+                      mode="week"
+                      quick_create="true"
+                      event_open_popup="true">
                 <field name="staff_id"/>
-                <field name="start_time"/>
-                <field name="end_time"/>
-                <field name="status"/>
+                <field name="availability_type"/>
+                <field name="facility_id"/>
             </calendar>
         </field>
     </record>
 
     <!-- Search View -->
     <record id="view_health_staff_availability_search" model="ir.ui.view">
-        <field name="name">health.staff.availability.matrix.search</field>
-        <field name="model">health.staff.availability.matrix</field>
+        <field name="name">health.staff.availability.search</field>
+        <field name="model">health.staff.availability</field>
         <field name="arch" type="xml">
             <search string="Staff Availability Search">
                 <field name="staff_id"/>
-                <field name="availability_date"/>
-                <field name="status"/>
+                <field name="availability_type"/>
+                <field name="date_start"/>
+                <field name="date_end"/>
                 
-                <filter string="Available" name="available" domain="[('status', '=', 'available')]"/>
-                <filter string="Booked" name="booked" domain="[('status', '=', 'booked')]"/>
-                <filter string="Conflicts" name="conflicts" domain="[('conflict_detected', '=', True)]"/>
-                <filter string="Today" name="today" 
-                        domain="[('availability_date', '=', context_today())]"/>
+                <filter string="Available" name="available" domain="[('availability_type', '=', 'available')]"/>
+                <filter string="Busy/Booked" name="busy" domain="[('availability_type', '=', 'busy')]"/>
+                <filter string="Off/Vacation" name="off" domain="[('availability_type', 'in', ('off', 'vacation', 'sick_leave'))]"/>
+                <filter string="This Week" name="this_week" 
+                        domain="[('date_start', '>=', (context_today() - datetime.timedelta(days=context_today().weekday())).strftime('%Y-%m-%d')),
+                                 ('date_start', '&lt;', (context_today() + datetime.timedelta(days=(6-context_today().weekday()))).strftime('%Y-%m-%d'))]"/>
+                <filter string="Recurring" name="recurring" domain="[('recurring', '=', True)]"/>
                 
                 <group expand="0" string="Group By">
                     <filter string="Staff" name="group_by_staff" context="{'group_by': 'staff_id'}"/>
-                    <filter string="Date" name="group_by_date" context="{'group_by': 'availability_date'}"/>
-                    <filter string="Status" name="group_by_status" context="{'group_by': 'status'}"/>
+                    <filter string="Availability Type" name="group_by_type" context="{'group_by': 'availability_type'}"/>
+                    <filter string="Date" name="group_by_date" context="{'group_by': 'date_start:day'}"/>
                 </group>
             </search>
         </field>
@@ -126,23 +181,23 @@
     <!-- Action -->
     <record id="action_health_staff_availability" model="ir.actions.act_window">
         <field name="name">Staff Availability</field>
-        <field name="res_model">health.staff.availability.matrix</field>
+        <field name="res_model">health.staff.availability</field>
         <field name="view_mode">calendar,list,form</field>
-        <field name="context">{'search_default_today': 1}</field>
+        <field name="context">{'search_default_this_week': 1}</field>
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">
                 No availability records found!
             </p>
             <p>
-                Staff availability is automatically managed by the assignment system.
-                You can manually block time slots or adjust capacity as needed.
+                Create availability schedules for staff members to manage their working hours,
+                time off, and recurring schedules.
+            </p>
+            <p>
+                <strong>Tip:</strong> Use the recurring option to automatically create 
+                multiple availability records for daily, weekly, or monthly schedules.
             </p>
         </field>
     </record>
-
-    <!-- Note: Healthcare Skills and Service Areas views are now defined in healthcare_skill_views.xml
-         to avoid duplicate view definitions and field naming conflicts. -->
-
 
 </data>
 </odoo>

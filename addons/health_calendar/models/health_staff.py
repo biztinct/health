@@ -628,9 +628,13 @@ class HealthStaffAvailability(models.Model):
                 else:
                     current_start = current_start.replace(month=current_start.month + 1)
             
-            # Check if we've exceeded the until date
+            # Check if we've exceeded the until date BEFORE creating the record
             if recurring_until and current_start.date() > recurring_until:
                 break
+            
+            # If recurring_until is set, ignore recurring_count limit
+            if recurring_until:
+                recurring_count = 1000  # Set high limit to rely on date check
             
             # Create the recurring record
             recurring_vals = {

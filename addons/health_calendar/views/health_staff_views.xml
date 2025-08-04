@@ -301,27 +301,58 @@
         <field name="model">health.staff.availability</field>
         <field name="arch" type="xml">
             <form string="Staff Availability">
+                <header>
+                    <field name="availability_type" widget="statusbar" 
+                           statusbar_visible="available,busy,off,vacation,sick_leave,training"
+                           clickable="1"/>
+                </header>
                 <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" readonly="1" class="text-break"/>
+                        </h1>
+                    </div>
+
                     <group>
-                        <group>
-                            <field name="staff_id"/>
-                            <field name="availability_type"/>
-                            <field name="facility_id"/>
+                        <group string="📋 Basic Information">
+                            <field name="staff_id" options="{'no_create': True}"/>
+                            <field name="facility_id" invisible="availability_type not in ('available', 'busy')" 
+                                   options="{'no_create': True}"/>
                         </group>
-                        <group>
+                        <group string="⏰ Time Period">
                             <field name="date_start"/>
                             <field name="date_end"/>
                         </group>
                     </group>
                     
-                    <group string="Recurring Schedule" invisible="availability_type != 'available'">
+                    <div class="alert alert-info" role="alert" invisible="not recurring">
+                        <i class="fa fa-repeat"/> This is a recurring availability schedule
+                    </div>
+                    
+                    <group string="🔄 Recurring Schedule">
                         <group>
                             <field name="recurring"/>
-                            <field name="recurring_rule" invisible="not recurring"/>
+                            <field name="recurring_rule" invisible="not recurring" 
+                                   widget="radio" options="{'horizontal': true}"/>
+                        </group>
+                        <group invisible="not recurring">
+                            <label for="recurring_until" string="End Recurrence"/>
+                            <div class="o_row">
+                                <field name="recurring_until" placeholder="Until specific date" 
+                                       class="oe_inline" nolabel="1"/>
+                                <span class="mx-2 text-muted"> OR </span>
+                                <field name="recurring_count" placeholder="# occurrences" 
+                                       class="oe_inline" nolabel="1"/>
+                                <span class="text-muted"> times</span>
+                            </div>
                         </group>
                     </group>
-                    
-                    <field name="notes" placeholder="Additional notes about this availability period..."/>
+
+                    <separator string="Additional Information"/>
+                    <group>
+                        <field name="notes" nolabel="1" 
+                               placeholder="Additional notes about this availability period (optional)..."/>
+                    </group>
                 </sheet>
             </form>
         </field>
