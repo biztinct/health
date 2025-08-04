@@ -4,6 +4,8 @@
     padding: 20px;
     background: #f8f9fa;
     min-height: 100vh;
+    overflow-y: auto;
+    max-height: 100vh;
 }
 
 /* Header Styles */
@@ -242,6 +244,26 @@
 .o_assignments_container {
     max-height: 400px;
     overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #adb5bd #f8f9fa;
+}
+
+.o_assignments_container::-webkit-scrollbar {
+    width: 6px;
+}
+
+.o_assignments_container::-webkit-scrollbar-track {
+    background: #f8f9fa;
+    border-radius: 3px;
+}
+
+.o_assignments_container::-webkit-scrollbar-thumb {
+    background: #adb5bd;
+    border-radius: 3px;
+}
+
+.o_assignments_container::-webkit-scrollbar-thumb:hover {
+    background: #6c757d;
 }
 
 .o_assignments_header {

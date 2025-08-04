@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+<data>
+
+    <!-- =====================================================================
+         Simple Staff Availability Views (health.staff.availability)
+         ===================================================================== -->
+
+    <!-- List View -->
+    <record id="view_health_staff_simple_availability_list" model="ir.ui.view">
+        <field name="name">health.staff.availability.list</field>
+        <field name="model">health.staff.availability</field>
+        <field name="arch" type="xml">
+            <list string="Staff Availability" create="true" edit="true" delete="true"
+                  decoration-success="availability_type == 'available'"
+                  decoration-warning="availability_type in ('busy', 'training')"
+                  decoration-danger="availability_type in ('off', 'sick_leave')"
+                  decoration-info="availability_type == 'vacation'">
+                
+                <field name="name"/>
+                <field name="staff_id"/>
+                <field name="date_start"/>
+                <field name="date_end"/>
+                <field name="availability_type"/>
+                <field name="recurring" optional="hide"/>
+                <field name="recurring_rule" optional="hide"/>
+                
+            </list>
+        </field>
+    </record>
+
+    <!-- Form View -->
+    <record id="view_health_staff_simple_availability_form" model="ir.ui.view">
+        <field name="name">health.staff.availability.form</field>
+        <field name="model">health.staff.availability</field>
+        <field name="arch" type="xml">
+            <form string="Staff Availability">
+                <sheet>
+                    <group>
+                        <group string="Basic Information">
+                            <field name="staff_id" required="1"/>
+                            <field name="availability_type" required="1"/>
+                            <field name="facility_id" invisible="availability_type not in ('available', 'busy')"/>
+                        </group>
+                        <group string="Time Period">
+                            <field name="date_start" required="1"/>
+                            <field name="date_end" required="1"/>
+                        </group>
+                    </group>
+                    
+                    <group string="Recurring Schedule">
+                        <group>
+                            <field name="recurring"/>
+                            <field name="recurring_rule" required="recurring" invisible="not recurring"/>
+                        </group>
+                        <group>
+                            <label for="recurring_until" string="End Recurrence" invisible="not recurring"/>
+                            <div invisible="not recurring">
+                                <field name="recurring_until" placeholder="Until specific date" class="oe_inline"/>
+                                <span class="o_form_label"> OR </span>
+                                <field name="recurring_count" placeholder="Number of occurrences" class="oe_inline"/>
+                            </div>
+                        </group>
+                    </group>
+                    
+                    <group string="Additional Information">
+                        <field name="notes" colspan="2"/>
+                    </group>
+                    
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Calendar View -->
+    <record id="view_health_staff_simple_availability_calendar" model="ir.ui.view">
+        <field name="name">health.staff.availability.calendar</field>
+        <field name="model">health.staff.availability</field>
+        <field name="arch" type="xml">
+            <calendar string="Staff Availability Calendar" 
+                      date_start="date_start" 
+                      date_stop="date_end"
+                      color="color"
+                      mode="week"
+                      quick_create="true"
+                      event_open_popup="true">
+                <field name="staff_id"/>
+                <field name="availability_type"/>
+                <field name="facility_id"/>
+            </calendar>
+        </field>
+    </record>
+
+    <!-- Search View -->
+    <record id="view_health_staff_simple_availability_search" model="ir.ui.view">
+        <field name="name">health.staff.availability.search</field>
+        <field name="model">health.staff.availability</field>
+        <field name="arch" type="xml">
+            <search string="Staff Availability Search">
+                <field name="staff_id"/>
+                <field name="availability_type"/>
+                <field name="date_start"/>
+                <field name="date_end"/>
+                
+                <filter string="Available" name="available" domain="[('availability_type', '=', 'available')]"/>
+                <filter string="Busy/Booked" name="busy" domain="[('availability_type', '=', 'busy')]"/>
+                <filter string="Off/Vacation" name="off" domain="[('availability_type', 'in', ('off', 'vacation', 'sick_leave'))]"/>
+                <filter string="This Week" name="this_week" 
+                        domain="[('date_start', '>=', (context_today() - datetime.timedelta(days=context_today().weekday())).strftime('%Y-%m-%d')),
+                                 ('date_start', '&lt;', (context_today() + datetime.timedelta(days=(6-context_today().weekday()))).strftime('%Y-%m-%d'))]"/>
+                <filter string="Recurring" name="recurring" domain="[('recurring', '=', True)]"/>
+                
+                <group expand="0" string="Group By">
+                    <filter string="Staff" name="group_by_staff" context="{'group_by': 'staff_id'}"/>
+                    <filter string="Availability Type" name="group_by_type" context="{'group_by': 'availability_type'}"/>
+                    <filter string="Date" name="group_by_date" context="{'group_by': 'date_start:day'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="action_health_staff_simple_availability" model="ir.actions.act_window">
+        <field name="name">Staff Availability</field>
+        <field name="res_model">health.staff.availability</field>
+        <field name="view_mode">calendar,list,form</field>
+        <field name="context">{'search_default_this_week': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No availability records found!
+            </p>
+            <p>
+                Create availability schedules for staff members to manage their working hours,
+                time off, and recurring schedules.
+            </p>
+            <p>
+                <strong>Tip:</strong> Use the recurring option to automatically create 
+                multiple availability records for daily, weekly, or monthly schedules.
+            </p>
+        </field>
+    </record>
+
+</data>
+</odoo>

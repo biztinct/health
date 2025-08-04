@@ -1,6 +1,6 @@
 from odoo import models, fields, api, _
 from odoo.exceptions import ValidationError
-from datetime import timedelta
+from datetime import timedelta, datetime
 
 
 class HealthStaff(models.Model):
@@ -328,6 +328,137 @@ class HealthStaff(models.Model):
                 'total_assignments': len(all_assignments),
             }
         }
+    
+    @api.model
+    def get_timeline_data(self, date=None, view_mode='week', include_assignments=True):
+        """Get timeline data for assignment timeline view"""
+        
+        if not date:
+            date = fields.Date.today()
+        else:
+            date = fields.Date.from_string(date)
+        
+        # Calculate date range based on view mode
+        if view_mode == 'day':
+            date_from = date_to = date
+        elif view_mode == 'week':
+            # Get start of week (Monday)
+            days_since_monday = date.weekday()
+            date_from = date - timedelta(days=days_since_monday)
+            date_to = date_from + timedelta(days=6)
+        elif view_mode == 'month':
+            date_from = date.replace(day=1)
+            # Get last day of month
+            if date.month == 12:
+                date_to = date.replace(year=date.year + 1, month=1, day=1) - timedelta(days=1)
+            else:
+                date_to = date.replace(month=date.month + 1, day=1) - timedelta(days=1)
+        else:
+            date_from = date_to = date
+        
+        # Get active staff members
+        staff_members = self.search([
+            ('employment_status', '=', 'active')
+        ])
+        
+        staff_data = []
+        all_assignments = []
+        
+        for staff in staff_members:
+            # Get staff assignments in the date range
+            assignments = []
+            if include_assignments:
+                assignments = self.env['health.staff.assignment'].search([
+                    '|',
+                    ('assigned_staff_ids', 'in', [staff.id]),
+                    ('lead_staff_id', '=', staff.id),
+                    ('assignment_date', '>=', date_from),
+                    ('assignment_date', '<=', date_to)
+                ])
+                
+                # Add to all assignments list
+                for assignment in assignments:
+                    # Calculate assignment start/end times
+                    assignment_datetime = assignment.assignment_date
+                    if hasattr(assignment_datetime, 'date'):
+                        assignment_date = assignment_datetime.date()
+                    else:
+                        assignment_date = assignment_datetime
+                    
+                    # For timeline, we need proper start and end datetimes
+                    if assignment.appointment_id:
+                        # Use appointment datetime if available
+                        if hasattr(assignment.appointment_id, 'appointment_datetime') and assignment.appointment_id.appointment_datetime:
+                            start_datetime = assignment.appointment_id.appointment_datetime
+                            duration_minutes = getattr(assignment.appointment_id, 'duration_minutes', 60)
+                        else:
+                            # Fallback to assignment date with default time (9 AM)
+                            start_datetime = datetime.combine(assignment_date, datetime.min.time().replace(hour=9))
+                            duration_minutes = 60
+                    else:
+                        # No appointment - use assignment date with default time
+                        start_datetime = datetime.combine(assignment_date, datetime.min.time().replace(hour=9))
+                        duration_minutes = 60
+                    
+                    end_datetime = start_datetime + timedelta(minutes=duration_minutes)
+                    
+                    all_assignments.append({
+                        'id': assignment.id,
+                        'name': assignment.name,
+                        'state': assignment.state,
+                        'priority': assignment.priority,
+                        'assignment_type': assignment.assignment_type,
+                        'assignment_date': assignment_date.isoformat(),
+                        'start_datetime': start_datetime.isoformat() if hasattr(start_datetime, 'isoformat') else str(start_datetime),
+                        'end_datetime': end_datetime.isoformat() if hasattr(end_datetime, 'isoformat') else str(end_datetime),
+                        'assigned_staff_ids': assignment.assigned_staff_ids.ids,
+                        'lead_staff_id': assignment.lead_staff_id.id if assignment.lead_staff_id else None,
+                        'appointment_id': assignment.appointment_id.id if assignment.appointment_id else None,
+                        'appointment_name': assignment.appointment_id.name if assignment.appointment_id else None,
+                        'estimated_duration': duration_minutes,
+                    })
+            
+            # Calculate current workload
+            total_assignments = len(assignments)
+            active_assignments = len(assignments.filtered(lambda a: a.state in ['assigned', 'confirmed', 'in_progress']))
+            
+            # Simplified workload calculation
+            max_daily_capacity = staff.max_appointments_per_day or 8
+            days_in_range = (date_to - date_from).days + 1
+            avg_daily_assignments = total_assignments / days_in_range if days_in_range > 0 else 0
+            workload_percentage = (avg_daily_assignments / max_daily_capacity) * 100 if max_daily_capacity > 0 else 0
+            workload_percentage = min(workload_percentage, 150)  # Cap at 150%
+            
+            staff_data.append({
+                'id': staff.id,
+                'name': staff.name,
+                'staff_code': staff.staff_code,
+                'staff_type': staff.staff_type,
+                'employment_status': staff.employment_status,
+                'workload_percentage': workload_percentage,
+                'active_assignments': active_assignments,
+                'total_assignments': total_assignments,
+                'max_daily_capacity': max_daily_capacity,
+                'email': staff.email,
+                'mobile': staff.mobile,
+            })
+        
+        return {
+            'staff_members': staff_data,
+            'assignments': all_assignments,
+            'date_range': {
+                'from': date_from.isoformat(),
+                'to': date_to.isoformat(),
+                'view_mode': view_mode,
+                'current_date': date.isoformat()
+            },
+            'timeline_config': {
+                'hour_width': 60,
+                'row_height': 80,
+                'min_duration': 15,
+                'snap_to_grid': 15
+            }
+        }
 
 
 class HealthSpecialization(models.Model):
@@ -352,6 +483,7 @@ class HealthStaffAvailability(models.Model):
     _description = 'Staff Availability'
     _order = 'date_start desc'
     
+    name = fields.Char('Name', compute='_compute_name', store=True)
     staff_id = fields.Many2one('health.staff', string='Staff Member', required=True, ondelete='cascade')
     date_start = fields.Datetime('Start Date & Time', required=True)
     date_end = fields.Datetime('End Date & Time', required=True)
@@ -375,8 +507,26 @@ class HealthStaffAvailability(models.Model):
         ('weekly', 'Weekly'),
         ('monthly', 'Monthly')
     ], string='Recurring Rule')
+    recurring_until = fields.Date('Recur Until', help='End date for recurring availability')
+    recurring_count = fields.Integer('Number of Occurrences', default=1, help='How many times to repeat')
     
     color = fields.Integer('Color', compute='_compute_color')
+    
+    @api.depends('staff_id', 'availability_type', 'date_start', 'date_end')
+    def _compute_name(self):
+        """Compute display name for availability records"""
+        for record in self:
+            if record.staff_id and record.date_start and record.date_end:
+                staff_name = record.staff_id.name or 'Unknown Staff'
+                availability_type = dict(record._fields['availability_type'].selection).get(record.availability_type, record.availability_type)
+                
+                # Format dates
+                start_date = record.date_start.strftime('%Y-%m-%d %H:%M') if record.date_start else ''
+                end_date = record.date_end.strftime('%Y-%m-%d %H:%M') if record.date_end else ''
+                
+                record.name = f"{staff_name} - {availability_type} ({start_date} to {end_date})"
+            else:
+                record.name = 'Staff Availability'
     
     @api.depends('availability_type')
     def _compute_color(self):
@@ -399,3 +549,108 @@ class HealthStaffAvailability(models.Model):
         for record in self:
             if record.date_end <= record.date_start:
                 raise ValidationError(_('End date must be after start date'))
+    
+    @api.constrains('recurring', 'recurring_until', 'recurring_count')
+    def _check_recurring_params(self):
+        """Validate recurring parameters"""
+        for record in self:
+            if record.recurring:
+                if not record.recurring_rule:
+                    raise ValidationError(_('Recurring rule is required when recurring is enabled'))
+                if not record.recurring_until and not record.recurring_count:
+                    raise ValidationError(_('Either "Recur Until" date or "Number of Occurrences" must be specified for recurring availability'))
+    
+    @api.model_create_multi
+    def create(self, vals_list):
+        """Create availability records with recurring support"""
+        records = super().create(vals_list)
+        
+        # Handle recurring for each created record
+        for record in records:
+            if record.recurring and record.recurring_rule:
+                self._create_recurring_records(record, record._get_vals_dict())
+        
+        return records
+    
+    def _get_vals_dict(self):
+        """Get record values as dictionary for recurring creation"""
+        return {
+            'staff_id': self.staff_id.id,
+            'availability_type': self.availability_type,
+            'facility_id': self.facility_id.id if self.facility_id else False,
+            'notes': self.notes or '',
+            'recurring': self.recurring,
+            'recurring_rule': self.recurring_rule,
+            'recurring_until': self.recurring_until,
+            'recurring_count': self.recurring_count,
+        }
+    
+    def write(self, vals):
+        """Update availability records"""
+        result = super().write(vals)
+        
+        # If recurring settings changed, recreate recurring records
+        if any(key in vals for key in ['recurring', 'recurring_rule', 'recurring_until', 'recurring_count']):
+            for record in self:
+                if record.recurring and record.recurring_rule:
+                    # Remove existing recurring records (those created by this record)
+                    self._remove_recurring_records(record)
+                    # Create new recurring records
+                    self._create_recurring_records(record, vals)
+        
+        return result
+    
+    def _create_recurring_records(self, base_record, vals):
+        """Create recurring availability records"""
+        if not base_record.recurring or not base_record.recurring_rule:
+            return
+        
+        recurring_rule = base_record.recurring_rule
+        recurring_until = base_record.recurring_until
+        recurring_count = base_record.recurring_count or 10  # Default to 10 if not specified
+        
+        # Calculate duration
+        duration = base_record.date_end - base_record.date_start
+        
+        created_count = 0
+        current_start = base_record.date_start
+        
+        while created_count < recurring_count:
+            # Calculate next occurrence
+            if recurring_rule == 'daily':
+                current_start = current_start + timedelta(days=1)
+            elif recurring_rule == 'weekly':
+                current_start = current_start + timedelta(weeks=1)
+            elif recurring_rule == 'monthly':
+                # Add one month (approximate)
+                if current_start.month == 12:
+                    current_start = current_start.replace(year=current_start.year + 1, month=1)
+                else:
+                    current_start = current_start.replace(month=current_start.month + 1)
+            
+            # Check if we've exceeded the until date
+            if recurring_until and current_start.date() > recurring_until:
+                break
+            
+            # Create the recurring record
+            recurring_vals = {
+                'staff_id': base_record.staff_id.id,
+                'date_start': current_start,
+                'date_end': current_start + duration,
+                'availability_type': base_record.availability_type,
+                'facility_id': base_record.facility_id.id if base_record.facility_id else False,
+                'notes': base_record.notes or '',
+                'recurring': False,  # Don't make recurring records themselves recurring
+                'color': base_record.color,
+            }
+            
+            # Create without triggering recursion
+            super(HealthStaffAvailability, self).create([recurring_vals])
+            created_count += 1
+    
+    def _remove_recurring_records(self, base_record):
+        """Remove recurring records created by this base record"""
+        # This is a simplified version - in a full implementation,
+        # you'd track which records were created by which base record
+        # For now, we won't remove existing records to avoid data loss
+        pass

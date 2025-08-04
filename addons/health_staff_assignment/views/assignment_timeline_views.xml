@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+<data>
+    <!-- Assignment Timeline View Action -->
+    <record id="action_assignment_timeline_view" model="ir.actions.client">
+        <field name="name">Assignment Timeline</field>
+        <field name="tag">assignment_timeline_view</field>
+        <field name="target">current</field>
+    </record>
+
+    <!-- Menu Item -->
+    <menuitem 
+        id="menu_assignment_timeline"
+        name="Assignment Timeline"
+        parent="menu_health_staff_assignment_root"
+        action="action_assignment_timeline_view"
+        sequence="5"/>
+
+</data>
+</odoo>

@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates>
+    <t t-name="health_staff_assignment.AssignmentTimelineView" owl="1">
+        <div class="o_assignment_timeline_view" t-ref="timeline">
+            <!-- Timeline Header Controls -->
+            <div class="o_timeline_controls">
+                <div class="o_controls_left">
+                    <h2 class="o_timeline_title">
+                        <i class="fa fa-calendar-o me-2"/>
+                        Assignment Timeline
+                    </h2>
+                </div>
+                
+                <div class="o_controls_center">
+                    <!-- View Mode Selector -->
+                    <div class="btn-group" role="group">
+                        <button type="button" 
+                                class="btn btn-outline-primary"
+                                t-att-class="state.viewMode === 'day' ? 'btn-primary' : 'btn-outline-primary'"
+                                t-on-click="() => this.onViewModeChange('day')">
+                            Day
+                        </button>
+                        <button type="button" 
+                                class="btn btn-outline-primary"
+                                t-att-class="state.viewMode === 'week' ? 'btn-primary' : 'btn-outline-primary'"
+                                t-on-click="() => this.onViewModeChange('week')">
+                            Week
+                        </button>
+                        <button type="button" 
+                                class="btn btn-outline-primary"
+                                t-att-class="state.viewMode === 'month' ? 'btn-primary' : 'btn-outline-primary'"
+                                t-on-click="() => this.onViewModeChange('month')">
+                            Month
+                        </button>
+                    </div>
+                    
+                    <!-- Navigation -->
+                    <div class="o_timeline_navigation">
+                        <button class="btn btn-outline-secondary" t-on-click="() => this.onNavigate('prev')">
+                            <i class="fa fa-chevron-left"/>
+                        </button>
+                        <span class="o_current_period">
+                            <t t-esc="state.currentDate.toLocaleDateString('en-US', { 
+                                year: 'numeric', 
+                                month: 'long', 
+                                day: state.viewMode === 'day' ? 'numeric' : undefined 
+                            })"/>
+                        </span>
+                        <button class="btn btn-outline-secondary" t-on-click="() => this.onNavigate('next')">
+                            <i class="fa fa-chevron-right"/>
+                        </button>
+                        <button class="btn btn-outline-secondary ms-2" t-on-click="() => this.onNavigate('today')">
+                            Today
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="o_controls_right">
+                    <!-- Zoom Controls -->
+                    <div class="o_zoom_controls">
+                        <button class="btn btn-sm btn-outline-secondary" t-on-click="() => this.onZoomChange(state.zoomLevel * 0.8)">
+                            <i class="fa fa-search-minus"/>
+                        </button>
+                        <span class="o_zoom_level">
+                            <t t-esc="Math.round(state.zoomLevel * 100)"/>%
+                        </span>
+                        <button class="btn btn-sm btn-outline-secondary" t-on-click="() => this.onZoomChange(state.zoomLevel * 1.2)">
+                            <i class="fa fa-search-plus"/>
+                        </button>
+                    </div>
+                    
+                    <button class="btn btn-primary ms-2" t-on-click="loadData">
+                        <i class="fa fa-refresh me-1"/>
+                        Refresh
+                    </button>
+                </div>
+            </div>
+
+            <!-- Loading State -->
+            <div t-if="state.isLoading" class="o_timeline_loading">
+                <div class="text-center py-5">
+                    <i class="fa fa-spinner fa-spin fa-3x text-muted"/>
+                    <p class="text-muted mt-3">Loading timeline data...</p>
+                </div>
+            </div>
+
+            <!-- Timeline Content -->
+            <div t-else="" class="o_timeline_content">
+                <!-- Timeline Header with Time Slots -->
+                <div class="o_timeline_header">
+                    <div class="o_timeline_header_left">
+                        <div class="o_staff_header_cell">
+                            <span class="o_header_label">Staff Members</span>
+                        </div>
+                    </div>
+                    <div class="o_timeline_header_right">
+                        <div class="o_time_header_container">
+                            <t t-foreach="state.timeSlots" t-as="timeSlot" t-key="timeSlot_index">
+                                <div class="o_time_header_cell" 
+                                     t-att-style="'width: ' + (this.timelineConfig.hourWidth * this.state.zoomLevel) + 'px'">
+                                    <div class="o_time_label">
+                                        <t t-esc="timeSlot.time"/>
+                                    </div>
+                                </div>
+                            </t>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Timeline Body with Staff Rows -->
+                <div class="o_timeline_body">
+                    <div class="o_timeline_body_left">
+                        <!-- Staff List Panel -->
+                        <t t-foreach="state.staffMembers" t-as="staff" t-key="staff.id">
+                            <div class="o_staff_row_header" 
+                                 t-att-style="'height: ' + this.timelineConfig.rowHeight + 'px'">
+                                <div class="o_staff_info">
+                                    <div class="o_staff_avatar">
+                                        <img t-att-src="'/web/image/health.staff/' + staff.id + '/image_256'" 
+                                             t-att-alt="staff.name" class="rounded-circle"/>
+                                    </div>
+                                    <div class="o_staff_details">
+                                        <h6 class="o_staff_name" t-esc="staff.name"/>
+                                        <small class="text-muted">
+                                            <t t-esc="staff.staff_type"/> • <t t-esc="staff.staff_code"/>
+                                        </small>
+                                        <div class="o_workload_mini">
+                                            <div class="o_workload_bar">
+                                                <div class="o_workload_fill" 
+                                                     t-att-style="'width: ' + Math.min(staff.workload_percentage || 0, 100) + '%'"
+                                                     t-att-class="staff.workload_percentage > 95 ? 'o_overload' : (staff.workload_percentage > 80 ? 'o_warning' : 'o_optimal')">
+                                                </div>
+                                            </div>
+                                            <small class="o_workload_text">
+                                                <t t-esc="Math.round(staff.workload_percentage || 0)"/>%
+                                            </small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+                    </div>
+
+                    <div class="o_timeline_body_right">
+                        <!-- Timeline Grid -->
+                        <div class="o_timeline_grid">
+                            <!-- Time Grid Lines -->
+                            <div class="o_time_grid_lines">
+                                <t t-foreach="state.timeSlots" t-as="timeSlot" t-key="timeSlot_index">
+                                    <div class="o_time_grid_line" 
+                                         t-att-style="'left: ' + (timeSlot_index * timelineConfig.hourWidth * state.zoomLevel) + 'px'">
+                                    </div>
+                                </t>
+                            </div>
+
+                            <!-- Staff Assignment Rows -->
+                            <t t-foreach="state.staffMembers" t-as="staff" t-key="staff.id">
+                                <div class="o_timeline_staff_row" 
+                                     t-att-data-staff-id="staff.id"
+                                     t-att-style="'height: ' + this.timelineConfig.rowHeight + 'px; top: ' + (staff_index * this.timelineConfig.rowHeight) + 'px'">
+                                    
+                                    <!-- Time Slots for this Staff -->
+                                    <t t-foreach="state.timeSlots" t-as="timeSlot" t-key="timeSlot_index">
+                                        <div class="o_timeline_slot" 
+                                             t-att-data-staff-id="staff.id"
+                                             t-att-data-time-slot="timeSlot.time"
+                                             t-att-style="'left: ' + (timeSlot_index * this.timelineConfig.hourWidth * this.state.zoomLevel) + 'px; width: ' + (this.timelineConfig.hourWidth * this.state.zoomLevel) + 'px; height: ' + this.timelineConfig.rowHeight + 'px'">
+                                        </div>
+                                    </t>
+
+                                    <!-- Assignment Blocks -->
+                                    <t t-foreach="state.assignments.filter(a => a.assigned_staff_ids.includes(staff.id))" 
+                                       t-as="assignment" t-key="assignment.id">
+                                        <div class="o_timeline_assignment" 
+                                             t-att-data-assignment-id="assignment.id"
+                                             t-att-class="'o_priority_' + assignment.priority + ' o_state_' + assignment.state"
+                                             t-att-style="'left: ' + this.getAssignmentPosition(assignment).left + 'px; width: ' + this.getAssignmentPosition(assignment).width + 'px; height: ' + (this.timelineConfig.rowHeight - 10) + 'px; top: 5px'"
+                                             draggable="true"
+                                             t-on-click="() => this.openAssignmentDetails(assignment.id)">
+                                            
+                                            <!-- Assignment Content -->
+                                            <div class="o_assignment_block">
+                                                <div class="o_assignment_header">
+                                                    <div class="o_assignment_title" t-esc="assignment.name"/>
+                                                    <div class="o_assignment_time">
+                                                        <i class="fa fa-clock-o"/>
+                                                        <span t-esc="assignment.estimated_duration || 60"/>min
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="o_assignment_details">
+                                                    <div t-if="assignment.appointment_name" class="o_assignment_detail">
+                                                        <i class="fa fa-calendar"/>
+                                                        <span t-esc="assignment.appointment_name"/>
+                                                    </div>
+                                                    <div class="o_assignment_status">
+                                                        <span class="badge" t-att-class="'badge-' + assignment.state">
+                                                            <t t-esc="assignment.state"/>
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                                
+                                                <!-- Resize Handles -->
+                                                <div class="o_resize_handle o_resize_left"></div>
+                                                <div class="o_resize_handle o_resize_right"></div>
+                                            </div>
+                                        </div>
+                                    </t>
+                                </div>
+                            </t>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Current Time Indicator -->
+            <div class="o_current_time_indicator" 
+                 t-att-style="'left: ' + this.dateToPixels(new Date()) + 'px'">
+                <div class="o_time_line"></div>
+                <div class="o_time_marker">
+                    <i class="fa fa-caret-down"/>
+                </div>
+            </div>
+
+            <!-- Assignment Details Popup -->
+            <div t-if="state.selectedAssignment" class="o_assignment_popup">
+                <!-- Assignment details would go here -->
+            </div>
+
+            <!-- Drag Ghost -->
+            <div class="o_timeline_drag_ghost" style="display: none;">
+                <div class="o_drag_ghost_content">
+                    <i class="fa fa-arrows-alt"></i>
+                    <span class="o_ghost_text"></span>
+                </div>
+            </div>
+        </div>
+    </t>
+</templates>
