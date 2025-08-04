@@ -269,10 +269,13 @@
         <field name="name">health.staff.availability.calendar</field>
         <field name="model">health.staff.availability</field>
         <field name="arch" type="xml">
-            <calendar date_start="date_start" date_stop="date_end" string="Staff Availability" color="color">
+            <calendar date_start="date_start" date_stop="date_end" string="Staff Availability" 
+                     color="color" mode="week" quick_create="true" event_open_popup="true">
                 <field name="staff_id"/>
                 <field name="availability_type"/>
                 <field name="facility_id"/>
+                <field name="notes"/>
+                <field name="color"/>
             </calendar>
         </field>
     </record>

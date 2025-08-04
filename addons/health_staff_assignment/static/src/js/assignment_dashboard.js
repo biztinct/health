@@ -1,9 +1,10 @@
 /**
  * VAFHS Healthcare - Assignment Dashboard JavaScript (Odoo 18)
  * Mobile-First Interactive Dashboard for Staff Assignment Management
- * Using OWL Framework and Modern ES6 Modules
+ * Using modern Odoo 18 patterns
  */
 
+import { Component } from "@odoo/owl";
 import { KanbanController } from "@web/views/kanban/kanban_controller";
 import { KanbanView } from "@web/views/kanban/kanban_view";
 import { registry } from "@web/core/registry";
@@ -11,7 +12,7 @@ import { useService } from "@web/core/utils/hooks";
 import { _t } from "@web/core/l10n/translation";
 
 // ============================================================================
-// Assignment Dashboard Controller (Odoo 18 OWL)
+// Assignment Dashboard Controller (Odoo 18)
 // ============================================================================
 
 export class AssignmentDashboardController extends KanbanController {
@@ -21,7 +22,11 @@ export class AssignmentDashboardController extends KanbanController {
         this.dialog = useService("dialog");
         this.notification = useService("notification");
         
-        // Initialize dashboard features
+        // Initialize dashboard features after component is mounted
+        this.onMounted(this.initializeDashboard.bind(this));
+    }
+
+    initializeDashboard() {
         this.initializeRealTimeUpdates();
         this.setupMobileOptimizations();
         this.initializeDragAndDrop();
@@ -35,7 +40,9 @@ export class AssignmentDashboardController extends KanbanController {
     initializeRealTimeUpdates() {
         // Auto-refresh every 30 seconds for real-time updates
         this.refreshInterval = setInterval(() => {
-            this.model.load();
+            if (this.model && this.model.load) {
+                this.model.load();
+            }
         }, 30000);
     }
 
@@ -132,7 +139,11 @@ export class AssignmentDashboardController extends KanbanController {
         document.body.appendChild(ghost);
         e.dataTransfer.setDragImage(ghost, 0, 0);
         
-        setTimeout(() => document.body.removeChild(ghost), 0);
+        setTimeout(() => {
+            if (document.body.contains(ghost)) {
+                document.body.removeChild(ghost);
+            }
+        }, 0);
     }
 
     handleDragEnd(e) {
@@ -148,6 +159,8 @@ export class AssignmentDashboardController extends KanbanController {
         
         dropZone.classList.remove('o_drag_over');
         
+        if (!assignmentId || !newState) return;
+        
         try {
             await this.rpc("/web/dataset/call_kw/health.staff.assignment/write", {
                 model: 'health.staff.assignment',
@@ -161,9 +174,12 @@ export class AssignmentDashboardController extends KanbanController {
             });
             
             // Refresh the view
-            this.model.load();
+            if (this.model && this.model.load) {
+                this.model.load();
+            }
             
         } catch (error) {
+            console.error('Error updating assignment status:', error);
             this.notification.add(_t('Error updating assignment status'), {
                 type: 'danger'
             });
@@ -182,7 +198,9 @@ export class AssignmentDashboardController extends KanbanController {
                 case 'r':
                     if (e.ctrlKey || e.metaKey) {
                         e.preventDefault();
-                        this.model.load();
+                        if (this.model && this.model.load) {
+                            this.model.load();
+                        }
                     }
                     break;
                 case 'n':
@@ -200,13 +218,17 @@ export class AssignmentDashboardController extends KanbanController {
     // ========================================================================
 
     async onAssignStaffClick(e) {
-        const assignmentId = e.target.closest('[data-assignment-id]').dataset.assignmentId;
-        // Handle staff assignment logic
-        console.log('Assign staff for assignment:', assignmentId);
+        const assignmentId = e.target.closest('[data-assignment-id]')?.dataset.assignmentId;
+        if (assignmentId) {
+            console.log('Assign staff for assignment:', assignmentId);
+            // Handle staff assignment logic
+        }
     }
 
     async onConfirmAssignmentClick(e) {
-        const assignmentId = e.target.closest('[data-assignment-id]').dataset.assignmentId;
+        const assignmentId = e.target.closest('[data-assignment-id]')?.dataset.assignmentId;
+        if (!assignmentId) return;
+        
         try {
             await this.rpc("/web/dataset/call_kw/health.staff.assignment/action_confirm_assignment", {
                 model: 'health.staff.assignment',
@@ -214,14 +236,20 @@ export class AssignmentDashboardController extends KanbanController {
                 args: [[parseInt(assignmentId)]],
                 kwargs: {}
             });
-            this.model.load();
+            
+            if (this.model && this.model.load) {
+                this.model.load();
+            }
         } catch (error) {
+            console.error('Error confirming assignment:', error);
             this.notification.add(_t('Error confirming assignment'), {type: 'danger'});
         }
     }
 
     async onStartAssignmentClick(e) {
-        const assignmentId = e.target.closest('[data-assignment-id]').dataset.assignmentId;
+        const assignmentId = e.target.closest('[data-assignment-id]')?.dataset.assignmentId;
+        if (!assignmentId) return;
+        
         try {
             await this.rpc("/web/dataset/call_kw/health.staff.assignment/action_start_assignment", {
                 model: 'health.staff.assignment',
@@ -229,14 +257,20 @@ export class AssignmentDashboardController extends KanbanController {
                 args: [[parseInt(assignmentId)]],
                 kwargs: {}
             });
-            this.model.load();
+            
+            if (this.model && this.model.load) {
+                this.model.load();
+            }
         } catch (error) {
+            console.error('Error starting assignment:', error);
             this.notification.add(_t('Error starting assignment'), {type: 'danger'});
         }
     }
 
     async onCompleteAssignmentClick(e) {
-        const assignmentId = e.target.closest('[data-assignment-id]').dataset.assignmentId;
+        const assignmentId = e.target.closest('[data-assignment-id]')?.dataset.assignmentId;
+        if (!assignmentId) return;
+        
         try {
             await this.rpc("/web/dataset/call_kw/health.staff.assignment/action_complete_assignment", {
                 model: 'health.staff.assignment',
@@ -244,14 +278,20 @@ export class AssignmentDashboardController extends KanbanController {
                 args: [[parseInt(assignmentId)]],
                 kwargs: {}
             });
-            this.model.load();
+            
+            if (this.model && this.model.load) {
+                this.model.load();
+            }
         } catch (error) {
+            console.error('Error completing assignment:', error);
             this.notification.add(_t('Error completing assignment'), {type: 'danger'});
         }
     }
 
     async onAISuggestClick(e) {
-        const assignmentId = e.target.closest('[data-assignment-id]').dataset.assignmentId;
+        const assignmentId = e.target.closest('[data-assignment-id]')?.dataset.assignmentId;
+        if (!assignmentId) return;
+        
         try {
             const suggestions = await this.rpc("/web/dataset/call_kw/health.staff.assignment/action_get_ai_suggestions", {
                 model: 'health.staff.assignment',
@@ -259,8 +299,10 @@ export class AssignmentDashboardController extends KanbanController {
                 args: [[parseInt(assignmentId)]],
                 kwargs: {}
             });
+            
             this.showAISuggestions(suggestions);
         } catch (error) {
+            console.error('Error getting AI suggestions:', error);
             this.notification.add(_t('Error getting AI suggestions'), {type: 'danger'});
         }
     }
@@ -268,19 +310,21 @@ export class AssignmentDashboardController extends KanbanController {
     showAISuggestions(suggestions) {
         // Display AI suggestions in a dialog
         console.log('AI Suggestions:', suggestions);
+        // TODO: Implement dialog with suggestions
     }
 
     createNewAssignment() {
         // Handle new assignment creation
         console.log('Create new assignment');
+        // TODO: Implement new assignment creation
     }
 
     // Cleanup
-    destroy() {
+    willUnmount() {
         if (this.refreshInterval) {
             clearInterval(this.refreshInterval);
         }
-        super.destroy();
+        super.willUnmount?.();
     }
 }
 
@@ -288,10 +332,10 @@ export class AssignmentDashboardController extends KanbanController {
 // Assignment Dashboard View (Odoo 18)
 // ============================================================================
 
-export class AssignmentDashboardView extends KanbanView {}
-
-AssignmentDashboardView.type = "assignment_dashboard_kanban";
-AssignmentDashboardView.Controller = AssignmentDashboardController;
+export class AssignmentDashboardView extends KanbanView {
+    static type = "assignment_dashboard_kanban";
+    static Controller = AssignmentDashboardController;
+}
 
 // Register the view in Odoo 18 registry
 registry.category("views").add("assignment_dashboard_kanban", AssignmentDashboardView);

@@ -224,8 +224,15 @@ class HealthStaffAvailabilityMatrix(models.Model):
             return False
         
         # Convert datetime to date and time components
-        appointment_date = appointment_datetime.date()
-        appointment_time = appointment_datetime.hour + (appointment_datetime.minute / 60.0)
+        if hasattr(appointment_datetime, 'date'):
+            # It's a datetime object
+            appointment_date = appointment_datetime.date()
+            appointment_time = appointment_datetime.hour + (appointment_datetime.minute / 60.0)
+        else:
+            # It's already a date object
+            appointment_date = appointment_datetime
+            appointment_time = 9.0  # Default to 9 AM if no time specified
+        
         end_time = appointment_time + (duration_minutes / 60.0)
         
         # Check for conflicting bookings
@@ -246,8 +253,14 @@ class HealthStaffAvailabilityMatrix(models.Model):
         Book a time slot for staff member
         Creates availability matrix entry with booked status
         """
-        appointment_date = appointment_datetime.date()
-        appointment_time = appointment_datetime.hour + (appointment_datetime.minute / 60.0)
+        if hasattr(appointment_datetime, 'date'):
+            # It's a datetime object
+            appointment_date = appointment_datetime.date()
+            appointment_time = appointment_datetime.hour + (appointment_datetime.minute / 60.0)
+        else:
+            # It's already a date object
+            appointment_date = appointment_datetime
+            appointment_time = 9.0  # Default to 9 AM if no time specified
         end_time = appointment_time + (duration_minutes / 60.0)
         
         # Check availability first
@@ -326,8 +339,14 @@ class HealthStaffAvailabilityMatrix(models.Model):
         Update staff availability status for a specific time slot
         Used when appointments are cancelled, rescheduled, or completed
         """
-        appointment_date = appointment_datetime.date()
-        appointment_time = appointment_datetime.hour + (appointment_datetime.minute / 60.0)
+        if hasattr(appointment_datetime, 'date'):
+            # It's a datetime object
+            appointment_date = appointment_datetime.date()
+            appointment_time = appointment_datetime.hour + (appointment_datetime.minute / 60.0)
+        else:
+            # It's already a date object
+            appointment_date = appointment_datetime
+            appointment_time = 9.0  # Default to 9 AM if no time specified
         end_time = appointment_time + (duration_minutes / 60.0)
         
         # Find existing slots
@@ -360,8 +379,14 @@ class HealthStaffAvailabilityMatrix(models.Model):
         Calculate buffer score based on surrounding availability
         Returns score 0-100 (higher is better)
         """
-        appointment_date = appointment_datetime.date()
-        appointment_time = appointment_datetime.hour + (appointment_datetime.minute / 60.0)
+        if hasattr(appointment_datetime, 'date'):
+            # It's a datetime object
+            appointment_date = appointment_datetime.date()
+            appointment_time = appointment_datetime.hour + (appointment_datetime.minute / 60.0)
+        else:
+            # It's already a date object
+            appointment_date = appointment_datetime
+            appointment_time = 9.0  # Default to 9 AM if no time specified
         
         # Check availability in 2-hour window around appointment
         window_start = max(0, appointment_time - 2)

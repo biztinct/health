@@ -32,18 +32,18 @@ class HealthStaffAssignment(models.Model):
     
     # Staff assignment (many2many for team assignments)
     assigned_staff_ids = fields.Many2many(
-        'hr.employee',
-        'staff_assignment_employee_rel',
-        'assignment_id', 'employee_id',
+        'health.staff',
+        'staff_assignment_healthstaff_rel',
+        'assignment_id', 'staff_id',
         string='Assigned Staff',
-        domain=[('is_healthcare_staff', '=', True)],
+        domain=[('employment_status', '=', 'active')],
         tracking=True
     )
     
     lead_staff_id = fields.Many2one(
-        'hr.employee',
+        'health.staff',
         string='Lead Staff',
-        domain=[('is_healthcare_staff', '=', True)],
+        domain=[('employment_status', '=', 'active')],
         tracking=True,
         help='Primary staff member responsible for this assignment'
     )
@@ -357,7 +357,35 @@ class HealthStaffAssignment(models.Model):
         for vals in vals_list:
             if vals.get('name', _('New Assignment')) == _('New Assignment'):
                 vals['name'] = self.env['ir.sequence'].next_by_code('health.staff.assignment') or _('New Assignment')
+            
+            # Auto-assign state if staff are provided during creation
+            if vals.get('assigned_staff_ids') and vals.get('state', 'draft') == 'draft':
+                vals['state'] = 'assigned'
+                
         return super().create(vals_list)
+    
+    def write(self, vals):
+        """Override write to handle automatic state transitions"""
+        # Auto-transition from draft to assigned when staff are assigned
+        if 'assigned_staff_ids' in vals:
+            for record in self:
+                if record.state == 'draft' and vals.get('assigned_staff_ids'):
+                    # Check if staff are being added (not just removed)
+                    if isinstance(vals['assigned_staff_ids'], list):
+                        # Handle many2many operations
+                        has_staff_assignment = False
+                        for operation in vals['assigned_staff_ids']:
+                            if isinstance(operation, (list, tuple)) and len(operation) >= 2:
+                                if operation[0] in [4, 6]:  # Link or Replace operations
+                                    has_staff_assignment = True
+                                    break
+                        
+                        if has_staff_assignment:
+                            vals['state'] = 'assigned'
+                    elif vals['assigned_staff_ids']:
+                        vals['state'] = 'assigned'
+                        
+        return super().write(vals)
     
     # ============================================================================
     # Business Logic Methods
@@ -383,6 +411,16 @@ class HealthStaffAssignment(models.Model):
             
             # Send confirmation notifications
             record._send_confirmation_notifications()
+    
+    def action_assign_staff(self):
+        """Manually move assignment from draft to assigned state"""
+        for record in self:
+            if record.state == 'draft':
+                if not record.assigned_staff_ids:
+                    raise UserError(_('Please assign staff members before moving to assigned state.'))
+                record.write({'state': 'assigned'})
+            else:
+                raise UserError(_('Only draft assignments can be moved to assigned state.'))
     
     def action_start_assignment(self):
         """Start the assignment (staff is en route or starting service)"""
@@ -577,9 +615,9 @@ class HealthStaffAssignmentEngine(models.Model):
         if not staff_ids or not appointment:
             return 0.0
         
-        # Get required skills from appointment type
+        # Get required skills from appointment type (if field exists)
         required_skills = []
-        if appointment.appointment_type_id.required_skills_json:
+        if hasattr(appointment.appointment_type_id, 'required_skills_json') and appointment.appointment_type_id.required_skills_json:
             try:
                 required_skills = json.loads(appointment.appointment_type_id.required_skills_json)
             except:
@@ -681,10 +719,14 @@ class HealthStaffAssignmentEngine(models.Model):
         availability_scores = []
         for staff in staff_ids:
             # Check if staff is available at the appointment time
+            # Use datetime for availability checking, fallback to date if datetime not available
+            appointment_datetime = getattr(appointment, 'appointment_datetime', None) or appointment.appointment_date
+            duration = getattr(appointment.appointment_type_id, 'duration_minutes', 30)
+            
             is_available = availability_matrix.is_staff_available(
                 staff.id,
-                appointment.appointment_date,
-                appointment.appointment_type_id.duration_minutes
+                appointment_datetime,
+                duration
             )
             
             if not is_available:
@@ -713,8 +755,8 @@ class HealthStaffAssignmentEngine(models.Model):
             return []
         
         # Get all available healthcare staff
-        available_staff = self.env['hr.employee'].search([
-            ('is_healthcare_staff', '=', True),
+        available_staff = self.env['health.staff'].search([
+            ('employment_status', '=', 'active'),
             ('active', '=', True)
         ])
         
@@ -796,11 +838,11 @@ class HealthStaffAssignmentEngine(models.Model):
         assignments = self.search(domain)
         
         # Get staff data
-        staff_domain = [('is_healthcare_staff', '=', True)]
+        staff_domain = [('employment_status', '=', 'active')]
         if staff_id:
             staff_domain.append(('id', '=', staff_id))
         
-        staff_records = self.env['hr.employee'].search(staff_domain, limit=10)  # Limit for UI performance
+        staff_records = self.env['health.staff'].search(staff_domain, limit=10)  # Limit for UI performance
         
         # Get unassigned appointments
         appointment_domain = [
@@ -833,11 +875,11 @@ class HealthStaffAssignmentEngine(models.Model):
             staff_data.append({
                 'id': staff.id,
                 'name': staff.name,
-                'role': staff.job_id.name if staff.job_id else 'Healthcare Staff',
+                'role': staff.staff_type.title() if staff.staff_type else 'Healthcare Staff',
                 'status': status,
                 'statusText': status_text,
                 'appointmentCount': len(staff_assignments),
-                'avatar_url': f'/web/image/hr.employee/{staff.id}/avatar_128'
+                'avatar_url': f'/web/image/health.staff/{staff.id}/image_256'
             })
         
         # Format assignment data
@@ -903,8 +945,8 @@ class HealthStaffAssignmentEngine(models.Model):
             raise UserError(_('No appointment linked to this assignment'))
         
         # Get available healthcare staff
-        available_staff = self.env['hr.employee'].search([
-            ('is_healthcare_staff', '=', True),
+        available_staff = self.env['health.staff'].search([
+            ('employment_status', '=', 'active'),
             ('active', '=', True)
         ], limit=5)
         
@@ -923,7 +965,7 @@ class HealthStaffAssignmentEngine(models.Model):
         # Create simple suggestions based on available staff
         suggestion_text = []
         for i, staff in enumerate(available_staff, 1):
-            job_title = staff.job_id.name if staff.job_id else 'Healthcare Staff'
+            job_title = staff.staff_type.title() if staff.staff_type else 'Healthcare Staff'
             score = 85 + (i * 2)  # Simple scoring for demo
             suggestion_text.append(
                 f"{i}. {staff.name} ({job_title}) - Score: {score}%"

@@ -13,8 +13,7 @@
         <field name="model">health.staff.assignment</field>
         <field name="arch" type="xml">
             <kanban default_group_by="state" class="o_kanban_dashboard o_assignment_dashboard o_advanced_scheduler" 
-                    quick_create="false" create="true" edit="true" delete="true" 
-                    js_class="assignment_dashboard_kanban">
+                    quick_create="false" create="true" edit="true" delete="true">
                 
                 <!-- Enhanced Progressbar with Assignment Intelligence -->
                 <progressbar field="assignment_score" colors='{"0": "danger", "50": "warning", "80": "success"}' sum_field="assignment_score"/>
@@ -183,7 +182,14 @@
                                 
                                 <!-- Quick Assignment Button -->
                                 <div class="o_quick_actions">
-                                    <t t-if="record.state.raw_value == 'assigned'">
+                                    <t t-if="record.state.raw_value == 'draft'">
+                                        <button name="action_assign_staff" type="object" 
+                                                class="btn btn-sm btn-warning" title="Assign Staff">
+                                            <i class="fa fa-user-plus mr-1"/>Assign
+                                        </button>
+                                    </t>
+                                    
+                                    <t t-elif="record.state.raw_value == 'assigned'">
                                         <button name="action_confirm_assignment" type="object" 
                                                 class="btn btn-sm btn-success" title="Confirm Assignment">
                                             <i class="fa fa-check mr-1"/>Confirm

@@ -66,10 +66,11 @@
         'web.assets_backend': [
             'health_staff_assignment/static/src/css/assignment_dashboard.css',
             'health_staff_assignment/static/src/css/scheduler_grid.css',
-            'health_staff_assignment/static/src/js/assignment_dashboard.js',
-            'health_staff_assignment/static/src/js/assignment_kanban.js',
-            'health_staff_assignment/static/src/js/scheduler_grid.js',
-            'health_staff_assignment/static/src/xml/assignment_dashboard.xml',
+            # JavaScript temporarily disabled to ensure basic view loads
+            # 'health_staff_assignment/static/src/js/assignment_dashboard.js',
+            # 'health_staff_assignment/static/src/js/assignment_kanban.js',
+            # 'health_staff_assignment/static/src/js/scheduler_grid.js',
+            # 'health_staff_assignment/static/src/xml/assignment_dashboard.xml',
         ],
         # 'web.assets_frontend': [
         #     'health_staff_assignment/static/src/css/mobile_assignment.css',

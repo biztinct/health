@@ -82,7 +82,7 @@
     </record>
 
     <!-- Calendar View - Temporarily disabled due to field type compatibility issues -->
-    <!-- <record id="view_health_staff_availability_calendar" model="ir.ui.view">
+     <record id="view_health_staff_availability_calendar" model="ir.ui.view">
         <field name="name">health.staff.availability.matrix.calendar</field>
         <field name="model">health.staff.availability.matrix</field>
         <field name="arch" type="xml">
@@ -96,7 +96,7 @@
                 <field name="status"/>
             </calendar>
         </field>
-    </record> -->
+    </record>
 
     <!-- Search View -->
     <record id="view_health_staff_availability_search" model="ir.ui.view">

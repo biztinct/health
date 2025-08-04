@@ -60,6 +60,9 @@ while maintaining full integration with VAFHS clinical and billing systems.
         # Views - Portal & Website
         'views/booking_portal_templates.xml',
     ],
+    'demo': [
+        'data_demo/health_staff_demo.xml',
+    ],
     'assets': {
         'web.assets_frontend': [
             'health_calendar/static/src/css/booking_portal.css',
