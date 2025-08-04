@@ -1,0 +1,365 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<data>
+
+    <!-- =====================================================================
+         Visual Assignment Scheduler Grid - Time-based Drag & Drop Interface
+         Inspired by: Google Calendar, Calendly, When2meet, Microsoft Bookings
+         ===================================================================== -->
+
+    <!-- Assignment Scheduler Grid View -->
+    <record id="view_assignment_scheduler_grid" model="ir.ui.view">
+        <field name="name">health.staff.assignment.scheduler.grid</field>
+        <field name="model">health.staff.assignment</field>
+        <field name="arch" type="xml">
+            <form string="Visual Assignment Scheduler" class="o_assignment_scheduler_grid" js_class="scheduler_grid">
+                <sheet>
+                    <!-- Scheduler Header Controls -->
+                    <div class="o_scheduler_header">
+                        <div class="o_scheduler_controls">
+                            <div class="o_date_navigation">
+                                <span class="btn btn-sm btn-outline-primary o_prev_week" role="button">
+                                    <i class="fa fa-chevron-left"/>
+                                </span>
+                                <div class="o_current_week_display">
+                                    <span class="o_week_range">Dec 2-8, 2024</span>
+                                </div>
+                                <span class="btn btn-sm btn-outline-primary o_next_week" role="button">
+                                    <i class="fa fa-chevron-right"/>
+                                </span>
+                                <span class="btn btn-sm btn-outline-secondary o_today" role="button">
+                                    Today
+                                </span>
+                            </div>
+                            
+                            <div class="o_view_controls">
+                                <div class="btn-group" role="group">
+                                    <span class="btn btn-sm btn-outline-primary active o_week_view" role="button">
+                                        Week
+                                    </span>
+                                    <span class="btn btn-sm btn-outline-primary o_day_view" role="button">
+                                        Day
+                                    </span>
+                                </div>
+                            </div>
+                            
+                            <div class="o_filter_controls">
+                                <select class="form-control form-control-sm o_staff_filter">
+                                    <option value="">All Staff</option>
+                                    <option value="1">Dr. Smith</option>
+                                    <option value="2">Nurse Johnson</option>
+                                    <option value="3">Dr. Brown</option>
+                                </select>
+                                
+                                <span class="btn btn-sm btn-outline-info o_refresh_grid" role="button">
+                                    <i class="fa fa-refresh"/>
+                                </span>
+                            </div>
+                        </div>
+                        
+                        <!-- Assignment Statistics -->
+                        <div class="o_scheduler_stats">
+                            <div class="o_stat_item">
+                                <span class="o_stat_value">24</span>
+                                <span class="o_stat_label">Total Assignments</span>
+                            </div>
+                            <div class="o_stat_item">
+                                <span class="o_stat_value">8</span>
+                                <span class="o_stat_label">Pending</span>
+                            </div>
+                            <div class="o_stat_item">
+                                <span class="o_stat_value">12</span>
+                                <span class="o_stat_label">Confirmed</span>
+                            </div>
+                            <div class="o_stat_item">
+                                <span class="o_stat_value">4</span>
+                                <span class="o_stat_label">In Progress</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Main Scheduler Grid -->
+                    <div class="o_scheduler_grid_container">
+                        <!-- Time Column -->
+                        <div class="o_time_column">
+                            <div class="o_time_header"></div>
+                            <div class="o_time_slots">
+                                <div class="o_time_slot" data-hour="7">7:00 AM</div>
+                                <div class="o_time_slot" data-hour="8">8:00 AM</div>
+                                <div class="o_time_slot" data-hour="9">9:00 AM</div>
+                                <div class="o_time_slot" data-hour="10">10:00 AM</div>
+                                <div class="o_time_slot" data-hour="11">11:00 AM</div>
+                                <div class="o_time_slot" data-hour="12">12:00 PM</div>
+                                <div class="o_time_slot" data-hour="13">1:00 PM</div>
+                                <div class="o_time_slot" data-hour="14">2:00 PM</div>
+                                <div class="o_time_slot" data-hour="15">3:00 PM</div>
+                                <div class="o_time_slot" data-hour="16">4:00 PM</div>
+                                <div class="o_time_slot" data-hour="17">5:00 PM</div>
+                                <div class="o_time_slot" data-hour="18">6:00 PM</div>
+                                <div class="o_time_slot" data-hour="19">7:00 PM</div>
+                                <div class="o_time_slot" data-hour="20">8:00 PM</div>
+                            </div>
+                        </div>
+
+                        <!-- Staff Columns Grid -->
+                        <div class="o_staff_grid_container">
+                            <!-- Staff Headers -->
+                            <div class="o_staff_headers">
+                                <div class="o_staff_header" data-staff-id="1">
+                                    <div class="o_staff_info">
+                                        <div class="o_staff_avatar">
+                                            <i class="fa fa-user-md fa-2x text-primary"/>
+                                        </div>
+                                        <div class="o_staff_details">
+                                            <div class="o_staff_name">Dr. Smith</div>
+                                            <div class="o_staff_role">Cardiologist</div>
+                                            <div class="o_staff_status online">
+                                                <i class="fa fa-circle"/> Available
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="o_staff_metrics">
+                                        <span class="badge badge-info">8 appointments</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="o_staff_header" data-staff-id="2">
+                                    <div class="o_staff_info">
+                                        <div class="o_staff_avatar">
+                                            <i class="fa fa-user-nurse fa-2x text-success"/>
+                                        </div>
+                                        <div class="o_staff_details">
+                                            <div class="o_staff_name">Nurse Johnson</div>
+                                            <div class="o_staff_role">Senior Nurse</div>
+                                            <div class="o_staff_status busy">
+                                                <i class="fa fa-circle"/> Busy
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="o_staff_metrics">
+                                        <span class="badge badge-warning">12 appointments</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="o_staff_header" data-staff-id="3">
+                                    <div class="o_staff_info">
+                                        <div class="o_staff_avatar">
+                                            <i class="fa fa-user-md fa-2x text-info"/>
+                                        </div>
+                                        <div class="o_staff_details">
+                                            <div class="o_staff_name">Dr. Brown</div>
+                                            <div class="o_staff_role">Pediatrician</div>
+                                            <div class="o_staff_status available">
+                                                <i class="fa fa-circle"/> Available
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="o_staff_metrics">
+                                        <span class="badge badge-success">4 appointments</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Time Grid -->
+                            <div class="o_time_grid">
+                                <!-- Staff Column 1 -->
+                                <div class="o_staff_column" data-staff-id="1">
+                                    <div class="o_time_cell" data-hour="7" data-staff-id="1"></div>
+                                    <div class="o_time_cell" data-hour="8" data-staff-id="1">
+                                        <!-- Example Assignment -->
+                                        <div class="o_assignment_block" data-assignment-id="1" data-duration="60">
+                                            <div class="o_assignment_header">
+                                                <span class="o_patient_name">John Doe</span>
+                                                <span class="o_assignment_priority high">
+                                                    <i class="fa fa-exclamation-circle"/>
+                                                </span>
+                                            </div>
+                                            <div class="o_assignment_details">
+                                                <div class="o_service_type">Cardiology Consultation</div>
+                                                <div class="o_assignment_time">8:00 - 9:00 AM</div>
+                                            </div>
+                                            <div class="o_assignment_status confirmed">
+                                                <i class="fa fa-check-circle"/> Confirmed
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="o_time_cell" data-hour="9" data-staff-id="1"></div>
+                                    <div class="o_time_cell" data-hour="10" data-staff-id="1">
+                                        <!-- Example Assignment -->
+                                        <div class="o_assignment_block" data-assignment-id="2" data-duration="30">
+                                            <div class="o_assignment_header">
+                                                <span class="o_patient_name">Jane Smith</span>
+                                                <span class="o_assignment_priority normal">
+                                                    <i class="fa fa-circle"/>
+                                                </span>
+                                            </div>
+                                            <div class="o_assignment_details">
+                                                <div class="o_service_type">Follow-up</div>
+                                                <div class="o_assignment_time">10:00 - 10:30 AM</div>
+                                            </div>
+                                            <div class="o_assignment_status in_progress">
+                                                <i class="fa fa-clock-o"/> In Progress
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="o_time_cell" data-hour="11" data-staff-id="1"></div>
+                                    <div class="o_time_cell" data-hour="12" data-staff-id="1"></div>
+                                    <div class="o_time_cell" data-hour="13" data-staff-id="1"></div>
+                                    <div class="o_time_cell" data-hour="14" data-staff-id="1"></div>
+                                    <div class="o_time_cell" data-hour="15" data-staff-id="1"></div>
+                                    <div class="o_time_cell" data-hour="16" data-staff-id="1"></div>
+                                    <div class="o_time_cell" data-hour="17" data-staff-id="1"></div>
+                                    <div class="o_time_cell" data-hour="18" data-staff-id="1"></div>
+                                    <div class="o_time_cell" data-hour="19" data-staff-id="1"></div>
+                                    <div class="o_time_cell" data-hour="20" data-staff-id="1"></div>
+                                </div>
+
+                                <!-- Staff Column 2 -->
+                                <div class="o_staff_column" data-staff-id="2">
+                                    <div class="o_time_cell" data-hour="7" data-staff-id="2"></div>
+                                    <div class="o_time_cell" data-hour="8" data-staff-id="2"></div>
+                                    <div class="o_time_cell" data-hour="9" data-staff-id="2">
+                                        <!-- Example Assignment -->
+                                        <div class="o_assignment_block" data-assignment-id="3" data-duration="45">
+                                            <div class="o_assignment_header">
+                                                <span class="o_patient_name">Mike Wilson</span>
+                                                <span class="o_assignment_priority urgent">
+                                                    <i class="fa fa-exclamation-triangle"/>
+                                                </span>
+                                            </div>
+                                            <div class="o_assignment_details">
+                                                <div class="o_service_type">Emergency Care</div>
+                                                <div class="o_assignment_time">9:00 - 9:45 AM</div>
+                                            </div>
+                                            <div class="o_assignment_status pending">
+                                                <i class="fa fa-hourglass-half"/> Pending
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="o_time_cell" data-hour="10" data-staff-id="2"></div>
+                                    <div class="o_time_cell" data-hour="11" data-staff-id="2"></div>
+                                    <div class="o_time_cell" data-hour="12" data-staff-id="2"></div>
+                                    <div class="o_time_cell" data-hour="13" data-staff-id="2"></div>
+                                    <div class="o_time_cell" data-hour="14" data-staff-id="2"></div>
+                                    <div class="o_time_cell" data-hour="15" data-staff-id="2"></div>
+                                    <div class="o_time_cell" data-hour="16" data-staff-id="2"></div>
+                                    <div class="o_time_cell" data-hour="17" data-staff-id="2"></div>
+                                    <div class="o_time_cell" data-hour="18" data-staff-id="2"></div>
+                                    <div class="o_time_cell" data-hour="19" data-staff-id="2"></div>
+                                    <div class="o_time_cell" data-hour="20" data-staff-id="2"></div>
+                                </div>
+
+                                <!-- Staff Column 3 -->
+                                <div class="o_staff_column" data-staff-id="3">
+                                    <div class="o_time_cell" data-hour="7" data-staff-id="3"></div>
+                                    <div class="o_time_cell" data-hour="8" data-staff-id="3"></div>
+                                    <div class="o_time_cell" data-hour="9" data-staff-id="3"></div>
+                                    <div class="o_time_cell" data-hour="10" data-staff-id="3"></div>
+                                    <div class="o_time_cell" data-hour="11" data-staff-id="3">
+                                        <!-- Example Assignment -->
+                                        <div class="o_assignment_block" data-assignment-id="4" data-duration="90">
+                                            <div class="o_assignment_header">
+                                                <span class="o_patient_name">Sarah Johnson</span>
+                                                <span class="o_assignment_priority normal">
+                                                    <i class="fa fa-circle"/>
+                                                </span>
+                                            </div>
+                                            <div class="o_assignment_details">
+                                                <div class="o_service_type">Pediatric Checkup</div>
+                                                <div class="o_assignment_time">11:00 - 12:30 PM</div>
+                                            </div>
+                                            <div class="o_assignment_status confirmed">
+                                                <i class="fa fa-check-circle"/> Confirmed
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="o_time_cell" data-hour="12" data-staff-id="3"></div>
+                                    <div class="o_time_cell" data-hour="13" data-staff-id="3"></div>
+                                    <div class="o_time_cell" data-hour="14" data-staff-id="3"></div>
+                                    <div class="o_time_cell" data-hour="15" data-staff-id="3"></div>
+                                    <div class="o_time_cell" data-hour="16" data-staff-id="3"></div>
+                                    <div class="o_time_cell" data-hour="17" data-staff-id="3"></div>
+                                    <div class="o_time_cell" data-hour="18" data-staff-id="3"></div>
+                                    <div class="o_time_cell" data-hour="19" data-staff-id="3"></div>
+                                    <div class="o_time_cell" data-hour="20" data-staff-id="3"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Unassigned Appointments Sidebar -->
+                    <div class="o_unassigned_sidebar">
+                        <div class="o_sidebar_header">
+                            <h5>
+                                <i class="fa fa-inbox mr-2"/>
+                                Unassigned Appointments
+                            </h5>
+                            <span class="badge badge-warning">6</span>
+                        </div>
+                        
+                        <div class="o_unassigned_list">
+                            <!-- Draggable unassigned appointments -->
+                            <div class="o_unassigned_appointment" data-appointment-id="101" draggable="true">
+                                <div class="o_appointment_info">
+                                    <div class="o_patient_name">Robert Chen</div>
+                                    <div class="o_service_type">General Consultation</div>
+                                    <div class="o_preferred_time">Preferred: 2:00 PM</div>
+                                </div>
+                                <div class="o_appointment_priority">
+                                    <span class="badge badge-info">Normal</span>
+                                </div>
+                            </div>
+                            
+                            <div class="o_unassigned_appointment" data-appointment-id="102" draggable="true">
+                                <div class="o_appointment_info">
+                                    <div class="o_patient_name">Lisa Park</div>
+                                    <div class="o_service_type">Specialist Referral</div>
+                                    <div class="o_preferred_time">Preferred: 10:00 AM</div>
+                                </div>
+                                <div class="o_appointment_priority">
+                                    <span class="badge badge-warning">High</span>
+                                </div>
+                            </div>
+                            
+                            <div class="o_unassigned_appointment" data-appointment-id="103" draggable="true">
+                                <div class="o_appointment_info">
+                                    <div class="o_patient_name">David Kumar</div>
+                                    <div class="o_service_type">Emergency</div>
+                                    <div class="o_preferred_time">ASAP</div>
+                                </div>
+                                <div class="o_appointment_priority">
+                                    <span class="badge badge-danger">Urgent</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Assignment Scheduler Action -->
+    <record id="action_assignment_scheduler_grid" model="ir.actions.act_window">
+        <field name="name">Visual Assignment Scheduler</field>
+        <field name="res_model">health.staff.assignment</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="view_assignment_scheduler_grid"/>
+        <field name="target">fullscreen</field>
+        <field name="context">{
+            'scheduler_mode': True,
+            'default_view': 'week'
+        }</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Welcome to the Visual Assignment Scheduler!
+            </p>
+            <p>
+                Drag and drop appointments from the sidebar to assign them to staff time slots.
+                This visual interface makes it easy to optimize staff schedules and ensure
+                efficient appointment distribution.
+            </p>
+        </field>
+    </record>
+
+</data>
+</odoo>

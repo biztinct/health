@@ -21,6 +21,14 @@
         <field name="sequence">10</field>
     </record>
 
+    <!-- Visual Assignment Scheduler Menu -->
+    <record id="menu_assignment_scheduler_grid" model="ir.ui.menu">
+        <field name="name">Visual Scheduler</field>
+        <field name="parent_id" ref="menu_health_staff_assignment_root"/>
+        <field name="action" ref="action_assignment_scheduler_grid"/>
+        <field name="sequence">15</field>
+    </record>
+
     <!-- Staff Assignments Menu -->
     <record id="menu_health_staff_assignment" model="ir.ui.menu">
         <field name="name">Staff Assignments</field>

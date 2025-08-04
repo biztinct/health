@@ -179,3 +179,6 @@ The health_calendar module now follows this working pattern:
 ## Claude Code Guidance
 
 - When you do any modification in the code, think well and follow the established design principles of inheritance etc. Then inform me of what you are going to do before proceeding
+
+## Memory Notes
+- Note to take care that the model is not defined again as duplicate

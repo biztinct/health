@@ -394,56 +394,5 @@ class HrEmployee(models.Model):
         return {'success': True, 'status': staff.assignment_status}
 
 
-class HealthStaffSkill(models.Model):
-    """Healthcare staff skills for intelligent assignment matching"""
-    _name = 'health.staff.skill'
-    _description = 'Healthcare Staff Skill'
-    _order = 'category, name'
-    
-    name = fields.Char('Skill Name', required=True)
-    category = fields.Selection([
-        ('medical', 'Medical'),
-        ('nursing', 'Nursing'),
-        ('technical', 'Technical'),
-        ('language', 'Language'),
-        ('specialty', 'Specialty'),
-        ('soft', 'Soft Skills')
-    ], string='Category', required=True)
-    
-    description = fields.Text('Description')
-    required_certification = fields.Boolean('Requires Certification')
-    
-    # Skill importance for different service types
-    service_type_ids = fields.Many2many(
-        'health.service.type',
-        'skill_service_type_rel',
-        'skill_id', 'service_type_id',
-        string='Relevant Service Types'
-    )
-    
-    active = fields.Boolean('Active', default=True)
-
-
-class HealthServiceArea(models.Model):
-    """Geographic service areas for home visit optimization"""
-    _name = 'health.service.area'
-    _description = 'Healthcare Service Area'
-    
-    name = fields.Char('Area Name', required=True)
-    code = fields.Char('Area Code')
-    
-    # Geographic boundaries
-    center_latitude = fields.Float('Center Latitude')
-    center_longitude = fields.Float('Center Longitude')
-    radius_km = fields.Float('Service Radius (KM)', default=5.0)
-    
-    # Area details
-    district = fields.Char('District')
-    city = fields.Char('City', default='Ho Chi Minh City')
-    postal_codes = fields.Text('Postal Codes', help='Comma-separated list of postal codes')
-    
-    # Service configuration
-    travel_fee = fields.Float('Base Travel Fee (VND)', default=0.0)
-    additional_fee_per_km = fields.Float('Additional Fee per KM (VND)', default=0.0)
-    
-    active = fields.Boolean('Active', default=True)
+# Note: HealthStaffSkill and HealthServiceArea models are now defined in healthcare_skill.py
+# to avoid duplicate model definitions and field naming conflicts.

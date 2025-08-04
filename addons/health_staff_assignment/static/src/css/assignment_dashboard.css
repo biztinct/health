@@ -111,6 +111,348 @@
 }
 
 /* ============================================================================
+   Advanced Scheduler - Drag and Drop Grid
+   ============================================================================ */
+
+.o_advanced_scheduler {
+    position: relative;
+}
+
+.o_draggable_assignment {
+    cursor: grab;
+    transition: var(--transition-normal);
+}
+
+.o_draggable_assignment:hover {
+    cursor: grab;
+}
+
+.o_draggable_assignment.dragging {
+    cursor: grabbing;
+    opacity: 0.8;
+    transform: rotate(2deg) scale(1.02);
+    z-index: 1000;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+.o_assignment_drag_handle {
+    opacity: 0;
+    transition: var(--transition-fast);
+    cursor: grab;
+    padding: var(--spacing-xs);
+    border-radius: 4px;
+}
+
+.o_assignment_card:hover .o_assignment_drag_handle {
+    opacity: 0.5;
+}
+
+.o_assignment_drag_handle:hover {
+    opacity: 1;
+    background: rgba(59, 130, 246, 0.1);
+}
+
+/* Drop Zone Indicators */
+.o_kanban_group.drop-zone {
+    background: rgba(59, 130, 246, 0.05);
+    border: 2px dashed var(--assignment-primary);
+}
+
+.o_kanban_group.drop-zone::after {
+    content: 'Drop assignment here';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: var(--assignment-primary);
+    font-weight: 600;
+    font-size: var(--font-size-lg);
+    background: white;
+    padding: var(--spacing-lg);
+    border-radius: var(--card-border-radius);
+    box-shadow: var(--card-shadow);
+    pointer-events: none;
+}
+
+/* ============================================================================
+   Enhanced Assignment Card Features
+   ============================================================================ */
+
+.o_assignment_priority_indicator {
+    display: flex;
+    align-items: center;
+}
+
+.pulse-animation {
+    animation: pulse 1.5s infinite;
+}
+
+.o_assignment_ai_score {
+    position: relative;
+}
+
+.o_assignment_ai_score .badge {
+    background: linear-gradient(45deg, #8b5cf6, #3b82f6);
+    border: none;
+    font-weight: 600;
+    position: relative;
+    overflow: hidden;
+}
+
+.o_assignment_ai_score .badge::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+    animation: shimmer 3s infinite;
+}
+
+@keyframes shimmer {
+    0% { left: -100%; }
+    50% { left: 100%; }
+    100% { left: 100%; }
+}
+
+/* Patient Section Enhancements */
+.o_assignment_patient_section {
+    margin-bottom: var(--spacing-lg);
+    padding-bottom: var(--spacing-md);
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.o_patient_info {
+    display: flex;
+    align-items: center;
+}
+
+.o_patient_avatar {
+    margin-right: var(--spacing-md);
+}
+
+.o_patient_details {
+    flex: 1;
+    min-width: 0;
+}
+
+.o_assignment_name {
+    font-size: var(--font-size-xs);
+    color: #64748b;
+    margin-top: var(--spacing-xs);
+}
+
+/* Schedule Info Section */
+.o_assignment_schedule_info {
+    margin-bottom: var(--spacing-lg);
+}
+
+.o_schedule_datetime {
+    display: flex;
+    align-items: center;
+    margin-bottom: var(--spacing-sm);
+    font-size: var(--font-size-sm);
+    font-weight: 500;
+    color: #1e293b;
+}
+
+.o_travel_info {
+    display: flex;
+    align-items: center;
+    font-size: var(--font-size-xs);
+}
+
+/* Staff Section Enhancements */
+.o_assigned_staff_section {
+    margin-bottom: var(--spacing-lg);
+    padding: var(--spacing-sm);
+    background: #f8fafc;
+    border-radius: 6px;
+}
+
+.o_staff_avatars_container {
+    display: flex;
+    align-items: center;
+    margin-bottom: var(--spacing-xs);
+}
+
+.o_lead_staff {
+    font-size: var(--font-size-xs);
+    color: #64748b;
+}
+
+/* Enhanced Metrics Grid */
+.o_assignment_metrics {
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+    border-radius: 8px;
+    padding: var(--spacing-md);
+    margin-bottom: var(--spacing-lg);
+    border: 1px solid #e2e8f0;
+}
+
+.o_metrics_grid {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+}
+
+.o_metric_item {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+.o_metric_icon {
+    width: 20px;
+    text-align: center;
+    color: #64748b;
+}
+
+.o_metric_bar {
+    flex: 1;
+    height: 4px;
+    background: #e2e8f0;
+    border-radius: 2px;
+    overflow: hidden;
+    position: relative;
+}
+
+.o_metric_fill {
+    height: 100%;
+    border-radius: 2px;
+    transition: width 0.8s ease-out;
+    position: relative;
+}
+
+.o_metric_fill::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+    animation: progress-shine 2s infinite;
+}
+
+@keyframes progress-shine {
+    0% { transform: translateX(-100%); }
+    50% { transform: translateX(100%); }
+    100% { transform: translateX(100%); }
+}
+
+.o_metric_value {
+    font-size: var(--font-size-xs);
+    font-weight: 600;
+    color: #1e293b;
+    min-width: 30px;
+    text-align: right;
+}
+
+/* Smart Actions Enhancement */
+.o_assignment_smart_actions {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+    margin-bottom: var(--spacing-md);
+}
+
+.o_ai_suggestions {
+    display: flex;
+    justify-content: center;
+}
+
+.btn-magic {
+    background: linear-gradient(45deg, #8b5cf6, #3b82f6, #06b6d4);
+    background-size: 200% 200%;
+    animation: gradient-shift 3s ease infinite;
+    border: none;
+    color: white;
+    font-weight: 600;
+    position: relative;
+    overflow: hidden;
+}
+
+@keyframes gradient-shift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+.btn-magic:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(139, 92, 246, 0.3);
+}
+
+.o_quick_actions {
+    display: flex;
+    justify-content: center;
+}
+
+.o_advanced_options {
+    display: flex;
+    justify-content: center;
+}
+
+/* Enhanced Dropdown */
+.o_advanced_options .dropdown-menu {
+    border: none;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    border-radius: 12px;
+    padding: var(--spacing-sm) 0;
+    min-width: 200px;
+}
+
+.o_advanced_options .dropdown-header {
+    font-size: var(--font-size-xs);
+    font-weight: 600;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: var(--spacing-sm) var(--spacing-lg);
+}
+
+.o_advanced_options .dropdown-item {
+    padding: var(--spacing-sm) var(--spacing-lg);
+    font-size: var(--font-size-sm);
+    color: #1e293b;
+    transition: var(--transition-fast);
+}
+
+.o_advanced_options .dropdown-item:hover {
+    background: #f8fafc;
+    color: var(--assignment-primary);
+    transform: translateX(4px);
+}
+
+.o_advanced_options .dropdown-item i {
+    width: 16px;
+    text-align: center;
+}
+
+/* Real-time Status Footer */
+.o_realtime_status_footer {
+    position: absolute;
+    bottom: var(--spacing-sm);
+    right: var(--spacing-sm);
+}
+
+.o_status_badge {
+    font-size: var(--font-size-xs);
+    padding: var(--spacing-xs) var(--spacing-sm);
+    border-radius: 50px;
+    display: flex;
+    align-items: center;
+    font-weight: 500;
+}
+
+.o_status_badge i {
+    font-size: 6px;
+    margin-right: var(--spacing-xs);
+}
+
+/* ============================================================================
    Assignment Cards - Mobile-First Design
    ============================================================================ */
 

@@ -51,6 +51,8 @@
         
         # Views - Load order matters
         'views/assignment_dashboard_views.xml',  # Load dashboard views first (contains kanban view referenced by actions)
+        'views/assignment_scheduler_grid.xml',   # Visual date/time grid scheduler
+        'views/healthcare_skill_views.xml',      # Healthcare skills and service areas
         'views/health_staff_availability_views.xml',
         'views/health_staff_assignment_views.xml',
         
@@ -63,8 +65,10 @@
     'assets': {
         'web.assets_backend': [
             'health_staff_assignment/static/src/css/assignment_dashboard.css',
+            'health_staff_assignment/static/src/css/scheduler_grid.css',
             'health_staff_assignment/static/src/js/assignment_dashboard.js',
             'health_staff_assignment/static/src/js/assignment_kanban.js',
+            'health_staff_assignment/static/src/js/scheduler_grid.js',
             'health_staff_assignment/static/src/xml/assignment_dashboard.xml',
         ],
         # 'web.assets_frontend': [

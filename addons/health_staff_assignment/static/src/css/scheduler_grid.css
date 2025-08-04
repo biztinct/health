@@ -1,0 +1,737 @@
+/* ============================================================================
+   VAFHS Healthcare - Visual Assignment Scheduler Grid CSS
+   Google Calendar meets When2meet for Healthcare Staff Assignment
+   State-of-the-Art Time-based Drag & Drop Interface
+   ============================================================================ */
+
+:root {
+    /* Scheduler Colors */
+    --scheduler-bg: #f8fafc;
+    --scheduler-border: #e2e8f0;
+    --scheduler-header-bg: #ffffff;
+    --scheduler-grid-bg: #ffffff;
+    
+    /* Time Grid Colors */
+    --time-slot-bg: #f8fafc;
+    --time-slot-border: #e2e8f0;
+    --time-cell-bg: #ffffff;
+    --time-cell-hover: #f1f5f9;
+    --time-cell-selected: rgba(59, 130, 246, 0.1);
+    
+    /* Assignment Block Colors */
+    --assignment-confirmed: #10b981;
+    --assignment-pending: #f59e0b;
+    --assignment-in-progress: #3b82f6;
+    --assignment-completed: #6b7280;
+    --assignment-cancelled: #ef4444;
+    
+    /* Priority Colors */
+    --priority-normal: #64748b;
+    --priority-high: #f59e0b;
+    --priority-urgent: #ef4444;
+    --priority-emergency: #dc2626;
+    
+    /* Staff Status Colors */
+    --status-available: #10b981;
+    --status-busy: #f59e0b;
+    --status-offline: #6b7280;
+    
+    /* Grid Dimensions */
+    --time-column-width: 100px;
+    --staff-column-width: 300px;
+    --time-cell-height: 60px;
+    --header-height: 120px;
+    --sidebar-width: 350px;
+}
+
+/* ============================================================================
+   Scheduler Container & Layout
+   ============================================================================ */
+
+.o_assignment_scheduler_grid {
+    height: 100vh;
+    overflow: hidden;
+    background: var(--scheduler-bg);
+}
+
+.o_assignment_scheduler_grid .o_form_sheet {
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    max-width: none;
+    display: flex;
+    flex-direction: column;
+}
+
+/* ============================================================================
+   Scheduler Header
+   ============================================================================ */
+
+.o_scheduler_header {
+    background: var(--scheduler-header-bg);
+    border-bottom: 2px solid var(--scheduler-border);
+    padding: 1rem;
+    flex-shrink: 0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.o_scheduler_controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.o_date_navigation {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.o_current_week_display {
+    min-width: 150px;
+    text-align: center;
+}
+
+.o_week_range {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: #1e293b;
+}
+
+.o_view_controls .btn-group .btn {
+    min-width: 60px;
+}
+
+.o_filter_controls {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.o_staff_filter {
+    min-width: 150px;
+}
+
+/* Scheduler Statistics */
+.o_scheduler_stats {
+    display: flex;
+    gap: 2rem;
+    justify-content: center;
+}
+
+.o_stat_item {
+    text-align: center;
+}
+
+.o_stat_value {
+    display: block;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #1e293b;
+}
+
+.o_stat_label {
+    font-size: 0.875rem;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+/* ============================================================================
+   Main Grid Container
+   ============================================================================ */
+
+.o_scheduler_grid_container {
+    display: flex;
+    flex: 1;
+    overflow: auto;
+    position: relative;
+}
+
+/* Time Column */
+.o_time_column {
+    width: var(--time-column-width);
+    flex-shrink: 0;
+    background: var(--time-slot-bg);
+    border-right: 2px solid var(--scheduler-border);
+    position: sticky;
+    left: 0;
+    z-index: 10;
+}
+
+.o_time_header {
+    height: var(--header-height);
+    border-bottom: 1px solid var(--scheduler-border);
+    background: var(--scheduler-header-bg);
+}
+
+.o_time_slots {
+    display: flex;
+    flex-direction: column;
+}
+
+.o_time_slot {
+    height: var(--time-cell-height);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #64748b;
+    border-bottom: 1px solid var(--time-slot-border);
+    background: var(--time-slot-bg);
+}
+
+.o_time_slot:nth-child(even) {
+    background: rgba(248, 250, 252, 0.5);
+}
+
+/* ============================================================================
+   Staff Grid Container
+   ============================================================================ */
+
+.o_staff_grid_container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+/* Staff Headers */
+.o_staff_headers {
+    height: var(--header-height);
+    display: flex;
+    background: var(--scheduler-header-bg);
+    border-bottom: 1px solid var(--scheduler-border);
+    position: sticky;
+    top: 0;
+    z-index: 5;
+}
+
+.o_staff_header {
+    width: var(--staff-column-width);
+    border-right: 1px solid var(--scheduler-border);
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    background: var(--scheduler-header-bg);
+}
+
+.o_staff_info {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.o_staff_avatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: rgba(59, 130, 246, 0.1);
+}
+
+.o_staff_details {
+    flex: 1;
+    min-width: 0;
+}
+
+.o_staff_name {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #1e293b;
+    margin-bottom: 0.25rem;
+}
+
+.o_staff_role {
+    font-size: 0.875rem;
+    color: #64748b;
+    margin-bottom: 0.25rem;
+}
+
+.o_staff_status {
+    font-size: 0.75rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.o_staff_status.online {
+    color: var(--status-available);
+}
+
+.o_staff_status.busy {
+    color: var(--status-busy);
+}
+
+.o_staff_status.available {
+    color: var(--status-available);
+}
+
+.o_staff_status i {
+    font-size: 0.5rem;
+}
+
+.o_staff_metrics {
+    margin-top: 0.5rem;
+}
+
+.o_staff_metrics .badge {
+    font-size: 0.75rem;
+}
+
+/* ============================================================================
+   Time Grid
+   ============================================================================ */
+
+.o_time_grid {
+    display: flex;
+    flex: 1;
+    overflow-x: auto;
+}
+
+.o_staff_column {
+    width: var(--staff-column-width);
+    border-right: 1px solid var(--scheduler-border);
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+}
+
+.o_time_cell {
+    height: var(--time-cell-height);
+    border-bottom: 1px solid var(--time-slot-border);
+    background: var(--time-cell-bg);
+    position: relative;
+    transition: background-color 0.15s ease;
+}
+
+.o_time_cell:hover {
+    background: var(--time-cell-hover);
+}
+
+.o_time_cell.drop-target {
+    background: var(--time-cell-selected);
+    border: 2px dashed #3b82f6;
+}
+
+.o_time_cell:nth-child(even) {
+    background: rgba(248, 250, 252, 0.3);
+}
+
+.o_time_cell:nth-child(even):hover {
+    background: var(--time-cell-hover);
+}
+
+/* ============================================================================
+   Assignment Blocks
+   ============================================================================ */
+
+.o_assignment_block {
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    right: 2px;
+    bottom: 2px;
+    background: white;
+    border-radius: 6px;
+    padding: 0.5rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border-left: 4px solid #64748b;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    overflow: hidden;
+    z-index: 1;
+}
+
+.o_assignment_block:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    transform: translateY(-1px);
+}
+
+.o_assignment_block.dragging {
+    opacity: 0.8;
+    transform: rotate(2deg) scale(1.02);
+    z-index: 1000;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+/* Assignment Block States */
+.o_assignment_block[data-assignment-id] {
+    border-left-color: var(--assignment-pending);
+}
+
+.o_assignment_block .o_assignment_status.confirmed {
+    border-left-color: var(--assignment-confirmed);
+}
+
+.o_assignment_block .o_assignment_status.pending {
+    border-left-color: var(--assignment-pending);
+}
+
+.o_assignment_block .o_assignment_status.in_progress {
+    border-left-color: var(--assignment-in-progress);
+}
+
+.o_assignment_block .o_assignment_status.completed {
+    border-left-color: var(--assignment-completed);
+}
+
+.o_assignment_header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 0.25rem;
+}
+
+.o_patient_name {
+    font-weight: 600;
+    font-size: 0.875rem;
+    color: #1e293b;
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.o_assignment_priority {
+    margin-left: 0.25rem;
+}
+
+.o_assignment_priority.high i {
+    color: var(--priority-high);
+}
+
+.o_assignment_priority.urgent i {
+    color: var(--priority-urgent);
+}
+
+.o_assignment_priority.normal i {
+    color: var(--priority-normal);
+}
+
+.o_assignment_details {
+    margin-bottom: 0.25rem;
+}
+
+.o_service_type {
+    font-size: 0.75rem;
+    color: #64748b;
+    margin-bottom: 0.125rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.o_assignment_time {
+    font-size: 0.75rem;
+    color: #64748b;
+    font-weight: 500;
+}
+
+.o_assignment_status {
+    font-size: 0.75rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.o_assignment_status.confirmed {
+    color: var(--assignment-confirmed);
+}
+
+.o_assignment_status.pending {
+    color: var(--assignment-pending);
+}
+
+.o_assignment_status.in_progress {
+    color: var(--assignment-in-progress);
+}
+
+.o_assignment_status.completed {
+    color: var(--assignment-completed);
+}
+
+/* ============================================================================
+   Unassigned Appointments Sidebar
+   ============================================================================ */
+
+.o_unassigned_sidebar {
+    width: var(--sidebar-width);
+    background: white;
+    border-left: 2px solid var(--scheduler-border);
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+    box-shadow: -2px 0 4px rgba(0, 0, 0, 0.1);
+}
+
+.o_sidebar_header {
+    padding: 1rem;
+    border-bottom: 1px solid var(--scheduler-border);
+    background: var(--scheduler-header-bg);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.o_sidebar_header h5 {
+    margin: 0;
+    color: #1e293b;
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.o_unassigned_list {
+    flex: 1;
+    overflow-y: auto;
+    padding: 0.5rem;
+}
+
+.o_unassigned_appointment {
+    background: white;
+    border: 1px solid var(--scheduler-border);
+    border-radius: 8px;
+    padding: 0.75rem;
+    margin-bottom: 0.5rem;
+    cursor: grab;
+    transition: all 0.15s ease;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.o_unassigned_appointment:hover {
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+    transform: translateY(-1px);
+}
+
+.o_unassigned_appointment:active {
+    cursor: grabbing;
+}
+
+.o_unassigned_appointment.dragging {
+    opacity: 0.5;
+    transform: rotate(2deg) scale(0.95);
+}
+
+.o_appointment_info {
+    margin-bottom: 0.5rem;
+}
+
+.o_appointment_info .o_patient_name {
+    font-weight: 600;
+    color: #1e293b;
+    margin-bottom: 0.25rem;
+}
+
+.o_appointment_info .o_service_type {
+    font-size: 0.875rem;
+    color: #64748b;
+    margin-bottom: 0.25rem;
+}
+
+.o_preferred_time {
+    font-size: 0.75rem;
+    color: #64748b;
+    font-style: italic;
+}
+
+.o_appointment_priority {
+    display: flex;
+    justify-content: flex-end;
+}
+
+/* ============================================================================
+   Drag and Drop States
+   ============================================================================ */
+
+.o_drag_ghost {
+    position: fixed;
+    z-index: 9999;
+    pointer-events: none;
+    opacity: 0.8;
+    transform: rotate(2deg) scale(1.02);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+.o_drop_zone {
+    background: rgba(59, 130, 246, 0.1) !important;
+    border: 2px dashed #3b82f6 !important;
+}
+
+.o_drop_zone_invalid {
+    background: rgba(239, 68, 68, 0.1) !important;
+    border: 2px dashed #ef4444 !important;
+}
+
+/* Drop indicators */
+.o_time_cell.drop-hover::after {
+    content: 'Drop appointment here';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: #3b82f6;
+    color: white;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    white-space: nowrap;
+    pointer-events: none;
+    z-index: 10;
+}
+
+/* ============================================================================
+   Responsive Design
+   ============================================================================ */
+
+@media (max-width: 1200px) {
+    :root {
+        --staff-column-width: 250px;
+        --sidebar-width: 300px;
+    }
+    
+    .o_scheduler_stats {
+        gap: 1rem;
+    }
+    
+    .o_stat_value {
+        font-size: 1.25rem;
+    }
+}
+
+@media (max-width: 768px) {
+    :root {
+        --staff-column-width: 200px;
+        --sidebar-width: 280px;
+        --time-column-width: 80px;
+        --header-height: 100px;
+    }
+    
+    .o_scheduler_controls {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .o_scheduler_stats {
+        display: none;
+    }
+    
+    .o_staff_info {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+    
+    .o_staff_avatar {
+        width: 40px;
+        height: 40px;
+    }
+    
+    .o_staff_name {
+        font-size: 0.875rem;
+    }
+    
+    .o_staff_role {
+        font-size: 0.75rem;
+    }
+    
+    .o_unassigned_sidebar {
+        position: fixed;
+        right: -280px;
+        top: 0;
+        bottom: 0;
+        z-index: 100;
+        transition: right 0.3s ease;
+    }
+    
+    .o_unassigned_sidebar.open {
+        right: 0;
+    }
+}
+
+/* ============================================================================
+   Animations
+   ============================================================================ */
+
+@keyframes pulse-glow {
+    0%, 100% {
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    50% {
+        box-shadow: 0 4px 8px rgba(59, 130, 246, 0.3);
+    }
+}
+
+.o_assignment_block.urgent {
+    animation: pulse-glow 2s infinite;
+}
+
+@keyframes slide-in {
+    from {
+        opacity: 0;
+        transform: translateX(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.o_unassigned_appointment {
+    animation: slide-in 0.3s ease-out;
+}
+
+/* Loading states */
+.o_scheduler_loading::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(248, 250, 252, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.o_scheduler_loading::before {
+    content: 'Loading scheduler...';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    padding: 1rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    font-weight: 500;
+    color: #64748b;
+    z-index: 1001;
+}
+
+/* Print styles */
+@media print {
+    .o_scheduler_header,
+    .o_unassigned_sidebar {
+        display: none;
+    }
+    
+    .o_scheduler_grid_container {
+        height: auto;
+        overflow: visible;
+    }
+    
+    .o_assignment_block {
+        box-shadow: none;
+        border: 1px solid #e2e8f0;
+    }
+}

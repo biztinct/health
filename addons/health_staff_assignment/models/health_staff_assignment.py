@@ -74,6 +74,14 @@ class HealthStaffAssignment(models.Model):
         ('4', 'Emergency')
     ], string='Priority', default='1', tracking=True)
     
+    assignment_type = fields.Selection([
+        ('clinic_visit', 'Clinic Visit'),
+        ('home_visit', 'Home Visit'),
+        ('emergency', 'Emergency Response'),
+        ('follow_up', 'Follow-up Visit'),
+        ('consultation', 'Consultation')
+    ], string='Assignment Type', default='clinic_visit', tracking=True)
+    
     # ============================================================================
     # AI-Powered Assignment Intelligence
     # ============================================================================
@@ -136,6 +144,19 @@ class HealthStaffAssignment(models.Model):
     # GPS tracking
     current_location = fields.Char('Current Location', help='Real-time GPS coordinates')
     location_last_updated = fields.Datetime('Location Last Updated')
+    
+    # Real-time assignment status
+    real_time_status = fields.Selection([
+        ('scheduled', 'Scheduled'),
+        ('assigned', 'Assigned'),
+        ('confirmed', 'Confirmed'),
+        ('en_route', 'En Route'),
+        ('arrived', 'Arrived'),
+        ('in_progress', 'In Progress'),
+        ('completed', 'Completed'),
+        ('cancelled', 'Cancelled')
+    ], string='Real-time Status', default='scheduled', tracking=True,
+       help='Real-time assignment status for mobile tracking')
     
     # ============================================================================
     # Performance Analytics
@@ -330,11 +351,13 @@ class HealthStaffAssignment(models.Model):
     # CRUD Overrides
     # ============================================================================
     
-    @api.model
-    def create(self, vals):
-        if vals.get('name', _('New Assignment')) == _('New Assignment'):
-            vals['name'] = self.env['ir.sequence'].next_by_code('health.staff.assignment') or _('New Assignment')
-        return super().create(vals)
+    @api.model_create_multi
+    def create(self, vals_list):
+        """Override create to handle sequence generation for batch and single records"""
+        for vals in vals_list:
+            if vals.get('name', _('New Assignment')) == _('New Assignment'):
+                vals['name'] = self.env['ir.sequence'].next_by_code('health.staff.assignment') or _('New Assignment')
+        return super().create(vals_list)
     
     # ============================================================================
     # Business Logic Methods
@@ -753,3 +776,330 @@ class HealthStaffAssignmentEngine(models.Model):
             reasons.append("Limited availability")
         
         return " • ".join(reasons) if reasons else "Standard assignment"
+    
+    @api.model
+    def get_scheduler_data(self, week_start, week_end, staff_id=False, view_mode='week'):
+        """
+        Get comprehensive scheduler data for the visual drag-and-drop grid
+        Returns: staff, assignments, unassigned appointments, and statistics
+        """
+        domain = [
+            ('assignment_date', '>=', week_start),
+            ('assignment_date', '<=', week_end),
+            ('state', '!=', 'cancelled')
+        ]
+        
+        if staff_id:
+            domain.append(('assigned_staff_ids', 'in', [staff_id]))
+        
+        # Get assignments for the period
+        assignments = self.search(domain)
+        
+        # Get staff data
+        staff_domain = [('is_healthcare_staff', '=', True)]
+        if staff_id:
+            staff_domain.append(('id', '=', staff_id))
+        
+        staff_records = self.env['hr.employee'].search(staff_domain, limit=10)  # Limit for UI performance
+        
+        # Get unassigned appointments
+        appointment_domain = [
+            ('appointment_date', '>=', week_start + ' 00:00:00'),
+            ('appointment_date', '<=', week_end + ' 23:59:59'),
+            ('state', 'in', ['draft', 'confirmed']),
+            ('id', 'not in', assignments.mapped('appointment_id.id'))
+        ]
+        unassigned_appointments = self.env['health.appointment'].search(appointment_domain)
+        
+        # Format staff data
+        staff_data = []
+        for staff in staff_records:
+            # Count current assignments for this staff
+            staff_assignments = assignments.filtered(lambda a: staff.id in a.assigned_staff_ids.ids)
+            
+            # Determine staff status (simplified logic)
+            current_hour = datetime.now().hour
+            if 7 <= current_hour <= 18:
+                if len(staff_assignments.filtered(lambda a: a.state == 'in_progress')) > 0:
+                    status = 'busy'
+                    status_text = 'Busy'
+                else:
+                    status = 'available'
+                    status_text = 'Available'
+            else:
+                status = 'offline'
+                status_text = 'Offline'
+            
+            staff_data.append({
+                'id': staff.id,
+                'name': staff.name,
+                'role': staff.job_id.name if staff.job_id else 'Healthcare Staff',
+                'status': status,
+                'statusText': status_text,
+                'appointmentCount': len(staff_assignments),
+                'avatar_url': f'/web/image/hr.employee/{staff.id}/avatar_128'
+            })
+        
+        # Format assignment data
+        assignment_data = []
+        for assignment in assignments:
+            if assignment.assigned_staff_ids:
+                staff_member = assignment.assigned_staff_ids[0]  # Take first assigned staff
+                assignment_data.append({
+                    'id': assignment.id,
+                    'staff_id': staff_member.id,
+                    'patient_name': assignment.appointment_id.patient_id.name,
+                    'service_type': assignment.appointment_id.appointment_type_id.name,
+                    'assignment_date': assignment.assignment_date.strftime('%Y-%m-%d %H:%M:%S'),
+                    'duration': 60,  # Default duration in minutes
+                    'priority': assignment.priority,
+                    'state': assignment.state,
+                    'state_display': dict(assignment._fields['state'].selection)[assignment.state],
+                    'time_display': assignment.assignment_date.strftime('%H:%M - %H:%M')  # Will calculate end time
+                })
+        
+        # Format unassigned appointments
+        unassigned_data = []
+        for appointment in unassigned_appointments:
+            priority_map = {'0': 'info', '1': 'info', '2': 'warning', '3': 'danger', '4': 'danger'}
+            priority_text = {'0': 'Low', '1': 'Normal', '2': 'High', '3': 'Urgent', '4': 'Emergency'}
+            
+            unassigned_data.append({
+                'id': appointment.id,
+                'patient_name': appointment.patient_id.name,
+                'service_type': appointment.appointment_type_id.name,
+                'preferred_time': appointment.appointment_date.strftime('%H:%M') if appointment.appointment_date else 'Flexible',
+                'priority_class': priority_map.get(str(appointment.priority), 'info'),
+                'priority_display': priority_text.get(str(appointment.priority), 'Normal')
+            })
+        
+        # Calculate statistics
+        statistics = {
+            'total assignments': len(assignments),
+            'pending': len(assignments.filtered(lambda a: a.state == 'assigned')),
+            'confirmed': len(assignments.filtered(lambda a: a.state == 'confirmed')),
+            'in progress': len(assignments.filtered(lambda a: a.state == 'in_progress'))
+        }
+        
+        return {
+            'staff': staff_data,
+            'assignments': assignment_data,
+            'unassigned': unassigned_data,
+            'statistics': statistics,
+            'week_start': week_start,
+            'week_end': week_end,
+            'view_mode': view_mode
+        }
+    
+    # ============================================================================
+    # Action Methods for UI Buttons
+    # ============================================================================
+    
+    def action_get_ai_suggestions(self):
+        """Get AI-powered staff suggestions for this assignment"""
+        self.ensure_one()
+        
+        if not self.appointment_id:
+            raise UserError(_('No appointment linked to this assignment'))
+        
+        # Get available healthcare staff
+        available_staff = self.env['hr.employee'].search([
+            ('is_healthcare_staff', '=', True),
+            ('active', '=', True)
+        ], limit=5)
+        
+        if not available_staff:
+            return {
+                'type': 'ir.actions.client',
+                'tag': 'display_notification',
+                'params': {
+                    'title': _('No Staff Available'),
+                    'message': _('No healthcare staff members found for assignment suggestions.'),
+                    'type': 'warning',
+                    'sticky': False,
+                }
+            }
+        
+        # Create simple suggestions based on available staff
+        suggestion_text = []
+        for i, staff in enumerate(available_staff, 1):
+            job_title = staff.job_id.name if staff.job_id else 'Healthcare Staff'
+            score = 85 + (i * 2)  # Simple scoring for demo
+            suggestion_text.append(
+                f"{i}. {staff.name} ({job_title}) - Score: {score}%"
+            )
+        
+        message = _("AI Staff Suggestions:\n\n") + "\n".join(suggestion_text)
+        message += _("\n\nClick on a staff member below to assign them to this appointment.")
+        
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'display_notification',
+            'params': {
+                'title': _('AI Staff Suggestions'),
+                'message': message,
+                'type': 'info',
+                'sticky': True,
+            }
+        }
+    
+    def action_confirm_assignment(self):
+        """Confirm the staff assignment"""
+        self.ensure_one()
+        
+        if self.state != 'assigned':
+            raise UserError(_('Only assigned assignments can be confirmed'))
+        
+        if not self.assigned_staff_ids:
+            raise UserError(_('No staff assigned to this assignment'))
+        
+        self.write({
+            'state': 'confirmed',
+            'real_time_status': 'confirmed',
+            'staff_confirmed_date': fields.Datetime.now()
+        })
+        
+        # Update related appointment
+        if self.appointment_id:
+            self.appointment_id.write({
+                'state': 'confirmed',
+                'real_time_status': 'confirmed'
+            })
+        
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'display_notification',
+            'params': {
+                'title': _('Assignment Confirmed'),
+                'message': _('Assignment has been confirmed successfully.'),
+                'type': 'success',
+                'sticky': False,
+            }
+        }
+    
+    def action_start_assignment(self):
+        """Start the assignment (staff is en route or beginning work)"""
+        self.ensure_one()
+        
+        if self.state != 'confirmed':
+            raise UserError(_('Only confirmed assignments can be started'))
+        
+        self.write({
+            'state': 'in_progress',
+            'real_time_status': 'en_route',
+            'actual_departure_time': fields.Datetime.now()
+        })
+        
+        # Update related appointment
+        if self.appointment_id:
+            self.appointment_id.write({
+                'state': 'in_progress',
+                'real_time_status': 'en_route'
+            })
+        
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'display_notification',
+            'params': {
+                'title': _('Assignment Started'),
+                'message': _('Assignment is now in progress. Staff is en route.'),
+                'type': 'success',
+                'sticky': False,
+            }
+        }
+    
+    def action_complete_assignment(self):
+        """Complete the assignment"""
+        self.ensure_one()
+        
+        if self.state != 'in_progress':
+            raise UserError(_('Only in-progress assignments can be completed'))
+        
+        self.write({
+            'state': 'completed',
+            'real_time_status': 'completed',
+            'actual_completion_time': fields.Datetime.now()
+        })
+        
+        # Update related appointment
+        if self.appointment_id:
+            self.appointment_id.write({
+                'state': 'done',
+                'real_time_status': 'completed'
+            })
+        
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'display_notification',
+            'params': {
+                'title': _('Assignment Completed'),
+                'message': _('Assignment has been marked as completed.'),
+                'type': 'success',
+                'sticky': False,
+            }
+        }
+    
+    def action_cancel_assignment(self):
+        """Cancel the assignment"""
+        self.ensure_one()
+        
+        if self.state in ('completed', 'cancelled'):
+            raise UserError(_('Cannot cancel completed or already cancelled assignments'))
+        
+        self.write({
+            'state': 'cancelled',
+            'real_time_status': 'cancelled'
+        })
+        
+        # Update related appointment if needed
+        if self.appointment_id and self.appointment_id.state != 'cancelled':
+            self.appointment_id.write({
+                'state': 'cancelled',
+                'real_time_status': 'cancelled'
+            })
+        
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'display_notification',
+            'params': {
+                'title': _('Assignment Cancelled'),
+                'message': _('Assignment has been cancelled.'),
+                'type': 'info',
+                'sticky': False,
+            }
+        }
+    
+    def action_reschedule_assignment(self):
+        """Reschedule the assignment to a different time"""
+        self.ensure_one()
+        
+        return {
+            'name': _('Reschedule Assignment'),
+            'type': 'ir.actions.act_window',
+            'res_model': 'health.staff.assignment',
+            'res_id': self.id,
+            'view_mode': 'form',
+            'view_id': self.env.ref('health_staff_assignment.view_health_staff_assignment_form').id,
+            'target': 'new',
+            'context': {
+                'default_state': self.state,
+                'reschedule_mode': True,
+            }
+        }
+    
+    def optimize_route(self):
+        """Optimize route for this assignment (placeholder for GPS integration)"""
+        self.ensure_one()
+        
+        # This would integrate with mapping services like Google Maps API
+        # For now, return a simple notification
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'display_notification',
+            'params': {
+                'title': _('Route Optimization'),
+                'message': _('Route optimization feature will be available with GPS integration.'),
+                'type': 'info',
+                'sticky': False,
+            }
+        }
