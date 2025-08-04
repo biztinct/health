@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<data>
+    <!-- Staff Workload Dashboard Action -->
+    <record id="action_staff_workload_dashboard" model="ir.actions.client">
+        <field name="name">Staff Workload Dashboard</field>
+        <field name="tag">staff_workload_dashboard</field>
+        <field name="target">current</field>
+    </record>
+
+    <!-- Menu Item -->
+    <menuitem 
+        id="menu_staff_workload_dashboard"
+        name="Workload Dashboard"
+        parent="menu_health_staff_assignment_root"
+        action="action_staff_workload_dashboard"
+        sequence="10"/>
+
+</data>
+</odoo>

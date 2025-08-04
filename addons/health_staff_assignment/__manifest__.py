@@ -55,6 +55,7 @@
         'views/healthcare_skill_views.xml',      # Healthcare skills and service areas
         'views/health_staff_availability_views.xml',
         'views/health_staff_assignment_views.xml',
+        'views/staff_workload_dashboard_views.xml',  # Visual workload management dashboard
         
         # Extended appointment views (inherit from health_calendar)
         'views/health_appointment_minimal.xml',  # Minimal extension first
@@ -66,7 +67,10 @@
         'web.assets_backend': [
             'health_staff_assignment/static/src/css/assignment_dashboard.css',
             'health_staff_assignment/static/src/css/scheduler_grid.css',
-            # JavaScript temporarily disabled to ensure basic view loads
+            'health_staff_assignment/static/src/css/staff_workload_dashboard.css',
+            'health_staff_assignment/static/src/js/staff_workload_dashboard.js',
+            'health_staff_assignment/static/src/xml/staff_workload_dashboard.xml',
+            # Other JavaScript temporarily disabled to ensure basic view loads
             # 'health_staff_assignment/static/src/js/assignment_dashboard.js',
             # 'health_staff_assignment/static/src/js/assignment_kanban.js',
             # 'health_staff_assignment/static/src/js/scheduler_grid.js',

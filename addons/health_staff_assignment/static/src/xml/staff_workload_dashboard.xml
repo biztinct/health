@@ -1,0 +1,272 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates>
+    <t t-name="health_staff_assignment.StaffWorkloadDashboard" owl="1">
+        <div class="o_staff_workload_dashboard">
+            <!-- Header Controls -->
+            <div class="o_dashboard_header">
+                <div class="o_header_left">
+                    <h2 class="o_dashboard_title">
+                        <i class="fa fa-users me-2"/>
+                        Staff Workload Management
+                    </h2>
+                </div>
+                
+                <div class="o_header_center">
+                    <div class="o_time_range_selector">
+                        <select class="form-select" t-model="state.selectedTimeRange" t-on-change="onTimeRangeChange">
+                            <option value="today">Today</option>
+                            <option value="week">This Week</option>
+                            <option value="month">This Month</option>
+                            <option value="quarter">This Quarter</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="o_header_right">
+                    <button class="btn btn-primary" t-on-click="autoBalanceWorkload">
+                        <i class="fa fa-magic me-1"/>
+                        Auto Balance
+                    </button>
+                    <button class="btn btn-outline-secondary" t-on-click="loadData">
+                        <i class="fa fa-refresh me-1"/>
+                        Refresh
+                    </button>
+                </div>
+            </div>
+
+            <!-- Loading State -->
+            <div t-if="state.isLoading" class="o_loading_container">
+                <div class="text-center py-5">
+                    <i class="fa fa-spinner fa-spin fa-3x text-muted"/>
+                    <p class="text-muted mt-3">Loading staff workload data...</p>
+                </div>
+            </div>
+
+            <!-- Main Dashboard Content -->
+            <div t-else="" class="o_dashboard_content">
+                <!-- Workload Summary Bar -->
+                <div class="o_workload_summary">
+                    <div class="row">
+                        <div class="col-3">
+                            <div class="o_summary_card o_optimal">
+                                <div class="o_summary_icon">
+                                    <i class="fa fa-check-circle"/>
+                                </div>
+                                <div class="o_summary_content">
+                                    <div class="o_summary_number">
+                                        <t t-esc="state.staffMembers.filter(s => s.workload_percentage &lt;= 80).length"/>
+                                    </div>
+                                    <div class="o_summary_label">Available Staff</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-3">
+                            <div class="o_summary_card o_warning">
+                                <div class="o_summary_icon">
+                                    <i class="fa fa-exclamation-triangle"/>
+                                </div>
+                                <div class="o_summary_content">
+                                    <div class="o_summary_number">
+                                        <t t-esc="state.staffMembers.filter(s => s.workload_percentage > 80 &amp;&amp; s.workload_percentage &lt;= 95).length"/>
+                                    </div>
+                                    <div class="o_summary_label">Busy Staff</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-3">
+                            <div class="o_summary_card o_overload">
+                                <div class="o_summary_icon">
+                                    <i class="fa fa-warning"/>
+                                </div>
+                                <div class="o_summary_content">
+                                    <div class="o_summary_number">
+                                        <t t-esc="state.staffMembers.filter(s => s.workload_percentage > 95).length"/>
+                                    </div>
+                                    <div class="o_summary_label">Overloaded Staff</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-3">
+                            <div class="o_summary_card o_total">
+                                <div class="o_summary_icon">
+                                    <i class="fa fa-tasks"/>
+                                </div>
+                                <div class="o_summary_content">
+                                    <div class="o_summary_number">
+                                        <t t-esc="state.assignments.length"/>
+                                    </div>
+                                    <div class="o_summary_label">Total Assignments</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Staff Columns -->
+                <div class="o_staff_columns_container">
+                    <div class="row">
+                        <div t-foreach="state.staffMembers" t-as="staff" t-key="staff.id" 
+                             class="col-lg-3 col-md-4 col-sm-6">
+                            <div class="o_staff_column" t-att-data-staff-id="staff.id">
+                                <!-- Staff Header -->
+                                <div class="o_staff_header" t-att-class="getWorkloadStatusClass(staff.workload_percentage)">
+                                    <div class="o_staff_avatar">
+                                        <img t-att-src="'/web/image/health.staff/' + staff.id + '/image_256'" 
+                                             t-att-alt="staff.name" class="rounded-circle"/>
+                                    </div>
+                                    
+                                    <div class="o_staff_info">
+                                        <h4 class="o_staff_name" t-esc="staff.name"/>
+                                        <div class="o_staff_details">
+                                            <span class="badge" t-att-class="'badge-' + staff.staff_type">
+                                                <t t-esc="staff.staff_type"/>
+                                            </span>
+                                            <span class="o_staff_code text-muted">
+                                                <t t-esc="staff.staff_code"/>
+                                            </span>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="o_workload_indicator">
+                                        <div class="o_workload_circle">
+                                            <svg viewBox="0 0 36 36" class="o_circular_progress">
+                                                <path class="o_circle_bg" d="M18 2.0845
+                                                    a 15.9155 15.9155 0 0 1 0 31.831
+                                                    a 15.9155 15.9155 0 0 1 0 -31.831"/>
+                                                <path class="o_circle" 
+                                                      t-att-stroke-dasharray="staff.workload_percentage + ', 100'"
+                                                      d="M18 2.0845
+                                                      a 15.9155 15.9155 0 0 1 0 31.831
+                                                      a 15.9155 15.9155 0 0 1 0 -31.831"/>
+                                            </svg>
+                                            <div class="o_percentage_text">
+                                                <t t-esc="Math.round(staff.workload_percentage)"/>%
+                                            </div>
+                                        </div>
+                                        <div class="o_workload_status">
+                                            <t t-esc="getWorkloadStatusText(staff.workload_percentage)"/>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Staff Statistics -->
+                                <div class="o_staff_stats">
+                                    <div class="row text-center">
+                                        <div class="col-4">
+                                            <div class="o_stat_number" t-esc="staff.active_assignments || 0"/>
+                                            <div class="o_stat_label">Active</div>
+                                        </div>
+                                        <div class="col-4">
+                                            <div class="o_stat_number" t-esc="staff.pending_assignments || 0"/>
+                                            <div class="o_stat_label">Pending</div>
+                                        </div>
+                                        <div class="col-4">
+                                            <div class="o_stat_number" t-esc="staff.completed_today || 0"/>
+                                            <div class="o_stat_label">Done</div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Assignment Cards -->
+                                <div class="o_assignments_container">
+                                    <div class="o_assignments_header">
+                                        <h6>
+                                            <i class="fa fa-tasks me-1"/>
+                                            Current Assignments
+                                        </h6>
+                                    </div>
+                                    
+                                    <div class="o_assignments_list">
+                                        <t t-foreach="state.assignments.filter(a => a.assigned_staff_ids.includes(staff.id))" 
+                                           t-as="assignment" t-key="assignment.id">
+                                            <div class="o_assignment_card" 
+                                                 t-att-data-assignment-id="assignment.id"
+                                                 t-att-class="'o_priority_' + assignment.priority + ' o_state_' + assignment.state"
+                                                 draggable="true">
+                                                
+                                                <!-- Priority Indicator -->
+                                                <div class="o_priority_indicator" t-att-class="'o_priority_' + assignment.priority">
+                                                    <div class="o_priority_dot"/>
+                                                </div>
+                                                
+                                                <!-- Assignment Content -->
+                                                <div class="o_assignment_content" t-on-click="() => this.openAssignmentDetails(assignment.id)">
+                                                    <div class="o_assignment_header">
+                                                        <h6 class="o_assignment_title" t-esc="assignment.name"/>
+                                                        <div class="o_assignment_meta">
+                                                            <span class="badge" t-att-class="'badge-' + assignment.state">
+                                                                <t t-esc="assignment.state"/>
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                    
+                                                    <div class="o_assignment_details">
+                                                        <div class="o_detail_row" t-if="assignment.appointment_id">
+                                                            <i class="fa fa-calendar me-1"/>
+                                                            <span t-esc="assignment.appointment_name"/>
+                                                        </div>
+                                                        <div class="o_detail_row" t-if="assignment.assignment_date">
+                                                            <i class="fa fa-clock-o me-1"/>
+                                                            <span t-esc="assignment.assignment_date"/>
+                                                        </div>
+                                                        <div class="o_detail_row" t-if="assignment.estimated_duration">
+                                                            <i class="fa fa-hourglass-half me-1"/>
+                                                            <span t-esc="assignment.estimated_duration"/>min
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <!-- Drag Handle -->
+                                                <div class="o_drag_handle">
+                                                    <i class="fa fa-grip-vertical"/>
+                                                </div>
+                                            </div>
+                                        </t>
+                                        
+                                        <!-- Empty State -->
+                                        <div t-if="!state.assignments.filter(a => a.assigned_staff_ids.includes(staff.id)).length" 
+                                             class="o_empty_assignments">
+                                            <div class="text-center text-muted py-3">
+                                                <i class="fa fa-inbox fa-2x mb-2"/>
+                                                <p>No assignments</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Drop Zone Indicator -->
+                                <div class="o_drop_zone_indicator">
+                                    <div class="o_drop_message">
+                                        <i class="fa fa-arrow-down"/>
+                                        Drop assignment here
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Empty State -->
+                <div t-if="!state.staffMembers.length" class="o_empty_state">
+                    <div class="text-center py-5">
+                        <i class="fa fa-users fa-4x text-muted mb-3"/>
+                        <h4 class="text-muted">No Staff Members Found</h4>
+                        <p class="text-muted">Add staff members to see workload management</p>
+                        <button class="btn btn-primary">
+                            <i class="fa fa-plus me-1"/>
+                            Add Staff Member
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Drag Preview -->
+            <div class="o_drag_preview" style="display: none;">
+                <div class="o_preview_content">
+                    <i class="fa fa-arrows-alt me-2"/>
+                    <span class="o_preview_text">Moving assignment...</span>
+                </div>
+            </div>
+        </div>
+    </t>
+</templates>

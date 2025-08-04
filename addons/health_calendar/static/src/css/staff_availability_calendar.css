@@ -1,0 +1,340 @@
+/* Advanced Staff Availability Calendar Styles */
+/* Drag & Drop Visual Enhancements */
+
+.o_staff_availability_calendar {
+    position: relative;
+}
+
+/* Drag Handles */
+.o_availability_drag_handle {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    width: 16px;
+    height: 16px;
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 3px;
+    cursor: move;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    color: rgba(255, 255, 255, 0.8);
+    transition: all 0.2s ease;
+}
+
+.o_availability_drag_handle:hover {
+    background: rgba(0, 0, 0, 0.2);
+    color: white;
+}
+
+/* Resize Handles */
+.o_availability_resize_handle {
+    position: absolute;
+    width: 100%;
+    height: 4px;
+    cursor: ns-resize;
+    background: transparent;
+    transition: background-color 0.2s ease;
+}
+
+.o_availability_resize_handle.o_resize_start {
+    top: -2px;
+}
+
+.o_availability_resize_handle.o_resize_end {
+    bottom: -2px;
+}
+
+.o_availability_resize_handle:hover {
+    background: rgba(0, 0, 0, 0.1);
+}
+
+/* Event Hover Effects */
+.fc-event:hover .o_availability_drag_handle,
+.fc-event.o_event_hover .o_availability_drag_handle {
+    display: flex;
+}
+
+.fc-event:hover .o_availability_resize_handle,
+.fc-event.o_event_hover .o_availability_resize_handle {
+    background: rgba(0, 0, 0, 0.05);
+}
+
+.fc-event.o_event_hover {
+    transform: scale(1.02);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    z-index: 10;
+    transition: all 0.2s ease;
+}
+
+/* Dragging States */
+.fc-event.o_dragging {
+    opacity: 0.3;
+    transform: rotate(2deg);
+    transition: all 0.2s ease;
+}
+
+.o_availability_ghost {
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+    transform: rotate(-2deg) scale(1.05);
+    border: 2px solid var(--primary);
+    animation: ghostPulse 1s ease-in-out infinite alternate;
+}
+
+@keyframes ghostPulse {
+    from { opacity: 0.7; }
+    to { opacity: 0.9; }
+}
+
+/* Resizing States */
+.fc-event.o_resizing {
+    border: 2px dashed var(--primary);
+    background: rgba(var(--primary-rgb), 0.1) !important;
+}
+
+/* Drop Zones */
+.o_show_drop_zones .fc-timegrid-slot:hover,
+.o_show_drop_zones .fc-daygrid-day:hover {
+    background: rgba(var(--success-rgb), 0.1);
+    border: 2px dashed var(--success);
+    animation: dropZonePulse 1s ease-in-out infinite alternate;
+}
+
+@keyframes dropZonePulse {
+    from { background: rgba(var(--success-rgb), 0.05); }
+    to { background: rgba(var(--success-rgb), 0.15); }
+}
+
+/* Conflict Highlights */
+.fc-event.o_conflict_highlight {
+    border: 2px solid var(--danger) !important;
+    background: rgba(var(--danger-rgb), 0.1) !important;
+    animation: conflictPulse 0.5s ease-in-out infinite alternate;
+}
+
+@keyframes conflictPulse {
+    from { box-shadow: 0 0 5px rgba(var(--danger-rgb), 0.5); }
+    to { box-shadow: 0 0 15px rgba(var(--danger-rgb), 0.8); }
+}
+
+/* Global Dragging State */
+body.o_availability_dragging {
+    cursor: grabbing !important;
+    user-select: none;
+}
+
+body.o_availability_dragging * {
+    cursor: grabbing !important;
+}
+
+/* Availability Type Specific Styling */
+.fc-event[data-availability-type="available"] {
+    background: linear-gradient(135deg, #28a745, #20c997);
+    border-color: #28a745;
+}
+
+.fc-event[data-availability-type="busy"] {
+    background: linear-gradient(135deg, #dc3545, #e83e8c);
+    border-color: #dc3545;
+}
+
+.fc-event[data-availability-type="off"] {
+    background: linear-gradient(135deg, #007bff, #6610f2);
+    border-color: #007bff;
+}
+
+.fc-event[data-availability-type="vacation"] {
+    background: linear-gradient(135deg, #ffc107, #fd7e14);
+    border-color: #ffc107;
+}
+
+.fc-event[data-availability-type="sick_leave"] {
+    background: linear-gradient(135deg, #6f42c1, #e83e8c);
+    border-color: #6f42c1;
+}
+
+.fc-event[data-availability-type="training"] {
+    background: linear-gradient(135deg, #fd7e14, #ffc107);
+    border-color: #fd7e14;
+}
+
+.fc-event[data-availability-type="meeting"] {
+    background: linear-gradient(135deg, #6c757d, #495057);
+    border-color: #6c757d;
+}
+
+/* Enhanced Event Text */
+.fc-event-title {
+    font-weight: 600;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.fc-event-time {
+    font-size: 0.85em;
+    opacity: 0.9;
+}
+
+/* Staff Resource Headers (if using resource view) */
+.fc-resource-cell {
+    background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+    border-bottom: 2px solid var(--primary);
+    font-weight: 600;
+    text-align: center;
+    padding: 10px;
+}
+
+.fc-resource-cell:hover {
+    background: linear-gradient(135deg, #e9ecef, #dee2e6);
+}
+
+/* Timeline Resource Styling */
+.fc-timeline-event {
+    border-radius: 6px;
+    padding: 4px 8px;
+    margin: 1px 0;
+}
+
+.fc-timeline-event:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+    .o_availability_drag_handle {
+        width: 20px;
+        height: 20px;
+        font-size: 12px;
+    }
+    
+    .o_availability_resize_handle {
+        height: 6px;
+    }
+    
+    .fc-event.o_event_hover {
+        transform: scale(1.05);
+    }
+}
+
+/* Touch Device Optimizations */
+@media (pointer: coarse) {
+    .o_availability_drag_handle {
+        display: flex;
+        background: rgba(0, 0, 0, 0.15);
+    }
+    
+    .o_availability_resize_handle {
+        height: 8px;
+        background: rgba(0, 0, 0, 0.05);
+    }
+    
+    .fc-event {
+        padding: 6px 8px;
+        min-height: 30px;
+    }
+}
+
+/* Accessibility Enhancements */
+.fc-event:focus {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+}
+
+.o_availability_drag_handle:focus {
+    outline: 2px solid white;
+    outline-offset: 1px;
+}
+
+/* Loading States */
+.o_availability_loading .fc-event {
+    opacity: 0.5;
+    pointer-events: none;
+}
+
+.o_availability_loading::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 40px;
+    height: 40px;
+    margin: -20px 0 0 -20px;
+    border: 3px solid rgba(var(--primary-rgb), 0.3);
+    border-radius: 50%;
+    border-top-color: var(--primary);
+    animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* Success/Error Feedback */
+.o_drag_success {
+    animation: successFlash 0.5s ease-in-out;
+}
+
+.o_drag_error {
+    animation: errorShake 0.5s ease-in-out;
+}
+
+@keyframes successFlash {
+    0%, 100% { background: inherit; }
+    50% { background: rgba(var(--success-rgb), 0.3); }
+}
+
+@keyframes errorShake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
+}
+
+/* Tooltip Styles */
+.o_availability_tooltip {
+    position: absolute;
+    background: rgba(0, 0, 0, 0.9);
+    color: white;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 12px;
+    z-index: 10000;
+    pointer-events: none;
+    max-width: 200px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.o_availability_tooltip::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -5px;
+    border: 5px solid transparent;
+    border-top-color: rgba(0, 0, 0, 0.9);
+}
+
+/* Grid Snap Indicators */
+.o_snap_indicator {
+    position: absolute;
+    width: 2px;
+    background: var(--primary);
+    opacity: 0.5;
+    pointer-events: none;
+    animation: snapPulse 0.3s ease-in-out infinite alternate;
+}
+
+@keyframes snapPulse {
+    from { opacity: 0.3; }
+    to { opacity: 0.7; }
+}
+
+/* Performance Optimizations */
+.fc-event {
+    will-change: transform, opacity;
+}
+
+.fc-event.o_dragging,
+.fc-event.o_resizing {
+    will-change: transform, opacity, left, top, width, height;
+}

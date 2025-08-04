@@ -64,6 +64,14 @@ while maintaining full integration with VAFHS clinical and billing systems.
         'data_demo/health_staff_demo.xml',
     ],
     'assets': {
+        'web.assets_backend': [
+            'health_calendar/static/src/css/staff_availability_calendar.css',
+            'health_calendar/static/src/js/calendar_utils.js',
+            'health_calendar/static/src/js/staff_availability_model.js',
+            # Temporarily disable bridge to isolate issue
+            # 'health_calendar/static/src/js/assignment_calendar_bridge.js',
+            'health_calendar/static/src/js/staff_availability_calendar.js',
+        ],
         'web.assets_frontend': [
             'health_calendar/static/src/css/booking_portal.css',
             'health_calendar/static/src/js/booking_portal.js',

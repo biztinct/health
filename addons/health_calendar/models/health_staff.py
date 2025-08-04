@@ -1,5 +1,6 @@
 from odoo import models, fields, api, _
 from odoo.exceptions import ValidationError
+from datetime import timedelta
 
 
 class HealthStaff(models.Model):
@@ -216,6 +217,116 @@ class HealthStaff(models.Model):
             'view_mode': 'calendar,list,form',
             'domain': [('staff_id', '=', self.id)],
             'context': {'default_staff_id': self.id},
+        }
+    
+    @api.model
+    def get_workload_dashboard_data(self, time_range='week', include_assignments=True, include_availability=True):
+        """Get workload dashboard data for all staff members"""
+        
+        # Calculate date range
+        today = fields.Date.today()
+        if time_range == 'today':
+            date_from = date_to = today
+        elif time_range == 'week':
+            date_from = today - timedelta(days=today.weekday())
+            date_to = date_from + timedelta(days=6)
+        elif time_range == 'month':
+            date_from = today.replace(day=1)
+            next_month = date_from + timedelta(days=32)
+            date_to = next_month.replace(day=1) - timedelta(days=1)
+        elif time_range == 'quarter':
+            quarter = (today.month - 1) // 3
+            date_from = today.replace(month=quarter * 3 + 1, day=1)
+            date_to = (date_from + timedelta(days=93)).replace(day=1) - timedelta(days=1)
+        else:
+            date_from = date_to = today
+        
+        # Get active staff members
+        staff_members = self.search([
+            ('employment_status', '=', 'active')
+        ])
+        
+        staff_data = []
+        all_assignments = []
+        
+        for staff in staff_members:
+            # Get staff assignments in the time range
+            assignments = []
+            if include_assignments:
+                assignments = self.env['health.staff.assignment'].search([
+                    '|',
+                    ('assigned_staff_ids', 'in', [staff.id]),
+                    ('lead_staff_id', '=', staff.id),
+                    ('assignment_date', '>=', date_from),
+                    ('assignment_date', '<=', date_to)
+                ])
+                
+                # Add to all assignments list
+                for assignment in assignments:
+                    all_assignments.append({
+                        'id': assignment.id,
+                        'name': assignment.name,
+                        'state': assignment.state,
+                        'priority': assignment.priority,
+                        'assignment_type': assignment.assignment_type,
+                        'assignment_date': assignment.assignment_date.isoformat() if assignment.assignment_date else None,
+                        'assigned_staff_ids': assignment.assigned_staff_ids.ids,
+                        'lead_staff_id': assignment.lead_staff_id.id if assignment.lead_staff_id else None,
+                        'appointment_id': assignment.appointment_id.id if assignment.appointment_id else None,
+                        'appointment_name': assignment.appointment_id.name if assignment.appointment_id else None,
+                        'estimated_duration': getattr(assignment.appointment_id, 'duration_minutes', 60) if assignment.appointment_id else 60,
+                    })
+            
+            # Calculate workload statistics
+            total_assignments = len(assignments)
+            active_assignments = len(assignments.filtered(lambda a: a.state in ['assigned', 'confirmed', 'in_progress']))
+            pending_assignments = len(assignments.filtered(lambda a: a.state in ['draft', 'assigned']))
+            completed_today = len(assignments.filtered(lambda a: a.state == 'completed' and a.assignment_date and a.assignment_date.date() == today))
+            
+            # Calculate workload percentage (simplified)
+            # In a full implementation, this would consider working hours, capacity, etc.
+            max_daily_capacity = staff.max_appointments_per_day or 8
+            if time_range == 'today':
+                workload_percentage = (active_assignments / max_daily_capacity) * 100 if max_daily_capacity > 0 else 0
+            else:
+                # For longer periods, calculate average daily workload
+                days_in_range = (date_to - date_from).days + 1
+                avg_daily_assignments = total_assignments / days_in_range if days_in_range > 0 else 0
+                workload_percentage = (avg_daily_assignments / max_daily_capacity) * 100 if max_daily_capacity > 0 else 0
+            
+            workload_percentage = min(workload_percentage, 150)  # Cap at 150%
+            
+            staff_data.append({
+                'id': staff.id,
+                'name': staff.name,
+                'staff_code': staff.staff_code,
+                'staff_type': staff.staff_type,
+                'employment_status': staff.employment_status,
+                'workload_percentage': workload_percentage,
+                'active_assignments': active_assignments,
+                'pending_assignments': pending_assignments,
+                'completed_today': completed_today,
+                'total_assignments': total_assignments,
+                'max_daily_capacity': max_daily_capacity,
+                'email': staff.email,
+                'mobile': staff.mobile,
+            })
+        
+        return {
+            'staff_members': staff_data,
+            'assignments': all_assignments,
+            'date_range': {
+                'from': date_from.isoformat(),
+                'to': date_to.isoformat(),
+                'range_type': time_range
+            },
+            'summary': {
+                'total_staff': len(staff_data),
+                'available_staff': len([s for s in staff_data if s['workload_percentage'] <= 80]),
+                'busy_staff': len([s for s in staff_data if 80 < s['workload_percentage'] <= 95]),
+                'overloaded_staff': len([s for s in staff_data if s['workload_percentage'] > 95]),
+                'total_assignments': len(all_assignments),
+            }
         }
 
 
