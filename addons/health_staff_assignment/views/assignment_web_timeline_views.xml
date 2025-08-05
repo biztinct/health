@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Professional Staff Assignment Timeline View using web_timeline -->
+    <record id="health_staff_assignment_timeline_view" model="ir.ui.view">
+        <field name="name">Staff Assignment Timeline</field>
+        <field name="model">health.staff.assignment</field>
+        <field name="type">timeline</field>
+        <field name="priority">10</field>
+        <field name="arch" type="xml">
+            <timeline date_start="assignment_date"
+                      string="display_name"
+                      default_group_by="lead_staff_id"
+                      event_open_popup="true"
+                      colors="#dc3545:state=='cancelled';#ffc107:state=='draft';#17a2b8:state=='assigned';#007bff:state=='confirmed';#fd7e14:state=='in_progress';#28a745:state=='completed'"
+                      quick_create="false">
+                
+                <!-- Enhanced Timeline Card Content with Professional Icons and Styling -->
+                <field name="name"/>
+                <field name="state"/>
+                <field name="priority"/>
+                <field name="assigned_staff_ids"/>
+                <field name="lead_staff_id"/>
+                <field name="appointment_id"/>
+                <field name="assignment_type"/>
+                <field name="assignment_date"/>
+                <field name="display_name"/>
+                
+                <!-- Professional card template with icons and status indicators -->
+                <templates>
+                    <t t-name="timeline-item">
+                        <div class="o_timeline_assignment_card" t-att-data-priority="record.priority" t-att-data-state="record.state" t-att-data-type="record.assignment_type">
+                            
+                            <!-- Card Header with Priority Badge -->
+                            <div class="assignment_card_header">
+                                <span class="priority_badge" t-att-data-priority="record.priority">
+                                    <i class="fa fa-exclamation-circle" t-if="record.priority == '4'"/>
+                                    <i class="fa fa-exclamation-triangle" t-elif="record.priority == '3'"/>
+                                    <i class="fa fa-circle" t-elif="record.priority == '2'"/>
+                                    <i class="fa fa-circle-o" t-else=""/>
+                                </span>
+                                <span class="assignment_type_icon">
+                                    <i class="fa fa-hospital-o" t-if="record.assignment_type == 'clinic_visit'"/>
+                                    <i class="fa fa-home" t-elif="record.assignment_type == 'home_visit'"/>
+                                    <i class="fa fa-ambulance" t-elif="record.assignment_type == 'emergency'"/>
+                                    <i class="fa fa-stethoscope" t-elif="record.assignment_type == 'follow_up'"/>
+                                    <i class="fa fa-user-md" t-else=""/>
+                                </span>
+                            </div>
+                            
+                            <!-- Main Content -->
+                            <div class="assignment_card_content">
+                                <div class="assignment_title" t-esc="record.display_name"/>
+                                
+                                <!-- Staff Info with Avatar -->
+                                <div class="staff_info" t-if="record.lead_staff_id">
+                                    <i class="fa fa-user-circle staff_avatar"/>
+                                    <span class="staff_name" t-esc="record.lead_staff_id[1]"/>
+                                </div>
+                                
+                                <!-- Appointment Info -->
+                                <div class="appointment_info" t-if="record.appointment_id">
+                                    <i class="fa fa-calendar-check-o"/>
+                                    <span class="appointment_ref" t-esc="record.appointment_id[1]"/>
+                                </div>
+                            </div>
+                            
+                            <!-- Status Footer -->
+                            <div class="assignment_card_footer">
+                                <span class="state_badge" t-att-data-state="record.state">
+                                    <i class="fa fa-clock-o" t-if="record.state == 'draft'"/>
+                                    <i class="fa fa-user-plus" t-elif="record.state == 'assigned'"/>
+                                    <i class="fa fa-check-circle-o" t-elif="record.state == 'confirmed'"/>
+                                    <i class="fa fa-play-circle" t-elif="record.state == 'in_progress'"/>
+                                    <i class="fa fa-check-circle" t-elif="record.state == 'completed'"/>
+                                    <i class="fa fa-times-circle" t-elif="record.state == 'cancelled'"/>
+                                    <span class="state_text" t-esc="record.state"/>
+                                </span>
+                                
+                                <!-- Team Size Indicator -->
+                                <span class="team_size" t-if="record.assigned_staff_ids and record.assigned_staff_ids.length > 1">
+                                    <i class="fa fa-users"/>
+                                    <span t-esc="record.assigned_staff_ids.length"/>
+                                </span>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+                
+            </timeline>
+        </field>
+    </record>
+
+    <!-- Professional Staff Assignment List View -->
+    <record id="health_staff_assignment_list_view" model="ir.ui.view">
+        <field name="name">Staff Assignment List</field>
+        <field name="model">health.staff.assignment</field>
+        <field name="type">list</field>
+        <field name="priority">10</field>
+        <field name="arch" type="xml">
+            <list string="Staff Assignments" default_order="assignment_date desc">
+                <field name="name"/>
+                <field name="assignment_date"/>
+                <field name="lead_staff_id"/>
+                <field name="assigned_staff_ids" widget="many2many_tags"/>
+                <field name="state" decoration-success="state=='completed'" decoration-warning="state=='assigned'" decoration-danger="state=='cancelled'"/>
+                <field name="priority"/>
+                <field name="appointment_id"/>
+                <field name="assignment_type"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Professional Staff Assignment Form View -->
+    <record id="health_staff_assignment_form_view" model="ir.ui.view">
+        <field name="name">Staff Assignment Form</field>
+        <field name="model">health.staff.assignment</field>
+        <field name="type">form</field>
+        <field name="priority">10</field>
+        <field name="arch" type="xml">
+            <form string="Staff Assignment">
+                <header>
+                    <button name="action_assign_staff" type="object" string="Assign Staff" class="oe_highlight" invisible="state != 'draft'"/>
+                    <button name="action_confirm_assignment" type="object" string="Confirm" class="oe_highlight" invisible="state != 'assigned'"/>
+                    <button name="action_start_assignment" type="object" string="Start" class="oe_highlight" invisible="state != 'confirmed'"/>
+                    <button name="action_complete_assignment" type="object" string="Complete" class="oe_highlight" invisible="state != 'in_progress'"/>
+                    <button name="action_cancel_assignment" type="object" string="Cancel" invisible="state in ['completed', 'cancelled']"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,assigned,confirmed,in_progress,completed"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" readonly="1"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group name="assignment_info">
+                            <field name="appointment_id" options="{'no_create': True}"/>
+                            <field name="assignment_date"/>
+                            <field name="assignment_type"/>
+                            <field name="priority"/>
+                        </group>
+                        <group name="staff_info">
+                            <field name="lead_staff_id" options="{'no_create': True}"/>
+                            <field name="assigned_staff_ids" widget="many2many_tags" options="{'no_create': True}"/>
+                            <field name="assigned_by" readonly="1"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page name="assignment_details" string="Assignment Details">
+                            <group>
+                                <field name="assignment_score" readonly="1"/>
+                                <field name="skill_match_score" readonly="1"/>
+                                <field name="proximity_score" readonly="1"/>
+                                <field name="workload_score" readonly="1"/>
+                                <field name="availability_score" readonly="1"/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+</odoo>

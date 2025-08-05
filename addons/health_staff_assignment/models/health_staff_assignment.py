@@ -19,6 +19,21 @@ class HealthStaffAssignment(models.Model):
     # Core Assignment Fields
     # ============================================================================
     
+    # Timeline display name for better web_timeline integration
+    @api.depends('name', 'appointment_id', 'assigned_staff_ids')
+    def _compute_display_name(self):
+        """Compute a rich display name for timeline view"""
+        for record in self:
+            if record.appointment_id:
+                staff_names = ', '.join(record.assigned_staff_ids.mapped('name')[:2])
+                if len(record.assigned_staff_ids) > 2:
+                    staff_names += f" +{len(record.assigned_staff_ids) - 2} more"
+                record.display_name = f"{record.appointment_id.name} ({staff_names})"
+            else:
+                record.display_name = record.name or "New Assignment"
+    
+    display_name = fields.Char(compute='_compute_display_name', store=True)
+    
     name = fields.Char('Assignment Reference', required=True, copy=False, readonly=True,
                       default=lambda self: _('New Assignment'))
     

@@ -122,74 +122,80 @@
                     </div>
 
                     <div class="o_timeline_body_right">
-                        <!-- Timeline Grid -->
-                        <div class="o_timeline_grid">
-                            <!-- Time Grid Lines -->
-                            <div class="o_time_grid_lines">
+                        <!-- PROFESSIONAL: Timeline Grid Container with proper positioning -->
+                        <div class="o_timeline_grid_container" style="position: relative; overflow: hidden; height: 100%;">
+                            
+                            <!-- Background Grid Lines Layer -->
+                            <div class="o_timeline_grid_background" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none;">
                                 <t t-foreach="state.timeSlots" t-as="timeSlot" t-key="timeSlot_index">
                                     <div class="o_time_grid_line" 
-                                         t-att-style="'left: ' + (timeSlot_index * timelineConfig.hourWidth * state.zoomLevel) + 'px'">
+                                         t-att-style="'position: absolute; left: ' + (timeSlot_index * timelineConfig.hourWidth * state.zoomLevel) + 'px; top: 0; bottom: 0; width: 1px; background: #e9ecef; opacity: 0.5;'">
                                     </div>
                                 </t>
                             </div>
-
-                            <!-- Staff Assignment Rows -->
-                            <t t-foreach="state.staffMembers" t-as="staff" t-key="staff.id">
-                                <div class="o_timeline_staff_row" 
-                                     t-att-data-staff-id="staff.id"
-                                     t-att-style="'height: ' + this.timelineConfig.rowHeight + 'px; top: ' + (staff_index * this.timelineConfig.rowHeight) + 'px'">
-                                    
-                                    <!-- Time Slots for this Staff -->
-                                    <t t-foreach="state.timeSlots" t-as="timeSlot" t-key="timeSlot_index">
-                                        <div class="o_timeline_slot" 
-                                             t-att-data-staff-id="staff.id"
-                                             t-att-data-time-slot="timeSlot.time"
-                                             t-att-data-slot-index="timeSlot_index"
-                                             t-att-data-slot-datetime="timeSlot.datetime ? timeSlot.datetime.toISOString() : ''"
-                                             t-att-style="'left: ' + (timeSlot_index * this.timelineConfig.hourWidth * this.state.zoomLevel) + 'px; width: ' + (this.timelineConfig.hourWidth * this.state.zoomLevel) + 'px; height: ' + this.timelineConfig.rowHeight + 'px'">
-                                        </div>
-                                    </t>
-
-                                    <!-- Assignment Blocks -->
-                                    <t t-foreach="state.assignments.filter(a => a.assigned_staff_ids.includes(staff.id))" 
-                                       t-as="assignment" t-key="assignment.id">
-                                        <div class="o_timeline_assignment" 
-                                             t-att-data-assignment-id="assignment.id"
-                                             t-att-class="'o_priority_' + assignment.priority + ' o_state_' + assignment.state"
-                                             t-att-style="'left: ' + this.getAssignmentPosition(assignment, staff.id).left + 'px; width: ' + this.getAssignmentPosition(assignment, staff.id).width + 'px; height: ' + this.getAssignmentPosition(assignment, staff.id).height + 'px; top: ' + this.getAssignmentPosition(assignment, staff.id).top + 'px'"
-                                             draggable="true"
-                                             title="Click to open details, drag to move">
-                                            
-                                            <!-- Assignment Content -->
-                                            <div class="o_assignment_block">
-                                                <div class="o_assignment_header">
-                                                    <div class="o_assignment_title" t-esc="assignment.name"/>
-                                                    <div class="o_assignment_time">
-                                                        <i class="fa fa-clock-o"/>
-                                                        <span t-esc="assignment.estimated_duration || 60"/>min
-                                                    </div>
-                                                </div>
-                                                
-                                                <div class="o_assignment_details">
-                                                    <div t-if="assignment.appointment_name" class="o_assignment_detail">
-                                                        <i class="fa fa-calendar"/>
-                                                        <span t-esc="assignment.appointment_name"/>
-                                                    </div>
-                                                    <div class="o_assignment_status">
-                                                        <span class="badge" t-att-class="'badge-' + assignment.state">
-                                                            <t t-esc="assignment.state"/>
-                                                        </span>
-                                                    </div>
-                                                </div>
-                                                
-                                                <!-- Resize Handles -->
-                                                <div class="o_resize_handle o_resize_left"></div>
-                                                <div class="o_resize_handle o_resize_right"></div>
+                            
+                            <!-- Staff Rows Layer (drop zones with reduced z-index) -->
+                            <div class="o_timeline_staff_rows" style="position: absolute; top: 0; left: 0; width: 100%; z-index: 5; pointer-events: none;">
+                                <t t-foreach="state.staffMembers" t-as="staff" t-key="staff.id">
+                                    <div class="o_timeline_staff_row" 
+                                         t-att-data-staff-id="staff.id"
+                                         t-att-style="'position: absolute; left: 0; right: 0; height: ' + this.timelineConfig.rowHeight + 'px; top: ' + (staff_index * this.timelineConfig.rowHeight) + 'px; border-bottom: 1px solid #f1f3f4; background: rgba(255,255,255,0.01); pointer-events: none;'">
+                                        
+                                        <!-- Time Slots for this Staff (only for drops, not clicks) -->
+                                        <t t-foreach="state.timeSlots" t-as="timeSlot" t-key="timeSlot_index">
+                                            <div class="o_timeline_slot" 
+                                                 t-att-data-staff-id="staff.id"
+                                                 t-att-data-time-slot="timeSlot.time"
+                                                 t-att-data-slot-index="timeSlot_index"
+                                                 t-att-data-slot-datetime="timeSlot.datetime ? timeSlot.datetime.toISOString() : ''"
+                                                 t-att-style="'position: absolute; left: ' + (timeSlot_index * this.timelineConfig.hourWidth * this.state.zoomLevel) + 'px; width: ' + (this.timelineConfig.hourWidth * this.state.zoomLevel) + 'px; height: ' + this.timelineConfig.rowHeight + 'px; cursor: crosshair; background: rgba(0,123,255,0.02); pointer-events: auto; z-index: 5;'"
+                                                 title="Drop assignment here">
                                             </div>
+                                        </t>
+                                    </div>
+                                </t>
+                            </div>
+                            
+                            <!-- PROFESSIONAL: Assignments Layer (on top for interaction) -->
+                            <div class="o_timeline_assignments_layer" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 20; pointer-events: none;">
+                                <t t-foreach="state.assignments" t-as="assignment" t-key="assignment.id">
+                                    <div class="o_timeline_assignment" 
+                                         t-att-data-assignment-id="assignment.id"
+                                         t-att-class="'o_priority_' + assignment.priority + ' o_state_' + assignment.state"
+                                         t-att-style="this.getAssignmentStyle(assignment)"
+                                         draggable="true"
+                                         style="position: absolute; cursor: move; pointer-events: auto; z-index: 20;"
+                                         title="Click to open details, drag to move">
+                                        
+                                        <!-- Assignment Content -->
+                                        <div class="o_assignment_block">
+                                            <div class="o_assignment_header">
+                                                <div class="o_assignment_title" t-esc="assignment.name"/>
+                                                <div class="o_assignment_time">
+                                                    <i class="fa fa-clock-o"/>
+                                                    <span t-esc="assignment.estimated_duration || 60"/>min
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="o_assignment_details">
+                                                <div t-if="assignment.appointment_name" class="o_assignment_detail">
+                                                    <i class="fa fa-calendar"/>
+                                                    <span t-esc="assignment.appointment_name"/>
+                                                </div>
+                                                <div class="o_assignment_status">
+                                                    <span class="badge" t-att-class="'badge-' + assignment.state">
+                                                        <t t-esc="assignment.state"/>
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            
+                                            <!-- Resize Handles -->
+                                            <div class="o_resize_handle o_resize_left"></div>
+                                            <div class="o_resize_handle o_resize_right"></div>
                                         </div>
-                                    </t>
-                                </div>
-                            </t>
+                                    </div>
+                                </t>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -206,7 +212,27 @@
 
             <!-- Assignment Details Popup -->
             <div t-if="state.selectedAssignment" class="o_assignment_popup">
-                <!-- Assignment details would go here -->
+                <div class="o_popup_header">
+                    <h4 class="o_popup_title">Assignment Details</h4>
+                    <button class="o_popup_close" t-on-click="closeAssignmentDetails">×</button>
+                </div>
+                <div class="o_popup_body">
+                    <div class="o_assignment_detail_row">
+                        <strong>Name:</strong> <span t-esc="state.selectedAssignment.name"/>
+                    </div>
+                    <div class="o_assignment_detail_row">
+                        <strong>State:</strong> <span t-esc="state.selectedAssignment.state"/>
+                    </div>
+                    <div class="o_assignment_detail_row">
+                        <strong>Priority:</strong> <span t-esc="state.selectedAssignment.priority"/>
+                    </div>
+                    <div class="o_assignment_detail_row">
+                        <strong>Date:</strong> <span t-esc="state.selectedAssignment.assignment_date"/>
+                    </div>
+                    <div t-if="state.selectedAssignment.appointment_name" class="o_assignment_detail_row">
+                        <strong>Appointment:</strong> <span t-esc="state.selectedAssignment.appointment_name"/>
+                    </div>
+                </div>
             </div>
 
             <!-- Drag Ghost -->

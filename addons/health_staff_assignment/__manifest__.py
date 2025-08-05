@@ -39,6 +39,7 @@
         'hr',
         'contacts',
         'web',
+        'web_timeline',  # Professional timeline/Gantt functionality
         'health_calendar',  # Inherit from our appointment system
     ],
     'data': [
@@ -52,7 +53,8 @@
         # Views - Load order matters
         'views/assignment_dashboard_views.xml',  # Load dashboard views first (contains kanban view referenced by actions)
         'views/assignment_scheduler_grid.xml',   # Visual date/time grid scheduler
-        'views/assignment_timeline_views.xml',   # Professional timeline/Gantt view
+        'views/assignment_web_timeline_views.xml',  # Professional web_timeline views (forms, lists)
+        'views/assignment_timeline_views.xml',   # Timeline action and menu
         'views/healthcare_skill_views.xml',      # Healthcare skills and service areas
         'views/health_staff_availability_views.xml',  # Staff availability views
         'views/health_staff_assignment_views.xml',
@@ -69,11 +71,12 @@
             'health_staff_assignment/static/src/css/assignment_dashboard.css',
             'health_staff_assignment/static/src/css/scheduler_grid.css',
             'health_staff_assignment/static/src/css/staff_workload_dashboard.css',
-            'health_staff_assignment/static/src/css/assignment_timeline_view.css',
+            'health_staff_assignment/static/src/css/web_timeline_custom.css',
             'health_staff_assignment/static/src/js/staff_workload_dashboard.js',
-            'health_staff_assignment/static/src/js/assignment_timeline_view.js',
             'health_staff_assignment/static/src/xml/staff_workload_dashboard.xml',
-            'health_staff_assignment/static/src/xml/assignment_timeline_view.xml',
+            # Timeline functionality now provided by web_timeline module
+            # 'health_staff_assignment/static/src/js/assignment_timeline_view.js',
+            # 'health_staff_assignment/static/src/xml/assignment_timeline_view.xml',
             # Other JavaScript temporarily disabled to ensure basic view loads
             # 'health_staff_assignment/static/src/js/assignment_dashboard.js',
             # 'health_staff_assignment/static/src/js/assignment_kanban.js',

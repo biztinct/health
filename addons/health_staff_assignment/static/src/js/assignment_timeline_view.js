@@ -32,7 +32,13 @@ export class AssignmentTimelineView extends Component {
             draggedAssignment: null,
             selectedAssignment: null,
             timeSlots: [],
-            zoomLevel: 1
+            zoomLevel: 1,
+            // PROFESSIONAL: Reactive position state (OWL can track changes)
+            assignmentLayout: {
+                positions: {},      // Reactive object for assignment positions
+                staffLanes: {},     // Staff lane assignments
+                timeSlotGrid: {}    // Time slot pixel mapping
+            }
         });
         
         // Debounce variables to prevent multiple operations
@@ -40,6 +46,13 @@ export class AssignmentTimelineView extends Component {
         this.clickTimeoutId = null;
         this.isDragging = false;
         this.isProcessingMove = false;
+        
+        // Professional click vs drag detection
+        this.mouseDownTime = 0;
+        this.mouseDownTarget = null;
+        this.mouseDownX = 0;
+        this.mouseDownY = 0;
+        this.actuallyDragging = false;
         
         // Timeline configuration
         this.timelineConfig = {
@@ -75,6 +88,10 @@ export class AssignmentTimelineView extends Component {
             this.state.staffMembers = timelineData.staff_members || [];
             this.state.assignments = timelineData.assignments || [];
             this.state.timeSlots = this.generateTimeSlots();
+            
+            // CRITICAL: Pre-compute all positions professionally
+            this.computeAllPositions();
+            
             this.state.isLoading = false;
             
             // Reset drag setup flag for new data
@@ -108,6 +125,53 @@ export class AssignmentTimelineView extends Component {
         setTimeout(() => {
             this.setupDragAndDrop();
         }, 200);
+    }
+
+    /**
+     * PROFESSIONAL: Compute reactive positions (Monday.com/Asana pattern)
+     * Uses reactive state so OWL automatically re-renders when positions change
+     */
+    computeAllPositions() {
+        console.log('🚀 Computing reactive positions for', this.state.assignments.length, 'assignments');
+        
+        // Clear reactive state
+        this.state.assignmentLayout.positions = {};
+        this.state.assignmentLayout.staffLanes = {};
+        this.state.assignmentLayout.timeSlotGrid = {};
+        
+        // Build staff lane mapping (reactive)
+        this.state.assignments.forEach(assignment => {
+            const staffIds = assignment.assigned_staff_ids || [];
+            if (assignment.lead_staff_id) staffIds.push(assignment.lead_staff_id);
+            
+            staffIds.forEach(staffId => {
+                if (!this.state.assignmentLayout.staffLanes[staffId]) {
+                    this.state.assignmentLayout.staffLanes[staffId] = [];
+                }
+                this.state.assignmentLayout.staffLanes[staffId].push(assignment.id);
+            });
+        });
+        
+        // Pre-compute time slot grid (reactive)
+        this.state.timeSlots.forEach((timeSlot, index) => {
+            this.state.assignmentLayout.timeSlotGrid[index] = {
+                left: index * this.timelineConfig.hourWidth * this.state.zoomLevel,
+                width: this.timelineConfig.hourWidth * this.state.zoomLevel,
+                datetime: timeSlot.datetime
+            };
+        });
+        
+        // Calculate positions for each assignment (reactive)
+        this.state.assignments.forEach(assignment => {
+            const primaryStaffId = assignment.lead_staff_id || assignment.assigned_staff_ids[0];
+            if (primaryStaffId) {
+                const position = this.calculatePositionReactive(assignment, primaryStaffId);
+                this.state.assignmentLayout.positions[assignment.id] = position;
+                console.log(`📍 Assignment ${assignment.id}: left=${position.left}px, top=${position.top}px`);
+            }
+        });
+        
+        console.log('✅ Reactive position computation complete');
     }
 
     /**
@@ -223,7 +287,8 @@ export class AssignmentTimelineView extends Component {
     }
 
     /**
-     * Setup assignment dragging
+     * PROFESSIONAL: Setup event delegation (Monday.com/Asana pattern)
+     * Single event listener for all assignments - more reliable and performant
      */
     setupAssignmentDragging() {
         if (!this.timelineRef.el) {
@@ -231,64 +296,87 @@ export class AssignmentTimelineView extends Component {
             return;
         }
         
-        const assignmentElements = this.timelineRef.el.querySelectorAll('.o_timeline_assignment');
-        console.log(`Setting up drag for ${assignmentElements.length} assignment elements`);
+        const timelineContainer = this.timelineRef.el.querySelector('.o_timeline_grid_container');
+        if (!timelineContainer) {
+            console.warn('Timeline grid container not found');
+            return;
+        }
+        
+        // Remove existing listeners to prevent duplicates
+        timelineContainer.removeEventListener('mousedown', this.handleMouseDown);
+        timelineContainer.removeEventListener('dragstart', this.handleDragStart);
+        timelineContainer.removeEventListener('dragend', this.handleDragEnd);
+        timelineContainer.removeEventListener('click', this.handleClick);
+        
+        // Professional event delegation - single listeners for all assignments
+        this.handleMouseDown = this.handleMouseDown.bind(this);
+        this.handleDragStart = this.handleDragStart.bind(this);
+        this.handleDragEnd = this.handleDragEnd.bind(this);
+        this.handleClick = this.handleClick.bind(this);
+        this.handleDoubleClick = this.handleDoubleClick.bind(this);
+        this.handleMouseMove = this.handleMouseMove.bind(this);
+        
+        timelineContainer.addEventListener('mousedown', this.handleMouseDown);
+        timelineContainer.addEventListener('mousemove', this.handleMouseMove);
+        timelineContainer.addEventListener('dragstart', this.handleDragStart);
+        timelineContainer.addEventListener('dragend', this.handleDragEnd);
+        timelineContainer.addEventListener('click', this.handleClick);
+        timelineContainer.addEventListener('dblclick', this.handleDoubleClick);
+        
+        // Ensure all assignment elements are draggable
+        const assignmentElements = timelineContainer.querySelectorAll('.o_timeline_assignment');
+        assignmentElements.forEach(element => {
+            element.draggable = true;
+            element.style.cursor = 'move';
+        });
+        
+        console.log(`✅ Professional drag setup complete for ${assignmentElements.length} assignments`);
+        
+        // ENHANCED DEBUG: Check assignment element properties and positioning
+        console.log('🔍 ASSIGNMENT DEBUGGING START');
+        console.log('🔍 State assignments count:', this.state.assignments.length);
+        console.log('🔍 DOM assignment elements found:', assignmentElements.length);
         
         assignmentElements.forEach((element, index) => {
-            // Ensure each element is individually draggable
-            element.draggable = true;
-            element.style.position = 'absolute';
-            element.style.cursor = 'move';
-            element.title = 'Drag to move assignment';
+            const rect = element.getBoundingClientRect();
+            const computedStyle = window.getComputedStyle(element);
+            const assignmentId = element.dataset.assignmentId;
+            const assignment = this.state.assignments.find(a => a.id == assignmentId);
             
-            // Remove existing event listeners to avoid duplicates
-            element.removeEventListener('dragstart', this.onAssignmentDragStart);
-            element.removeEventListener('drag', this.onAssignmentDrag);
-            element.removeEventListener('dragend', this.onAssignmentDragEnd);
-            
-            // Add event listeners with proper binding
-            element.addEventListener('dragstart', (e) => this.onAssignmentDragStart(e));
-            element.addEventListener('drag', (e) => this.onAssignmentDrag(e));
-            element.addEventListener('dragend', (e) => this.onAssignmentDragEnd(e));
-            
-            // Add click handler for opening details (distinct from drag)
-            let clickStartTime = 0;
-            let dragStarted = false;
-            
-            element.addEventListener('mousedown', (e) => {
-                clickStartTime = Date.now();
-                dragStarted = false;
+            console.log(`🔍 Assignment ${index + 1} (ID: ${assignmentId}):`, {
+                visible: rect.width > 0 && rect.height > 0,
+                dimensions: `${rect.width}x${rect.height}`,
+                position: `${element.style.left}, ${element.style.top}`,
+                inlineStyle: element.getAttribute('style'),
+                zIndex: computedStyle.zIndex,
+                pointerEvents: computedStyle.pointerEvents,  
+                display: computedStyle.display,
+                opacity: computedStyle.opacity,
+                assignmentData: assignment ? {
+                    name: assignment.name,
+                    state: assignment.state,
+                    staffIds: assignment.assigned_staff_ids,
+                    leadStaff: assignment.lead_staff_id
+                } : 'NOT FOUND'
             });
             
-            element.addEventListener('dragstart', (e) => {
-                dragStarted = true;
-            });
+            // Check if assignment is positioned outside visible area
+            if (rect.left > window.innerWidth || rect.top > window.innerHeight) {
+                console.warn(`⚠️ Assignment ${assignmentId} positioned outside viewport!`);
+            }
             
-            element.addEventListener('click', (e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                
-                // Only handle click if it wasn't a drag operation and was a quick click
-                const clickDuration = Date.now() - clickStartTime;
-                if (!dragStarted && clickDuration < 300) {
-                    // Clear any existing timeout to prevent multiple calls
-                    if (this.clickTimeoutId) {
-                        clearTimeout(this.clickTimeoutId);
-                    }
-                    
-                    // Debounce the click operation
-                    this.clickTimeoutId = setTimeout(() => {
-                        const assignmentId = parseInt(element.dataset.assignmentId);
-                        console.log('Assignment clicked:', assignmentId);
-                        this.openAssignmentDetails(assignmentId);
-                        this.clickTimeoutId = null;
-                    }, 100); // Reduced debounce time
-                }
-                
-                // Reset state
-                dragStarted = false;
-            });
+            // Check if assignment has zero dimensions
+            if (rect.width === 0 || rect.height === 0) {
+                console.warn(`⚠️ Assignment ${assignmentId} has zero dimensions!`);
+            }
         });
+        
+        // Also debug the reactive position data
+        console.log('🔍 Reactive position data:', this.state.assignmentLayout.positions);
+        console.log('🔍 ASSIGNMENT DEBUGGING END');
+        
+        // CRITICAL: Also setup drop zones (was missing!)
+        this.setupTimelineDropZones();
     }
 
     /**
@@ -327,10 +415,162 @@ export class AssignmentTimelineView extends Component {
     }
 
     /**
+     * PROFESSIONAL: Mouse down handler for click vs drag detection
+     */
+    handleMouseDown(event) {
+        console.log('🔍 Mouse down event details:', {
+            target: event.target.className,
+            targetTag: event.target.tagName,
+            targetId: event.target.id,
+            targetDataset: event.target.dataset,
+            clientX: event.clientX,
+            clientY: event.clientY
+        });
+        
+        const assignmentElement = event.target.closest('.o_timeline_assignment');
+        if (!assignmentElement) {
+            console.log('🔍 Mouse down - no assignment element found');
+            console.log('🔍 Searching for assignments in DOM...');
+            
+            // Debug: Find all assignment elements in the DOM
+            const allAssignments = document.querySelectorAll('.o_timeline_assignment');
+            console.log(`🔍 Found ${allAssignments.length} assignment elements in DOM`);
+            
+            allAssignments.forEach((el, index) => {
+                const rect = el.getBoundingClientRect();
+                const isUnderMouse = event.clientX >= rect.left && event.clientX <= rect.right && 
+                                   event.clientY >= rect.top && event.clientY <= rect.bottom;
+                console.log(`🔍 Assignment ${index + 1}:`, {
+                    id: el.dataset.assignmentId,
+                    rect: `${rect.left},${rect.top} ${rect.width}x${rect.height}`,
+                    underMouse: isUnderMouse,
+                    visible: rect.width > 0 && rect.height > 0
+                });
+            });
+            
+            return;
+        }
+        
+        this.mouseDownTime = Date.now();
+        this.mouseDownTarget = assignmentElement;
+        this.mouseDownX = event.clientX;
+        this.mouseDownY = event.clientY;
+        console.log('🖱️ Mouse down on assignment', assignmentElement.dataset.assignmentId);
+    }
+
+    /**
+     * PROFESSIONAL: Mouse move handler to detect actual dragging
+     */
+    handleMouseMove(event) {
+        if (!this.mouseDownTarget || !this.mouseDownTime) return;
+        
+        const deltaX = Math.abs(event.clientX - this.mouseDownX);
+        const deltaY = Math.abs(event.clientY - this.mouseDownY);
+        const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+        
+        // Consider it actual dragging if moved more than 5 pixels
+        if (distance > 5) {
+            this.actuallyDragging = true;
+            console.log('🔄 Mouse movement detected, actuallyDragging = true');
+        }
+    }
+
+    /**
+     * PROFESSIONAL: Click handler with improved element detection
+     */
+    handleClick(event) {
+        // Try multiple ways to find the assignment element
+        let assignmentElement = event.target.closest('.o_timeline_assignment');
+        
+        // If not found, check if we're clicking on the container and use stored target
+        if (!assignmentElement && this.mouseDownTarget) {
+            assignmentElement = this.mouseDownTarget;
+        }
+        
+        console.log('🔍 Click event - assignment found:', !!assignmentElement, 'target:', event.target.className);
+        console.log('🔍 Mouse down target:', this.mouseDownTarget?.dataset?.assignmentId);
+        
+        if (!assignmentElement) {
+            console.log('🔍 Click ignored - no assignment element found');
+            this.mouseDownTarget = null;
+            this.mouseDownTime = 0;
+            return;
+        }
+        
+        const clickDuration = Date.now() - (this.mouseDownTime || 0);
+        console.log('🔍 Click duration:', clickDuration, 'ms, isDragging:', this.isDragging, 'actuallyDragging:', this.actuallyDragging);
+        
+        // Improved click detection using actual mouse movement
+        if (!this.actuallyDragging && clickDuration < 2000) {
+            // Click without significant mouse movement
+            event.preventDefault();
+            event.stopPropagation();
+            
+            const assignmentId = parseInt(assignmentElement.dataset.assignmentId);
+            console.log('✅ Assignment clicked successfully:', assignmentId);
+            this.openAssignmentDetails(assignmentId);
+        } else if (this.actuallyDragging) {
+            console.log('🔍 Click ignored - user was actually dragging the element');
+        } else {
+            console.log('🔍 Click ignored - duration too long:', clickDuration, 'ms');
+        }
+        
+        // Reset state
+        this.mouseDownTarget = null;
+        this.mouseDownTime = 0;
+        this.actuallyDragging = false;
+    }
+
+    /**
+     * PROFESSIONAL: Double-click handler for quick assignment access
+     */
+    handleDoubleClick(event) {
+        const assignmentElement = event.target.closest('.o_timeline_assignment');
+        if (!assignmentElement) {
+            console.log('🔍 Double-click - no assignment element found');
+            return;
+        }
+        
+        event.preventDefault();
+        event.stopPropagation();
+        
+        const assignmentId = parseInt(assignmentElement.dataset.assignmentId);
+        console.log('✅ Assignment double-clicked:', assignmentId);
+        this.openAssignmentDetails(assignmentId);
+    }
+
+    /**
+     * PROFESSIONAL: Drag start handler
+     */
+    handleDragStart(event) {
+        const assignmentElement = event.target.closest('.o_timeline_assignment');
+        console.log('🔍 Drag start - assignment found:', !!assignmentElement, 'target:', event.target.className);
+        
+        if (!assignmentElement) {
+            console.log('🔍 Drag start ignored - no assignment element');
+            return;
+        }
+        
+        console.log('✅ Drag started on assignment:', assignmentElement.dataset.assignmentId);
+        this.isDragging = true;
+        this.onAssignmentDragStart(event);
+    }
+
+    /**
+     * PROFESSIONAL: Drag end handler
+     */
+    handleDragEnd(event) {
+        this.onAssignmentDragEnd(event);
+        
+        // No delay needed - drag state is already reset in onAssignmentDragEnd
+        console.log('🔄 HandleDragEnd completed');
+    }
+
+    /**
      * Handle assignment drag start
      */
     onAssignmentDragStart(event) {
-        if (this.isDragging || this.isProcessingMove) {
+        if (this.isProcessingMove) {
             event.preventDefault();
             return;
         }
@@ -338,11 +578,17 @@ export class AssignmentTimelineView extends Component {
         this.isDragging = true;
         console.log('Drag start event triggered', event.target);
         
-        const assignmentId = parseInt(event.target.dataset.assignmentId);
-        console.log('Assignment ID:', assignmentId);
+        // Try to get assignment ID from the dragged element or its closest assignment parent
+        let assignmentElement = event.target.closest('.o_timeline_assignment');
+        if (!assignmentElement) {
+            assignmentElement = event.target;
+        }
+        
+        const assignmentId = parseInt(assignmentElement.dataset.assignmentId);
+        console.log('Assignment ID from element:', assignmentId, 'element:', assignmentElement);
         
         const assignment = this.state.assignments.find(a => a.id === assignmentId);
-        console.log('Found assignment:', assignment);
+        console.log('Found assignment:', assignment ? assignment.name : 'NOT FOUND');
         
         if (!assignment) {
             console.warn('Assignment not found for ID:', assignmentId);
@@ -350,7 +596,31 @@ export class AssignmentTimelineView extends Component {
             return;
         }
         
+        console.log('✅ Assignment found, continuing with drag setup...');
+        
         this.state.draggedAssignment = assignment;
+        console.log('✅ Set draggedAssignment state:', this.state.draggedAssignment.id, this.state.draggedAssignment.name);
+        
+        // DEBUGGING: Check if drop zones can receive events
+        setTimeout(() => {
+            const dropZones = document.querySelectorAll('.o_timeline_slot');
+            console.log(`🔍 Found ${dropZones.length} drop zones after drag start`);
+            dropZones.forEach((zone, index) => {
+                if (index < 3) { // Check first 3 zones
+                    const style = window.getComputedStyle(zone);
+                    const rect = zone.getBoundingClientRect();
+                    console.log(`🔍 Drop zone ${index}:`, {
+                        pointerEvents: style.pointerEvents,
+                        zIndex: style.zIndex,
+                        position: style.position,
+                        dimensions: `${rect.width}x${rect.height}`,
+                        visible: rect.width > 0 && rect.height > 0,
+                        staffId: zone.dataset.staffId,
+                        timeSlot: zone.dataset.timeSlot
+                    });
+                }
+            });
+        }, 100);
         
         // Create drag ghost with assignment info
         const dragGhost = document.createElement('div');
@@ -368,11 +638,29 @@ export class AssignmentTimelineView extends Component {
         setTimeout(() => document.body.removeChild(dragGhost), 0);
         
         event.dataTransfer.setData('text/plain', assignmentId.toString());
+        event.dataTransfer.setData('application/json', JSON.stringify({
+            assignmentId: assignmentId,
+            assignmentName: assignment.name
+        }));
         event.dataTransfer.effectAllowed = 'move';
+        
+        console.log('✅ Drag data set:', { assignmentId, name: assignment.name });
         
         // Add visual feedback
         event.target.classList.add('o_dragging');
         this.timelineRef.el.classList.add('o_timeline_dragging');
+        
+        // CRITICAL: During drag, hide the dragged assignment so drop zones can receive events
+        event.target.style.opacity = '0.1';
+        event.target.style.pointerEvents = 'none';
+        console.log('🔄 Made dragged assignment transparent for drop zone access');
+        
+        // Optionally reduce assignments layer z-index  
+        const assignmentsLayer = this.timelineRef.el.querySelector('.o_timeline_assignments_layer');
+        if (assignmentsLayer) {
+            assignmentsLayer.style.zIndex = '2';
+            console.log('🔄 Reduced assignments layer z-index for drag operation');
+        }
         
         // Highlight valid drop zones
         this.highlightValidDropZones(assignment);
@@ -394,22 +682,39 @@ export class AssignmentTimelineView extends Component {
         event.target.classList.remove('o_dragging');
         this.timelineRef.el.classList.remove('o_timeline_dragging');
         
+        // CRITICAL: Restore dragged assignment appearance
+        event.target.style.opacity = '1';
+        event.target.style.pointerEvents = 'auto';
+        console.log('🔄 Restored dragged assignment appearance');
+        
+        // CRITICAL: Restore assignment layer z-index after drag
+        const assignmentsLayer = this.timelineRef.el.querySelector('.o_timeline_assignments_layer');
+        if (assignmentsLayer) {
+            assignmentsLayer.style.zIndex = '20';
+            console.log('🔄 Restored assignments layer z-index after drag');
+        }
+        
         // Remove drop zone highlights
         this.removeDropZoneHighlights();
         
         // Reset state
         this.state.draggedAssignment = null;
         
-        // Reset drag flag after a delay to prevent immediate clicks
-        setTimeout(() => {
-            this.isDragging = false;
-        }, 100);
+        // Reset drag flag immediately - don't delay clicks unnecessarily
+        this.isDragging = false;
+        console.log('🔄 Drag ended, isDragging reset to false');
     }
 
     /**
      * Handle time slot drag over
      */
     onTimeSlotDragOver(event) {
+        if (!this.state.draggedAssignment) {
+            console.log('🔄 Drag over slot but no draggedAssignment:', event.currentTarget.dataset.timeSlot);
+            return;
+        }
+        
+        console.log('🔄 Drag over slot:', event.currentTarget.dataset.timeSlot, 'with assignment:', this.state.draggedAssignment.id);
         event.preventDefault();
         event.dataTransfer.dropEffect = 'move';
     }
@@ -443,10 +748,11 @@ export class AssignmentTimelineView extends Component {
      * Handle time slot drop
      */
     async onTimeSlotDrop(event) {
+        console.log('🎯 DROP EVENT TRIGGERED!', event.type);
         event.preventDefault();
         
         if (this.isProcessingMove) {
-            console.log('Already processing a move, ignoring drop');
+            console.log('⚠️ Already processing a move, ignoring drop');
             return;
         }
         
@@ -459,13 +765,16 @@ export class AssignmentTimelineView extends Component {
         const slotIndex = parseInt(slot.dataset.slotIndex);
         const assignmentId = parseInt(event.dataTransfer.getData('text/plain'));
         
-        console.log('Drop data:', { staffId, timeSlot, slotDatetime, slotIndex, assignmentId });
+        console.log('🎯 Drop data:', { staffId, timeSlot, slotDatetime, slotIndex, assignmentId });
         
         const assignment = this.state.assignments.find(a => a.id === assignmentId);
         if (!assignment) {
+            console.log('❌ Assignment not found for drop:', assignmentId);
             this.isProcessingMove = false;
             return;
         }
+        
+        console.log('✅ Processing drop for assignment:', assignment.name);
         
         // Clean up visual states
         slot.classList.remove('o_valid_drop_target', 'o_invalid_drop_target');
@@ -569,7 +878,12 @@ export class AssignmentTimelineView extends Component {
                     this.state.assignments[assignmentIndex].lead_staff_id = staffId;
                     this.state.assignments[assignmentIndex].assignment_date = newDateTime.toISOString();
                     
+                    // PROFESSIONAL: Recompute positions after assignment move
+                    console.log('🔄 Recomputing positions after assignment move');
+                    this.computeAllPositions();
+                    
                     // Force re-render to update positions immediately
+                    console.log('🔄 Forcing re-render after position update');
                     this.render();
                 }
                 
@@ -846,52 +1160,128 @@ export class AssignmentTimelineView extends Component {
     }
 
     /**
-     * Get assignment position in timeline with vertical stacking
+     * PROFESSIONAL: Calculate position with reactive state (DHTMLX/Monday.com pattern)
      */
-    getAssignmentPosition(assignment, staffId = null) {
-        // Calculate position based on assignment date/time and duration
-        // Use start_datetime if available, fallback to assignment_date
+    calculatePositionReactive(assignment, staffId) {
+        console.log(`🧮 Calculating position for assignment ${assignment.id} on staff ${staffId}`);
+        
         const assignmentDate = new Date(assignment.start_datetime || assignment.assignment_date);
-        const duration = assignment.estimated_duration || 60; // minutes
+        const duration = assignment.estimated_duration || 60;
         
-        // Get staff ID for this assignment
-        const targetStaffId = staffId || assignment.assigned_staff_ids[0] || assignment.lead_staff_id;
+        console.log(`🧮 Assignment date: ${assignmentDate}, duration: ${duration}min`);
         
-        // Calculate left position based on view mode
+        // Calculate horizontal position based on view mode
         let left = 0;
         let width = this.durationToPixels(duration);
         
-        if (this.state.viewMode === 'day') {
-            // For day view, position by hour within the day
-            left = this.dateToPixels(assignmentDate);
-        } else if (this.state.viewMode === 'week') {
-            // For week view, position by day within the week
+        if (this.state.viewMode === 'week') {
+            // Week view: position by day
             const weekStart = new Date(this.state.currentDate);
             const daysFromMonday = weekStart.getDay() === 0 ? 6 : weekStart.getDay() - 1;
             weekStart.setDate(weekStart.getDate() - daysFromMonday);
             weekStart.setHours(0, 0, 0, 0);
             
             const dayIndex = Math.floor((assignmentDate - weekStart) / (1000 * 60 * 60 * 24));
-            left = dayIndex * this.timelineConfig.hourWidth * this.state.zoomLevel;
+            left = Math.max(0, dayIndex) * this.timelineConfig.hourWidth * this.state.zoomLevel;
             width = Math.max(width, this.timelineConfig.hourWidth * this.state.zoomLevel * 0.8);
+            
+            console.log(`🧮 Week view: dayIndex=${dayIndex}, weekStart=${weekStart}, left=${left}, width=${width}`);
+            
+        } else if (this.state.viewMode === 'day') {
+            // Day view: position by hour
+            left = this.dateToPixels(assignmentDate);
+            console.log(`🧮 Day view: left=${left}, width=${width}`);
+            
         } else if (this.state.viewMode === 'month') {
-            // For month view, position by week within the month
+            // Month view: position by week
             const monthStart = new Date(this.state.currentDate.getFullYear(), this.state.currentDate.getMonth(), 1);
             const dayIndex = Math.floor((assignmentDate - monthStart) / (1000 * 60 * 60 * 24));
             const weekIndex = Math.floor(dayIndex / 7);
             left = weekIndex * this.timelineConfig.hourWidth * this.state.zoomLevel;
             width = Math.max(width, this.timelineConfig.hourWidth * this.state.zoomLevel * 0.6);
+            
+            console.log(`🧮 Month view: weekIndex=${weekIndex}, left=${left}, width=${width}`);
         }
         
-        // Calculate vertical position to avoid stacking
-        const top = this.calculateVerticalPosition(assignment, targetStaffId, left, width);
+        // Calculate vertical position using reactive state
+        const staffIndex = this.state.staffMembers.findIndex(s => s.id === staffId);
+        const rowTop = staffIndex * this.timelineConfig.rowHeight;
+        const cardTop = this.calculateVerticalPositionReactive(assignment, staffId, left, width);
         
-        return {
+        const finalPosition = {
             left: Math.max(0, left),
-            width: Math.max(50, width), // Minimum width for visibility
-            top: top,
-            height: 25, // Fixed height for assignments
+            width: Math.max(50, width),
+            top: rowTop + cardTop,
+            height: 25
         };
+        
+        console.log(`🧮 Final position for assignment ${assignment.id}:`, finalPosition);
+        console.log(`🧮 Staff index: ${staffIndex}, rowTop: ${rowTop}, cardTop: ${cardTop}`);
+        
+        return finalPosition;
+    }
+
+    /**
+     * PROFESSIONAL: Calculate vertical position with reactive overlap detection
+     */
+    calculateVerticalPositionReactive(assignment, staffId, left, width) {
+        const staffAssignmentIds = this.state.assignmentLayout.staffLanes[staffId] || [];
+        const cardHeight = 25;
+        const cardSpacing = 2;
+        
+        // Find the lowest available level using reactive state
+        let level = 0;
+        let levelFound = false;
+        
+        while (!levelFound && level < 6) { // Max 6 levels
+            const testTop = 5 + (level * (cardHeight + cardSpacing));
+            let hasConflict = false;
+            
+            // Check for conflicts with other assignments at this level
+            for (const otherAssignmentId of staffAssignmentIds) {
+                if (otherAssignmentId === assignment.id) continue;
+                
+                const otherPosition = this.state.assignmentLayout.positions[otherAssignmentId];
+                if (otherPosition && (otherPosition.top % this.timelineConfig.rowHeight) === testTop) {
+                    // Check horizontal overlap
+                    if (this.hasHorizontalOverlap(left, width, otherPosition.left, otherPosition.width)) {
+                        hasConflict = true;
+                        break;
+                    }
+                }
+            }
+            
+            if (!hasConflict) {
+                levelFound = true;
+            } else {
+                level++;
+            }
+        }
+        
+        return 5 + (level * (cardHeight + cardSpacing));
+    }
+
+    /**
+     * PROFESSIONAL: Get reactive assignment position (eliminates template recalculation)
+     */
+    getAssignmentPosition(assignment, staffId = null) {
+        const reactivePosition = this.state.assignmentLayout.positions[assignment.id];
+        if (reactivePosition) {
+            return reactivePosition;
+        }
+        
+        // Fallback: calculate on demand (should rarely happen)
+        console.warn(`⚠️ Position not cached for assignment ${assignment.id}, calculating on demand`);
+        const targetStaffId = staffId || assignment.lead_staff_id || assignment.assigned_staff_ids[0];
+        return this.calculatePositionReactive(assignment, targetStaffId);
+    }
+
+    /**
+     * NEW: Get assignment style string for template (single call optimization)
+     */
+    getAssignmentStyle(assignment) {
+        const position = this.getAssignmentPosition(assignment);
+        return `left: ${position.left}px; width: ${position.width}px; height: ${position.height}px; top: ${position.top}px;`;
     }
 
     /**
@@ -1110,54 +1500,37 @@ export class AssignmentTimelineView extends Component {
         try {
             console.log('Opening assignment details for ID:', assignmentId);
             
-            // Use the action service to open the assignment form
-            await this.action.doAction({
-                type: 'ir.actions.act_window',
-                res_model: 'health.staff.assignment',
-                res_id: assignmentId,
-                view_mode: 'form',
-                target: 'new',
-                context: {
-                    'default_id': assignmentId,
-                },
-                flags: {
-                    'form': {
-                        'action_buttons': true,
-                        'sidebar': true,
-                    }
-                }
-            });
+            // Get assignment data from state
+            const assignment = this.state.assignments.find(a => a.id === assignmentId);
+            if (!assignment) {
+                console.error('Assignment not found in state:', assignmentId);
+                this.notification.add('Assignment not found', { type: 'danger' });
+                return;
+            }
             
-            console.log('Assignment form opened successfully');
+            // Create and show assignment details popup
+            this.state.selectedAssignment = assignment;
+            console.log('✅ Assignment details opened for:', assignment.name);
+            
+            // Show notification for now (will be replaced with proper modal later)
+            this.notification.add(`Assignment: ${assignment.name} (${assignment.state})`, {
+                type: 'info',
+                title: 'Assignment Details',
+                sticky: true
+            });
             
         } catch (error) {
             console.error('Error opening assignment details:', error);
-            
-            // Fallback: try to get assignment data and show in dialog
-            try {
-                const assignment = this.state.assignments.find(a => a.id === assignmentId);
-                if (assignment) {
-                    this.dialog.alert({
-                        title: _t("Assignment Details"),
-                        body: `
-                            <div class="mb-2"><strong>Name:</strong> ${assignment.name}</div>
-                            <div class="mb-2"><strong>State:</strong> ${assignment.state}</div>
-                            <div class="mb-2"><strong>Priority:</strong> ${assignment.priority}</div>
-                            <div class="mb-2"><strong>Date:</strong> ${assignment.assignment_date}</div>
-                            ${assignment.appointment_name ? `<div class="mb-2"><strong>Appointment:</strong> ${assignment.appointment_name}</div>` : ''}
-                        `,
-                    });
-                } else {
-                    this.notification.add(_t("Assignment not found"), {
-                        type: "warning"
-                    });
-                }
-            } catch (fallbackError) {
-                this.notification.add(_t("Could not open assignment details"), {
-                    type: "warning"
-                });
-            }
+            this.notification.add('Error opening assignment details', { type: 'danger' });
         }
+    }
+
+    /**
+     * Close assignment details popup
+     */
+    closeAssignmentDetails() {
+        this.state.selectedAssignment = null;
+        console.log('✅ Assignment details popup closed');
     }
 }
 

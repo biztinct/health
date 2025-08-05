@@ -488,9 +488,12 @@
     border-radius: 6px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     transition: all 0.2s ease;
-    z-index: 10;
+    z-index: 20;
     overflow: hidden;
     border: 1px solid rgba(255, 255, 255, 0.3);
+    pointer-events: auto;
+    min-width: 50px;
+    min-height: 25px;
 }
 
 .o_timeline_assignment:hover {
@@ -707,16 +710,77 @@
 
 /* Assignment Popup */
 .o_assignment_popup {
-    position: absolute;
+    position: fixed;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
     background: white;
     border-radius: 8px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
     z-index: 1000;
+    min-width: 400px;
+    max-width: 600px;
+    border: 1px solid #dee2e6;
+}
+
+.o_popup_header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    border-bottom: 1px solid #dee2e6;
+    background: #f8f9fa;
+    border-radius: 8px 8px 0 0;
+}
+
+.o_popup_title {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+    color: #495057;
+}
+
+.o_popup_close {
+    background: none;
+    border: none;
+    font-size: 24px;
+    color: #6c757d;
+    cursor: pointer;
+    padding: 0;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+}
+
+.o_popup_close:hover {
+    background: #e9ecef;
+    color: #495057;
+}
+
+.o_popup_body {
     padding: 20px;
-    min-width: 300px;
+}
+
+.o_assignment_detail_row {
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.o_assignment_detail_row strong {
+    min-width: 100px;
+    color: #495057;
+    font-weight: 600;
+}
+
+.o_assignment_detail_row span {
+    color: #6c757d;
+    flex: 1;
 }
 
 /* Responsive Design */

@@ -1,0 +1,525 @@
+/* Professional Timeline Customizations for VAFHS */
+/* Inspired by Monday.com, Asana Timeline, and Microsoft Project */
+
+/* Timeline Container */
+.o_timeline_view {
+    background: #f8f9fa;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+/* Timeline Header */
+.o_timeline_view .timeline-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 12px 20px;
+    border-radius: 8px 8px 0 0;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.o_timeline_view .timeline-header h3 {
+    margin: 0;
+    font-weight: 600;
+    font-size: 18px;
+}
+
+/* Timeline Controls */
+.o_timeline_view .timeline-nav {
+    background: white;
+    border-bottom: 1px solid #dee2e6;
+    padding: 10px 20px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.o_timeline_view .timeline-nav button {
+    background: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 6px;
+    padding: 6px 12px;
+    font-size: 12px;
+    font-weight: 500;
+    color: #495057;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.o_timeline_view .timeline-nav button:hover {
+    background: #e9ecef;
+    border-color: #adb5bd;
+}
+
+.o_timeline_view .timeline-nav button.active {
+    background: #007bff;
+    border-color: #007bff;
+    color: white;
+}
+
+/* Timeline Grid */
+.o_timeline_view .timeline-grid {
+    background: white;
+    border-radius: 0 0 8px 8px;
+    overflow: hidden;
+}
+
+/* Staff Groups */
+.o_timeline_view .timeline-group {
+    border-bottom: 1px solid #f1f3f4;
+    background: white;
+}
+
+.o_timeline_view .timeline-group-header {
+    background: #f8f9fa;
+    padding: 12px 20px;
+    border-bottom: 1px solid #e9ecef;
+    font-weight: 600;
+    color: #495057;
+    font-size: 14px;
+    position: sticky;
+    left: 0;
+    z-index: 10;
+}
+
+.o_timeline_view .timeline-group-header:hover {
+    background: #e9ecef;
+}
+
+/* Professional Assignment Cards - Inspired by Monday.com, Asana Timeline, Calendly */
+.o_timeline_assignment_card {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    border: 1px solid #e9ecef;
+    padding: 0;
+    cursor: move;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow: hidden;
+    min-height: 80px;
+    position: relative;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+.o_timeline_assignment_card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+    border-color: #007bff;
+}
+
+/* Card Header with Priority and Type Icons */
+.assignment_card_header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 12px 6px;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.priority_badge {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    font-size: 10px;
+}
+
+.priority_badge[data-priority="4"] {
+    background: linear-gradient(135deg, #dc3545, #c82333);
+    color: white;
+    animation: emergencyPulse 1.5s ease-in-out infinite alternate;
+}
+
+.priority_badge[data-priority="3"] {
+    background: linear-gradient(135deg, #fd7e14, #e8650d);
+    color: white;
+}
+
+.priority_badge[data-priority="2"] {
+    background: linear-gradient(135deg, #ffc107, #e0a800);
+    color: white;
+}
+
+.priority_badge[data-priority="1"], .priority_badge[data-priority="0"] {
+    background: linear-gradient(135deg, #6c757d, #5a6268);
+    color: white;
+}
+
+.assignment_type_icon {
+    color: #495057;
+    font-size: 14px;
+    opacity: 0.8;
+}
+
+/* Main Card Content */
+.assignment_card_content {
+    padding: 10px 12px 8px;
+    flex-grow: 1;
+}
+
+.assignment_title {
+    font-weight: 600;
+    font-size: 13px;
+    color: #212529;
+    line-height: 1.3;
+    margin-bottom: 6px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.staff_info, .appointment_info {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 4px;
+    font-size: 11px;
+    color: #6c757d;
+}
+
+.staff_avatar {
+    font-size: 12px;
+    color: #007bff;
+}
+
+.staff_name, .appointment_ref {
+    font-weight: 500;
+    max-width: 120px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* Card Footer with Status */
+.assignment_card_footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 12px 8px;
+    background: rgba(248, 249, 250, 0.5);
+    border-top: 1px solid rgba(0, 0, 0, 0.03);
+}
+
+.state_badge {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 2px 6px;
+    border-radius: 12px;
+}
+
+.state_badge[data-state="draft"] {
+    background: rgba(108, 117, 125, 0.15);
+    color: #6c757d;
+}
+
+.state_badge[data-state="assigned"] {
+    background: rgba(23, 162, 184, 0.15);
+    color: #17a2b8;
+}
+
+.state_badge[data-state="confirmed"] {
+    background: rgba(0, 123, 255, 0.15);
+    color: #007bff;
+}
+
+.state_badge[data-state="in_progress"] {
+    background: rgba(253, 126, 20, 0.15);
+    color: #fd7e14;
+    animation: progressGlow 2s ease-in-out infinite alternate;
+}
+
+.state_badge[data-state="completed"] {
+    background: rgba(40, 167, 69, 0.15);
+    color: #28a745;
+}
+
+.state_badge[data-state="cancelled"] {
+    background: rgba(220, 53, 69, 0.15);
+    color: #dc3545;
+}
+
+.team_size {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    font-size: 10px;
+    color: #6c757d;
+    background: rgba(0, 123, 255, 0.1);
+    padding: 2px 6px;
+    border-radius: 8px;
+    font-weight: 500;
+}
+
+/* Animations */
+@keyframes emergencyPulse {
+    from { 
+        box-shadow: 0 0 0 0 rgba(220, 53, 69, 0.4);
+        transform: scale(1);
+    }
+    to { 
+        box-shadow: 0 0 0 4px rgba(220, 53, 69, 0);
+        transform: scale(1.05);
+    }
+}
+
+@keyframes progressGlow {
+    from { opacity: 0.8; }
+    to { opacity: 1; }
+}
+
+/* Card Type Specific Styling */
+.o_timeline_assignment_card[data-type="emergency"] {
+    border-left: 4px solid #dc3545;
+}
+
+.o_timeline_assignment_card[data-type="home_visit"] {
+    border-left: 4px solid #28a745;
+}
+
+.o_timeline_assignment_card[data-type="clinic_visit"] {
+    border-left: 4px solid #007bff;
+}
+
+.o_timeline_assignment_card[data-type="follow_up"] {
+    border-left: 4px solid #17a2b8;
+}
+
+.o_timeline_assignment_card[data-type="consultation"] {
+    border-left: 4px solid #6f42c1;
+}
+
+/* Dragging State */
+.o_timeline_assignment_card.dragging {
+    opacity: 0.9;
+    transform: rotate(3deg) scale(1.02);
+    z-index: 1000;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+    .o_timeline_assignment_card {
+        min-height: 60px;
+    }
+    
+    .assignment_card_header {
+        padding: 6px 8px 4px;
+    }
+    
+    .assignment_card_content {
+        padding: 6px 8px;
+    }
+    
+    .assignment_title {
+        font-size: 12px;
+        -webkit-line-clamp: 1;
+    }
+    
+    .staff_info, .appointment_info {
+        font-size: 10px;
+    }
+    
+    .assignment_card_footer {
+        padding: 4px 8px 6px;
+    }
+}
+
+/* Priority-based colors */
+.o_timeline_view .timeline-event[data-priority="0"] {
+    background: linear-gradient(135deg, #6c757d, #5a6268);
+    border-left: 3px solid #495057;
+}
+
+.o_timeline_view .timeline-event[data-priority="1"] {
+    background: linear-gradient(135deg, #007bff, #0056b3);
+    border-left: 3px solid #004085;
+}
+
+.o_timeline_view .timeline-event[data-priority="2"] {
+    background: linear-gradient(135deg, #ffc107, #e0a800);
+    border-left: 3px solid #b69500;
+}
+
+.o_timeline_view .timeline-event[data-priority="3"] {
+    background: linear-gradient(135deg, #fd7e14, #e8650d);
+    border-left: 3px solid #cc5500;
+}
+
+.o_timeline_view .timeline-event[data-priority="4"] {
+    background: linear-gradient(135deg, #dc3545, #c82333);
+    border-left: 3px solid #a71e2a;
+    animation: emergencyPulse 2s ease-in-out infinite alternate;
+}
+
+@keyframes emergencyPulse {
+    from { box-shadow: 0 2px 4px rgba(220, 53, 69, 0.3); }
+    to { box-shadow: 0 4px 12px rgba(220, 53, 69, 0.6); }
+}
+
+/* State-based styling */
+.o_timeline_view .timeline-event[data-state="draft"] {
+    opacity: 0.7;
+    border-style: dashed;
+}
+
+.o_timeline_view .timeline-event[data-state="cancelled"] {
+    opacity: 0.5;
+    filter: grayscale(50%);
+    text-decoration: line-through;
+}
+
+.o_timeline_view .timeline-event[data-state="completed"] {
+    background: linear-gradient(135deg, #28a745, #20c997) !important;
+    border-left-color: #1e7e34 !important;
+}
+
+.o_timeline_view .timeline-event[data-state="in_progress"] {
+    animation: progressPulse 3s ease-in-out infinite alternate;
+}
+
+@keyframes progressPulse {
+    from { opacity: 0.9; }
+    to { opacity: 1; }
+}
+
+/* Timeline Grid Lines */
+.o_timeline_view .timeline-grid-line {
+    stroke: #e9ecef;
+    stroke-width: 1;
+}
+
+.o_timeline_view .timeline-grid-line.major {
+    stroke: #dee2e6;
+    stroke-width: 2;
+}
+
+/* Timeline Scale */
+.o_timeline_view .timeline-scale {
+    background: #f8f9fa;
+    border-bottom: 1px solid #dee2e6;
+    font-size: 11px;
+    color: #6c757d;
+    font-weight: 500;
+}
+
+.o_timeline_view .timeline-scale-item {
+    padding: 8px 12px;
+    border-right: 1px solid #e9ecef;
+    text-align: center;
+}
+
+/* Drag and Drop States */
+.o_timeline_view.timeline-dragging {
+    cursor: grabbing;
+    user-select: none;
+}
+
+.o_timeline_view .timeline-event.dragging {
+    opacity: 0.8;
+    transform: scale(1.05) rotate(2deg);
+    z-index: 1000;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+}
+
+.o_timeline_view .timeline-drop-zone {
+    background: rgba(40, 167, 69, 0.1);
+    border: 2px dashed #28a745;
+    border-radius: 4px;
+    animation: dropZoneHint 1s ease-in-out infinite alternate;
+}
+
+@keyframes dropZoneHint {
+    from { background: rgba(40, 167, 69, 0.05); }
+    to { background: rgba(40, 167, 69, 0.15); }
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+    .o_timeline_view .timeline-group-header {
+        padding: 8px 12px;
+        font-size: 13px;
+    }
+    
+    .o_timeline_view .timeline-event {
+        padding: 4px 8px;
+        font-size: 11px;
+        min-height: 20px;
+    }
+    
+    .o_timeline_view .timeline-nav {
+        padding: 8px 12px;
+        gap: 10px;
+    }
+}
+
+/* Custom scrollbar */
+.o_timeline_view ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+.o_timeline_view ::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 3px;
+}
+
+.o_timeline_view ::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 3px;
+}
+
+.o_timeline_view ::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+}
+
+/* Loading State */
+.o_timeline_view .timeline-loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 200px;
+    color: #6c757d;
+    font-size: 14px;
+}
+
+.o_timeline_view .timeline-loading i {
+    margin-right: 8px;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* Success message for drag operations */
+.o_timeline_success_message {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: #28a745;
+    color: white;
+    padding: 12px 20px;
+    border-radius: 6px;
+    font-weight: 500;
+    z-index: 2000;
+    animation: slideInRight 0.3s ease-out;
+}
+
+@keyframes slideInRight {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}

@@ -1,12 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-<data>
-    <!-- Assignment Timeline View Action -->
-    <record id="action_assignment_timeline_view" model="ir.actions.client">
-        <field name="name">Assignment Timeline</field>
-        <field name="tag">assignment_timeline_view</field>
+    <!-- Professional Assignment Timeline Action using web_timeline -->
+    <record id="action_assignment_web_timeline_view" model="ir.actions.act_window">
+        <field name="name">Staff Assignment Timeline</field>
+        <field name="res_model">health.staff.assignment</field>
+        <field name="view_mode">timeline,list,form</field>
+        <field name="view_id" ref="health_staff_assignment_timeline_view"/>
         <field name="target">current</field>
+        <field name="context">{
+            'default_assignment_date': context_today(),
+            'timeline_default_group_by': 'lead_staff_id'
+        }</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first staff assignment!
+            </p>
+            <p>
+                Use the professional timeline view to manage staff assignments with drag &amp; drop functionality.
+                Group by staff members and easily reschedule assignments by dragging them to new time slots.
+            </p>
+        </field>
     </record>
 
     <!-- Menu Item -->
@@ -14,8 +28,7 @@
         id="menu_assignment_timeline"
         name="Assignment Timeline"
         parent="menu_health_staff_assignment_root"
-        action="action_assignment_timeline_view"
+        action="action_assignment_web_timeline_view"
         sequence="5"/>
 
-</data>
 </odoo>
