@@ -47,18 +47,18 @@ class HealthStaffAssignment(models.Model):
     
     # Staff assignment (many2many for team assignments)
     assigned_staff_ids = fields.Many2many(
-        'health.staff',
-        'staff_assignment_healthstaff_rel',
-        'assignment_id', 'staff_id',
+        'hr.employee',
+        'staff_assignment_hremployee_rel',
+        'assignment_id', 'employee_id',
         string='Assigned Staff',
-        domain=[('employment_status', '=', 'active')],
+        domain=[('is_healthcare_staff', '=', True), ('employment_status', '=', 'active')],
         tracking=True
     )
     
     lead_staff_id = fields.Many2one(
-        'health.staff',
+        'hr.employee',
         string='Lead Staff',
-        domain=[('employment_status', '=', 'active')],
+        domain=[('is_healthcare_staff', '=', True), ('employment_status', '=', 'active')],
         tracking=True,
         help='Primary staff member responsible for this assignment'
     )
@@ -770,7 +770,8 @@ class HealthStaffAssignmentEngine(models.Model):
             return []
         
         # Get all available healthcare staff
-        available_staff = self.env['health.staff'].search([
+        available_staff = self.env['hr.employee'].search([
+            ('is_healthcare_staff', '=', True),
             ('employment_status', '=', 'active'),
             ('active', '=', True)
         ])
@@ -857,7 +858,9 @@ class HealthStaffAssignmentEngine(models.Model):
         if staff_id:
             staff_domain.append(('id', '=', staff_id))
         
-        staff_records = self.env['health.staff'].search(staff_domain, limit=10)  # Limit for UI performance
+        # Add healthcare staff filter to domain
+        staff_domain.append(('is_healthcare_staff', '=', True))
+        staff_records = self.env['hr.employee'].search(staff_domain, limit=10)  # Limit for UI performance
         
         # Get unassigned appointments
         appointment_domain = [
@@ -890,11 +893,11 @@ class HealthStaffAssignmentEngine(models.Model):
             staff_data.append({
                 'id': staff.id,
                 'name': staff.name,
-                'role': staff.staff_type.title() if staff.staff_type else 'Healthcare Staff',
+                'role': staff.healthcare_role.title() if staff.healthcare_role else 'Healthcare Staff',
                 'status': status,
                 'statusText': status_text,
                 'appointmentCount': len(staff_assignments),
-                'avatar_url': f'/web/image/health.staff/{staff.id}/image_256'
+                'avatar_url': f'/web/image/hr.employee/{staff.id}/image_256'
             })
         
         # Format assignment data
@@ -960,7 +963,8 @@ class HealthStaffAssignmentEngine(models.Model):
             raise UserError(_('No appointment linked to this assignment'))
         
         # Get available healthcare staff
-        available_staff = self.env['health.staff'].search([
+        available_staff = self.env['hr.employee'].search([
+            ('is_healthcare_staff', '=', True),
             ('employment_status', '=', 'active'),
             ('active', '=', True)
         ], limit=5)
@@ -980,7 +984,7 @@ class HealthStaffAssignmentEngine(models.Model):
         # Create simple suggestions based on available staff
         suggestion_text = []
         for i, staff in enumerate(available_staff, 1):
-            job_title = staff.staff_type.title() if staff.staff_type else 'Healthcare Staff'
+            job_title = staff.healthcare_role.title() if staff.healthcare_role else 'Healthcare Staff'
             score = 85 + (i * 2)  # Simple scoring for demo
             suggestion_text.append(
                 f"{i}. {staff.name} ({job_title}) - Score: {score}%"

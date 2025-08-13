@@ -60,9 +60,9 @@ export class StaffAvailabilityCalendarModel extends CalendarModel {
         
         try {
             const staffData = await this.orm.searchRead(
-                'health.staff',
+                'hr.employee',
                 [['id', 'in', uncachedIds]],
-                ['id', 'name', 'staff_code', 'staff_type', 'email', 'mobile', 'primary_facility_id']
+                ['id', 'name', 'staff_code', 'healthcare_role', 'work_email', 'mobile_phone', 'primary_facility_id']
             );
             
             // Cache staff data
@@ -86,31 +86,31 @@ export class StaffAvailabilityCalendarModel extends CalendarModel {
                 ...record.extendedProps,
                 staff_name: staffData.name,
                 staff_code: staffData.staff_code,
-                staff_type: staffData.staff_type,
-                staff_email: staffData.email,
-                staff_mobile: staffData.mobile,
+                staff_type: staffData.healthcare_role,
+                staff_email: staffData.work_email,
+                staff_mobile: staffData.mobile_phone,
                 facility_name: staffData.primary_facility_id ? staffData.primary_facility_id[1] : null
             };
         }
         
-        // Add availability type styling
+        // Add status styling
         record.className = [
             ...(record.className || []),
-            `o_availability_${record.availability_type}`,
+            `o_availability_${record.status}`,
             `o_staff_${record.staff_id}`
         ];
         
-        // Set event title with staff name and type
+        // Set event title with staff name and status
         const staffName = record.extendedProps?.staff_name || 'Unknown Staff';
-        const availabilityType = record.availability_type || 'available';
-        record.title = `${staffName} - ${availabilityType.charAt(0).toUpperCase() + availabilityType.slice(1)}`;
+        const status = record.status || 'available';
+        record.title = `${staffName} - ${status.charAt(0).toUpperCase() + status.slice(1)}`;
         
         // Add data attributes for drag & drop
         record.extendedProps = {
             ...record.extendedProps,
             'data-event-id': record.id,
             'data-staff-id': record.staff_id,
-            'data-availability-type': record.availability_type
+            'data-status': record.status
         };
     }
 
@@ -206,13 +206,18 @@ export class StaffAvailabilityCalendarModel extends CalendarModel {
             return { isValid: false, message: 'Staff member is required' };
         }
         
-        if (!record.date_start || !record.date_end) {
-            return { isValid: false, message: 'Start and end dates are required' };
+        if (!record.availability_date || record.start_time === undefined || record.end_time === undefined) {
+            return { isValid: false, message: 'Date and time slots are required' };
         }
         
-        // Check date range
-        const startDate = new Date(record.date_start);
-        const endDate = new Date(record.date_end);
+        // Check time range
+        if (record.end_time <= record.start_time) {
+            return { isValid: false, message: 'End time must be after start time' };
+        }
+        
+        // Convert to proper date objects for validation
+        const startDate = new Date(`${record.availability_date} ${record.start_time}:00`);
+        const endDate = new Date(`${record.availability_date} ${record.end_time}:00`);
         
         if (endDate <= startDate) {
             return { isValid: false, message: 'End date must be after start date' };
@@ -236,7 +241,7 @@ export class StaffAvailabilityCalendarModel extends CalendarModel {
      * Check for scheduling conflicts
      */
     async _checkConflicts(record) {
-        const cacheKey = `${record.staff_id}-${record.date_start}-${record.date_end}`;
+        const cacheKey = `${record.staff_id}-${record.availability_date}-${record.start_time}-${record.end_time}`;
         
         if (this.conflictCache.has(cacheKey)) {
             return this.conflictCache.get(cacheKey);
@@ -244,15 +249,16 @@ export class StaffAvailabilityCalendarModel extends CalendarModel {
         
         try {
             const conflicts = await this.orm.searchRead(
-                'health.staff.availability',
+                'health.staff.availability.matrix',
                 [
                     ['staff_id', '=', record.staff_id],
                     ['id', '!=', record.id || 0],
+                    ['availability_date', '=', record.availability_date],
                     '|',
-                    '&', ['date_start', '<=', record.date_start], ['date_end', '>', record.date_start],
-                    '&', ['date_start', '<', record.date_end], ['date_end', '>=', record.date_end]
+                    '&', ['start_time', '<=', record.start_time], ['end_time', '>', record.start_time],
+                    '&', ['start_time', '<', record.end_time], ['end_time', '>=', record.end_time]
                 ],
-                ['id', 'date_start', 'date_end', 'availability_type', 'notes']
+                ['id', 'availability_date', 'start_time', 'end_time', 'status']
             );
             
             // Cache result for 30 seconds
@@ -284,7 +290,7 @@ export class StaffAvailabilityCalendarModel extends CalendarModel {
         try {
             return await this.orm.searchRead(
                 'health.staff.assignment',
-                [['availability_matrix_ids', 'in', [availabilityId]]],
+                [['assignment_id', '=', availabilityId]],
                 ['id', 'name', 'state', 'assignment_date']
             );
         } catch (error) {
@@ -316,9 +322,10 @@ export class StaffAvailabilityCalendarModel extends CalendarModel {
                     availability_change: {
                         operation: operation,
                         record_id: record.id,
-                        date_start: record.date_start,
-                        date_end: record.date_end,
-                        availability_type: record.availability_type
+                        availability_date: record.availability_date,
+                        start_time: record.start_time,
+                        end_time: record.end_time,
+                        status: record.status
                     }
                 }
             );
@@ -347,7 +354,7 @@ export class StaffAvailabilityCalendarModel extends CalendarModel {
     async getAvailabilityStats(dateRange) {
         try {
             const stats = await this.orm.call(
-                'health.staff.availability',
+                'health.staff.availability.matrix',
                 'get_availability_summary',
                 [],
                 {

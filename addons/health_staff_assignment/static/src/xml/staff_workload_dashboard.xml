@@ -111,15 +111,15 @@
                                 <!-- Staff Header -->
                                 <div class="o_staff_header" t-att-class="getWorkloadStatusClass(staff.workload_percentage)">
                                     <div class="o_staff_avatar">
-                                        <img t-att-src="'/web/image/health.staff/' + staff.id + '/image_256'" 
+                                        <img t-att-src="'/web/image/hr.employee/' + staff.id + '/image_256'" 
                                              t-att-alt="staff.name" class="rounded-circle"/>
                                     </div>
                                     
                                     <div class="o_staff_info">
                                         <h4 class="o_staff_name" t-esc="staff.name"/>
                                         <div class="o_staff_details">
-                                            <span class="badge" t-att-class="'badge-' + staff.staff_type">
-                                                <t t-esc="staff.staff_type"/>
+                                            <span class="badge" t-att-class="'badge-' + staff.healthcare_role">
+                                                <t t-esc="staff.healthcare_role"/>
                                             </span>
                                             <span class="o_staff_code text-muted">
                                                 <t t-esc="staff.staff_code"/>

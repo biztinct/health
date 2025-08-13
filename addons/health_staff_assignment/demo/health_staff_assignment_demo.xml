@@ -98,14 +98,14 @@
     </record>
 
     <!-- Demo Appointment Types -->
-    <record id="demo_appointment_type_consultation" model="health.appointment.type">
+    <record id="demo_appointment_type_consultation" model="health.service.type">
         <field name="name">General Consultation</field>
         <field name="duration_minutes">60</field>
         <field name="color">2</field>
         <field name="is_home_visit">false</field>
     </record>
 
-    <record id="demo_appointment_type_home_visit" model="health.appointment.type">
+    <record id="demo_appointment_type_home_visit" model="health.service.type">
         <field name="name">Home Health Visit</field>
         <field name="duration_minutes">90</field>
         <field name="color">5</field>
@@ -167,22 +167,22 @@
     </record>
 
     <!-- Demo Staff Availability -->
-    <record id="demo_availability_doctor_smith" model="health.staff.availability">
+    <record id="demo_availability_doctor_smith" model="health.staff.availability.matrix">
         <field name="staff_id" ref="demo_doctor_smith"/>
-        <field name="date" eval="(DateTime.now() + timedelta(days=1)).date()"/>
+        <field name="availability_date" eval="(DateTime.now() + timedelta(days=1)).strftime('%Y-%m-%d')"/>
         <field name="start_time">8.0</field>
         <field name="end_time">17.0</field>
-        <field name="is_available">true</field>
-        <field name="availability_type">regular</field>
+        <field name="status">available</field>
+        <field name="capacity">1</field>
     </record>
 
-    <record id="demo_availability_nurse_johnson" model="health.staff.availability">
+    <record id="demo_availability_nurse_johnson" model="health.staff.availability.matrix">
         <field name="staff_id" ref="demo_nurse_johnson"/>
-        <field name="date" eval="(DateTime.now() + timedelta(days=1)).date()"/>
+        <field name="availability_date" eval="(DateTime.now() + timedelta(days=1)).strftime('%Y-%m-%d')"/>
         <field name="start_time">9.0</field>
         <field name="end_time">18.0</field>
-        <field name="is_available">true</field>
-        <field name="availability_type">regular</field>
+        <field name="status">available</field>
+        <field name="capacity">1</field>
     </record>
 
 </data>

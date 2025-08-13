@@ -1,6 +1,6 @@
 {
     'name': 'VAFHS Staff Assignment System',
-    'version': '18.0.1.0.0',
+    'version': '18.0.2.1.0',
     'category': 'Healthcare/Staff Management',
     'summary': 'State-of-the-art staff assignment system with intelligent routing and mobile-first UI',
     'description': """
@@ -73,6 +73,7 @@
             'health_staff_assignment/static/src/css/staff_workload_dashboard.css',
             'health_staff_assignment/static/src/css/web_timeline_custom.css',
             'health_staff_assignment/static/src/js/staff_workload_dashboard.js',
+            # 'health_staff_assignment/static/src/js/timeline_card_enhancer.js',  # Removed - using model-based HTML content instead
             'health_staff_assignment/static/src/xml/staff_workload_dashboard.xml',
             # Timeline functionality now provided by web_timeline module
             # 'health_staff_assignment/static/src/js/assignment_timeline_view.js',

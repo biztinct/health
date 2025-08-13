@@ -24,10 +24,96 @@ class HrEmployee(models.Model):
         ('support', 'Support Staff')
     ], string='Healthcare Role')
     
-    # Professional credentials
-    license_number = fields.Char('Professional License Number')
-    license_expiry = fields.Date('License Expiry Date')
+    # Professional credentials (consolidated from all staff models)
+    license_number = fields.Char('Professional License Number', tracking=True)
+    license_expiry = fields.Date('License Expiry Date', tracking=True)
     specializations = fields.Text('Medical Specializations')
+    qualifications = fields.Text('Qualifications & Certifications')
+    certifications = fields.Text('Additional Certifications')
+    years_experience = fields.Integer('Years of Experience', default=0)
+    
+    # Medical Specialties
+    medical_specialties = fields.Many2many(
+        'health.medical.specialty', 
+        'employee_medical_specialty_rel',
+        'employee_id', 'specialty_id',
+        string='Medical Specialties'
+    )
+    
+    # Employment Details (from health.staff)
+    staff_code = fields.Char('Staff Code', copy=False, readonly=True)
+    hire_date = fields.Date('Hire Date', tracking=True)
+    employment_status = fields.Selection([
+        ('active', 'Active'),
+        ('on_leave', 'On Leave'),
+        ('suspended', 'Suspended'),
+        ('terminated', 'Terminated')
+    ], string='Employment Status', default='active', tracking=True)
+    
+    # Facility Assignment (consolidated)
+    facility_ids = fields.Many2many(
+        'health.facility', 
+        'employee_facility_rel',
+        'employee_id', 'facility_id',
+        string='Assigned Facilities',
+        help='Healthcare facilities where this employee works'
+    )
+    primary_facility_id = fields.Many2one('health.facility', string='Primary Facility')
+    
+    # Service Capabilities
+    service_type_ids = fields.Many2many(
+        'health.service.type',
+        'employee_service_type_rel', 
+        'employee_id', 'service_type_id',
+        string='Qualified Service Types',
+        help='Types of services this staff can provide'
+    )
+    
+    # Availability Settings (consolidated)
+    available_for_clinic = fields.Boolean('Available for Clinic Visits', default=True)
+    available_for_home_visits = fields.Boolean('Available for Home Visits', default=True)
+    available_for_telemedicine = fields.Boolean('Available for Telemedicine', default=False)
+    can_work_emergency = fields.Boolean('Available for Emergency Calls', default=False)
+    
+    # Transportation for home visits
+    has_vehicle = fields.Boolean('Has Vehicle', default=False)
+    vehicle_type = fields.Selection([
+        ('motorbike', 'Motorbike'),
+        ('car', 'Car'),
+        ('bicycle', 'Bicycle'),
+        ('public_transport', 'Public Transport')
+    ], string='Transportation')
+    
+    # Coverage Areas for home visits
+    home_visit_areas = fields.Many2many(
+        'health.vietnamese.district',
+        'employee_district_rel',
+        'employee_id', 'district_id',
+        string='Home Visit Coverage Areas'
+    )
+    
+    # Working Schedule (consolidated)
+    working_hours_monday = fields.Char('Monday Hours', default='09:00-17:00')
+    working_hours_tuesday = fields.Char('Tuesday Hours', default='09:00-17:00')
+    working_hours_wednesday = fields.Char('Wednesday Hours', default='09:00-17:00')
+    working_hours_thursday = fields.Char('Thursday Hours', default='09:00-17:00')
+    working_hours_friday = fields.Char('Friday Hours', default='09:00-17:00')
+    working_hours_saturday = fields.Char('Saturday Hours', default='09:00-13:00')
+    working_hours_sunday = fields.Char('Sunday Hours', default='')
+    
+    # Appointment/Booking Settings (consolidated)
+    max_appointments_per_day = fields.Integer('Max Appointments Per Day', default=20)
+    max_home_visits_per_day = fields.Integer('Max Home Visits per Day', default=5)
+    appointment_duration_default = fields.Integer('Default Appointment Duration (Minutes)', default=30)
+    advance_booking_days = fields.Integer(
+        'Advance Booking Days', 
+        default=30,
+        help='How many days in advance patients can book with this staff'
+    )
+    
+    # Emergency Contact
+    emergency_contact_name = fields.Char('Emergency Contact Name')
+    emergency_contact_phone = fields.Char('Emergency Contact Phone')
     
     # ============================================================================
     # Skills and Qualifications
@@ -98,7 +184,7 @@ class HrEmployee(models.Model):
         compute='_compute_workload_metrics'
     )
     
-    # Performance metrics
+    # Performance metrics (consolidated)
     assignment_completion_rate = fields.Float(
         'Completion Rate %',
         compute='_compute_performance_metrics'
@@ -113,6 +199,22 @@ class HrEmployee(models.Model):
         'Total Appointments',
         compute='_compute_performance_metrics'
     )
+    
+    monthly_appointments = fields.Integer(
+        'Monthly Appointments', 
+        compute='_compute_monthly_appointments'
+    )
+    
+    patient_satisfaction_score = fields.Float(
+        'Patient Satisfaction Score', 
+        compute='_compute_satisfaction_score'
+    )
+    
+    # Availability Status
+    is_available_today = fields.Boolean('Available Today', compute='_compute_availability_today')
+    
+    # Display Settings
+    color = fields.Integer('Color Index', default=1, help='Color for calendar display')
     
     # ============================================================================
     # Scheduling Preferences
@@ -148,6 +250,11 @@ class HrEmployee(models.Model):
     # ============================================================================
     # Computed Fields
     # ============================================================================
+    
+    def _generate_staff_code(self):
+        """Generate unique staff code"""
+        sequence = self.env['ir.sequence'].next_by_code('hr.employee.healthcare') or '0001'
+        return f'S{sequence}'
     
     @api.depends('user_id')
     def _compute_current_assignments(self):
@@ -216,6 +323,33 @@ class HrEmployee(models.Model):
             # Average patient rating (would come from patient feedback)
             # For now, set a default good rating
             employee.average_patient_rating = 4.2  # This would be calculated from actual feedback
+    
+    def _compute_monthly_appointments(self):
+        """Compute monthly appointments for healthcare staff"""
+        for employee in self:
+            if employee.is_healthcare_staff:
+                # TODO: Implement when appointment system is updated
+                employee.monthly_appointments = 0
+            else:
+                employee.monthly_appointments = 0
+    
+    def _compute_satisfaction_score(self):
+        """Compute patient satisfaction score"""
+        for employee in self:
+            if employee.is_healthcare_staff:
+                # TODO: Implement with feedback system
+                employee.patient_satisfaction_score = 4.0
+            else:
+                employee.patient_satisfaction_score = 0.0
+    
+    def _compute_availability_today(self):
+        """Check if staff is available today"""
+        for employee in self:
+            if employee.is_healthcare_staff:
+                # TODO: Implement real availability checking
+                employee.is_available_today = employee.assignment_status == 'available'
+            else:
+                employee.is_available_today = False
     
     # ============================================================================
     # Business Logic Methods
@@ -392,7 +526,92 @@ class HrEmployee(models.Model):
             )
         
         return {'success': True, 'status': staff.assignment_status}
-
-
-# Note: HealthStaffSkill and HealthServiceArea models are now defined in healthcare_skill.py
-# to avoid duplicate model definitions and field naming conflicts.
+    
+    def action_view_patients(self):
+        """View patients assigned to this staff member"""
+        if not self.is_healthcare_staff:
+            return
+            
+        return {
+            'type': 'ir.actions.act_window',
+            'name': f'Patients - {self.name}',
+            'res_model': 'res.partner',
+            'view_mode': 'list,form',
+            'domain': [('is_patient', '=', True)],  # TODO: Add staff assignment filter
+            'context': {'search_patients': True}
+        }
+    
+    def action_check_license_expiry(self):
+        """Check license expiry for healthcare staff"""
+        if not self.is_healthcare_staff:
+            return
+            
+        today = fields.Date.today()
+        if self.license_expiry:
+            days_to_expiry = (self.license_expiry - today).days
+            
+            if days_to_expiry < 0:
+                message = f'License expired {abs(days_to_expiry)} days ago!'
+                notification_type = 'danger'
+            elif days_to_expiry <= 30:
+                message = f'License expires in {days_to_expiry} days!'
+                notification_type = 'warning'
+            else:
+                message = f'License is valid until {self.license_expiry}'
+                notification_type = 'success'
+            
+            return {
+                'type': 'ir.actions.client',
+                'tag': 'display_notification',
+                'params': {
+                    'title': 'License Status',
+                    'message': message,
+                    'type': notification_type
+                }
+            }
+    
+    def toggle_availability(self):
+        """Toggle staff availability status"""
+        if not self.is_healthcare_staff:
+            return
+            
+        if self.assignment_status == 'available':
+            new_status = 'off_duty'
+            message = 'You are now marked as Off Duty'
+        else:
+            new_status = 'available'
+            message = 'You are now marked as Available'
+            
+        self.assignment_status = new_status
+        
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'display_notification',
+            'params': {
+                'title': 'Availability Updated',
+                'message': message,
+                'type': 'success'
+            }
+        }
+    
+    @api.model_create_multi
+    def create(self, vals_list):
+        """Override create to set healthcare staff categories"""
+        employees = super().create(vals_list)
+        
+        for employee in employees:
+            if employee.is_healthcare_staff:
+                # Generate staff code if not already set
+                if not employee.staff_code:
+                    employee.staff_code = employee._generate_staff_code()
+                    
+                # Set customer rank for CRM integration
+                if employee.user_id and employee.user_id.partner_id:
+                    employee.user_id.partner_id.is_healthcare_staff = True
+                    
+                    # Add healthcare staff category
+                    staff_category = self.env.ref('health_base.staff_category', raise_if_not_found=False)
+                    if staff_category:
+                        employee.user_id.partner_id.category_id = [(4, staff_category.id)]
+                        
+        return employees

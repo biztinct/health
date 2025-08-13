@@ -36,7 +36,7 @@ class ResPartner(models.Model):
             if hasattr(partner, 'is_patient') and partner.is_patient:
                 # Count assignments through appointments
                 appointments = self.env['health.appointment'].search([
-                    ('patient_id.partner_id', '=', partner.id)
+                    ('patient_id', '=', partner.id)
                 ])
                 
                 assignments = self.env['health.staff.assignment'].search([

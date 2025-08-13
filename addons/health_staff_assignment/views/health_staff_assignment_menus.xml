@@ -13,12 +13,28 @@
         <field name="web_icon">health_staff_assignment,static/description/icon.png</field>
     </record>
 
+    <!-- Assignment Timeline Menu -->
+    <record id="menu_assignment_timeline" model="ir.ui.menu">
+        <field name="name">Assignment Timeline</field>
+        <field name="parent_id" ref="menu_health_staff_assignment_root"/>
+        <field name="action" ref="action_assignment_web_timeline_view"/>
+        <field name="sequence">5</field>
+    </record>
+
     <!-- Assignment Dashboard Menu -->
     <record id="menu_assignment_dashboard" model="ir.ui.menu">
         <field name="name">Assignment Dashboard</field>
         <field name="parent_id" ref="menu_health_staff_assignment_root"/>
         <field name="action" ref="action_assignment_dashboard"/>
         <field name="sequence">10</field>
+    </record>
+
+    <!-- Staff Workload Dashboard Menu -->
+    <record id="menu_staff_workload_dashboard" model="ir.ui.menu">
+        <field name="name">Workload Dashboard</field>
+        <field name="parent_id" ref="menu_health_staff_assignment_root"/>
+        <field name="action" ref="action_staff_workload_dashboard"/>
+        <field name="sequence">12</field>
     </record>
 
     <!-- Visual Assignment Scheduler Menu -->

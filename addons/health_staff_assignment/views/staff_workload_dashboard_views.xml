@@ -8,13 +8,6 @@
         <field name="target">current</field>
     </record>
 
-    <!-- Menu Item -->
-    <menuitem 
-        id="menu_staff_workload_dashboard"
-        name="Workload Dashboard"
-        parent="menu_health_staff_assignment_root"
-        action="action_staff_workload_dashboard"
-        sequence="10"/>
 
 </data>
 </odoo>

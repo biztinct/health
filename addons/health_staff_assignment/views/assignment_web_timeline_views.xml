@@ -12,10 +12,10 @@
                       string="display_name"
                       default_group_by="lead_staff_id"
                       event_open_popup="true"
-                      colors="#dc3545:state=='cancelled';#ffc107:state=='draft';#17a2b8:state=='assigned';#007bff:state=='confirmed';#fd7e14:state=='in_progress';#28a745:state=='completed'"
+                      colors="#e74c3c:state=='cancelled';#f39c12:state=='draft';#3498db:state=='assigned';#2980b9:state=='confirmed';#e67e22:state=='in_progress';#27ae60:state=='completed'"
                       quick_create="false">
                 
-                <!-- Enhanced Timeline Card Content with Professional Icons and Styling -->
+                <!-- Timeline Fields -->
                 <field name="name"/>
                 <field name="state"/>
                 <field name="priority"/>
@@ -26,62 +26,61 @@
                 <field name="assignment_date"/>
                 <field name="display_name"/>
                 
-                <!-- Professional card template with icons and status indicators -->
                 <templates>
                     <t t-name="timeline-item">
-                        <div class="o_timeline_assignment_card" t-att-data-priority="record.priority" t-att-data-state="record.state" t-att-data-type="record.assignment_type">
-                            
-                            <!-- Card Header with Priority Badge -->
-                            <div class="assignment_card_header">
-                                <span class="priority_badge" t-att-data-priority="record.priority">
-                                    <i class="fa fa-exclamation-circle" t-if="record.priority == '4'"/>
-                                    <i class="fa fa-exclamation-triangle" t-elif="record.priority == '3'"/>
-                                    <i class="fa fa-circle" t-elif="record.priority == '2'"/>
-                                    <i class="fa fa-circle-o" t-else=""/>
+                        <div class="o_healthcare_assignment_item">
+                            <!-- Priority & Type Icons Row -->
+                            <div class="assignment_header">
+                                <span class="priority_icon">
+                                    <i t-if="record.priority == '4'" class="fa fa-exclamation-circle text-danger" title="Emergency"/>
+                                    <i t-elif="record.priority == '3'" class="fa fa-exclamation-triangle text-warning" title="Urgent"/>
+                                    <i t-elif="record.priority == '2'" class="fa fa-circle text-warning" title="High"/>
+                                    <i t-else="" class="fa fa-circle-o text-muted" title="Normal"/>
                                 </span>
-                                <span class="assignment_type_icon">
-                                    <i class="fa fa-hospital-o" t-if="record.assignment_type == 'clinic_visit'"/>
-                                    <i class="fa fa-home" t-elif="record.assignment_type == 'home_visit'"/>
-                                    <i class="fa fa-ambulance" t-elif="record.assignment_type == 'emergency'"/>
-                                    <i class="fa fa-stethoscope" t-elif="record.assignment_type == 'follow_up'"/>
-                                    <i class="fa fa-user-md" t-else=""/>
+                                <span class="type_icon ml-auto">
+                                    <i t-if="record.assignment_type == 'emergency'" class="fa fa-ambulance text-danger" title="Emergency"/>
+                                    <i t-elif="record.assignment_type == 'home_visit'" class="fa fa-home text-success" title="Home Visit"/>
+                                    <i t-elif="record.assignment_type == 'clinic_visit'" class="fa fa-hospital-o text-primary" title="Clinic"/>
+                                    <i t-elif="record.assignment_type == 'follow_up'" class="fa fa-stethoscope text-info" title="Follow-up"/>
+                                    <i t-else="" class="fa fa-user-md text-secondary" title="Consultation"/>
                                 </span>
                             </div>
                             
-                            <!-- Main Content -->
-                            <div class="assignment_card_content">
-                                <div class="assignment_title" t-esc="record.display_name"/>
-                                
-                                <!-- Staff Info with Avatar -->
-                                <div class="staff_info" t-if="record.lead_staff_id">
-                                    <i class="fa fa-user-circle staff_avatar"/>
-                                    <span class="staff_name" t-esc="record.lead_staff_id[1]"/>
-                                </div>
-                                
-                                <!-- Appointment Info -->
-                                <div class="appointment_info" t-if="record.appointment_id">
+                            <!-- Staff Avatars Row -->
+                            <div class="staff_avatars">
+                                <img t-if="record.lead_staff_id"
+                                     t-attf-src="/web/image/hr.employee/#{record.lead_staff_id[0]}/image_128/20x20"
+                                     t-att-title="record.lead_staff_id[1]"
+                                     width="20" height="20"
+                                     class="rounded-circle mr-1"
+                                     alt="Lead Staff"/>
+                                <t t-if="record.assigned_staff_ids and record.assigned_staff_ids.length > 1">
+                                    <span class="team_badge">
+                                        <i class="fa fa-users"></i>
+                                        <small t-esc="record.assigned_staff_ids.length"/>
+                                    </span>
+                                </t>
+                            </div>
+                            
+                            <!-- Assignment Title -->
+                            <div class="assignment_name">
+                                <t t-esc="record.display_name"/>
+                            </div>
+                            
+                            <!-- Status & Appointment Info -->
+                            <div class="assignment_footer">
+                                <small class="state_text text-muted">
+                                    <i t-if="record.state == 'draft'" class="fa fa-clock-o"/>
+                                    <i t-elif="record.state == 'assigned'" class="fa fa-user-plus"/>
+                                    <i t-elif="record.state == 'confirmed'" class="fa fa-check-circle-o"/>
+                                    <i t-elif="record.state == 'in_progress'" class="fa fa-play-circle"/>
+                                    <i t-elif="record.state == 'completed'" class="fa fa-check-circle"/>
+                                    <i t-elif="record.state == 'cancelled'" class="fa fa-times-circle"/>
+                                    <t t-esc="record.state"/>
+                                </small>
+                                <small t-if="record.appointment_id" class="appointment_ref text-info ml-2">
                                     <i class="fa fa-calendar-check-o"/>
-                                    <span class="appointment_ref" t-esc="record.appointment_id[1]"/>
-                                </div>
-                            </div>
-                            
-                            <!-- Status Footer -->
-                            <div class="assignment_card_footer">
-                                <span class="state_badge" t-att-data-state="record.state">
-                                    <i class="fa fa-clock-o" t-if="record.state == 'draft'"/>
-                                    <i class="fa fa-user-plus" t-elif="record.state == 'assigned'"/>
-                                    <i class="fa fa-check-circle-o" t-elif="record.state == 'confirmed'"/>
-                                    <i class="fa fa-play-circle" t-elif="record.state == 'in_progress'"/>
-                                    <i class="fa fa-check-circle" t-elif="record.state == 'completed'"/>
-                                    <i class="fa fa-times-circle" t-elif="record.state == 'cancelled'"/>
-                                    <span class="state_text" t-esc="record.state"/>
-                                </span>
-                                
-                                <!-- Team Size Indicator -->
-                                <span class="team_size" t-if="record.assigned_staff_ids and record.assigned_staff_ids.length > 1">
-                                    <i class="fa fa-users"/>
-                                    <span t-esc="record.assigned_staff_ids.length"/>
-                                </span>
+                                </small>
                             </div>
                         </div>
                     </t>

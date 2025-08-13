@@ -150,7 +150,7 @@
         <field name="name">Appointment Portal User Access</field>
         <field name="model_id" ref="health_calendar.model_health_appointment"/>
         <field name="groups" eval="[(4, ref('base.group_portal'))]"/>
-        <field name="domain_force">[('patient_id.partner_id', '=', user.partner_id.id)]</field>
+        <field name="domain_force">[('patient_id', '=', user.partner_id.id)]</field>
         <field name="perm_read" eval="True"/>
         <field name="perm_write" eval="False"/>
         <field name="perm_create" eval="False"/>

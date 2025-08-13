@@ -143,6 +143,28 @@ This prevents field conflicts, reduces code duplication, and maintains consisten
 4. **Self-closing tags**: Use `<field name="description" />` pattern when appropriate
 5. **View types**: Use `list` not `tree` in Odoo 18
 6. **Indentation**: Match official Odoo project module patterns exactly
+7. **XML Entity Escaping**: MANDATORY for all special characters in string attributes
+
+### XML Entity Escaping Rules (CRITICAL - REPEATED MISTAKE)
+**ALWAYS escape these characters in XML string attributes:**
+```xml
+<!-- ❌ WRONG - Causes xmlParseEntityRef errors -->
+<page string="Location & Travel">
+<page string="Terms & Conditions">
+<filter domain="[('date', '>', 'value')]">
+
+<!-- ✅ CORRECT - Properly escaped -->
+<page string="Location &amp; Travel">
+<page string="Terms &amp; Conditions">  
+<filter domain="[('date', '&gt;', 'value')]">
+```
+
+**Required XML Entities:**
+- `&` → `&amp;`
+- `<` → `&lt;` 
+- `>` → `&gt;`
+- `"` → `&quot;` (in attributes)
+- `'` → `&apos;` (in attributes)
 
 ### Debugging XML Issues
 - **Schema validation errors**: Check XML structure matches patterns above
@@ -157,6 +179,7 @@ This prevents field conflicts, reduces code duplication, and maintains consisten
 - ❌ Incorrect indentation or formatting
 - ❌ Adding all XML files at once without incremental testing
 - ❌ Including menu items in view files (causes schema validation errors)
+- ❌ **CRITICAL: Unescaped ampersands in XML strings** - ALWAYS use `&amp;` instead of `&`
 
 ### Field Definition Requirements
 When creating views that reference model fields, ensure all fields exist in the model:
