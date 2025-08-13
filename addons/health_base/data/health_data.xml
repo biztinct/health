@@ -1,9 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <!-- Patient ID Sequence -->
-    <record id="sequence_health_patient" model="ir.sequence">
-        <field name="name">Patient ID</field>
-        <field name="code">health.patient</field>
+    <!-- Patient Code Sequence -->
+    <record id="sequence_res_partner_patient" model="ir.sequence">
+        <field name="name">Patient Code</field>
+        <field name="code">res.partner.patient</field>
+        <field name="prefix"></field>
+        <field name="suffix"></field>
+        <field name="padding">4</field>
+        <field name="number_next">1001</field>
+        <field name="number_increment">1</field>
+        <field name="implementation">standard</field>
+    </record>
+    
+    <!-- Healthcare Staff Code Sequence -->
+    <record id="sequence_hr_employee_healthcare" model="ir.sequence">
+        <field name="name">Healthcare Staff Code</field>
+        <field name="code">hr.employee.healthcare</field>
         <field name="prefix"></field>
         <field name="suffix"></field>
         <field name="padding">4</field>

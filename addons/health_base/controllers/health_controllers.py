@@ -20,8 +20,8 @@ class HealthcareController(http.Controller):
             # Search filters
             if kwargs.get('name'):
                 domain.append(['name', 'ilike', kwargs['name']])
-            if kwargs.get('patient_id'):
-                domain.append(['patient_id', 'ilike', kwargs['patient_id']])
+            if kwargs.get('patient_code'):
+                domain.append(['patient_code', 'ilike', kwargs['patient_code']])
             if kwargs.get('phone'):
                 domain.append(['|', ['phone', 'ilike', kwargs['phone']], ['mobile', 'ilike', kwargs['phone']]])
             if kwargs.get('national_id'):
@@ -33,7 +33,9 @@ class HealthcareController(http.Controller):
             if kwargs.get('status'):
                 domain.append(['patient_status', '=', kwargs['status']])
 
-            patients = request.env['health.patient'].search(
+            # Add patient filter to domain
+            domain.append(('is_patient', '=', True))
+            patients = request.env['res.partner'].search(
                 domain, limit=limit, offset=offset, order='name asc'
             )
             
@@ -41,7 +43,7 @@ class HealthcareController(http.Controller):
             for patient in patients:
                 patient_data.append({
                     'id': patient.id,
-                    'patient_id': patient.patient_id,
+                    'patient_code': patient.patient_code,
                     'name': patient.name,
                     'age_display': patient.age_display,
                     'gender': patient.gender,
@@ -73,7 +75,9 @@ class HealthcareController(http.Controller):
     def get_patient_details(self, patient_id, **kwargs):
         """Get detailed patient information"""
         try:
-            patient = request.env['health.patient'].browse(patient_id)
+            patient = request.env['res.partner'].browse(patient_id)
+            if not patient.is_patient:
+                return request.not_found()
             if not patient.exists():
                 return {
                     'success': False,
@@ -84,7 +88,7 @@ class HealthcareController(http.Controller):
                 'success': True,
                 'data': {
                     'id': patient.id,
-                    'patient_id': patient.patient_id,
+                    'patient_code': patient.patient_code,
                     'name': patient.name,
                     'vietnamese_name': patient.vietnamese_name,
                     'first_name': patient.first_name,
@@ -356,14 +360,15 @@ class HealthcareController(http.Controller):
         """Healthcare dashboard page"""
         try:
             # Get dashboard statistics
-            patient_count = request.env['health.patient'].search_count([('active', '=', True)])
+            patient_count = request.env['res.partner'].search_count([('is_patient', '=', True), ('active', '=', True)])
             facility_count = request.env['health.facility'].search_count([('active', '=', True)])
             
             # Today's appointments (placeholder - will be implemented in health_calendar)
             today_appointments = 0
             
             # Recent patients
-            recent_patients = request.env['health.patient'].search([
+            recent_patients = request.env['res.partner'].search([
+                ('is_patient', '=', True),
                 ('active', '=', True)
             ], limit=5, order='registration_date desc')
 
@@ -392,7 +397,8 @@ class HealthcareController(http.Controller):
             user = request.env.user
             
             # Check if user is linked to a patient record
-            patient = request.env['health.patient'].search([
+            patient = request.env['res.partner'].search([
+                ('is_patient', '=', True),
                 ('partner_id.user_ids', 'in', [user.id])
             ], limit=1)
 
@@ -422,12 +428,14 @@ class HealthcareController(http.Controller):
         try:
             stats = {
                 'patients': {
-                    'total': request.env['health.patient'].search_count([('active', '=', True)]),
-                    'new_this_month': request.env['health.patient'].search_count([
+                    'total': request.env['res.partner'].search_count([('is_patient', '=', True), ('active', '=', True)]),
+                    'new_this_month': request.env['res.partner'].search_count([
+                        ('is_patient', '=', True),
                         ('active', '=', True),
                         ('registration_date', '>=', kwargs.get('month_start', '2024-01-01'))
                     ]),
-                    'vip': request.env['health.patient'].search_count([
+                    'vip': request.env['res.partner'].search_count([
+                        ('is_patient', '=', True),
                         ('active', '=', True),
                         ('patient_category_id.name', '=', 'VIP Patient')
                     ])

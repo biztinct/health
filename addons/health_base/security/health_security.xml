@@ -101,8 +101,8 @@
     <!-- Patients can only see their own records -->
     <record id="rule_patient_own_records" model="ir.rule">
         <field name="name">Patient: Own Records Only</field>
-        <field name="model_id" ref="model_health_patient"/>
-        <field name="domain_force">[('partner_id.user_ids', 'in', [user.id])]</field>
+        <field name="model_id" ref="base.model_res_partner"/>
+        <field name="domain_force">[('is_patient', '=', True), ('user_ids', 'in', [user.id])]</field>
         <field name="groups" eval="[(4, ref('group_healthcare_patient'))]"/>
         <field name="perm_read" eval="True"/>
         <field name="perm_write" eval="False"/>
@@ -113,8 +113,8 @@
     <!-- Healthcare staff can see all patients -->
     <record id="rule_staff_all_patients" model="ir.rule">
         <field name="name">Healthcare Staff: All Patients</field>
-        <field name="model_id" ref="model_health_patient"/>
-        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="model_id" ref="base.model_res_partner"/>
+        <field name="domain_force">[('is_patient', '=', True)]</field>
         <field name="groups" eval="[(4, ref('group_healthcare_nurse')), (4, ref('group_healthcare_doctor')), (4, ref('group_healthcare_receptionist'))]"/>
         <field name="perm_read" eval="True"/>
         <field name="perm_write" eval="True"/>
@@ -125,8 +125,8 @@
     <!-- Only managers and admins can delete patients -->
     <record id="rule_manager_delete_patients" model="ir.rule">
         <field name="name">Manager: Delete Patients</field>
-        <field name="model_id" ref="model_health_patient"/>
-        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="model_id" ref="base.model_res_partner"/>
+        <field name="domain_force">[('is_patient', '=', True)]</field>
         <field name="groups" eval="[(4, ref('group_healthcare_manager'))]"/>
         <field name="perm_read" eval="True"/>
         <field name="perm_write" eval="True"/>

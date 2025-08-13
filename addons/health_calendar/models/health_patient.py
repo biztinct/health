@@ -1,9 +1,9 @@
 from odoo import api, fields, models, _
 
 
-class PatientCalendar(models.Model):
-    """Extend base patient model with appointment-specific functionality"""
-    _inherit = ['health.patient']
+class ResPartnerCalendar(models.Model):
+    """Extend res.partner with appointment-specific functionality for patients"""
+    _inherit = 'res.partner'
     
     # Appointment-specific fields
     appointment_ids = fields.One2many('health.appointment', 'patient_id', 'Appointments')
@@ -18,11 +18,17 @@ class PatientCalendar(models.Model):
     @api.depends('appointment_ids.state')
     def _compute_visit_count(self):
         """Override base visit count to use actual appointment data"""
-        for patient in self:
-            patient.visit_count = len(patient.appointment_ids.filtered(lambda a: a.state == 'completed'))
+        for partner in self:
+            if partner.is_patient:
+                partner.visit_count = len(partner.appointment_ids.filtered(lambda a: a.state == 'completed'))
+            else:
+                super(ResPartnerCalendar, partner)._compute_visit_count()
     
     def action_view_appointments(self):
         """View patient appointments (override base method)"""
+        if not self.is_patient:
+            return super().action_view_appointments()
+            
         return {
             'name': _('Patient Appointments'),
             'type': 'ir.actions.act_window',
@@ -38,30 +44,30 @@ class PatientCalendar(models.Model):
     
     def action_activate_portal_access(self):
         """Activate portal access for this patient"""
-        if self.partner_id:
-            # Ensure partner has portal access
-            self.partner_id.signup_prepare()
-            
-            # Update patient status to active if it's new
-            if self.patient_status == 'new':
-                self.patient_status = 'active'
-            
-            return {
-                'type': 'ir.actions.client',
-                'tag': 'display_notification',
-                'params': {
-                    'title': _('Portal Access Activated'),
-                    'message': _('Portal access has been activated for %s. They can now book appointments online.') % self.name,
-                    'type': 'success'
-                }
-            }
-        else:
+        if not self.is_patient:
             return {
                 'type': 'ir.actions.client',
                 'tag': 'display_notification',
                 'params': {
                     'title': _('Error'),
-                    'message': _('Cannot activate portal access: No contact record found.'),
-                    'type': 'danger'
+                    'message': _('This contact is not a patient.'),
+                    'type': 'warning'
                 }
             }
+            
+        # Ensure partner has portal access
+        self.signup_prepare()
+        
+        # Update patient status to active if it's new
+        if self.patient_status == 'new':
+            self.patient_status = 'active'
+        
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'display_notification',
+            'params': {
+                'title': _('Portal Access Activated'),
+                'message': _('Portal access has been activated for %s. They can now book appointments online.') % self.name,
+                'type': 'success'
+            }
+        }

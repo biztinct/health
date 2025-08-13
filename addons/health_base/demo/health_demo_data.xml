@@ -96,7 +96,9 @@ Sunday: Emergency only</field>
     </record>
 
     <!-- Demo Patients -->
-    <record id="demo_patient_1" model="health.patient">
+    <record id="demo_patient_1" model="res.partner">
+        <field name="is_patient" eval="True"/>
+        <field name="customer_rank">1</field>
         <field name="name">Nguyen Van A</field>
         <field name="vietnamese_name">Nguyễn Văn A</field>
         <field name="first_name">Van A</field>
@@ -128,7 +130,9 @@ Sunday: Emergency only</field>
         <field name="allergies">No known allergies.</field>
     </record>
 
-    <record id="demo_patient_2" model="health.patient">
+    <record id="demo_patient_2" model="res.partner">
+        <field name="is_patient" eval="True"/>
+        <field name="customer_rank">1</field>
         <field name="name">Le Thi C</field>
         <field name="vietnamese_name">Lê Thị C</field>
         <field name="first_name">Thi C</field>
@@ -161,7 +165,9 @@ Sunday: Emergency only</field>
         <field name="allergies">Allergic to penicillin.</field>
     </record>
 
-    <record id="demo_patient_3" model="health.patient">
+    <record id="demo_patient_3" model="res.partner">
+        <field name="is_patient" eval="True"/>
+        <field name="customer_rank">1</field>
         <field name="name">Hoang Van E</field>
         <field name="vietnamese_name">Hoàng Văn E</field>
         <field name="first_name">Van E</field>
@@ -193,7 +199,9 @@ Sunday: Emergency only</field>
         <field name="allergies">Allergic to aspirin and shellfish.</field>
     </record>
 
-    <record id="demo_patient_4" model="health.patient">
+    <record id="demo_patient_4" model="res.partner">
+        <field name="is_patient" eval="True"/>
+        <field name="customer_rank">1</field>
         <field name="name">Nguyen Thi G</field>
         <field name="vietnamese_name">Nguyễn Thị G</field>
         <field name="first_name">Thi G</field>

@@ -13,7 +13,7 @@ class HealthBookingPortal(CustomerPortal):
         values = super()._prepare_home_portal_values(counters)
         if 'appointment_count' in counters:
             appointment_count = request.env['health.appointment'].search_count([
-                ('partner_id', '=', request.env.user.partner_id.id)
+                ('patient_id', '=', request.env.user.partner_id.id)
             ]) if request.env.user.partner_id else 0
             values['appointment_count'] = appointment_count
         return values
@@ -25,7 +25,7 @@ class HealthBookingPortal(CustomerPortal):
         values = self._prepare_portal_layout_values()
         
         # Search domain
-        domain = [('partner_id', '=', request.env.user.partner_id.id)]
+        domain = [('patient_id', '=', request.env.user.partner_id.id)]
         
         # Date filtering
         if date_begin and date_end:
@@ -199,7 +199,8 @@ class HealthBookingPortal(CustomerPortal):
     def _find_or_create_patient(self, post):
         """Find existing patient or create new one"""
         # Try to find existing patient by email or phone
-        existing_patient = request.env['health.patient'].sudo().search([
+        existing_patient = request.env['res.partner'].sudo().search([
+            ('is_patient', '=', True),
             '|', ('email', '=', post['patient_email']), 
                  ('mobile', '=', post['patient_phone'])
         ], limit=1)
@@ -234,7 +235,10 @@ class HealthBookingPortal(CustomerPortal):
                 'country_id': int(post['country_id']) if post.get('country_id') else None,
             })
         
-        return request.env['health.patient'].sudo().create(patient_vals)
+        # Set patient flag and create partner
+        patient_vals['is_patient'] = True
+        patient_vals['customer_rank'] = 1
+        return request.env['res.partner'].sudo().create(patient_vals)
     
     def _send_booking_confirmation(self, appointment):
         """Send booking confirmation email"""

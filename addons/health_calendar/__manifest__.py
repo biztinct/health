@@ -1,6 +1,6 @@
 {
     'name': 'Healthcare Calendar & Appointments',
-    'version': '18.0.1.0.0',
+    'version': '18.0.3.4.0',
     'category': 'Healthcare',
     'summary': 'Advanced appointment booking and scheduling system for VAFHS',
     'description': """
@@ -54,7 +54,6 @@ while maintaining full integration with VAFHS clinical and billing systems.
         'views/health_appointment_views.xml',
         'views/health_patient_views.xml',
         'views/health_appointment_type_views.xml',
-        'views/health_staff_views.xml',
         'views/health_calendar_menus.xml',
         
         # Views - Portal & Website

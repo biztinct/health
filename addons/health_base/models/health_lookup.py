@@ -1,6 +1,27 @@
 from odoo import models, fields, api, _
 
 
+class PatientCategory(models.Model):
+    """Patient categories for classification"""
+    _name = 'health.patient.category'
+    _description = 'Patient Category'
+    _order = 'sequence, name'
+
+    name = fields.Char('Category Name', required=True, translate=True)
+    description = fields.Text('Description', translate=True)
+    color = fields.Integer('Color Index', default=0)
+    sequence = fields.Integer('Sequence', default=10)
+    active = fields.Boolean('Active', default=True)
+    
+    # Pricing and features
+    price_multiplier = fields.Float('Price Multiplier', default=1.0, help='Multiplier for service pricing')
+    special_requirements = fields.Text('Special Requirements')
+    
+    _sql_constraints = [
+        ('name_unique', 'unique(name)', 'Category name must be unique!')
+    ]
+
+
 class ServiceType(models.Model):
     """Healthcare service types"""
     _name = 'health.service.type'

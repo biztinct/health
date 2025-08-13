@@ -1,6 +1,6 @@
 {
     'name': 'Healthcare Base',
-    'version': '18.0.1.0.0',
+    'version': '18.0.3.0.0',
     'category': 'Healthcare',
     'summary': 'Foundation module for VAFHS Healthcare Management System',
     'description': """
@@ -29,6 +29,7 @@ This module serves as the foundation for all other health_* modules and must be 
         'mail',
         'calendar',
         'portal',
+        'hr',
     ],
     'data': [
         # Security

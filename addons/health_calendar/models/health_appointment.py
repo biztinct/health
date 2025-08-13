@@ -18,8 +18,10 @@ class Appointment(models.Model):
     display_name = fields.Char('Display Name', compute='_compute_display_name', store=True)
     
     # Patient Information
-    patient_id = fields.Many2one('health.patient', string='Patient', required=True, tracking=True)
-    partner_id = fields.Many2one('res.partner', string='Contact', related='patient_id.partner_id', store=True)
+    patient_id = fields.Many2one('res.partner', string='Patient', required=True, tracking=True,
+                                domain=[('is_patient', '=', True)],
+                                help='Select a patient (contact marked as patient)')
+    patient_code = fields.Char('Patient Code', related='patient_id.patient_code', readonly=True)
     patient_phone = fields.Char('Patient Phone', related='patient_id.mobile', readonly=True)
     patient_email = fields.Char('Patient Email', related='patient_id.email', readonly=True)
     
@@ -255,7 +257,7 @@ Appointment Details:
 - Symptoms: {self.symptoms or 'None specified'}
             '''.strip(),
             'user_id': self.primary_doctor_id.id or self.env.user.id,
-            'partner_ids': [(4, self.partner_id.id)] if self.partner_id else [],
+            'partner_ids': [(4, self.patient_id.id)] if self.patient_id else [],
             'alarm_ids': [(6, 0, [])],  # No default alarms, can be customized
         }
         

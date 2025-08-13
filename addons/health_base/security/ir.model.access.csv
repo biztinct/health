@@ -1,15 +1,4 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_health_patient_patient,health.patient patient,model_health_patient,group_healthcare_patient,1,0,0,0
-access_health_patient_receptionist,health.patient receptionist,model_health_patient,group_healthcare_receptionist,1,1,1,0
-access_health_patient_sales,health.patient sales,model_health_patient,group_healthcare_sales,1,1,1,0
-access_health_patient_nurse,health.patient nurse,model_health_patient,group_healthcare_nurse,1,1,0,0
-access_health_patient_head_nurse,health.patient head_nurse,model_health_patient,group_healthcare_head_nurse,1,1,1,0
-access_health_patient_doctor,health.patient doctor,model_health_patient,group_healthcare_doctor,1,1,0,0
-access_health_patient_operations_manager,health.patient operations_manager,model_health_patient,group_healthcare_operations_manager,1,1,1,0
-access_health_patient_finance,health.patient finance,model_health_patient,group_healthcare_finance,1,0,0,0
-access_health_patient_manager,health.patient manager,model_health_patient,group_healthcare_manager,1,1,1,1
-access_health_patient_admin,health.patient admin,model_health_patient,group_healthcare_admin,1,1,1,1
-access_health_patient_owner,health.patient owner,model_health_patient,group_healthcare_owner,1,1,1,1
 access_health_patient_category_receptionist,health.patient.category receptionist,model_health_patient_category,group_healthcare_receptionist,1,0,0,0
 access_health_patient_category_sales,health.patient.category sales,model_health_patient_category,group_healthcare_sales,1,0,0,0
 access_health_patient_category_nurse,health.patient.category nurse,model_health_patient_category,group_healthcare_nurse,1,0,0,0

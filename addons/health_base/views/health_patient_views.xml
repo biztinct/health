@@ -2,11 +2,11 @@
 <odoo>
     <!-- Patient Tree View -->
     <record id="view_health_patient_tree" model="ir.ui.view">
-        <field name="name">health.patient.list</field>
-        <field name="model">health.patient</field>
+        <field name="name">res.partner.patient.list</field>
+        <field name="model">res.partner</field>
         <field name="arch" type="xml">
             <list string="Patients" decoration-warning="patient_status=='new'" decoration-danger="patient_status=='deceased'" decoration-info="patient_category_id.name=='VIP Patient'">
-                <field name="patient_id"/>
+                <field name="patient_code"/>
                 <field name="name"/>
                 <field name="age_display"/>
                 <field name="gender"/>
@@ -27,8 +27,8 @@
 
     <!-- Patient Form View -->
     <record id="view_health_patient_form" model="ir.ui.view">
-        <field name="name">health.patient.form</field>
-        <field name="model">health.patient</field>
+        <field name="name">res.partner.patient.form</field>
+        <field name="model">res.partner</field>
         <field name="arch" type="xml">
             <form string="Patient">
                 <header>
@@ -50,10 +50,10 @@
                     <div class="health-card-header">
                         <div class="oe_title">
                             <h1 class="health-title">
-                                <field name="display_name" readonly="1"/>
+                                <field name="name" readonly="1"/>
                             </h1>
                             <div class="health-subtitle">
-                                <field name="patient_id" readonly="1"/>
+                                <field name="patient_code" readonly="1"/>
                                 <span class="health-badge health-badge-info ml-2">
                                     <field name="age_display"/>
                                 </span>
@@ -151,13 +151,13 @@
 
     <!-- Patient Kanban View -->
     <record id="view_health_patient_kanban" model="ir.ui.view">
-        <field name="name">health.patient.kanban</field>
-        <field name="model">health.patient</field>
+        <field name="name">res.partner.patient.kanban</field>
+        <field name="model">res.partner</field>
         <field name="arch" type="xml">
             <kanban default_group_by="patient_category_id">
                 <field name="id"/>
                 <field name="name"/>
-                <field name="patient_id"/>
+                <field name="patient_code"/>
                 <field name="age_display"/>
                 <field name="gender"/>
                 <field name="phone"/>
@@ -192,7 +192,7 @@
                                     <div class="col-6">
                                         <small class="health-text-xs">Patient ID</small><br/>
                                         <span class="health-badge health-badge-neutral">
-                                            <field name="patient_id"/>
+                                            <field name="patient_code"/>
                                         </span>
                                     </div>
                                     <div class="col-6">
@@ -231,12 +231,12 @@
 
     <!-- Patient Search View -->
     <record id="view_health_patient_search" model="ir.ui.view">
-        <field name="name">health.patient.search</field>
-        <field name="model">health.patient</field>
+        <field name="name">res.partner.patient.search</field>
+        <field name="model">res.partner</field>
         <field name="arch" type="xml">
             <search string="Patients">
                 <field name="name" string="Patient Name"/>
-                <field name="patient_id" string="Patient ID"/>
+                <field name="patient_code" string="Patient ID"/>
                 <field name="phone" string="Phone"/>
                 <field name="mobile" string="Mobile"/>
                 <field name="email" string="Email"/>
@@ -271,12 +271,15 @@
     <!-- Patient Action -->
     <record id="action_health_patient" model="ir.actions.act_window">
         <field name="name">Patients</field>
-        <field name="res_model">health.patient</field>
+        <field name="res_model">res.partner</field>
         <field name="view_mode">kanban,list,form</field>
         <field name="view_id" ref="view_health_patient_kanban"/>
         <field name="search_view_id" ref="view_health_patient_search"/>
+        <field name="domain">[('is_patient', '=', True)]</field>
         <field name="context">{
-            'search_default_active_patients': 1
+            'search_default_active_patients': 1,
+            'default_is_patient': True,
+            'default_customer_rank': 1
         }</field>
         <field name="help" type="html">
             <div class="health-empty-state">
