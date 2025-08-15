@@ -260,6 +260,48 @@ class ResPartner(models.Model):
             }
         }
     
+    def action_view_lab_results(self):
+        """Action to view patient lab results"""
+        if not self.is_patient:
+            return
+        
+        return {
+            'type': 'ir.actions.act_window',
+            'name': f'Lab Results - {self.name}',
+            'res_model': 'health.lab.result',  # Will be implemented when lab module is added
+            'view_mode': 'list,form',
+            'target': 'current',
+            'domain': [('patient_id', '=', self.id)],
+            'context': {'default_patient_id': self.id},
+            'help': """<p class="o_view_nocontent_smiling_face">
+                No lab results found for this patient.
+            </p>
+            <p>
+                Lab results will be displayed here when the laboratory module is installed.
+            </p>"""
+        }
+    
+    def action_view_prescriptions(self):
+        """Action to view patient prescriptions"""
+        if not self.is_patient:
+            return
+        
+        return {
+            'type': 'ir.actions.act_window',
+            'name': f'Prescriptions - {self.name}',
+            'res_model': 'health.prescription',  # Will be implemented when pharmacy module is added
+            'view_mode': 'list,form',
+            'target': 'current',
+            'domain': [('patient_id', '=', self.id)],
+            'context': {'default_patient_id': self.id},
+            'help': """<p class="o_view_nocontent_smiling_face">
+                No prescriptions found for this patient.
+            </p>
+            <p>
+                Prescriptions will be displayed here when the pharmacy module is installed.
+            </p>"""
+        }
+    
     def action_view_facility_record(self):
         """View the linked facility record"""
         if self.facility_id:

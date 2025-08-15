@@ -85,7 +85,7 @@
     <record id="group_healthcare_owner" model="res.groups">
         <field name="name">Healthcare: Owner</field>
         <field name="category_id" ref="module_category_healthcare"/>
-        <field name="implied_ids" eval="[(4, ref('group_healthcare_admin'))]"/>
+        <field name="implied_ids" eval="[(4, ref('group_healthcare_admin')), (4, ref('base.group_system'))]"/>
         <field name="comment">Owner - full system access, business oversight</field>
     </record>
     
@@ -98,40 +98,52 @@
     
     <!-- Record Rules for Patient Data Security -->
     
-    <!-- Patients can only see their own records -->
-    <record id="rule_patient_own_records" model="ir.rule">
-        <field name="name">Patient: Own Records Only</field>
+    <!-- CRITICAL: Users must be able to read their own partner record for login -->
+    <record id="rule_user_own_partner" model="ir.rule">
+        <field name="name">User: Own Partner Record</field>
         <field name="model_id" ref="base.model_res_partner"/>
-        <field name="domain_force">[('is_patient', '=', True), ('user_ids', 'in', [user.id])]</field>
-        <field name="groups" eval="[(4, ref('group_healthcare_patient'))]"/>
+        <field name="domain_force">[('id', '=', user.partner_id.id)]</field>
+        <field name="groups" eval="[(4, ref('base.group_user'))]"/>
         <field name="perm_read" eval="True"/>
-        <field name="perm_write" eval="False"/>
+        <field name="perm_write" eval="True"/>
         <field name="perm_create" eval="False"/>
         <field name="perm_unlink" eval="False"/>
     </record>
     
-    <!-- Healthcare staff can see all patients -->
-    <record id="rule_staff_all_patients" model="ir.rule">
-        <field name="name">Healthcare Staff: All Patients</field>
+    <!-- System administrators have unrestricted access -->
+    <record id="rule_system_admin_all_partners" model="ir.rule">
+        <field name="name">System Admin: All Partners</field>
         <field name="model_id" ref="base.model_res_partner"/>
-        <field name="domain_force">[('is_patient', '=', True)]</field>
-        <field name="groups" eval="[(4, ref('group_healthcare_nurse')), (4, ref('group_healthcare_doctor')), (4, ref('group_healthcare_receptionist'))]"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('base.group_system'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="True"/>
+    </record>
+    
+    <!-- Healthcare staff can access patients AND non-patient partners they need -->
+    <record id="rule_healthcare_staff_partners" model="ir.rule">
+        <field name="name">Healthcare Staff: Patient and Business Partners</field>
+        <field name="model_id" ref="base.model_res_partner"/>
+        <field name="domain_force">['|', '|', ('is_patient', '=', True), ('supplier_rank', '>', 0), ('customer_rank', '>', 0)]</field>
+        <field name="groups" eval="[(4, ref('group_healthcare_nurse')), (4, ref('group_healthcare_doctor')), (4, ref('group_healthcare_receptionist')), (4, ref('group_healthcare_manager'))]"/>
         <field name="perm_read" eval="True"/>
         <field name="perm_write" eval="True"/>
         <field name="perm_create" eval="True"/>
         <field name="perm_unlink" eval="False"/>
     </record>
     
-    <!-- Only managers and admins can delete patients -->
-    <record id="rule_manager_delete_patients" model="ir.rule">
-        <field name="name">Manager: Delete Patients</field>
+    <!-- Patients can only see their own records -->
+    <record id="rule_patient_own_records" model="ir.rule">
+        <field name="name">Patient Portal: Own Records Only</field>
         <field name="model_id" ref="base.model_res_partner"/>
-        <field name="domain_force">[('is_patient', '=', True)]</field>
-        <field name="groups" eval="[(4, ref('group_healthcare_manager'))]"/>
+        <field name="domain_force">[('id', '=', user.partner_id.id)]</field>
+        <field name="groups" eval="[(4, ref('group_healthcare_patient'))]"/>
         <field name="perm_read" eval="True"/>
         <field name="perm_write" eval="True"/>
-        <field name="perm_create" eval="True"/>
-        <field name="perm_unlink" eval="True"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
     </record>
     
     <!-- Facility access rules -->
@@ -204,4 +216,5 @@
         <field name="key">vietnam.tax_authority_integration_enabled</field>
         <field name="value">True</field>
     </record>
+    
 </odoo>

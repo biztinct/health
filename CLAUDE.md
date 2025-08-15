@@ -180,6 +180,42 @@ This prevents field conflicts, reduces code duplication, and maintains consisten
 - ❌ Adding all XML files at once without incremental testing
 - ❌ Including menu items in view files (causes schema validation errors)
 - ❌ **CRITICAL: Unescaped ampersands in XML strings** - ALWAYS use `&amp;` instead of `&`
+- ❌ **CRITICAL: Wrong chatter pattern** - Use `<chatter reload_on_follower="True"/>` outside `</sheet>`, NOT `<div class="oe_chatter">`
+- ❌ **CRITICAL: Fields pushed to left** - Use proper `<group><group>` nesting pattern from project module
+- ❌ Custom CSS classes that interfere with Odoo's responsive layout system
+
+### Proper Odoo 18 Form Structure (Based on Project Module Analysis)
+**CRITICAL PATTERN** - Follow this exact structure to avoid layout issues:
+```xml
+<form string="Record Name" class="o_form_record_class">
+    <header>
+        <field name="state" widget="statusbar"/>
+        <!-- Action buttons -->
+    </header>
+    <sheet string="Record">
+        <div class="oe_button_box" name="button_box" groups="base.group_user">
+            <!-- Smart buttons -->
+        </div>
+        <div class="oe_title">
+            <h1 class="d-flex justify-content-between align-items-center">
+                <field name="name" class="o_text_overflow"/>
+            </h1>
+        </div>
+        <group>
+            <group string="Left Column">
+                <!-- Left fields -->
+            </group>
+            <group string="Right Column">
+                <!-- Right fields -->
+            </group>
+        </group>
+        <notebook>
+            <!-- Tabbed content -->
+        </notebook>
+    </sheet>
+    <chatter reload_on_follower="True"/>
+</form>
+```
 
 ### Field Definition Requirements
 When creating views that reference model fields, ensure all fields exist in the model:
