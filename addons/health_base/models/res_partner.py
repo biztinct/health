@@ -5,7 +5,7 @@ import re
 
 
 class ResPartner(models.Model):
-    """Extend res.partner for healthcare functionality"""
+    """Extend res.partner for healthcare functionality module"""
     _inherit = 'res.partner'
 
     # Healthcare Classification
