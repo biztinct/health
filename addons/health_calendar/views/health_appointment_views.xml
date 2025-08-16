@@ -25,6 +25,8 @@
                        decoration-danger="state == 'cancelled'"/>
                 <field name="booking_source" optional="hide"/>
                 <field name="urgency_level" optional="hide"/>
+                <field name="no_show_probability" optional="hide" widget="progressbar"/>
+                <field name="optimal_time_score" optional="hide" widget="progressbar"/>
                 <field name="currency_id" column_invisible="True"/>
                 <field name="total_amount" widget="monetary" optional="show"/>
             </list>
@@ -125,6 +127,39 @@
                                     <field name="feedback" widget="text"/>
                                 </group>
                             </group>
+                        </page>
+                        <page string="AI Insights" name="ai_insights">
+                            <div class="alert alert-info" role="alert">
+                                <strong><i class="fa fa-robot"/> AI-Powered Predictions</strong>
+                                <p>These predictions are generated using machine learning based on historical data.</p>
+                            </div>
+                            
+                            <group string="Predictive Analytics">
+                                <group>
+                                    <field name="no_show_probability" widget="progressbar"/>
+                                    <field name="optimal_time_score" widget="progressbar"/>
+                                    <field name="predicted_duration"/>
+                                    <field name="patient_satisfaction_prediction" widget="progressbar"/>
+                                </group>
+                                <group>
+                                    <field name="auto_assigned" readonly="True"/>
+                                    <field name="assignment_confidence" widget="progressbar" readonly="True"/>
+                                    <field name="clinical_protocol_id" readonly="True"/>
+                                </group>
+                            </group>
+                            
+                            <group string="AI Recommendations">
+                                <field name="care_recommendations" widget="text" readonly="True"/>
+                                <field name="rescheduling_suggestions" widget="text" readonly="True"/>
+                            </group>
+                            
+                            <div class="oe_button_box mt-3">
+                                <button name="action_apply_ai_optimization" type="object" 
+                                        string="Apply AI Optimization" 
+                                        class="btn-primary"
+                                        invisible="not rescheduling_suggestions"
+                                        icon="fa-magic"/>
+                            </div>
                         </page>
                         <page string="System Information" name="system">
                             <group>

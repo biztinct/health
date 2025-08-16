@@ -8,18 +8,18 @@
             <field name="sequence">5</field>
         </record>
 
-        <!-- Main Healthcare Menu -->
-        <menuitem 
+        <!-- Use existing root menu from health_base instead of creating a new one -->
+        <!-- <menuitem 
             id="health_main_menu" 
             name="Healthcare"
             sequence="10"
-            web_icon="health_calendar,static/description/icon.png"/>
+            web_icon="health_calendar,static/description/icon.png"/> -->
 
         <!-- Calendar & Appointments Submenu -->
         <menuitem 
             id="health_calendar_menu" 
             name="Calendar &amp; Appointments"
-            parent="health_main_menu"
+            parent="health_base.menu_healthcare_root"
             sequence="10"/>
 
         <!-- Appointments Menu Items -->
@@ -44,11 +44,20 @@
             action="action_health_service_type_appointments"
             sequence="30"/>
 
+        <!-- V2.0 Enhancement: AI Predictive Scheduling -->
+        <menuitem 
+            id="menu_health_predictive_scheduling" 
+            name="AI Predictive Scheduling"
+            parent="health_calendar_menu"
+            action="action_health_predictive_scheduling"
+            sequence="40"
+            groups="health_base.group_healthcare_manager,health_base.group_healthcare_admin,health_base.group_healthcare_owner"/>
+
         <!-- Patients Submenu -->
         <menuitem 
             id="health_patients_menu" 
             name="Patients"
-            parent="health_main_menu"
+            parent="health_base.menu_healthcare_root"
             sequence="20"/>
 
         <menuitem 
@@ -69,14 +78,14 @@
         <menuitem 
             id="health_reports_menu" 
             name="Reports"
-            parent="health_main_menu"
+            parent="health_base.menu_healthcare_root"
             sequence="90"/>
 
         <!-- Configuration Submenu -->
         <menuitem 
             id="health_config_menu" 
             name="Configuration"
-            parent="health_main_menu"
+            parent="health_base.menu_healthcare_root"
             sequence="100"/>
 
         <!-- Staff management menus are defined in health_staff_assignment module -->
