@@ -218,7 +218,7 @@
         </field>
     </record>
 
-    <!-- Professional Patient Kanban View -->
+    <!-- Professional Patient Kanban View for patient-->
     <record id="view_health_patient_kanban" model="ir.ui.view">
         <field name="name">res.partner.patient.kanban</field>
         <field name="model">res.partner</field>
