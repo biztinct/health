@@ -1,8 +1,8 @@
 {
-    'name': 'VAFHS Staff Assignment System',
-    'version': '18.0.2.1.0',
+    'name': 'VAFHS Staff Assignment System v2.0',
+    'version': '18.0.3.1.0',
     'category': 'Healthcare/Staff Management',
-    'summary': 'State-of-the-art staff assignment system with intelligent routing and mobile-first UI',
+    'summary': 'AI-Powered staff assignment system with machine learning optimization and intelligent routing',
     'description': """
         VAFHS Healthcare Staff Assignment System
         =====================================
@@ -48,6 +48,7 @@
         'security/ir.model.access.csv',
         
         # Data  
+        'data/health_ai_assignment_cron.xml',    # AI assignment optimization cron jobs
         # 'data/health_staff_assignment_data.xml',  # Temporarily commented out for basic installation
         
         # Views - Load order matters
@@ -58,6 +59,7 @@
         'views/healthcare_skill_views.xml',      # Healthcare skills and service areas
         'views/health_staff_availability_views.xml',  # Staff availability views
         'views/health_staff_assignment_views.xml',
+        'views/health_ai_assignment_engine_views.xml',  # AI Assignment Engine views
         'views/staff_workload_dashboard_views.xml',  # Visual workload management dashboard
         
         # Extended appointment views (inherit from health_calendar)

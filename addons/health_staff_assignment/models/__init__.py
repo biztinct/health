@@ -4,3 +4,4 @@ from . import health_staff_availability
 from . import healthcare_skill
 from . import hr_employee
 from . import res_partner
+from . import health_ai_assignment_engine

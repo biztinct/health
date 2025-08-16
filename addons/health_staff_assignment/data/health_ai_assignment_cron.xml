@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+
+    <!-- Daily AI Assignment Optimization -->
+    <record id="cron_daily_assignment_optimization" model="ir.cron">
+        <field name="name">Healthcare: Daily AI Assignment Optimization</field>
+        <field name="model_id" ref="model_health_ai_assignment_engine"/>
+        <field name="state">code</field>
+        <field name="code">model.optimize_daily_assignments()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">days</field>
+        <field name="user_id" ref="base.user_root"/>
+        <field name="active">True</field>
+        <field name="nextcall">2025-01-01 06:00:00</field>
+    </record>
+
+    <!-- Weekly AI Model Training -->
+    <record id="cron_weekly_ai_training" model="ir.cron">
+        <field name="name">Healthcare: Weekly AI Assignment Model Training</field>
+        <field name="model_id" ref="model_health_ai_assignment_engine"/>
+        <field name="state">code</field>
+        <field name="code">model.train_assignment_model()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">weeks</field>
+        <field name="user_id" ref="base.user_root"/>
+        <field name="active">True</field>
+        <field name="nextcall">2025-01-06 02:00:00</field>
+    </record>
+
+    <!-- Automated Assignment Suggestions -->
+    <record id="cron_assignment_suggestions" model="ir.cron">
+        <field name="name">Healthcare: Generate AI Assignment Suggestions</field>
+        <field name="model_id" ref="model_health_ai_assignment_engine"/>
+        <field name="state">code</field>
+        <field name="code">model.generate_optimal_assignments()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">days</field>
+        <field name="user_id" ref="base.user_root"/>
+        <field name="active">True</field>
+        <field name="nextcall">2025-01-01 18:00:00</field>
+    </record>
+
+</odoo>

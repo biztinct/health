@@ -36,6 +36,22 @@
                             confirm="Are you sure you want to cancel this assignment?"
                             invisible="state in ('completed', 'cancelled')"/>
                     
+                    <button name="action_apply_ai_optimization" 
+                            type="object" 
+                            string="🤖 Apply AI Optimization" 
+                            class="btn-secondary" 
+                            invisible="state not in ('draft', 'assigned')"
+                            groups="health_staff_assignment.group_head_nurse,health_staff_assignment.group_assignment_manager"
+                            help="Use AI to optimize this assignment with the best staff recommendations"/>
+                    
+                    <button name="action_get_ai_predictions" 
+                            type="object" 
+                            string="📊 Get AI Predictions" 
+                            class="btn-info" 
+                            invisible="state in ('completed', 'cancelled')"
+                            groups="health_staff_assignment.group_head_nurse,health_staff_assignment.group_assignment_manager"
+                            help="Generate AI predictions for assignment complexity and duration"/>
+                    
                     <field name="state" widget="statusbar" statusbar_visible="draft,assigned,confirmed,in_progress,completed"/>
                 </header>
 
@@ -111,6 +127,59 @@
                                     <field name="staff_performance_rating"/>
                                 </group>
                             </group>
+                        </page>
+
+                        <page string="🤖 AI Insights" name="ai_insights" groups="health_staff_assignment.group_head_nurse,health_staff_assignment.group_assignment_manager">
+                            <div class="alert alert-info" role="alert" invisible="ml_optimization_applied">
+                                <strong>💡 AI Optimization Available!</strong> 
+                                Click "Apply AI Optimization" above to get the best staff recommendations powered by machine learning.
+                            </div>
+                            
+                            <div class="alert alert-success" role="alert" invisible="not ml_optimization_applied">
+                                <strong>✅ AI Optimized Assignment</strong> 
+                                This assignment has been optimized using AI/ML algorithms for best results.
+                            </div>
+                            
+                            <group>
+                                <group string="🎯 AI Assignment Intelligence">
+                                    <field name="ai_assignment_score" widget="progressbar" 
+                                           help="Overall AI assessment of assignment quality (0-100%)"/>
+                                    <field name="assignment_confidence" widget="progressbar"
+                                           help="AI confidence in assignment success (0-100%)"/>
+                                    <field name="predicted_success_probability" widget="progressbar"
+                                           help="ML predicted probability of successful completion"/>
+                                    <field name="predicted_complexity" widget="badge"
+                                           help="AI assessment of assignment complexity level"/>
+                                    <field name="predicted_duration" widget="float_time"
+                                           help="AI predicted duration for this assignment"/>
+                                </group>
+                                
+                                <group string="🔧 ML Optimization Status">
+                                    <field name="ml_optimization_applied" widget="boolean_toggle"
+                                           help="Whether ML optimization has been applied"/>
+                                    <field name="optimization_timestamp" readonly="1"
+                                           help="When AI optimization was last applied"/>
+                                </group>
+                            </group>
+                            
+                            <group string="📋 AI-Generated Recommendations">
+                                <field name="optimal_staff_suggestions" widget="ace" options="{'mode': 'json'}" 
+                                       placeholder="💭 AI-generated staff suggestions will appear here after optimization. Click 'Apply AI Optimization' to get recommendations."/>
+                                <field name="optimization_suggestions" widget="ace" options="{'mode': 'json'}" 
+                                       placeholder="💡 Optimization recommendations and insights will appear here after AI analysis."/>
+                            </group>
+                            
+                            <div class="mt-3">
+                                <h5>🚀 Quick Actions</h5>
+                                <button name="action_apply_ai_optimization" type="object" 
+                                        string="🤖 Apply AI Optimization" class="btn btn-primary mr-2"
+                                        invisible="state not in ('draft', 'assigned')"
+                                        help="Apply AI optimization to get the best staff recommendations"/>
+                                <button name="action_get_ai_predictions" type="object" 
+                                        string="📊 Update AI Predictions" class="btn btn-secondary"
+                                        invisible="state in ('completed', 'cancelled')"
+                                        help="Generate fresh AI predictions for this assignment"/>
+                            </div>
                         </page>
                     </notebook>
                 </sheet>

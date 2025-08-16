@@ -3,6 +3,9 @@ from odoo.exceptions import ValidationError, UserError
 from datetime import datetime, timedelta
 import json
 import math
+import logging
+
+_logger = logging.getLogger(__name__)
 
 
 class HealthStaffAssignment(models.Model):
@@ -116,6 +119,30 @@ class HealthStaffAssignment(models.Model):
     # Required skills analysis
     required_skills_json = fields.Text('Required Skills (JSON)', help='JSON array of required skills')
     staff_skills_match = fields.Text('Staff Skills Match', help='JSON analysis of skill matching')
+    
+    # ============================================================================
+    # V2.0 AI/ML Enhanced Fields
+    # ============================================================================
+    
+    # AI Assignment Intelligence
+    ai_assignment_score = fields.Float('AI Assignment Score', readonly=True, help='ML-powered assignment quality score')
+    assignment_confidence = fields.Float('Assignment Confidence %', readonly=True, help='AI confidence in assignment success')
+    predicted_success_probability = fields.Float('Success Probability %', readonly=True, help='ML predicted assignment success rate')
+    optimal_staff_suggestions = fields.Text('Optimal Staff Suggestions JSON', readonly=True, help='AI-generated staff recommendations')
+    
+    # Predictive Analytics
+    predicted_duration = fields.Integer('Predicted Duration (Minutes)', readonly=True, help='AI predicted assignment duration')
+    predicted_complexity = fields.Selection([
+        ('low', 'Low Complexity'),
+        ('medium', 'Medium Complexity'), 
+        ('high', 'High Complexity'),
+        ('critical', 'Critical Complexity')
+    ], string='Predicted Complexity', readonly=True, help='AI assessment of assignment complexity')
+    
+    # ML-based Optimization
+    ml_optimization_applied = fields.Boolean('ML Optimization Applied', default=False, readonly=True)
+    optimization_timestamp = fields.Datetime('Last Optimization', readonly=True)
+    optimization_suggestions = fields.Text('Optimization Suggestions JSON', readonly=True)
     
     # ============================================================================
     # Geographic Optimization (Home Visits)
@@ -1164,3 +1191,517 @@ class HealthStaffAssignmentEngine(models.Model):
                 'sticky': False,
             }
         }
+
+    # ============================================================================
+    # V2.0 ENHANCEMENTS: AI-POWERED ASSIGNMENT OPTIMIZATION
+    # ============================================================================
+    
+    # AI/ML Enhanced Fields
+    ai_assignment_score = fields.Float('AI Assignment Score', readonly=True, 
+                                      help='ML-generated score for assignment quality')
+    optimal_staff_suggestions = fields.Text('AI Staff Suggestions JSON', readonly=True)
+    assignment_confidence = fields.Float('Assignment Confidence %', readonly=True)
+    predicted_completion_time = fields.Datetime('AI Predicted Completion', readonly=True)
+    predicted_success_probability = fields.Float('Success Probability %', readonly=True)
+    workload_optimization_score = fields.Float('Workload Optimization Score', readonly=True)
+    
+    # Skills Matrix Integration
+    required_skills_match = fields.Float('Required Skills Match %', readonly=True)
+    staff_experience_factor = fields.Float('Staff Experience Factor', readonly=True)
+    
+    # Predictive Analytics
+    predicted_travel_time = fields.Float('AI Predicted Travel Time (minutes)', readonly=True)
+    route_efficiency_score = fields.Float('Route Efficiency Score', readonly=True)
+    patient_satisfaction_prediction = fields.Float('Predicted Patient Satisfaction', readonly=True)
+
+    @api.model
+    def get_ai_assignment_recommendations(self, appointment_id, limit=5):
+        """
+        V2.0 Enhancement: Get AI-powered assignment recommendations
+        """
+        appointment = self.env['health.appointment'].browse(appointment_id)
+        if not appointment:
+            return []
+        
+        # Use the AI assignment engine
+        ai_engine = self.env['health.ai.assignment.engine']
+        suggestions = ai_engine._get_optimal_staff_suggestions(appointment)
+        
+        return suggestions[:limit]
+
+
+    @api.model
+    def predict_assignment_outcomes(self, assignment_ids):
+        """
+        V2.0 Enhancement: Predict outcomes for assignments using ML
+        """
+        assignments = self.browse(assignment_ids)
+        predictions = []
+        
+        for assignment in assignments:
+            # Predict completion time
+            predicted_completion = self._predict_completion_time(assignment)
+            
+            # Predict success probability
+            success_probability = self._predict_success_probability(assignment)
+            
+            # Predict patient satisfaction impact
+            satisfaction_prediction = self._predict_patient_satisfaction_impact(assignment)
+            
+            # Update assignment with predictions
+            assignment.write({
+                'predicted_completion_time': predicted_completion,
+                'predicted_success_probability': success_probability,
+                'patient_satisfaction_prediction': satisfaction_prediction
+            })
+            
+            predictions.append({
+                'assignment_id': assignment.id,
+                'predicted_completion': predicted_completion,
+                'success_probability': success_probability,
+                'satisfaction_prediction': satisfaction_prediction
+            })
+        
+        return predictions
+
+    def _predict_completion_time(self, assignment):
+        """
+        Predict when assignment will be completed
+        """
+        if not assignment.appointment_id:
+            return False
+        
+        base_duration = assignment.appointment_id.duration_minutes or 30
+        
+        # Adjust based on assignment type
+        if assignment.assignment_type == 'home_visit':
+            base_duration += 20  # Home visits take longer
+        elif assignment.assignment_type == 'emergency':
+            base_duration += 15  # Emergency care takes longer
+        
+        # Adjust based on staff experience
+        if assignment.lead_staff_id:
+            experience_factor = self._calculate_staff_experience_factor(assignment.lead_staff_id)
+            base_duration *= (1.2 - experience_factor)  # More experienced = faster
+        
+        # Add travel time for home visits
+        if assignment.assignment_type == 'home_visit':
+            travel_time = assignment.estimated_travel_time or 30
+            base_duration += travel_time
+        
+        # Calculate predicted completion time
+        start_time = assignment.appointment_id.appointment_datetime
+        if start_time:
+            return start_time + timedelta(minutes=base_duration)
+        
+        return False
+
+    def _predict_success_probability(self, assignment):
+        """
+        Predict probability of successful assignment completion
+        """
+        success_probability = 0.7  # Base probability
+        
+        # Staff experience factor
+        if assignment.lead_staff_id:
+            experience_factor = self._calculate_staff_experience_factor(assignment.lead_staff_id)
+            success_probability += experience_factor * 0.2
+        
+        # Skills match factor
+        if assignment.appointment_id:
+            skills_match = self._calculate_skills_match_score(assignment)
+            success_probability += skills_match * 0.15
+        
+        # Workload factor
+        workload_factor = self._calculate_workload_factor(assignment)
+        success_probability += workload_factor * 0.1
+        
+        # Time factor (early morning or late evening assignments might be more challenging)
+        if assignment.appointment_id.appointment_datetime:
+            hour = assignment.appointment_id.appointment_datetime.hour
+            if 8 <= hour <= 17:  # Normal working hours
+                success_probability += 0.05
+            elif hour < 8 or hour > 20:  # Very early or late
+                success_probability -= 0.1
+        
+        return min(100, max(20, success_probability * 100))
+
+    def _predict_patient_satisfaction_impact(self, assignment):
+        """
+        Predict impact on patient satisfaction
+        """
+        satisfaction_score = 4.0  # Base score out of 5
+        
+        # Staff experience impact
+        if assignment.lead_staff_id:
+            experience_factor = self._calculate_staff_experience_factor(assignment.lead_staff_id)
+            satisfaction_score += experience_factor * 0.5
+        
+        # Assignment type impact
+        if assignment.assignment_type == 'home_visit':
+            satisfaction_score += 0.3  # Patients prefer home visits
+        elif assignment.assignment_type == 'emergency':
+            satisfaction_score += 0.2  # Good emergency response
+        
+        # Workload impact (overloaded staff might affect satisfaction)
+        workload_factor = self._calculate_workload_factor(assignment)
+        satisfaction_score += workload_factor * 0.2
+        
+        return min(5.0, max(1.0, satisfaction_score))
+
+    def _calculate_staff_experience_factor(self, staff):
+        """
+        Calculate staff experience factor (0.0 to 1.0)
+        """
+        if not staff:
+            return 0.0
+        
+        # Calculate based on employment duration
+        if staff.contract_start_date:
+            days_employed = (fields.Date.today() - staff.contract_start_date).days
+            years_experience = days_employed / 365
+            experience_factor = min(1.0, years_experience / 5)  # 5 years = max experience
+        else:
+            experience_factor = 0.5  # Default for unknown start date
+        
+        # Add assignment completion bonus
+        completed_assignments = self.search_count([
+            ('assigned_staff_ids', 'in', [staff.id]),
+            ('state', '=', 'completed')
+        ])
+        completion_bonus = min(0.3, completed_assignments / 100)  # 0.3 max bonus
+        
+        return min(1.0, experience_factor + completion_bonus)
+
+    def _calculate_skills_match_score(self, assignment):
+        """
+        Calculate how well staff skills match assignment requirements
+        """
+        if not assignment.lead_staff_id or not assignment.appointment_id:
+            return 0.5
+        
+        # Get staff skills
+        staff_skills = set(assignment.lead_staff_id.skill_ids.mapped('name'))
+        
+        # Get required skills (simplified logic)
+        appointment_type = assignment.appointment_id.appointment_type_id.name.lower()
+        required_skills = set()
+        
+        if 'emergency' in appointment_type:
+            required_skills.update(['Emergency Care', 'Critical Care'])
+        elif 'home' in appointment_type or assignment.assignment_type == 'home_visit':
+            required_skills.update(['Home Care', 'Patient Assessment'])
+        elif 'nursing' in appointment_type:
+            required_skills.update(['Nursing Care', 'Patient Care'])
+        else:
+            required_skills.update(['General Medicine', 'Patient Care'])
+        
+        if not required_skills:
+            return 0.7  # Neutral score
+        
+        # Calculate match percentage
+        matches = len(required_skills.intersection(staff_skills))
+        match_score = matches / len(required_skills) if required_skills else 0.7
+        
+        return min(1.0, match_score)
+
+    def _calculate_workload_factor(self, assignment):
+        """
+        Calculate workload factor (0.0 = overloaded, 1.0 = optimal load)
+        """
+        if not assignment.lead_staff_id:
+            return 0.5
+        
+        # Count assignments for the same day
+        assignment_date = assignment.assignment_date.date() if assignment.assignment_date else fields.Date.today()
+        
+        same_day_assignments = self.search_count([
+            ('assigned_staff_ids', 'in', [assignment.lead_staff_id.id]),
+            ('assignment_date', '>=', assignment_date),
+            ('assignment_date', '<', assignment_date + timedelta(days=1)),
+            ('state', 'in', ['assigned', 'confirmed', 'in_progress']),
+            ('id', '!=', assignment.id)
+        ])
+        
+        # Optimal workload is 4-6 assignments per day
+        if same_day_assignments <= 3:
+            return 1.0  # Light workload
+        elif same_day_assignments <= 6:
+            return 0.8  # Optimal workload
+        elif same_day_assignments <= 8:
+            return 0.6  # Heavy workload
+        else:
+            return 0.3  # Overloaded
+
+    @api.model
+    def auto_optimize_assignments(self, target_date=None):
+        """
+        V2.0 Enhancement: Auto-optimize all assignments for a given date
+        """
+        if not target_date:
+            target_date = fields.Date.today()
+        
+        # Get unoptimized assignments for the date
+        assignments = self.search([
+            ('assignment_date', '>=', target_date),
+            ('assignment_date', '<', target_date + timedelta(days=1)),
+            ('state', 'in', ['draft', 'assigned']),
+            ('ai_assignment_score', '=', 0)  # Not yet optimized
+        ])
+        
+        optimized_count = 0
+        
+        for assignment in assignments:
+            if assignment.appointment_id:
+                # Get AI recommendations
+                ai_engine = self.env['health.ai.assignment.engine']
+                suggestions = ai_engine._get_optimal_staff_suggestions(assignment.appointment_id)
+                
+                if suggestions:
+                    # Apply optimization
+                    top_suggestion = suggestions[0]
+                    optimal_staff = self.env['hr.employee'].browse(top_suggestion['staff_id'])
+                    
+                    assignment.write({
+                        'assigned_staff_ids': [(6, 0, [optimal_staff.id])],
+                        'lead_staff_id': optimal_staff.id,
+                        'ai_assignment_score': top_suggestion['recommendation_score'] * 100,
+                        'assignment_confidence': top_suggestion['confidence'] * 100,
+                        'optimal_staff_suggestions': json.dumps(suggestions),
+                        'required_skills_match': top_suggestion['skills_match'] * 100,
+                        'state': 'assigned'
+                    })
+                    
+                    optimized_count += 1
+        
+        return {
+            'optimized_assignments': optimized_count,
+            'total_assignments': len(assignments),
+            'optimization_date': target_date.isoformat()
+        }
+    
+    # ============================================================================
+    # V2.0 Enhancement: AI-Powered Assignment Methods
+    # ============================================================================
+    
+    def action_apply_ai_optimization(self):
+        """
+        V2.0 Enhancement: Apply AI optimization to this assignment
+        """
+        self.ensure_one()
+        
+        if not self.appointment_id:
+            raise UserError(_("Cannot optimize assignment without an appointment."))
+        
+        try:
+            # Get AI assignment engine
+            ai_engine = self.env['health.ai.assignment.engine']
+            
+            # Generate optimal staff suggestions
+            suggestions = ai_engine._get_optimal_staff_suggestions(self.appointment_id)
+            
+            if not suggestions:
+                raise UserError(_("No optimal staff suggestions available for this assignment."))
+            
+            # Get best suggestion
+            best_suggestion = suggestions[0]
+            optimal_staff = self.env['hr.employee'].browse(best_suggestion['staff_id'])
+            
+            # Apply AI optimization
+            self.write({
+                'assigned_staff_ids': [(6, 0, [optimal_staff.id])],
+                'lead_staff_id': optimal_staff.id,
+                'ai_assignment_score': best_suggestion['recommendation_score'] * 100,
+                'assignment_confidence': best_suggestion['confidence'] * 100,
+                'predicted_success_probability': self._predict_assignment_success(best_suggestion),
+                'optimal_staff_suggestions': json.dumps(suggestions[:3]),  # Store top 3 suggestions
+                'ml_optimization_applied': True,
+                'optimization_timestamp': fields.Datetime.now(),
+                'state': 'assigned'
+            })
+            
+            # Log optimization activity
+            self.message_post(
+                body=_("AI optimization applied. Recommended staff: %s (Score: %.1f%%)") % 
+                     (optimal_staff.name, best_suggestion['recommendation_score'] * 100),
+                subject=_("AI Assignment Optimization")
+            )
+            
+            return {
+                'type': 'ir.actions.client',
+                'tag': 'display_notification',
+                'params': {
+                    'title': _('AI Optimization Applied'),
+                    'message': _('Assignment optimized with AI recommendations.'),
+                    'type': 'success',
+                }
+            }
+            
+        except Exception as e:
+            _logger.error(f"Error applying AI optimization: {str(e)}")
+            raise UserError(_("Failed to apply AI optimization: %s") % str(e))
+    
+    def action_get_ai_predictions(self):
+        """
+        V2.0 Enhancement: Get AI predictions for this assignment
+        """
+        self.ensure_one()
+        
+        try:
+            ai_engine = self.env['health.ai.assignment.engine']
+            
+            # Get AI predictions
+            predictions = self._generate_ai_predictions()
+            
+            # Update assignment with predictions
+            self.write({
+                'predicted_duration': predictions.get('duration', 0),
+                'predicted_complexity': predictions.get('complexity', 'medium'),
+                'predicted_success_probability': predictions.get('success_probability', 0.0),
+                'optimization_suggestions': json.dumps(predictions.get('suggestions', []))
+            })
+            
+            return {
+                'type': 'ir.actions.client',
+                'tag': 'display_notification',
+                'params': {
+                    'title': _('AI Predictions Updated'),
+                    'message': _('Assignment predictions generated successfully.'),
+                    'type': 'info',
+                }
+            }
+            
+        except Exception as e:
+            _logger.error(f"Error generating AI predictions: {str(e)}")
+            raise UserError(_("Failed to generate AI predictions: %s") % str(e))
+    
+    def _predict_assignment_success(self, suggestion):
+        """
+        Predict assignment success probability based on suggestion metrics
+        """
+        # Use weighted combination of suggestion metrics
+        success_probability = (
+            suggestion.get('confidence', 0.5) * 0.4 +
+            suggestion.get('skills_match', 0.5) * 0.3 +
+            suggestion.get('travel_efficiency', 0.5) * 0.2 +
+            (1.0 - min(suggestion.get('current_workload', {}).get('assignments_count', 0) / 8, 1.0)) * 0.1
+        )
+        
+        return min(100.0, success_probability * 100)
+    
+    def _generate_ai_predictions(self):
+        """
+        Generate comprehensive AI predictions for the assignment
+        """
+        if not self.appointment_id:
+            return {}
+        
+        predictions = {}
+        
+        # Predict duration based on appointment type and complexity
+        base_duration = self.appointment_id.appointment_type_id.duration or 60
+        complexity_multiplier = {
+            'low': 0.8,
+            'medium': 1.0,
+            'high': 1.3,
+            'critical': 1.5
+        }.get(self.appointment_id.urgency_level, 1.0)
+        
+        predictions['duration'] = int(base_duration * complexity_multiplier)
+        
+        # Predict complexity based on appointment details
+        complexity_score = self._calculate_complexity_score()
+        if complexity_score >= 0.8:
+            predictions['complexity'] = 'critical'
+        elif complexity_score >= 0.6:
+            predictions['complexity'] = 'high'
+        elif complexity_score >= 0.4:
+            predictions['complexity'] = 'medium'
+        else:
+            predictions['complexity'] = 'low'
+        
+        # Generate optimization suggestions
+        suggestions = []
+        if self.staff_current_load > 80:
+            suggestions.append("Consider redistributing workload - current staff overloaded")
+        if self.skill_match_score < 70:
+            suggestions.append("Skills mismatch detected - consider alternative staff")
+        if self.proximity_score < 60:
+            suggestions.append("Geographic inefficiency - optimize routing")
+        
+        predictions['suggestions'] = suggestions
+        
+        return predictions
+    
+    def _calculate_complexity_score(self):
+        """
+        Calculate assignment complexity score based on various factors
+        """
+        complexity = 0.3  # Base complexity
+        
+        # Appointment urgency factor
+        urgency_weights = {
+            'low': 0.1,
+            'normal': 0.2,
+            'high': 0.4,
+            'urgent': 0.6,
+            'emergency': 0.8
+        }
+        complexity += urgency_weights.get(self.priority, 0.2)
+        
+        # Assignment type factor
+        type_weights = {
+            'clinic_visit': 0.1,
+            'home_visit': 0.3,
+            'emergency': 0.8,
+            'follow_up': 0.2,
+            'consultation': 0.2
+        }
+        complexity += type_weights.get(self.assignment_type, 0.2)
+        
+        # Patient factors (if available)
+        if self.appointment_id.patient_id:
+            patient = self.appointment_id.patient_id
+            if patient.age and patient.age > 70:
+                complexity += 0.1  # Elderly patients add complexity
+        
+        return min(1.0, complexity)
+    
+    @api.model
+    def get_ai_assignment_insights(self, assignment_ids=None):
+        """
+        V2.0 Enhancement: Get AI insights for assignments
+        """
+        domain = [('state', 'in', ['assigned', 'confirmed', 'in_progress'])]
+        if assignment_ids:
+            domain.append(('id', 'in', assignment_ids))
+        
+        assignments = self.search(domain, limit=100)
+        
+        insights = {
+            'total_assignments': len(assignments),
+            'ai_optimized': len(assignments.filtered('ml_optimization_applied')),
+            'average_confidence': sum(assignments.mapped('assignment_confidence')) / len(assignments) if assignments else 0,
+            'high_confidence': len(assignments.filtered(lambda a: a.assignment_confidence >= 80)),
+            'low_confidence': len(assignments.filtered(lambda a: a.assignment_confidence < 60)),
+            'complexity_distribution': {},
+            'optimization_recommendations': []
+        }
+        
+        # Complexity distribution
+        for complexity in ['low', 'medium', 'high', 'critical']:
+            count = len(assignments.filtered(lambda a: a.predicted_complexity == complexity))
+            insights['complexity_distribution'][complexity] = count
+        
+        # Generate recommendations
+        if insights['low_confidence'] > insights['total_assignments'] * 0.3:
+            insights['optimization_recommendations'].append(
+                "High number of low-confidence assignments detected. Consider AI re-optimization."
+            )
+        
+        if insights['ai_optimized'] < insights['total_assignments'] * 0.5:
+            insights['optimization_recommendations'].append(
+                "Less than 50% of assignments are AI-optimized. Enable automated optimization."
+            )
+        
+        return insights

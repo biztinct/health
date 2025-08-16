@@ -6,11 +6,11 @@
          Staff Assignment Main Menu Structure
          ===================================================================== -->
 
-    <!-- Main Healthcare Staff Assignment Menu -->
+    <!-- Staff Assignment Submenu under Healthcare -->
     <record id="menu_health_staff_assignment_root" model="ir.ui.menu">
         <field name="name">Staff Assignment</field>
+        <field name="parent_id" ref="health_base.menu_healthcare_root"/>
         <field name="sequence">15</field>
-        <field name="web_icon">health_staff_assignment,static/description/icon.png</field>
     </record>
 
     <!-- Assignment Timeline Menu -->
@@ -59,6 +59,15 @@
         <field name="parent_id" ref="menu_health_staff_assignment_root"/>
         <field name="action" ref="action_health_staff_availability"/>
         <field name="sequence">30</field>
+    </record>
+
+    <!-- AI Assignment Engine Menu -->
+    <record id="menu_ai_assignment_engine" model="ir.ui.menu">
+        <field name="name">AI Assignment Engine</field>
+        <field name="parent_id" ref="menu_health_staff_assignment_root"/>
+        <field name="action" ref="action_health_ai_assignment_engine"/>
+        <field name="sequence">35</field>
+        <field name="groups" ref="group_head_nurse,group_assignment_manager"/>
     </record>
 
     <!-- Configuration Submenu -->
