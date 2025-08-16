@@ -31,10 +31,10 @@
                             class="btn-primary" groups="health_staff_assignment.group_assignment_manager"
                             help="Train the machine learning model with historical assignment data"/>
                     <button name="generate_optimal_assignments" type="object" string="🎯 Generate Optimal Assignments" 
-                            class="btn-secondary" groups="health_staff_assignment.group_head_nurse,health_staff_assignment.group_assignment_manager"
+                            class="btn-secondary" groups="health_staff_assignment.group_head_nurse health_staff_assignment.group_assignment_manager"
                             help="Generate AI-powered staff assignment suggestions for unassigned appointments"/>
                     <button name="optimize_daily_assignments" type="object" string="⚡ Optimize Daily Assignments" 
-                            class="btn-secondary" groups="health_staff_assignment.group_head_nurse,health_staff_assignment.group_assignment_manager"
+                            class="btn-secondary" groups="health_staff_assignment.group_head_nurse health_staff_assignment.group_assignment_manager"
                             help="Run comprehensive daily assignment optimization across all assignments"/>
                 </header>
                 <sheet>

@@ -28,6 +28,7 @@ class HealthAIAssignmentEngine(models.Model):
     _name = 'health.ai.assignment.engine'
     _description = 'AI-Powered Staff Assignment and Optimization Engine'
     _rec_name = 'analysis_name'
+    _inherit = ['mail.thread', 'mail.activity.mixin']
 
     # Analysis Information
     analysis_name = fields.Char('Analysis Name', required=True)

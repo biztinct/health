@@ -41,7 +41,7 @@
                             string="🤖 Apply AI Optimization" 
                             class="btn-secondary" 
                             invisible="state not in ('draft', 'assigned')"
-                            groups="health_staff_assignment.group_head_nurse,health_staff_assignment.group_assignment_manager"
+                            groups="health_staff_assignment.group_head_nurse health_staff_assignment.group_assignment_manager"
                             help="Use AI to optimize this assignment with the best staff recommendations"/>
                     
                     <button name="action_get_ai_predictions" 
@@ -49,7 +49,7 @@
                             string="📊 Get AI Predictions" 
                             class="btn-info" 
                             invisible="state in ('completed', 'cancelled')"
-                            groups="health_staff_assignment.group_head_nurse,health_staff_assignment.group_assignment_manager"
+                            groups="health_staff_assignment.group_head_nurse health_staff_assignment.group_assignment_manager"
                             help="Generate AI predictions for assignment complexity and duration"/>
                     
                     <field name="state" widget="statusbar" statusbar_visible="draft,assigned,confirmed,in_progress,completed"/>
@@ -129,7 +129,7 @@
                             </group>
                         </page>
 
-                        <page string="🤖 AI Insights" name="ai_insights" groups="health_staff_assignment.group_head_nurse,health_staff_assignment.group_assignment_manager">
+                        <page string="🤖 AI Insights" name="ai_insights" groups="health_staff_assignment.group_head_nurse health_staff_assignment.group_assignment_manager">
                             <div class="alert alert-info" role="alert" invisible="ml_optimization_applied">
                                 <strong>💡 AI Optimization Available!</strong> 
                                 Click "Apply AI Optimization" above to get the best staff recommendations powered by machine learning.
@@ -171,14 +171,16 @@
                             
                             <div class="mt-3">
                                 <h5>🚀 Quick Actions</h5>
-                                <button name="action_apply_ai_optimization" type="object" 
+                                <!-- TODO: Re-enable after module installation -->
+                                <!-- <button name="action_apply_ai_optimization" type="object" 
                                         string="🤖 Apply AI Optimization" class="btn btn-primary mr-2"
                                         invisible="state not in ('draft', 'assigned')"
                                         help="Apply AI optimization to get the best staff recommendations"/>
                                 <button name="action_get_ai_predictions" type="object" 
                                         string="📊 Update AI Predictions" class="btn btn-secondary"
                                         invisible="state in ('completed', 'cancelled')"
-                                        help="Generate fresh AI predictions for this assignment"/>
+                                        help="Generate fresh AI predictions for this assignment"/> -->
+                                <p class="text-muted">AI optimization buttons will be enabled after successful module installation.</p>
                             </div>
                         </page>
                     </notebook>

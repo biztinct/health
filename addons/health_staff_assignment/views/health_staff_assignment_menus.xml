@@ -67,7 +67,6 @@
         <field name="parent_id" ref="menu_health_staff_assignment_root"/>
         <field name="action" ref="action_health_ai_assignment_engine"/>
         <field name="sequence">35</field>
-        <field name="groups" ref="group_head_nurse,group_assignment_manager"/>
     </record>
 
     <!-- Configuration Submenu -->

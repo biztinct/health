@@ -639,6 +639,163 @@ class HealthStaffAssignment(models.Model):
         })
         
         return {'success': True}
+    
+    # ============================================================================
+    # V2.0 Enhancement: AI-Powered Assignment Methods
+    # ============================================================================
+    
+    def action_apply_ai_optimization(self):
+        """
+        V2.0 Enhancement: Apply AI optimization to this assignment
+        """
+        self.ensure_one()
+        
+        if not self.appointment_id:
+            raise UserError(_("Cannot optimize assignment without an appointment."))
+        
+        try:
+            # Get AI assignment engine
+            ai_engine = self.env['health.ai.assignment.engine']
+            
+            # Generate optimal staff suggestions
+            suggestions = ai_engine._get_optimal_staff_suggestions(self.appointment_id)
+            
+            if not suggestions:
+                return {
+                    'type': 'ir.actions.client',
+                    'tag': 'display_notification',
+                    'params': {
+                        'title': _('No AI Suggestions'),
+                        'message': _('No optimal staff suggestions available for this assignment. Please ensure staff are available and have required skills.'),
+                        'type': 'warning',
+                    }
+                }
+            
+            # Get best suggestion
+            best_suggestion = suggestions[0]
+            optimal_staff = self.env['hr.employee'].browse(best_suggestion['staff_id'])
+            
+            # Apply AI optimization
+            self.write({
+                'assigned_staff_ids': [(6, 0, [optimal_staff.id])],
+                'lead_staff_id': optimal_staff.id,
+                'ai_assignment_score': best_suggestion['recommendation_score'] * 100,
+                'assignment_confidence': best_suggestion['confidence'] * 100,
+                'predicted_success_probability': self._predict_assignment_success(best_suggestion),
+                'optimal_staff_suggestions': json.dumps(suggestions[:3]),  # Store top 3 suggestions
+                'ml_optimization_applied': True,
+                'optimization_timestamp': fields.Datetime.now(),
+                'state': 'assigned'
+            })
+            
+            # Log optimization activity
+            self.message_post(
+                body=_("🤖 AI optimization applied successfully!<br/>"
+                      "Recommended staff: <strong>%s</strong><br/>"
+                      "AI Score: <strong>%.1f%%</strong><br/>"
+                      "Confidence: <strong>%.1f%%</strong><br/>"
+                      "Skills Match: <strong>%.1f%%</strong>") % (
+                    optimal_staff.name, 
+                    best_suggestion['recommendation_score'] * 100,
+                    best_suggestion['confidence'] * 100,
+                    best_suggestion['skills_match'] * 100
+                ),
+                subject=_("AI Assignment Optimization Applied")
+            )
+            
+            return {
+                'type': 'ir.actions.client',
+                'tag': 'display_notification',
+                'params': {
+                    'title': _('🤖 AI Optimization Applied'),
+                    'message': _('Assignment optimized! Assigned to %s with %.1f%% AI confidence.') % (
+                        optimal_staff.name, best_suggestion['confidence'] * 100
+                    ),
+                    'type': 'success',
+                }
+            }
+            
+        except Exception as e:
+            _logger.error(f"Error applying AI optimization: {str(e)}")
+            return {
+                'type': 'ir.actions.client',
+                'tag': 'display_notification',
+                'params': {
+                    'title': _('AI Optimization Error'),
+                    'message': _('Failed to apply AI optimization: %s') % str(e),
+                    'type': 'danger',
+                }
+            }
+    
+    def action_get_ai_predictions(self):
+        """
+        V2.0 Enhancement: Get AI predictions for this assignment
+        """
+        self.ensure_one()
+        
+        try:
+            # Generate comprehensive AI predictions
+            predictions = self._generate_ai_predictions()
+            
+            if not predictions:
+                return {
+                    'type': 'ir.actions.client',
+                    'tag': 'display_notification',
+                    'params': {
+                        'title': _('No Predictions Available'),
+                        'message': _('Unable to generate AI predictions. Please ensure appointment details are complete.'),
+                        'type': 'warning',
+                    }
+                }
+            
+            # Update assignment with predictions
+            self.write({
+                'predicted_duration': predictions.get('duration', 0),
+                'predicted_complexity': predictions.get('complexity', 'medium'),
+                'predicted_success_probability': predictions.get('success_probability', 0.0),
+                'optimization_suggestions': json.dumps(predictions.get('suggestions', []))
+            })
+            
+            # Log prediction activity
+            self.message_post(
+                body=_("📊 AI predictions updated successfully!<br/>"
+                      "Predicted Duration: <strong>%d minutes</strong><br/>"
+                      "Complexity Level: <strong>%s</strong><br/>"
+                      "Success Probability: <strong>%.1f%%</strong><br/>"
+                      "Optimization Suggestions: <strong>%d recommendations</strong>") % (
+                    predictions.get('duration', 0),
+                    predictions.get('complexity', 'Unknown').title(),
+                    predictions.get('success_probability', 0.0),
+                    len(predictions.get('suggestions', []))
+                ),
+                subject=_("AI Predictions Updated")
+            )
+            
+            return {
+                'type': 'ir.actions.client',
+                'tag': 'display_notification',
+                'params': {
+                    'title': _('📊 AI Predictions Updated'),
+                    'message': _('Predicted duration: %d min, Complexity: %s, Success rate: %.1f%%') % (
+                        predictions.get('duration', 0),
+                        predictions.get('complexity', 'Unknown').title(),
+                        predictions.get('success_probability', 0.0)
+                    ),
+                    'type': 'success',
+                }
+            }
+            
+        except Exception as e:
+            _logger.error(f"Error generating AI predictions: {str(e)}")
+            return {
+                'type': 'ir.actions.client',
+                'tag': 'display_notification',
+                'params': {
+                    'title': _('AI Prediction Error'),
+                    'message': _('Failed to generate AI predictions: %s') % str(e),
+                    'type': 'danger',
+                }
+            }
 
 
 class HealthStaffAssignmentEngine(models.Model):
@@ -1480,100 +1637,6 @@ class HealthStaffAssignmentEngine(models.Model):
             'optimization_date': target_date.isoformat()
         }
     
-    # ============================================================================
-    # V2.0 Enhancement: AI-Powered Assignment Methods
-    # ============================================================================
-    
-    def action_apply_ai_optimization(self):
-        """
-        V2.0 Enhancement: Apply AI optimization to this assignment
-        """
-        self.ensure_one()
-        
-        if not self.appointment_id:
-            raise UserError(_("Cannot optimize assignment without an appointment."))
-        
-        try:
-            # Get AI assignment engine
-            ai_engine = self.env['health.ai.assignment.engine']
-            
-            # Generate optimal staff suggestions
-            suggestions = ai_engine._get_optimal_staff_suggestions(self.appointment_id)
-            
-            if not suggestions:
-                raise UserError(_("No optimal staff suggestions available for this assignment."))
-            
-            # Get best suggestion
-            best_suggestion = suggestions[0]
-            optimal_staff = self.env['hr.employee'].browse(best_suggestion['staff_id'])
-            
-            # Apply AI optimization
-            self.write({
-                'assigned_staff_ids': [(6, 0, [optimal_staff.id])],
-                'lead_staff_id': optimal_staff.id,
-                'ai_assignment_score': best_suggestion['recommendation_score'] * 100,
-                'assignment_confidence': best_suggestion['confidence'] * 100,
-                'predicted_success_probability': self._predict_assignment_success(best_suggestion),
-                'optimal_staff_suggestions': json.dumps(suggestions[:3]),  # Store top 3 suggestions
-                'ml_optimization_applied': True,
-                'optimization_timestamp': fields.Datetime.now(),
-                'state': 'assigned'
-            })
-            
-            # Log optimization activity
-            self.message_post(
-                body=_("AI optimization applied. Recommended staff: %s (Score: %.1f%%)") % 
-                     (optimal_staff.name, best_suggestion['recommendation_score'] * 100),
-                subject=_("AI Assignment Optimization")
-            )
-            
-            return {
-                'type': 'ir.actions.client',
-                'tag': 'display_notification',
-                'params': {
-                    'title': _('AI Optimization Applied'),
-                    'message': _('Assignment optimized with AI recommendations.'),
-                    'type': 'success',
-                }
-            }
-            
-        except Exception as e:
-            _logger.error(f"Error applying AI optimization: {str(e)}")
-            raise UserError(_("Failed to apply AI optimization: %s") % str(e))
-    
-    def action_get_ai_predictions(self):
-        """
-        V2.0 Enhancement: Get AI predictions for this assignment
-        """
-        self.ensure_one()
-        
-        try:
-            ai_engine = self.env['health.ai.assignment.engine']
-            
-            # Get AI predictions
-            predictions = self._generate_ai_predictions()
-            
-            # Update assignment with predictions
-            self.write({
-                'predicted_duration': predictions.get('duration', 0),
-                'predicted_complexity': predictions.get('complexity', 'medium'),
-                'predicted_success_probability': predictions.get('success_probability', 0.0),
-                'optimization_suggestions': json.dumps(predictions.get('suggestions', []))
-            })
-            
-            return {
-                'type': 'ir.actions.client',
-                'tag': 'display_notification',
-                'params': {
-                    'title': _('AI Predictions Updated'),
-                    'message': _('Assignment predictions generated successfully.'),
-                    'type': 'info',
-                }
-            }
-            
-        except Exception as e:
-            _logger.error(f"Error generating AI predictions: {str(e)}")
-            raise UserError(_("Failed to generate AI predictions: %s") % str(e))
     
     def _predict_assignment_success(self, suggestion):
         """
