@@ -1,54 +1,40 @@
 {
     'name': 'Healthcare Base',
-    'version': '18.0.3.0.0',
+    'version': '18.0.4.0.0',  # Updated version
     'category': 'Healthcare',
-    'summary': 'Foundation module for VAFHS Healthcare Management System',
+    'summary': 'Foundation module for VAFHS Healthcare Management System with Clinical Intelligence',
     'description': """
-Healthcare Base Module
-======================
+Healthcare Base Module v4.0
+===========================
 
-Foundation module for Vietnam-Australia Family Health Service (VAFHS) healthcare management system.
+Enhanced foundation module for Vietnam-Australia Family Health Service (VAFHS) healthcare management system.
 
 Key Features:
 * Healthcare-specific data models and lookup codes
 * Vietnamese localization support
-* Professional mobile-first responsive design system
-* Security roles and permissions for healthcare staff
-* PWA-optimized interface components
-* Unified desktop/mobile layouts (no duplication)
-
-This module serves as the foundation for all other health_* modules and must be installed first.
-    """,
-    'author': 'I Am Dream Catcher Ltd',
-    'website': 'https://vafhs.com',
+* Professional mobile-responsive design
+* Multi-language support (Vietnamese & English)
+* Security and access controls
+* Clinical intelligence foundation
+""",
+    'author': 'VAFHS Development Team',
+    'website': 'https://www.vafhs.com',
     'license': 'LGPL-3',
     'depends': [
         'base',
-        'contacts',
-        'web',
         'mail',
-        'calendar',
         'portal',
-        'hr',
     ],
     'data': [
-        # Security
         'security/health_security.xml',
         'security/ir.model.access.csv',
-        
-        # Data
         'data/health_data.xml',
         'data/res_country_state_data.xml',
         'data/menu_access.xml',
-        
-        # Views
-        'views/health_patient_views.xml',
         'views/health_lookup_views.xml',
         'views/health_facility_views.xml',
+        'views/health_patient_views.xml',
         'views/health_menus.xml',
-        
-        # Assets (templates only, not asset includes)
-        'views/templates.xml',
     ],
     'assets': {
         'web.assets_backend': [

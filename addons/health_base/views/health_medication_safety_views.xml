@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Medication Form View -->
+    <record id="view_health_medication_form" model="ir.ui.view">
+        <field name="name">health.medication.form</field>
+        <field name="model">health.medication</field>
+        <field name="arch" type="xml">
+            <form string="Medication" class="o_form_record_class">
+                <header>
+                    <field name="active" widget="boolean_toggle"/>
+                </header>
+                <sheet string="Medication">
+                    <div class="oe_button_box" name="button_box" groups="base.group_user">
+                        <button name="check_interactions" type="object" 
+                                string="Check Interactions" class="oe_stat_button" icon="fa-exclamation-triangle"/>
+                    </div>
+                    <div class="oe_title">
+                        <h1 class="d-flex justify-content-between align-items-center">
+                            <field name="name" class="o_text_overflow" placeholder="Medication Name"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group string="Medication Information">
+                            <field name="generic_name"/>
+                            <field name="brand_name"/>
+                            <field name="medication_class"/>
+                            <field name="therapeutic_category"/>
+                        </group>
+                        <group string="Safety Information">
+                            <field name="pregnancy_category"/>
+                            <field name="vietnamese_name"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Contraindications" name="contraindications">
+                            <field name="contraindications" placeholder="List contraindications..."/>
+                            <field name="vietnamese_contraindications" placeholder="Vietnamese contraindications..."/>
+                        </page>
+                        <page string="Side Effects" name="side_effects">
+                            <field name="side_effects" placeholder="Common side effects..."/>
+                        </page>
+                        <page string="Interactions" name="interactions">
+                            <field name="interaction_ids" readonly="1">
+                                <tree>
+                                    <field name="medication2_id"/>
+                                    <field name="severity"/>
+                                    <field name="description"/>
+                                    <field name="evidence_level"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter reload_on_follower="True"/>
+            </form>
+        </field>
+    </record>
+
+    <!-- Medication List View -->
+    <record id="view_health_medication_list" model="ir.ui.view">
+        <field name="name">health.medication.list</field>
+        <field name="model">health.medication</field>
+        <field name="arch" type="xml">
+            <list string="Medications">
+                <field name="name"/>
+                <field name="generic_name"/>
+                <field name="therapeutic_category"/>
+                <field name="pregnancy_category"/>
+                <field name="active"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Medication Search View -->
+    <record id="view_health_medication_search" model="ir.ui.view">
+        <field name="name">health.medication.search</field>
+        <field name="model">health.medication</field>
+        <field name="arch" type="xml">
+            <search string="Search Medications">
+                <field name="name"/>
+                <field name="generic_name"/>
+                <field name="therapeutic_category"/>
+                <filter string="Active Medications" name="active" domain="[('active', '=', True)]"/>
+                <filter string="High Risk Pregnancy" name="pregnancy_high" domain="[('pregnancy_category', 'in', ['d', 'x'])]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Therapeutic Category" name="group_category" context="{'group_by': 'therapeutic_category'}"/>
+                    <filter string="Pregnancy Category" name="group_pregnancy" context="{'group_by': 'pregnancy_category'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Medication Action -->
+    <record id="action_health_medication" model="ir.actions.act_window">
+        <field name="name">Medications</field>
+        <field name="res_model">health.medication</field>
+        <field name="view_mode">list,form</field>
+        <field name="context">{'search_default_active': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first medication record!
+            </p>
+            <p>
+                Manage medication catalog with safety information and drug interactions.
+            </p>
+        </field>
+    </record>
+
+    <!-- Medication Interaction Form View -->
+    <record id="view_health_medication_interaction_form" model="ir.ui.view">
+        <field name="name">health.medication.interaction.form</field>
+        <field name="model">health.medication.interaction</field>
+        <field name="arch" type="xml">
+            <form string="Medication Interaction" class="o_form_record_class">
+                <sheet string="Interaction">
+                    <group>
+                        <group string="Medications">
+                            <field name="medication1_id"/>
+                            <field name="medication2_id"/>
+                        </group>
+                        <group string="Interaction Details">
+                            <field name="severity"/>
+                            <field name="evidence_level"/>
+                            <field name="source"/>
+                            <field name="last_updated"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Description" name="description">
+                            <field name="description" placeholder="Interaction description..."/>
+                            <field name="vietnamese_description" placeholder="Vietnamese description..."/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter reload_on_follower="True"/>
+            </form>
+        </field>
+    </record>
+
+    <!-- Medication Interaction Action -->
+    <record id="action_health_medication_interaction" model="ir.actions.act_window">
+        <field name="name">Medication Interactions</field>
+        <field name="res_model">health.medication.interaction</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No medication interactions found!
+            </p>
+            <p>
+                Drug interactions are automatically detected when checking medications.
+            </p>
+        </field>
+    </record>
+
+</odoo>

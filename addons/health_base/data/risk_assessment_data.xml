@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <!-- Sample Risk Assessment Templates -->
+    <record id="fall_risk_template_high" model="health.fall.risk">
+        <field name="name">High Risk Fall Assessment Template</field>
+        <field name="morse_score" eval="45"/>
+        <field name="risk_level">high</field>
+        <field name="is_active">True</field>
+        <field name="intervention_plan">High risk fall prevention plan with 24-hour supervision requirements.</field>
+    </record>
+
+    <record id="fall_risk_template_medium" model="health.fall.risk">
+        <field name="name">Medium Risk Fall Assessment Template</field>
+        <field name="morse_score" eval="35"/>
+        <field name="risk_level">medium</field>
+        <field name="is_active">True</field>
+        <field name="intervention_plan">Medium risk fall prevention with assisted ambulation and safety checks.</field>
+    </record>
+</odoo>

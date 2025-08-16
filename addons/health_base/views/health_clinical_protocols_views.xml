@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Clinical Protocol Form View -->
+    <record id="view_health_clinical_protocol_form" model="ir.ui.view">
+        <field name="name">health.clinical.protocol.form</field>
+        <field name="model">health.clinical.protocol</field>
+        <field name="arch" type="xml">
+            <form string="Clinical Protocol" class="o_form_record_class">
+                <header>
+                    <field name="is_active" widget="boolean_toggle"/>
+                </header>
+                <sheet string="Protocol">
+                    <div class="oe_button_box" name="button_box" groups="base.group_user">
+                        <button name="get_protocol_guidance" type="object" 
+                                string="Get Guidance" class="oe_stat_button" icon="fa-lightbulb-o"/>
+                    </div>
+                    <div class="oe_title">
+                        <h1 class="d-flex justify-content-between align-items-center">
+                            <field name="name" class="o_text_overflow" placeholder="Protocol Name"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group string="Protocol Information">
+                            <field name="protocol_type"/>
+                            <field name="evidence_source"/>
+                            <field name="implementation_date"/>
+                            <field name="last_review_date"/>
+                            <field name="next_review_date"/>
+                        </group>
+                        <group string="Vietnamese Localization">
+                            <field name="vietnamese_name" placeholder="Vietnamese Name"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Description" name="description">
+                            <field name="description" placeholder="Protocol description..."/>
+                            <field name="vietnamese_description" placeholder="Vietnamese description..."/>
+                        </page>
+                        <page string="Assessment Questions" name="questions">
+                            <field name="assessment_questions">
+                                <tree editable="bottom">
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="question_text"/>
+                                    <field name="question_type"/>
+                                    <field name="has_scoring"/>
+                                    <field name="vietnamese_question"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Interventions" name="interventions">
+                            <field name="interventions">
+                                <tree editable="bottom">
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="intervention_name"/>
+                                    <field name="intervention_type"/>
+                                    <field name="frequency"/>
+                                    <field name="priority"/>
+                                    <field name="vietnamese_name"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Care Recommendations" name="recommendations">
+                            <field name="care_recommendations" placeholder="AI-generated recommendations..."/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter reload_on_follower="True"/>
+            </form>
+        </field>
+    </record>
+
+    <!-- Clinical Protocol List View -->
+    <record id="view_health_clinical_protocol_list" model="ir.ui.view">
+        <field name="name">health.clinical.protocol.list</field>
+        <field name="model">health.clinical.protocol</field>
+        <field name="arch" type="xml">
+            <list string="Clinical Protocols">
+                <field name="name"/>
+                <field name="protocol_type"/>
+                <field name="evidence_source"/>
+                <field name="is_active"/>
+                <field name="implementation_date"/>
+                <field name="next_review_date"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Clinical Protocol Search View -->
+    <record id="view_health_clinical_protocol_search" model="ir.ui.view">
+        <field name="name">health.clinical.protocol.search</field>
+        <field name="model">health.clinical.protocol</field>
+        <field name="arch" type="xml">
+            <search string="Search Clinical Protocols">
+                <field name="name"/>
+                <field name="protocol_type"/>
+                <field name="evidence_source"/>
+                <filter string="Active Protocols" name="active" domain="[('is_active', '=', True)]"/>
+                <filter string="CDC Guidelines" name="cdc" domain="[('evidence_source', '=', 'cdc')]"/>
+                <filter string="WHO Protocols" name="who" domain="[('evidence_source', '=', 'who')]"/>
+                <filter string="Vietnamese MOH" name="vietnamese_moh" domain="[('evidence_source', '=', 'vietnamese_moh')]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Protocol Type" name="group_type" context="{'group_by': 'protocol_type'}"/>
+                    <filter string="Evidence Source" name="group_source" context="{'group_by': 'evidence_source'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Clinical Protocol Action -->
+    <record id="action_health_clinical_protocol" model="ir.actions.act_window">
+        <field name="name">Clinical Protocols</field>
+        <field name="res_model">health.clinical.protocol</field>
+        <field name="view_mode">list,form</field>
+        <field name="context">{'search_default_active': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first clinical protocol!
+            </p>
+            <p>
+                Clinical protocols provide evidence-based care guidelines for healthcare providers.
+            </p>
+        </field>
+    </record>
+
+</odoo>
