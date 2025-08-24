@@ -1,0 +1,269 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Healthcare Contact Form View Extension -->
+    <record id="view_healthcare_partner_form" model="ir.ui.view">
+        <field name="name">res.partner.form.healthcare</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+            <!-- Add healthcare identification fields -->
+            <xpath expr="//field[@name='vat']" position="after">
+                <field name="cccd_number" invisible="not is_patient and not is_caregiver and not is_payer"/>
+                <field name="ethnicity" invisible="not is_patient and not is_caregiver"/>
+            </xpath>
+
+            <!-- Add Vietnamese naming fields -->
+            <xpath expr="//field[@name='name']" position="after">
+                <field name="kinship_title" placeholder="Ông, Bà, Anh, Chị..."/>
+                <field name="preferred_name" placeholder="Preferred calling name"/>
+            </xpath>
+
+            <!-- Add healthcare flags -->
+            <xpath expr="//field[@name='is_company']" position="after">
+                <field name="is_patient"/>
+                <field name="is_caregiver"/>
+                <field name="is_payer"/>
+                <field name="is_referrer"/>
+            </xpath>
+
+            <!-- Enhanced Vietnamese Address Section -->
+            <xpath expr="//div[@class='o_address_format']" position="replace">
+                <div class="o_address_format">
+                    <field name="street" placeholder="Street..." class="o_address_street"/>
+                    <field name="street2" placeholder="Street 2..." class="o_address_street"/>
+                    
+                    <!-- Vietnamese Address Structure -->
+                    <div class="row" invisible="country_id != %(base.vn)d">
+                        <div class="col-6">
+                            <field name="house_number" placeholder="Số nhà"/>
+                        </div>
+                        <div class="col-6">
+                            <field name="sub_alley_number" placeholder="Số ngách"/>
+                        </div>
+                    </div>
+                    <div class="row" invisible="country_id != %(base.vn)d">
+                        <div class="col-6">
+                            <field name="alley_number" placeholder="Số ngõ"/>
+                        </div>
+                        <div class="col-6">
+                            <field name="ward_commune" placeholder="Phường/Xã"/>
+                        </div>
+                    </div>
+                    <field name="vietnamese_address_line1" placeholder="Khu vực đặt tên" invisible="country_id != %(base.vn)d"/>
+                    <field name="vietnamese_address_line2" placeholder="Số căn hộ" invisible="country_id != %(base.vn)d"/>
+                    <field name="vietnamese_address_line3" placeholder="Tên tòa nhà" invisible="country_id != %(base.vn)d"/>
+
+                    <field name="city" placeholder="City" class="o_address_city"/>
+                    <field name="state_id" class="o_address_state" placeholder="State" options="{'no_open': True, 'no_quick_create': True}"/>
+                    <field name="zip" placeholder="ZIP" class="o_address_zip"/>
+                    <field name="country_id" placeholder="Country" class="o_address_country" options="{'no_open': True, 'no_quick_create': True}"/>
+                </div>
+            </xpath>
+
+            <!-- Add Vietnamese communication fields -->
+            <xpath expr="//field[@name='mobile']" position="after">
+                <field name="zalo_number" placeholder="Zalo number"/>
+                <field name="facebook_profile" placeholder="Facebook profile"/>
+                <field name="preferred_contact_method"/>
+            </xpath>
+
+            <!-- Add healthcare communication section -->
+            <xpath expr="//page[@name='sales_purchases']" position="after">
+                <page name="healthcare_info" string="Healthcare Info" 
+                      invisible="not is_patient and not is_caregiver and not is_payer and not is_referrer">
+                    
+                    <!-- Healthcare Lead Source -->
+                    <group name="healthcare_source" string="Lead Source &amp; Preferences">
+                        <group>
+                            <field name="healthcare_lead_source"/>
+                            <field name="distance_from_clinic"/>
+                            <field name="gps_coordinates"/>
+                        </group>
+                        <group>
+                            <field name="service_area_ids" widget="many2many_tags" options="{'no_create': True}"/>
+                        </group>
+                    </group>
+
+                    <!-- Emergency Contact -->
+                    <group name="emergency_contact" string="Emergency Contact">
+                        <group>
+                            <field name="emergency_contact_name"/>
+                            <field name="emergency_contact_phone"/>
+                        </group>
+                        <group>
+                            <field name="emergency_contact_relationship"/>
+                        </group>
+                    </group>
+
+                    <!-- Healthcare Notes -->
+                    <group name="healthcare_notes" string="Healthcare Notes">
+                        <field name="healthcare_notes" nolabel="1" placeholder="Healthcare-related notes and observations..."/>
+                    </group>
+
+                    <!-- Relationship Statistics -->
+                    <group name="relationship_stats" string="Healthcare Relationships" 
+                           invisible="not is_caregiver and not is_payer and not is_referrer">
+                        <group>
+                            <field name="caregiver_count" string="Clients as Caregiver" invisible="not is_caregiver"/>
+                            <field name="payer_count" string="Clients as Payer" invisible="not is_payer"/>
+                            <field name="referrer_count" string="Clients as Referrer" invisible="not is_referrer"/>
+                        </group>
+                    </group>
+
+                    <!-- Client Representatives (FROM EXCEL REQUIREMENTS) -->
+                    <page name="client_representatives" string="Client Representatives">
+                        <group name="primary_representative" string="Primary Representative">
+                            <field name="primary_representative_id" readonly="1"/>
+                        </group>
+                        
+                        <field name="client_representative_ids" mode="tree">
+                            <tree>
+                                <field name="representative_name"/>
+                                <field name="kinship_title"/>
+                                <field name="preferred_name"/>
+                                <field name="relationship"/>
+                                <field name="representative_phone_1"/>
+                                <field name="email"/>
+                                <field name="zalo"/>
+                                <field name="is_primary"/>
+                                <field name="details_complete"/>
+                                <field name="active"/>
+                                <button name="action_set_as_primary" 
+                                        string="Set Primary" 
+                                        type="object" 
+                                        icon="fa-star"
+                                        invisible="is_primary"/>
+                                <button name="action_create_followup_activity" 
+                                        string="Follow-up" 
+                                        type="object" 
+                                        icon="fa-clock-o"
+                                        invisible="details_complete"/>
+                            </tree>
+                        </field>
+                    </page>
+
+                    <!-- Related Parties -->
+                    <notebook>
+                        <page name="as_caregiver" string="Caregiver Relationships" invisible="not is_caregiver">
+                            <field name="caregiver_client_ids" mode="tree" readonly="1">
+                                <tree>
+                                    <field name="client_id"/>
+                                    <field name="caregiver_relationship"/>
+                                    <field name="caregiver_availability"/>
+                                    <field name="start_date"/>
+                                    <field name="is_active"/>
+                                </tree>
+                            </field>
+                        </page>
+                        
+                        <page name="as_payer" string="Payer Relationships" invisible="not is_payer">
+                            <field name="payer_client_ids" mode="tree" readonly="1">
+                                <tree>
+                                    <field name="client_id"/>
+                                    <field name="payer_relationship"/>
+                                    <field name="payment_responsibility"/>
+                                    <field name="start_date"/>
+                                    <field name="is_active"/>
+                                </tree>
+                            </field>
+                        </page>
+                        
+                        <page name="as_referrer" string="Referrer Relationships" invisible="not is_referrer">
+                            <field name="referrer_client_ids" mode="tree" readonly="1">
+                                <tree>
+                                    <field name="client_id"/>
+                                    <field name="referrer_type"/>
+                                    <field name="referral_date"/>
+                                    <field name="commission_rate"/>
+                                    <field name="is_active"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </page>
+            </xpath>
+
+            <!-- Add healthcare action buttons -->
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button name="action_create_healthcare_lead" 
+                        type="object" 
+                        class="oe_stat_button" 
+                        icon="fa-user-plus"
+                        invisible="is_company">
+                    <div class="o_stat_info">
+                        <span class="o_stat_text">Create</span>
+                        <span class="o_stat_text">Healthcare Lead</span>
+                    </div>
+                </button>
+                <button name="action_create_representative" 
+                        type="object" 
+                        class="oe_stat_button" 
+                        icon="fa-users"
+                        invisible="is_company">
+                    <div class="o_stat_info">
+                        <span class="o_stat_text">Add</span>
+                        <span class="o_stat_text">Representative</span>
+                    </div>
+                </button>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Healthcare Contact Tree View Extension -->
+    <record id="view_healthcare_partner_tree" model="ir.ui.view">
+        <field name="name">res.partner.tree.healthcare</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_tree"/>
+        <field name="arch" type="xml">
+            <!-- Add healthcare columns -->
+            <xpath expr="//field[@name='display_name']" position="after">
+                <field name="kinship_title" optional="hide"/>
+                <field name="preferred_name" optional="hide"/>
+                <field name="cccd_number" optional="hide"/>
+                <field name="is_patient" optional="show"/>
+                <field name="is_caregiver" optional="hide"/>
+                <field name="is_payer" optional="hide"/>
+                <field name="is_referrer" optional="hide"/>
+                <field name="preferred_contact_method" optional="hide"/>
+                <field name="healthcare_lead_source" optional="hide"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Healthcare Contact Search View Extension -->
+    <record id="view_healthcare_partner_search" model="ir.ui.view">
+        <field name="name">res.partner.search.healthcare</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_res_partner_filter"/>
+        <field name="arch" type="xml">
+            <!-- Add healthcare search fields -->
+            <xpath expr="//field[@name='category_id']" position="after">
+                <field name="cccd_number"/>
+                <field name="kinship_title"/>
+                <field name="preferred_name"/>
+                <field name="healthcare_lead_source"/>
+                <field name="zalo_number"/>
+                <field name="facebook_profile"/>
+            </xpath>
+
+            <!-- Add healthcare filters -->
+            <xpath expr="//filter[@name='inactive']" position="after">
+                <separator/>
+                <filter name="patients" string="Patients" domain="[('is_patient', '=', True)]"/>
+                <filter name="caregivers" string="Caregivers" domain="[('is_caregiver', '=', True)]"/>
+                <filter name="payers" string="Payers" domain="[('is_payer', '=', True)]"/>
+                <filter name="referrers" string="Referrers" domain="[('is_referrer', '=', True)]"/>
+                <separator/>
+                <filter name="vietnamese_contacts" string="Vietnamese Contacts" domain="[('country_id', '=', %(base.vn)d)]"/>
+            </xpath>
+
+            <!-- Add healthcare group by -->
+            <xpath expr="//filter[@name='group_by_category']" position="after">
+                <filter name="group_by_healthcare_type" string="Healthcare Type" context="{'group_by': 'healthcare_lead_source'}"/>
+                <filter name="group_by_contact_method" string="Contact Method" context="{'group_by': 'preferred_contact_method'}"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

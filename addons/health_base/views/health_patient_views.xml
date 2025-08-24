@@ -195,7 +195,8 @@
         <field name="arch" type="xml">
             <list string="Patient Registry" decoration-warning="patient_status=='new'" 
                   decoration-danger="patient_status=='deceased'" decoration-muted="patient_status=='inactive'"
-                  decoration-success="patient_category_id and 'VIP' in patient_category_id.name">
+                  decoration-success="patient_category_id and 'VIP' in patient_category_id.name"
+                  create="true" edit="true" delete="true" sample="1">
                   
                 <field name="patient_code"/>
                 <field name="name"/>
@@ -223,7 +224,7 @@
         <field name="name">res.partner.patient.kanban</field>
         <field name="model">res.partner</field>
         <field name="arch" type="xml">
-            <kanban default_group_by="patient_category_id" class="o_patient_kanban" create="1" quick_create="0">
+            <kanban default_group_by="patient_category_id" class="o_patient_kanban" create="true" quick_create="false" sample="1" group_create="false" group_edit="false" group_delete="false">
                 <field name="id"/>
                 <field name="name"/>
                 <field name="patient_code"/>
@@ -275,6 +276,11 @@
                                 </div>
                             </div>
                         </div>
+                    </t>
+                    
+                    <!-- Kanban Empty State Template -->
+                    <t t-name="kanban-menu">
+                        <a role="menuitem" type="object" name="action_create_patient" class="dropdown-item">New Patient</a>
                     </t>
                 </templates>
             </kanban>
@@ -345,14 +351,20 @@
             'search_default_active_patients': 1,
             'default_is_patient': True,
             'default_customer_rank': 1,
-            'default_patient_status': 'new'
+            'default_patient_status': 'new',
+            'create': True,
+            'edit': True,
+            'delete': True
         }</field>
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">
                 Welcome to VAFHS Patient Management!
             </p>
             <p>
-                Create your first patient record to begin managing healthcare services.
+                Create your first patient record to begin managing healthcare services.<br/>
+                Click the <strong>New</strong> button above to register your first patient.
+            </p>
+            <p>
                 The system tracks patient demographics, medical history, appointments, and billing.
             </p>
         </field>
@@ -379,6 +391,9 @@
         <field name="view_id" ref="view_health_patient_form"/>
         <field name="act_window_id" ref="action_health_patient"/>
     </record>
+    
+
+
 
     <!-- Patient Category Management -->
     <record id="view_health_patient_category_tree" model="ir.ui.view">

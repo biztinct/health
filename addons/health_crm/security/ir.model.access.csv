@@ -1,0 +1,7 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_health_related_party_user,health.related.party user,model_health_related_party,group_health_crm_user,1,1,1,0
+access_health_related_party_manager,health.related.party manager,model_health_related_party,group_health_crm_manager,1,1,1,1
+access_health_related_party_public,health.related.party public,model_health_related_party,,1,0,0,0
+access_health_client_representative_user,health.client.representative user,model_health_client_representative,group_health_crm_user,1,1,1,0
+access_health_client_representative_manager,health.client.representative manager,model_health_client_representative,group_health_crm_manager,1,1,1,1
+access_health_client_representative_public,health.client.representative public,model_health_client_representative,,1,0,0,0

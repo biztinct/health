@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<odoo>
+<odoo noupdate="1">
+
     <!-- Demo Healthcare Facilities -->
     <record id="demo_facility_main_clinic" model="health.facility">
         <field name="name">VAFHS Main Clinic</field>

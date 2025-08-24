@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Healthcare Invoicing Security Categories -->
+    <record id="module_category_healthcare_invoicing" model="ir.module.category">
+        <field name="name">Healthcare Invoicing</field>
+        <field name="description">Healthcare billing and invoicing management</field>
+        <field name="sequence">25</field>
+    </record>
+
+    <!-- Healthcare Invoicing User Group -->
+    <record id="group_health_invoicing_user" model="res.groups">
+        <field name="name">Healthcare Invoicing User</field>
+        <field name="category_id" ref="module_category_healthcare_invoicing"/>
+        <field name="comment">Healthcare invoicing users can create and manage healthcare billing and invoices</field>
+    </record>
+
+    <!-- Healthcare Invoicing Manager Group -->
+    <record id="group_health_invoicing_manager" model="res.groups">
+        <field name="name">Healthcare Invoicing Manager</field>
+        <field name="category_id" ref="module_category_healthcare_invoicing"/>
+        <field name="implied_ids" eval="[(4, ref('group_health_invoicing_user'))]"/>
+        <field name="comment">Healthcare invoicing managers have full access to billing, invoicing, and financial reporting</field>
+    </record>
+
+    <!-- Vietnamese Tax Compliance Group -->
+    <record id="group_vietnamese_tax_compliance" model="res.groups">
+        <field name="name">Vietnamese Tax Compliance</field>
+        <field name="category_id" ref="module_category_healthcare_invoicing"/>
+        <field name="implied_ids" eval="[(4, ref('group_health_invoicing_user'))]"/>
+        <field name="comment">Users who can submit invoices to Vietnamese Tax Authorities and manage compliance</field>
+    </record>
+
+    <!-- MISA Integration Group -->
+    <record id="group_misa_integration" model="res.groups">
+        <field name="name">MISA Integration Admin</field>
+        <field name="category_id" ref="module_category_healthcare_invoicing"/>
+        <field name="implied_ids" eval="[(4, ref('group_health_invoicing_manager'))]"/>
+        <field name="comment">MISA integration administrators can configure and manage MISA synchronization</field>
+    </record>
+
+    <!-- Insurance Claims Processing Group -->
+    <record id="group_insurance_claims" model="res.groups">
+        <field name="name">Insurance Claims Processor</field>
+        <field name="category_id" ref="module_category_healthcare_invoicing"/>
+        <field name="implied_ids" eval="[(4, ref('group_health_invoicing_user'))]"/>
+        <field name="comment">Users who can process insurance claims and manage insurance-related billing</field>
+    </record>
+
+    <!-- Record Rules for Healthcare Invoicing -->
+
+    <!-- Healthcare Service Billing - Users can see their company's billing records -->
+    <record id="rule_health_service_billing_user" model="ir.rule">
+        <field name="name">Healthcare Service Billing: User Access</field>
+        <field name="model_id" ref="model_health_service_billing"/>
+        <field name="domain_force">[('customer_id.company_id', 'in', [company_id, False])]</field>
+        <field name="groups" eval="[(4, ref('group_health_invoicing_user'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+    <!-- Healthcare Service Billing - Managers have full access -->
+    <record id="rule_health_service_billing_manager" model="ir.rule">
+        <field name="name">Healthcare Service Billing: Manager Full Access</field>
+        <field name="model_id" ref="model_health_service_billing"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('group_health_invoicing_manager'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="True"/>
+    </record>
+
+    <!-- MISA Integration - Only MISA admins can access -->
+    <record id="rule_misa_integration_admin" model="ir.rule">
+        <field name="name">MISA Integration: Admin Only</field>
+        <field name="model_id" ref="model_misa_integration"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('group_misa_integration'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="True"/>
+    </record>
+
+    <!-- Staff Time Tracking - Users can see their own and company records -->
+    <record id="rule_staff_time_tracking_user" model="ir.rule">
+        <field name="name">Staff Time Tracking: User Access</field>
+        <field name="model_id" ref="model_health_staff_time_tracking"/>
+        <field name="domain_force">['|', ('employee_id.user_id', '=', user.id), ('billing_id.customer_id.company_id', 'in', [company_id, False])]</field>
+        <field name="groups" eval="[(4, ref('group_health_invoicing_user'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+    <!-- Healthcare Invoice Extensions - Users can access company invoices -->
+    <record id="rule_healthcare_invoice_user" model="ir.rule">
+        <field name="name">Healthcare Invoice: User Company Access</field>
+        <field name="model_id" ref="account.model_account_move"/>
+        <field name="domain_force">[('company_id', 'in', [company_id, False])]</field>
+        <field name="groups" eval="[(4, ref('group_health_invoicing_user'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+    <!-- Healthcare Payment Extensions - Users can access company payments -->
+    <record id="rule_healthcare_payment_user" model="ir.rule">
+        <field name="name">Healthcare Payment: User Company Access</field>
+        <field name="model_id" ref="account.model_account_payment"/>
+        <field name="domain_force">[('company_id', 'in', [company_id, False])]</field>
+        <field name="groups" eval="[(4, ref('group_health_invoicing_user'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+    <!-- Security for Insurance Claims - Only insurance processors can modify claims -->
+    <record id="rule_insurance_claims_processor" model="ir.rule">
+        <field name="name">Insurance Claims: Processor Access</field>
+        <field name="model_id" ref="account.model_account_payment"/>
+        <field name="domain_force">[('healthcare_payment_type', 'in', ['insurance_primary', 'insurance_secondary'])]</field>
+        <field name="groups" eval="[(4, ref('group_insurance_claims'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+    <!-- Tax Authority Submission - Only tax compliance users -->
+    <record id="rule_tax_authority_submission" model="ir.rule">
+        <field name="name">Tax Authority Submission: Compliance Users Only</field>
+        <field name="model_id" ref="account.model_account_move"/>
+        <field name="domain_force">[('tax_authority_submission_status', '!=', False)]</field>
+        <field name="groups" eval="[(4, ref('group_vietnamese_tax_compliance'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+</odoo>

@@ -1,0 +1,1093 @@
+/* ====================================================================
+   Ultra-Professional Staff Workload Dashboard
+   Enterprise-Grade Healthcare Management Interface
+   Inspired by: Salesforce Lightning, ServiceNow UI4, Epic MyChart
+   ==================================================================== */
+
+/* Root Variables - Professional Healthcare Color Palette */
+:root {
+    /* Healthcare Brand Colors */
+    --healthcare-primary: #0066cc;
+    --healthcare-primary-light: #e6f2ff;
+    --healthcare-primary-dark: #004499;
+    --healthcare-success: #16a34a;
+    --healthcare-warning: #f59e0b;
+    --healthcare-danger: #ef4444;
+    --healthcare-info: #0ea5e9;
+    
+    /* Enterprise Neutral Palette */
+    --neutral-50: #f8fafc;
+    --neutral-100: #f1f5f9;
+    --neutral-200: #e2e8f0;
+    --neutral-300: #cbd5e1;
+    --neutral-400: #94a3b8;
+    --neutral-500: #64748b;
+    --neutral-600: #475569;
+    --neutral-700: #334155;
+    --neutral-800: #1e293b;
+    --neutral-900: #0f172a;
+    
+    /* Professional Gradients */
+    --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --gradient-success: linear-gradient(135deg, #4ade80 0%, #16a34a 100%);
+    --gradient-warning: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+    --gradient-danger: linear-gradient(135deg, #f87171 0%, #ef4444 100%);
+    --gradient-glass: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%);
+    
+    /* Enterprise Shadows */
+    --shadow-xs: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    --shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    
+    /* Border Radius Scale */
+    --radius-sm: 0.375rem;
+    --radius-md: 0.5rem;
+    --radius-lg: 0.75rem;
+    --radius-xl: 1rem;
+    --radius-2xl: 1.5rem;
+    
+    /* Typography Scale */
+    --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    --font-mono: 'Fira Code', 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', monospace;
+}
+
+/* ====================================================================
+   Base Dashboard Layout - Modern Healthcare Interface
+   ==================================================================== */
+
+.o_staff_workload_dashboard {
+    background: var(--neutral-50);
+    min-height: 100vh;
+    padding: 2rem;
+    font-family: var(--font-sans);
+    color: var(--neutral-800);
+    position: relative;
+}
+
+.o_staff_workload_dashboard::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 200px;
+    background: var(--gradient-primary);
+    opacity: 0.03;
+    pointer-events: none;
+}
+
+/* ====================================================================
+   Dashboard Header - Executive Command Center
+   ==================================================================== */
+
+.o_dashboard_header {
+    background: white;
+    border-radius: var(--radius-2xl);
+    box-shadow: var(--shadow-lg);
+    padding: 2rem;
+    margin-bottom: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border: 1px solid var(--neutral-200);
+    position: relative;
+    overflow: hidden;
+}
+
+.o_dashboard_header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: var(--gradient-primary);
+}
+
+.o_header_left {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.o_dashboard_title {
+    color: var(--neutral-800);
+    font-weight: 800;
+    font-size: 2rem;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    letter-spacing: -0.025em;
+}
+
+.o_dashboard_title i {
+    color: var(--healthcare-primary);
+    font-size: 2.25rem;
+    background: var(--healthcare-primary-light);
+    width: 3.5rem;
+    height: 3.5rem;
+    border-radius: var(--radius-xl);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.o_header_center {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.o_time_range_selector {
+    position: relative;
+}
+
+.o_time_range_selector::before {
+    content: '';
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    font-family: 'Font Awesome 5 Free';
+    content: '\f017';
+    font-weight: 900;
+    color: var(--neutral-400);
+    font-size: 0.875rem;
+}
+
+.o_time_range_selector select {
+    background: var(--neutral-100);
+    border: 2px solid var(--neutral-200);
+    border-radius: var(--radius-lg);
+    padding: 0.875rem 1rem 0.875rem 2.5rem;
+    font-weight: 600;
+    color: var(--neutral-700);
+    min-width: 180px;
+    font-size: 0.875rem;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+    background-position: right 0.5rem center;
+    background-repeat: no-repeat;
+    background-size: 1.5em 1.5em;
+}
+
+.o_time_range_selector select:focus {
+    outline: none;
+    border-color: var(--healthcare-primary);
+    box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.1);
+    background-color: white;
+}
+
+.o_header_right {
+    display: flex;
+    gap: 0.75rem;
+}
+
+.o_header_right .btn {
+    padding: 0.875rem 1.5rem;
+    border-radius: var(--radius-lg);
+    font-weight: 600;
+    border: none;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.o_header_right .btn-outline-secondary {
+    background: white;
+    color: var(--neutral-600);
+    border: 2px solid var(--neutral-200);
+}
+
+.o_header_right .btn-outline-secondary:hover {
+    background: var(--neutral-50);
+    border-color: var(--healthcare-primary);
+    color: var(--healthcare-primary);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
+}
+
+/* ====================================================================
+   Loading State - Professional Skeleton
+   ==================================================================== */
+
+.o_loading_container {
+    background: white;
+    border-radius: var(--radius-2xl);
+    box-shadow: var(--shadow-lg);
+    margin-bottom: 2rem;
+    padding: 4rem 2rem;
+    border: 1px solid var(--neutral-200);
+}
+
+.o_loading_container .text-center {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+}
+
+.o_loading_container i {
+    color: var(--healthcare-primary);
+    animation: spin 1s linear infinite;
+}
+
+.o_loading_container p {
+    color: var(--neutral-500);
+    font-weight: 500;
+    margin: 0;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* ====================================================================
+   Summary Cards - Executive KPI Dashboard
+   ==================================================================== */
+
+.o_workload_summary {
+    margin-bottom: 2rem;
+}
+
+.o_summary_card {
+    background: white;
+    border-radius: var(--radius-xl);
+    padding: 1.75rem;
+    border: 1px solid var(--neutral-200);
+    box-shadow: var(--shadow-md);
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    height: 100%;
+    position: relative;
+    overflow: hidden;
+}
+
+.o_summary_card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 4px;
+    transition: all 0.3s ease;
+}
+
+.o_summary_card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-xl);
+}
+
+.o_summary_card.o_optimal::before {
+    background: var(--gradient-success);
+}
+
+.o_summary_card.o_warning::before {
+    background: var(--gradient-warning);
+}
+
+.o_summary_card.o_overload::before {
+    background: var(--gradient-danger);
+}
+
+.o_summary_card.o_total::before {
+    background: var(--gradient-primary);
+}
+
+.o_summary_icon {
+    width: 4rem;
+    height: 4rem;
+    border-radius: var(--radius-xl);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    color: white;
+    flex-shrink: 0;
+    position: relative;
+}
+
+.o_summary_icon::after {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    border-radius: var(--radius-xl);
+    background: var(--gradient-glass);
+    backdrop-filter: blur(10px);
+    z-index: -1;
+}
+
+.o_optimal .o_summary_icon {
+    background: var(--gradient-success);
+}
+
+.o_warning .o_summary_icon {
+    background: var(--gradient-warning);
+}
+
+.o_overload .o_summary_icon {
+    background: var(--gradient-danger);
+}
+
+.o_total .o_summary_icon {
+    background: var(--gradient-primary);
+}
+
+.o_summary_content {
+    flex: 1;
+}
+
+.o_summary_number {
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: var(--neutral-800);
+    line-height: 1;
+    margin-bottom: 0.375rem;
+    letter-spacing: -0.025em;
+}
+
+.o_summary_label {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--neutral-500);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+/* ====================================================================
+   Staff Columns - Professional Card Design
+   ==================================================================== */
+
+.o_staff_columns_container {
+    margin-bottom: 2rem;
+}
+
+.o_staff_column {
+    margin-bottom: 1.5rem;
+}
+
+.o_staff_column > div {
+    background: white;
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-md);
+    border: 1px solid var(--neutral-200);
+    overflow: hidden;
+    transition: all 0.3s ease;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.o_staff_column > div:hover {
+    box-shadow: var(--shadow-xl);
+    transform: translateY(-4px);
+}
+
+/* ====================================================================
+   Professional Staff Header - Streamlined Design
+   ==================================================================== */
+
+.o_staff_header_professional {
+    background: var(--healthcare-primary-light);
+    color: var(--healthcare-primary-dark);
+    padding: 2rem;
+    position: relative;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    min-height: 120px;
+    border: 2px solid var(--healthcare-primary);
+}
+
+.o_staff_header_professional:hover {
+    background: linear-gradient(135deg, var(--healthcare-primary-dark) 0%, var(--healthcare-primary) 100%);
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-xl);
+}
+
+.o_staff_header_professional::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.05);
+    pointer-events: none;
+    z-index: 0;
+}
+
+.o_staff_primary_info {
+    position: relative;
+    z-index: 2;
+    flex: 1;
+}
+
+.o_staff_name_prominent {
+    font-size: 1.5rem !important;
+    font-weight: 800 !important;
+    margin: 0 0 0.75rem 0 !important;
+    color: var(--healthcare-primary-dark) !important;
+    letter-spacing: -0.025em;
+    line-height: 1.2;
+    opacity: 1 !important;
+    visibility: visible !important;
+    display: block !important;
+    text-shadow: none;
+}
+
+.o_staff_header_professional:hover .o_staff_name_prominent {
+    color: white !important;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+.o_staff_assignment_summary {
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+}
+
+.o_assignment_count {
+    font-size: 2.25rem !important;
+    font-weight: 900 !important;
+    color: var(--healthcare-primary-dark) !important;
+    line-height: 1;
+    text-shadow: none;
+    opacity: 1 !important;
+    visibility: visible !important;
+}
+
+.o_staff_header_professional:hover .o_assignment_count {
+    color: white !important;
+    text-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+}
+
+.o_assignment_label {
+    font-size: 0.875rem !important;
+    font-weight: 600 !important;
+    color: var(--healthcare-primary-dark) !important;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    opacity: 1 !important;
+    visibility: visible !important;
+    text-shadow: none;
+}
+
+.o_staff_header_professional:hover .o_assignment_label {
+    color: rgba(255, 255, 255, 0.95) !important;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.o_staff_role_indicator {
+    position: relative;
+    z-index: 2;
+}
+
+.o_role_badge {
+    background: var(--healthcare-primary);
+    color: white !important;
+    padding: 0.5rem 1rem;
+    border-radius: var(--radius-lg);
+    font-weight: 700 !important;
+    font-size: 0.8125rem !important;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border: 1px solid var(--healthcare-primary-dark);
+    display: inline-block;
+    min-width: 80px;
+    text-align: center;
+    opacity: 1 !important;
+    visibility: visible !important;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.o_staff_header_professional:hover .o_role_badge {
+    background: rgba(255, 255, 255, 0.25);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    backdrop-filter: blur(10px);
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+/* ====================================================================
+   Assignment Management - Modern Task Interface
+   ==================================================================== */
+
+.o_assignments_container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.o_assignments_header {
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid var(--neutral-200);
+    background: var(--neutral-50);
+}
+
+.o_assignments_header h6 {
+    margin: 0;
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: var(--neutral-700);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.o_assignments_header i {
+    color: var(--healthcare-primary);
+    font-size: 1rem;
+}
+
+.o_assignments_list {
+    padding: 1.25rem;
+    flex: 1;
+    min-height: 250px;
+}
+
+/* ====================================================================
+   Assignment Cards - Professional Task Cards
+   ==================================================================== */
+
+.o_assignment_card {
+    background: var(--neutral-50);
+    border: 2px solid var(--neutral-200);
+    border-radius: var(--radius-lg);
+    padding: 1.25rem;
+    margin-bottom: 1rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.o_assignment_card:hover {
+    border-color: var(--healthcare-primary);
+    background: white;
+    box-shadow: var(--shadow-md);
+    transform: translateX(4px);
+}
+
+.o_assignment_card:last-child {
+    margin-bottom: 0;
+}
+
+.o_assignment_card::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    background: var(--healthcare-primary);
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+.o_assignment_card:hover::before {
+    opacity: 1;
+}
+
+.o_assignment_content {
+    position: relative;
+    z-index: 1;
+}
+
+.o_assignment_header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 0.875rem;
+}
+
+.o_assignment_title {
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: var(--neutral-800);
+    margin: 0;
+    line-height: 1.4;
+    letter-spacing: -0.01em;
+}
+
+.o_assignment_meta .badge {
+    background: var(--healthcare-info);
+    color: white;
+    padding: 0.25rem 0.625rem;
+    border-radius: var(--radius-sm);
+    font-size: 0.6875rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.025em;
+}
+
+.o_assignment_details {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.o_detail_row {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    font-size: 0.8125rem;
+    color: var(--neutral-600);
+    font-weight: 500;
+}
+
+.o_detail_row i {
+    color: var(--healthcare-primary);
+    width: 14px;
+    text-align: center;
+    font-size: 0.75rem;
+}
+
+/* ====================================================================
+   Empty States - Professional No-Content Design
+   ==================================================================== */
+
+.o_empty_assignments {
+    text-align: center;
+    padding: 2.5rem 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 200px;
+}
+
+.o_empty_assignments i {
+    color: var(--neutral-300);
+    margin-bottom: 1rem;
+    background: var(--neutral-100);
+    width: 4rem;
+    height: 4rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.o_empty_assignments p {
+    color: var(--neutral-400);
+    font-size: 0.875rem;
+    font-weight: 500;
+    margin: 0;
+}
+
+.o_empty_state {
+    background: white;
+    border-radius: var(--radius-2xl);
+    box-shadow: var(--shadow-lg);
+    padding: 4rem 2rem;
+    text-align: center;
+    border: 1px solid var(--neutral-200);
+}
+
+.o_empty_state i {
+    color: var(--neutral-300);
+    background: var(--neutral-100);
+    width: 5rem;
+    height: 5rem;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1.5rem;
+}
+
+.o_empty_state h4 {
+    color: var(--neutral-500);
+    font-weight: 600;
+    margin: 0 0 0.75rem 0;
+    font-size: 1.125rem;
+}
+
+.o_empty_state p {
+    color: var(--neutral-400);
+    margin-bottom: 2rem;
+    font-weight: 500;
+}
+
+.o_empty_state .btn {
+    background: var(--healthcare-primary);
+    color: white;
+    border: none;
+    padding: 0.875rem 1.75rem;
+    border-radius: var(--radius-lg);
+    font-weight: 600;
+    transition: all 0.2s ease;
+    font-size: 0.875rem;
+}
+
+.o_empty_state .btn:hover {
+    background: var(--healthcare-primary-dark);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-lg);
+}
+
+/* ====================================================================
+   Responsive Design - Mobile-First Healthcare Interface
+   ==================================================================== */
+
+/* Tablet Landscape */
+@media (max-width: 1024px) {
+    .o_staff_workload_dashboard {
+        padding: 1.5rem;
+    }
+    
+    .o_dashboard_header {
+        padding: 1.75rem;
+    }
+    
+    .o_staff_header_professional {
+        padding: 1.75rem;
+    }
+}
+
+/* Tablet Portrait */
+@media (max-width: 768px) {
+    .o_staff_workload_dashboard {
+        padding: 1rem;
+    }
+    
+    .o_dashboard_header {
+        flex-direction: column;
+        gap: 1.5rem;
+        padding: 1.5rem;
+    }
+    
+    .o_header_center {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .o_time_range_selector select {
+        width: 100%;
+        max-width: 300px;
+    }
+    
+    .o_dashboard_title {
+        font-size: 1.5rem;
+        justify-content: center;
+    }
+    
+    .o_header_right {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    /* Summary cards - 2 per row on tablet */
+    .o_workload_summary .row > .col-3 {
+        flex: 0 0 50%;
+        max-width: 50%;
+        margin-bottom: 1rem;
+    }
+    
+    .o_summary_card {
+        margin-bottom: 1rem;
+        padding: 1.25rem;
+    }
+    
+    /* Staff columns - 2 per row on tablet */
+    .o_staff_columns_container .col-lg-3 {
+        flex: 0 0 50%;
+        max-width: 50%;
+    }
+    
+    .o_staff_column {
+        margin-bottom: 1rem;
+    }
+    
+    .o_staff_header_professional {
+        padding: 1.5rem;
+        flex-direction: column;
+        gap: 1rem;
+        align-items: flex-start;
+        min-height: auto;
+    }
+    
+    .o_staff_role_indicator {
+        align-self: flex-end;
+    }
+    
+    .o_assignment_count {
+        font-size: 1.875rem;
+    }
+    
+    .o_assignments_list {
+        padding: 1rem;
+    }
+}
+
+/* Mobile Large */
+@media (max-width: 576px) {
+    .o_staff_workload_dashboard {
+        padding: 0.75rem;
+    }
+    
+    .o_dashboard_header {
+        padding: 1rem;
+        gap: 1rem;
+    }
+    
+    .o_dashboard_title {
+        font-size: 1.25rem;
+    }
+    
+    .o_dashboard_title i {
+        width: 2.5rem;
+        height: 2.5rem;
+        font-size: 1.25rem;
+    }
+    
+    /* Summary cards - 1 per row on mobile */
+    .o_workload_summary .row > .col-3 {
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
+    
+    .o_summary_card {
+        padding: 1rem;
+        flex-direction: column;
+        text-align: center;
+        gap: 1rem;
+    }
+    
+    .o_summary_icon {
+        margin: 0 auto;
+    }
+    
+    .o_summary_number {
+        font-size: 2rem;
+    }
+    
+    /* Staff columns - 1 per row on mobile */
+    .o_staff_columns_container .col-lg-3 {
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
+    
+    .o_staff_header_professional {
+        padding: 1.25rem;
+        text-align: center;
+        align-items: center;
+    }
+    
+    .o_staff_primary_info {
+        text-align: center;
+        width: 100%;
+    }
+    
+    .o_staff_role_indicator {
+        align-self: center;
+        margin-top: 0.5rem;
+    }
+    
+    .o_assignments_header {
+        padding: 1rem;
+    }
+    
+    .o_assignments_list {
+        padding: 0.75rem;
+    }
+    
+    .o_assignment_card {
+        padding: 1rem;
+    }
+    
+    .o_assignment_header {
+        flex-direction: column;
+        gap: 0.5rem;
+        align-items: flex-start;
+    }
+}
+
+/* Mobile Small */
+@media (max-width: 480px) {
+    .o_staff_workload_dashboard {
+        padding: 0.5rem;
+    }
+    
+    .o_dashboard_header {
+        padding: 0.75rem;
+        border-radius: var(--radius-lg);
+    }
+    
+    .o_dashboard_title {
+        font-size: 1.125rem;
+    }
+    
+    .o_dashboard_title i {
+        width: 2rem;
+        height: 2rem;
+        font-size: 1rem;
+    }
+    
+    .o_summary_card {
+        padding: 0.875rem;
+        border-radius: var(--radius-lg);
+    }
+    
+    .o_summary_icon {
+        width: 3rem;
+        height: 3rem;
+        font-size: 1.25rem;
+    }
+    
+    .o_summary_number {
+        font-size: 1.75rem;
+    }
+    
+    .o_summary_label {
+        font-size: 0.75rem;
+    }
+    
+    .o_staff_header_professional {
+        padding: 1rem;
+        border-radius: var(--radius-lg);
+    }
+    
+    .o_staff_name_prominent {
+        font-size: 1.25rem !important;
+    }
+    
+    .o_assignment_count {
+        font-size: 1.5rem !important;
+    }
+    
+    .o_assignment_label {
+        font-size: 0.75rem !important;
+    }
+    
+    .o_role_badge {
+        padding: 0.375rem 0.75rem;
+        font-size: 0.75rem !important;
+        min-width: 70px;
+    }
+    
+    .o_staff_column > div {
+        border-radius: var(--radius-lg);
+    }
+}
+
+/* Touch-friendly improvements */
+@media (max-width: 768px) {
+    .o_staff_header_professional,
+    .o_assignment_card,
+    .btn {
+        min-height: 44px; /* iOS recommended touch target */
+    }
+    
+    .o_assignment_card {
+        margin-bottom: 0.75rem;
+    }
+    
+    .o_time_range_selector select {
+        padding: 1rem;
+        font-size: 1rem;
+    }
+    
+    .btn {
+        padding: 1rem 1.5rem;
+        font-size: 1rem;
+    }
+}
+
+/* ====================================================================
+   Animations and Micro-Interactions
+   ==================================================================== */
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideInLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.o_staff_column > div {
+    animation: fadeInUp 0.6s ease forwards;
+}
+
+.o_staff_column:nth-child(1) > div { animation-delay: 0.1s; }
+.o_staff_column:nth-child(2) > div { animation-delay: 0.2s; }
+.o_staff_column:nth-child(3) > div { animation-delay: 0.3s; }
+.o_staff_column:nth-child(4) > div { animation-delay: 0.4s; }
+
+.o_assignment_card {
+    animation: slideInLeft 0.3s ease forwards;
+}
+
+/* ====================================================================
+   Accessibility and Focus States
+   ==================================================================== */
+
+.o_staff_header_professional:focus,
+.o_assignment_card:focus,
+.o_time_range_selector select:focus {
+    outline: 3px solid rgba(0, 102, 204, 0.3);
+    outline-offset: 2px;
+}
+
+/* ====================================================================
+   Print Styles
+   ==================================================================== */
+
+@media print {
+    .o_staff_workload_dashboard {
+        background: white;
+        padding: 1rem;
+    }
+    
+    .o_staff_column > div {
+        break-inside: avoid;
+        box-shadow: none;
+        border: 1px solid var(--neutral-300);
+        margin-bottom: 1rem;
+    }
+    
+    .o_dashboard_header {
+        box-shadow: none;
+        border: 1px solid var(--neutral-300);
+    }
+    
+    .o_staff_header_professional {
+        background: var(--neutral-100) !important;
+        color: var(--neutral-800) !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+}

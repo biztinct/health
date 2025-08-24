@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_partner_form_fso_buttons" model="ir.ui.view">
+        <field name="name">res.partner.form.fso.buttons</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="health_base.view_health_patient_form"/>
+        <field name="arch" type="xml">
+            <header position="inside">
+                <button name="action_create_fso" 
+                        type="object" 
+                        string="Create Booking (FSO)" 
+                        class="btn-primary" 
+                        invisible="not is_patient"/>
+                <button name="action_view_fso_orders" 
+                        type="object" 
+                        string="View Bookings" 
+                        invisible="not is_patient"/>
+            </header>
+        </field>
+    </record>
+
+    <record id="view_partner_form_fso_stats" model="ir.ui.view">
+        <field name="name">res.partner.form.fso.stats</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="health_base.view_health_patient_form"/>
+        <field name="arch" type="xml">
+            <notebook position="before">
+                <group string="Service History" invisible="not is_patient">
+                    <group>
+                        <field name="total_assignments" readonly="1"/>
+                        <field name="last_assignment_date" readonly="1"/>
+                    </group>
+                    <group>
+                        <field name="preferred_staff_id"/>
+                        <field name="assignment_notes" placeholder="Special assignment notes (accessibility, language, etc.)"/>
+                    </group>
+                </group>
+            </notebook>
+        </field>
+    </record>
+
+    <!-- Smart button for FSO count -->
+    <record id="view_partner_form_fso_smart_button" model="ir.ui.view">
+        <field name="name">res.partner.form.fso.smart.button</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="health_base.view_health_patient_form"/>
+        <field name="arch" type="xml">
+            <div name="button_box" position="inside">
+                <button name="action_view_fso_orders" 
+                        type="object" 
+                        class="oe_stat_button" 
+                        icon="fa-calendar-check-o" 
+                        invisible="not is_patient">
+                    <field name="total_assignments" widget="statinfo" string="Bookings"/>
+                </button>
+            </div>
+        </field>
+    </record>
+
+</odoo>

@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<data>
+
+    <!-- Healthcare Staff List View -->
+    <record id="view_healthcare_staff_list" model="ir.ui.view">
+        <field name="name">healthcare.staff.list</field>
+        <field name="model">hr.employee</field>
+        <field name="arch" type="xml">
+            <list string="Healthcare Staff" create="true" edit="true" delete="true"
+                  decoration-success="employment_status=='active'"
+                  decoration-warning="employment_status=='on_leave'"
+                  decoration-danger="employment_status=='inactive'">
+                
+                <field name="name"/>
+                <field name="job_id"/>
+                <field name="healthcare_role"/>
+                <field name="work_email"/>
+                <field name="work_phone"/>
+                <field name="employment_status"/>
+                <field name="is_healthcare_staff" invisible="1"/>
+                
+                <!-- Healthcare Staff Actions -->
+                <button name="action_view_assignments" 
+                        type="object" 
+                        icon="fa-calendar" 
+                        string="View Assignments" 
+                        title="View staff assignments"/>
+                
+            </list>
+        </field>
+    </record>
+
+    <!-- Healthcare Staff Form View -->
+    <record id="view_healthcare_staff_form" model="ir.ui.view">
+        <field name="name">healthcare.staff.form</field>
+        <field name="model">hr.employee</field>
+        <field name="inherit_id" ref="hr.view_employee_form"/>
+        <field name="arch" type="xml">
+            
+            <!-- Add Healthcare Tab -->
+            <xpath expr="//notebook" position="inside">
+                <page string="Healthcare Information" name="healthcare_info">
+                    <group>
+                        <group string="Healthcare Role &amp; Status">
+                            <field name="is_healthcare_staff"/>
+                            <field name="healthcare_role" required="is_healthcare_staff"/>
+                            <field name="employment_status" required="is_healthcare_staff"/>
+                            <field name="license_number"/>
+                            <field name="certification_expiry"/>
+                        </group>
+                        
+                        <group string="Assignment Preferences">
+                            <field name="max_daily_assignments"/>
+                            <field name="preferred_shift"/>
+                            <field name="travel_radius_km"/>
+                            <field name="availability_status"/>
+                        </group>
+                    </group>
+                    
+                    <group string="Skills &amp; Competencies" col="1">
+                        <field name="healthcare_skill_ids" widget="many2many_tags" 
+                               options="{'color_field': 'weight', 'no_create_edit': True}"/>
+                    </group>
+                    
+                    <group string="Performance Metrics" col="4">
+                        <field name="total_assignments"/>
+                        <field name="completed_assignments"/>
+                        <field name="assignment_success_rate" widget="percentage"/>
+                        <field name="average_patient_rating" widget="progressbar"/>
+                    </group>
+                    
+                    <separator string="Emergency Contact Information"/>
+                    <group col="4">
+                        <field name="emergency_contact_name"/>
+                        <field name="emergency_contact_phone"/>
+                        <field name="emergency_contact_relation"/>
+                        <field name="emergency_contact_email"/>
+                    </group>
+                </page>
+            </xpath>
+            
+            <!-- Add Healthcare indicator to button box -->
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button class="oe_stat_button" 
+                        type="object" 
+                        name="action_view_assignments"
+                        icon="fa-calendar-check-o"
+                        invisible="not is_healthcare_staff">
+                    <field string="Assignments" name="total_assignments" widget="statinfo"/>
+                </button>
+                
+                <button class="oe_stat_button" 
+                        type="object" 
+                        name="action_view_availability"
+                        icon="fa-clock-o"
+                        invisible="not is_healthcare_staff">
+                    <div class="o_field_widget o_stat_info">
+                        <span class="o_stat_value">
+                            <field name="availability_status"/>
+                        </span>
+                        <span class="o_stat_text">Status</span>
+                    </div>
+                </button>
+            </xpath>
+            
+        </field>
+    </record>
+
+    <!-- Healthcare Staff Search View -->
+    <record id="view_healthcare_staff_search" model="ir.ui.view">
+        <field name="name">healthcare.staff.search</field>
+        <field name="model">hr.employee</field>
+        <field name="arch" type="xml">
+            <search string="Healthcare Staff Search">
+                <field name="name"/>
+                <field name="healthcare_role"/>
+                <field name="work_email"/>
+                <field name="healthcare_skill_ids"/>
+                
+                <!-- Filters -->
+                <filter string="Active Staff" name="active_staff" 
+                        domain="[('employment_status', '=', 'active')]"/>
+                <filter string="Available" name="available" 
+                        domain="[('availability_status', '=', 'available')]"/>
+                <filter string="On Duty" name="on_duty" 
+                        domain="[('availability_status', 'in', ['available', 'busy'])]"/>
+                
+                <separator/>
+                
+                <filter string="Doctors" name="doctors" 
+                        domain="[('healthcare_role', 'ilike', 'doctor')]"/>
+                <filter string="Nurses" name="nurses" 
+                        domain="[('healthcare_role', 'ilike', 'nurse')]"/>
+                <filter string="Therapists" name="therapists" 
+                        domain="[('healthcare_role', 'ilike', 'therapist')]"/>
+                
+                <separator/>
+                
+                <filter string="High Performers" name="high_performers" 
+                        domain="[('assignment_success_rate', '>=', 90)]"/>
+                <filter string="Recently Joined" name="recent" 
+                        domain="[('create_date', '>=', (context_today() - datetime.timedelta(days=30)))]"/>
+                
+                <!-- Group By -->
+                <group expand="0" string="Group By">
+                    <filter string="Healthcare Role" name="group_by_role" 
+                            context="{'group_by': 'healthcare_role'}"/>
+                    <filter string="Employment Status" name="group_by_status" 
+                            context="{'group_by': 'employment_status'}"/>
+                    <filter string="Availability" name="group_by_availability" 
+                            context="{'group_by': 'availability_status'}"/>
+                    <filter string="Department" name="group_by_department" 
+                            context="{'group_by': 'department_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+</data>
+</odoo>

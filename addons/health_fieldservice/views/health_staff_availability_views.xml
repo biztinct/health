@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+<data>
+
+    <!-- =====================================================================
+         Staff Availability Matrix Views (health.staff.availability.matrix)
+         ===================================================================== -->
+
+    <!-- List View -->
+    <record id="view_health_staff_availability_list" model="ir.ui.view">
+        <field name="name">health.staff.availability.matrix.list</field>
+        <field name="model">health.staff.availability.matrix</field>
+        <field name="arch" type="xml">
+            <list string="Staff Availability Matrix" create="true" edit="true" delete="true"
+                  decoration-success="status == 'available'"
+                  decoration-warning="status in ('booked', 'tentative')"
+                  decoration-danger="status == 'blocked'"
+                  decoration-info="status in ('break', 'travel', 'buffer')">
+                
+                <field name="staff_id"/>
+                <field name="availability_date"/>
+                <field name="start_time" widget="float_time"/>
+                <field name="end_time" widget="float_time"/>
+                <field name="status"/>
+                <field name="capacity"/>
+                <field name="booked_count"/>
+                <field name="remaining_capacity"/>
+                
+            </list>
+        </field>
+    </record>
+
+    <!-- Form View -->
+    <record id="view_health_staff_availability_form" model="ir.ui.view">
+        <field name="name">health.staff.availability.matrix.form</field>
+        <field name="model">health.staff.availability.matrix</field>
+        <field name="arch" type="xml">
+            <form string="Staff Availability Matrix">
+                <header>
+                    <field name="status" widget="statusbar" 
+                           statusbar_visible="available,booked,blocked,tentative"
+                           clickable="1"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="staff_id" required="1" options="{'no_create': True}"/>
+                        </h1>
+                    </div>
+
+                    <div class="o_row">
+                        <div class="o_col">
+                            <div class="alert alert-info" role="alert" invisible="status != 'available'">
+                                <i class="fa fa-calendar-check-o"/> Staff will be available during this time slot
+                            </div>
+                            <div class="alert alert-warning" role="alert" invisible="status not in ('booked', 'tentative')">
+                                <i class="fa fa-exclamation-triangle"/> Time slot is booked or tentatively reserved
+                            </div>
+                            <div class="alert alert-danger" role="alert" invisible="status != 'blocked'">
+                                <i class="fa fa-ban"/> Time slot is blocked for appointments
+                            </div>
+                        </div>
+                    </div>
+
+                    <group>
+                        <group string="Schedule Details" class="o_label_nowrap">
+                            <field name="availability_date" required="1"/>
+                            <field name="start_time" required="1" widget="float_time" string="Start Time"/>
+                            <field name="end_time" required="1" widget="float_time" string="End Time"/>
+                        </group>
+                        <group string="Capacity" class="o_label_nowrap">
+                            <field name="capacity"/>
+                            <field name="booked_count" readonly="1"/>
+                            <field name="remaining_capacity" readonly="1"/>
+                        </group>
+                    </group>
+                    
+                    <notebook>
+                        <page string="Assignments" name="assignments">
+                            <group>
+                                <field name="fso_id" readonly="1"/>
+                                <field name="assignment_id" readonly="1"/>
+                            </group>
+                        </page>
+                        
+                        <page string="Buffer &amp; Travel" name="buffer">
+                            <group>
+                                <group string="Buffer Times">
+                                    <field name="buffer_before"/>
+                                    <field name="buffer_after"/>
+                                </group>
+                                <group string="Travel Times">
+                                    <field name="travel_time_from_previous" widget="float_time"/>
+                                    <field name="travel_time_to_next" widget="float_time"/>
+                                    <field name="location_type" readonly="1"/>
+                                </group>
+                            </group>
+                        </page>
+                        
+                        <page string="Conflicts" name="conflicts">
+                            <group>
+                                <field name="conflict_detected" readonly="1"/>
+                                <field name="conflict_details" readonly="1" invisible="not conflict_detected"/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- Calendar View -->
+    <record id="view_health_staff_availability_calendar" model="ir.ui.view">
+        <field name="name">health.staff.availability.matrix.calendar</field>
+        <field name="model">health.staff.availability.matrix</field>
+        <field name="arch" type="xml">
+            <calendar string="Staff Availability Calendar" 
+                      date_start="availability_date" 
+                      mode="week"
+                      quick_create="true"
+                      event_open_popup="true">
+                <field name="staff_id"/>
+                <field name="status"/>
+                <field name="start_time"/>
+                <field name="end_time"/>
+            </calendar>
+        </field>
+    </record>
+
+    <!-- Search View -->
+    <record id="view_health_staff_availability_search" model="ir.ui.view">
+        <field name="name">health.staff.availability.matrix.search</field>
+        <field name="model">health.staff.availability.matrix</field>
+        <field name="arch" type="xml">
+            <search string="Staff Availability Matrix Search">
+                <field name="staff_id"/>
+                <field name="status"/>
+                <field name="availability_date"/>
+                
+                <filter string="Available" name="available" domain="[('status', '=', 'available')]"/>
+                <filter string="Booked" name="booked" domain="[('status', '=', 'booked')]"/>
+                <filter string="Blocked" name="blocked" domain="[('status', '=', 'blocked')]"/>
+                <filter string="Today" name="today" 
+                        domain="[('availability_date', '=', context_today())]"/>
+                <filter string="This Week" name="this_week" 
+                        domain="[('availability_date', '>=', context_today())]"/>
+                <filter string="Has Conflicts" name="conflicts" domain="[('conflict_detected', '=', True)]"/>
+                
+                <group expand="0" string="Group By">
+                    <filter string="Staff" name="group_by_staff" context="{'group_by': 'staff_id'}"/>
+                    <filter string="Status" name="group_by_status" context="{'group_by': 'status'}"/>
+                    <filter string="Date" name="group_by_date" context="{'group_by': 'availability_date:day'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="action_health_staff_availability" model="ir.actions.act_window">
+        <field name="name">Staff Availability Matrix</field>
+        <field name="res_model">health.staff.availability.matrix</field>
+        <field name="view_mode">calendar,list,form</field>
+        <field name="context">{'search_default_today': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No availability slots found!
+            </p>
+            <p>
+                Create availability time slots for staff members to manage their working hours,
+                capacity, and scheduling conflicts.
+            </p>
+            <p>
+                <strong>Tip:</strong> Use the calendar view to quickly visualize staff availability 
+                across different time periods.
+            </p>
+        </field>
+    </record>
+
+</data>
+</odoo>

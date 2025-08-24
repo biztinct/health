@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+
+    <!-- Healthcare CRM Team Configuration -->
+    <record id="healthcare_crm_team" model="crm.team">
+        <field name="name">Vietnamese Healthcare Team</field>
+        <field name="sequence">5</field>
+        <field name="use_leads">True</field>
+        <field name="use_opportunities">True</field>
+        <field name="alias_name">healthcare-leads</field>
+        <field name="description">Vietnamese Healthcare CRM Team for home visit and clinic services</field>
+        <field name="company_id" ref="base.main_company"/>
+    </record>
+
+    <!-- Home Visit Specialists Team -->
+    <record id="home_visit_crm_team" model="crm.team">
+        <field name="name">Home Visit Specialists</field>
+        <field name="sequence">6</field>
+        <field name="use_leads">True</field>
+        <field name="use_opportunities">True</field>
+        <field name="alias_name">home-visits</field>
+        <field name="description">Specialized team for home healthcare visits</field>
+        <field name="company_id" ref="base.main_company"/>
+    </record>
+
+    <!-- Clinic Services Team -->
+    <record id="clinic_services_crm_team" model="crm.team">
+        <field name="name">Clinic Services</field>
+        <field name="sequence">7</field>
+        <field name="use_leads">True</field>
+        <field name="use_opportunities">True</field>
+        <field name="alias_name">clinic-services</field>
+        <field name="description">Team handling clinic-based healthcare services</field>
+        <field name="company_id" ref="base.main_company"/>
+    </record>
+
+    <!-- Emergency Care Team -->
+    <record id="emergency_care_crm_team" model="crm.team">
+        <field name="name">Emergency Care</field>
+        <field name="sequence">8</field>
+        <field name="use_leads">True</field>
+        <field name="use_opportunities">True</field>
+        <field name="alias_name">emergency-care</field>
+        <field name="description">Emergency healthcare response team</field>
+        <field name="company_id" ref="base.main_company"/>
+    </record>
+
+</odoo>

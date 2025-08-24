@@ -241,6 +241,7 @@ The health_calendar module now follows this working pattern:
 
 ## Memory Notes
 - Note to take care that the model is not defined again as duplicate
+- **CRITICAL: NO FIELDSERVICE MODULE INHERITANCE** - Do NOT inherit from any fieldservice modules (fsm.order, fsm.team, etc.) as fieldservice modules are NOT installed. Only use for inspiration, never inheritance.
 
 ## Timeline View Professional Architecture Design (January 2025)
 

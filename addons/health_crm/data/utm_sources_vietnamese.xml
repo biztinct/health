@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+
+    <!-- Vietnamese Healthcare UTM Sources -->
+    
+    <!-- Social Media Sources -->
+    <record id="utm_source_facebook_ads" model="utm.source">
+        <field name="name">Facebook Ads</field>
+    </record>
+
+    <record id="utm_source_facebook_organic" model="utm.source">
+        <field name="name">Facebook Organic</field>
+    </record>
+
+    <record id="utm_source_zalo" model="utm.source">
+        <field name="name">Zalo</field>
+    </record>
+
+    <record id="utm_source_linkedin" model="utm.source">
+        <field name="name">LinkedIn</field>
+    </record>
+
+    <record id="utm_source_youtube" model="utm.source">
+        <field name="name">YouTube</field>
+    </record>
+
+    <!-- Digital Sources -->
+    <record id="utm_source_website" model="utm.source">
+        <field name="name">Website</field>
+    </record>
+
+    <record id="utm_source_google_ads" model="utm.source">
+        <field name="name">Google Ads</field>
+    </record>
+
+    <record id="utm_source_google_organic" model="utm.source">
+        <field name="name">Google Organic</field>
+    </record>
+
+    <record id="utm_source_email" model="utm.source">
+        <field name="name">Email Marketing</field>
+    </record>
+
+    <!-- Traditional Sources -->
+    <record id="utm_source_phone" model="utm.source">
+        <field name="name">Phone Inquiry</field>
+    </record>
+
+    <record id="utm_source_walk_in" model="utm.source">
+        <field name="name">Walk-in</field>
+    </record>
+
+    <record id="utm_source_referral" model="utm.source">
+        <field name="name">Referral</field>
+    </record>
+
+    <!-- Healthcare-specific Campaigns -->
+    <record id="utm_campaign_home_visits" model="utm.campaign">
+        <field name="name">Home Visit Services</field>
+    </record>
+
+    <record id="utm_campaign_clinic_services" model="utm.campaign">
+        <field name="name">Clinic Services</field>
+    </record>
+
+    <record id="utm_campaign_elderly_care" model="utm.campaign">
+        <field name="name">Elderly Care</field>
+    </record>
+
+    <record id="utm_campaign_chronic_care" model="utm.campaign">
+        <field name="name">Chronic Disease Management</field>
+    </record>
+
+    <record id="utm_campaign_emergency_care" model="utm.campaign">
+        <field name="name">Emergency Care</field>
+    </record>
+
+    <record id="utm_campaign_preventive_care" model="utm.campaign">
+        <field name="name">Preventive Care</field>
+    </record>
+
+    <record id="utm_campaign_rehabilitation" model="utm.campaign">
+        <field name="name">Rehabilitation Services</field>
+    </record>
+
+    <!-- Vietnamese Healthcare Mediums -->
+    <record id="utm_medium_social_media" model="utm.medium">
+        <field name="name">Social Media</field>
+    </record>
+
+    <record id="utm_medium_paid_ads" model="utm.medium">
+        <field name="name">Paid Advertising</field>
+    </record>
+
+    <record id="utm_medium_organic_search" model="utm.medium">
+        <field name="name">Organic Search</field>
+    </record>
+
+    <record id="utm_medium_direct" model="utm.medium">
+        <field name="name">Direct Contact</field>
+    </record>
+
+    <record id="utm_medium_referral" model="utm.medium">
+        <field name="name">Referral</field>
+    </record>
+
+    <record id="utm_medium_email" model="utm.medium">
+        <field name="name">Email</field>
+    </record>
+
+</odoo>

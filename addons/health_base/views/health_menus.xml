@@ -52,12 +52,67 @@
               parent="menu_healthcare_risk_assessment" 
               action="action_health_readmission_risk" sequence="20"/> -->
 
-    <!-- Existing menus... -->
+    <!-- Facilities Menu -->
     <menuitem id="menu_healthcare_facilities" name="Facilities" 
               parent="menu_healthcare_root" sequence="30"
               groups="group_healthcare_nurse,group_healthcare_head_nurse,group_healthcare_operations_manager,group_healthcare_manager,group_healthcare_admin,group_healthcare_owner"/>
-    <menuitem id="menu_healthcare_lookups" name="Lookups" 
+    
+    <menuitem id="menu_healthcare_facility_list" name="Healthcare Facilities" 
+              parent="menu_healthcare_facilities" 
+              action="action_health_facility" sequence="10"
+              groups="group_healthcare_nurse,group_healthcare_head_nurse,group_healthcare_operations_manager,group_healthcare_manager,group_healthcare_admin,group_healthcare_owner"/>
+
+    <!-- Configuration & Lookups Menu -->
+    <menuitem id="menu_healthcare_lookups" name="Configuration" 
               parent="menu_healthcare_root" sequence="40"
               groups="group_healthcare_base,group_healthcare_receptionist,group_healthcare_nurse,group_healthcare_doctor,group_healthcare_manager,group_healthcare_admin,group_healthcare_owner"/>
+
+    <!-- Patient Categories -->
+    <menuitem id="menu_healthcare_patient_categories" name="Patient Categories" 
+              parent="menu_healthcare_lookups" 
+              action="action_health_patient_category" sequence="10"
+              groups="group_healthcare_receptionist,group_healthcare_manager,group_healthcare_admin,group_healthcare_owner"/>
+
+    <!-- Service Types -->
+    <menuitem id="menu_healthcare_service_types" name="Service Types" 
+              parent="menu_healthcare_lookups" 
+              action="action_health_service_type" sequence="20"
+              groups="group_healthcare_manager,group_healthcare_admin,group_healthcare_owner"/>
+
+    <!-- Medical Specialties -->
+    <menuitem id="menu_healthcare_medical_specialties" name="Medical Specialties" 
+              parent="menu_healthcare_lookups" 
+              action="action_health_medical_specialty" sequence="30"
+              groups="group_healthcare_doctor,group_healthcare_manager,group_healthcare_admin,group_healthcare_owner"/>
+
+    <!-- Symptoms -->
+    <menuitem id="menu_healthcare_symptoms" name="Symptoms" 
+              parent="menu_healthcare_lookups" 
+              action="action_health_symptom" sequence="40"
+              groups="group_healthcare_nurse,group_healthcare_doctor,group_healthcare_manager,group_healthcare_admin,group_healthcare_owner"/>
+
+    <!-- Referral Sources -->
+    <menuitem id="menu_healthcare_referral_sources" name="Referral Sources" 
+              parent="menu_healthcare_lookups" 
+              action="action_health_referral_source" sequence="50"
+              groups="group_healthcare_receptionist,group_healthcare_manager,group_healthcare_admin,group_healthcare_owner"/>
+
+    <!-- Insurance Providers -->
+    <menuitem id="menu_healthcare_insurance_providers" name="Insurance Providers" 
+              parent="menu_healthcare_lookups" 
+              action="action_health_insurance_provider" sequence="60"
+              groups="group_healthcare_receptionist,group_healthcare_manager,group_healthcare_admin,group_healthcare_owner"/>
+
+    <!-- Urgency Levels -->
+    <menuitem id="menu_healthcare_urgency_levels" name="Urgency Levels" 
+              parent="menu_healthcare_lookups" 
+              action="action_health_urgency_level" sequence="70"
+              groups="group_healthcare_manager,group_healthcare_admin,group_healthcare_owner"/>
+
+    <!-- Vietnamese Districts -->
+    <menuitem id="menu_healthcare_vietnamese_districts" name="Vietnamese Districts" 
+              parent="menu_healthcare_lookups" 
+              action="action_health_vietnamese_district" sequence="80"
+              groups="group_healthcare_manager,group_healthcare_admin,group_healthcare_owner"/>
 
 </odoo>

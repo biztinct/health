@@ -1,0 +1,68 @@
+/* === Professional, compact timeline card === */
+.hfhs-timeline-card {
+  border-radius: 10px !important;
+  border: 1px solid rgba(0,0,0,0.06) !important;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06) !important;
+  overflow: hidden;
+  background: #fff !important;
+}
+
+.hfhs-timeline-card .vis-item-content,
+.hfhs-timeline-card .timeline-event-content {
+  padding: 8px 10px !important;
+}
+
+.hfhs-card {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 140px;
+}
+
+.hfhs-card__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.hfhs-patient {
+  font-weight: 700;
+  font-size: 13px;
+  color: #1f2d3d;
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.hfhs-card__bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 12px;
+  color: #607d8b;
+}
+
+.hfhs-bottom-left {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.hfhs-bottom-right {
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+/* Hover affordance */
+.hfhs-timeline-card:hover {
+  box-shadow: 0 4px 12px rgba(0,0,0,0.10) !important;
+  transform: translateY(-1px);
+  transition: all .15s ease;
+}
+
+/* Accent left border (keeps existing color handling) */
+.vis-item.hfhs-timeline-card:not(.vis-background) {
+  border-left-width: 4px !important;
+}

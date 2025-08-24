@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- =====================================================================
+         Healthcare Field Service Security Groups
+         ===================================================================== -->
+
+    <!-- Module Category -->
+    <record id="module_category_health_fieldservice" model="ir.module.category">
+        <field name="name">Healthcare Field Service</field>
+        <field name="description">Healthcare Field Service Management System</field>
+        <field name="sequence">25</field>
+    </record>
+
+    <!-- Field Service User Group -->
+    <record id="group_fieldservice_user" model="res.groups">
+        <field name="name">Field Service User</field>
+        <field name="category_id" ref="module_category_health_fieldservice"/>
+        <field name="comment">Basic field service access - can view assigned FSOs and update status</field>
+    </record>
+
+    <!-- Field Service Staff Group -->
+    <record id="group_fieldservice_staff" model="res.groups">
+        <field name="name">Field Service Staff</field>
+        <field name="category_id" ref="module_category_health_fieldservice"/>
+        <field name="implied_ids" eval="[(4, ref('group_fieldservice_user'))]"/>
+        <field name="comment">Field staff - can update FSO status, communicate, and complete service steps</field>
+    </record>
+
+    <!-- Field Service Dispatcher Group -->
+    <record id="group_fieldservice_dispatcher" model="res.groups">
+        <field name="name">Field Service Dispatcher</field>
+        <field name="category_id" ref="module_category_health_fieldservice"/>
+        <field name="implied_ids" eval="[(4, ref('group_fieldservice_staff'))]"/>
+        <field name="comment">Dispatchers - can create/assign FSOs, manage teams, and monitor all field activities</field>
+    </record>
+
+    <!-- Field Service Manager Group -->
+    <record id="group_fieldservice_manager" model="res.groups">
+        <field name="name">Field Service Manager</field>
+        <field name="category_id" ref="module_category_health_fieldservice"/>
+        <field name="implied_ids" eval="[(4, ref('group_fieldservice_dispatcher'))]"/>
+        <field name="comment">Managers - full access to field service system, analytics, and configuration</field>
+    </record>
+
+    <!-- Equipment Manager Group -->
+    <record id="group_equipment_manager" model="res.groups">
+        <field name="name">Equipment Manager</field>
+        <field name="category_id" ref="module_category_health_fieldservice"/>
+        <field name="comment">Equipment management - can manage portable equipment, maintenance, and assignments</field>
+    </record>
+
+    <!-- Clinical Protocol Manager Group -->
+    <record id="group_protocol_manager" model="res.groups">
+        <field name="name">Clinical Protocol Manager</field>
+        <field name="category_id" ref="module_category_health_fieldservice"/>
+        <field name="comment">Clinical protocols - can create and modify clinical protocol templates</field>
+    </record>
+
+</odoo>

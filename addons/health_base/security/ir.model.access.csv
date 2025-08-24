@@ -60,3 +60,13 @@ access_health_facility_finance,health.facility finance,model_health_facility,gro
 access_health_facility_manager,health.facility manager,model_health_facility,group_healthcare_manager,1,1,1,1
 access_health_facility_admin,health.facility admin,model_health_facility,group_healthcare_admin,1,1,1,1
 access_health_facility_owner,health.facility owner,model_health_facility,group_healthcare_owner,1,1,1,1
+access_res_partner_patient_receptionist,res.partner patient receptionist,base.model_res_partner,group_healthcare_receptionist,1,1,1,0
+access_res_partner_patient_sales,res.partner patient sales,base.model_res_partner,group_healthcare_sales,1,1,1,0
+access_res_partner_patient_nurse,res.partner patient nurse,base.model_res_partner,group_healthcare_nurse,1,1,0,0
+access_res_partner_patient_head_nurse,res.partner patient head_nurse,base.model_res_partner,group_healthcare_head_nurse,1,1,1,0
+access_res_partner_patient_doctor,res.partner patient doctor,base.model_res_partner,group_healthcare_doctor,1,1,1,0
+access_res_partner_patient_operations_manager,res.partner patient operations_manager,base.model_res_partner,group_healthcare_operations_manager,1,1,1,1
+access_res_partner_patient_finance,res.partner patient finance,base.model_res_partner,group_healthcare_finance,1,0,0,0
+access_res_partner_patient_manager,res.partner patient manager,base.model_res_partner,group_healthcare_manager,1,1,1,1
+access_res_partner_patient_admin,res.partner patient admin,base.model_res_partner,group_healthcare_admin,1,1,1,1
+access_res_partner_patient_owner,res.partner patient owner,base.model_res_partner,group_healthcare_owner,1,1,1,1

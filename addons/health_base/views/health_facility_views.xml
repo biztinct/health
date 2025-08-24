@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+
     <!-- Facility Tree View -->
     <record id="view_health_facility_list" model="ir.ui.view">
         <field name="name">health.facility.list</field>

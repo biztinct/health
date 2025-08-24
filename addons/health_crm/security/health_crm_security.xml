@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Healthcare CRM Security Groups -->
+    <record id="module_category_health_crm" model="ir.module.category">
+        <field name="name">Healthcare CRM</field>
+        <field name="description">Healthcare Customer Relationship Management</field>
+        <field name="sequence">25</field>
+    </record>
+
+    <!-- CRM User - Basic healthcare lead management -->
+    <record id="group_health_crm_user" model="res.groups">
+        <field name="name">CRM User</field>
+        <field name="category_id" ref="module_category_health_crm"/>
+        <field name="implied_ids" eval="[(4, ref('crm.group_use_lead'))]"/>
+        <field name="comment">Healthcare CRM users can view and manage leads and opportunities</field>
+    </record>
+
+    <!-- CRM Manager - Full healthcare CRM management -->
+    <record id="group_health_crm_manager" model="res.groups">
+        <field name="name">CRM Manager</field>
+        <field name="category_id" ref="module_category_health_crm"/>
+        <field name="implied_ids" eval="[(4, ref('group_health_crm_user')), (4, ref('crm.group_use_lead'))]"/>
+        <field name="comment">Healthcare CRM managers can configure CRM settings and manage all leads</field>
+    </record>
+
+    <!-- Record Rules -->
+    
+    <!-- Healthcare Lead Access Rules -->
+    <record id="health_crm_lead_user_rule" model="ir.rule">
+        <field name="name">Healthcare CRM Lead: User Access</field>
+        <field name="model_id" ref="crm.model_crm_lead"/>
+        <field name="domain_force">['|', ('user_id', '=', user.id), ('user_id', '=', False)]</field>
+        <field name="groups" eval="[(4, ref('group_health_crm_user'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+    <record id="health_crm_lead_manager_rule" model="ir.rule">
+        <field name="name">Healthcare CRM Lead: Manager Access</field>
+        <field name="model_id" ref="crm.model_crm_lead"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('group_health_crm_manager'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="True"/>
+    </record>
+
+    <!-- Healthcare Related Party Access Rules -->
+    <record id="health_related_party_user_rule" model="ir.rule">
+        <field name="name">Healthcare Related Party: User Access</field>
+        <field name="model_id" ref="model_health_related_party"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('group_health_crm_user'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+    <record id="health_related_party_manager_rule" model="ir.rule">
+        <field name="name">Healthcare Related Party: Manager Access</field>
+        <field name="model_id" ref="model_health_related_party"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('group_health_crm_manager'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="True"/>
+    </record>
+
+    <!-- Partner Access - Enhanced for Healthcare -->
+    <record id="health_crm_partner_user_rule" model="ir.rule">
+        <field name="name">Healthcare CRM Partner: User Access</field>
+        <field name="model_id" ref="base.model_res_partner"/>
+        <field name="domain_force">['|', '|', ('is_patient', '=', True), ('is_caregiver', '=', True), '|', ('is_payer', '=', True), ('is_referrer', '=', True)]</field>
+        <field name="groups" eval="[(4, ref('group_health_crm_user'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+</odoo>

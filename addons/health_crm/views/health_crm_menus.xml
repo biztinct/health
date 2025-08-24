@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Healthcare CRM Menu under main Healthcare menu -->
+    <menuitem 
+        id="menu_healthcare_crm_root"
+        name="CRM"
+        parent="health_base.menu_healthcare_root"
+        sequence="20"
+        groups="group_health_crm_user"/>
+
+    <!-- Leads/Opportunities -->
+    <menuitem 
+        id="menu_healthcare_leads"
+        name="Leads &amp; Opportunities"
+        parent="menu_healthcare_crm_root"
+        action="crm.crm_lead_all_leads"
+        sequence="10"/>
+
+    <!-- Pipeline -->
+    <menuitem 
+        id="menu_healthcare_pipeline"
+        name="Pipeline"
+        parent="menu_healthcare_crm_root"
+        action="crm.action_opportunity_form"
+        sequence="20"/>
+
+    <!-- Customers/Contacts -->
+    <menuitem 
+        id="menu_healthcare_customers"
+        name="Customers"
+        parent="menu_healthcare_crm_root"
+        action="base.action_partner_form"
+        sequence="30"/>
+
+    <!-- Related Parties -->
+    <menuitem 
+        id="menu_healthcare_related_parties"
+        name="Related Parties"
+        parent="menu_healthcare_crm_root"
+        action="action_health_related_party"
+        sequence="40"/>
+
+    <!-- Client Representatives (FROM EXCEL REQUIREMENTS) -->
+    <menuitem 
+        id="menu_healthcare_client_representatives"
+        name="Client Representatives"
+        parent="menu_healthcare_crm_root"
+        action="action_health_client_representative"
+        sequence="45"/>
+
+    <!-- Reporting -->
+    <menuitem 
+        id="menu_healthcare_crm_reporting"
+        name="Reporting"
+        parent="menu_healthcare_crm_root"
+        sequence="50"
+        groups="group_health_crm_manager"/>
+
+    <!-- Configuration -->
+    <menuitem 
+        id="menu_healthcare_crm_config"
+        name="Configuration"
+        parent="menu_healthcare_crm_root"
+        sequence="60"
+        groups="group_health_crm_manager"/>
+
+    <!-- CRM Teams -->
+    <menuitem 
+        id="menu_healthcare_crm_teams"
+        name="Sales Teams"
+        parent="menu_healthcare_crm_config"
+        action="crm.action_team_config"
+        sequence="10"/>
+
+    <!-- CRM Stages -->
+    <menuitem 
+        id="menu_healthcare_crm_stages"
+        name="Stages"
+        parent="menu_healthcare_crm_config"
+        action="crm.action_stage_config"
+        sequence="20"/>
+
+    <!-- UTM Sources -->
+    <menuitem 
+        id="menu_healthcare_utm_sources"
+        name="Lead Sources"
+        parent="menu_healthcare_crm_config"
+        action="utm.action_utm_source"
+        sequence="30"/>
+
+</odoo>

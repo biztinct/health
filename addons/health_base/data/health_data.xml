@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<odoo>
+<odoo noupdate="1">
+
     <!-- Patient Code Sequence -->
     <record id="sequence_res_partner_patient" model="ir.sequence">
         <field name="name">Patient Code</field>

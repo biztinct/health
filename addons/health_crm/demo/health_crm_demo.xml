@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+
+    <!-- Demo Healthcare Contacts -->
+    <record id="demo_patient_nguyen" model="res.partner">
+        <field name="name">Nguyễn Văn Minh</field>
+        <field name="is_company">False</field>
+        <field name="is_patient">True</field>
+        <field name="cccd_number">012345678901</field>
+        <field name="ethnicity">Kinh</field>
+        <field name="kinship_title">Ông</field>
+        <field name="preferred_name">Ông Minh</field>
+        <field name="phone">+84 901 234 567</field>
+        <field name="email">nguyen.minh@example.com</field>
+        <field name="street">Ngõ 123 Láng Hạ</field>
+        <field name="ward_commune">Láng Hạ</field>
+        <field name="city">Hà Nội</field>
+        <field name="country_id" ref="base.vn"/>
+        <field name="preferred_contact_method">phone</field>
+        <field name="healthcare_lead_source">facebook_ad</field>
+    </record>
+
+    <record id="demo_caregiver_tran" model="res.partner">
+        <field name="name">Trần Thị Lan</field>
+        <field name="is_company">False</field>
+        <field name="is_caregiver">True</field>
+        <field name="kinship_title">Chị</field>
+        <field name="preferred_name">Chị Lan</field>
+        <field name="phone">+84 902 345 678</field>
+        <field name="email">tran.lan@example.com</field>
+        <field name="preferred_contact_method">zalo</field>
+        <field name="zalo_number">+84 902 345 678</field>
+    </record>
+
+    <record id="demo_payer_le" model="res.partner">
+        <field name="name">Lê Minh Đức</field>
+        <field name="is_company">False</field>
+        <field name="is_payer">True</field>
+        <field name="kinship_title">Anh</field>
+        <field name="preferred_name">Anh Đức</field>
+        <field name="phone">+84 903 456 789</field>
+        <field name="email">le.duc@example.com</field>
+        <field name="preferred_contact_method">email</field>
+    </record>
+
+    <!-- Demo Related Party Relationships -->
+    <record id="demo_relationship_caregiver" model="health.related.party">
+        <field name="client_id" ref="demo_patient_nguyen"/>
+        <field name="partner_id" ref="demo_caregiver_tran"/>
+        <field name="relationship_type">caregiver</field>
+        <field name="caregiver_relationship">child</field>
+        <field name="caregiver_availability">part_time</field>
+        <field name="caregiver_notes">Daughter taking care of elderly father</field>
+    </record>
+
+    <record id="demo_relationship_payer" model="health.related.party">
+        <field name="client_id" ref="demo_patient_nguyen"/>
+        <field name="partner_id" ref="demo_payer_le"/>
+        <field name="relationship_type">payer</field>
+        <field name="payer_relationship">child</field>
+        <field name="payment_responsibility">primary</field>
+        <field name="payer_notes">Son responsible for medical expenses</field>
+    </record>
+
+    <!-- Demo Healthcare Leads -->
+    <record id="demo_healthcare_lead_1" model="crm.lead">
+        <field name="name">Home Nursing Care Inquiry</field>
+        <field name="partner_id" ref="demo_patient_nguyen"/>
+        <field name="contact_name">Nguyễn Văn Minh</field>
+        <field name="email_from">nguyen.minh@example.com</field>
+        <field name="phone">+84 901 234 567</field>
+        <field name="team_id" ref="healthcare_crm_team"/>
+        <field name="stage_id" ref="stage_healthcare_qualification"/>
+        <field name="service_interest">home_visit</field>
+        <field name="clinical_priority">routine</field>
+        <field name="vietnamese_channel">facebook</field>
+        <field name="health_contact_outcome">pending_follow_up</field>
+        <field name="service_requirements">Regular blood pressure monitoring and medication management for elderly patient</field>
+        <field name="has_health_insurance">True</field>
+        <field name="insurance_provider">BHXH Vietnam</field>
+        <field name="preferred_language">vietnamese</field>
+        <field name="description">Elderly patient requires regular home nursing care for chronic hypertension management</field>
+        <field name="source_id" ref="utm_source_facebook_ads"/>
+        <field name="campaign_id" ref="utm_campaign_elderly_care"/>
+        <field name="medium_id" ref="utm_medium_social_media"/>
+    </record>
+
+    <record id="demo_healthcare_lead_2" model="crm.lead">
+        <field name="name">Clinic Consultation Request</field>
+        <field name="contact_name">Phạm Thị Mai</field>
+        <field name="email_from">pham.mai@example.com</field>
+        <field name="phone">+84 904 567 890</field>
+        <field name="team_id" ref="clinic_services_crm_team"/>
+        <field name="stage_id" ref="stage_healthcare_contact"/>
+        <field name="service_interest">clinic_visit</field>
+        <field name="clinical_priority">urgent</field>
+        <field name="vietnamese_channel">phone</field>
+        <field name="health_contact_outcome">pending_follow_up</field>
+        <field name="service_requirements">Diabetes management consultation and blood sugar monitoring</field>
+        <field name="preferred_language">vietnamese</field>
+        <field name="description">Patient needs diabetes management consultation at clinic</field>
+        <field name="source_id" ref="utm_source_phone"/>
+        <field name="campaign_id" ref="utm_campaign_chronic_care"/>
+        <field name="medium_id" ref="utm_medium_direct"/>
+    </record>
+
+    <record id="demo_healthcare_lead_3" model="crm.lead">
+        <field name="name">Emergency Care Request</field>
+        <field name="contact_name">Hoàng Văn Nam</field>
+        <field name="phone">+84 905 678 901</field>
+        <field name="team_id" ref="emergency_care_crm_team"/>
+        <field name="stage_id" ref="stage_healthcare_assessment"/>
+        <field name="service_interest">emergency</field>
+        <field name="clinical_priority">emergency</field>
+        <field name="vietnamese_channel">phone</field>
+        <field name="health_contact_outcome">service_booked</field>
+        <field name="service_requirements">Emergency home visit for elderly patient with breathing difficulties</field>
+        <field name="preferred_language">vietnamese</field>
+        <field name="description">Emergency request for home healthcare visit</field>
+        <field name="source_id" ref="utm_source_phone"/>
+        <field name="campaign_id" ref="utm_campaign_emergency_care"/>
+        <field name="medium_id" ref="utm_medium_direct"/>
+    </record>
+
+</odoo>

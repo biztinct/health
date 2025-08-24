@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Field Service Order Form View -->
+    <record id="view_health_fieldservice_order_form" model="ir.ui.view">
+        <field name="name">health.fieldservice.order.form</field>
+        <field name="model">health.fieldservice.order</field>
+        <field name="arch" type="xml">
+            <form string="Field Service Order">
+                <header>
+                    <button name="action_ai_assign_staff" type="object" 
+                            string="🚀 AI Assign Staff" class="oe_highlight"
+                            invisible="assigned_staff_ids"/>
+                    
+                    <button name="action_start_service" type="object" 
+                            string="▶️ Start Service" class="oe_highlight"
+                            invisible="state in ['draft', 'in_progress', 'completed', 'cancelled']"/>
+                    
+                    <button name="action_complete_service" type="object" 
+                            string="✅ Complete Service" class="oe_highlight"
+                            invisible="state != 'in_progress'"/>
+                    
+                    <button name="action_cancel_booking" type="object" 
+                            string="❌ Cancel Booking"
+                            invisible="state in ['completed', 'cancelled']"
+                            confirm="Are you sure you want to cancel this booking?"/>
+                    
+                    <field name="stage_id" widget="statusbar" options="{'clickable': '1'}"/>
+                </header>
+                
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <!-- Stat buttons temporarily removed for initial installation -->
+                    </div>
+                    
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" readonly="1"/>
+                        </h1>
+                        <div class="o_row">
+                            <field name="priority" widget="priority"/>
+                            <field name="state" widget="badge" 
+                                   decoration-success="state == 'completed'"
+                                   decoration-info="state == 'assigned'"
+                                   decoration-warning="state == 'in_progress'"
+                                   decoration-danger="state == 'cancelled'"/>
+                        </div>
+                    </div>
+                    
+                    <group>
+                        <group string="Service Information">
+                            <field name="patient_id" readonly="1"/>
+                            <field name="service_type"/>
+                            <field name="scheduled_datetime" readonly="1"/>
+                            <field name="team_id"/>
+                        </group>
+                        
+                        <group string="Assignment &amp; Staff">
+                            <field name="assigned_staff_ids" widget="many2many_tags" 
+                                   domain="[('is_healthcare_staff', '=', True), ('employment_status', '=', 'active')]"
+                                   options="{'color_field': 'color', 'no_create': True}"/>
+                            <field name="lead_staff_id" 
+                                   domain="[('id', 'in', assigned_staff_ids)]"
+                                   options="{'no_create': True}"/>
+                        </group>
+                    </group>
+                    
+                    <group>
+                        <group string="Location &amp; Timing">
+                            <field name="service_location" readonly="1"/>
+                            <field name="actual_start_datetime"/>
+                            <field name="actual_end_datetime"/>
+                            <field name="duration_minutes" readonly="1"/>
+                        </group>
+                        
+                        <group string="Invoice Status">
+                            <field name="invoice_id" readonly="1"/>
+                            <field name="invoice_state" widget="badge"/>
+                        </group>
+                    </group>
+                    
+                    <notebook>
+                        
+                        <page string="Equipment" name="equipment">
+                            <group>
+                                <group string="Required Equipment">
+                                    <field name="required_equipment_ids" widget="many2many_tags"/>
+                                    <field name="equipment_checklist_complete" widget="boolean_toggle"/>
+                                </group>
+                                
+                                <group string="Assigned Equipment">
+                                    <field name="assigned_equipment_ids" widget="many2many_tags"/>
+                                </group>
+                            </group>
+                        </page>
+                        
+                        <page string="Real-time Communication" name="communication">
+                            <field name="communication_ids" readonly="1">
+                                <list string="Communications" create="false">
+                                    <field name="create_date"/>
+                                    <field name="sender_id"/>
+                                    <field name="message_type"/>
+                                    <field name="priority" decoration-danger="priority == 'urgent'"/>
+                                    <field name="message"/>
+                                    <field name="is_read" widget="boolean_toggle"/>
+                                </list>
+                            </field>
+                        </page>
+                        
+                        <page string="GPS Tracking" name="tracking">
+                            <group>
+                                <group string="Current Location">
+                                    <field name="gps_coordinates" readonly="1"/>
+                                </group>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                
+                <chatter reload_on_follower="True"/>
+            </form>
+        </field>
+    </record>
+
+    <!-- Field Service Order List View -->
+    <record id="view_health_fieldservice_order_list" model="ir.ui.view">
+        <field name="name">health.fieldservice.order.list</field>
+        <field name="model">health.fieldservice.order</field>
+        <field name="arch" type="xml">
+            <list string="Field Service Orders" default_order="create_date desc">
+                <field name="name"/>
+                <field name="patient_id"/>
+                <field name="scheduled_datetime"/>
+                <field name="assigned_staff_ids" widget="many2many_tags"/>
+                <field name="state" decoration-success="state == 'completed'"
+                       decoration-info="state == 'assigned'"
+                       decoration-warning="state == 'in_progress'"
+                       decoration-danger="state == 'cancelled'"/>
+                <field name="stage_id"/>
+                <field name="priority" decoration-danger="priority == '3'"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Field Service Order Kanban View -->
+    <record id="view_health_fieldservice_order_kanban" model="ir.ui.view">
+        <field name="name">health.fieldservice.order.kanban</field>
+        <field name="model">health.fieldservice.order</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="stage_id" class="o_kanban_small_column">
+                <field name="name"/>
+                <field name="patient_id"/>
+                <field name="assigned_staff_ids"/>
+                <field name="state"/>
+                <field name="priority"/>
+                <field name="stage_id"/>
+                <templates>
+                    <t t-name="card">
+                        <div class="oe_kanban_card oe_kanban_global_click">
+                            <div class="oe_kanban_content">
+                                <div class="o_kanban_record_top">
+                                    <div class="o_kanban_record_headings">
+                                        <strong class="o_kanban_record_title">
+                                            <field name="name"/>
+                                        </strong>
+                                        <br/>
+                                        <span class="o_kanban_record_subtitle">
+                                            <field name="patient_id"/>
+                                        </span>
+                                    </div>
+                                    <div class="o_dropdown_kanban dropdown">
+                                        <a class="dropdown-toggle o-no-caret btn" data-toggle="dropdown" href="#" role="button" aria-label="Dropdown menu" title="Dropdown menu">
+                                            <span class="fa fa-ellipsis-v"/>
+                                        </a>
+                                        <div class="dropdown-menu" role="menu">
+                                            <a name="action_start_service" type="object" class="dropdown-item">Start Service</a>
+                                            <a name="action_complete_service" type="object" class="dropdown-item">Complete Service</a>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="o_kanban_record_body">
+                                    <field name="assigned_staff_ids" widget="many2many_tags"/>
+                                    <br/>
+                                    <i class="fa fa-clock-o"/> <field name="scheduled_datetime"/>
+                                </div>
+                                
+                                <div class="o_kanban_record_bottom">
+                                    <div class="oe_kanban_bottom_left">
+                                        <field name="priority" widget="priority"/>
+                                        <field name="state" widget="label" 
+                                               decoration-success="state == 'completed'"
+                                               decoration-info="state == 'assigned'"
+                                               decoration-warning="state == 'in_progress'"
+                                               decoration-danger="state == 'cancelled'"/>
+                                    </div>
+                                    <div class="oe_kanban_bottom_right">
+                                        <span t-if="record.priority.raw_value == '3'" 
+                                              class="badge badge-danger">
+                                            <i class="fa fa-exclamation"/> 
+                                            High Priority
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- Actions -->
+    <record id="action_health_fieldservice_order" model="ir.actions.act_window">
+        <field name="name">Field Service Orders</field>
+        <field name="res_model">health.fieldservice.order</field>
+        <field name="view_mode">kanban,list,form</field>
+        <field name="context">{}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No field service orders found!
+            </p>
+            <p>
+                Field service orders are automatically created when home visit appointments are confirmed.
+                They coordinate staff assignment, equipment, and service delivery for home healthcare visits.
+            </p>
+        </field>
+    </record>
+
+</odoo>

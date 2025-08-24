@@ -1,0 +1,34 @@
+
+/* Professional compact card for web_timeline items */
+.hf-wt-card {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 8px 10px;
+    background: #fff;
+    border: 1px solid rgba(0,0,0,0.06);
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    max-width: 320px;
+    line-height: 1.25;
+}
+.hf-wt-title { 
+    font-size: 14px; 
+    font-weight: 700; 
+    color: #111; 
+    overflow: hidden; 
+    white-space: nowrap; 
+    text-overflow: ellipsis; 
+}
+.hf-wt-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 12px;
+    color: #4b5563;
+}
+.hf-wt-left, .hf-wt-right { display: flex; align-items: center; gap: 6px; }
+
+/* Safeguards to avoid affecting the connector line alignment */
+.o_timeline_view .vis-item .hf-wt-card { padding-top: 6px; padding-bottom: 6px; }
+.o_timeline_view .vis-item { border: none; background: transparent; } /* keep outer visuals neutral */

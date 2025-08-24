@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+
     <!-- Service Type Views -->
     <record id="view_health_service_type_list" model="ir.ui.view">
         <field name="name">health.service.type.list</field>
@@ -397,4 +398,5 @@
         <field name="res_model">health.vietnamese.district</field>
         <field name="view_mode">list,form</field>
     </record>
+
 </odoo>

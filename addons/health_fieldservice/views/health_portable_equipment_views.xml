@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Equipment Form View -->
+    <record id="view_health_portable_equipment_form" model="ir.ui.view">
+        <field name="name">health.portable.equipment.form</field>
+        <field name="model">health.portable.equipment</field>
+        <field name="arch" type="xml">
+            <form string="Portable Medical Equipment">
+                <header>
+                    <button name="action_mark_in_use" type="object" 
+                            string="Mark In Use" class="oe_highlight"
+                            invisible="status != 'available'"/>
+                    
+                    <button name="action_mark_available" type="object" 
+                            string="Mark Available" class="oe_highlight"
+                            invisible="status != 'in_use'"/>
+                    
+                    <button name="action_schedule_maintenance" type="object" 
+                            string="Schedule Maintenance"
+                            invisible="status == 'maintenance'"/>
+                    
+                    <field name="status" widget="statusbar"/>
+                </header>
+                
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_service_history" type="object"
+                                class="oe_stat_button" icon="fa-wrench">
+                            <div class="o_field_widget o_stat_info">
+                                <span class="o_stat_text">Service History</span>
+                            </div>
+                        </button>
+                    </div>
+                    
+                    <group>
+                        <group string="Equipment Information">
+                            <field name="name"/>
+                            <field name="equipment_type"/>
+                            <field name="category"/>
+                            <field name="manufacturer"/>
+                            <field name="model_number"/>
+                            <field name="serial_number"/>
+                        </group>
+                        
+                        <group string="Current Status">
+                            <field name="current_fso_id" readonly="1"/>
+                            <field name="assigned_team_id"/>
+                            <field name="assigned_staff_id"/>
+                            <field name="usage_count" readonly="1"/>
+                            <field name="total_usage_hours" readonly="1"/>
+                        </group>
+                    </group>
+                    
+                    <notebook>
+                        <page string="Specifications" name="specs">
+                            <group>
+                                <group string="Physical">
+                                    <field name="weight_kg"/>
+                                    <field name="dimensions"/>
+                                </group>
+                                <group string="Power">
+                                    <field name="power_source"/>
+                                    <field name="battery_life_hours"/>
+                                </group>
+                            </group>
+                        </page>
+                        
+                        <page string="Maintenance" name="maintenance">
+                            <group>
+                                <group string="Maintenance Schedule">
+                                    <field name="last_maintenance_date"/>
+                                    <field name="next_maintenance_date"/>
+                                    <field name="maintenance_interval_days"/>
+                                    <field name="is_maintenance_due" widget="boolean_toggle"/>
+                                    <field name="days_until_maintenance"/>
+                                </group>
+                                <group string="Calibration">
+                                    <field name="calibration_due_date"/>
+                                    <field name="calibration_interval_days"/>
+                                    <field name="is_calibration_due" widget="boolean_toggle"/>
+                                </group>
+                            </group>
+                        </page>
+                        
+                        <page string="Compliance" name="compliance">
+                            <group>
+                                <group string="Certification">
+                                    <field name="certification_number"/>
+                                    <field name="certification_expiry"/>
+                                    <field name="regulatory_approval"/>
+                                </group>
+                                <group string="Financial">
+                                    <field name="purchase_date"/>
+                                    <field name="purchase_cost"/>
+                                    <field name="currency_id" invisible="1"/>
+                                </group>
+                            </group>
+                        </page>
+                        
+                        <page string="Service Requirements" name="services">
+                            <field name="required_for_service_ids" widget="many2many_tags"/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- Equipment List View -->
+    <record id="view_health_portable_equipment_list" model="ir.ui.view">
+        <field name="name">health.portable.equipment.list</field>
+        <field name="model">health.portable.equipment</field>
+        <field name="arch" type="xml">
+            <list string="Portable Medical Equipment">
+                <field name="name"/>
+                <field name="equipment_type"/>
+                <field name="status" decoration-success="status == 'available'"
+                       decoration-warning="status == 'in_use'"
+                       decoration-danger="status in ['maintenance', 'repair']"/>
+                <field name="assigned_team_id"/>
+                <field name="current_fso_id"/>
+                <field name="is_maintenance_due" decoration-danger="is_maintenance_due"/>
+                <field name="usage_count"/>
+                <field name="active"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Equipment Search View -->
+    <record id="view_health_portable_equipment_search" model="ir.ui.view">
+        <field name="name">health.portable.equipment.search</field>
+        <field name="model">health.portable.equipment</field>
+        <field name="arch" type="xml">
+            <search string="Equipment Search">
+                <field name="name"/>
+                <field name="equipment_type"/>
+                <field name="manufacturer"/>
+                <field name="serial_number"/>
+                
+                <filter string="Available" name="available" domain="[('status', '=', 'available')]"/>
+                <filter string="In Use" name="in_use" domain="[('status', '=', 'in_use')]"/>
+                <filter string="Maintenance Due" name="maintenance_due" domain="[('is_maintenance_due', '=', True)]"/>
+                
+                <group expand="0" string="Group By">
+                    <filter string="Equipment Type" name="group_by_type" context="{'group_by': 'equipment_type'}"/>
+                    <filter string="Status" name="group_by_status" context="{'group_by': 'status'}"/>
+                    <filter string="Team" name="group_by_team" context="{'group_by': 'assigned_team_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Equipment Action -->
+    <record id="action_health_portable_equipment" model="ir.actions.act_window">
+        <field name="name">Portable Medical Equipment</field>
+        <field name="res_model">health.portable.equipment</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_health_portable_equipment_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No portable medical equipment found!
+            </p>
+            <p>
+                Create and manage portable medical equipment used for field service visits.
+                Track equipment status, maintenance schedules, and assignment to field teams.
+            </p>
+        </field>
+    </record>
+
+</odoo>

@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+
+    <!-- Default Clinical Protocols for Healthcare Field Services -->
+
+    <!-- Blood Draw Protocol -->
+    <record id="protocol_blood_draw" model="health.clinical.protocol">
+        <field name="name">Blood Draw Protocol</field>
+        <field name="description">Standard protocol for phlebotomy services in home visits</field>
+        <field name="complexity_level">basic</field>
+        <field name="duration_estimate_minutes">15</field>
+        <field name="infection_control_level">standard</field>
+        <field name="required_qualifications">Licensed phlebotomist or nurse with phlebotomy certification</field>
+        <field name="safety_requirements">Standard precautions, proper sharps disposal, patient identification verification</field>
+        <field name="action_steps_template">{"steps": [
+            {"step": 1, "action": "Verify patient identity using two identifiers", "required": true, "time_minutes": 2},
+            {"step": 2, "action": "Review doctor orders and fasting requirements", "required": true, "time_minutes": 2},
+            {"step": 3, "action": "Explain procedure to patient and obtain consent", "required": true, "time_minutes": 3},
+            {"step": 4, "action": "Prepare and check phlebotomy equipment", "required": true, "time_minutes": 2},
+            {"step": 5, "action": "Select appropriate venipuncture site", "required": true, "time_minutes": 1},
+            {"step": 6, "action": "Perform hand hygiene and don gloves", "required": true, "time_minutes": 1},
+            {"step": 7, "action": "Perform venipuncture using sterile technique", "required": true, "time_minutes": 3},
+            {"step": 8, "action": "Label specimens correctly and immediately", "required": true, "time_minutes": 2},
+            {"step": 9, "action": "Apply pressure and bandage puncture site", "required": true, "time_minutes": 2},
+            {"step": 10, "action": "Provide patient aftercare instructions", "required": true, "time_minutes": 2},
+            {"step": 11, "action": "Document procedure and any complications", "required": true, "time_minutes": 3},
+            {"step": 12, "action": "Prepare specimens for transport", "required": true, "time_minutes": 2}
+        ], "total_estimated_minutes": 25, "critical_steps": [1, 2, 7, 8], "safety_checks": ["Patient identity", "Equipment sterility", "Proper labeling"]}</field>
+    </record>
+
+    <!-- Wound Care Protocol -->
+    <record id="protocol_wound_care" model="health.clinical.protocol">
+        <field name="name">Wound Care Protocol</field>
+        <field name="description">Standard protocol for home wound care services</field>
+        <field name="complexity_level">intermediate</field>
+        <field name="duration_estimate_minutes">45</field>
+        <field name="infection_control_level">contact</field>
+        <field name="required_qualifications">Registered nurse with wound care experience</field>
+        <field name="safety_requirements">Contact precautions, sterile technique, infection control measures</field>
+        <field name="action_steps_template">{"steps": [
+            {"step": 1, "action": "Verify patient identity and review care plan", "required": true, "time_minutes": 3},
+            {"step": 2, "action": "Assess patient pain level and administer analgesics if ordered", "required": true, "time_minutes": 5},
+            {"step": 3, "action": "Prepare sterile field and wound care supplies", "required": true, "time_minutes": 5},
+            {"step": 4, "action": "Perform hand hygiene and don sterile gloves", "required": true, "time_minutes": 2},
+            {"step": 5, "action": "Remove old dressing using sterile technique", "required": true, "time_minutes": 5},
+            {"step": 6, "action": "Assess wound characteristics (size, depth, drainage)", "required": true, "time_minutes": 5},
+            {"step": 7, "action": "Clean wound according to physician orders", "required": true, "time_minutes": 10},
+            {"step": 8, "action": "Apply prescribed topical medications", "required": false, "time_minutes": 3},
+            {"step": 9, "action": "Apply new dressing using sterile technique", "required": true, "time_minutes": 8},
+            {"step": 10, "action": "Secure dressing and check for proper fit", "required": true, "time_minutes": 3},
+            {"step": 11, "action": "Educate patient/caregiver on wound care", "required": true, "time_minutes": 10},
+            {"step": 12, "action": "Document wound assessment and care provided", "required": true, "time_minutes": 5},
+            {"step": 13, "action": "Schedule next visit and provide contact information", "required": true, "time_minutes": 3}
+        ], "total_estimated_minutes": 67, "critical_steps": [1, 4, 5, 6, 7, 9], "safety_checks": ["Sterile technique", "Pain assessment", "Infection signs", "Patient education"]}</field>
+    </record>
+
+    <!-- Vital Signs Protocol -->
+    <record id="protocol_vital_signs" model="health.clinical.protocol">
+        <field name="name">Vital Signs Assessment Protocol</field>
+        <field name="description">Standard protocol for comprehensive vital signs assessment</field>
+        <field name="complexity_level">basic</field>
+        <field name="duration_estimate_minutes">15</field>
+        <field name="infection_control_level">standard</field>
+        <field name="required_qualifications">Healthcare professional with vital signs training</field>
+        <field name="safety_requirements">Equipment calibration, proper technique, abnormal value recognition</field>
+        <field name="action_steps_template">{"steps": [
+            {"step": 1, "action": "Verify patient identity and explain procedure", "required": true, "time_minutes": 2},
+            {"step": 2, "action": "Ensure patient has rested for 5 minutes", "required": true, "time_minutes": 5},
+            {"step": 3, "action": "Check and calibrate equipment", "required": true, "time_minutes": 2},
+            {"step": 4, "action": "Measure blood pressure (two readings if elevated)", "required": true, "time_minutes": 5},
+            {"step": 5, "action": "Measure pulse rate and rhythm", "required": true, "time_minutes": 2},
+            {"step": 6, "action": "Measure respiratory rate", "required": true, "time_minutes": 2},
+            {"step": 7, "action": "Measure temperature", "required": true, "time_minutes": 2},
+            {"step": 8, "action": "Measure oxygen saturation if indicated", "required": false, "time_minutes": 2},
+            {"step": 9, "action": "Document all measurements accurately", "required": true, "time_minutes": 3},
+            {"step": 10, "action": "Report abnormal findings to physician", "required": true, "time_minutes": 2}
+        ], "total_estimated_minutes": 27, "critical_steps": [1, 3, 4, 9, 10], "safety_checks": ["Equipment calibration", "Abnormal value recognition", "Physician notification"]}</field>
+    </record>
+
+    <!-- Medication Administration Protocol -->
+    <record id="protocol_medication" model="health.clinical.protocol">
+        <field name="name">Medication Administration Protocol</field>
+        <field name="description">Protocol for home medication administration</field>
+        <field name="complexity_level">intermediate</field>
+        <field name="duration_estimate_minutes">20</field>
+        <field name="infection_control_level">standard</field>
+        <field name="required_qualifications">Registered nurse with medication administration certification</field>
+        <field name="safety_requirements">Five rights verification, allergy assessment, adverse reaction monitoring</field>
+        <field name="action_steps_template">{"steps": [
+            {"step": 1, "action": "Verify patient identity using two identifiers", "required": true, "time_minutes": 2},
+            {"step": 2, "action": "Review medication orders and allergies", "required": true, "time_minutes": 3},
+            {"step": 3, "action": "Check medication five rights (patient, drug, dose, route, time)", "required": true, "time_minutes": 5},
+            {"step": 4, "action": "Assess patient vital signs if required", "required": false, "time_minutes": 5},
+            {"step": 5, "action": "Prepare medication using aseptic technique", "required": true, "time_minutes": 3},
+            {"step": 6, "action": "Administer medication via prescribed route", "required": true, "time_minutes": 5},
+            {"step": 7, "action": "Monitor patient for immediate adverse reactions", "required": true, "time_minutes": 10},
+            {"step": 8, "action": "Document administration and patient response", "required": true, "time_minutes": 3},
+            {"step": 9, "action": "Educate patient/caregiver about medication", "required": true, "time_minutes": 5},
+            {"step": 10, "action": "Dispose of supplies safely", "required": true, "time_minutes": 2}
+        ], "total_estimated_minutes": 43, "critical_steps": [1, 2, 3, 5, 6, 7], "safety_checks": ["Five rights verification", "Allergy check", "Vital signs", "Adverse reactions"]}</field>
+    </record>
+
+</odoo>

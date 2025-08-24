@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<data>
+
+    <!-- =====================================================================
+         FSO Staff Assignment Dashboard - Mobile-First Kanban Interface
+         Inspired by: Monday.com, Asana, Uber Driver Dashboard
+         ===================================================================== -->
+
+    <!-- Mobile-First Kanban Board View -->
+    <record id="view_fso_assignment_dashboard_kanban" model="ir.ui.view">
+        <field name="name">health.fieldservice.order.dashboard.kanban</field>
+        <field name="model">health.fieldservice.order</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="state" class="o_kanban_dashboard o_assignment_dashboard o_advanced_scheduler" 
+                    quick_create="false" create="true" edit="true" delete="true">
+                
+                <!-- Enhanced Progressbar with AI Assignment Intelligence -->
+                <progressbar field="ai_assignment_score" colors='{"0": "danger", "50": "warning", "80": "success"}' sum_field="ai_assignment_score"/>
+                
+                <!-- FSO Fields for Compact Display -->
+                <field name="name"/>
+                <field name="patient_id"/>
+                <field name="assigned_staff_ids"/>
+                <field name="scheduled_datetime"/>
+                <field name="state"/>
+                <field name="priority"/>
+                <field name="service_location"/>
+                <field name="estimated_duration"/>
+                
+                <templates>
+                    <t t-name="card">
+                        <main class="fso_compact_card" 
+                              t-att-class="record.state.raw_value == 'completed' ? 'opacity-50' : ''"
+                              t-att-data-state="record.state.raw_value">
+                            
+                            <!-- FSO ID (Bold Header) -->
+                            <div class="fw-bold fs-6 text-truncate mb-2">
+                                <field name="name"/>
+                            </div>
+                            
+                            <!-- Patient Name -->
+                            <div class="text-muted d-flex flex-column mb-2">
+                                <div class="d-flex align-items-center gap-1">
+                                    <span class="fa fa-user-o text-primary"></span>
+                                    <span class="text-truncate fw-bold">
+                                        <field name="patient_id"/>
+                                    </span>
+                                </div>
+                            </div>
+                            
+                            <!-- Appointment Date & Time -->
+                            <div class="text-muted small mb-2">
+                                <div class="d-flex align-items-center gap-1">
+                                    <span class="fa fa-clock-o text-info"></span>
+                                    <span><field name="scheduled_datetime" widget="datetime"/></span>
+                                </div>
+                            </div>
+                            
+                            <!-- Duration & Location -->
+                            <div class="text-muted small mb-3">
+                                <div class="d-flex align-items-center gap-1 mb-1">
+                                    <span class="fa fa-clock text-success"></span>
+                                    <span><field name="estimated_duration"/> hours</span>
+                                </div>
+                                <div class="d-flex align-items-center gap-1">
+                                    <span class="fa fa-map-marker text-warning"></span>
+                                    <span class="text-truncate">
+                                        <field name="service_location"/>
+                                    </span>
+                                </div>
+                            </div>
+                            
+                            <!-- Footer with Staff Assignment -->
+                            <footer class="pt-1">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div class="d-flex align-items-center gap-1">
+                                        <field name="priority" widget="priority"/>
+                                    </div>
+                                    <div class="d-flex align-items-center gap-1">
+                                        <field name="assigned_staff_ids" widget="many2many_avatar_user"/>
+                                        <span class="badge badge-sm" 
+                                              t-att-class="record.state.raw_value == 'draft' ? 'badge-light' : 
+                                                           record.state.raw_value == 'assigned' ? 'badge-info' : 
+                                                           record.state.raw_value == 'in_progress' ? 'badge-warning' : 
+                                                           record.state.raw_value == 'completed' ? 'badge-success' : 'badge-secondary'">
+                                            <field name="state"/>
+                                        </span>
+                                    </div>
+                                </div>
+                            </footer>
+                        </main>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- FSO Assignment Dashboard Action -->
+    <record id="action_fso_assignment_dashboard" model="ir.actions.act_window">
+        <field name="name">FSO Assignment Dashboard</field>
+        <field name="res_model">health.fieldservice.order</field>
+        <field name="view_mode">kanban,calendar,list,form</field>
+        <field name="view_id" ref="view_fso_assignment_dashboard_kanban"/>
+        <field name="domain">[]</field>
+        <field name="context">{
+            'default_state': 'draft',
+            'group_by': ['state'],
+            'kanban_column_progressbar': 'true'
+        }</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Welcome to the FSO Assignment Dashboard!
+            </p>
+            <p>
+                This is your command center for managing Field Service Orders and staff assignments.
+                Drag and drop FSOs between workflow stages, assign staff manually or with AI,
+                and track service delivery in real-time.
+            </p>
+        </field>
+    </record>
+
+    <!-- FSO Assignment Calendar View -->
+    <record id="view_fso_assignment_calendar" model="ir.ui.view">
+        <field name="name">health.fieldservice.order.calendar</field>
+        <field name="model">health.fieldservice.order</field>
+        <field name="arch" type="xml">
+            <calendar string="FSO Assignment Calendar" 
+                      date_start="scheduled_datetime" 
+                      color="state"
+                      mode="week">
+                
+                <field name="name"/>
+                <field name="patient_id"/>
+                <field name="assigned_staff_ids"/>
+                <field name="state"/>
+                <field name="priority"/>
+            </calendar>
+        </field>
+    </record>
+
+    <!-- FSO Assignment List View -->
+    <record id="view_fso_assignment_list" model="ir.ui.view">
+        <field name="name">health.fieldservice.order.list</field>
+        <field name="model">health.fieldservice.order</field>
+        <field name="arch" type="xml">
+            <list string="FSO Staff Assignments" create="true" edit="true" delete="true" 
+                  decoration-success="state == 'completed'" 
+                  decoration-warning="state == 'assigned'"
+                  decoration-danger="priority in ('3', '4')"
+                  decoration-info="state == 'in_progress'">
+                
+                <field name="name"/>
+                <field name="patient_id"/>
+                <field name="assigned_staff_ids" widget="many2many_tags"/>
+                <field name="scheduled_datetime"/>
+                <field name="state" decoration-bf="1"/>
+                <field name="priority" widget="priority"/>
+                <field name="ai_assignment_score" widget="progressbar"/>
+                <field name="service_location" optional="hide"/>
+                <field name="team_id" optional="hide"/>
+                
+                <!-- Context Menu -->
+                <button name="action_ai_assign_staff" 
+                        type="object" 
+                        icon="fa-magic" 
+                        string="AI Assign Staff"
+                        invisible="state != 'draft'"/>
+                
+                <button name="action_start_service" 
+                        type="object" 
+                        icon="fa-play" 
+                        string="Start Service"
+                        invisible="state != 'assigned'"/>
+                
+                <button name="action_complete_service" 
+                        type="object" 
+                        icon="fa-check" 
+                        string="Complete Service"
+                        invisible="state != 'in_progress'"/>
+                
+            </list>
+        </field>
+    </record>
+
+</data>
+</odoo>

@@ -25,8 +25,9 @@
 12. [IoT & Wearables Integration](#12-iot--wearables-integration)
 13. [Enhanced Module Specifications](#13-enhanced-module-specifications)
 14. [Open Source Technology Stack](#14-open-source-technology-stack)
-15. [Implementation Roadmap v2.0](#15-implementation-roadmap-v20)
-16. [Performance & Scalability](#16-performance--scalability)
+15. [CRM & Invoicing Integration Architecture](#15-crm--invoicing-integration-architecture)
+16. [Implementation Roadmap v2.0](#16-implementation-roadmap-v20)
+17. [Performance & Scalability](#17-performance--scalability)
 
 ---
 
@@ -1887,7 +1888,251 @@ services:
 
 ---
 
-## 15. Implementation Roadmap v2.0
+## 15. CRM & Invoicing Integration Architecture
+
+### 15.1 Integration Philosophy: Inherit from Standard Odoo Modules
+
+**Design Principle**: Leverage 100% of standard Odoo CRM and Accounting functionality by inheriting from core modules rather than duplicating functionality.
+
+### 15.2 World-Class Application Pattern: Contact → Lead Workflow
+
+Based on analysis of Salesforce, HubSpot, Epic, and Cerner:
+
+```
+Contact (Person) → Lead (Opportunity) → Deal → Customer
+Healthcare: res.partner → crm.lead → health.appointment → health.patient
+```
+
+### 15.3 CRM Integration Architecture
+
+#### A. health_crm Module (Inherits from Standard CRM)
+```python
+# Inherits from crm.lead - keeps ALL standard CRM functionality
+class HealthLead(models.Model):
+    _inherit = 'crm.lead'
+    
+    # Healthcare-specific extensions only
+    service_interest = fields.Selection([
+        ('home_visit', 'Home Visit'),
+        ('clinic_visit', 'Clinic Visit'),
+        ('consultation', 'Consultation'),
+        ('follow_up', 'Follow-up'),
+        ('emergency', 'Emergency Care')
+    ], string='Service Interest')
+    
+    health_contact_outcome = fields.Selection([
+        ('service_booked', 'Service Booked'),
+        ('pending_follow_up', 'Pending Follow-up'),
+        ('rejected', 'Rejected'),
+        ('no_response', 'No Response')
+    ], string='Healthcare Outcome')
+    
+    patient_id = fields.Many2one('health.patient', string='Patient')
+    appointment_ids = fields.One2many('health.appointment', 'lead_id', string='Appointments')
+    clinical_priority = fields.Selection([
+        ('routine', 'Routine'),
+        ('urgent', 'Urgent'),
+        ('emergency', 'Emergency')
+    ], string='Clinical Priority')
+    
+    # Vietnamese healthcare channels (extends standard utm_source)
+    vietnamese_channel = fields.Selection([
+        ('zalo', 'Zalo'),
+        ('facebook', 'Facebook'),
+        ('linkedin', 'LinkedIn'),
+        ('website', 'Website'),
+        ('phone', 'Phone Call'),
+        ('referral', 'Referral'),
+        ('walk_in', 'Walk-in')
+    ], string='Vietnamese Channel')
+
+# Inherits from res.partner - keeps ALL standard contact functionality  
+class HealthContact(models.Model):
+    _inherit = 'res.partner'
+    
+    # Vietnamese healthcare-specific fields only
+    cccd_number = fields.Char('CCCD Number', help='Vietnamese Citizen ID')
+    ethnicity = fields.Char('Dân tộc', help='Vietnamese Ethnicity')
+    kinship_title = fields.Char('Kinship Title', help='Vietnamese Honorific')
+    preferred_name = fields.Char('Preferred Name')
+    
+    # Vietnamese address structure
+    vietnamese_address_line1 = fields.Char('Named Area (Khu vực đặt tên)')
+    vietnamese_address_line2 = fields.Char('Apartment Number (Số căn hộ)')  
+    vietnamese_address_line3 = fields.Char('Building Name (Tên tòa nhà)')
+    house_number = fields.Char('House Number (Số nhà)')
+    sub_alley_number = fields.Char('Sub-Alley Number (Số ngách)')
+    alley_number = fields.Char('Alley Number (Số ngõ)')
+    ward_commune = fields.Char('Ward/Commune (Phường/Xã)')
+    
+    # Relationships
+    caregiver_ids = fields.One2many('health.caregiver', 'client_id', string='Caregivers')
+    payer_ids = fields.One2many('health.payer', 'client_id', string='Payers')
+    referrer_ids = fields.One2many('health.referrer', 'client_id', string='Referrers')
+```
+
+#### B. CRM Pipeline Configuration
+```python
+# Standard Odoo CRM stages enhanced for healthcare
+HEALTHCARE_CRM_STAGES = [
+    ('contact', 'Initial Contact'),
+    ('qualification', 'Service Qualification'),
+    ('assessment', 'Health Assessment'),
+    ('proposal', 'Service Proposal'),
+    ('booking', 'Booking Confirmed'),
+    ('won', 'Patient Acquired'),
+    ('lost', 'Opportunity Lost')
+]
+```
+
+### 15.4 Invoicing Integration Architecture
+
+#### A. health_invoicing Module (Inherits from Standard Accounting)
+```python
+# Inherits from account.move - keeps ALL standard invoicing functionality
+class HealthInvoice(models.Model):
+    _inherit = 'account.move'
+    
+    # Healthcare-specific extensions only
+    appointment_id = fields.Many2one('health.appointment', string='Appointment')
+    service_event_id = fields.Many2one('health.service.event', string='Service Event')
+    moh_submission_id = fields.Many2one('health.moh.submission', string='MOH Submission')
+    
+    # Vietnamese tax compliance
+    tax_authority_submitted = fields.Boolean('Tax Authority Submitted')
+    tax_submission_date = fields.Datetime('Tax Submission Date')
+    tax_submission_response = fields.Text('Tax Authority Response')
+    
+    # Prepayment handling
+    prepayment_batch_id = fields.Many2one('health.prepayment.batch', string='Prepayment Batch')
+    is_prepaid_service = fields.Boolean('Prepaid Service')
+    
+    # MISA integration fields
+    misa_sync_status = fields.Selection([
+        ('pending', 'Pending Sync'),
+        ('synced', 'Synced'),
+        ('error', 'Sync Error')
+    ], string='MISA Sync Status', default='pending')
+    misa_sync_date = fields.Datetime('MISA Sync Date')
+    misa_reference = fields.Char('MISA Reference')
+
+# Inherits from account.payment - keeps ALL standard payment functionality
+class HealthPayment(models.Model):
+    _inherit = 'account.payment'
+    
+    # Healthcare-specific extensions only
+    nurse_collected = fields.Boolean('Collected by Nurse')
+    cash_in_transit = fields.Boolean('Cash in Transit')
+    evidence_uri = fields.Char('Photo Evidence URL')
+    collection_location = fields.Char('Collection Location')
+    om_received_date = fields.Datetime('OM Received Date')
+    om_received_by = fields.Many2one('res.users', string='OM Received By')
+```
+
+#### B. Prepayment Batch Management
+```python
+class HealthPrepaymentBatch(models.Model):
+    _name = 'health.prepayment.batch'
+    _description = 'Healthcare Prepayment Batch'
+    
+    name = fields.Char('Batch Reference', required=True)
+    client_id = fields.Many2one('res.partner', string='Client', required=True)
+    total_amount = fields.Monetary('Total Prepaid Amount')
+    services_count = fields.Integer('Number of Services')
+    consumed_count = fields.Integer('Services Consumed', compute='_compute_consumed')
+    remaining_count = fields.Integer('Services Remaining', compute='_compute_remaining')
+    
+    # Service tracking
+    service_ids = fields.One2many('health.appointment', 'prepayment_batch_id', string='Services')
+    invoice_ids = fields.One2many('account.move', 'prepayment_batch_id', string='Invoices')
+    
+    state = fields.Selection([
+        ('active', 'Active'),
+        ('consumed', 'Fully Consumed'),
+        ('refunded', 'Refunded'),
+        ('expired', 'Expired')
+    ], string='Status', default='active')
+```
+
+### 15.5 MISA Integration Architecture
+
+#### A. Real-time Sync Service
+```python
+class HealthMISAIntegration(models.Model):
+    _name = 'health.misa.integration'
+    _description = 'MISA Accounting Integration'
+    
+    def sync_invoice_to_misa(self, invoice_id):
+        """Real-time invoice sync to MISA"""
+        # Standard Odoo data export to MISA format
+        
+    def sync_payment_to_misa(self, payment_id):
+        """Real-time payment sync to MISA"""
+        # Standard Odoo payment data to MISA
+        
+    def sync_ar_changes(self):
+        """Sync AR changes to MISA"""
+        # Accounts receivable synchronization
+```
+
+### 15.6 Tax Authority Integration
+
+#### A. Real-time Red Invoice Submission
+```python
+class HealthTaxSubmission(models.Model):
+    _name = 'health.tax.submission'
+    _description = 'Vietnamese Tax Authority Submission'
+    
+    invoice_id = fields.Many2one('account.move', string='Invoice', required=True)
+    submission_type = fields.Selection([
+        ('real_time', 'Real-time'),
+        ('deferred', 'Deferred (Technical Issues)'),
+        ('batch', 'Batch Submission')
+    ], string='Submission Type', default='real_time')
+    
+    submission_status = fields.Selection([
+        ('pending', 'Pending'),
+        ('submitted', 'Submitted'),
+        ('accepted', 'Accepted'),
+        ('rejected', 'Rejected')
+    ], string='Status', default='pending')
+    
+    def submit_to_tax_authority(self):
+        """Submit red invoice to Vietnamese Tax Authority"""
+        # Real-time API integration
+```
+
+### 15.7 Benefits of Inheritance Approach
+
+#### A. Standard Odoo CRM Benefits
+- ✅ **Lead scoring** and qualification
+- ✅ **Pipeline management** with stages  
+- ✅ **Activity scheduling** and follow-ups
+- ✅ **Email marketing** integration
+- ✅ **Reporting and analytics**
+- ✅ **Team management** and territories
+- ✅ **UTM campaign** tracking
+
+#### B. Standard Odoo Accounting Benefits  
+- ✅ **Multi-currency** support
+- ✅ **Tax calculation** engines
+- ✅ **Payment terms** and aging
+- ✅ **Bank reconciliation** automation
+- ✅ **Financial reporting**
+- ✅ **Chart of accounts** management
+- ✅ **Multi-company** support
+
+#### C. Healthcare-Specific Enhancements
+- ✅ **Vietnamese compliance** fields
+- ✅ **MOH integration** workflows
+- ✅ **Medical service** types
+- ✅ **Clinical protocols** linking
+- ✅ **Staff assignment** workflows
+- ✅ **MISA integration** for local accounting
+
+---
+
+## 16. Implementation Roadmap v2.0
 
 ### Phase 1: Enhanced Foundation (Weeks 1-4)
 **Objectives**: Core infrastructure with clinical intelligence

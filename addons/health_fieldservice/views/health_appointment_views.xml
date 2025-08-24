@@ -1,0 +1,255 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<data>
+
+    <!-- =====================================================================
+         Extended Health Appointment Views for Staff Assignment
+         ===================================================================== -->
+
+    <!-- Extended Appointment Form View -->
+    <record id="view_health_appointment_assignment_form" model="ir.ui.view">
+        <field name="name">health.appointment.assignment.form</field>
+        <field name="model">health.appointment</field>
+        <field name="inherit_id" ref="health_calendar.health_appointment_view_form"/>
+        <field name="arch" type="xml">
+            
+            <!-- Add Assignment Status to Header -->
+            <xpath expr="//header/field[@name='state']" position="before">
+                <button name="action_sales_approve" 
+                        type="object" 
+                        string="Sales Approve" 
+                        class="btn-primary"
+                        groups="health_staff_assignment.group_sales_user"
+                        invisible="assignment_state != 'sales_review'"/>
+                
+                <button name="action_ops_manager_review" 
+                        type="object" 
+                        string="Ops Approve" 
+                        class="btn-success"
+                        groups="health_staff_assignment.group_ops_manager"
+                        invisible="assignment_state != 'ops_manager_review'"/>
+                
+                <button name="action_head_nurse_assign_staff" 
+                        type="object" 
+                        string="Assign Staff" 
+                        class="btn-info"
+                        groups="health_staff_assignment.group_head_nurse"
+                        invisible="assignment_state != 'head_nurse_assign'"/>
+                
+                <button name="action_staff_confirm_assignment" 
+                        type="object" 
+                        string="Confirm Assignment" 
+                        class="btn-warning"
+                        groups="health_staff_assignment.group_healthcare_staff"
+                        invisible="assignment_state != 'staff_assigned'"/>
+                
+                <field name="assignment_state" widget="statusbar" 
+                       statusbar_visible="draft,sales_review,ops_manager_review,head_nurse_assign,staff_assigned,staff_confirmed,ready"/>
+            </xpath>
+
+            <!-- Add Staff Assignment Section -->
+            <xpath expr="//group[@name='appointment_details']" position="after">
+                <group string="Staff Assignment" name="staff_assignment" 
+                       invisible="assignment_state in ('draft', 'sales_review')">
+                    <field name="assigned_staff_ids" widget="many2many_tags"
+                           readonly="assignment_state not in ('head_nurse_assign',)"/>
+                    <field name="lead_staff_id" 
+                           domain="[('id', 'in', assigned_staff_ids)]"
+                           readonly="assignment_state not in ('head_nurse_assign',)"/>
+                    <field name="staff_assignment_id" readonly="1" 
+                           invisible="not staff_assignment_id"/>
+                    <field name="assignment_score" widget="progressbar" readonly="1"
+                           invisible="assignment_score == 0"/>
+                </group>
+            </xpath>
+
+            <!-- Add Assignment Priority Field -->
+            <xpath expr="//field[@name='urgency_level']" position="after">
+                <field name="assignment_priority" 
+                       invisible="assignment_state in ('draft',)"/>
+            </xpath>
+
+            <!-- Add Real-time Status Tracking -->
+            <xpath expr="//group[@name='location_staff']" position="after">
+                <group string="Real-time Status" name="realtime_status"
+                       invisible="assignment_state in ('draft', 'sales_review', 'ops_manager_review')">
+                    <field name="real_time_status" readonly="1"/>
+                    <field name="status_last_updated" readonly="1"/>
+                    <field name="staff_current_location" readonly="1" 
+                           invisible="not staff_current_location"/>
+                    <field name="estimated_arrival_time" readonly="1"
+                           invisible="not estimated_arrival_time"/>
+                </group>
+            </xpath>
+
+            <!-- Add Approval History Tab -->
+            <xpath expr="//notebook" position="inside">
+                <page string="Assignment Workflow" name="assignment_workflow"
+                      invisible="assignment_state == 'draft'">
+                    
+                    <group string="Approval History">
+                        <group>
+                            <field name="sales_approved_by" readonly="1"/>
+                            <field name="sales_approved_date" readonly="1"/>
+                            <field name="ops_manager_approved_by" readonly="1"/>
+                            <field name="ops_manager_approved_date" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="head_nurse_assigned_by" readonly="1"/>
+                            <field name="head_nurse_assigned_date" readonly="1"/>
+                            <field name="estimated_travel_time" readonly="1" widget="float_time"/>
+                        </group>
+                    </group>
+
+                    <!-- Assignment Intelligence Section -->
+                    <group string="Assignment Intelligence" 
+                           invisible="assignment_score == 0">
+                        <div class="o_assignment_intelligence_panel">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="o_stat_card">
+                                        <div class="o_stat_value">
+                                            <field name="assignment_score" widget="gauge" 
+                                                   options="{'max_field': 100, 'style': 'width:120px; height: 90px;'}"/>
+                                        </div>
+                                        <div class="o_stat_label">Overall Assignment Score</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <field name="required_skills" readonly="1"/>
+                                </div>
+                            </div>
+                        </div>
+                    </group>
+
+                    <!-- Real-time Status Updates -->
+                    <group string="Status History" 
+                           invisible="real_time_status == 'scheduled'">
+                        <div class="alert alert-info">
+                            <strong>Current Status:</strong> <field name="real_time_status" readonly="1"/>
+                            <br/>
+                            <strong>Last Updated:</strong> <field name="status_last_updated" readonly="1"/>
+                            <br/>
+                            <strong>Updated By:</strong> <field name="status_updated_by" readonly="1"/>
+                        </div>
+                    </group>
+                </page>
+            </xpath>
+
+        </field>
+    </record>
+
+    <!-- Extended Appointment List View -->
+    <record id="view_health_appointment_assignment_list" model="ir.ui.view">
+        <field name="name">health.appointment.assignment.list</field>
+        <field name="model">health.appointment</field>
+        <field name="inherit_id" ref="health_calendar.health_appointment_view_list"/>
+        <field name="arch" type="xml">
+            
+            <!-- Add Assignment Fields to List -->
+            <xpath expr="//field[@name='state']" position="before">
+                <field name="assignment_state" 
+                       decoration-info="assignment_state in ('sales_review', 'ops_manager_review')"
+                       decoration-warning="assignment_state in ('head_nurse_assign', 'staff_assigned')"
+                       decoration-success="assignment_state in ('staff_confirmed', 'ready')"/>
+                <field name="assigned_staff_ids" widget="many2many_tags" optional="show"/>
+                <field name="assignment_priority" widget="priority" optional="show"/>
+                <field name="assignment_score" widget="progressbar" optional="show"/>
+            </xpath>
+
+        </field>
+    </record>
+
+    <!-- Extended Appointment Search View -->
+    <record id="view_health_appointment_assignment_search" model="ir.ui.view">
+        <field name="name">health.appointment.assignment.search</field>
+        <field name="model">health.appointment</field>
+        <field name="inherit_id" ref="health_calendar.health_appointment_view_search"/>
+        <field name="arch" type="xml">
+            
+            <!-- Add Assignment Filters -->
+            <xpath expr="//filter[@name='today']" position="after">
+                <separator/>
+                <filter string="Needs Sales Review" name="needs_sales_review" 
+                        domain="[('assignment_state', '=', 'sales_review')]"/>
+                <filter string="Needs Ops Review" name="needs_ops_review" 
+                        domain="[('assignment_state', '=', 'ops_manager_review')]"/>
+                <filter string="Needs Staff Assignment" name="needs_assignment" 
+                        domain="[('assignment_state', '=', 'head_nurse_assign')]"/>
+                <filter string="Assigned to Me" name="assigned_to_me" 
+                        domain="[('assigned_staff_ids', 'in', [uid])]"/>
+                <filter string="High Priority" name="high_priority_assignment" 
+                        domain="[('assignment_priority', 'in', ['high', 'urgent', 'emergency'])]"/>
+            </xpath>
+
+            <!-- Add Assignment Group By -->
+            <xpath expr="//filter[@name='group_source']" position="after">
+                <filter string="Assignment State" name="group_by_assignment_state" 
+                        context="{'group_by': 'assignment_state'}"/>
+                <filter string="Assigned Staff" name="group_by_assigned_staff" 
+                        context="{'group_by': 'assigned_staff_ids'}"/>
+                <filter string="Assignment Priority" name="group_by_priority" 
+                        context="{'group_by': 'assignment_priority'}"/>
+            </xpath>
+
+        </field>
+    </record>
+
+    <!-- Appointment Assignment Kanban View -->
+    <record id="view_health_appointment_assignment_kanban" model="ir.ui.view">
+        <field name="name">health.appointment.assignment.kanban</field>
+        <field name="model">health.appointment</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="assignment_state" class="o_appointment_assignment_kanban">
+                <templates>
+                    <t t-name="card">
+                        <div class="oe_kanban_card o_appointment_assignment_card">
+                            <div class="o_card_header">
+                                <strong><field name="name"/></strong>
+                                <span class="badge badge-secondary"><field name="assignment_priority"/></span>
+                            </div>
+                            <div class="o_card_content">
+                                <div><strong>Patient:</strong> <field name="patient_id"/></div>
+                                <div><strong>Service:</strong> <field name="appointment_type_id"/></div>
+                                <div><strong>Date:</strong> <field name="appointment_date"/></div>
+                                <div t-if="record.assigned_staff_ids.raw_value">
+                                    <strong>Staff:</strong> <field name="assigned_staff_ids" widget="many2many_tags"/>
+                                </div>
+                                <div t-if="record.assignment_score.raw_value > 0">
+                                    <strong>Score:</strong> 
+                                    <span class="badge" t-att-class="record.assignment_score.raw_value >= 80 ? 'badge-success' : record.assignment_score.raw_value >= 60 ? 'badge-warning' : 'badge-danger'">
+                                        <t t-esc="Math.round(record.assignment_score.raw_value)"/>%
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- Assignment Workflow Action -->
+    <record id="action_appointment_assignment_workflow" model="ir.actions.act_window">
+        <field name="name">Appointment Assignment Workflow</field>
+        <field name="res_model">health.appointment</field>
+        <field name="view_mode">kanban,list,form,calendar</field>
+        <field name="view_id" ref="view_health_appointment_assignment_kanban"/>
+        <field name="domain">[('assignment_state', '!=', 'draft')]</field>
+        <field name="context">{
+            'group_by': ['assignment_state'],
+            'search_default_needs_review': 1
+        }</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No appointments in assignment workflow!
+            </p>
+            <p>
+                Appointments appear here once they've been submitted for assignment workflow.
+                Use this view to manage the multi-role approval process.
+            </p>
+        </field>
+    </record>
+
+</data>
+</odoo>

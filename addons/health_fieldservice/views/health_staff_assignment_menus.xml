@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<data>
+
+    <!-- =====================================================================
+         FSO Scheduling & Staff Management Menu Structure  
+         ===================================================================== -->
+
+    <!-- FSO Scheduling Submenu under Healthcare -->
+    <record id="menu_health_staff_assignment_root" model="ir.ui.menu">
+        <field name="name">Scheduling &amp; Staff</field>
+        <field name="parent_id" ref="health_base.menu_healthcare_root"/>
+        <field name="sequence">15</field>
+    </record>
+
+    <!-- FSO Assignment Dashboard - Main Interface -->
+    <record id="menu_fso_assignment_dashboard" model="ir.ui.menu">
+        <field name="name">Assignment Dashboard</field>
+        <field name="parent_id" ref="menu_health_staff_assignment_root"/>
+        <field name="action" ref="action_fso_assignment_dashboard"/>
+        <field name="sequence">10</field>
+    </record>
+
+    <!-- Visual Scheduler for Assignment Planning -->
+    <record id="menu_assignment_scheduler_grid" model="ir.ui.menu">
+        <field name="name">Visual Scheduler</field>
+        <field name="parent_id" ref="menu_health_staff_assignment_root"/>
+        <field name="action" ref="action_assignment_scheduler_grid"/>
+        <field name="sequence">20</field>
+    </record>
+
+    <!-- Timeline View for Assignment Tracking -->
+    <record id="menu_assignment_timeline" model="ir.ui.menu">
+        <field name="name">Timeline View</field>
+        <field name="parent_id" ref="menu_health_staff_assignment_root"/>
+        <field name="action" ref="action_assignment_web_timeline_view"/>
+        <field name="sequence">30</field>
+    </record>
+
+    <!-- Staff Availability Management -->
+    <record id="menu_staff_availability" model="ir.ui.menu">
+        <field name="name">Staff Availability</field>
+        <field name="parent_id" ref="menu_health_staff_assignment_root"/>
+        <field name="action" ref="action_health_staff_availability"/>
+        <field name="sequence">40</field>
+    </record>
+
+    <!-- Staff Workload Monitoring -->
+    <record id="menu_staff_workload_dashboard" model="ir.ui.menu">
+        <field name="name">Staff Workload</field>
+        <field name="parent_id" ref="menu_health_staff_assignment_root"/>
+        <field name="action" ref="action_staff_workload_dashboard"/>
+        <field name="sequence">50</field>
+    </record>
+
+    <!-- Configuration Submenu -->
+    <record id="menu_assignment_configuration" model="ir.ui.menu">
+        <field name="name">Configuration</field>
+        <field name="parent_id" ref="menu_health_staff_assignment_root"/>
+        <field name="sequence">90</field>
+    </record>
+
+    <!-- Healthcare Skills Menu -->
+    <record id="menu_healthcare_skills" model="ir.ui.menu">
+        <field name="name">Healthcare Skills</field>
+        <field name="parent_id" ref="menu_assignment_configuration"/>
+        <field name="action" ref="action_healthcare_skills"/>
+        <field name="sequence">10</field>
+    </record>
+
+    <!-- Service Areas Menu -->
+    <record id="menu_service_areas" model="ir.ui.menu">
+        <field name="name">Service Areas</field>
+        <field name="parent_id" ref="menu_assignment_configuration"/>
+        <field name="action" ref="action_service_areas"/>
+        <field name="sequence">20</field>
+    </record>
+
+    <!-- Healthcare Staff Management Menu -->
+    <record id="menu_healthcare_staff" model="ir.ui.menu">
+        <field name="name">Healthcare Staff</field>
+        <field name="parent_id" ref="menu_assignment_configuration"/>
+        <field name="action" ref="action_healthcare_staff"/>
+        <field name="sequence">30</field>
+    </record>
+
+</data>
+</odoo>
