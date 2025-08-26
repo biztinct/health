@@ -60,7 +60,7 @@
         'sale',  # Sales integration for service orders
         'purchase',  # Equipment and supplies purchasing
         'hr_timesheet',  # Staff time tracking
-        'health_base',  # Our health foundation
+        'health_base',  # CRITICAL: Must load first - defines foundational healthcare models
         'health_fieldservice',  # Field service billing
         'health_crm',  # Customer billing information
     ],
@@ -81,6 +81,9 @@
         'views/healthcare_invoice_templates.xml',
         'views/misa_integration_views.xml',
         'views/health_invoicing_menus.xml',
+        
+        # Wizards
+        'views/health_payment_workflow_wizard_views.xml',
         
         # Reports
         'reports/healthcare_invoice_reports.xml',

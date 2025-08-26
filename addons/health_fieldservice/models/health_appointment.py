@@ -19,6 +19,13 @@ class HealthAppointment(models.Model):
         help="Automatically generated field service order for home visits"
     )
     
+    # CRM integration - Lead that generated this appointment
+    lead_id = fields.Many2one(
+        'crm.lead',
+        string='Originating Lead',
+        help="CRM lead that generated this appointment"
+    )
+    
     has_fieldservice_order = fields.Boolean(
         'Has Field Service Order',
         compute='_compute_has_fieldservice_order',

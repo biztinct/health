@@ -1,6 +1,6 @@
 {
     'name': 'Healthcare Base',
-    'version': '18.0.4.0.0',  # Updated version
+    'version': '18.0.4.0.1',  # Updated version - includes schema fix migration
     'category': 'Healthcare',
     'summary': 'Foundation module for VAFHS Healthcare Management System with Clinical Intelligence',
     'description': """
@@ -52,4 +52,5 @@ Key Features:
     'application': True,
     'auto_install': False,
     'sequence': 10,
+    'post_init_hook': 'hooks.post_init_hook',
 }

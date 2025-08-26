@@ -21,20 +21,35 @@
 
                 <sheet string="Patient">
                     <div class="oe_button_box" name="button_box" groups="base.group_user">
-                        <button name="action_view_appointments" type="object" class="oe_stat_button" icon="fa-calendar-check-o">
+                        <button name="action_view_appointments" type="object" class="oe_stat_button" icon="fa-calendar-check-o"
+                                invisible="not is_patient">
                             <field name="visit_count" string="Total Visits" widget="statinfo"/>
                         </button>
-                        <button name="action_view_lab_results" type="object" class="oe_stat_button" icon="fa-flask">
+                        <button name="action_view_lab_results" type="object" class="oe_stat_button" icon="fa-flask"
+                                invisible="not is_patient">
                             <div class="o_field_widget o_stat_info">
                                 <span class="o_stat_value">0</span>
                                 <span class="o_stat_text">Lab Results</span>
                             </div>
                         </button>
-                        <button name="action_view_prescriptions" type="object" class="oe_stat_button" icon="fa-medkit">
+                        <button name="action_view_prescriptions" type="object" class="oe_stat_button" icon="fa-medkit"
+                                invisible="not is_patient">
                             <div class="o_field_widget o_stat_info">
                                 <span class="o_stat_value">0</span>
                                 <span class="o_stat_text">Prescriptions</span>
                             </div>
+                        </button>
+                        <button name="action_view_my_patients_as_caregiver" type="object" class="oe_stat_button" icon="fa-user-md"
+                                invisible="not is_caregiver">
+                            <field name="caregiver_patient_count" string="Patients I Care For" widget="statinfo"/>
+                        </button>
+                        <button name="action_view_my_patients_as_payer" type="object" class="oe_stat_button" icon="fa-credit-card"
+                                invisible="not is_payer">
+                            <field name="payer_patient_count" string="Patients I Pay For" widget="statinfo"/>
+                        </button>
+                        <button name="action_view_my_patients_as_referrer" type="object" class="oe_stat_button" icon="fa-share-square-o"
+                                invisible="not is_referrer">
+                            <field name="referrer_patient_count" string="Patients I Referred" widget="statinfo"/>
                         </button>
                     </div>
 
@@ -113,6 +128,12 @@
                                     <field name="emergency_contact_name" required="1"/>
                                     <field name="emergency_contact_phone" widget="phone" required="1"/>
                                     <field name="emergency_contact_relation"/>
+                                </group>
+                                
+                                <group string="Primary Contacts">
+                                    <field name="primary_caregiver_id" options="{'no_create': True}"/>
+                                    <field name="primary_payer_id" options="{'no_create': True}"/>
+                                    <field name="primary_referrer_id" options="{'no_create': True}"/>
                                 </group>
                             </group>
 

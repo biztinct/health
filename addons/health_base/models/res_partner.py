@@ -8,11 +8,16 @@ class ResPartner(models.Model):
     """Extend res.partner for healthcare functionality module"""
     _inherit = 'res.partner'
 
-    # Healthcare Classification
+    # Healthcare Classification - FOUNDATIONAL FIELDS
+    # CRITICAL: These fields are referenced by health_crm, health_fieldservice, health_invoicing
+    # DO NOT REMOVE OR RENAME - other modules depend on these exact field names
     is_patient = fields.Boolean('Is Patient', default=False, tracking=True)
     is_healthcare_staff = fields.Boolean('Is Healthcare Staff', default=False)
     is_healthcare_facility = fields.Boolean('Is Healthcare Facility', default=False)
     is_emergency_contact = fields.Boolean('Is Emergency Contact', default=False)
+    is_caregiver = fields.Boolean('Is Caregiver', default=False, help='This contact is a caregiver')
+    is_payer = fields.Boolean('Is Payer', default=False, help='This contact is responsible for payments')
+    is_referrer = fields.Boolean('Is Referrer', default=False, help='This contact refers patients')
     
     # Patient Healthcare ID
     patient_code = fields.Char(
@@ -55,6 +60,46 @@ class ResPartner(models.Model):
     emergency_contact_name = fields.Char('Emergency Contact Name')
     emergency_contact_phone = fields.Char('Emergency Contact Phone')
     emergency_contact_relation = fields.Char('Relation to Patient')
+    
+    # Primary Healthcare Relationships (Patient Side - Many2one)
+    primary_caregiver_id = fields.Many2one(
+        'res.partner',
+        string='Primary Caregiver',
+        domain=[('is_caregiver', '=', True)],
+        help='Main person providing care for this patient'
+    )
+    primary_payer_id = fields.Many2one(
+        'res.partner', 
+        string='Primary Payer',
+        domain=[('is_payer', '=', True)],
+        help='Main person responsible for payments for this patient'
+    )
+    primary_referrer_id = fields.Many2one(
+        'res.partner',
+        string='Primary Referrer', 
+        domain=[('is_referrer', '=', True)],
+        help='Person who referred this patient'
+    )
+    
+    # Healthcare Relationships (Caregiver/Payer/Referrer Side - One2many)
+    my_patients_as_caregiver = fields.One2many(
+        'res.partner',
+        'primary_caregiver_id',
+        string='Patients I Care For',
+        help='Patients for whom I am the primary caregiver'
+    )
+    my_patients_as_payer = fields.One2many(
+        'res.partner',
+        'primary_payer_id', 
+        string='Patients I Pay For',
+        help='Patients for whom I am the primary payer'
+    )
+    my_patients_as_referrer = fields.One2many(
+        'res.partner',
+        'primary_referrer_id',
+        string='Patients I Referred',
+        help='Patients I have referred to healthcare services'
+    )
     
     # Insurance & Payment
     insurance_provider = fields.Char('Insurance Provider')
@@ -115,6 +160,23 @@ class ResPartner(models.Model):
     # Computed Fields
     visit_count = fields.Integer('Total Visits', compute='_compute_visit_count')
     
+    # Relationship count fields
+    caregiver_patient_count = fields.Integer(
+        'Patients as Caregiver',
+        compute='_compute_relationship_counts',
+        help='Number of patients I care for'
+    )
+    payer_patient_count = fields.Integer(
+        'Patients as Payer', 
+        compute='_compute_relationship_counts',
+        help='Number of patients I pay for'
+    )
+    referrer_patient_count = fields.Integer(
+        'Patients as Referrer',
+        compute='_compute_relationship_counts', 
+        help='Number of patients I referred'
+    )
+    
     def _generate_patient_code(self):
         """Generate unique patient code"""
         sequence = self.env['ir.sequence'].next_by_code('res.partner.patient') or '0001'
@@ -150,6 +212,14 @@ class ResPartner(models.Model):
                 partner.visit_count = 0
             else:
                 partner.visit_count = 0
+    
+    @api.depends('my_patients_as_caregiver', 'my_patients_as_payer', 'my_patients_as_referrer')
+    def _compute_relationship_counts(self):
+        """Compute healthcare relationship counts"""
+        for partner in self:
+            partner.caregiver_patient_count = len(partner.my_patients_as_caregiver)
+            partner.payer_patient_count = len(partner.my_patients_as_payer)
+            partner.referrer_patient_count = len(partner.my_patients_as_referrer)
     
     @api.constrains('email')
     def _check_email(self):
@@ -333,3 +403,45 @@ class ResPartner(models.Model):
         if self.is_patient and self.patient_code:
             return f'[{self.patient_code}] {name}'
         return name
+    
+    def action_view_my_patients_as_caregiver(self):
+        """View patients I care for"""
+        self.ensure_one()
+        
+        return {
+            'type': 'ir.actions.act_window',
+            'name': f'Patients Cared For by {self.name}',
+            'res_model': 'res.partner',
+            'view_mode': 'list,form',
+            'target': 'current',
+            'domain': [('primary_caregiver_id', '=', self.id)],
+            'context': {'search_default_is_patient': 1},
+        }
+    
+    def action_view_my_patients_as_payer(self):
+        """View patients I pay for"""
+        self.ensure_one()
+        
+        return {
+            'type': 'ir.actions.act_window',
+            'name': f'Patients Paid For by {self.name}',
+            'res_model': 'res.partner',
+            'view_mode': 'list,form',
+            'target': 'current',
+            'domain': [('primary_payer_id', '=', self.id)],
+            'context': {'search_default_is_patient': 1},
+        }
+    
+    def action_view_my_patients_as_referrer(self):
+        """View patients I referred"""
+        self.ensure_one()
+        
+        return {
+            'type': 'ir.actions.act_window',
+            'name': f'Patients Referred by {self.name}',
+            'res_model': 'res.partner',
+            'view_mode': 'list,form', 
+            'target': 'current',
+            'domain': [('primary_referrer_id', '=', self.id)],
+            'context': {'search_default_is_patient': 1},
+        }

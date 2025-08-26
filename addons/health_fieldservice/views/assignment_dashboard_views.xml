@@ -83,7 +83,8 @@
                                               t-att-class="record.state.raw_value == 'draft' ? 'badge-light' : 
                                                            record.state.raw_value == 'assigned' ? 'badge-info' : 
                                                            record.state.raw_value == 'in_progress' ? 'badge-warning' : 
-                                                           record.state.raw_value == 'completed' ? 'badge-success' : 'badge-secondary'">
+                                                           record.state.raw_value == 'completed' ? 'badge-success' : 
+                                                           record.state.raw_value == 'closed' ? 'badge-secondary' : 'badge-secondary'">
                                             <field name="state"/>
                                         </span>
                                     </div>
@@ -178,6 +179,12 @@
                         icon="fa-check" 
                         string="Complete Service"
                         invisible="state != 'in_progress'"/>
+                
+                <button name="action_close_fso" 
+                        type="object" 
+                        icon="fa-archive" 
+                        string="Close FSO"
+                        invisible="state != 'completed'"/>
                 
             </list>
         </field>

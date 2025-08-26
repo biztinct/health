@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Payment Workflow Wizard Form View -->
+    <record id="view_health_payment_workflow_wizard_form" model="ir.ui.view">
+        <field name="name">health.payment.workflow.wizard.form</field>
+        <field name="model">health.payment.workflow.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Healthcare Payment Workflow" class="o_form_healthcare_payment">
+                <header>
+                    <button name="action_process_payment_workflow" type="object" 
+                            string="Process Payment" class="btn-primary oe_highlight"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </header>
+                
+                <sheet>
+                    <div class="oe_title">
+                        <h1>Payment Workflow</h1>
+                        <p class="o_form_subtitle">Complete payment processing as per Vietnamese healthcare regulations</p>
+                    </div>
+                    
+                    <!-- Service Information -->
+                    <group string="Service Information" class="o_group_healthcare_info">
+                        <group>
+                            <field name="patient_name" readonly="1"/>
+                            <field name="service_type" readonly="1"/>
+                            <field name="amount_total" readonly="1" widget="monetary"/>
+                        </group>
+                        <group>
+                            <field name="fso_id" readonly="1"/>
+                            <field name="invoice_id" readonly="1"/>
+                            <field name="currency_id" invisible="1"/>
+                        </group>
+                    </group>
+                    
+                    <!-- Payment Workflow Selection -->
+                    <group string="Payment Workflow (per Invoicing.md)" class="o_group_payment_workflow">
+                        <field name="payment_workflow" widget="radio" 
+                               help="Select payment workflow according to Invoicing.md requirements"/>
+                    </group>
+                    
+                    <!-- Pay Now Options (Case 1) -->
+                    <group string="Pay Now - Payment Details" 
+                           invisible="payment_workflow != 'pay_now'" 
+                           class="o_group_pay_now">
+                        <group>
+                            <field name="payment_method" required="payment_workflow == 'pay_now'"/>
+                            <field name="payment_amount" required="payment_workflow == 'pay_now'"
+                                   widget="monetary"/>
+                            <field name="adjustment_reason" 
+                                   placeholder="Reason for any invoice adjustments made by nurse..."
+                                   invisible="not adjustment_reason and abs(payment_amount - amount_total) &lt; 0.01"/>
+                        </group>
+                        
+                        <group>
+                            <field name="payment_proof_required" readonly="1"/>
+                            <field name="payment_proof_notes" 
+                                   invisible="not payment_proof_required"
+                                   placeholder="Photo taken, transaction ID recorded, etc."/>
+                        </group>
+                    </group>
+                    
+                    <!-- Cash Handling (Case 1 specific) -->
+                    <group string="Cash Collection Workflow (Invoicing.md Case 1)" 
+                           invisible="payment_workflow != 'pay_now' or payment_method != 'cash'"
+                           class="o_group_cash_handling">
+                        <div class="alert alert-info">
+                            <strong>Cash Collection Process:</strong>
+                            <ul>
+                                <li>Nurse holds cash until next clinic visit</li>
+                                <li>OM issues electronic receipt upon cash receipt</li> 
+                                <li>AR increases initially, cash recorded when OM receives it</li>
+                            </ul>
+                        </div>
+                        <group>
+                            <field name="cash_held_by_nurse" readonly="1"/>
+                            <field name="nurse_receipt_required" readonly="1"/>
+                        </group>
+                    </group>
+                    
+                    <!-- Pay Later Options (Case 3) -->
+                    <group string="Pay Later - Account Receivable Setup" 
+                           invisible="payment_workflow != 'pay_later'"
+                           class="o_group_pay_later">
+                        <group>
+                            <field name="payment_terms"/>
+                            <field name="due_date" required="payment_workflow == 'pay_later'"/>
+                        </group>
+                        <div class="alert alert-warning" invisible="payment_workflow != 'pay_later'">
+                            <strong>Pay Later Workflow:</strong>
+                            <ul>
+                                <li>Invoice submitted to Tax Department immediately</li>
+                                <li>AR entry created with positive outstanding balance</li>
+                                <li>Collections follow-up per company policy</li>
+                            </ul>
+                        </div>
+                    </group>
+                    
+                    <!-- Vietnamese Compliance -->
+                    <group string="Vietnamese Tax Compliance" class="o_group_tax_compliance">
+                        <group>
+                            <field name="tax_submission_required"/>
+                            <field name="offline_submission" 
+                                   invisible="not tax_submission_required"
+                                   help="Check if submission will be offline due to connectivity issues"/>
+                        </group>
+                        
+                        <group>
+                            <field name="actual_completion_time" 
+                                   help="Actual service completion time for audit trail"/>
+                            <field name="adjusted_submission_time" 
+                                   invisible="not offline_submission"
+                                   help="Time when invoice will be submitted when system becomes available"/>
+                        </group>
+                    </group>
+                    
+                    <!-- Compliance Notice -->
+                    <div class="alert alert-success" name="compliance_notice">
+                        <i class="fa fa-check-circle"/> 
+                        <strong>Compliance Notice:</strong> 
+                        This workflow complies with Vietnamese healthcare invoicing regulations and Invoicing.md requirements.
+                    </div>
+                    
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Payment Workflow Wizard Action -->
+    <record id="action_health_payment_workflow_wizard" model="ir.actions.act_window">
+        <field name="name">Healthcare Payment Workflow</field>
+        <field name="res_model">health.payment.workflow.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+        <field name="view_id" ref="view_health_payment_workflow_wizard_form"/>
+    </record>
+
+</odoo>

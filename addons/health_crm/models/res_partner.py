@@ -101,53 +101,6 @@ class HealthContact(models.Model):
         help='Phường/Xã'
     )
 
-    # Healthcare relationship flags
-    is_patient = fields.Boolean(
-        'Is Patient',
-        help='This contact is a patient'
-    )
-    
-    is_caregiver = fields.Boolean(
-        'Is Caregiver',
-        help='This contact is a caregiver'
-    )
-    
-    is_payer = fields.Boolean(
-        'Is Payer',
-        help='This contact is responsible for payments'
-    )
-    
-    is_referrer = fields.Boolean(
-        'Is Referrer',
-        help='This contact refers patients'
-    )
-
-    # Healthcare relationships - as caregiver
-    caregiver_client_ids = fields.One2many(
-        'health.related.party',
-        'caregiver_id',
-        string='Clients (as Caregiver)',
-        domain=[('relationship_type', '=', 'caregiver')],
-        help='Clients this person cares for'
-    )
-
-    # Healthcare relationships - as payer
-    payer_client_ids = fields.One2many(
-        'health.related.party',
-        'payer_id',
-        string='Clients (as Payer)',
-        domain=[('relationship_type', '=', 'payer')],
-        help='Clients this person pays for'
-    )
-
-    # Healthcare relationships - as referrer
-    referrer_client_ids = fields.One2many(
-        'health.related.party',
-        'referrer_id',
-        string='Clients (as Referrer)',
-        domain=[('relationship_type', '=', 'referrer')],
-        help='Clients this person referred'
-    )
 
     # Healthcare communication preferences
     preferred_contact_method = fields.Selection([
@@ -305,28 +258,3 @@ class HealthContact(models.Model):
             'target': 'current',
         }
 
-    @api.depends('caregiver_client_ids', 'payer_client_ids', 'referrer_client_ids')
-    def _compute_healthcare_relationship_counts(self):
-        """Compute healthcare relationship counts"""
-        for partner in self:
-            partner.caregiver_count = len(partner.caregiver_client_ids)
-            partner.payer_count = len(partner.payer_client_ids)
-            partner.referrer_count = len(partner.referrer_client_ids)
-
-    caregiver_count = fields.Integer(
-        'Caregiver Count',
-        compute='_compute_healthcare_relationship_counts',
-        help='Number of clients this person cares for'
-    )
-
-    payer_count = fields.Integer(
-        'Payer Count',
-        compute='_compute_healthcare_relationship_counts',
-        help='Number of clients this person pays for'
-    )
-
-    referrer_count = fields.Integer(
-        'Referrer Count',
-        compute='_compute_healthcare_relationship_counts',
-        help='Number of clients this person referred'
-    )

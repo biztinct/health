@@ -490,12 +490,14 @@
     background: #6b7280; /* Default gray */
 }
 
-/* State-based colors */
-.fso_compact_card[data-state="draft"]::before { background: #6b7280; }
-.fso_compact_card[data-state="assigned"]::before { background: #3b82f6; }
-.fso_compact_card[data-state="in_progress"]::before { background: #f59e0b; }
-.fso_compact_card[data-state="completed"]::before { background: #10b981; }
-.fso_compact_card[data-state="cancelled"]::before { background: #ef4444; }
+/* State-based colors for 5-stage FSO workflow */
+.fso_compact_card[data-state="draft"]::before { background: #6b7280; }      /* Gray - Draft */
+.fso_compact_card[data-state="assigned"]::before { background: #3b82f6; }   /* Blue - Assigned */
+.fso_compact_card[data-state="in_progress"]::before { background: #f59e0b; } /* Amber - In Progress */
+.fso_compact_card[data-state="completed"]::before { background: #10b981; }  /* Green - Completed */
+.fso_compact_card[data-state="closed"]::before { background: #64748b; }     /* Slate - Closed */
+/* Legacy states */
+.fso_compact_card[data-state="cancelled"]::before { background: #ef4444; }  /* Red - Cancelled */
 
 /* Compact Card Typography */
 .fso_compact_card .fw-bold {

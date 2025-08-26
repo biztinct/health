@@ -169,6 +169,55 @@ class HealthcarePayment(models.Model):
         'Vietnamese Tax Invoice Reference',
         help='Reference to related tax invoice'
     )
+    
+    # Additional fields for Invoicing.md workflow integration
+    healthcare_payment_method = fields.Selection([
+        ('cash', 'Cash'),
+        ('bank_card', 'Bank/Card Transfer'),
+        ('bank_transfer', 'Bank Transfer'),
+        ('online_payment', 'Online Payment'),
+    ], string='Healthcare Payment Method (Invoicing.md)',
+       help='Payment method as per Invoicing.md workflow')
+    
+    fso_id = fields.Many2one(
+        'health.fieldservice.order',
+        string='Field Service Order (Invoicing.md)',
+        help='FSO that generated this payment'
+    )
+    
+    # Cash collection workflow (Invoicing.md Case 1)
+    cash_held_by_staff = fields.Boolean(
+        'Cash Held by Staff',
+        help='Cash is held by healthcare staff until clinic visit'
+    )
+    
+    om_receipt_required = fields.Boolean(
+        'OM Receipt Required',
+        help='Operations Manager must issue electronic receipt'
+    )
+    
+    payment_proof_notes = fields.Text(
+        'Payment Proof Notes',
+        help='Notes about payment proof/photo taken'
+    )
+    
+    # AR tracking (per Invoicing.md requirements)
+    ar_cash_status = fields.Selection([
+        ('ar_increase_logged', 'AR Increase Logged'),
+        ('cash_received_by_om', 'Cash Received by OM'),
+        ('cash_recorded', 'Cash Recorded in System'),
+    ], string='AR Cash Status',
+       help='Accounts receivable cash processing status per Invoicing.md')
+    
+    cash_recorded = fields.Boolean(
+        'Cash Recorded',
+        help='Cash has been recorded in accounting system'
+    )
+    
+    ar_notes = fields.Text(
+        'AR Notes',
+        help='Accounts receivable processing notes'
+    )
 
     @api.model
     def create(self, vals):

@@ -21,8 +21,7 @@
         - Campaign source tracking for healthcare marketing
         
         Integration:
-        - Links with health_calendar for appointment booking
-        - Connects to health_fieldservice for service delivery
+        - Links with health_fieldservice for appointment booking and service delivery
         - Supports health_invoicing for billing workflow
         
         Vietnamese Healthcare Compliance:
@@ -39,8 +38,8 @@
         'mail',
         'crm',  # Standard Odoo CRM - we inherit from this
         'utm',  # UTM campaign tracking
-        'health_base',  # Our health foundation
-        'health_calendar',  # Appointment integration
+        'health_base',  # CRITICAL: Must load first - defines res.partner extensions (is_caregiver, etc.)
+        'health_fieldservice',  # Appointment integration (appointments are in fieldservice module)
     ],
     'data': [
         # Security
@@ -55,7 +54,6 @@
         # Views - CRM Extensions
         'views/crm_lead_views.xml',
         'views/res_partner_views.xml',
-        'views/health_related_party_views.xml',
         'views/health_client_representative_views.xml',
         'views/health_crm_menus.xml',
     ],

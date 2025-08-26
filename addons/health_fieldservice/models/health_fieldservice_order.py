@@ -421,15 +421,11 @@ class HealthFieldServiceOrderUnified(models.Model):
     
     state = fields.Selection([
         ('draft', 'Draft'),
-        ('requested', 'Requested'),
-        ('confirmed', 'Confirmed'),
-        ('assigned', 'Staff Assigned'),
-        ('scheduled', 'Scheduled'),
-        ('ready', 'Ready to Start'),
-        ('in_progress', 'Service in Progress'),
-        ('completed', 'Service Completed'),
-        ('invoiced', 'Invoiced'),
-        ('paid', 'Paid'),
+        ('assigned', 'Assigned'),
+        ('in_progress', 'In Progress'),
+        ('completed', 'Completed'),
+        ('closed', 'Closed'),
+        # Legacy states for existing data compatibility
         ('cancelled', 'Cancelled'),
         ('no_show', 'Patient No Show'),
         ('rescheduled', 'Rescheduled'),
@@ -739,12 +735,9 @@ class HealthFieldServiceOrderUnified(models.Model):
         
         # Post-creation automation
         for order in orders:
-            # Auto-generate draft invoice when booking is created (Client Requirement)
-            if order.state not in ['draft', 'cancelled']:
-                order._generate_draft_invoice()
-            
             # Send notifications
             order._send_booking_notifications()
+            # Note: Invoice generation removed - now manual per Invoicing.md requirements
         
         return orders
     
@@ -767,80 +760,84 @@ class HealthFieldServiceOrderUnified(models.Model):
     def _handle_state_change(self, new_state):
         """Handle automation based on state changes"""
         for record in self:
-            if new_state == 'confirmed':
-                # Generate invoice if not exists
-                if not record.invoice_id:
-                    record._generate_draft_invoice()
-                # Send confirmation notifications
-                record._send_confirmation_notifications()
-            
-            elif new_state == 'assigned':
+            if new_state == 'assigned':
                 # Set assignment date
                 record.assignment_date = fields.Datetime.now()
                 # Notify assigned staff
                 record._notify_assigned_staff()
             
+            elif new_state == 'in_progress':
+                # Set actual start time if not set
+                if not record.actual_start_datetime:
+                    record.actual_start_datetime = fields.Datetime.now()
+            
             elif new_state == 'completed':
                 # Set actual end time if not set
                 if not record.actual_end_datetime:
                     record.actual_end_datetime = fields.Datetime.now()
-                # Finalize invoice
-                record._finalize_invoice()
                 # Send completion notifications
                 record._send_completion_notifications()
+                # Note: Invoice creation is now manual per Invoicing.md workflow
+            
+            elif new_state == 'closed':
+                # Final state - archive or cleanup actions
+                pass
     
     def _handle_staff_assignment(self):
         """Handle automation when staff is assigned (through assignment model)"""
         for record in self:
-            # Auto-advance state to 'assigned' if assignments exist and in earlier state
-            if record.assignment_ids and record.state in ['draft', 'requested', 'confirmed']:
+            # Auto-advance state to 'assigned' if assignments exist and in draft state
+            if record.assignment_ids and record.state == 'draft':
                 record.state = 'assigned'
     
     def _handle_scheduling(self):
         """Handle automation when service is scheduled"""
         for record in self:
-            # Auto-advance state to 'scheduled' if staff assigned
-            if record.assigned_staff_ids and record.state in ['assigned']:
-                record.state = 'scheduled'
+            # Keep state as 'assigned' when scheduling - no additional state needed
+            pass
     
     # ============================================================================
     # INVOICE GENERATION & BILLING (Client Priority)
     # ============================================================================
     
-    def _generate_draft_invoice(self):
-        """Generate draft invoice for the service (Client Requirement)"""
+    def action_create_final_invoice(self):
+        """Create final invoice after service completion (per Invoicing.md workflow)"""
         self.ensure_one()
         
+        # Validate state - can only invoice completed services
+        if self.state != 'completed':
+            raise UserError(_('Invoice can only be created for completed services.'))
+        
         if self.invoice_id:
-            return self.invoice_id
+            raise UserError(_('Invoice already exists for this service order.'))
         
-        # Prepare invoice values
-        invoice_vals = {
-            'move_type': 'out_invoice',
-            'partner_id': self.customer_id.id,
-            'invoice_date': fields.Date.today(),
-            'invoice_origin': self.name,
-            'ref': self.name,
-            
-            # Healthcare-specific fields (from health_invoicing module)
-            'fieldservice_order_id': self.id,
-            'patient_id': self.patient_id.id,
-            'healthcare_service_type': self.service_type,
-            'staff_time_hours': self.estimated_duration,
-            'travel_distance_km': self.travel_distance,
-            'urgency_surcharge': self.urgency_charge,
+        # Create billing record first (intermediate step)
+        billing = self.env['health.service.billing'].create_from_fieldservice_order(self.id)
+        billing.action_mark_ready_to_invoice()
+        
+        # Generate final invoice
+        invoice_result = billing.action_generate_invoice()
+        
+        # Update FSO with invoice link
+        self.invoice_id = billing.invoice_id.id
+        
+        # Return wizard for payment workflow (Pay Now/Pay Later)
+        return self._open_payment_workflow_wizard(billing.invoice_id)
+    
+    def _open_payment_workflow_wizard(self, invoice):
+        """Open payment workflow wizard (Pay Now/Pay Later) per Invoicing.md"""
+        return {
+            'name': _('Payment Workflow'),
+            'type': 'ir.actions.act_window',
+            'res_model': 'health.payment.workflow.wizard',
+            'view_mode': 'form',
+            'target': 'new',
+            'context': {
+                'default_fso_id': self.id,
+                'default_invoice_id': invoice.id,
+                'default_amount_total': invoice.amount_total,
+            }
         }
-        
-        # Create invoice
-        invoice = self.env['account.move'].create(invoice_vals)
-        
-        # Create invoice lines
-        self._create_invoice_lines(invoice)
-        
-        # Link invoice to FSO
-        self.invoice_id = invoice.id
-        
-        return invoice
     
     def _create_invoice_lines(self, invoice):
         """Create detailed invoice lines for the service"""
@@ -1030,7 +1027,7 @@ class HealthFieldServiceOrderUnified(models.Model):
         })
         
         # Update FSO state if needed
-        if self.state in ['draft', 'confirmed']:
+        if self.state == 'draft':
             self.state = 'assigned'
         
         return {'success': True, 'assignment_id': assignment.id}
@@ -1062,6 +1059,13 @@ class HealthFieldServiceOrderUnified(models.Model):
         self.write({
             'state': 'completed',
             'actual_end_datetime': fields.Datetime.now(),
+        })
+
+    def action_close_fso(self):
+        """Close the FSO after completion (final state)"""
+        self.ensure_one()
+        self.write({
+            'state': 'closed',
         })
     
     def action_cancel_booking(self):

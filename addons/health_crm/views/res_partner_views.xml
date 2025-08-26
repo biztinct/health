@@ -19,13 +19,7 @@
                 <field name="preferred_name" placeholder="Preferred calling name"/>
             </xpath>
 
-            <!-- Add healthcare flags -->
-            <xpath expr="//field[@name='is_company']" position="after">
-                <field name="is_patient"/>
-                <field name="is_caregiver"/>
-                <field name="is_payer"/>
-                <field name="is_referrer"/>
-            </xpath>
+            <!-- Healthcare flags are inherited from health_base -->
 
             <!-- Enhanced Vietnamese Address Section -->
             <xpath expr="//div[@class='o_address_format']" position="replace">
@@ -101,15 +95,7 @@
                         <field name="healthcare_notes" nolabel="1" placeholder="Healthcare-related notes and observations..."/>
                     </group>
 
-                    <!-- Relationship Statistics -->
-                    <group name="relationship_stats" string="Healthcare Relationships" 
-                           invisible="not is_caregiver and not is_payer and not is_referrer">
-                        <group>
-                            <field name="caregiver_count" string="Clients as Caregiver" invisible="not is_caregiver"/>
-                            <field name="payer_count" string="Clients as Payer" invisible="not is_payer"/>
-                            <field name="referrer_count" string="Clients as Referrer" invisible="not is_referrer"/>
-                        </group>
-                    </group>
+                    <!-- Relationship statistics now handled in health_base -->
 
                     <!-- Client Representatives (FROM EXCEL REQUIREMENTS) -->
                     <page name="client_representatives" string="Client Representatives">
@@ -143,44 +129,7 @@
                         </field>
                     </page>
 
-                    <!-- Related Parties -->
-                    <notebook>
-                        <page name="as_caregiver" string="Caregiver Relationships" invisible="not is_caregiver">
-                            <field name="caregiver_client_ids" mode="tree" readonly="1">
-                                <tree>
-                                    <field name="client_id"/>
-                                    <field name="caregiver_relationship"/>
-                                    <field name="caregiver_availability"/>
-                                    <field name="start_date"/>
-                                    <field name="is_active"/>
-                                </tree>
-                            </field>
-                        </page>
-                        
-                        <page name="as_payer" string="Payer Relationships" invisible="not is_payer">
-                            <field name="payer_client_ids" mode="tree" readonly="1">
-                                <tree>
-                                    <field name="client_id"/>
-                                    <field name="payer_relationship"/>
-                                    <field name="payment_responsibility"/>
-                                    <field name="start_date"/>
-                                    <field name="is_active"/>
-                                </tree>
-                            </field>
-                        </page>
-                        
-                        <page name="as_referrer" string="Referrer Relationships" invisible="not is_referrer">
-                            <field name="referrer_client_ids" mode="tree" readonly="1">
-                                <tree>
-                                    <field name="client_id"/>
-                                    <field name="referrer_type"/>
-                                    <field name="referral_date"/>
-                                    <field name="commission_rate"/>
-                                    <field name="is_active"/>
-                                </tree>
-                            </field>
-                        </page>
-                    </notebook>
+                    <!-- Patient relationships now handled in health_base with simple Many2one fields -->
                 </page>
             </xpath>
 
