@@ -49,28 +49,6 @@
         <field name="perm_unlink" eval="True"/>
     </record>
 
-    <!-- Healthcare Related Party Access Rules -->
-    <record id="health_related_party_user_rule" model="ir.rule">
-        <field name="name">Healthcare Related Party: User Access</field>
-        <field name="model_id" ref="model_health_related_party"/>
-        <field name="domain_force">[(1, '=', 1)]</field>
-        <field name="groups" eval="[(4, ref('group_health_crm_user'))]"/>
-        <field name="perm_read" eval="True"/>
-        <field name="perm_write" eval="True"/>
-        <field name="perm_create" eval="True"/>
-        <field name="perm_unlink" eval="False"/>
-    </record>
-
-    <record id="health_related_party_manager_rule" model="ir.rule">
-        <field name="name">Healthcare Related Party: Manager Access</field>
-        <field name="model_id" ref="model_health_related_party"/>
-        <field name="domain_force">[(1, '=', 1)]</field>
-        <field name="groups" eval="[(4, ref('group_health_crm_manager'))]"/>
-        <field name="perm_read" eval="True"/>
-        <field name="perm_write" eval="True"/>
-        <field name="perm_create" eval="True"/>
-        <field name="perm_unlink" eval="True"/>
-    </record>
 
     <!-- Partner Access - Enhanced for Healthcare -->
     <record id="health_crm_partner_user_rule" model="ir.rule">

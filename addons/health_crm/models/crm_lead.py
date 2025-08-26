@@ -57,8 +57,9 @@ class HealthLead(models.Model):
 
     # Healthcare relationships
     patient_id = fields.Many2one(
-        'health.patient', 
+        'res.partner', 
         string='Patient',
+        domain=[('is_patient', '=', True)],
         help='Linked patient record if converted'
     )
     
@@ -198,13 +199,9 @@ class HealthLead(models.Model):
         if self.patient_id:
             return self.patient_id
         
-        # Try to find existing patient by partner
-        if self.partner_id:
-            patient = self.env['health.patient'].search([
-                ('partner_id', '=', self.partner_id.id)
-            ], limit=1)
-            if patient:
-                return patient
+        # Try to find existing patient by partner  
+        if self.partner_id and self.partner_id.is_patient:
+            return self.partner_id
         
         # Create new patient
         patient_vals = {
@@ -226,7 +223,7 @@ class HealthLead(models.Model):
                 'country_id': self.country_id.id if self.country_id else False,
             })
         
-        return self.env['health.patient'].create(patient_vals)
+        return self.env['res.partner'].create(patient_vals)
 
     def _get_appointment_type(self):
         """Get appointment type based on service interest"""

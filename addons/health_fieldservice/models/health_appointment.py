@@ -7,9 +7,67 @@ _logger = logging.getLogger(__name__)
 
 class HealthAppointment(models.Model):
     """
-    Extend health.appointment to automatically generate FSO for home visits
+    Healthcare appointment model that automatically generates FSO for home visits
     """
-    _inherit = 'health.appointment'
+    _name = 'health.appointment'
+    _description = 'Healthcare Appointment'
+    _inherit = ['mail.thread', 'mail.activity.mixin']
+    _order = 'start_datetime desc'
+    
+    # ============================================================================
+    # Core Appointment Fields
+    # ============================================================================
+    
+    name = fields.Char('Appointment Reference', required=True, default='New Appointment')
+    
+    patient_id = fields.Many2one(
+        'res.partner',
+        string='Patient',
+        required=True,
+        domain=[('is_patient', '=', True)],
+        help="Patient for this appointment"
+    )
+    
+    start_datetime = fields.Datetime(
+        'Start Date & Time',
+        required=True,
+        help="When the appointment starts"
+    )
+    
+    end_datetime = fields.Datetime(
+        'End Date & Time',
+        help="When the appointment ends"
+    )
+    
+    duration = fields.Integer(
+        'Duration (minutes)',
+        default=60,
+        help="Appointment duration in minutes"
+    )
+    
+    appointment_type_id = fields.Many2one(
+        'health.service.type',
+        string='Appointment Type',
+        required=True,
+        help="Type of appointment/service"
+    )
+    
+    state = fields.Selection([
+        ('draft', 'Draft'),
+        ('confirmed', 'Confirmed'),
+        ('in_progress', 'In Progress'),
+        ('completed', 'Completed'),
+        ('cancelled', 'Cancelled'),
+        ('no_show', 'No Show')
+    ], string='Status', default='draft', tracking=True)
+    
+    priority = fields.Selection([
+        ('routine', 'Routine'),
+        ('urgent', 'Urgent'),
+        ('emergency', 'Emergency')
+    ], string='Priority', default='routine')
+    
+    notes = fields.Text('Notes')
     
     # Field Service Order relationship
     fieldservice_order_id = fields.Many2one(
@@ -135,12 +193,12 @@ class HealthAppointment(models.Model):
         for appointment in self:
             appointment.has_fieldservice_order = bool(appointment.fieldservice_order_id)
     
-    @api.depends('service_type_id', 'service_type_id.name')
+    @api.depends('appointment_type_id', 'appointment_type_id.name')
     def _compute_location_type(self):
-        """Determine location type based on service type"""
+        """Determine location type based on appointment type"""
         for appointment in self:
-            if appointment.service_type_id:
-                service_name = appointment.service_type_id.name.lower()
+            if appointment.appointment_type_id:
+                service_name = appointment.appointment_type_id.name.lower()
                 if any(keyword in service_name for keyword in ['home', 'visit', 'house', 'domicile']):
                     appointment.location_type = 'home'
                 elif any(keyword in service_name for keyword in ['emergency', 'urgent', 'ambulance']):
@@ -183,12 +241,12 @@ class HealthAppointment(models.Model):
         if not self.patient_id:
             raise UserError(_("Patient is required to create Field Service Order."))
         
-        if not self.service_type_id:
+        if not self.appointment_type_id:
             raise UserError(_("Service type is required to create Field Service Order."))
         
         # Get appropriate clinical protocol
         protocol = self.env['health.clinical.protocol'].get_protocol_for_service(
-            self.service_type_id.id
+            self.appointment_type_id.id
         )
         
         # Create FSO
@@ -233,7 +291,7 @@ class HealthAppointment(models.Model):
         """Get appropriate field service team for this appointment"""
         # Find team based on service area or service type
         team = self.env['health.fieldservice.team'].search([
-            ('service_type_ids', 'in', self.service_type_id.id),
+            ('service_type_ids', 'in', self.appointment_type_id.id),
             ('active', '=', True)
         ], limit=1)
         

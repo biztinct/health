@@ -1,3 +1,4 @@
+from . import health_appointment  # CRITICAL: Must load first - defines health.appointment model
 from . import health_fieldservice_order
 from . import health_fieldservice_stage
 from . import health_fieldservice_team

@@ -33,14 +33,6 @@
         action="base.action_partner_form"
         sequence="30"/>
 
-    <!-- Related Parties -->
-    <menuitem 
-        id="menu_healthcare_related_parties"
-        name="Related Parties"
-        parent="menu_healthcare_crm_root"
-        action="action_health_related_party"
-        sequence="40"/>
-
     <!-- Client Representatives (FROM EXCEL REQUIREMENTS) -->
     <menuitem 
         id="menu_healthcare_client_representatives"
