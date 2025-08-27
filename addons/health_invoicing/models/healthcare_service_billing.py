@@ -41,8 +41,9 @@ class HealthcareServiceBilling(models.Model):
     
     # Patient and customer information
     patient_id = fields.Many2one(
-        'health.patient',
+        'res.partner',
         string='Patient',
+        domain=[('is_patient', '=', True)],
         required=True,
         help='Patient receiving the service'
     )
@@ -168,17 +169,16 @@ class HealthcareServiceBilling(models.Model):
         help='Date when invoice was generated'
     )
     
-    # Staff and equipment tracking
+    # Staff tracking
     staff_ids = fields.Many2many(
         'hr.employee',
         string='Staff Members',
         help='Healthcare staff involved in service delivery'
     )
     
-    equipment_ids = fields.Many2many(
-        'health.equipment',
-        string='Equipment Used',
-        help='Medical equipment used during service'
+    equipment_description = fields.Text(
+        'Equipment Used',
+        help='Description of medical equipment used during service'
     )
     
     # Time tracking for staff billing
@@ -263,7 +263,7 @@ class HealthcareServiceBilling(models.Model):
             'service_address': fso.service_address,
             'travel_distance_km': fso.travel_distance,
             'staff_ids': [(6, 0, fso.assigned_staff_ids.mapped('employee_id').ids)],
-            'equipment_ids': [(6, 0, fso.required_equipment_ids.ids)],
+            'equipment_description': fso.equipment_requirements or 'Standard medical equipment',
         }
         
         # Calculate amounts
@@ -295,11 +295,12 @@ class HealthcareServiceBilling(models.Model):
         else:
             amounts['base_service_amount'] = 1000000.0  # Default VND amount
         
-        # Equipment rental
-        equipment_cost = 0.0
-        for equipment in fso.required_equipment_ids:
-            equipment_cost += equipment.daily_rental_rate * (fso.estimated_duration / 24.0 or 1)
-        amounts['equipment_rental_amount'] = equipment_cost
+        # Equipment rental - simplified for now
+        # TODO: Implement proper equipment cost calculation
+        if fso.equipment_requirements:
+            amounts['equipment_rental_amount'] = 100000.0  # Default VND equipment charge
+        else:
+            amounts['equipment_rental_amount'] = 0.0
         
         # Travel expenses for home visits
         if fso.service_category == 'home_visit' and fso.travel_distance:
@@ -445,7 +446,7 @@ class HealthcareServiceBilling(models.Model):
         if self.equipment_rental_amount:
             lines_to_create.append({
                 'move_id': invoice.id,
-                'name': f'Medical Equipment Rental - {", ".join(self.equipment_ids.mapped("name"))}',
+                'name': f'Medical Equipment Rental - {self.equipment_description or "Standard equipment"}',
                 'quantity': 1,
                 'price_unit': self.equipment_rental_amount,
                 'healthcare_service_category': 'equipment',

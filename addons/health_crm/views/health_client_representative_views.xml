@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-    <!-- Client Representative Tree View -->
-    <record id="view_health_client_representative_tree" model="ir.ui.view">
-        <field name="name">health.client.representative.tree</field>
+    <!-- Client Representative List View -->
+    <record id="view_health_client_representative_list" model="ir.ui.view">
+        <field name="name">health.client.representative.list</field>
         <field name="model">health.client.representative</field>
         <field name="arch" type="xml">
-            <tree string="Client Representatives">
+            <list string="Client Representatives">
                 <field name="contact_id"/>
                 <field name="representative_name"/>
                 <field name="kinship_title"/>
@@ -18,7 +18,7 @@
                 <field name="is_primary"/>
                 <field name="details_complete"/>
                 <field name="active"/>
-            </tree>
+            </list>
         </field>
     </record>
 
@@ -78,11 +78,7 @@
                         <field name="notes" nolabel="1" placeholder="Additional notes about this representative..."/>
                     </group>
                 </sheet>
-                <div class="oe_chatter">
-                    <field name="message_follower_ids"/>
-                    <field name="activity_ids"/>
-                    <field name="message_ids"/>
-                </div>
+                <chatter reload_on_follower="True"/>
             </form>
         </field>
     </record>
@@ -126,7 +122,7 @@
     <record id="action_health_client_representative" model="ir.actions.act_window">
         <field name="name">Client Representatives</field>
         <field name="res_model">health.client.representative</field>
-        <field name="view_mode">tree,form</field>
+        <field name="view_mode">list,form</field>
         <field name="search_view_id" ref="view_health_client_representative_search"/>
         <field name="context">{'search_default_active': 1}</field>
         <field name="help" type="html">

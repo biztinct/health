@@ -49,7 +49,7 @@
                                    widget="monetary"/>
                             <field name="adjustment_reason" 
                                    placeholder="Reason for any invoice adjustments made by nurse..."
-                                   invisible="not adjustment_reason and abs(payment_amount - amount_total) &lt; 0.01"/>
+                                   invisible="not adjustment_reason and abs(payment_amount - amount_total) &amp;lt; 0.01"/>
                         </group>
                         
                         <group>

@@ -1,95 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo noupdate="1">
 
-    <!-- Healthcare CRM Team -->
-    <record id="healthcare_crm_team" model="crm.team">
-        <field name="name">Healthcare Team</field>
-        <field name="sequence">10</field>
-        <field name="use_leads">True</field>
-        <field name="use_opportunities">True</field>
-        <field name="alias_name">healthcare</field>
-        <field name="description">Vietnamese Healthcare CRM Team for VAFHS</field>
-    </record>
-
     <!-- Healthcare CRM Stages -->
     <record id="stage_healthcare_contact" model="crm.stage">
         <field name="name">Initial Contact</field>
         <field name="sequence">1</field>
-        <field name="probability">10</field>
-        <field name="on_change">1</field>
-        <field name="requirements">Contact information collected</field>
         <field name="team_id" ref="healthcare_crm_team"/>
-        <field name="legend_blocked">Blocked</field>
-        <field name="legend_done">Ready</field>
-        <field name="legend_normal">In Progress</field>
     </record>
 
     <record id="stage_healthcare_qualification" model="crm.stage">
         <field name="name">Service Qualification</field>
         <field name="sequence">2</field>
-        <field name="probability">25</field>
-        <field name="requirements">Service needs and preferences identified</field>
         <field name="team_id" ref="healthcare_crm_team"/>
-        <field name="legend_blocked">Not Qualified</field>
-        <field name="legend_done">Qualified</field>
-        <field name="legend_normal">In Progress</field>
     </record>
 
     <record id="stage_healthcare_assessment" model="crm.stage">
         <field name="name">Health Assessment</field>
         <field name="sequence">3</field>
-        <field name="probability">50</field>
-        <field name="requirements">Basic health assessment completed</field>
         <field name="team_id" ref="healthcare_crm_team"/>
-        <field name="legend_blocked">Assessment Incomplete</field>
-        <field name="legend_done">Assessment Complete</field>
-        <field name="legend_normal">In Progress</field>
     </record>
 
     <record id="stage_healthcare_proposal" model="crm.stage">
         <field name="name">Service Proposal</field>
         <field name="sequence">4</field>
-        <field name="probability">75</field>
-        <field name="requirements">Service plan and pricing provided</field>
         <field name="team_id" ref="healthcare_crm_team"/>
-        <field name="legend_blocked">Proposal Rejected</field>
-        <field name="legend_done">Proposal Accepted</field>
-        <field name="legend_normal">Under Review</field>
     </record>
 
     <record id="stage_healthcare_booking" model="crm.stage">
         <field name="name">Booking Confirmed</field>
         <field name="sequence">5</field>
-        <field name="probability">90</field>
-        <field name="requirements">Appointment scheduled and confirmed</field>
         <field name="team_id" ref="healthcare_crm_team"/>
-        <field name="legend_blocked">Booking Issues</field>
-        <field name="legend_done">Confirmed</field>
-        <field name="legend_normal">Scheduling</field>
     </record>
 
     <record id="stage_healthcare_won" model="crm.stage">
         <field name="name">Patient Acquired</field>
         <field name="sequence">6</field>
-        <field name="probability">100</field>
         <field name="is_won">True</field>
-        <field name="requirements">First service delivered successfully</field>
         <field name="team_id" ref="healthcare_crm_team"/>
-        <field name="legend_blocked">Service Issues</field>
-        <field name="legend_done">Success</field>
-        <field name="legend_normal">Active Patient</field>
     </record>
 
     <record id="stage_healthcare_lost" model="crm.stage">
         <field name="name">Opportunity Lost</field>
         <field name="sequence">7</field>
-        <field name="probability">0</field>
         <field name="fold">True</field>
-        <field name="requirements">Reason for loss documented</field>
         <field name="team_id" ref="healthcare_crm_team"/>
-        <field name="legend_blocked">Lost</field>
-        <field name="legend_done">Documented</field>
-        <field name="legend_normal">Review</field>
     </record>
 
 </odoo>

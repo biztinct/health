@@ -341,17 +341,17 @@ class HealthPaymentWorkflowWizard(models.TransientModel):
     
     def _handle_cash_collection_workflow(self, payment):
         """Handle cash collection workflow per Invoicing.md Case 1"""
-        # Create cash collection record for Operations Manager
-        self.env['health.cash.collection'].create({
-            'payment_id': payment.id,
-            'fso_id': self.fso_id.id,
-            'staff_member_id': self.fso_id.lead_staff_id.id,
-            'amount': self.payment_amount,
-            'collection_date': fields.Date.today(),
-            'status': 'held_by_staff',
-            'notes': 'Cash held by nurse until clinic visit - OM receipt required',
-            'om_receipt_required': True,
-        })
+        # TODO: Create cash collection record for Operations Manager
+        # self.env['health.cash.collection'].create({
+        #     'payment_id': payment.id,
+        #     'fso_id': self.fso_id.id,
+        #     'staff_member_id': self.fso_id.lead_staff_id.id,
+        #     'amount': self.payment_amount,
+        #     'collection_date': fields.Date.today(),
+        #     'status': 'held_by_staff',
+        #     'notes': 'Cash held by nurse until clinic visit - OM receipt required',
+        #     'om_receipt_required': True,
+        # })
         
         # Log in AR as increase (per Invoicing.md: "Initial nurse collection logged as AR ↑")
         self._log_ar_cash_collection(payment)
@@ -371,17 +371,19 @@ class HealthPaymentWorkflowWizard(models.TransientModel):
         """Create AR entry with outstanding balance (Case 3)"""
         # The invoice posting already creates the AR entry
         # This method can be used for additional AR tracking if needed
-        ar_vals = {
-            'fso_id': self.fso_id.id,
-            'invoice_id': self.invoice_id.id,
-            'customer_id': self.invoice_id.partner_id.id,
-            'outstanding_amount': self.amount_total,
-            'due_date': self.due_date,
-            'status': 'outstanding',
-            'notes': 'Outstanding balance from Pay Later workflow',
-        }
-        
-        self.env['health.ar.tracking'].create(ar_vals)
+        # TODO: Create AR tracking record when model is implemented
+        # ar_vals = {
+        #     'fso_id': self.fso_id.id,
+        #     'invoice_id': self.invoice_id.id,
+        #     'customer_id': self.invoice_id.partner_id.id,
+        #     'outstanding_amount': self.amount_total,
+        #     'due_date': self.due_date,
+        #     'status': 'outstanding',
+        #     'notes': 'Outstanding balance from Pay Later workflow',
+        # }
+        # 
+        # self.env['health.ar.tracking'].create(ar_vals)
+        pass
     
     def _submit_to_tax_authorities(self):
         """Submit invoice to Vietnamese Tax Authorities"""
@@ -412,18 +414,20 @@ class HealthPaymentWorkflowWizard(models.TransientModel):
     
     def _log_service_completion(self):
         """Log service completion per Invoicing.md requirements"""
-        completion_data = {
-            'fso_id': self.fso_id.id,
-            'completion_time': self.actual_completion_time or fields.Datetime.now(),
-            'invoice_id': self.invoice_id.id,
-            'payment_workflow': self.payment_workflow,
-            'payment_method': self.payment_method,
-            'tax_submitted': self.tax_submission_required,
-            'offline_submission': self.offline_submission,
-            'notes': f'Service completed with {self.payment_workflow} workflow',
-        }
-        
-        self.env['health.service.completion.log'].create(completion_data)
+        # TODO: Log service completion when model is implemented
+        # completion_data = {
+        #     'fso_id': self.fso_id.id,
+        #     'completion_time': self.actual_completion_time or fields.Datetime.now(),
+        #     'invoice_id': self.invoice_id.id,
+        #     'payment_workflow': self.payment_workflow,
+        #     'payment_method': self.payment_method,
+        #     'tax_submitted': self.tax_submission_required,
+        #     'offline_submission': self.offline_submission,
+        #     'notes': f'Service completed with {self.payment_workflow} workflow',
+        # }
+        # 
+        # self.env['health.service.completion.log'].create(completion_data)
+        pass
     
     def _return_success_action(self, message):
         """Return success action with message"""

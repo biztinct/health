@@ -47,19 +47,19 @@
         'security/ir.model.access.csv',
         
         # Data
+        'data/health_crm_teams.xml',  # MUST load first - defines teams referenced by stages
         'data/health_crm_stages.xml',
-        'data/health_crm_teams.xml',
         'data/utm_sources_vietnamese.xml',
         
         # Views - CRM Extensions
+        'views/health_client_representative_views.xml',  # Load first - defines model views
         'views/crm_lead_views.xml',
         'views/res_partner_views.xml',
-        'views/health_client_representative_views.xml',
         'views/health_crm_menus.xml',
     ],
-    'demo': [
-        'demo/health_crm_demo.xml',
-    ],
+    # 'demo': [
+    #     'demo/health_crm_demo.xml',
+    # ],
     'installable': True,
     'auto_install': False,
     'application': False,  # Extends existing CRM

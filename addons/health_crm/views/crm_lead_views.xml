@@ -29,13 +29,9 @@
                 </group>
             </xpath>
 
-            <!-- Add service requirements -->
+            <!-- Add service requirements and Vietnamese healthcare fields -->
             <xpath expr="//field[@name='description']" position="after">
                 <field name="service_requirements" placeholder="Specific healthcare service requirements and notes..."/>
-            </xpath>
-
-            <!-- Add Vietnamese healthcare fields -->
-            <xpath expr="//group[@name='extra']" position="after">
                 <group name="vietnamese_healthcare" string="Vietnamese Healthcare Details">
                     <group>
                         <field name="preferred_service_area" options="{'no_create': True}"/>
@@ -58,7 +54,7 @@
                         string="Convert to Appointment" 
                         type="object" 
                         class="btn-primary"
-                        invisible="health_contact_outcome == 'service_booked' or stage_id in (%(crm.stage_lead_6)d, %(crm.stage_lead_7)d)"/>
+                        invisible="health_contact_outcome == 'service_booked'"/>
                 <button name="action_schedule_follow_up" 
                         string="Schedule Follow-up" 
                         type="object" 
@@ -67,86 +63,5 @@
         </field>
     </record>
 
-    <!-- Healthcare Lead Tree View Extension -->
-    <record id="view_healthcare_lead_tree" model="ir.ui.view">
-        <field name="name">crm.lead.tree.healthcare</field>
-        <field name="model">crm.lead</field>
-        <field name="inherit_id" ref="crm.crm_lead_view_tree"/>
-        <field name="arch" type="xml">
-            <!-- Add healthcare columns -->
-            <xpath expr="//field[@name='stage_id']" position="after">
-                <field name="service_interest" optional="show"/>
-                <field name="clinical_priority" optional="show"/>
-                <field name="vietnamese_channel" optional="hide"/>
-                <field name="health_contact_outcome" optional="show"/>
-                <field name="client_representative_id" optional="hide"/>
-                <field name="lead_status" optional="hide"/>
-                <field name="next_action_at" optional="hide"/>
-            </xpath>
-        </field>
-    </record>
-
-    <!-- Healthcare Lead Search View Extension -->
-    <record id="view_healthcare_lead_search" model="ir.ui.view">
-        <field name="name">crm.lead.search.healthcare</field>
-        <field name="model">crm.lead</field>
-        <field name="inherit_id" ref="crm.view_crm_lead_filter"/>
-        <field name="arch" type="xml">
-            <!-- Add healthcare search fields -->
-            <xpath expr="//field[@name='tag_ids']" position="after">
-                <field name="service_interest"/>
-                <field name="clinical_priority"/>
-                <field name="vietnamese_channel"/>
-                <field name="health_contact_outcome"/>
-                <field name="patient_id"/>
-            </xpath>
-
-            <!-- Add healthcare filters -->
-            <xpath expr="//filter[@name='unassigned']" position="after">
-                <separator/>
-                <filter name="home_visits" string="Home Visits" domain="[('service_interest', '=', 'home_visit')]"/>
-                <filter name="clinic_visits" string="Clinic Visits" domain="[('service_interest', '=', 'clinic_visit')]"/>
-                <filter name="emergency_care" string="Emergency Care" domain="[('service_interest', '=', 'emergency')]"/>
-                <separator/>
-                <filter name="urgent_priority" string="Urgent" domain="[('clinical_priority', '=', 'urgent')]"/>
-                <filter name="emergency_priority" string="Emergency" domain="[('clinical_priority', '=', 'emergency')]"/>
-                <separator/>
-                <filter name="pending_followup" string="Pending Follow-up" domain="[('health_contact_outcome', '=', 'pending_follow_up')]"/>
-                <filter name="service_booked" string="Service Booked" domain="[('health_contact_outcome', '=', 'service_booked')]"/>
-            </xpath>
-
-            <!-- Add healthcare group by -->
-            <xpath expr="//filter[@name='group_by_salesperson']" position="after">
-                <filter name="group_by_service_interest" string="Service Interest" context="{'group_by': 'service_interest'}"/>
-                <filter name="group_by_clinical_priority" string="Clinical Priority" context="{'group_by': 'clinical_priority'}"/>
-                <filter name="group_by_vietnamese_channel" string="Vietnamese Channel" context="{'group_by': 'vietnamese_channel'}"/>
-                <filter name="group_by_health_outcome" string="Healthcare Outcome" context="{'group_by': 'health_contact_outcome'}"/>
-            </xpath>
-        </field>
-    </record>
-
-    <!-- Healthcare Kanban View -->
-    <record id="view_healthcare_lead_kanban" model="ir.ui.view">
-        <field name="name">crm.lead.kanban.healthcare</field>
-        <field name="model">crm.lead</field>
-        <field name="inherit_id" ref="crm.crm_lead_view_kanban"/>
-        <field name="arch" type="xml">
-            <!-- Add healthcare indicators -->
-            <xpath expr="//div[hasclass('o_kanban_record_title')]" position="after">
-                <div class="o_kanban_record_subtitle">
-                    <field name="service_interest" widget="badge"/>
-                    <field name="clinical_priority" widget="priority"/>
-                </div>
-            </xpath>
-
-            <!-- Add Vietnamese channel indicator -->
-            <xpath expr="//div[hasclass('o_kanban_record_bottom')]" position="before">
-                <div class="o_kanban_record_healthcare">
-                    <field name="vietnamese_channel" widget="badge" invisible="not vietnamese_channel"/>
-                    <field name="health_contact_outcome" widget="badge" invisible="not health_contact_outcome"/>
-                </div>
-            </xpath>
-        </field>
-    </record>
 
 </odoo>

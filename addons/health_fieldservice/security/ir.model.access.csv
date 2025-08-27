@@ -49,3 +49,15 @@ access_health_staff_assignment_portal,health.staff.assignment.portal,model_healt
 access_health_staff_availability_matrix_portal,health.staff.availability.matrix.portal,model_health_staff_availability_matrix,base.group_portal,1,0,0,0
 access_health_staff_skill_public,health.staff.skill.public,model_health_staff_skill,base.group_public,1,0,0,0
 access_health_service_area_public,health.service.area.public,model_health_service_area,base.group_public,1,0,0,0
+access_health_appointment_receptionist,health.appointment.receptionist,model_health_appointment,health_base.group_healthcare_receptionist,1,1,1,0
+access_health_appointment_nurse,health.appointment.nurse,model_health_appointment,health_base.group_healthcare_nurse,1,1,1,0
+access_health_appointment_head_nurse,health.appointment.head_nurse,model_health_appointment,health_base.group_healthcare_head_nurse,1,1,1,1
+access_health_appointment_doctor,health.appointment.doctor,model_health_appointment,health_base.group_healthcare_doctor,1,1,1,0
+access_health_appointment_sales,health.appointment.sales,model_health_appointment,health_base.group_healthcare_sales,1,1,1,0
+access_health_appointment_finance,health.appointment.finance,model_health_appointment,health_base.group_healthcare_finance,1,0,0,0
+access_health_appointment_manager,health.appointment.manager,model_health_appointment,group_fieldservice_manager,1,1,1,1
+access_health_appointment_user,health.appointment.user,model_health_appointment,base.group_user,1,0,0,0
+access_health_appointment_portal,health.appointment.portal,model_health_appointment,base.group_portal,1,0,0,0
+access_health_appointment_public,health.appointment.public,model_health_appointment,base.group_public,1,0,0,0
+access_health_appointment_crm_user,health.appointment.crm_user,model_health_appointment,health_crm.group_health_crm_user,1,1,1,0
+access_health_appointment_crm_manager,health.appointment.crm_manager,model_health_appointment,health_crm.group_health_crm_manager,1,1,1,1

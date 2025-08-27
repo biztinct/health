@@ -8,7 +8,6 @@
         <field name="use_leads">True</field>
         <field name="use_opportunities">True</field>
         <field name="alias_name">healthcare-leads</field>
-        <field name="description">Vietnamese Healthcare CRM Team for home visit and clinic services</field>
         <field name="company_id" ref="base.main_company"/>
     </record>
 
@@ -19,7 +18,6 @@
         <field name="use_leads">True</field>
         <field name="use_opportunities">True</field>
         <field name="alias_name">home-visits</field>
-        <field name="description">Specialized team for home healthcare visits</field>
         <field name="company_id" ref="base.main_company"/>
     </record>
 
@@ -30,7 +28,6 @@
         <field name="use_leads">True</field>
         <field name="use_opportunities">True</field>
         <field name="alias_name">clinic-services</field>
-        <field name="description">Team handling clinic-based healthcare services</field>
         <field name="company_id" ref="base.main_company"/>
     </record>
 
@@ -41,7 +38,6 @@
         <field name="use_leads">True</field>
         <field name="use_opportunities">True</field>
         <field name="alias_name">emergency-care</field>
-        <field name="description">Emergency healthcare response team</field>
         <field name="company_id" ref="base.main_company"/>
     </record>
 

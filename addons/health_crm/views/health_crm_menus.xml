@@ -22,7 +22,7 @@
         id="menu_healthcare_pipeline"
         name="Pipeline"
         parent="menu_healthcare_crm_root"
-        action="crm.action_opportunity_form"
+        action="crm.crm_lead_opportunities"
         sequence="20"/>
 
     <!-- Customers/Contacts -->
@@ -62,7 +62,7 @@
         id="menu_healthcare_crm_teams"
         name="Sales Teams"
         parent="menu_healthcare_crm_config"
-        action="crm.action_team_config"
+        action="sales_team.crm_team_action_config"
         sequence="10"/>
 
     <!-- CRM Stages -->
@@ -70,15 +70,17 @@
         id="menu_healthcare_crm_stages"
         name="Stages"
         parent="menu_healthcare_crm_config"
-        action="crm.action_stage_config"
+        action="crm.crm_stage_action"
         sequence="20"/>
 
-    <!-- UTM Sources -->
+    <!-- UTM Sources - Disabled until UTM module is available -->
+    <!--
     <menuitem 
         id="menu_healthcare_utm_sources"
         name="Lead Sources"
         parent="menu_healthcare_crm_config"
         action="utm.action_utm_source"
         sequence="30"/>
+    -->
 
 </odoo>

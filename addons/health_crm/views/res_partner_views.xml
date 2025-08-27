@@ -28,7 +28,7 @@
                     <field name="street2" placeholder="Street 2..." class="o_address_street"/>
                     
                     <!-- Vietnamese Address Structure -->
-                    <div class="row" invisible="country_id != %(base.vn)d">
+                    <div class="row">
                         <div class="col-6">
                             <field name="house_number" placeholder="Số nhà"/>
                         </div>
@@ -36,7 +36,7 @@
                             <field name="sub_alley_number" placeholder="Số ngách"/>
                         </div>
                     </div>
-                    <div class="row" invisible="country_id != %(base.vn)d">
+                    <div class="row">
                         <div class="col-6">
                             <field name="alley_number" placeholder="Số ngõ"/>
                         </div>
@@ -44,9 +44,9 @@
                             <field name="ward_commune" placeholder="Phường/Xã"/>
                         </div>
                     </div>
-                    <field name="vietnamese_address_line1" placeholder="Khu vực đặt tên" invisible="country_id != %(base.vn)d"/>
-                    <field name="vietnamese_address_line2" placeholder="Số căn hộ" invisible="country_id != %(base.vn)d"/>
-                    <field name="vietnamese_address_line3" placeholder="Tên tòa nhà" invisible="country_id != %(base.vn)d"/>
+                    <field name="vietnamese_address_line1" placeholder="Khu vực đặt tên"/>
+                    <field name="vietnamese_address_line2" placeholder="Số căn hộ"/>
+                    <field name="vietnamese_address_line3" placeholder="Tên tòa nhà"/>
 
                     <field name="city" placeholder="City" class="o_address_city"/>
                     <field name="state_id" class="o_address_state" placeholder="State" options="{'no_open': True, 'no_quick_create': True}"/>
@@ -95,16 +95,14 @@
                         <field name="healthcare_notes" nolabel="1" placeholder="Healthcare-related notes and observations..."/>
                     </group>
 
-                    <!-- Relationship statistics now handled in health_base -->
-
                     <!-- Client Representatives (FROM EXCEL REQUIREMENTS) -->
-                    <page name="client_representatives" string="Client Representatives">
+                    <group name="client_representatives" string="Client Representatives">
                         <group name="primary_representative" string="Primary Representative">
                             <field name="primary_representative_id" readonly="1"/>
                         </group>
                         
-                        <field name="client_representative_ids" mode="tree">
-                            <tree>
+                        <field name="client_representative_ids">
+                            <list>
                                 <field name="representative_name"/>
                                 <field name="kinship_title"/>
                                 <field name="preferred_name"/>
@@ -115,19 +113,9 @@
                                 <field name="is_primary"/>
                                 <field name="details_complete"/>
                                 <field name="active"/>
-                                <button name="action_set_as_primary" 
-                                        string="Set Primary" 
-                                        type="object" 
-                                        icon="fa-star"
-                                        invisible="is_primary"/>
-                                <button name="action_create_followup_activity" 
-                                        string="Follow-up" 
-                                        type="object" 
-                                        icon="fa-clock-o"
-                                        invisible="details_complete"/>
-                            </tree>
+                            </list>
                         </field>
-                    </page>
+                    </group>
 
                     <!-- Patient relationships now handled in health_base with simple Many2one fields -->
                 </page>
@@ -159,14 +147,15 @@
         </field>
     </record>
 
-    <!-- Healthcare Contact Tree View Extension -->
+    <!-- Healthcare Contact Tree View Extension - Disabled for now -->
+    <!-- TODO: Re-enable after identifying correct field structure in base partner tree view -->
+    <!--
     <record id="view_healthcare_partner_tree" model="ir.ui.view">
         <field name="name">res.partner.tree.healthcare</field>
         <field name="model">res.partner</field>
         <field name="inherit_id" ref="base.view_partner_tree"/>
         <field name="arch" type="xml">
-            <!-- Add healthcare columns -->
-            <xpath expr="//field[@name='display_name']" position="after">
+            <xpath expr="//field[1]" position="after">
                 <field name="kinship_title" optional="hide"/>
                 <field name="preferred_name" optional="hide"/>
                 <field name="cccd_number" optional="hide"/>
@@ -179,40 +168,26 @@
             </xpath>
         </field>
     </record>
+    -->
 
-    <!-- Healthcare Contact Search View Extension -->
+    <!-- Healthcare Contact Search View Extension - Disabled for compatibility -->
+    <!-- TODO: Re-enable with correct xpath references after analyzing base search view structure -->
+    <!--
     <record id="view_healthcare_partner_search" model="ir.ui.view">
         <field name="name">res.partner.search.healthcare</field>
         <field name="model">res.partner</field>
         <field name="inherit_id" ref="base.view_res_partner_filter"/>
         <field name="arch" type="xml">
-            <!-- Add healthcare search fields -->
-            <xpath expr="//field[@name='category_id']" position="after">
+            <search>
                 <field name="cccd_number"/>
                 <field name="kinship_title"/>
                 <field name="preferred_name"/>
                 <field name="healthcare_lead_source"/>
                 <field name="zalo_number"/>
                 <field name="facebook_profile"/>
-            </xpath>
-
-            <!-- Add healthcare filters -->
-            <xpath expr="//filter[@name='inactive']" position="after">
-                <separator/>
-                <filter name="patients" string="Patients" domain="[('is_patient', '=', True)]"/>
-                <filter name="caregivers" string="Caregivers" domain="[('is_caregiver', '=', True)]"/>
-                <filter name="payers" string="Payers" domain="[('is_payer', '=', True)]"/>
-                <filter name="referrers" string="Referrers" domain="[('is_referrer', '=', True)]"/>
-                <separator/>
-                <filter name="vietnamese_contacts" string="Vietnamese Contacts" domain="[('country_id', '=', %(base.vn)d)]"/>
-            </xpath>
-
-            <!-- Add healthcare group by -->
-            <xpath expr="//filter[@name='group_by_category']" position="after">
-                <filter name="group_by_healthcare_type" string="Healthcare Type" context="{'group_by': 'healthcare_lead_source'}"/>
-                <filter name="group_by_contact_method" string="Contact Method" context="{'group_by': 'preferred_contact_method'}"/>
-            </xpath>
+            </search>
         </field>
     </record>
+    -->
 
 </odoo>

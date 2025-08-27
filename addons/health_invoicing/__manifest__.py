@@ -69,25 +69,11 @@
         'security/health_invoicing_security.xml',
         'security/ir.model.access.csv',
         
-        # Data
-        'data/invoice_sequences.xml',
-        'data/healthcare_service_products.xml',
-        'data/vietnamese_tax_rates.xml',
-        'data/payment_terms_healthcare.xml',
-        
-        # Views - Accounting Extensions
-        'views/account_move_views.xml',
-        'views/account_payment_views.xml',
-        'views/healthcare_invoice_templates.xml',
-        'views/misa_integration_views.xml',
-        'views/health_invoicing_menus.xml',
-        
         # Wizards
         'views/health_payment_workflow_wizard_views.xml',
         
-        # Reports
-        'reports/healthcare_invoice_reports.xml',
-        'reports/vietnamese_tax_reports.xml',
+        # Views - Accounting Extensions (Basic implementation first)
+        'views/health_invoicing_menus.xml',
     ],
     'demo': [
         'demo/health_invoicing_demo.xml',
