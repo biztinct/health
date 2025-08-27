@@ -107,12 +107,13 @@ class HealthClientRepresentative(models.Model):
                         'Please uncheck the other primary representative first.'
                     ) % record.contact_id.name)
 
-    @api.model
-    def create(self, vals):
+    @api.model_create_multi
+    def create(self, vals_list):
         """Auto-calculate details_complete based on required fields"""
-        record = super().create(vals)
-        record._compute_details_complete()
-        return record
+        records = super().create(vals_list)
+        for record in records:
+            record._compute_details_complete()
+        return records
 
     def write(self, vals):
         """Re-calculate details_complete when fields change"""

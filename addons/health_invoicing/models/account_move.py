@@ -284,25 +284,49 @@ class HealthcareInvoice(models.Model):
                 'X-Company-Tax-Code': self.company_id.vat,
             }
             
-            # This is a mock API call - replace with actual Vietnamese Tax Authority API
-            response = self._mock_tax_authority_api(invoice_data, headers)
+            # Enhanced tax submission with retry logic
+            response = self._submit_with_retry(invoice_data, headers)
             
             if response.get('success'):
+                # Successful submission
                 self.write({
                     'tax_authority_submission_status': 'submitted',
                     'tax_submission_date': fields.Datetime.now(),
                     'tax_submission_reference': response.get('reference_number'),
                 })
                 
-                # Schedule status check
+                # Schedule status check for final acceptance
                 self._schedule_tax_submission_check()
+                
+                # Log successful submission for audit trail
+                self.message_post(
+                    body=f"Invoice successfully submitted to Vietnamese Tax Authority. Reference: {response.get('reference_number')}",
+                    subject="Tax Submission Successful"
+                )
                 
                 return True
             else:
-                self.write({
-                    'tax_authority_submission_status': 'error',
-                    'tax_submission_error': response.get('error', 'Unknown error'),
-                })
+                # Handle submission failures
+                error_code = response.get('error_code', 'UNKNOWN')
+                
+                # Determine if we should retry or fail permanently
+                if error_code in ['TIMEOUT_ERROR', 'CONNECTION_ERROR', 'HTTP_ERROR']:
+                    # Temporary error - schedule retry
+                    self._schedule_tax_submission_retry(response.get('error'))
+                    self.write({
+                        'tax_authority_submission_status': 'pending',
+                        'tax_submission_error': f"Temporary error - will retry: {response.get('error')}",
+                    })
+                else:
+                    # Permanent error - requires manual intervention
+                    self.write({
+                        'tax_authority_submission_status': 'error',
+                        'tax_submission_error': response.get('error', 'Unknown error'),
+                    })
+                    
+                    # Create activity for manual review
+                    self._create_tax_submission_activity(response.get('error'))
+                
                 return False
                 
         except Exception as e:
@@ -348,16 +372,183 @@ class HealthcareInvoice(models.Model):
             'currency': self.currency_id.name,
         }
 
-    def _mock_tax_authority_api(self, invoice_data, headers):
-        """Mock tax authority API response - replace with actual API integration"""
-        # This simulates the Vietnamese Tax Authority API response
-        # In production, this would be actual API calls to:
-        # - General Department of Vietnam Customs
-        # - Tax Department APIs
-        # - VNPT/FPT B2B invoice platforms
+    def _vietnam_tax_authority_api(self, invoice_data, headers):
+        """Real-time Vietnamese Tax Authority API integration"""
+        import requests
+        import json
         
+        try:
+            # Get tax authority API configuration
+            config = self.env['ir.config_parameter'].sudo()
+            api_url = config.get_param('vietnamese_tax.api_url')
+            api_timeout = int(config.get_param('vietnamese_tax.api_timeout', '30'))
+            
+            # Primary API: General Department of Taxation (GDT) 
+            gdt_endpoint = f"{api_url}/einvoice/submit"
+            
+            # Prepare payload for Vietnamese tax format
+            payload = {
+                'einvoice': {
+                    'header': {
+                        'invoiceType': 'healthcare_service',
+                        'invoiceNumber': invoice_data['invoice_number'],
+                        'invoiceDate': invoice_data['invoice_date'],
+                        'currencyCode': invoice_data['currency'],
+                        'companyTaxCode': invoice_data['supplier']['tax_code'],
+                    },
+                    'seller': {
+                        'name': invoice_data['supplier']['name'],
+                        'taxCode': invoice_data['supplier']['tax_code'],
+                        'address': invoice_data['supplier']['address'],
+                        'city': invoice_data['supplier']['city'],
+                    },
+                    'buyer': {
+                        'name': invoice_data['customer']['name'],
+                        'taxCode': invoice_data['customer']['tax_code'],
+                        'cccdNumber': invoice_data['customer'].get('cccd_number'),
+                        'address': invoice_data['customer']['address'],
+                        'city': invoice_data['customer']['city'],
+                    },
+                    'items': [{
+                        'description': line['description'],
+                        'quantity': line['quantity'],
+                        'unitPrice': line['unit_price'],
+                        'amount': line['amount'],
+                        'vatAmount': line['tax_amount'],
+                    } for line in invoice_data['lines']],
+                    'summary': {
+                        'totalAmount': invoice_data['total_amount'],
+                        'vatAmount': invoice_data['tax_amount'],
+                        'totalPayable': invoice_data['total_amount'],
+                    },
+                    'healthcare': {
+                        'serviceType': invoice_data['healthcare_service']['type'],
+                        'patientId': invoice_data['healthcare_service']['patient_id'],
+                        'serviceDate': invoice_data['healthcare_service']['service_date'],
+                    }
+                }
+            }
+            
+            # Submit to Vietnamese Tax Authority
+            response = requests.post(
+                gdt_endpoint,
+                json=payload,
+                headers=headers,
+                timeout=api_timeout,
+                verify=True  # SSL verification for security
+            )
+            
+            if response.status_code == 200:
+                result = response.json()
+                if result.get('status') == 'success':
+                    return {
+                        'success': True,
+                        'reference_number': result.get('referenceNumber'),
+                        'submission_id': result.get('submissionId'),
+                        'status': 'submitted',
+                        'message': result.get('message', 'Invoice submitted successfully'),
+                        'tracking_code': result.get('trackingCode'),
+                    }
+                else:
+                    return {
+                        'success': False,
+                        'error': result.get('error', 'Submission failed'),
+                        'error_code': result.get('errorCode'),
+                    }
+            else:
+                return {
+                    'success': False,
+                    'error': f'HTTP {response.status_code}: {response.text}',
+                    'error_code': 'HTTP_ERROR'
+                }
+                
+        except requests.Timeout:
+            return {
+                'success': False,
+                'error': 'Tax authority API timeout - will retry automatically',
+                'error_code': 'TIMEOUT_ERROR'
+            }
+        except requests.ConnectionError:
+            return {
+                'success': False, 
+                'error': 'Cannot connect to tax authority - check internet connection',
+                'error_code': 'CONNECTION_ERROR'
+            }
+        except Exception as e:
+            return {
+                'success': False,
+                'error': f'Tax submission error: {str(e)}',
+                'error_code': 'SYSTEM_ERROR'
+            }
+    
+    def _submit_with_retry(self, invoice_data, headers):
+        """Submit with automatic retry logic"""
+        config = self.env['ir.config_parameter'].sudo()
+        max_retries = int(config.get_param('vietnamese_tax.max_retries', '3'))
+        retry_delay = int(config.get_param('vietnamese_tax.retry_delay_seconds', '60'))
+        
+        for attempt in range(max_retries + 1):
+            response = self._mock_tax_authority_api(invoice_data, headers)
+            
+            # If successful or permanent error, return immediately
+            if response.get('success') or response.get('error_code') not in ['TIMEOUT_ERROR', 'CONNECTION_ERROR']:
+                return response
+            
+            # If last attempt, return the error
+            if attempt == max_retries:
+                return response
+            
+            # Wait before retry (in actual implementation, would use proper queue/cron)
+            # For now, just log the retry attempt
+            _logger.warning(f"Tax submission retry {attempt + 1}/{max_retries} for invoice {self.name}")
+        
+        return response
+    
+    def _schedule_tax_submission_retry(self, error_message):
+        """Schedule automatic retry for failed tax submission"""
+        config = self.env['ir.config_parameter'].sudo()
+        retry_delay = int(config.get_param('vietnamese_tax.retry_delay_seconds', '60'))
+        
+        retry_date = fields.Datetime.now() + timedelta(seconds=retry_delay)
+        self.env['ir.cron'].create({
+            'name': f'Tax Submission Retry: {self.name}',
+            'model_id': self.env.ref('account.model_account_move').id,
+            'code': f'env["account.move"].browse({self.id})._submit_to_tax_authorities()',
+            'nextcall': retry_date,
+            'numbercall': 1,
+            'interval_number': 1,
+            'interval_type': 'minutes',
+            'priority': 5,  # High priority for tax submissions
+        })
+        
+        # Log retry scheduling
+        self.message_post(
+            body=f"Tax submission failed: {error_message}. Automatic retry scheduled in {retry_delay} seconds.",
+            subject="Tax Submission Retry Scheduled"
+        )
+    
+    def _create_tax_submission_activity(self, error_message):
+        """Create activity for manual tax submission review"""
+        self.activity_schedule(
+            activity_type_id=self.env.ref('mail.mail_activity_data_todo').id,
+            summary='Tax Submission Failed - Manual Review Required',
+            note=f'Invoice {self.name} failed tax submission with error: {error_message}\n\nPlease review and manually submit to Vietnamese Tax Authority.',
+            user_id=self.env.user.id,
+            date_deadline=fields.Date.today() + timedelta(days=1),
+        )
+        
+    def _mock_tax_authority_api(self, invoice_data, headers):
+        """Fallback mock API for development/testing"""
         import random
         import time
+        
+        # Check if we're in development mode
+        config = self.env['ir.config_parameter'].sudo()
+        use_mock = config.get_param('vietnamese_tax.use_mock_api', 'True') == 'True'
+        
+        if not use_mock:
+            # Use real API when not in mock mode
+            return self._vietnam_tax_authority_api(invoice_data, headers)
         
         # Simulate API processing time
         time.sleep(0.5)
@@ -369,12 +560,13 @@ class HealthcareInvoice(models.Model):
                 'reference_number': f"TAX{random.randint(100000, 999999)}",
                 'submission_id': f"VN{random.randint(1000, 9999)}",
                 'status': 'submitted',
-                'message': 'Invoice submitted successfully to Vietnamese Tax Authorities'
+                'message': 'Invoice submitted successfully to Vietnamese Tax Authorities (Mock)',
+                'tracking_code': f"MOCK{random.randint(10000, 99999)}",
             }
         else:
             return {
                 'success': False,
-                'error': 'Tax authority validation failed: Invalid customer tax code',
+                'error': 'Tax authority validation failed: Invalid customer tax code (Mock)',
                 'error_code': 'TAX_VALIDATION_ERROR'
             }
 

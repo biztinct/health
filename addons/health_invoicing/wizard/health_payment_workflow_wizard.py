@@ -39,11 +39,18 @@ class HealthPaymentWorkflowWizard(models.TransientModel):
         readonly=True
     )
     
-    service_type = fields.Char(
-        'Service Type',
-        related='fso_id.service_type',
-        readonly=True
-    )
+    service_type = fields.Selection([
+        ('home_visit', 'Home Visit'),
+        ('clinic_visit', 'Clinic Visit'),
+        ('consultation', 'Consultation'),
+        ('emergency', 'Emergency Care'),
+        ('follow_up', 'Follow-up Care'),
+        ('preventive', 'Preventive Care'),
+        ('rehabilitation', 'Rehabilitation'),
+        ('telemedicine', 'Telemedicine/Online'),
+        ('vaccination', 'Vaccination'),
+        ('diagnostic', 'Diagnostic Services'),
+    ], string='Service Type', related='fso_id.service_type', readonly=True)
     
     amount_total = fields.Monetary(
         'Total Amount',

@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+
+    <!-- Vietnamese Tax Authority Configuration Parameters -->
+    
+    <!-- Primary API Configuration -->
+    <record id="vietnam_tax_api_url" model="ir.config_parameter">
+        <field name="key">vietnamese_tax.api_url</field>
+        <field name="value">https://api.tax.gov.vn</field>
+    </record>
+    
+    <record id="vietnam_tax_api_key" model="ir.config_parameter">
+        <field name="key">vietnamese_tax.api_key</field>
+        <field name="value">CONFIGURE_YOUR_API_KEY</field>
+    </record>
+    
+    <record id="vietnam_tax_api_timeout" model="ir.config_parameter">
+        <field name="key">vietnamese_tax.api_timeout</field>
+        <field name="value">30</field>
+    </record>
+    
+    <!-- Development/Testing Configuration -->
+    <record id="vietnam_tax_use_mock" model="ir.config_parameter">
+        <field name="key">vietnamese_tax.use_mock_api</field>
+        <field name="value">True</field>
+    </record>
+    
+    <!-- Backup API Configuration (VNPT/FPT Integration) -->
+    <record id="vietnam_tax_backup_api_url" model="ir.config_parameter">
+        <field name="key">vietnamese_tax.backup_api_url</field>
+        <field name="value">https://einvoice.vnpt.vn/api</field>
+    </record>
+    
+    <!-- Retry Configuration -->
+    <record id="vietnam_tax_max_retries" model="ir.config_parameter">
+        <field name="key">vietnamese_tax.max_retries</field>
+        <field name="value">3</field>
+    </record>
+    
+    <record id="vietnam_tax_retry_delay" model="ir.config_parameter">
+        <field name="key">vietnamese_tax.retry_delay_seconds</field>
+        <field name="value">60</field>
+    </record>
+    
+    <!-- Healthcare Service Type Mapping -->
+    <record id="vietnam_tax_service_mapping" model="ir.config_parameter">
+        <field name="key">vietnamese_tax.healthcare_service_mapping</field>
+        <field name="value">{"home_visit": "HC01", "clinic_visit": "HC02", "consultation": "HC03", "emergency": "HC04", "follow_up": "HC05", "preventive": "HC06", "rehabilitation": "HC07", "telemedicine": "HC08", "vaccination": "HC09", "diagnostic": "HC10"}</field>
+    </record>
+    
+    <!-- Compliance Settings -->
+    <record id="vietnam_tax_auto_submit" model="ir.config_parameter">
+        <field name="key">vietnamese_tax.auto_submit_enabled</field>
+        <field name="value">True</field>
+    </record>
+    
+    <record id="vietnam_tax_submit_delay" model="ir.config_parameter">
+        <field name="key">vietnamese_tax.submit_delay_minutes</field>
+        <field name="value">5</field>
+    </record>
+    
+    <!-- Red Invoice Configuration -->
+    <record id="vietnam_tax_red_invoice_enabled" model="ir.config_parameter">
+        <field name="key">vietnamese_tax.red_invoice_enabled</field>
+        <field name="value">True</field>
+    </record>
+    
+    <!-- Ministry of Health Integration -->
+    <record id="vietnam_moh_api_url" model="ir.config_parameter">
+        <field name="key">vietnam.moh_api_url</field>
+        <field name="value">https://api.moh.gov.vn</field>
+    </record>
+    
+    <record id="vietnam_moh_auto_report" model="ir.config_parameter">
+        <field name="key">vietnam.moh_auto_report_enabled</field>
+        <field name="value">True</field>
+    </record>
+
+</odoo>

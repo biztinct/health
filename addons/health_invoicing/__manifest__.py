@@ -69,6 +69,9 @@
         'security/health_invoicing_security.xml',
         'security/ir.model.access.csv',
         
+        # Configuration Data
+        'data/vietnamese_tax_config.xml',
+        
         # Wizards
         'views/health_payment_workflow_wizard_views.xml',
         

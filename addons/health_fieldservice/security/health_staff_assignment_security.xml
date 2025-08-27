@@ -98,7 +98,7 @@
         <field name="name">Staff Assignment Healthcare Staff Access</field>
         <field name="model_id" ref="model_health_staff_assignment"/>
         <field name="groups" eval="[(4, ref('group_healthcare_staff'))]"/>
-        <field name="domain_force">[('staff_id', '=', user.employee_id.id)]</field>
+        <field name="domain_force">[('staff_id', '=', user.employee_id)]</field>
         <field name="perm_read" eval="True"/>
         <field name="perm_write" eval="True"/>
         <field name="perm_create" eval="False"/>
@@ -110,7 +110,7 @@
         <field name="name">FSO Healthcare Staff Access</field>
         <field name="model_id" ref="model_health_fieldservice_order"/>
         <field name="groups" eval="[(4, ref('group_healthcare_staff'))]"/>
-        <field name="domain_force">[('assigned_staff_ids', 'in', [user.employee_id.id])]</field>
+        <field name="domain_force">[('assigned_staff_ids', 'in', [user.employee_id])]</field>
         <field name="perm_read" eval="True"/>
         <field name="perm_write" eval="True"/>
         <field name="perm_create" eval="False"/>
@@ -122,7 +122,7 @@
         <field name="name">Availability Matrix Healthcare Staff Access</field>
         <field name="model_id" ref="model_health_staff_availability_matrix"/>
         <field name="groups" eval="[(4, ref('group_healthcare_staff'))]"/>
-        <field name="domain_force">[('staff_id', '=', user.employee_id.id)]</field>
+        <field name="domain_force">[('staff_id', '=', user.employee_id)]</field>
         <field name="perm_read" eval="True"/>
         <field name="perm_write" eval="True"/>
         <field name="perm_create" eval="False"/>

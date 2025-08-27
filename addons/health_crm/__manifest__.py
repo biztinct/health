@@ -38,6 +38,7 @@
         'mail',
         'crm',  # Standard Odoo CRM - we inherit from this
         'utm',  # UTM campaign tracking
+        'sales_team',  # CRM Teams functionality - required for menu actions
         'health_base',  # CRITICAL: Must load first - defines res.partner extensions (is_caregiver, etc.)
         'health_fieldservice',  # Appointment integration (appointments are in fieldservice module)
     ],
