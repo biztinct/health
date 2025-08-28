@@ -72,7 +72,7 @@
                         <group string="Service Information">
                             <field name="patient_id" readonly="1"/>
                             <field name="service_type"/>
-                            <field name="scheduled_datetime" readonly="1"/>
+                            <field name="scheduled_datetime"/>
                             <field name="team_id"/>
                         </group>
                         

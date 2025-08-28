@@ -204,12 +204,18 @@ class ResPartner(models.Model):
                 partner.age_display = 'Age unknown'
     
     def _compute_visit_count(self):
-        """Compute total visits for patients"""
-        # This will be implemented when appointment models are updated
+        """Compute total FSO bookings for patients"""
         for partner in self:
             if partner.is_patient:
-                # TODO: Update when appointment model is refactored
-                partner.visit_count = 0
+                # Count FSO bookings for this patient
+                try:
+                    fso_count = self.env['health.fieldservice.order'].search_count([
+                        ('patient_id', '=', partner.id)
+                    ])
+                    partner.visit_count = fso_count
+                except:
+                    # If FSO model not available, default to 0
+                    partner.visit_count = 0
             else:
                 partner.visit_count = 0
     
@@ -267,15 +273,15 @@ class ResPartner(models.Model):
         return partners
     
     def action_view_appointments(self):
-        """Action to view patient appointments"""
+        """Action to view patient FSO bookings"""
         if not self.is_patient:
             return
         
         return {
             'type': 'ir.actions.act_window',
-            'name': f'Appointments - {self.name}',
-            'res_model': 'health.appointment',  # Will be updated when appointment model is refactored
-            'view_mode': 'calendar,list,form',
+            'name': f'Service Bookings - {self.name}',
+            'res_model': 'health.fieldservice.order',
+            'view_mode': 'list,form,calendar',
             'target': 'current',
             'domain': [('patient_id', '=', self.id)],
             'context': {'default_patient_id': self.id}

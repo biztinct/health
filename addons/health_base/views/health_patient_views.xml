@@ -23,7 +23,7 @@
                     <div class="oe_button_box" name="button_box" groups="base.group_user">
                         <button name="action_view_appointments" type="object" class="oe_stat_button" icon="fa-calendar-check-o"
                                 invisible="not is_patient">
-                            <field name="visit_count" string="Total Visits" widget="statinfo"/>
+                            <field name="visit_count" string="Bookings" widget="statinfo"/>
                         </button>
                         <button name="action_view_lab_results" type="object" class="oe_stat_button" icon="fa-flask"
                                 invisible="not is_patient">

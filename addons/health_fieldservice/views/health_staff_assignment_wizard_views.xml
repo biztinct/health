@@ -20,6 +20,8 @@
                             <field name="patient_id" readonly="1"/>
                             <field name="service_type" readonly="1"/>
                             <field name="scheduled_datetime" readonly="1"/>
+                            <field name="new_scheduled_datetime" 
+                                   placeholder="Leave blank to keep current schedule"/>
                         </group>
                         
                         <group string="Staff Assignment">

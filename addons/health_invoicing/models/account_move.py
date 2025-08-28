@@ -81,6 +81,25 @@ class HealthcareInvoice(models.Model):
         'Tax Submission Error',
         help='Error message from tax authority submission'
     )
+    
+    # Cron job references for tax submissions (Odoo 18 compatibility)
+    tax_submission_cron_id = fields.Many2one(
+        'ir.cron',
+        string='Tax Submission Cron Job',
+        help='Scheduled job for tax submission - auto-deactivated after completion'
+    )
+    
+    tax_retry_cron_id = fields.Many2one(
+        'ir.cron', 
+        string='Tax Retry Cron Job',
+        help='Scheduled job for tax submission retry - auto-deactivated after completion'
+    )
+    
+    tax_check_cron_id = fields.Many2one(
+        'ir.cron',
+        string='Tax Check Cron Job', 
+        help='Scheduled job for tax submission status check - auto-deactivated after completion'
+    )
 
     # MISA integration fields
     misa_invoice_id = fields.Char(
@@ -242,19 +261,31 @@ class HealthcareInvoice(models.Model):
         date_part = fields.Date.today().strftime('%Y%m')
         return f"VN{company_tax[-4:]}{date_part}{sequence}"
 
+    def _deactivate_tax_cron_jobs(self):
+        """Deactivate all tax-related cron jobs for this invoice (Odoo 18 compatibility)"""
+        cron_fields = ['tax_submission_cron_id', 'tax_retry_cron_id', 'tax_check_cron_id']
+        for field in cron_fields:
+            cron_job = getattr(self, field)
+            if cron_job and cron_job.exists():
+                try:
+                    cron_job.write({'active': False})
+                except Exception:
+                    pass  # Continue even if cron job deletion fails
+
     def _schedule_tax_authority_submission(self):
         """Schedule automatic submission to Vietnamese tax authorities"""
         # Schedule for next business day if configured
         submit_date = fields.Datetime.now() + timedelta(hours=1)
-        self.env['ir.cron'].create({
+        cron_job = self.env['ir.cron'].create({
             'name': f'Tax Authority Submission: {self.name}',
             'model_id': self.env.ref('account.model_account_move').id,
             'code': f'env["account.move"].browse({self.id})._submit_to_tax_authorities()',
             'nextcall': submit_date,
-            'numbercall': 1,
             'interval_number': 1,
             'interval_type': 'hours',
         })
+        # Store cron job reference for later deactivation
+        self.write({'tax_submission_cron_id': cron_job.id})
 
     def _submit_to_tax_authorities(self):
         """Submit invoice to Vietnamese Tax Authorities (real-time)"""
@@ -294,6 +325,12 @@ class HealthcareInvoice(models.Model):
                     'tax_submission_date': fields.Datetime.now(),
                     'tax_submission_reference': response.get('reference_number'),
                 })
+                
+                # Deactivate submission and retry cron jobs since submission succeeded
+                if self.tax_submission_cron_id:
+                    self.tax_submission_cron_id.write({'active': False})
+                if self.tax_retry_cron_id:
+                    self.tax_retry_cron_id.write({'active': False})
                 
                 # Schedule status check for final acceptance
                 self._schedule_tax_submission_check()
@@ -510,16 +547,17 @@ class HealthcareInvoice(models.Model):
         retry_delay = int(config.get_param('vietnamese_tax.retry_delay_seconds', '60'))
         
         retry_date = fields.Datetime.now() + timedelta(seconds=retry_delay)
-        self.env['ir.cron'].create({
+        retry_cron = self.env['ir.cron'].create({
             'name': f'Tax Submission Retry: {self.name}',
             'model_id': self.env.ref('account.model_account_move').id,
             'code': f'env["account.move"].browse({self.id})._submit_to_tax_authorities()',
             'nextcall': retry_date,
-            'numbercall': 1,
             'interval_number': 1,
             'interval_type': 'minutes',
             'priority': 5,  # High priority for tax submissions
         })
+        # Store retry cron job reference
+        self.write({'tax_retry_cron_id': retry_cron.id})
         
         # Log retry scheduling
         self.message_post(
@@ -573,15 +611,16 @@ class HealthcareInvoice(models.Model):
     def _schedule_tax_submission_check(self):
         """Schedule check of tax submission status"""
         check_date = fields.Datetime.now() + timedelta(hours=24)
-        self.env['ir.cron'].create({
+        check_cron = self.env['ir.cron'].create({
             'name': f'Tax Submission Check: {self.name}',
             'model_id': self.env.ref('account.model_account_move').id,
             'code': f'env["account.move"].browse({self.id})._check_tax_submission_status()',
             'nextcall': check_date,
-            'numbercall': 1,
             'interval_number': 24,
             'interval_type': 'hours',
         })
+        # Store check cron job reference
+        self.write({'tax_check_cron_id': check_cron.id})
 
     def _check_tax_submission_status(self):
         """Check status of tax authority submission"""
@@ -598,6 +637,10 @@ class HealthcareInvoice(models.Model):
         else:
             self.tax_authority_submission_status = 'rejected'
             self.tax_submission_error = 'Tax authority rejected: Additional documentation required'
+        
+        # Deactivate the status check cron job since we have final status
+        if self.tax_check_cron_id:
+            self.tax_check_cron_id.write({'active': False})
 
     def _sync_to_misa(self):
         """Synchronize invoice to MISA accounting system"""

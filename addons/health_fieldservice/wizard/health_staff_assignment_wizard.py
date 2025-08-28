@@ -40,9 +40,14 @@ class HealthStaffAssignmentWizard(models.TransientModel):
     ], string='Service Type', related='fso_id.service_type', readonly=True)
     
     scheduled_datetime = fields.Datetime(
-        'Scheduled Date/Time',
+        'Current Scheduled Date/Time',
         related='fso_id.scheduled_datetime',
         readonly=True
+    )
+    
+    new_scheduled_datetime = fields.Datetime(
+        'New Scheduled Date/Time',
+        help='Update the scheduled date/time for this service (optional)'
     )
     
     # Staff Assignment Fields
@@ -102,11 +107,17 @@ class HealthStaffAssignmentWizard(models.TransientModel):
         if not self.assigned_staff_ids:
             raise UserError(_('Please select at least one staff member to assign.'))
         
-        # Update FSO with assigned staff
-        self.fso_id.write({
+        # Update FSO with assigned staff and optionally new schedule
+        update_vals = {
             'assigned_staff_ids': [(6, 0, self.assigned_staff_ids.ids)],
             'lead_staff_id': self.lead_staff_id.id if self.lead_staff_id else False,
-        })
+        }
+        
+        # Update scheduled time if provided
+        if self.new_scheduled_datetime:
+            update_vals['scheduled_datetime'] = self.new_scheduled_datetime
+            
+        self.fso_id.write(update_vals)
         
         # Create individual staff assignment records
         existing_assignments = self.env['health.staff.assignment'].search([
@@ -120,8 +131,8 @@ class HealthStaffAssignmentWizard(models.TransientModel):
                 'fso_id': self.fso_id.id,
                 'staff_id': staff.id,
                 'assignment_role': role,
-                'assignment_date': self.scheduled_datetime or fields.Datetime.now(),
-                'planned_start_time': self.scheduled_datetime,
+                'assignment_date': self.new_scheduled_datetime or self.scheduled_datetime or fields.Datetime.now(),
+                'planned_start_time': self.new_scheduled_datetime or self.scheduled_datetime,
                 'assignment_status': 'assigned',
                 'state': 'assigned',
                 'assignment_notes': self.assignment_notes or f'Manually assigned via wizard',
@@ -131,11 +142,16 @@ class HealthStaffAssignmentWizard(models.TransientModel):
         if self.fso_id.state == 'draft':
             self.fso_id.write({'state': 'assigned'})
         
-        # Log the assignment
+        # Log the assignment  
+        message_body = f"Staff manually assigned: {', '.join(self.assigned_staff_ids.mapped('name'))}. " \
+                      f"Lead: {self.lead_staff_id.name if self.lead_staff_id else 'None'}"
+        
+        if self.new_scheduled_datetime:
+            message_body += f". Rescheduled to: {self.new_scheduled_datetime.strftime('%Y-%m-%d %H:%M')}"
+            
         self.fso_id.message_post(
-            body=f"Staff manually assigned: {', '.join(self.assigned_staff_ids.mapped('name'))}. "
-                 f"Lead: {self.lead_staff_id.name if self.lead_staff_id else 'None'}",
-            subject="Staff Assignment Updated"
+            body=message_body,
+            subject="Staff Assignment & Schedule Updated"
         )
         
         return {
