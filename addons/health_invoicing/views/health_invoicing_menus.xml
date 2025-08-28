@@ -1,6 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
+    <!-- Actions must be defined before menus that reference them -->
+    
+    <!-- Actions for Service Billing -->
+    <record id="action_health_service_billing" model="ir.actions.act_window">
+        <field name="name">Healthcare Service Billing</field>
+        <field name="res_model">account.move</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('move_type', '=', 'out_invoice'), ('healthcare_service_type', '!=', False)]</field>
+        <field name="context">{'default_move_type': 'out_invoice', 'move_type': 'out_invoice'}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create healthcare service invoices
+            </p>
+            <p>
+                Track billing for healthcare services including home visits, clinic visits, and other medical services.
+                Manage insurance claims and generate invoices automatically with Vietnamese tax compliance.
+            </p>
+        </field>
+    </record>
+
+    <!-- Actions for Payment Workflow -->
+    <record id="action_health_payment_workflow_wizard" model="ir.actions.act_window">
+        <field name="name">Healthcare Payment Workflow</field>
+        <field name="res_model">health.payment.workflow.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Process healthcare service payments
+            </p>
+            <p>
+                Process payments for completed healthcare services using Pay Now or Pay Later workflows.
+                Automatically submit invoices to Vietnamese Tax Authorities.
+            </p>
+        </field>
+    </record>
+
+    <!-- Menu Items (defined after actions) -->
+    
     <!-- Main Healthcare Invoicing Menu -->
     <menuitem 
         id="menu_health_invoicing_root" 
@@ -36,38 +75,5 @@
         parent="menu_health_payment_workflow"
         action="action_health_payment_workflow_wizard"
         sequence="10"/>
-
-    <!-- Actions for Service Billing -->
-    <record id="action_health_service_billing" model="ir.actions.act_window">
-        <field name="name">Healthcare Service Billing</field>
-        <field name="res_model">health.service.billing</field>
-        <field name="view_mode">list,form</field>
-        <field name="help" type="html">
-            <p class="o_view_nocontent_smiling_face">
-                Create healthcare service billing records
-            </p>
-            <p>
-                Track billing for healthcare services including home visits, clinic visits, and other medical services.
-                Manage insurance claims and generate invoices automatically.
-            </p>
-        </field>
-    </record>
-
-    <!-- Actions for Payment Workflow -->
-    <record id="action_health_payment_workflow_wizard" model="ir.actions.act_window">
-        <field name="name">Healthcare Payment Workflow</field>
-        <field name="res_model">health.payment.workflow.wizard</field>
-        <field name="view_mode">form</field>
-        <field name="target">new</field>
-        <field name="help" type="html">
-            <p class="o_view_nocontent_smiling_face">
-                Process healthcare service payments
-            </p>
-            <p>
-                Process payments for completed healthcare services using Pay Now or Pay Later workflows.
-                Automatically submit invoices to Vietnamese Tax Authorities.
-            </p>
-        </field>
-    </record>
 
 </odoo>

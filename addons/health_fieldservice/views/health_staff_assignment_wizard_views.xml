@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Staff Assignment Wizard Form View -->
+    <record id="view_health_staff_assignment_wizard_form" model="ir.ui.view">
+        <field name="name">health.staff.assignment.wizard.form</field>
+        <field name="model">health.staff.assignment.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Assign Staff to Service">
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <span>Assign Staff to Service</span>
+                        </h1>
+                    </div>
+                    
+                    <group>
+                        <group string="Service Information">
+                            <field name="fso_id" readonly="1"/>
+                            <field name="patient_id" readonly="1"/>
+                            <field name="service_type" readonly="1"/>
+                            <field name="scheduled_datetime" readonly="1"/>
+                        </group>
+                        
+                        <group string="Staff Assignment">
+                            <field name="assigned_staff_ids" 
+                                   widget="many2many_tags"
+                                   options="{'color_field': 'color', 'no_create': True}"
+                                   placeholder="Select healthcare staff members..."/>
+                            <field name="lead_staff_id" 
+                                   options="{'no_create': True}"
+                                   placeholder="Select lead staff member..."/>
+                        </group>
+                    </group>
+                    
+                    <group>
+                        <field name="assignment_notes" 
+                               placeholder="Optional notes about the staff assignment..."
+                               colspan="2"/>
+                    </group>
+                </sheet>
+                
+                <footer>
+                    <button name="action_assign_staff" 
+                            string="Assign Staff" 
+                            type="object" 
+                            class="btn-primary"/>
+                    <button string="Cancel" 
+                            class="btn-secondary" 
+                            special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- Wizard Action -->
+    <record id="action_health_staff_assignment_wizard" model="ir.actions.act_window">
+        <field name="name">Assign Staff to Service</field>
+        <field name="res_model">health.staff.assignment.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+        <field name="view_id" ref="view_health_staff_assignment_wizard_form"/>
+    </record>
+
+</odoo>

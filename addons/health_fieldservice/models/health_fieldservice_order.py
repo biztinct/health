@@ -1186,3 +1186,37 @@ class HealthFieldServiceOrderUnified(models.Model):
                 name = record.name
             result.append((record.id, name))
         return result
+    
+    def action_manual_assign_staff(self):
+        """Open manual staff assignment wizard"""
+        self.ensure_one()
+        
+        return {
+            'name': _('Assign Staff to Service'),
+            'type': 'ir.actions.act_window',
+            'res_model': 'health.staff.assignment.wizard',
+            'view_mode': 'form',
+            'target': 'new',
+            'context': {
+                'default_fso_id': self.id,
+                'default_service_type': self.service_type,
+                'default_scheduled_datetime': self.scheduled_datetime,
+                'default_patient_id': self.patient_id.id,
+            }
+        }
+    
+    def action_view_invoice(self):
+        """View the generated invoice"""
+        self.ensure_one()
+        
+        if not self.invoice_id:
+            raise UserError(_('No invoice has been generated for this service order yet.'))
+        
+        return {
+            'name': _('Service Invoice'),
+            'type': 'ir.actions.act_window',
+            'res_model': 'account.move',
+            'res_id': self.invoice_id.id,
+            'view_mode': 'form',
+            'target': 'current',
+        }

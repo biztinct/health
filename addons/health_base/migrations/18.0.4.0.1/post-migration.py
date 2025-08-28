@@ -97,23 +97,48 @@ def migrate(cr, version):
             
             print(f"Created missing column: res_partner.{field_name}")
     
-    # Create healthcare categories if they don't exist
-    cr.execute("""
-        INSERT INTO res_partner_category (name, color, parent_id, create_uid, create_date, write_uid, write_date)
-        SELECT 'Patient', 1, NULL, 1, NOW(), 1, NOW()
-        WHERE NOT EXISTS (SELECT 1 FROM res_partner_category WHERE name='Patient')
-    """)
+    # Create healthcare categories if they don't exist - using ORM to avoid SQL issues
+    try:
+        from odoo import registry, api, SUPERUSER_ID
+        
+        # Use ORM instead of raw SQL to avoid JSON field issues
+        with api.Environment.manage():
+            env = api.Environment(cr, SUPERUSER_ID, {})
+            
+            # Create Patient category
+            if not env['res.partner.category'].search([('name', '=', 'Patient')]):
+                env['res.partner.category'].create({
+                    'name': 'Patient',
+                    'color': 4,
+                })
+                print("Created Patient category")
+            
+            # Create Healthcare Staff category
+            if not env['res.partner.category'].search([('name', '=', 'Healthcare Staff')]):
+                env['res.partner.category'].create({
+                    'name': 'Healthcare Staff', 
+                    'color': 2,
+                })
+                print("Created Healthcare Staff category")
+                
+            # Create Healthcare Facility category
+            if not env['res.partner.category'].search([('name', '=', 'Healthcare Facility')]):
+                env['res.partner.category'].create({
+                    'name': 'Healthcare Facility',
+                    'color': 6,
+                })
+                print("Created Healthcare Facility category")
     
-    cr.execute("""
-        INSERT INTO res_partner_category (name, color, parent_id, create_uid, create_date, write_uid, write_date)
-        SELECT 'Healthcare Staff', 2, NULL, 1, NOW(), 1, NOW()
-        WHERE NOT EXISTS (SELECT 1 FROM res_partner_category WHERE name='Healthcare Staff')
-    """)
-    
-    cr.execute("""
-        INSERT INTO res_partner_category (name, color, parent_id, create_uid, create_date, write_uid, write_date)
-        SELECT 'Healthcare Facility', 3, NULL, 1, NOW(), 1, NOW()
-        WHERE NOT EXISTS (SELECT 1 FROM res_partner_category WHERE name='Healthcare Facility')
-    """)
+    except Exception as e:
+        print(f"Warning: Could not create partner categories using ORM: {e}")
+        # Fallback: Try simpler SQL approach
+        try:
+            cr.execute("""
+                INSERT INTO res_partner_category (name, color, create_uid, create_date, write_uid, write_date)
+                SELECT 'Patient', 4, 1, NOW(), 1, NOW()
+                WHERE NOT EXISTS (SELECT 1 FROM res_partner_category WHERE name='Patient')
+            """)
+        except Exception as sql_error:
+            print(f"Warning: Could not create Patient category: {sql_error}")
     
     print("Healthcare base migration completed - database schema fixed")

@@ -489,11 +489,10 @@ class HealthStaffAssignment(models.Model):
                 'staff_confirmed_date': fields.Datetime.now()
             })
             
-            # Update related appointment
-            if record.appointment_id:
-                record.appointment_id.write({
-                    'assignment_state': 'staff_confirmed',
-                    'real_time_status': 'confirmed'
+            # Update related FSO
+            if record.fso_id:
+                record.fso_id.write({
+                    'state': 'assigned',
                 })
             
             # Send confirmation notifications
@@ -520,10 +519,10 @@ class HealthStaffAssignment(models.Model):
                 'actual_departure_time': fields.Datetime.now()
             })
             
-            # Update appointment status
-            if record.appointment_id:
-                record.appointment_id.write({
-                    'real_time_status': 'en_route'
+            # Update FSO status
+            if record.fso_id:
+                record.fso_id.write({
+                    'state': 'in_progress'
                 })
     
     def action_complete_assignment(self):
@@ -538,9 +537,8 @@ class HealthStaffAssignment(models.Model):
             })
             
             # Update appointment
-            if record.appointment_id:
-                record.appointment_id.write({
-                    'real_time_status': 'completed',
+            if record.fso_id:
+                record.fso_id.write({
                     'state': 'completed'
                 })
             
@@ -595,18 +593,22 @@ class HealthStaffAssignment(models.Model):
         """Send notifications when assignment is confirmed"""
         # Notify patient
         if self.appointment_id.patient_id.email:
-            template = self.env.ref('health_staff_assignment.email_template_assignment_confirmed', False)
+            template = self.env.ref('health_fieldservice.email_template_assignment_confirmed', False)
             if template:
                 template.send_mail(self.id, force_send=True)
         
         # Notify operations team
-        ops_users = self.env.ref('health_staff_assignment.group_ops_manager').users
-        for user in ops_users:
-            self.message_post(
-                body=_('Assignment confirmed for appointment %s') % self.appointment_id.name,
-                partner_ids=user.partner_id.ids,
-                message_type='notification'
-            )
+        try:
+            ops_users = self.env.ref('health_fieldservice.group_ops_manager').users
+            for user in ops_users:
+                self.message_post(
+                    body=_('Assignment confirmed for FSO %s') % self.fso_id.name,
+                    partner_ids=user.partner_id.ids,
+                    message_type='notification'
+                )
+        except ValueError:
+            # If group doesn't exist, skip notification
+            pass
     
     def _update_staff_availability(self):
         """Update staff availability matrix after completion"""
@@ -1426,11 +1428,10 @@ class HealthStaffAssignmentEngine(models.Model):
             'staff_confirmed_date': fields.Datetime.now()
         })
         
-        # Update related appointment
-        if self.appointment_id:
-            self.appointment_id.write({
-                'state': 'confirmed',
-                'real_time_status': 'confirmed'
+        # Update related FSO
+        if self.fso_id:
+            self.fso_id.write({
+                'state': 'assigned'
             })
         
         return {
@@ -1458,10 +1459,9 @@ class HealthStaffAssignmentEngine(models.Model):
         })
         
         # Update related appointment
-        if self.appointment_id:
-            self.appointment_id.write({
-                'state': 'in_progress',
-                'real_time_status': 'en_route'
+        if self.fso_id:
+            self.fso_id.write({
+                'state': 'in_progress'
             })
         
         return {
@@ -1488,11 +1488,10 @@ class HealthStaffAssignmentEngine(models.Model):
             'actual_completion_time': fields.Datetime.now()
         })
         
-        # Update related appointment
-        if self.appointment_id:
-            self.appointment_id.write({
-                'state': 'done',
-                'real_time_status': 'completed'
+        # Update related FSO
+        if self.fso_id:
+            self.fso_id.write({
+                'state': 'completed'
             })
         
         return {
@@ -1518,11 +1517,10 @@ class HealthStaffAssignmentEngine(models.Model):
             'real_time_status': 'cancelled'
         })
         
-        # Update related appointment if needed
-        if self.appointment_id and self.appointment_id.state != 'cancelled':
-            self.appointment_id.write({
-                'state': 'cancelled',
-                'real_time_status': 'cancelled'
+        # Update related FSO if needed
+        if self.fso_id and self.fso_id.state != 'cancelled':
+            self.fso_id.write({
+                'state': 'cancelled'
             })
         
         return {
@@ -1546,7 +1544,7 @@ class HealthStaffAssignmentEngine(models.Model):
             'res_model': 'health.staff.assignment',
             'res_id': self.id,
             'view_mode': 'form',
-            'view_id': self.env.ref('health_staff_assignment.view_health_staff_assignment_form').id,
+            'view_id': self.env.ref('health_fieldservice.view_health_staff_assignment_form').id,
             'target': 'new',
             'context': {
                 'default_state': self.state,

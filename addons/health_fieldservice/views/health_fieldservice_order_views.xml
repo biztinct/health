@@ -10,7 +10,13 @@
                 <header>
                     <button name="action_ai_assign_staff" type="object" 
                             string="🚀 AI Assign Staff" class="oe_highlight"
-                            invisible="assigned_staff_ids"/>
+                            invisible="assigned_staff_ids"
+                            help="Automatically assign staff using AI matching"/>
+                    
+                    <button name="action_manual_assign_staff" type="object" 
+                            string="👥 Manual Staff Assignment" class="btn-primary"
+                            invisible="state in ['completed', 'cancelled']"
+                            help="Manually assign or modify staff assignments"/>
                     
                     <button name="action_start_service" type="object" 
                             string="▶️ Start Service" class="oe_highlight"
@@ -24,6 +30,11 @@
                             string="💰 Create Invoice" class="btn-success"
                             invisible="state != 'completed' or invoice_id"
                             help="Create final invoice and initiate payment workflow (Pay Now/Pay Later)"/>
+                    
+                    <button name="action_view_invoice" type="object" 
+                            string="📄 View Invoice" class="btn-info"
+                            invisible="not invoice_id"
+                            help="View the generated invoice"/>
                     
                     <button name="action_close_fso" type="object" 
                             string="📁 Close FSO" 

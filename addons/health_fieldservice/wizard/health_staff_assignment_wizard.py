@@ -1,0 +1,150 @@
+# -*- coding: utf-8 -*-
+
+from odoo import api, fields, models, _
+from odoo.exceptions import UserError
+
+
+class HealthStaffAssignmentWizard(models.TransientModel):
+    """
+    Wizard for manual staff assignment to Field Service Orders
+    """
+    _name = 'health.staff.assignment.wizard'
+    _description = 'Staff Assignment Wizard'
+    
+    # FSO Information (read-only)
+    fso_id = fields.Many2one(
+        'health.fieldservice.order',
+        string='Field Service Order',
+        required=True,
+        readonly=True
+    )
+    
+    patient_id = fields.Many2one(
+        'res.partner',
+        string='Patient',
+        related='fso_id.patient_id',
+        readonly=True
+    )
+    
+    service_type = fields.Selection([
+        ('home_visit', 'Home Visit'),
+        ('clinic_visit', 'Clinic Visit'),
+        ('consultation', 'Consultation'),
+        ('emergency', 'Emergency Care'),
+        ('follow_up', 'Follow-up Care'),
+        ('preventive', 'Preventive Care'),
+        ('rehabilitation', 'Rehabilitation'),
+        ('telemedicine', 'Telemedicine/Online'),
+        ('vaccination', 'Vaccination'),
+        ('diagnostic', 'Diagnostic Services'),
+    ], string='Service Type', related='fso_id.service_type', readonly=True)
+    
+    scheduled_datetime = fields.Datetime(
+        'Scheduled Date/Time',
+        related='fso_id.scheduled_datetime',
+        readonly=True
+    )
+    
+    # Staff Assignment Fields
+    assigned_staff_ids = fields.Many2many(
+        'hr.employee',
+        'wizard_staff_assignment_rel',
+        'wizard_id',
+        'employee_id',
+        string='Assigned Staff',
+        domain="[('is_healthcare_staff', '=', True), ('employment_status', '=', 'active')]",
+        help='Select healthcare staff members to assign to this service'
+    )
+    
+    lead_staff_id = fields.Many2one(
+        'hr.employee',
+        string='Lead Staff Member',
+        help='Primary staff member responsible for this service'
+    )
+    
+    assignment_notes = fields.Text(
+        'Assignment Notes',
+        help='Optional notes about the staff assignment'
+    )
+    
+    @api.onchange('assigned_staff_ids')
+    def _onchange_assigned_staff_ids(self):
+        """Update lead staff domain based on assigned staff"""
+        if self.assigned_staff_ids:
+            # If lead staff is not in assigned staff, clear it
+            if self.lead_staff_id and self.lead_staff_id not in self.assigned_staff_ids:
+                self.lead_staff_id = False
+            
+            # Set first assigned staff as default lead if none selected
+            if not self.lead_staff_id and self.assigned_staff_ids:
+                self.lead_staff_id = self.assigned_staff_ids[0]
+                
+        return {'domain': {'lead_staff_id': [('id', 'in', self.assigned_staff_ids.ids)]}}
+    
+    @api.model
+    def default_get(self, fields_list):
+        """Set default values based on FSO context"""
+        defaults = super().default_get(fields_list)
+        
+        if self.env.context.get('default_fso_id'):
+            fso = self.env['health.fieldservice.order'].browse(self.env.context['default_fso_id'])
+            if fso.assigned_staff_ids:
+                defaults['assigned_staff_ids'] = [(6, 0, fso.assigned_staff_ids.ids)]
+                if fso.lead_staff_id:
+                    defaults['lead_staff_id'] = fso.lead_staff_id.id
+        
+        return defaults
+    
+    def action_assign_staff(self):
+        """Assign selected staff to the FSO"""
+        self.ensure_one()
+        
+        if not self.assigned_staff_ids:
+            raise UserError(_('Please select at least one staff member to assign.'))
+        
+        # Update FSO with assigned staff
+        self.fso_id.write({
+            'assigned_staff_ids': [(6, 0, self.assigned_staff_ids.ids)],
+            'lead_staff_id': self.lead_staff_id.id if self.lead_staff_id else False,
+        })
+        
+        # Create individual staff assignment records
+        existing_assignments = self.env['health.staff.assignment'].search([
+            ('fso_id', '=', self.fso_id.id)
+        ])
+        existing_assignments.unlink()  # Remove existing assignments
+        
+        for staff in self.assigned_staff_ids:
+            role = 'lead' if staff == self.lead_staff_id else 'support'
+            self.env['health.staff.assignment'].create({
+                'fso_id': self.fso_id.id,
+                'staff_id': staff.id,
+                'assignment_role': role,
+                'assignment_date': self.scheduled_datetime or fields.Datetime.now(),
+                'planned_start_time': self.scheduled_datetime,
+                'assignment_status': 'assigned',
+                'state': 'assigned',
+                'assignment_notes': self.assignment_notes or f'Manually assigned via wizard',
+            })
+        
+        # Update FSO state if needed
+        if self.fso_id.state == 'draft':
+            self.fso_id.write({'state': 'assigned'})
+        
+        # Log the assignment
+        self.fso_id.message_post(
+            body=f"Staff manually assigned: {', '.join(self.assigned_staff_ids.mapped('name'))}. "
+                 f"Lead: {self.lead_staff_id.name if self.lead_staff_id else 'None'}",
+            subject="Staff Assignment Updated"
+        )
+        
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'display_notification',
+            'params': {
+                'message': _('Staff successfully assigned to service order.'),
+                'type': 'success',
+                'sticky': False,
+            },
+            'next': {'type': 'ir.actions.act_window_close'},
+        }
