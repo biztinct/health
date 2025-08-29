@@ -138,22 +138,27 @@ class HealthLead(models.Model):
         ('walk_in', 'Walk-in'),
     ], string='Contact Source', help='From Excel: How the contact was initiated')
 
-    @api.model
-    def create(self, vals):
+    @api.model_create_multi
+    def create(self, vals_list):
         """Override create to set healthcare-specific defaults"""
-        # Set default team to healthcare team if not specified
-        if not vals.get('team_id'):
-            healthcare_team = self.env.ref('health_crm.healthcare_crm_team', raise_if_not_found=False)
-            if healthcare_team:
-                vals['team_id'] = healthcare_team.id
+        # Handle both single dict and list of dicts
+        if not isinstance(vals_list, list):
+            vals_list = [vals_list]
+            
+        for vals in vals_list:
+            # Set default team to healthcare team if not specified
+            if not vals.get('team_id'):
+                healthcare_team = self.env.ref('health_crm.healthcare_crm_team', raise_if_not_found=False)
+                if healthcare_team:
+                    vals['team_id'] = healthcare_team.id
+            
+            # Set Vietnamese as default country if not specified
+            if not vals.get('country_id') and not vals.get('partner_id'):
+                vietnam = self.env.ref('base.vn', raise_if_not_found=False)
+                if vietnam:
+                    vals['country_id'] = vietnam.id
         
-        # Set Vietnamese as default country if not specified
-        if not vals.get('country_id') and not vals.get('partner_id'):
-            vietnam = self.env.ref('base.vn', raise_if_not_found=False)
-            if vietnam:
-                vals['country_id'] = vietnam.id
-        
-        return super().create(vals)
+        return super().create(vals_list)
 
     def action_convert_to_appointment(self):
         """Convert lead directly to healthcare appointment"""

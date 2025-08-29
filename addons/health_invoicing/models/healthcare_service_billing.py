@@ -255,26 +255,26 @@ class HealthcareServiceBilling(models.Model):
             'name': f'Billing - {fso.name}',
             'fieldservice_order_id': fso.id,
             'patient_id': fso.patient_id.id,
-            'customer_id': fso.customer_id.id if fso.customer_id else fso.patient_id.partner_id.id,
-            'service_type': fso.service_category or 'home_visit',
+            'customer_id': fso.customer_id.id if fso.customer_id else fso.patient_id.id,
+            'service_type': fso.service_type or 'home_visit',
             'service_date': fso.scheduled_date,
             'service_duration_hours': fso.estimated_duration,
-            'service_location': 'patient_home' if fso.service_category == 'home_visit' else 'clinic',
+            'service_location': 'patient_home' if fso.service_type == 'home_visit' else 'clinic',
             'service_address': fso.service_address,
             'travel_distance_km': fso.travel_distance,
-            'staff_ids': [(6, 0, fso.assigned_staff_ids.mapped('employee_id').ids)],
-            'equipment_description': fso.equipment_requirements or 'Standard medical equipment',
+            'staff_ids': [(6, 0, fso.assigned_staff_ids.ids)],
+            'equipment_description': ', '.join(fso.required_equipment_ids.mapped('name')) or 'Standard medical equipment',
         }
         
         # Calculate amounts
         billing_vals.update(self._calculate_fso_amounts(fso))
         
         # Check insurance
-        if fso.patient_id.partner_id.has_health_insurance:
+        if hasattr(fso.patient_id, 'has_health_insurance') and fso.patient_id.has_health_insurance:
             billing_vals.update({
                 'has_insurance': True,
-                'insurance_provider_id': fso.patient_id.partner_id.insurance_provider_id.id,
-                'insurance_coverage_percentage': fso.patient_id.partner_id.insurance_coverage_percentage,
+                'insurance_provider_id': fso.patient_id.insurance_provider_id.id if fso.patient_id.insurance_provider_id else False,
+                'insurance_coverage_percentage': fso.patient_id.insurance_coverage_percentage or 0.0,
             })
         
         billing = self.create(billing_vals)
@@ -289,7 +289,7 @@ class HealthcareServiceBilling(models.Model):
         amounts = {}
         
         # Base service amount - get from service type pricing
-        service_product = self._get_service_product(fso.service_category)
+        service_product = self._get_service_product(fso.service_type)
         if service_product:
             amounts['base_service_amount'] = service_product.list_price * (fso.estimated_duration or 1)
         else:
@@ -297,13 +297,13 @@ class HealthcareServiceBilling(models.Model):
         
         # Equipment rental - simplified for now
         # TODO: Implement proper equipment cost calculation
-        if fso.equipment_requirements:
+        if fso.required_equipment_ids:
             amounts['equipment_rental_amount'] = 100000.0  # Default VND equipment charge
         else:
             amounts['equipment_rental_amount'] = 0.0
         
         # Travel expenses for home visits
-        if fso.service_category == 'home_visit' and fso.travel_distance:
+        if fso.service_type == 'home_visit' and fso.travel_distance:
             travel_rate = 5000.0  # VND per km
             amounts['travel_expense_amount'] = fso.travel_distance * travel_rate
         else:
@@ -331,12 +331,12 @@ class HealthcareServiceBilling(models.Model):
 
     def _create_staff_time_tracking(self, billing, fso):
         """Create staff time tracking entries"""
-        for staff_assignment in fso.assigned_staff_ids:
+        for staff_assignment in fso.assignment_ids:
             self.env['health.staff.time.tracking'].create({
                 'billing_id': billing.id,
-                'employee_id': staff_assignment.employee_id.id,
+                'employee_id': staff_assignment.staff_id.id,
                 'estimated_hours': fso.estimated_duration,
-                'hourly_rate': staff_assignment.employee_id.hourly_cost or 50000.0,  # Default VND rate
+                'hourly_rate': staff_assignment.staff_id.hourly_cost or 50000.0,  # Default VND rate
                 'service_date': fso.scheduled_date,
             })
 
@@ -380,32 +380,47 @@ class HealthcareServiceBilling(models.Model):
         if self.invoice_id:
             raise UserError(_('Invoice already generated for this billing.'))
         
-        # Prepare invoice values
+        # Create invoice with basic fields only
         invoice_vals = {
             'move_type': 'out_invoice',
             'partner_id': self.customer_id.id,
             'invoice_date': fields.Date.today(),
             'invoice_origin': self.name,
-            
-            # Healthcare-specific fields
-            'fieldservice_order_id': self.fieldservice_order_id.id,
-            'appointment_id': self.appointment_id.id,
-            'patient_id': self.patient_id.id,
-            'healthcare_service_type': self.service_type,
-            'staff_time_hours': sum(self.staff_time_ids.mapped('actual_hours')),
-            'equipment_rental_days': self.service_duration_hours / 24.0,
-            'travel_distance_km': self.travel_distance_km,
-            'urgency_surcharge': self.urgency_surcharge_amount,
-            
-            # Insurance fields
-            'has_insurance_claim': self.has_insurance,
-            'insurance_provider': self.insurance_provider_id.name if self.insurance_provider_id else False,
-            'insurance_coverage_amount': self.insurance_covered_amount,
-            'patient_responsibility_amount': self.patient_responsibility_amount,
         }
+        
+        # Healthcare fields temporarily commented out
+        # if self.fieldservice_order_id:
+        #     invoice_vals['fieldservice_order_id'] = self.fieldservice_order_id.id
+        # if self.appointment_id:
+        #     invoice_vals['appointment_id'] = self.appointment_id.id    
+        # if self.patient_id:
+        #     invoice_vals['patient_id'] = self.patient_id.id
+        if self.service_type:
+            invoice_vals['healthcare_service_type'] = self.service_type
         
         # Create invoice
         invoice = self.env['account.move'].create(invoice_vals)
+        
+        # Update with additional fields after creation (safer approach)
+        additional_vals = {}
+        if self.staff_time_ids:
+            additional_vals['staff_time_hours'] = sum(self.staff_time_ids.mapped('actual_hours'))
+        if self.service_duration_hours:
+            additional_vals['equipment_rental_days'] = self.service_duration_hours / 24.0
+        if self.travel_distance_km:
+            additional_vals['travel_distance_km'] = self.travel_distance_km
+        if self.urgency_surcharge_amount:
+            additional_vals['urgency_surcharge'] = self.urgency_surcharge_amount
+        if self.has_insurance:
+            additional_vals.update({
+                'has_insurance_claim': self.has_insurance,
+                'insurance_provider': self.insurance_provider_id.name if self.insurance_provider_id else False,
+                'insurance_coverage_amount': self.insurance_covered_amount or 0.0,
+                'patient_responsibility_amount': self.patient_responsibility_amount or 0.0,
+            })
+        
+        if additional_vals:
+            invoice.write(additional_vals)
         
         # Create invoice lines
         self._create_invoice_lines(invoice)
@@ -436,8 +451,8 @@ class HealthcareServiceBilling(models.Model):
             lines_to_create.append({
                 'move_id': invoice.id,
                 'product_id': service_product.product_variant_id.id if service_product else False,
-                'name': f'{dict(self._fields["service_type"].selection)[self.service_type]} - {self.patient_id.name}',
-                'quantity': self.service_duration_hours,
+                'name': f'{dict(self._fields["service_type"].selection)[self.service_type]} - Service',
+                'quantity': self.service_duration_hours or 1,
                 'price_unit': self.base_service_amount / (self.service_duration_hours or 1),
                 'healthcare_service_category': 'consultation',
             })
@@ -491,9 +506,18 @@ class HealthcareServiceBilling(models.Model):
                     'quantity': staff_time.actual_hours,
                     'price_unit': staff_time.hourly_rate,
                     'healthcare_service_category': 'staff_time',
-                    'staff_member_id': staff_time.employee_id.id,
+                    'staff_member_id': staff_time.employee_id.id if hasattr(staff_time, 'employee_id') else False,
                     'service_duration_minutes': staff_time.actual_hours * 60,
                 })
+        
+        # Ensure at least one line exists
+        if not lines_to_create:
+            lines_to_create.append({
+                'move_id': invoice.id,
+                'name': 'Healthcare Service',
+                'quantity': 1,
+                'price_unit': 100.0,  # Default price
+            })
         
         # Create all invoice lines
         for line_vals in lines_to_create:

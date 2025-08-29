@@ -190,6 +190,22 @@ class HealthFieldServiceOrderUnified(models.Model):
         for record in self:
             record.assignment_count = len(record.assignment_ids)
     
+    @api.depends('invoice_id')
+    def _compute_invoice_count(self):
+        """Compute the number of invoices related to this FSO"""
+        for record in self:
+            # Count related invoices (main invoice_id plus any other invoices)
+            invoice_count = 0
+            if record.invoice_id:
+                invoice_count += 1
+            # Also count any additional invoices linked to this FSO
+            additional_invoices = self.env['account.move'].search([
+                ('fieldservice_order_id', '=', record.id),
+                ('id', '!=', record.invoice_id.id if record.invoice_id else False)
+            ])
+            invoice_count += len(additional_invoices)
+            record.invoice_count = invoice_count
+    
     @api.depends('assignment_ids.staff_id')
     def _compute_assigned_staff(self):
         """Compute assigned staff from assignment records"""
@@ -311,6 +327,13 @@ class HealthFieldServiceOrderUnified(models.Model):
         'Assignment Count',
         compute='_compute_assignment_count',
         help='Number of staff assignments for this FSO'
+    )
+    
+    # Invoice-related computed fields
+    invoice_count = fields.Integer(
+        'Invoice Count',
+        compute='_compute_invoice_count',
+        help='Number of invoices related to this FSO'
     )
     
     lead_assignment_id = fields.Many2one(
@@ -1106,6 +1129,48 @@ class HealthFieldServiceOrderUnified(models.Model):
             'view_mode': 'form',
             'target': 'current',
         }
+    
+    def action_view_all_invoices(self):
+        """View all invoices related to this FSO"""
+        self.ensure_one()
+        
+        # Find all invoices related to this FSO
+        invoice_ids = []
+        if self.invoice_id:
+            invoice_ids.append(self.invoice_id.id)
+        
+        # Search for additional invoices
+        additional_invoices = self.env['account.move'].search([
+            ('fieldservice_order_id', '=', self.id)
+        ])
+        invoice_ids.extend(additional_invoices.ids)
+        
+        if not invoice_ids:
+            raise UserError(_('No invoices have been generated for this booking.'))
+        
+        if len(invoice_ids) == 1:
+            # Single invoice - open form view
+            return {
+                'name': _('Invoice'),
+                'type': 'ir.actions.act_window',
+                'res_model': 'account.move',
+                'res_id': invoice_ids[0],
+                'view_mode': 'form',
+                'target': 'current',
+            }
+        else:
+            # Multiple invoices - open list view
+            return {
+                'name': _('Invoices for %s') % self.name,
+                'type': 'ir.actions.act_window',
+                'res_model': 'account.move',
+                'domain': [('id', 'in', invoice_ids)],
+                'view_mode': 'list,form',
+                'target': 'current',
+            }
+    
+    # action_create_invoice_anytime method temporarily removed
+    # Use "Create Invoice" after service completion or Healthcare Invoicing menu
     
     def action_view_communications(self):
         """View communications related to this booking"""

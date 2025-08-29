@@ -21,23 +21,23 @@ class HealthcareInvoice(models.Model):
     _inherit = 'account.move'
 
     # Healthcare service integration
-    fieldservice_order_id = fields.Many2one(
-        'health.fieldservice.order',
-        string='Field Service Order',
-        help='Field Service Order that generated this invoice'
-    )
+    # fieldservice_order_id = fields.Many2one(
+    #     'health.fieldservice.order',
+    #     string='Field Service Order',
+    #     help='Field Service Order that generated this invoice'
+    # )
     
-    appointment_id = fields.Many2one(
-        'health.appointment',
-        string='Appointment',
-        help='Healthcare appointment that generated this invoice'
-    )
+    # appointment_id = fields.Many2one(
+    #     'health.appointment',
+    #     string='Appointment',
+    #     help='Healthcare appointment that generated this invoice'
+    # )
     
-    patient_id = fields.Many2one(
-        'health.patient',
-        string='Patient',
-        help='Patient receiving healthcare services'
-    )
+    # patient_id = fields.Many2one(
+    #     'health.patient',
+    #     string='Patient',
+    #     help='Patient receiving healthcare services'
+    # )
     
     healthcare_service_type = fields.Selection([
         ('home_visit', 'Home Visit'),
@@ -82,24 +82,6 @@ class HealthcareInvoice(models.Model):
         help='Error message from tax authority submission'
     )
     
-    # Cron job references for tax submissions (Odoo 18 compatibility)
-    tax_submission_cron_id = fields.Many2one(
-        'ir.cron',
-        string='Tax Submission Cron Job',
-        help='Scheduled job for tax submission - auto-deactivated after completion'
-    )
-    
-    tax_retry_cron_id = fields.Many2one(
-        'ir.cron', 
-        string='Tax Retry Cron Job',
-        help='Scheduled job for tax submission retry - auto-deactivated after completion'
-    )
-    
-    tax_check_cron_id = fields.Many2one(
-        'ir.cron',
-        string='Tax Check Cron Job', 
-        help='Scheduled job for tax submission status check - auto-deactivated after completion'
-    )
 
     # MISA integration fields
     misa_invoice_id = fields.Char(
@@ -235,9 +217,8 @@ class HealthcareInvoice(models.Model):
         
         invoice = super().create(vals)
         
-        # Auto-submit to tax authorities if configured
-        if invoice.move_type in ('out_invoice', 'out_refund'):
-            invoice._schedule_tax_authority_submission()
+        # Schedule tax submission after creation is complete (not during create)
+        # This will be handled by the invoice posting process instead
         
         return invoice
 
@@ -262,15 +243,8 @@ class HealthcareInvoice(models.Model):
         return f"VN{company_tax[-4:]}{date_part}{sequence}"
 
     def _deactivate_tax_cron_jobs(self):
-        """Deactivate all tax-related cron jobs for this invoice (Odoo 18 compatibility)"""
-        cron_fields = ['tax_submission_cron_id', 'tax_retry_cron_id', 'tax_check_cron_id']
-        for field in cron_fields:
-            cron_job = getattr(self, field)
-            if cron_job and cron_job.exists():
-                try:
-                    cron_job.write({'active': False})
-                except Exception:
-                    pass  # Continue even if cron job deletion fails
+        """Legacy method - no longer needed since we don't track cron job references"""
+        pass
 
     def _schedule_tax_authority_submission(self):
         """Schedule automatic submission to Vietnamese tax authorities"""
@@ -284,8 +258,7 @@ class HealthcareInvoice(models.Model):
             'interval_number': 1,
             'interval_type': 'hours',
         })
-        # Store cron job reference for later deactivation
-        self.write({'tax_submission_cron_id': cron_job.id})
+        # Note: Cron job will run independently - no need to track reference
 
     def _submit_to_tax_authorities(self):
         """Submit invoice to Vietnamese Tax Authorities (real-time)"""
@@ -326,11 +299,7 @@ class HealthcareInvoice(models.Model):
                     'tax_submission_reference': response.get('reference_number'),
                 })
                 
-                # Deactivate submission and retry cron jobs since submission succeeded
-                if self.tax_submission_cron_id:
-                    self.tax_submission_cron_id.write({'active': False})
-                if self.tax_retry_cron_id:
-                    self.tax_retry_cron_id.write({'active': False})
+                # Note: Cron jobs will self-manage their lifecycle
                 
                 # Schedule status check for final acceptance
                 self._schedule_tax_submission_check()
@@ -556,8 +525,7 @@ class HealthcareInvoice(models.Model):
             'interval_type': 'minutes',
             'priority': 5,  # High priority for tax submissions
         })
-        # Store retry cron job reference
-        self.write({'tax_retry_cron_id': retry_cron.id})
+        # Retry cron job created - will run independently
         
         # Log retry scheduling
         self.message_post(
@@ -619,8 +587,7 @@ class HealthcareInvoice(models.Model):
             'interval_number': 24,
             'interval_type': 'hours',
         })
-        # Store check cron job reference
-        self.write({'tax_check_cron_id': check_cron.id})
+        # Check cron job created - will run independently
 
     def _check_tax_submission_status(self):
         """Check status of tax authority submission"""
@@ -638,9 +605,7 @@ class HealthcareInvoice(models.Model):
             self.tax_authority_submission_status = 'rejected'
             self.tax_submission_error = 'Tax authority rejected: Additional documentation required'
         
-        # Deactivate the status check cron job since we have final status
-        if self.tax_check_cron_id:
-            self.tax_check_cron_id.write({'active': False})
+        # Note: Status check cron job will self-manage its lifecycle
 
     def _sync_to_misa(self):
         """Synchronize invoice to MISA accounting system"""
@@ -824,6 +789,30 @@ class HealthcareInvoice(models.Model):
                 
                 if company_auto_submit == 'True':
                     invoice._submit_to_tax_authorities()
+
+    def action_process_payment(self):
+        """Launch payment processing wizard from invoice form"""
+        self.ensure_one()
+        
+        if self.state != 'posted':
+            raise UserError(_('Only posted invoices can be processed for payment.'))
+        
+        if self.payment_state in ['paid', 'in_payment']:
+            raise UserError(_('This invoice is already paid or in payment process.'))
+        
+        # Launch the payment workflow wizard
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _('Process Payment'),
+            'res_model': 'health.payment.workflow.wizard',
+            'view_mode': 'form',
+            'target': 'new',
+            'context': {
+                'default_invoice_id': self.id,
+                'default_amount': self.amount_residual,
+                'default_partner_id': self.partner_id.id,
+            }
+        }
 
 
 class HealthcareInvoiceLine(models.Model):

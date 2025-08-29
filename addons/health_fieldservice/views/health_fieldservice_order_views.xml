@@ -36,6 +36,8 @@
                             invisible="not invoice_id"
                             help="View the generated invoice"/>
                     
+                    <!-- Invoice creation button temporarily removed - use Healthcare Invoicing menu instead -->
+                    
                     <button name="action_close_fso" type="object" 
                             string="📁 Close FSO" 
                             invisible="state != 'completed'"
@@ -51,7 +53,22 @@
                 
                 <sheet>
                     <div class="oe_button_box" name="button_box">
-                        <!-- Stat buttons temporarily removed for initial installation -->
+                        <!-- Smart buttons for enhanced user experience -->
+                        <button name="action_view_all_invoices" 
+                                type="object" 
+                                class="oe_stat_button" 
+                                icon="fa-file-text-o"
+                                invisible="not invoice_count">
+                            <field name="invoice_count" widget="statinfo" string="Invoices"/>
+                        </button>
+                        
+                        <button name="action_view_assignments" 
+                                type="object" 
+                                class="oe_stat_button" 
+                                icon="fa-users"
+                                invisible="not assignment_count">
+                            <field name="assignment_count" widget="statinfo" string="Assignments"/>
+                        </button>
                     </div>
                     
                     <div class="oe_title">

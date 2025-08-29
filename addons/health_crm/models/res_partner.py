@@ -196,16 +196,21 @@ class HealthContact(models.Model):
             )
             partner.primary_representative_id = primary[0] if primary else False
 
-    @api.model
-    def create(self, vals):
+    @api.model_create_multi
+    def create(self, vals_list):
         """Override create to set Vietnamese defaults"""
-        # Set Vietnam as default country for healthcare contacts
-        if not vals.get('country_id'):
-            vietnam = self.env.ref('base.vn', raise_if_not_found=False)
-            if vietnam:
-                vals['country_id'] = vietnam.id
+        # Handle both single dict and list of dicts
+        if not isinstance(vals_list, list):
+            vals_list = [vals_list]
+            
+        for vals in vals_list:
+            # Set Vietnam as default country for healthcare contacts
+            if not vals.get('country_id'):
+                vietnam = self.env.ref('base.vn', raise_if_not_found=False)
+                if vietnam:
+                    vals['country_id'] = vietnam.id
         
-        return super().create(vals)
+        return super().create(vals_list)
 
     def get_formatted_vietnamese_address(self):
         """Get formatted Vietnamese address"""

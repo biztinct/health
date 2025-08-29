@@ -76,6 +76,7 @@
         'views/health_payment_workflow_wizard_views.xml',
         
         # Views - Accounting Extensions (Basic implementation first)
+        'views/account_move_views.xml',
         'views/health_invoicing_menus.xml',
     ],
     'demo': [

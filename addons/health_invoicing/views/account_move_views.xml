@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Healthcare Invoice Form View Extension -->
+    <record id="view_healthcare_invoice_form" model="ir.ui.view">
+        <field name="name">account.move.form.healthcare</field>
+        <field name="model">account.move</field>
+        <field name="inherit_id" ref="account.view_move_form"/>
+        <field name="arch" type="xml">
+            <!-- Add Process Payment button after existing buttons in header -->
+            <header position="inside">
+                <button name="action_process_payment" 
+                        type="object" 
+                        string="💳 Process Payment" 
+                        class="btn-success"
+                        invisible="state != 'posted' or payment_state in ['paid', 'in_payment']"
+                        help="Process payment for this invoice"/>
+            </header>
+            
+            <!-- Healthcare-specific fields temporarily commented out -->
+            <!-- <xpath expr="//field[@name='partner_id']" position="after">
+                <field name="patient_id" invisible="not patient_id"/>
+                <field name="fieldservice_order_id" invisible="not fieldservice_order_id"/>
+                <field name="appointment_id" invisible="not appointment_id"/>
+                <field name="healthcare_service_type" invisible="not healthcare_service_type"/>
+            </xpath> -->
+            
+            <!-- Add Tax Authority Status in a separate group -->
+            <notebook position="inside">
+                <page string="Tax Authority &amp; Compliance" name="tax_compliance"
+                      invisible="move_type not in ['out_invoice', 'out_refund']">
+                    <group>
+                        <group string="Vietnamese Tax Authority">
+                            <field name="tax_authority_submission_status" widget="badge"/>
+                            <field name="tax_submission_date" readonly="1"/>
+                            <field name="tax_submission_reference" readonly="1"/>
+                            <field name="tax_submission_error" readonly="1" invisible="not tax_submission_error"/>
+                        </group>
+                        
+                        <group string="MISA Integration">
+                            <field name="misa_sync_status" widget="badge"/>
+                            <field name="misa_invoice_id" readonly="1"/>
+                            <field name="misa_sync_date" readonly="1"/>
+                            <field name="misa_sync_error" readonly="1" invisible="not misa_sync_error"/>
+                        </group>
+                    </group>
+                </page>
+            </notebook>
+        </field>
+    </record>
+
+</odoo>
