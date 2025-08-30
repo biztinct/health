@@ -1,0 +1,281 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Payment Transaction List View -->
+    <record id="view_health_payment_transaction_list" model="ir.ui.view">
+        <field name="name">health.payment.transaction.list</field>
+        <field name="model">health.payment.transaction</field>
+        <field name="arch" type="xml">
+            <list string="Payment Transactions" default_order="transaction_date desc"
+                  decoration-success="status == 'reconciled'"
+                  decoration-warning="status in ('pending_delivery', 'collected')"
+                  decoration-danger="status == 'failed'"
+                  decoration-info="transaction_type == 'prepaid'">
+                <field name="name"/>
+                <field name="transaction_date"/>
+                <field name="patient_id"/>
+                <field name="amount" widget="monetary"/>
+                <field name="payment_method"/>
+                <field name="transaction_type" widget="badge"
+                       decoration-success="transaction_type == 'immediate'"
+                       decoration-info="transaction_type == 'prepaid'"
+                       decoration-warning="transaction_type == 'deferred'"/>
+                <field name="status" widget="badge" 
+                       decoration-success="status == 'reconciled'"
+                       decoration-warning="status in ('pending_delivery', 'collected')"
+                       decoration-danger="status == 'failed'"/>
+                <field name="collected_by_id"/>
+                <field name="currency_id" invisible="1"/>
+                
+                <!-- Row Actions -->
+                <button type="object" name="action_mark_cash_delivered" 
+                        icon="fa-truck" title="Mark Cash Delivered"
+                        invisible="payment_method != 'cash' or status != 'pending_delivery'"/>
+                <button type="object" name="action_create_ar_payment" 
+                        icon="fa-plus-circle" title="Create AR Payment"
+                        invisible="payment_id"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Payment Transaction Form View -->
+    <record id="view_health_payment_transaction_form" model="ir.ui.view">
+        <field name="name">health.payment.transaction.form</field>
+        <field name="model">health.payment.transaction</field>
+        <field name="arch" type="xml">
+            <form string="Payment Transaction">
+                <header>
+                    <field name="status" widget="statusbar" 
+                           statusbar_visible="collected,pending_delivery,delivered_to_om,reconciled"/>
+                    
+                    <!-- Status Actions -->
+                    <button type="object" name="action_mark_cash_delivered"
+                            string="Mark Cash Delivered to OM" class="btn-primary"
+                            invisible="payment_method != 'cash' or status != 'pending_delivery'"
+                            groups="health_invoicing.group_health_invoicing_user"/>
+                            
+                    <button type="object" name="action_create_ar_payment"
+                            string="Create AR Payment" class="btn-success"
+                            invisible="payment_id"
+                            groups="health_invoicing.group_health_invoicing_user"/>
+                            
+                    <button type="object" name="action_create_refund"
+                            string="Create Refund" class="btn-warning"
+                            invisible="status == 'refunded'"
+                            groups="health_invoicing.group_health_invoicing_manager"/>
+                </header>
+                
+                <sheet string="Payment Transaction">
+                    
+                    <!-- Status Alerts -->
+                    <div class="alert alert-warning" role="alert" 
+                         invisible="payment_method != 'cash' or status != 'pending_delivery'">
+                        <strong>💰 Cash Delivery Pending:</strong> This cash payment needs to be delivered to the Operations Manager.
+                    </div>
+                    
+                    <div class="alert alert-info" role="alert" 
+                         invisible="transaction_type != 'prepaid'">
+                        <strong>🎁 Prepaid Service:</strong> This payment was processed using a prepaid service package.
+                    </div>
+                    
+                    <!-- Smart Buttons -->
+                    <div class="oe_button_box" name="button_box" groups="base.group_user">
+                        
+                        <button type="object" name="action_view_proof_documents"
+                                class="oe_stat_button" icon="fa-camera"
+                                invisible="proof_count == 0">
+                            <field name="proof_count" widget="statinfo" string="Proof Docs"/>
+                        </button>
+                        
+                        <button type="action" name="%(account.action_move_out_invoice_type)d"
+                                class="oe_stat_button" icon="fa-file-text"
+                                invisible="not invoice_id"
+                                context="{'search_default_partner_id': [patient_id]}">
+                            <div class="o_field_widget o_stat_info">
+                                <span class="o_stat_value">Invoice</span>
+                                <span class="o_stat_text">View</span>
+                            </div>
+                        </button>
+                        
+                        <button type="action" name="%(account.action_account_payments)d"
+                                class="oe_stat_button" icon="fa-money"
+                                invisible="not payment_id"
+                                context="{'search_default_partner_id': [patient_id]}">
+                            <div class="o_field_widget o_stat_info">
+                                <span class="o_stat_value">AR Payment</span>
+                                <span class="o_stat_text">View</span>
+                            </div>
+                        </button>
+                        
+                    </div>
+                    
+                    <!-- Transaction Title -->
+                    <div class="oe_title">
+                        <h1 class="d-flex justify-content-between align-items-center">
+                            <field name="display_name" class="o_text_overflow"/>
+                        </h1>
+                    </div>
+                    
+                    <!-- Core Transaction Information -->
+                    <group>
+                        <group string="Transaction Details">
+                            <field name="name" readonly="1"/>
+                            <field name="patient_id" options="{'no_create': True}"/>
+                            <field name="transaction_date"/>
+                            <field name="currency_id" invisible="1"/>
+                            <field name="amount" widget="monetary"/>
+                            <field name="payment_method"/>
+                            <field name="transaction_type"/>
+                        </group>
+                        
+                        <group string="Processing Information">
+                            <field name="collected_by_id"/>
+                            <field name="received_by_om_id" 
+                                   invisible="payment_method != 'cash'"/>
+                            <field name="cash_delivery_date" 
+                                   invisible="payment_method != 'cash'"/>
+                            <field name="om_receipt_number" 
+                                   invisible="payment_method != 'cash'"/>
+                        </group>
+                    </group>
+                    
+                    <!-- Service Links -->
+                    <group string="Related Records">
+                        <group>
+                            <field name="fso_id" invisible="not fso_id"/>
+                            <field name="invoice_id" invisible="not invoice_id"/>
+                            <field name="payment_id" invisible="not payment_id"/>
+                        </group>
+                        <group>
+                            <field name="package_id" invisible="not package_id"/>
+                        </group>
+                    </group>
+                    
+                    <!-- Amount Override Information -->
+                    <group string="Amount Override Details"
+                           invisible="not original_invoice_amount">
+                        <group>
+                            <field name="original_invoice_amount" widget="monetary" readonly="1"/>
+                            <field name="amount" widget="monetary" readonly="1" string="Final Amount"/>
+                        </group>
+                        <group>
+                            <field name="nurse_override_reason" readonly="1"/>
+                        </group>
+                    </group>
+                    
+                    <!-- Accounts Receivable -->
+                    <group string="Accounts Receivable">
+                        <group>
+                            <field name="ar_reconciled" readonly="1"/>
+                            <field name="ar_reconciliation_date" readonly="1"
+                                   invisible="not ar_reconciled"/>
+                        </group>
+                    </group>
+                    
+                    <!-- Payment Proof Documents -->
+                    <group string="Payment Proof Documents" 
+                           invisible="proof_count == 0">
+                        <field name="payment_proof_attachment_ids" nolabel="1" 
+                               widget="many2many_binary"/>
+                    </group>
+                    
+                    <!-- Transaction Notes -->
+                    <group string="Notes &amp; Comments">
+                        <field name="transaction_notes" nolabel="1" 
+                               placeholder="Additional notes about this payment transaction..."/>
+                    </group>
+                    
+                </sheet>
+                <chatter reload_on_follower="True"/>
+            </form>
+        </field>
+    </record>
+
+    <!-- Payment Transaction Search View -->
+    <record id="view_health_payment_transaction_search" model="ir.ui.view">
+        <field name="name">health.payment.transaction.search</field>
+        <field name="model">health.payment.transaction</field>
+        <field name="arch" type="xml">
+            <search string="Payment Transactions">
+                <field name="name" filter_domain="[('name', 'ilike', self)]"/>
+                <field name="patient_id"/>
+                <field name="collected_by_id"/>
+                <field name="transaction_notes"/>
+                
+                <!-- Quick Filters -->
+                <filter name="cash_pending" string="Cash Pending Delivery" 
+                        domain="[('payment_method', '=', 'cash'), ('status', '=', 'pending_delivery')]"/>
+                <filter name="not_reconciled" string="Not Reconciled in AR" 
+                        domain="[('ar_reconciled', '=', False)]"/>
+                <filter name="prepaid" string="Prepaid Services" 
+                        domain="[('transaction_type', '=', 'prepaid')]"/>
+                <filter name="immediate" string="Pay Now Transactions" 
+                        domain="[('transaction_type', '=', 'immediate')]"/>
+                <filter name="deferred" string="Pay Later Collections" 
+                        domain="[('transaction_type', '=', 'deferred')]"/>
+                        
+                <!-- Date Filters -->
+                <separator/>
+                <filter name="today" string="Today"
+                        domain="[('transaction_date', '&gt;=', datetime.date.today().strftime('%Y-%m-%d'))]"/>
+                <filter name="this_week" string="This Week"
+                        domain="[('transaction_date', '&gt;=', (context_today() - relativedelta(weeks=1)).strftime('%Y-%m-%d'))]"/>
+                <filter name="this_month" string="This Month"
+                        domain="[('transaction_date', '&gt;=', (context_today() - relativedelta(months=1)).strftime('%Y-%m-01'))]"/>
+                        
+                <!-- Group By -->
+                <separator/>
+                <group expand="0" string="Group By">
+                    <filter name="group_patient" string="Patient" 
+                            context="{'group_by': 'patient_id'}"/>
+                    <filter name="group_payment_method" string="Payment Method" 
+                            context="{'group_by': 'payment_method'}"/>
+                    <filter name="group_transaction_type" string="Transaction Type" 
+                            context="{'group_by': 'transaction_type'}"/>
+                    <filter name="group_status" string="Status" 
+                            context="{'group_by': 'status'}"/>
+                    <filter name="group_collected_by" string="Collected By" 
+                            context="{'group_by': 'collected_by_id'}"/>
+                    <filter name="group_date" string="Transaction Date" 
+                            context="{'group_by': 'transaction_date'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Payment Transaction Action -->
+    <record id="action_health_payment_transaction" model="ir.actions.act_window">
+        <field name="name">Payment Transactions</field>
+        <field name="res_model">health.payment.transaction</field>
+        <field name="view_mode">list,form</field>
+        <field name="context">{'search_default_this_month': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No payment transactions yet!
+            </p>
+            <p>
+                Payment transactions are automatically created when nurses collect payments
+                or when front desk processes prepaid packages and invoice collections.
+            </p>
+        </field>
+    </record>
+
+    <!-- Cash Management Dashboard Action -->
+    <record id="action_health_cash_management" model="ir.actions.act_window">
+        <field name="name">Cash Management Dashboard</field>
+        <field name="res_model">health.payment.transaction</field>
+        <field name="view_mode">list</field>
+        <field name="domain">[('payment_method', '=', 'cash')]</field>
+        <field name="context">{'search_default_cash_pending': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No cash transactions found!
+            </p>
+            <p>
+                This dashboard tracks cash payments collected by nurses that need
+                to be delivered to the Operations Manager.
+            </p>
+        </field>
+    </record>
+
+</odoo>

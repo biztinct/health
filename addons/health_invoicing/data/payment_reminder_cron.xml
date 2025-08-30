@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+
+    <!-- Automated Payment Reminder Cron Job -->
+    <record id="ir_cron_healthcare_payment_reminders" model="ir.cron">
+        <field name="name">Healthcare: Send Payment Reminders</field>
+        <field name="model_id" ref="base.model_res_partner"/>
+        <field name="state">code</field>
+        <field name="code">
+# Find patients with overdue payments who have reminders enabled
+patients_to_remind = env['res.partner'].search([
+    ('is_patient', '=', True),
+    ('send_payment_reminders', '=', True),
+    ('total_due', '>', 0),
+    ('overdue_healthcare_invoices', '>', 0)
+])
+
+for patient in patients_to_remind:
+    try:
+        # Check if we should send reminder based on payment risk
+        days_since_last_reminder = 7  # Default interval
+        
+        if patient.healthcare_payment_risk == 'critical':
+            days_since_last_reminder = 3  # More frequent reminders
+        elif patient.healthcare_payment_risk == 'high':
+            days_since_last_reminder = 5
+        elif patient.healthcare_payment_risk == 'medium':
+            days_since_last_reminder = 7
+        else:  # low risk
+            days_since_last_reminder = 14  # Less frequent reminders
+        
+        # Check if enough time has passed since last reminder
+        last_reminder = env['mail.message'].search([
+            ('model', '=', 'res.partner'),
+            ('res_id', '=', patient.id),
+            ('subject', 'ilike', 'Payment Reminder'),
+            ('create_date', '>=', fields.Date.today() - relativedelta(days=days_since_last_reminder))
+        ], limit=1)
+        
+        if not last_reminder:
+            # Send automated reminder
+            patient.action_send_payment_reminder()
+            
+            # Log successful reminder
+            env['ir.logging'].sudo().create({
+                'name': f'Payment reminder sent to patient {patient.name}',
+                'type': 'server',
+                'level': 'INFO',
+                'dbname': env.cr.dbname,
+                'path': 'health_invoicing.payment_reminders',
+                'func': 'automated_reminder',
+                'line': '1',
+            })
+            
+    except Exception as e:
+        # Log errors but continue with other patients
+        env['ir.logging'].sudo().create({
+            'name': f'Failed to send payment reminder to {patient.name}: {str(e)}',
+            'type': 'server', 
+            'level': 'ERROR',
+            'dbname': env.cr.dbname,
+            'path': 'health_invoicing.payment_reminders',
+            'func': 'automated_reminder',
+            'line': '1',
+        })
+        continue
+
+env.cr.commit()
+        </field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">days</field>
+        <field name="numbercall">-1</field>
+        <field name="active" eval="True"/>
+        <field name="priority">5</field>
+    </record>
+
+</odoo>

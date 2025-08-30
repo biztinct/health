@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Cash Delivery Confirmation Wizard Form -->
+    <record id="view_health_cash_delivery_wizard_form" model="ir.ui.view">
+        <field name="name">health.cash.delivery.wizard.form</field>
+        <field name="model">health.cash.delivery.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Confirm Cash Delivery to OM">
+                <sheet>
+                    <div class="oe_title">
+                        <h1>💰 Confirm Cash Delivery</h1>
+                        <h3>Operations Manager Cash Receipt Confirmation</h3>
+                    </div>
+                    
+                    <!-- Transaction Summary -->
+                    <group string="Transaction Summary" colspan="2">
+                        <group>
+                            <field name="transaction_id" readonly="1"/>
+                            <field name="patient_name" readonly="1"/>
+                            <field name="collected_by" readonly="1" string="Originally Collected By"/>
+                        </group>
+                        <group>
+                            <field name="currency_id" invisible="1"/>
+                            <field name="cash_amount" readonly="1" widget="monetary"/>
+                        </group>
+                    </group>
+                    
+                    <!-- Delivery Details -->
+                    <group string="Cash Delivery Details">
+                        <group>
+                            <field name="om_employee_id" placeholder="Select Operations Manager..."/>
+                            <field name="delivery_date"/>
+                        </group>
+                        <group>
+                            <field name="amount_verified" required="1"/>
+                            <field name="generate_receipt"/>
+                            <field name="om_receipt_number" 
+                                   required="generate_receipt" readonly="not generate_receipt"/>
+                        </group>
+                    </group>
+                    
+                    <!-- Cash Condition &amp; Verification -->
+                    <group string="Cash Verification &amp; Notes">
+                        <field name="cash_condition_notes" nolabel="1" 
+                               placeholder="Notes about cash condition, denomination, any discrepancies or issues..."/>
+                    </group>
+                    
+                    <!-- Process Options -->
+                    <group string="Processing Options">
+                        <group>
+                            <field name="auto_reconcile_ar"/>
+                            <field name="create_bank_deposit"/>
+                        </group>
+                    </group>
+                    
+                    <!-- Important Notice -->
+                    <div class="alert alert-info" role="alert">
+                        <strong>📋 Important:</strong> Please verify that:
+                        <ul>
+                            <li>Cash amount matches the transaction amount exactly</li>
+                            <li>All bills are genuine and in acceptable condition</li>
+                            <li>Patient and service details are correct</li>
+                            <li>Electronic receipt will be generated for your records</li>
+                        </ul>
+                    </div>
+                    
+                </sheet>
+                
+                <footer>
+                    <button string="💰 Confirm Cash Receipt" name="action_confirm_cash_delivery" 
+                            type="object" class="btn-success"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+</odoo>

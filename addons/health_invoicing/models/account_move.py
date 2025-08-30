@@ -21,11 +21,11 @@ class HealthcareInvoice(models.Model):
     _inherit = 'account.move'
 
     # Healthcare service integration
-    # fieldservice_order_id = fields.Many2one(
-    #     'health.fieldservice.order',
-    #     string='Field Service Order',
-    #     help='Field Service Order that generated this invoice'
-    # )
+    fieldservice_order_id = fields.Many2one(
+        'health.fieldservice.order',
+        string='Field Service Order',
+        help='Field Service Order that generated this invoice'
+    )
     
     # appointment_id = fields.Many2one(
     #     'health.appointment',
@@ -230,10 +230,43 @@ class HealthcareInvoice(models.Model):
         if 'state' in vals and vals['state'] == 'posted':
             for invoice in self:
                 if invoice.move_type in ('out_invoice', 'out_refund'):
+                    # Create healthcare package instances for package products
+                    if invoice.move_type == 'out_invoice':
+                        invoice._create_healthcare_package_instances()
+                    
                     invoice._submit_to_tax_authorities()
                     invoice._sync_to_misa()
         
         return result
+
+    def _create_healthcare_package_instances(self):
+        """Create healthcare package instances for package products on invoice lines"""
+        self.ensure_one()
+        
+        for line in self.invoice_line_ids:
+            # Check if this line contains a healthcare package product
+            if (line.product_id and 
+                line.product_id.product_tmpl_id and
+                line.product_id.product_tmpl_id.type == 'healthcare_package'):
+                
+                product_template = line.product_id.product_tmpl_id
+                
+                # Create package instances based on quantity
+                for i in range(int(line.quantity)):
+                    package = product_template.create_patient_package(
+                        patient_id=self.partner_id.id,
+                        invoice_line_id=line.id
+                    )
+                    
+                    # Link invoice to first package created
+                    if i == 0:
+                        package.invoice_id = self.id
+                    
+                    # Log package creation
+                    self.message_post(
+                        body=f"Healthcare package created: {package.name} ({product_template.healthcare_service_count} services)",
+                        subject="Package Instance Created"
+                    )
 
     def _generate_vietnamese_tax_code(self):
         """Generate Vietnamese tax code for invoice"""

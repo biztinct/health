@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Enhanced Product Template Form - Healthcare Package Support -->
+    <record id="view_product_template_form_healthcare" model="ir.ui.view">
+        <field name="name">Healthcare Package Product Enhancement</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="product.product_template_form_view"/>
+        <field name="arch" type="xml">
+            
+            <!-- Add Smart Button for Package Instances -->
+            <xpath expr="//div[hasclass('oe_button_box')]" position="inside">
+                <button type="object" name="action_view_package_instances"
+                        class="oe_stat_button" icon="fa-users"
+                        invisible="not is_healthcare_package or healthcare_package_instances_count == 0"
+                        groups="health_invoicing.group_health_invoicing_user">
+                    <field name="healthcare_package_instances_count" widget="statinfo" string="Patient Packages"/>
+                </button>
+            </xpath>
+            
+            <!-- Add Healthcare Package Configuration Section -->
+            <xpath expr="//group[@name='group_general']" position="after">
+                <group name="healthcare_package_config" string="Healthcare Package Configuration"
+                       invisible="type != 'healthcare_package'">
+                    <group>
+                        <field name="healthcare_package_type" required="type == 'healthcare_package'"/>
+                        <field name="healthcare_service_count" required="type == 'healthcare_package'"/>
+                        <field name="healthcare_price_per_visit" readonly="1"/>
+                    </group>
+                    <group>
+                        <field name="healthcare_service_location"/>
+                        <field name="healthcare_package_duration"/>
+                        <field name="currency_id" invisible="1"/>
+                    </group>
+                </group>
+            </xpath>
+            
+            <!-- Add Healthcare Package Terms -->
+            <xpath expr="//field[@name='description_sale']" position="after">
+                <field name="healthcare_terms" 
+                       string="Package Terms &amp; Conditions"
+                       placeholder="Enter package terms, conditions, service details, etc."
+                       invisible="type != 'healthcare_package'"/>
+            </xpath>
+            
+            <!-- Add computed fields for tracking -->
+            <xpath expr="//field[@name='active']" position="after">
+                <field name="is_healthcare_package" invisible="1"/>
+            </xpath>
+            
+        </field>
+    </record>
+
+    <!-- Product Template List View - Healthcare Package Indicators -->
+    <record id="view_product_template_list_healthcare" model="ir.ui.view">
+        <field name="name">Healthcare Package Product List</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="product.product_template_tree_view"/>
+        <field name="arch" type="xml">
+            
+            <!-- Add healthcare package indicators -->
+            <xpath expr="//field[@name='list_price']" position="after">
+                <field name="healthcare_service_count" 
+                       string="Services" 
+                       invisible="not context.get('show_healthcare_columns', False)"/>
+                <field name="healthcare_price_per_visit" 
+                       widget="monetary" 
+                       string="Per Service"
+                       invisible="not context.get('show_healthcare_columns', False)"/>
+                <field name="healthcare_package_instances_count" 
+                       string="Active Packages"
+                       invisible="not context.get('show_healthcare_columns', False)"/>
+            </xpath>
+            
+            <!-- Add package type decoration -->
+            <xpath expr="//list" position="attributes">
+                <attribute name="decoration-info">type == 'healthcare_package'</attribute>
+            </xpath>
+            
+            <xpath expr="//field[@name='active']" position="after">
+                <field name="is_healthcare_package" invisible="1"/>
+            </xpath>
+            
+        </field>
+    </record>
+
+    <!-- Product Template Search View - Healthcare Package Filters -->
+    <record id="view_product_template_search_healthcare" model="ir.ui.view">
+        <field name="name">Healthcare Package Product Search</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="product.product_template_search_view"/>
+        <field name="arch" type="xml">
+            
+            <!-- Add healthcare package filters at end of search -->
+            <xpath expr="//search" position="inside">
+                <separator/>
+                <filter name="healthcare_packages" string="Healthcare Packages" 
+                        domain="[('type', '=', 'healthcare_package')]"/>
+                <filter name="physiotherapy" string="Physiotherapy Packages" 
+                        domain="[('healthcare_package_type', '=', 'physiotherapy')]"/>
+                <filter name="home_visit" string="Home Visit Packages" 
+                        domain="[('healthcare_service_location', '=', 'home')]"/>
+                
+                <separator/>
+                <group expand="0" string="Healthcare Grouping">
+                    <filter name="group_healthcare_package_type" string="Package Type" 
+                            domain="[]" context="{'group_by': 'healthcare_package_type'}"/>
+                    <filter name="group_healthcare_location" string="Service Location" 
+                            domain="[]" context="{'group_by': 'healthcare_service_location'}"/>
+                </group>
+            </xpath>
+            
+        </field>
+    </record>
+
+    <!-- Healthcare Package Products Action -->
+    <record id="action_healthcare_package_products" model="ir.actions.act_window">
+        <field name="name">Healthcare Package Products</field>
+        <field name="res_model">product.template</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('type', '=', 'healthcare_package')]</field>
+        <field name="context">{
+            'default_type': 'healthcare_package',
+            'default_detailed_type': 'service',
+            'default_invoice_policy': 'order',
+            'default_service_type': 'manual',
+            'show_healthcare_columns': True,
+            'search_default_healthcare_packages': 1
+        }</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first healthcare package product!
+            </p>
+            <p>
+                Healthcare packages are reusable service templates that can be sold to patients.
+                Define packages like "7 Day Physiotherapy" or "12 Session Blood Pressure Monitoring"
+                that can be selected in invoices alongside regular products like syringes and bandages.
+            </p>
+        </field>
+    </record>
+
+    <!-- All Healthcare Products Action (Packages + Supplies) -->
+    <record id="action_all_healthcare_products" model="ir.actions.act_window">
+        <field name="name">All Healthcare Products</field>
+        <field name="res_model">product.template</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">['|', ('type', '=', 'healthcare_package'), ('categ_id.name', 'ilike', 'healthcare')]</field>
+        <field name="context">{
+            'show_healthcare_columns': True
+        }</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Manage all healthcare products and packages!
+            </p>
+            <p>
+                This view shows both healthcare service packages (physiotherapy, consultations, etc.)
+                and healthcare supplies (syringes, bandages, medications) in one unified catalog.
+                Both can be added to patient invoices as line items.
+            </p>
+        </field>
+    </record>
+
+</odoo>

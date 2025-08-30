@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Service Package List View -->
+    <record id="view_health_service_package_list" model="ir.ui.view">
+        <field name="name">health.service.package.list</field>
+        <field name="model">health.service.package</field>
+        <field name="arch" type="xml">
+            <list string="Service Packages" default_order="create_date desc" 
+                  decoration-success="state == 'active'" 
+                  decoration-warning="state == 'exhausted'"
+                  decoration-muted="state in ('expired', 'cancelled', 'refunded')">
+                <field name="display_name"/>
+                <field name="patient_id"/>
+                <field name="service_type"/>
+                <field name="total_services"/>
+                <field name="consumed_services"/>
+                <field name="remaining_services" widget="badge" 
+                       decoration-success="remaining_services &gt; 5"
+                       decoration-warning="remaining_services &lt;= 5 and remaining_services &gt; 0"
+                       decoration-danger="remaining_services == 0"/>
+                <field name="package_price" widget="monetary"/>
+                <field name="price_per_service" widget="monetary"/>
+                <field name="purchase_date"/>
+                <field name="expiration_date"/>
+                <field name="state" widget="badge" 
+                       decoration-success="state == 'active'"
+                       decoration-warning="state == 'exhausted'"
+                       decoration-info="state == 'expired'"
+                       decoration-muted="state in ('cancelled', 'refunded')"/>
+                <field name="currency_id" invisible="1"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Service Package Form View -->
+    <record id="view_health_service_package_form" model="ir.ui.view">
+        <field name="name">health.service.package.form</field>
+        <field name="model">health.service.package</field>
+        <field name="arch" type="xml">
+            <form string="Service Package" class="o_form_record_package">
+                <header>
+                    <field name="state" widget="statusbar" statusbar_visible="active,exhausted,expired"/>
+                    
+                    <!-- Package Actions -->
+                    <button type="object" name="action_view_consumptions"
+                            string="View Consumption History" class="btn-primary"
+                            invisible="consumption_count == 0"
+                            groups="health_invoicing.group_health_invoicing_user"/>
+                            
+                    <button type="object" name="action_refund_package"
+                            string="Refund Unused Services" class="btn-warning"
+                            invisible="state != 'active' or remaining_services == 0"
+                            groups="health_invoicing.group_health_invoicing_manager"/>
+                </header>
+                
+                <sheet string="Service Package">
+                    
+                    <!-- Package Status Alert -->
+                    <div class="alert alert-warning" role="alert" 
+                         invisible="remaining_services &gt; 5">
+                        <strong>⚠️ Low Service Count:</strong> Only <field name="remaining_services"/> services remaining in this package.
+                    </div>
+                    
+                    <div class="alert alert-danger" role="alert" 
+                         invisible="state != 'exhausted'">
+                        <strong>🚫 Package Exhausted:</strong> All services in this package have been consumed.
+                    </div>
+                    
+                    <!-- Smart Buttons -->
+                    <div class="oe_button_box" name="button_box" groups="base.group_user">
+                        
+                        <button type="object" name="action_view_consumptions"
+                                class="oe_stat_button" icon="fa-list">
+                            <field name="consumption_count" widget="statinfo" string="Consumptions"/>
+                        </button>
+                        
+                        <button type="action" name="%(account.action_move_out_invoice_type)d"
+                                class="oe_stat_button" icon="fa-file-text"
+                                invisible="not invoice_id"
+                                context="{'search_default_partner_id': [patient_id], 'default_move_type': 'out_invoice'}">
+                            <div class="o_field_widget o_stat_info">
+                                <span class="o_stat_value">Invoice</span>
+                                <span class="o_stat_text">View</span>
+                            </div>
+                        </button>
+                        
+                    </div>
+                    
+                    <!-- Package Title -->
+                    <div class="oe_title">
+                        <h1 class="d-flex justify-content-between align-items-center">
+                            <field name="name" class="o_text_overflow" placeholder="Package Name"/>
+                        </h1>
+                    </div>
+                    
+                    <!-- Main Package Information -->
+                    <group>
+                        <group string="Package Details">
+                            <field name="product_template_id" 
+                                   options="{'no_create': True, 'no_edit': True}"
+                                   help="Select a healthcare package product template"/>
+                            <field name="patient_id" options="{'no_create': True}"/>
+                            <field name="service_type"/>
+                            <field name="purchase_date"/>
+                            <field name="expiration_date"/>
+                        </group>
+                        
+                        <group string="Service Count &amp; Progress">
+                            <field name="total_services"/>
+                            <field name="consumed_services" readonly="1"/>
+                            <field name="remaining_services" readonly="1" 
+                                   widget="badge" decoration-success="remaining_services &gt; 5"
+                                   decoration-warning="remaining_services &lt;= 5 and remaining_services &gt; 0"
+                                   decoration-danger="remaining_services == 0"/>
+                            
+                            <!-- Visual Progress Bar -->
+                            <div class="o_field_widget">
+                                <span class="o_form_label">Service Progress:</span>
+                                <div class="progress" style="height: 20px; margin-top: 5px;">
+                                    <div class="progress-bar bg-success" role="progressbar" 
+                                         style="width: calc(100% * consumed_services / total_services);"
+                                         aria-valuenow="consumed_services" aria-valuemin="0" aria-valuemax="total_services">
+                                        <field name="consumed_services"/> / <field name="total_services"/> used
+                                    </div>
+                                </div>
+                            </div>
+                        </group>
+                    </group>
+                    
+                    <!-- Pricing Information -->
+                    <group string="Package Pricing">
+                        <group>
+                            <field name="currency_id" invisible="1"/>
+                            <field name="package_price" widget="monetary"/>
+                            <field name="price_per_service" widget="monetary" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="remaining_services" readonly="1" string="Services Remaining"/>
+                            <field name="price_per_service" widget="monetary" readonly="1" string="Price per Service"/>
+                        </group>
+                    </group>
+                    
+                    <!-- Package Notes -->
+                    <group string="Package Details &amp; Notes">
+                        <field name="package_notes" nolabel="1" 
+                               placeholder="Package details, service descriptions, terms &amp; conditions..."/>
+                    </group>
+                    
+                    <!-- Invoice Integration -->
+                    <group string="Invoice &amp; Payment" 
+                           invisible="not invoice_id and not invoice_line_id">
+                        <field name="invoice_id" readonly="1" invisible="not invoice_id"/>
+                        <field name="invoice_line_id" readonly="1" invisible="not invoice_line_id" 
+                               help="Invoice line that created this package"/>
+                    </group>
+                    
+                    <!-- Service Consumption History -->
+                    <notebook>
+                        <page string="Service Consumption History" name="consumptions">
+                            <field name="consumption_ids">
+                                <list editable="bottom" create="false" delete="false">
+                                    <field name="service_date"/>
+                                    <field name="fso_id" readonly="1"/>
+                                    <field name="quantity_consumed" readonly="1"/>
+                                    <field name="unit_value" widget="monetary" readonly="1"/>
+                                    <field name="total_value" widget="monetary" readonly="1"/>
+                                    <field name="delivered_by_id" readonly="1"/>
+                                    <field name="service_location" readonly="1"/>
+                                    <field name="status" widget="badge" readonly="1"/>
+                                    <field name="service_notes" readonly="1"/>
+                                </list>
+                            </field>
+                            
+                            <!-- Consumption Summary -->
+                            <group class="oe_subtotal_footer oe_right" colspan="2">
+                                <field name="consumed_services" readonly="1" string="Total Services Consumed"/>
+                                <field name="remaining_services" readonly="1" string="Services Remaining" 
+                                       class="oe_subtotal_footer_separator"/>
+                            </group>
+                        </page>
+                    </notebook>
+                    
+                </sheet>
+                <chatter reload_on_follower="True"/>
+            </form>
+        </field>
+    </record>
+
+    <!-- Service Package Search View -->
+    <record id="view_health_service_package_search" model="ir.ui.view">
+        <field name="name">health.service.package.search</field>
+        <field name="model">health.service.package</field>
+        <field name="arch" type="xml">
+            <search string="Service Packages">
+                <field name="name" filter_domain="[('name', 'ilike', self)]"/>
+                <field name="patient_id"/>
+                <field name="service_type"/>
+                <field name="package_notes"/>
+                
+                <!-- Quick Filters -->
+                <filter name="active" string="Active Packages" 
+                        domain="[('state', '=', 'active')]"/>
+                <filter name="running_low" string="Running Low (&lt; 5 services)" 
+                        domain="[('remaining_services', '&lt;', 5), ('remaining_services', '&gt;', 0)]"/>
+                <filter name="exhausted" string="Exhausted" 
+                        domain="[('state', '=', 'exhausted')]"/>
+                <filter name="expired" string="Expired" 
+                        domain="[('state', '=', 'expired')]"/>
+                        
+                <!-- Date Filters -->
+                <separator/>
+                <filter name="this_month" string="Purchased This Month"
+                        domain="[('purchase_date', '&gt;=', (context_today() - relativedelta(months=1)).strftime('%Y-%m-01'))]"/>
+                <filter name="expiring_soon" string="Expiring Soon"
+                        domain="[('expiration_date', '&lt;=', (context_today() + relativedelta(days=30)).strftime('%Y-%m-%d')), ('expiration_date', '!=', False)]"/>
+                        
+                <!-- Group By -->
+                <separator/>
+                <group expand="0" string="Group By">
+                    <filter name="group_patient" string="Patient" 
+                            context="{'group_by': 'patient_id'}"/>
+                    <filter name="group_service_type" string="Service Type" 
+                            context="{'group_by': 'service_type'}"/>
+                    <filter name="group_state" string="Status" 
+                            context="{'group_by': 'state'}"/>
+                    <filter name="group_purchase_date" string="Purchase Date" 
+                            context="{'group_by': 'purchase_date'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Service Package Action -->
+    <record id="action_health_service_package" model="ir.actions.act_window">
+        <field name="name">Service Packages</field>
+        <field name="res_model">health.service.package</field>
+        <field name="view_mode">list,form</field>
+        <field name="context">{'search_default_active': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first prepaid service package!
+            </p>
+            <p>
+                Prepaid service packages allow patients to pre-purchase services at discounted rates.
+                Packages automatically track service consumption with countdown functionality.
+            </p>
+        </field>
+    </record>
+
+</odoo>

@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Patient/Contact Form - Enhanced Invoicing -->
+    <record id="view_partner_patient_form_invoicing" model="ir.ui.view">
+        <field name="name">Patient Invoicing Enhancement</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="health_base.view_health_patient_form"/>
+        <field name="arch" type="xml">
+            
+            <!-- Add Smart Buttons for Invoicing -->
+            <xpath expr="//div[hasclass('oe_button_box')]" position="inside">
+                
+                <!-- Service Packages Smart Button -->
+                <button type="object" name="action_view_service_packages"
+                        class="oe_stat_button" icon="fa-gift" 
+                        groups="health_invoicing.group_health_invoicing_user">
+                    <field name="service_package_count" widget="statinfo" string="Packages"/>
+                </button>
+                
+                <!-- Payment Transactions Smart Button -->
+                <button type="object" name="action_view_payment_transactions"
+                        class="oe_stat_button" icon="fa-credit-card"
+                        groups="health_invoicing.group_health_invoicing_user">
+                    <field name="payment_transaction_count" widget="statinfo" string="Payments"/>
+                </button>
+                
+                <!-- Outstanding Balance Smart Button -->
+                <button type="object" name="action_view_outstanding_invoices"
+                        class="oe_stat_button" icon="fa-money"
+                        invisible="total_due == 0"
+                        groups="health_invoicing.group_health_invoicing_user">
+                    <div class="o_field_widget o_stat_info">
+                        <span class="o_stat_value">
+                            <field name="total_due" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                        </span>
+                        <span class="o_stat_text">Due</span>
+                    </div>
+                </button>
+                
+            </xpath>
+            
+            <!-- Add Quick Invoicing Actions in Header -->
+            <xpath expr="//header" position="inside">
+                
+                <!-- Prepaid Package Invoice Creation -->
+                <button type="object" name="action_create_prepaid_package"
+                        string="Create Prepaid Package"
+                        class="btn-primary"
+                        invisible="not is_patient"
+                        groups="health_invoicing.group_health_invoicing_user"/>
+                        
+                <!-- Standard Invoice Creation -->
+                <button type="object" name="action_create_standard_invoice"
+                        string="Create Invoice"
+                        class="btn-secondary"
+                        invisible="not is_patient"
+                        groups="health_invoicing.group_health_invoicing_user"/>
+                        
+                <!-- Pay Later Collection -->
+                <button type="object" name="action_collect_payment"
+                        string="Collect Payment"
+                        class="btn-success"
+                        invisible="not is_patient or total_due == 0"
+                        groups="health_invoicing.group_health_invoicing_user"/>
+                        
+                        
+            </xpath>
+            
+            <!-- Add Financial Summary Tab -->
+            <xpath expr="//notebook" position="inside">
+                <page string="Financial Summary" name="financial_summary"
+                      groups="health_invoicing.group_health_invoicing_user">
+                    
+                    <group>
+                        <group string="Payment Summary">
+                            <field name="total_invoiced" widget="monetary"/>
+                            <field name="total_paid" widget="monetary"/>
+                            <field name="total_due" widget="monetary"/>
+                            <field name="currency_id" invisible="1"/>
+                        </group>
+                        
+                        <group string="Package Summary">
+                            <field name="active_packages_count"/>
+                            <field name="total_prepaid_value" widget="monetary"/>
+                            <field name="remaining_prepaid_value" widget="monetary"/>
+                        </group>
+                    </group>
+                    
+                    <!-- Recent Transactions -->
+                    <group string="Recent Payment Transactions" colspan="2">
+                        <field name="recent_payment_ids" nolabel="1" readonly="1">
+                            <list limit="5">
+                                <field name="transaction_date"/>
+                                <field name="display_name"/>
+                                <field name="amount" widget="monetary"/>
+                                <field name="payment_method"/>
+                                <field name="status"/>
+                            </list>
+                        </field>
+                    </group>
+                    
+                </page>
+            </xpath>
+            
+        </field>
+    </record>
+
+</odoo>

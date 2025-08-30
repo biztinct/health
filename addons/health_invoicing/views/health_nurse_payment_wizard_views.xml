@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Nurse Payment Collection Wizard Form -->
+    <record id="view_health_nurse_payment_wizard_form" model="ir.ui.view">
+        <field name="name">health.nurse.payment.wizard.form</field>
+        <field name="model">health.nurse.payment.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Service Completed - Payment Collection">
+                <sheet>
+                    <div class="oe_title">
+                        <h1>Service Completed</h1>
+                        <h3>Choose payment collection method</h3>
+                    </div>
+                    
+                    <!-- Service Summary -->
+                    <group string="Service Summary">
+                        <group>
+                            <field name="fso_id" readonly="1"/>
+                            <field name="patient_id" readonly="1"/>
+                            <field name="nurse_id" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="currency_id" invisible="1"/>
+                            <field name="calculated_amount" readonly="1"/>
+                            <field name="final_amount"/>
+                            <field name="amount_adjustment" readonly="1" 
+                                   invisible="amount_adjustment == 0"/>
+                        </group>
+                    </group>
+                    
+                    <!-- Amount Adjustment Reason -->
+                    <group string="Amount Adjustment Reason" 
+                           invisible="amount_adjustment == 0">
+                        <field name="nurse_override_reason" nolabel="1" 
+                               placeholder="Explain why the amount was adjusted from the calculated amount..."/>
+                    </group>
+                    
+                    <!-- Payment Choice (Main Decision) -->
+                    <group string="💰 Payment Collection">
+                        <field name="payment_choice" widget="radio" nolabel="1"/>
+                    </group>
+                    
+                    <!-- Pay Now Options -->
+                    <group string="💳 Payment Method" 
+                           invisible="payment_choice != 'pay_now'">
+                        <field name="payment_method" widget="radio" nolabel="1"/>
+                    </group>
+                    
+                    <!-- Prepaid Package Options -->
+                    <group string="🎁 Prepaid Package Consumption"
+                           invisible="payment_method != 'prepaid'">
+                        <group>
+                            <field name="prepaid_package_id" 
+                                   domain="[('patient_id', '=', patient_id), ('state', '=', 'active'), ('remaining_services', '>', 0)]"/>
+                            <field name="services_to_consume"/>
+                        </group>
+                        <group>
+                            <span class="o_form_label" invisible="1">Package Details:</span>
+                            <div invisible="not prepaid_package_id">
+                                <strong>Remaining Services: </strong>
+                                <field name="prepaid_package_id" widget="field_many2one" 
+                                       options="{'no_open': True}" readonly="1"/>
+                            </div>
+                        </group>
+                    </group>
+                    
+                    <!-- Payment Proof for Non-Cash -->
+                    <group string="📸 Payment Proof"
+                           invisible="not payment_proof_required">
+                        <field name="payment_proof_required" invisible="1"/>
+                        <field name="payment_proof_attachment_ids" nolabel="1" 
+                               widget="many2many_binary"
+                               help="Take photo/screenshot of bank transfer, card payment, or QR code confirmation"/>
+                    </group>
+                    
+                    <!-- Nurse Notes -->
+                    <group string="📝 Service Notes">
+                        <field name="nurse_notes" nolabel="1" 
+                               placeholder="Additional notes about service delivery, patient condition, payment collection, etc."/>
+                    </group>
+                    
+                    <!-- Invoice Options -->
+                    <group string="🧾 Invoice Processing">
+                        <field name="create_invoice_now"/>
+                    </group>
+                    
+                </sheet>
+                
+                <footer>
+                    <!-- Pay Now Button -->
+                    <button string="💰 Collect Payment Now" name="action_process_payment" 
+                            type="object" class="btn-success"
+                            invisible="payment_choice != 'pay_now'"/>
+                    
+                    <!-- Pay Later Button -->
+                    <button string="📧 Send Invoice (Pay Later)" name="action_process_payment" 
+                            type="object" class="btn-primary"
+                            invisible="payment_choice != 'pay_later'"/>
+                    
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+</odoo>

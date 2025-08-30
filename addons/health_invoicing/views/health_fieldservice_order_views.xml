@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- FSO Form - Enhanced Payment Integration -->
+    <record id="view_health_fieldservice_order_form_invoicing" model="ir.ui.view">
+        <field name="name">FSO Enhanced Payment Integration</field>
+        <field name="model">health.fieldservice.order</field>
+        <field name="inherit_id" ref="health_fieldservice.view_health_fieldservice_order_form"/>
+        <field name="arch" type="xml">
+            
+            <!-- Add Smart Buttons for Payment Tracking -->
+            <xpath expr="//div[hasclass('oe_button_box')]" position="inside">
+                
+                <!-- Payment Transactions Smart Button -->
+                <button type="object" name="action_view_payment_transactions"
+                        class="oe_stat_button" icon="fa-credit-card"
+                        invisible="payment_transaction_count == 0"
+                        groups="health_invoicing.group_health_invoicing_user">
+                    <field name="payment_transaction_count" widget="statinfo" string="Payments"/>
+                </button>
+                
+                <!-- Invoice Smart Button -->
+                <button type="object" name="action_view_invoice"
+                        class="oe_stat_button" icon="fa-file-text"
+                        invisible="not is_invoiced"
+                        groups="health_invoicing.group_health_invoicing_user">
+                    <div class="o_field_widget o_stat_info">
+                        <span class="o_stat_value">Invoice</span>
+                        <span class="o_stat_text">View</span>
+                    </div>
+                </button>
+                
+                <!-- Outstanding Amount Button (if invoice exists with balance) -->
+                <button type="object" name="action_view_invoice"
+                        class="oe_stat_button" icon="fa-exclamation-circle"
+                        invisible="outstanding_amount == 0 or not is_invoiced"
+                        groups="health_invoicing.group_health_invoicing_user">
+                    <div class="o_field_widget o_stat_info">
+                        <span class="o_stat_value">
+                            <field name="outstanding_amount" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                        </span>
+                        <span class="o_stat_text">Outstanding</span>
+                    </div>
+                </button>
+                
+            </xpath>
+            
+            <!-- Enhanced Header Actions -->
+            <xpath expr="//header" position="inside">
+                
+                <!-- Primary Nurse Workflow Button -->
+                <button type="object" name="action_complete_service_with_payment"
+                        string="💰 Complete Service &amp; Collect Payment"
+                        class="btn-success"
+                        invisible="state != 'in_progress' or is_invoiced"
+                        groups="health_invoicing.group_health_invoicing_user"
+                        help="Complete service and launch payment collection workflow"/>
+                        
+                <!-- Alternative Manual Invoice Creation -->
+                <button type="object" name="action_create_manual_invoice"
+                        string="Create Invoice"
+                        class="btn-primary"
+                        invisible="is_invoiced"
+                        groups="health_invoicing.group_health_invoicing_manager"
+                        help="Create invoice without payment collection"/>
+                        
+            </xpath>
+            
+            <!-- Add Payment Summary Fields -->
+            <xpath expr="//group[1]" position="after">
+                <group string="Payment &amp; Invoice Summary" name="payment_summary"
+                       invisible="not is_invoiced"
+                       groups="health_invoicing.group_health_invoicing_user">
+                    <group>
+                        <field name="currency_id" invisible="1"/>
+                        <field name="is_invoiced" readonly="1"/>
+                        <field name="total_paid_amount" readonly="1"/>
+                        <field name="outstanding_amount" readonly="1" 
+                               invisible="outstanding_amount == 0"/>
+                    </group>
+                    <group>
+                        <field name="invoice_id" readonly="1" invisible="not invoice_id"/>
+                        <field name="payment_transaction_count" readonly="1" 
+                               invisible="payment_transaction_count == 0"/>
+                    </group>
+                </group>
+            </xpath>
+            
+            <!-- Add Payment Tracking Tab -->
+            <xpath expr="//notebook" position="inside">
+                <page string="Payments &amp; Transactions" name="payment_tracking"
+                      invisible="payment_transaction_count == 0"
+                      groups="health_invoicing.group_health_invoicing_user">
+                    
+                    <group string="Payment Transactions">
+                        <field name="payment_transaction_ids" nolabel="1" readonly="1">
+                            <list>
+                                <field name="transaction_date"/>
+                                <field name="display_name"/>
+                                <field name="amount" widget="monetary"/>
+                                <field name="payment_method"/>
+                                <field name="transaction_type"/>
+                                <field name="status" widget="badge" 
+                                       decoration-success="status == 'reconciled'"
+                                       decoration-warning="status in ('pending_delivery', 'collected')"
+                                       decoration-danger="status == 'failed'"/>
+                                <field name="collected_by_id"/>
+                            </list>
+                        </field>
+                    </group>
+                    
+                    <group string="Prepaid Service Consumption" 
+                           invisible="not prepaid_consumption_ids"
+                           groups="health_invoicing.group_health_invoicing_user">
+                        <field name="prepaid_consumption_ids" nolabel="1" readonly="1">
+                            <list>
+                                <field name="service_date"/>
+                                <field name="package_id"/>
+                                <field name="quantity_consumed"/>
+                                <field name="total_value" widget="monetary"/>
+                                <field name="status"/>
+                            </list>
+                        </field>
+                    </group>
+                    
+                </page>
+            </xpath>
+            
+        </field>
+    </record>
+
+</odoo>

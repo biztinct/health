@@ -55,8 +55,12 @@
     'depends': [
         'base',
         'mail',
+        'sms',  # SMS notifications for payment reminders
         'account',  # Standard Odoo accounting - we inherit from this
         'account_payment',  # Payment processing
+        'account_due_list',  # Enhanced AR due list management
+        'account_payment_notification',  # Patient payment reminders via email/SMS
+        'partner_time_to_pay',  # Patient payment analytics and trends
         'sale',  # Sales integration for service orders
         'purchase',  # Equipment and supplies purchasing
         'hr_timesheet',  # Staff time tracking
@@ -70,13 +74,29 @@
         'security/ir.model.access.csv',
         
         # Configuration Data
+        'data/sequences.xml',
         'data/vietnamese_tax_config.xml',
         
         # Wizards
         'views/health_payment_workflow_wizard_views.xml',
+        'views/health_prepaid_package_wizard_views.xml',
+        'views/health_payment_collection_wizard_views.xml',
+        'views/health_nurse_payment_wizard_views.xml',
+        'views/health_cash_delivery_wizard_views.xml',
         
         # Views - Accounting Extensions (Basic implementation first)
         'views/account_move_views.xml',
+        'views/res_partner_views.xml',
+        'views/health_fieldservice_order_views.xml',
+        'views/product_template_views.xml',
+        
+        # Enhanced Payment System Views
+        'views/health_service_package_views.xml',
+        'views/health_payment_transaction_views.xml',
+        'views/health_prepaid_service_views.xml',
+        'views/health_ar_dashboard_views.xml',
+        
+        # Menus
         'views/health_invoicing_menus.xml',
     ],
     'demo': [

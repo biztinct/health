@@ -2,3 +2,9 @@ from . import account_move
 from . import account_payment
 from . import misa_integration
 from . import healthcare_service_billing
+from . import health_service_package
+from . import health_payment_transaction
+from . import health_prepaid_service
+from . import res_partner
+from . import health_fieldservice_order
+from . import product_template

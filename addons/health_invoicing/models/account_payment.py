@@ -170,14 +170,21 @@ class HealthcarePayment(models.Model):
         help='Reference to related tax invoice'
     )
     
-    # Additional fields for Invoicing.md workflow integration
+    # Healthcare integration fields
+    health_transaction_id = fields.Many2one(
+        'health.payment.transaction',
+        string='Healthcare Transaction',
+        help='Related healthcare payment transaction',
+        copy=False
+    )
+    
     healthcare_payment_method = fields.Selection([
         ('cash', 'Cash'),
         ('bank_card', 'Bank/Card Transfer'),
         ('bank_transfer', 'Bank Transfer'),
         ('online_payment', 'Online Payment'),
-    ], string='Healthcare Payment Method (Invoicing.md)',
-       help='Payment method as per Invoicing.md workflow')
+    ], string='Healthcare Payment Method',
+       help='Payment method as per healthcare workflow')
     
     fso_id = fields.Many2one(
         'health.fieldservice.order',
@@ -242,6 +249,15 @@ class HealthcarePayment(models.Model):
         # Process insurance claim if applicable
         if payment.insurance_claim_id:
             payment._process_insurance_claim()
+        
+        # Auto-link with healthcare transaction if reference matches
+        if payment.ref and not payment.health_transaction_id:
+            transaction = self.env['health.payment.transaction'].search([
+                ('name', '=', payment.ref)
+            ], limit=1)
+            if transaction:
+                payment.health_transaction_id = transaction.id
+                transaction.payment_id = payment.id
         
         return payment
 

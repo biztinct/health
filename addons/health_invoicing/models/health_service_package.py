@@ -1,0 +1,356 @@
+# -*- coding: utf-8 -*-
+
+from odoo import models, fields, api, _
+from odoo.exceptions import UserError, ValidationError
+
+
+class HealthServicePackage(models.Model):
+    """
+    Prepaid Service Packages for Healthcare Services
+    
+    Allows front desk/OM to create prepaid packages for patients:
+    - Physiotherapy: 7 sessions for $700
+    - Blood pressure monitoring: 12 visits for $1200
+    - Diabetes management: Monthly package
+    """
+    _name = 'health.service.package'
+    _description = 'Healthcare Service Package'
+    _inherit = ['mail.thread', 'mail.activity.mixin']
+    _order = 'create_date desc'
+    _rec_name = 'display_name'
+    
+    # Core Package Information
+    name = fields.Char(
+        'Package Name',
+        required=True,
+        tracking=True,
+        help='Name for this service package (e.g., "7-Session Physiotherapy Package")'
+    )
+    
+    display_name = fields.Char(
+        'Display Name',
+        compute='_compute_display_name',
+        store=True
+    )
+    
+    @api.depends('name', 'patient_id', 'total_services', 'service_type')
+    def _compute_display_name(self):
+        for package in self:
+            if package.patient_id and package.name:
+                package.display_name = f"{package.patient_id.name} - {package.name}"
+            else:
+                package.display_name = package.name or "New Package"
+    
+    # Patient and Service Information
+    patient_id = fields.Many2one(
+        'res.partner',
+        string='Patient',
+        required=True,
+        domain="[('is_patient', '=', True)]",
+        tracking=True,
+        help='Patient who purchased this package'
+    )
+    
+    service_type = fields.Selection([
+        ('physiotherapy', 'Physiotherapy'),
+        ('blood_pressure_monitoring', 'Blood Pressure Monitoring'),
+        ('diabetes_management', 'Diabetes Management'),
+        ('home_visit', 'Home Visit'),
+        ('clinic_visit', 'Clinic Visit'),
+        ('consultation', 'Consultation'),
+        ('emergency', 'Emergency Care'),
+        ('follow_up', 'Follow-up Care'),
+        ('preventive', 'Preventive Care'),
+        ('rehabilitation', 'Rehabilitation'),
+        ('vaccination', 'Vaccination'),
+        ('diagnostic', 'Diagnostic Services'),
+        ('other', 'Other Service'),
+    ], string='Service Type', required=True, tracking=True,
+       help='Type of healthcare service included in this package')
+    
+    # Package Quantities and Pricing
+    total_services = fields.Integer(
+        'Total Services',
+        required=True,
+        default=1,
+        tracking=True,
+        help='Total number of services included in this package'
+    )
+    
+    consumed_services = fields.Integer(
+        'Services Used',
+        default=0,
+        tracking=True,
+        help='Number of services already consumed from this package'
+    )
+    
+    remaining_services = fields.Integer(
+        'Services Remaining',
+        compute='_compute_remaining_services',
+        store=True,
+        help='Services remaining in this package'
+    )
+    
+    @api.depends('total_services', 'consumed_services')
+    def _compute_remaining_services(self):
+        for package in self:
+            package.remaining_services = package.total_services - package.consumed_services
+    
+    # Pricing Information
+    package_price = fields.Monetary(
+        'Package Price',
+        currency_field='currency_id',
+        required=True,
+        tracking=True,
+        help='Total price paid for this package'
+    )
+    
+    price_per_service = fields.Monetary(
+        'Price Per Service',
+        currency_field='currency_id',
+        compute='_compute_price_per_service',
+        store=True,
+        help='Calculated price per individual service'
+    )
+    
+    @api.depends('package_price', 'total_services')
+    def _compute_price_per_service(self):
+        for package in self:
+            if package.total_services > 0:
+                package.price_per_service = package.package_price / package.total_services
+            else:
+                package.price_per_service = 0.0
+    
+    currency_id = fields.Many2one(
+        'res.currency',
+        string='Currency',
+        default=lambda self: self.env.company.currency_id,
+        required=True
+    )
+    
+    # Package Status and Lifecycle
+    state = fields.Selection([
+        ('active', 'Active'),
+        ('exhausted', 'Services Exhausted'),
+        ('expired', 'Expired'),
+        ('cancelled', 'Cancelled'),
+        ('refunded', 'Refunded'),
+    ], string='Status', default='active', tracking=True,
+       help='Current status of this service package')
+    
+    # Dates and Expiration
+    purchase_date = fields.Datetime(
+        'Purchase Date',
+        default=fields.Datetime.now,
+        required=True,
+        tracking=True,
+        help='Date when this package was purchased'
+    )
+    
+    expiration_date = fields.Date(
+        'Expiration Date',
+        help='Optional expiration date for this package'
+    )
+    
+    # Invoice Integration
+    invoice_id = fields.Many2one(
+        'account.move',
+        string='Prepaid Invoice',
+        help='Invoice generated when this package was purchased'
+    )
+    
+    # Product Integration
+    product_template_id = fields.Many2one(
+        'product.template',
+        string='Package Product Template',
+        domain="[('type', '=', 'healthcare_package')]",
+        help='Product template this package is based on'
+    )
+    
+    invoice_line_id = fields.Many2one(
+        'account.move.line',
+        string='Invoice Line',
+        help='Invoice line that created this package instance'
+    )
+    
+    # Package Notes (Manual Flexibility as Requested)
+    package_notes = fields.Text(
+        'Package Notes',
+        help='Manual notes about this package - service details, special conditions, etc.'
+    )
+    
+    # Service Consumption Tracking
+    consumption_ids = fields.One2many(
+        'health.prepaid.service',
+        'package_id',
+        string='Service Consumption',
+        help='Individual services consumed from this package'
+    )
+    
+    consumption_count = fields.Integer(
+        'Consumptions',
+        compute='_compute_consumption_count',
+        help='Number of consumption records'
+    )
+    
+    @api.depends('consumption_ids')
+    def _compute_consumption_count(self):
+        for package in self:
+            package.consumption_count = len(package.consumption_ids)
+    
+    # Constraints and Validations
+    @api.constrains('total_services', 'consumed_services')
+    def _check_service_counts(self):
+        for package in self:
+            if package.total_services < 1:
+                raise ValidationError(_('Total services must be at least 1.'))
+            if package.consumed_services < 0:
+                raise ValidationError(_('Consumed services cannot be negative.'))
+            if package.consumed_services > package.total_services:
+                raise ValidationError(_('Cannot consume more services than available in package.'))
+    
+    @api.constrains('package_price')
+    def _check_package_price(self):
+        for package in self:
+            if package.package_price <= 0:
+                raise ValidationError(_('Package price must be positive.'))
+    
+    # Product Integration Methods
+    @api.onchange('product_template_id')
+    def _onchange_product_template_id(self):
+        """Auto-populate package details from selected product template"""
+        if self.product_template_id:
+            template = self.product_template_id
+            
+            # Only auto-populate if fields are empty (don't overwrite user changes)
+            if not self.name or self.name == 'New Package':
+                self.name = template.name
+            
+            if not self.service_type:
+                self.service_type = template.healthcare_package_type
+                
+            if not self.total_services:
+                self.total_services = template.healthcare_service_count
+                
+            if not self.package_price:
+                self.package_price = template.list_price
+                
+            if not self.package_notes:
+                self.package_notes = template.healthcare_terms or f"Package based on product: {template.name}"
+                
+            if not self.expiration_date and template.healthcare_package_duration:
+                self.expiration_date = fields.Date.add(fields.Date.today(), weeks=template.healthcare_package_duration)
+    
+    @api.model_create_multi
+    def create(self, vals_list):
+        """Auto-populate from product template on creation"""
+        for vals in vals_list:
+            if vals.get('product_template_id'):
+                template = self.env['product.template'].browse(vals['product_template_id'])
+                
+                # Auto-populate missing fields from template
+                if not vals.get('name'):
+                    patient_name = ""
+                    if vals.get('patient_id'):
+                        patient = self.env['res.partner'].browse(vals['patient_id'])
+                        patient_name = f" - {patient.name}"
+                    vals['name'] = f"{template.name}{patient_name}"
+                
+                if not vals.get('service_type'):
+                    vals['service_type'] = template.healthcare_package_type
+                
+                if not vals.get('total_services'):
+                    vals['total_services'] = template.healthcare_service_count
+                    
+                if not vals.get('package_price'):
+                    vals['package_price'] = template.list_price
+                    
+                if not vals.get('package_notes'):
+                    vals['package_notes'] = template.healthcare_terms or f"Package based on product: {template.name}"
+                    
+                if not vals.get('expiration_date') and template.healthcare_package_duration:
+                    vals['expiration_date'] = fields.Date.add(fields.Date.today(), weeks=template.healthcare_package_duration)
+        
+        return super().create(vals_list)
+    
+    # Business Logic Methods
+    def action_consume_service(self, fso_id=None, quantity=1):
+        """Consume services from this package"""
+        self.ensure_one()
+        
+        if self.state != 'active':
+            raise UserError(_('Cannot consume services from inactive package.'))
+        
+        if self.remaining_services < quantity:
+            raise UserError(_('Not enough services remaining in package.'))
+        
+        # Create consumption record
+        consumption = self.env['health.prepaid.service'].create({
+            'package_id': self.id,
+            'fso_id': fso_id,
+            'quantity_consumed': quantity,
+            'service_date': fields.Datetime.now(),
+            'service_notes': f'Service consumed from {self.name}',
+        })
+        
+        # Update consumed count
+        self.consumed_services += quantity
+        
+        # Check if package is exhausted
+        if self.remaining_services == 0:
+            self.state = 'exhausted'
+            self.message_post(
+                body=f"Package exhausted - all {self.total_services} services have been used.",
+                subject="Package Services Exhausted"
+            )
+        
+        return consumption
+    
+    def action_view_consumptions(self):
+        """View service consumption history"""
+        self.ensure_one()
+        return {
+            'name': _('Service Consumption History'),
+            'type': 'ir.actions.act_window',
+            'res_model': 'health.prepaid.service',
+            'domain': [('package_id', '=', self.id)],
+            'view_mode': 'list,form',
+            'target': 'current',
+            'context': {'default_package_id': self.id}
+        }
+    
+    def action_refund_package(self):
+        """Process refund for unused services"""
+        self.ensure_one()
+        
+        if self.remaining_services <= 0:
+            raise UserError(_('No services remaining to refund.'))
+        
+        refund_amount = self.remaining_services * self.price_per_service
+        
+        # Create refund invoice (credit note)
+        refund_invoice = self.env['account.move'].create({
+            'move_type': 'out_refund',
+            'partner_id': self.patient_id.id,
+            'invoice_origin': f'Refund: {self.name}',
+            'invoice_line_ids': [(0, 0, {
+                'name': f'Refund for {self.remaining_services} unused services - {self.name}',
+                'quantity': self.remaining_services,
+                'price_unit': self.price_per_service,
+            })],
+        })
+        
+        self.state = 'refunded'
+        self.message_post(
+            body=f"Package refunded for {self.remaining_services} unused services. Refund amount: {refund_amount}",
+            subject="Package Refunded"
+        )
+        
+        return {
+            'name': _('Refund Invoice'),
+            'type': 'ir.actions.act_window',
+            'res_model': 'account.move',
+            'res_id': refund_invoice.id,
+            'view_mode': 'form',
+            'target': 'current',
+        }

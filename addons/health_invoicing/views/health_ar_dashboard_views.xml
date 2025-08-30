@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Healthcare AR Dashboard - Patient Due List -->
+    <record id="view_healthcare_ar_payments_tree" model="ir.ui.view">
+        <field name="name">Healthcare Payments Due List</field>
+        <field name="model">account.move.line</field>
+        <field name="priority">15</field>
+        <field name="arch" type="xml">
+            <list decoration-success="full_reconcile_id!=False"
+                  decoration-muted="reconciled!=False and full_reconcile_id==False"
+                  decoration-warning="parent_state!='posted'"
+                  decoration-danger="reconciled==False and date_maturity&lt;current_date and parent_state=='posted'"
+                  decoration-info="move_id.healthcare_service_type!=False"
+                  create="false" delete="false" default_order="date_maturity">
+                  
+                <!-- Healthcare-specific columns first -->
+                <field name="partner_id" string="Patient" readonly="1"/>
+                <field name="move_id" string="Invoice" readonly="1"/>
+                <field name="invoice_date" readonly="1"/>
+                <field name="date_maturity" string="Due Date"/>
+                <field name="amount_residual" sum="Total Outstanding" string="Outstanding Amount"/>
+                
+                <!-- Service information -->
+                <field name="invoice_origin" readonly="1" string="Service Origin"/>
+                <field name="payment_term_id" readonly="1" string="Payment Terms"/>
+                
+                <!-- Financial details -->
+                <field name="debit" readonly="1" sum="Total Debit" optional="hide"/>
+                <field name="credit" readonly="1" sum="Total Credit" optional="hide"/>
+                <field name="balance" readonly="1" sum="Total Balance" optional="show"/>
+                
+                <!-- Status fields -->
+                <field name="reconciled" readonly="1" string="Paid" widget="boolean"/>
+                <field name="full_reconcile_id" readonly="1" optional="hide"/>
+                
+                <!-- Hidden fields for functionality -->
+                <field name="company_currency_id" invisible="1" readonly="1"/>
+                <field name="parent_state" invisible="1"/>
+                <field name="account_id" invisible="1"/>
+                
+            </list>
+        </field>
+    </record>
+
+    <!-- Healthcare AR Search View -->
+    <record id="view_healthcare_ar_payments_filter" model="ir.ui.view">
+        <field name="name">Healthcare Payments Due Search</field>
+        <field name="model">account.move.line</field>
+        <field name="priority">15</field>
+        <field name="arch" type="xml">
+            <search string="Search Healthcare Payments">
+                
+                <!-- Healthcare-specific filters -->
+                <filter name="outstanding_only" string="Outstanding Payments"
+                        domain="[('reconciled', '=', False), ('parent_state', '=', 'posted')]"/>
+                <filter name="overdue_patients" string="Overdue Patients"
+                        domain="[('date_maturity', '&lt;', context_today()), ('reconciled', '=', False), ('parent_state', '=', 'posted')]"/>
+                <filter name="due_this_week" string="Due This Week"
+                        domain="[('date_maturity', '&lt;=', (context_today() + relativedelta(weeks=1)).strftime('%Y-%m-%d')), ('reconciled', '=', False)]"/>
+                <filter name="due_this_month" string="Due This Month"
+                        domain="[('date_maturity', '&lt;=', (context_today() + relativedelta(months=1)).strftime('%Y-%m-%d')), ('reconciled', '=', False)]"/>
+                
+                <separator/>
+                
+                <!-- Payment status filters -->
+                <filter name="paid" string="Paid" domain="[('reconciled', '=', True)]"/>
+                <filter name="partial_paid" string="Partially Paid"
+                        domain="[('reconciled', '=', False), '|', ('matched_credit_ids', '!=', False), ('matched_debit_ids', '!=', False)]"/>
+                <filter name="unpaid" string="Unpaid" domain="[('reconciled', '=', False)]"/>
+                
+                <separator/>
+                
+                <!-- Amount ranges -->
+                <filter name="high_value" string="High Value (&gt; 1M VND)"
+                        domain="[('amount_residual', '&gt;', 1000000)]"/>
+                <filter name="medium_value" string="Medium Value (100K - 1M VND)"
+                        domain="[('amount_residual', '&gt;=', 100000), ('amount_residual', '&lt;=', 1000000)]"/>
+                <filter name="low_value" string="Low Value (&lt; 100K VND)"
+                        domain="[('amount_residual', '&lt;', 100000)]"/>
+                
+                <separator/>
+                
+                <separator/>
+                
+                <!-- Date filters -->
+                <filter string="Due Date" name="date_maturity" date="date_maturity"/>
+                <filter string="Invoice Date" name="invoice_date" date="invoice_date"/>
+                
+                <separator/>
+                
+                <!-- Search fields -->
+                <field name="partner_id" string="Patient"/>
+                <field name="move_id" string="Invoice"/>
+                <field name="invoice_origin" string="Service"/>
+                <field name="amount_residual" string="Outstanding Amount"/>
+                <field name="date_maturity" string="Due Date"/>
+                
+                <!-- Group by options -->
+                <group expand="0" string="Group By">
+                    <filter string="Patient" domain="[]" context="{'group_by': 'partner_id'}" name="group_by_patient"/>
+                    <filter string="Due Date" domain="[]" context="{'group_by': 'date_maturity'}" name="group_by_due_date"/>
+                    <filter string="Invoice Date" domain="[]" context="{'group_by': 'invoice_date'}" name="group_by_invoice_date"/>
+                    <filter string="Payment Terms" domain="[]" context="{'group_by': 'payment_term_id'}" name="group_by_payment_terms"/>
+                    <filter string="Payment Status" domain="[]" context="{'group_by': 'reconciled'}" name="group_by_status"/>
+                </group>
+                
+            </search>
+        </field>
+    </record>
+
+    <!-- Healthcare AR Pivot View -->
+    <record id="view_healthcare_ar_payments_pivot" model="ir.ui.view">
+        <field name="name">Healthcare AR Analysis</field>
+        <field name="model">account.move.line</field>
+        <field name="arch" type="xml">
+            <pivot string="Healthcare Accounts Receivable Analysis">
+                <field name="partner_id" type="row"/>
+                <field name="date_maturity" type="col" interval="month"/>
+                <field name="amount_residual" type="measure"/>
+                <field name="balance" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <!-- Healthcare AR Graph View -->
+    <record id="view_healthcare_ar_payments_graph" model="ir.ui.view">
+        <field name="name">Healthcare AR Trends</field>
+        <field name="model">account.move.line</field>
+        <field name="arch" type="xml">
+            <graph string="Healthcare Accounts Receivable Trends" type="line">
+                <field name="date_maturity" type="row" interval="month"/>
+                <field name="amount_residual" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <!-- Healthcare AR Dashboard Action -->
+    <record id="action_healthcare_ar_dashboard" model="ir.actions.act_window">
+        <field name="name">Healthcare AR Dashboard</field>
+        <field name="res_model">account.move.line</field>
+        <field name="view_mode">list,pivot,graph,form</field>
+        <field name="context">{
+            'search_default_outstanding_only': 1,
+            'search_default_group_by_patient': 1
+        }</field>
+        <field name="view_ids" eval="[(5, 0, 0),
+            (0, 0, {'view_mode': 'list', 'view_id': ref('view_healthcare_ar_payments_tree')}),
+            (0, 0, {'view_mode': 'pivot', 'view_id': ref('view_healthcare_ar_payments_pivot')}),
+            (0, 0, {'view_mode': 'graph', 'view_id': ref('view_healthcare_ar_payments_graph')})]"/>
+        <field name="search_view_id" ref="view_healthcare_ar_payments_filter"/>
+        <field name="domain">[
+            ('account_id.reconcile', '=', True),
+            ('balance', '!=', 0),
+            ('account_id.account_type', '=', 'asset_receivable')
+        ]</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No outstanding patient payments found!
+            </p>
+            <p>
+                This dashboard shows all outstanding payments from patients.
+                Use filters to find overdue payments, high-value receivables, or analyze payment patterns.
+            </p>
+        </field>
+    </record>
+
+    <!-- Cash Management Dashboard -->
+    <record id="action_healthcare_cash_management" model="ir.actions.act_window">
+        <field name="name">Cash Management - Nurse Collections</field>
+        <field name="res_model">health.payment.transaction</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('payment_method', '=', 'cash')]</field>
+        <field name="context">{'search_default_cash_pending': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No cash collections found!
+            </p>
+            <p>
+                This dashboard tracks cash payments collected by nurses that need
+                to be delivered to the Operations Manager.
+            </p>
+        </field>
+    </record>
+
+    <!-- Overdue Patients Action -->
+    <record id="action_healthcare_overdue_patients" model="ir.actions.act_window">
+        <field name="name">Overdue Patient Payments</field>
+        <field name="res_model">account.move.line</field>
+        <field name="view_mode">list,form</field>
+        <field name="context">{
+            'search_default_overdue_patients': 1,
+            'search_default_group_by_patient': 1
+        }</field>
+        <field name="view_ids" eval="[(5, 0, 0),
+            (0, 0, {'view_mode': 'list', 'view_id': ref('view_healthcare_ar_payments_tree')})]"/>
+        <field name="search_view_id" ref="view_healthcare_ar_payments_filter"/>
+        <field name="domain">[
+            ('account_id.reconcile', '=', True),
+            ('balance', '!=', 0),
+            ('account_id.account_type', '=', 'asset_receivable'),
+            ('date_maturity', '&lt;', context_today()),
+            ('reconciled', '=', False)
+        ]</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No overdue payments! 🎉
+            </p>
+            <p>
+                This view shows patients with overdue payments that require follow-up.
+                Use the contact information to reach out to patients for payment collection.
+            </p>
+        </field>
+    </record>
+
+</odoo>

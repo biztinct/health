@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Healthcare Payment Reminder Management -->
+    <record id="view_healthcare_payment_reminder_tree" model="ir.ui.view">
+        <field name="name">Healthcare Payment Reminder List</field>
+        <field name="model">res.partner</field>
+        <field name="priority">20</field>
+        <field name="arch" type="xml">
+            <list decoration-danger="healthcare_payment_risk=='critical'"
+                  decoration-warning="healthcare_payment_risk=='high'"
+                  decoration-info="healthcare_payment_risk=='medium'"
+                  decoration-success="healthcare_payment_risk=='low'"
+                  create="false" default_order="total_due desc">
+                
+                <field name="name" string="Patient Name"/>
+                <field name="healthcare_payment_risk" string="Risk Level" widget="badge"/>
+                <field name="healthcare_payment_score" string="Score" widget="progressbar"/>
+                <field name="total_due" string="Outstanding Amount" widget="monetary" sum="Total Outstanding"/>
+                <field name="overdue_healthcare_invoices" string="Overdue Invoices" sum="Total Overdue"/>
+                <field name="avg_days_to_pay_healthcare" string="Avg Days to Pay"/>
+                <field name="send_payment_reminders" string="Reminders Enabled" widget="boolean"/>
+                <field name="payment_notification_method" string="Reminder Method"/>
+                <field name="email" string="Email" optional="show"/>
+                <field name="mobile" string="Mobile" optional="show"/>
+                
+                <!-- Quick Actions -->
+                <button type="object" name="action_send_payment_reminder"
+                        string="Send Reminder" icon="fa-bell"
+                        invisible="total_due == 0 or not send_payment_reminders"
+                        class="btn-warning"/>
+                        
+                <button type="object" name="action_view_outstanding_invoices"
+                        string="View Invoices" icon="fa-file-text-o"
+                        invisible="total_due == 0"
+                        class="btn-primary"/>
+                
+                <!-- Hidden fields for domain filters -->
+                <field name="is_patient" invisible="1"/>
+                <field name="currency_id" invisible="1"/>
+                
+            </list>
+        </field>
+    </record>
+
+    <!-- Healthcare Payment Reminder Search View -->
+    <record id="view_healthcare_payment_reminder_filter" model="ir.ui.view">
+        <field name="name">Healthcare Payment Reminder Search</field>
+        <field name="model">res.partner</field>
+        <field name="priority">20</field>
+        <field name="arch" type="xml">
+            <search string="Search Payment Reminders">
+                
+                <!-- Risk-based filters -->
+                <filter name="critical_risk" string="Critical Risk Patients"
+                        domain="[('healthcare_payment_risk', '=', 'critical')]"
+                        help="Patients with very late payment patterns"/>
+                <filter name="high_risk" string="High Risk Patients"
+                        domain="[('healthcare_payment_risk', '=', 'high')]"
+                        help="Patients often late with payments"/>
+                <filter name="medium_risk" string="Medium Risk Patients"
+                        domain="[('healthcare_payment_risk', '=', 'medium')]"
+                        help="Patients sometimes late with payments"/>
+                <filter name="low_risk" string="Low Risk Patients"
+                        domain="[('healthcare_payment_risk', '=', 'low')]"
+                        help="Patients with prompt payment patterns"/>
+                
+                <separator/>
+                
+                <!-- Outstanding amount filters -->
+                <filter name="has_outstanding" string="Has Outstanding Amount"
+                        domain="[('total_due', '>', 0)]"/>
+                <filter name="high_outstanding" string="High Outstanding (> 1M VND)"
+                        domain="[('total_due', '>', 1000000)]"/>
+                <filter name="overdue_invoices" string="Has Overdue Invoices"
+                        domain="[('overdue_healthcare_invoices', '>', 0)]"/>
+                
+                <separator/>
+                
+                <!-- Reminder settings -->
+                <filter name="reminders_enabled" string="Reminders Enabled"
+                        domain="[('send_payment_reminders', '=', True)]"/>
+                <filter name="reminders_disabled" string="Reminders Disabled"
+                        domain="[('send_payment_reminders', '=', False)]"/>
+                <filter name="email_reminders" string="Email Reminders"
+                        domain="[('payment_notification_method', 'in', ['email', 'both'])]"/>
+                <filter name="sms_reminders" string="SMS Reminders"
+                        domain="[('payment_notification_method', 'in', ['sms', 'both'])]"/>
+                
+                <separator/>
+                
+                <!-- Payment score ranges -->
+                <filter name="excellent_score" string="Excellent Score (90-100)"
+                        domain="[('healthcare_payment_score', '>=', 90)]"/>
+                <filter name="good_score" string="Good Score (70-89)"
+                        domain="[('healthcare_payment_score', '>=', 70), ('healthcare_payment_score', '&lt;', 90)]"/>
+                <filter name="poor_score" string="Poor Score (50-69)"
+                        domain="[('healthcare_payment_score', '>=', 50), ('healthcare_payment_score', '&lt;', 70)]"/>
+                <filter name="bad_score" string="Bad Score (&lt; 50)"
+                        domain="[('healthcare_payment_score', '&lt;', 50)]"/>
+                
+                <separator/>
+                
+                <!-- Search fields -->
+                <field name="name" string="Patient Name"/>
+                <field name="email" string="Email"/>
+                <field name="mobile" string="Mobile"/>
+                <field name="total_due" string="Outstanding Amount"/>
+                <field name="healthcare_payment_risk" string="Payment Risk"/>
+                <field name="healthcare_payment_score" string="Payment Score"/>
+                
+                <!-- Group by options -->
+                <group expand="0" string="Group By">
+                    <filter string="Payment Risk Level" domain="[]" context="{'group_by': 'healthcare_payment_risk'}" name="group_by_risk"/>
+                    <filter string="Reminder Method" domain="[]" context="{'group_by': 'payment_notification_method'}" name="group_by_method"/>
+                    <filter string="Reminders Enabled" domain="[]" context="{'group_by': 'send_payment_reminders'}" name="group_by_enabled"/>
+                </group>
+                
+            </search>
+        </field>
+    </record>
+
+    <!-- Payment Reminder Management Action -->
+    <record id="action_healthcare_payment_reminder_management" model="ir.actions.act_window">
+        <field name="name">Payment Reminder Management</field>
+        <field name="res_model">res.partner</field>
+        <field name="view_mode">list,form</field>
+        <field name="context">{
+            'search_default_has_outstanding': 1,
+            'search_default_reminders_enabled': 1,
+            'search_default_group_by_risk': 1
+        }</field>
+        <field name="view_ids" eval="[(5, 0, 0),
+            (0, 0, {'view_mode': 'list', 'view_id': ref('view_healthcare_payment_reminder_tree')})]"/>
+        <field name="search_view_id" ref="view_healthcare_payment_reminder_filter"/>
+        <field name="domain">[('is_patient', '=', True)]</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No patients found for payment reminder management!
+            </p>
+            <p>
+                This view helps you manage payment reminders for healthcare patients.
+                Use filters to identify high-risk patients or those with outstanding amounts.
+                Configure reminder settings and send targeted payment reminders based on risk levels.
+            </p>
+        </field>
+    </record>
+
+</odoo>

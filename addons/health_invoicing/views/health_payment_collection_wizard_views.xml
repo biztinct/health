@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Payment Collection Wizard Form -->
+    <record id="view_health_payment_collection_wizard_form" model="ir.ui.view">
+        <field name="name">health.payment.collection.wizard.form</field>
+        <field name="model">health.payment.collection.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Collect Payment">
+                <sheet>
+                    <div class="oe_title">
+                        <h1>Collect Payment from Patient</h1>
+                        <h3>Process payment for outstanding invoices</h3>
+                    </div>
+                    
+                    <group>
+                        <group string="Patient &amp; Payment">
+                            <field name="patient_id" options="{'no_create': True}"/>
+                            <field name="currency_id" invisible="1"/>
+                            <field name="amount"/>
+                            <field name="payment_method"/>
+                        </group>
+                        
+                        <group string="Outstanding Summary">
+                            <field name="total_outstanding" readonly="1"/>
+                            <field name="allocate_automatically"/>
+                            <field name="payment_proof_required" invisible="1"/>
+                        </group>
+                    </group>
+                    
+                    <group string="Apply Payment To Invoices">
+                        <field name="outstanding_invoice_ids" nolabel="1">
+                            <list>
+                                <field name="name"/>
+                                <field name="invoice_date"/>
+                                <field name="amount_total" widget="monetary"/>
+                                <field name="amount_residual" widget="monetary" string="Outstanding"/>
+                                <field name="state"/>
+                            </list>
+                        </field>
+                    </group>
+                    
+                    <group string="Payment Proof" 
+                           invisible="not payment_proof_required">
+                        <field name="payment_proof_attachment_ids" nolabel="1" 
+                               widget="many2many_binary" string="Upload Payment Proof"
+                               help="Upload photos or documents as proof of payment (required for bank transfers, cards, QR payments)"/>
+                    </group>
+                    
+                    <group string="Additional Notes">
+                        <field name="payment_notes" nolabel="1" 
+                               placeholder="Additional notes about this payment collection..."/>
+                    </group>
+                </sheet>
+                
+                <footer>
+                    <button string="Collect Payment" name="action_collect_payment" 
+                            type="object" class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+</odoo>

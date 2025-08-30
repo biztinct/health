@@ -62,12 +62,97 @@
         action="action_health_service_billing"
         sequence="10"/>
 
+    <!-- Product Configuration Menu -->
+    <menuitem 
+        id="menu_health_product_configuration"
+        name="Product Configuration"
+        parent="menu_health_invoicing_root"
+        sequence="15"/>
+
+    <menuitem 
+        id="menu_health_package_products"
+        name="Package Products"
+        parent="menu_health_product_configuration"
+        action="action_healthcare_package_products"
+        sequence="10"/>
+
+    <menuitem 
+        id="menu_all_healthcare_products"
+        name="All Healthcare Products"
+        parent="menu_health_product_configuration"
+        action="action_all_healthcare_products"
+        sequence="20"/>
+
+    <!-- Prepaid Services Menu -->
+    <menuitem 
+        id="menu_health_prepaid_services"
+        name="Prepaid Services"
+        parent="menu_health_invoicing_root"
+        sequence="20"/>
+
+    <menuitem 
+        id="menu_health_service_packages"
+        name="Patient Packages"
+        parent="menu_health_prepaid_services"
+        action="action_health_service_package"
+        sequence="10"/>
+
+    <menuitem 
+        id="menu_health_prepaid_consumptions"
+        name="Service Consumptions"
+        parent="menu_health_prepaid_services"
+        action="action_health_prepaid_service"
+        sequence="20"/>
+
+    <!-- Accounts Receivable Management Menu -->
+    <menuitem 
+        id="menu_health_accounts_receivable"
+        name="Accounts Receivable"
+        parent="menu_health_invoicing_root"
+        sequence="30"/>
+
+    <menuitem 
+        id="menu_health_ar_dashboard"
+        name="AR Dashboard"
+        parent="menu_health_accounts_receivable"
+        action="action_healthcare_ar_dashboard"
+        sequence="10"/>
+
+    <menuitem 
+        id="menu_health_overdue_patients"
+        name="Overdue Patients"
+        parent="menu_health_accounts_receivable"
+        action="action_healthcare_overdue_patients"
+        sequence="20"/>
+
+    <menuitem 
+        id="menu_health_cash_collections"
+        name="Cash Collections"
+        parent="menu_health_accounts_receivable"
+        action="action_healthcare_cash_management"
+        sequence="30"/>
+
+
+    <!-- Payment Management Menu -->
+    <menuitem 
+        id="menu_health_payment_management"
+        name="Payment Management"
+        parent="menu_health_invoicing_root"
+        sequence="35"/>
+
+    <menuitem 
+        id="menu_health_payment_transactions"
+        name="Payment Transactions"
+        parent="menu_health_payment_management"
+        action="action_health_payment_transaction"
+        sequence="10"/>
+
     <!-- Payment Workflow Menu -->
     <menuitem 
         id="menu_health_payment_workflow"
         name="Payment Workflow"
         parent="menu_health_invoicing_root"
-        sequence="20"/>
+        sequence="40"/>
 
     <menuitem 
         id="menu_health_payment_workflow_wizard"
@@ -75,5 +160,12 @@
         parent="menu_health_payment_workflow"
         action="action_health_payment_workflow_wizard"
         sequence="10"/>
+
+    <!-- Reports Menu -->
+    <menuitem 
+        id="menu_health_invoicing_reports"
+        name="Reports"
+        parent="menu_health_invoicing_root"
+        sequence="50"/>
 
 </odoo>

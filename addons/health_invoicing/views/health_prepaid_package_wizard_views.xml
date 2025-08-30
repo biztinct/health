@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Prepaid Package Creation Wizard Form -->
+    <record id="view_health_prepaid_package_wizard_form" model="ir.ui.view">
+        <field name="name">health.prepaid.package.wizard.form</field>
+        <field name="model">health.prepaid.package.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Create Prepaid Service Package">
+                <sheet>
+                    <div class="oe_title">
+                        <h1>Create Prepaid Service Package</h1>
+                        <h3>Streamlined package creation with invoice &amp; payment processing</h3>
+                    </div>
+                    
+                    <group>
+                        <group string="Package Configuration">
+                            <field name="patient_id" options="{'no_create': True}"/>
+                            <field name="package_product_id" 
+                                   options="{'no_create': True, 'no_edit': True}" 
+                                   help="Select a pre-configured healthcare package"/>
+                        </group>
+                        
+                        <group string="Package Details" invisible="not package_product_id">
+                            <field name="package_name" readonly="1"/>
+                            <field name="service_type" readonly="1"/>
+                            <field name="total_services" readonly="1"/>
+                            <field name="expiration_date" readonly="1"/>
+                        </group>
+                    </group>
+                    
+                    <group string="Pricing" invisible="not package_product_id">
+                        <group>
+                            <field name="currency_id" invisible="1"/>
+                            <field name="package_price" readonly="1" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                            <field name="price_per_service" readonly="1" widget="monetary" options="{'currency_field': 'currency_id'}"
+                                   help="Price per service from product template"/>
+                        </group>
+                    </group>
+                    
+                    <group string="Package Notes" invisible="not package_product_id">
+                        <field name="package_notes" nolabel="1" readonly="1"
+                               help="Terms and conditions from product template"/>
+                    </group>
+                    
+                    <group string="Invoice &amp; Payment Processing">
+                        <group>
+                            <field name="create_invoice"/>
+                            <field name="process_payment"/>
+                        </group>
+                        <group invisible="not process_payment">
+                            <field name="payment_method" required="process_payment"/>
+                            <field name="payment_amount"/>
+                        </group>
+                    </group>
+                </sheet>
+                
+                <footer>
+                    <button string="Create Package" name="action_create_package" 
+                            type="object" class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+</odoo>

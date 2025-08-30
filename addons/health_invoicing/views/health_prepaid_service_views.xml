@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Prepaid Service Consumption List View -->
+    <record id="view_health_prepaid_service_list" model="ir.ui.view">
+        <field name="name">health.prepaid.service.list</field>
+        <field name="model">health.prepaid.service</field>
+        <field name="arch" type="xml">
+            <list string="Service Consumptions" default_order="service_date desc"
+                  decoration-success="status == 'consumed'"
+                  decoration-info="status == 'invoiced'"
+                  decoration-muted="status == 'refunded'">
+                <field name="service_date"/>
+                <field name="display_name"/>
+                <field name="patient_id"/>
+                <field name="package_id"/>
+                <field name="fso_id"/>
+                <field name="quantity_consumed"/>
+                <field name="total_value" widget="monetary"/>
+                <field name="delivered_by_id"/>
+                <field name="service_location"/>
+                <field name="status" widget="badge"
+                       decoration-success="status == 'consumed'"
+                       decoration-info="status == 'invoiced'"
+                       decoration-muted="status == 'refunded'"/>
+                <field name="currency_id" invisible="1"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Prepaid Service Consumption Form View -->
+    <record id="view_health_prepaid_service_form" model="ir.ui.view">
+        <field name="name">health.prepaid.service.form</field>
+        <field name="model">health.prepaid.service</field>
+        <field name="arch" type="xml">
+            <form string="Service Consumption">
+                <header>
+                    <field name="status" widget="statusbar"/>
+                    
+                    <button type="object" name="action_mark_invoiced"
+                            string="Mark as Invoiced" class="btn-primary"
+                            invisible="status != 'consumed'"
+                            groups="health_invoicing.group_health_invoicing_user"/>
+                            
+                    <button type="object" name="action_create_refund"
+                            string="Create Refund" class="btn-warning"
+                            invisible="status == 'refunded'"
+                            groups="health_invoicing.group_health_invoicing_manager"/>
+                </header>
+                
+                <sheet string="Service Consumption">
+                    
+                    <!-- Title -->
+                    <div class="oe_title">
+                        <h1 class="d-flex justify-content-between align-items-center">
+                            <field name="display_name" class="o_text_overflow"/>
+                        </h1>
+                    </div>
+                    
+                    <!-- Core Consumption Information -->
+                    <group>
+                        <group string="Consumption Details">
+                            <field name="name" readonly="1"/>
+                            <field name="package_id" readonly="1"/>
+                            <field name="patient_id" readonly="1"/>
+                            <field name="service_date"/>
+                            <field name="quantity_consumed"/>
+                        </group>
+                        
+                        <group string="Service Value">
+                            <field name="currency_id" invisible="1"/>
+                            <field name="unit_value" widget="monetary" readonly="1"/>
+                            <field name="total_value" widget="monetary" readonly="1"/>
+                        </group>
+                    </group>
+                    
+                    <!-- Service Delivery Information -->
+                    <group string="Service Delivery">
+                        <group>
+                            <field name="fso_id" readonly="1"/>
+                            <field name="delivered_by_id"/>
+                            <field name="service_location"/>
+                        </group>
+                    </group>
+                    
+                    <!-- Invoice Integration -->
+                    <group string="Invoice Integration"
+                           invisible="not invoice_line_id">
+                        <field name="invoice_line_id" readonly="1"/>
+                    </group>
+                    
+                    <!-- Service Notes -->
+                    <group string="Service Notes">
+                        <field name="service_notes" nolabel="1" 
+                               placeholder="Notes about the service delivery or consumption..."/>
+                    </group>
+                    
+                </sheet>
+                <chatter reload_on_follower="True"/>
+            </form>
+        </field>
+    </record>
+
+    <!-- Prepaid Service Consumption Search View -->
+    <record id="view_health_prepaid_service_search" model="ir.ui.view">
+        <field name="name">health.prepaid.service.search</field>
+        <field name="model">health.prepaid.service</field>
+        <field name="arch" type="xml">
+            <search string="Service Consumptions">
+                <field name="name"/>
+                <field name="patient_id"/>
+                <field name="package_id"/>
+                <field name="fso_id"/>
+                <field name="delivered_by_id"/>
+                <field name="service_notes"/>
+                
+                <!-- Quick Filters -->
+                <filter name="consumed" string="Consumed"
+                        domain="[('status', '=', 'consumed')]"/>
+                <filter name="invoiced" string="Invoiced"
+                        domain="[('status', '=', 'invoiced')]"/>
+                <filter name="refunded" string="Refunded"
+                        domain="[('status', '=', 'refunded')]"/>
+                        
+                <!-- Date Filters -->
+                <separator/>
+                <filter name="today" string="Today"
+                        domain="[('service_date', '&gt;=', datetime.date.today().strftime('%Y-%m-%d'))]"/>
+                <filter name="this_week" string="This Week"
+                        domain="[('service_date', '&gt;=', (context_today() - relativedelta(weeks=1)).strftime('%Y-%m-%d'))]"/>
+                <filter name="this_month" string="This Month"
+                        domain="[('service_date', '&gt;=', (context_today() - relativedelta(months=1)).strftime('%Y-%m-01'))]"/>
+                        
+                <!-- Group By -->
+                <separator/>
+                <group expand="0" string="Group By">
+                    <filter name="group_patient" string="Patient"
+                            context="{'group_by': 'patient_id'}"/>
+                    <filter name="group_package" string="Package"
+                            context="{'group_by': 'package_id'}"/>
+                    <filter name="group_delivered_by" string="Delivered By"
+                            context="{'group_by': 'delivered_by_id'}"/>
+                    <filter name="group_location" string="Service Location"
+                            context="{'group_by': 'service_location'}"/>
+                    <filter name="group_status" string="Status"
+                            context="{'group_by': 'status'}"/>
+                    <filter name="group_date" string="Service Date"
+                            context="{'group_by': 'service_date'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Prepaid Service Consumption Action -->
+    <record id="action_health_prepaid_service" model="ir.actions.act_window">
+        <field name="name">Service Consumptions</field>
+        <field name="res_model">health.prepaid.service</field>
+        <field name="view_mode">list,form</field>
+        <field name="context">{'search_default_this_month': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No service consumptions yet!
+            </p>
+            <p>
+                Service consumptions are automatically created when nurses use
+                prepaid packages during service delivery.
+            </p>
+        </field>
+    </record>
+
+</odoo>
