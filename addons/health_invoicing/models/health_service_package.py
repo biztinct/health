@@ -179,24 +179,32 @@ class HealthServicePackage(models.Model):
         help='Manual notes about this package - service details, special conditions, etc.'
     )
     
-    # Service Consumption Tracking
-    consumption_ids = fields.One2many(
-        'health.prepaid.service',
+    # Service Consumption Tracking (Using FSOs directly)
+    fso_ids = fields.One2many(
+        'health.fieldservice.order',
         'package_id',
-        string='Service Consumption',
-        help='Individual services consumed from this package'
+        string='Service Orders',
+        help='Field service orders that consumed from this package'
     )
     
     consumption_count = fields.Integer(
-        'Consumptions',
+        'Service Orders',
         compute='_compute_consumption_count',
-        help='Number of consumption records'
+        help='Number of FSOs that consumed from this package'
     )
     
-    @api.depends('consumption_ids')
+    # Legacy field for backward compatibility (will be removed)
+    consumption_ids = fields.One2many(
+        'health.prepaid.service',
+        'package_id',
+        string='Service Consumption (DEPRECATED)',
+        help='Legacy consumption records - use fso_ids instead'
+    )
+    
+    @api.depends('fso_ids')
     def _compute_consumption_count(self):
         for package in self:
-            package.consumption_count = len(package.consumption_ids)
+            package.consumption_count = len(package.fso_ids)
     
     # Constraints and Validations
     @api.constrains('total_services', 'consumed_services')
@@ -274,8 +282,8 @@ class HealthServicePackage(models.Model):
         return super().create(vals_list)
     
     # Business Logic Methods
-    def action_consume_service(self, fso_id=None, quantity=1):
-        """Consume services from this package"""
+    def action_consume_service_legacy(self, fso_id=None, quantity=1):
+        """DEPRECATED: Legacy method for consuming services (now handled by FSO completion)"""
         self.ensure_one()
         
         if self.state != 'active':
@@ -284,16 +292,7 @@ class HealthServicePackage(models.Model):
         if self.remaining_services < quantity:
             raise UserError(_('Not enough services remaining in package.'))
         
-        # Create consumption record
-        consumption = self.env['health.prepaid.service'].create({
-            'package_id': self.id,
-            'fso_id': fso_id,
-            'quantity_consumed': quantity,
-            'service_date': fields.Datetime.now(),
-            'service_notes': f'Service consumed from {self.name}',
-        })
-        
-        # Update consumed count
+        # Direct consumption without creating separate consumption record
         self.consumed_services += quantity
         
         # Check if package is exhausted
@@ -304,19 +303,25 @@ class HealthServicePackage(models.Model):
                 subject="Package Services Exhausted"
             )
         
-        return consumption
+        # Log the consumption
+        self.message_post(
+            body=f"Manual service consumption: {quantity} service(s) consumed from package.",
+            subject="Manual Service Consumption"
+        )
+        
+        return True
     
     def action_view_consumptions(self):
-        """View service consumption history"""
+        """View service orders that consumed from this package"""
         self.ensure_one()
         return {
-            'name': _('Service Consumption History'),
+            'name': _('Service Orders - Package Consumption'),
             'type': 'ir.actions.act_window',
-            'res_model': 'health.prepaid.service',
+            'res_model': 'health.fieldservice.order',
             'domain': [('package_id', '=', self.id)],
             'view_mode': 'list,form',
             'target': 'current',
-            'context': {'default_package_id': self.id}
+            'context': {'default_package_id': self.id, 'default_patient_id': self.patient_id.id}
         }
     
     def action_refund_package(self):

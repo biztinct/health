@@ -67,6 +67,93 @@
                         
             </xpath>
             
+            <!-- Add Active Service Packages Section Before Notebook -->
+            <xpath expr="//notebook" position="before">
+                <div class="oe_clear"></div>
+                <group string="Active Service Packages" name="active_packages_section" 
+                       invisible="not is_patient or active_packages_count == 0"
+                       groups="health_invoicing.group_health_invoicing_user">
+                    
+                    <!-- Package List with Progress Tracking -->
+                    <field name="active_service_packages" nolabel="1" readonly="1">
+                        <tree create="false" delete="false" edit="false" 
+                              decoration-success="remaining_services &gt; 5" 
+                              decoration-warning="remaining_services &lt;= 5 and remaining_services &gt; 0" 
+                              decoration-danger="remaining_services == 0">
+                            
+                            <!-- Package Information -->
+                            <field name="name" string="Package"/>
+                            <field name="service_type" string="Service"/>
+                            <field name="total_services" string="Total"/>
+                            <field name="consumed_services" string="Used"/>
+                            <field name="remaining_services" string="Remaining" 
+                                   widget="badge" 
+                                   decoration-success="remaining_services &gt; 5"
+                                   decoration-warning="remaining_services &lt;= 5 and remaining_services &gt; 0"
+                                   decoration-danger="remaining_services == 0"/>
+                            <field name="package_price" widget="monetary" string="Package Value"/>
+                            <field name="price_per_service" widget="monetary" string="Per Service"/>
+                            <field name="state" widget="badge"/>
+                            <field name="expiration_date" string="Expires"/>
+                            
+                            <!-- Hidden fields for computation -->
+                            <field name="currency_id" invisible="1"/>
+                        </tree>
+                    </field>
+                    
+                    <!-- Package Summary Cards with Bootstrap Styling -->
+                    <div class="row mt-3" invisible="active_packages_count == 0">
+                        <div class="col-md-4">
+                            <div class="card border-primary mb-3">
+                                <div class="card-body text-center">
+                                    <h5 class="card-title text-primary">
+                                        <i class="fa fa-gift"></i>
+                                        <field name="active_packages_count" readonly="1"/> Active Packages
+                                    </h5>
+                                    <p class="card-text">
+                                        <strong>Total Value: </strong>
+                                        <field name="total_prepaid_value" widget="monetary" readonly="1"/>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card border-success mb-3">
+                                <div class="card-body text-center">
+                                    <h5 class="card-title text-success">
+                                        <i class="fa fa-money"></i> Remaining Value
+                                    </h5>
+                                    <p class="card-text">
+                                        <strong style="font-size: 1.2em;">
+                                            <field name="remaining_prepaid_value" widget="monetary" readonly="1"/>
+                                        </strong>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card border-info mb-3">
+                                <div class="card-body text-center">
+                                    <p class="card-text">
+                                        <button type="object" name="action_view_service_packages" 
+                                                class="btn btn-outline-info btn-sm">
+                                            <i class="fa fa-eye"></i> View All Packages
+                                        </button>
+                                    </p>
+                                    <p class="card-text">
+                                        <button type="object" name="action_create_prepaid_package" 
+                                                class="btn btn-outline-primary btn-sm">
+                                            <i class="fa fa-plus"></i> Add New Package
+                                        </button>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                </group>
+            </xpath>
+            
             <!-- Add Financial Summary Tab -->
             <xpath expr="//notebook" position="inside">
                 <page string="Financial Summary" name="financial_summary"

@@ -18,11 +18,20 @@
         - Ministry of Health (MOH) regulatory compliance
         
         Healthcare Service Integration:
-        - Auto-invoice creation from Field Service Orders (FSO)
+        - Auto-invoice creation from Field Service Orders (FSO)  
+        - Package service consumption via FSO completion (NEW APPROACH)
+        - Reusable healthcare package products in product catalog
         - Appointment-based billing workflow
         - Service-specific invoice templates (home visits, clinic visits)
         - Equipment and supplies billing
         - Staff time tracking and billing
+        
+        Package Service Architecture (UPDATED):
+        - FSO direct package integration (replaces separate consumption model)
+        - Service packages as first-class Odoo products
+        - Automatic visit countdown via FSO completion
+        - Mixed invoice line items (packages + supplies)
+        - Patient package tracking in unified Patient Journey
         
         Vietnamese Compliance Features:
         - Real-time VAT submission to Tax Authorities

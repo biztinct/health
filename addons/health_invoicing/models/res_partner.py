@@ -72,6 +72,15 @@ class Partner(models.Model):
         help='Recent payment transactions for this patient'
     )
     
+    # Active Package Details for Display
+    active_service_packages = fields.One2many(
+        'health.service.package',
+        'patient_id',
+        string='Active Service Packages',
+        domain=[('state', '=', 'active')],
+        help='Active service packages with visit tracking'
+    )
+    
 # NOTE: Payment analytics fields will be added in Phase 4b after base module upgrades successfully
     # This ensures clean database column creation without ORM conflicts
     

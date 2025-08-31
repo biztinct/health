@@ -251,9 +251,10 @@ class HealthcarePayment(models.Model):
             payment._process_insurance_claim()
         
         # Auto-link with healthcare transaction if reference matches
-        if payment.ref and not payment.health_transaction_id:
+        reference = getattr(payment, 'ref', None) or getattr(payment, 'communication', None)
+        if reference and hasattr(payment, 'health_transaction_id') and not payment.health_transaction_id:
             transaction = self.env['health.payment.transaction'].search([
-                ('name', '=', payment.ref)
+                ('name', '=', reference)
             ], limit=1)
             if transaction:
                 payment.health_transaction_id = transaction.id

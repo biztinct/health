@@ -1,5 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+    <!-- 
+    DEPRECATED VIEWS - DO NOT USE FOR NEW DEVELOPMENT
+    
+    These views are for the deprecated health.prepaid.service model.
+    Service consumption is now tracked directly via FSO completion.
+    
+    NEW APPROACH: Use health.fieldservice.order with package_id field
+    -->
 
     <!-- Prepaid Service Consumption List View -->
     <record id="view_health_prepaid_service_list" model="ir.ui.view">

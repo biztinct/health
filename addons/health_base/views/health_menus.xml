@@ -52,6 +52,16 @@
               parent="menu_healthcare_risk_assessment" 
               action="action_health_readmission_risk" sequence="20"/> -->
 
+    <!-- Service Packages Menu -->
+    <menuitem id="menu_healthcare_service_packages" name="Service Packages" 
+              parent="menu_healthcare_root" sequence="25"
+              groups="group_healthcare_receptionist,group_healthcare_nurse,group_healthcare_manager,group_healthcare_admin,group_healthcare_owner"/>
+              
+    <!-- Billing & Invoicing Menu -->
+    <menuitem id="menu_healthcare_billing" name="Billing &amp; Invoicing" 
+              parent="menu_healthcare_root" sequence="26"
+              groups="group_healthcare_receptionist,group_healthcare_manager,group_healthcare_admin,group_healthcare_owner"/>
+
     <!-- Facilities Menu -->
     <menuitem id="menu_healthcare_facilities" name="Facilities" 
               parent="menu_healthcare_root" sequence="30"

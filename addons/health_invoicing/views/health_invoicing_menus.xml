@@ -40,19 +40,13 @@
 
     <!-- Menu Items (defined after actions) -->
     
-    <!-- Main Healthcare Invoicing Menu -->
-    <menuitem 
-        id="menu_health_invoicing_root" 
-        name="Healthcare Invoicing"
-        groups="base.group_user"
-        web_icon="health_invoicing,static/description/icon.png"
-        sequence="135"/>
+    <!-- Use main Healthcare menu from health_base instead of separate top-level menu -->
 
-    <!-- Service Billing Menu -->
+    <!-- Service Billing Menu (under Healthcare > Billing & Invoicing) -->
     <menuitem 
         id="menu_health_service_billing"
         name="Service Billing"
-        parent="menu_health_invoicing_root"
+        parent="health_base.menu_healthcare_billing"
         sequence="10"/>
 
     <menuitem 
@@ -62,12 +56,12 @@
         action="action_health_service_billing"
         sequence="10"/>
 
-    <!-- Product Configuration Menu -->
+    <!-- Product Configuration Menu (under Healthcare > Service Packages) -->
     <menuitem 
         id="menu_health_product_configuration"
-        name="Product Configuration"
-        parent="menu_health_invoicing_root"
-        sequence="15"/>
+        name="Package Products"
+        parent="health_base.menu_healthcare_service_packages"
+        sequence="10"/>
 
     <menuitem 
         id="menu_health_package_products"
@@ -83,33 +77,25 @@
         action="action_all_healthcare_products"
         sequence="20"/>
 
-    <!-- Prepaid Services Menu -->
-    <menuitem 
-        id="menu_health_prepaid_services"
-        name="Prepaid Services"
-        parent="menu_health_invoicing_root"
-        sequence="20"/>
-
+    <!-- Patient Packages Menu (directly under Healthcare > Service Packages) -->
     <menuitem 
         id="menu_health_service_packages"
         name="Patient Packages"
-        parent="menu_health_prepaid_services"
+        parent="health_base.menu_healthcare_service_packages"
         action="action_health_service_package"
-        sequence="10"/>
-
-    <menuitem 
-        id="menu_health_prepaid_consumptions"
-        name="Service Consumptions"
-        parent="menu_health_prepaid_services"
-        action="action_health_prepaid_service"
         sequence="20"/>
+        
+    <!-- DEPRECATED: Service Consumptions menu removed - now tracked via FSO completion -->
+    <!-- <menuitem id="menu_health_prepaid_consumptions" name="Service Consumptions" 
+              parent="health_base.menu_healthcare_service_packages" 
+              action="action_health_prepaid_service" sequence="30"/> -->
 
-    <!-- Accounts Receivable Management Menu -->
+    <!-- Accounts Receivable Management Menu (under Healthcare > Billing & Invoicing) -->
     <menuitem 
         id="menu_health_accounts_receivable"
         name="Accounts Receivable"
-        parent="menu_health_invoicing_root"
-        sequence="30"/>
+        parent="health_base.menu_healthcare_billing"
+        sequence="20"/>
 
     <menuitem 
         id="menu_health_ar_dashboard"
@@ -133,12 +119,12 @@
         sequence="30"/>
 
 
-    <!-- Payment Management Menu -->
+    <!-- Payment Management Menu (under Healthcare > Billing & Invoicing) -->
     <menuitem 
         id="menu_health_payment_management"
         name="Payment Management"
-        parent="menu_health_invoicing_root"
-        sequence="35"/>
+        parent="health_base.menu_healthcare_billing"
+        sequence="30"/>
 
     <menuitem 
         id="menu_health_payment_transactions"
@@ -151,7 +137,7 @@
     <menuitem 
         id="menu_health_payment_workflow"
         name="Payment Workflow"
-        parent="menu_health_invoicing_root"
+        parent="health_base.menu_healthcare_billing"
         sequence="40"/>
 
     <menuitem 
@@ -165,7 +151,7 @@
     <menuitem 
         id="menu_health_invoicing_reports"
         name="Reports"
-        parent="menu_health_invoicing_root"
+        parent="health_base.menu_healthcare_billing"
         sequence="50"/>
 
 </odoo>

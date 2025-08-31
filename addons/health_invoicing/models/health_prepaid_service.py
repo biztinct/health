@@ -6,13 +6,20 @@ from odoo.exceptions import UserError, ValidationError
 
 class HealthPrepaidService(models.Model):
     """
-    Individual Service Consumption Tracking
+    DEPRECATED: Individual Service Consumption Tracking
     
-    Records each service consumed from prepaid packages:
+    ⚠️ DEPRECATED MODEL - DO NOT USE FOR NEW DEVELOPMENT
+    
+    This model has been replaced by direct FSO package integration.
+    Service consumption is now tracked directly when FSOs are completed.
+    
+    Legacy functionality maintained for backward compatibility:
     - Links to parent service package
-    - Associates with FSO when service is delivered
+    - Associates with FSO when service is delivered  
     - Tracks consumption date and quantity
     - Maintains service history for audit
+    
+    NEW APPROACH: Use health.fieldservice.order.package_id field instead
     """
     _name = 'health.prepaid.service'
     _description = 'Prepaid Service Consumption'

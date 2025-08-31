@@ -66,13 +66,27 @@
                         
             </xpath>
             
-            <!-- Add Payment Summary Fields -->
+            <!-- Add Service Package Integration Fields -->
             <xpath expr="//group[1]" position="after">
+                <group string="Service Package" name="package_integration"
+                       invisible="not is_package_service and not package_id"
+                       groups="health_invoicing.group_health_invoicing_user">
+                    <group>
+                        <field name="package_id" 
+                               domain="[('patient_id', '=', patient_id), ('state', '=', 'active'), ('remaining_services', '>', 0)]"/>
+                        <field name="is_package_service" readonly="1"/>
+                        <field name="package_consumption_quantity"/>
+                    </group>
+                    <group>
+                        <field name="currency_id" invisible="1"/>
+                        <field name="package_service_value" readonly="1" widget="monetary"/>
+                    </group>
+                </group>
+                
                 <group string="Payment &amp; Invoice Summary" name="payment_summary"
                        invisible="not is_invoiced"
                        groups="health_invoicing.group_health_invoicing_user">
                     <group>
-                        <field name="currency_id" invisible="1"/>
                         <field name="is_invoiced" readonly="1"/>
                         <field name="total_paid_amount" readonly="1"/>
                         <field name="outstanding_amount" readonly="1" 
@@ -109,10 +123,17 @@
                         </field>
                     </group>
                     
-                    <group string="Prepaid Service Consumption" 
-                           invisible="not prepaid_consumption_ids"
+                    <group string="Package Service Details" 
+                           invisible="not is_package_service"
                            groups="health_invoicing.group_health_invoicing_user">
-                        <field name="prepaid_consumption_ids" nolabel="1" readonly="1">
+                        <p><strong>Package Service Integration:</strong></p>
+                        <p>Package: <field name="package_id" readonly="1" nolabel="1"/></p>
+                        <p>Services Consumed: <field name="package_consumption_quantity" readonly="1" nolabel="1"/></p>
+                        <p>Service Value: <field name="package_service_value" readonly="1" nolabel="1" widget="monetary"/></p>
+                        
+                        <!-- Legacy Prepaid Consumptions (for backward compatibility) -->
+                        <separator string="Legacy Consumption Records (Deprecated)" invisible="not prepaid_consumption_ids"/>
+                        <field name="prepaid_consumption_ids" nolabel="1" readonly="1" invisible="not prepaid_consumption_ids">
                             <list>
                                 <field name="service_date"/>
                                 <field name="package_id"/>

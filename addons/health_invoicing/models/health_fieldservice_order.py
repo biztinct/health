@@ -54,13 +54,55 @@ class HealthFieldserviceOrder(models.Model):
         default=lambda self: self.env.company.currency_id
     )
     
-    # Prepaid Package Consumption
+    # Prepaid Package Integration (REPLACING health.prepaid.service model)
+    package_id = fields.Many2one(
+        'health.service.package',
+        string='Service Package',
+        domain="[('patient_id', '=', patient_id), ('state', '=', 'active'), ('remaining_services', '>', 0)]",
+        help='Prepaid service package to consume from (if any)'
+    )
+    
+    is_package_service = fields.Boolean(
+        'Package Service',
+        compute='_compute_is_package_service',
+        store=True,
+        help='True if this FSO consumes from a prepaid package'
+    )
+    
+    package_consumption_quantity = fields.Integer(
+        'Services Consumed',
+        default=1,
+        help='Number of services consumed from the package (default: 1)'
+    )
+    
+    package_service_value = fields.Monetary(
+        'Package Service Value',
+        currency_field='currency_id',
+        compute='_compute_package_service_value',
+        store=True,
+        help='Value of services consumed from package'
+    )
+    
+    # Legacy field for backward compatibility (will be removed)
     prepaid_consumption_ids = fields.One2many(
         'health.prepaid.service',
         'fso_id',
-        string='Prepaid Consumptions',
-        help='Prepaid services consumed for this FSO'
+        string='Prepaid Consumptions (DEPRECATED)',
+        help='Legacy prepaid service consumptions - use package_id instead'
     )
+    
+    @api.depends('package_id')
+    def _compute_is_package_service(self):
+        for fso in self:
+            fso.is_package_service = bool(fso.package_id)
+    
+    @api.depends('package_id', 'package_consumption_quantity')
+    def _compute_package_service_value(self):
+        for fso in self:
+            if fso.package_id and fso.package_consumption_quantity:
+                fso.package_service_value = fso.package_id.price_per_service * fso.package_consumption_quantity
+            else:
+                fso.package_service_value = 0.0
     
     @api.depends('payment_transaction_ids')
     def _compute_payment_count(self):
@@ -176,3 +218,65 @@ class HealthFieldserviceOrder(models.Model):
             'view_mode': 'form',
             'target': 'current',
         }
+    
+    # Package Service Consumption Methods
+    def action_consume_package_service(self):
+        """Consume services from package when FSO is completed"""
+        self.ensure_one()
+        
+        if not self.package_id:
+            return False
+        
+        if self.package_consumption_quantity <= 0:
+            return False
+        
+        if self.package_id.remaining_services < self.package_consumption_quantity:
+            raise UserError(_(
+                'Cannot consume %d services from package "%s". Only %d services remaining.'
+            ) % (self.package_consumption_quantity, self.package_id.name, self.package_id.remaining_services))
+        
+        # Consume services from package (direct consumption without separate model)
+        self.package_id.consumed_services += self.package_consumption_quantity
+        
+        # Check if package is exhausted
+        if self.package_id.remaining_services == 0:
+            self.package_id.state = 'exhausted'
+            self.package_id.message_post(
+                body=f"Package exhausted by FSO {self.name} - all {self.package_id.total_services} services consumed.",
+                subject="Package Services Exhausted"
+            )
+        else:
+            self.package_id.message_post(
+                body=f"FSO {self.name} consumed {self.package_consumption_quantity} service(s). "
+                     f"{self.package_id.remaining_services} services remaining.",
+                subject="Package Service Consumed"
+            )
+        
+        # Record consumption in FSO message
+        self.message_post(
+            body=f"Consumed {self.package_consumption_quantity} service(s) from package '{self.package_id.name}'. "
+                 f"Service value: {self.package_service_value:,.0f} {self.currency_id.symbol}",
+            subject="Package Service Consumed"
+        )
+        
+        return True
+    
+    @api.onchange('package_id')
+    def _onchange_package_id(self):
+        """Auto-fill service details when package is selected"""
+        if self.package_id:
+            # Auto-set service type if it matches
+            if self.package_id.service_type in dict(self._fields.get('service_type', fields.Selection([])).selection):
+                self.service_type = self.package_id.service_type
+    
+    def write(self, vals):
+        """Override write to consume package services when FSO stage changes"""
+        result = super().write(vals)
+        
+        # Auto-consume package services when FSO is completed
+        if 'stage' in vals and vals['stage'] in ['completed', 'done']:
+            for fso in self:
+                if fso.package_id and not fso.is_invoiced:
+                    fso.action_consume_package_service()
+        
+        return result

@@ -155,24 +155,35 @@
                                help="Invoice line that created this package"/>
                     </group>
                     
-                    <!-- Service Consumption History -->
+                    <!-- Service Orders History -->
                     <notebook>
-                        <page string="Service Consumption History" name="consumptions">
-                            <field name="consumption_ids">
-                                <list editable="bottom" create="false" delete="false">
+                        <page string="Service Orders" name="service_orders">
+                            <field name="fso_ids">
+                                <list create="false" delete="false">
+                                    <field name="name" string="FSO Reference"/>
+                                    <field name="scheduled_datetime" string="Service Date"/>
+                                    <field name="service_type" string="Service Type"/>
+                                    <field name="package_consumption_quantity" string="Services Used"/>
+                                    <field name="package_service_value" widget="monetary" string="Service Value"/>
+                                    <field name="lead_staff_id" string="Lead Staff"/>
+                                    <field name="state" widget="badge"/>
+                                </list>
+                            </field>
+                            
+                            <!-- Legacy Consumption Records (for backward compatibility) -->
+                            <separator string="Legacy Consumption Records (Deprecated)" invisible="not consumption_ids"/>
+                            <field name="consumption_ids" invisible="not consumption_ids">
+                                <list create="false" delete="false" edit="false">
                                     <field name="service_date"/>
                                     <field name="fso_id" readonly="1"/>
                                     <field name="quantity_consumed" readonly="1"/>
                                     <field name="unit_value" widget="monetary" readonly="1"/>
                                     <field name="total_value" widget="monetary" readonly="1"/>
-                                    <field name="delivered_by_id" readonly="1"/>
-                                    <field name="service_location" readonly="1"/>
                                     <field name="status" widget="badge" readonly="1"/>
-                                    <field name="service_notes" readonly="1"/>
                                 </list>
                             </field>
                             
-                            <!-- Consumption Summary -->
+                            <!-- Service Summary -->
                             <group class="oe_subtotal_footer oe_right" colspan="2">
                                 <field name="consumed_services" readonly="1" string="Total Services Consumed"/>
                                 <field name="remaining_services" readonly="1" string="Services Remaining" 
