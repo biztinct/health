@@ -38,8 +38,8 @@
         <field name="inherit_id" ref="hr.view_employee_form"/>
         <field name="arch" type="xml">
             
-            <!-- Add Healthcare Tab -->
-            <xpath expr="//notebook" position="inside">
+            <!-- Add Healthcare Tab as First Tab -->
+            <xpath expr="//notebook/page[1]" position="before">
                 <page string="Healthcare Information" name="healthcare_info">
                     <group>
                         <group string="Healthcare Role &amp; Status">

@@ -235,7 +235,7 @@ class HealthPaymentCollectionWizard(models.TransientModel):
                 'No %s journal found. Please configure payment journals in Accounting settings.'
             ) % journal_type.title())
         
-        return journal.id
+        return journal
     
     def _allocate_payment_automatically(self, payment, transaction):
         """Automatically allocate payment to invoices (oldest first)"""

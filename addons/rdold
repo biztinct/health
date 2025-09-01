@@ -1,0 +1,10 @@
+  #!/bin/bash
+  if [ -z "$1" ]; then
+      echo "Usage: $0 <directory_name>"
+      echo "Example: $0 health_invoicing"
+      exit 1
+  fi
+
+  echo "Copying $1 to remote server..."
+  scp -r "$1" Health18:/odoo/odoo-server/addons/
+  echo "Copy completed!"

@@ -94,6 +94,7 @@
                             <field name="email" widget="email"/>
                             <field name="patient_category_id" required="1"/>
                             <field name="primary_facility_id"/>
+                            <field name="source_type" required="1"/>
                         </group>
                     </group>
 
@@ -163,7 +164,6 @@
                         <page string="Patient Journey" name="patient_journey">
                             <group>
                                 <group string="Registration Details">
-                                    <field name="source_type" required="1"/>
                                     <field name="source_details" placeholder="Specific source details"/>
                                     <field name="referral_source" invisible="source_type != 'referral'"/>
                                     <field name="registration_date" readonly="1"/>

@@ -106,7 +106,7 @@ class HealthCashDeliveryWizard(models.TransientModel):
             # Auto-generate receipt number
             sequence = self.env['ir.sequence'].next_by_code('health.om.receipt') or '0001'
             date_part = fields.Date.today().strftime('%Y%m%d')
-            self.om_receipt_number = f"OM-{self.om_employee_id.employee_number or 'EMP'}-{date_part}-{sequence}"
+            self.om_receipt_number = f"OM-{self.om_employee_id.id or 'EMP'}-{date_part}-{sequence}"
     
     @api.constrains('cash_amount')
     def _check_cash_amount(self):

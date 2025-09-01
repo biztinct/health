@@ -185,11 +185,13 @@ class HealthFieldserviceOrder(models.Model):
         
         # Calculate service amount
         amount = 0.0
-        if self.service_type_id:
-            amount += self.service_type_id.base_price or 0.0
-        
-        if self.duration_hours and self.service_type_id.hourly_rate:
-            amount += self.duration_hours * self.service_type_id.hourly_rate
+        if self.appointment_type_id:
+            amount += self.appointment_type_id.price or 0.0
+        elif self.base_price:
+            amount += self.base_price
+        else:
+            # Default amount if no specific pricing found
+            amount = 100.0  # Default service amount
         
         # Create invoice
         invoice = self.env['account.move'].create({

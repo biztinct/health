@@ -81,10 +81,9 @@
                     </group>
                     <group>
                         <field name="currency_id" invisible="1"/>
-                        <field name="is_package_service" readonly="1" invisible="not package_id"/>
+                        <field name="is_package_service" readonly="1" invisible="1"/>
                         <field name="package_service_value" readonly="1" widget="monetary"
-                               invisible="not package_id" 
-                               help="Value of services being consumed from package"/>
+                               invisible="1"/>
                     </group>
                 </group>
                 
@@ -141,12 +140,13 @@
                            groups="health_invoicing.group_health_invoicing_user">
                         <p><strong>Package Service Integration:</strong></p>
                         <p>Package: <field name="package_id" readonly="1" nolabel="1"/></p>
-                        <p>Services Consumed: <field name="package_consumption_quantity" readonly="1" nolabel="1"/></p>
-                        <p>Service Value: <field name="package_service_value" readonly="1" nolabel="1" widget="monetary"/></p>
+                        <!-- Hidden: Services Consumed and Service Value not needed in UI -->
+                        <p invisible="1">Services Consumed: <field name="package_consumption_quantity" readonly="1" nolabel="1"/></p>
+                        <p invisible="1">Service Value: <field name="package_service_value" readonly="1" nolabel="1" widget="monetary"/></p>
                         
-                        <!-- Legacy Prepaid Consumptions (for backward compatibility) -->
-                        <separator string="Legacy Consumption Records (Deprecated)" invisible="not prepaid_consumption_ids"/>
-                        <field name="prepaid_consumption_ids" nolabel="1" readonly="1" invisible="not prepaid_consumption_ids">
+                        <!-- Legacy Prepaid Consumptions (hidden - deprecated) -->
+                        <separator string="Legacy Consumption Records (Deprecated)" invisible="1"/>
+                        <field name="prepaid_consumption_ids" nolabel="1" readonly="1" invisible="1">
                             <list>
                                 <field name="service_date"/>
                                 <field name="package_id"/>
