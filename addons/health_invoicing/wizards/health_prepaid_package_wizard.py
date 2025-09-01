@@ -180,14 +180,10 @@ class HealthPrepaidPackageWizard(models.TransientModel):
         """Create prepaid package using product template with optional invoice and payment"""
         self.ensure_one()
         
-        # Step 1: Create Service Package using product template
-        package = self.package_product_id.create_patient_package(
-            patient_id=self.patient_id.id
-        )
-        
         invoice_id = False
+        package = None
         
-        # Step 2: Create Invoice (if requested)  
+        # Step 1: Create Invoice (if requested) - Let invoice posting create the package automatically
         if self.create_invoice:
             invoice = self.env['account.move'].create({
                 'move_type': 'out_invoice',
@@ -202,26 +198,37 @@ class HealthPrepaidPackageWizard(models.TransientModel):
                 })],
             })
             
-            # Link package to invoice
-            package.invoice_id = invoice.id
             invoice_id = invoice.id
             
-            # Post the invoice
+            # Post the invoice (this will auto-create the package)
             invoice.action_post()
+            
+            # Find the package that was created by invoice posting
+            package = self.env['health.service.package'].search([
+                ('product_template_id', '=', self.package_product_id.id),
+                ('patient_id', '=', self.patient_id.id),
+                ('invoice_id', '=', invoice.id)
+            ], limit=1, order='create_date desc')
             
             # Submit to tax authorities (Vietnamese compliance)
             try:
                 invoice.action_submit_to_tax_authority()
             except Exception as e:
                 # Log but don't block - can be submitted later
-                package.message_post(
-                    body=f"Invoice created but tax submission failed: {str(e)}. Please submit manually.",
-                    subject="Tax Submission Warning"
-                )
+                if package:
+                    package.message_post(
+                        body=f"Invoice created but tax submission failed: {str(e)}. Please submit manually.",
+                        subject="Tax Submission Warning"
+                    )
+        else:
+            # If no invoice requested, create package directly
+            package = self.package_product_id.create_patient_package(
+                patient_id=self.patient_id.id
+            )
         
         # Step 3: Process Payment (if requested)
         transaction_id = False
-        if self.process_payment and self.payment_amount > 0:
+        if self.process_payment and self.payment_amount > 0 and package:
             transaction = self.env['health.payment.transaction'].create({
                 'patient_id': self.patient_id.id,
                 'package_id': package.id,
@@ -230,7 +237,7 @@ class HealthPrepaidPackageWizard(models.TransientModel):
                 'payment_method': self.payment_method,
                 'transaction_type': 'prepaid',
                 'status': 'collected' if self.payment_method != 'cash' else 'pending_delivery',
-                'collected_by_id': self.env.user.employee_id.id,
+                'collected_by_id': self.env.user.employee_id.id if self.env.user.employee_id else False,
                 'transaction_notes': f'Prepaid payment for package: {self.package_name}',
             })
             transaction_id = transaction.id
@@ -244,34 +251,48 @@ class HealthPrepaidPackageWizard(models.TransientModel):
                     'ar_reconciliation_date': fields.Datetime.now()
                 })
         
-        # Success message
-        message = f"""
-        Prepaid Package Created Successfully!
-        
-        Package: {package.name}
-        Services: {package.total_services} × {package.service_type.replace('_', ' ').title()}
-        Total Value: {package.package_price:,.0f} {package.currency_id.symbol}
-        """
-        
-        if invoice_id:
-            message += f"\n✓ Invoice created and submitted to tax authorities"
-        if transaction_id:
-            message += f"\n✓ Payment processed: {self.payment_amount:,.0f} {self.currency_id.symbol}"
-        
-        package.message_post(
-            body=message,
-            subject="Prepaid Package Created"
-        )
-        
-        # Return action to view the created package
-        return {
-            'name': _('Prepaid Service Package'),
-            'type': 'ir.actions.act_window',
-            'res_model': 'health.service.package',
-            'res_id': package.id,
-            'view_mode': 'form',
-            'target': 'current',
-        }
+        # Success handling
+        if package:
+            # Success message
+            message = f"""
+            Prepaid Package Created Successfully!
+            
+            Package: {package.name}
+            Services: {package.total_services} × {package.service_type.replace('_', ' ').title()}
+            Total Value: {package.package_price:,.0f} {package.currency_id.symbol}
+            """
+            
+            if invoice_id:
+                message += f"\n✓ Invoice created and submitted to tax authorities"
+            if transaction_id:
+                message += f"\n✓ Payment processed: {self.payment_amount:,.0f} {self.currency_id.symbol}"
+            
+            package.message_post(
+                body=message,
+                subject="Prepaid Package Created"
+            )
+            
+            # Return action to view the created package
+            return {
+                'name': _('Prepaid Service Package'),
+                'type': 'ir.actions.act_window',
+                'res_model': 'health.service.package',
+                'res_id': package.id,
+                'view_mode': 'form',
+                'target': 'current',
+            }
+        else:
+            # Fallback if package creation failed
+            return {
+                'type': 'ir.actions.client',
+                'tag': 'display_notification',
+                'params': {
+                    'title': _('Package Creation'),
+                    'message': _('Package workflow completed. Check the patient record for package details.'),
+                    'sticky': False,
+                    'type': 'success'
+                }
+            }
     
     def _create_ar_payment(self, transaction, invoice):
         """Create standard account.payment record for prepaid packages"""

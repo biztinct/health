@@ -11,9 +11,18 @@
             <!-- Add Smart Buttons for Invoicing -->
             <xpath expr="//div[hasclass('oe_button_box')]" position="inside">
                 
+                <!-- Invoices Smart Button -->
+                <button type="object" name="action_view_invoices"
+                        class="oe_stat_button" icon="fa-file-text"
+                        invisible="invoice_count == 0"
+                        groups="health_invoicing.group_health_invoicing_user">
+                    <field name="invoice_count" widget="statinfo" string="Invoices"/>
+                </button>
+                
                 <!-- Service Packages Smart Button -->
                 <button type="object" name="action_view_service_packages"
                         class="oe_stat_button" icon="fa-gift" 
+                        invisible="service_package_count == 0"
                         groups="health_invoicing.group_health_invoicing_user">
                     <field name="service_package_count" widget="statinfo" string="Packages"/>
                 </button>
@@ -21,6 +30,7 @@
                 <!-- Payment Transactions Smart Button -->
                 <button type="object" name="action_view_payment_transactions"
                         class="oe_stat_button" icon="fa-credit-card"
+                        invisible="payment_transaction_count == 0"
                         groups="health_invoicing.group_health_invoicing_user">
                     <field name="payment_transaction_count" widget="statinfo" string="Payments"/>
                 </button>
@@ -45,10 +55,11 @@
                 
                 <!-- Prepaid Package Invoice Creation -->
                 <button type="object" name="action_create_prepaid_package"
-                        string="Create Prepaid Package"
+                        string="🎁 Quick Package Purchase"
                         class="btn-primary"
                         invisible="not is_patient"
-                        groups="health_invoicing.group_health_invoicing_user"/>
+                        groups="health_invoicing.group_health_invoicing_user"
+                        help="Quick wizard to purchase and pay for package products"/>
                         
                 <!-- Standard Invoice Creation -->
                 <button type="object" name="action_create_standard_invoice"
@@ -67,89 +78,52 @@
                         
             </xpath>
             
-            <!-- Add Active Service Packages Section Before Notebook -->
+            <!-- Active Service Packages with Gauge Widgets -->
             <xpath expr="//notebook" position="before">
-                <div class="oe_clear"></div>
-                <group string="Active Service Packages" name="active_packages_section" 
+                <group string="📦 Active Service Packages" name="active_packages_section" 
                        invisible="not is_patient or active_packages_count == 0"
                        groups="health_invoicing.group_health_invoicing_user">
                     
-                    <!-- Package List with Progress Tracking -->
-                    <field name="active_service_packages" nolabel="1" readonly="1">
-                        <tree create="false" delete="false" edit="false" 
-                              decoration-success="remaining_services &gt; 5" 
-                              decoration-warning="remaining_services &lt;= 5 and remaining_services &gt; 0" 
-                              decoration-danger="remaining_services == 0">
+                    <!-- Package Display with Gauge Widgets (Gamification Style) -->
+                    <field name="active_service_packages" nolabel="1">
+                        <kanban create="false" edit="false" delete="false">
+                            <field name="name"/>
+                            <field name="service_type"/>
+                            <field name="total_services"/>
+                            <field name="consumed_services"/>
+                            <field name="remaining_services"/>
                             
-                            <!-- Package Information -->
-                            <field name="name" string="Package"/>
-                            <field name="service_type" string="Service"/>
-                            <field name="total_services" string="Total"/>
-                            <field name="consumed_services" string="Used"/>
-                            <field name="remaining_services" string="Remaining" 
-                                   widget="badge" 
-                                   decoration-success="remaining_services &gt; 5"
-                                   decoration-warning="remaining_services &lt;= 5 and remaining_services &gt; 0"
-                                   decoration-danger="remaining_services == 0"/>
-                            <field name="package_price" widget="monetary" string="Package Value"/>
-                            <field name="price_per_service" widget="monetary" string="Per Service"/>
-                            <field name="state" widget="badge"/>
-                            <field name="expiration_date" string="Expires"/>
-                            
-                            <!-- Hidden fields for computation -->
-                            <field name="currency_id" invisible="1"/>
-                        </tree>
+                            <templates>
+                                <t t-name="card" class="text-center">
+                                    <!-- Package Name (Visually Appealing) -->
+                                    <field class="fw-bold fs-4 text-primary" name="name" />
+                                    
+                                    <!-- Service Type Badge -->
+                                    <div class="mt-2">
+                                        <span class="badge badge-info">
+                                            <field name="service_type"/>
+                                        </span>
+                                    </div>
+                                    
+                                    <!-- Gauge Widget for Service Progress -->
+                                    <div class="pt-3 fs-1 fw-bolder">
+                                        <field name="consumed_services" 
+                                               widget="gauge" 
+                                               options="{'max_field': 'total_services', 'style': 'width:160px; height: 120px;'}" />
+                                    </div>
+                                    
+                                    <!-- Service Count Summary -->
+                                    <p class="mt-2">
+                                        <small class="text-muted">
+                                            <field name="consumed_services"/> / <field name="total_services"/> services used
+                                            <br/>
+                                            <field name="remaining_services"/> remaining
+                                        </small>
+                                    </p>
+                                </t>
+                            </templates>
+                        </kanban>
                     </field>
-                    
-                    <!-- Package Summary Cards with Bootstrap Styling -->
-                    <div class="row mt-3" invisible="active_packages_count == 0">
-                        <div class="col-md-4">
-                            <div class="card border-primary mb-3">
-                                <div class="card-body text-center">
-                                    <h5 class="card-title text-primary">
-                                        <i class="fa fa-gift"></i>
-                                        <field name="active_packages_count" readonly="1"/> Active Packages
-                                    </h5>
-                                    <p class="card-text">
-                                        <strong>Total Value: </strong>
-                                        <field name="total_prepaid_value" widget="monetary" readonly="1"/>
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="card border-success mb-3">
-                                <div class="card-body text-center">
-                                    <h5 class="card-title text-success">
-                                        <i class="fa fa-money"></i> Remaining Value
-                                    </h5>
-                                    <p class="card-text">
-                                        <strong style="font-size: 1.2em;">
-                                            <field name="remaining_prepaid_value" widget="monetary" readonly="1"/>
-                                        </strong>
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="card border-info mb-3">
-                                <div class="card-body text-center">
-                                    <p class="card-text">
-                                        <button type="object" name="action_view_service_packages" 
-                                                class="btn btn-outline-info btn-sm">
-                                            <i class="fa fa-eye"></i> View All Packages
-                                        </button>
-                                    </p>
-                                    <p class="card-text">
-                                        <button type="object" name="action_create_prepaid_package" 
-                                                class="btn btn-outline-primary btn-sm">
-                                            <i class="fa fa-plus"></i> Add New Package
-                                        </button>
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
                     
                 </group>
             </xpath>

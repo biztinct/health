@@ -185,9 +185,9 @@ class ProductTemplate(models.Model):
             'name': f"{self.name} - {self.env['res.partner'].browse(patient_id).name}",
             'product_template_id': self.id,
             'patient_id': patient_id,
-            'service_type': self.healthcare_package_type,
-            'total_services': self.healthcare_service_count,
-            'package_price': self.list_price,
+            'service_type': self.healthcare_package_type or 'other',  # Default to 'other' if not set
+            'total_services': self.healthcare_service_count or 1,
+            'package_price': self.list_price or 0.0,
             'expiration_date': fields.Date.add(fields.Date.today(), weeks=self.healthcare_package_duration) if self.healthcare_package_duration else False,
             'package_notes': self.healthcare_terms or f"Package based on product: {self.name}",
             'state': 'active',

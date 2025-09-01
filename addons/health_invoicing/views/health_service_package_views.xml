@@ -43,10 +43,11 @@
                     <field name="state" widget="statusbar" statusbar_visible="active,exhausted,expired"/>
                     
                     <!-- Package Actions -->
-                    <button type="object" name="action_view_consumptions"
-                            string="View Consumption History" class="btn-primary"
-                            invisible="consumption_count == 0"
-                            groups="health_invoicing.group_health_invoicing_user"/>
+                    <button type="object" name="action_create_booking"
+                            string="📅 Create Service Booking" class="btn-success"
+                            invisible="state != 'active' or remaining_services == 0"
+                            groups="health_invoicing.group_health_invoicing_user"
+                            help="Create a new FSO booking from this package"/>
                             
                     <button type="object" name="action_refund_package"
                             string="Refund Unused Services" class="btn-warning"
@@ -70,8 +71,15 @@
                     <!-- Smart Buttons -->
                     <div class="oe_button_box" name="button_box" groups="base.group_user">
                         
+                        <button type="object" name="action_view_bookings"
+                                class="oe_stat_button" icon="fa-calendar"
+                                invisible="booking_count == 0">
+                            <field name="booking_count" widget="statinfo" string="Bookings"/>
+                        </button>
+                        
                         <button type="object" name="action_view_consumptions"
-                                class="oe_stat_button" icon="fa-list">
+                                class="oe_stat_button" icon="fa-list"
+                                invisible="consumption_count == 0">
                             <field name="consumption_count" widget="statinfo" string="Consumptions"/>
                         </button>
                         

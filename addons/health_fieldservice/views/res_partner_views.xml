@@ -12,10 +12,6 @@
                         string="Create Booking (FSO)" 
                         class="btn-primary" 
                         invisible="not is_patient"/>
-                <button name="action_view_fso_orders" 
-                        type="object" 
-                        string="View Bookings" 
-                        invisible="not is_patient"/>
             </header>
         </field>
     </record>

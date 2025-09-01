@@ -20,6 +20,12 @@ class Partner(models.Model):
         help='Number of payment transactions for this patient'
     )
     
+    invoice_count = fields.Integer(
+        'Invoice Count',
+        compute='_compute_invoicing_counts',
+        help='Number of invoices for this patient'
+    )
+    
     # Financial Summary Fields
     total_invoiced = fields.Monetary(
         'Total Invoiced',
@@ -84,7 +90,7 @@ class Partner(models.Model):
 # NOTE: Payment analytics fields will be added in Phase 4b after base module upgrades successfully
     # This ensures clean database column creation without ORM conflicts
     
-    # Computed Methods
+    # Computed Methods (add dependencies to trigger recomputation)
     @api.depends('is_patient')
     def _compute_invoicing_counts(self):
         for partner in self:
@@ -95,9 +101,15 @@ class Partner(models.Model):
                 partner.payment_transaction_count = self.env['health.payment.transaction'].search_count([
                     ('patient_id', '=', partner.id)
                 ])
+                partner.invoice_count = self.env['account.move'].search_count([
+                    ('partner_id', '=', partner.id),
+                    ('move_type', 'in', ['out_invoice', 'out_refund']),
+                    ('state', '!=', 'cancel')
+                ])
             else:
                 partner.service_package_count = 0
                 partner.payment_transaction_count = 0
+                partner.invoice_count = 0
     
     @api.depends('is_patient')
     def _compute_financial_summary(self):
@@ -174,6 +186,23 @@ class Partner(models.Model):
                 'default_patient_id': self.id,
                 'create': True,
             }
+        }
+    
+    def action_view_invoices(self):
+        """View all invoices for this patient"""
+        self.ensure_one()
+        
+        return {
+            'name': _('Patient Invoices'),
+            'type': 'ir.actions.act_window',
+            'res_model': 'account.move',
+            'domain': [
+                ('partner_id', '=', self.id),
+                ('move_type', 'in', ['out_invoice', 'out_refund']),
+                ('state', '!=', 'cancel')
+            ],
+            'view_mode': 'list,form',
+            'target': 'current',
         }
     
     def action_view_outstanding_invoices(self):

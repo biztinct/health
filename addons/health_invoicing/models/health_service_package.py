@@ -193,6 +193,12 @@ class HealthServicePackage(models.Model):
         help='Number of FSOs that consumed from this package'
     )
     
+    booking_count = fields.Integer(
+        'Bookings',
+        compute='_compute_booking_count',
+        help='Number of FSO bookings linked to this package'
+    )
+    
     # Legacy field for backward compatibility (will be removed)
     consumption_ids = fields.One2many(
         'health.prepaid.service',
@@ -205,6 +211,13 @@ class HealthServicePackage(models.Model):
     def _compute_consumption_count(self):
         for package in self:
             package.consumption_count = len(package.fso_ids)
+    
+    def _compute_booking_count(self):
+        for package in self:
+            # Count all FSOs linked to this package (both booked and completed)
+            package.booking_count = self.env['health.fieldservice.order'].search_count([
+                ('package_id', '=', package.id)
+            ])
     
     # Constraints and Validations
     @api.constrains('total_services', 'consumed_services')
@@ -358,4 +371,65 @@ class HealthServicePackage(models.Model):
             'res_id': refund_invoice.id,
             'view_mode': 'form',
             'target': 'current',
+        }
+    
+    def action_create_booking(self):
+        """Create FSO booking from this package"""
+        self.ensure_one()
+        
+        if self.state != 'active':
+            raise UserError(_('Cannot create bookings for inactive packages.'))
+        
+        if self.remaining_services <= 0:
+            raise UserError(_('No remaining services in this package to book.'))
+        
+        # Map package service types to FSO service types
+        service_type_mapping = {
+            'physiotherapy': 'rehabilitation',
+            'blood_pressure_monitoring': 'diagnostic', 
+            'diabetes_management': 'follow_up',
+            'home_visit': 'home_visit',
+            'clinic_visit': 'clinic_visit',
+            'consultation': 'consultation',
+            'emergency': 'emergency',
+            'follow_up': 'follow_up',
+            'preventive': 'preventive',
+            'rehabilitation': 'rehabilitation',
+            'vaccination': 'vaccination',
+            'diagnostic': 'diagnostic',
+            'other': 'consultation',  # Default mapping for 'other'
+        }
+        
+        mapped_service_type = service_type_mapping.get(self.service_type, 'consultation')
+        
+        return {
+            'name': _('Create Service Booking'),
+            'type': 'ir.actions.act_window',
+            'res_model': 'health.fieldservice.order',
+            'view_mode': 'form',
+            'target': 'current',
+            'context': {
+                'default_patient_id': self.patient_id.id,
+                'default_package_id': self.id,
+                'default_service_type': mapped_service_type,
+                'default_service_category': 'medical',  # Default category
+                'create_from_package': True,
+            }
+        }
+    
+    def action_view_bookings(self):
+        """View all FSO bookings linked to this package"""
+        self.ensure_one()
+        
+        return {
+            'name': _('Package Bookings'),
+            'type': 'ir.actions.act_window',
+            'res_model': 'health.fieldservice.order',
+            'domain': [('package_id', '=', self.id)],
+            'view_mode': 'list,form',
+            'target': 'current',
+            'context': {
+                'default_package_id': self.id,
+                'default_patient_id': self.patient_id.id,
+            }
         }

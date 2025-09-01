@@ -66,22 +66,35 @@
                         
             </xpath>
             
-            <!-- Add Service Package Integration Fields -->
+            <!-- Add Service Package Selection (Always Visible for Easy Package Booking) -->
             <xpath expr="//group[1]" position="after">
-                <group string="Service Package" name="package_integration"
-                       invisible="not is_package_service and not package_id"
+                <group string="📦 Service Package Integration" name="package_selection"
                        groups="health_invoicing.group_health_invoicing_user">
                     <group>
                         <field name="package_id" 
+                               placeholder="Select a prepaid package (optional)"
+                               help="Select a prepaid service package to consume services from"
                                domain="[('patient_id', '=', patient_id), ('state', '=', 'active'), ('remaining_services', '>', 0)]"/>
-                        <field name="is_package_service" readonly="1"/>
-                        <field name="package_consumption_quantity"/>
+                        <field name="package_consumption_quantity" 
+                               invisible="not package_id"
+                               help="Number of services to consume from selected package"/>
                     </group>
                     <group>
                         <field name="currency_id" invisible="1"/>
-                        <field name="package_service_value" readonly="1" widget="monetary"/>
+                        <field name="is_package_service" readonly="1" invisible="not package_id"/>
+                        <field name="package_service_value" readonly="1" widget="monetary"
+                               invisible="not package_id" 
+                               help="Value of services being consumed from package"/>
                     </group>
                 </group>
+                
+                <!-- Package Status Alert -->
+                <div class="alert alert-info" role="alert" 
+                     invisible="not package_id">
+                    <strong>📦 Package Selected:</strong> 
+                    <field name="package_id" readonly="1" nolabel="1"/> - 
+                    Services will be consumed from this prepaid package.
+                </div>
                 
                 <group string="Payment &amp; Invoice Summary" name="payment_summary"
                        invisible="not is_invoiced"

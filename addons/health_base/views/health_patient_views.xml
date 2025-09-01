@@ -14,7 +14,6 @@
                 <header>
                     <field name="patient_status" widget="statusbar" statusbar_visible="new,active,inactive"/>
                     <button name="action_create_appointment" string="Schedule Appointment" type="object" class="oe_highlight"/>
-                    <button name="action_view_appointments" string="View History" type="object"/>
                     <button name="action_activate_patient" string="Activate" type="object" class="oe_highlight" 
                             invisible="patient_status == 'active'"/>
                 </header>
