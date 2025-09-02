@@ -76,7 +76,7 @@
                                help="Select a prepaid service package to consume services from"
                                domain="[('patient_id', '=', patient_id), ('state', '=', 'active'), ('remaining_services', '>', 0)]"/>
                         <field name="package_consumption_quantity" 
-                               invisible="not package_id"
+                               invisible="1"
                                help="Number of services to consume from selected package"/>
                     </group>
                     <group>

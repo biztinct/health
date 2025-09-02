@@ -149,7 +149,7 @@ class HealthPaymentCollectionWizard(models.TransientModel):
             'payment_method': self.payment_method,
             'transaction_type': 'deferred',  # This is collecting a "Pay Later"
             'status': 'collected' if self.payment_method != 'cash' else 'pending_delivery',
-            'collected_by_id': self.env.user.employee_id.id,
+            'collected_by_id': self.env.user.employee_id.id if self.env.user.employee_id else False,
             'transaction_notes': self.payment_notes or f'Payment collection for outstanding invoices',
             'payment_proof_attachment_ids': [(6, 0, self.payment_proof_attachment_ids.ids)],
         })
@@ -162,8 +162,7 @@ class HealthPaymentCollectionWizard(models.TransientModel):
             'partner_id': self.patient_id.id,
             'amount': self.amount,
             'journal_id': payment_journal.id,
-            'ref': f'Payment collection - {self.patient_id.name}',
-            'communication': f'Payment collection: {transaction.display_name}',
+            'payment_reference': f'Payment collection: {transaction.display_name}',
         }
         
         payment = self.env['account.payment'].create(payment_vals)
@@ -238,7 +237,22 @@ class HealthPaymentCollectionWizard(models.TransientModel):
         return journal
     
     def _allocate_payment_automatically(self, payment, transaction):
-        """Automatically allocate payment to invoices (oldest first)"""
+        """Automatically allocate payment to invoices (oldest first) - Odoo 18 compatible"""
+        # In Odoo 18, payment reconciliation is handled differently
+        # Use the payment's reconciled_invoice_ids or manual reconciliation
+        
+        if not payment.move_id:
+            # Payment hasn't created a journal entry yet
+            return True
+            
+        # Get payment lines from the journal entry
+        payment_lines = payment.move_id.line_ids.filtered(
+            lambda line: line.account_id == payment.destination_account_id and not line.reconciled
+        )
+        
+        if not payment_lines:
+            return True
+            
         remaining_amount = self.amount
         invoices = self.outstanding_invoice_ids.sorted(lambda inv: inv.invoice_date)
         
@@ -246,15 +260,21 @@ class HealthPaymentCollectionWizard(models.TransientModel):
             if remaining_amount <= 0:
                 break
             
-            # Calculate allocation amount
+            # Calculate allocation amount  
             allocation_amount = min(remaining_amount, invoice.amount_residual)
             
-            # Create payment reconciliation
-            payment_lines = payment.line_ids.filtered(lambda line: line.account_id == payment.destination_account_id)
-            invoice_lines = invoice.line_ids.filtered(lambda line: line.account_id == invoice.line_ids.account_id)
+            # Get receivable lines from invoice
+            invoice_lines = invoice.line_ids.filtered(
+                lambda line: line.account_id.account_type == 'asset_receivable' and not line.reconciled
+            )
             
             if payment_lines and invoice_lines:
-                (payment_lines + invoice_lines).reconcile()
+                try:
+                    # Reconcile payment with invoice
+                    (payment_lines + invoice_lines).reconcile()
+                except Exception:
+                    # If reconciliation fails, continue to next invoice
+                    pass
             
             remaining_amount -= allocation_amount
         

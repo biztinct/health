@@ -324,8 +324,7 @@ class HealthPrepaidPackageWizard(models.TransientModel):
             'currency_id': self.currency_id.id,
             'date': fields.Date.today(),
             'journal_id': journal.id,
-            'communication': f"Prepaid package: {self.package_name}",
-            'ref': transaction.name,
+            'payment_reference': f"Prepaid package: {self.package_name}",
         }
         
         payment = self.env['account.payment'].create(payment_vals)
