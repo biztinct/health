@@ -19,7 +19,18 @@
                 <field name="preferred_name" placeholder="Preferred calling name"/>
             </xpath>
 
-            <!-- Healthcare flags are inherited from health_base -->
+            <!-- Add healthcare role flags -->
+            <xpath expr="//field[@name='category_id']" position="after">
+                <group name="healthcare_roles" string="Healthcare Roles" col="4">
+                    <field name="is_patient"/>
+                    <field name="is_representative"/>
+                    <field name="is_caregiver"/>
+                    <field name="is_payer"/>
+                    <field name="is_referrer"/>
+                    <field name="is_emergency_contact"/>
+                    <field name="is_healthcare_provider"/>
+                </group>
+            </xpath>
 
             <!-- Enhanced Vietnamese Address Section -->
             <xpath expr="//div[@class='o_address_format']" position="replace">
@@ -67,10 +78,9 @@
                 <page name="healthcare_info" string="Healthcare Info" 
                       invisible="not is_patient and not is_caregiver and not is_payer and not is_referrer">
                     
-                    <!-- Healthcare Lead Source -->
-                    <group name="healthcare_source" string="Lead Source &amp; Preferences">
+                    <!-- Healthcare Preferences -->
+                    <group name="healthcare_preferences" string="Healthcare Preferences">
                         <group>
-                            <field name="healthcare_lead_source"/>
                             <field name="distance_from_clinic"/>
                             <field name="gps_coordinates"/>
                         </group>
@@ -95,29 +105,44 @@
                         <field name="healthcare_notes" nolabel="1" placeholder="Healthcare-related notes and observations..."/>
                     </group>
 
-                    <!-- Client Representatives (FROM EXCEL REQUIREMENTS) -->
-                    <group name="client_representatives" string="Client Representatives">
-                        <group name="primary_representative" string="Primary Representative">
-                            <field name="primary_representative_id" readonly="1"/>
-                        </group>
-                        
-                        <field name="client_representative_ids">
+
+                    <!-- Patient relationships now handled in health_base with simple Many2one fields -->
+                </page>
+                
+                <page name="healthcare_relationships" string="Healthcare Relationships" 
+                      invisible="not is_patient and not is_representative">
+                    
+                    <!-- Relationships where this person is a client/patient -->
+                    <group name="my_representatives" string="My Representatives" 
+                           invisible="not is_patient">
+                        <field name="client_relationships" nolabel="1">
                             <list>
-                                <field name="representative_name"/>
-                                <field name="kinship_title"/>
-                                <field name="preferred_name"/>
-                                <field name="relationship"/>
-                                <field name="representative_phone_1"/>
-                                <field name="email"/>
-                                <field name="zalo"/>
-                                <field name="is_primary"/>
-                                <field name="details_complete"/>
-                                <field name="active"/>
+                                <field name="representative_id"/>
+                                <field name="role"/>
+                                <field name="relationship_type"/>
+                                <field name="is_primary" widget="boolean_toggle"/>
+                                <field name="can_make_medical_decisions" widget="boolean_toggle"/>
+                                <field name="financial_responsibility" widget="percentage"/>
+                                <field name="active" widget="boolean_toggle"/>
                             </list>
                         </field>
                     </group>
-
-                    <!-- Patient relationships now handled in health_base with simple Many2one fields -->
+                    
+                    <!-- Relationships where this person is a representative -->
+                    <group name="clients_i_represent" string="Clients I Represent" 
+                           invisible="not is_representative">
+                        <field name="representative_relationships" nolabel="1">
+                            <list>
+                                <field name="client_id"/>
+                                <field name="role"/>
+                                <field name="relationship_type"/>
+                                <field name="is_primary" widget="boolean_toggle"/>
+                                <field name="can_make_medical_decisions" widget="boolean_toggle"/>
+                                <field name="financial_responsibility" widget="percentage"/>
+                                <field name="active" widget="boolean_toggle"/>
+                            </list>
+                        </field>
+                    </group>
                 </page>
             </xpath>
 
@@ -131,16 +156,6 @@
                     <div class="o_stat_info">
                         <span class="o_stat_text">Create</span>
                         <span class="o_stat_text">Healthcare Lead</span>
-                    </div>
-                </button>
-                <button name="action_create_representative" 
-                        type="object" 
-                        class="oe_stat_button" 
-                        icon="fa-users"
-                        invisible="is_company">
-                    <div class="o_stat_info">
-                        <span class="o_stat_text">Add</span>
-                        <span class="o_stat_text">Representative</span>
                     </div>
                 </button>
             </xpath>

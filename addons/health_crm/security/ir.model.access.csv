@@ -1,4 +1,13 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_health_client_representative_user,health.client.representative user,model_health_client_representative,group_health_crm_user,1,1,1,0
-access_health_client_representative_manager,health.client.representative manager,model_health_client_representative,group_health_crm_manager,1,1,1,1
-access_health_client_representative_public,health.client.representative public,model_health_client_representative,,1,0,0,0
+access_health_client_relation_user,health.client.relation user,model_health_client_relation,group_health_crm_user,1,1,1,0
+access_health_client_relation_manager,health.client.relation manager,model_health_client_relation,group_health_crm_manager,1,1,1,1
+access_health_client_relation_public,health.client.relation public,model_health_client_relation,,1,0,0,0
+access_health_contact_reason_user,health.contact.reason user,model_health_contact_reason,group_health_crm_user,1,1,1,0
+access_health_contact_reason_manager,health.contact.reason manager,model_health_contact_reason,group_health_crm_manager,1,1,1,1
+access_health_contact_reason_public,health.contact.reason public,model_health_contact_reason,,1,0,0,0
+access_health_lead_reason_user,health.lead.reason user,model_health_lead_reason,group_health_crm_user,1,1,1,0
+access_health_lead_reason_manager,health.lead.reason manager,model_health_lead_reason,group_health_crm_manager,1,1,1,1
+access_health_lead_reason_public,health.lead.reason public,model_health_lead_reason,,1,0,0,0
+access_health_province_user,health.province user,model_health_province,group_health_crm_user,1,1,1,0
+access_health_province_manager,health.province manager,model_health_province,group_health_crm_manager,1,1,1,1
+access_health_province_public,health.province public,model_health_province,,1,0,0,0

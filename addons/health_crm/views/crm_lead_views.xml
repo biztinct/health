@@ -1,52 +1,174 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
+    <!-- Healthcare Convert to Opportunity Wizard - Change terminology -->
+    <record id="view_healthcare_lead2opportunity_partner" model="ir.ui.view">
+        <field name="name">crm.lead2opportunity.partner.form.healthcare</field>
+        <field name="model">crm.lead2opportunity.partner</field>
+        <field name="inherit_id" ref="crm.view_crm_lead2opportunity_partner"/>
+        <field name="arch" type="xml">
+            <!-- Change form title -->
+            <xpath expr="//form" position="attributes">
+                <attribute name="string">Convert to CRM Lead</attribute>
+            </xpath>
+            
+            <!-- Change assign section title - target by name attribute -->
+            <xpath expr="//group[field[@name='user_id']]" position="attributes">
+                <attribute name="string">Assign this CRM Lead to</attribute>
+            </xpath>
+            
+            <!-- Change opportunities section title - target by invisible condition -->
+            <xpath expr="//group[@invisible=&quot;name != 'merge'&quot;]" position="attributes">
+                <attribute name="string">CRM Leads</attribute>
+            </xpath>
+            
+            <!-- Change button text - target by name attribute -->
+            <xpath expr="//button[@name='action_apply']" position="attributes">
+                <attribute name="string">Create CRM Lead</attribute>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Healthcare Convert to Opportunity Action - Change name -->
+    <record id="action_healthcare_lead2opportunity_partner" model="ir.actions.act_window">
+        <field name="name">Convert to CRM Lead</field>
+        <field name="res_model">crm.lead2opportunity.partner</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
     <!-- Healthcare Lead Form View Extension -->
     <record id="view_healthcare_lead_form" model="ir.ui.view">
         <field name="name">crm.lead.form.healthcare</field>
         <field name="model">crm.lead</field>
         <field name="inherit_id" ref="crm.crm_lead_view_form"/>
         <field name="arch" type="xml">
-            <!-- Add healthcare fields after standard CRM fields -->
-            <xpath expr="//group[@name='lead_partner']" position="after">
-                <group name="healthcare_info" string="Healthcare Information">
-                    <group>
-                        <field name="service_interest"/>
-                        <field name="clinical_priority"/>
-                        <field name="health_contact_outcome"/>
-                        <field name="vietnamese_channel"/>
-                        <field name="contact_source"/>
-                    </group>
-                    <group>
-                        <field name="patient_id" options="{'no_create': True}"/>
-                        <field name="client_representative_id" options="{'no_create': True}"/>
-                        <field name="appointment_count" invisible="1"/>
-                        <field name="preferred_language"/>
-                        <field name="has_health_insurance"/>
-                        <field name="insurance_provider" invisible="not has_health_insurance"/>
-                        <field name="lead_status"/>
-                    </group>
-                </group>
+            
+            <!-- Change field label 'name' to 'Contact name' -->
+            <xpath expr="//field[@name='name']" position="attributes">
+                <attribute name="string">Contact name</attribute>
+            </xpath>
+            
+            <!-- Change Convert to Opportunity button to Convert to CRM Lead -->
+            <xpath expr="//button[@name='%(crm.action_crm_lead2opportunity_partner)d']" position="attributes">
+                <attribute name="string">Convert to CRM Lead</attribute>
+            </xpath>
+            
+            <!-- Add Convert to Booking button -->
+            <xpath expr="//button[@name='%(crm.action_crm_lead2opportunity_partner)d']" position="after">
+                <button name="action_convert_to_booking" 
+                        string="Convert to Booking" 
+                        type="object" 
+                        class="btn-primary"
+                        invisible="type == 'opportunity'"/>
+            </xpath>
+            
+            <!-- Remove unwanted fields from form view -->
+            <xpath expr="//field[@name='probability']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            
+            <xpath expr="//field[@name='partner_name']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            
+            <xpath expr="//field[@name='website']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            
+            <xpath expr="//field[@name='function']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <!-- Hide all standard CRM fields except the ones we want -->
+            <xpath expr="//field[@name='email_from']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='phone']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='user_id']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='team_id']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='tag_ids']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='contact_name']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            
+            <!-- Hide Expected Revenue field -->
+            <xpath expr="//field[@name='expected_revenue']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            
+            <!-- Add Contact Code to top right after title -->
+            <xpath expr="//div[hasclass('oe_title')]" position="after">
+                <div class="oe_right">
+                    <field name="unique_contact_code" string="Contact ID" readonly="1" 
+                           style="font-weight: bold; font-size: 14px; color: #875A7B; text-align: right;"/>
+                </div>
+            </xpath>
+            
+            <!-- Replace lead_partner group with our specified fields only -->
+            <xpath expr="//group[@name='lead_partner']" position="replace">
+                <notebook>
+                    <page string="Lead Information" name="lead_info">
+                        <group>
+                            <!-- Basic Lead Information -->
+                            <group string="Basic Information" col="2">
+                                <field name="contact_datetime" string="Contact Date/Time"/>
+                            </group>
+                            
+                            <!-- Contact Source & Location -->
+                            <group string="Contact Source &amp; Location" col="4">
+                                <field name="vietnamese_channel" string="Contact Channel"/>
+                                <field name="campaign_id" string="Campaign Source" options="{'no_create': True}"/>
+                                <field name="province_code" string="Province/City" options="{'no_create': True}"/>
+                                <field name="facility_id" string="Healthcare Facility" options="{'no_create': True}"/>
+                            </group>
+                            
+                            <!-- Contact Classification -->
+                            <group string="Contact Classification" col="4">
+                                <field name="contact_type" string="Contact Type"/>
+                                <field name="contact_reason_id" string="Contact Reason" options="{'no_create': True}"/>
+                                <field name="lead_followup_required" string="Follow-up Required"/>
+                                <field name="booking_status" string="Booking Status"/>
+                            </group>
+                        </group>
+                    </page>
+                    
+                    <page string="Client &amp; Representatives" name="representatives">
+                        <group>
+                            <!-- Client Information -->
+                            <group string="Client Information" col="2">
+                                <field name="patient_id" string="Client" options="{'no_create': True}" colspan="2"/>
+                            </group>
+                            
+                            <!-- Care Team -->
+                            <group string="Care Team" col="2">
+                                <field name="primary_caregiver_id" string="Primary Caregiver" options="{'no_create': True}"/>
+                                <field name="secondary_caregiver_id" string="Secondary Caregiver" options="{'no_create': True}"/>
+                                <field name="primary_payer_id" string="Payer" options="{'no_create': True}"/>
+                            </group>
+                            
+                            <!-- Referral Information -->
+                            <group string="Referral Information" col="2">
+                                <field name="referrer_id" string="Referrer" options="{'no_create': True}"/>
+                            </group>
+                        </group>
+                    </page>
+                </notebook>
             </xpath>
 
-            <!-- Add service requirements and Vietnamese healthcare fields -->
-            <xpath expr="//field[@name='description']" position="after">
-                <field name="service_requirements" placeholder="Specific healthcare service requirements and notes..."/>
-                <group name="vietnamese_healthcare" string="Vietnamese Healthcare Details">
-                    <group>
-                        <field name="preferred_service_area" options="{'no_create': True}"/>
-                        <field name="distance_from_clinic"/>
-                    </group>
-                    <group>
-                        <field name="next_follow_up_date"/>
-                        <field name="next_action_at"/>
-                        <field name="follow_up_count"/>
-                    </group>
-                </group>
-                <group name="follow_up_notes" string="Follow-up Notes">
-                    <field name="follow_up_notes" nolabel="1" placeholder="Follow-up notes and communication history..."/>
-                </group>
+            <!-- Keep only the description field as "Your Notes" -->
+            <xpath expr="//field[@name='description']" position="attributes">
+                <attribute name="string">Your Notes</attribute>
+                <attribute name="placeholder">Your notes about this healthcare lead...</attribute>
             </xpath>
+            
 
             <!-- Add healthcare action buttons -->
             <xpath expr="//header" position="inside">
@@ -59,6 +181,48 @@
                         string="Schedule Follow-up" 
                         type="object" 
                         class="btn-secondary"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Healthcare Lead List View Extension - Change name field label -->
+    <record id="view_healthcare_lead_tree" model="ir.ui.view">
+        <field name="name">crm.lead.tree.healthcare</field>
+        <field name="model">crm.lead</field>
+        <field name="inherit_id" ref="crm.crm_case_tree_view_leads"/>
+        <field name="arch" type="xml">
+            <!-- Change field label 'name' to 'Contact name' in list view -->
+            <xpath expr="//field[@name='name']" position="attributes">
+                <attribute name="string">Contact name</attribute>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Healthcare Lead Kanban View Extension - Change name field label and remove partner_id -->
+    <record id="view_healthcare_lead_kanban" model="ir.ui.view">
+        <field name="name">crm.lead.kanban.healthcare</field>
+        <field name="model">crm.lead</field>
+        <field name="inherit_id" ref="crm.crm_case_kanban_view_leads"/>
+        <field name="arch" type="xml">
+            <!-- Change field label 'name' to 'Contact name' in kanban view -->
+            <xpath expr="//field[@name='name']" position="attributes">
+                <attribute name="string">Contact name</attribute>
+            </xpath>
+            
+            <!-- Remove partner_id field from kanban view -->
+            <xpath expr="//field[@name='partner_id' and @class='text-truncate']" position="replace"/>
+        </field>
+    </record>
+
+    <!-- Healthcare Opportunities List View Extension - Change name field label -->
+    <record id="view_healthcare_opportunity_tree" model="ir.ui.view">
+        <field name="name">crm.lead.tree.opportunities.healthcare</field>
+        <field name="model">crm.lead</field>
+        <field name="inherit_id" ref="crm.crm_case_tree_view_oppor"/>
+        <field name="arch" type="xml">
+            <!-- Change field label 'name' to 'Contact name' in opportunity list view -->
+            <xpath expr="//field[@name='name']" position="attributes">
+                <attribute name="string">Contact name</attribute>
             </xpath>
         </field>
     </record>

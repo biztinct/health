@@ -62,4 +62,39 @@
         <field name="perm_unlink" eval="False"/>
     </record>
 
+    <!-- Healthcare Client Relationship Access Rules -->
+    <record id="health_client_relation_user_rule" model="ir.rule">
+        <field name="name">Healthcare Client Relationship: User Access</field>
+        <field name="model_id" ref="model_health_client_relation"/>
+        <field name="domain_force">['|', ('client_id.user_id', '=', user.id), ('representative_id.user_id', '=', user.id)]</field>
+        <field name="groups" eval="[(4, ref('group_health_crm_user'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+    <record id="health_client_relation_manager_rule" model="ir.rule">
+        <field name="name">Healthcare Client Relationship: Manager Access</field>
+        <field name="model_id" ref="model_health_client_relation"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('group_health_crm_manager'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="True"/>
+    </record>
+
+    <!-- Healthcare Representative Self-Access -->
+    <record id="health_client_relation_representative_rule" model="ir.rule">
+        <field name="name">Healthcare Client Relationship: Representative Self-Access</field>
+        <field name="model_id" ref="model_health_client_relation"/>
+        <field name="domain_force">[('representative_id.user_id', '=', user.id)]</field>
+        <field name="groups" eval="[(4, ref('group_health_crm_user'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
 </odoo>

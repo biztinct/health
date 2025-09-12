@@ -11,38 +11,7 @@ class HealthContact(models.Model):
     _inherit = 'res.partner'
 
     # CRITICAL: Client Requirements - Contact Table Fields
-    unique_contact_id = fields.Char(
-        'Unique Contact ID',
-        help='Sequential contact ID per city (from Excel requirement)',
-        copy=False
-    )
-    
-    contact_datetime = fields.Datetime(
-        'Contact Date/Time',
-        help='Auto-record with override capability (from Excel)',
-        default=fields.Datetime.now
-    )
-    
-    contact_outcome = fields.Selection([
-        ('service_booked', 'Service Booked'),
-        ('pending_follow_up', 'Pending Follow-up'), 
-        ('rejected', 'Rejected'),
-        ('no_response', 'No Response'),
-        ('booking_lost', 'Booking Lost')
-    ], string='Contact Outcome', help='From Excel: Contact Outcome field')
-    
-    lead_followup_required = fields.Boolean(
-        'Lead Follow-up Required',
-        help='Auto-calculated from Excel requirement'
-    )
-    
-    booking_status = fields.Selection([
-        ('no_booking', 'No Booking'),
-        ('pending', 'Booking Pending'),
-        ('confirmed', 'Booking Confirmed'),
-        ('completed', 'Booking Completed'),
-        ('cancelled', 'Booking Cancelled')
-    ], string='Booking Status', help='From Excel: Booking Status [Compulsory]', required=True, default='no_booking')
+    # Note: Lead-specific fields (contact_outcome, booking_status, etc.) moved to crm.lead model
 
     # Vietnamese healthcare-specific identification (from Excel CMF table)
     cccd_number = fields.Char(
@@ -122,18 +91,50 @@ class HealthContact(models.Model):
         help='Facebook profile URL or username'
     )
 
-    # Healthcare lead source tracking
-    healthcare_lead_source = fields.Selection([
-        ('facebook_ad', 'Facebook Advertisement'),
-        ('zalo_marketing', 'Zalo Marketing'),
-        ('website_form', 'Website Contact Form'),
-        ('phone_inquiry', 'Phone Inquiry'),
-        ('referral_patient', 'Patient Referral'),
-        ('referral_doctor', 'Doctor Referral'),
-        ('walk_in', 'Walk-in'),
-        ('health_fair', 'Health Fair'),
-        ('community_outreach', 'Community Outreach'),
-    ], string='Healthcare Lead Source')
+    # Note: healthcare_lead_source moved to crm.lead model
+
+    # Healthcare role flags for relationship management
+    is_patient = fields.Boolean(
+        string='Is Patient',
+        default=False,
+        help='This person is a patient/client who receives healthcare services'
+    )
+    
+    is_representative = fields.Boolean(
+        string='Is Representative',
+        default=False,
+        help='This person can represent or support patients/clients'
+    )
+    
+    is_caregiver = fields.Boolean(
+        string='Is Caregiver',
+        default=False,
+        help='This person provides caregiving services'
+    )
+    
+    is_payer = fields.Boolean(
+        string='Is Payer',
+        default=False,
+        help='This person or entity is responsible for payments'
+    )
+    
+    is_referrer = fields.Boolean(
+        string='Is Referrer',
+        default=False,
+        help='This person refers patients to our services'
+    )
+    
+    is_emergency_contact = fields.Boolean(
+        string='Is Emergency Contact',
+        default=False,
+        help='This person serves as an emergency contact'
+    )
+    
+    is_healthcare_provider = fields.Boolean(
+        string='Is Healthcare Provider',
+        default=False,
+        help='This person is a healthcare professional or provider'
+    )
 
     # Geographic and service preferences
     service_area_ids = fields.Many2many(
@@ -170,31 +171,21 @@ class HealthContact(models.Model):
         'Emergency Contact Relationship'
     )
 
-    # Client Representative relationship (FROM EXCEL)
-    client_representative_ids = fields.One2many(
-        'health.client.representative',
-        'contact_id',
-        string='Client Representatives',
-        help='People who can represent this contact (from Excel Client Representative table)'
+    # Healthcare relationships - as client/patient
+    client_relationships = fields.One2many(
+        'health.client.relation',
+        'client_id',
+        string='My Representatives',
+        help='People who represent or support me'
     )
-
-    # Primary representative (FROM EXCEL: client_representative_id [Compulsory])
-    primary_representative_id = fields.Many2one(
-        'health.client.representative',
-        string='Primary Representative',
-        help='From Excel: client_representative_id [Compulsory]',
-        compute='_compute_primary_representative',
-        store=True
+    
+    # Healthcare relationships - as representative
+    representative_relationships = fields.One2many(
+        'health.client.relation', 
+        'representative_id',
+        string='Clients I Represent',
+        help='Clients/patients I represent or support'
     )
-
-    @api.depends('client_representative_ids.is_primary')
-    def _compute_primary_representative(self):
-        """Compute primary representative"""
-        for partner in self:
-            primary = partner.client_representative_ids.filtered(
-                lambda r: r.is_primary and r.active
-            )
-            partner.primary_representative_id = primary[0] if primary else False
 
     @api.model_create_multi
     def create(self, vals_list):
@@ -276,6 +267,7 @@ class HealthContact(models.Model):
             'country_id': self.country_id.id if self.country_id else False,
             'team_id': self.env.ref('health_crm.healthcare_crm_team', raise_if_not_found=False).id,
             'vietnamese_channel': 'referral',  # Default for manual creation
+            'preferred_language': 'vietnamese',  # Default for Vietnamese healthcare
         }
         
         lead = self.env['crm.lead'].create(lead_vals)
@@ -289,19 +281,4 @@ class HealthContact(models.Model):
             'target': 'current',
         }
 
-    def action_create_representative(self):
-        """Create a new representative for this contact"""
-        self.ensure_one()
-        
-        return {
-            'type': 'ir.actions.act_window',
-            'name': _('New Client Representative'),
-            'res_model': 'health.client.representative',
-            'view_mode': 'form',
-            'target': 'new',
-            'context': {
-                'default_contact_id': self.id,
-                'default_is_primary': not self.client_representative_ids,  # First rep is primary
-            }
-        }
 

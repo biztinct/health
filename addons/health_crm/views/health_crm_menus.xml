@@ -9,18 +9,18 @@
         sequence="20"
         groups="group_health_crm_user"/>
 
-    <!-- Leads/Opportunities -->
+    <!-- CRM Contacts -->
     <menuitem 
         id="menu_healthcare_leads"
-        name="Leads &amp; Opportunities"
+        name="CRM Contacts"
         parent="menu_healthcare_crm_root"
         action="crm.crm_lead_all_leads"
         sequence="10"/>
 
-    <!-- Pipeline -->
+    <!-- CRM Leads -->
     <menuitem 
         id="menu_healthcare_pipeline"
-        name="Pipeline"
+        name="CRM Leads"
         parent="menu_healthcare_crm_root"
         action="crm.crm_lead_opportunities"
         sequence="20"/>
@@ -33,13 +33,14 @@
         action="base.action_partner_form"
         sequence="30"/>
 
-    <!-- Client Representatives (FROM EXCEL REQUIREMENTS) -->
+    <!-- Healthcare Relationships -->
     <menuitem 
-        id="menu_healthcare_client_representatives"
-        name="Client Representatives"
+        id="menu_healthcare_relationships"
+        name="Healthcare Relationships"
         parent="menu_healthcare_crm_root"
-        action="action_health_client_representative"
-        sequence="45"/>
+        action="action_health_client_relation"
+        sequence="40"/>
+
 
     <!-- Reporting -->
     <menuitem 
@@ -72,6 +73,30 @@
         parent="menu_healthcare_crm_config"
         action="crm.crm_stage_action"
         sequence="20"/>
+
+    <!-- Contact Reasons -->
+    <menuitem 
+        id="menu_healthcare_contact_reasons"
+        name="Contact Reasons"
+        parent="menu_healthcare_crm_config"
+        action="action_health_contact_reason"
+        sequence="30"/>
+
+    <!-- Lead Reasons -->
+    <menuitem 
+        id="menu_healthcare_lead_reasons"
+        name="Lead Reasons"
+        parent="menu_healthcare_crm_config"
+        action="action_health_lead_reason"
+        sequence="40"/>
+
+    <!-- Provinces -->
+    <menuitem 
+        id="menu_healthcare_provinces"
+        name="Provinces/Cities"
+        parent="menu_healthcare_crm_config"
+        action="action_health_province"
+        sequence="50"/>
 
     <!-- UTM Sources - Disabled until UTM module is available -->
     <!--

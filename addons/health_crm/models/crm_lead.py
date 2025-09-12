@@ -107,11 +107,121 @@ class HealthLead(models.Model):
         help='From Excel: next_action_at [Compulsory] - When next action should be taken'
     )
     
-    # Link to Client Representative (FROM EXCEL REQUIREMENTS)
-    client_representative_id = fields.Many2one(
-        'health.client.representative',
-        string='Client Representative',
-        help='From Excel: client_representative_id - Person representing this lead'
+    # Additional Excel Requirements - Missing Fields
+    unique_contact_code = fields.Char(
+        'Unique Contact Code',
+        help='Sequential contact number per city (from Excel requirement)',
+        copy=False
+    )
+    
+    # Moved from res.partner - Lead-specific contact tracking fields
+    contact_datetime = fields.Datetime(
+        'Contact Date/Time',
+        help='Auto-record with override capability (from Excel)',
+        default=fields.Datetime.now
+    )
+    
+    contact_outcome = fields.Selection([
+        ('service_booked', 'Service Booked'),
+        ('pending_follow_up', 'Pending Follow-up'), 
+        ('rejected', 'Rejected'),
+        ('no_response', 'No Response'),
+        ('booking_lost', 'Booking Lost')
+    ], string='Contact Outcome', help='From Excel: Contact Outcome field')
+    
+    booking_status = fields.Selection([
+        ('no_booking', 'No Booking'),
+        ('pending', 'Booking Pending'),
+        ('confirmed', 'Booking Confirmed'),
+        ('completed', 'Booking Completed'),
+        ('cancelled', 'Booking Cancelled')
+    ], string='Booking Status', help='From Excel: Booking Status [Compulsory]', default='no_booking')
+    
+    # Healthcare lead source tracking (moved from res.partner)
+    healthcare_lead_source = fields.Selection([
+        ('facebook_ad', 'Facebook Advertisement'),
+        ('zalo_marketing', 'Zalo Marketing'),
+        ('website_form', 'Website Contact Form'),
+        ('phone_inquiry', 'Phone Inquiry'),
+        ('referral_patient', 'Patient Referral'),
+        ('referral_doctor', 'Doctor Referral'),
+        ('walk_in', 'Walk-in'),
+        ('health_fair', 'Health Fair'),
+        ('community_outreach', 'Community Outreach'),
+    ], string='Healthcare Lead Source')
+    
+    contact_type = fields.Selection([
+        ('new', 'New Contact'),
+        ('repeat', 'Repeat Contact'),
+    ], string='Contact Type', 
+       help='Whether this is a new or repeat contact')
+    
+    contact_reason_id = fields.Many2one(
+        'health.contact.reason',
+        string='Contact Reason',
+        help='Reason for the initial contact (Sales/OM purposes)'
+    )
+    
+    facility_id = fields.Many2one(
+        'health.facility',
+        string='Healthcare Facility',
+        help='Associated healthcare facility for this lead'
+    )
+    
+    lead_followup_required = fields.Boolean(
+        'Lead Follow-up Required',
+        default=False,
+        help='Whether this lead requires follow-up action'
+    )
+    
+    lead_reason_id = fields.Many2one(
+        'health.lead.reason', 
+        string='Lead Reason',
+        help='Reason for this lead/opportunity (different from contact reason)'
+    )
+    
+    # Province lookup for Vietnamese locations
+    province_code = fields.Many2one(
+        'health.province',
+        string='Province/City',
+        help='Vietnamese province or city for this lead'
+    )
+    
+    # Secondary caregiver (Caregiver 2 ID)
+    secondary_caregiver_id = fields.Many2one(
+        'res.partner',
+        string='Secondary Caregiver',
+        domain=[('is_caregiver', '=', True)],
+        help='Secondary caregiver for this lead (Caregiver 2 ID)'
+    )
+    
+    # Healthcare relationships for leads
+    primary_caregiver_id = fields.Many2one(
+        'res.partner',
+        string='Primary Caregiver',
+        domain=[('is_caregiver', '=', True)],
+        help='Primary caregiver for this lead'
+    )
+    
+    primary_payer_id = fields.Many2one(
+        'res.partner', 
+        string='Primary Payer',
+        domain=[('is_payer', '=', True)],
+        help='Primary person/entity responsible for payments'
+    )
+    
+    referrer_id = fields.Many2one(
+        'res.partner',
+        string='Referrer',
+        domain=[('is_referrer', '=', True)],
+        help='Person who referred this lead'
+    )
+    
+    emergency_contact_id = fields.Many2one(
+        'res.partner',
+        string='Emergency Contact',
+        domain=[('is_emergency_contact', '=', True)],
+        help='Emergency contact for this lead'
     )
     
     # Lead Status from Excel (extends standard CRM stage)
@@ -146,6 +256,10 @@ class HealthLead(models.Model):
             vals_list = [vals_list]
             
         for vals in vals_list:
+            # Generate unique contact code if not provided
+            if not vals.get('unique_contact_code'):
+                vals['unique_contact_code'] = self._generate_unique_contact_code(vals)
+            
             # Set default team to healthcare team if not specified
             if not vals.get('team_id'):
                 healthcare_team = self.env.ref('health_crm.healthcare_crm_team', raise_if_not_found=False)
@@ -159,6 +273,31 @@ class HealthLead(models.Model):
                     vals['country_id'] = vietnam.id
         
         return super().create(vals_list)
+    
+    def _generate_unique_contact_code(self, vals):
+        """Generate unique contact code based on city"""
+        # Get city from vals or use default
+        city = vals.get('city', 'HCM')  # Default to Ho Chi Minh City
+        
+        # Get the last contact code for this city
+        last_lead = self.search([
+            ('city', '=', city),
+            ('unique_contact_code', '!=', False)
+        ], order='unique_contact_code desc', limit=1)
+        
+        if last_lead and last_lead.unique_contact_code:
+            # Extract number from last code (format: CITY-NNNN)
+            try:
+                last_number = int(last_lead.unique_contact_code.split('-')[-1])
+                new_number = last_number + 1
+            except (ValueError, IndexError):
+                new_number = 1
+        else:
+            new_number = 1
+        
+        # Generate code in format: CITY-NNNN
+        city_code = city[:3].upper() if city else 'HCM'
+        return f"{city_code}-{new_number:04d}"
 
     def action_convert_to_appointment(self):
         """Convert lead directly to healthcare appointment"""
@@ -186,6 +325,8 @@ class HealthLead(models.Model):
         self.write({
             'patient_id': patient.id,
             'health_contact_outcome': 'service_booked',
+            'contact_outcome': 'service_booked',
+            'booking_status': 'confirmed',
             'stage_id': self._get_won_stage().id,
         })
         
@@ -215,7 +356,13 @@ class HealthLead(models.Model):
             'phone': self.phone,
             'mobile': self.mobile,
             'is_patient': True,
+            'preferred_contact_method': 'phone',
+            'country_id': self.country_id.id if self.country_id else self.env.ref('base.vn', raise_if_not_found=False).id,
         }
+        
+        # Copy relevant lead data to patient record
+        if self.healthcare_lead_source:
+            patient_vals['comment'] = f"Original lead source: {dict(self._fields['healthcare_lead_source'].selection).get(self.healthcare_lead_source, self.healthcare_lead_source)}"
         
         # Add address if available
         if self.street:
@@ -228,7 +375,69 @@ class HealthLead(models.Model):
                 'country_id': self.country_id.id if self.country_id else False,
             })
         
-        return self.env['res.partner'].create(patient_vals)
+        patient = self.env['res.partner'].create(patient_vals)
+        
+        # Create healthcare relationships from lead data
+        self._create_healthcare_relationships(patient)
+        
+        return patient
+
+    def _create_healthcare_relationships(self, patient):
+        """Create healthcare relationships from lead data"""
+        self.ensure_one()
+        
+        # Create caregiver relationship
+        if self.primary_caregiver_id:
+            self.env['health.client.relation'].create({
+                'client_id': patient.id,
+                'representative_id': self.primary_caregiver_id.id,
+                'role': 'caregiver',
+                'is_primary': True,
+                'can_make_medical_decisions': True,
+                'can_receive_medical_info': True,
+                'can_schedule_appointments': True,
+            })
+        
+        # Create secondary caregiver relationship
+        if self.secondary_caregiver_id:
+            self.env['health.client.relation'].create({
+                'client_id': patient.id,
+                'representative_id': self.secondary_caregiver_id.id,
+                'role': 'caregiver',
+                'is_primary': False,
+                'can_make_medical_decisions': False,
+                'can_receive_medical_info': True,
+                'can_schedule_appointments': False,
+            })
+        
+        # Create payer relationship
+        if self.primary_payer_id:
+            self.env['health.client.relation'].create({
+                'client_id': patient.id,
+                'representative_id': self.primary_payer_id.id,
+                'role': 'payer',
+                'is_primary': True,
+                'financial_responsibility': 100.0,
+            })
+        
+        # Create referrer relationship
+        if self.referrer_id:
+            self.env['health.client.relation'].create({
+                'client_id': patient.id,
+                'representative_id': self.referrer_id.id,
+                'role': 'referrer',
+                'is_primary': True,
+            })
+        
+        # Create emergency contact relationship
+        if self.emergency_contact_id:
+            self.env['health.client.relation'].create({
+                'client_id': patient.id,
+                'representative_id': self.emergency_contact_id.id,
+                'role': 'emergency_contact',
+                'is_primary': True,
+                'can_receive_medical_info': True,
+            })
 
     def _get_appointment_type(self):
         """Get appointment type based on service interest"""
@@ -286,3 +495,48 @@ class HealthLead(models.Model):
         compute='_compute_appointment_count',
         help='Number of appointments generated from this lead'
     )
+
+    def action_convert_to_booking(self):
+        """Convert lead to field service order/booking"""
+        self.ensure_one()
+        
+        if not self.service_interest:
+            raise UserError(_('Please specify the service interest before converting to booking.'))
+        
+        # Create or get patient record
+        patient = self._get_or_create_patient()
+        
+        # Create field service order (booking)
+        fso_vals = {
+            'patient_id': patient.id,
+            'name': f"Booking from Lead: {self.name}",
+            'description': self.service_requirements or self.description or f"Service booking for {self.service_interest}",
+            'priority': self.clinical_priority,
+            'lead_id': self.id,
+        }
+        
+        # Add appointment type if available
+        appointment_type = self._get_appointment_type()
+        if appointment_type:
+            fso_vals['appointment_type_id'] = appointment_type.id
+        
+        fso = self.env['health.fieldservice.order'].create(fso_vals)
+        
+        # Update lead
+        self.write({
+            'patient_id': patient.id,
+            'health_contact_outcome': 'service_booked',
+            'contact_outcome': 'service_booked',
+            'booking_status': 'confirmed',
+            'stage_id': self._get_won_stage().id,
+        })
+        
+        # Return action to open the created booking
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _('Field Service Order'),
+            'res_model': 'health.fieldservice.order',
+            'res_id': fso.id,
+            'view_mode': 'form',
+            'target': 'current',
+        }

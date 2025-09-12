@@ -1,0 +1,278 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Healthcare Contact Reason Views -->
+    <record id="view_health_contact_reason_form" model="ir.ui.view">
+        <field name="name">health.contact.reason.form</field>
+        <field name="model">health.contact.reason</field>
+        <field name="arch" type="xml">
+            <form string="Healthcare Contact Reason">
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="Contact Reason Name"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="code"/>
+                            <field name="category"/>
+                            <field name="sequence"/>
+                        </group>
+                        <group>
+                            <field name="active"/>
+                            <field name="usage_count" readonly="1"/>
+                        </group>
+                    </group>
+                    <group string="Multilingual Support">
+                        <field name="name_vietnamese"/>
+                    </group>
+                    <group string="Description">
+                        <field name="description" nolabel="1" placeholder="Detailed description of when to use this contact reason..."/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_health_contact_reason_tree" model="ir.ui.view">
+        <field name="name">health.contact.reason.tree</field>
+        <field name="model">health.contact.reason</field>
+        <field name="arch" type="xml">
+            <list string="Healthcare Contact Reasons">
+                <field name="sequence" widget="handle"/>
+                <field name="code"/>
+                <field name="name"/>
+                <field name="category"/>
+                <field name="usage_count"/>
+                <field name="active" widget="boolean_toggle"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_health_contact_reason_search" model="ir.ui.view">
+        <field name="name">health.contact.reason.search</field>
+        <field name="model">health.contact.reason</field>
+        <field name="arch" type="xml">
+            <search string="Search Contact Reasons">
+                <field name="name"/>
+                <field name="code"/>
+                <field name="category"/>
+                
+                <filter string="Active" name="active" domain="[('active', '=', True)]"/>
+                <filter string="Inactive" name="inactive" domain="[('active', '=', False)]"/>
+                
+                <separator/>
+                <filter string="Sales" name="sales" domain="[('category', '=', 'sales')]"/>
+                <filter string="Operations" name="om" domain="[('category', '=', 'om')]"/>
+                <filter string="Support" name="support" domain="[('category', '=', 'support')]"/>
+                <filter string="Emergency" name="emergency" domain="[('category', '=', 'emergency')]"/>
+                
+                <group expand="0" string="Group By">
+                    <filter string="Category" name="group_category" context="{'group_by': 'category'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_health_contact_reason" model="ir.actions.act_window">
+        <field name="name">Contact Reasons</field>
+        <field name="res_model">health.contact.reason</field>
+        <field name="view_mode">list,form</field>
+        <field name="context">{'search_default_active': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create contact reasons for CRM leads!
+            </p>
+            <p>
+                Contact reasons help categorize why contacts are reaching out to your healthcare organization.
+                This is useful for Sales and Operations Management reporting.
+            </p>
+        </field>
+    </record>
+
+    <!-- Healthcare Lead Reason Views -->
+    <record id="view_health_lead_reason_form" model="ir.ui.view">
+        <field name="name">health.lead.reason.form</field>
+        <field name="model">health.lead.reason</field>
+        <field name="arch" type="xml">
+            <form string="Healthcare Lead Reason">
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="Lead Reason Name"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="code"/>
+                            <field name="category"/>
+                            <field name="lead_type"/>
+                            <field name="sequence"/>
+                        </group>
+                        <group>
+                            <field name="active"/>
+                            <field name="usage_count" readonly="1"/>
+                        </group>
+                    </group>
+                    <group string="Multilingual Support">
+                        <field name="name_vietnamese"/>
+                    </group>
+                    <group string="Description">
+                        <field name="description" nolabel="1" placeholder="Detailed description of when to use this lead reason..."/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_health_lead_reason_tree" model="ir.ui.view">
+        <field name="name">health.lead.reason.tree</field>
+        <field name="model">health.lead.reason</field>
+        <field name="arch" type="xml">
+            <list string="Healthcare Lead Reasons">
+                <field name="sequence" widget="handle"/>
+                <field name="code"/>
+                <field name="name"/>
+                <field name="category"/>
+                <field name="lead_type"/>
+                <field name="usage_count"/>
+                <field name="active" widget="boolean_toggle"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_health_lead_reason_search" model="ir.ui.view">
+        <field name="name">health.lead.reason.search</field>
+        <field name="model">health.lead.reason</field>
+        <field name="arch" type="xml">
+            <search string="Search Lead Reasons">
+                <field name="name"/>
+                <field name="code"/>
+                <field name="category"/>
+                <field name="lead_type"/>
+                
+                <filter string="Active" name="active" domain="[('active', '=', True)]"/>
+                <filter string="Inactive" name="inactive" domain="[('active', '=', False)]"/>
+                
+                <separator/>
+                <filter string="For Leads" name="for_leads" domain="[('lead_type', 'in', ['lead', 'both'])]"/>
+                <filter string="For Opportunities" name="for_opportunities" domain="[('lead_type', 'in', ['opportunity', 'both'])]"/>
+                
+                <separator/>
+                <filter string="Service Interest" name="service_interest" domain="[('category', '=', 'service_interest')]"/>
+                <filter string="Referral" name="referral" domain="[('category', '=', 'referral')]"/>
+                <filter string="Marketing" name="marketing" domain="[('category', '=', 'marketing')]"/>
+                <filter string="Website" name="website" domain="[('category', '=', 'website')]"/>
+                
+                <group expand="0" string="Group By">
+                    <filter string="Category" name="group_category" context="{'group_by': 'category'}"/>
+                    <filter string="Lead Type" name="group_lead_type" context="{'group_by': 'lead_type'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_health_lead_reason" model="ir.actions.act_window">
+        <field name="name">Lead Reasons</field>
+        <field name="res_model">health.lead.reason</field>
+        <field name="view_mode">list,form</field>
+        <field name="context">{'search_default_active': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create lead reasons for CRM opportunities!
+            </p>
+            <p>
+                Lead reasons help categorize the motivation or source behind leads and opportunities.
+                This is useful for tracking conversion sources and marketing effectiveness.
+            </p>
+        </field>
+    </record>
+
+    <!-- Healthcare Province Views -->
+    <record id="view_health_province_form" model="ir.ui.view">
+        <field name="name">health.province.form</field>
+        <field name="model">health.province</field>
+        <field name="arch" type="xml">
+            <form string="Vietnamese Province">
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="Province Name (English)"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="name_vietnamese"/>
+                            <field name="code"/>
+                            <field name="region"/>
+                        </group>
+                        <group>
+                            <field name="sequence"/>
+                            <field name="active"/>
+                            <field name="usage_count" readonly="1"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_health_province_tree" model="ir.ui.view">
+        <field name="name">health.province.tree</field>
+        <field name="model">health.province</field>
+        <field name="arch" type="xml">
+            <list string="Vietnamese Provinces">
+                <field name="sequence" widget="handle"/>
+                <field name="code"/>
+                <field name="name"/>
+                <field name="name_vietnamese"/>
+                <field name="region"/>
+                <field name="usage_count"/>
+                <field name="active" widget="boolean_toggle"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_health_province_search" model="ir.ui.view">
+        <field name="name">health.province.search</field>
+        <field name="model">health.province</field>
+        <field name="arch" type="xml">
+            <search string="Search Provinces">
+                <field name="name"/>
+                <field name="name_vietnamese"/>
+                <field name="code"/>
+                <field name="region"/>
+                
+                <filter string="Active" name="active" domain="[('active', '=', True)]"/>
+                <filter string="Inactive" name="inactive" domain="[('active', '=', False)]"/>
+                
+                <separator/>
+                <filter string="Northern" name="north" domain="[('region', '=', 'north')]"/>
+                <filter string="Central" name="central" domain="[('region', '=', 'central')]"/>
+                <filter string="Southern" name="south" domain="[('region', '=', 'south')]"/>
+                
+                <group expand="0" string="Group By">
+                    <filter string="Region" name="group_region" context="{'group_by': 'region'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_health_province" model="ir.actions.act_window">
+        <field name="name">Provinces/Cities</field>
+        <field name="res_model">health.province</field>
+        <field name="view_mode">list,form</field>
+        <field name="context">{'search_default_active': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create Vietnamese provinces and cities!
+            </p>
+            <p>
+                Province lookup table for Vietnamese locations used in CRM leads.
+                This helps track geographic distribution of leads and customers.
+            </p>
+        </field>
+    </record>
+
+</odoo>

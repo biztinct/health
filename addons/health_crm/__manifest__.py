@@ -51,9 +51,13 @@
         'data/health_crm_teams.xml',  # MUST load first - defines teams referenced by stages
         'data/health_crm_stages.xml',
         'data/utm_sources_vietnamese.xml',
+        'data/health_contact_reasons.xml',  # Load contact reasons data
+        'data/health_lead_reasons.xml',     # Load lead reasons data
+        'data/health_provinces.xml',        # Load province data
         
         # Views - CRM Extensions
-        'views/health_client_representative_views.xml',  # Load first - defines model views
+        'views/health_client_relation_views.xml',
+        'views/health_lookup_views.xml',    # Contact and lead reason views
         'views/crm_lead_views.xml',
         'views/res_partner_views.xml',
         'views/health_crm_menus.xml',

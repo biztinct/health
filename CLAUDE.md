@@ -243,6 +243,151 @@ The health_calendar module now follows this working pattern:
 - Note to take care that the model is not defined again as duplicate
 - **CRITICAL: NO FIELDSERVICE MODULE INHERITANCE** - Do NOT inherit from any fieldservice modules (fsm.order, fsm.team, etc.) as fieldservice modules are NOT installed. Only use for inspiration, never inheritance.
 
+## Healthcare Relationship Management Design (January 2025)
+
+### Overview
+Healthcare relationship management system for modeling complex interactions between patients/clients and their representatives (caregivers, payers, referrers, emergency contacts, legal guardians, etc.) in Vietnamese healthcare workflows.
+
+### Design Pattern: Association Table with Role-Based Permissions
+Following Odoo best practices for many-to-many relationships with rich metadata using an association table pattern.
+
+### Core Models
+
+#### 1. res.partner Extensions (health_crm module)
+Extended res.partner with healthcare role flags:
+```python
+# Healthcare role flags for relationship management
+is_patient = fields.Boolean('Is Patient', help='This person is a patient/client who receives healthcare services')
+is_representative = fields.Boolean('Is Representative', help='This person can represent or support patients/clients')
+is_caregiver = fields.Boolean('Is Caregiver', help='This person provides caregiving services')
+is_payer = fields.Boolean('Is Payer', help='This person or entity is responsible for payments')
+is_referrer = fields.Boolean('Is Referrer', help='This person refers patients to our services')
+is_emergency_contact = fields.Boolean('Is Emergency Contact', help='This person serves as an emergency contact')
+is_healthcare_provider = fields.Boolean('Is Healthcare Provider', help='This person is a healthcare professional or provider')
+```
+
+#### 2. health.client.relation Model (health_crm module)
+Association table managing rich relationship metadata:
+
+**Core Relationship Fields:**
+- `client_id`: Many2one to res.partner (patient/client)
+- `representative_id`: Many2one to res.partner (representative)
+- `role`: Selection field for healthcare roles (caregiver, payer, referrer, etc.)
+- `relationship_type`: Selection field for personal relationships (spouse, child, parent, etc.)
+- `is_primary`: Boolean for primary contact designation
+
+**Healthcare Permissions:**
+- `can_make_medical_decisions`: Boolean authorization
+- `can_receive_medical_info`: Boolean HIPAA-style permissions
+- `can_schedule_appointments`: Boolean scheduling rights
+- `financial_responsibility`: Float percentage (0-100%)
+
+**Vietnamese Healthcare Compliance:**
+- `legal_document_type`: Selection (Family Book, Birth Certificate, Power of Attorney, etc.)
+- `legal_document_number`: Char field for document reference
+- `issued_by`: Char field for issuing authority
+- `issued_date`: Date field for document date
+
+**Business Logic:**
+- Primary contact validation per role per client
+- Role-based default permission assignment
+- Date range validation for relationship validity
+- Vietnamese legal document tracking
+
+### Integration Points
+
+#### 1. CRM Lead Extensions
+Enhanced crm.lead model with direct relationship fields:
+```python
+primary_caregiver_id = fields.Many2one('res.partner', domain=[('is_caregiver', '=', True)])
+primary_payer_id = fields.Many2one('res.partner', domain=[('is_payer', '=', True)])
+referrer_id = fields.Many2one('res.partner', domain=[('is_referrer', '=', True)])
+emergency_contact_id = fields.Many2one('res.partner', domain=[('is_emergency_contact', '=', True)])
+```
+
+#### 2. Lead to Patient Conversion
+Automated relationship creation during lead conversion:
+- Creates health.client.relation records based on lead data
+- Sets appropriate permissions based on role defaults
+- Maintains audit trail of relationship establishment
+
+### Security Model
+
+**Access Control Rules:**
+- Users can only access relationships where they manage the client or are the representative
+- Managers have full access to all relationships
+- Representatives have read-only access to their own relationships
+- Public read access for basic relationship information
+
+**Record Rules:**
+```python
+# User access: can see relationships for clients they manage or where they are the representative
+domain_force = ['|', ('client_id.user_id', '=', user.id), ('representative_id.user_id', '=', user.id)]
+
+# Manager access: full access
+domain_force = [(1, '=', 1)]
+
+# Representative self-access: read-only for own relationships
+domain_force = [('representative_id.user_id', '=', user.id)]
+```
+
+### Views and User Experience
+
+#### 1. Healthcare Relationship Management Views
+- **Form View**: Full relationship details with permissions and legal documentation
+- **List View**: Tabular overview with key relationship data
+- **Kanban View**: Card-based mobile-friendly interface
+- **Search View**: Comprehensive filtering and grouping options
+
+#### 2. res.partner Integration
+- **Healthcare Roles**: Checkbox group for role assignment
+- **My Representatives**: Tab showing people who represent this patient
+- **Clients I Represent**: Tab showing clients this person represents
+
+#### 3. CRM Lead Integration
+- Relationship fields in healthcare information section
+- Automatic relationship creation during conversion
+- Visual relationship indicators in lead forms
+
+### Vietnamese Healthcare Compliance Features
+
+#### 1. Legal Documentation Tracking
+- Family Registration Book (Sổ hộ khẩu)
+- Birth Certificate (Giấy khai sinh)
+- Marriage Certificate (Giấy đăng ký kết hôn)
+- Power of Attorney (Giấy ủy quyền)
+- Guardianship Orders (Lệnh giám hộ)
+- National ID Card (CCCD/CMND)
+
+#### 2. Relationship Types
+Covers Vietnamese family and social structures:
+- Family relationships: spouse, child, parent, sibling, grandparent, etc.
+- Professional relationships: healthcare providers, social workers
+- Social relationships: friends, neighbors, community members
+
+### Implementation Benefits
+
+1. **Regulatory Compliance**: Full audit trail for Vietnamese healthcare authorities
+2. **HIPAA-Style Privacy**: Granular permissions for medical information sharing
+3. **Financial Clarity**: Clear financial responsibility tracking
+4. **Emergency Preparedness**: Structured emergency contact management
+5. **Legal Protection**: Documentation of authorization and consent
+6. **Workflow Integration**: Seamless CRM to patient conversion
+7. **Mobile Optimization**: Responsive design for field staff
+8. **Scalability**: Association table pattern supports complex multi-party relationships
+
+### Technical Architecture
+
+**Module**: health_crm (extends existing CRM module)
+**Dependencies**: health_base, crm, base
+**Models Created**: health.client.relation (242 lines)
+**Models Extended**: res.partner, crm.lead
+**Views**: Form, List, Kanban, Search for relationship management
+**Security**: Role-based access with record rules
+**Integration**: Menu items, smart buttons, automated workflows
+
+This design provides a robust foundation for healthcare relationship management while maintaining Odoo best practices and Vietnamese regulatory compliance.
+
 ## Timeline View Professional Architecture Design (January 2025)
 
 ### CRITICAL: Professional Timeline Architecture Solution
