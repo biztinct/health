@@ -61,6 +61,9 @@
         'views/crm_lead_views.xml',
         'views/res_partner_views.xml',
         'views/health_crm_menus.xml',
+        
+        # Wizards
+        'wizard/client_selection_wizard_views.xml',
     ],
     # 'demo': [
     #     'demo/health_crm_demo.xml',

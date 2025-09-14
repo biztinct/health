@@ -9,20 +9,20 @@
         sequence="20"
         groups="group_health_crm_user"/>
 
-    <!-- CRM Contacts -->
+    <!-- Leads (formerly CRM Contacts) -->
     <menuitem 
         id="menu_healthcare_leads"
-        name="CRM Contacts"
+        name="Leads"
         parent="menu_healthcare_crm_root"
         action="crm.crm_lead_all_leads"
         sequence="10"/>
 
-    <!-- CRM Leads -->
+    <!-- CRM Contacts (formerly CRM Leads) -->
     <menuitem 
         id="menu_healthcare_pipeline"
-        name="CRM Leads"
+        name="CRM Contacts"
         parent="menu_healthcare_crm_root"
-        action="crm.crm_lead_opportunities"
+        action="action_healthcare_opportunities"
         sequence="20"/>
 
     <!-- Customers/Contacts -->

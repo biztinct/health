@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-    <!-- Healthcare Convert to Opportunity Wizard - Change terminology -->
+    <!-- Healthcare Convert to Contact Wizard - Customize for healthcare -->
     <record id="view_healthcare_lead2opportunity_partner" model="ir.ui.view">
         <field name="name">crm.lead2opportunity.partner.form.healthcare</field>
         <field name="model">crm.lead2opportunity.partner</field>
@@ -9,178 +9,246 @@
         <field name="arch" type="xml">
             <!-- Change form title -->
             <xpath expr="//form" position="attributes">
-                <attribute name="string">Convert to CRM Lead</attribute>
+                <attribute name="string">Convert to Contact</attribute>
             </xpath>
             
-            <!-- Change assign section title - target by name attribute -->
+            <!-- Change radio button labels for conversion action -->
+            <xpath expr="//field[@name='name']" position="replace">
+                <field name="name" widget="radio">
+                    <option value="convert">Convert to contact</option>
+                    <option value="merge">Merge with existing contacts</option>
+                </field>
+            </xpath>
+            
+            <!-- Change assign section title -->
             <xpath expr="//group[field[@name='user_id']]" position="attributes">
-                <attribute name="string">Assign this CRM Lead to</attribute>
+                <attribute name="string">Assign this contact to</attribute>
             </xpath>
             
-            <!-- Change opportunities section title - target by invisible condition -->
+            <!-- Change opportunities section title to contacts -->
             <xpath expr="//group[@invisible=&quot;name != 'merge'&quot;]" position="attributes">
-                <attribute name="string">CRM Leads</attribute>
+                <attribute name="string">Contacts</attribute>
             </xpath>
             
-            <!-- Change button text - target by name attribute -->
+            <!-- Hide CUSTOMER section completely -->
+            <xpath expr="//group[@name='action']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            
+            <!-- Change button text -->
             <xpath expr="//button[@name='action_apply']" position="attributes">
-                <attribute name="string">Create CRM Lead</attribute>
+                <attribute name="string">Create Contact</attribute>
             </xpath>
         </field>
     </record>
 
-    <!-- Healthcare Convert to Opportunity Action - Change name -->
+    <!-- Healthcare Convert to Contact Action - Change name -->
     <record id="action_healthcare_lead2opportunity_partner" model="ir.actions.act_window">
-        <field name="name">Convert to CRM Lead</field>
+        <field name="name">Convert to Contact</field>
         <field name="res_model">crm.lead2opportunity.partner</field>
         <field name="view_mode">form</field>
         <field name="target">new</field>
+        <field name="view_id" ref="view_healthcare_lead2opportunity_partner"/>
     </record>
 
-    <!-- Healthcare Lead Form View Extension -->
-    <record id="view_healthcare_lead_form" model="ir.ui.view">
-        <field name="name">crm.lead.form.healthcare</field>
+
+    <!-- NEW: Dedicated Healthcare Opportunity Form View (No Inheritance) -->
+    <record id="view_healthcare_opportunity_form" model="ir.ui.view">
+        <field name="name">crm.lead.form.healthcare.opportunity</field>
+        <field name="model">crm.lead</field>
+        <field name="arch" type="xml">
+            <form string="CRM Contact">
+                <header>
+                    <button name="action_convert_to_booking" 
+                            string="Convert to Booking" 
+                            type="object" 
+                            class="btn-primary"
+                            invisible="health_contact_outcome == 'service_booked'"/>
+                    <button name="action_schedule_follow_up" 
+                            string="Schedule Follow-up" 
+                            type="object" 
+                            class="btn-secondary"/>
+                    <field name="stage_id" widget="statusbar" options="{'clickable': '1'}"/>
+                </header>
+                
+                <sheet string="CRM Contact">
+                    <!-- Contact Code positioned top right -->
+                    <div style="position: absolute; top: 10px; right: 20px; z-index: 1000;">
+                        <span class="o_form_label" style="font-size: 12px; color: #666; display: block;">Contact ID</span>
+                        <span style="font-weight: bold; font-size: 16px; color: #875A7B;">
+                            <field name="unique_contact_code" readonly="1" nolabel="1"/>
+                        </span>
+                    </div>
+                    
+                    <!-- Title and Basic Info -->
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" string="Contact Name" placeholder="Contact name..." required="1"/>
+                        </h1>
+                    </div>
+                    
+                    <!-- Relationship Selection -->
+                    <group style="padding: 10px 0;">
+                        <field name="contact_relationship_type" string="I am the:" widget="radio" 
+                               options="{'horizontal': true}" style="font-size: 14px; font-weight: normal;"/>
+                        <field name="client_name" string="Client Name" placeholder="Enter client name..." 
+                               style="font-size: 14px; font-weight: normal;"
+                               invisible="contact_relationship_type == 'client'"
+                               required="contact_relationship_type != 'client'"/>
+                    </group>
+                    
+                    <!-- Main Content Tabs -->
+                    <notebook>
+                        <!-- Contact Details Tab -->
+                        <page string="Contact Details" name="contact_details">
+                            <group>
+                                <!-- Basic Contact Information -->
+                                <group string="Contact Information" col="2">
+                                    <field name="email_from" string="Email" widget="email"/>
+                                    <field name="phone" widget="phone"/>
+                                    <field name="mobile" widget="phone"/>
+                                    <field name="contact_datetime" string="Contact Date/Time"/>
+                                </group>
+                                
+                                <!-- Address Information -->
+                                <group string="Address Information" col="2">
+                                    <field name="street" string="Street"/>
+                                    <field name="street2" string="Street 2"/>
+                                    <field name="city" string="City"/>
+                                    <field name="zip" string="ZIP"/>
+                                    <field name="state_id" string="State" options="{'no_create': True}"/>
+                                    <field name="country_id" string="Country" options="{'no_create': True}"/>
+                                    <field name="province_code" string="Province/City" options="{'no_create': True}"/>
+                                    <field name="facility_id" string="Healthcare Facility" options="{'no_create': True}"/>
+                                </group>
+                                
+                                <!-- Contact Classification -->
+                                <group string="Contact Classification" col="2">
+                                    <field name="contact_type" string="Contact Type"/>
+                                    <field name="contact_reason_id" string="Contact Reason" options="{'no_create': True}"/>
+                                    <field name="reason_if_rejected" string="Reason if Rejected" invisible="stage_id != 'lost'"/>
+                                </group>
+                            </group>
+                        </page>
+                        
+                        <!-- Source &amp; Campaign Tab -->
+                        <page string="Source &amp; Campaign" name="source_campaign">
+                            <group>
+                                <group string="Source Tracking" col="2">
+                                    <field name="source_id" string="Source" options="{'no_create': True}"/>
+                                    <field name="medium_id" string="Medium" options="{'no_create': True}"/>
+                                    <field name="campaign_id" string="Campaign" options="{'no_create': True}"/>
+                                </group>
+                            </group>
+                        </page>
+                        
+                        <!-- Service &amp; Booking Tab -->
+                        <page string="Service &amp; Booking" name="service_booking">
+                            <group>
+                                <group string="Service Information" col="2">
+                                    <field name="service_interest" string="Service Interest"/>
+                                    <field name="booking_status" string="Booking Status"/>
+                                    <field name="lead_reason_id" string="Lead Reason" options="{'no_create': True}"/>
+                                </group>
+                                
+                                <group string="Follow-up Management" col="2">
+                                    <field name="follow_up_count" string="Follow-up Count" readonly="1"/>
+                                    <field name="next_follow_up_date" string="Next Follow-up Date"/>
+                                    <field name="lead_followup_required" string="Follow-up Required"/>
+                                    <field name="follow_up_notes" string="Follow-up Notes" colspan="2"/>
+                                </group>
+                            </group>
+                        </page>
+                        
+                        <!-- Relationships Tab -->
+                        <page string="Healthcare Relationships" name="relationships">
+                            <group>
+                                <!-- Client Information -->
+                                <group string="Client Information" col="2">
+                                    <field name="patient_id" string="Client/Patient" options="{'no_create': True}" colspan="2"/>
+                                </group>
+                                
+                                <!-- Care Team -->
+                                <group string="Care Team" col="2">
+                                    <field name="primary_caregiver_id" string="Primary Caregiver" options="{'no_create': True}"/>
+                                    <field name="secondary_caregiver_id" string="Secondary Caregiver" options="{'no_create': True}"/>
+                                    <field name="primary_payer_id" string="Payer" options="{'no_create': True}"/>
+                                    <field name="client_representative_id" string="Client Representative" options="{'no_create': True}"/>
+                                </group>
+                                
+                                <!-- Referral &amp; Emergency -->
+                                <group string="Referral &amp; Emergency Information" col="2">
+                                    <field name="referrer_id" string="Referrer" options="{'no_create': True}"/>
+                                    <field name="emergency_contact_id" string="Emergency Contact" options="{'no_create': True}"/>
+                                </group>
+                            </group>
+                        </page>
+                        
+                        <!-- Analytics Tab -->
+                        <page string="Analytics &amp; Tracking" name="analytics">
+                            <group>
+                                <group string="Duration Tracking" col="2">
+                                    <field name="day_open" string="Days Open" readonly="1"/>
+                                    <field name="day_close" string="Days to Close" readonly="1"/>
+                                    <field name="create_date" string="Created On" readonly="1"/>
+                                    <field name="date_closed" string="Closed On" readonly="1"/>
+                                </group>
+                            </group>
+                        </page>
+                        
+                        <!-- Notes Tab -->
+                        <page string="Internal Notes" name="notes">
+                            <group>
+                                <field name="description" string="Internal Notes" nolabel="1" 
+                                       placeholder="Internal notes about this healthcare contact..."/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                
+                <chatter reload_on_follower="True"/>
+            </form>
+        </field>
+    </record>
+
+    <!-- Healthcare Opportunities Action - Uses dedicated form for type=opportunity -->
+    <record id="action_healthcare_opportunities" model="ir.actions.act_window">
+        <field name="name">CRM Contacts</field>
+        <field name="res_model">crm.lead</field>
+        <field name="view_mode">kanban,list,form,calendar,pivot,graph,activity</field>
+        <field name="domain">[('type', '=', 'opportunity')]</field>
+        <field name="context">{
+            'default_type': 'opportunity',
+        }</field>
+        <field name="view_ids" eval="[(5, 0, 0),
+            (0, 0, {'view_mode': 'kanban'}),
+            (0, 0, {'view_mode': 'list'}),
+            (0, 0, {'view_mode': 'form', 'view_id': ref('view_healthcare_opportunity_form')}),
+            (0, 0, {'view_mode': 'calendar'}),
+            (0, 0, {'view_mode': 'pivot'}),
+            (0, 0, {'view_mode': 'graph'}),
+            (0, 0, {'view_mode': 'activity'}),
+        ]"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first healthcare contact!
+            </p><p>
+                A healthcare contact is a potential patient, caregiver, or payer who has shown interest in your services. 
+                Use this section to manage your healthcare relationships and track your interactions.
+            </p>
+        </field>
+    </record>
+
+    <!-- Healthcare Lead Form - Change Convert button label for leads -->
+    <record id="view_healthcare_lead_form_button" model="ir.ui.view">
+        <field name="name">crm.lead.form.healthcare.button</field>
         <field name="model">crm.lead</field>
         <field name="inherit_id" ref="crm.crm_lead_view_form"/>
         <field name="arch" type="xml">
-            
-            <!-- Change field label 'name' to 'Contact name' -->
-            <xpath expr="//field[@name='name']" position="attributes">
-                <attribute name="string">Contact name</attribute>
-            </xpath>
-            
-            <!-- Change Convert to Opportunity button to Convert to CRM Lead -->
+            <!-- Change "Convert to Opportunity" button text to "Convert to Contact" and use our custom action -->
             <xpath expr="//button[@name='%(crm.action_crm_lead2opportunity_partner)d']" position="attributes">
-                <attribute name="string">Convert to CRM Lead</attribute>
-            </xpath>
-            
-            <!-- Add Convert to Booking button -->
-            <xpath expr="//button[@name='%(crm.action_crm_lead2opportunity_partner)d']" position="after">
-                <button name="action_convert_to_booking" 
-                        string="Convert to Booking" 
-                        type="object" 
-                        class="btn-primary"
-                        invisible="type == 'opportunity'"/>
-            </xpath>
-            
-            <!-- Remove unwanted fields from form view -->
-            <xpath expr="//field[@name='probability']" position="attributes">
-                <attribute name="invisible">1</attribute>
-            </xpath>
-            
-            <xpath expr="//field[@name='partner_name']" position="attributes">
-                <attribute name="invisible">1</attribute>
-            </xpath>
-            
-            <xpath expr="//field[@name='website']" position="attributes">
-                <attribute name="invisible">1</attribute>
-            </xpath>
-            
-            <xpath expr="//field[@name='function']" position="attributes">
-                <attribute name="invisible">1</attribute>
-            </xpath>
-            <!-- Hide all standard CRM fields except the ones we want -->
-            <xpath expr="//field[@name='email_from']" position="attributes">
-                <attribute name="invisible">1</attribute>
-            </xpath>
-            <xpath expr="//field[@name='phone']" position="attributes">
-                <attribute name="invisible">1</attribute>
-            </xpath>
-            <xpath expr="//field[@name='user_id']" position="attributes">
-                <attribute name="invisible">1</attribute>
-            </xpath>
-            <xpath expr="//field[@name='team_id']" position="attributes">
-                <attribute name="invisible">1</attribute>
-            </xpath>
-            <xpath expr="//field[@name='tag_ids']" position="attributes">
-                <attribute name="invisible">1</attribute>
-            </xpath>
-            <xpath expr="//field[@name='contact_name']" position="attributes">
-                <attribute name="invisible">1</attribute>
-            </xpath>
-            
-            <!-- Hide Expected Revenue field -->
-            <xpath expr="//field[@name='expected_revenue']" position="attributes">
-                <attribute name="invisible">1</attribute>
-            </xpath>
-            
-            <!-- Add Contact Code to top right after title -->
-            <xpath expr="//div[hasclass('oe_title')]" position="after">
-                <div class="oe_right">
-                    <field name="unique_contact_code" string="Contact ID" readonly="1" 
-                           style="font-weight: bold; font-size: 14px; color: #875A7B; text-align: right;"/>
-                </div>
-            </xpath>
-            
-            <!-- Replace lead_partner group with our specified fields only -->
-            <xpath expr="//group[@name='lead_partner']" position="replace">
-                <notebook>
-                    <page string="Lead Information" name="lead_info">
-                        <group>
-                            <!-- Basic Lead Information -->
-                            <group string="Basic Information" col="2">
-                                <field name="contact_datetime" string="Contact Date/Time"/>
-                            </group>
-                            
-                            <!-- Contact Source & Location -->
-                            <group string="Contact Source &amp; Location" col="4">
-                                <field name="vietnamese_channel" string="Contact Channel"/>
-                                <field name="campaign_id" string="Campaign Source" options="{'no_create': True}"/>
-                                <field name="province_code" string="Province/City" options="{'no_create': True}"/>
-                                <field name="facility_id" string="Healthcare Facility" options="{'no_create': True}"/>
-                            </group>
-                            
-                            <!-- Contact Classification -->
-                            <group string="Contact Classification" col="4">
-                                <field name="contact_type" string="Contact Type"/>
-                                <field name="contact_reason_id" string="Contact Reason" options="{'no_create': True}"/>
-                                <field name="lead_followup_required" string="Follow-up Required"/>
-                                <field name="booking_status" string="Booking Status"/>
-                            </group>
-                        </group>
-                    </page>
-                    
-                    <page string="Client &amp; Representatives" name="representatives">
-                        <group>
-                            <!-- Client Information -->
-                            <group string="Client Information" col="2">
-                                <field name="patient_id" string="Client" options="{'no_create': True}" colspan="2"/>
-                            </group>
-                            
-                            <!-- Care Team -->
-                            <group string="Care Team" col="2">
-                                <field name="primary_caregiver_id" string="Primary Caregiver" options="{'no_create': True}"/>
-                                <field name="secondary_caregiver_id" string="Secondary Caregiver" options="{'no_create': True}"/>
-                                <field name="primary_payer_id" string="Payer" options="{'no_create': True}"/>
-                            </group>
-                            
-                            <!-- Referral Information -->
-                            <group string="Referral Information" col="2">
-                                <field name="referrer_id" string="Referrer" options="{'no_create': True}"/>
-                            </group>
-                        </group>
-                    </page>
-                </notebook>
-            </xpath>
-
-            <!-- Keep only the description field as "Your Notes" -->
-            <xpath expr="//field[@name='description']" position="attributes">
-                <attribute name="string">Your Notes</attribute>
-                <attribute name="placeholder">Your notes about this healthcare lead...</attribute>
-            </xpath>
-            
-
-            <!-- Add healthcare action buttons -->
-            <xpath expr="//header" position="inside">
-                <button name="action_convert_to_appointment" 
-                        string="Convert to Appointment" 
-                        type="object" 
-                        class="btn-primary"
-                        invisible="health_contact_outcome == 'service_booked'"/>
-                <button name="action_schedule_follow_up" 
-                        string="Schedule Follow-up" 
-                        type="object" 
-                        class="btn-secondary"/>
+                <attribute name="string">Convert to Contact</attribute>
+                <attribute name="name">%(action_healthcare_lead2opportunity_partner)d</attribute>
             </xpath>
         </field>
     </record>

@@ -175,7 +175,8 @@ This prevents field conflicts, reduces code duplication, and maintains consisten
 ### Common Mistakes to Avoid
 - ❌ Using `<data>` wrapper tags in regular XML files
 - ❌ Missing `name` field in `ir.module.category` records
-- ❌ Using `tree` instead of `list` for view types
+- ❌ **CRITICAL: Using `tree` instead of `list` for view types in Odoo 18** - ALWAYS use `list` for list views and `'list'` in view_mode fields
+- ❌ **CRITICAL: Using `'tree'` in ir.actions.act_window view_ids** - ALWAYS use `{'view_mode': 'list'}` not `{'view_mode': 'tree'}`
 - ❌ Incorrect indentation or formatting
 - ❌ Adding all XML files at once without incremental testing
 - ❌ Including menu items in view files (causes schema validation errors)

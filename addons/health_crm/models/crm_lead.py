@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from odoo import api, fields, models, _
-from odoo.exceptions import UserError
+from odoo.exceptions import UserError, ValidationError
 
 
 class HealthLead(models.Model):
@@ -55,6 +55,27 @@ class HealthLead(models.Model):
         ('word_of_mouth', 'Word of Mouth'),
     ], string='Vietnamese Channel', help='Specific Vietnamese contact channel')
 
+    # Contact relationship identification
+    contact_relationship_type = fields.Selection([
+        ('client', 'Client'),
+        ('caregiver', 'Caregiver'),
+        ('payer', 'Payer'),
+        ('referrer', 'Referrer'),
+        ('emergency_contact', 'Emergency Contact'),
+        ('legal_guardian', 'Legal Guardian'),
+        ('healthcare_proxy', 'Healthcare Proxy'),
+        ('client_representative', 'Client Representative'),
+        ('family_member', 'Family Member'),
+        ('friend', 'Friend'),
+        ('professional', 'Professional Care Provider'),
+    ], string='I am the:', default='client',
+       help='Specify your relationship to the client/patient')
+    
+    client_name = fields.Char(
+        string='Client Name',
+        help='Name of the actual client/patient (when you are not the client yourself)'
+    )
+
     # Healthcare relationships
     patient_id = fields.Many2one(
         'res.partner', 
@@ -100,6 +121,27 @@ class HealthLead(models.Model):
     next_follow_up_date = fields.Datetime('Next Follow-up Date')
     follow_up_notes = fields.Text('Follow-up Notes')
     follow_up_count = fields.Integer('Follow-up Count', default=0)
+    
+    # Rejection and outcome tracking
+    reason_if_rejected = fields.Text(
+        'Reason if Rejected', 
+        help='Detailed reason if the lead was rejected or lost'
+    )
+    
+    # Computed duration fields
+    day_open = fields.Integer(
+        'Days Open',
+        compute='_compute_days_open',
+        store=True,
+        help='Number of days since the lead was created'
+    )
+    
+    day_close = fields.Integer(
+        'Days to Close', 
+        compute='_compute_days_close',
+        store=True,
+        help='Number of days from creation to close (if closed)'
+    )
 
     # CRITICAL: FROM EXCEL REQUIREMENTS - Lead Management Table
     next_action_at = fields.Datetime(
@@ -224,6 +266,13 @@ class HealthLead(models.Model):
         help='Emergency contact for this lead'
     )
     
+    client_representative_id = fields.Many2one(
+        'res.partner',
+        string='Client Representative',
+        domain=[('is_representative', '=', True)],
+        help='Person representing the client'
+    )
+    
     # Lead Status from Excel (extends standard CRM stage)
     lead_status = fields.Selection([
         ('new', 'New'),
@@ -248,6 +297,39 @@ class HealthLead(models.Model):
         ('walk_in', 'Walk-in'),
     ], string='Contact Source', help='From Excel: How the contact was initiated')
 
+    @api.constrains('contact_relationship_type', 'client_name')
+    def _check_client_name_required(self):
+        """Validate that client_name is provided when contact is not the client"""
+        for record in self:
+            if record.contact_relationship_type != 'client' and not record.client_name:
+                raise ValidationError(_(
+                    'Client Name is required when you are not the client yourself. '
+                    'Please provide the name of the actual client/patient.'
+                ))
+
+    @api.depends('create_date')
+    def _compute_days_open(self):
+        """Compute number of days since lead was created"""
+        for record in self:
+            if record.create_date:
+                today = fields.Date.today()
+                create_date = record.create_date.date()
+                record.day_open = (today - create_date).days
+            else:
+                record.day_open = 0
+
+    @api.depends('create_date', 'date_closed')
+    def _compute_days_close(self):
+        """Compute number of days from creation to close"""
+        for record in self:
+            if record.create_date and record.date_closed:
+                # Ensure both dates are date objects for consistent comparison
+                create_date = record.create_date.date() if hasattr(record.create_date, 'date') else record.create_date
+                close_date = record.date_closed.date() if hasattr(record.date_closed, 'date') else record.date_closed
+                record.day_close = (close_date - create_date).days
+            else:
+                record.day_close = 0
+
     @api.model_create_multi
     def create(self, vals_list):
         """Override create to set healthcare-specific defaults"""
@@ -256,8 +338,8 @@ class HealthLead(models.Model):
             vals_list = [vals_list]
             
         for vals in vals_list:
-            # Generate unique contact code if not provided
-            if not vals.get('unique_contact_code'):
+            # Generate unique contact code only for opportunities
+            if not vals.get('unique_contact_code') and vals.get('type') == 'opportunity':
                 vals['unique_contact_code'] = self._generate_unique_contact_code(vals)
             
             # Set default team to healthcare team if not specified
@@ -272,7 +354,25 @@ class HealthLead(models.Model):
                 if vietnam:
                     vals['country_id'] = vietnam.id
         
-        return super().create(vals_list)
+        # Create records and handle relationships
+        records = super().create(vals_list)
+        
+        # Process relationship logic for each record
+        for record in records:
+            record._process_contact_relationship()
+        
+        return records
+    
+    def write(self, vals):
+        """Override write to handle relationship changes"""
+        result = super().write(vals)
+        
+        # If relationship fields were changed, reprocess relationships
+        if any(field in vals for field in ['contact_relationship_type', 'client_name', 'name']):
+            for record in self:
+                record._process_contact_relationship()
+        
+        return result
     
     def _generate_unique_contact_code(self, vals):
         """Generate unique contact code based on city"""
@@ -298,6 +398,165 @@ class HealthLead(models.Model):
         # Generate code in format: CITY-NNNN
         city_code = city[:3].upper() if city else 'HCM'
         return f"{city_code}-{new_number:04d}"
+
+    def _process_contact_relationship(self):
+        """Process contact relationship and create patient/representative records - ONLY for opportunities"""
+        self.ensure_one()
+        
+        # Skip healthcare relationship processing for leads
+        if self.type == 'lead':
+            return
+        
+        if self.contact_relationship_type == 'client':
+            # Contact is the client - create/find patient using contact name
+            patient = self._get_or_create_patient()
+            self.patient_id = patient.id
+        else:
+            # Contact is a representative - handle client and representative separately
+            if not self.client_name:
+                return  # Validation will catch this
+            
+            # Check for existing clients with same name
+            existing_patients = self.env['res.partner'].search([
+                ('name', '=', self.client_name),
+                ('is_patient', '=', True)
+            ])
+            
+            if len(existing_patients) > 1:
+                # Multiple clients found - show wizard and exit (wizard will complete the process)
+                self._show_client_selection_wizard(existing_patients)
+                return
+            elif len(existing_patients) == 1:
+                # Single client found - use it
+                patient = existing_patients[0]
+            else:
+                # No client found - create new patient
+                patient = self._get_or_create_patient(self.client_name)
+            
+            self.patient_id = patient.id
+            
+            # Create representative record
+            representative = self._create_representative()
+            
+            # Create relationship
+            self._create_health_relationship(patient, representative)
+            
+            # Populate appropriate relationship field
+            self._populate_relationship_field(representative)
+
+    def _get_or_create_patient(self, patient_name=None):
+        """Create or get patient record"""
+        if not patient_name:
+            patient_name = self.name
+            
+        # Check if patient already exists
+        existing_patient = self.env['res.partner'].search([
+            ('name', '=', patient_name),
+            ('is_patient', '=', True)
+        ], limit=1)
+        
+        if existing_patient:
+            return existing_patient
+        
+        # Create new patient
+        patient_vals = {
+            'name': patient_name,
+            'is_patient': True,
+            'is_company': False,
+            'customer_rank': 1,
+        }
+        
+        # Copy contact info from lead if contact is the client
+        if self.contact_relationship_type == 'client':
+            patient_vals.update({
+                'phone': self.phone,
+                'mobile': self.mobile,
+                'email': self.email_from,
+                'street': self.street,
+                'city': self.city,
+                'zip': self.zip,
+                'country_id': self.country_id.id if self.country_id else False,
+            })
+        
+        return self.env['res.partner'].create(patient_vals)
+
+    def _create_representative(self):
+        """Create representative record from lead contact info"""
+        rep_vals = {
+            'name': self.name,  # Contact name is the representative
+            'is_representative': True,
+            'is_company': False,
+            'phone': self.phone,
+            'mobile': self.mobile,
+            'email': self.email_from,
+            'street': self.street,
+            'city': self.city,
+            'zip': self.zip,
+            'country_id': self.country_id.id if self.country_id else False,
+        }
+        return self.env['res.partner'].create(rep_vals)
+
+    def _create_health_relationship(self, patient, representative):
+        """Create health.client.relation record"""
+        # Map our relationship type to health.client.relation role
+        role_mapping = {
+            'caregiver': 'caregiver',
+            'payer': 'payer', 
+            'referrer': 'referrer',
+            'emergency_contact': 'emergency_contact',
+            'legal_guardian': 'legal_guardian',
+            'healthcare_proxy': 'healthcare_proxy',
+            'client_representative': 'client_representative',
+            'family_member': 'family_member',
+            'friend': 'friend',
+            'professional': 'professional',
+        }
+        
+        relation_vals = {
+            'client_id': patient.id,
+            'representative_id': representative.id,
+            'role': role_mapping.get(self.contact_relationship_type, 'client_representative'),
+            'is_primary': True,  # First relationship of this type is primary
+            'can_schedule_appointments': True,  # Default permission
+            'can_receive_medical_info': self.contact_relationship_type in ['legal_guardian', 'healthcare_proxy', 'emergency_contact'],
+        }
+        
+        return self.env['health.client.relation'].create(relation_vals)
+
+    def _populate_relationship_field(self, representative):
+        """Populate the appropriate relationship field in the lead"""
+        field_mapping = {
+            'caregiver': 'primary_caregiver_id',
+            'payer': 'primary_payer_id', 
+            'referrer': 'referrer_id',
+            'emergency_contact': 'emergency_contact_id',
+            'client_representative': 'client_representative_id',
+            'legal_guardian': 'primary_caregiver_id',  # Legal guardians are primary caregivers
+            'healthcare_proxy': 'primary_caregiver_id',  # Healthcare proxies are primary caregivers
+            'family_member': 'client_representative_id',  # Family members are client representatives
+            'friend': 'client_representative_id',  # Friends are client representatives
+            'professional': 'referrer_id',  # Professionals are referrers
+        }
+        
+        field_name = field_mapping.get(self.contact_relationship_type)
+        if field_name and hasattr(self, field_name):
+            setattr(self, field_name, representative.id)
+
+    def _show_client_selection_wizard(self, patients):
+        """Show wizard to select from multiple patients with same name"""
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _('Select Client'),
+            'res_model': 'health.client.selection.wizard',
+            'view_mode': 'form',
+            'target': 'new',
+            'context': {
+                'default_lead_id': self.id,
+                'default_client_name': self.client_name,
+                'default_patient_ids': [(6, 0, patients.ids)],
+                'active_id': self.id,
+            },
+        }
 
     def action_convert_to_appointment(self):
         """Convert lead directly to healthcare appointment"""
@@ -340,124 +599,13 @@ class HealthLead(models.Model):
             'target': 'current',
         }
 
-    def _get_or_create_patient(self):
-        """Get existing patient or create new one from lead"""
-        if self.patient_id:
-            return self.patient_id
-        
-        # Try to find existing patient by partner  
-        if self.partner_id and self.partner_id.is_patient:
-            return self.partner_id
-        
-        # Create new patient
-        patient_vals = {
-            'name': self.contact_name or self.name,
-            'email': self.email_from,
-            'phone': self.phone,
-            'mobile': self.mobile,
-            'is_patient': True,
-            'preferred_contact_method': 'phone',
-            'country_id': self.country_id.id if self.country_id else self.env.ref('base.vn', raise_if_not_found=False).id,
-        }
-        
-        # Copy relevant lead data to patient record
-        if self.healthcare_lead_source:
-            patient_vals['comment'] = f"Original lead source: {dict(self._fields['healthcare_lead_source'].selection).get(self.healthcare_lead_source, self.healthcare_lead_source)}"
-        
-        # Add address if available
-        if self.street:
-            patient_vals.update({
-                'street': self.street,
-                'street2': self.street2,
-                'city': self.city,
-                'zip': self.zip,
-                'state_id': self.state_id.id if self.state_id else False,
-                'country_id': self.country_id.id if self.country_id else False,
-            })
-        
-        patient = self.env['res.partner'].create(patient_vals)
-        
-        # Create healthcare relationships from lead data
-        self._create_healthcare_relationships(patient)
-        
-        return patient
 
-    def _create_healthcare_relationships(self, patient):
-        """Create healthcare relationships from lead data"""
-        self.ensure_one()
-        
-        # Create caregiver relationship
-        if self.primary_caregiver_id:
-            self.env['health.client.relation'].create({
-                'client_id': patient.id,
-                'representative_id': self.primary_caregiver_id.id,
-                'role': 'caregiver',
-                'is_primary': True,
-                'can_make_medical_decisions': True,
-                'can_receive_medical_info': True,
-                'can_schedule_appointments': True,
-            })
-        
-        # Create secondary caregiver relationship
-        if self.secondary_caregiver_id:
-            self.env['health.client.relation'].create({
-                'client_id': patient.id,
-                'representative_id': self.secondary_caregiver_id.id,
-                'role': 'caregiver',
-                'is_primary': False,
-                'can_make_medical_decisions': False,
-                'can_receive_medical_info': True,
-                'can_schedule_appointments': False,
-            })
-        
-        # Create payer relationship
-        if self.primary_payer_id:
-            self.env['health.client.relation'].create({
-                'client_id': patient.id,
-                'representative_id': self.primary_payer_id.id,
-                'role': 'payer',
-                'is_primary': True,
-                'financial_responsibility': 100.0,
-            })
-        
-        # Create referrer relationship
-        if self.referrer_id:
-            self.env['health.client.relation'].create({
-                'client_id': patient.id,
-                'representative_id': self.referrer_id.id,
-                'role': 'referrer',
-                'is_primary': True,
-            })
-        
-        # Create emergency contact relationship
-        if self.emergency_contact_id:
-            self.env['health.client.relation'].create({
-                'client_id': patient.id,
-                'representative_id': self.emergency_contact_id.id,
-                'role': 'emergency_contact',
-                'is_primary': True,
-                'can_receive_medical_info': True,
-            })
-
-    def _get_appointment_type(self):
-        """Get appointment type based on service interest"""
-        domain = []
-        if self.service_interest:
-            domain = [('name', 'ilike', self.service_interest.replace('_', ' '))]
-        
-        appointment_type = self.env['health.appointment.type'].search(domain, limit=1)
-        
-        if not appointment_type:
-            # Return default appointment type
-            appointment_type = self.env['health.appointment.type'].search([], limit=1)
-        
-        return appointment_type
 
     def _get_won_stage(self):
         """Get the 'won' stage for healthcare CRM"""
         won_stage = self.env['crm.stage'].search([
             ('is_won', '=', True),
-            '|', ('team_ids', '=', False), ('team_ids', 'in', self.team_id.id)
+            '|', ('team_id', '=', False), ('team_id', '=', self.team_id.id)
         ], limit=1)
         
         if not won_stage:
@@ -506,19 +654,39 @@ class HealthLead(models.Model):
         # Create or get patient record
         patient = self._get_or_create_patient()
         
+        # Map clinical priority to FSO priority (text -> numeric string)
+        priority_mapping = {
+            'routine': '0',      # Low
+            'preventive': '1',   # Normal  
+            'urgent': '2',       # High
+            'emergency': '4',    # Emergency
+        }
+        fso_priority = priority_mapping.get(self.clinical_priority, '1')  # Default to Normal
+        
         # Create field service order (booking)
         fso_vals = {
             'patient_id': patient.id,
-            'name': f"Booking from Lead: {self.name}",
-            'description': self.service_requirements or self.description or f"Service booking for {self.service_interest}",
-            'priority': self.clinical_priority,
-            'lead_id': self.id,
+            'name': patient.name,
+            'patient_notes': self.service_requirements or self.description or f"Service booking for {self.service_interest}",
+            'priority': fso_priority,
+            'crm_lead_id': self.id,
         }
         
-        # Add appointment type if available
-        appointment_type = self._get_appointment_type()
-        if appointment_type:
-            fso_vals['appointment_type_id'] = appointment_type.id
+        # Map service interest to FSO service type selection
+        if self.service_interest:
+            service_type_mapping = {
+                'home_visit': 'home_visit',
+                'clinic_visit': 'clinic_visit', 
+                'consultation': 'consultation',
+                'emergency': 'emergency',
+                'follow_up': 'follow_up',
+                'preventive': 'preventive',
+                'rehabilitation': 'rehabilitation',
+                'telemedicine': 'telemedicine',
+                'vaccination': 'vaccination',
+                'diagnostic': 'diagnostic',
+            }
+            fso_vals['service_type'] = service_type_mapping.get(self.service_interest, 'consultation')
         
         fso = self.env['health.fieldservice.order'].create(fso_vals)
         
@@ -531,7 +699,7 @@ class HealthLead(models.Model):
             'stage_id': self._get_won_stage().id,
         })
         
-        # Return action to open the created booking
+        # Return action to open the created FSO booking form
         return {
             'type': 'ir.actions.act_window',
             'name': _('Field Service Order'),

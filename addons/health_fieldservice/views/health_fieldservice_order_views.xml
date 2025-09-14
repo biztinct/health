@@ -87,7 +87,8 @@
                     
                     <group>
                         <group string="Service Information">
-                            <field name="patient_id" readonly="1"/>
+                            <field name="patient_id" readonly="1" 
+                                   context="{'form_view_ref': 'health_base.view_health_patient_form'}"/>
                             <field name="service_type"/>
                             <field name="scheduled_datetime"/>
                             <field name="team_id"/>
