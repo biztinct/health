@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Health PWA Icon Generator</title>
+</head>
+<body>
+    <canvas id="iconCanvas" width="512" height="512" style="border: 1px solid #ccc;"></canvas>
+    
+    <script>
+        // Create PWA icons programmatically
+        const canvas = document.getElementById('iconCanvas');
+        const ctx = canvas.getContext('2d');
+        
+        function createIcon(size) {
+            canvas.width = size;
+            canvas.height = size;
+            
+            // Background
+            const gradient = ctx.createLinearGradient(0, 0, size, size);
+            gradient.addColorStop(0, '#875A7B');
+            gradient.addColorStop(1, '#B33D6C');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, size, size);
+            
+            // Medical cross
+            ctx.fillStyle = 'white';
+            const centerX = size / 2;
+            const centerY = size / 2;
+            const crossSize = size * 0.4;
+            const thickness = size * 0.1;
+            
+            // Horizontal bar
+            ctx.fillRect(centerX - crossSize/2, centerY - thickness/2, crossSize, thickness);
+            // Vertical bar
+            ctx.fillRect(centerX - thickness/2, centerY - crossSize/2, thickness, crossSize);
+            
+            // Download
+            const link = document.createElement('a');
+            link.download = `icon-${size}.png`;
+            link.href = canvas.toDataURL();
+            link.click();
+        }
+        
+        // Generate icons
+        const sizes = [72, 96, 128, 144, 152, 192, 384, 512];
+        sizes.forEach(size => createIcon(size));
+    </script>
+</body>
+</html>

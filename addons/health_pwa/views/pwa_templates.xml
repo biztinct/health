@@ -1,0 +1,756 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <template id="app_shell" name="Health PWA App Shell">
+        <t t-call="web.layout">
+            <t t-set="head">
+                <!-- PWA Meta Tags -->
+                <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"/>
+                <meta name="theme-color" content="#875A7B"/>
+                <meta name="mobile-web-app-capable" content="yes"/>
+                <meta name="apple-mobile-web-app-capable" content="yes"/>
+                <meta name="apple-mobile-web-app-status-bar-style" content="default"/>
+                <meta name="apple-mobile-web-app-title" content="Health Mobile"/>
+                
+                <!-- PWA Manifest -->
+                <link rel="manifest" href="/health_pwa/manifest.json"/>
+                
+                <!-- Icons -->
+                <link rel="icon" type="image/png" sizes="192x192" href="/health_pwa/static/icons/icon-192.png"/>
+                <link rel="apple-touch-icon" sizes="192x192" href="/health_pwa/static/icons/icon-192.png"/>
+                
+                <!-- Quasar CSS -->
+                <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900|Material+Icons" rel="stylesheet" type="text/css"/>
+                <link href="https://unpkg.com/quasar@2.14.0/dist/quasar.prod.css" rel="stylesheet" type="text/css"/>
+                
+                <!-- Custom PWA Styles -->
+                <link href="/health_pwa/static/src/css/app.css" rel="stylesheet" type="text/css"/>
+                <link href="/health_pwa/static/src/css/mobile.css" rel="stylesheet" type="text/css"/>
+                <link href="/health_pwa/static/src/css/health.css" rel="stylesheet" type="text/css"/>
+                
+                <!-- Disable default Odoo styles for PWA -->
+                <style>
+                    body { margin: 0; padding: 0; font-family: 'Roboto', sans-serif; }
+                    .o_main_navbar, .o_content, .o_control_panel { display: none !important; }
+                </style>
+            </t>
+            
+            <div id="health-pwa-app" class="pwa-container">
+                <!-- PWA Loading Screen -->
+                <div id="pwa-loading" class="pwa-loading-screen">
+                    <div class="loading-container">
+                        <div class="loading-logo">
+                            <img src="/health_pwa/static/icons/icon-192.png" alt="Health Mobile" width="80" height="80"/>
+                        </div>
+                        <div class="loading-text">
+                            <h3>Health Mobile</h3>
+                            <p>Loading healthcare data...</p>
+                        </div>
+                        <div class="loading-spinner">
+                            <div class="spinner"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Vue.js App Will Mount Here -->
+                <div id="vue-app" style="display: none;">
+                    <!-- Vue.js application content -->
+                </div>
+            </div>
+            
+            <!-- PWA Install Banner -->
+            <div id="pwa-install-banner" class="pwa-install-banner" style="display: none;">
+                <div class="banner-content">
+                    <div class="banner-text">
+                        <strong>Install Health Mobile</strong>
+                        <span>Get the best mobile experience</span>
+                    </div>
+                    <div class="banner-actions">
+                        <button id="pwa-install-btn" class="btn btn-primary">Install</button>
+                        <button id="pwa-dismiss-btn" class="btn btn-secondary">Later</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- JavaScript Configuration -->
+            <script type="text/javascript">
+                window.healthPWAConfig = {
+                    userId: <t t-esc="user_id"/>,
+                    userName: '<t t-esc="user_name"/>',
+                    companyName: '<t t-esc="company_name"/>',
+                    dbName: '<t t-esc="db_name"/>',
+                    apiBaseUrl: '/health_pwa/api',
+                    syncUrl: '/health_pwa/sync',
+                    websocketUrl: '/longpolling',
+                    version: '1.0.0',
+                    buildTime: '<t t-esc="datetime.datetime.now().isoformat()"/>',
+                };
+            </script>
+            
+            <!-- External Libraries -->
+            <script src="https://unpkg.com/vue@3.4.0/dist/vue.global.prod.js"></script>
+            <script src="https://unpkg.com/quasar@2.14.0/dist/quasar.umd.min.js"></script>
+            <script src="https://unpkg.com/pouchdb@8.0.0/dist/pouchdb.min.js"></script>
+            
+            <!-- PWA Core Scripts -->
+            <script src="/health_pwa/static/src/js/utils/pwa-utils.js"></script>
+            <script src="/health_pwa/static/src/js/utils/sync-manager.js"></script>
+            <script src="/health_pwa/static/src/js/utils/storage-manager.js"></script>
+            
+            <!-- Vue.js Application -->
+            <script src="/health_pwa/static/src/js/app.js"></script>
+            <script src="/health_pwa/static/src/js/router.js"></script>
+            
+            <!-- Service Worker Registration -->
+            <script>
+                if ('serviceWorker' in navigator) {
+                    window.addEventListener('load', function() {
+                        navigator.serviceWorker.register('/health_pwa/service-worker.js')
+                            .then(function(registration) {
+                                console.log('SW registered: ', registration);
+                                
+                                // Check for updates
+                                registration.addEventListener('updatefound', function() {
+                                    const newWorker = registration.installing;
+                                    newWorker.addEventListener('statechange', function() {
+                                        if (newWorker.state === 'installed' &amp;&amp; navigator.serviceWorker.controller) {
+                                            // New content available, notify user
+                                            if (window.healthPWA &amp;&amp; window.healthPWA.notifyUpdate) {
+                                                window.healthPWA.notifyUpdate();
+                                            }
+                                        }
+                                    });
+                                });
+                            })
+                            .catch(function(registrationError) {
+                                console.log('SW registration failed: ', registrationError);
+                            });
+                    });
+                }
+                
+                // PWA Install Prompt
+                let deferredPrompt;
+                window.addEventListener('beforeinstallprompt', function(e) {
+                    e.preventDefault();
+                    deferredPrompt = e;
+                    
+                    // Show install banner after 3 seconds
+                    setTimeout(function() {
+                        if (!localStorage.getItem('pwa-install-dismissed')) {
+                            document.getElementById('pwa-install-banner').style.display = 'block';
+                        }
+                    }, 3000);
+                });
+                
+                // Install button handler
+                document.addEventListener('DOMContentLoaded', function() {
+                    const installBtn = document.getElementById('pwa-install-btn');
+                    const dismissBtn = document.getElementById('pwa-dismiss-btn');
+                    const installBanner = document.getElementById('pwa-install-banner');
+                    
+                    if (installBtn) {
+                        installBtn.addEventListener('click', async function() {
+                            if (deferredPrompt) {
+                                deferredPrompt.prompt();
+                                const choiceResult = await deferredPrompt.userChoice;
+                                if (choiceResult.outcome === 'accepted') {
+                                    console.log('User accepted PWA install');
+                                }
+                                deferredPrompt = null;
+                            }
+                            installBanner.style.display = 'none';
+                        });
+                    }
+                    
+                    if (dismissBtn) {
+                        dismissBtn.addEventListener('click', function() {
+                            localStorage.setItem('pwa-install-dismissed', 'true');
+                            installBanner.style.display = 'none';
+                        });
+                    }
+                });
+            </script>
+        </t>
+    </template>
+    
+    <template id="service_worker_js" name="Service Worker JavaScript">
+        <![CDATA[
+// Health PWA Service Worker v1.0.0
+
+const CACHE_NAME = 'health-pwa-v1.0.0';
+const OFFLINE_URL = '/health_pwa/offline';
+const API_CACHE_NAME = 'health-pwa-api-v1.0.0';
+
+// Files to cache for offline functionality
+const STATIC_CACHE_URLS = [
+    '/health_pwa',
+    '/health_pwa/offline',
+    '/health_pwa/static/src/css/app.css',
+    '/health_pwa/static/src/css/mobile.css',
+    '/health_pwa/static/src/js/app.js',
+    '/health_pwa/static/src/js/router.js',
+    '/health_pwa/static/icons/icon-192.png',
+    'https://unpkg.com/vue@3.4.0/dist/vue.global.prod.js',
+    'https://unpkg.com/quasar@2.14.0/dist/quasar.umd.min.js',
+    'https://unpkg.com/pouchdb@8.0.0/dist/pouchdb.min.js',
+];
+
+// API endpoints to cache
+const API_CACHE_PATTERNS = [
+    /^\/health_pwa\/api\/patients/,
+    /^\/health_pwa\/api\/fso/,
+    /^\/health_pwa\/api\/teams/,
+    /^\/health_pwa\/api\/user/,
+];
+
+// Install event - cache static files
+self.addEventListener('install', event => {
+    console.log('Service Worker installing...');
+    event.waitUntil(
+        caches.open(CACHE_NAME)
+            .then(cache => {
+                console.log('Caching static files');
+                return cache.addAll(STATIC_CACHE_URLS);
+            })
+            .then(() => {
+                console.log('Service Worker installed successfully');
+                return self.skipWaiting();
+            })
+            .catch(error => {
+                console.error('Service Worker installation failed:', error);
+            })
+    );
+});
+
+// Activate event - clean up old caches
+self.addEventListener('activate', event => {
+    console.log('Service Worker activating...');
+    event.waitUntil(
+        caches.keys().then(cacheNames => {
+            return Promise.all(
+                cacheNames.map(cacheName => {
+                    if (cacheName !== CACHE_NAME && cacheName !== API_CACHE_NAME) {
+                        console.log('Deleting old cache:', cacheName);
+                        return caches.delete(cacheName);
+                    }
+                })
+            );
+        }).then(() => {
+            console.log('Service Worker activated');
+            return self.clients.claim();
+        })
+    );
+});
+
+// Fetch event - handle network requests with caching strategy
+self.addEventListener('fetch', event => {
+    const request = event.request;
+    const url = new URL(request.url);
+    
+    // Skip non-GET requests and chrome-extension requests
+    if (request.method !== 'GET' || url.protocol === 'chrome-extension:') {
+        return;
+    }
+    
+    // Handle PWA app requests
+    if (url.pathname.startsWith('/health_pwa')) {
+        if (url.pathname.startsWith('/health_pwa/api/') || url.pathname.startsWith('/health_pwa/sync/')) {
+            // API requests - Network First with Cache Fallback
+            event.respondWith(handleAPIRequest(request));
+        } else {
+            // Static files - Cache First
+            event.respondWith(handleStaticRequest(request));
+        }
+    }
+});
+
+// Handle API requests with Network First strategy
+async function handleAPIRequest(request) {
+    const url = new URL(request.url);
+    
+    try {
+        // Try network first
+        const response = await fetch(request);
+        
+        // Cache successful GET responses for offline use
+        if (response.ok && request.method === 'GET') {
+            const cache = await caches.open(API_CACHE_NAME);
+            cache.put(request, response.clone());
+        }
+        
+        return response;
+    } catch (error) {
+        console.log('Network failed, trying cache for:', url.pathname);
+        
+        // Network failed, try cache
+        const cache = await caches.open(API_CACHE_NAME);
+        const cachedResponse = await cache.match(request);
+        
+        if (cachedResponse) {
+            // Add offline indicator header
+            const response = cachedResponse.clone();
+            response.headers.set('X-Served-By', 'ServiceWorker-Cache');
+            return response;
+        }
+        
+        // Return offline response for API requests
+        return new Response(JSON.stringify({
+            success: false,
+            error: 'Network unavailable and no cached data',
+            offline: true,
+            timestamp: new Date().toISOString()
+        }), {
+            status: 503,
+            headers: { 'Content-Type': 'application/json' }
+        });
+    }
+}
+
+// Handle static requests with Cache First strategy
+async function handleStaticRequest(request) {
+    const cache = await caches.open(CACHE_NAME);
+    const cachedResponse = await cache.match(request);
+    
+    if (cachedResponse) {
+        return cachedResponse;
+    }
+    
+    try {
+        const response = await fetch(request);
+        if (response.ok) {
+            cache.put(request, response.clone());
+        }
+        return response;
+    } catch (error) {
+        console.log('Static request failed:', request.url);
+        
+        // Return offline page for navigation requests
+        if (request.mode === 'navigate') {
+            const offlineResponse = await cache.match(OFFLINE_URL);
+            return offlineResponse || new Response('Offline', { status: 503 });
+        }
+        
+        // Return minimal response for other requests
+        return new Response('Offline', { status: 503 });
+    }
+}
+
+// Background sync for offline actions
+self.addEventListener('sync', event => {
+    console.log('Background sync triggered:', event.tag);
+    
+    if (event.tag === 'health-pwa-sync') {
+        event.waitUntil(performBackgroundSync());
+    }
+});
+
+// Perform background sync
+async function performBackgroundSync() {
+    try {
+        // Get pending sync data from IndexedDB (handled by PouchDB)
+        console.log('Performing background sync...');
+        
+        // Send message to active clients to trigger sync
+        const clients = await self.clients.matchAll();
+        clients.forEach(client => {
+            client.postMessage({
+                type: 'BACKGROUND_SYNC',
+                timestamp: new Date().toISOString()
+            });
+        });
+        
+    } catch (error) {
+        console.error('Background sync failed:', error);
+    }
+}
+
+// Push notification handler (for future use)
+self.addEventListener('push', event => {
+    console.log('Push notification received:', event);
+    
+    const options = {
+        body: event.data ? event.data.text() : 'New health update available',
+        icon: '/health_pwa/static/icons/icon-192.png',
+        badge: '/health_pwa/static/icons/icon-96.png',
+        vibrate: [200, 100, 200],
+        tag: 'health-pwa-notification',
+        actions: [
+            {
+                action: 'open',
+                title: 'Open App',
+                icon: '/health_pwa/static/icons/icon-96.png'
+            },
+            {
+                action: 'close',
+                title: 'Close',
+                icon: '/health_pwa/static/icons/icon-96.png'
+            }
+        ]
+    };
+    
+    event.waitUntil(
+        self.registration.showNotification('Health Mobile', options)
+    );
+});
+
+// Notification click handler
+self.addEventListener('notificationclick', event => {
+    console.log('Notification clicked:', event);
+    event.notification.close();
+    
+    if (event.action === 'open') {
+        event.waitUntil(
+            clients.matchAll().then(clientList => {
+                // Try to focus existing window
+                for (const client of clientList) {
+                    if (client.url.includes('/health_pwa') && 'focus' in client) {
+                        return client.focus();
+                    }
+                }
+                
+                // Open new window if no existing window
+                if (clients.openWindow) {
+                    return clients.openWindow('/health_pwa');
+                }
+            })
+        );
+    }
+});
+
+console.log('Health PWA Service Worker loaded successfully');
+        ]]>
+    </template>
+    
+    <template id="offline_page" name="PWA Offline Page">
+        <t t-call="web.layout">
+            <t t-set="head">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+                <style>
+                    body { 
+                        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+                        background: linear-gradient(135deg, #875A7B 0%, #B33D6C 100%);
+                        color: white;
+                        margin: 0;
+                        padding: 0;
+                        min-height: 100vh;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                    }
+                    .offline-container {
+                        text-align: center;
+                        padding: 2rem;
+                        max-width: 400px;
+                    }
+                    .offline-icon {
+                        width: 80px;
+                        height: 80px;
+                        margin: 0 auto 2rem;
+                        opacity: 0.8;
+                    }
+                    .offline-title {
+                        font-size: 2rem;
+                        font-weight: 300;
+                        margin-bottom: 1rem;
+                    }
+                    .offline-message {
+                        font-size: 1.1rem;
+                        margin-bottom: 2rem;
+                        opacity: 0.9;
+                        line-height: 1.5;
+                    }
+                    .retry-btn {
+                        background: rgba(255,255,255,0.2);
+                        border: 2px solid rgba(255,255,255,0.3);
+                        color: white;
+                        padding: 1rem 2rem;
+                        border-radius: 25px;
+                        font-size: 1rem;
+                        cursor: pointer;
+                        transition: all 0.3s ease;
+                    }
+                    .retry-btn:hover {
+                        background: rgba(255,255,255,0.3);
+                        transform: translateY(-2px);
+                    }
+                </style>
+            </t>
+            
+            <div class="offline-container">
+                <div class="offline-icon">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M1,21H23L12,2M12,6L19.53,19H4.47M11,10V14H13V10M11,16V18H13V16"/>
+                    </svg>
+                </div>
+                <h1 class="offline-title">You're Offline</h1>
+                <p class="offline-message">
+                    Health Mobile is not available right now. 
+                    Please check your internet connection and try again.
+                </p>
+                <button class="retry-btn" onclick="window.location.reload()">
+                    Try Again
+                </button>
+                
+                <script>
+                    // Auto-retry when back online
+                    window.addEventListener('online', function() {
+                        setTimeout(function() {
+                            window.location.reload();
+                        }, 1000);
+                    });
+                </script>
+            </div>
+        </t>
+    </template>
+    
+    <template id="install_guide" name="PWA Installation Guide">
+        <t t-call="web.layout">
+            <t t-set="head">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+                <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700" rel="stylesheet"/>
+                <style>
+                    body { 
+                        font-family: 'Roboto', sans-serif;
+                        margin: 0;
+                        padding: 0;
+                        background: #f5f5f5;
+                    }
+                    .install-container {
+                        max-width: 600px;
+                        margin: 0 auto;
+                        padding: 2rem;
+                        background: white;
+                        min-height: 100vh;
+                    }
+                    .install-header {
+                        text-align: center;
+                        margin-bottom: 2rem;
+                    }
+                    .install-icon {
+                        width: 100px;
+                        height: 100px;
+                        margin: 0 auto 1rem;
+                        border-radius: 20px;
+                        overflow: hidden;
+                    }
+                    .install-title {
+                        color: #875A7B;
+                        font-size: 2rem;
+                        font-weight: 300;
+                        margin-bottom: 0.5rem;
+                    }
+                    .install-subtitle {
+                        color: #666;
+                        font-size: 1.1rem;
+                    }
+                    .install-steps {
+                        margin-top: 2rem;
+                    }
+                    .step {
+                        display: flex;
+                        align-items: flex-start;
+                        margin-bottom: 2rem;
+                        padding: 1rem;
+                        background: #f9f9f9;
+                        border-radius: 8px;
+                    }
+                    .step-number {
+                        background: #875A7B;
+                        color: white;
+                        width: 24px;
+                        height: 24px;
+                        border-radius: 50%;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        margin-right: 1rem;
+                        flex-shrink: 0;
+                        font-weight: 500;
+                        font-size: 0.9rem;
+                    }
+                    .step-content h4 {
+                        margin: 0 0 0.5rem 0;
+                        color: #333;
+                    }
+                    .step-content p {
+                        margin: 0;
+                        color: #666;
+                        line-height: 1.5;
+                    }
+                    .platform-specific {
+                        display: none;
+                    }
+                    .open-app-btn {
+                        background: #875A7B;
+                        color: white;
+                        padding: 1rem 2rem;
+                        border: none;
+                        border-radius: 25px;
+                        font-size: 1.1rem;
+                        cursor: pointer;
+                        width: 100%;
+                        margin-top: 2rem;
+                        text-decoration: none;
+                        display: inline-block;
+                        text-align: center;
+                    }
+                </style>
+            </t>
+            
+            <div class="install-container">
+                <div class="install-header">
+                    <div class="install-icon">
+                        <img src="/health_pwa/static/icons/icon-192.png" alt="Health Mobile" width="100" height="100"/>
+                    </div>
+                    <h1 class="install-title">Health Mobile</h1>
+                    <p class="install-subtitle">Install our app for the best mobile experience</p>
+                </div>
+                
+                <!-- iOS Installation Steps -->
+                <div t-if="is_ios" class="install-steps platform-specific" style="display: block;">
+                    <div class="step">
+                        <div class="step-number">1</div>
+                        <div class="step-content">
+                            <h4>Tap the Share button</h4>
+                            <p>Look for the share icon at the bottom of your Safari browser</p>
+                        </div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">2</div>
+                        <div class="step-content">
+                            <h4>Select "Add to Home Screen"</h4>
+                            <p>Scroll down in the share menu and tap "Add to Home Screen"</p>
+                        </div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">3</div>
+                        <div class="step-content">
+                            <h4>Confirm installation</h4>
+                            <p>Tap "Add" to install Health Mobile on your home screen</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Android Installation Steps -->
+                <div t-if="is_android" class="install-steps platform-specific" style="display: block;">
+                    <div class="step">
+                        <div class="step-number">1</div>
+                        <div class="step-content">
+                            <h4>Tap the menu button</h4>
+                            <p>Look for the three dots in the top-right corner of your Chrome browser</p>
+                        </div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">2</div>
+                        <div class="step-content">
+                            <h4>Select "Add to Home screen"</h4>
+                            <p>Find and tap "Add to Home screen" or "Install" in the menu</p>
+                        </div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">3</div>
+                        <div class="step-content">
+                            <h4>Confirm installation</h4>
+                            <p>Tap "Install" to add Health Mobile to your home screen</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Desktop Installation Steps -->
+                <div t-if="is_desktop" class="install-steps platform-specific" style="display: block;">
+                    <div class="step">
+                        <div class="step-number">1</div>
+                        <div class="step-content">
+                            <h4>Look for the install icon</h4>
+                            <p>You should see an install icon in your browser's address bar</p>
+                        </div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">2</div>
+                        <div class="step-content">
+                            <h4>Click install</h4>
+                            <p>Click the install icon and confirm to install Health Mobile</p>
+                        </div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">3</div>
+                        <div class="step-content">
+                            <h4>Launch the app</h4>
+                            <p>Health Mobile will be available as a desktop application</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <a href="/health_pwa" class="open-app-btn">
+                    Open Health Mobile
+                </a>
+            </div>
+        </t>
+    </template>
+    
+    <template id="access_denied" name="PWA Access Denied">
+        <t t-call="web.layout">
+            <t t-set="head">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+                <style>
+                    body { 
+                        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+                        background: #f5f5f5;
+                        margin: 0;
+                        padding: 2rem;
+                        color: #333;
+                    }
+                    .access-container {
+                        max-width: 400px;
+                        margin: 0 auto;
+                        text-align: center;
+                        background: white;
+                        padding: 3rem 2rem;
+                        border-radius: 8px;
+                        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+                    }
+                    .access-icon {
+                        width: 80px;
+                        height: 80px;
+                        margin: 0 auto 2rem;
+                        color: #e74c3c;
+                    }
+                    .access-title {
+                        font-size: 1.5rem;
+                        margin-bottom: 1rem;
+                        color: #e74c3c;
+                    }
+                    .access-message {
+                        color: #666;
+                        line-height: 1.5;
+                        margin-bottom: 2rem;
+                    }
+                    .back-btn {
+                        background: #875A7B;
+                        color: white;
+                        padding: 0.75rem 1.5rem;
+                        border: none;
+                        border-radius: 4px;
+                        text-decoration: none;
+                        display: inline-block;
+                    }
+                </style>
+            </t>
+            
+            <div class="access-container">
+                <div class="access-icon">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12,17A2,2 0 0,0 14,15C14,13.89 13.1,13 12,13A2,2 0 0,0 10,15A2,2 0 0,0 12,17M18,8A2,2 0 0,1 20,10V20A2,2 0 0,1 18,22H6A2,2 0 0,1 4,20V10C4,8.89 4.9,8 6,8H7V6A5,5 0 0,1 12,1A5,5 0 0,1 17,6V8H18M12,3A3,3 0 0,0 9,6V8H15V6A3,3 0 0,0 12,3Z"/>
+                    </svg>
+                </div>
+                <h1 class="access-title">Access Denied</h1>
+                <p class="access-message">
+                    You don't have permission to access Health Mobile. 
+                    Please contact your administrator to get access to the health modules.
+                </p>
+                <a href="/web" class="back-btn">Back to Main System</a>
+            </div>
+        </t>
+    </template>
+
+</odoo>

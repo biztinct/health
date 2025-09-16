@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <template id="debug_shell" name="Health PWA Debug Shell">
+        <t t-call="web.layout">
+            <t t-set="head">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+                <title>Health PWA Debug</title>
+                <style>
+                    body {
+                        font-family: Arial, sans-serif;
+                        margin: 20px;
+                        background: #f5f5f5;
+                    }
+                    .debug-container {
+                        background: white;
+                        padding: 20px;
+                        border-radius: 8px;
+                        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+                    }
+                    .success { color: green; }
+                    .error { color: red; }
+                    .info { color: blue; }
+                </style>
+            </t>
+            
+            <div class="debug-container">
+                <h1>Health PWA Debug Information</h1>
+                
+                <h3 class="success">✓ Template Rendering Works</h3>
+                
+                <div class="info">
+                    <p><strong>User ID:</strong> <t t-esc="user_id"/></p>
+                    <p><strong>User Name:</strong> <t t-esc="user_name"/></p>
+                    <p><strong>Company:</strong> <t t-esc="company_name"/></p>
+                    <p><strong>Database:</strong> <t t-esc="db_name"/></p>
+                </div>
+                
+                <h3>Static Files Test</h3>
+                <div id="css-test">
+                    <p>Testing CSS loading...</p>
+                    <link href="/health_pwa/static/src/css/app.css" rel="stylesheet" type="text/css"/>
+                </div>
+                
+                <h3>JavaScript Test</h3>
+                <script src="/health_pwa/static/src/js/utils/pwa-utils.js"></script>
+                <script>
+                    document.addEventListener('DOMContentLoaded', function() {
+                        console.log('Debug template loaded successfully');
+                        console.log('PWAUtils available:', typeof window.PWAUtils !== 'undefined');
+                        
+                        // Test API endpoints
+                        fetch('/health_pwa/debug')
+                            .then(response => response.text())
+                            .then(data => {
+                                console.log('Debug endpoint response:', data);
+                                document.getElementById('debug-result').innerHTML = 
+                                    '&lt;span class="success"&gt;✓ Debug endpoint works: ' + data + '&lt;/span&gt;';
+                            })
+                            .catch(error => {
+                                console.error('Debug endpoint error:', error);
+                                document.getElementById('debug-result').innerHTML = 
+                                    '&lt;span class="error"&gt;✗ Debug endpoint failed: ' + error + '&lt;/span&gt;';
+                            });
+                    });
+                </script>
+                
+                <div id="debug-result">
+                    <p>Testing debug endpoint...</p>
+                </div>
+                
+                <h3>Next Steps</h3>
+                <ul>
+                    <li><a href="/health_pwa/debug">Test Debug Controller</a></li>
+                    <li><a href="/health_pwa/manifest.json">Test Manifest</a></li>
+                    <li><a href="/health_pwa/api/user/profile">Test API</a></li>
+                </ul>
+            </div>
+        </t>
+    </template>
+
+</odoo>

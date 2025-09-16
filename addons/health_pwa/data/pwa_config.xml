@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    
+    <!-- PWA Configuration Data -->
+    <record id="pwa_config_data" model="ir.config_parameter">
+        <field name="key">health_pwa.version</field>
+        <field name="value">1.0.0</field>
+    </record>
+    
+    <record id="pwa_config_theme" model="ir.config_parameter">
+        <field name="key">health_pwa.theme_color</field>
+        <field name="value">#875A7B</field>
+    </record>
+    
+    <record id="pwa_config_background" model="ir.config_parameter">
+        <field name="key">health_pwa.background_color</field>
+        <field name="value">#FFFFFF</field>
+    </record>
+    
+    <record id="pwa_config_offline_timeout" model="ir.config_parameter">
+        <field name="key">health_pwa.offline_timeout</field>
+        <field name="value">300000</field>
+    </record>
+    
+    <record id="pwa_config_sync_interval" model="ir.config_parameter">
+        <field name="key">health_pwa.sync_interval</field>
+        <field name="value">600000</field>
+    </record>
+
+</odoo>
