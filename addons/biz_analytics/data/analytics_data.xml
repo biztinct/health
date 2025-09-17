@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+
+    <!-- Sample Dashboard -->
+    <record id="demo_dashboard_sales" model="analytics.dashboard">
+        <field name="name">Sales Analytics</field>
+        <field name="description">Comprehensive sales performance dashboard with key metrics and trends</field>
+        <field name="layout_type">grid</field>
+        <field name="columns">4</field>
+        <field name="theme">light</field>
+        <field name="is_public">1</field>
+        <field name="allow_export">1</field>
+        <field name="auto_refresh">1</field>
+        <field name="refresh_interval">10</field>
+    </record>
+
+    <!-- Sample Dataset for Partners (Patients) -->
+    <record id="dataset_health_patients" model="analytics.dataset">
+        <field name="name">Partners</field>
+        <field name="description">Partner demographics and contact information</field>
+        <field name="model_id" ref="base.model_res_partner"/>
+        <field name="domain">[]</field>
+        <field name="auto_refresh">1</field>
+        <field name="refresh_interval">30</field>
+    </record>
+
+    <!-- Sample Dataset for Health Facilities -->
+    <record id="dataset_health_facilities" model="analytics.dataset">
+        <field name="name">Health Facilities</field>
+        <field name="description">Facility performance and capacity metrics</field>
+        <field name="model_id" ref="health_base.model_health_facility"/>
+        <field name="domain">[]</field>
+        <field name="auto_refresh">1</field>
+        <field name="refresh_interval">60</field>
+    </record>
+
+</odoo>

@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_analytics_dashboard_user,analytics.dashboard.user,model_analytics_dashboard,base.group_user,1,1,1,1
+access_analytics_dataset_user,analytics.dataset.user,model_analytics_dataset,base.group_user,1,1,1,1
+access_analytics_dataset_field_user,analytics.dataset.field.user,model_analytics_dataset_field,base.group_user,1,1,1,1
+access_analytics_widget_user,analytics.widget.user,model_analytics_widget,base.group_user,1,1,1,1

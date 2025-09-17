@@ -206,6 +206,22 @@ class HealthFieldServiceOrderUnified(models.Model):
             invoice_count += len(additional_invoices)
             record.invoice_count = invoice_count
     
+    @api.depends('sale_order_id')
+    def _compute_quote_count(self):
+        """Compute the number of quotes/sales orders related to this FSO"""
+        for record in self:
+            # Count quotes/sales orders linked to this FSO
+            quote_count = 0
+            if record.sale_order_id:
+                quote_count += 1
+            # Also count any additional quotes linked to this FSO via origin field
+            additional_quotes = self.env['sale.order'].search([
+                ('origin', '=', record.name),
+                ('id', '!=', record.sale_order_id.id if record.sale_order_id else False)
+            ])
+            quote_count += len(additional_quotes)
+            record.quote_count = quote_count
+    
     @api.depends('assignment_ids.staff_id')
     def _compute_assigned_staff(self):
         """Compute assigned staff from assignment records"""
@@ -510,6 +526,27 @@ class HealthFieldServiceOrderUnified(models.Model):
     # INVOICING & BILLING (Client Priority: Auto Invoice Generation)
     # ============================================================================
     
+    # Quote/Sales Order (FSO Quote Integration)
+    sale_order_id = fields.Many2one(
+        'sale.order',
+        string='Healthcare Quote',
+        readonly=True,
+        tracking=True,
+        help='Associated healthcare quote/sales order for this service'
+    )
+    
+    quote_count = fields.Integer(
+        'Quote Count',
+        compute='_compute_quote_count',
+        help='Number of quotes/sales orders related to this FSO'
+    )
+    
+    quote_state = fields.Selection(
+        related='sale_order_id.state',
+        string='Quote Status',
+        readonly=True
+    )
+    
     # Auto-generated invoice (Client Requirement: "Draft invoices are created when a booking is assigned")
     invoice_id = fields.Many2one(
         'account.move',
@@ -760,7 +797,6 @@ class HealthFieldServiceOrderUnified(models.Model):
         for order in orders:
             # Send notifications
             order._send_booking_notifications()
-            # Note: Invoice generation removed - now manual per Invoicing.md requirements
         
         return orders
     
@@ -824,7 +860,7 @@ class HealthFieldServiceOrderUnified(models.Model):
     # ============================================================================
     
     def action_create_final_invoice(self):
-        """Create final invoice after service completion (per Invoicing.md workflow)"""
+        """Create final invoice - first opens quote for editing like sale.order"""
         self.ensure_one()
         
         # Validate state - can only invoice completed services
@@ -834,18 +870,37 @@ class HealthFieldServiceOrderUnified(models.Model):
         if self.invoice_id:
             raise UserError(_('Invoice already exists for this service order.'))
         
-        # Create billing record first (intermediate step)
-        billing = self.env['health.service.billing'].create_from_fieldservice_order(self.id)
-        billing.action_mark_ready_to_invoice()
+        # Ensure quote exists first
+        if not self.sale_order_id:
+            # Create quote if it doesn't exist
+            quote = self._create_empty_quote()
+            if quote:
+                self.sale_order_id = quote.id
+            else:
+                raise UserError(_('Failed to create quote. Please create a quote first.'))
         
-        # Generate final invoice
-        invoice_result = billing.action_generate_invoice()
-        
-        # Update FSO with invoice link
-        self.invoice_id = billing.invoice_id.id
-        
-        # Return wizard for payment workflow (Pay Now/Pay Later)
-        return self._open_payment_workflow_wizard(billing.invoice_id)
+        # Open quote for editing with Create Invoice context
+        return self._open_quote_for_invoicing()
+    
+    def _open_quote_for_invoicing(self):
+        """Open quote popup with Create Invoice context"""
+        self.ensure_one()
+        return {
+            'name': _('Review Quote - Create Invoice'),
+            'type': 'ir.actions.act_window',
+            'res_model': 'sale.order',
+            'res_id': self.sale_order_id.id,
+            'view_mode': 'form',
+            'view_id': self.env.ref('health_fieldservice.view_healthcare_quote_form_custom').id,
+            'target': 'new',  # Opens in popup
+            'context': {
+                'form_view_initial_mode': 'edit',
+                'healthcare_context': True,
+                'invoicing_mode': True,  # Special flag for invoicing
+                'fso_id': self.id,
+                'default_fso_id': self.id,
+            }
+        }
     
     def _open_payment_workflow_wizard(self, invoice):
         """Open payment workflow wizard (Pay Now/Pay Later) per Invoicing.md"""
@@ -974,10 +1029,86 @@ class HealthFieldServiceOrderUnified(models.Model):
         # Implementation for internal notifications
         pass
     
+    def _validate_quote_requirement(self):
+        """Handle quote creation workflow - no blocking validation"""
+        # This method now just handles the quote creation workflow
+        # No validation errors are raised here
+        pass
+    
+    def action_save_and_create_quote_if_needed(self):
+        """Save FSO and create/open quote if needed - for Operations Managers"""
+        self.ensure_one()
+        
+        # For Operations Managers, handle quote workflow
+        if self.env.user.has_group('health_base.group_healthcare_operations_manager'):
+            if not self.sale_order_id:
+                # Create empty quote and open it
+                quote = self._create_empty_quote()
+                if quote:
+                    self.sale_order_id = quote.id
+                    # Return action to open quote popup
+                    return self._open_quote_popup(quote)
+            elif not self.sale_order_id.order_line:
+                # Quote exists but empty - open it
+                return self._open_quote_popup(self.sale_order_id)
+        
+        # Return to FSO form view
+        return {
+            'type': 'ir.actions.act_window',
+            'res_model': 'health.fieldservice.order',
+            'res_id': self.id,
+            'view_mode': 'form',
+            'target': 'current',
+        }
+    
     def _notify_patient_booking_confirmed(self):
         """Notify patient that booking is confirmed"""
         # Implementation for patient confirmation
         pass
+    
+    def _create_empty_quote(self):
+        """Create an empty healthcare quote for this FSO"""
+        # Get default pricelist
+        pricelist = self.env['product.pricelist'].search([('currency_id', '=', self.env.company.currency_id.id)], limit=1)
+        if not pricelist:
+            pricelist = self.env['product.pricelist'].create({
+                'name': 'Healthcare Services Pricelist',
+                'currency_id': self.env.company.currency_id.id,
+            })
+        
+        # Create empty sales order
+        quote_vals = {
+            'partner_id': self.patient_id.id,
+            'origin': self.name,
+            'pricelist_id': pricelist.id,
+            'state': 'draft',
+            'note': f'Healthcare Quote for {self.service_type} - {self.patient_id.name}',
+        }
+        
+        quote = self.env['sale.order'].create(quote_vals)
+        return quote
+    
+    def _show_quote_notification(self):
+        """Show notification to user about adding items to quote"""
+        message = _(
+            '📋 An empty healthcare quote has been created for this FSO.\n'
+            '⚠️ Please add at least one service or product to the quote by clicking the "Quote" smart button.'
+        )
+        # Post message to chatter for persistent notification
+        self.message_post(
+            body=message,
+            message_type='notification',
+            subtype_xmlid='mail.mt_note'
+        )
+    
+    def _show_quote_recommendation(self):
+        """Show recommendation message for non-OM users"""
+        message = _('💡 Consider asking Operations Manager to create a quote for this FSO.')
+        self.message_post(
+            body=message,
+            message_type='notification',
+            subtype_xmlid='mail.mt_note'
+        )
     
     def _send_staff_assignment_notification(self, staff):
         """Send notification to assigned staff"""
@@ -1172,6 +1303,221 @@ class HealthFieldServiceOrderUnified(models.Model):
     # action_create_invoice_anytime method temporarily removed
     # Use "Create Invoice" after service completion or Healthcare Invoicing menu
     
+    # ============================================================================
+    # QUOTE/SALES ORDER ACTION METHODS
+    # ============================================================================
+    
+    def action_create_quote(self):
+        """Create a healthcare quote/sales order for this FSO"""
+        self.ensure_one()
+        
+        # Check if quote already exists
+        if self.sale_order_id:
+            return self.action_view_quote()
+        
+        # Create quote and show popup
+        quote = self._create_quote_with_lines()
+        if quote:
+            self.sale_order_id = quote.id
+            return self._open_quote_popup(quote)
+        else:
+            raise UserError(_('Failed to create quote. Please check patient and pricing information.'))
+    
+    def action_create_and_open_quote(self):
+        """Create quote and immediately open in popup (for button click)"""
+        return self.action_create_quote()
+    
+    def action_check_and_open_quote_if_needed(self):
+        """Check if quote exists and open popup if needed after FSO save"""
+        self.ensure_one()
+        if self.env.user.has_group('health_base.group_healthcare_operations_manager'):
+            if self.sale_order_id and not self.sale_order_id.order_line:
+                # Quote exists but is empty - open it for editing
+                return self._open_quote_popup(self.sale_order_id)
+        return False
+    
+    def _create_quote_with_lines(self):
+        """Create quote with all necessary lines and validation"""
+        # Get default pricelist (first found or create one)
+        pricelist = self.env['product.pricelist'].search([('currency_id', '=', self.env.company.currency_id.id)], limit=1)
+        if not pricelist:
+            pricelist = self.env['product.pricelist'].create({
+                'name': 'Healthcare Services Pricelist',
+                'currency_id': self.env.company.currency_id.id,
+            })
+        
+        # Create sales order with FSO data
+        quote_vals = {
+            'partner_id': self.patient_id.id,
+            'origin': self.name,
+            'pricelist_id': pricelist.id,
+            'state': 'draft',
+            'note': f'Healthcare Quote for {self.service_type} - {self.patient_id.name}',
+        }
+        
+        quote = self.env['sale.order'].create(quote_vals)
+        
+        # Add service lines to quote if we have pricing info
+        self._add_quote_lines(quote)
+        
+        return quote
+    
+    def action_view_quote(self):
+        """View the healthcare quote"""
+        self.ensure_one()
+        if not self.sale_order_id:
+            raise UserError(_('No quote has been created for this FSO yet.'))
+        
+        return self._open_quote_popup(self.sale_order_id)
+    
+    def action_view_all_quotes(self):
+        """View all quotes related to this FSO"""
+        self.ensure_one()
+        
+        # Find all quotes related to this FSO
+        quote_ids = []
+        if self.sale_order_id:
+            quote_ids.append(self.sale_order_id.id)
+        
+        # Search for additional quotes by origin
+        additional_quotes = self.env['sale.order'].search([
+            ('origin', '=', self.name)
+        ])
+        quote_ids.extend(additional_quotes.ids)
+        
+        if not quote_ids:
+            raise UserError(_('No quotes have been created for this FSO yet.'))
+        
+        if len(quote_ids) == 1:
+            return self._open_quote_popup(self.env['sale.order'].browse(quote_ids[0]))
+        else:
+            # Multiple quotes - open list view
+            return {
+                'name': _('Quotes for %s') % self.name,
+                'type': 'ir.actions.act_window',
+                'res_model': 'sale.order',
+                'domain': [('id', 'in', quote_ids)],
+                'view_mode': 'list,form',
+                'target': 'current',
+            }
+    
+    def _open_quote_popup(self, quote):
+        """Open quote in popup form to keep FSO visible in background"""
+        return {
+            'name': _('Healthcare Quote - %s') % self.name,
+            'type': 'ir.actions.act_window',
+            'res_model': 'sale.order',
+            'res_id': quote.id,
+            'view_mode': 'form',
+            'view_id': self.env.ref('health_fieldservice.view_healthcare_quote_form_custom').id,
+            'target': 'new',  # Opens in popup
+            'context': {
+                'form_view_initial_mode': 'edit',
+                'healthcare_context': True,
+                'fso_id': self.id,
+            }
+        }
+    
+    def _add_quote_lines(self, quote):
+        """Add service lines to the quote based on FSO data"""
+        # Get or create healthcare service products
+        if self.base_price and self.base_price > 0:
+            service_product = self._get_or_create_service_product()
+            if service_product:
+                self.env['sale.order.line'].create({
+                    'order_id': quote.id,
+                    'product_id': service_product.id,
+                    'name': f'{dict(self._fields["service_type"].selection)[self.service_type]} - {self.patient_id.name}',
+                    'product_uom_qty': self.estimated_duration or 1,
+                    'price_unit': self.base_price / (self.estimated_duration or 1),
+                })
+        
+        # Add additional charges as separate lines
+        if self.travel_charge and self.travel_charge > 0:
+            travel_product = self._get_or_create_travel_product()
+            if travel_product:
+                self.env['sale.order.line'].create({
+                    'order_id': quote.id,
+                    'product_id': travel_product.id,
+                    'name': f'Travel Charge ({self.travel_distance} km)',
+                    'product_uom_qty': 1,
+                    'price_unit': self.travel_charge,
+                })
+    
+    def _get_or_create_service_product(self):
+        """Get or create a service product for healthcare services"""
+        product_name = f'Healthcare Service - {dict(self._fields["service_type"].selection)[self.service_type]}'
+        product = self.env['product.product'].search([('name', '=', product_name)], limit=1)
+        if not product:
+            product = self.env['product.product'].create({
+                'name': product_name,
+                'type': 'service',
+                'list_price': self.base_price or 0,
+                'categ_id': self.env.ref('product.product_category_3').id,  # Services category
+            })
+        return product
+    
+    def _get_or_create_travel_product(self):
+        """Get or create a travel charge product"""
+        product_name = 'Travel Charge'
+        product = self.env['product.product'].search([('name', '=', product_name)], limit=1)
+        if not product:
+            product = self.env['product.product'].create({
+                'name': product_name,
+                'type': 'service',
+                'list_price': 0,  # Variable pricing
+                'categ_id': self.env.ref('product.product_category_3').id,  # Services category
+            })
+        return product
+    
+    def _auto_create_quote(self):
+        """Automatically create quote when FSO is saved (for Operations Manager)"""
+        self.ensure_one()
+        
+        # Only create if no quote exists yet
+        if self.sale_order_id:
+            return
+        
+        # Only create if we have basic required data
+        if not self.patient_id:
+            return
+        
+        try:
+            # Create quote silently in background
+            quote = self._create_quote_silent()
+            if quote:
+                self.sale_order_id = quote.id
+                _logger.info(f'Auto-created quote {quote.name} for FSO {self.name}')
+        except Exception as e:
+            _logger.warning(f'Failed to auto-create quote for FSO {self.name}: {e}')
+            # Don't raise exception - quote creation is optional
+    
+    def _create_quote_silent(self):
+        """Create quote silently without UI interaction"""
+        # Get default pricelist
+        pricelist = self.env['product.pricelist'].search([('currency_id', '=', self.env.company.currency_id.id)], limit=1)
+        if not pricelist:
+            pricelist = self.env['product.pricelist'].create({
+                'name': 'Healthcare Services Pricelist',
+                'currency_id': self.env.company.currency_id.id,
+            })
+        
+        # Create sales order
+        quote_vals = {
+            'partner_id': self.patient_id.id,
+            'origin': self.name,
+            'pricelist_id': pricelist.id,
+            'state': 'draft',
+            'note': f'Auto-generated Healthcare Quote for {self.service_type} - {self.patient_id.name}',
+        }
+        
+        quote = self.env['sale.order'].create(quote_vals)
+        
+        # Add basic service lines
+        self._add_quote_lines(quote)
+        
+        return quote
+    
     def action_view_communications(self):
         """View communications related to this booking"""
         self.ensure_one()
@@ -1285,3 +1631,59 @@ class HealthFieldServiceOrderUnified(models.Model):
             'view_mode': 'form',
             'target': 'current',
         }
+
+
+class SaleOrder(models.Model):
+    """Extend sale.order to add healthcare quote validation and invoice creation"""
+    _inherit = 'sale.order'
+    
+    def action_confirm(self):
+        """Override confirm to validate quote lines"""
+        for order in self:
+            if order.origin and 'FSO' in order.origin:
+                order._validate_healthcare_quote_lines()
+        return super().action_confirm()
+    
+    def action_create_invoice_from_healthcare_quote(self):
+        """Create invoice from healthcare quote (FSO workflow)"""
+        self.ensure_one()
+        
+        # Validate quote has items
+        if not self.order_line:
+            raise UserError(_(
+                'Cannot create invoice from empty quote.\n'
+                'Please add at least one service or product to this quote.'
+            ))
+        
+        # Get the related FSO
+        fso = self.env['health.fieldservice.order'].search([('sale_order_id', '=', self.id)], limit=1)
+        if not fso:
+            raise UserError(_('No FSO found for this quote.'))
+        
+        # Confirm the quote first (sale.order workflow)
+        if self.state == 'draft':
+            self.action_confirm()
+        
+        # Create invoice using original FSO billing workflow
+        billing = self.env['health.service.billing'].create_from_fieldservice_order(fso.id)
+        billing.action_mark_ready_to_invoice()
+        
+        # Generate final invoice
+        invoice_result = billing.action_generate_invoice()
+        
+        # Update FSO with invoice link
+        fso.invoice_id = billing.invoice_id.id
+        
+        # Close the quote popup and return to FSO
+        return {
+            'type': 'ir.actions.act_window_close',
+        }
+    
+    def _validate_healthcare_quote_lines(self):
+        """Validate that healthcare quotes have at least one order line"""
+        self.ensure_one()
+        if not self.order_line:
+            raise UserError(_(
+                'Healthcare quotes must have at least one order line before confirmation.\n'
+                'Please add at least one service or product to this quote.'
+            ))

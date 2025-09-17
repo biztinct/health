@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Healthcare Quote Form View (Minimal Custom View) -->
+    <record id="view_healthcare_quote_form_custom" model="ir.ui.view">
+        <field name="name">healthcare.quote.form.custom</field>
+        <field name="model">sale.order</field>
+        <field name="priority">20</field>
+        <field name="arch" type="xml">
+            <form string="Healthcare Quote" class="o_sale_order">
+                <header>
+                    <button name="action_create_invoice_from_healthcare_quote" type="object" 
+                            string="💰 Create Invoice" class="oe_highlight"
+                            invisible="not context.get('invoicing_mode')"
+                            help="Create invoice from this quote"/>
+                    
+                    <div class="alert alert-info" groups="health_base.group_healthcare_nurse">
+                        <strong>Nurse Access:</strong> You can only edit quantities and discounts in this quote.
+                    </div>
+                    
+                    <div class="alert alert-success" invisible="not context.get('invoicing_mode')" role="alert">
+                        <strong>Invoice Creation Mode:</strong> Review and modify the quote items below, then click "Create Invoice" to generate the final invoice.
+                    </div>
+                </header>
+                <sheet string="Healthcare Quote">
+                    <div class="oe_title">
+                        <h1 class="d-flex justify-content-between align-items-center">
+                            <field name="name" class="o_text_overflow" readonly="1"/>
+                        </h1>
+                        <h2>
+                            <span class="badge badge-info">Healthcare Quote</span>
+                        </h2>
+                    </div>
+                    
+                    <notebook>
+                        <page string="Order Lines" name="order_lines">
+                            <field name="order_line">
+                                <list string="Healthcare Services" editable="bottom">
+                                    <field name="display_type" column_invisible="True"/>
+                                    <field name="product_uom_category_id" column_invisible="True"/>
+                                    <field name="product_updatable" column_invisible="True"/>
+                                    <field name="product_id" string="Product" readonly="not product_updatable" required="not display_type" 
+                                           context="{'partner_id': parent.partner_id, 'quantity': product_uom_qty, 'pricelist': parent.pricelist_id, 'uom': product_uom, 'company_id': parent.company_id}" 
+                                           domain="[('sale_ok', '=', True)]"/>
+                                    <field name="name" string="Description"/>
+                                    <field name="product_uom_qty" string="Qty" 
+                                           context="{'partner_id': parent.partner_id, 'quantity': product_uom_qty, 'pricelist': parent.pricelist_id, 'uom': product_uom, 'company_id': parent.company_id}"/>
+                                    <field name="product_uom" string="UoM" groups="uom.group_uom" optional="show"/>
+                                    <field name="price_unit" string="Unit Price"/>
+                                    <field name="discount" string="Disc.%" groups="sale.group_discount_per_so_line" optional="show"/>
+                                    <field name="price_subtotal" string="Subtotal" widget="monetary"/>
+                                    <field name="currency_id" column_invisible="True"/>
+                                    <field name="state" column_invisible="True"/>
+                                </list>
+                            </field>
+                            
+                            <group class="oe_subtotal_footer oe_right" colspan="2" name="sale_total">
+                                <field name="amount_untaxed" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                                <field name="amount_tax" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                                <div class="oe_subtotal_footer_separator oe_inline o_td_label">
+                                    <label for="amount_total"/>
+                                </div>
+                                <field name="amount_total" nolabel="1" class="oe_subtotal_footer_separator" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                            </group>
+                            <div class="clearfix"/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter reload_on_follower="True"/>
+            </form>
+        </field>
+    </record>
+
+    <!-- Healthcare Quote List View -->
+    <record id="view_healthcare_quote_list" model="ir.ui.view">
+        <field name="name">healthcare.quote.list</field>
+        <field name="model">sale.order</field>
+        <field name="priority">50</field>
+        <field name="arch" type="xml">
+            <list string="Healthcare Quotes" 
+                  decoration-info="state == 'draft'" 
+                  decoration-muted="state == 'cancel'"
+                  decoration-bf="state == 'sale'">
+                <field name="name" string="Quote Number"/>
+                <field name="origin" string="FSO Reference"/>
+                <field name="amount_total" widget="monetary"/>
+                <field name="currency_id" column_invisible="1"/>
+                <field name="state" string="Status"
+                       decoration-info="state == 'draft'"
+                       decoration-warning="state == 'sent'"
+                       decoration-success="state == 'sale'"
+                       decoration-muted="state == 'cancel'"
+                       widget="badge"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Window Action for Healthcare Quotes -->
+    <record id="action_healthcare_quotes" model="ir.actions.act_window">
+        <field name="name">Healthcare Quotes</field>
+        <field name="res_model">sale.order</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('origin', 'ilike', 'FSO')]</field>
+        <field name="context">{
+            'default_pricelist_id': 1,
+            'healthcare_context': True
+        }</field>
+        <field name="view_ids" eval="[(5, 0, 0), 
+                                      (0, 0, {'view_mode': 'list', 'view_id': ref('view_healthcare_quote_list')}),
+                                      (0, 0, {'view_mode': 'form', 'view_id': ref('view_healthcare_quote_form_custom')})]"/>
+    </record>
+
+</odoo>

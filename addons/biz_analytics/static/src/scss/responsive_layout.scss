@@ -1,0 +1,508 @@
+/* ================================================
+   Responsive Dashboard Layout System
+   ================================================ */
+
+/* Grid System Variables */
+:root {
+  --grid-columns: 12;
+  --grid-gap: 20px;
+  --grid-item-min-height: 200px;
+  --breakpoint-sm: 576px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 992px;
+  --breakpoint-xl: 1200px;
+  --breakpoint-xxl: 1400px;
+}
+
+/* ================================================
+   Responsive Grid Layout
+   ================================================ */
+
+.analytics-grid-container {
+  display: grid;
+  grid-template-columns: repeat(var(--grid-columns), 1fr);
+  gap: var(--grid-gap);
+  padding: var(--grid-gap);
+  min-height: calc(100vh - 160px);
+  position: relative;
+}
+
+.analytics-grid-item {
+  position: relative;
+  background: white;
+  border-radius: var(--analytics-border-radius);
+  box-shadow: var(--analytics-shadow);
+  transition: var(--analytics-transition);
+  overflow: hidden;
+  min-height: var(--grid-item-min-height);
+  
+  /* Grid positioning using CSS custom properties */
+  grid-column: var(--grid-col-start, auto) / span var(--grid-col-span, 1);
+  grid-row: var(--grid-row-start, auto) / span var(--grid-row-span, 1);
+}
+
+/* Dynamic grid positioning classes */
+@for $i from 1 through 12 {
+  .grid-w-#{$i} {
+    --grid-col-span: #{$i};
+  }
+  
+  .grid-x-#{$i} {
+    --grid-col-start: #{$i + 1};
+  }
+}
+
+@for $i from 1 through 20 {
+  .grid-h-#{$i} {
+    --grid-row-span: #{$i};
+  }
+  
+  .grid-y-#{$i} {
+    --grid-row-start: #{$i + 1};
+  }
+}
+
+/* ================================================
+   Responsive Breakpoints
+   ================================================ */
+
+/* Extra Large Screens (≥1400px) */
+@media (min-width: 1400px) {
+  .analytics-grid-container {
+    --grid-columns: 12;
+    --grid-gap: 24px;
+  }
+  
+  .analytics-widget {
+    .widget-content {
+      padding: 20px;
+    }
+  }
+}
+
+/* Large Screens (≥1200px) */
+@media (max-width: 1399px) and (min-width: 1200px) {
+  .analytics-grid-container {
+    --grid-columns: 10;
+    --grid-gap: 20px;
+  }
+}
+
+/* Medium Large Screens (≥992px) */
+@media (max-width: 1199px) and (min-width: 992px) {
+  .analytics-grid-container {
+    --grid-columns: 8;
+    --grid-gap: 18px;
+  }
+  
+  .analytics-widget {
+    .widget-content {
+      padding: 16px;
+    }
+    
+    .widget-header {
+      .widget-title {
+        font-size: 13px;
+      }
+    }
+  }
+}
+
+/* Medium Screens (≥768px) */
+@media (max-width: 991px) and (min-width: 768px) {
+  .analytics-grid-container {
+    --grid-columns: 6;
+    --grid-gap: 16px;
+    padding: 16px;
+  }
+  
+  .analytics-widget {
+    min-height: 180px;
+    
+    .widget-content {
+      padding: 14px;
+    }
+    
+    .widget-header {
+      padding: 12px 16px;
+      
+      .widget-title {
+        font-size: 13px;
+      }
+      
+      .widget-controls {
+        .btn {
+          padding: 3px 6px;
+          font-size: 11px;
+        }
+      }
+    }
+  }
+  
+  /* Adjust widget spans for medium screens */
+  .analytics-widget {
+    &.grid-w-8, &.grid-w-9, &.grid-w-10, &.grid-w-11, &.grid-w-12 {
+      --grid-col-span: 6; /* Full width on medium screens */
+    }
+    
+    &.grid-w-6, &.grid-w-7 {
+      --grid-col-span: 6;
+    }
+    
+    &.grid-w-4, &.grid-w-5 {
+      --grid-col-span: 3;
+    }
+    
+    &.grid-w-2, &.grid-w-3 {
+      --grid-col-span: 2;
+    }
+  }
+}
+
+/* Small Screens (≥576px) */
+@media (max-width: 767px) and (min-width: 576px) {
+  .analytics-grid-container {
+    --grid-columns: 4;
+    --grid-gap: 14px;
+    padding: 14px;
+  }
+  
+  .analytics-widget {
+    min-height: 160px;
+    
+    .widget-content {
+      padding: 12px;
+    }
+    
+    .widget-header {
+      padding: 10px 14px;
+      
+      .widget-title {
+        font-size: 12px;
+      }
+      
+      .widget-controls {
+        display: none; /* Hide controls on small screens */
+      }
+    }
+  }
+  
+  /* Adjust widget spans for small screens */
+  .analytics-widget {
+    &.grid-w-6, &.grid-w-7, &.grid-w-8, &.grid-w-9, &.grid-w-10, &.grid-w-11, &.grid-w-12 {
+      --grid-col-span: 4; /* Full width on small screens */
+    }
+    
+    &.grid-w-4, &.grid-w-5 {
+      --grid-col-span: 4;
+    }
+    
+    &.grid-w-2, &.grid-w-3 {
+      --grid-col-span: 2;
+    }
+  }
+}
+
+/* Extra Small Screens (<576px) */
+@media (max-width: 575px) {
+  .analytics-grid-container {
+    --grid-columns: 2;
+    --grid-gap: 12px;
+    padding: 12px;
+    grid-template-columns: 1fr; /* Single column on mobile */
+  }
+  
+  .analytics-widget {
+    --grid-col-span: 1 !important;
+    --grid-col-start: 1 !important;
+    min-height: 140px;
+    margin-bottom: var(--grid-gap);
+    
+    .widget-content {
+      padding: 10px;
+    }
+    
+    .widget-header {
+      padding: 8px 12px;
+      
+      .widget-title {
+        font-size: 12px;
+      }
+      
+      .widget-controls {
+        display: none;
+      }
+    }
+  }
+  
+  /* Mobile-specific adjustments */
+  .o_analytics_dashboard_view {
+    .o_control_panel {
+      padding: 8px 12px;
+      
+      .btn {
+        padding: 6px 10px;
+        font-size: 12px;
+        
+        .fa {
+          margin-right: 4px;
+        }
+      }
+      
+      .dropdown-menu {
+        font-size: 13px;
+      }
+    }
+  }
+  
+  .o_analytics_field_selector {
+    width: 100% !important;
+    border-left: none;
+    border-top: 1px solid var(--analytics-border-color);
+    
+    .field-selector-content {
+      padding: 16px;
+    }
+    
+    .field-category {
+      margin-bottom: 20px;
+      
+      .field-item {
+        padding: 12px;
+        margin: 8px 0;
+        
+        .field-name {
+          font-size: 13px;
+        }
+        
+        .field-type {
+          font-size: 11px;
+        }
+      }
+    }
+    
+    .drop-zone {
+      min-height: 60px;
+      margin-bottom: 16px;
+      
+      .drop-zone-header {
+        font-size: 13px;
+      }
+      
+      .drop-zone-placeholder {
+        font-size: 12px;
+      }
+    }
+  }
+  
+  .o_analytics_filter_panel {
+    margin: 0 12px;
+    padding: 16px;
+    
+    .quick-filter-btn {
+      padding: 8px 12px;
+      font-size: 12px;
+      margin: 4px 0;
+    }
+    
+    .filter-item {
+      .card-header {
+        padding: 10px 14px;
+        font-size: 13px;
+      }
+      
+      .card-body {
+        padding: 14px;
+      }
+    }
+  }
+}
+
+/* ================================================
+   Touch and Mobile Interactions
+   ================================================ */
+
+@media (pointer: coarse) {
+  /* Increase touch targets for mobile */
+  .analytics-widget {
+    .widget-controls {
+      .btn {
+        min-width: 36px;
+        min-height: 36px;
+      }
+    }
+  }
+  
+  .o_analytics_field_selector {
+    .field-item {
+      min-height: 44px;
+      display: flex;
+      align-items: center;
+    }
+  }
+  
+  .o_analytics_filter_panel {
+    .quick-filter-btn {
+      min-height: 44px;
+      display: flex;
+      align-items: center;
+    }
+  }
+  
+  /* Improve scrolling on touch devices */
+  .o_analytics_dashboard_renderer,
+  .field-selector-content,
+  .filter-panel-content {
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+/* ================================================
+   Print Styles for Responsive Layout
+   ================================================ */
+
+@media print {
+  .analytics-grid-container {
+    --grid-columns: 2;
+    --grid-gap: 10px;
+    padding: 0;
+    grid-template-columns: 1fr 1fr;
+  }
+  
+  .analytics-widget {
+    --grid-col-span: 1 !important;
+    break-inside: avoid;
+    margin-bottom: 15px;
+    box-shadow: none !important;
+    border: 1px solid #ddd !important;
+    
+    .widget-header {
+      background: #f5f5f5 !important;
+      color: #333 !important;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+    
+    .widget-content {
+      padding: 10px !important;
+    }
+  }
+  
+  /* Force single column for very wide widgets */
+  .analytics-widget.grid-w-8,
+  .analytics-widget.grid-w-9,
+  .analytics-widget.grid-w-10,
+  .analytics-widget.grid-w-11,
+  .analytics-widget.grid-w-12 {
+    --grid-col-span: 2 !important;
+  }
+}
+
+/* ================================================
+   Accessibility Improvements
+   ================================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  .analytics-widget,
+  .analytics-grid-item {
+    transition: none !important;
+    animation: none !important;
+  }
+  
+  .chart-canvas {
+    /* Disable chart animations for users who prefer reduced motion */
+    --chart-animation-duration: 0 !important;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .analytics-widget {
+    border: 2px solid;
+    box-shadow: none;
+    
+    .widget-header {
+      border-bottom: 2px solid;
+    }
+  }
+  
+  .analytics-grid-container {
+    --analytics-shadow: none;
+  }
+}
+
+/* ================================================
+   Container Query Support (Future-proofing)
+   ================================================ */
+
+/* When container queries are supported, use them for better responsive design */
+@supports (container-type: inline-size) {
+  .analytics-widget {
+    container-type: inline-size;
+  }
+  
+  /* Adjust chart legend position based on widget width */
+  @container (max-width: 300px) {
+    .chart-container .chart-canvas {
+      /* Small widget adjustments */
+      font-size: 11px;
+    }
+  }
+  
+  @container (min-width: 400px) {
+    .chart-container .chart-canvas {
+      /* Large widget adjustments */
+      font-size: 13px;
+    }
+  }
+}
+
+/* ================================================
+   Performance Optimizations
+   ================================================ */
+
+/* Use transform3d to enable hardware acceleration */
+.analytics-widget {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+/* Optimize rendering for animations */
+.analytics-widget.dragging {
+  will-change: transform;
+}
+
+.analytics-widget:not(.dragging) {
+  will-change: auto;
+}
+
+/* ================================================
+   Dark Mode Responsive Adjustments
+   ================================================ */
+
+[data-theme="dark"] {
+  .analytics-grid-container {
+    background: var(--analytics-dark-bg);
+  }
+  
+  .analytics-widget {
+    background: #34495e;
+    border-color: #4a6084;
+    
+    .widget-header {
+      background: linear-gradient(135deg, #3c5372 0%, #2c3e50 100%);
+      border-color: #4a6084;
+    }
+  }
+  
+  @media (max-width: 767px) {
+    .o_analytics_dashboard_view {
+      background: #1a252f;
+      
+      .o_control_panel {
+        background: #2c3e50;
+        border-color: #4a6084;
+      }
+    }
+  }
+}

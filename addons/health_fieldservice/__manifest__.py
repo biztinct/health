@@ -54,6 +54,7 @@
         'base',
         'mail',
         'account',  # For invoice generation
+        'sale',     # For quote/sales order integration
         'hr',
         'contacts',
         'web',
@@ -82,6 +83,7 @@
         'views/health_portable_equipment_views.xml',
         'views/health_clinical_protocol_views.xml',
         'views/health_fieldservice_communication_views.xml',
+        'views/health_quote_views.xml',
         'views/health_fieldservice_menus.xml',
         
         # Views - Staff Assignment  

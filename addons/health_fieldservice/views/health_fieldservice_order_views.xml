@@ -31,12 +31,7 @@
                             invisible="state != 'completed' or invoice_id"
                             help="Create final invoice and initiate payment workflow (Pay Now/Pay Later)"/>
                     
-                    <button name="action_view_invoice" type="object" 
-                            string="📄 View Invoice" class="btn-info"
-                            invisible="not invoice_id"
-                            help="View the generated invoice"/>
-                    
-                    <!-- Invoice creation button temporarily removed - use Healthcare Invoicing menu instead -->
+                    <!-- View Invoice button removed - duplicate of Invoices smart button -->
                     
                     <button name="action_close_fso" type="object" 
                             string="📁 Close FSO" 
@@ -47,6 +42,12 @@
                             string="❌ Cancel Booking"
                             invisible="state in ['completed', 'cancelled']"
                             confirm="Are you sure you want to cancel this booking?"/>
+                    
+                    <button name="action_save_and_create_quote_if_needed" type="object" 
+                            string="💾 Save &amp; Create Quote" class="oe_highlight"
+                            invisible="sale_order_id"
+                            groups="health_base.group_healthcare_operations_manager"
+                            help="Save FSO and automatically create/open quote for editing"/>
                     
                     <field name="stage_id" widget="statusbar" options="{'clickable': '1'}"/>
                 </header>
@@ -69,6 +70,35 @@
                                 invisible="not assignment_count">
                             <field name="assignment_count" widget="statinfo" string="Assignments"/>
                         </button>
+                        
+                        <button name="action_create_and_open_quote" 
+                                type="object" 
+                                class="oe_stat_button" 
+                                icon="fa-file-text"
+                                invisible="sale_order_id"
+                                groups="health_base.group_healthcare_operations_manager">
+                            <div class="o_field_widget o_stat_info">
+                                <span class="o_stat_text">Create</span>
+                                <span class="o_stat_text">Quote</span>
+                            </div>
+                        </button>
+                        
+                        <button name="action_view_quote" 
+                                type="object" 
+                                class="oe_stat_button" 
+                                icon="fa-file-text-o"
+                                invisible="not sale_order_id"
+                                groups="health_base.group_healthcare_operations_manager">
+                            <field name="quote_count" widget="statinfo" string="Quote"/>
+                        </button>
+                        
+                        <!-- Hidden button to trigger quote popup after save -->
+                        <button name="action_check_and_open_quote_if_needed" 
+                                type="object" 
+                                string="Check Quote" 
+                                invisible="1"
+                                id="auto_quote_trigger"
+                                groups="health_base.group_healthcare_operations_manager"/>
                     </div>
                     
                     <div class="oe_title">
@@ -112,9 +142,11 @@
                             <field name="duration_minutes" readonly="1"/>
                         </group>
                         
-                        <group string="Invoice Status">
+                        <group string="Quote &amp; Invoice Status">
+                            <field name="sale_order_id" readonly="1" string="Healthcare Quote"/>
+                            <field name="quote_state" widget="badge" invisible="not sale_order_id"/>
                             <field name="invoice_id" readonly="1"/>
-                            <field name="invoice_state" widget="badge"/>
+                            <field name="invoice_state" widget="badge" invisible="not invoice_id"/>
                         </group>
                     </group>
                     

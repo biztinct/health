@@ -199,7 +199,7 @@ class HealthFieldserviceOrder(models.Model):
             'partner_id': self.patient_id.id,
             'invoice_origin': f'FSO: {self.name}',
             'invoice_line_ids': [(0, 0, {
-                'name': f'{self.service_type_id.name or "Healthcare Service"} - {self.name}',
+                'name': f'{dict(self._fields["service_type"].selection).get(self.service_type, "Healthcare Service")} - {self.name}',
                 'quantity': 1,
                 'price_unit': amount,
                 'product_uom_id': self.env.ref('uom.product_uom_unit').id,

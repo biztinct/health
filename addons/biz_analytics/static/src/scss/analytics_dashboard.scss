@@ -1,0 +1,547 @@
+/* ================================================
+   Business Analytics Dashboard Styles
+   ================================================ */
+
+// Variables
+:root {
+  --analytics-primary-color: #875A7B;
+  --analytics-secondary-color: #E94B3C;
+  --analytics-accent-color: #00A09D;
+  --analytics-success-color: #00C4A7;
+  --analytics-warning-color: #F19600;
+  --analytics-danger-color: #E94B3C;
+  --analytics-light-bg: #f8f9fa;
+  --analytics-dark-bg: #2c3e50;
+  --analytics-border-color: #e0e6ed;
+  --analytics-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  --analytics-shadow-hover: 0 4px 20px rgba(0, 0, 0, 0.12);
+  --analytics-border-radius: 12px;
+  --analytics-transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ================================================
+   Dashboard Layout
+   ================================================ */
+
+.o_analytics_dashboard_view {
+  height: 100vh;
+  background: var(--analytics-light-bg);
+  
+  .o_control_panel {
+    background: white;
+    border-bottom: 1px solid var(--analytics-border-color);
+    box-shadow: var(--analytics-shadow);
+    z-index: 10;
+  }
+}
+
+.o_analytics_dashboard_content {
+  position: relative;
+  height: calc(100vh - 120px);
+  overflow: hidden;
+}
+
+/* ================================================
+   Dashboard Renderer
+   ================================================ */
+
+.o_analytics_dashboard_renderer {
+  position: relative;
+  height: 100%;
+  padding: 20px;
+  overflow: auto;
+  
+  &.drag-over {
+    background: rgba(var(--analytics-primary-color), 0.1);
+    border: 2px dashed var(--analytics-primary-color);
+  }
+}
+
+.o_analytics_widgets_container {
+  position: relative;
+  min-height: 100%;
+  background-image: 
+    linear-gradient(rgba(0,0,0,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,0,0,0.03) 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+
+/* ================================================
+   Empty State
+   ================================================ */
+
+.o_analytics_empty_state {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 400px;
+  max-width: 90%;
+  
+  .fa {
+    color: #bdc3c7;
+  }
+  
+  .btn {
+    border-radius: 25px;
+    padding: 12px 24px;
+    font-weight: 600;
+    transition: var(--analytics-transition);
+    
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--analytics-shadow-hover);
+    }
+  }
+}
+
+/* ================================================
+   Widget Styles
+   ================================================ */
+
+.analytics-widget {
+  background: white;
+  border-radius: var(--analytics-border-radius);
+  box-shadow: var(--analytics-shadow);
+  transition: var(--analytics-transition);
+  overflow: hidden;
+  cursor: pointer;
+  border: 2px solid transparent;
+  
+  &:hover {
+    box-shadow: var(--analytics-shadow-hover);
+    transform: translateY(-2px);
+  }
+  
+  &.selected {
+    border-color: var(--analytics-primary-color);
+    box-shadow: 0 0 0 3px rgba(135, 90, 123, 0.2);
+  }
+  
+  &.edit-mode {
+    cursor: move;
+    
+    &:hover {
+      border-color: var(--analytics-accent-color);
+    }
+  }
+  
+  .widget-header {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-bottom: 1px solid var(--analytics-border-color);
+    
+    .widget-title {
+      font-weight: 600;
+      color: #2c3e50;
+      font-size: 14px;
+    }
+    
+    .widget-controls {
+      opacity: 0;
+      transition: var(--analytics-transition);
+      
+      .btn {
+        padding: 4px 8px;
+        border-radius: 6px;
+        font-size: 12px;
+      }
+    }
+  }
+  
+  &:hover .widget-controls,
+  &.selected .widget-controls {
+    opacity: 1;
+  }
+  
+  .widget-content {
+    position: relative;
+    height: calc(100% - 50px);
+    
+    .chart-container {
+      padding: 10px;
+    }
+    
+    .chart-canvas {
+      max-height: 100%;
+    }
+  }
+}
+
+/* ================================================
+   Widget Resize Handles
+   ================================================ */
+
+.widget-resize-handles {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  
+  .resize-handle {
+    position: absolute;
+    background: var(--analytics-primary-color);
+    opacity: 0;
+    transition: var(--analytics-transition);
+    pointer-events: all;
+    cursor: se-resize;
+    
+    &.resize-se {
+      bottom: 0;
+      right: 0;
+      width: 12px;
+      height: 12px;
+      border-radius: 6px 0 var(--analytics-border-radius) 0;
+    }
+    
+    &.resize-s {
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 20px;
+      height: 4px;
+      border-radius: 2px 2px 0 0;
+      cursor: s-resize;
+    }
+    
+    &.resize-e {
+      right: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 4px;
+      height: 20px;
+      border-radius: 2px 0 0 2px;
+      cursor: e-resize;
+    }
+  }
+}
+
+.analytics-widget.edit-mode:hover .resize-handle,
+.analytics-widget.selected .resize-handle {
+  opacity: 0.8;
+}
+
+/* ================================================
+   Widget Types
+   ================================================ */
+
+.widget-chart {
+  .chart-container {
+    padding: 15px;
+  }
+}
+
+.widget-table {
+  .table-container {
+    max-height: 100%;
+    overflow: auto;
+    
+    table {
+      font-size: 13px;
+      
+      th {
+        background: var(--analytics-light-bg);
+        font-weight: 600;
+        color: #2c3e50;
+      }
+    }
+  }
+}
+
+.widget-metric {
+  .metric-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: 100%;
+    padding: 20px;
+    
+    .metric-value {
+      font-size: 2.5em;
+      font-weight: 700;
+      color: var(--analytics-primary-color);
+      margin-bottom: 10px;
+    }
+    
+    .metric-label {
+      font-size: 1.1em;
+      color: #6c757d;
+      margin-bottom: 5px;
+    }
+    
+    .metric-change {
+      font-size: 0.9em;
+      
+      &.positive {
+        color: var(--analytics-success-color);
+      }
+      
+      &.negative {
+        color: var(--analytics-danger-color);
+      }
+    }
+  }
+}
+
+/* ================================================
+   Filter Panel
+   ================================================ */
+
+.o_analytics_filter_panel {
+  background: white;
+  padding: 20px;
+  border-radius: var(--analytics-border-radius);
+  box-shadow: var(--analytics-shadow);
+  margin: 0 20px;
+  
+  .filter-group {
+    margin-bottom: 15px;
+    
+    label {
+      font-weight: 600;
+      color: #2c3e50;
+      margin-bottom: 5px;
+      display: block;
+    }
+    
+    .form-control,
+    .form-select {
+      border-radius: 8px;
+      border: 1px solid var(--analytics-border-color);
+      padding: 8px 12px;
+      
+      &:focus {
+        border-color: var(--analytics-primary-color);
+        box-shadow: 0 0 0 3px rgba(135, 90, 123, 0.1);
+      }
+    }
+  }
+}
+
+/* ================================================
+   Field Selector Panel
+   ================================================ */
+
+.o_analytics_field_selector {
+  border-left: 1px solid var(--analytics-border-color);
+  animation: slideInRight 0.3s ease-out;
+  
+  .field-selector-header {
+    padding: 20px;
+    background: var(--analytics-primary-color);
+    color: white;
+    
+    h5 {
+      margin: 0;
+      font-weight: 600;
+    }
+    
+    .btn-close {
+      filter: invert(1);
+    }
+  }
+  
+  .field-selector-content {
+    padding: 20px;
+    height: calc(100% - 80px);
+    overflow-y: auto;
+  }
+  
+  .field-category {
+    margin-bottom: 25px;
+    
+    .category-header {
+      background: var(--analytics-light-bg);
+      padding: 10px 15px;
+      border-radius: 8px;
+      margin-bottom: 10px;
+      font-weight: 600;
+      color: #2c3e50;
+    }
+    
+    .field-item {
+      padding: 8px 15px;
+      margin: 5px 0;
+      background: white;
+      border: 1px solid var(--analytics-border-color);
+      border-radius: 6px;
+      cursor: grab;
+      transition: var(--analytics-transition);
+      
+      &:hover {
+        background: var(--analytics-light-bg);
+        border-color: var(--analytics-primary-color);
+        transform: translateX(3px);
+      }
+      
+      &:active {
+        cursor: grabbing;
+      }
+      
+      .field-name {
+        font-weight: 500;
+        color: #2c3e50;
+        margin-bottom: 2px;
+      }
+      
+      .field-type {
+        font-size: 12px;
+        color: #6c757d;
+      }
+    }
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+/* ================================================
+   Loading States
+   ================================================ */
+
+.o_analytics_loading {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(4px);
+  
+  .spinner-border {
+    width: 3rem;
+    height: 3rem;
+  }
+}
+
+/* ================================================
+   Responsive Design
+   ================================================ */
+
+@media (max-width: 1200px) {
+  .o_analytics_dashboard_renderer {
+    padding: 15px;
+  }
+  
+  .analytics-widget {
+    .widget-content {
+      padding: 15px;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .o_analytics_dashboard_renderer {
+    padding: 10px;
+  }
+  
+  .o_analytics_field_selector {
+    width: 100% !important;
+  }
+  
+  .analytics-widget {
+    position: relative !important;
+    width: 100% !important;
+    height: 300px !important;
+    margin-bottom: 20px;
+    left: 0 !important;
+    top: auto !important;
+  }
+  
+  .o_analytics_widgets_container {
+    display: flex;
+    flex-direction: column;
+  }
+}
+
+/* ================================================
+   Dark Theme Support
+   ================================================ */
+
+[data-theme="dark"] {
+  .o_analytics_dashboard_view {
+    background: var(--analytics-dark-bg);
+    color: white;
+  }
+  
+  .analytics-widget {
+    background: #34495e;
+    color: white;
+    
+    .widget-header {
+      background: linear-gradient(135deg, #3c5372 0%, #2c3e50 100%);
+      border-color: #4a6084;
+      
+      .widget-title {
+        color: white;
+      }
+    }
+  }
+  
+  .o_analytics_filter_panel {
+    background: #34495e;
+    color: white;
+    
+    .form-control,
+    .form-select {
+      background: #2c3e50;
+      border-color: #4a6084;
+      color: white;
+      
+      &:focus {
+        background: #2c3e50;
+        border-color: var(--analytics-primary-color);
+        color: white;
+      }
+    }
+  }
+  
+  .o_analytics_field_selector {
+    background: #34495e;
+    color: white;
+    
+    .field-item {
+      background: #2c3e50;
+      border-color: #4a6084;
+      color: white;
+      
+      &:hover {
+        background: #3c5372;
+        border-color: var(--analytics-primary-color);
+      }
+    }
+  }
+}
+
+/* ================================================
+   Print Styles
+   ================================================ */
+
+@media print {
+  .o_analytics_dashboard_view {
+    .o_control_panel,
+    .widget-controls,
+    .widget-resize-handles,
+    .o_analytics_add_widget {
+      display: none !important;
+    }
+    
+    .analytics-widget {
+      box-shadow: none !important;
+      border: 1px solid #ccc !important;
+      break-inside: avoid;
+      margin-bottom: 20px;
+    }
+    
+    .o_analytics_dashboard_content {
+      height: auto !important;
+      overflow: visible !important;
+    }
+    
+    .o_analytics_widgets_container {
+      display: flex;
+      flex-direction: column;
+    }
+  }
+}

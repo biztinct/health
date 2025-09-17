@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Healthcare Quote Form View (Minimal Safe Version) -->
+    <record id="view_healthcare_quote_form" model="ir.ui.view">
+        <field name="name">healthcare.quote.form</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="arch" type="xml">
+            <!-- Simplify header -->
+            <xpath expr="//header" position="replace">
+                <header>
+                    <div class="alert alert-info" groups="health_base.group_healthcare_nurse">
+                        <strong>Nurse Access:</strong> You can only edit quantities and discounts in this quote.
+                    </div>
+                </header>
+            </xpath>
+            
+            <!-- Customize title -->
+            <xpath expr="//div[@class='oe_title']" position="replace">
+                <div class="oe_title">
+                    <h1 class="d-flex justify-content-between align-items-center">
+                        <field name="name" class="o_text_overflow" readonly="1"/>
+                    </h1>
+                    <h2>
+                        <span class="badge badge-info">Healthcare Quote</span>
+                    </h2>
+                </div>
+            </xpath>
+            
+            <!-- Hide partner field -->
+            <xpath expr="//field[@name='partner_id']" position="replace">
+            </xpath>
+            
+            <!-- Hide date field -->
+            <xpath expr="//field[@name='date_order']" position="replace">
+            </xpath>
+            
+            <!-- Hide validity date -->
+            <xpath expr="//field[@name='validity_date']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            
+            <!-- Hide pricelist -->
+            <xpath expr="//field[@name='pricelist_id']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            
+            <!-- Hide payment terms -->
+            <xpath expr="//field[@name='payment_term_id']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            
+            <!-- Remove remaining quotation date field -->
+            <xpath expr="//label[@for='date_order']" position="replace">
+            </xpath>
+            
+            <!-- Hide unwanted tabs -->
+            <xpath expr="//page[@name='optional_products']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            
+            <xpath expr="//page[@name='other_information']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            
+            <xpath expr="//page[@name='customer_signature']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Healthcare Quote List View -->
+    <record id="view_healthcare_quote_list" model="ir.ui.view">
+        <field name="name">healthcare.quote.list</field>
+        <field name="model">sale.order</field>
+        <field name="priority">50</field>
+        <field name="arch" type="xml">
+            <list string="Healthcare Quotes" 
+                  decoration-info="state == 'draft'" 
+                  decoration-muted="state == 'cancel'"
+                  decoration-bf="state == 'sale'">
+                <field name="name" string="Quote Number"/>
+                <field name="origin" string="FSO Reference"/>
+                <field name="partner_id" string="Patient"/>
+                <field name="date_order" string="Quote Date"/>
+                <field name="validity_date" string="Expiration"/>
+                <field name="user_id" string="Salesperson"/>
+                <field name="amount_total" widget="monetary"/>
+                <field name="currency_id" column_invisible="1"/>
+                <field name="state" string="Status"
+                       decoration-info="state == 'draft'"
+                       decoration-warning="state == 'sent'"
+                       decoration-success="state == 'sale'"
+                       decoration-muted="state == 'cancel'"
+                       widget="badge"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Window Action for Healthcare Quotes -->
+    <record id="action_healthcare_quotes" model="ir.actions.act_window">
+        <field name="name">Healthcare Quotes</field>
+        <field name="res_model">sale.order</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('origin', 'ilike', 'FSO')]</field>
+        <field name="context">{
+            'default_pricelist_id': 1,
+            'healthcare_context': True
+        }</field>
+        <field name="view_ids" eval="[(5, 0, 0), 
+                                      (0, 0, {'view_mode': 'list', 'view_id': ref('view_healthcare_quote_list')}),
+                                      (0, 0, {'view_mode': 'form', 'view_id': ref('view_healthcare_quote_form')})]"/>
+    </record>
+
+</odoo>

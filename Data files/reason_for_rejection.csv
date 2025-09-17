@@ -1,0 +1,14 @@
+﻿id,name:vi_VN,name:en_US
+no-service,Không có dịch vụ,No service
+not-specified,Không nói,Not specified
+other,Khác,Other
+wrong-hotline-number,Nhầm số hotline,Wrong hotline number
+address-too-far,Địa chỉ quá xa,Address too far
+price-too-high,Giá quá cao,Price too high
+no-doctor-lt2-5h,Không có bác sĩ <2.5h,No doctor <2.5h
+consultation-only,Chỉ cần tư vấn,Consultation only
+no-prescription,Không có đơn thuốc,No prescription
+still-considering,Vẫn đang cân nhắc,Still considering
+no-equipment-available,Không có máy móc thiết bị,No equipment available
+spam,Spam,Spam
+no-nurse-gt2-5h,Không có điều dưỡng > 2.5h,No nurse >2.5h

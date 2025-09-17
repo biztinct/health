@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Analytics Dashboard Actions -->
+    <record id="action_analytics_dashboard" model="ir.actions.act_window">
+        <field name="name">Analytics Dashboards</field>
+        <field name="res_model">analytics.dashboard</field>
+        <field name="view_mode">kanban,list,form</field>
+        <field name="view_id" ref="view_analytics_dashboard_kanban"/>
+        <field name="context">{}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first Analytics Dashboard!
+            </p>
+            <p>
+                Build interactive dashboards with drag &amp; drop charts, 
+                advanced filters, and real-time data visualization.
+            </p>
+        </field>
+    </record>
+
+    <!-- Analytics Dataset Actions -->
+    <record id="action_analytics_dataset" model="ir.actions.act_window">
+        <field name="name">Analytics Datasets</field>
+        <field name="res_model">analytics.dataset</field>
+        <field name="view_mode">list,form</field>
+        <field name="context">{}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Configure your first Analytics Dataset!
+            </p>
+            <p>
+                Datasets define the data sources for your analytics dashboards.
+                Connect to any Odoo model and configure fields for visualization.
+            </p>
+        </field>
+    </record>
+
+    <!-- Analytics Widget Actions -->
+    <record id="action_analytics_widget" model="ir.actions.act_window">
+        <field name="name">Analytics Widgets</field>
+        <field name="res_model">analytics.widget</field>
+        <field name="view_mode">list,form</field>
+        <field name="context">{}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first Analytics Widget!
+            </p>
+            <p>
+                Widgets are the building blocks of your dashboards.
+                Create charts, tables, metrics, and more.
+            </p>
+        </field>
+    </record>
+
+    <!-- Analytics Dataset Field Actions -->
+    <record id="action_analytics_dataset_field" model="ir.actions.act_window">
+        <field name="name">Dataset Fields</field>
+        <field name="res_model">analytics.dataset.field</field>
+        <field name="view_mode">list,form</field>
+        <field name="context">{}</field>
+    </record>
+
+    <!-- Main Analytics Menu -->
+    <menuitem id="menu_analytics_root" 
+              name="Analytics" 
+              sequence="95"
+              web_icon="biz_analytics,static/description/icon.png"/>
+
+    <!-- Dashboard Submenu -->
+    <menuitem id="menu_analytics_dashboard" 
+              name="Dashboards" 
+              parent="menu_analytics_root" 
+              action="action_analytics_dashboard" 
+              sequence="10"/>
+
+    <!-- Configuration Submenu -->
+    <menuitem id="menu_analytics_config" 
+              name="Configuration" 
+              parent="menu_analytics_root" 
+              sequence="90"/>
+
+    <menuitem id="menu_analytics_dataset" 
+              name="Datasets" 
+              parent="menu_analytics_config" 
+              action="action_analytics_dataset" 
+              sequence="10"/>
+
+    <menuitem id="menu_analytics_widget" 
+              name="Widgets" 
+              parent="menu_analytics_config" 
+              action="action_analytics_widget" 
+              sequence="20"/>
+
+    <menuitem id="menu_analytics_dataset_field" 
+              name="Dataset Fields" 
+              parent="menu_analytics_config" 
+              action="action_analytics_dataset_field" 
+              sequence="30"/>
+
+</odoo>

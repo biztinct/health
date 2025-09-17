@@ -1,0 +1,464 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Analytics Dashboard Form View -->
+    <record id="view_analytics_dashboard_form" model="ir.ui.view">
+        <field name="name">analytics.dashboard.form</field>
+        <field name="model">analytics.dashboard</field>
+        <field name="arch" type="xml">
+            <form string="Analytics Dashboard" class="o_form_analytics_dashboard">
+                <header>
+                    <button name="action_preview_dashboard" type="object" 
+                            string="Preview Dashboard" class="btn-primary"/>
+                    <button name="refresh_dashboard_data" type="object" 
+                            string="Refresh Data" class="btn-secondary"/>
+                    <button name="action_duplicate_dashboard" type="object" 
+                            string="Duplicate" class="btn-secondary"/>
+                    <field name="active" widget="boolean_toggle" invisible="1"/>
+                </header>
+                <sheet string="Dashboard Configuration">
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_widgets" type="object" 
+                                class="oe_stat_button" icon="fa-pie-chart">
+                            <field name="widget_count" widget="statinfo" 
+                                   string="Widgets"/>
+                        </button>
+                    </div>
+                    
+                    <div class="oe_title">
+                        <h1 class="d-flex justify-content-between align-items-center">
+                            <field name="name" class="o_text_overflow" placeholder="Dashboard Name"/>
+                        </h1>
+                    </div>
+                    
+                    <group>
+                        <group string="Basic Information">
+                            <field name="description" placeholder="Describe your dashboard"/>
+                            <field name="sequence"/>
+                            <field name="color" widget="color"/>
+                            <field name="last_updated" readonly="1"/>
+                        </group>
+                        <group string="Layout &amp; Styling">
+                            <field name="layout_type"/>
+                            <field name="columns" invisible="layout_type != 'grid'"/>
+                            <field name="widget_spacing"/>
+                            <field name="theme"/>
+                            <field name="background_color" widget="color"/>
+                            <field name="accent_color" widget="color"/>
+                        </group>
+                    </group>
+                    
+                    <notebook>
+                        <page string="Widgets" name="widgets">
+                            <field name="widget_ids" nolabel="1">
+                                <list string="Dashboard Widgets">
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="name"/>
+                                    <field name="widget_type"/>
+                                    <field name="chart_type"/>
+                                    <field name="dataset_id"/>
+                                    <field name="position_x"/>
+                                    <field name="position_y"/>
+                                    <field name="width"/>
+                                    <field name="height"/>
+                                    <field name="active"/>
+                                </list>
+                            </field>
+                        </page>
+                        
+                        <page string="Datasets" name="datasets">
+                            <field name="dataset_ids" widget="many2many_tags" nolabel="1"/>
+                            <div class="mt-3">
+                                <p class="text-muted">
+                                    <small>Select the datasets that can be used by widgets in this dashboard.</small>
+                                </p>
+                            </div>
+                        </page>
+                        
+                        <page string="Access Control" name="access">
+                            <group>
+                                <group string="Public Access">
+                                    <field name="is_public"/>
+                                    <div invisible="not is_public" class="alert alert-info">
+                                        This dashboard will be visible to all users.
+                                    </div>
+                                </group>
+                                <group string="Restricted Access" invisible="is_public">
+                                    <field name="user_ids" widget="many2many_tags" 
+                                           placeholder="Select allowed users"/>
+                                    <field name="group_ids" widget="many2many_tags" 
+                                           placeholder="Select allowed groups"/>
+                                </group>
+                            </group>
+                        </page>
+                        
+                        <page string="Auto-refresh" name="refresh">
+                            <group>
+                                <group string="Refresh Settings">
+                                    <field name="auto_refresh"/>
+                                    <field name="refresh_interval" 
+                                           invisible="not auto_refresh"
+                                           widget="integer"/>
+                                </group>
+                                <group string="Export Settings">
+                                    <field name="allow_export"/>
+                                    <field name="export_formats" 
+                                           invisible="not allow_export"/>
+                                </group>
+                            </group>
+                        </page>
+                        
+                        <page string="Advanced" name="advanced">
+                            <group>
+                                <field name="filter_data" widget="ace" 
+                                       options="{'mode': 'json'}" 
+                                       placeholder='{"filter_name": "default_value"}'/>
+                                <field name="layout_data" widget="ace" 
+                                       options="{'mode': 'json'}"
+                                       placeholder='{"grid_size": 20, "snap": true}'/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter reload_on_follower="True"/>
+            </form>
+        </field>
+    </record>
+
+    <!-- Analytics Dashboard List View -->
+    <record id="view_analytics_dashboard_list" model="ir.ui.view">
+        <field name="name">analytics.dashboard.list</field>
+        <field name="model">analytics.dashboard</field>
+        <field name="arch" type="xml">
+            <list string="Analytics Dashboards" default_order="sequence,name" 
+                  sample="1" multi_edit="1">
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="description"/>
+                <field name="layout_type"/>
+                <field name="widget_count"/>
+                <field name="theme"/>
+                <field name="is_public" widget="boolean_toggle"/>
+                <field name="last_updated"/>
+                <field name="active" widget="boolean_toggle"/>
+                <field name="color" widget="color" invisible="1"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Analytics Dashboard Kanban View -->
+    <record id="view_analytics_dashboard_kanban" model="ir.ui.view">
+        <field name="name">analytics.dashboard.kanban</field>
+        <field name="model">analytics.dashboard</field>
+        <field name="arch" type="xml">
+            <kanban string="Analytics Dashboards" default_group_by="theme" sample="1">
+                <field name="id"/>
+                <field name="name"/>
+                <field name="description"/>
+                <field name="widget_count"/>
+                <field name="color"/>
+                <field name="theme"/>
+                <field name="is_public"/>
+                <field name="last_updated"/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div t-attf-class="oe_kanban_color_{{ record.color.raw_value }} oe_kanban_card">
+                            <div class="oe_kanban_content">
+                                <div class="o_kanban_record_top mb-2">
+                                    <div class="o_kanban_record_headings">
+                                        <strong class="o_kanban_record_title">
+                                            <field name="name"/>
+                                        </strong>
+                                        <div class="o_kanban_record_subtitle text-muted">
+                                            <field name="description"/>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="o_kanban_record_body">
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <i class="fa fa-pie-chart"/> 
+                                            <field name="widget_count"/> widgets
+                                        </div>
+                                        <div class="col-6">
+                                            <i t-if="record.is_public.raw_value" 
+                                               class="fa fa-globe text-success" 
+                                               title="Public Dashboard"/>
+                                            <i t-else="" 
+                                               class="fa fa-lock text-warning" 
+                                               title="Private Dashboard"/>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="o_kanban_record_bottom mt-2">
+                                    <div class="oe_kanban_bottom_left">
+                                        <small class="text-muted">
+                                            Updated: <field name="last_updated" widget="relative"/>
+                                        </small>
+                                    </div>
+                                    <div class="oe_kanban_bottom_right">
+                                        <button name="action_preview_dashboard" 
+                                                type="object" 
+                                                class="btn btn-primary btn-sm">
+                                            <i class="fa fa-eye"/> Preview
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- Analytics Dataset Form View -->
+    <record id="view_analytics_dataset_form" model="ir.ui.view">
+        <field name="name">analytics.dataset.form</field>
+        <field name="model">analytics.dataset</field>
+        <field name="arch" type="xml">
+            <form string="Analytics Dataset">
+                <header>
+                    <button name="action_refresh_data" type="object" 
+                            string="Refresh Data" class="btn-primary"/>
+                    <button name="action_view_records" type="object" 
+                            string="View Records" class="btn-secondary"/>
+                    <button name="action_configure_fields" type="object" 
+                            string="Configure Fields" class="btn-secondary"/>
+                </header>
+                <sheet string="Dataset Configuration">
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_configure_fields" type="object" 
+                                class="oe_stat_button" icon="fa-columns">
+                            <field name="field_count" widget="statinfo" 
+                                   string="Fields"/>
+                        </button>
+                        <button name="action_view_records" type="object" 
+                                class="oe_stat_button" icon="fa-database">
+                            <field name="record_count" widget="statinfo" 
+                                   string="Records"/>
+                        </button>
+                    </div>
+                    
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="Dataset Name"/>
+                        </h1>
+                    </div>
+                    
+                    <group>
+                        <group string="Basic Information">
+                            <field name="description"/>
+                            <field name="sequence"/>
+                            <field name="color" widget="color"/>
+                            <field name="active"/>
+                        </group>
+                        <group string="Data Source">
+                            <field name="model_id"/>
+                            <field name="model_name" readonly="1"/>
+                            <field name="last_refresh" readonly="1"/>
+                        </group>
+                    </group>
+                    
+                    <notebook>
+                        <page string="Fields" name="fields">
+                            <field name="available_field_ids" nolabel="1">
+                                <list string="Dataset Fields" editable="bottom">
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="field_name"/>
+                                    <field name="field_label"/>
+                                    <field name="field_type"/>
+                                    <field name="aggregation_method"/>
+                                    <field name="number_format"/>
+                                    <field name="active"/>
+                                </list>
+                            </field>
+                        </page>
+                        
+                        <page string="Filters &amp; Domain" name="filters">
+                            <group>
+                                <field name="domain" widget="ace" 
+                                       options="{'mode': 'python'}"
+                                       placeholder='[("field", "operator", "value")]'/>
+                                <field name="default_filters" widget="ace" 
+                                       options="{'mode': 'json'}"
+                                       placeholder='{"filter_name": "default_value"}'/>
+                            </group>
+                        </page>
+                        
+                        <page string="Access Control" name="access">
+                            <group>
+                                <field name="user_ids" widget="many2many_tags"/>
+                                <field name="group_ids" widget="many2many_tags"/>
+                            </group>
+                        </page>
+                        
+                        <page string="Auto-refresh" name="refresh">
+                            <group>
+                                <field name="auto_refresh"/>
+                                <field name="refresh_interval" 
+                                       invisible="not auto_refresh"/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter reload_on_follower="True"/>
+            </form>
+        </field>
+    </record>
+
+    <!-- Analytics Dataset List View -->
+    <record id="view_analytics_dataset_list" model="ir.ui.view">
+        <field name="name">analytics.dataset.list</field>
+        <field name="model">analytics.dataset</field>
+        <field name="arch" type="xml">
+            <list string="Analytics Datasets" default_order="sequence,name">
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="description"/>
+                <field name="model_name"/>
+                <field name="field_count"/>
+                <field name="record_count"/>
+                <field name="last_refresh"/>
+                <field name="active" widget="boolean_toggle"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Analytics Widget Form View -->
+    <record id="view_analytics_widget_form" model="ir.ui.view">
+        <field name="name">analytics.widget.form</field>
+        <field name="model">analytics.widget</field>
+        <field name="arch" type="xml">
+            <form string="Analytics Widget">
+                <header>
+                    <button name="action_refresh_data" type="object" 
+                            string="Refresh Data" class="btn-primary"/>
+                    <button name="action_preview_widget" type="object" 
+                            string="Preview" class="btn-secondary"/>
+                    <button name="action_duplicate_widget" type="object" 
+                            string="Duplicate" class="btn-secondary"/>
+                </header>
+                <sheet string="Widget Configuration">
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="Widget Name"/>
+                        </h1>
+                    </div>
+                    
+                    <group>
+                        <group string="Basic Configuration">
+                            <field name="dashboard_id"/>
+                            <field name="dataset_id"/>
+                            <field name="widget_type"/>
+                            <field name="chart_type" 
+                                   invisible="widget_type != 'chart'"/>
+                            <field name="sequence"/>
+                            <field name="active"/>
+                        </group>
+                        <group string="Position &amp; Size">
+                            <field name="position_x"/>
+                            <field name="position_y"/>
+                            <field name="width"/>
+                            <field name="height"/>
+                        </group>
+                    </group>
+                    
+                    <notebook>
+                        <page string="Data Configuration" name="data">
+                            <group>
+                                <group string="Axis Configuration">
+                                    <field name="x_axis_field_id" 
+                                           domain="[('dataset_id', '=', dataset_id)]"/>
+                                    <field name="y_axis_field_id" 
+                                           domain="[('dataset_id', '=', dataset_id)]"/>
+                                    <field name="color_field_id" 
+                                           domain="[('dataset_id', '=', dataset_id)]"/>
+                                    <field name="aggregation_method"/>
+                                </group>
+                                <group string="Additional Fields">
+                                    <field name="additional_field_ids" 
+                                           widget="many2many_tags"
+                                           domain="[('dataset_id', '=', dataset_id)]"/>
+                                </group>
+                            </group>
+                            <group string="Filters">
+                                <field name="widget_filters" widget="ace" 
+                                       options="{'mode': 'python'}"
+                                       placeholder='[("field", "operator", "value")]'/>
+                            </group>
+                        </page>
+                        
+                        <page string="Display Options" name="display">
+                            <group>
+                                <group string="Visual Elements">
+                                    <field name="title_display"/>
+                                    <field name="legend_display"/>
+                                    <field name="grid_display"/>
+                                    <field name="animation_enabled"/>
+                                </group>
+                                <group string="Colors &amp; Theme">
+                                    <field name="color_scheme"/>
+                                    <field name="custom_colors" 
+                                           invisible="color_scheme != 'custom'"
+                                           widget="ace" 
+                                           options="{'mode': 'json'}"
+                                           placeholder='["#875A7B", "#E94B3C", "#00A09D"]'/>
+                                    <field name="background_color" widget="color"/>
+                                    <field name="border_color" widget="color"/>
+                                </group>
+                            </group>
+                        </page>
+                        
+                        <page string="Interactivity" name="interaction">
+                            <group>
+                                <group string="User Interaction">
+                                    <field name="clickable"/>
+                                    <field name="drilldown_enabled"/>
+                                    <field name="export_enabled"/>
+                                </group>
+                                <group string="Data Refresh">
+                                    <field name="auto_refresh"/>
+                                    <field name="refresh_interval" 
+                                           invisible="not auto_refresh"/>
+                                    <field name="last_refresh" readonly="1"/>
+                                </group>
+                            </group>
+                        </page>
+                        
+                        <page string="Advanced" name="advanced">
+                            <group>
+                                <field name="config_data" widget="ace" 
+                                       options="{'mode': 'json'}"
+                                       placeholder='{"options": {"plugins": {"legend": {"position": "top"}}}}'/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter reload_on_follower="True"/>
+            </form>
+        </field>
+    </record>
+
+    <!-- Analytics Widget List View -->
+    <record id="view_analytics_widget_list" model="ir.ui.view">
+        <field name="name">analytics.widget.list</field>
+        <field name="model">analytics.widget</field>
+        <field name="arch" type="xml">
+            <list string="Analytics Widgets" default_order="dashboard_id,sequence,name">
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="dashboard_id"/>
+                <field name="dataset_id"/>
+                <field name="widget_type"/>
+                <field name="chart_type"/>
+                <field name="position_x"/>
+                <field name="position_y"/>
+                <field name="width"/>
+                <field name="height"/>
+                <field name="active" widget="boolean_toggle"/>
+            </list>
+        </field>
+    </record>
+
+</odoo>

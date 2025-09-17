@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="biz_analytics.FieldSelector">
+        <div class="o_analytics_field_selector h-100" t-ref="container">
+            <!-- Header -->
+            <div class="field-selector-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">
+                    <i class="fa fa-plus-circle me-2"/>
+                    Create Widget
+                </h5>
+                <button class="btn btn-sm btn-outline-light" t-on-click="close">
+                    <i class="fa fa-times"/>
+                </button>
+            </div>
+            
+            <!-- Content -->
+            <div class="field-selector-content">
+                
+                <!-- Step 1: Select Dataset -->
+                <div class="setup-step mb-4">
+                    <h6 class="step-title">
+                        <span class="step-number">1</span>
+                        Select Dataset
+                    </h6>
+                    
+                    <select class="form-select" t-on-change="(ev) => this.onDatasetChange(ev.target.value)">
+                        <option value="">Choose a dataset...</option>
+                        <t t-foreach="getDatasets()" t-as="dataset" t-key="dataset.id">
+                            <option t-att-value="dataset.id" 
+                                    t-att-selected="state.selectedDataset === dataset.id">
+                                <t t-esc="dataset.name"/>
+                            </option>
+                        </t>
+                    </select>
+                    
+                    <div t-if="getSelectedDataset()" class="dataset-info mt-2 p-2 bg-light rounded">
+                        <small class="text-muted">
+                            <i class="fa fa-info-circle me-1"/>
+                            <t t-esc="getSelectedDataset().metadata.record_count"/> records available
+                        </small>
+                    </div>
+                </div>
+                
+                <!-- Step 2: Select Fields (only show if dataset selected) -->
+                <div t-if="state.selectedDataset" class="setup-step mb-4">
+                    <h6 class="step-title">
+                        <span class="step-number">2</span>
+                        Configure Fields
+                    </h6>
+                    
+                    <!-- Drop Zones -->
+                    <div class="drop-zones mb-3">
+                        <div t-foreach="['x_axis', 'y_axis', 'color']" t-as="fieldType" t-key="fieldType"
+                             class="drop-zone mb-2"
+                             t-attf-class="{{ state.selectedFields[fieldType] ? 'has-field' : '' }}"
+                             t-on-dragover="(ev) => this.onDropZoneDragOver(ev, fieldType)"
+                             t-on-dragleave="onDropZoneDragLeave"
+                             t-on-drop="(ev) => this.onDropZoneDrop(ev, fieldType)">
+                            
+                            <div class="drop-zone-header">
+                                <i t-attf-class="fa {{ getDropZoneIcon(fieldType) }} me-2"/>
+                                <span t-esc="getDropZoneLabel(fieldType)"/>
+                                <span t-if="fieldType !== 'color'" class="text-danger">*</span>
+                            </div>
+                            
+                            <div t-if="!state.selectedFields[fieldType]" class="drop-zone-placeholder">
+                                <i class="fa fa-plus-circle"/>
+                                <span>Drag a field here</span>
+                            </div>
+                            
+                            <div t-else="" class="selected-field">
+                                <i t-attf-class="fa {{ getFieldTypeIcon(getSelectedField(fieldType).type) }} me-2"/>
+                                <span t-esc="getSelectedField(fieldType).label"/>
+                                <button class="btn btn-sm btn-outline-danger ms-2" 
+                                        t-on-click="() => this.onFieldSelect(fieldType, null)">
+                                    <i class="fa fa-times"/>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Field Categories -->
+                    <div class="field-categories">
+                        <!-- Dimension Fields -->
+                        <div t-if="getDimensionFields().length" class="field-category">
+                            <div class="category-header">
+                                <i class="fa fa-tags me-2"/>
+                                Dimensions
+                            </div>
+                            <div class="field-list">
+                                <div t-foreach="getDimensionFields()" t-as="field" t-key="field.id"
+                                     class="field-item" 
+                                     draggable="true"
+                                     t-on-dragstart="(ev) => this.onFieldDragStart(ev, field, 'dimension')"
+                                     t-on-dragend="onFieldDragEnd">
+                                    <div class="field-name" t-esc="field.label"/>
+                                    <div class="field-type">
+                                        <i class="fa fa-tags me-1"/>
+                                        <t t-esc="field.type"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Measure Fields -->
+                        <div t-if="getMeasureFields().length" class="field-category">
+                            <div class="category-header">
+                                <i class="fa fa-calculator me-2"/>
+                                Measures
+                            </div>
+                            <div class="field-list">
+                                <div t-foreach="getMeasureFields()" t-as="field" t-key="field.id"
+                                     class="field-item" 
+                                     draggable="true"
+                                     t-on-dragstart="(ev) => this.onFieldDragStart(ev, field, 'measure')"
+                                     t-on-dragend="onFieldDragEnd">
+                                    <div class="field-name" t-esc="field.label"/>
+                                    <div class="field-type">
+                                        <i class="fa fa-calculator me-1"/>
+                                        <t t-esc="field.aggregation"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Date Fields -->
+                        <div t-if="getDateFields().length" class="field-category">
+                            <div class="category-header">
+                                <i class="fa fa-calendar me-2"/>
+                                Dates
+                            </div>
+                            <div class="field-list">
+                                <div t-foreach="getDateFields()" t-as="field" t-key="field.id"
+                                     class="field-item" 
+                                     draggable="true"
+                                     t-on-dragstart="(ev) => this.onFieldDragStart(ev, field, 'date')"
+                                     t-on-dragend="onFieldDragEnd">
+                                    <div class="field-name" t-esc="field.label"/>
+                                    <div class="field-type">
+                                        <i class="fa fa-calendar me-1"/>
+                                        <t t-esc="field.type"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Step 3: Select Chart Type -->
+                <div t-if="state.selectedFields.x_axis and state.selectedFields.y_axis" class="setup-step mb-4">
+                    <h6 class="step-title">
+                        <span class="step-number">3</span>
+                        Choose Chart Type
+                    </h6>
+                    
+                    <div class="chart-type-grid">
+                        <div t-foreach="getCompatibleChartTypes()" t-as="chartType" t-key="chartType.value"
+                             class="chart-type-option"
+                             t-attf-class="{{ state.chartType === chartType.value ? 'selected' : '' }}"
+                             t-on-click="() => this.onChartTypeChange(chartType.value)">
+                            <i t-attf-class="fa {{ chartType.icon }} fa-2x"/>
+                            <div class="chart-type-label" t-esc="chartType.label"/>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Step 4: Widget Configuration -->
+                <div t-if="state.chartType" class="setup-step mb-4">
+                    <h6 class="step-title">
+                        <span class="step-number">4</span>
+                        Configure Widget
+                    </h6>
+                    
+                    <div class="form-group mb-3">
+                        <label class="form-label">Widget Name</label>
+                        <input type="text" class="form-control" 
+                               t-model="state.widgetName"
+                               placeholder="Enter widget name..."/>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-6">
+                            <label class="form-label">Width</label>
+                            <input type="number" class="form-control" 
+                                   t-model="state.widgetPosition.width"
+                                   min="1" max="12"/>
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label">Height</label>
+                            <input type="number" class="form-control" 
+                                   t-model="state.widgetPosition.height"
+                                   min="1" max="20"/>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Create Button -->
+                <div t-if="canCreateWidget()" class="create-widget-section">
+                    <button class="btn btn-primary btn-lg w-100" t-on-click="createWidget">
+                        <i class="fa fa-plus me-2"/>
+                        Create Widget
+                    </button>
+                </div>
+                
+                <!-- Empty State -->
+                <div t-if="!getDatasets().length" class="empty-state text-center py-4">
+                    <i class="fa fa-database fa-3x text-muted mb-3"/>
+                    <h6 class="text-muted">No datasets available</h6>
+                    <p class="text-muted small">
+                        Create a dataset first to start building widgets.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </t>
+
+</templates>

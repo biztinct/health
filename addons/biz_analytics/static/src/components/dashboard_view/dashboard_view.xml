@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <!-- Main Dashboard View Template -->
+    <t t-name="biz_analytics.DashboardView">
+        <Layout className="'o_analytics_dashboard_view'" display="props.display">
+            <t t-set-slot="layout-buttons">
+                <div class="d-flex align-items-center gap-2">
+                    <!-- Dashboard Controls -->
+                    <button class="btn btn-outline-primary" 
+                            t-on-click="toggleEditMode"
+                            title="Toggle Edit Mode (Ctrl+E)">
+                        <i t-attf-class="fa {{ state.editMode ? 'fa-eye' : 'fa-pencil' }}"/>
+                        <span t-if="state.editMode">View</span>
+                        <span t-else="">Edit</span>
+                    </button>
+                    
+                    <button class="btn btn-outline-secondary" 
+                            t-on-click="refreshDashboard"
+                            title="Refresh Dashboard (Ctrl+R)">
+                        <i class="fa fa-refresh"/>
+                    </button>
+                    
+                    <button class="btn btn-outline-secondary" 
+                            t-on-click="toggleFilterPanel"
+                            title="Toggle Filters (Ctrl+F)">
+                        <i class="fa fa-filter"/>
+                    </button>
+                    
+                    <div class="dropdown">
+                        <button class="btn btn-outline-secondary dropdown-toggle" 
+                                type="button" data-bs-toggle="dropdown">
+                            <i class="fa fa-cog"/>
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <a class="dropdown-item" t-on-click="openDashboardSettings">
+                                    <i class="fa fa-sliders"/> Settings
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" t-on-click="exportDashboard">
+                                    <i class="fa fa-download"/> Export
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" t-on-click="shareDashboard">
+                                    <i class="fa fa-share-alt"/> Share
+                                </a>
+                            </li>
+                            <li><hr class="dropdown-divider"/></li>
+                            <li>
+                                <a class="dropdown-item" t-on-click="toggleAutoRefresh">
+                                    <i t-attf-class="fa {{ state.autoRefreshEnabled ? 'fa-pause' : 'fa-play' }}"/>
+                                    <span t-if="state.autoRefreshEnabled">Pause Auto-refresh</span>
+                                    <span t-else="">Enable Auto-refresh</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </t>
+            
+            <t t-set-slot="layout-actions">
+                <!-- Dashboard Title -->
+                <div class="d-flex align-items-center">
+                    <h3 class="mb-0 me-3" t-esc="getDashboardTitle()"/>
+                    <span class="badge bg-secondary" t-esc="getWidgetCount()"/> widgets
+                </div>
+            </t>
+
+            <!-- Main Dashboard Content -->
+            <div class="o_analytics_dashboard_content">
+                <!-- Filter Panel (Collapsible) -->
+                <div t-if="state.showFilterPanel" class="o_analytics_filter_panel border-bottom mb-3 pb-3">
+                    <FilterPanel 
+                        model="props.model" 
+                        onFilterChange="rendererProps.onFilterChange"
+                        onClose="closeFilterPanel"/>
+                </div>
+                
+                <!-- Dashboard Renderer -->
+                <t t-component="props.Renderer" t-props="rendererProps"/>
+                
+                <!-- Field Selector (Slide-in Panel) -->
+                <div t-if="state.showFieldSelector" 
+                     class="o_analytics_field_selector position-fixed end-0 top-0 h-100 bg-white shadow-lg"
+                     style="width: 400px; z-index: 1050;">
+                    <FieldSelector 
+                        model="props.model"
+                        onCreateWidget="createWidget"
+                        onClose="closeFieldSelector"/>
+                </div>
+            </div>
+            
+            <!-- Loading Overlay -->
+            <div t-if="props.model.isLoading" 
+                 class="o_analytics_loading position-absolute w-100 h-100 d-flex align-items-center justify-content-center"
+                 style="background: rgba(255,255,255,0.8); z-index: 1000;">
+                <div class="text-center">
+                    <div class="spinner-border text-primary mb-3" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <div>Loading dashboard...</div>
+                </div>
+            </div>
+        </Layout>
+    </t>
+
+    <!-- Dashboard Renderer Template -->
+    <t t-name="biz_analytics.DashboardRenderer">
+        <div class="o_analytics_dashboard_renderer" 
+             t-ref="container"
+             t-attf-class="{{ state.dragOver ? 'drag-over' : '' }}">
+            
+            <!-- Empty State -->
+            <div t-if="!props.model.getAllWidgets().length" 
+                 class="o_analytics_empty_state text-center py-5">
+                <div class="mb-4">
+                    <i class="fa fa-bar-chart-o fa-5x text-muted"/>
+                </div>
+                <h4 class="text-muted mb-3">No widgets yet</h4>
+                <p class="text-muted mb-4">Start building your dashboard by adding widgets</p>
+                <button t-if="canAddWidget()" 
+                        class="btn btn-primary btn-lg" 
+                        t-on-click="onAddWidget">
+                    <i class="fa fa-plus"/> Add Your First Widget
+                </button>
+                <div t-else="" class="text-muted">
+                    <small>Enable edit mode to add widgets</small>
+                </div>
+            </div>
+            
+            <!-- Widgets Grid -->
+            <div t-if="props.model.getAllWidgets().length" 
+                 class="o_analytics_widgets_container position-relative">
+                
+                <div t-foreach="props.model.getAllWidgets()" 
+                     t-as="widget" 
+                     t-key="widget.id"
+                     t-attf-class="{{ getWidgetClasses(widget) }}"
+                     t-attf-style="{{ getWidgetStyle(widget) }}"
+                     t-att-data-widget-id="widget.id"
+                     t-on-click="(ev) => this.onWidgetClick(widget.id, ev)"
+                     t-on-dblclick="() => this.onWidgetDoubleClick(widget.id)">
+                    
+                    <!-- Widget Header -->
+                    <div class="widget-header d-flex justify-content-between align-items-center p-2 border-bottom">
+                        <h6 class="widget-title mb-0" t-esc="widget.name"/>
+                        <div class="widget-controls">
+                            <button t-if="props.editMode" 
+                                    class="btn btn-sm btn-outline-secondary me-1"
+                                    title="Edit Widget"
+                                    t-on-click="() => this.onWidgetDoubleClick(widget.id)">
+                                <i class="fa fa-pencil"/>
+                            </button>
+                            <button t-if="props.editMode" 
+                                    class="btn btn-sm btn-outline-danger"
+                                    title="Delete Widget"
+                                    t-on-click="(ev) => this.onWidgetDelete(widget.id, ev)">
+                                <i class="fa fa-trash"/>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Widget Content -->
+                    <div class="widget-content p-3 h-100">
+                        <!-- Chart Widget -->
+                        <div t-if="widget.widget_type === 'chart'" 
+                             class="chart-container position-relative h-100">
+                            <canvas t-attf-id="chart_{{ widget.id }}" 
+                                    class="chart-canvas w-100 h-100"/>
+                        </div>
+                        
+                        <!-- Table Widget -->
+                        <div t-elif="widget.widget_type === 'table'" 
+                             class="table-container">
+                            <!-- TODO: Implement table widget -->
+                            <div class="text-center text-muted">
+                                <i class="fa fa-table fa-3x mb-3"/>
+                                <div>Table widget coming soon</div>
+                            </div>
+                        </div>
+                        
+                        <!-- Metric Widget -->
+                        <div t-elif="widget.widget_type === 'metric'" 
+                             class="metric-container text-center">
+                            <!-- TODO: Implement metric widget -->
+                            <div class="text-center text-muted">
+                                <i class="fa fa-tachometer fa-3x mb-3"/>
+                                <div>Metric widget coming soon</div>
+                            </div>
+                        </div>
+                        
+                        <!-- Text Widget -->
+                        <div t-elif="widget.widget_type === 'text'" 
+                             class="text-container">
+                            <!-- TODO: Implement text widget -->
+                            <div class="text-center text-muted">
+                                <i class="fa fa-file-text-o fa-3x mb-3"/>
+                                <div>Text widget coming soon</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Widget Resize Handles (Edit Mode) -->
+                    <div t-if="props.editMode" class="widget-resize-handles">
+                        <div class="resize-handle resize-se"></div>
+                        <div class="resize-handle resize-s"></div>
+                        <div class="resize-handle resize-e"></div>
+                    </div>
+                </div>
+                
+                <!-- Add Widget Button (Edit Mode) -->
+                <div t-if="props.editMode" 
+                     class="o_analytics_add_widget position-fixed bottom-0 end-0 me-4 mb-4"
+                     style="z-index: 100;">
+                    <button class="btn btn-primary btn-lg rounded-circle" 
+                            title="Add Widget (Ctrl+N)"
+                            t-on-click="onAddWidget">
+                        <i class="fa fa-plus fa-lg"/>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </t>
+
+</templates>

@@ -1,0 +1,4 @@
+﻿id,name:vi_VN,name:en_US
+cash,Tiền mặt,Cash
+bank-transfer,Chuyển khoản,Bank Transfer
+cash-bank-transfer,Tiền mặt + Chuyển khoản,Cash + Bank Transfer

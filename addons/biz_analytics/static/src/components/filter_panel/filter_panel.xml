@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="biz_analytics.FilterPanel">
+        <div class="o_analytics_filter_panel">
+            <!-- Header -->
+            <div class="filter-header d-flex justify-content-between align-items-center mb-3">
+                <h6 class="mb-0">
+                    <i class="fa fa-filter me-2"/>
+                    Filters 
+                    <span t-if="getFilterCount()" class="badge bg-primary ms-1" t-esc="getFilterCount()"/>
+                </h6>
+                <div class="filter-actions">
+                    <button class="btn btn-sm btn-outline-secondary me-2" t-on-click="clearAllFilters"
+                            t-if="getFilterCount()">
+                        <i class="fa fa-eraser me-1"/>
+                        Clear All
+                    </button>
+                    <button class="btn btn-sm btn-outline-secondary" t-on-click="close">
+                        <i class="fa fa-times"/>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="row">
+                <!-- Quick Filters -->
+                <div class="col-md-4">
+                    <div class="filter-section mb-4">
+                        <h6 class="section-title">Quick Filters</h6>
+                        
+                        <!-- Global Search -->
+                        <div class="form-group mb-3">
+                            <div class="input-group">
+                                <span class="input-group-text">
+                                    <i class="fa fa-search"/>
+                                </span>
+                                <input type="text" class="form-control" 
+                                       placeholder="Search..."
+                                       t-model="state.searchText"
+                                       t-on-input="(ev) => this.updateSearchText(ev.target.value)"/>
+                            </div>
+                        </div>
+                        
+                        <!-- Date Range Quick Filters -->
+                        <div class="quick-filters">
+                            <div t-foreach="getQuickFilters()" t-as="quickFilter" t-key="quickFilter.id"
+                                 class="quick-filter-btn" t-on-click="quickFilter.action">
+                                <i t-attf-class="fa {{ quickFilter.icon }} me-2"/>
+                                <span t-esc="quickFilter.label"/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Active Filters -->
+                <div class="col-md-8">
+                    <div class="filter-section">
+                        <h6 class="section-title">Active Filters</h6>
+                        
+                        <!-- No Filters State -->
+                        <div t-if="!getActiveFilters().length" class="no-filters-state text-center py-3">
+                            <i class="fa fa-filter fa-2x text-muted mb-2"/>
+                            <p class="text-muted mb-2">No filters applied</p>
+                            <div class="dropdown">
+                                <button class="btn btn-sm btn-outline-primary dropdown-toggle" 
+                                        type="button" data-bs-toggle="dropdown">
+                                    <i class="fa fa-plus me-1"/>
+                                    Add Filter
+                                </button>
+                                <ul class="dropdown-menu">
+                                    <li class="dropdown-header">Available Filters</li>
+                                    <t t-foreach="getAvailableFilters()" t-as="filter" t-key="filter.id">
+                                        <li t-if="!state.filters[filter.id]">
+                                            <a class="dropdown-item" t-on-click="() => this.addFilter(filter.id)">
+                                                <i t-attf-class="fa {{ getFilterIcon(filter.type) }} me-2"/>
+                                                <span t-esc="filter.label"/>
+                                                <small class="text-muted ms-2">(<t t-esc="filter.dataset"/>)</small>
+                                            </a>
+                                        </li>
+                                    </t>
+                                    <li t-if="!getAvailableFilters().length">
+                                        <span class="dropdown-item-text text-muted">
+                                            No filters available
+                                        </span>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <!-- Active Filter List -->
+                        <div t-if="getActiveFilters().length" class="active-filters">
+                            <div t-foreach="getActiveFilters()" t-as="filter" t-key="filter.id" 
+                                 class="filter-item card mb-3">
+                                <div class="card-header d-flex justify-content-between align-items-center">
+                                    <div class="filter-info">
+                                        <i t-attf-class="fa {{ getFilterIcon(filter.type) }} me-2"/>
+                                        <strong t-esc="filter.label"/>
+                                        <small class="text-muted ms-2">(<t t-esc="filter.dataset"/>)</small>
+                                    </div>
+                                    <button class="btn btn-sm btn-outline-danger" 
+                                            t-on-click="() => this.removeFilter(filter.id)">
+                                        <i class="fa fa-trash"/>
+                                    </button>
+                                </div>
+                                
+                                <div class="card-body">
+                                    <!-- Selection Filter -->
+                                    <div t-if="filter.type === 'selection'" class="selection-filter">
+                                        <select class="form-select" multiple="multiple" size="4"
+                                                t-on-change="(ev) => this.updateFilterValue(filter.id, Array.from(ev.target.selectedOptions, option => option.value))">
+                                            <!-- TODO: Populate options dynamically -->
+                                            <option value="option1">Option 1</option>
+                                            <option value="option2">Option 2</option>
+                                            <option value="option3">Option 3</option>
+                                        </select>
+                                        <small class="form-text text-muted">
+                                            Hold Ctrl/Cmd to select multiple options
+                                        </small>
+                                    </div>
+                                    
+                                    <!-- Date Range Filter -->
+                                    <div t-elif="filter.type === 'date_range'" class="date-range-filter">
+                                        <div class="row">
+                                            <div class="col-6">
+                                                <label class="form-label">From</label>
+                                                <input type="date" class="form-control" 
+                                                       t-att-value="state.filters[filter.id] ? state.filters[filter.id].from : ''"
+                                                       t-on-change="(ev) => this.updateFilterValue(filter.id, {...(state.filters[filter.id] || {}), from: ev.target.value})"/>
+                                            </div>
+                                            <div class="col-6">
+                                                <label class="form-label">To</label>
+                                                <input type="date" class="form-control" 
+                                                       t-att-value="state.filters[filter.id] ? state.filters[filter.id].to : ''"
+                                                       t-on-change="(ev) => this.updateFilterValue(filter.id, {...(state.filters[filter.id] || {}), to: ev.target.value})"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Numeric Range Filter -->
+                                    <div t-elif="filter.type === 'numeric_range'" class="numeric-range-filter">
+                                        <div class="row">
+                                            <div class="col-6">
+                                                <label class="form-label">Minimum</label>
+                                                <input type="number" class="form-control" 
+                                                       t-att-value="state.filters[filter.id] ? state.filters[filter.id].min : ''"
+                                                       t-on-change="(ev) => this.updateFilterValue(filter.id, {...(state.filters[filter.id] || {}), min: parseFloat(ev.target.value) || null})"/>
+                                            </div>
+                                            <div class="col-6">
+                                                <label class="form-label">Maximum</label>
+                                                <input type="number" class="form-control" 
+                                                       t-att-value="state.filters[filter.id] ? state.filters[filter.id].max : ''"
+                                                       t-on-change="(ev) => this.updateFilterValue(filter.id, {...(state.filters[filter.id] || {}), max: parseFloat(ev.target.value) || null})"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Text Filter -->
+                                    <div t-elif="filter.type === 'text'" class="text-filter">
+                                        <input type="text" class="form-control" 
+                                               placeholder="Enter value..."
+                                               t-att-value="state.filters[filter.id] || ''"
+                                               t-on-input="(ev) => this.updateFilterValue(filter.id, ev.target.value)"/>
+                                    </div>
+                                    
+                                    <!-- Current Value Display -->
+                                    <div class="current-value mt-2">
+                                        <small class="text-muted">
+                                            Current: <strong t-esc="formatFilterValue(filter, state.filters[filter.id])"/>
+                                        </small>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Add More Filters Button -->
+                            <div class="add-filter-section">
+                                <div class="dropdown">
+                                    <button class="btn btn-sm btn-outline-secondary dropdown-toggle" 
+                                            type="button" data-bs-toggle="dropdown">
+                                        <i class="fa fa-plus me-1"/>
+                                        Add Another Filter
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                        <li class="dropdown-header">Available Filters</li>
+                                        <t t-foreach="getAvailableFilters()" t-as="filter" t-key="filter.id">
+                                            <li t-if="!state.filters[filter.id]">
+                                                <a class="dropdown-item" t-on-click="() => this.addFilter(filter.id)">
+                                                    <i t-attf-class="fa {{ getFilterIcon(filter.type) }} me-2"/>
+                                                    <span t-esc="filter.label"/>
+                                                    <small class="text-muted ms-2">(<t t-esc="filter.dataset"/>)</small>
+                                                </a>
+                                            </li>
+                                        </t>
+                                        <li t-if="getAvailableFilters().filter(f => !state.filters[f.id]).length === 0">
+                                            <span class="dropdown-item-text text-muted">
+                                                All filters are active
+                                            </span>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </t>
+
+</templates>
