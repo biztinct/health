@@ -1,5 +1,12 @@
-﻿id,name:vi_VN,name:en_US
-new,Mới,New
-completed,Đã hoàn thành,Completed
-cancelled,Huỷ,Cancelled
-rescheduled,Dời lịch,Rescheduled
+﻿id,name:vi_VN,name:en_US,,
+new,Mới,New,,
+completed,Đã hoàn thành,Completed,,
+cancelled,Huỷ,Cancelled,,
+rescheduled,Dời lịch,Rescheduled,,
+,,,,
+,,New Booked,,Booking Status
+,,Assigned,,
+,,In Progress,,
+,,Completed,,
+,,Cancelled,,
+,,Rescheduled,,

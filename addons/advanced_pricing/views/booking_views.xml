@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_booking_form" model="ir.ui.view">
+        <field name="name">booking.model.form</field>
+        <field name="model">booking.model</field>
+        <field name="arch" type="xml">
+            <form string="Booking">
+                <header>
+                    <button name="action_create_quotation" type="object" 
+                            string="Create Quotation" class="oe_highlight"/>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="partner_id"/>
+                        <field name="appointment_time"/>
+                        <field name="service_type"/>
+                        <field name="distance"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    
+    <record id="view_booking_tree" model="ir.ui.view">
+        <field name="name">booking.model.tree</field>
+        <field name="model">booking.model</field>
+        <field name="arch" type="xml">
+            <tree string="Bookings">
+                <field name="name"/>
+                <field name="partner_id"/>
+                <field name="appointment_time"/>
+                <field name="service_type"/>
+                <field name="state"/>
+            </tree>
+        </field>
+    </record>
+    
+    <record id="action_bookings" model="ir.actions.act_window">
+        <field name="name">Bookings</field>
+        <field name="res_model">booking.model</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+    
+    <menuitem id="menu_bookings" 
+              name="Bookings" 
+              parent="sale.sale_order_menu"
+              action="action_bookings"
+              sequence="20"/>
+</odoo>

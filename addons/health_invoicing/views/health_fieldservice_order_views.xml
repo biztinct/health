@@ -56,13 +56,7 @@
                         groups="health_invoicing.group_health_invoicing_user"
                         help="Complete service and launch payment collection workflow"/>
                         
-                <!-- Alternative Manual Invoice Creation -->
-                <button type="object" name="action_create_manual_invoice"
-                        string="Create Invoice"
-                        class="btn-primary"
-                        invisible="is_invoiced"
-                        groups="health_invoicing.group_health_invoicing_manager"
-                        help="Create invoice without payment collection"/>
+                <!-- Alternative Manual Invoice Creation removed - use main Create Invoice button instead -->
                         
             </xpath>
             

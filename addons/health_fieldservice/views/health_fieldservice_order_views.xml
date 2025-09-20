@@ -43,14 +43,45 @@
                             invisible="state in ['completed', 'cancelled']"
                             confirm="Are you sure you want to cancel this booking?"/>
                     
-                    <button name="action_save_and_create_quote_if_needed" type="object" 
-                            string="💾 Save &amp; Create Quote" class="oe_highlight"
-                            invisible="sale_order_id"
+                    <button name="action_confirm_booking" type="object" 
+                            string="✅ Confirm Booking" class="oe_highlight"
+                            invisible="state != 'draft'"
                             groups="health_base.group_healthcare_operations_manager"
-                            help="Save FSO and automatically create/open quote for editing"/>
+                            help="Confirm booking and move to next stage (requires quote with items)"/>
                     
                     <field name="stage_id" widget="statusbar" options="{'clickable': '1'}"/>
                 </header>
+                
+                <!-- Quote Requirement Banner for Draft FSOs -->
+                <div class="alert alert-warning" role="alert" 
+                     invisible="sale_order_id or state != 'draft'"
+                     groups="health_base.group_healthcare_operations_manager">
+                    <div class="d-flex align-items-center">
+                        <i class="fa fa-exclamation-triangle me-2"/>
+                        <div>
+                            <strong>📋 Quote Required:</strong> 
+                            This booking needs a healthcare quote before it can be confirmed. 
+                            <a href="#" class="btn btn-link p-0" role="button" name="action_create_quote" type="object">
+                                Click here to create a quote
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Empty Quote Warning Banner -->
+                <div class="alert alert-info" role="alert" 
+                     invisible="not sale_order_id or order_line_count > 0 or state != 'draft'">
+                    <div class="d-flex align-items-center">
+                        <i class="fa fa-info-circle me-2"/>
+                        <div>
+                            <strong>📝 Quote Created:</strong> 
+                            Healthcare quote exists but needs items added before confirmation.
+                            <a href="#" class="btn btn-link p-0" role="button" name="action_view_quote" type="object">
+                                Click here to add services
+                            </a>
+                        </div>
+                    </div>
+                </div>
                 
                 <sheet>
                     <div class="oe_button_box" name="button_box">

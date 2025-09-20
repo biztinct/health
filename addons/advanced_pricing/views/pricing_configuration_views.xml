@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_pricing_config_form" model="ir.ui.view">
+        <field name="name">advanced.pricing.config.form</field>
+        <field name="model">advanced.pricing.config</field>
+        <field name="arch" type="xml">
+            <form string="Pricing Configuration">
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="active"/>
+                        <field name="company_id" groups="base.group_multi_company"/>
+                        <field name="default_engine_id"/>
+                    </group>
+                    <notebook>
+                        <page string="Features">
+                            <group>
+                                <field name="enable_visual_builder"/>
+                                <field name="enable_caching"/>
+                                <field name="enable_api"/>
+                                <field name="enable_templates"/>
+                                <field name="enable_audit"/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+</odoo>

@@ -1,5 +1,10 @@
-﻿id,name:vi_VN,name:en_US
-new,Mới,New
-booked-appointment,Đặt lịch hẹn,Booked appointment
-used,Đã sử dụng,Used
-cancelled,Huỷ,Cancelled
+﻿id,name:vi_VN,name:en_US,,
+new,Mới,New,,Contact Status
+booked-appointment,Đặt lịch hẹn,Booked appointment,,
+used,Đã sử dụng,Used,,
+cancelled,Huỷ,Cancelled,,
+,,,,
+,New,Nothing happened yet,,
+,New,Booked,,
+,New,Junk call,,Tag the contact number and take it off when they come back and are interested by giving info about patient and contact details
+,New,Lead to follow up,,

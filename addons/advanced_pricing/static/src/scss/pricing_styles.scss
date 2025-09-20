@@ -1,0 +1,25 @@
+.o_advanced_pricing_widget {
+    .card {
+        border: 1px solid #dee2e6;
+        box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    }
+    
+    .table {
+        margin-bottom: 0;
+    }
+}
+
+.o_pricing_rule_builder {
+    .modal-header {
+        background-color: #f8f9fa;
+    }
+}
+
+.o_pricing_calculator {
+    .card-body {
+        min-height: 150px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+}

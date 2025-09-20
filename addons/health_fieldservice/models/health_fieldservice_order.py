@@ -222,6 +222,15 @@ class HealthFieldServiceOrderUnified(models.Model):
             quote_count += len(additional_quotes)
             record.quote_count = quote_count
     
+    @api.depends('sale_order_id', 'sale_order_id.order_line')
+    def _compute_order_line_count(self):
+        """Compute the number of order lines in the healthcare quote"""
+        for record in self:
+            if record.sale_order_id:
+                record.order_line_count = len(record.sale_order_id.order_line)
+            else:
+                record.order_line_count = 0
+    
     @api.depends('assignment_ids.staff_id')
     def _compute_assigned_staff(self):
         """Compute assigned staff from assignment records"""
@@ -458,25 +467,32 @@ class HealthFieldServiceOrderUnified(models.Model):
     # WORKFLOW & STATUS MANAGEMENT  
     # ============================================================================
     
+    # Backend state for logic (readonly, invisible, domain conditions)
     state = fields.Selection([
         ('draft', 'Draft'),
+        ('confirmed', 'Confirmed'),
         ('assigned', 'Assigned'),
         ('in_progress', 'In Progress'),
         ('completed', 'Completed'),
-        ('closed', 'Closed'),
-        # Legacy states for existing data compatibility
         ('cancelled', 'Cancelled'),
-        ('no_show', 'Patient No Show'),
-        ('rescheduled', 'Rescheduled'),
-    ], string='Status', default='draft', tracking=True, required=True)
+        ('closed', 'Closed'),
+    ], string='Status', default='draft', tracking=True, required=True,
+       help='Backend state for workflow logic and field visibility')
     
+    # Visual stage for UI (kanban, colors, user experience)
     stage_id = fields.Many2one(
         'health.fieldservice.stage',
         string='Stage',
         tracking=True,
         group_expand='_read_group_stage_ids',
-        help='Current stage in the service delivery workflow'
+        domain=[('active', '=', True)],
+        ondelete='restrict',
+        help='Visual stage for kanban and user interface'
     )
+    
+    # Additional workflow fields
+    patient_contact_confirmed = fields.Boolean('Patient Contact Confirmed', default=False,
+                                              help='Patient has been contacted and confirmed the appointment')
     
     team_id = fields.Many2one(
         'health.fieldservice.team',
@@ -539,6 +555,12 @@ class HealthFieldServiceOrderUnified(models.Model):
         'Quote Count',
         compute='_compute_quote_count',
         help='Number of quotes/sales orders related to this FSO'
+    )
+    
+    order_line_count = fields.Integer(
+        'Quote Line Count',
+        compute='_compute_order_line_count',
+        help='Number of order lines in the healthcare quote'
     )
     
     quote_state = fields.Selection(
@@ -719,6 +741,33 @@ class HealthFieldServiceOrderUnified(models.Model):
             record.communication_count = len(record.communication_ids)
     
     # ============================================================================
+    # STATE-STAGE SYNCHRONIZATION
+    # ============================================================================
+    
+    @api.model
+    def _get_default_stage(self):
+        """Get default stage for new FSOs"""
+        return self.env['health.fieldservice.stage'].search([
+            ('state', '=', 'draft'),
+            ('active', '=', True)
+        ], order='sequence', limit=1)
+    
+    @api.onchange('stage_id')
+    def _onchange_stage_id(self):
+        """Auto-sync state when stage changes"""
+        if self.stage_id and self.stage_id.state:
+            self.state = self.stage_id.state
+    
+    def _validate_stage_transition(self, new_stage):
+        """Validate stage transition requirements"""
+        if not new_stage:
+            return
+        
+        errors = new_stage.validate_stage_requirements(self)
+        if errors:
+            raise UserError('\n'.join(errors))
+    
+    # ============================================================================
     # ONCHANGE METHODS & BUSINESS LOGIC
     # ============================================================================
     
@@ -781,7 +830,7 @@ class HealthFieldServiceOrderUnified(models.Model):
     
     @api.model_create_multi
     def create(self, vals_list):
-        """Create FSO with auto-generated reference and invoice"""
+        """Create FSO with auto-generated reference and default stage"""
         for vals in vals_list:
             # Generate sequence number
             if vals.get('name', _('New Booking')) == _('New Booking'):
@@ -790,6 +839,13 @@ class HealthFieldServiceOrderUnified(models.Model):
             # Set customer to patient if not specified
             if vals.get('patient_id') and not vals.get('customer_id'):
                 vals['customer_id'] = vals['patient_id']
+            
+            # Set default stage if not specified
+            if not vals.get('stage_id'):
+                default_stage = self._get_default_stage()
+                if default_stage:
+                    vals['stage_id'] = default_stage.id
+                    vals['state'] = default_stage.state
         
         orders = super().create(vals_list)
         
@@ -797,18 +853,31 @@ class HealthFieldServiceOrderUnified(models.Model):
         for order in orders:
             # Send notifications
             order._send_booking_notifications()
+            # Show quote creation notification for Operations Managers
+            order._show_quote_creation_notification()
         
         return orders
     
     def write(self, vals):
-        """Handle state changes and automation triggers"""
+        """Handle state changes and automation triggers with stage-state synchronization"""
+        
+        # Handle stage transitions with validation
+        if 'stage_id' in vals and vals['stage_id']:
+            new_stage = self.env['health.fieldservice.stage'].browse(vals['stage_id'])
+            
+            # Validate stage requirements for each record
+            for record in self:
+                record._validate_stage_transition(new_stage)
+            
+            # Auto-sync state from stage
+            if new_stage.state:
+                vals['state'] = new_stage.state
+        
         result = super().write(vals)
         
         # Handle state transitions
         if 'state' in vals:
             self._handle_state_change(vals['state'])
-        
-        # Staff assignment is now handled through assignment_ids relationship
         
         # Handle scheduling
         if 'scheduled_datetime' in vals and vals['scheduled_datetime']:
@@ -1029,37 +1098,54 @@ class HealthFieldServiceOrderUnified(models.Model):
         # Implementation for internal notifications
         pass
     
-    def _validate_quote_requirement(self):
-        """Handle quote creation workflow - no blocking validation"""
-        # This method now just handles the quote creation workflow
-        # No validation errors are raised here
-        pass
-    
-    def action_save_and_create_quote_if_needed(self):
-        """Save FSO and create/open quote if needed - for Operations Managers"""
-        self.ensure_one()
-        
-        # For Operations Managers, handle quote workflow
+    def _show_quote_creation_notification(self):
+        """Show notification about quote creation requirement for Operations Managers"""
         if self.env.user.has_group('health_base.group_healthcare_operations_manager'):
             if not self.sale_order_id:
-                # Create empty quote and open it
-                quote = self._create_empty_quote()
-                if quote:
-                    self.sale_order_id = quote.id
-                    # Return action to open quote popup
-                    return self._open_quote_popup(quote)
-            elif not self.sale_order_id.order_line:
-                # Quote exists but empty - open it
-                return self._open_quote_popup(self.sale_order_id)
+                # Post informational message to chatter
+                self.message_post(
+                    body=_('📋 <strong>Quote Required:</strong> This booking needs a healthcare quote before it can be confirmed. Use the "Create Quote" smart button to add services and pricing.'),
+                    message_type='notification',
+                    subtype_xmlid='mail.mt_note'
+                )
+    
+    def action_confirm_booking(self):
+        """Confirm booking and move to confirmed stage"""
+        self.ensure_one()
         
-        # Return to FSO form view
-        return {
-            'type': 'ir.actions.act_window',
-            'res_model': 'health.fieldservice.order',
-            'res_id': self.id,
-            'view_mode': 'form',
-            'target': 'current',
-        }
+        # Find confirmed stage
+        confirmed_stage = self.env['health.fieldservice.stage'].search([
+            ('state', '=', 'confirmed'),
+            ('active', '=', True)
+        ], order='sequence', limit=1)
+        
+        if not confirmed_stage:
+            raise UserError(_('No confirmed stage found. Please configure stages properly.'))
+        
+        # Move to confirmed stage (validation will happen in write method)
+        try:
+            self.write({'stage_id': confirmed_stage.id})
+            
+            # Post confirmation message
+            self.message_post(
+                body=_('✅ <strong>Booking Confirmed:</strong> FSO moved to %s stage. Quote %s is ready for service delivery.') % (confirmed_stage.name, self.sale_order_id.name),
+                message_type='notification',
+                subtype_xmlid='mail.mt_note'
+            )
+        except UserError as e:
+            # Re-raise with better context
+            raise UserError(_('Cannot confirm booking:\n%s') % str(e))
+        
+        return True
+    
+    def _get_next_stage(self):
+        """Get the next stage in sequence"""
+        if self.stage_id:
+            next_stage = self.env['health.fieldservice.stage'].search([
+                ('sequence', '>', self.stage_id.sequence)
+            ], order='sequence asc', limit=1)
+            return next_stage
+        return None
     
     def _notify_patient_booking_confirmed(self):
         """Notify patient that booking is confirmed"""
@@ -1190,14 +1276,7 @@ class HealthFieldServiceOrderUnified(models.Model):
     # ACTION METHODS FOR UI
     # ============================================================================
     
-    def action_confirm_booking(self):
-        """Confirm the booking"""
-        self.ensure_one()
-        self.write({
-            'state': 'confirmed',
-            'confirmation_date': fields.Datetime.now(),
-            'confirmed_by_id': self.env.user.id,
-        })
+    # action_confirm_booking method moved above with quote validation
     
     def action_start_service(self):
         """Start the service execution"""
@@ -1633,57 +1712,3 @@ class HealthFieldServiceOrderUnified(models.Model):
         }
 
 
-class SaleOrder(models.Model):
-    """Extend sale.order to add healthcare quote validation and invoice creation"""
-    _inherit = 'sale.order'
-    
-    def action_confirm(self):
-        """Override confirm to validate quote lines"""
-        for order in self:
-            if order.origin and 'FSO' in order.origin:
-                order._validate_healthcare_quote_lines()
-        return super().action_confirm()
-    
-    def action_create_invoice_from_healthcare_quote(self):
-        """Create invoice from healthcare quote (FSO workflow)"""
-        self.ensure_one()
-        
-        # Validate quote has items
-        if not self.order_line:
-            raise UserError(_(
-                'Cannot create invoice from empty quote.\n'
-                'Please add at least one service or product to this quote.'
-            ))
-        
-        # Get the related FSO
-        fso = self.env['health.fieldservice.order'].search([('sale_order_id', '=', self.id)], limit=1)
-        if not fso:
-            raise UserError(_('No FSO found for this quote.'))
-        
-        # Confirm the quote first (sale.order workflow)
-        if self.state == 'draft':
-            self.action_confirm()
-        
-        # Create invoice using original FSO billing workflow
-        billing = self.env['health.service.billing'].create_from_fieldservice_order(fso.id)
-        billing.action_mark_ready_to_invoice()
-        
-        # Generate final invoice
-        invoice_result = billing.action_generate_invoice()
-        
-        # Update FSO with invoice link
-        fso.invoice_id = billing.invoice_id.id
-        
-        # Close the quote popup and return to FSO
-        return {
-            'type': 'ir.actions.act_window_close',
-        }
-    
-    def _validate_healthcare_quote_lines(self):
-        """Validate that healthcare quotes have at least one order line"""
-        self.ensure_one()
-        if not self.order_line:
-            raise UserError(_(
-                'Healthcare quotes must have at least one order line before confirmation.\n'
-                'Please add at least one service or product to this quote.'
-            ))

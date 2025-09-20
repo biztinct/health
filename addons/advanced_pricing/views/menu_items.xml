@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <menuitem id="menu_advanced_pricing_root" 
+              name="Advanced Pricing" 
+              parent="sale.sale_menu_root"
+              sequence="15"/>
+    
+    <menuitem id="menu_pricing_engines" 
+              name="Pricing Engines" 
+              parent="menu_advanced_pricing_root"
+              action="action_advanced_pricing_engines"
+              sequence="10"/>
+    
+    <menuitem id="menu_pricing_rules" 
+              name="Pricing Rules" 
+              parent="menu_advanced_pricing_root"
+              action="action_advanced_pricing_rules"
+              sequence="20"/>
+    
+    <menuitem id="menu_pricing_config" 
+              name="Configuration" 
+              parent="menu_advanced_pricing_root"
+              action="action_advanced_pricing_config"
+              sequence="30"/>
+    
+    <record id="action_advanced_pricing_engines" model="ir.actions.act_window">
+        <field name="name">Pricing Engines</field>
+        <field name="res_model">advanced.pricing.engine</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+    
+    <record id="action_advanced_pricing_rules" model="ir.actions.act_window">
+        <field name="name">Pricing Rules</field>
+        <field name="res_model">advanced.pricing.rule</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+    
+    <record id="action_advanced_pricing_config" model="ir.actions.act_window">
+        <field name="name">Configuration</field>
+        <field name="res_model">advanced.pricing.config</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+</odoo>

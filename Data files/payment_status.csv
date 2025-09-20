@@ -1,5 +1,5 @@
-﻿id,name:vi_VN,name:en_US
-unpaid,Chưa thanh toán,Unpaid
-paid,Đã thanh toán,Paid
-carried-forward,Trả từ TT trước,Carried Forward Payment
-prepaid,Thanh toán trước,Prepaid
+﻿id,name:vi_VN,name:en_US,,
+unpaid,Chưa thanh toán,Unpaid,,
+paid,Đã thanh toán,Paid,,
+carried-forward,Trả từ TT trước,Carried Forward Payment,,It has been prepaid
+prepaid,Thanh toán trước,Prepaid,,Act of prepaying

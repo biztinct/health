@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_product_pricelist_form_advanced" model="ir.ui.view">
+        <field name="name">product.pricelist.form.advanced</field>
+        <field name="model">product.pricelist</field>
+        <field name="inherit_id" ref="product.product_pricelist_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='active']" position="after">
+                <field name="use_advanced_pricing"/>
+                <field name="advanced_engine_id" 
+                       attrs="{'invisible': [('use_advanced_pricing', '=', False)],
+                              'required': [('use_advanced_pricing', '=', True)]}"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

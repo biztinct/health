@@ -1,20 +1,20 @@
-﻿id,name:vi_VN,name:en_US
-hotline,Hotline,Hotline
-viet-uc-family-clinic,Phòng khám Gia đình Việt Úc,Viet Uc Family Clinic
-european-international-school,Trường Quốc Tế Châu Âu,European International School
-ms-dang-thi-thuong,Ms. Đặng Thị Thương,Ms. Đặng Thị Thương
-viet-uc-home-care,Chăm sóc tại nhà Việt Úc,Viet Uc Home Care
-fwd,FWD,FWD
-zalo,Zalo,Zalo
-existing-customer,Khách hàng cũ,Existing Customer
-walk-in-clinic,Tự đến PK,Walk-in at Clinic
-dd-song-phu,ĐD Song Phú,DD Song Phu
-doctor-nurse,Bác sĩ/Điều dưỡng,Doctor/Nurse
-ivie-bac-si-oi,Ivie - Bác sĩ ơi,Ivie - Bác sĩ ơi
-daiichi,Daiichi,Daiichi
-acg-international-school,Trường Quốc Tế Úc ACG,ACG International School Vietnam
-dd-truc-mai,ĐD Trúc Mai,DD Truc Mai
-referrer,Người Giới Thiệu,Referrer
-dd-le-dang-anh-thuong,ĐD Lê Đặng Anh Thương,DD Le Dang Anh Thuong
-ms-thu,Ms.Thu,Ms.Thu
-partner,Đối tác,Partner
+﻿id,name:vi_VN,name:en_US,,
+hotline,Hotline,Hotline,,
+viet-uc-family-clinic,Phòng khám Gia đình Việt Úc,Viet Uc Family Clinic,,Source of introduction / Referrals
+european-international-school,Trường Quốc Tế Châu Âu,European International School,,
+ms-dang-thi-thuong,Ms. Đặng Thị Thương,Ms. Đặng Thị Thương,,
+viet-uc-home-care,Chăm sóc tại nhà Việt Úc,Viet Uc Home Care,,
+fwd,FWD,FWD,,
+zalo,Zalo,Zalo,,
+existing-customer,Khách hàng cũ,Existing Customer,,
+walk-in-clinic,Tự đến PK,Walk-in at Clinic,,
+dd-song-phu,ĐD Song Phú,DD Song Phu,,
+doctor-nurse,Bác sĩ/Điều dưỡng,Doctor/Nurse,,
+ivie-bac-si-oi,Ivie - Bác sĩ ơi,Ivie - Bác sĩ ơi,,
+daiichi,Daiichi,Daiichi,,
+acg-international-school,Trường Quốc Tế Úc ACG,ACG International School Vietnam,,
+dd-truc-mai,ĐD Trúc Mai,DD Truc Mai,,
+referrer,Người Giới Thiệu,Referrer,,
+dd-le-dang-anh-thuong,ĐD Lê Đặng Anh Thương,DD Le Dang Anh Thuong,,
+ms-thu,Ms.Thu,Ms.Thu,,
+partner,Đối tác,Partner,,

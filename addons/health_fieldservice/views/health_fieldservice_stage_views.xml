@@ -1,63 +1,100 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-    <!-- Stage List View -->
-    <record id="view_health_fieldservice_stage_list" model="ir.ui.view">
-        <field name="name">health.fieldservice.stage.list</field>
-        <field name="model">health.fieldservice.stage</field>
-        <field name="arch" type="xml">
-            <list string="Field Service Stages" editable="bottom">
-                <field name="sequence" widget="handle"/>
-                <field name="name"/>
-                <field name="description"/>
-                <field name="color" widget="color_picker"/>
-                <field name="is_closed"/>
-                <field name="allow_edit"/>
-                <field name="fso_count"/>
-            </list>
-        </field>
-    </record>
-
     <!-- Stage Form View -->
     <record id="view_health_fieldservice_stage_form" model="ir.ui.view">
         <field name="name">health.fieldservice.stage.form</field>
         <field name="model">health.fieldservice.stage</field>
         <field name="arch" type="xml">
-            <form string="Field Service Stage">
+            <form string="FSO Stage Configuration">
                 <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_fsos" type="object" class="oe_stat_button" icon="fa-tasks" invisible="fso_count == 0">
+                            <field name="fso_count" widget="statinfo" string="FSOs"/>
+                        </button>
+                    </div>
+                    
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" class="o_text_overflow" placeholder="Stage Name"/>
+                        </h1>
+                    </div>
+                    
                     <group>
-                        <group>
-                            <field name="name"/>
+                        <group string="Basic Information">
                             <field name="sequence"/>
-                            <field name="color" widget="color_picker"/>
-                        </group>
-                        <group>
-                            <field name="is_closed"/>
+                            <field name="state" widget="selection"/>
+                            <field name="active"/>
                             <field name="is_default"/>
-                            <field name="allow_edit"/>
+                        </group>
+                        <group string="Visual Settings">
+                            <field name="color"/>
                             <field name="fold"/>
+                            <field name="is_closed"/>
+                            <field name="allow_edit"/>
                         </group>
                     </group>
-                    <group>
-                        <field name="description"/>
+                    
+                    <group string="Stage Requirements" name="requirements">
+                        <group>
+                            <field name="require_quote"/>
+                            <field name="require_quote_items"/>
+                        </group>
+                        <group>
+                            <field name="require_staff_assignment"/>
+                            <field name="require_patient_contact"/>
+                        </group>
+                    </group>
+                    
+                    <group string="Description">
+                        <field name="description" nolabel="1" placeholder="Describe what happens in this stage..."/>
                     </group>
                 </sheet>
             </form>
         </field>
     </record>
 
+    <!-- Stage List View -->
+    <record id="view_health_fieldservice_stage_list" model="ir.ui.view">
+        <field name="name">health.fieldservice.stage.list</field>
+        <field name="model">health.fieldservice.stage</field>
+        <field name="arch" type="xml">
+            <list string="FSO Stages" default_order="sequence,name" editable="bottom">
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="state" widget="selection" readonly="0"
+                       decoration-info="state == 'draft'"
+                       decoration-warning="state == 'confirmed'"
+                       decoration-primary="state == 'assigned'"
+                       decoration-success="state in ['in_progress', 'completed']"
+                       decoration-muted="state in ['cancelled', 'closed']"/>
+                <field name="require_quote" widget="boolean_toggle"/>
+                <field name="require_quote_items" widget="boolean_toggle"/>
+                <field name="require_staff_assignment" widget="boolean_toggle"/>
+                <field name="fso_count" string="FSOs"/>
+                <field name="is_default" widget="boolean_toggle"/>
+                <field name="active" widget="boolean_toggle"/>
+                <field name="color"/>
+            </list>
+        </field>
+    </record>
+
     <!-- Stage Action -->
     <record id="action_health_fieldservice_stage" model="ir.actions.act_window">
-        <field name="name">Field Service Stages</field>
+        <field name="name">FSO Stages</field>
         <field name="res_model">health.fieldservice.stage</field>
         <field name="view_mode">list,form</field>
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">
-                No field service stages found!
+                Create your first FSO stage!
             </p>
             <p>
-                Configure stages for field service order workflow.
-                Stages define the progression from draft creation to service completion.
+                Configure stages to define your field service workflow. Each stage can have:
+                <ul>
+                    <li>State mapping for backend logic</li>
+                    <li>Requirements (quotes, staff, etc.)</li>
+                    <li>Visual settings for kanban view</li>
+                </ul>
             </p>
         </field>
     </record>

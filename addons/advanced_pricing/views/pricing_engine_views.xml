@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_pricing_engine_form" model="ir.ui.view">
+        <field name="name">advanced.pricing.engine.form</field>
+        <field name="model">advanced.pricing.engine</field>
+        <field name="arch" type="xml">
+            <form string="Pricing Engine">
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="sequence"/>
+                        <field name="active"/>
+                        <field name="company_id" groups="base.group_multi_company"/>
+                    </group>
+                    <group>
+                        <field name="enable_multi_level"/>
+                        <field name="enable_cascade"/>
+                        <field name="cache_duration"/>
+                    </group>
+                    <notebook>
+                        <page string="Rules">
+                            <field name="rule_ids"/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    
+    <record id="view_pricing_engine_tree" model="ir.ui.view">
+        <field name="name">advanced.pricing.engine.tree</field>
+        <field name="model">advanced.pricing.engine</field>
+        <field name="arch" type="xml">
+            <tree string="Pricing Engines">
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="active"/>
+                <field name="company_id" groups="base.group_multi_company"/>
+            </tree>
+        </field>
+    </record>
+</odoo>
