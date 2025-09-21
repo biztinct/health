@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Visual Rule Builder Wizard Form -->
+    <record id="view_visual_rule_builder_wizard_form" model="ir.ui.view">
+        <field name="name">advanced.pricing.visual.wizard.form</field>
+        <field name="model">advanced.pricing.visual.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Visual Rule Builder">
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="Rule Name" class="o_text_overflow"/>
+                        </h1>
+                    </div>
+                    
+                    <group>
+                        <group string="Rule Settings">
+                            <field name="engine_id" required="1"/>
+                            <field name="level"/>
+                            <field name="sequence"/>
+                            <field name="active"/>
+                        </group>
+                        <group string="Existing Rule" invisible="not rule_id">
+                            <field name="rule_id" readonly="1"/>
+                        </group>
+                    </group>
+                    
+                    <!-- Visual Builder Preview -->
+                    <group string="Visual Rule Builder" invisible="not visual_config">
+                        <div class="alert alert-info">
+                            <i class="fa fa-info-circle me-2"/>
+                            Visual rule configuration is saved. You can modify it using the visual builder.
+                        </div>
+                        <field name="generated_code" widget="ace" options="{'mode': 'javascript'}" readonly="1"/>
+                    </group>
+                    
+                    <!-- Getting Started Help -->
+                    <group string="Getting Started" invisible="visual_config">
+                        <div class="alert alert-success">
+                            <h5><i class="fa fa-puzzle-piece me-2"/>Welcome to Visual Rule Builder!</h5>
+                            <p>Create pricing rules using drag-and-drop blocks:</p>
+                            <ul>
+                                <li><strong>Conditions:</strong> Define when rules apply (distance, quantity, customer type, etc.)</li>
+                                <li><strong>Actions:</strong> Set what happens (add charges, apply discounts, multiply prices)</li>
+                                <li><strong>Logic:</strong> Combine conditions with AND/OR operators</li>
+                            </ul>
+                            <p class="mb-0">Click "Open Visual Builder" to start creating your rule!</p>
+                        </div>
+                    </group>
+                </sheet>
+                
+                <footer>
+                    <button name="action_open_visual_builder" type="object" 
+                            string="Open Visual Builder" class="btn-primary"/>
+                    <button name="action_save_rule" type="object" 
+                            string="Save Rule" class="btn-success"
+                            invisible="not visual_config"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- Visual Rule Builder Action -->
+    <record id="action_visual_rule_builder_wizard" model="ir.actions.act_window">
+        <field name="name">Visual Rule Builder</field>
+        <field name="res_model">advanced.pricing.visual.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+        <field name="context">{}</field>
+    </record>
+
+</odoo>

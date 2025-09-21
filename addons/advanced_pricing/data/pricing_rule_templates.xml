@@ -3,6 +3,7 @@
     <data noupdate="1">
         <record id="template_distance_pricing" model="advanced.pricing.rule">
             <field name="name">Template: Distance Surcharge</field>
+            <field name="engine_id" ref="demo_engine"/>
             <field name="sequence">100</field>
             <field name="active">False</field>
             <field name="level">1</field>

@@ -395,10 +395,15 @@ const initializeTimelineEnhancer = () => {
     window.AssignmentTimelineEnhancer = timelineEnhancer;
     console.log('🔧 DEBUG: Timeline Enhancer available globally');
 
-    // Register in Odoo registry
+    // Register in Odoo registry - more defensive approach
     try {
-        registry.category("timeline_utils").add("enhancer", timelineEnhancer);
-        console.log('🔧 DEBUG: Timeline Enhancer registered in Odoo registry');
+        // First check if registry and category exist
+        if (registry && typeof registry.category === 'function') {
+            registry.category("timeline_utils").add("enhancer", timelineEnhancer);
+            console.log('🔧 DEBUG: Timeline Enhancer registered in Odoo registry');
+        } else {
+            console.log('🔧 DEBUG: Registry not available, skipping registration');
+        }
     } catch (error) {
         console.warn('🔧 DEBUG: Could not register in Odoo registry:', error);
     }

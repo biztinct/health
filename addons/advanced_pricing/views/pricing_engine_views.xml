@@ -27,16 +27,16 @@
         </field>
     </record>
     
-    <record id="view_pricing_engine_tree" model="ir.ui.view">
-        <field name="name">advanced.pricing.engine.tree</field>
+    <record id="view_pricing_engine_list" model="ir.ui.view">
+        <field name="name">advanced.pricing.engine.list</field>
         <field name="model">advanced.pricing.engine</field>
         <field name="arch" type="xml">
-            <tree string="Pricing Engines">
+            <list string="Pricing Engines">
                 <field name="sequence" widget="handle"/>
                 <field name="name"/>
                 <field name="active"/>
                 <field name="company_id" groups="base.group_multi_company"/>
-            </tree>
+            </list>
         </field>
     </record>
 </odoo>

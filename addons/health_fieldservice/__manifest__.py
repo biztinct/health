@@ -108,7 +108,8 @@
             'health_fieldservice/static/src/css/scheduler_grid.css',
             'health_fieldservice/static/src/css/staff_workload_dashboard.css',
             'health_fieldservice/static/src/css/web_timeline_custom.css',
-            # JavaScript Assets (Fixed for Odoo 18)
+            'health_fieldservice/static/src/css/web_timeline_card.css',
+            # JavaScript Assets (Restored - was working before analytics uninstall)
             'health_fieldservice/static/src/js/assignment_dashboard.js',
             'health_fieldservice/static/src/js/assignment_kanban.js',
             'health_fieldservice/static/src/js/assignment_timeline_view.js',
@@ -119,8 +120,6 @@
             'health_fieldservice/static/src/xml/assignment_dashboard.xml',
             'health_fieldservice/static/src/xml/assignment_timeline_view.xml',
             'health_fieldservice/static/src/xml/staff_workload_dashboard.xml',
-        
-            'health_fieldservice/static/src/css/web_timeline_card.css',
         ],
     },
     'installable': True,

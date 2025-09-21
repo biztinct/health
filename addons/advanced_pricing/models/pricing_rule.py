@@ -25,11 +25,16 @@ class AdvancedPricingRule(models.Model):
         ('condition', 'Conditional'),
         ('formula', 'Formula-based'),
         ('matrix', 'Matrix'),
-        ('custom', 'Custom Python')
+        ('custom', 'Custom Python'),
+        ('visual', 'Visual Rule')
     ], string='Rule Type', default='condition', required=True)
     
     blockly_xml = fields.Text('Blockly XML')
     generated_code = fields.Text('Generated Code', readonly=True)
+    visual_config = fields.Text('Visual Configuration', help='Blockly workspace configuration')
+    
+    # Visual builder fields
+    is_visual_rule = fields.Boolean('Is Visual Rule', compute='_compute_is_visual_rule', store=True)
     
     condition_field = fields.Char('Condition Field')
     condition_operator = fields.Selection([
@@ -123,3 +128,45 @@ class AdvancedPricingRule(models.Model):
     def apply_cascading_action(self, price, context_data):
         """Apply cascading action for Level 2 rules"""
         return self.apply_action(price, context_data)
+    
+    @api.depends('rule_type')
+    def _compute_is_visual_rule(self):
+        """Compute if this is a visual rule"""
+        for rule in self:
+            rule.is_visual_rule = rule.rule_type == 'visual'
+    
+    def action_open_visual_builder(self):
+        """Open the visual rule builder interface"""
+        self.ensure_one()
+        
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'visual_rule_builder',
+            'target': 'fullscreen',
+            'context': {
+                'rule_data': {
+                    'id': self.id,
+                    'name': self.name,
+                    'engine_id': self.engine_id.id,
+                    'level': self.level,
+                    'sequence': self.sequence,
+                    'active': self.active,
+                    'visual_config': self.visual_config or '',
+                    'generated_code': self.generated_code or '',
+                }
+            }
+        }
+    
+    def action_create_visual_rule(self):
+        """Create a new visual rule"""
+        return {
+            'type': 'ir.actions.act_window',
+            'name': 'Visual Rule Builder',
+            'res_model': 'advanced.pricing.visual.wizard',
+            'view_mode': 'form',
+            'target': 'new',
+            'context': {
+                'default_engine_id': self.engine_id.id,
+                'default_name': f'{self.name} - Visual Rule',
+            }
+        }

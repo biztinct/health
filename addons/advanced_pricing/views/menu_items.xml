@@ -1,5 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+    
+    <!-- Actions must be defined before menu items that reference them -->
+    <record id="action_advanced_pricing_engines" model="ir.actions.act_window">
+        <field name="name">Pricing Engines</field>
+        <field name="res_model">advanced.pricing.engine</field>
+        <field name="view_mode">list,form</field>
+    </record>
+    
+    <record id="action_advanced_pricing_rules" model="ir.actions.act_window">
+        <field name="name">Pricing Rules</field>
+        <field name="res_model">advanced.pricing.rule</field>
+        <field name="view_mode">list,form</field>
+    </record>
+    
+    <record id="action_advanced_pricing_config" model="ir.actions.act_window">
+        <field name="name">Configuration</field>
+        <field name="res_model">advanced.pricing.config</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- Menu items referencing the actions above -->
     <menuitem id="menu_advanced_pricing_root" 
               name="Advanced Pricing" 
               parent="sale.sale_menu_root"
@@ -22,22 +43,5 @@
               parent="menu_advanced_pricing_root"
               action="action_advanced_pricing_config"
               sequence="30"/>
-    
-    <record id="action_advanced_pricing_engines" model="ir.actions.act_window">
-        <field name="name">Pricing Engines</field>
-        <field name="res_model">advanced.pricing.engine</field>
-        <field name="view_mode">tree,form</field>
-    </record>
-    
-    <record id="action_advanced_pricing_rules" model="ir.actions.act_window">
-        <field name="name">Pricing Rules</field>
-        <field name="res_model">advanced.pricing.rule</field>
-        <field name="view_mode">tree,form</field>
-    </record>
-    
-    <record id="action_advanced_pricing_config" model="ir.actions.act_window">
-        <field name="name">Configuration</field>
-        <field name="res_model">advanced.pricing.config</field>
-        <field name="view_mode">tree,form</field>
-    </record>
+
 </odoo>

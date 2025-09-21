@@ -5,17 +5,41 @@
         <field name="model">advanced.pricing.rule</field>
         <field name="arch" type="xml">
             <form string="Pricing Rule">
+                <header>
+                    <button name="action_open_visual_builder" type="object" 
+                            string="🎨 Visual Builder" class="btn-primary"
+                            help="Open drag-and-drop visual rule builder"/>
+                </header>
                 <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_create_visual_rule" type="object" 
+                                class="oe_stat_button" icon="fa-puzzle-piece"
+                                invisible="rule_type == 'visual'">
+                            <div class="o_field_widget o_stat_info">
+                                <span class="o_stat_text">Create</span>
+                                <span class="o_stat_text">Visual Rule</span>
+                            </div>
+                        </button>
+                    </div>
+                    
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="Rule Name"/>
+                        </h1>
+                    </div>
+                    
                     <group>
-                        <field name="name"/>
-                        <field name="engine_id"/>
-                        <field name="sequence"/>
-                        <field name="active"/>
+                        <group string="Basic Information">
+                            <field name="engine_id"/>
+                            <field name="sequence"/>
+                            <field name="active"/>
+                        </group>
+                        <group string="Rule Configuration">
+                            <field name="level"/>
+                            <field name="rule_type"/>
+                        </group>
                     </group>
-                    <group>
-                        <field name="level"/>
-                        <field name="rule_type"/>
-                    </group>
+                    
                     <notebook>
                         <page string="Conditions">
                             <group>
@@ -36,18 +60,18 @@
         </field>
     </record>
     
-    <record id="view_pricing_rule_tree" model="ir.ui.view">
-        <field name="name">advanced.pricing.rule.tree</field>
+    <record id="view_pricing_rule_list" model="ir.ui.view">
+        <field name="name">advanced.pricing.rule.list</field>
         <field name="model">advanced.pricing.rule</field>
         <field name="arch" type="xml">
-            <tree string="Pricing Rules">
+            <list string="Pricing Rules">
                 <field name="sequence" widget="handle"/>
                 <field name="name"/>
                 <field name="engine_id"/>
                 <field name="level"/>
                 <field name="rule_type"/>
                 <field name="active"/>
-            </tree>
+            </list>
         </field>
     </record>
 </odoo>

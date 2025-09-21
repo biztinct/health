@@ -8,8 +8,8 @@
             <xpath expr="//field[@name='active']" position="after">
                 <field name="use_advanced_pricing"/>
                 <field name="advanced_engine_id" 
-                       attrs="{'invisible': [('use_advanced_pricing', '=', False)],
-                              'required': [('use_advanced_pricing', '=', True)]}"/>
+                       invisible="not use_advanced_pricing"
+                       required="use_advanced_pricing"/>
             </xpath>
         </field>
     </record>

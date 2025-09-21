@@ -7,7 +7,7 @@
         <field name="arch" type="xml">
             <xpath expr="//field[@name='pricelist_id']" position="after">
                 <field name="use_advanced_pricing" invisible="1"/>
-                <field name="booking_id" attrs="{'invisible': [('booking_id', '=', False)]}"/>
+                <field name="booking_id" invisible="not booking_id"/>
             </xpath>
         </field>
     </record>

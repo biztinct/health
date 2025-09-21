@@ -46,5 +46,7 @@ export class PricingService {
 
 registry.category('services').add('pricing', {
     dependencies: ['orm', 'notification'],
-    factory: (env, dependencies) => new PricingService(env, dependencies),
+    start(env, dependencies) {
+        return new PricingService(env, dependencies);
+    },
 });
