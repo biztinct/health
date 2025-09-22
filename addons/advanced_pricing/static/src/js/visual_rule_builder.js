@@ -37,14 +37,27 @@ export class VisualRuleBuilder extends Component {
 
     async initializeBlockly() {
         try {
+            console.log('🚀 Starting Blockly initialization...');
+            
             // Wait for Blockly to be loaded
             await this.loadBlocklyLibrary();
+            console.log('✅ Blockly library loaded');
+            
+            // Use setTimeout to ensure DOM is ready
+            await new Promise(resolve => {
+                setTimeout(resolve, 200); // Small delay for DOM rendering
+            });
+            
+            console.log('✅ DOM should be ready, checking element...');
+            console.log('blocklyDiv.el:', this.blocklyDiv.el);
             
             // Define custom blocks for pricing rules
             this.defineCustomBlocks();
+            console.log('✅ Custom blocks defined');
             
             // Initialize workspace
             this.createWorkspace();
+            console.log('✅ Workspace created');
             
             // Load existing rule if provided
             if (this.props.ruleData && this.props.ruleData.visual_config) {
@@ -52,12 +65,38 @@ export class VisualRuleBuilder extends Component {
             }
             
             this.state.isLoading = false;
+            console.log('✅ Blockly initialization complete!');
         } catch (error) {
-            console.error("Failed to initialize Blockly:", error);
-            this.notification.add(_t("Failed to load visual rule builder"), {
+            console.error("❌ Failed to initialize Blockly:", error);
+            this.state.isLoading = false;
+            this.notification.add(_t("Failed to load visual rule builder: " + error.message), {
                 type: "danger",
             });
         }
+    }
+
+    async waitForElement() {
+        // Wait for the DOM element to be available
+        return new Promise((resolve, reject) => {
+            let attempts = 0;
+            const maxAttempts = 50; // 5 seconds max
+            
+            const checkElement = () => {
+                attempts++;
+                console.log(`Attempt ${attempts}: Checking for blocklyDiv.el`, this.blocklyDiv.el);
+                
+                if (this.blocklyDiv.el && document.contains(this.blocklyDiv.el)) {
+                    console.log('✅ DOM element found and is in document');
+                    resolve();
+                } else if (attempts >= maxAttempts) {
+                    console.error('❌ Timeout waiting for DOM element');
+                    reject(new Error('Timeout waiting for DOM element'));
+                } else {
+                    setTimeout(checkElement, 100);
+                }
+            };
+            checkElement();
+        });
     }
 
     async loadBlocklyLibrary() {
@@ -109,145 +148,133 @@ export class VisualRuleBuilder extends Component {
     defineCustomBlocks() {
         if (!window.Blockly) return;
 
-        // Define pricing condition block
-        window.Blockly.defineBlocksWithJsonArray([
-            {
-                "type": "pricing_condition",
-                "message0": "If %1 %2 %3",
-                "args0": [
-                    {
-                        "type": "field_dropdown",
-                        "name": "FIELD",
-                        "options": [
-                            ["Order Total", "order_total"],
-                            ["Quantity", "quantity"],
-                            ["Customer Type", "customer_type"],
-                            ["Distance", "distance"],
-                            ["Time", "time"],
-                            ["Service Type", "service_type"]
-                        ]
-                    },
-                    {
-                        "type": "field_dropdown",
-                        "name": "OPERATOR",
-                        "options": [
-                            ["equals", "=="],
-                            ["greater than", ">"],
-                            ["less than", "<"],
-                            ["greater or equal", ">="],
-                            ["less or equal", "<="],
-                            ["not equal", "!="]
-                        ]
-                    },
-                    {
-                        "type": "input_value",
-                        "name": "VALUE"
-                    }
-                ],
-                "inputsInline": true,
-                "output": "Boolean",
-                "colour": 210,
-                "tooltip": "Create a pricing condition",
-                "helpUrl": ""
-            },
-            {
-                "type": "pricing_action",
-                "message0": "Set price to %1 %2",
-                "args0": [
-                    {
-                        "type": "field_dropdown",
-                        "name": "ACTION_TYPE",
-                        "options": [
-                            ["Add", "add"],
-                            ["Subtract", "subtract"],
-                            ["Multiply by", "multiply"],
-                            ["Set to", "set"],
-                            ["Percentage", "percentage"]
-                        ]
-                    },
-                    {
-                        "type": "input_value",
-                        "name": "VALUE"
-                    }
-                ],
-                "inputsInline": true,
-                "previousStatement": null,
-                "nextStatement": null,
-                "colour": 160,
-                "tooltip": "Define a pricing action",
-                "helpUrl": ""
-            },
-            {
-                "type": "number_value",
-                "message0": "%1",
-                "args0": [
-                    {
-                        "type": "field_number",
-                        "name": "NUM",
-                        "value": 0
-                    }
-                ],
-                "output": "Number",
-                "colour": 230,
-                "tooltip": "A number value",
-                "helpUrl": ""
-            },
-            {
-                "type": "pricing_rule",
-                "message0": "Pricing Rule %1 %2 Then %3",
-                "args0": [
-                    {
-                        "type": "field_input",
-                        "name": "RULE_NAME",
-                        "text": "New Rule"
-                    },
-                    {
-                        "type": "input_value",
-                        "name": "CONDITION",
-                        "check": "Boolean"
-                    },
-                    {
-                        "type": "input_statement",
-                        "name": "ACTIONS"
-                    }
-                ],
-                "colour": 120,
-                "tooltip": "Create a complete pricing rule",
-                "helpUrl": ""
+        // Define custom blocks using JavaScript API for better compatibility
+        window.Blockly.Blocks['pricing_condition'] = {
+            init: function() {
+                this.appendDummyInput()
+                    .appendField("If")
+                    .appendField(new window.Blockly.FieldDropdown([
+                        ["Order Total", "order_total"],
+                        ["Quantity", "quantity"],
+                        ["Customer Type", "customer_type"],
+                        ["Distance", "distance"],
+                        ["Time", "time"],
+                        ["Service Type", "service_type"]
+                    ]), "FIELD")
+                    .appendField(new window.Blockly.FieldDropdown([
+                        ["equals", "=="],
+                        ["greater than", ">"],
+                        ["less than", "<"],
+                        ["greater or equal", ">="],
+                        ["less or equal", "<="],
+                        ["not equal", "!="]
+                    ]), "OPERATOR");
+                this.appendValueInput("VALUE");
+                this.setInputsInline(true);
+                this.setOutput(true, "Boolean");
+                this.setColour(210);
+                this.setTooltip("Create a pricing condition");
+                this.setMovable(true);
+                this.setDeletable(true);
             }
-        ]);
+        };
+
+        window.Blockly.Blocks['pricing_action'] = {
+            init: function() {
+                this.appendDummyInput()
+                    .appendField("Set price to")
+                    .appendField(new window.Blockly.FieldDropdown([
+                        ["Add", "add"],
+                        ["Subtract", "subtract"],
+                        ["Multiply by", "multiply"],
+                        ["Set to", "set"],
+                        ["Percentage", "percentage"]
+                    ]), "ACTION_TYPE");
+                this.appendValueInput("VALUE");
+                this.setInputsInline(true);
+                this.setPreviousStatement(true, null);
+                this.setNextStatement(true, null);
+                this.setColour(160);
+                this.setTooltip("Define a pricing action");
+                this.setMovable(true);
+                this.setDeletable(true);
+            }
+        };
+
+        window.Blockly.Blocks['number_value'] = {
+            init: function() {
+                this.appendDummyInput()
+                    .appendField(new window.Blockly.FieldNumber(0), "NUM");
+                this.setOutput(true, "Number");
+                this.setColour(230);
+                this.setTooltip("A number value");
+                this.setMovable(true);
+                this.setDeletable(true);
+            }
+        };
+
+        window.Blockly.Blocks['pricing_rule'] = {
+            init: function() {
+                this.appendDummyInput()
+                    .appendField("Pricing Rule")
+                    .appendField(new window.Blockly.FieldTextInput("New Rule"), "RULE_NAME");
+                this.appendValueInput("CONDITION")
+                    .setCheck("Boolean")
+                    .appendField("When");
+                this.appendStatementInput("ACTIONS")
+                    .setCheck(null)
+                    .appendField("Then");
+                this.setColour(120);
+                this.setTooltip("Create a complete pricing rule");
+                this.setMovable(true);
+                this.setDeletable(true);
+            }
+        };
 
         // Define JavaScript generators for the blocks
-        window.Blockly.JavaScript['pricing_condition'] = function(block) {
-            const field = block.getFieldValue('FIELD');
-            const operator = block.getFieldValue('OPERATOR');
-            const value = window.Blockly.JavaScript.valueToCode(block, 'VALUE', window.Blockly.JavaScript.ORDER_ATOMIC);
-            
-            return [`${field} ${operator} ${value}`, window.Blockly.JavaScript.ORDER_RELATIONAL];
-        };
+        const javascriptGenerator = window.Blockly.JavaScript || window.Blockly.generators?.javascript;
+        
+        if (javascriptGenerator) {
+            javascriptGenerator.forBlock['pricing_condition'] = function(block) {
+                const field = block.getFieldValue('FIELD');
+                const operator = block.getFieldValue('OPERATOR');
+                const value = javascriptGenerator.valueToCode(block, 'VALUE', javascriptGenerator.ORDER_ATOMIC);
+                
+                return [`${field} ${operator} ${value}`, javascriptGenerator.ORDER_RELATIONAL];
+            };
 
-        window.Blockly.JavaScript['pricing_action'] = function(block) {
-            const actionType = block.getFieldValue('ACTION_TYPE');
-            const value = window.Blockly.JavaScript.valueToCode(block, 'VALUE', window.Blockly.JavaScript.ORDER_ATOMIC);
-            
-            return `apply_${actionType}(${value});\n`;
-        };
+            javascriptGenerator.forBlock['pricing_action'] = function(block) {
+                const actionType = block.getFieldValue('ACTION_TYPE');
+                const value = javascriptGenerator.valueToCode(block, 'VALUE', javascriptGenerator.ORDER_ATOMIC);
+                
+                return `apply_${actionType}(${value});\n`;
+            };
 
-        window.Blockly.JavaScript['number_value'] = function(block) {
-            const number = parseFloat(block.getFieldValue('NUM'));
-            return [number, window.Blockly.JavaScript.ORDER_ATOMIC];
-        };
+            javascriptGenerator.forBlock['number_value'] = function(block) {
+                const number = parseFloat(block.getFieldValue('NUM'));
+                return [number, javascriptGenerator.ORDER_ATOMIC];
+            };
 
-        window.Blockly.JavaScript['pricing_rule'] = function(block) {
-            const ruleName = block.getFieldValue('RULE_NAME');
-            const condition = window.Blockly.JavaScript.valueToCode(block, 'CONDITION', window.Blockly.JavaScript.ORDER_NONE);
-            const actions = window.Blockly.JavaScript.statementToCode(block, 'ACTIONS');
-            
-            return `// Rule: ${ruleName}\nif (${condition}) {\n${actions}}\n`;
-        };
+            javascriptGenerator.forBlock['pricing_rule'] = function(block) {
+                const ruleName = block.getFieldValue('RULE_NAME');
+                const condition = javascriptGenerator.valueToCode(block, 'CONDITION', javascriptGenerator.ORDER_NONE);
+                const actions = javascriptGenerator.statementToCode(block, 'ACTIONS');
+                
+                return `// Rule: ${ruleName}\nif (${condition}) {\n${actions}}\n`;
+            };
+        }
     }
 
     createWorkspace() {
+        // Validate that element exists and is in DOM
+        if (!this.blocklyDiv.el) {
+            throw new Error('Blockly container element not found');
+        }
+        
+        if (!document.contains(this.blocklyDiv.el)) {
+            throw new Error('Blockly container is not in current document');
+        }
+
         const toolbox = `
         <xml xmlns="https://developers.google.com/blockly/xml" id="toolbox" style="display: none">
             <category name="Conditions" colour="210">
@@ -273,53 +300,67 @@ export class VisualRuleBuilder extends Component {
             </category>
         </xml>`;
 
-        this.state.workspace = window.Blockly.inject(this.blocklyDiv.el, {
-            toolbox: toolbox,
-            collapse: true,
-            comments: true,
-            disable: true,
-            maxBlocks: Infinity,
-            trashcan: true,
-            horizontalLayout: false,
-            toolboxPosition: 'start',
-            css: true,
-            media: 'https://unpkg.com/blockly/media/',
-            rtl: false,
-            scrollbars: true,
-            sounds: true,
-            oneBasedIndex: true,
-            grid: {
-                spacing: 20,
-                length: 1,
-                colour: '#888',
-                snap: true
-            },
-            zoom: {
-                controls: true,
-                wheel: true,
-                startScale: 1.0,
-                maxScale: 3,
-                minScale: 0.3,
-                scaleSpeed: 1.2
-            }
-        });
+        try {
+            this.state.workspace = window.Blockly.inject(this.blocklyDiv.el, {
+                toolbox: toolbox,
+                collapse: true,
+                comments: true,
+                disable: false, // Enable block interactions
+                maxBlocks: Infinity,
+                trashcan: true,
+                horizontalLayout: false,
+                toolboxPosition: 'start',
+                css: true,
+                media: 'https://unpkg.com/blockly/media/',
+                rtl: false,
+                scrollbars: true,
+                sounds: false, // Disable sounds to prevent focus issues
+                oneBasedIndex: true,
+                move: {
+                    scrollbars: true,
+                    drag: true,
+                    wheel: true
+                },
+                grid: {
+                    spacing: 20,
+                    length: 1,
+                    colour: '#888',
+                    snap: true
+                },
+                zoom: {
+                    controls: true,
+                    wheel: true,
+                    startScale: 1.0,
+                    maxScale: 3,
+                    minScale: 0.3,
+                    scaleSpeed: 1.2
+                }
+            });
 
-        // Listen for changes
-        this.state.workspace.addChangeListener(this.onWorkspaceChange.bind(this));
+            // Listen for changes
+            this.state.workspace.addChangeListener(this.onWorkspaceChange.bind(this));
+            
+            console.log('Blockly workspace created successfully');
+        } catch (error) {
+            console.error('Failed to create Blockly workspace:', error);
+            throw error;
+        }
     }
 
     onWorkspaceChange() {
         if (!this.state.workspace) return;
         
         try {
-            // Generate code from blocks
-            const code = window.Blockly.JavaScript.workspaceToCode(this.state.workspace);
+            // Generate code from blocks using the correct generator
+            const javascriptGenerator = window.Blockly.JavaScript || window.Blockly.generators?.javascript;
+            const code = javascriptGenerator ? javascriptGenerator.workspaceToCode(this.state.workspace) : '';
             this.state.generatedCode = code;
             
             // Update preview
             this.updatePreview();
         } catch (error) {
             console.error("Error generating code from blocks:", error);
+            this.state.generatedCode = '// Error generating code: ' + error.message;
         }
     }
 
@@ -415,7 +456,21 @@ export class VisualRuleBuilder extends Component {
         
         try {
             const xml = this.props.ruleData.visual_config;
-            window.Blockly.Xml.domToWorkspace(xml, this.state.workspace);
+            // Check if it's a string that needs parsing
+            if (typeof xml === 'string') {
+                try {
+                    // Try new Blockly API first
+                    const xmlDom = window.Blockly.utils.xml.textToDom(xml);
+                    window.Blockly.Xml.domToWorkspace(xmlDom, this.state.workspace);
+                } catch (error) {
+                    // Fallback to legacy API
+                    const xmlDom = window.Blockly.Xml.textToDom(xml);
+                    window.Blockly.Xml.domToWorkspace(xmlDom, this.state.workspace);
+                }
+            } else {
+                // It's already a DOM element
+                window.Blockly.Xml.domToWorkspace(xml, this.state.workspace);
+            }
         } catch (error) {
             console.error("Failed to load existing rule:", error);
         }
@@ -487,72 +542,261 @@ export class VisualRuleBuilder extends Component {
     }
 
     loadTemplate(templateName) {
-        // Load predefined templates
-        const templates = {
-            distance_pricing: `
-                <xml xmlns="https://developers.google.com/blockly/xml">
-                    <block type="pricing_rule" x="20" y="20">
-                        <field name="RULE_NAME">Distance Surcharge</field>
-                        <value name="CONDITION">
-                            <block type="pricing_condition">
-                                <field name="FIELD">distance</field>
-                                <field name="OPERATOR">&gt;</field>
-                                <value name="VALUE">
-                                    <block type="number_value">
-                                        <field name="NUM">15</field>
-                                    </block>
-                                </value>
-                            </block>
-                        </value>
-                        <statement name="ACTIONS">
-                            <block type="pricing_action">
-                                <field name="ACTION_TYPE">add</field>
-                                <value name="VALUE">
-                                    <block type="number_value">
-                                        <field name="NUM">50</field>
-                                    </block>
-                                </value>
-                            </block>
-                        </statement>
-                    </block>
-                </xml>
-            `,
-            bulk_discount: `
-                <xml xmlns="https://developers.google.com/blockly/xml">
-                    <block type="pricing_rule" x="20" y="20">
-                        <field name="RULE_NAME">Bulk Discount</field>
-                        <value name="CONDITION">
-                            <block type="pricing_condition">
-                                <field name="FIELD">quantity</field>
-                                <field name="OPERATOR">&gt;=</field>
-                                <value name="VALUE">
-                                    <block type="number_value">
-                                        <field name="NUM">10</field>
-                                    </block>
-                                </value>
-                            </block>
-                        </value>
-                        <statement name="ACTIONS">
-                            <block type="pricing_action">
-                                <field name="ACTION_TYPE">percentage</field>
-                                <value name="VALUE">
-                                    <block type="number_value">
-                                        <field name="NUM">-10</field>
-                                    </block>
-                                </value>
-                            </block>
-                        </statement>
-                    </block>
-                </xml>
-            `
-        };
+        if (!this.state.workspace) return;
 
-        if (templates[templateName] && this.state.workspace) {
-            const xml = window.Blockly.Xml.textToDom(templates[templateName]);
+        try {
+            // Clear workspace first
             this.state.workspace.clear();
-            window.Blockly.Xml.domToWorkspace(xml, this.state.workspace);
+
+            // Use Blockly's recommended approach: XML workspace state
+            const templates = {
+                distance_pricing: `
+                    <xml xmlns="https://developers.google.com/blockly/xml">
+                        <block type="pricing_rule" x="20" y="20">
+                            <field name="RULE_NAME">Distance Surcharge</field>
+                        </block>
+                        <block type="pricing_condition" x="20" y="120">
+                            <field name="FIELD">distance</field>
+                            <field name="OPERATOR">&gt;</field>
+                        </block>
+                        <block type="number_value" x="300" y="120">
+                            <field name="NUM">15</field>
+                        </block>
+                        <block type="pricing_action" x="20" y="220">
+                            <field name="ACTION_TYPE">add</field>
+                        </block>
+                        <block type="number_value" x="300" y="220">
+                            <field name="NUM">50</field>
+                        </block>
+                    </xml>
+                `,
+                bulk_discount: `
+                    <xml xmlns="https://developers.google.com/blockly/xml">
+                        <block type="pricing_rule" x="20" y="20">
+                            <field name="RULE_NAME">Bulk Discount</field>
+                        </block>
+                        <block type="pricing_condition" x="20" y="120">
+                            <field name="FIELD">quantity</field>
+                            <field name="OPERATOR">&gt;=</field>
+                        </block>
+                        <block type="number_value" x="300" y="120">
+                            <field name="NUM">10</field>
+                        </block>
+                        <block type="pricing_action" x="20" y="220">
+                            <field name="ACTION_TYPE">percentage</field>
+                        </block>
+                        <block type="number_value" x="300" y="220">
+                            <field name="NUM">-10</field>
+                        </block>
+                    </xml>
+                `
+            };
+
+            if (templates[templateName]) {
+                console.log(`🔧 DEBUG: Loading template ${templateName}`);
+                console.log(`🔧 DEBUG: Template XML:`, templates[templateName]);
+                
+                // Use DOMParser to parse XML (browser native, no Blockly dependencies)
+                const parser = new DOMParser();
+                const xmlDoc = parser.parseFromString(templates[templateName], "text/xml");
+                
+                console.log(`🔧 DEBUG: Parsed XML document:`, xmlDoc);
+                console.log(`🔧 DEBUG: XML documentElement:`, xmlDoc.documentElement);
+                console.log(`🔧 DEBUG: Workspace before loading:`, this.state.workspace);
+                console.log(`🔧 DEBUG: Number of blocks before loading:`, this.state.workspace.getAllBlocks().length);
+                
+                // Clear workspace first to avoid conflicts
+                this.state.workspace.clear();
+                
+                // Load blocks one by one to maintain interactivity
+                const blocks = xmlDoc.documentElement.children;
+                for (let i = 0; i < blocks.length; i++) {
+                    const blockElement = blocks[i];
+                    if (blockElement.tagName === 'block') {
+                        this.createInteractiveBlock(blockElement);
+                    }
+                }
+                
+                console.log(`🔧 DEBUG: Number of blocks after loading:`, this.state.workspace.getAllBlocks().length);
+                console.log(`🔧 DEBUG: All blocks:`, this.state.workspace.getAllBlocks());
+                
+                // Force workspace to render and resize
+                this.state.workspace.render();
+                this.state.workspace.resizeContents();
+                
+                // Debug workspace visibility
+                console.log(`🔧 DEBUG: Container width: ${this.blocklyDiv.el.offsetWidth}px`);
+                console.log(`🔧 DEBUG: Container height: ${this.blocklyDiv.el.offsetHeight}px`);
+                console.log(`🔧 DEBUG: Container visible: ${this.blocklyDiv.el.offsetParent !== null}`);
+                
+                // Debug SVG elements
+                const svgElement = this.blocklyDiv.el.querySelector('svg');
+                if (svgElement) {
+                    console.log(`🔧 DEBUG: SVG width: ${svgElement.getAttribute('width')}`);
+                    console.log(`🔧 DEBUG: SVG height: ${svgElement.getAttribute('height')}`);
+                    console.log(`🔧 DEBUG: SVG viewBox: ${svgElement.getAttribute('viewBox')}`);
+                } else {
+                    console.log(`🔧 DEBUG: No SVG element found!`);
+                }
+                
+                // Debug block positions and visibility
+                this.state.workspace.getAllBlocks().forEach((block, index) => {
+                    const position = block.getRelativeToSurfaceXY();
+                    console.log(`🔧 DEBUG: Block ${index} (${block.type}): x=${position.x}, y=${position.y}, rendered=${block.rendered}`);
+                });
+                
+                // Force a resize to make sure everything is visible
+                setTimeout(() => {
+                    // Force container to have proper height
+                    this.blocklyDiv.el.style.height = '600px';
+                    this.blocklyDiv.el.style.minHeight = '600px';
+                    
+                    // Ensure all blocks are properly configured for dragging
+                    this.state.workspace.getAllBlocks().forEach(block => {
+                        if (block.setMovable) {
+                            block.setMovable(true);
+                        }
+                        if (block.setDeletable) {
+                            block.setDeletable(true);
+                        }
+                        if (block.setEditable) {
+                            block.setEditable(true);
+                        }
+                        // Re-initialize SVG for proper interaction
+                        if (block.initSvg) {
+                            block.initSvg();
+                        }
+                    });
+                    
+                    // Trigger Blockly resize
+                    window.Blockly.svgResize(this.state.workspace);
+                    this.state.workspace.resizeContents();
+                    this.state.workspace.render();
+                    
+                    // Clear any focus issues
+                    try {
+                        this.state.workspace.getFlyout()?.hide();
+                    } catch (e) {
+                        console.log('No flyout to hide');
+                    }
+                    
+                    console.log(`🔧 DEBUG: After forced resize - Container height: ${this.blocklyDiv.el.offsetHeight}px`);
+                    console.log(`🔧 DEBUG: Blocks configured for dragging`);
+                    
+                    const svgElement = this.blocklyDiv.el.querySelector('svg');
+                    if (svgElement) {
+                        console.log(`🔧 DEBUG: After resize - SVG height: ${svgElement.getAttribute('height')}`);
+                    }
+                }, 100);
+                
+                console.log(`✅ Template ${templateName} loaded successfully`);
+            }
+
+        } catch (error) {
+            console.error('Failed to load template:', error);
+            this.notification.add(_t("Failed to load template: " + error.message), {
+                type: "danger",
+            });
         }
     }
+
+    /**
+     * Create a block from XML element while maintaining full interactivity
+     * This method parses XML block elements and creates them using the JavaScript API
+     * to ensure they maintain the same interactivity as blocks dragged from the toolbox
+     */
+    createInteractiveBlock(blockElement) {
+        try {
+            const blockType = blockElement.getAttribute('type');
+            const x = parseInt(blockElement.getAttribute('x')) || 0;
+            const y = parseInt(blockElement.getAttribute('y')) || 0;
+            
+            console.log(`🔧 Creating interactive block: ${blockType} at (${x}, ${y})`);
+            
+            // Create the block using the JavaScript API
+            const block = this.state.workspace.newBlock(blockType);
+            
+            // Set position
+            block.moveBy(x, y);
+            
+            // Parse and set field values
+            const fields = blockElement.querySelectorAll('field');
+            fields.forEach(field => {
+                const fieldName = field.getAttribute('name');
+                const fieldValue = field.textContent;
+                
+                console.log(`🔧 Setting field ${fieldName} = ${fieldValue}`);
+                
+                if (block.getField(fieldName)) {
+                    block.setFieldValue(fieldValue, fieldName);
+                }
+            });
+            
+            // Parse and set values for value inputs
+            const values = blockElement.querySelectorAll('value');
+            values.forEach(value => {
+                const valueName = value.getAttribute('name');
+                const childBlock = value.querySelector('block');
+                
+                if (childBlock) {
+                    console.log(`🔧 Creating child block for value input: ${valueName}`);
+                    
+                    // Recursively create child blocks
+                    const childBlockObj = this.createInteractiveBlock(childBlock);
+                    if (childBlockObj && block.getInput(valueName)) {
+                        block.getInput(valueName).connection.connect(childBlockObj.outputConnection);
+                    }
+                }
+            });
+            
+            // Parse and set statement connections
+            const statements = blockElement.querySelectorAll('statement');
+            statements.forEach(statement => {
+                const statementName = statement.getAttribute('name');
+                const childBlock = statement.querySelector('block');
+                
+                if (childBlock) {
+                    console.log(`🔧 Creating child block for statement: ${statementName}`);
+                    
+                    // Recursively create child blocks
+                    const childBlockObj = this.createInteractiveBlock(childBlock);
+                    if (childBlockObj && block.getInput(statementName)) {
+                        block.getInput(statementName).connection.connect(childBlockObj.previousConnection);
+                    }
+                }
+            });
+            
+            // Parse next blocks in sequence
+            const nextBlock = blockElement.querySelector(':scope > next > block');
+            if (nextBlock) {
+                console.log(`🔧 Creating next block in sequence`);
+                const nextBlockObj = this.createInteractiveBlock(nextBlock);
+                if (nextBlockObj && block.nextConnection) {
+                    block.nextConnection.connect(nextBlockObj.previousConnection);
+                }
+            }
+            
+            // Initialize the block's SVG and make it interactive
+            block.initSvg();
+            block.render();
+            
+            // Ensure block is movable and deletable
+            block.setMovable(true);
+            block.setDeletable(true);
+            block.setEditable(true);
+            
+            console.log(`✅ Successfully created interactive block: ${blockType}`);
+            
+            return block;
+            
+        } catch (error) {
+            console.error(`❌ Failed to create interactive block:`, error);
+            console.error(`Block element:`, blockElement);
+            return null;
+        }
+    }
+
+
 }
 
 registry.category("components").add("VisualRuleBuilder", VisualRuleBuilder);

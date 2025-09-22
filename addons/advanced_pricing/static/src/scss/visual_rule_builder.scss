@@ -30,6 +30,9 @@
         
         .blockly-workspace {
             border: none;
+            height: 600px !important;
+            min-height: 600px !important;
+            display: block !important;
             
             /* Custom Blockly styling */
             .blocklyToolboxDiv {

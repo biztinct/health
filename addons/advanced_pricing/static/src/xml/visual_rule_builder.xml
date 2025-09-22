@@ -33,13 +33,13 @@
             </div>
 
             <!-- Main Content -->
-            <div t-if="!state.isLoading" class="builder-content">
+            <div class="builder-content">
                 <div class="row g-0 h-100">
                     <!-- Blockly Workspace -->
                     <div class="col-md-8">
                         <div class="blockly-container">
                             <!-- Templates Bar -->
-                            <div class="templates-bar bg-light p-2 border-bottom">
+                            <div t-if="!state.isLoading" class="templates-bar bg-light p-2 border-bottom">
                                 <small class="text-muted me-3">Quick Templates:</small>
                                 <button class="btn btn-sm btn-outline-primary me-2" 
                                         t-on-click="() => this.loadTemplate('distance_pricing')">
@@ -52,7 +52,9 @@
                             </div>
                             
                             <!-- Blockly Workspace Area -->
-                            <div t-ref="blocklyDiv" class="blockly-workspace" style="height: 600px; width: 100%;"/>
+                            <div t-ref="blocklyDiv" class="blockly-workspace" 
+                                 style="height: 600px; width: 100%; min-height: 600px; position: relative;" 
+                                 t-att-style="state.isLoading ? 'visibility: hidden;' : 'visibility: visible;'"/>
                         </div>
                     </div>
 
