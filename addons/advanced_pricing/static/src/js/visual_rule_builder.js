@@ -305,7 +305,7 @@ export class VisualRuleBuilder extends Component {
                 toolbox: toolbox,
                 collapse: true,
                 comments: true,
-                disable: false, // Enable block interactions
+                disable: false,
                 maxBlocks: Infinity,
                 trashcan: true,
                 horizontalLayout: false,
@@ -314,18 +314,21 @@ export class VisualRuleBuilder extends Component {
                 media: 'https://unpkg.com/blockly/media/',
                 rtl: false,
                 scrollbars: true,
-                sounds: false, // Disable sounds to prevent focus issues
+                sounds: false,
                 oneBasedIndex: true,
                 move: {
-                    scrollbars: true,
+                    scrollbars: {
+                        horizontal: true,
+                        vertical: true
+                    },
                     drag: true,
                     wheel: true
                 },
                 grid: {
                     spacing: 20,
                     length: 1,
-                    colour: '#888',
-                    snap: true
+                    colour: '#ccc',
+                    snap: false  // Disable snap for smoother dragging
                 },
                 zoom: {
                     controls: true,
@@ -333,8 +336,10 @@ export class VisualRuleBuilder extends Component {
                     startScale: 1.0,
                     maxScale: 3,
                     minScale: 0.3,
-                    scaleSpeed: 1.2
-                }
+                    scaleSpeed: 1.2,
+                    pinch: true  // Enable pinch to zoom
+                },
+                renderer: 'geras'  // Use modern renderer for better performance
             });
 
             // Listen for changes
@@ -490,6 +495,18 @@ export class VisualRuleBuilder extends Component {
             const workspaceXml = window.Blockly.Xml.workspaceToDom(this.state.workspace);
             const extractedData = this.extractRuleDataFromBlocks();
             
+            // Get default engine_id if not provided
+            let engineId = this.props.ruleData?.engine_id;
+            if (!engineId) {
+                try {
+                    const engines = await this.orm.searchRead('advanced.pricing.engine', [], ['id'], { limit: 1 });
+                    engineId = engines.length > 0 ? engines[0].id : 1;
+                } catch (error) {
+                    console.warn('Could not fetch default engine, using ID 1:', error);
+                    engineId = 1;
+                }
+            }
+            
             const ruleData = {
                 name: this.state.previewRule.name || 'Visual Rule',
                 visual_config: new XMLSerializer().serializeToString(workspaceXml),
@@ -502,6 +519,7 @@ export class VisualRuleBuilder extends Component {
                 condition_value: extractedData.condition_value,
                 action_type: extractedData.action_type,
                 action_value: extractedData.action_value,
+                engine_id: engineId,
             };
 
             // Handle subtract action with negative value
@@ -511,9 +529,7 @@ export class VisualRuleBuilder extends Component {
             
             await this.props.onSave(ruleData);
             
-            this.notification.add(_t("Visual rule saved successfully"), {
-                type: "success",
-            });
+            // Success notification is handled by the parent component
         } catch (error) {
             console.error("Failed to save rule:", error);
             this.notification.add(_t("Failed to save rule"), {
@@ -538,6 +554,16 @@ export class VisualRuleBuilder extends Component {
     clearWorkspace() {
         if (this.state.workspace) {
             this.state.workspace.clear();
+        }
+    }
+
+    backToRulesList() {
+        // Call the parent's back to rules list method
+        if (this.props.onBackToRulesList) {
+            this.props.onBackToRulesList();
+        } else {
+            // Fallback: use cancel
+            this.props.onCancel();
         }
     }
 
@@ -651,20 +677,11 @@ export class VisualRuleBuilder extends Component {
                     this.blocklyDiv.el.style.height = '600px';
                     this.blocklyDiv.el.style.minHeight = '600px';
                     
-                    // Ensure all blocks are properly configured for dragging
+                    // Just re-render blocks for proper interaction
                     this.state.workspace.getAllBlocks().forEach(block => {
-                        if (block.setMovable) {
-                            block.setMovable(true);
-                        }
-                        if (block.setDeletable) {
-                            block.setDeletable(true);
-                        }
-                        if (block.setEditable) {
-                            block.setEditable(true);
-                        }
-                        // Re-initialize SVG for proper interaction
-                        if (block.initSvg) {
-                            block.initSvg();
+                        // Only re-render, don't re-initialize to avoid conflicts
+                        if (block.render) {
+                            block.render();
                         }
                     });
                     
@@ -716,8 +733,13 @@ export class VisualRuleBuilder extends Component {
             // Create the block using the JavaScript API
             const block = this.state.workspace.newBlock(blockType);
             
-            // Set position
-            block.moveBy(x, y);
+            // Initialize SVG first before positioning
+            block.initSvg();
+            
+            // Set position after SVG initialization
+            if (x !== 0 || y !== 0) {
+                block.moveBy(x, y);
+            }
             
             // Parse and set field values
             const fields = blockElement.querySelectorAll('field');
@@ -776,11 +798,10 @@ export class VisualRuleBuilder extends Component {
                 }
             }
             
-            // Initialize the block's SVG and make it interactive
-            block.initSvg();
+            // Render the block after all connections are made
             block.render();
             
-            // Ensure block is movable and deletable
+            // Ensure block is movable and deletable (should be default, but ensure)
             block.setMovable(true);
             block.setDeletable(true);
             block.setEditable(true);

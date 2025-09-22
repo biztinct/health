@@ -43,20 +43,22 @@ export class VisualRuleBuilderAction extends Component {
                 }
             } else {
                 // Direct save to pricing rule model
-                const rule = await this.orm.create('advanced.pricing.rule', {
+                const ruleIds = await this.orm.create('advanced.pricing.rule', [{
                     ...ruleData,
                     rule_type: 'visual',
+                }]);
+                
+                console.log('Created rule IDs:', ruleIds);
+                
+                // Show success notification
+                this.notification.add("Visual rule saved successfully! Returning to rules list...", {
+                    type: "success",
                 });
                 
-                // Show success and navigate to rule
-                this.action.doAction({
-                    type: 'ir.actions.act_window',
-                    name: 'Pricing Rule',
-                    res_model: 'advanced.pricing.rule',
-                    res_id: rule,
-                    view_mode: 'form',
-                    target: 'current',
-                });
+                // Auto-navigate to rules list for better UX
+                setTimeout(() => {
+                    this.backToRulesList();
+                }, 1000); // Give user time to see the success message
             }
         } catch (error) {
             console.error("Failed to save visual rule:", error);
@@ -69,6 +71,40 @@ export class VisualRuleBuilderAction extends Component {
     onCancel() {
         // Close the action and return to previous view
         this.action.doAction({ type: 'ir.actions.act_window_close' });
+    }
+
+    async viewRule(ruleId) {
+        try {
+            await this.action.doAction({
+                type: 'ir.actions.act_window',
+                name: 'Pricing Rule',
+                res_model: 'advanced.pricing.rule',
+                res_id: ruleId,
+                view_mode: 'form',
+                target: 'current',
+            });
+        } catch (error) {
+            console.warn('Failed to view rule:', error);
+            this.notification.add("Could not open rule form", { type: "warning" });
+        }
+    }
+
+    async backToRulesList() {
+        try {
+            await this.action.doAction({
+                type: 'ir.actions.act_window',
+                name: 'Pricing Rules',
+                res_model: 'advanced.pricing.rule',
+                view_mode: 'list,form',
+                target: 'current',
+                domain: [],
+                context: {},
+            });
+        } catch (error) {
+            console.warn('Failed to navigate to rules list:', error);
+            // Fallback: just close the visual builder
+            this.onCancel();
+        }
     }
 }
 

@@ -33,6 +33,7 @@
             height: 600px !important;
             min-height: 600px !important;
             display: block !important;
+            position: relative !important; /* Ensure proper positioning context */
             
             /* Custom Blockly styling */
             .blocklyToolboxDiv {
@@ -174,10 +175,10 @@
     font-size: 12px !important;
 }
 
-/* Drag and drop enhancements */
+/* Drag and drop enhancements - removed transform to fix positioning */
 .blocklyDragging {
     opacity: 0.8 !important;
-    transform: scale(1.05) !important;
+    /* Removed transform: scale() as it interferes with Blockly positioning */
     box-shadow: 0 8px 16px rgba(0,0,0,0.2) !important;
 }
 

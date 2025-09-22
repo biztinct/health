@@ -11,6 +11,9 @@
                         Visual Rule Builder
                     </h4>
                     <div class="btn-group">
+                        <button class="btn btn-sm btn-outline-info" t-on-click="backToRulesList">
+                            <i class="fa fa-list"/> Back to Rules
+                        </button>
                         <button class="btn btn-sm btn-outline-secondary" t-on-click="clearWorkspace">
                             <i class="fa fa-trash"/> Clear
                         </button>
@@ -143,6 +146,7 @@
                 ruleData="state.ruleData"
                 onSave.bind="onSaveRule"
                 onCancel.bind="onCancel"
+                onBackToRulesList.bind="backToRulesList"
             />
         </div>
     </t>
