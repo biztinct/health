@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Blockly XML Loading Test</title>
+    <script src="https://unpkg.com/blockly/blockly.min.js"></script>
+</head>
+<body>
+    <div id="blocklyDiv" style="height: 480px; width: 600px;"></div>
+
+    <script>
+        // Test XML data (similar to what would be in database)
+        const testXML = `
+        <xml xmlns="https://developers.google.com/blockly/xml">
+            <block type="pricing_rule" id="test-rule-1" x="50" y="50">
+                <field name="RULE_NAME">Test Rule</field>
+                <statement name="CONDITIONS">
+                    <block type="pricing_condition" id="test-condition-1">
+                        <field name="FIELD">quantity</field>
+                        <field name="OPERATOR">></field>
+                        <value name="VALUE">
+                            <block type="number_value" id="test-number-1">
+                                <field name="NUM">10</field>
+                            </block>
+                        </value>
+                    </block>
+                </statement>
+                <statement name="ACTIONS">
+                    <block type="pricing_action" id="test-action-1">
+                        <field name="ACTION_TYPE">percentage</field>
+                        <value name="VALUE">
+                            <block type="number_value" id="test-number-2">
+                                <field name="NUM">15</field>
+                            </block>
+                        </value>
+                    </block>
+                </statement>
+            </block>
+        </xml>`;
+
+        // Define block types
+        Blockly.defineBlocksWithJsonArray([
+            {
+                "type": "pricing_rule",
+                "message0": "Pricing Rule %1 %2 Conditions %3 %4 Actions %5",
+                "args0": [
+                    {"type": "field_input", "name": "RULE_NAME", "text": "New Rule"},
+                    {"type": "input_dummy"},
+                    {"type": "input_dummy"},
+                    {"type": "input_statement", "name": "CONDITIONS"},
+                    {"type": "input_statement", "name": "ACTIONS"}
+                ],
+                "colour": 270,
+                "tooltip": "Create a pricing rule"
+            },
+            {
+                "type": "pricing_condition",
+                "message0": "If %1 %2 %3",
+                "args0": [
+                    {"type": "field_dropdown", "name": "FIELD", "options": [["quantity", "quantity"], ["distance", "distance"]]},
+                    {"type": "field_dropdown", "name": "OPERATOR", "options": [["=", "="], [">", ">"], ["<", "<"]]},
+                    {"type": "input_value", "name": "VALUE"}
+                ],
+                "previousStatement": null,
+                "nextStatement": null,
+                "colour": 120,
+                "tooltip": "Add a condition"
+            },
+            {
+                "type": "pricing_action",
+                "message0": "Action %1 %2",
+                "args0": [
+                    {"type": "field_dropdown", "name": "ACTION_TYPE", "options": [["add", "add"], ["percentage", "percentage"]]},
+                    {"type": "input_value", "name": "VALUE"}
+                ],
+                "previousStatement": null,
+                "nextStatement": null,
+                "colour": 200,
+                "tooltip": "Add an action"
+            },
+            {
+                "type": "number_value",
+                "message0": "Number %1",
+                "args0": [{"type": "field_number", "name": "NUM", "value": 0}],
+                "output": null,
+                "colour": 230,
+                "tooltip": "A number value"
+            }
+        ]);
+
+        // Create workspace
+        const workspace = Blockly.inject('blocklyDiv', {
+            toolbox: `
+            <xml>
+                <category name="Pricing" colour="270">
+                    <block type="pricing_rule"></block>
+                    <block type="pricing_condition"></block>
+                    <block type="pricing_action"></block>
+                    <block type="number_value"></block>
+                </category>
+            </xml>`
+        });
+
+        // Test our improved block-by-block recreation approach with deferred rendering
+        function recreateBlocksFromXML(xmlString) {
+            try {
+                console.log('🔨 Testing improved block-by-block recreation with deferred rendering...');
+                
+                const parser = new DOMParser();
+                const xmlDoc = parser.parseFromString(xmlString, "text/xml");
+                
+                if (xmlDoc.documentElement.nodeName === "parsererror") {
+                    throw new Error("XML parsing failed");
+                }
+                
+                const blockElements = xmlDoc.getElementsByTagName('block');
+                const createdBlocks = new Map();
+                
+                // Phase 1: Create blocks without immediate rendering
+                for (let i = 0; i < blockElements.length; i++) {
+                    const blockElement = blockElements[i];
+                    const blockType = blockElement.getAttribute('type');
+                    const blockId = blockElement.getAttribute('id');
+                    
+                    if (blockType) {
+                        try {
+                            const newBlock = workspace.newBlock(blockType);
+                            if (blockId) {
+                                createdBlocks.set(blockId, newBlock);
+                            }
+                            
+                            // Set field values
+                            const fieldElements = blockElement.getElementsByTagName('field');
+                            for (let j = 0; j < fieldElements.length; j++) {
+                                const fieldElement = fieldElements[j];
+                                const fieldName = fieldElement.getAttribute('name');
+                                const fieldValue = fieldElement.textContent;
+                                
+                                if (fieldName && fieldValue) {
+                                    try {
+                                        const field = newBlock.getField(fieldName);
+                                        if (field) {
+                                            field.setValue(fieldValue);
+                                            console.log(`  📝 Set field ${fieldName} = ${fieldValue}`);
+                                        }
+                                    } catch (fieldError) {
+                                        console.warn(`⚠️ Failed to set field ${fieldName}:`, fieldError);
+                                    }
+                                }
+                            }
+                            
+                            // Set position
+                            const x = parseInt(blockElement.getAttribute('x')) || 50;
+                            const y = parseInt(blockElement.getAttribute('y')) || 50;
+                            newBlock.moveBy(x, y);
+                            
+                            // Initialize SVG but don't render yet (avoids connection DB issues)
+                            newBlock.initSvg();
+                            
+                            console.log(`✅ Created block: ${blockType} at (${x}, ${y})`);
+                            
+                        } catch (blockError) {
+                            console.warn(`⚠️ Failed to create block ${blockType}:`, blockError);
+                        }
+                    }
+                }
+                
+                // Phase 2: Render all blocks at once (safer for connection database)
+                console.log('🎨 Rendering all blocks...');
+                createdBlocks.forEach(block => {
+                    try {
+                        block.render();
+                    } catch (renderError) {
+                        console.warn(`⚠️ Failed to render block ${block.type}:`, renderError);
+                    }
+                });
+                
+                console.log(`✅ Successfully recreated ${createdBlocks.size} blocks from XML`);
+                return createdBlocks.size > 0;
+                
+            } catch (error) {
+                console.error('❌ Block recreation failed:', error);
+                return false;
+            }
+        }
+
+        // Test traditional XML loading
+        function testTraditionalXMLLoading(xmlString) {
+            try {
+                console.log('🔧 Testing traditional XML loading...');
+                
+                const parser = new DOMParser();
+                const xmlDoc = parser.parseFromString(xmlString, "text/xml");
+                
+                if (xmlDoc.documentElement.nodeName === "parsererror") {
+                    throw new Error("XML parsing failed");
+                }
+                
+                Blockly.Xml.domToWorkspace(xmlDoc.documentElement, workspace);
+                console.log('✅ Traditional XML loading succeeded');
+                return true;
+                
+            } catch (error) {
+                console.error('❌ Traditional XML loading failed:', error);
+                return false;
+            }
+        }
+
+        // Run tests
+        setTimeout(() => {
+            console.log('=== BLOCKLY XML LOADING TESTS ===');
+            
+            // Test 1: Traditional approach
+            workspace.clear();
+            const traditionalSuccess = testTraditionalXMLLoading(testXML);
+            
+            // Test 2: Block-by-block approach
+            workspace.clear();
+            const blockByBlockSuccess = recreateBlocksFromXML(testXML);
+            
+            console.log('=== TEST RESULTS ===');
+            console.log(`Traditional XML Loading: ${traditionalSuccess ? '✅ PASS' : '❌ FAIL'}`);
+            console.log(`Block-by-block Recreation: ${blockByBlockSuccess ? '✅ PASS' : '❌ FAIL'}`);
+            
+            if (blockByBlockSuccess && !traditionalSuccess) {
+                console.log('🎉 Block-by-block approach works where traditional fails!');
+            }
+        }, 500);
+    </script>
+</body>
+</html>

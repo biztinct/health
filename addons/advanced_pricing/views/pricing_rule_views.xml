@@ -73,8 +73,8 @@
                 <field name="sequence" widget="handle"/>
                 <field name="name" required="1"/>
                 <field name="engine_id" options="{'no_create': True}"/>
-                <field name="level" readonly="1"/>
-                <field name="rule_type" readonly="1"/>
+                <field name="level"/>
+                <field name="rule_type"/>
                 <field name="condition_field" optional="show"/>
                 <field name="condition_operator" optional="show"/>
                 <field name="condition_value" optional="show"/>
