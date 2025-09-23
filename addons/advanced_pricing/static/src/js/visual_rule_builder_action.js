@@ -22,6 +22,10 @@ export class VisualRuleBuilderAction extends Component {
             ruleData: this.props.action?.context?.rule_data || {},
             wizardId: this.props.action?.context?.wizard_id,
         });
+        
+        // Debug action context
+        console.log('🔍 Visual Builder Action Context:', this.props.action?.context);
+        console.log('🔍 Rule Data received:', this.state.ruleData);
     }
 
     async onSaveRule(ruleData) {
@@ -91,19 +95,38 @@ export class VisualRuleBuilderAction extends Component {
 
     async backToRulesList() {
         try {
+            console.log('🔄 Attempting to navigate back to rules list...');
+            
+            // Direct navigation to replace current action completely
             await this.action.doAction({
                 type: 'ir.actions.act_window',
                 name: 'Pricing Rules',
                 res_model: 'advanced.pricing.rule',
                 view_mode: 'list,form',
                 target: 'current',
-                domain: [],
-                context: {},
+                context: {
+                    'search_default_active': 1,
+                },
+                flags: {
+                    'search_view': true,
+                    'action_buttons': true,
+                }
+            }, {
+                replace: true,  // This should replace the current action instead of navigating within it
+                clear_breadcrumbs: true,
             });
+            
+            console.log('✅ Successfully navigated to rules list');
         } catch (error) {
-            console.warn('Failed to navigate to rules list:', error);
-            // Fallback: just close the visual builder
-            this.onCancel();
+            console.warn('❌ Direct navigation failed, trying browser navigation:', error);
+            
+            // Fallback: Use browser navigation to the correct URL
+            const baseUrl = window.location.origin + window.location.pathname;
+            // Remove the /8/visual_rule_builder part and just keep the base action
+            const actionUrl = baseUrl.replace(/\/\d+\/visual_rule_builder.*$/, '');
+            console.log('🔄 Navigating to:', actionUrl);
+            
+            window.location.href = actionUrl;
         }
     }
 }

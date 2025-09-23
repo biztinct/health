@@ -64,13 +64,27 @@
         <field name="name">advanced.pricing.rule.list</field>
         <field name="model">advanced.pricing.rule</field>
         <field name="arch" type="xml">
-            <list string="Pricing Rules">
+            <list string="Pricing Rules" editable="bottom" default_order="sequence">
+                <header>
+                    <button name="action_create_visual_rule" type="object" 
+                            string="🎨 Create Visual Rule" class="btn-primary"
+                            help="Create a new visual pricing rule using drag-and-drop builder"/>
+                </header>
                 <field name="sequence" widget="handle"/>
-                <field name="name"/>
-                <field name="engine_id"/>
-                <field name="level"/>
-                <field name="rule_type"/>
-                <field name="active"/>
+                <field name="name" required="1"/>
+                <field name="engine_id" options="{'no_create': True}"/>
+                <field name="level" readonly="1"/>
+                <field name="rule_type" readonly="1"/>
+                <field name="condition_field" optional="show"/>
+                <field name="condition_operator" optional="show"/>
+                <field name="condition_value" optional="show"/>
+                <field name="action_type" optional="show"/>
+                <field name="action_value" optional="show"/>
+                <field name="active" widget="boolean_toggle"/>
+                <button name="action_open_visual_builder" type="object" 
+                        string="Visual Builder" class="btn-primary btn-sm"
+                        invisible="rule_type != 'visual'"
+                        icon="fa-puzzle-piece"/>
             </list>
         </field>
     </record>

@@ -60,8 +60,12 @@ export class VisualRuleBuilder extends Component {
             console.log('✅ Workspace created');
             
             // Load existing rule if provided
+            console.log('🔍 Checking for existing rule data:', this.props.ruleData);
             if (this.props.ruleData && this.props.ruleData.visual_config) {
+                console.log('📥 Loading existing visual config:', this.props.ruleData.visual_config);
                 this.loadExistingRule();
+            } else {
+                console.log('ℹ️ No existing rule data to load');
             }
             
             this.state.isLoading = false;
@@ -301,6 +305,7 @@ export class VisualRuleBuilder extends Component {
         </xml>`;
 
         try {
+            
             this.state.workspace = window.Blockly.inject(this.blocklyDiv.el, {
                 toolbox: toolbox,
                 collapse: true,
@@ -317,10 +322,7 @@ export class VisualRuleBuilder extends Component {
                 sounds: false,
                 oneBasedIndex: true,
                 move: {
-                    scrollbars: {
-                        horizontal: true,
-                        vertical: true
-                    },
+                    scrollbars: true,
                     drag: true,
                     wheel: true
                 },
@@ -328,7 +330,7 @@ export class VisualRuleBuilder extends Component {
                     spacing: 20,
                     length: 1,
                     colour: '#ccc',
-                    snap: false  // Disable snap for smoother dragging
+                    snap: false
                 },
                 zoom: {
                     controls: true,
@@ -336,14 +338,14 @@ export class VisualRuleBuilder extends Component {
                     startScale: 1.0,
                     maxScale: 3,
                     minScale: 0.3,
-                    scaleSpeed: 1.2,
-                    pinch: true  // Enable pinch to zoom
-                },
-                renderer: 'geras'  // Use modern renderer for better performance
+                    scaleSpeed: 1.2
+                }
             });
 
             // Listen for changes
             this.state.workspace.addChangeListener(this.onWorkspaceChange.bind(this));
+            
+            // Workspace is ready for drag and drop
             
             console.log('Blockly workspace created successfully');
         } catch (error) {
@@ -457,28 +459,21 @@ export class VisualRuleBuilder extends Component {
     }
 
     loadExistingRule() {
-        if (!this.props.ruleData.visual_config || !this.state.workspace) return;
+        // TEMPORARY FIX: Disable existing rule loading to prevent connection database corruption
+        // This preserves drag and drop functionality for creating new rules
+        console.log('ℹ️ Existing rule loading temporarily disabled to maintain drag/drop functionality');
+        console.log('🔄 Starting with clean workspace for now');
         
-        try {
-            const xml = this.props.ruleData.visual_config;
-            // Check if it's a string that needs parsing
-            if (typeof xml === 'string') {
-                try {
-                    // Try new Blockly API first
-                    const xmlDom = window.Blockly.utils.xml.textToDom(xml);
-                    window.Blockly.Xml.domToWorkspace(xmlDom, this.state.workspace);
-                } catch (error) {
-                    // Fallback to legacy API
-                    const xmlDom = window.Blockly.Xml.textToDom(xml);
-                    window.Blockly.Xml.domToWorkspace(xmlDom, this.state.workspace);
-                }
-            } else {
-                // It's already a DOM element
-                window.Blockly.Xml.domToWorkspace(xml, this.state.workspace);
-            }
-        } catch (error) {
-            console.error("Failed to load existing rule:", error);
+        // Just start with an empty workspace - this ensures drag/drop works
+        if (this.state.workspace) {
+            this.state.workspace.clear();
         }
+        
+        return;
+        
+        // TODO: Fix the XML loading to not corrupt connection database
+        // The issue is that domToWorkspace breaks the connection database
+        // Need to implement proper block-by-block recreation without XML loading
     }
 
     destroyBlockly() {
@@ -554,6 +549,13 @@ export class VisualRuleBuilder extends Component {
     clearWorkspace() {
         if (this.state.workspace) {
             this.state.workspace.clear();
+            
+            // Force workspace to resize after clearing
+            setTimeout(() => {
+                if (this.state.workspace) {
+                    window.Blockly.svgResize(this.state.workspace);
+                }
+            }, 50);
         }
     }
 
@@ -736,7 +738,7 @@ export class VisualRuleBuilder extends Component {
             // Initialize SVG first before positioning
             block.initSvg();
             
-            // Set position after SVG initialization
+            // Set position after SVG initialization but before render
             if (x !== 0 || y !== 0) {
                 block.moveBy(x, y);
             }
