@@ -161,9 +161,19 @@ export class VisualRuleBuilder extends Component {
                         ["Order Total", "order_total"],
                         ["Quantity", "quantity"],
                         ["Customer Type", "customer_type"],
-                        ["Distance", "distance"],
-                        ["Time", "time"],
-                        ["Service Type", "service_type"]
+                        ["--- FSO Fields ---", "separator1"],
+                        ["Distance (km)", "distance"],
+                        ["Appointment Hour", "appointment_hour"],
+                        ["Service Type", "service_type"],
+                        ["Service Location", "service_location"],
+                        ["Urgency Level", "urgency"],
+                        ["Priority", "priority"],
+                        ["Service Units", "service_units"],
+                        ["Service City", "service_city"],
+                        ["--- Time Conditions ---", "separator2"],
+                        ["Is Weekend", "is_weekend"],
+                        ["Is Holiday", "is_holiday"],
+                        ["Is After Hours", "is_after_hours"]
                     ]), "FIELD")
                     .appendField(new window.Blockly.FieldDropdown([
                         ["equals", "=="],
@@ -188,11 +198,11 @@ export class VisualRuleBuilder extends Component {
                 this.appendDummyInput()
                     .appendField("Set price to")
                     .appendField(new window.Blockly.FieldDropdown([
-                        ["Add", "add"],
-                        ["Subtract", "subtract"],
-                        ["Multiply by", "multiply"],
-                        ["Set to", "set"],
-                        ["Percentage", "percentage"]
+                        ["Add Amount", "add"],
+                        ["Multiply by Factor", "multiply"],
+                        ["Apply Percentage", "percentage"],
+                        ["Set Fixed Price", "fixed"],
+                        ["Apply Formula", "formula"]
                     ]), "ACTION_TYPE");
                 this.appendValueInput("VALUE");
                 this.setInputsInline(true);

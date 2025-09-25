@@ -8,11 +8,33 @@
             <field name="active">False</field>
             <field name="level">1</field>
             <field name="rule_type">condition</field>
-            <field name="condition_field">booking.distance</field>
-            <field name="condition_operator">></field>
-            <field name="condition_value">15</field>
+            <field name="distance_min">15</field>
             <field name="action_type">add</field>
             <field name="action_value">50</field>
+        </record>
+        
+        <record id="template_weekend_pricing" model="advanced.pricing.rule">
+            <field name="name">Template: Weekend Premium</field>
+            <field name="engine_id" ref="demo_engine"/>
+            <field name="sequence">200</field>
+            <field name="active">False</field>
+            <field name="level">1</field>
+            <field name="rule_type">condition</field>
+            <field name="is_weekend_required">True</field>
+            <field name="action_type">percentage</field>
+            <field name="action_value">25</field>
+        </record>
+        
+        <record id="template_after_hours_pricing" model="advanced.pricing.rule">
+            <field name="name">Template: After Hours Surcharge</field>
+            <field name="engine_id" ref="demo_engine"/>
+            <field name="sequence">300</field>
+            <field name="active">False</field>
+            <field name="level">1</field>
+            <field name="rule_type">condition</field>
+            <field name="is_after_hours_required">True</field>
+            <field name="action_type">add</field>
+            <field name="action_value">75</field>
         </record>
     </data>
 </odoo>

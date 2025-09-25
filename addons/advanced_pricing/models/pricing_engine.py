@@ -25,20 +25,34 @@ class AdvancedPricingEngine(models.Model):
     enable_cascade = fields.Boolean('Enable Cascading', default=True)
     
     @api.model
-    @tools.ormcache('product_id', 'quantity', 'partner_id', 'context_str')
     def calculate_price(self, product_id, quantity, partner_id, context_data):
         """Calculate price with multi-level rules"""
         product = self.env['product.product'].browse(product_id)
         base_price = product.list_price
         
-        context_str = json.dumps(context_data, sort_keys=True)
+        # Convert datetime objects to strings for JSON serialization
+        serializable_context = {}
+        for key, value in context_data.items():
+            if hasattr(value, 'strftime'):  # datetime object
+                serializable_context[key] = value.strftime('%Y-%m-%d %H:%M:%S')
+            else:
+                serializable_context[key] = value
+        
+        context_str = json.dumps(serializable_context, sort_keys=True)
         
         # Apply Level 1 rules
         if self.enable_multi_level:
             level1_rules = self.rule_ids.filtered(lambda r: r.level == '1' and r.active)
+            _logger.info(f"Found {len(level1_rules)} active Level 1 rules")
             for rule in level1_rules.sorted('sequence'):
+                _logger.info(f"Evaluating rule: {rule.name} (ID: {rule.id})")
                 if rule.evaluate_condition(product_id, partner_id, quantity, context_data):
+                    _logger.info(f"Rule {rule.name} MATCHES - applying action")
+                    old_price = base_price
                     base_price = rule.apply_action(base_price, context_data)
+                    _logger.info(f"Price changed by rule {rule.name}: {old_price} → {base_price}")
+                else:
+                    _logger.info(f"Rule {rule.name} does NOT match")
         
         # Apply Level 2 cascading rules
         if self.enable_cascade:

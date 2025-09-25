@@ -171,7 +171,11 @@ class HealthFieldServiceOrderUnified(models.Model):
     def _compute_scheduled_date(self):
         for record in self:
             if record.scheduled_datetime:
-                record.scheduled_date = record.scheduled_datetime.date()
+                # Convert from UTC storage to user's timezone for date computation
+                utc_dt = pytz.UTC.localize(record.scheduled_datetime)
+                user_tz = pytz.timezone(self.env.user.tz or 'UTC')
+                local_dt = utc_dt.astimezone(user_tz)
+                record.scheduled_date = local_dt.date()
             else:
                 record.scheduled_date = False
     
@@ -179,7 +183,10 @@ class HealthFieldServiceOrderUnified(models.Model):
     def _compute_scheduled_time(self):
         for record in self:
             if record.scheduled_datetime:
-                local_dt = record.scheduled_datetime
+                # Convert from UTC storage to user's timezone
+                utc_dt = pytz.UTC.localize(record.scheduled_datetime)
+                user_tz = pytz.timezone(self.env.user.tz or 'UTC')
+                local_dt = utc_dt.astimezone(user_tz)
                 record.scheduled_time = local_dt.hour + local_dt.minute / 60.0
             else:
                 record.scheduled_time = 0.0
@@ -248,20 +255,36 @@ class HealthFieldServiceOrderUnified(models.Model):
     def _inverse_scheduled_date(self):
         for record in self:
             if record.scheduled_date and record.scheduled_time:
-                # Combine date and time
+                # Combine date and time with proper timezone handling
                 hours = int(record.scheduled_time)
                 minutes = int((record.scheduled_time - hours) * 60)
-                dt = datetime.combine(record.scheduled_date, datetime.min.time().replace(hour=hours, minute=minutes))
-                record.scheduled_datetime = dt
+                
+                # Create naive datetime first
+                naive_dt = datetime.combine(record.scheduled_date, datetime.min.time().replace(hour=hours, minute=minutes))
+                
+                # Convert to user's timezone then to UTC for storage
+                user_tz = pytz.timezone(self.env.user.tz or 'UTC')
+                local_dt = user_tz.localize(naive_dt)
+                utc_dt = local_dt.astimezone(pytz.UTC)
+                
+                record.scheduled_datetime = utc_dt.replace(tzinfo=None)  # Store as naive UTC
     
     def _inverse_scheduled_time(self):
         for record in self:
             if record.scheduled_date and record.scheduled_time:
-                # Combine date and time
+                # Combine date and time with proper timezone handling
                 hours = int(record.scheduled_time)
                 minutes = int((record.scheduled_time - hours) * 60)
-                dt = datetime.combine(record.scheduled_date, datetime.min.time().replace(hour=hours, minute=minutes))
-                record.scheduled_datetime = dt
+                
+                # Create naive datetime first
+                naive_dt = datetime.combine(record.scheduled_date, datetime.min.time().replace(hour=hours, minute=minutes))
+                
+                # Convert to user's timezone then to UTC for storage
+                user_tz = pytz.timezone(self.env.user.tz or 'UTC')
+                local_dt = user_tz.localize(naive_dt)
+                utc_dt = local_dt.astimezone(pytz.UTC)
+                
+                record.scheduled_datetime = utc_dt.replace(tzinfo=None)  # Store as naive UTC
     
     # Duration and timing
     estimated_duration = fields.Float(
@@ -1709,6 +1732,28 @@ class HealthFieldServiceOrderUnified(models.Model):
             'res_id': self.invoice_id.id,
             'view_mode': 'form',
             'target': 'current',
+        }
+    
+    def action_auto_open_quote_after_catalog(self):
+        """Auto-open Healthcare Quote after returning from catalog"""
+        self.ensure_one()
+        
+        # Check if we have a quote to open
+        if not self.sale_order_id:
+            return False
+            
+        # Open the Healthcare Quote form immediately
+        return {
+            'type': 'ir.actions.act_window',
+            'name': f'Healthcare Quote - {self.name}',
+            'res_model': 'sale.order',
+            'res_id': self.sale_order_id.id,
+            'view_mode': 'form',
+            'view_id': self.env.ref('health_fieldservice.view_healthcare_quote_form_custom').id,
+            'target': 'main',  # Open in main window, not dialog
+            'context': {
+                'from_catalog_redirect': True,
+            }
         }
 
 

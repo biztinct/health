@@ -40,12 +40,56 @@
                         </group>
                     </group>
                     
+                    <group string="Product Selection">
+                        <field name="applied_on"/>
+                        <field name="categ_id" 
+                               invisible="applied_on != '2_product_category'"
+                               domain="[('parent_id', '=', False)]"
+                               options="{'no_create': True}"/>
+                        <field name="product_tmpl_id" 
+                               invisible="applied_on != '1_product'"
+                               domain="[('sale_ok', '=', True)]"
+                               options="{'no_create': True}"/>
+                        <field name="product_id" 
+                               invisible="applied_on != '0_product_variant'"
+                               domain="[('sale_ok', '=', True)]"
+                               options="{'no_create': True}"/>
+                    </group>
+                    
                     <notebook>
-                        <page string="Conditions">
+                        <page string="General Conditions" invisible="1">
                             <group>
                                 <field name="condition_field"/>
                                 <field name="condition_operator"/>
                                 <field name="condition_value"/>
+                            </group>
+                        </page>
+                        <page string="Booking Conditions">
+                            <group>
+                                <group string="Distance &amp; Time">
+                                    <field name="distance_min"/>
+                                    <field name="distance_max"/>
+                                    <field name="appointment_hour_min"/>
+                                    <field name="appointment_hour_max"/>
+                                </group>
+                                <group string="Time-based Conditions">
+                                    <field name="is_weekend_required"/>
+                                    <field name="is_holiday_required"/>
+                                    <field name="is_after_hours_required"/>
+                                </group>
+                            </group>
+                            <group>
+                                <group string="Service Details">
+                                    <field name="service_type"/>
+                                    <field name="service_location"/>
+                                    <field name="urgency_level"/>
+                                    <field name="priority"/>
+                                </group>
+                                <group string="Quantity &amp; Location">
+                                    <field name="service_units_min"/>
+                                    <field name="service_units_max"/>
+                                    <field name="service_city"/>
+                                </group>
                             </group>
                         </page>
                         <page string="Actions">
@@ -60,11 +104,43 @@
         </field>
     </record>
     
+    <!-- Regular List View (No Inline Editing) -->
     <record id="view_pricing_rule_list" model="ir.ui.view">
         <field name="name">advanced.pricing.rule.list</field>
         <field name="model">advanced.pricing.rule</field>
         <field name="arch" type="xml">
-            <list string="Pricing Rules" editable="bottom" default_order="sequence">
+            <list string="Pricing Rules" default_order="sequence">
+                <header>
+                    <button name="action_create_visual_rule" type="object" 
+                            string="🎨 Create Visual Rule" class="btn-primary"
+                            help="Create a new visual pricing rule using drag-and-drop builder"/>
+                </header>
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="engine_id"/>
+                <field name="applied_on"/>
+                <field name="level"/>
+                <field name="rule_type"/>
+                <field name="condition_field" optional="show"/>
+                <field name="condition_operator" optional="show"/>
+                <field name="condition_value" optional="show"/>
+                <field name="action_type"/>
+                <field name="action_value"/>
+                <field name="active" widget="boolean_toggle"/>
+                <button name="action_open_visual_builder" type="object" 
+                        string="Visual Builder" class="btn-primary btn-sm"
+                        invisible="rule_type != 'visual'"
+                        icon="fa-puzzle-piece"/>
+            </list>
+        </field>
+    </record>
+    
+    <!-- Quick Edit List View (Inline Editing) -->
+    <record id="view_pricing_rule_list_quick_edit" model="ir.ui.view">
+        <field name="name">advanced.pricing.rule.list.quick.edit</field>
+        <field name="model">advanced.pricing.rule</field>
+        <field name="arch" type="xml">
+            <list string="Quick Edit Pricing Rules" editable="bottom" default_order="sequence">
                 <header>
                     <button name="action_create_visual_rule" type="object" 
                             string="🎨 Create Visual Rule" class="btn-primary"
@@ -73,6 +149,7 @@
                 <field name="sequence" widget="handle"/>
                 <field name="name" required="1"/>
                 <field name="engine_id" options="{'no_create': True}"/>
+                <field name="applied_on" optional="show"/>
                 <field name="level"/>
                 <field name="rule_type"/>
                 <field name="condition_field" optional="show"/>
@@ -81,10 +158,6 @@
                 <field name="action_type" optional="show"/>
                 <field name="action_value" optional="show"/>
                 <field name="active" widget="boolean_toggle"/>
-                <button name="action_open_visual_builder" type="object" 
-                        string="Visual Builder" class="btn-primary btn-sm"
-                        invisible="rule_type != 'visual'"
-                        icon="fa-puzzle-piece"/>
             </list>
         </field>
     </record>

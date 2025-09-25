@@ -7,7 +7,93 @@
         <field name="arch" type="xml">
             <xpath expr="//field[@name='pricelist_id']" position="after">
                 <field name="use_advanced_pricing" invisible="1"/>
-                <field name="booking_id" invisible="not booking_id"/>
+                <field name="fso_id" invisible="not fso_id"/>
+                <field name="advanced_pricing_details" readonly="1" invisible="not use_advanced_pricing"/>
+            </xpath>
+            
+            <!-- Add Advanced Pricing button to header -->
+            <xpath expr="//header//button[@name='action_confirm'][1]" position="before">
+                <button name="action_recalculate_advanced_prices" 
+                        string="Recalc Pricing" 
+                        type="object" 
+                        class="btn-secondary"
+                        invisible="not use_advanced_pricing"
+                        help="Recalculate prices using advanced pricing rules"/>
+            </xpath>
+            
+            <!-- Add pricing info to order lines (informational) -->
+            <xpath expr="//field[@name='order_line']//control//button[@name='action_add_from_catalog']" position="after">
+                <span invisible="not parent.use_advanced_pricing" 
+                      class="text-muted px-2">
+                    📊 Advanced Pricing Active
+                </span>
+            </xpath>
+            
+            <notebook position="inside">
+                <page string="Advanced Pricing" invisible="not use_advanced_pricing">
+                    <group>
+                        <group string="FSO Information">
+                            <field name="fso_distance" readonly="1"/>
+                            <field name="fso_appointment_time" readonly="1"/>
+                            <field name="fso_service_type" readonly="1"/>
+                            <field name="fso_service_location" readonly="1"/>
+                            <field name="fso_urgency" readonly="1"/>
+                            <field name="fso_priority" readonly="1"/>
+                        </group>
+                        <group string="Computed Factors">
+                            <field name="is_weekend" readonly="1"/>
+                            <field name="is_holiday" readonly="1"/>
+                            <field name="is_after_hours" readonly="1"/>
+                            <field name="appointment_hour" readonly="1"/>
+                            <field name="service_units" readonly="1"/>
+                            <field name="service_city" readonly="1"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="advanced_pricing_details" readonly="1" widget="html"/>
+                    </group>
+                </page>
+            </notebook>
+        </field>
+    </record>
+    
+    <!-- Add Catalog button to healthcare quote form -->
+    <record id="view_healthcare_quote_form_catalog" model="ir.ui.view">
+        <field name="name">healthcare.quote.form.catalog</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="health_fieldservice.view_healthcare_quote_form_custom"/>
+        <field name="arch" type="xml">
+            <!-- Add Back to Quotation button to header -->
+            <xpath expr="//header" position="inside">
+                <button name="action_draft" invisible="state != 'cancel'" type="object" string="Back to Quotation" data-hotkey="w"/>
+                <field name="state" widget="statusbar" statusbar_visible="draft,sent,sale"/>
+            </xpath>
+            
+            <!-- Add Catalog button after the order lines field -->
+            <xpath expr="//field[@name='order_line']" position="after">
+                <div class="row mt-3">
+                    <div class="col-12 text-center">
+                        <button name="action_add_from_catalog"
+                                string="📋 Add from Catalog"
+                                type="object"
+                                class="btn btn-primary me-2"
+                                context="{'order_id': id}"
+                                help="Add products from catalog"/>
+                        <button name="action_recalculate_advanced_prices" 
+                                string="💰 Recalc Pricing" 
+                                type="object" 
+                                class="btn btn-secondary"
+                                help="Recalculate prices using advanced pricing rules"/>
+                    </div>
+                </div>
+            </xpath>
+            
+            <!-- Add advanced pricing fields after the title -->
+            <xpath expr="//div[@class='oe_title']" position="after">
+                <group>
+                    <field name="use_advanced_pricing" invisible="1"/>
+                    <field name="fso_id" invisible="not fso_id"/>
+                </group>
             </xpath>
         </field>
     </record>

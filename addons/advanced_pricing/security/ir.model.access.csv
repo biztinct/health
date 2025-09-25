@@ -5,7 +5,5 @@ access_pricing_rule_user,pricing.rule.user,model_advanced_pricing_rule,base.grou
 access_pricing_rule_manager,pricing.rule.manager,model_advanced_pricing_rule,base.group_system,1,1,1,1
 access_pricing_config_user,pricing.config.user,model_advanced_pricing_config,base.group_user,1,0,0,0
 access_pricing_config_manager,pricing.config.manager,model_advanced_pricing_config,base.group_system,1,1,1,1
-access_booking_model_user,booking.model.user,model_booking_model,base.group_user,1,1,1,0
-access_booking_model_manager,booking.model.manager,model_booking_model,base.group_system,1,1,1,1
 access_visual_wizard_user,visual.wizard.user,model_advanced_pricing_visual_wizard,base.group_user,1,1,1,1
 access_visual_wizard_manager,visual.wizard.manager,model_advanced_pricing_visual_wizard,base.group_system,1,1,1,1

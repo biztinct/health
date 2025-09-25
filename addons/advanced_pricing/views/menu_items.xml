@@ -20,11 +20,12 @@
         <field name="view_mode">list,form</field>
     </record>
 
-    <!-- Enhanced action for pricing rules -->
+    <!-- Regular action for pricing rules (opens form view) -->
     <record id="action_pricing_rules_with_visual" model="ir.actions.act_window">
         <field name="name">Pricing Rules</field>
         <field name="res_model">advanced.pricing.rule</field>
         <field name="view_mode">list,form</field>
+        <field name="view_id" ref="view_pricing_rule_list"/>
         <field name="context">{
             'search_default_active': 1,
         }</field>
@@ -38,12 +39,60 @@
             </p>
         </field>
     </record>
+    
+    <!-- Quick Edit action for pricing rules (inline editing) -->
+    <record id="action_pricing_rules_quick_edit" model="ir.actions.act_window">
+        <field name="name">Quick Edit Rules</field>
+        <field name="res_model">advanced.pricing.rule</field>
+        <field name="view_mode">list</field>
+        <field name="view_id" ref="view_pricing_rule_list_quick_edit"/>
+        <field name="context">{
+            'search_default_active': 1,
+        }</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first pricing rule!
+            </p>
+            <p>
+                Quick edit pricing rules with inline editing. Click a cell to edit values directly.
+            </p>
+        </field>
+    </record>
 
     <!-- Menu items referencing the actions above -->
     <menuitem id="menu_advanced_pricing_root" 
               name="Advanced Pricing" 
               parent="sale.sale_menu_root"
               sequence="15"/>
+              
+    <!-- Healthcare Advanced Pricelist Menu -->
+    <menuitem id="menu_healthcare_advanced_pricelist" 
+              name="Advanced Pricelist" 
+              parent="health_base.menu_healthcare_root"
+              sequence="27"
+              groups="health_base.group_healthcare_manager,health_base.group_healthcare_admin,health_base.group_healthcare_owner"/>
+    
+    <!-- Healthcare Pricelist Submenus -->
+    <menuitem id="menu_healthcare_pricing_engines" 
+              name="Pricing Engines" 
+              parent="menu_healthcare_advanced_pricelist"
+              action="action_advanced_pricing_engines"
+              sequence="10"
+              groups="health_base.group_healthcare_manager,health_base.group_healthcare_admin,health_base.group_healthcare_owner"/>
+    
+    <menuitem id="menu_healthcare_pricing_rules" 
+              name="Pricing Rules" 
+              parent="menu_healthcare_advanced_pricelist"
+              action="action_pricing_rules_with_visual"
+              sequence="20"
+              groups="health_base.group_healthcare_manager,health_base.group_healthcare_admin,health_base.group_healthcare_owner"/>
+    
+    <menuitem id="menu_healthcare_pricing_rules_quick_edit" 
+              name="Quick Edit Rules" 
+              parent="menu_healthcare_advanced_pricelist"
+              action="action_pricing_rules_quick_edit"
+              sequence="25"
+              groups="health_base.group_healthcare_manager,health_base.group_healthcare_admin,health_base.group_healthcare_owner"/>
     
     <menuitem id="menu_pricing_engines" 
               name="Pricing Engines" 
@@ -56,6 +105,12 @@
               parent="menu_advanced_pricing_root"
               action="action_pricing_rules_with_visual"
               sequence="20"/>
+    
+    <menuitem id="menu_pricing_rules_quick_edit" 
+              name="Quick Edit Rules" 
+              parent="menu_advanced_pricing_root"
+              action="action_pricing_rules_quick_edit"
+              sequence="25"/>
     
     <menuitem id="menu_pricing_config" 
               name="Configuration" 
