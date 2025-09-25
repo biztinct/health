@@ -67,10 +67,10 @@
                         <page string="Booking Conditions">
                             <group>
                                 <group string="Distance &amp; Time">
-                                    <field name="distance_min"/>
-                                    <field name="distance_max"/>
-                                    <field name="appointment_hour_min"/>
-                                    <field name="appointment_hour_max"/>
+                                    <field name="distance_min" placeholder="Leave blank to ignore"/>
+                                    <field name="distance_max" placeholder="Leave blank to ignore"/>
+                                    <field name="appointment_hour_min" placeholder="Leave blank to ignore"/>
+                                    <field name="appointment_hour_max" placeholder="Leave blank to ignore"/>
                                 </group>
                                 <group string="Time-based Conditions">
                                     <field name="is_weekend_required"/>
@@ -86,9 +86,9 @@
                                     <field name="priority"/>
                                 </group>
                                 <group string="Quantity &amp; Location">
-                                    <field name="service_units_min"/>
-                                    <field name="service_units_max"/>
-                                    <field name="service_city"/>
+                                    <field name="service_units_min" placeholder="Leave blank to ignore"/>
+                                    <field name="service_units_max" placeholder="Leave blank to ignore"/>
+                                    <field name="service_city" placeholder="Leave blank to ignore"/>
                                 </group>
                             </group>
                         </page>

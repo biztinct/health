@@ -300,15 +300,39 @@ class SaleOrder(models.Model):
         
         _logger.info("=== END PRICING DEBUG ===")
         
-        # Stay in current form, don't redirect
-        return {
-            'type': 'ir.actions.client',
-            'tag': 'display_notification',
-            'params': {
-                'message': 'Prices recalculated successfully!',
-                'type': 'success',
+        # Force UI refresh to show updated prices immediately
+        self.env.cr.commit()  # Commit changes to database
+        
+        # Return to the correct form view (FSO custom form if FSO order, regular form otherwise)
+        if self.fso_id:
+            # Return to healthcare custom quote form for FSO orders (as popup modal)
+            return {
+                'type': 'ir.actions.act_window',
+                'res_model': 'sale.order',
+                'res_id': self.id,
+                'view_mode': 'form',
+                'view_id': self.env.ref('health_fieldservice.view_healthcare_quote_form_custom').id,
+                'target': 'new',  # Open as popup modal
+                'context': {
+                    'show_notification': True,
+                    'notification_message': 'Prices recalculated successfully!',
+                    'notification_type': 'success'
+                }
             }
-        }
+        else:
+            # Return to standard sale order form for regular orders
+            return {
+                'type': 'ir.actions.act_window',
+                'res_model': 'sale.order',
+                'res_id': self.id,
+                'view_mode': 'form',
+                'target': 'current',
+                'context': {
+                    'show_notification': True,
+                    'notification_message': 'Prices recalculated successfully!',
+                    'notification_type': 'success'
+                }
+            }
     
     def _get_action_add_from_catalog_extra_context(self):
         """Override to ensure catalog returns to Healthcare Quote form for FSO orders"""

@@ -218,20 +218,38 @@ class AdvancedPricingRule(models.Model):
     
     def _evaluate_fso_conditions(self, context_data):
         """Evaluate FSO-based conditions"""
-        # Distance conditions
-        if self.distance_min or self.distance_max:
+        _logger.info(f"    Evaluating FSO conditions for rule {self.name}")
+        _logger.info(f"    Distance min: {self.distance_min}, Distance max: {self.distance_max}")
+        _logger.info(f"    Hour min: {self.appointment_hour_min}, Hour max: {self.appointment_hour_max}")
+        _logger.info(f"    After hours required: {self.is_after_hours_required}")
+        _logger.info(f"    Context data: {context_data}")
+        
+        # Distance conditions (only apply if values are set and positive)
+        if self.distance_min and self.distance_min > 0:
             distance = context_data.get('distance', 0)
-            if self.distance_min and distance < self.distance_min:
+            _logger.info(f"    Distance min check: {distance} >= {self.distance_min}")
+            if distance < self.distance_min:
+                _logger.info(f"    FAILED: Distance too low")
                 return False
-            if self.distance_max and distance > self.distance_max:
+        if self.distance_max and self.distance_max > 0:
+            distance = context_data.get('distance', 0)
+            _logger.info(f"    Distance max check: {distance} <= {self.distance_max}")
+            if distance > self.distance_max:
+                _logger.info(f"    FAILED: Distance too high")
                 return False
         
-        # Appointment hour conditions
-        if self.appointment_hour_min is not None or self.appointment_hour_max is not None:
+        # Appointment hour conditions (skip if 0 since 0 means "not set")
+        if self.appointment_hour_min and self.appointment_hour_min > 0:
             hour = context_data.get('appointment_hour', 0)
-            if self.appointment_hour_min is not None and hour < self.appointment_hour_min:
+            _logger.info(f"    Hour min check: {hour} >= {self.appointment_hour_min}")
+            if hour < self.appointment_hour_min:
+                _logger.info(f"    FAILED: Hour too low")
                 return False
-            if self.appointment_hour_max is not None and hour > self.appointment_hour_max:
+        if self.appointment_hour_max and self.appointment_hour_max > 0:
+            hour = context_data.get('appointment_hour', 0)
+            _logger.info(f"    Hour max check: {hour} <= {self.appointment_hour_max}")
+            if hour > self.appointment_hour_max:
+                _logger.info(f"    FAILED: Hour too high")
                 return False
         
         # Weekend condition
@@ -272,12 +290,18 @@ class AdvancedPricingRule(models.Model):
             if context_data.get('priority') != self.priority:
                 return False
         
-        # Service units conditions
-        if self.service_units_min or self.service_units_max:
+        # Service units conditions (only apply if values are set and positive)
+        if self.service_units_min and self.service_units_min > 0:
             units = context_data.get('service_units', 0)
-            if self.service_units_min and units < self.service_units_min:
+            _logger.info(f"    Service units min check: {units} >= {self.service_units_min}")
+            if units < self.service_units_min:
+                _logger.info(f"    FAILED: Service units too low")
                 return False
-            if self.service_units_max and units > self.service_units_max:
+        if self.service_units_max and self.service_units_max > 0:
+            units = context_data.get('service_units', 0)
+            _logger.info(f"    Service units max check: {units} <= {self.service_units_max}")
+            if units > self.service_units_max:
+                _logger.info(f"    FAILED: Service units too high")
                 return False
         
         # Service city condition
