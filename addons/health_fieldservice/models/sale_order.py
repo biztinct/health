@@ -104,44 +104,31 @@ class SaleOrder(models.Model):
         # Find the related FSO
         fso = self.env['health.fieldservice.order'].search([('sale_order_id', '=', self.id)], limit=1)
         
-        # Show notification to debug what's happening
         if fso:
-            message = f'FSO Found: {fso.name} (ID: {fso.id}). Attempting redirect...'
-        else:
-            message = f'No FSO found for quote {self.name}. Closing modal...'
-            
-        # Show notification first
-        notification = {
-            'type': 'ir.actions.client',
-            'tag': 'display_notification',
-            'params': {
-                'title': 'Debug Info',
-                'message': message,
-                'type': 'info',
-                'sticky': True,
-            }
-        }
-        
-        # If this is an FSO quote, try to return to the FSO
-        if fso:
-            # Return multiple actions - notification then navigation
+            # Navigate directly to the FSO
             return {
-                'type': 'ir.actions.act_multi',
-                'actions': [
-                    notification,
-                    {
-                        'type': 'ir.actions.act_window',
-                        'name': f'Field Service Order - {fso.name}',
-                        'res_model': 'health.fieldservice.order',
-                        'res_id': fso.id,
-                        'view_mode': 'form',
-                        'target': 'main',  # Try 'main' to replace everything
-                    }
-                ]
+                'type': 'ir.actions.act_window',
+                'name': f'Field Service Order - {fso.name}',
+                'res_model': 'health.fieldservice.order',
+                'res_id': fso.id,
+                'view_mode': 'form',
+                'target': 'main',  # Replace the entire view stack
+                'context': {
+                    'from_quote_save': True,
+                }
             }
-        
-        # For regular quotes, show notification and close modal
-        return notification
+        else:
+            # Show warning if no FSO found
+            return {
+                'type': 'ir.actions.client',
+                'tag': 'display_notification',
+                'params': {
+                    'title': 'No FSO Found',
+                    'message': f'No FSO found for quote {self.name}',
+                    'type': 'warning',
+                    'sticky': True,
+                }
+            }
     
     def get_healthcare_quote_view_id(self):
         """Get the correct view ID for healthcare quotes"""

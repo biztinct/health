@@ -431,28 +431,6 @@ class SaleOrder(models.Model):
         
         # For regular quotes, use standard behavior
         return super().action_add_from_catalog()
-    
-    def action_save_and_return_to_fso(self):
-        """Save quote and return to parent FSO regardless of workflow path"""
-        self.ensure_one()
-        
-        # If this is an FSO quote, always return to the FSO
-        if self.fso_id:
-            return {
-                'type': 'ir.actions.act_window',
-                'res_model': 'health.fieldservice.order',
-                'res_id': self.fso_id.id,
-                'view_mode': 'form',
-                'target': 'current',  # Replace current view (close modal and go to FSO)
-                'context': {
-                    'show_notification': True,
-                    'notification_message': 'Quote saved successfully!',
-                    'notification_type': 'success'
-                }
-            }
-        
-        # For regular quotes, just close the modal
-        return {'type': 'ir.actions.act_window_close'}
 
 class SaleOrderLine(models.Model):
     _inherit = 'sale.order.line'
