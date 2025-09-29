@@ -96,3 +96,55 @@ class SaleOrder(models.Model):
                 'Healthcare quotes must have at least one order line before confirmation.\n'
                 'Please add at least one service or product to this quote.'
             ))
+    
+    def action_save_and_return_to_fso(self):
+        """Save quote and return to parent FSO regardless of workflow path"""
+        self.ensure_one()
+        
+        # Find the related FSO
+        fso = self.env['health.fieldservice.order'].search([('sale_order_id', '=', self.id)], limit=1)
+        
+        # Show notification to debug what's happening
+        if fso:
+            message = f'FSO Found: {fso.name} (ID: {fso.id}). Attempting redirect...'
+        else:
+            message = f'No FSO found for quote {self.name}. Closing modal...'
+            
+        # Show notification first
+        notification = {
+            'type': 'ir.actions.client',
+            'tag': 'display_notification',
+            'params': {
+                'title': 'Debug Info',
+                'message': message,
+                'type': 'info',
+                'sticky': True,
+            }
+        }
+        
+        # If this is an FSO quote, try to return to the FSO
+        if fso:
+            # Return multiple actions - notification then navigation
+            return {
+                'type': 'ir.actions.act_multi',
+                'actions': [
+                    notification,
+                    {
+                        'type': 'ir.actions.act_window',
+                        'name': f'Field Service Order - {fso.name}',
+                        'res_model': 'health.fieldservice.order',
+                        'res_id': fso.id,
+                        'view_mode': 'form',
+                        'target': 'main',  # Try 'main' to replace everything
+                    }
+                ]
+            }
+        
+        # For regular quotes, show notification and close modal
+        return notification
+    
+    def get_healthcare_quote_view_id(self):
+        """Get the correct view ID for healthcare quotes"""
+        self.ensure_one()
+        # Always return the healthcare quote form view for FSO quotes
+        return self.env.ref('health_fieldservice.view_healthcare_quote_form_custom').id

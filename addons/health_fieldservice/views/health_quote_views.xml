@@ -7,8 +7,12 @@
         <field name="model">sale.order</field>
         <field name="priority">20</field>
         <field name="arch" type="xml">
-            <form string="Healthcare Quote" class="o_sale_order">
+            <form string="Healthcare Quote" class="o_sale_order" js_class="healthcare_quote_form">
                 <header>
+                    <button name="action_save_and_return_to_fso" type="object" 
+                            string="💾 Save &amp; Return to FSO" class="oe_highlight"
+                            help="Save quote and return to Field Service Order"/>
+                    
                     <button name="action_create_invoice_from_healthcare_quote" type="object" 
                             string="💰 Create Invoice" class="oe_highlight"
                             invisible="not context.get('invoicing_mode')"

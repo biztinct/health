@@ -40,6 +40,7 @@ Features:
         'views/menu_items.xml',
         'data/demo_data.xml',
         'data/pricing_rule_templates.xml',
+        'data/healthcare_catalog_actions.xml',
     ],
     'assets': {
         'web.assets_backend': [
@@ -51,6 +52,8 @@ Features:
             'advanced_pricing/static/src/js/pricing_widget.js',
             'advanced_pricing/static/src/js/visual_rule_builder.js',
             'advanced_pricing/static/src/js/visual_rule_builder_action.js',
+            'advanced_pricing/static/src/js/product_catalog_controller.js',
+            'advanced_pricing/static/src/js/product_catalog_view.js',
             'advanced_pricing/static/src/xml/pricing_templates.xml',
             'advanced_pricing/static/src/xml/visual_rule_builder.xml',
         ],

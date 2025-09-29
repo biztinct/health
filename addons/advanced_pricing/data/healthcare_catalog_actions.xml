@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    
+    <!-- Healthcare Product Catalog Action -->
+    <record id="action_healthcare_product_catalog" model="ir.actions.act_window">
+        <field name="name">Healthcare Product Catalog</field>
+        <field name="res_model">product.product</field>
+        <field name="view_mode">kanban</field>
+        <field name="view_id" ref="product.product_view_kanban_catalog"/>
+        <field name="target">fullscreen</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No products found!
+            </p>
+            <p>
+                Add products to your catalog to get started.
+            </p>
+        </field>
+    </record>
+    
+</odoo>

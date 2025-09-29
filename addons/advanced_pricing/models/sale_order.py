@@ -300,6 +300,9 @@ class SaleOrder(models.Model):
         
         _logger.info("=== END PRICING DEBUG ===")
         
+        # Generate user-friendly pricing rule notes
+        self._update_pricing_notes()
+        
         # Force UI refresh to show updated prices immediately
         self.env.cr.commit()  # Commit changes to database
         
@@ -314,6 +317,8 @@ class SaleOrder(models.Model):
                 'view_id': self.env.ref('health_fieldservice.view_healthcare_quote_form_custom').id,
                 'target': 'new',  # Open as popup modal
                 'context': {
+                    'healthcare_context': True,
+                    'fso_id': self.fso_id.id,
                     'show_notification': True,
                     'notification_message': 'Prices recalculated successfully!',
                     'notification_type': 'success'
@@ -334,6 +339,59 @@ class SaleOrder(models.Model):
                 }
             }
     
+    def _update_pricing_notes(self):
+        """Update sale order note with user-friendly pricing rule explanations"""
+        self.ensure_one()
+        
+        if not self.use_advanced_pricing or not self.order_line:
+            return
+        
+        # Start building the note with HTML formatting
+        note_parts = []
+        note_parts.append("<strong>=== HEALTHCARE PRICING BREAKDOWN ===</strong><br/><br/>")
+        note_parts.append("<strong>PRICING SUMMARY:</strong><br/><br/>")
+        
+        # Process each order line
+        for line_idx, line in enumerate(self.order_line, 1):
+            if not line.product_id:
+                continue
+                
+            base_price = line.base_price or line.product_id.list_price or 0
+            final_price = line.price_unit or 0
+            line_total_final = final_price * line.product_uom_qty
+            
+            note_parts.append(f"<strong>ITEM {line_idx}: {line.product_id.name}</strong><br/>")
+            note_parts.append(f"• Base Price: ${base_price:,.2f} per unit<br/>")
+            note_parts.append(f"• Quantity: {line.product_uom_qty}<br/>")
+            
+            # Calculate adjustment and show reason if there's a difference
+            price_difference = final_price - base_price
+            if abs(price_difference) > 0.01:  # Only show if there's a meaningful difference
+                adjustment_total = price_difference * line.product_uom_qty
+                
+                # Determine pricing factor reason
+                pricing_reason = ""
+                if hasattr(self, 'is_after_hours') and self.is_after_hours:
+                    pricing_reason = "After hours service"
+                elif hasattr(self, 'is_weekend') and self.is_weekend:
+                    pricing_reason = "Weekend service"
+                elif hasattr(self, 'is_holiday') and self.is_holiday:
+                    pricing_reason = "Holiday service"
+                elif hasattr(self, 'fso_urgency') and self.fso_urgency in ['urgent', 'emergency']:
+                    urgency_label = dict(self._fields['fso_urgency'].selection).get(self.fso_urgency, self.fso_urgency)
+                    pricing_reason = f"{urgency_label.title()} priority"
+                elif hasattr(line, 'applied_rules') and line.applied_rules:
+                    pricing_reason = line.applied_rules
+                else:
+                    pricing_reason = "Special pricing applied"
+                
+                note_parts.append(f"• Adjustment Total: ${adjustment_total:+,.2f} ({pricing_reason})<br/>")
+            
+            note_parts.append(f"• Final Total: ${line_total_final:,.2f}<br/><br/>")
+        
+        # Update the note field with HTML content
+        self.note = ''.join(note_parts)
+    
     def _get_action_add_from_catalog_extra_context(self):
         """Override to ensure catalog returns to Healthcare Quote form for FSO orders"""
         context = super()._get_action_add_from_catalog_extra_context()
@@ -347,28 +405,54 @@ class SaleOrder(models.Model):
                 'return_to_form': True,
                 'form_view_ref': 'health_fieldservice.view_healthcare_quote_form_custom',
                 'healthcare_context': True,
-                'catalog_source': 'healthcare_quote'
+                'catalog_source': 'healthcare_quote',
+                # Use our custom healthcare catalog view
+                'catalog_view_type': 'healthcare_product_catalog'
             })
         
         return context
     
     def action_add_from_catalog(self):
         """Add context marker for FSO quotes to enable auto-redirect after catalog"""
-        # For FSO quotes, add a context marker so we can auto-redirect after catalog
+        # For FSO quotes, add healthcare context to standard catalog
         if self.fso_id:
             action = super().action_add_from_catalog()
             
-            # Add context marker to indicate we should auto-open quote after catalog
+            # Add healthcare context to make our patch work
             if isinstance(action, dict):
                 action.setdefault('context', {}).update({
                     'catalog_return_to_quote': True,
                     'quote_order_id': self.id,
+                    'healthcare_context': True,
+                    'catalog_source': 'healthcare_quote',
                 })
             
             return action
         
         # For regular quotes, use standard behavior
         return super().action_add_from_catalog()
+    
+    def action_save_and_return_to_fso(self):
+        """Save quote and return to parent FSO regardless of workflow path"""
+        self.ensure_one()
+        
+        # If this is an FSO quote, always return to the FSO
+        if self.fso_id:
+            return {
+                'type': 'ir.actions.act_window',
+                'res_model': 'health.fieldservice.order',
+                'res_id': self.fso_id.id,
+                'view_mode': 'form',
+                'target': 'current',  # Replace current view (close modal and go to FSO)
+                'context': {
+                    'show_notification': True,
+                    'notification_message': 'Quote saved successfully!',
+                    'notification_type': 'success'
+                }
+            }
+        
+        # For regular quotes, just close the modal
+        return {'type': 'ir.actions.act_window_close'}
 
 class SaleOrderLine(models.Model):
     _inherit = 'sale.order.line'
@@ -419,18 +503,35 @@ class SaleOrderLine(models.Model):
             
             # Calculate price using pricing engine
             try:
-                price = engine.calculate_price(
-                    line.product_id.id,
-                    line.product_uom_qty,
-                    line.order_id.partner_id.id,
-                    context_data
-                )
-                line.price_unit = price
-                line.base_price = line.product_id.list_price
+                # Store base price before calculation
+                line.base_price = line.product_id.list_price or 0
+                
+                # Calculate price and get detailed results if available
+                if hasattr(engine, 'calculate_price_with_details'):
+                    result = engine.calculate_price_with_details(
+                        line.product_id.id,
+                        line.product_uom_qty,
+                        line.order_id.partner_id.id,
+                        context_data
+                    )
+                    line.price_unit = result.get('final_price', line.base_price)
+                    line.applied_rules = result.get('applied_rules', '')
+                    line.price_calculation_log = result.get('calculation_log', '')
+                else:
+                    # Fallback to basic calculation
+                    price = engine.calculate_price(
+                        line.product_id.id,
+                        line.product_uom_qty,
+                        line.order_id.partner_id.id,
+                        context_data
+                    )
+                    line.price_unit = price
+                    
             except Exception as e:
                 # Log error but don't break the order
                 import logging
                 _logger = logging.getLogger(__name__)
                 _logger.warning(f"Advanced pricing calculation failed for line {line.id}: {e}")
                 # Fall back to standard pricing
-                line.base_price = line.product_id.list_price
+                line.base_price = line.product_id.list_price or 0
+                line.price_unit = line.base_price

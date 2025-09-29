@@ -58,6 +58,12 @@ class HealthFieldServiceOrderUnified(models.Model):
             else:
                 record.display_name = record.name or 'New Booking'
     
+    def _get_service_type_label(self):
+        """Get the human-readable label for service type"""
+        self.ensure_one()
+        service_type_dict = dict(self._fields['service_type'].selection)
+        return service_type_dict.get(self.service_type, self.service_type or 'Unknown Service')
+    
     # ============================================================================
     # PATIENT & CUSTOMER INFORMATION (From Client Requirements)
     # ============================================================================
@@ -1191,7 +1197,7 @@ class HealthFieldServiceOrderUnified(models.Model):
             'origin': self.name,
             'pricelist_id': pricelist.id,
             'state': 'draft',
-            'note': f'Healthcare Quote for {self.service_type} - {self.patient_id.name}',
+            'note': f'Healthcare Quote for {self._get_service_type_label()} - {self.patient_id.name}',
         }
         
         quote = self.env['sale.order'].create(quote_vals)
@@ -1454,13 +1460,17 @@ class HealthFieldServiceOrderUnified(models.Model):
             'origin': self.name,
             'pricelist_id': pricelist.id,
             'state': 'draft',
-            'note': f'Healthcare Quote for {self.service_type} - {self.patient_id.name}',
+            'note': f'Healthcare Quote for {self._get_service_type_label()} - {self.patient_id.name}',
         }
         
         quote = self.env['sale.order'].create(quote_vals)
         
         # Add service lines to quote if we have pricing info
         self._add_quote_lines(quote)
+        
+        # Update pricing notes if advanced pricing is enabled
+        if hasattr(quote, '_update_pricing_notes') and quote.use_advanced_pricing:
+            quote._update_pricing_notes()
         
         return quote
     
@@ -1610,13 +1620,17 @@ class HealthFieldServiceOrderUnified(models.Model):
             'origin': self.name,
             'pricelist_id': pricelist.id,
             'state': 'draft',
-            'note': f'Auto-generated Healthcare Quote for {self.service_type} - {self.patient_id.name}',
+            'note': f'Auto-generated Healthcare Quote for {self._get_service_type_label()} - {self.patient_id.name}',
         }
         
         quote = self.env['sale.order'].create(quote_vals)
         
         # Add basic service lines
         self._add_quote_lines(quote)
+        
+        # Update pricing notes if advanced pricing is enabled
+        if hasattr(quote, '_update_pricing_notes') and quote.use_advanced_pricing:
+            quote._update_pricing_notes()
         
         return quote
     

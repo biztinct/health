@@ -103,6 +103,7 @@
     'assets': {
         'web.assets_backend': [
             # CSS Assets
+            'health_fieldservice/static/src/css/healthcare_quote.css',
             'health_fieldservice/static/src/css/assignment_dashboard.css',
             'health_fieldservice/static/src/css/assignment_timeline_view.css',
             'health_fieldservice/static/src/css/scheduler_grid.css',
@@ -116,6 +117,8 @@
             'health_fieldservice/static/src/js/scheduler_grid.js',
             'health_fieldservice/static/src/js/staff_workload_dashboard.js',
             'health_fieldservice/static/src/js/timeline_card_enhancer.js',
+            'health_fieldservice/static/src/js/healthcare_quote_save.js',
+            'health_fieldservice/static/src/js/healthcare_quote_form.js',
             # XML Templates
             'health_fieldservice/static/src/xml/assignment_dashboard.xml',
             'health_fieldservice/static/src/xml/assignment_timeline_view.xml',
