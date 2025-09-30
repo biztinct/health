@@ -1,0 +1,32 @@
+// Healthcare Theme - Backend Styles
+// Additional styling for healthcare-specific UI elements
+
+// Light, clean healthcare backgrounds
+.o_action_manager .o_view_controller .o_content {
+    background-color: #F7FAF9; // Light mint - clean, clinical
+}
+
+.o_control_panel {
+    background-color: #ECF5F3; // Soft mint - subtle separation
+    border-bottom: 1px solid #CFE3E1; // Light teal border
+}
+
+// Ensure proper link colors
+a {
+    color: #0F6D66; // Healthcare teal
+
+    &:hover {
+        color: darken(#0F6D66, 10%);
+    }
+}
+
+// Clean card styling for healthcare forms
+.o_form_sheet {
+    background-color: #ffffff;
+}
+
+// Professional selection highlighting
+.o_list_view .o_data_row.o_selected_row,
+.o_list_view .o_data_row:focus {
+    background-color: rgba(15, 109, 102, 0.08); // Subtle teal highlight
+}

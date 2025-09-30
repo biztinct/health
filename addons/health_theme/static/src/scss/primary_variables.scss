@@ -1,0 +1,46 @@
+// Healthcare Theme - Primary Variables
+// This file overrides Odoo's core SCSS variables BEFORE compilation
+
+// Healthcare Brand Colors
+$hc-color-brand: #0F6D66;      // Teal - primary healthcare brand color
+$hc-color-primary: #0F6D66;    // Teal - primary action color
+$hc-color-secondary: #2E6F89;  // Blue-teal - secondary elements
+
+// Healthcare State Colors
+$hc-color-success: #176B47;    // Medical green
+$hc-color-info: #2A7ABF;       // Information blue
+$hc-color-warning: #946200;    // Caution amber
+$hc-color-danger: #C0332A;     // Alert red
+
+// Override Odoo Community/Enterprise Brand Variables
+$o-community-color: $hc-color-brand;
+$o-enterprise-color: $hc-color-brand;
+$o-enterprise-action-color: $hc-color-primary;
+
+// Override Odoo Brand Variables (Most Important!)
+$o-brand-odoo: $hc-color-brand;
+$o-brand-primary: $hc-color-primary;
+$o-brand-secondary: $hc-color-secondary;
+
+// Override Bootstrap State Colors
+$primary: $hc-color-primary;
+$secondary: $hc-color-secondary;
+$success: $hc-color-success;
+$info: $hc-color-info;
+$warning: $hc-color-warning;
+$danger: $hc-color-danger;
+
+// Override Odoo State Colors
+$o-success: $hc-color-success;
+$o-info: $hc-color-info;
+$o-warning: $hc-color-warning;
+$o-danger: $hc-color-danger;
+
+// Theme Text Colors Map (for badges, labels, etc.)
+$o-theme-text-colors: (
+    "primary": $hc-color-brand,
+    "success": $o-success,
+    "info": $o-info,
+    "warning": $o-warning,
+    "danger": $o-danger,
+);
