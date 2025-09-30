@@ -21,14 +21,15 @@ class ResPartner(models.Model):
     
     # Patient Healthcare ID
     patient_code = fields.Char(
-        'Patient ID', 
-        copy=False, 
+        'Patient ID',
+        copy=False,
         readonly=True,
         tracking=True,
         index=True,
         help='Unique patient identifier (auto-generated)'
     )
-    
+    patient_code_display = fields.Char('Patient ID Display', compute='_compute_patient_code_display')
+
     # Personal Details (Patient-specific)
     first_name = fields.Char('First Name', tracking=True)
     last_name = fields.Char('Last Name', tracking=True)
@@ -202,7 +203,16 @@ class ResPartner(models.Model):
                 partner.age_display = f'{partner.age} years old'
             else:
                 partner.age_display = 'Age unknown'
-    
+
+    @api.depends('patient_code')
+    def _compute_patient_code_display(self):
+        """Compute patient code display with fallback"""
+        for partner in self:
+            if partner.patient_code:
+                partner.patient_code_display = partner.patient_code
+            else:
+                partner.patient_code_display = 'Not Assigned'
+
     def _compute_visit_count(self):
         """Compute total FSO bookings for patients"""
         for partner in self:

@@ -30,3 +30,60 @@ a {
 .o_list_view .o_data_row:focus {
     background-color: rgba(15, 109, 102, 0.08); // Subtle teal highlight
 }
+
+// Healthcare Badge Colors (ID, Age, etc.)
+.badge.bg-info {
+    background-color: #0F6D66 !important; // Healthcare teal for ID badge
+    color: #ffffff !important;
+
+    // Ensure fields inside badges display properly
+    .o_field_widget {
+        display: inline-block !important;
+        background: transparent !important;
+        border: none !important;
+        color: white !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        width: 120px !important;
+        min-width: 120px !important;
+        max-width: 200px !important;
+
+        input, span {
+            background: transparent !important;
+            border: none !important;
+            color: white !important;
+            padding: 0 !important;
+            width: 120px !important;
+            min-width: 120px !important;
+            box-shadow: none !important;
+        }
+    }
+}
+
+.badge.bg-secondary {
+    background-color: #2E6F89 !important; // Blue-teal for Age badge
+    color: #ffffff !important;
+
+    // Ensure fields inside badges display properly
+    .o_field_widget {
+        display: inline-block !important;
+        background: transparent !important;
+        border: none !important;
+        color: white !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        width: 120px !important;
+        min-width: 120px !important;
+        max-width: 200px !important;
+
+        input, span {
+            background: transparent !important;
+            border: none !important;
+            color: white !important;
+            padding: 0 !important;
+            width: 120px !important;
+            min-width: 120px !important;
+            box-shadow: none !important;
+        }
+    }
+}
