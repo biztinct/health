@@ -656,6 +656,8 @@ class HealthFieldServiceOrderUnified(models.Model):
     actual_start_datetime = fields.Datetime('Actual Start Time', tracking=True)
     actual_end_datetime = fields.Datetime('Actual End Time', tracking=True)
     actual_duration = fields.Float('Actual Duration (Hours)', compute='_compute_actual_duration', store=True)
+    actual_duration_display = fields.Char('Duration Display', compute='_compute_duration_display', store=True)
+    service_timer_active = fields.Boolean('Timer Active', compute='_compute_timer_active', store=True)
     
     @api.depends('actual_start_datetime', 'actual_end_datetime')
     def _compute_actual_duration(self):
@@ -665,6 +667,33 @@ class HealthFieldServiceOrderUnified(models.Model):
                 record.actual_duration = delta.total_seconds() / 3600.0
             else:
                 record.actual_duration = 0.0
+    
+    @api.depends('actual_start_datetime', 'actual_end_datetime')
+    def _compute_duration_display(self):
+        """Compute human-readable duration display (HH:MM:SS)"""
+        for record in self:
+            if record.actual_start_datetime and record.actual_end_datetime:
+                delta = record.actual_end_datetime - record.actual_start_datetime
+                total_seconds = int(delta.total_seconds())
+                hours = total_seconds // 3600
+                minutes = (total_seconds % 3600) // 60
+                seconds = total_seconds % 60
+                record.actual_duration_display = f"{hours:02d}:{minutes:02d}:{seconds:02d}"
+            elif record.actual_start_datetime and not record.actual_end_datetime:
+                # Service is running - show "RUNNING"
+                record.actual_duration_display = "RUNNING"
+            else:
+                record.actual_duration_display = "00:00:00"
+    
+    @api.depends('actual_start_datetime', 'actual_end_datetime', 'state')
+    def _compute_timer_active(self):
+        """Check if service timer is currently active"""
+        for record in self:
+            record.service_timer_active = (
+                record.actual_start_datetime and 
+                not record.actual_end_datetime and 
+                record.state == 'in_progress'
+            )
     
     # Clinical Documentation
     clinical_notes = fields.Html('Clinical Notes', help='Clinical observations and notes from service provider')

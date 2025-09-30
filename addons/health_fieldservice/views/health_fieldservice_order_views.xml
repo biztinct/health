@@ -10,7 +10,7 @@
                 <header>
                     <button name="action_ai_assign_staff" type="object" 
                             string="🚀 AI Assign Staff" class="oe_highlight"
-                            invisible="assigned_staff_ids"
+                            invisible="True"
                             help="Automatically assign staff using AI matching"/>
                     
                     <button name="action_manual_assign_staff" type="object" 
@@ -132,13 +132,22 @@
                                 groups="health_base.group_healthcare_operations_manager"/>
                     </div>
                     
+                    <!-- Service Timer Widget - Top Right Position -->
+                    <field name="service_timer_active" invisible="1"/>
+                    <field name="actual_start_datetime" invisible="1"/>
+                    <field name="actual_end_datetime" invisible="1"/>
+                    <div class="timer-top-right-container">
+                        <field name="actual_duration_display" widget="service_timer" nolabel="1"
+                               invisible="not id"/>
+                    </div>
+
                     <div class="oe_title">
                         <h1>
                             <field name="name" readonly="1"/>
                         </h1>
                         <div class="o_row">
                             <field name="priority" widget="priority"/>
-                            <field name="state" widget="badge" 
+                            <field name="state" widget="badge"
                                    decoration-success="state == 'completed'"
                                    decoration-info="state == 'assigned'"
                                    decoration-warning="state == 'in_progress'"
@@ -170,7 +179,7 @@
                             <field name="service_location" readonly="1"/>
                             <field name="actual_start_datetime"/>
                             <field name="actual_end_datetime"/>
-                            <field name="duration_minutes" readonly="1"/>
+                            <field name="actual_duration" readonly="1" string="Duration (Hours)"/>
                         </group>
                         
                         <group string="Quote &amp; Invoice Status">

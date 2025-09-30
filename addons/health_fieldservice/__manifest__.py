@@ -104,6 +104,7 @@
         'web.assets_backend': [
             # CSS Assets
             'health_fieldservice/static/src/css/healthcare_quote.css',
+            'health_fieldservice/static/src/css/service_timer.css',
             'health_fieldservice/static/src/css/assignment_dashboard.css',
             'health_fieldservice/static/src/css/assignment_timeline_view.css',
             'health_fieldservice/static/src/css/scheduler_grid.css',
@@ -119,10 +120,12 @@
             'health_fieldservice/static/src/js/timeline_card_enhancer.js',
             'health_fieldservice/static/src/js/healthcare_quote_save.js',
             'health_fieldservice/static/src/js/healthcare_quote_form.js',
+            'health_fieldservice/static/src/js/service_timer.js',
             # XML Templates
             'health_fieldservice/static/src/xml/assignment_dashboard.xml',
             'health_fieldservice/static/src/xml/assignment_timeline_view.xml',
             'health_fieldservice/static/src/xml/staff_workload_dashboard.xml',
+            'health_fieldservice/static/src/xml/service_timer.xml',
         ],
     },
     'installable': True,

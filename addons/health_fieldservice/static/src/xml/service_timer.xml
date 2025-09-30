@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates>
+    <t t-name="health_fieldservice.ServiceTimer" owl="1">
+        <div class="service-timer-wrapper">
+            <div t-attf-class="{{getTimerClass()}}">
+                <!-- Main Timer Display - Compact -->
+                <div class="service-timer-display">
+                    <!-- Time Segments Only - No Icon -->
+                    <div class="timer-segment">
+                        <div class="timer-digit" t-esc="getFormattedHours()"/>
+                        <div class="timer-unit-label">Hours</div>
+                    </div>
+
+                    <div class="timer-separator">:</div>
+
+                    <div class="timer-segment">
+                        <div class="timer-digit" t-esc="getFormattedMinutes()"/>
+                        <div class="timer-unit-label">Minutes</div>
+                    </div>
+
+                    <div class="timer-separator">:</div>
+
+                    <div class="timer-segment">
+                        <div class="timer-digit" t-esc="getFormattedSeconds()"/>
+                        <div class="timer-unit-label">Seconds</div>
+                    </div>
+                </div>
+
+                <!-- Duration Label - Shown on hover -->
+                <div class="service-timer-label">
+                    <span t-esc="formatDuration()"/>
+                </div>
+            </div>
+        </div>
+    </t>
+</templates>
