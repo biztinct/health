@@ -31,59 +31,99 @@ a {
     background-color: rgba(15, 109, 102, 0.08); // Subtle teal highlight
 }
 
-// Healthcare Badge Colors (ID, Age, etc.)
+// Healthcare Badge Colors (ID, Age, etc.) - Professional pill-shaped badges
 .badge.bg-info {
-    background-color: #0F6D66 !important; // Healthcare teal for ID badge
-    color: #ffffff !important;
+    background: linear-gradient(135deg, #C8ECE9 0%, #B5E5E1 100%) !important; // Gradient light teal
+    color: #0A4F4B !important; // Dark teal text
+    border: 2px solid #0F6D66 !important; // Healthcare teal border
+    border-radius: 20px !important; // Circular/pill shape
+    font-size: 16px !important;
+    font-weight: 600 !important;
+    box-shadow: 0 2px 6px rgba(15, 109, 102, 0.15) !important; // Subtle shadow
+    transition: all 0.2s ease !important;
+
+    strong {
+        color: #0F6D66 !important; // Label in primary teal
+        font-weight: 700 !important;
+        margin-right: 4px;
+    }
 
     // Ensure fields inside badges display properly
     .o_field_widget {
         display: inline-block !important;
         background: transparent !important;
         border: none !important;
-        color: white !important;
+        color: #0A4F4B !important; // Dark teal text
         padding: 0 !important;
-        margin: 0 !important;
+        margin: 0 0 0 4px !important;
         width: 120px !important;
         min-width: 120px !important;
         max-width: 200px !important;
+        font-size: 16px !important;
 
         input, span {
             background: transparent !important;
             border: none !important;
-            color: white !important;
+            color: #0A4F4B !important; // Dark teal text
             padding: 0 !important;
             width: 120px !important;
             min-width: 120px !important;
             box-shadow: none !important;
+            font-weight: 600 !important;
+            font-size: 16px !important;
         }
+    }
+
+    &:hover {
+        box-shadow: 0 3px 8px rgba(15, 109, 102, 0.25) !important;
+        transform: translateY(-1px);
     }
 }
 
 .badge.bg-secondary {
-    background-color: #2E6F89 !important; // Blue-teal for Age badge
-    color: #ffffff !important;
+    background: linear-gradient(135deg, #D5ECF6 0%, #C2E4F1 100%) !important; // Gradient light blue-teal
+    color: #1A4A5C !important; // Dark blue-teal text
+    border: 2px solid #2E6F89 !important; // Blue-teal border
+    border-radius: 20px !important; // Circular/pill shape
+    font-size: 16px !important;
+    font-weight: 600 !important;
+    box-shadow: 0 2px 6px rgba(46, 111, 137, 0.15) !important; // Subtle shadow
+    transition: all 0.2s ease !important;
+
+    strong {
+        color: #2E6F89 !important; // Label in secondary blue-teal
+        font-weight: 700 !important;
+        margin-right: 4px;
+    }
 
     // Ensure fields inside badges display properly
     .o_field_widget {
         display: inline-block !important;
         background: transparent !important;
         border: none !important;
-        color: white !important;
+        color: #1A4A5C !important; // Dark blue-teal text
         padding: 0 !important;
-        margin: 0 !important;
+        margin: 0 0 0 4px !important;
         width: 120px !important;
         min-width: 120px !important;
         max-width: 200px !important;
+        font-size: 16px !important;
 
         input, span {
             background: transparent !important;
             border: none !important;
-            color: white !important;
+            color: #1A4A5C !important; // Dark blue-teal text
             padding: 0 !important;
             width: 120px !important;
             min-width: 120px !important;
             box-shadow: none !important;
+            font-weight: 600 !important;
+            font-size: 16px !important;
         }
+    }
+
+    &:hover {
+        box-shadow: 0 3px 8px rgba(46, 111, 137, 0.25) !important;
+        transform: translateY(-1px);
     }
 }

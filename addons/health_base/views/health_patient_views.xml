@@ -55,12 +55,12 @@
                     <div class="oe_title">
                         <h1 class="d-flex justify-content-between align-items-center">
                             <field name="name" placeholder="Patient Full Name" required="1" class="o_text_overflow"/>
-                            <div class="d-flex gap-2" style="flex-shrink: 0; min-width: 400px;">
-                                <span class="badge bg-info text-white" style="padding: 8px 20px; font-size: 14px; min-width: 180px;">
-                                    ID: <field name="patient_code_display" nolabel="1" style="width: 120px !important; min-width: 120px !important;"/>
+                            <div class="d-flex gap-3" style="flex-shrink: 0; min-width: 450px;">
+                                <span class="badge bg-info text-white" style="padding: 10px 24px; font-size: 16px; min-width: 200px; border-radius: 20px;">
+                                    <strong>ID:</strong> <field name="patient_code_display" nolabel="1" style="width: 120px !important; min-width: 120px !important;"/>
                                 </span>
-                                <span class="badge bg-secondary text-white" style="padding: 8px 20px; font-size: 14px; min-width: 180px;">
-                                    <field name="age_display" nolabel="1" style="width: 120px !important; min-width: 120px !important;"/>
+                                <span class="badge bg-secondary text-white" style="padding: 10px 24px; font-size: 16px; min-width: 200px; border-radius: 20px;">
+                                    <strong>Age:</strong> <field name="age_display" nolabel="1" style="width: 120px !important; min-width: 120px !important;"/>
                                 </span>
                             </div>
                         </h1>
