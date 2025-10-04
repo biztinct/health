@@ -1,46 +1,184 @@
-// Healthcare Theme - Primary Variables
+// ============================================================================
+// VIỆT ÚC CLINIC - OFFICIAL BRAND THEME
+// Based on Việt Úc Clinic Brand Guidelines (Brandingcompressed.pdf)
+// ============================================================================
 // This file overrides Odoo's core SCSS variables BEFORE compilation
+//
+// Brand Essence: Trustworthy, Professional, Compassionate, Modern & Clean
+// Typography: Montserrat (headings) + Segoe (body) + Arial (fallback)
+// ============================================================================
 
-// Healthcare Brand Colors
-$hc-color-brand: #0F6D66;      // Teal - primary healthcare brand color
-$hc-color-primary: #0F6D66;    // Teal - primary action color
-$hc-color-secondary: #2E6F89;  // Blue-teal - secondary elements
+// ===== PRIMARY LOGO COLORS (Never Alter - For Logo/Brand Elements Only) =====
+$vu-hibiscus-red: #E53935;          // Logo flower - passion, trust, responsibility
+$vu-hibiscus-red-dark: #C32B2E;     // Darker shade
+$vu-hibiscus-red-darker: #8B1A1F;   // Darkest shade
+$vu-hibiscus-red-light: #F07C75;    // Lighter shade
+$vu-hibiscus-red-lightest: #FBE3E1; // Lightest shade
 
-// Healthcare State Colors
-$hc-color-success: #176B47;    // Medical green
-$hc-color-info: #2A7ABF;       // Information blue
-$hc-color-warning: #946200;    // Caution amber
-$hc-color-danger: #C0332A;     // Alert red
+$vu-hibiscus-orange: #FB8C00;       // Logo flower gradient
+$vu-hibiscus-orange-dark: #D46E00;
+$vu-hibiscus-orange-darker: #9C4C00;
+$vu-hibiscus-orange-light: #FCB24D;
+$vu-hibiscus-orange-lightest: #FEE8C9;
 
-// Override Odoo Community/Enterprise Brand Variables
-$o-community-color: $hc-color-brand;
-$o-enterprise-color: $hc-color-brand;
-$o-enterprise-action-color: $hc-color-primary;
+$vu-leaf-green: #43A047;            // Logo leaf - natural, health-related
+$vu-leaf-green-dark: #3A8A41;
+$vu-leaf-green-darker: #2E6B33;
+$vu-leaf-green-light: #7BC685;
+$vu-leaf-green-lightest: #DBF0DB;
 
-// Override Odoo Brand Variables (Most Important!)
-$o-brand-odoo: $hc-color-brand;
-$o-brand-primary: $hc-color-primary;
-$o-brand-secondary: $hc-color-secondary;
+// ===== SECONDARY UI COLORS (Main Application Theme) =====
 
-// Override Bootstrap State Colors
-$primary: $hc-color-primary;
-$secondary: $hc-color-secondary;
-$success: $hc-color-success;
-$info: $hc-color-info;
-$warning: $hc-color-warning;
-$danger: $hc-color-danger;
+// Deep Blue - Primary action color (headings, buttons, uniforms)
+$vu-deep-blue: #1565C0;             // Base - calm and professional
+$vu-deep-blue-darkest: #0D356B;     // Darkest - dark mode, shadows
+$vu-deep-blue-darker: #1356A9;      // Darker - active states
+$vu-deep-blue-base: #1565C0;        // Base - primary buttons, links
+$vu-deep-blue-light: #83C5FA;       // Light - hover backgrounds
+$vu-deep-blue-lightest: #E4F4FD;    // Lightest - subtle backgrounds
 
-// Override Odoo State Colors
-$o-success: $hc-color-success;
-$o-info: $hc-color-info;
-$o-warning: $hc-color-warning;
-$o-danger: $hc-color-danger;
+// Accent Blue - Secondary color (hover states, icons, highlights)
+$vu-accent-blue: #42A5F5;           // Base - interactive elements
+$vu-accent-blue-darkest: #1F5E97;   // Darkest
+$vu-accent-blue-darker: #2E74BD;    // Darker
+$vu-accent-blue-base: #42A5F5;      // Base
+$vu-accent-blue-light: #83C5FA;     // Light
+$vu-accent-blue-lightest: #E4F4FD;  // Lightest
 
-// Theme Text Colors Map (for badges, labels, etc.)
+// ===== NEUTRAL TONES (Clean, Professional Aesthetic) =====
+$vu-black: #121212;                 // Absolute darkest
+$vu-text-primary: #212121;          // Main text color - high contrast
+$vu-text-secondary: #424242;        // Secondary text, muted content
+$vu-gray-light: #F5F5F5;            // Light backgrounds, surface
+$vu-gray-lighter: #FAFAFA;          // Subtle surface variations
+$vu-white: #FFFFFF;                 // Main background, cards
+
+// ===== STATE COLORS (From Healthcare Colour Palette for consistency) =====
+$vu-success: #176B47;               // Medical green - success states
+$vu-info: #2A7ABF;                  // Information blue - info messages
+$vu-warning: #946200;               // Caution amber - warnings
+$vu-danger: #C0332A;                // Alert red - errors, critical
+
+// ===== ODOO BRAND VARIABLE OVERRIDES =====
+
+// Override Odoo Community/Enterprise Brand Colors
+$o-community-color: $vu-deep-blue;
+$o-enterprise-color: $vu-deep-blue;
+$o-enterprise-action-color: $vu-deep-blue;
+
+// Override Odoo Core Brand Variables (Most Important!)
+$o-brand-odoo: $vu-deep-blue;
+$o-brand-primary: $vu-deep-blue;
+$o-brand-secondary: $vu-accent-blue;
+
+// ===== BOOTSTRAP VARIABLE OVERRIDES =====
+
+// Primary Colors
+$primary: $vu-deep-blue;            // Bootstrap primary → Deep Blue
+$secondary: $vu-accent-blue;        // Bootstrap secondary → Accent Blue
+
+// State Colors
+$success: $vu-success;              // Bootstrap success → Medical green
+$info: $vu-info;                    // Bootstrap info → Info blue
+$warning: $vu-warning;              // Bootstrap warning → Caution amber
+$danger: $vu-danger;                // Bootstrap danger → Alert red
+
+// Text Colors
+$body-color: $vu-text-primary;      // Main text color
+$headings-color: $vu-text-primary;  // Heading text color
+$text-muted: $vu-text-secondary;    // Muted text
+
+// Background Colors
+$body-bg: $vu-white;                // Main background
+$light: $vu-gray-light;             // Light variant
+
+// ===== ODOO STATE COLOR OVERRIDES =====
+$o-success: $vu-success;
+$o-info: $vu-info;
+$o-warning: $vu-warning;
+$o-danger: $vu-danger;
+
+// ===== ODOO COMPONENT OVERRIDES =====
+
+// Links
+$link-color: $vu-deep-blue;
+$link-hover-color: $vu-deep-blue-darker;
+
+// Borders
+$border-color: #E0E0E0;             // Subtle borders
+$border-radius: 6px;                // Modern rounded corners
+$border-radius-sm: 4px;
+$border-radius-lg: 8px;
+
+// Focus States
+$focus-ring-color: rgba($vu-deep-blue, 0.25);
+$input-focus-border-color: $vu-deep-blue;
+
+// Buttons
+$btn-border-radius: $border-radius;
+$btn-border-radius-sm: $border-radius-sm;
+$btn-border-radius-lg: $border-radius-lg;
+
+// ===== THEME COLOR MAP (For Odoo Badge/Status Components) =====
 $o-theme-text-colors: (
-    "primary": $hc-color-brand,
+    "primary": $vu-deep-blue,
+    "secondary": $vu-accent-blue,
     "success": $o-success,
     "info": $o-info,
     "warning": $o-warning,
     "danger": $o-danger,
 );
+
+$theme-colors: (
+    "primary": $vu-deep-blue,
+    "secondary": $vu-accent-blue,
+    "success": $vu-success,
+    "info": $vu-info,
+    "warning": $vu-warning,
+    "danger": $vu-danger,
+    "light": $vu-gray-light,
+    "dark": $vu-text-primary,
+);
+
+// ===== CUSTOM VIỆT ÚC VARIABLES (For Extended Theming) =====
+
+// Navbar
+$vu-navbar-bg: $vu-deep-blue;
+$vu-navbar-text: $vu-white;
+$vu-navbar-hover: $vu-deep-blue-light;
+
+// Sidebar
+$vu-sidebar-bg: $vu-gray-lighter;
+$vu-sidebar-text: $vu-text-primary;
+$vu-sidebar-hover: $vu-deep-blue-lightest;
+
+// Cards & Panels
+$vu-card-bg: $vu-white;
+$vu-card-border: #E0E0E0;
+$vu-panel-bg: $vu-gray-light;
+
+// Control Panel
+$vu-control-panel-bg: $vu-gray-light;
+$vu-control-panel-border: #E0E0E0;
+
+// Shadows (Professional depth)
+$vu-shadow-sm: 0 1px 3px rgba($vu-text-primary, 0.1);
+$vu-shadow-md: 0 2px 8px rgba($vu-text-primary, 0.12);
+$vu-shadow-lg: 0 4px 16px rgba($vu-text-primary, 0.15);
+
+// ===== TYPOGRAPHY SYSTEM =====
+// Primary: Montserrat (Regular 400, Semi Bold 600, Extra Bold 800)
+// Secondary: Segoe (Regular 400, Semi Bold 600, Bold 700)
+// Fallback: Arial
+
+$font-family-sans-serif: 'Segoe UI', Arial, sans-serif;
+$font-family-headings: 'Montserrat', 'Segoe UI', Arial, sans-serif;
+
+$headings-font-family: $font-family-headings;
+$headings-font-weight: 600;         // Semi Bold for headings
+
+// Font Weights
+$font-weight-normal: 400;
+$font-weight-semibold: 600;
+$font-weight-bold: 700;
+$font-weight-extrabold: 800;

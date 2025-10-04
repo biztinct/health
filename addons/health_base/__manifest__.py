@@ -1,6 +1,6 @@
 {
     'name': 'Healthcare Base',
-    'version': '18.0.1.0.0',
+    'version': '18.0.1.1.0',
     'category': 'Healthcare',
     'summary': 'Foundation module for VAFHS Healthcare Management System with Clinical Intelligence',
     'description': """
@@ -25,6 +25,9 @@ Key Features:
         'mail',
         'portal',
     ],
+    'external_dependencies': {
+        'python': ['requests'],
+    },
     'data': [
         'security/health_security.xml',
         'security/ir.model.access.csv',
@@ -40,6 +43,11 @@ Key Features:
         'web.assets_backend': [
             'health_base/static/src/css/health_base.css',
             'health_base/static/src/js/health_base.js',
+            'health_base/static/src/js/address_autocomplete_widget.js',
+            'health_base/static/src/xml/address_autocomplete_widget.xml',
+            'health_base/static/src/scss/address_autocomplete_widget.scss',
+            'health_base/static/src/js/address_map_widget.js',
+            'health_base/static/src/xml/address_map_widget.xml',
         ],
         'web.assets_frontend': [
             'health_base/static/src/css/health_frontend.css',

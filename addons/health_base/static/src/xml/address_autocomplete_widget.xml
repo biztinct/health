@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="health_address_autocomplete.AddressAutocomplete">
+        <div class="address-autocomplete-container">
+            <!-- Search Input Field -->
+            <div class="address-search-input-wrapper">
+                <input
+                    type="text"
+                    class="address-search-input o_input"
+                    placeholder="Start typing address (min 3 characters)..."
+                    t-att-value="state.searchText"
+                    t-on-input="onInputChange"
+                    t-on-keydown="onKeydown"
+                    t-on-blur="onBlur"
+                    t-att-readonly="props.readonly"
+                    autocomplete="off"
+                />
+
+                <!-- Loading Spinner -->
+                <span t-if="state.isLoading" class="address-loading-spinner">
+                    <i class="fa fa-spinner fa-spin"/>
+                </span>
+
+                <!-- Clear Button -->
+                <button
+                    t-if="state.searchText and !state.isLoading"
+                    class="address-clear-btn btn btn-link"
+                    t-on-click="clearSearch"
+                    type="button"
+                >
+                    <i class="fa fa-times"/>
+                </button>
+
+                <!-- Search Icon -->
+                <span t-if="!state.searchText and !state.isLoading" class="address-search-icon">
+                    <i class="fa fa-search"/>
+                </span>
+            </div>
+
+            <!-- Error Message -->
+            <div t-if="state.hasError" class="address-error-message alert alert-warning mt-2" role="alert">
+                <i class="fa fa-exclamation-triangle"/> <t t-esc="state.errorMessage"/>
+            </div>
+
+            <!-- Suggestions Dropdown -->
+            <div t-if="state.showDropdown and state.suggestions.length > 0" class="address-suggestions-dropdown">
+                <div class="address-suggestions-header">
+                    <small class="text-muted">
+                        <i class="fa fa-map-marker"/> <t t-esc="state.suggestions.length"/> address<t t-if="state.suggestions.length != 1">es</t> found
+                    </small>
+                </div>
+
+                <t t-foreach="state.suggestions" t-as="suggestion" t-key="suggestion_index">
+                    <div
+                        t-att-class="getSuggestionClass(suggestion_index)"
+                        t-on-click="() => this.selectAddress(suggestion, suggestion_index)"
+                    >
+                        <div class="suggestion-display">
+                            <i class="fa fa-map-marker text-primary"/>
+                            <strong><t t-esc="suggestion.display"/></strong>
+                        </div>
+                        <div t-if="suggestion.lat and suggestion.lon" class="suggestion-coords">
+                            <small class="text-muted">
+                                <i class="fa fa-globe"/> <t t-esc="suggestion.lat.toFixed(4)"/>, <t t-esc="suggestion.lon.toFixed(4)"/>
+                            </small>
+                        </div>
+                    </div>
+                </t>
+
+                <div class="address-suggestions-footer">
+                    <small class="text-muted">
+                        <i class="fa fa-info-circle"/> Powered by Photon (OpenStreetMap)
+                    </small>
+                </div>
+            </div>
+
+            <!-- Help Text -->
+            <div t-if="!state.showDropdown and !state.searchText and !state.hasError" class="address-help-text">
+                <small class="text-muted">
+                    <i class="fa fa-lightbulb-o"/> Tip: Type street, city, or landmark name to search addresses
+                </small>
+            </div>
+        </div>
+    </t>
+
+</templates>

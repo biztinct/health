@@ -1,7 +1,11 @@
 from odoo import models, fields, api, _
-from odoo.exceptions import ValidationError
+from odoo.exceptions import ValidationError, UserError
 from datetime import date
 import re
+import requests
+import logging
+
+_logger = logging.getLogger(__name__)
 
 
 class ResPartner(models.Model):
@@ -157,6 +161,32 @@ class ResPartner(models.Model):
     # Vietnamese specific fields
     vietnamese_name = fields.Char('Vietnamese Name')
     national_id = fields.Char('National ID (CCCD/CMND)')
+
+    # Address Autocomplete & Geolocation fields
+    address_search = fields.Char(
+        'Address Search',
+        help='Start typing to search addresses (minimum 3 characters)'
+    )
+    partner_latitude = fields.Float(
+        'Latitude',
+        digits=(10, 7),
+        help='Geographical latitude'
+    )
+    partner_longitude = fields.Float(
+        'Longitude',
+        digits=(10, 7),
+        help='Geographical longitude'
+    )
+    date_localization = fields.Date(
+        'Geolocation Date',
+        readonly=True,
+        help='Date when coordinates were last updated'
+    )
+    geo_coordinates_display = fields.Char(
+        'GPS Coordinates',
+        compute='_compute_geo_coordinates',
+        help='Latitude, Longitude coordinates'
+    )
     
     # Computed Fields
     visit_count = fields.Integer('Total Visits', compute='_compute_visit_count')
@@ -212,6 +242,22 @@ class ResPartner(models.Model):
                 partner.patient_code_display = partner.patient_code
             else:
                 partner.patient_code_display = 'Not Assigned'
+
+    @api.depends('partner_latitude', 'partner_longitude')
+    def _compute_geo_coordinates(self):
+        """Compute display string for GPS coordinates"""
+        for partner in self:
+            if partner.partner_latitude and partner.partner_longitude:
+                partner.geo_coordinates_display = f"{partner.partner_latitude:.6f}, {partner.partner_longitude:.6f}"
+            else:
+                partner.geo_coordinates_display = "Not geolocated"
+
+    def write(self, vals):
+        """Override write to auto-update date_localization when coordinates change"""
+        # Auto-set date_localization when coordinates are updated
+        if ('partner_latitude' in vals or 'partner_longitude' in vals) and 'date_localization' not in vals:
+            vals['date_localization'] = fields.Date.today()
+        return super(ResPartner, self).write(vals)
 
     def _compute_visit_count(self):
         """Compute total FSO bookings for patients"""
@@ -451,13 +497,199 @@ class ResPartner(models.Model):
     def action_view_my_patients_as_referrer(self):
         """View patients I referred"""
         self.ensure_one()
-        
+
         return {
             'type': 'ir.actions.act_window',
             'name': f'Patients Referred by {self.name}',
             'res_model': 'res.partner',
-            'view_mode': 'list,form', 
+            'view_mode': 'list,form',
             'target': 'current',
             'domain': [('primary_referrer_id', '=', self.id)],
             'context': {'search_default_is_patient': 1},
         }
+
+    # ========================================================================
+    # ADDRESS AUTOCOMPLETE & GEOLOCATION METHODS
+    # ========================================================================
+
+    def action_geocode_address_photon(self):
+        """
+        Geocode address using Photon API (Komoot - Free, OpenStreetMap-based)
+        No API key required, worldwide coverage
+        """
+        for partner in self:
+            # Build address string from components
+            address_parts = []
+            if partner.street:
+                address_parts.append(partner.street)
+            if partner.street2:
+                address_parts.append(partner.street2)
+            if partner.city:
+                address_parts.append(partner.city)
+            if partner.state_id:
+                address_parts.append(partner.state_id.name)
+            if partner.country_id:
+                address_parts.append(partner.country_id.name)
+
+            address = ', '.join(address_parts)
+
+            if not address:
+                raise UserError(_('Please fill in at least the street or city before geocoding.'))
+
+            try:
+                # Call Photon API (free, no authentication)
+                url = 'https://photon.komoot.io/api/'
+                params = {
+                    'q': address,
+                    'limit': 1
+                }
+
+                # Add location bias based on country center (Photon doesn't support country filtering)
+                country_centers = {
+                    'vn': {'lat': 16.0, 'lon': 106.0},  # Vietnam center
+                    'id': {'lat': -2.5, 'lon': 118.0},  # Indonesia center
+                    'sg': {'lat': 1.35, 'lon': 103.8},  # Singapore center
+                    'jp': {'lat': 36.2, 'lon': 138.2},  # Japan center
+                }
+
+                if partner.country_id and partner.country_id.code:
+                    country_code = partner.country_id.code.lower()
+                    if country_code in country_centers:
+                        center = country_centers[country_code]
+                        params['lat'] = center['lat']
+                        params['lon'] = center['lon']
+
+                _logger.info(f"Geocoding address via Photon API: {address}")
+                response = requests.get(url, params=params, timeout=10)
+
+                if response.status_code == 200:
+                    data = response.json()
+
+                    if data.get('features') and len(data['features']) > 0:
+                        # Extract coordinates (Photon returns [lon, lat] in GeoJSON format)
+                        coords = data['features'][0]['geometry']['coordinates']
+                        longitude = coords[0]
+                        latitude = coords[1]
+
+                        # Update partner with coordinates
+                        partner.write({
+                            'partner_longitude': longitude,
+                            'partner_latitude': latitude,
+                            'date_localization': fields.Date.today()
+                        })
+
+                        _logger.info(f"Geocoded successfully: lat={latitude}, lon={longitude}")
+
+                        return {
+                            'type': 'ir.actions.client',
+                            'tag': 'display_notification',
+                            'params': {
+                                'title': _('Geocoding Successful'),
+                                'message': _('Address geocoded: %.6f, %.6f') % (latitude, longitude),
+                                'type': 'success',
+                                'sticky': False,
+                            }
+                        }
+                    else:
+                        raise UserError(_('No coordinates found for this address. Please check the address details.'))
+                else:
+                    raise UserError(_('Geocoding service error (HTTP %s). Please try again later.') % response.status_code)
+
+            except requests.RequestException as e:
+                _logger.error(f"Photon API request failed: {e}")
+                raise UserError(_('Unable to connect to geocoding service. Please check your internet connection.'))
+            except Exception as e:
+                _logger.error(f"Geocoding error: {e}")
+                raise UserError(_('Geocoding failed: %s') % str(e))
+
+    @api.model
+    def photon_address_search(self, query, country_code=None, limit=10):
+        """
+        Search addresses using Photon API (for autocomplete widget)
+
+        Args:
+            query (str): Search query (address text)
+            country_code (str): ISO country code for location bias (e.g., 'VN', 'ID', 'SG', 'JP')
+            limit (int): Maximum number of results (default 10)
+
+        Returns:
+            list: List of address suggestions with coordinates
+        """
+        if not query or len(query) < 3:
+            return []
+
+        try:
+            url = 'https://photon.komoot.io/api/'
+            params = {
+                'q': query,
+                'limit': min(limit, 50)  # Photon max is 50
+            }
+
+            # Add location bias based on country (center coordinates)
+            # Note: Photon API doesn't support 'countrycodes' parameter
+            # Instead, we bias results toward the country's center coordinates
+            country_centers = {
+                'vn': {'lat': 16.0, 'lon': 106.0},  # Vietnam center
+                'id': {'lat': -2.5, 'lon': 118.0},  # Indonesia center
+                'sg': {'lat': 1.35, 'lon': 103.8},  # Singapore center
+                'jp': {'lat': 36.2, 'lon': 138.2},  # Japan center
+            }
+
+            if country_code and country_code.lower() in country_centers:
+                center = country_centers[country_code.lower()]
+                params['lat'] = center['lat']
+                params['lon'] = center['lon']
+
+            _logger.info(f"Photon API request - URL: {url}, Params: {params}")
+            response = requests.get(url, params=params, timeout=5)
+            _logger.info(f"Photon API response - Status: {response.status_code}, URL: {response.url}")
+
+            if response.status_code == 200:
+                data = response.json()
+                suggestions = []
+
+                for feature in data.get('features', []):
+                    props = feature.get('properties', {})
+                    geom = feature.get('geometry', {})
+                    coords = geom.get('coordinates', [None, None])
+
+                    # Build display name from available properties
+                    name_parts = []
+                    if props.get('name'):
+                        name_parts.append(props['name'])
+                    if props.get('street'):
+                        name_parts.append(props['street'])
+                    if props.get('housenumber'):
+                        name_parts.append(props['housenumber'])
+                    if props.get('city'):
+                        name_parts.append(props['city'])
+                    if props.get('state'):
+                        name_parts.append(props['state'])
+                    if props.get('country'):
+                        name_parts.append(props['country'])
+
+                    display_name = ', '.join(name_parts) if name_parts else 'Unknown location'
+
+                    suggestion = {
+                        'display': display_name,
+                        'street': props.get('street') or props.get('name') or '',
+                        'housenumber': props.get('housenumber') or '',
+                        'city': props.get('city') or '',
+                        'state': props.get('state') or '',
+                        'postcode': props.get('postcode') or '',
+                        'country': props.get('country') or '',
+                        'country_code': props.get('countrycode', '').upper(),
+                        'lat': coords[1],  # GeoJSON format: [lon, lat]
+                        'lon': coords[0],
+                    }
+
+                    suggestions.append(suggestion)
+
+                return suggestions
+            else:
+                _logger.warning(f"Photon API returned status {response.status_code}, Response: {response.text[:200]}")
+                return []
+
+        except Exception as e:
+            _logger.error(f"Photon address search failed: {e}", exc_info=True)
+            return []

@@ -1,22 +1,22 @@
-// Healthcare Theme - Backend Styles
+// Việt Úc Clinic Theme - Backend Styles
 // Additional styling for healthcare-specific UI elements
 
 // Light, clean healthcare backgrounds
 .o_action_manager .o_view_controller .o_content {
-    background-color: #F7FAF9; // Light mint - clean, clinical
+    background-color: #FAFAFA; // Clean neutral background
 }
 
 .o_control_panel {
-    background-color: #ECF5F3; // Soft mint - subtle separation
-    border-bottom: 1px solid #CFE3E1; // Light teal border
+    background-color: #F5F5F5; // Subtle separation
+    border-bottom: 1px solid #E0E0E0; // Neutral border
 }
 
 // Ensure proper link colors
 a {
-    color: #0F6D66; // Healthcare teal
+    color: #1565C0; // Deep Blue
 
     &:hover {
-        color: darken(#0F6D66, 10%);
+        color: darken(#1565C0, 10%);
     }
 }
 
@@ -28,22 +28,22 @@ a {
 // Professional selection highlighting
 .o_list_view .o_data_row.o_selected_row,
 .o_list_view .o_data_row:focus {
-    background-color: rgba(15, 109, 102, 0.08); // Subtle teal highlight
+    background-color: rgba(21, 101, 192, 0.08); // Deep Blue highlight
 }
 
 // Healthcare Badge Colors (ID, Age, etc.) - Professional pill-shaped badges
 .badge.bg-info {
-    background: linear-gradient(135deg, #C8ECE9 0%, #B5E5E1 100%) !important; // Gradient light teal
-    color: #0A4F4B !important; // Dark teal text
-    border: 2px solid #0F6D66 !important; // Healthcare teal border
+    background: linear-gradient(135deg, #E4F4FD 0%, #83C5FA 100%) !important; // Accent Blue gradient
+    color: #0D356B !important; // Deep Blue Darkest text
+    border: 2px solid #42A5F5 !important; // Accent Blue border
     border-radius: 20px !important; // Circular/pill shape
     font-size: 16px !important;
     font-weight: 600 !important;
-    box-shadow: 0 2px 6px rgba(15, 109, 102, 0.15) !important; // Subtle shadow
+    box-shadow: 0 2px 6px rgba(66, 165, 245, 0.15) !important; // Subtle shadow
     transition: all 0.2s ease !important;
 
     strong {
-        color: #0F6D66 !important; // Label in primary teal
+        color: #1565C0 !important; // Label in Deep Blue
         font-weight: 700 !important;
         margin-right: 4px;
     }
@@ -53,7 +53,7 @@ a {
         display: inline-block !important;
         background: transparent !important;
         border: none !important;
-        color: #0A4F4B !important; // Dark teal text
+        color: #0D356B !important; // Deep Blue Darkest text
         padding: 0 !important;
         margin: 0 0 0 4px !important;
         width: 120px !important;
@@ -64,7 +64,7 @@ a {
         input, span {
             background: transparent !important;
             border: none !important;
-            color: #0A4F4B !important; // Dark teal text
+            color: #0D356B !important; // Deep Blue Darkest text
             padding: 0 !important;
             width: 120px !important;
             min-width: 120px !important;
@@ -75,23 +75,23 @@ a {
     }
 
     &:hover {
-        box-shadow: 0 3px 8px rgba(15, 109, 102, 0.25) !important;
+        box-shadow: 0 3px 8px rgba(66, 165, 245, 0.25) !important;
         transform: translateY(-1px);
     }
 }
 
 .badge.bg-secondary {
-    background: linear-gradient(135deg, #D5ECF6 0%, #C2E4F1 100%) !important; // Gradient light blue-teal
-    color: #1A4A5C !important; // Dark blue-teal text
-    border: 2px solid #2E6F89 !important; // Blue-teal border
+    background: linear-gradient(135deg, #E4F4FD 0%, #C2E4F1 100%) !important; // Light Accent Blue gradient
+    color: #1F5E97 !important; // Accent Blue Darkest text
+    border: 2px solid #1565C0 !important; // Deep Blue border
     border-radius: 20px !important; // Circular/pill shape
     font-size: 16px !important;
     font-weight: 600 !important;
-    box-shadow: 0 2px 6px rgba(46, 111, 137, 0.15) !important; // Subtle shadow
+    box-shadow: 0 2px 6px rgba(21, 101, 192, 0.15) !important; // Subtle shadow
     transition: all 0.2s ease !important;
 
     strong {
-        color: #2E6F89 !important; // Label in secondary blue-teal
+        color: #1565C0 !important; // Label in Deep Blue
         font-weight: 700 !important;
         margin-right: 4px;
     }
@@ -101,7 +101,7 @@ a {
         display: inline-block !important;
         background: transparent !important;
         border: none !important;
-        color: #1A4A5C !important; // Dark blue-teal text
+        color: #1F5E97 !important; // Accent Blue Darkest text
         padding: 0 !important;
         margin: 0 0 0 4px !important;
         width: 120px !important;
@@ -112,7 +112,7 @@ a {
         input, span {
             background: transparent !important;
             border: none !important;
-            color: #1A4A5C !important; // Dark blue-teal text
+            color: #1F5E97 !important; // Accent Blue Darkest text
             padding: 0 !important;
             width: 120px !important;
             min-width: 120px !important;
@@ -123,7 +123,7 @@ a {
     }
 
     &:hover {
-        box-shadow: 0 3px 8px rgba(46, 111, 137, 0.25) !important;
+        box-shadow: 0 3px 8px rgba(21, 101, 192, 0.25) !important;
         transform: translateY(-1px);
     }
 }

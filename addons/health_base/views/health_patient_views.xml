@@ -100,14 +100,28 @@
 
                     <group string="Address Information">
                         <group>
-                            <field name="street" placeholder="Street Address"/>
+                            <field name="country_id" domain="[('code', 'in', ['VN', 'ID', 'SG', 'JP'])]"
+                                   options="{'no_create': True}" required="1"/>
+                            <field name="address_search" widget="address_autocomplete"
+                                   placeholder="🔍 Start typing address (e.g., 'Nguyen Hue, Ho Chi Minh City')..."
+                                   help="Type minimum 3 characters to search addresses. Select from dropdown to auto-fill all fields."/>
+                            <field name="street" placeholder="Auto-filled from address search above"/>
                             <field name="street2" placeholder="Apartment, Suite, etc."/>
                             <field name="city"/>
-                        </group>
-                        <group>
                             <field name="state_id"/>
                             <field name="zip"/>
-                            <field name="country_id"/>
+                            <button name="action_geocode_address_photon" string="🗺️ Refresh GPS Coordinates"
+                                    type="object" class="btn-secondary"
+                                    help="Update latitude/longitude from current address using Photon API (OpenStreetMap)"
+                                    icon="fa-map-marker" invisible="not street and not city"/>
+                            <!-- Hidden coordinate fields -->
+                            <field name="partner_latitude" invisible="1"/>
+                            <field name="partner_longitude" invisible="1"/>
+                            <field name="date_localization" invisible="1"/>
+                        </group>
+                        <group>
+                            <!-- Interactive OpenStreetMap Display -->
+                            <field name="geo_coordinates_display" widget="address_map" nolabel="1"/>
                         </group>
                     </group>
 

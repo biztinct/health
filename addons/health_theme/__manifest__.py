@@ -1,21 +1,54 @@
 {
-    'name': 'Healthcare Theme',
-    'summary': 'Professional healthcare color palette for Odoo 18 CE',
+    'name': 'Việt Úc Clinic Official Theme',
+    'summary': 'Official Việt Úc Clinic branding for Odoo 18 CE - Professional healthcare theme',
     'description': '''
-        This module provides a professional, AA-accessible healthcare theme
-        with calming teal/blue-teal colors optimized for medical workflows.
+        Official Việt Úc Clinic Theme
+        =============================
 
-        Colors:
-        - Primary: #0F6D66 (Teal - calming, medical)
-        - Secondary: #2E6F89 (Blue-Teal - trust, professionalism)
-        - Success: #176B47 (Medical green)
-        - Warning: #946200 (Caution amber)
-        - Danger: #C0332A (Alert red)
+        This module implements the official Việt Úc Clinic brand guidelines for Odoo 18 CE,
+        providing a professional, modern, and accessible healthcare interface.
+
+        Brand Essence
+        -------------
+        - Trustworthy, Professional, Compassionate, Modern & Clean
+
+        Official Color Palette (Based on Brandingcompressed.pdf)
+        ---------------------------------------------------------
+
+        Primary Logo Colors (Brand Identity):
+        - Hibiscus Red: #E53935 (Logo flower - passion, trust, responsibility)
+        - Hibiscus Orange: #FB8C00 (Logo flower gradient)
+        - Leaf Green: #43A047 (Logo leaf - natural, health-related)
+
+        Secondary UI Colors (Application Theme):
+        - Deep Blue: #1565C0 (Primary actions, buttons, navbar - calm & professional)
+        - Accent Blue: #42A5F5 (Interactive elements, hover states - modern & engaging)
+
+        State Colors (Healthcare Compliance):
+        - Success: #176B47 (Medical green - positive outcomes)
+        - Info: #2A7ABF (Information blue - system messages)
+        - Warning: #946200 (Caution amber - important notices)
+        - Danger: #C0332A (Alert red - critical actions)
+
+        Typography System
+        -----------------
+        - Primary Headings: Montserrat (Semi Bold 600, Extra Bold 800)
+        - Body Text: Segoe UI (Regular 400, Semi Bold 600, Bold 700)
+        - Fallback: Arial
+
+        Features
+        --------
+        - Overrides all Odoo core SCSS variables before compilation
+        - Bootstrap-compatible color system
+        - Professional shadows and borders for depth
+        - Accessible color contrasts (WCAG AA compliant)
+        - Modern pill-shaped badges for healthcare workflows
+        - Custom navbar and control panel styling
     ''',
-    'version': '18.0.1.0.0',
+    'version': '18.0.2.0.0',
     'category': 'Themes/Backend',
     'license': 'LGPL-3',
-    'author': 'VAFHS Healthcare System',
+    'author': 'VAFHS Healthcare System - Vietnam-Australia Family Health Service',
     'website': 'https://vafhs.com',
     'depends': [
         'web',
