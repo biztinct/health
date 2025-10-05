@@ -95,7 +95,7 @@ class ResPartner(models.Model):
     )
     my_patients_as_payer = fields.One2many(
         'res.partner',
-        'primary_payer_id', 
+        'primary_payer_id',
         string='Patients I Pay For',
         help='Patients for whom I am the primary payer'
     )
@@ -105,6 +105,7 @@ class ResPartner(models.Model):
         string='Patients I Referred',
         help='Patients I have referred to healthcare services'
     )
+
     
     # Insurance & Payment
     insurance_provider = fields.Char('Insurance Provider')
@@ -191,20 +192,20 @@ class ResPartner(models.Model):
     # Computed Fields
     visit_count = fields.Integer('Total Visits', compute='_compute_visit_count')
     
-    # Relationship count fields
+    # Relationship count fields (for smart buttons)
     caregiver_patient_count = fields.Integer(
         'Patients as Caregiver',
         compute='_compute_relationship_counts',
         help='Number of patients I care for'
     )
     payer_patient_count = fields.Integer(
-        'Patients as Payer', 
+        'Patients as Payer',
         compute='_compute_relationship_counts',
         help='Number of patients I pay for'
     )
     referrer_patient_count = fields.Integer(
         'Patients as Referrer',
-        compute='_compute_relationship_counts', 
+        compute='_compute_relationship_counts',
         help='Number of patients I referred'
     )
     
@@ -277,8 +278,9 @@ class ResPartner(models.Model):
     
     @api.depends('my_patients_as_caregiver', 'my_patients_as_payer', 'my_patients_as_referrer')
     def _compute_relationship_counts(self):
-        """Compute healthcare relationship counts"""
+        """Compute healthcare relationship counts for smart buttons"""
         for partner in self:
+            # Representative Side: Count patients I care for/pay for/referred
             partner.caregiver_patient_count = len(partner.my_patients_as_caregiver)
             partner.payer_patient_count = len(partner.my_patients_as_payer)
             partner.referrer_patient_count = len(partner.my_patients_as_referrer)

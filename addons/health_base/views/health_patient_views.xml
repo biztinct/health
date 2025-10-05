@@ -38,16 +38,18 @@
                                 <span class="o_stat_text">Prescriptions</span>
                             </div>
                         </button>
+
+                        <!-- REPRESENTATIVE SIDE: My Patients -->
                         <button name="action_view_my_patients_as_caregiver" type="object" class="oe_stat_button" icon="fa-user-md"
-                                invisible="not is_caregiver">
+                                invisible="not is_caregiver or caregiver_patient_count == 0">
                             <field name="caregiver_patient_count" string="Patients I Care For" widget="statinfo"/>
                         </button>
                         <button name="action_view_my_patients_as_payer" type="object" class="oe_stat_button" icon="fa-credit-card"
-                                invisible="not is_payer">
+                                invisible="not is_payer or payer_patient_count == 0">
                             <field name="payer_patient_count" string="Patients I Pay For" widget="statinfo"/>
                         </button>
                         <button name="action_view_my_patients_as_referrer" type="object" class="oe_stat_button" icon="fa-share-square-o"
-                                invisible="not is_referrer">
+                                invisible="not is_referrer or referrer_patient_count == 0">
                             <field name="referrer_patient_count" string="Patients I Referred" widget="statinfo"/>
                         </button>
                     </div>
