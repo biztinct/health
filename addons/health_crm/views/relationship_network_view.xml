@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Relationship Network View - D3.js Graph Widget (Section 2.2 Option B) -->
+    <record id="view_relationship_network_form" model="ir.ui.view">
+        <field name="name">relationship.network.form</field>
+        <field name="model">res.partner</field>
+        <field name="arch" type="xml">
+            <form string="Relationship Network">
+                <sheet>
+                    <div class="oe_title mb-3">
+                        <label for="name" class="o_form_label" string="Patient"/>
+                        <h1 class="d-flex">
+                            <field name="name" class="o_text_overflow" readonly="1" placeholder="Patient Name"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="is_patient" invisible="1"/>
+                            <field name="patient_code" readonly="1" invisible="not is_patient"/>
+                        </group>
+                        <group>
+                            <field name="relationship_total_count" readonly="1" string="Total Relationships"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Relationship Network Graph" name="network_graph">
+                            <field name="client_relationships" widget="relationship_graph" nolabel="1"/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action to open Relationship Network -->
+    <record id="action_view_relationship_network" model="ir.actions.act_window">
+        <field name="name">Relationship Network</field>
+        <field name="res_model">res.partner</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="view_relationship_network_form"/>
+        <field name="target">new</field>
+    </record>
+
+</odoo>

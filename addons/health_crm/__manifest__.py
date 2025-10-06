@@ -57,15 +57,29 @@
         
         # Views - CRM Extensions
         'views/health_client_relation_views.xml',
+        'views/relationship_network_view.xml',  # Section 2.2 Option B - D3.js network graph
         'views/res_partner_relation_views.xml',  # Section 2.2 relationship dashboard
         'views/health_lookup_views.xml',    # Contact and lead reason views
         'views/crm_lead_views.xml',
         'views/res_partner_views.xml',
         'views/health_crm_menus.xml',
-        
+
         # Wizards
         'wizard/client_selection_wizard_views.xml',
     ],
+    'assets': {
+        'web.assets_backend': [
+            # D3.js library (local copy with LICENSE)
+            'health_crm/static/lib/d3/d3.min.js',
+            # Test widget (for debugging)
+            'health_crm/static/src/js/test_widget.js',
+            'health_crm/static/src/xml/test_widget.xml',
+            # Relationship graph widget
+            'health_crm/static/src/js/relationship_graph_widget.js',
+            'health_crm/static/src/xml/relationship_graph_widget.xml',
+            'health_crm/static/src/scss/relationship_graph_widget.scss',
+        ],
+    },
     # 'demo': [
     #     'demo/health_crm_demo.xml',
     # ],

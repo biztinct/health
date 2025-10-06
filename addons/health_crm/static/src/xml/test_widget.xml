@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="health_crm.TestWidget">
+        <div class="o_test_widget">
+            <div class="alert alert-info">
+                <strong>Test Widget Works!</strong>
+                <p>If you see this, the widget system is working correctly.</p>
+            </div>
+        </div>
+    </t>
+</templates>

@@ -1,0 +1,100 @@
+/* Relationship Network Graph Widget Styles (Section 2.2 - Option B) */
+
+.o_relationship_graph_widget {
+    width: 100%;
+    height: 100%;
+    min-height: 600px;
+    background: #ffffff;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    overflow: hidden;
+
+    .relationship-graph-container {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+    }
+
+    .graph-header {
+        h5 {
+            color: #1565C0;
+            font-weight: 600;
+        }
+
+        small {
+            display: block;
+            margin-top: 4px;
+        }
+    }
+
+    .relationship-graph-svg {
+        flex: 1;
+        background: #fafafa;
+        border-top: 1px solid #e0e0e0;
+        border-bottom: 1px solid #e0e0e0;
+
+        .nodes {
+            circle {
+                transition: r 0.2s ease;
+
+                &:hover {
+                    r: 25;
+                    filter: drop-shadow(0 0 8px rgba(21, 101, 192, 0.6));
+                }
+            }
+
+            text {
+                pointer-events: none;
+                font-family: 'Segoe UI', Arial, sans-serif;
+            }
+        }
+
+        .links {
+            line {
+                transition: stroke-width 0.2s ease;
+
+                &:hover {
+                    stroke-width: 4 !important;
+                    stroke-opacity: 0.9 !important;
+                }
+            }
+        }
+
+        .legend {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+    }
+
+    .graph-footer {
+        background: #f8f9fa;
+
+        small {
+            line-height: 1.6;
+        }
+    }
+}
+
+/* Fullscreen mode for graph widget */
+.o_content.o_controller_with_searchpanel {
+    .o_relationship_graph_widget {
+        min-height: calc(100vh - 200px);
+
+        .relationship-graph-svg {
+            height: calc(100vh - 300px);
+        }
+    }
+}
+
+/* Tooltip styling (injected by D3.js) */
+.relationship-tooltip {
+    max-width: 250px;
+    line-height: 1.4;
+
+    strong {
+        color: #1565C0;
+        text-transform: capitalize;
+    }
+}

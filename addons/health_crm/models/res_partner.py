@@ -181,11 +181,102 @@ class HealthContact(models.Model):
     
     # Healthcare relationships - as representative
     representative_relationships = fields.One2many(
-        'health.client.relation', 
+        'health.client.relation',
         'representative_id',
         string='Clients I Represent',
         help='Clients/patients I represent or support'
     )
+
+    # Computed fields for relationship counts (Section 2.2)
+    relationship_total_count = fields.Integer(
+        string='Total Relationships',
+        compute='_compute_relationship_counts',
+        store=False
+    )
+
+    total_caregivers = fields.Integer(
+        string='Total Caregivers',
+        compute='_compute_relationship_counts',
+        store=False
+    )
+
+    total_payers = fields.Integer(
+        string='Total Payers',
+        compute='_compute_relationship_counts',
+        store=False
+    )
+
+    total_referrers = fields.Integer(
+        string='Total Referrers',
+        compute='_compute_relationship_counts',
+        store=False
+    )
+
+    total_emergency_contacts = fields.Integer(
+        string='Total Emergency Contacts',
+        compute='_compute_relationship_counts',
+        store=False
+    )
+
+    total_legal_guardians = fields.Integer(
+        string='Total Legal Guardians',
+        compute='_compute_relationship_counts',
+        store=False
+    )
+
+    # Representative-side counts (how many patients I support in each role)
+    caregiver_patient_count = fields.Integer(
+        string='Patients I Care For',
+        compute='_compute_representative_counts',
+        store=False
+    )
+
+    payer_patient_count = fields.Integer(
+        string='Patients I Pay For',
+        compute='_compute_representative_counts',
+        store=False
+    )
+
+    referrer_patient_count = fields.Integer(
+        string='Patients I Referred',
+        compute='_compute_representative_counts',
+        store=False
+    )
+
+    emergency_contact_patient_count = fields.Integer(
+        string='Patients I\'m Emergency Contact For',
+        compute='_compute_representative_counts',
+        store=False
+    )
+
+    legal_guardian_patient_count = fields.Integer(
+        string='Patients I\'m Legal Guardian For',
+        compute='_compute_representative_counts',
+        store=False
+    )
+
+    @api.depends('client_relationships', 'client_relationships.role')
+    def _compute_relationship_counts(self):
+        """Compute relationship counts by role (patient-side: my representatives)"""
+        for partner in self:
+            relationships = partner.client_relationships
+            partner.relationship_total_count = len(relationships)
+            partner.total_caregivers = len(relationships.filtered(lambda r: r.role == 'caregiver'))
+            partner.total_payers = len(relationships.filtered(lambda r: r.role == 'payer'))
+            partner.total_referrers = len(relationships.filtered(lambda r: r.role == 'referrer'))
+            partner.total_emergency_contacts = len(relationships.filtered(lambda r: r.role == 'emergency_contact'))
+            partner.total_legal_guardians = len(relationships.filtered(lambda r: r.role == 'legal_guardian'))
+
+    @api.depends('representative_relationships', 'representative_relationships.role')
+    def _compute_representative_counts(self):
+        """Compute relationship counts by role (representative-side: patients I support)"""
+        for partner in self:
+            relationships = partner.representative_relationships
+            partner.caregiver_patient_count = len(relationships.filtered(lambda r: r.role == 'caregiver'))
+            partner.payer_patient_count = len(relationships.filtered(lambda r: r.role == 'payer'))
+            partner.referrer_patient_count = len(relationships.filtered(lambda r: r.role == 'referrer'))
+            partner.emergency_contact_patient_count = len(relationships.filtered(lambda r: r.role == 'emergency_contact'))
+            partner.legal_guardian_patient_count = len(relationships.filtered(lambda r: r.role == 'legal_guardian'))
 
     @api.model_create_multi
     def create(self, vals_list):
@@ -251,7 +342,7 @@ class HealthContact(models.Model):
     def action_create_healthcare_lead(self):
         """Create a healthcare lead for this contact"""
         self.ensure_one()
-        
+
         lead_vals = {
             'name': f'Healthcare Lead - {self.name}',
             'partner_id': self.id,
@@ -269,9 +360,9 @@ class HealthContact(models.Model):
             'vietnamese_channel': 'referral',  # Default for manual creation
             'preferred_language': 'vietnamese',  # Default for Vietnamese healthcare
         }
-        
+
         lead = self.env['crm.lead'].create(lead_vals)
-        
+
         return {
             'type': 'ir.actions.act_window',
             'name': _('Healthcare Lead'),
@@ -280,5 +371,98 @@ class HealthContact(models.Model):
             'view_mode': 'form',
             'target': 'current',
         }
+
+    # Section 2.2 - Relationship Smart Button Actions
+    def action_view_all_relationships(self):
+        """View all relationships for this partner"""
+        self.ensure_one()
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _('All Relationships - %s') % self.name,
+            'res_model': 'health.client.relation',
+            'view_mode': 'list,form',
+            'domain': [('client_id', '=', self.id)],
+            'context': {'default_client_id': self.id},
+        }
+
+    def action_view_my_caregivers(self):
+        """View caregiver relationships"""
+        self.ensure_one()
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _('My Caregivers - %s') % self.name,
+            'res_model': 'health.client.relation',
+            'view_mode': 'list,form',
+            'domain': [('client_id', '=', self.id), ('role', '=', 'caregiver')],
+            'context': {'default_client_id': self.id, 'default_role': 'caregiver'},
+        }
+
+    def action_view_my_payers(self):
+        """View payer relationships"""
+        self.ensure_one()
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _('My Payers - %s') % self.name,
+            'res_model': 'health.client.relation',
+            'view_mode': 'list,form',
+            'domain': [('client_id', '=', self.id), ('role', '=', 'payer')],
+            'context': {'default_client_id': self.id, 'default_role': 'payer'},
+        }
+
+    def action_view_my_referrers(self):
+        """View referrer relationships"""
+        self.ensure_one()
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _('My Referrers - %s') % self.name,
+            'res_model': 'health.client.relation',
+            'view_mode': 'list,form',
+            'domain': [('client_id', '=', self.id), ('role', '=', 'referrer')],
+            'context': {'default_client_id': self.id, 'default_role': 'referrer'},
+        }
+
+    def action_view_my_emergency_contacts(self):
+        """View emergency contact relationships"""
+        self.ensure_one()
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _('My Emergency Contacts - %s') % self.name,
+            'res_model': 'health.client.relation',
+            'view_mode': 'list,form',
+            'domain': [('client_id', '=', self.id), ('role', '=', 'emergency_contact')],
+            'context': {'default_client_id': self.id, 'default_role': 'emergency_contact'},
+        }
+
+    def action_view_my_legal_guardians(self):
+        """View legal guardian relationships"""
+        self.ensure_one()
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _('My Legal Guardians - %s') % self.name,
+            'res_model': 'health.client.relation',
+            'view_mode': 'list,form',
+            'domain': [('client_id', '=', self.id), ('role', '=', 'legal_guardian')],
+            'context': {'default_client_id': self.id, 'default_role': 'legal_guardian'},
+        }
+
+    def action_view_relationship_network(self):
+        """Open the D3.js relationship network graph view"""
+        import logging
+        _logger = logging.getLogger(__name__)
+
+        self.ensure_one()
+        _logger.info(f"=== action_view_relationship_network called for partner ID: {self.id}, name: {self.name} ===")
+
+        action = {
+            'type': 'ir.actions.act_window',
+            'name': _('Relationship Network - %s') % self.name,
+            'res_model': 'res.partner',
+            'res_id': self.id,
+            'view_mode': 'form',
+            'view_id': self.env.ref('health_crm.view_relationship_network_form').id,
+            'target': 'new',
+        }
+        _logger.info(f"=== Returning action: {action} ===")
+        return action
 
 
