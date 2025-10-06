@@ -24,7 +24,10 @@
                         </group>
                     </group>
                     <notebook>
-                        <page string="Relationship Network Graph" name="network_graph">
+                        <page string="Hierarchy View" name="hierarchy_view">
+                            <widget name="relationship_hierarchy"/>
+                        </page>
+                        <page string="Network Graph" name="network_graph">
                             <field name="client_relationships" widget="relationship_graph" nolabel="1"/>
                         </page>
                     </notebook>

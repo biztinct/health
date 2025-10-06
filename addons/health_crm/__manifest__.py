@@ -74,10 +74,14 @@
             # Test widget (for debugging)
             'health_crm/static/src/js/test_widget.js',
             'health_crm/static/src/xml/test_widget.xml',
-            # Relationship graph widget
+            # Relationship graph widget (D3.js network visualization)
             'health_crm/static/src/js/relationship_graph_widget.js',
             'health_crm/static/src/xml/relationship_graph_widget.xml',
             'health_crm/static/src/scss/relationship_graph_widget.scss',
+            # Relationship hierarchy widget (Org chart style)
+            'health_crm/static/src/components/relationship_hierarchy/relationship_hierarchy.js',
+            'health_crm/static/src/components/relationship_hierarchy/relationship_hierarchy.xml',
+            'health_crm/static/src/components/relationship_hierarchy/relationship_hierarchy.scss',
         ],
     },
     # 'demo': [

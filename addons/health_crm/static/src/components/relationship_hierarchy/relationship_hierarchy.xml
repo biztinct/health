@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+
+    <!-- Main Hierarchy Widget Template -->
+    <t t-name="health_crm.RelationshipHierarchyWidget">
+        <div class="o_relationship_hierarchy_widget">
+            <t t-if="state.loading">
+                <div class="text-center p-5">
+                    <i class="fa fa-spinner fa-spin fa-3x text-primary"/>
+                    <p class="mt-3">Loading relationship hierarchy...</p>
+                </div>
+            </t>
+            <t t-else="">
+                <div class="o_relationship_hierarchy">
+                    <!-- Empty state -->
+                    <t t-if="Object.keys(state.hierarchy.as_patient).length === 0 and Object.keys(state.hierarchy.as_representative).length === 0">
+                        <div class="alert alert-info text-center">
+                            <i class="fa fa-info-circle fa-2x mb-3"/>
+                            <h5>No Relationships Found</h5>
+                            <p class="mb-0">This partner doesn't have any relationship records yet.</p>
+                        </div>
+                    </t>
+
+                    <!-- Org Chart Structure -->
+                    <t t-else="">
+                        <!-- Current Partner (Center Node) -->
+                        <div class="o_org_chart_center">
+                            <div class="o_org_node o_org_node_self">
+                                <div class="o_org_node_content">
+                                    <h5 class="mb-0">
+                                        <t t-esc="state.hierarchy.self.name"/>
+                                    </h5>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Vertical Connector from center -->
+                        <div class="o_org_connector_down"/>
+
+                        <!-- Branch Container -->
+                        <div class="o_org_branches">
+                            <!-- Patient-side relationships (My Representatives) -->
+                            <t t-if="Object.keys(state.hierarchy.as_patient).length > 0">
+                                <div class="o_horizontal_separator mb-3 text-uppercase fw-bolder small">My Support Team</div>
+                                <!-- Horizontal row of role labels -->
+                                <div class="o_org_roles_horizontal">
+                                    <t t-foreach="getRoleCategories('as_patient')" t-as="category" t-key="category.key">
+                                        <div class="o_org_role_column">
+                                            <!-- Role Label -->
+                                            <div class="o_org_role_label" t-att-data-role="category.key">
+                                                <t t-esc="category.label"/>
+                                            </div>
+
+                                            <!-- Connector Line -->
+                                            <div class="o_org_connector_vertical"/>
+
+                                            <!-- Cards stacked vertically in this role -->
+                                            <div class="o_org_cards_column">
+                                                <t t-foreach="category.cards" t-as="card" t-key="card.id">
+                                                    <div class="o_org_card_wrapper">
+                                                        <t t-call="health_crm.RelationshipOrgCard"/>
+                                                    </div>
+                                                </t>
+                                            </div>
+                                        </div>
+                                    </t>
+                                </div>
+                            </t>
+
+                            <!-- Representative-side relationships (Patients I Support) -->
+                            <t t-if="Object.keys(state.hierarchy.as_representative).length > 0">
+                                <div class="o_horizontal_separator mb-3 mt-4 text-uppercase fw-bolder small">Patients I Support</div>
+                                <!-- Horizontal row of role labels -->
+                                <div class="o_org_roles_horizontal">
+                                    <t t-foreach="getRoleCategories('as_representative')" t-as="category" t-key="category.key">
+                                        <div class="o_org_role_column">
+                                            <!-- Role Label -->
+                                            <div class="o_org_role_label" t-att-data-role="category.key">
+                                                <t t-esc="category.label"/>
+                                            </div>
+
+                                            <!-- Connector Line -->
+                                            <div class="o_org_connector_vertical"/>
+
+                                            <!-- Cards stacked vertically in this role -->
+                                            <div class="o_org_cards_column">
+                                                <t t-foreach="category.cards" t-as="card" t-key="card.id">
+                                                    <div class="o_org_card_wrapper">
+                                                        <t t-call="health_crm.RelationshipOrgCard"/>
+                                                    </div>
+                                                </t>
+                                            </div>
+                                        </div>
+                                    </t>
+                                </div>
+                            </t>
+                        </div>
+                    </t>
+                </div>
+            </t>
+        </div>
+    </t>
+
+    <!-- Organization Chart Card Template -->
+    <t t-name="health_crm.RelationshipOrgCard">
+        <div class="o_org_card" t-att-data-role="card.role" t-on-click="() => this.openPartnerCard(card.id)">
+            <div class="o_org_card_content">
+                <div class="o_org_card_name">
+                    <t t-esc="card.name"/>
+                </div>
+                <div class="o_org_card_role">
+                    <t t-esc="card.relationship_type"/>
+                </div>
+            </div>
+        </div>
+    </t>
+
+</templates>

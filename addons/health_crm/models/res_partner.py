@@ -465,4 +465,102 @@ class HealthContact(models.Model):
         _logger.info(f"=== Returning action: {action} ===")
         return action
 
+    # Section 2.2 - Relationship Hierarchy Widget (Org Chart Style)
+    def get_relationship_hierarchy(self):
+        """
+        Get relationship hierarchy data for organization chart-style display.
+        Returns a structured dict with relationships grouped by role.
+
+        Structure matches Odoo's hr_department_chart pattern:
+        - 'self': Current partner info
+        - 'as_patient': Relationships where this person is the patient
+        - 'as_representative': Relationships where this person is the representative
+        """
+        self.ensure_one()
+
+        def _format_relationship_card(relation):
+            """Format a relationship record into a card data structure"""
+            # Determine if we're looking at the client or representative side
+            partner = relation.representative_id if relation.client_id.id == self.id else relation.client_id
+
+            # Format relationship type for display
+            relationship_type_display = ''
+            if relation.relationship_type:
+                relationship_type_display = relation.relationship_type.replace('_', ' ').title()
+
+            return {
+                'id': partner.id,
+                'name': partner.name,
+                'role': relation.role,
+                'relationship_type': relationship_type_display,
+                'is_primary': relation.is_primary,
+                'start_date': relation.start_date.isoformat() if relation.start_date else None,
+                'end_date': relation.end_date.isoformat() if relation.end_date else None,
+                'can_make_medical_decisions': relation.can_make_medical_decisions,
+                'financial_responsibility': relation.financial_responsibility,
+                'relation_id': relation.id,
+            }
+
+        # Build hierarchy structure
+        hierarchy = {
+            'self': {
+                'id': self.id,
+                'name': self.name,
+                'is_patient': self.is_patient,
+                'is_representative': self.is_representative,
+                'patient_code': self.patient_code if self.is_patient else None,
+                'total_relationships': len(self.client_relationships) + len(self.representative_relationships),
+            },
+            'as_patient': {},
+            'as_representative': {},
+        }
+
+        # Patient-side: My representatives (people who support me)
+        if self.is_patient and self.client_relationships:
+            # Group by role
+            for role_key, role_label in [
+                ('caregiver', 'Caregivers'),
+                ('payer', 'Payers'),
+                ('referrer', 'Referrers'),
+                ('emergency_contact', 'Emergency Contacts'),
+                ('legal_guardian', 'Legal Guardians'),
+                ('healthcare_proxy', 'Healthcare Proxies'),
+                ('client_representative', 'Representatives'),
+                ('family_member', 'Family Members'),
+                ('friend', 'Friends'),
+                ('professional', 'Professional Providers'),
+            ]:
+                relations = self.client_relationships.filtered(lambda r: r.role == role_key)
+                if relations:
+                    hierarchy['as_patient'][role_key] = {
+                        'label': role_label,
+                        'count': len(relations),
+                        'cards': [_format_relationship_card(r) for r in relations],
+                    }
+
+        # Representative-side: Patients I support
+        if self.is_representative and self.representative_relationships:
+            # Group by role
+            for role_key, role_label in [
+                ('caregiver', 'Patients I Care For'),
+                ('payer', 'Patients I Pay For'),
+                ('referrer', 'Patients I Referred'),
+                ('emergency_contact', 'Emergency Contact For'),
+                ('legal_guardian', 'Legal Guardian For'),
+                ('healthcare_proxy', 'Healthcare Proxy For'),
+                ('client_representative', 'Patients I Represent'),
+                ('family_member', 'Family Members'),
+                ('friend', 'Friends'),
+                ('professional', 'Professional Clients'),
+            ]:
+                relations = self.representative_relationships.filtered(lambda r: r.role == role_key)
+                if relations:
+                    hierarchy['as_representative'][role_key] = {
+                        'label': role_label,
+                        'count': len(relations),
+                        'cards': [_format_relationship_card(r) for r in relations],
+                    }
+
+        return hierarchy
+
 
