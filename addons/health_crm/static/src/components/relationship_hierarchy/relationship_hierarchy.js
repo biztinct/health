@@ -4,6 +4,7 @@ import { registry } from "@web/core/registry";
 import { useService } from "@web/core/utils/hooks";
 import { standardWidgetProps } from "@web/views/widgets/standard_widget_props";
 import { onWillStart, useState, onWillUpdateProps, Component } from "@odoo/owl";
+import { ConfirmationDialog } from "@web/core/confirmation_dialog/confirmation_dialog";
 
 /**
  * Relationship Hierarchy Widget
@@ -23,6 +24,8 @@ export class RelationshipHierarchyWidget extends Component {
 
         this.action = useService("action");
         this.orm = useService("orm");
+        this.dialog = useService("dialog");
+        this.notification = useService("notification");
 
         this.state = useState({
             hierarchy: {
@@ -142,6 +145,41 @@ export class RelationshipHierarchyWidget extends Component {
         } catch (error) {
             console.error('Error adding relationship:', error);
         }
+    }
+
+    /**
+     * Delete a relationship
+     */
+    async deleteRelationship(relationId, partnerName) {
+        const partnerId = this.props.record.resId;
+
+        // Show confirmation dialog
+        this.dialog.add(ConfirmationDialog, {
+            title: 'Remove Relationship',
+            body: `Are you sure you want to remove the relationship with ${partnerName}?`,
+            confirm: async () => {
+                try {
+                    // Delete the relationship record (NOT the partner)
+                    await this.orm.unlink('health.client.relation', [relationId]);
+
+                    // Refresh hierarchy
+                    await this.fetchHierarchy(partnerId);
+
+                    // Show success notification
+                    this.notification.add(
+                        `Relationship with ${partnerName} has been removed.`,
+                        { type: 'success' }
+                    );
+                } catch (error) {
+                    console.error('Error deleting relationship:', error);
+                    this.notification.add(
+                        'Failed to remove relationship. Please try again.',
+                        { type: 'danger' }
+                    );
+                }
+            },
+            cancel: () => {},
+        });
     }
 }
 

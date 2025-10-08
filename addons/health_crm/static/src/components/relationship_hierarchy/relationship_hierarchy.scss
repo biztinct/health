@@ -130,6 +130,16 @@
                             border: 3px solid #1565C0;
                         }
 
+                        // Legal Guardian - Dark border #6B4BA8
+                        &[data-role="legal_guardian"] {
+                            border: 3px solid #6B4BA8;
+                        }
+
+                        // Client Representative - Dark border #00796B
+                        &[data-role="client_representative"] {
+                            border: 3px solid #00796B;
+                        }
+
                         // Default fallback
                         &:not([data-role]) {
                             border: 3px solid #C32B2E;
@@ -273,6 +283,46 @@
                 }
             }
 
+            // Legal Guardian cards - #E8E0F5 (lighter shade of purple)
+            &[data-role="legal_guardian"] {
+                background: #E8E0F5;
+                border: 1px solid #9575CD;
+
+                &:hover {
+                    transform: translateY(-4px);
+                    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+                    border-color: #9575CD;
+                }
+
+                .o_org_card_name {
+                    color: #4A3475;
+                }
+
+                .o_org_card_role {
+                    color: #6B4BA8;
+                }
+            }
+
+            // Client Representative cards - #D9F2F0 (lighter shade of teal)
+            &[data-role="client_representative"] {
+                background: #D9F2F0;
+                border: 1px solid #4DB6AC;
+
+                &:hover {
+                    transform: translateY(-4px);
+                    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+                    border-color: #4DB6AC;
+                }
+
+                .o_org_card_name {
+                    color: #004D40;
+                }
+
+                .o_org_card_role {
+                    color: #00796B;
+                }
+            }
+
             // Default fallback
             &:not([data-role]) {
                 background: #FBE3E1;
@@ -295,6 +345,7 @@
 
             .o_org_card_content {
                 padding: 12px;
+                padding-bottom: 8px;
                 text-align: center;
 
                 .o_org_card_name {
@@ -311,6 +362,46 @@
                     line-height: 1.2;
                 }
             }
+
+            // Delete button (trash icon)
+            .o_org_card_delete {
+                position: absolute;
+                bottom: 6px;
+                right: 6px;
+                background: rgba(255, 255, 255, 0.9);
+                border: none;
+                border-radius: 50%;
+                width: 28px;
+                height: 28px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+                transition: all 0.2s ease;
+                opacity: 0;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+
+                i {
+                    font-size: 0.85rem;
+                    color: #dc3545;
+                }
+
+                &:hover {
+                    background: #dc3545;
+                    transform: scale(1.1);
+
+                    i {
+                        color: white;
+                    }
+                }
+            }
+
+            &:hover .o_org_card_delete {
+                opacity: 1;
+            }
+
+            // Position relative for delete button
+            position: relative;
         }
     }
 }

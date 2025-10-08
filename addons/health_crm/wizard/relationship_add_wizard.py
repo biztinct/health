@@ -24,11 +24,7 @@ class RelationshipAddWizard(models.TransientModel):
         ('referrer', 'Referrer'),
         ('emergency_contact', 'Emergency Contact'),
         ('legal_guardian', 'Legal Guardian'),
-        ('healthcare_proxy', 'Healthcare Proxy'),
         ('client_representative', 'Client Representative'),
-        ('family_member', 'Family Member'),
-        ('friend', 'Friend'),
-        ('professional', 'Professional Care Provider'),
     ], string='Role', required=True, readonly=True,
        help='The role this representative will play')
 
@@ -128,9 +124,6 @@ class RelationshipAddWizard(models.TransientModel):
                 res['can_make_medical_decisions'] = True
                 res['can_receive_medical_info'] = True
                 res['can_schedule_appointments'] = True
-            elif role == 'healthcare_proxy':
-                res['can_make_medical_decisions'] = True
-                res['can_receive_medical_info'] = True
             elif role in ['emergency_contact', 'caregiver']:
                 res['can_receive_medical_info'] = True
                 if role == 'caregiver':
@@ -147,9 +140,6 @@ class RelationshipAddWizard(models.TransientModel):
             self.can_make_medical_decisions = True
             self.can_receive_medical_info = True
             self.can_schedule_appointments = True
-        elif self.role == 'healthcare_proxy':
-            self.can_make_medical_decisions = True
-            self.can_receive_medical_info = True
         elif self.role in ['emergency_contact', 'caregiver']:
             self.can_receive_medical_info = True
             if self.role == 'caregiver':
@@ -199,10 +189,12 @@ class RelationshipAddWizard(models.TransientModel):
 
         self.env['health.client.relation'].create(relation_vals)
 
+        # Show notification and close wizard
         return {
             'type': 'ir.actions.client',
             'tag': 'display_notification',
             'params': {
+                'title': _('Relationship Added'),
                 'message': _('%s added as %s for %s') % (
                     self.representative_id.name,
                     self.role_label,
@@ -210,5 +202,6 @@ class RelationshipAddWizard(models.TransientModel):
                 ),
                 'type': 'success',
                 'sticky': False,
+                'next': {'type': 'ir.actions.act_window_close'},
             }
         }

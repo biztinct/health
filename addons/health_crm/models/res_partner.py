@@ -143,6 +143,20 @@ class HealthContact(models.Model):
         help='Auto-computed: This person is a healthcare provider (based on health.client.relation)'
     )
 
+    is_legal_guardian = fields.Boolean(
+        string='Is Legal Guardian',
+        compute='_compute_legacy_role_flags',
+        store=True,
+        help='Auto-computed: This person is a legal guardian (based on health.client.relation)'
+    )
+
+    is_client_representative = fields.Boolean(
+        string='Is Client Representative',
+        compute='_compute_legacy_role_flags',
+        store=True,
+        help='Auto-computed: This person is a client representative (based on health.client.relation)'
+    )
+
     # Visual role tags - for display in form view
     healthcare_role_tags = fields.Html(
         string='Healthcare Roles',
@@ -282,9 +296,12 @@ class HealthContact(models.Model):
             partner.is_payer = bool(partner.representative_relationships.filtered(lambda r: r.role == 'payer'))
             partner.is_referrer = bool(partner.representative_relationships.filtered(lambda r: r.role == 'referrer'))
             partner.is_emergency_contact = bool(partner.representative_relationships.filtered(lambda r: r.role == 'emergency_contact'))
-            partner.is_healthcare_provider = bool(partner.representative_relationships.filtered(lambda r: r.role == 'professional'))
+            partner.is_legal_guardian = bool(partner.representative_relationships.filtered(lambda r: r.role == 'legal_guardian'))
+            partner.is_client_representative = bool(partner.representative_relationships.filtered(lambda r: r.role == 'client_representative'))
+            # Note: is_healthcare_provider kept for backwards compatibility but no longer used
+            partner.is_healthcare_provider = False
 
-    @api.depends('is_patient', 'is_representative', 'is_caregiver', 'is_payer', 'is_referrer', 'is_emergency_contact', 'is_healthcare_provider')
+    @api.depends('is_patient', 'is_representative', 'is_caregiver', 'is_payer', 'is_referrer', 'is_emergency_contact', 'is_legal_guardian', 'is_client_representative')
     def _compute_healthcare_role_tags(self):
         """Compute visual role tags HTML for display"""
         for partner in self:
@@ -312,9 +329,13 @@ class HealthContact(models.Model):
             if partner.is_emergency_contact:
                 badges.append('<span class="badge rounded-pill me-1" style="background-color: #E4F4FD; color: #1565C0; font-size: 0.875rem; padding: 0.35rem 0.75rem;"><i class="fa fa-check-circle"></i> Emergency Contact</span>')
 
-            # Healthcare Provider - Light Gray
-            if partner.is_healthcare_provider:
-                badges.append('<span class="badge rounded-pill me-1" style="background-color: #F5F5F5; color: #616161; font-size: 0.875rem; padding: 0.35rem 0.75rem;"><i class="fa fa-check-circle"></i> Healthcare Provider</span>')
+            # Legal Guardian - Light Purple
+            if partner.is_legal_guardian:
+                badges.append('<span class="badge rounded-pill me-1" style="background-color: #E8E0F5; color: #6B4BA8; font-size: 0.875rem; padding: 0.35rem 0.75rem;"><i class="fa fa-check-circle"></i> Legal Guardian</span>')
+
+            # Client Representative - Light Teal
+            if partner.is_client_representative:
+                badges.append('<span class="badge rounded-pill me-1" style="background-color: #D9F2F0; color: #00796B; font-size: 0.875rem; padding: 0.35rem 0.75rem;"><i class="fa fa-check-circle"></i> Client Representative</span>')
 
             # Combine all badges into HTML
             partner.healthcare_role_tags = ''.join(badges) if badges else '<span class="text-muted" style="font-size: 0.875rem;">No roles assigned</span>'
@@ -580,50 +601,42 @@ class HealthContact(models.Model):
         }
 
         # Patient-side: My representatives (people who support me)
-        if self.is_patient and self.client_relationships:
-            # Group by role
+        # ALWAYS show all 6 role categories, even if empty
+        if self.is_patient:
+            # Group by role - LIMITED TO 6 ESSENTIAL ROLES
             for role_key, role_label in [
                 ('caregiver', 'Caregivers'),
                 ('payer', 'Payers'),
                 ('referrer', 'Referrers'),
                 ('emergency_contact', 'Emergency Contacts'),
                 ('legal_guardian', 'Legal Guardians'),
-                ('healthcare_proxy', 'Healthcare Proxies'),
-                ('client_representative', 'Representatives'),
-                ('family_member', 'Family Members'),
-                ('friend', 'Friends'),
-                ('professional', 'Professional Providers'),
+                ('client_representative', 'Client Representatives'),
             ]:
                 relations = self.client_relationships.filtered(lambda r: r.role == role_key)
-                if relations:
-                    hierarchy['as_patient'][role_key] = {
-                        'label': role_label,
-                        'count': len(relations),
-                        'cards': [_format_relationship_card(r) for r in relations],
-                    }
+                hierarchy['as_patient'][role_key] = {
+                    'label': role_label,
+                    'count': len(relations),
+                    'cards': [_format_relationship_card(r) for r in relations] if relations else [],
+                }
 
         # Representative-side: Patients I support
-        if self.is_representative and self.representative_relationships:
-            # Group by role
+        # ALWAYS show all 6 role categories, even if empty
+        if self.is_representative:
+            # Group by role - LIMITED TO 6 ESSENTIAL ROLES
             for role_key, role_label in [
                 ('caregiver', 'Patients I Care For'),
                 ('payer', 'Patients I Pay For'),
                 ('referrer', 'Patients I Referred'),
                 ('emergency_contact', 'Emergency Contact For'),
                 ('legal_guardian', 'Legal Guardian For'),
-                ('healthcare_proxy', 'Healthcare Proxy For'),
                 ('client_representative', 'Patients I Represent'),
-                ('family_member', 'Family Members'),
-                ('friend', 'Friends'),
-                ('professional', 'Professional Clients'),
             ]:
                 relations = self.representative_relationships.filtered(lambda r: r.role == role_key)
-                if relations:
-                    hierarchy['as_representative'][role_key] = {
-                        'label': role_label,
-                        'count': len(relations),
-                        'cards': [_format_relationship_card(r) for r in relations],
-                    }
+                hierarchy['as_representative'][role_key] = {
+                    'label': role_label,
+                    'count': len(relations),
+                    'cards': [_format_relationship_card(r) for r in relations] if relations else [],
+                }
 
         return hierarchy
 
@@ -640,18 +653,14 @@ class HealthContact(models.Model):
         """
         self.ensure_one()
 
-        # Get human-readable role label
+        # Get human-readable role label - LIMITED TO 6 ESSENTIAL ROLES
         role_labels = {
             'caregiver': 'Caregiver',
             'payer': 'Payer',
             'referrer': 'Referrer',
             'emergency_contact': 'Emergency Contact',
             'legal_guardian': 'Legal Guardian',
-            'healthcare_proxy': 'Healthcare Proxy',
             'client_representative': 'Client Representative',
-            'family_member': 'Family Member',
-            'friend': 'Friend',
-            'professional': 'Professional Care Provider',
         }
         role_label = role_labels.get(role, role.replace('_', ' ').title())
 

@@ -37,18 +37,14 @@ class HealthClientRelation(models.Model):
         help="The person representing or supporting the client"
     )
     
-    # Healthcare role classification
+    # Healthcare role classification - Limited to 6 essential roles
     role = fields.Selection([
         ('caregiver', 'Caregiver'),
         ('payer', 'Payer'),
         ('referrer', 'Referrer'),
         ('emergency_contact', 'Emergency Contact'),
         ('legal_guardian', 'Legal Guardian'),
-        ('healthcare_proxy', 'Healthcare Proxy'),
         ('client_representative', 'Client Representative'),
-        ('family_member', 'Family Member'),
-        ('friend', 'Friend'),
-        ('professional', 'Professional Care Provider'),
     ], string="Role", required=True, default='client_representative',
        help="The role this representative plays for the client")
     

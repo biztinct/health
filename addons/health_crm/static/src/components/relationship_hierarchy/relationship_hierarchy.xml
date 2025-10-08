@@ -115,8 +115,8 @@
 
     <!-- Organization Chart Card Template -->
     <t t-name="health_crm.RelationshipOrgCard">
-        <div class="o_org_card" t-att-data-role="card.role" t-on-click="() => this.openPartnerCard(card.id)">
-            <div class="o_org_card_content">
+        <div class="o_org_card" t-att-data-role="card.role">
+            <div class="o_org_card_content" t-on-click="() => this.openPartnerCard(card.id)">
                 <div class="o_org_card_name">
                     <t t-esc="card.name"/>
                 </div>
@@ -124,6 +124,12 @@
                     <t t-esc="card.relationship_type"/>
                 </div>
             </div>
+            <!-- Delete Button -->
+            <button class="o_org_card_delete"
+                    t-on-click.stop="() => this.deleteRelationship(card.relation_id, card.name)"
+                    title="Remove relationship">
+                <i class="fa fa-trash"/>
+            </button>
         </div>
     </t>
 
