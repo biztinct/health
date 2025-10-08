@@ -51,6 +51,12 @@
                                                 <t t-esc="category.label"/>
                                             </div>
 
+                                            <!-- Add Button -->
+                                            <button class="btn btn-sm btn-link o_add_relationship_btn"
+                                                    t-on-click="() => this.addRelationship(category.key, 'as_patient')">
+                                                <i class="fa fa-plus-circle"/> Add
+                                            </button>
+
                                             <!-- Connector Line -->
                                             <div class="o_org_connector_vertical"/>
 
@@ -78,6 +84,12 @@
                                             <div class="o_org_role_label" t-att-data-role="category.key">
                                                 <t t-esc="category.label"/>
                                             </div>
+
+                                            <!-- Add Button -->
+                                            <button class="btn btn-sm btn-link o_add_relationship_btn"
+                                                    t-on-click="() => this.addRelationship(category.key, 'as_representative')">
+                                                <i class="fa fa-plus-circle"/> Add
+                                            </button>
 
                                             <!-- Connector Line -->
                                             <div class="o_org_connector_vertical"/>

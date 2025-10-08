@@ -13,3 +13,5 @@ access_health_province_manager,health.province manager,model_health_province,gro
 access_health_province_public,health.province public,model_health_province,,1,0,0,0
 access_client_selection_wizard_user,health.client.selection.wizard user,model_health_client_selection_wizard,group_health_crm_user,1,1,1,1
 access_client_selection_wizard_manager,health.client.selection.wizard manager,model_health_client_selection_wizard,group_health_crm_manager,1,1,1,1
+access_relationship_add_wizard_user,health.relationship.add.wizard user,model_health_relationship_add_wizard,group_health_crm_user,1,1,1,1
+access_relationship_add_wizard_manager,health.relationship.add.wizard manager,model_health_relationship_add_wizard,group_health_crm_manager,1,1,1,1

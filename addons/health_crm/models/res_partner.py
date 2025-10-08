@@ -106,34 +106,49 @@ class HealthContact(models.Model):
         help='This person can represent or support patients/clients'
     )
     
+    # Legacy role flags - auto-synced from health.client.relation
+    # These are kept for backwards compatibility but computed from the new relation system
     is_caregiver = fields.Boolean(
         string='Is Caregiver',
-        default=False,
-        help='This person provides caregiving services'
+        compute='_compute_legacy_role_flags',
+        store=True,
+        help='Auto-computed: This person provides care to patients (based on health.client.relation)'
     )
-    
+
     is_payer = fields.Boolean(
         string='Is Payer',
-        default=False,
-        help='This person or entity is responsible for payments'
+        compute='_compute_legacy_role_flags',
+        store=True,
+        help='Auto-computed: This person is responsible for payment (based on health.client.relation)'
     )
-    
+
     is_referrer = fields.Boolean(
         string='Is Referrer',
-        default=False,
-        help='This person refers patients to our services'
+        compute='_compute_legacy_role_flags',
+        store=True,
+        help='Auto-computed: This person refers patients (based on health.client.relation)'
     )
-    
+
     is_emergency_contact = fields.Boolean(
         string='Is Emergency Contact',
-        default=False,
-        help='This person serves as an emergency contact'
+        compute='_compute_legacy_role_flags',
+        store=True,
+        help='Auto-computed: This person serves as emergency contact (based on health.client.relation)'
     )
-    
+
     is_healthcare_provider = fields.Boolean(
         string='Is Healthcare Provider',
-        default=False,
-        help='This person is a healthcare professional or provider'
+        compute='_compute_legacy_role_flags',
+        store=True,
+        help='Auto-computed: This person is a healthcare provider (based on health.client.relation)'
+    )
+
+    # Visual role tags - for display in form view
+    healthcare_role_tags = fields.Html(
+        string='Healthcare Roles',
+        compute='_compute_healthcare_role_tags',
+        sanitize=False,
+        help='Visual display of all healthcare roles this person has'
     )
 
     # Geographic and service preferences
@@ -254,6 +269,55 @@ class HealthContact(models.Model):
         compute='_compute_representative_counts',
         store=False
     )
+
+    @api.depends('representative_relationships', 'representative_relationships.role')
+    def _compute_legacy_role_flags(self):
+        """
+        Auto-sync legacy role flags based on health.client.relation records.
+        This ensures backwards compatibility with old code using is_caregiver, is_payer, etc.
+        """
+        for partner in self:
+            # Check if this partner has any representative relationships with each role
+            partner.is_caregiver = bool(partner.representative_relationships.filtered(lambda r: r.role == 'caregiver'))
+            partner.is_payer = bool(partner.representative_relationships.filtered(lambda r: r.role == 'payer'))
+            partner.is_referrer = bool(partner.representative_relationships.filtered(lambda r: r.role == 'referrer'))
+            partner.is_emergency_contact = bool(partner.representative_relationships.filtered(lambda r: r.role == 'emergency_contact'))
+            partner.is_healthcare_provider = bool(partner.representative_relationships.filtered(lambda r: r.role == 'professional'))
+
+    @api.depends('is_patient', 'is_representative', 'is_caregiver', 'is_payer', 'is_referrer', 'is_emergency_contact', 'is_healthcare_provider')
+    def _compute_healthcare_role_tags(self):
+        """Compute visual role tags HTML for display"""
+        for partner in self:
+            badges = []
+
+            # Patient - Light Blue
+            if partner.is_patient:
+                badges.append('<span class="badge rounded-pill me-1" style="background-color: #E4F4FD; color: #1565C0; font-size: 0.875rem; padding: 0.35rem 0.75rem;"><i class="fa fa-check-circle"></i> Patient</span>')
+
+            # Don't show generic "Representative" - only show specific roles below
+
+            # Caregiver - Light Red/Coral
+            if partner.is_caregiver:
+                badges.append('<span class="badge rounded-pill me-1" style="background-color: #FBE3E1; color: #C32B2E; font-size: 0.875rem; padding: 0.35rem 0.75rem;"><i class="fa fa-check-circle"></i> Caregiver</span>')
+
+            # Payer - Light Orange
+            if partner.is_payer:
+                badges.append('<span class="badge rounded-pill me-1" style="background-color: #FEE8C9; color: #D46E00; font-size: 0.875rem; padding: 0.35rem 0.75rem;"><i class="fa fa-check-circle"></i> Payer</span>')
+
+            # Referrer - Light Green
+            if partner.is_referrer:
+                badges.append('<span class="badge rounded-pill me-1" style="background-color: #DBF0DB; color: #43A047; font-size: 0.875rem; padding: 0.35rem 0.75rem;"><i class="fa fa-check-circle"></i> Referrer</span>')
+
+            # Emergency Contact - Light Blue
+            if partner.is_emergency_contact:
+                badges.append('<span class="badge rounded-pill me-1" style="background-color: #E4F4FD; color: #1565C0; font-size: 0.875rem; padding: 0.35rem 0.75rem;"><i class="fa fa-check-circle"></i> Emergency Contact</span>')
+
+            # Healthcare Provider - Light Gray
+            if partner.is_healthcare_provider:
+                badges.append('<span class="badge rounded-pill me-1" style="background-color: #F5F5F5; color: #616161; font-size: 0.875rem; padding: 0.35rem 0.75rem;"><i class="fa fa-check-circle"></i> Healthcare Provider</span>')
+
+            # Combine all badges into HTML
+            partner.healthcare_role_tags = ''.join(badges) if badges else '<span class="text-muted" style="font-size: 0.875rem;">No roles assigned</span>'
 
     @api.depends('client_relationships', 'client_relationships.role')
     def _compute_relationship_counts(self):
@@ -562,5 +626,47 @@ class HealthContact(models.Model):
                     }
 
         return hierarchy
+
+    def action_add_relationship_for_role(self, role, side='as_patient'):
+        """
+        Open wizard to add a new relationship for a specific role.
+
+        Args:
+            role (str): The role for the new relationship (caregiver, payer, etc.)
+            side (str): Either 'as_patient' or 'as_representative'
+
+        Returns:
+            dict: Action dict to open the add relationship wizard
+        """
+        self.ensure_one()
+
+        # Get human-readable role label
+        role_labels = {
+            'caregiver': 'Caregiver',
+            'payer': 'Payer',
+            'referrer': 'Referrer',
+            'emergency_contact': 'Emergency Contact',
+            'legal_guardian': 'Legal Guardian',
+            'healthcare_proxy': 'Healthcare Proxy',
+            'client_representative': 'Client Representative',
+            'family_member': 'Family Member',
+            'friend': 'Friend',
+            'professional': 'Professional Care Provider',
+        }
+        role_label = role_labels.get(role, role.replace('_', ' ').title())
+
+        return {
+            'name': _('Add %s') % role_label,
+            'type': 'ir.actions.act_window',
+            'res_model': 'health.relationship.add.wizard',
+            'view_mode': 'form',
+            'views': [[False, 'form']],
+            'target': 'new',
+            'context': {
+                'default_client_id': self.id,
+                'default_role': role,
+                'relationship_side': side,
+            }
+        }
 
 

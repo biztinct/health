@@ -117,6 +117,32 @@ export class RelationshipHierarchyWidget extends Component {
         };
         return roleColors[role] || 'secondary';
     }
+
+    /**
+     * Add a new relationship for a specific role
+     */
+    async addRelationship(role, side) {
+        const partnerId = this.props.record.resId;
+
+        try {
+            // Call backend to open wizard
+            const action = await this.orm.call(
+                'res.partner',
+                'action_add_relationship_for_role',
+                [partnerId, role, side]
+            );
+
+            // Open wizard with onClose callback
+            await this.action.doAction(action, {
+                onClose: async () => {
+                    // Refresh hierarchy after wizard closes
+                    await this.fetchHierarchy(partnerId);
+                }
+            });
+        } catch (error) {
+            console.error('Error adding relationship:', error);
+        }
+    }
 }
 
 export const relationshipHierarchyWidget = {

@@ -66,6 +66,7 @@
 
         # Wizards
         'wizard/client_selection_wizard_views.xml',
+        'wizard/relationship_add_wizard_views.xml',
     ],
     'assets': {
         'web.assets_backend': [

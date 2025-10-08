@@ -19,16 +19,20 @@
                 <field name="preferred_name" placeholder="Preferred calling name"/>
             </xpath>
 
-            <!-- Add healthcare role flags -->
+            <!-- Add healthcare role flags with visual tags -->
             <xpath expr="//field[@name='category_id']" position="after">
-                <group name="healthcare_roles" string="Healthcare Roles" col="4">
-                    <field name="is_patient"/>
-                    <field name="is_representative"/>
-                    <field name="is_caregiver"/>
-                    <field name="is_payer"/>
-                    <field name="is_referrer"/>
-                    <field name="is_emergency_contact"/>
-                    <field name="is_healthcare_provider"/>
+                <group name="healthcare_roles" string="Healthcare Roles">
+                    <!-- Hidden boolean fields for computation -->
+                    <field name="is_patient" invisible="1"/>
+                    <field name="is_representative" invisible="1"/>
+                    <field name="is_caregiver" invisible="1"/>
+                    <field name="is_payer" invisible="1"/>
+                    <field name="is_referrer" invisible="1"/>
+                    <field name="is_emergency_contact" invisible="1"/>
+                    <field name="is_healthcare_provider" invisible="1"/>
+
+                    <!-- Visual role display -->
+                    <field name="healthcare_role_tags" nolabel="1"/>
                 </group>
             </xpath>
 
@@ -175,9 +179,9 @@
                 <field name="preferred_name" optional="hide"/>
                 <field name="cccd_number" optional="hide"/>
                 <field name="is_patient" optional="show"/>
-                <field name="is_caregiver" optional="hide"/>
-                <field name="is_payer" optional="hide"/>
-                <field name="is_referrer" optional="hide"/>
+                <field name="is_caregiver" invisible="1"/>
+                <field name="is_payer" invisible="1"/>
+                <field name="is_referrer" invisible="1"/>
                 <field name="preferred_contact_method" optional="hide"/>
                 <field name="healthcare_lead_source" optional="hide"/>
             </xpath>
