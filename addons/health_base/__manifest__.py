@@ -42,8 +42,10 @@ Key Features:
     'assets': {
         'web.assets_backend': [
             'health_base/static/src/css/health_base.css',
+            'health_base/static/src/css/notebook_icons.css',
             'health_base/static/src/scss/patient_form_custom.scss',
             'health_base/static/src/js/health_base.js',
+            'health_base/static/src/js/notebook_icons.js',
             'health_base/static/src/js/address_autocomplete_widget.js',
             'health_base/static/src/xml/address_autocomplete_widget.xml',
             'health_base/static/src/scss/address_autocomplete_widget.scss',

@@ -25,9 +25,35 @@
     white-space: nowrap !important;
     overflow: hidden !important;
     text-overflow: ellipsis !important;
-    display: block !important;
-    text-align: center !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 6px !important;
 }
+
+/* Font Awesome icon styling in notebook tabs */
+.o_form_patient_record .o_notebook .nav-tabs .nav-link i.fa {
+    font-size: 16px !important;
+    flex-shrink: 0 !important;
+    opacity: 0.85 !important;
+    transition: all 0.2s ease !important;
+}
+
+/* Highlight icon on active tab */
+.o_form_patient_record .o_notebook .nav-tabs .nav-link.active i.fa {
+    opacity: 1 !important;
+    transform: scale(1.1) !important;
+}
+
+/* Icon color variations for different tabs */
+.o_form_patient_record .o_notebook .nav-tabs .nav-link:nth-child(1) i.fa { color: #1565C0; } /* Blue */
+.o_form_patient_record .o_notebook .nav-tabs .nav-link:nth-child(2) i.fa { color: #C32B2E; } /* Red */
+.o_form_patient_record .o_notebook .nav-tabs .nav-link:nth-child(3) i.fa { color: #43A047; } /* Green */
+.o_form_patient_record .o_notebook .nav-tabs .nav-link:nth-child(4) i.fa { color: #D46E00; } /* Orange */
+.o_form_patient_record .o_notebook .nav-tabs .nav-link:nth-child(5) i.fa { color: #6B4BA8; } /* Purple */
+.o_form_patient_record .o_notebook .nav-tabs .nav-link:nth-child(6) i.fa { color: #00796B; } /* Teal */
+.o_form_patient_record .o_notebook .nav-tabs .nav-link:nth-child(7) i.fa { color: #F57C00; } /* Deep Orange */
+.o_form_patient_record .o_notebook .nav-tabs .nav-link:nth-child(8) i.fa { color: #0097A7; } /* Cyan */
 
 /* Responsive adjustments for smaller screens */
 @media (max-width: 1200px) {
