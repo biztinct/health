@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Home Menu Item - Primary Entry Point -->
+    <menuitem id="menu_health_landing_home"
+              name="Home"
+              sequence="1"
+              action="action_health_landing_dashboard"
+              web_icon="health_landing,static/description/icon.png"
+              groups="health_base.group_healthcare_base,health_base.group_healthcare_receptionist,health_base.group_healthcare_nurse,health_base.group_healthcare_doctor,health_base.group_healthcare_manager,health_base.group_healthcare_admin,health_base.group_healthcare_owner"/>
+
+</odoo>

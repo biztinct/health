@@ -1,0 +1,64 @@
+/* ============================================================================
+   Patient Form - Responsive Notebook Tab Styling
+   Auto-wrap tabs based on window width (no horizontal scrolling)
+   ============================================================================ */
+
+/* Patient Form Notebook Tabs - Responsive Auto-wrap */
+.o_form_patient_record .o_notebook .nav-tabs {
+    flex-wrap: wrap !important;
+    overflow-x: visible !important;
+    gap: 8px !important;
+}
+
+.o_form_patient_record .o_notebook .nav-tabs .nav-item {
+    /* Auto-size based on content, min 150px, max 250px */
+    flex: 0 1 auto !important;
+    min-width: 150px !important;
+    max-width: 250px !important;
+    margin: 0 !important; /* Gap handled by parent */
+}
+
+/* Adjust tab link for better readability */
+.o_form_patient_record .o_notebook .nav-tabs .nav-link {
+    font-size: 14px !important;
+    padding: 10px 16px !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    display: block !important;
+    text-align: center !important;
+}
+
+/* Responsive adjustments for smaller screens */
+@media (max-width: 1200px) {
+    .o_form_patient_record .o_notebook .nav-tabs .nav-item {
+        min-width: 140px !important;
+        max-width: 220px !important;
+    }
+
+    .o_form_patient_record .o_notebook .nav-tabs .nav-link {
+        font-size: 13px !important;
+        padding: 8px 12px !important;
+    }
+}
+
+@media (max-width: 768px) {
+    .o_form_patient_record .o_notebook .nav-tabs .nav-item {
+        min-width: 120px !important;
+        max-width: 200px !important;
+    }
+
+    .o_form_patient_record .o_notebook .nav-tabs .nav-link {
+        font-size: 12px !important;
+        padding: 8px 10px !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .o_form_patient_record .o_notebook .nav-tabs .nav-item {
+        /* Full width on very small screens */
+        flex: 1 1 100% !important;
+        min-width: 100% !important;
+        max-width: 100% !important;
+    }
+}

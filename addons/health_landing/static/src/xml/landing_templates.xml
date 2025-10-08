@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <!-- Main Dashboard Template -->
+    <t t-name="health_landing.DashboardTemplate">
+        <div class="health_landing_dashboard">
+
+            <!-- Main Dashboard View -->
+            <t t-if="state.currentView === 'main'">
+                <div class="health_landing_dashboard_header">
+                    <h1 class="health_landing_dashboard_title">
+                        <i class="fa fa-heartbeat"/> Healthcare Management System
+                    </h1>
+                    <p class="health_landing_dashboard_subtitle">
+                        Vietnam-Australia Family Health Service - Select a module to continue
+                    </p>
+                </div>
+
+                <div class="health_landing_card_grid">
+                    <t t-foreach="modules" t-as="module" t-key="module.id">
+                        <div class="health_landing_card"
+                             t-att-class="module.class"
+                             t-on-click="() => this.showSubmenu(module)">
+                            <div class="health_landing_card_icon">
+                                <i t-att-class="'fa ' + module.icon"/>
+                            </div>
+                            <div class="health_landing_card_label" t-esc="module.name"/>
+                            <div class="health_landing_card_description" t-esc="module.description"/>
+                        </div>
+                    </t>
+                </div>
+            </t>
+
+            <!-- Submenu Dashboard View -->
+            <t t-if="state.currentView === 'submenu' and state.currentModule">
+                <!-- Breadcrumb -->
+                <div class="health_landing_breadcrumb">
+                    <span class="health_landing_breadcrumb_item">
+                        <a class="health_landing_breadcrumb_link" t-on-click="() => this.showMain()">
+                            <i class="fa fa-home"/> Home
+                        </a>
+                    </span>
+                    <span class="health_landing_breadcrumb_separator">/</span>
+                    <span class="health_landing_breadcrumb_item" t-esc="state.currentModule.name"/>
+                </div>
+
+                <!-- Back Button -->
+                <button class="health_landing_back_btn" t-on-click="() => this.showMain()">
+                    <i class="fa fa-arrow-left"/> Back to Main Dashboard
+                </button>
+
+                <!-- Submenu Header -->
+                <div class="health_landing_dashboard_header">
+                    <h1 class="health_landing_dashboard_title">
+                        <i t-att-class="'fa ' + state.currentModule.icon"/>
+                        <t t-esc="state.currentModule.name"/>
+                    </h1>
+                    <p class="health_landing_dashboard_subtitle" t-esc="state.currentModule.description"/>
+                </div>
+
+                <!-- Submenu Cards -->
+                <div class="health_landing_submenu_grid">
+                    <t t-foreach="state.currentModule.submenus" t-as="submenu" t-key="submenu.name">
+                        <div class="health_landing_card health_landing_submenu_card"
+                             t-att-class="state.currentModule.class"
+                             t-on-click="() => this.launchAction(submenu.action)">
+                            <div class="health_landing_card_icon">
+                                <i t-att-class="'fa ' + submenu.icon"/>
+                            </div>
+                            <div class="health_landing_card_label" t-esc="submenu.name"/>
+                            <div class="health_landing_card_description" t-esc="submenu.description"/>
+                        </div>
+                    </t>
+                </div>
+            </t>
+
+        </div>
+    </t>
+
+</templates>

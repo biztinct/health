@@ -1,0 +1,341 @@
+/* ============================================================================
+   Healthcare Landing Dashboard - Professional Styling
+   Inspired by: Material Design, Hierarchy Widget Colors, Modern SaaS Apps
+   ============================================================================ */
+
+/* Theme Color Variables */
+:root {
+    --color-patient-primary: #1565C0;
+    --color-patient-light: #E4F4FD;
+    --color-scheduling-primary: #0097A7;
+    --color-scheduling-light: #B2EBF2;
+    --color-crm-primary: #00796B;
+    --color-crm-light: #D9F2F0;
+    --color-fieldservice-primary: #D46E00;
+    --color-fieldservice-light: #FEE8C9;
+    --color-packages-primary: #6B4BA8;
+    --color-packages-light: #E8E0F5;
+    --color-pricing-primary: #F57C00;
+    --color-pricing-light: #FFE0B2;
+    --color-billing-primary: #43A047;
+    --color-billing-light: #DBF0DB;
+    --color-facilities-primary: #C32B2E;
+    --color-facilities-light: #FBE3E1;
+    --color-config-primary: #546E7A;
+    --color-config-light: #ECEFF1;
+}
+
+/* Main Dashboard Container */
+.health_landing_dashboard {
+    padding: 32px;
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    min-height: 100vh;
+}
+
+.health_landing_dashboard_header {
+    margin-bottom: 40px;
+}
+
+.health_landing_dashboard_title {
+    font-size: 36px;
+    font-weight: 700;
+    color: #2C3E50;
+    margin-bottom: 8px;
+    text-align: center;
+}
+
+.health_landing_dashboard_subtitle {
+    font-size: 16px;
+    color: #7F8C8D;
+    text-align: center;
+    margin-bottom: 24px;
+}
+
+/* Breadcrumb Navigation */
+.health_landing_breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 24px;
+    font-size: 14px;
+    color: #546E7A;
+}
+
+.health_landing_breadcrumb_item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.health_landing_breadcrumb_link {
+    color: #1565C0;
+    text-decoration: none;
+    cursor: pointer;
+    transition: color 0.2s ease;
+}
+
+.health_landing_breadcrumb_link:hover {
+    color: #0D47A1;
+    text-decoration: underline;
+}
+
+.health_landing_breadcrumb_separator {
+    color: #BDC3C7;
+}
+
+/* Back Button */
+.health_landing_back_btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    background: white;
+    border: 2px solid #1565C0;
+    color: #1565C0;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin-bottom: 24px;
+}
+
+.health_landing_back_btn:hover {
+    background: #1565C0;
+    color: white;
+    transform: translateX(-4px);
+}
+
+/* Card Grid Layout */
+.health_landing_card_grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 24px;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.health_landing_submenu_grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* Individual Card Styling */
+.health_landing_card {
+    background: white;
+    border-radius: 16px;
+    padding: 32px 24px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 4px solid;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    position: relative;
+    overflow: hidden;
+}
+
+.health_landing_card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+}
+
+.health_landing_card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+}
+
+.health_landing_card:hover::before {
+    opacity: 0.05;
+}
+
+/* Module-Specific Card Colors */
+.health_landing_card.module-patient {
+    border-color: var(--color-patient-primary);
+    background: linear-gradient(135deg, white 0%, var(--color-patient-light) 100%);
+}
+
+.health_landing_card.module-scheduling {
+    border-color: var(--color-scheduling-primary);
+    background: linear-gradient(135deg, white 0%, var(--color-scheduling-light) 100%);
+}
+
+.health_landing_card.module-crm {
+    border-color: var(--color-crm-primary);
+    background: linear-gradient(135deg, white 0%, var(--color-crm-light) 100%);
+}
+
+.health_landing_card.module-fieldservice {
+    border-color: var(--color-fieldservice-primary);
+    background: linear-gradient(135deg, white 0%, var(--color-fieldservice-light) 100%);
+}
+
+.health_landing_card.module-packages {
+    border-color: var(--color-packages-primary);
+    background: linear-gradient(135deg, white 0%, var(--color-packages-light) 100%);
+}
+
+.health_landing_card.module-pricing {
+    border-color: var(--color-pricing-primary);
+    background: linear-gradient(135deg, white 0%, var(--color-pricing-light) 100%);
+}
+
+.health_landing_card.module-billing {
+    border-color: var(--color-billing-primary);
+    background: linear-gradient(135deg, white 0%, var(--color-billing-light) 100%);
+}
+
+.health_landing_card.module-facilities {
+    border-color: var(--color-facilities-primary);
+    background: linear-gradient(135deg, white 0%, var(--color-facilities-light) 100%);
+}
+
+.health_landing_card.module-config {
+    border-color: var(--color-config-primary);
+    background: linear-gradient(135deg, white 0%, var(--color-config-light) 100%);
+}
+
+/* Card Icon */
+.health_landing_card_icon {
+    font-size: 56px;
+    margin-bottom: 16px;
+    display: inline-block;
+    transition: transform 0.3s ease;
+}
+
+.health_landing_card:hover .health_landing_card_icon {
+    transform: scale(1.1);
+}
+
+.module-patient .health_landing_card_icon { color: var(--color-patient-primary); }
+.module-scheduling .health_landing_card_icon { color: var(--color-scheduling-primary); }
+.module-crm .health_landing_card_icon { color: var(--color-crm-primary); }
+.module-fieldservice .health_landing_card_icon { color: var(--color-fieldservice-primary); }
+.module-packages .health_landing_card_icon { color: var(--color-packages-primary); }
+.module-pricing .health_landing_card_icon { color: var(--color-pricing-primary); }
+.module-billing .health_landing_card_icon { color: var(--color-billing-primary); }
+.module-facilities .health_landing_card_icon { color: var(--color-facilities-primary); }
+.module-config .health_landing_card_icon { color: var(--color-config-primary); }
+
+/* Card Label */
+.health_landing_card_label {
+    font-size: 20px;
+    font-weight: 700;
+    color: #2C3E50;
+    margin-bottom: 8px;
+}
+
+.health_landing_card_description {
+    font-size: 13px;
+    color: #7F8C8D;
+    line-height: 1.4;
+}
+
+/* Submenu Card (Smaller) */
+.health_landing_submenu_card {
+    padding: 24px 20px;
+}
+
+.health_landing_submenu_card .health_landing_card_icon {
+    font-size: 42px;
+    margin-bottom: 12px;
+}
+
+.health_landing_submenu_card .health_landing_card_label {
+    font-size: 16px;
+}
+
+.health_landing_submenu_card .health_landing_card_description {
+    font-size: 12px;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+    .health_landing_card_grid {
+        grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+        gap: 20px;
+    }
+
+    .health_landing_dashboard_title {
+        font-size: 28px;
+    }
+}
+
+@media (max-width: 768px) {
+    .health_landing_dashboard {
+        padding: 20px 16px;
+    }
+
+    .health_landing_card_grid,
+    .health_landing_submenu_grid {
+        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+        gap: 16px;
+    }
+
+    .health_landing_card {
+        padding: 24px 16px;
+        border-width: 3px;
+    }
+
+    .health_landing_card_icon {
+        font-size: 42px;
+    }
+
+    .health_landing_card_label {
+        font-size: 16px;
+    }
+
+    .health_landing_dashboard_title {
+        font-size: 24px;
+    }
+}
+
+@media (max-width: 480px) {
+    .health_landing_card_grid,
+    .health_landing_submenu_grid {
+        grid-template-columns: 1fr;
+    }
+
+    .health_landing_card {
+        padding: 20px;
+    }
+}
+
+/* Loading State */
+.health_landing_loading {
+    text-align: center;
+    padding: 60px 20px;
+}
+
+.health_landing_loading_spinner {
+    font-size: 48px;
+    color: #1565C0;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* Empty State */
+.health_landing_empty {
+    text-align: center;
+    padding: 60px 20px;
+    color: #7F8C8D;
+}
+
+.health_landing_empty_icon {
+    font-size: 64px;
+    margin-bottom: 16px;
+    opacity: 0.3;
+}

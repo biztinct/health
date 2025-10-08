@@ -1,0 +1,2 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_health_landing_dashboard_user,health.landing.dashboard.user,base.model_ir_actions_client,health_base.group_healthcare_base,1,0,0,0
