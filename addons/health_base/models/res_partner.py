@@ -163,6 +163,24 @@ class ResPartner(models.Model):
     vietnamese_name = fields.Char('Vietnamese Name')
     national_id = fields.Char('National ID (CCCD/CMND)')
 
+    # Vietnamese address structure fields
+    province_code = fields.Char('Province Code', help='Mã tỉnh/thành phố')
+    named_area = fields.Char('Named Area', help='Khu vực đặt tên')
+    apartment_number = fields.Char('Apartment Number', help='Số căn hộ')
+    building_name = fields.Char('Building Name', help='Tên tòa nhà')
+    house_number = fields.Char('House Number', help='Số nhà')
+    sub_alley_number = fields.Char('Sub-Alley Number', help='Số ngách')
+    alley_number = fields.Char('Alley Number', help='Số ngõ')
+    ward_commune = fields.Char('Ward/Commune', help='Phường/Xã')
+
+    # Computed concatenated Vietnamese address
+    vietnamese_address = fields.Text(
+        'Vietnamese Address',
+        compute='_compute_vietnamese_address',
+        store=True,
+        help='Automatically formatted Vietnamese address'
+    )
+
     # Address Autocomplete & Geolocation fields
     address_search = fields.Char(
         'Address Search',
@@ -214,6 +232,62 @@ class ResPartner(models.Model):
         sequence = self.env['ir.sequence'].next_by_code('res.partner.patient') or '0001'
         return f'P{sequence}'
     
+    @api.depends('province_code', 'named_area', 'apartment_number', 'building_name',
+                 'house_number', 'sub_alley_number', 'alley_number', 'street', 'street2',
+                 'ward_commune', 'city', 'state_id', 'zip', 'country_id')
+    def _compute_vietnamese_address(self):
+        """Compute formatted Vietnamese address"""
+        for rec in self:
+            address_parts = []
+
+            # Building/Apartment info
+            if rec.apartment_number:
+                address_parts.append(f"Căn hộ {rec.apartment_number}")
+
+            if rec.building_name:
+                address_parts.append(rec.building_name)
+
+            if rec.named_area:
+                address_parts.append(rec.named_area)
+
+            # Street address
+            street_parts = []
+            if rec.house_number:
+                street_parts.append(rec.house_number)
+
+            if rec.sub_alley_number:
+                street_parts.append(f"Ngách {rec.sub_alley_number}")
+
+            if rec.alley_number:
+                street_parts.append(f"Ngõ {rec.alley_number}")
+
+            if rec.street:
+                street_parts.append(rec.street)
+
+            if rec.street2:
+                street_parts.append(rec.street2)
+
+            if street_parts:
+                address_parts.append(', '.join(street_parts))
+
+            # Administrative divisions
+            if rec.ward_commune:
+                address_parts.append(f"Phường/Xã {rec.ward_commune}")
+
+            if rec.city:
+                address_parts.append(rec.city)
+
+            if rec.state_id:
+                address_parts.append(rec.state_id.name)
+
+            if rec.zip:
+                address_parts.append(rec.zip)
+
+            if rec.country_id:
+                address_parts.append(rec.country_id.name)
+
+            rec.vietnamese_address = ', '.join(address_parts) if address_parts else ''
+
     @api.depends('birth_date')
     def _compute_age(self):
         """Compute age from birth date"""

@@ -34,43 +34,6 @@ class HealthContact(models.Model):
         help='Name the person prefers to be called (from Excel CMF)'
     )
 
-    # Vietnamese address structure fields
-    vietnamese_address_line1 = fields.Char(
-        'Named Area',
-        help='Khu vực đặt tên'
-    )
-    
-    vietnamese_address_line2 = fields.Char(
-        'Apartment Number',
-        help='Số căn hộ'
-    )
-    
-    vietnamese_address_line3 = fields.Char(
-        'Building Name',
-        help='Tên tòa nhà'
-    )
-    
-    house_number = fields.Char(
-        'House Number',
-        help='Số nhà'
-    )
-    
-    sub_alley_number = fields.Char(
-        'Sub-Alley Number',
-        help='Số ngách'
-    )
-    
-    alley_number = fields.Char(
-        'Alley Number',
-        help='Số ngõ'
-    )
-    
-    ward_commune = fields.Char(
-        'Ward/Commune',
-        help='Phường/Xã'
-    )
-
-
     # Healthcare communication preferences
     preferred_contact_method = fields.Selection([
         ('phone', 'Phone'),
@@ -378,51 +341,6 @@ class HealthContact(models.Model):
                     vals['country_id'] = vietnam.id
         
         return super().create(vals_list)
-
-    def get_formatted_vietnamese_address(self):
-        """Get formatted Vietnamese address"""
-        self.ensure_one()
-        
-        address_parts = []
-        
-        # Building/Apartment info
-        if self.vietnamese_address_line2:  # Apartment number
-            address_parts.append(f"Căn hộ {self.vietnamese_address_line2}")
-        
-        if self.vietnamese_address_line3:  # Building name
-            address_parts.append(self.vietnamese_address_line3)
-        
-        if self.vietnamese_address_line1:  # Named area
-            address_parts.append(self.vietnamese_address_line1)
-        
-        # Street address
-        street_parts = []
-        if self.house_number:
-            street_parts.append(self.house_number)
-        
-        if self.sub_alley_number:
-            street_parts.append(f"Ngách {self.sub_alley_number}")
-        
-        if self.alley_number:
-            street_parts.append(f"Ngõ {self.alley_number}")
-        
-        if self.street:
-            street_parts.append(self.street)
-        
-        if street_parts:
-            address_parts.append(', '.join(street_parts))
-        
-        # Administrative divisions
-        if self.ward_commune:
-            address_parts.append(f"Phường/Xã {self.ward_commune}")
-        
-        if self.city:
-            address_parts.append(self.city)
-        
-        if self.state_id:
-            address_parts.append(self.state_id.name)
-        
-        return ', '.join(address_parts) if address_parts else ''
 
     def action_create_healthcare_lead(self):
         """Create a healthcare lead for this contact"""

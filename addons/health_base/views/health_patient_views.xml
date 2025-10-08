@@ -105,18 +105,27 @@
                             <field name="country_id" domain="[('code', 'in', ['VN', 'ID', 'SG', 'JP'])]"
                                    options="{'no_create': True}" required="1"/>
                             <field name="address_search" widget="address_autocomplete"
-                                   placeholder="🔍 Start typing address (e.g., 'Nguyen Hue, Ho Chi Minh City')..."
-                                   help="Type minimum 3 characters to search addresses. Select from dropdown to auto-fill all fields."/>
-                            <field name="street" placeholder="Auto-filled from address search above"/>
-                            <field name="street2" placeholder="Apartment, Suite, etc."/>
+                                   placeholder="🔍 Start typing address (min 3 characters)..."
+                                   help="Type to search addresses. Select from dropdown to auto-fill."/>
+                            <field name="street"/>
                             <field name="city"/>
                             <field name="state_id"/>
-                            <field name="zip"/>
+                            <field name="vietnamese_address" readonly="1" string="Full Vietnamese Address"/>
                             <button name="action_geocode_address_photon" string="🗺️ Refresh GPS Coordinates"
                                     type="object" class="btn-secondary"
-                                    help="Update latitude/longitude from current address using Photon API (OpenStreetMap)"
+                                    help="Update latitude/longitude from current address"
                                     icon="fa-map-marker" invisible="not street and not city"/>
-                            <!-- Hidden coordinate fields -->
+                            <!-- Hidden fields for advanced users -->
+                            <field name="street2" invisible="1"/>
+                            <field name="zip" invisible="1"/>
+                            <field name="house_number" invisible="1"/>
+                            <field name="sub_alley_number" invisible="1"/>
+                            <field name="alley_number" invisible="1"/>
+                            <field name="ward_commune" invisible="1"/>
+                            <field name="named_area" invisible="1"/>
+                            <field name="province_code" invisible="1"/>
+                            <field name="apartment_number" invisible="1"/>
+                            <field name="building_name" invisible="1"/>
                             <field name="partner_latitude" invisible="1"/>
                             <field name="partner_longitude" invisible="1"/>
                             <field name="date_localization" invisible="1"/>

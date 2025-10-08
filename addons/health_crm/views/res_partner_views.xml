@@ -36,40 +36,6 @@
                 </group>
             </xpath>
 
-            <!-- Enhanced Vietnamese Address Section -->
-            <xpath expr="//div[@class='o_address_format']" position="replace">
-                <div class="o_address_format">
-                    <field name="street" placeholder="Street..." class="o_address_street"/>
-                    <field name="street2" placeholder="Street 2..." class="o_address_street"/>
-                    
-                    <!-- Vietnamese Address Structure -->
-                    <div class="row">
-                        <div class="col-6">
-                            <field name="house_number" placeholder="Số nhà"/>
-                        </div>
-                        <div class="col-6">
-                            <field name="sub_alley_number" placeholder="Số ngách"/>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-6">
-                            <field name="alley_number" placeholder="Số ngõ"/>
-                        </div>
-                        <div class="col-6">
-                            <field name="ward_commune" placeholder="Phường/Xã"/>
-                        </div>
-                    </div>
-                    <field name="vietnamese_address_line1" placeholder="Khu vực đặt tên"/>
-                    <field name="vietnamese_address_line2" placeholder="Số căn hộ"/>
-                    <field name="vietnamese_address_line3" placeholder="Tên tòa nhà"/>
-
-                    <field name="city" placeholder="City" class="o_address_city"/>
-                    <field name="state_id" class="o_address_state" placeholder="State" options="{'no_open': True, 'no_quick_create': True}"/>
-                    <field name="zip" placeholder="ZIP" class="o_address_zip"/>
-                    <field name="country_id" placeholder="Country" class="o_address_country" options="{'no_open': True, 'no_quick_create': True}"/>
-                </div>
-            </xpath>
-
             <!-- Add Vietnamese communication fields -->
             <xpath expr="//field[@name='mobile']" position="after">
                 <field name="zalo_number" placeholder="Zalo number"/>
