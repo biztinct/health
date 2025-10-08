@@ -21,8 +21,8 @@
         <field name="model">res.partner</field>
         <field name="inherit_id" ref="health_base.view_health_patient_form"/>
         <field name="arch" type="xml">
-            <notebook position="before">
-                <group string="Service History" invisible="not is_patient">
+            <page name="service_history" position="inside">
+                <group string="Service History Summary" invisible="not is_patient">
                     <group>
                         <field name="total_assignments" readonly="1"/>
                         <field name="last_assignment_date" readonly="1"/>
@@ -32,7 +32,7 @@
                         <field name="assignment_notes" placeholder="Special assignment notes (accessibility, language, etc.)"/>
                     </group>
                 </group>
-            </notebook>
+            </page>
         </field>
     </record>
 

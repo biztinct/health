@@ -78,12 +78,12 @@
                         
             </xpath>
             
-            <!-- Active Service Packages with Gauge Widgets -->
-            <xpath expr="//notebook" position="before">
-                <group string="📦 Active Service Packages" name="active_packages_section" 
+            <!-- Active Service Packages with Gauge Widgets - Inject into Active Packages page -->
+            <xpath expr="//page[@name='active_packages']" position="inside">
+                <group string="Active Service Packages" name="active_packages_section"
                        invisible="not is_patient or active_packages_count == 0"
                        groups="health_invoicing.group_health_invoicing_user">
-                    
+
                     <!-- Package Display with Gauge Widgets (Gamification Style) -->
                     <field name="active_service_packages" nolabel="1">
                         <kanban create="false" edit="false" delete="false">
@@ -92,26 +92,26 @@
                             <field name="total_services"/>
                             <field name="consumed_services"/>
                             <field name="remaining_services"/>
-                            
+
                             <templates>
                                 <t t-name="card" class="text-center">
                                     <!-- Package Name (Visually Appealing) -->
                                     <field class="fw-bold fs-4 text-primary" name="name" />
-                                    
+
                                     <!-- Service Type Badge -->
                                     <div class="mt-2">
                                         <span class="badge badge-info">
                                             <field name="service_type"/>
                                         </span>
                                     </div>
-                                    
+
                                     <!-- Gauge Widget for Service Progress -->
                                     <div class="pt-3 fs-1 fw-bolder">
-                                        <field name="consumed_services" 
-                                               widget="gauge" 
+                                        <field name="consumed_services"
+                                               widget="gauge"
                                                options="{'max_field': 'total_services', 'style': 'width:160px; height: 120px;'}" />
                                     </div>
-                                    
+
                                     <!-- Service Count Summary -->
                                     <p class="mt-2">
                                         <small class="text-muted">
@@ -124,7 +124,7 @@
                             </templates>
                         </kanban>
                     </field>
-                    
+
                 </group>
             </xpath>
             

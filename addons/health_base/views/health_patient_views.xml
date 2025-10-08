@@ -55,16 +55,16 @@
                     </div>
 
                     <div class="oe_title">
-                        <h1 class="d-flex justify-content-between align-items-center">
-                            <field name="name" placeholder="Patient Full Name" required="1" class="o_text_overflow"/>
-                            <div class="d-flex gap-3" style="flex-shrink: 0; min-width: 450px;">
-                                <span class="badge bg-info text-white" style="padding: 10px 24px; font-size: 16px; min-width: 200px; border-radius: 20px;">
-                                    <strong>ID:</strong> <field name="patient_code_display" nolabel="1" style="width: 120px !important; min-width: 120px !important;"/>
-                                </span>
-                                <span class="badge bg-secondary text-white" style="padding: 10px 24px; font-size: 16px; min-width: 200px; border-radius: 20px;">
-                                    <strong>Age:</strong> <field name="age_display" nolabel="1" style="width: 120px !important; min-width: 120px !important;"/>
-                                </span>
-                            </div>
+                        <h1 class="d-flex align-items-center gap-3">
+                            <field name="name" placeholder="Patient Full Name" required="1" class="o_text_overflow" style="flex-shrink: 1;"/>
+                            <!-- ID Badge - Light Blue with thick border (matching hierarchy widget) -->
+                            <span class="badge text-white" style="background-color: #E4F4FD; color: #1565C0 !important; padding: 8px 28px; font-size: 28px; font-weight: 700; border-radius: 12px; border: 4px solid #1565C0; flex-shrink: 0;">
+                                <field name="patient_code_display" nolabel="1" style="color: #1565C0 !important; font-size: 28px; font-weight: 700;"/>
+                            </span>
+                            <!-- Age Badge - Light Orange with thick border (matching payer color) -->
+                            <span class="badge text-white" style="background-color: #FEE8C9; color: #D46E00 !important; padding: 8px 28px; font-size: 28px; font-weight: 700; border-radius: 12px; border: 4px solid #D46E00; flex-shrink: 0;">
+                                <field name="age_display" nolabel="1" style="color: #D46E00 !important; font-size: 28px; font-weight: 700;"/>
+                            </span>
                         </h1>
                     </div>
 
@@ -100,40 +100,43 @@
                         </group>
                     </group>
 
-                    <group string="Address Information">
-                        <group>
-                            <!-- Vietnamese Address Fields Only (as per DESIGN_MISSING_FEATURES.md) -->
-                            <field name="province_code"/>
-                            <field name="house_number"/>
-                            <field name="sub_alley_number"/>
-                            <field name="alley_number"/>
-                            <field name="ward_commune"/>
-                            <field name="named_area"/>
-                            <field name="apartment_number"/>
-                            <field name="building_name"/>
-                            <field name="zip" string="Postal Code"/>
-                            <field name="vietnamese_address" readonly="1" string="Vietnamese Address"/>
-
-                            <!-- Hidden standard Odoo fields -->
-                            <field name="country_id" invisible="1"/>
-                            <field name="address_search" invisible="1"/>
-                            <field name="street" invisible="1"/>
-                            <field name="street2" invisible="1"/>
-                            <field name="city" invisible="1"/>
-                            <field name="state_id" invisible="1"/>
-                            <field name="partner_latitude" invisible="1"/>
-                            <field name="partner_longitude" invisible="1"/>
-                            <field name="date_localization" invisible="1"/>
-                        </group>
-                        <group>
-                            <!-- Interactive OpenStreetMap Display -->
-                            <field name="geo_coordinates_display" widget="address_map" nolabel="1"/>
-                        </group>
-                    </group>
-
                     <notebook>
+                        <!-- Address Information Page -->
+                        <page string="&#x1F4CD; Address Information" name="address_info">
+                            <group>
+                                <group>
+                                    <!-- Vietnamese Address Fields Only (as per DESIGN_MISSING_FEATURES.md) -->
+                                    <field name="province_code"/>
+                                    <field name="house_number"/>
+                                    <field name="sub_alley_number"/>
+                                    <field name="alley_number"/>
+                                    <field name="ward_commune"/>
+                                    <field name="named_area"/>
+                                    <field name="apartment_number"/>
+                                    <field name="building_name"/>
+                                    <field name="zip" string="Postal Code"/>
+                                    <field name="vietnamese_address" readonly="1" string="Vietnamese Address"/>
+
+                                    <!-- Hidden standard Odoo fields -->
+                                    <field name="country_id" invisible="1"/>
+                                    <field name="address_search" invisible="1"/>
+                                    <field name="street" invisible="1"/>
+                                    <field name="street2" invisible="1"/>
+                                    <field name="city" invisible="1"/>
+                                    <field name="state_id" invisible="1"/>
+                                    <field name="partner_latitude" invisible="1"/>
+                                    <field name="partner_longitude" invisible="1"/>
+                                    <field name="date_localization" invisible="1"/>
+                                </group>
+                                <group>
+                                    <!-- Interactive OpenStreetMap Display -->
+                                    <field name="geo_coordinates_display" widget="address_map" nolabel="1"/>
+                                </group>
+                            </group>
+                        </page>
+
                         <!-- Medical Information -->
-                        <page string="Medical Information" name="medical_info">
+                        <page string="&#x1F3E5; Medical Information" name="medical_info">
                             <group>
                                 <group string="Vital Information">
                                     <field name="blood_group" required="1"/>
@@ -163,7 +166,7 @@
                         </page>
 
                         <!-- Insurance & Billing -->
-                        <page string="Insurance &amp; Billing" name="insurance_billing">
+                        <page string="&#x1F4B3; Insurance &amp; Billing" name="insurance_billing">
                             <group>
                                 <group string="Insurance Details">
                                     <field name="insurance_provider"/>
@@ -180,8 +183,24 @@
                             </group>
                         </page>
 
+                        <!-- Service History -->
+                        <page string="&#x1F4CB; Service History" name="service_history">
+                            <!-- Content will be injected by health_fieldservice module -->
+                        </page>
+
+                        <!-- Active Service Packages -->
+                        <page string="&#x1F4E6; Active Packages" name="active_packages">
+                            <!-- Content will be injected by health_invoicing module -->
+                        </page>
+
+                        <!-- Healthcare Relationships -->
+                        <page string="&#x1F465; Healthcare Relationships" name="healthcare_relationships">
+                            <field name="id" invisible="1"/>
+                            <widget name="relationship_hierarchy"/>
+                        </page>
+
                         <!-- Patient Journey & Analytics -->
-                        <page string="Patient Journey" name="patient_journey">
+                        <page string="&#x1F680; Patient Journey" name="patient_journey">
                             <group>
                                 <group string="Registration Details">
                                     <field name="source_details" placeholder="Specific source details"/>
@@ -206,7 +225,7 @@
                         </page>
 
                         <!-- Clinical Notes & Communications -->
-                        <page string="Clinical Notes" name="clinical_notes">
+                        <page string="&#x1F4DD; Clinical Notes" name="clinical_notes">
                             <div>
                                 <h4>Clinical Notes &amp; Provider Communications</h4>
                                 <p class="text-muted">
