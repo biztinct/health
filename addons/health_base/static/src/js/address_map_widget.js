@@ -15,6 +15,7 @@ export class AddressMapWidget extends Component {
         record: Object,
         name: String,
         readonly: { type: Boolean, optional: true },
+        "*": true,  // Accept any additional props from Odoo framework
     };
 
     setup() {
