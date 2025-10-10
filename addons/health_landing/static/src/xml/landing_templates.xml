@@ -16,9 +16,76 @@
                     </p>
                 </div>
 
+                <!-- Search Bar -->
+                <div class="health_landing_search_container">
+                    <div class="health_landing_search_wrapper">
+                        <i class="fa fa-search health_landing_search_icon"/>
+                        <input
+                            type="text"
+                            class="health_landing_search_input"
+                            placeholder="Search modules and features... (Ctrl+K)"
+                            t-model="state.searchQuery"
+                            t-on-input="onSearchInput"
+                            t-ref="searchInput"
+                        />
+                        <button
+                            class="health_landing_search_clear"
+                            t-if="state.searchQuery"
+                            t-on-click="clearSearch"
+                        >
+                            <i class="fa fa-times"/>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Recently Accessed -->
+                <div class="health_landing_quick_access" t-if="state.recentlyAccessed.length > 0 and !state.searchQuery">
+                    <div class="health_landing_quick_access_title">
+                        <i class="fa fa-clock-o"/> Recently Accessed
+                    </div>
+                    <div class="health_landing_quick_access_grid">
+                        <t t-foreach="state.recentlyAccessed" t-as="recent" t-key="recent.id">
+                            <div class="health_landing_quick_card" t-on-click="() => this.launchAction(recent.id, recent.name, recent.icon)">
+                                <div class="health_landing_quick_card_icon">
+                                    <i t-att-class="'fa ' + recent.icon"/>
+                                </div>
+                                <div class="health_landing_quick_card_label" t-esc="recent.name"/>
+                                <i
+                                    class="fa health_landing_quick_card_star"
+                                    t-att-class="isFavorite(recent.id) ? 'fa-star' : 'fa-star-o'"
+                                    t-on-click.stop="() => this.toggleFavorite(recent.id, recent.name, recent.icon)"
+                                />
+                            </div>
+                        </t>
+                    </div>
+                </div>
+
+                <!-- Favorites -->
+                <div class="health_landing_quick_access" t-if="state.favorites.length > 0 and !state.searchQuery">
+                    <div class="health_landing_quick_access_title">
+                        <i class="fa fa-star"/> Favorites
+                    </div>
+                    <div class="health_landing_quick_access_grid">
+                        <t t-foreach="state.favorites" t-as="favorite" t-key="favorite.id">
+                            <div class="health_landing_quick_card" t-on-click="() => this.launchAction(favorite.id, favorite.name, favorite.icon)">
+                                <div class="health_landing_quick_card_icon">
+                                    <i t-att-class="'fa ' + favorite.icon"/>
+                                </div>
+                                <div class="health_landing_quick_card_label" t-esc="favorite.name"/>
+                                <i
+                                    class="fa fa-star health_landing_quick_card_star"
+                                    t-on-click.stop="() => this.toggleFavorite(favorite.id, favorite.name, favorite.icon)"
+                                />
+                            </div>
+                        </t>
+                    </div>
+                </div>
+
+                <!-- Main Module Cards -->
                 <div class="health_landing_card_grid">
-                    <t t-foreach="modules" t-as="module" t-key="module.id">
+                    <t t-foreach="getDisplayModules()" t-as="module" t-key="module.id">
                         <div class="health_landing_card"
+                             tabindex="0"
                              t-att-class="module.class"
                              t-on-click="() => this.showSubmenu(module)">
                             <div class="health_landing_card_icon">
@@ -28,6 +95,14 @@
                             <div class="health_landing_card_description" t-esc="module.description"/>
                         </div>
                     </t>
+                </div>
+
+                <!-- No Results Message -->
+                <div class="health_landing_empty" t-if="state.searchQuery and state.filteredModules.length === 0">
+                    <div class="health_landing_empty_icon">
+                        <i class="fa fa-search"/>
+                    </div>
+                    <p>No modules or features found for "<t t-esc="state.searchQuery"/>"</p>
                 </div>
             </t>
 
@@ -62,8 +137,9 @@
                 <div class="health_landing_submenu_grid">
                     <t t-foreach="state.currentModule.submenus" t-as="submenu" t-key="submenu.name">
                         <div class="health_landing_card health_landing_submenu_card"
+                             tabindex="0"
                              t-att-class="state.currentModule.class"
-                             t-on-click="() => this.launchAction(submenu.action)">
+                             t-on-click="() => this.launchAction(submenu.action, submenu.name, submenu.icon)">
                             <div class="health_landing_card_icon">
                                 <i t-att-class="'fa ' + submenu.icon"/>
                             </div>
@@ -71,6 +147,75 @@
                             <div class="health_landing_card_description" t-esc="submenu.description"/>
                         </div>
                     </t>
+                </div>
+            </t>
+
+            <!-- Hub-and-Spoke View -->
+            <t t-if="state.currentView === 'hub_spoke' and state.selectedPatientId">
+                <HubSpokeWidget
+                    patientId="state.selectedPatientId"
+                    patientName="state.selectedPatientName"
+                    onBack="() => this.showMain()"
+                    onSpokeClick="(spoke, patientId) => this.onSpokeClick(spoke, patientId)"
+                />
+
+                <!-- Patient Spoke Modal -->
+                <t t-if="state.selectedSpoke">
+                    <PatientSpokeModal
+                        spoke="state.selectedSpoke"
+                        patientId="state.selectedPatientId"
+                        onClose="() => this.closeSpokeModal()"
+                        onEdit="(spokeId) => this.onSpokeEdit(spokeId)"
+                        onItemClick="(item, itemType, spokeId) => this.onSpokeItemClick(item, itemType, spokeId)"
+                    />
+                </t>
+            </t>
+
+            <!-- Modal Popup (for future enhancement) -->
+            <t t-if="state.modalModule">
+                <div class="health_landing_modal_backdrop" t-on-click="closeModal">
+                    <div class="health_landing_modal" t-att-class="state.modalModule.class" t-on-click.stop="">
+                        <!-- Modal Header -->
+                        <div class="health_landing_modal_header">
+                            <button class="health_landing_modal_close" t-on-click="closeModal">
+                                <i class="fa fa-times"/>
+                            </button>
+                            <div class="health_landing_modal_icon">
+                                <i t-att-class="'fa ' + state.modalModule.icon"/>
+                            </div>
+                            <h2 class="health_landing_modal_title" t-esc="state.modalModule.name"/>
+                            <p class="health_landing_modal_subtitle" t-esc="state.modalModule.description"/>
+                        </div>
+
+                        <!-- Modal Body -->
+                        <div class="health_landing_modal_body">
+                            <p class="health_landing_modal_description">
+                                Explore the full range of features available in this module.
+                            </p>
+
+                            <!-- Quick Actions List -->
+                            <div class="health_landing_modal_actions_title">Quick Actions</div>
+                            <ul class="health_landing_modal_actions_list">
+                                <t t-foreach="state.modalModule.submenus.slice(0, 5)" t-as="action" t-key="action.name">
+                                    <li class="health_landing_modal_action_item" t-on-click="() => this.launchAction(action.action, action.name, action.icon)">
+                                        <i t-att-class="'fa ' + action.icon + ' health_landing_modal_action_icon'"/>
+                                        <span class="health_landing_modal_action_text" t-esc="action.name"/>
+                                        <i class="fa fa-arrow-right"/>
+                                    </li>
+                                </t>
+                            </ul>
+                        </div>
+
+                        <!-- Modal Footer -->
+                        <div class="health_landing_modal_footer">
+                            <button class="health_landing_modal_btn health_landing_modal_btn_secondary" t-on-click="closeModal">
+                                Close
+                            </button>
+                            <button class="health_landing_modal_btn health_landing_modal_btn_primary" t-on-click="() => { this.showSubmenu(state.modalModule); this.closeModal(); }">
+                                <i class="fa fa-th"/> View All Features
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </t>
 

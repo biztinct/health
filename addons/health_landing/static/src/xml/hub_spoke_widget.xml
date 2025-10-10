@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <!-- Hub-and-Spoke Patient Dashboard Template -->
+    <t t-name="health_landing.HubSpokeTemplate">
+        <div class="hub_spoke_container">
+
+            <!-- Header with breadcrumb and back button -->
+            <div class="hub_spoke_header">
+                <button class="health_landing_back_btn" t-on-click="props.onBack">
+                    <i class="fa fa-arrow-left"/> Back to Dashboard
+                </button>
+
+                <div class="health_landing_breadcrumb">
+                    <span class="health_landing_breadcrumb_item">
+                        <i class="fa fa-home"/> Home
+                    </span>
+                    <span class="health_landing_breadcrumb_separator">/</span>
+                    <span class="health_landing_breadcrumb_item">Patient Management</span>
+                    <span class="health_landing_breadcrumb_separator">/</span>
+                    <span class="health_landing_breadcrumb_item">Client</span>
+                    <span class="health_landing_breadcrumb_separator">/</span>
+                    <span class="health_landing_breadcrumb_item" t-esc="props.patientName"/>
+                </div>
+
+                <h1 class="hub_spoke_title">
+                    <i class="fa fa-user-circle"/> <t t-esc="props.patientName"/>
+                </h1>
+                <p class="hub_spoke_subtitle">
+                    Click on any section to view details
+                </p>
+            </div>
+
+            <!-- Loading State -->
+            <div class="health_landing_loading" t-if="state.loading">
+                <i class="fa fa-spinner health_landing_loading_spinner"/>
+                <p>Loading patient data...</p>
+            </div>
+
+            <!-- SVG Hub-and-Spoke Diagram -->
+            <div class="hub_spoke_svg_container" t-if="!state.loading">
+                <svg
+                    t-ref="hubSpokeSvg"
+                    class="hub_spoke_svg"
+                    t-att-width="svgWidth"
+                    t-att-height="svgHeight"
+                    viewBox="0 0 800 600"
+                    preserveAspectRatio="xMidYMid meet"
+                >
+                    <!-- Define gradients and filters -->
+                    <defs>
+                        <!-- Glow filter for hover effect -->
+                        <filter id="glow">
+                            <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
+                            <feMerge>
+                                <feMergeNode in="coloredBlur"/>
+                                <feMergeNode in="SourceGraphic"/>
+                            </feMerge>
+                        </filter>
+
+                        <!-- Gradient for each spoke -->
+                        <linearGradient t-foreach="spokes" t-as="spoke" t-key="spoke.id"
+                                        t-attf-id="gradient_{{spoke.id}}"
+                                        x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" t-att-stop-color="spoke.color" stop-opacity="0.3"/>
+                            <stop offset="100%" t-att-stop-color="spoke.color" stop-opacity="1"/>
+                        </linearGradient>
+                    </defs>
+
+                    <!-- Connecting lines from hub to spokes -->
+                    <g class="hub_spoke_lines">
+                        <t t-foreach="spokes" t-as="spoke" t-key="spoke.id + '_line'">
+                            <path
+                                t-att-class="getLineClasses(spoke)"
+                                t-att-d="getSpokePath(spoke.angle)"
+                                t-att-stroke="spoke.color"
+                                stroke-width="3"
+                                stroke-dasharray="5,5"
+                                fill="none"
+                            />
+                        </t>
+                    </g>
+
+                    <!-- Center hub (Patient) -->
+                    <g class="hub_spoke_center" t-on-click="onHubClick">
+                        <!-- Outer circle with light fill -->
+                        <circle
+                            t-att-cx="centerX"
+                            t-att-cy="centerY"
+                            t-att-r="hubRadius"
+                            class="hub_spoke_center_circle"
+                            fill="#E3F2FD"
+                            stroke="#1565C0"
+                            stroke-width="4"
+                        />
+
+                        <!-- Icon -->
+                        <foreignObject
+                            t-att-x="centerX - 30"
+                            t-att-y="centerY - 40"
+                            width="60"
+                            height="60"
+                        >
+                            <div xmlns="http://www.w3.org/1999/xhtml" class="hub_spoke_center_icon">
+                                <i class="fa fa-user-circle"/>
+                            </div>
+                        </foreignObject>
+
+                        <!-- Patient name text -->
+                        <text
+                            t-att-x="centerX"
+                            t-att-y="centerY + 30"
+                            class="hub_spoke_center_text"
+                            text-anchor="middle"
+                            fill="#1565C0"
+                            font-size="16"
+                            font-weight="700"
+                        >
+                            <t t-esc="props.patientName"/>
+                        </text>
+                    </g>
+
+                    <!-- Spoke nodes -->
+                    <g class="hub_spoke_nodes">
+                        <t t-foreach="spokes" t-as="spoke" t-key="spoke.id + '_node'">
+                            <g
+                                t-att-class="getSpokeClasses(spoke)"
+                                t-att-transform="`translate(${getSpokePosition(spoke.angle).x}, ${getSpokePosition(spoke.angle).y})`"
+                                t-on-mouseenter="() => this.onSpokeMouseEnter(spoke)"
+                                t-on-mouseleave="() => this.onSpokeMouseLeave()"
+                                t-on-click="() => this.onSpokeClick(spoke)"
+                            >
+                                <!-- Spoke circle background -->
+                                <circle
+                                    r="60"
+                                    t-att-fill="spoke.lightColor"
+                                    t-att-stroke="spoke.color"
+                                    stroke-width="4"
+                                    class="hub_spoke_node_circle"
+                                />
+
+                                <!-- Icon -->
+                                <foreignObject
+                                    x="-25"
+                                    y="-30"
+                                    width="50"
+                                    height="50"
+                                >
+                                    <div xmlns="http://www.w3.org/1999/xhtml" class="hub_spoke_node_icon">
+                                        <i t-att-class="`fa ${spoke.icon}`" t-att-style="`color: ${spoke.color};`"/>
+                                    </div>
+                                </foreignObject>
+
+                                <!-- Label text -->
+                                <text
+                                    x="0"
+                                    y="28"
+                                    class="hub_spoke_node_label"
+                                    text-anchor="middle"
+                                    t-att-fill="spoke.color"
+                                    font-size="14"
+                                    font-weight="600"
+                                >
+                                    <t t-esc="spoke.label"/>
+                                </text>
+                            </g>
+                        </t>
+                    </g>
+                </svg>
+
+                <!-- Legend / Instructions -->
+                <div class="hub_spoke_legend">
+                    <p>
+                        <i class="fa fa-hand-pointer-o"/> Click on any section to view details
+                    </p>
+                </div>
+            </div>
+        </div>
+    </t>
+
+</templates>

@@ -1,54 +1,149 @@
 /* ============================================================================
-   Healthcare Landing Dashboard - Professional Styling
-   Inspired by: Material Design, Hierarchy Widget Colors, Modern SaaS Apps
+   Healthcare Landing Dashboard - Professional Styling v2.0
+   Inspired by: Material Design 3, Modern SaaS Apps, Healthcare Hierarchy Widget
+   Features: Material elevation, smooth animations, responsive design, accessibility
    ============================================================================ */
 
-/* Theme Color Variables */
+/* Theme Color Variables - Extended Palette */
 :root {
+    /* Patient Management - Blue */
     --color-patient-primary: #1565C0;
     --color-patient-light: #E4F4FD;
+    --color-patient-dark: #0D47A1;
+    --color-patient-accent: #42A5F5;
+
+    /* Scheduling & Staff - Cyan */
     --color-scheduling-primary: #0097A7;
     --color-scheduling-light: #B2EBF2;
+    --color-scheduling-dark: #006064;
+    --color-scheduling-accent: #26C6DA;
+
+    /* CRM - Teal */
     --color-crm-primary: #00796B;
     --color-crm-light: #D9F2F0;
+    --color-crm-dark: #004D40;
+    --color-crm-accent: #26A69A;
+
+    /* Field Service - Orange */
     --color-fieldservice-primary: #D46E00;
     --color-fieldservice-light: #FEE8C9;
+    --color-fieldservice-dark: #BF360C;
+    --color-fieldservice-accent: #FF9800;
+
+    /* Service Packages - Purple */
     --color-packages-primary: #6B4BA8;
     --color-packages-light: #E8E0F5;
+    --color-packages-dark: #4A148C;
+    --color-packages-accent: #9C27B0;
+
+    /* Advanced Pricelist - Amber */
     --color-pricing-primary: #F57C00;
     --color-pricing-light: #FFE0B2;
+    --color-pricing-dark: #E65100;
+    --color-pricing-accent: #FFA726;
+
+    /* Billing & Invoicing - Green */
     --color-billing-primary: #43A047;
     --color-billing-light: #DBF0DB;
+    --color-billing-dark: #2E7D32;
+    --color-billing-accent: #66BB6A;
+
+    /* Facilities - Red */
     --color-facilities-primary: #C32B2E;
     --color-facilities-light: #FBE3E1;
+    --color-facilities-dark: #B71C1C;
+    --color-facilities-accent: #EF5350;
+
+    /* Configuration - Grey */
     --color-config-primary: #546E7A;
     --color-config-light: #ECEFF1;
+    --color-config-dark: #37474F;
+    --color-config-accent: #78909C;
+
+    /* UI Colors */
+    --color-text-primary: #2C3E50;
+    --color-text-secondary: #7F8C8D;
+    --color-text-hint: #95A5A6;
+    --color-background: #F5F7FA;
+    --color-surface: #FFFFFF;
+    --color-overlay: rgba(0, 0, 0, 0.5);
+
+    /* Material Design Elevation Shadows */
+    --elevation-0: none;
+    --elevation-1: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.08);
+    --elevation-2: 0 3px 6px rgba(0, 0, 0, 0.12), 0 2px 4px rgba(0, 0, 0, 0.08);
+    --elevation-4: 0 6px 12px rgba(0, 0, 0, 0.15), 0 4px 8px rgba(0, 0, 0, 0.10);
+    --elevation-8: 0 12px 24px rgba(0, 0, 0, 0.18), 0 8px 16px rgba(0, 0, 0, 0.12);
+    --elevation-16: 0 24px 48px rgba(0, 0, 0, 0.22), 0 16px 32px rgba(0, 0, 0, 0.15);
+
+    /* Animation Timing */
+    --timing-fast: 150ms;
+    --timing-normal: 250ms;
+    --timing-slow: 350ms;
+    --easing-standard: cubic-bezier(0.4, 0, 0.2, 1);
+    --easing-decelerate: cubic-bezier(0, 0, 0.2, 1);
+    --easing-accelerate: cubic-bezier(0.4, 0, 1, 1);
+}
+
+/* Global Font Stack */
+* {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 
 /* Main Dashboard Container */
 .health_landing_dashboard {
-    padding: 32px;
-    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    padding: 48px 32px;
+    background: linear-gradient(135deg, #f5f7fa 0%, #e8eef5 100%);
     min-height: 100vh;
+    animation: fadeIn var(--timing-slow) var(--easing-decelerate);
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .health_landing_dashboard_header {
-    margin-bottom: 40px;
+    margin-bottom: 48px;
+    text-align: center;
 }
 
 .health_landing_dashboard_title {
-    font-size: 36px;
+    font-size: 42px;
     font-weight: 700;
-    color: #2C3E50;
-    margin-bottom: 8px;
-    text-align: center;
+    color: var(--color-text-primary);
+    margin-bottom: 12px;
+    letter-spacing: -0.5px;
+    line-height: 1.2;
+}
+
+.health_landing_dashboard_title i {
+    color: var(--color-patient-primary);
+    margin-right: 12px;
+    animation: heartbeat 1.5s ease-in-out infinite;
+}
+
+@keyframes heartbeat {
+    0%, 100% { transform: scale(1); }
+    10%, 30% { transform: scale(1.1); }
+    20%, 40% { transform: scale(1); }
 }
 
 .health_landing_dashboard_subtitle {
-    font-size: 16px;
-    color: #7F8C8D;
-    text-align: center;
-    margin-bottom: 24px;
+    font-size: 17px;
+    font-weight: 400;
+    color: var(--color-text-secondary);
+    line-height: 1.5;
+    max-width: 600px;
+    margin: 0 auto;
 }
 
 /* Breadcrumb Navigation */
@@ -123,40 +218,80 @@
     margin: 0 auto;
 }
 
-/* Individual Card Styling */
+/* Individual Card Styling - Material Design Enhanced */
 .health_landing_card {
-    background: white;
-    border-radius: 16px;
-    padding: 32px 24px;
+    background: var(--color-surface);
+    border-radius: 20px;
+    padding: 36px 28px;
     text-align: center;
     cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all var(--timing-normal) var(--easing-standard);
     border: 4px solid;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    box-shadow: var(--elevation-2);
     position: relative;
     overflow: hidden;
+    will-change: transform, box-shadow;
 }
 
+/* Ripple Effect Container */
 .health_landing_card::before {
     content: '';
     position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    opacity: 0;
-    transition: opacity 0.3s ease;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.6);
+    transform: translate(-50%, -50%);
+    transition: width var(--timing-slow) var(--easing-standard),
+                height var(--timing-slow) var(--easing-standard);
     pointer-events: none;
 }
 
-.health_landing_card:hover {
-    transform: translateY(-6px);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+.health_landing_card:active::before {
+    width: 300px;
+    height: 300px;
 }
 
-.health_landing_card:hover::before {
-    opacity: 0.05;
+/* Hover State - Material Elevation Lift */
+.health_landing_card:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: var(--elevation-8);
 }
+
+/* Focus State for Accessibility */
+.health_landing_card:focus {
+    outline: 3px solid var(--color-patient-accent);
+    outline-offset: 4px;
+}
+
+/* Staggered Entrance Animation */
+.health_landing_card {
+    animation: cardEnter var(--timing-slow) var(--easing-decelerate) backwards;
+}
+
+@keyframes cardEnter {
+    from {
+        opacity: 0;
+        transform: translateY(30px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* Stagger delays for each card */
+.health_landing_card:nth-child(1) { animation-delay: 0ms; }
+.health_landing_card:nth-child(2) { animation-delay: 50ms; }
+.health_landing_card:nth-child(3) { animation-delay: 100ms; }
+.health_landing_card:nth-child(4) { animation-delay: 150ms; }
+.health_landing_card:nth-child(5) { animation-delay: 200ms; }
+.health_landing_card:nth-child(6) { animation-delay: 250ms; }
+.health_landing_card:nth-child(7) { animation-delay: 300ms; }
+.health_landing_card:nth-child(8) { animation-delay: 350ms; }
+.health_landing_card:nth-child(9) { animation-delay: 400ms; }
 
 /* Module-Specific Card Colors */
 .health_landing_card.module-patient {
@@ -204,16 +339,18 @@
     background: linear-gradient(135deg, white 0%, var(--color-config-light) 100%);
 }
 
-/* Card Icon */
+/* Card Icon - Enhanced Animation */
 .health_landing_card_icon {
-    font-size: 56px;
-    margin-bottom: 16px;
+    font-size: 64px;
+    margin-bottom: 20px;
     display: inline-block;
-    transition: transform 0.3s ease;
+    transition: transform var(--timing-normal) var(--easing-standard);
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
 }
 
 .health_landing_card:hover .health_landing_card_icon {
-    transform: scale(1.1);
+    transform: scale(1.15) rotate(-5deg);
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.15));
 }
 
 .module-patient .health_landing_card_icon { color: var(--color-patient-primary); }
@@ -226,18 +363,23 @@
 .module-facilities .health_landing_card_icon { color: var(--color-facilities-primary); }
 .module-config .health_landing_card_icon { color: var(--color-config-primary); }
 
-/* Card Label */
+/* Card Label - Improved Typography */
 .health_landing_card_label {
-    font-size: 20px;
-    font-weight: 700;
-    color: #2C3E50;
-    margin-bottom: 8px;
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--color-text-primary);
+    margin-bottom: 10px;
+    letter-spacing: -0.3px;
+    line-height: 1.3;
 }
 
 .health_landing_card_description {
-    font-size: 13px;
-    color: #7F8C8D;
-    line-height: 1.4;
+    font-size: 14px;
+    font-weight: 400;
+    color: var(--color-text-secondary);
+    line-height: 1.5;
+    max-width: 280px;
+    margin: 0 auto;
 }
 
 /* Submenu Card (Smaller) */
@@ -331,11 +473,436 @@
 .health_landing_empty {
     text-align: center;
     padding: 60px 20px;
-    color: #7F8C8D;
+    color: var(--color-text-secondary);
 }
 
 .health_landing_empty_icon {
     font-size: 64px;
     margin-bottom: 16px;
     opacity: 0.3;
+}
+
+/* ============================================================================
+   MODAL / POPUP SYSTEM - Card Details
+   ============================================================================ */
+
+/* Modal Backdrop */
+.health_landing_modal_backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: var(--color-overlay);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    z-index: 9998;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    animation: backdropFadeIn var(--timing-normal) var(--easing-decelerate);
+}
+
+@keyframes backdropFadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+/* Modal Container */
+.health_landing_modal {
+    background: var(--color-surface);
+    border-radius: 24px;
+    box-shadow: var(--elevation-16);
+    max-width: 600px;
+    width: 100%;
+    max-height: 90vh;
+    overflow: hidden;
+    position: relative;
+    z-index: 9999;
+    animation: modalSlideIn var(--timing-normal) var(--easing-decelerate);
+}
+
+@keyframes modalSlideIn {
+    from {
+        opacity: 0;
+        transform: scale(0.9) translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+/* Modal Header */
+.health_landing_modal_header {
+    padding: 32px;
+    text-align: center;
+    position: relative;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.health_landing_modal_close {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    width: 40px;
+    height: 40px;
+    border: none;
+    background: rgba(0, 0, 0, 0.05);
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all var(--timing-fast) var(--easing-standard);
+    font-size: 20px;
+    color: var(--color-text-secondary);
+}
+
+.health_landing_modal_close:hover {
+    background: rgba(0, 0, 0, 0.1);
+    transform: rotate(90deg);
+    color: var(--color-text-primary);
+}
+
+.health_landing_modal_icon {
+    font-size: 72px;
+    margin-bottom: 16px;
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.15));
+}
+
+.health_landing_modal_title {
+    font-size: 28px;
+    font-weight: 600;
+    color: var(--color-text-primary);
+    margin-bottom: 8px;
+    letter-spacing: -0.4px;
+}
+
+.health_landing_modal_subtitle {
+    font-size: 15px;
+    color: var(--color-text-secondary);
+    line-height: 1.5;
+}
+
+/* Modal Body */
+.health_landing_modal_body {
+    padding: 32px;
+    overflow-y: auto;
+    max-height: calc(90vh - 280px);
+}
+
+.health_landing_modal_description {
+    font-size: 16px;
+    color: var(--color-text-primary);
+    line-height: 1.6;
+    margin-bottom: 24px;
+}
+
+.health_landing_modal_stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.health_landing_modal_stat {
+    background: var(--color-background);
+    border-radius: 12px;
+    padding: 16px;
+    text-align: center;
+}
+
+.health_landing_modal_stat_value {
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--color-text-primary);
+    margin-bottom: 4px;
+}
+
+.health_landing_modal_stat_label {
+    font-size: 12px;
+    color: var(--color-text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.health_landing_modal_actions_list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.health_landing_modal_actions_title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--color-text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 12px;
+}
+
+.health_landing_modal_action_item {
+    padding: 12px 16px;
+    background: var(--color-background);
+    border-radius: 10px;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    transition: all var(--timing-fast) var(--easing-standard);
+}
+
+.health_landing_modal_action_item:hover {
+    background: var(--color-patient-light);
+    transform: translateX(4px);
+}
+
+.health_landing_modal_action_icon {
+    font-size: 18px;
+    color: var(--color-patient-primary);
+    width: 24px;
+    text-align: center;
+}
+
+.health_landing_modal_action_text {
+    font-size: 14px;
+    color: var(--color-text-primary);
+    flex: 1;
+}
+
+/* Modal Footer */
+.health_landing_modal_footer {
+    padding: 24px 32px;
+    border-top: 1px solid rgba(0, 0, 0, 0.08);
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+}
+
+.health_landing_modal_btn {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 10px;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all var(--timing-fast) var(--easing-standard);
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.health_landing_modal_btn_secondary {
+    background: var(--color-background);
+    color: var(--color-text-primary);
+}
+
+.health_landing_modal_btn_secondary:hover {
+    background: rgba(0, 0, 0, 0.1);
+}
+
+.health_landing_modal_btn_primary {
+    background: var(--color-patient-primary);
+    color: white;
+    box-shadow: var(--elevation-2);
+}
+
+.health_landing_modal_btn_primary:hover {
+    background: var(--color-patient-dark);
+    box-shadow: var(--elevation-4);
+    transform: translateY(-2px);
+}
+
+/* Module-Specific Modal Icon Colors */
+.health_landing_modal.module-patient .health_landing_modal_icon { color: var(--color-patient-primary); }
+.health_landing_modal.module-scheduling .health_landing_modal_icon { color: var(--color-scheduling-primary); }
+.health_landing_modal.module-crm .health_landing_modal_icon { color: var(--color-crm-primary); }
+.health_landing_modal.module-fieldservice .health_landing_modal_icon { color: var(--color-fieldservice-primary); }
+.health_landing_modal.module-packages .health_landing_modal_icon { color: var(--color-packages-primary); }
+.health_landing_modal.module-pricing .health_landing_modal_icon { color: var(--color-pricing-primary); }
+.health_landing_modal.module-billing .health_landing_modal_icon { color: var(--color-billing-primary); }
+.health_landing_modal.module-facilities .health_landing_modal_icon { color: var(--color-facilities-primary); }
+.health_landing_modal.module-config .health_landing_modal_icon { color: var(--color-config-primary); }
+
+/* ============================================================================
+   SEARCH BAR
+   ============================================================================ */
+
+.health_landing_search_container {
+    max-width: 600px;
+    margin: 0 auto 32px;
+    position: relative;
+}
+
+.health_landing_search_wrapper {
+    position: relative;
+}
+
+.health_landing_search_icon {
+    position: absolute;
+    left: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 20px;
+    color: var(--color-text-hint);
+    pointer-events: none;
+}
+
+.health_landing_search_input {
+    width: 100%;
+    padding: 16px 20px 16px 56px;
+    font-size: 16px;
+    border: 2px solid rgba(0, 0, 0, 0.1);
+    border-radius: 50px;
+    background: var(--color-surface);
+    box-shadow: var(--elevation-1);
+    transition: all var(--timing-fast) var(--easing-standard);
+    outline: none;
+}
+
+.health_landing_search_input:focus {
+    border-color: var(--color-patient-primary);
+    box-shadow: var(--elevation-4), 0 0 0 4px rgba(21, 101, 192, 0.1);
+}
+
+.health_landing_search_input::placeholder {
+    color: var(--color-text-hint);
+}
+
+.health_landing_search_clear {
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 32px;
+    height: 32px;
+    border: none;
+    background: rgba(0, 0, 0, 0.05);
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all var(--timing-fast) var(--easing-standard);
+    font-size: 14px;
+    color: var(--color-text-secondary);
+}
+
+.health_landing_search_clear:hover {
+    background: rgba(0, 0, 0, 0.1);
+}
+
+/* ============================================================================
+   RECENTLY ACCESSED & FAVORITES
+   ============================================================================ */
+
+.health_landing_quick_access {
+    max-width: 1400px;
+    margin: 0 auto 40px;
+}
+
+.health_landing_quick_access_title {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--color-text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.health_landing_quick_access_grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 16px;
+}
+
+.health_landing_quick_card {
+    background: var(--color-surface);
+    border-radius: 12px;
+    padding: 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    transition: all var(--timing-fast) var(--easing-standard);
+    box-shadow: var(--elevation-1);
+    border: 2px solid transparent;
+}
+
+.health_landing_quick_card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--elevation-4);
+}
+
+.health_landing_quick_card_icon {
+    font-size: 24px;
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.health_landing_quick_card_label {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--color-text-primary);
+    flex: 1;
+}
+
+.health_landing_quick_card_star {
+    font-size: 16px;
+    color: var(--color-pricing-primary);
+    cursor: pointer;
+    transition: all var(--timing-fast) var(--easing-standard);
+}
+
+.health_landing_quick_card_star:hover {
+    transform: scale(1.2);
+}
+
+/* Mobile Responsiveness for Modal */
+@media (max-width: 768px) {
+    .health_landing_modal {
+        max-width: 100%;
+        border-radius: 24px 24px 0 0;
+        margin-top: auto;
+    }
+
+    .health_landing_modal_header {
+        padding: 24px;
+    }
+
+    .health_landing_modal_icon {
+        font-size: 56px;
+    }
+
+    .health_landing_modal_title {
+        font-size: 24px;
+    }
+
+    .health_landing_modal_body {
+        padding: 24px;
+    }
+
+    .health_landing_modal_footer {
+        padding: 20px 24px;
+        flex-direction: column;
+    }
+
+    .health_landing_modal_btn {
+        width: 100%;
+        justify-content: center;
+    }
 }

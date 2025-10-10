@@ -1,0 +1,349 @@
+/* ============================================================================
+   Hub-and-Spoke Patient Dashboard - Professional Radial Visualization
+   Matches Material Design aesthetics from landing dashboard
+   ============================================================================ */
+
+/* Container */
+.hub_spoke_container {
+    padding: 48px 32px;
+    background: linear-gradient(135deg, #f5f7fa 0%, #e8eef5 100%);
+    min-height: 100vh;
+    animation: fadeIn var(--timing-slow) var(--easing-decelerate);
+}
+
+/* Header */
+.hub_spoke_header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.hub_spoke_title {
+    font-size: 38px;
+    font-weight: 700;
+    color: var(--color-text-primary);
+    margin-bottom: 12px;
+    letter-spacing: -0.5px;
+}
+
+.hub_spoke_title i {
+    color: var(--color-patient-primary);
+    margin-right: 12px;
+}
+
+.hub_spoke_subtitle {
+    font-size: 16px;
+    font-weight: 400;
+    color: var(--color-text-secondary);
+    margin-top: 8px;
+}
+
+/* SVG Container */
+.hub_spoke_svg_container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.hub_spoke_svg {
+    max-width: 100%;
+    height: auto;
+    filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.1));
+}
+
+/* Center Hub - Patient (Lighter Color) */
+.hub_spoke_center {
+    cursor: pointer;
+    transition: all var(--timing-normal) var(--easing-standard);
+    transform-origin: center;
+}
+
+.hub_spoke_center:hover {
+    transform: scale(1.15);
+    filter: drop-shadow(0 6px 16px rgba(21, 101, 192, 0.3));
+}
+
+.hub_spoke_center_circle {
+    transition: all var(--timing-normal) var(--easing-standard);
+    fill: #E3F2FD !important; /* Light blue instead of dark */
+}
+
+.hub_spoke_center_icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 48px;
+    color: #1565C0;
+    pointer-events: none;
+}
+
+.hub_spoke_center_text {
+    pointer-events: none;
+    transition: all var(--timing-normal) var(--easing-standard);
+    fill: #1565C0 !important;
+    font-weight: 600;
+}
+
+.hub_spoke_center:hover .hub_spoke_center_text {
+    font-size: 18px;
+}
+
+/* Spoke Lines */
+.hub_spoke_line {
+    transition: all var(--timing-normal) var(--easing-standard);
+    opacity: 0.4;
+}
+
+.hub_spoke_line_hovered {
+    opacity: 1;
+    stroke-width: 5;
+    stroke-dasharray: none;
+    filter: drop-shadow(0 2px 8px currentColor);
+}
+
+/* Spoke Nodes */
+.hub_spoke_node {
+    cursor: pointer;
+    transition: all var(--timing-normal) var(--easing-standard);
+}
+
+.hub_spoke_node_circle {
+    transition: all var(--timing-normal) var(--easing-standard);
+}
+
+.hub_spoke_node:hover .hub_spoke_node_circle {
+    transform: scale(1.15);
+    filter: drop-shadow(0 6px 16px rgba(0, 0, 0, 0.25));
+}
+
+.hub_spoke_node_hovered .hub_spoke_node_circle {
+    transform: scale(1.15);
+    filter: drop-shadow(0 6px 16px rgba(0, 0, 0, 0.25));
+}
+
+.hub_spoke_node_icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 32px;
+    pointer-events: none;
+    transition: all var(--timing-normal) var(--easing-standard);
+}
+
+.hub_spoke_node:hover .hub_spoke_node_icon i {
+    transform: scale(1.2) rotate(-5deg);
+}
+
+.hub_spoke_node_label {
+    pointer-events: none;
+    transition: all var(--timing-fast) var(--easing-standard);
+}
+
+.hub_spoke_node:hover .hub_spoke_node_label {
+    font-size: 16px;
+    font-weight: 700;
+}
+
+/* Entrance Animations - Staggered */
+.hub_spoke_center {
+    animation: hubEnter 0.6s var(--easing-decelerate) backwards;
+}
+
+@keyframes hubEnter {
+    from {
+        opacity: 0;
+        transform: scale(0.3);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.hub_spoke_nodes g:nth-child(1) {
+    animation: spokeEnter 0.5s var(--easing-decelerate) 0.2s backwards;
+}
+
+.hub_spoke_nodes g:nth-child(2) {
+    animation: spokeEnter 0.5s var(--easing-decelerate) 0.3s backwards;
+}
+
+.hub_spoke_nodes g:nth-child(3) {
+    animation: spokeEnter 0.5s var(--easing-decelerate) 0.4s backwards;
+}
+
+.hub_spoke_nodes g:nth-child(4) {
+    animation: spokeEnter 0.5s var(--easing-decelerate) 0.5s backwards;
+}
+
+.hub_spoke_nodes g:nth-child(5) {
+    animation: spokeEnter 0.5s var(--easing-decelerate) 0.6s backwards;
+}
+
+.hub_spoke_nodes g:nth-child(6) {
+    animation: spokeEnter 0.5s var(--easing-decelerate) 0.7s backwards;
+}
+
+@keyframes spokeEnter {
+    from {
+        opacity: 0;
+        transform: translate(0, 0) scale(0.3);
+    }
+    to {
+        opacity: 1;
+        transform: translate(var(--tx, 0), var(--ty, 0)) scale(1);
+    }
+}
+
+.hub_spoke_lines path {
+    animation: lineEnter 0.8s var(--easing-decelerate) 0.1s backwards;
+}
+
+@keyframes lineEnter {
+    from {
+        stroke-dashoffset: 200;
+        opacity: 0;
+    }
+    to {
+        stroke-dashoffset: 0;
+        opacity: 0.4;
+    }
+}
+
+/* Legend */
+.hub_spoke_legend {
+    margin-top: 32px;
+    padding: 16px 24px;
+    background: var(--color-surface);
+    border-radius: 12px;
+    box-shadow: var(--elevation-2);
+    text-align: center;
+}
+
+.hub_spoke_legend p {
+    margin: 0;
+    font-size: 14px;
+    color: var(--color-text-secondary);
+}
+
+.hub_spoke_legend i {
+    color: var(--color-patient-primary);
+    margin-right: 6px;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+    .hub_spoke_svg {
+        width: 90vw;
+        height: auto;
+    }
+
+    .hub_spoke_title {
+        font-size: 32px;
+    }
+}
+
+@media (max-width: 768px) {
+    .hub_spoke_container {
+        padding: 24px 16px;
+    }
+
+    .hub_spoke_svg {
+        width: 100vw;
+        height: auto;
+    }
+
+    .hub_spoke_title {
+        font-size: 26px;
+    }
+
+    .hub_spoke_subtitle {
+        font-size: 14px;
+    }
+
+    /* On mobile, reduce node sizes for better fit */
+    .hub_spoke_node_icon {
+        font-size: 24px;
+    }
+
+    .hub_spoke_node_label {
+        font-size: 12px;
+    }
+
+    .hub_spoke_center_icon {
+        font-size: 36px;
+    }
+}
+
+@media (max-width: 480px) {
+    /* Stack view on very small screens */
+    .hub_spoke_svg_container {
+        display: none;
+    }
+
+    /* Show list view instead */
+    .hub_spoke_list_view {
+        display: block;
+    }
+}
+
+/* List View (Mobile Fallback) */
+.hub_spoke_list_view {
+    display: none;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.hub_spoke_list_item {
+    background: var(--color-surface);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    cursor: pointer;
+    transition: all var(--timing-fast) var(--easing-standard);
+    box-shadow: var(--elevation-2);
+    border-left: 4px solid;
+}
+
+.hub_spoke_list_item:hover {
+    transform: translateX(4px);
+    box-shadow: var(--elevation-4);
+}
+
+.hub_spoke_list_item_icon {
+    font-size: 32px;
+    width: 50px;
+    text-align: center;
+}
+
+.hub_spoke_list_item_content {
+    flex: 1;
+}
+
+.hub_spoke_list_item_label {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+.hub_spoke_list_item_desc {
+    font-size: 13px;
+    color: var(--color-text-secondary);
+}
+
+/* Pulse animation for active spoke */
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.6;
+    }
+}
+
+.hub_spoke_node_active {
+    animation: pulse 2s ease-in-out infinite;
+}

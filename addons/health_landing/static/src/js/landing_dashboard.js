@@ -1,22 +1,49 @@
 /** @odoo-module **/
 
 import { registry } from "@web/core/registry";
-import { Component, useState } from "@odoo/owl";
+import { Component, useState, onMounted, useRef } from "@odoo/owl";
 import { useService } from "@web/core/utils/hooks";
+import { HubSpokeWidget } from "./hub_spoke_widget";
+import { PatientSpokeModal } from "./patient_spoke_modal";
 
 /**
- * Healthcare Landing Dashboard Component
+ * Healthcare Landing Dashboard Component v2.0
  *
- * Provides a modern, icon-driven navigation interface with two-level dashboard structure.
- * Main Dashboard → Submenu Dashboard → Action Window
+ * Enhanced with:
+ * - Modal popup for module details
+ * - Search and filter functionality
+ * - Recently accessed tracking
+ * - Favorites system
+ * - Keyboard shortcuts
+ * - Professional animations
  */
 class HealthLandingDashboard extends Component {
     setup() {
         this.actionService = useService("action");
+        this.searchInputRef = useRef("searchInput");
+
         this.state = useState({
-            currentView: "main", // "main" or "submenu"
+            currentView: "main", // "main", "submenu", "hub_spoke", or "modal"
             currentModule: null,
+            modalModule: null,
+            selectedPatientId: null,
+            selectedPatientName: null,
+            selectedSpoke: null,
             breadcrumb: ["Home"],
+            searchQuery: "",
+            recentlyAccessed: this.getRecentlyAccessed(),
+            favorites: this.getFavorites(),
+            filteredModules: [],
+        });
+
+        // Keyboard shortcuts
+        onMounted(() => {
+            document.addEventListener("keydown", this.handleKeyboard.bind(this));
+
+            // Focus search on mount
+            if (this.searchInputRef.el) {
+                this.searchInputRef.el.focus();
+            }
         });
 
         // Main dashboard modules configuration
@@ -29,10 +56,10 @@ class HealthLandingDashboard extends Component {
                 class: "module-patient",
                 submenus: [
                     {
-                        name: "Patient Registry",
-                        icon: "fa-address-book",
-                        action: "health_base.action_health_patient",
-                        description: "View and manage all patients"
+                        name: "Client",
+                        icon: "fa-user-circle",
+                        action: "hub_spoke",  // Special action to trigger hub-and-spoke
+                        description: "View patient hub-and-spoke dashboard"
                     },
                 ],
             },
@@ -328,6 +355,7 @@ class HealthLandingDashboard extends Component {
         this.state.currentView = "submenu";
         this.state.currentModule = module;
         this.state.breadcrumb = ["Home", module.name];
+        this.trackRecentAccess(module.id, module.name, module.icon);
     }
 
     /**
@@ -337,19 +365,43 @@ class HealthLandingDashboard extends Component {
         this.state.currentView = "main";
         this.state.currentModule = null;
         this.state.breadcrumb = ["Home"];
+        this.state.searchQuery = "";
     }
 
     /**
-     * Launch Odoo action window
+     * Show modal with module details
      */
-    async launchAction(actionXmlId) {
+    showModal(module) {
+        this.state.modalModule = module;
+    }
+
+    /**
+     * Close modal
+     */
+    closeModal() {
+        this.state.modalModule = null;
+    }
+
+    /**
+     * Launch Odoo action window or special hub-and-spoke view
+     */
+    async launchAction(actionXmlId, actionName, icon) {
+        // Check for hub-and-spoke special action
+        if (actionXmlId === "hub_spoke") {
+            await this.showPatientSelection();
+            return;
+        }
+
+        // Track recent access
+        this.trackRecentAccess(actionXmlId, actionName, icon);
+
         try {
             await this.actionService.doAction(actionXmlId);
         } catch (error) {
             console.error("Failed to launch action:", actionXmlId, error);
             // Fallback: try to parse XML ID and load directly
-            const [module, actionName] = actionXmlId.split(".");
-            if (module && actionName) {
+            const [module, action] = actionXmlId.split(".");
+            if (module && action) {
                 await this.actionService.doAction({
                     type: "ir.actions.act_window",
                     xml_id: actionXmlId,
@@ -357,9 +409,221 @@ class HealthLandingDashboard extends Component {
             }
         }
     }
+
+    /**
+     * Show patient selection list
+     */
+    async showPatientSelection() {
+        await this.actionService.doAction("health_base.action_health_patient");
+    }
+
+    /**
+     * Show hub-and-spoke for specific patient
+     */
+    showPatientHub(patientId, patientName) {
+        this.state.currentView = "hub_spoke";
+        this.state.selectedPatientId = patientId;
+        this.state.selectedPatientName = patientName;
+        this.state.breadcrumb = ["Home", "Patient Management", "Client", patientName];
+    }
+
+    /**
+     * Handle spoke click - open modal
+     */
+    onSpokeClick(spoke, patientId) {
+        this.state.selectedSpoke = spoke;
+        // Modal will be shown by template conditional
+    }
+
+    /**
+     * Close spoke modal
+     */
+    closeSpokeModal() {
+        this.state.selectedSpoke = null;
+    }
+
+    /**
+     * Handle spoke modal edit button
+     */
+    onSpokeEdit(spokeId) {
+        // Close modal and navigate as needed
+        this.closeSpokeModal();
+    }
+
+    /**
+     * Handle item click in spoke modal (e.g., booking card)
+     */
+    onSpokeItemClick(item, itemType, spokeId) {
+        if (itemType === "booking" && item.id) {
+            // TODO: Show nested hub-and-spoke for booking
+            console.log("Show booking hub-and-spoke for:", item.id);
+        }
+    }
+
+    /**
+     * Search and filter modules
+     */
+    onSearchInput(event) {
+        const query = event.target.value.toLowerCase();
+        this.state.searchQuery = query;
+
+        if (!query) {
+            this.state.filteredModules = [];
+            return;
+        }
+
+        // Search across all modules and submenus
+        const results = [];
+        this.modules.forEach(module => {
+            // Search module name
+            if (module.name.toLowerCase().includes(query) ||
+                module.description.toLowerCase().includes(query)) {
+                results.push({
+                    type: 'module',
+                    data: module,
+                });
+            }
+
+            // Search submenu items
+            module.submenus.forEach(submenu => {
+                if (submenu.name.toLowerCase().includes(query) ||
+                    submenu.description.toLowerCase().includes(query)) {
+                    results.push({
+                        type: 'action',
+                        data: submenu,
+                        parent: module,
+                    });
+                }
+            });
+        });
+
+        this.state.filteredModules = results;
+    }
+
+    /**
+     * Clear search
+     */
+    clearSearch() {
+        this.state.searchQuery = "";
+        this.state.filteredModules = [];
+        if (this.searchInputRef.el) {
+            this.searchInputRef.el.focus();
+        }
+    }
+
+    /**
+     * Track recently accessed items
+     */
+    trackRecentAccess(id, name, icon) {
+        const recent = this.getRecentlyAccessed();
+        const item = { id, name, icon, timestamp: Date.now() };
+
+        // Remove if already exists
+        const filtered = recent.filter(r => r.id !== id);
+
+        // Add to front
+        filtered.unshift(item);
+
+        // Keep only last 5
+        const updated = filtered.slice(0, 5);
+
+        localStorage.setItem('health_landing_recent', JSON.stringify(updated));
+        this.state.recentlyAccessed = updated;
+    }
+
+    /**
+     * Get recently accessed from localStorage
+     */
+    getRecentlyAccessed() {
+        try {
+            const stored = localStorage.getItem('health_landing_recent');
+            return stored ? JSON.parse(stored) : [];
+        } catch {
+            return [];
+        }
+    }
+
+    /**
+     * Toggle favorite
+     */
+    toggleFavorite(id, name, icon) {
+        const favorites = this.getFavorites();
+        const index = favorites.findIndex(f => f.id === id);
+
+        if (index >= 0) {
+            // Remove from favorites
+            favorites.splice(index, 1);
+        } else {
+            // Add to favorites
+            favorites.push({ id, name, icon });
+        }
+
+        localStorage.setItem('health_landing_favorites', JSON.stringify(favorites));
+        this.state.favorites = favorites;
+    }
+
+    /**
+     * Check if item is favorited
+     */
+    isFavorite(id) {
+        return this.state.favorites.some(f => f.id === id);
+    }
+
+    /**
+     * Get favorites from localStorage
+     */
+    getFavorites() {
+        try {
+            const stored = localStorage.getItem('health_landing_favorites');
+            return stored ? JSON.parse(stored) : [];
+        } catch {
+            return [];
+        }
+    }
+
+    /**
+     * Keyboard shortcuts
+     */
+    handleKeyboard(event) {
+        // ESC to close modal or go back
+        if (event.key === 'Escape') {
+            if (this.state.modalModule) {
+                this.closeModal();
+            } else if (this.state.currentView === 'submenu') {
+                this.showMain();
+            }
+        }
+
+        // Number keys 1-9 for quick module access (when not in search)
+        if (event.target.tagName !== 'INPUT' && /^[1-9]$/.test(event.key)) {
+            const index = parseInt(event.key) - 1;
+            if (this.modules[index]) {
+                this.showSubmenu(this.modules[index]);
+            }
+        }
+
+        // Ctrl/Cmd + K for search focus
+        if ((event.ctrlKey || event.metaKey) && event.key === 'k') {
+            event.preventDefault();
+            if (this.searchInputRef.el) {
+                this.searchInputRef.el.focus();
+            }
+        }
+    }
+
+    /**
+     * Get filtered or all modules
+     */
+    getDisplayModules() {
+        if (this.state.searchQuery && this.state.filteredModules.length > 0) {
+            return this.state.filteredModules.filter(r => r.type === 'module').map(r => r.data);
+        }
+        return this.modules;
+    }
 }
 
 HealthLandingDashboard.template = "health_landing.DashboardTemplate";
+HealthLandingDashboard.components = { HubSpokeWidget, PatientSpokeModal };
 
 // Register the component as a client action
 registry.category("actions").add("health_landing_dashboard", HealthLandingDashboard);

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <!-- Patient Hub Client Action Template -->
+    <t t-name="health_landing.PatientHubActionTemplate">
+        <div class="patient_hub_action_container">
+            <HubSpokeWidget
+                patientId="patientId"
+                patientName="patientName"
+                onBack="() => this.onBack()"
+                onSpokeClick="(spoke, patientId) => this.onSpokeClick(spoke, patientId)"
+            />
+
+            <!-- Patient Spoke Modal -->
+            <t t-if="state.selectedSpoke">
+                <PatientSpokeModal
+                    spoke="state.selectedSpoke"
+                    patientId="patientId"
+                    onClose="() => this.closeSpokeModal()"
+                    onEdit="(spokeId) => this.onSpokeEdit(spokeId)"
+                    onItemClick="(item, itemType, spokeId) => this.onSpokeItemClick(item, itemType, spokeId)"
+                />
+            </t>
+        </div>
+    </t>
+
+</templates>
