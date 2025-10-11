@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Booking Cancellation Wizard Form View -->
+    <record id="view_health_booking_cancel_wizard_form" model="ir.ui.view">
+        <field name="name">health.booking.cancel.wizard.form</field>
+        <field name="model">health.booking.cancel.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Cancel Booking">
+                <sheet>
+                    <div class="alert alert-warning" role="alert" invisible="not show_invoice_warning">
+                        <p><strong>Warning:</strong> This booking has an associated invoice. The draft invoice will be cancelled automatically.</p>
+                    </div>
+
+                    <group>
+                        <group string="Booking Information">
+                            <field name="booking_reference"/>
+                            <field name="patient_name"/>
+                            <field name="scheduled_datetime"/>
+                            <field name="booking_id" invisible="1"/>
+                            <field name="show_invoice_warning" invisible="1"/>
+                        </group>
+                    </group>
+
+                    <group>
+                        <group string="Cancellation Details" colspan="2">
+                            <field name="cancellation_reason_id" options="{'no_create': True, 'no_edit': True}"/>
+                            <field name="cancellation_notes" placeholder="Please provide detailed information about why this booking is being cancelled. Include any relevant context that may be useful for future reference."/>
+                        </group>
+                    </group>
+
+                    <div class="alert alert-info" role="alert">
+                        <p><strong>Note:</strong> Cancellation details are mandatory and will be logged for record-keeping purposes.</p>
+                    </div>
+                </sheet>
+                <footer>
+                    <button string="Confirm Cancellation" name="action_confirm_cancellation" type="object" class="btn-danger"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+</odoo>

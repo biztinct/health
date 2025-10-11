@@ -259,6 +259,28 @@ class VietnameseDistricts(models.Model):
     active = fields.Boolean('Active', default=True)
     
     _sql_constraints = [
-        ('district_province_unique', 'unique(name, province_name)', 
+        ('district_province_unique', 'unique(name, province_name)',
          'District name must be unique within province!')
+    ]
+
+
+class BookingCancellationReason(models.Model):
+    """Booking cancellation reasons for structured cancellation tracking"""
+    _name = 'health.booking.cancellation.reason'
+    _description = 'Booking Cancellation Reason'
+    _order = 'sequence, name'
+
+    name = fields.Char('Reason', required=True, translate=True)
+    reason_type = fields.Selection([
+        ('patient', 'Patient-initiated'),
+        ('provider', 'Provider-initiated'),
+        ('system', 'System/Technical'),
+        ('emergency', 'Emergency/Force Majeure'),
+    ], string='Reason Type', required=True)
+    sequence = fields.Integer('Sequence', default=10)
+    active = fields.Boolean('Active', default=True)
+    description = fields.Text('Description', translate=True)
+
+    _sql_constraints = [
+        ('name_unique', 'unique(name)', 'Cancellation reason must be unique!')
     ]

@@ -543,7 +543,30 @@ class HealthFieldServiceOrderUnified(models.Model):
     # Additional workflow fields
     patient_contact_confirmed = fields.Boolean('Patient Contact Confirmed', default=False,
                                               help='Patient has been contacted and confirmed the appointment')
-    
+
+    # Cancellation fields
+    cancellation_reason_id = fields.Many2one(
+        'health.booking.cancellation.reason',
+        string='Cancellation Reason',
+        tracking=True,
+        help='Structured reason for booking cancellation'
+    )
+    cancelled_by = fields.Many2one(
+        'res.users',
+        string='Cancelled By',
+        readonly=True,
+        help='User who cancelled the booking'
+    )
+    cancellation_date = fields.Datetime(
+        'Cancellation Date',
+        readonly=True,
+        help='Date and time when booking was cancelled'
+    )
+    cancellation_notes = fields.Text(
+        'Cancellation Notes',
+        help='Additional notes about the cancellation'
+    )
+
     team_id = fields.Many2one(
         'health.fieldservice.team',
         string='Service Team',
@@ -1381,12 +1404,28 @@ class HealthFieldServiceOrderUnified(models.Model):
         })
     
     def action_cancel_booking(self):
-        """Cancel the booking"""
+        """Cancel the booking - opens wizard for structured cancellation"""
+        self.ensure_one()
+        return {
+            'type': 'ir.actions.act_window',
+            'name': 'Cancel Booking',
+            'res_model': 'health.booking.cancel.wizard',
+            'view_mode': 'form',
+            'target': 'new',
+            'context': {'default_booking_id': self.id}
+        }
+
+    def cancel_with_reason(self, cancellation_reason_id, cancellation_notes):
+        """Cancel booking with structured cancellation data"""
         self.ensure_one()
         self.write({
             'state': 'cancelled',
+            'cancellation_reason_id': cancellation_reason_id,
+            'cancelled_by': self.env.user.id,
+            'cancellation_date': fields.Datetime.now(),
+            'cancellation_notes': cancellation_notes,
         })
-        
+
         # Archive draft invoice if exists
         if self.invoice_id and self.invoice_id.state == 'draft':
             self.invoice_id.button_cancel()

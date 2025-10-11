@@ -75,7 +75,8 @@
         
         # Wizards
         'views/health_staff_assignment_wizard_views.xml',
-        
+        'views/health_booking_cancel_wizard_views.xml',
+
         # Views - Field Service
         'views/health_fieldservice_order_views.xml',
         'views/health_fieldservice_stage_views.xml',

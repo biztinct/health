@@ -32,6 +32,7 @@ Key Features:
         'security/health_security.xml',
         'security/ir.model.access.csv',
         'data/health_data.xml',
+        'data/health_cancellation_reasons.xml',
         'data/res_country_state_data.xml',
         'data/menu_access.xml',
         'views/health_lookup_views.xml',

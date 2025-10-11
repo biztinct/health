@@ -38,10 +38,9 @@
                             invisible="state != 'completed'"
                             help="Close the field service order"/>
                     
-                    <button name="action_cancel_booking" type="object" 
+                    <button name="action_cancel_booking" type="object"
                             string="❌ Cancel Booking"
-                            invisible="state in ['completed', 'cancelled']"
-                            confirm="Are you sure you want to cancel this booking?"/>
+                            invisible="state in ['completed', 'cancelled']"/>
                     
                     <button name="action_confirm_booking" type="object" 
                             string="✅ Confirm Booking" class="oe_highlight"
@@ -223,6 +222,19 @@
                                 <group string="Current Location">
                                     <field name="gps_coordinates" readonly="1"/>
                                 </group>
+                            </group>
+                        </page>
+
+                        <page string="Cancellation Details" name="cancellation" invisible="state != 'cancelled'">
+                            <group>
+                                <group string="Cancellation Information">
+                                    <field name="cancellation_reason_id" readonly="1"/>
+                                    <field name="cancelled_by" readonly="1"/>
+                                    <field name="cancellation_date" readonly="1"/>
+                                </group>
+                            </group>
+                            <group string="Cancellation Notes">
+                                <field name="cancellation_notes" nolabel="1" readonly="1"/>
                             </group>
                         </page>
                     </notebook>
