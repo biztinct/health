@@ -59,3 +59,25 @@ class ResPartner(models.Model):
                 'patient_name': self.name,
             },
         }
+
+    def action_view_bookings_calendar(self):
+        """Open calendar view of all bookings for this patient"""
+        self.ensure_one()
+
+        return {
+            'type': 'ir.actions.act_window',
+            'name': f'Bookings Calendar: {self.name}',
+            'res_model': 'health.fieldservice.order',
+            'view_mode': 'calendar,list,form',
+            'views': [
+                (self.env.ref('health_landing.view_fso_bookings_calendar').id, 'calendar'),
+                (False, 'list'),
+                (False, 'form')
+            ],
+            'domain': [('patient_id', '=', self.id)],
+            'context': {
+                'default_patient_id': self.id,
+                'search_default_patient_id': self.id,
+            },
+            'target': 'new',
+        }

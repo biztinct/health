@@ -1,6 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
+    <!-- FSO Calendar View for Patient Bookings -->
+    <record id="view_fso_bookings_calendar" model="ir.ui.view">
+        <field name="name">fso.bookings.calendar</field>
+        <field name="model">health.fieldservice.order</field>
+        <field name="arch" type="xml">
+            <calendar string="Bookings Calendar" date_start="scheduled_datetime" date_stop="estimated_end_datetime" color="state" mode="month" quick_create="0" event_open_popup="1">
+                <field name="name"/>
+                <field name="patient_id"/>
+                <field name="primary_nurse_id"/>
+                <field name="service_type"/>
+                <field name="state"/>
+            </calendar>
+        </field>
+    </record>
+
     <!-- Client Info Modal View - Summary of patient details -->
     <record id="view_patient_client_info_modal" model="ir.ui.view">
         <field name="name">res.partner.client.info.modal</field>
@@ -193,6 +208,9 @@
         <field name="model">res.partner</field>
         <field name="arch" type="xml">
             <form string="Patient Bookings">
+                <header>
+                    <button name="action_view_bookings_calendar" type="object" string="Calendar View" class="btn-primary"/>
+                </header>
                 <sheet>
                     <h1>
                         <field name="name" readonly="1" nolabel="1"/> - Bookings
@@ -201,12 +219,14 @@
                     <!-- Upcoming Bookings -->
                     <group string="Upcoming Bookings">
                         <field name="fso_upcoming_ids" nolabel="1">
-                            <kanban create="false" edit="false" delete="false" default_group_by="scheduled_month">
+                            <kanban create="false" edit="false" delete="false" default_group_by="scheduled_month" group_create="false">
                                 <field name="name"/>
                                 <field name="scheduled_datetime"/>
                                 <field name="scheduled_month"/>
                                 <field name="primary_nurse_id"/>
                                 <field name="state"/>
+
+                                <progressbar field="state" colors='{"draft": "secondary", "scheduled": "info", "assigned": "warning", "confirmed": "success", "done": "success", "cancelled": "danger"}'/>
 
                                 <templates>
                                     <t t-name="card">
@@ -249,12 +269,16 @@
                     <!-- Past Bookings -->
                     <group string="Past Bookings">
                         <field name="fso_past_ids" nolabel="1">
-                            <list create="false" delete="false" decoration-success="state == 'done'" decoration-muted="state == 'cancelled'">
+                            <list create="false" delete="false">
                                 <field name="scheduled_datetime"/>
                                 <field name="primary_nurse_id"/>
                                 <field name="name"/>
                                 <field name="service_type"/>
-                                <field name="state" widget="badge" decoration-success="state == 'done'" decoration-danger="state == 'cancelled'"/>
+                                <field name="state" widget="badge"
+                                       decoration-success="state == 'done' or state == 'completed'"
+                                       decoration-danger="state == 'cancelled'"
+                                       decoration-warning="state == 'draft'"
+                                       decoration-info="state == 'confirmed'"/>
                                 <field name="actual_duration" string="Duration (hrs)"/>
                             </list>
                         </field>
