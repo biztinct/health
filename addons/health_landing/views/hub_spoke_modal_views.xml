@@ -6,13 +6,40 @@
         <field name="name">fso.bookings.calendar</field>
         <field name="model">health.fieldservice.order</field>
         <field name="arch" type="xml">
-            <calendar string="Bookings Calendar" date_start="scheduled_datetime" date_stop="estimated_end_datetime" color="state" mode="month" quick_create="0" event_open_popup="1">
+            <calendar string="Bookings Calendar"
+                      date_start="scheduled_datetime"
+                      date_stop="estimated_end_datetime"
+                      color="lead_staff_id"
+                      mode="month"
+                      quick_create="0"
+                      event_open_popup="1"
+                      hide_time="false"
+                      all_day="estimated_end_datetime">
                 <field name="name"/>
                 <field name="patient_id"/>
-                <field name="primary_nurse_id"/>
+                <field name="lead_staff_id"
+                       filters="1"
+                       avatar_field="image_128"/>
                 <field name="service_type"/>
                 <field name="state"/>
             </calendar>
+        </field>
+    </record>
+
+    <!-- FSO Calendar Search View with Lead Staff Filter -->
+    <record id="view_fso_bookings_calendar_search" model="ir.ui.view">
+        <field name="name">fso.bookings.calendar.search</field>
+        <field name="model">health.fieldservice.order</field>
+        <field name="arch" type="xml">
+            <search string="Search Bookings">
+                <field name="name"/>
+                <field name="patient_id"/>
+                <field name="lead_staff_id"/>
+                <field name="service_type"/>
+                <field name="state"/>
+                <filter string="Lead Staff" name="group_lead_staff" context="{'group_by': 'lead_staff_id'}"/>
+                <filter string="State" name="group_state" context="{'group_by': 'state'}"/>
+            </search>
         </field>
     </record>
 
@@ -223,22 +250,23 @@
                                 <field name="name"/>
                                 <field name="scheduled_datetime"/>
                                 <field name="scheduled_month"/>
-                                <field name="primary_nurse_id"/>
+                                <field name="lead_staff_id"/>
                                 <field name="state"/>
 
                                 <progressbar field="state" colors='{"draft": "secondary", "scheduled": "info", "assigned": "warning", "confirmed": "success", "done": "success", "cancelled": "danger"}'/>
 
                                 <templates>
                                     <t t-name="card">
-                                        <div class="d-flex flex-column position-relative">
-                                            <!-- Status Badge - Top Right -->
+                                        <div class="d-flex flex-column position-relative" style="background: white;">
+                                            <!-- Status Badge - Top Right (No Background) -->
                                             <div class="position-absolute top-0 end-0">
-                                                <field name="state" widget="badge"
-                                                       decoration-secondary="state=='draft'"
-                                                       decoration-info="state=='scheduled'"
-                                                       decoration-warning="state=='assigned'"
-                                                       decoration-success="state=='confirmed'"
-                                                       decoration-muted="state=='cancelled'"/>
+                                                <span t-if="record.state.raw_value == 'draft'" class="badge text-bg-secondary">Draft</span>
+                                                <span t-elif="record.state.raw_value == 'scheduled'" class="badge text-bg-info">Scheduled</span>
+                                                <span t-elif="record.state.raw_value == 'assigned'" class="badge text-bg-warning">Assigned</span>
+                                                <span t-elif="record.state.raw_value == 'confirmed'" class="badge text-bg-success">Confirmed</span>
+                                                <span t-elif="record.state.raw_value == 'done' or record.state.raw_value == 'completed'" class="badge text-bg-success">Completed</span>
+                                                <span t-elif="record.state.raw_value == 'cancelled'" class="badge text-bg-danger">Cancelled</span>
+                                                <span t-else="" class="badge text-bg-secondary"><field name="state"/></span>
                                             </div>
 
                                             <!-- Booking Reference (Top Left, No Icon) -->
@@ -253,11 +281,11 @@
                                                 <t t-esc="luxon.DateTime.fromISO(record.scheduled_datetime.raw_value).toFormat('dd-MMM-yy HH:mm')"/>
                                             </div>
 
-                                            <!-- Primary Nurse -->
+                                            <!-- Lead Staff -->
                                             <div class="mb-1">
                                                 <i class="fa fa-user-md me-1 text-muted"/>
                                                 <strong>Nurse:</strong>
-                                                <field name="primary_nurse_id"/>
+                                                <field name="lead_staff_id"/>
                                             </div>
                                         </div>
                                     </t>

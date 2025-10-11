@@ -77,7 +77,7 @@ class ResPartner(models.Model):
             'domain': [('patient_id', '=', self.id)],
             'context': {
                 'default_patient_id': self.id,
-                'search_default_patient_id': self.id,
             },
             'target': 'new',
+            'search_view_id': self.env.ref('health_landing.view_fso_bookings_calendar_search').id,
         }
