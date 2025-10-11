@@ -186,11 +186,9 @@
 @keyframes spokeEnter {
     from {
         opacity: 0;
-        transform: translate(0, 0) scale(0.3);
     }
     to {
         opacity: 1;
-        transform: translate(var(--tx, 0), var(--ty, 0)) scale(1);
     }
 }
 

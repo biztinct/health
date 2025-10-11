@@ -1,6 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
+    <!-- FSO Timeline View for Upcoming Bookings -->
+    <record id="health_fso_upcoming_timeline_view" model="ir.ui.view">
+        <field name="name">FSO Upcoming Bookings Timeline</field>
+        <field name="model">health.fieldservice.order</field>
+        <field name="type">timeline</field>
+        <field name="priority">10</field>
+        <field name="arch" type="xml">
+            <timeline date_start="scheduled_datetime"
+                      string="display_name"
+                      default_group_by="primary_nurse_id"
+                      event_open_popup="true"
+                      colors="#f8f9fa:state=='draft';#e3f2fd:state=='scheduled';#fff3e0:state=='assigned';#e8f5e8:state=='confirmed';#ffebee:state=='cancelled'"
+                      quick_create="false">
+
+                <!-- Timeline Fields -->
+                <field name="name"/>
+                <field name="state"/>
+                <field name="patient_id"/>
+                <field name="primary_nurse_id"/>
+                <field name="scheduled_datetime"/>
+                <field name="service_type"/>
+                <field name="estimated_duration"/>
+                <field name="display_name"/>
+
+            </timeline>
+        </field>
+    </record>
+
     <!-- Client Info Modal View - Summary of patient details -->
     <record id="view_patient_client_info_modal" model="ir.ui.view">
         <field name="name">res.partner.client.info.modal</field>
@@ -8,14 +36,12 @@
         <field name="arch" type="xml">
             <form string="Client Information">
                 <sheet>
-                    <div class="oe_title">
-                        <h1>
-                            <field name="name" readonly="1"/>
-                        </h1>
-                        <h3>
-                            <field name="patient_code_display" readonly="1"/>
-                        </h3>
-                    </div>
+                    <h1>
+                        <field name="name" readonly="1" nolabel="1"/> - Client Info
+                    </h1>
+                    <h3>
+                        <field name="patient_code_display" readonly="1"/>
+                    </h3>
 
                     <group>
                         <group string="Personal Details">
@@ -53,7 +79,6 @@
                     </group>
                 </sheet>
                 <footer>
-                    <button string="Edit Full Profile" name="%(health_base.action_health_patient)d" type="action" class="btn-primary" context="{'form_view_ref': 'health_base.view_health_patient_form'}"/>
                     <button string="Close" class="btn-secondary" special="cancel"/>
                 </footer>
             </form>
@@ -67,9 +92,9 @@
         <field name="arch" type="xml">
             <form string="Patient Relationships">
                 <sheet>
-                    <div class="oe_title">
-                        <h1><field name="name" readonly="1" nolabel="1"/> - Relationships</h1>
-                    </div>
+                    <h1>
+                        <field name="name" readonly="1" nolabel="1"/> - Relationships
+                    </h1>
 
                     <group>
                         <group string="Summary">
@@ -82,7 +107,6 @@
                     <widget name="relationship_hierarchy"/>
                 </sheet>
                 <footer>
-                    <button string="View Full Network" name="action_view_relationship_network" type="object" class="btn-primary"/>
                     <button string="Close" class="btn-secondary" special="cancel"/>
                 </footer>
             </form>
@@ -96,9 +120,9 @@
         <field name="arch" type="xml">
             <form string="Patient Location">
                 <sheet>
-                    <div class="oe_title">
-                        <h1><field name="name" readonly="1" nolabel="1"/> - Location</h1>
-                    </div>
+                    <h1>
+                        <field name="name" readonly="1" nolabel="1"/> - Location
+                    </h1>
 
                     <group>
                         <group string="Vietnamese Address">
@@ -123,7 +147,6 @@
                     </group>
                 </sheet>
                 <footer>
-                    <button string="Edit Address" name="%(health_base.action_health_patient)d" type="action" class="btn-primary" context="{'form_view_ref': 'health_base.view_health_patient_form'}"/>
                     <button string="Close" class="btn-secondary" special="cancel"/>
                 </footer>
             </form>
@@ -137,12 +160,12 @@
         <field name="arch" type="xml">
             <form string="Service Packages">
                 <sheet>
-                    <div class="oe_title">
-                        <h1><field name="name" readonly="1" nolabel="1"/> - Service Packages</h1>
-                    </div>
+                    <h1>
+                        <field name="name" readonly="1" nolabel="1"/> - Service Packages
+                    </h1>
 
                     <!-- Active Service Packages with Gauge Widgets -->
-                    <group string="Active Service Packages" name="active_packages_section"
+                    <group string="Service Packages" name="active_packages_section"
                            invisible="not is_patient or active_packages_count == 0">
                         <field name="active_service_packages" nolabel="1">
                             <kanban create="false" edit="false" delete="false">
@@ -186,7 +209,6 @@
                     </group>
                 </sheet>
                 <footer>
-                    <button string="View All Packages" name="action_view_service_packages" type="object" class="btn-primary"/>
                     <button string="Close" class="btn-secondary" special="cancel"/>
                 </footer>
             </form>
@@ -200,21 +222,14 @@
         <field name="arch" type="xml">
             <form string="Patient Bookings">
                 <sheet>
-                    <div class="oe_title">
-                        <h1><field name="name" readonly="1" nolabel="1"/> - Bookings</h1>
-                    </div>
+                    <h1>
+                        <field name="name" readonly="1" nolabel="1"/> - Bookings
+                    </h1>
 
                     <!-- Upcoming Bookings -->
                     <group string="Upcoming Bookings">
-                        <field name="fso_upcoming_ids" nolabel="1">
-                            <list create="false" delete="false" default_order="primary_nurse_id,scheduled_datetime" decoration-info="state == 'scheduled'" decoration-warning="state == 'assigned'">
-                                <field name="primary_nurse_id"/>
-                                <field name="name"/>
-                                <field name="scheduled_datetime"/>
-                                <field name="service_type"/>
-                                <field name="state" widget="badge" decoration-info="state == 'scheduled'" decoration-warning="state == 'assigned'"/>
-                                <field name="estimated_duration" string="Duration (hrs)"/>
-                            </list>
+                        <field name="fso_upcoming_ids" nolabel="1"
+                               context="{'tree_view_ref': 'health_landing.health_fso_upcoming_list_view'}">
                         </field>
                     </group>
 
@@ -246,9 +261,9 @@
         <field name="arch" type="xml">
             <form string="Patient Financials">
                 <sheet>
-                    <div class="oe_title">
-                        <h1><field name="name" readonly="1" nolabel="1"/> - Financial Summary</h1>
-                    </div>
+                    <h1>
+                        <field name="name" readonly="1" nolabel="1"/> - Financials
+                    </h1>
 
                     <group>
                         <group string="Financial Summary">
@@ -259,10 +274,10 @@
                         </group>
                     </group>
 
-                    <!-- Recent Invoices List -->
-                    <group string="Recent Invoices">
-                        <field name="invoice_ids" nolabel="1" domain="[('move_type', '=', 'out_invoice')]" context="{'limit': 10}">
-                            <list create="false" delete="false" limit="10" decoration-success="state == 'posted' and payment_state == 'paid'" decoration-warning="state == 'draft'" decoration-info="state == 'posted' and payment_state == 'partial'" decoration-danger="state == 'posted' and payment_state == 'not_paid'">
+                    <!-- All Invoices List -->
+                    <group string="Invoices">
+                        <field name="invoice_ids" nolabel="1" domain="[('move_type', '=', 'out_invoice')]">
+                            <list create="false" delete="false" decoration-success="state == 'posted' and payment_state == 'paid'" decoration-warning="state == 'draft'" decoration-info="state == 'posted' and payment_state == 'partial'" decoration-danger="state == 'posted' and payment_state == 'not_paid'">
                                 <field name="name"/>
                                 <field name="invoice_date"/>
                                 <field name="invoice_date_due"/>
@@ -275,7 +290,6 @@
                     </group>
                 </sheet>
                 <footer>
-                    <button string="View All Invoices" name="action_view_invoices" type="object" class="btn-primary"/>
                     <button string="Close" class="btn-secondary" special="cancel"/>
                 </footer>
             </form>
