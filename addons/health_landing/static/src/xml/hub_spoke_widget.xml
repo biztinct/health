@@ -8,17 +8,17 @@
             <!-- Header with breadcrumb and back button -->
             <div class="hub_spoke_header">
                 <button class="health_landing_back_btn" t-on-click="props.onBack">
-                    <i class="fa fa-arrow-left"/> Back to Dashboard
+                    <i class="fa fa-arrow-left"/> Back
                 </button>
 
                 <div class="health_landing_breadcrumb">
-                    <span class="health_landing_breadcrumb_item">
+                    <a href="#" class="health_landing_breadcrumb_item" t-on-click="props.onBack">
                         <i class="fa fa-home"/> Home
-                    </span>
+                    </a>
                     <span class="health_landing_breadcrumb_separator">/</span>
-                    <span class="health_landing_breadcrumb_item">Patient Management</span>
+                    <a href="#" class="health_landing_breadcrumb_item" t-on-click="props.onBack">Patient Management</a>
                     <span class="health_landing_breadcrumb_separator">/</span>
-                    <span class="health_landing_breadcrumb_item">Client</span>
+                    <a href="#" class="health_landing_breadcrumb_item" t-on-click="props.onBack">Client</a>
                     <span class="health_landing_breadcrumb_separator">/</span>
                     <span class="health_landing_breadcrumb_item" t-esc="props.patientName"/>
                 </div>

@@ -58,18 +58,11 @@ class PatientHubAction extends Component {
     }
 
     /**
-     * Back to patient list
+     * Back to patient kanban
      */
     onBack() {
-        this.env.services.action.doAction({
-            type: "ir.actions.act_window",
-            name: "Patients",
-            res_model: "res.partner",
-            domain: [["is_patient", "=", true]],
-            views: [[false, "list"], [false, "form"]],
-            view_mode: "list,form",
-            target: "current",
-        });
+        // Go back to the patient registry kanban view
+        this.env.services.action.doAction("health_base.action_health_patient");
     }
 }
 

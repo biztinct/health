@@ -1,0 +1,285 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Client Info Modal View - Summary of patient details -->
+    <record id="view_patient_client_info_modal" model="ir.ui.view">
+        <field name="name">res.partner.client.info.modal</field>
+        <field name="model">res.partner</field>
+        <field name="arch" type="xml">
+            <form string="Client Information">
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" readonly="1"/>
+                        </h1>
+                        <h3>
+                            <field name="patient_code_display" readonly="1"/>
+                        </h3>
+                    </div>
+
+                    <group>
+                        <group string="Personal Details">
+                            <field name="first_name" readonly="1"/>
+                            <field name="last_name" readonly="1"/>
+                            <field name="middle_name" readonly="1"/>
+                            <field name="vietnamese_name" readonly="1"/>
+                            <field name="birth_date" readonly="1"/>
+                            <field name="age_display" readonly="1"/>
+                            <field name="gender" readonly="1"/>
+                            <field name="national_id" readonly="1"/>
+                        </group>
+
+                        <group string="Contact Information">
+                            <field name="mobile" widget="phone" readonly="1"/>
+                            <field name="phone" widget="phone" readonly="1"/>
+                            <field name="email" widget="email" readonly="1"/>
+                            <field name="patient_status" readonly="1"/>
+                            <field name="patient_category_id" readonly="1"/>
+                            <field name="primary_facility_id" readonly="1"/>
+                        </group>
+                    </group>
+
+                    <group>
+                        <group string="Medical Information">
+                            <field name="blood_group" readonly="1"/>
+                            <field name="allergies" readonly="1"/>
+                        </group>
+
+                        <group string="Emergency Contact">
+                            <field name="emergency_contact_name" readonly="1"/>
+                            <field name="emergency_contact_phone" widget="phone" readonly="1"/>
+                            <field name="emergency_contact_relation" readonly="1"/>
+                        </group>
+                    </group>
+                </sheet>
+                <footer>
+                    <button string="Edit Full Profile" name="%(health_base.action_health_patient)d" type="action" class="btn-primary" context="{'form_view_ref': 'health_base.view_health_patient_form'}"/>
+                    <button string="Close" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- Relations Modal View - Hierarchy widget -->
+    <record id="view_patient_relations_modal" model="ir.ui.view">
+        <field name="name">res.partner.relations.modal</field>
+        <field name="model">res.partner</field>
+        <field name="arch" type="xml">
+            <form string="Patient Relationships">
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name" readonly="1" nolabel="1"/> - Relationships</h1>
+                    </div>
+
+                    <group>
+                        <group string="Summary">
+                            <field name="primary_caregiver_id" readonly="1"/>
+                            <field name="primary_payer_id" readonly="1"/>
+                        </group>
+                    </group>
+
+                    <!-- Relationship Hierarchy Widget -->
+                    <widget name="relationship_hierarchy"/>
+                </sheet>
+                <footer>
+                    <button string="View Full Network" name="action_view_relationship_network" type="object" class="btn-primary"/>
+                    <button string="Close" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- Map Modal View - Address with map widget -->
+    <record id="view_patient_map_modal" model="ir.ui.view">
+        <field name="name">res.partner.map.modal</field>
+        <field name="model">res.partner</field>
+        <field name="arch" type="xml">
+            <form string="Patient Location">
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name" readonly="1" nolabel="1"/> - Location</h1>
+                    </div>
+
+                    <group>
+                        <group string="Vietnamese Address">
+                            <field name="province_code" readonly="1"/>
+                            <field name="house_number" readonly="1"/>
+                            <field name="sub_alley_number" readonly="1"/>
+                            <field name="alley_number" readonly="1"/>
+                            <field name="ward_commune" readonly="1"/>
+                            <field name="named_area" readonly="1"/>
+                            <field name="apartment_number" readonly="1"/>
+                            <field name="building_name" readonly="1"/>
+                            <field name="zip" string="Postal Code" readonly="1"/>
+                            <field name="vietnamese_address" readonly="1"/>
+                        </group>
+
+                        <group string="Location Map">
+                            <!-- Interactive OpenStreetMap Display -->
+                            <field name="geo_coordinates_display" widget="address_map" nolabel="1"/>
+                            <field name="partner_latitude" readonly="1"/>
+                            <field name="partner_longitude" readonly="1"/>
+                        </group>
+                    </group>
+                </sheet>
+                <footer>
+                    <button string="Edit Address" name="%(health_base.action_health_patient)d" type="action" class="btn-primary" context="{'form_view_ref': 'health_base.view_health_patient_form'}"/>
+                    <button string="Close" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- Packages Modal View - Service packages with gauge widgets -->
+    <record id="view_patient_packages_modal" model="ir.ui.view">
+        <field name="name">res.partner.packages.modal</field>
+        <field name="model">res.partner</field>
+        <field name="arch" type="xml">
+            <form string="Service Packages">
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name" readonly="1" nolabel="1"/> - Service Packages</h1>
+                    </div>
+
+                    <!-- Active Service Packages with Gauge Widgets -->
+                    <group string="Active Service Packages" name="active_packages_section"
+                           invisible="not is_patient or active_packages_count == 0">
+                        <field name="active_service_packages" nolabel="1">
+                            <kanban create="false" edit="false" delete="false">
+                                <field name="name"/>
+                                <field name="service_type"/>
+                                <field name="total_services"/>
+                                <field name="consumed_services"/>
+                                <field name="remaining_services"/>
+
+                                <templates>
+                                    <t t-name="card" class="text-center">
+                                        <field class="fw-bold fs-4 text-primary" name="name" />
+                                        <div class="mt-2">
+                                            <span class="badge badge-info">
+                                                <field name="service_type"/>
+                                            </span>
+                                        </div>
+                                        <div class="pt-3 fs-1 fw-bolder">
+                                            <field name="consumed_services"
+                                                   widget="gauge"
+                                                   options="{'max_field': 'total_services', 'style': 'width:160px; height: 120px;'}" />
+                                        </div>
+                                        <p class="mt-2">
+                                            <small class="text-muted">
+                                                <field name="consumed_services"/> / <field name="total_services"/> services used
+                                                <br/>
+                                                <field name="remaining_services"/> remaining
+                                            </small>
+                                        </p>
+                                    </t>
+                                </templates>
+                            </kanban>
+                        </field>
+                    </group>
+
+                    <!-- Show message when no packages -->
+                    <group invisible="active_packages_count &gt; 0">
+                        <div class="alert alert-info">
+                            <p>No active service packages for this patient.</p>
+                        </div>
+                    </group>
+                </sheet>
+                <footer>
+                    <button string="View All Packages" name="action_view_service_packages" type="object" class="btn-primary"/>
+                    <button string="Close" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- Bookings Modal View - FSO Bookings with timeline -->
+    <record id="view_patient_bookings_modal" model="ir.ui.view">
+        <field name="name">res.partner.bookings.modal</field>
+        <field name="model">res.partner</field>
+        <field name="arch" type="xml">
+            <form string="Patient Bookings">
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name" readonly="1" nolabel="1"/> - Bookings</h1>
+                    </div>
+
+                    <!-- Upcoming Bookings -->
+                    <group string="Upcoming Bookings">
+                        <field name="fso_upcoming_ids" nolabel="1">
+                            <list create="false" delete="false" default_order="primary_nurse_id,scheduled_datetime" decoration-info="state == 'scheduled'" decoration-warning="state == 'assigned'">
+                                <field name="primary_nurse_id"/>
+                                <field name="name"/>
+                                <field name="scheduled_datetime"/>
+                                <field name="service_type"/>
+                                <field name="state" widget="badge" decoration-info="state == 'scheduled'" decoration-warning="state == 'assigned'"/>
+                                <field name="estimated_duration" string="Duration (hrs)"/>
+                            </list>
+                        </field>
+                    </group>
+
+                    <!-- Past Bookings -->
+                    <group string="Past Bookings">
+                        <field name="fso_past_ids" nolabel="1">
+                            <list create="false" delete="false" decoration-success="state == 'done'" decoration-muted="state == 'cancelled'">
+                                <field name="scheduled_datetime"/>
+                                <field name="primary_nurse_id"/>
+                                <field name="name"/>
+                                <field name="service_type"/>
+                                <field name="state" widget="badge" decoration-success="state == 'done'" decoration-danger="state == 'cancelled'"/>
+                                <field name="actual_duration" string="Duration (hrs)"/>
+                            </list>
+                        </field>
+                    </group>
+                </sheet>
+                <footer>
+                    <button string="Close" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- Financials Modal View - Invoices with line items -->
+    <record id="view_patient_financials_modal" model="ir.ui.view">
+        <field name="name">res.partner.financials.modal</field>
+        <field name="model">res.partner</field>
+        <field name="arch" type="xml">
+            <form string="Patient Financials">
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name" readonly="1" nolabel="1"/> - Financial Summary</h1>
+                    </div>
+
+                    <group>
+                        <group string="Financial Summary">
+                            <field name="total_invoiced" readonly="1" widget="monetary"/>
+                            <field name="total_paid" readonly="1" widget="monetary"/>
+                            <field name="total_due" readonly="1" widget="monetary"/>
+                            <field name="currency_id" invisible="1"/>
+                        </group>
+                    </group>
+
+                    <!-- Recent Invoices List -->
+                    <group string="Recent Invoices">
+                        <field name="invoice_ids" nolabel="1" domain="[('move_type', '=', 'out_invoice')]" context="{'limit': 10}">
+                            <list create="false" delete="false" limit="10" decoration-success="state == 'posted' and payment_state == 'paid'" decoration-warning="state == 'draft'" decoration-info="state == 'posted' and payment_state == 'partial'" decoration-danger="state == 'posted' and payment_state == 'not_paid'">
+                                <field name="name"/>
+                                <field name="invoice_date"/>
+                                <field name="invoice_date_due"/>
+                                <field name="amount_total" widget="monetary"/>
+                                <field name="amount_residual" widget="monetary"/>
+                                <field name="payment_state" widget="badge" decoration-success="payment_state == 'paid'" decoration-info="payment_state == 'partial'" decoration-danger="payment_state == 'not_paid'"/>
+                                <field name="state" invisible="1"/>
+                            </list>
+                        </field>
+                    </group>
+                </sheet>
+                <footer>
+                    <button string="View All Invoices" name="action_view_invoices" type="object" class="btn-primary"/>
+                    <button string="Close" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+</odoo>

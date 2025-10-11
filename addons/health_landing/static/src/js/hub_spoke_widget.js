@@ -175,7 +175,7 @@ export class HubSpokeWidget extends Component {
     }
 
     /**
-     * Handle spoke click - open Odoo wizard/form directly
+     * Handle spoke click - open custom modal views
      */
     async onSpokeClick(spoke) {
         const spokeId = spoke.id;
@@ -183,77 +183,92 @@ export class HubSpokeWidget extends Component {
 
         switch (spokeId) {
             case "client_info":
+                // Open Client Info modal with summary
                 action = {
                     type: "ir.actions.act_window",
+                    name: "Client Information",
                     res_model: "res.partner",
                     res_id: this.props.patientId,
                     views: [[false, "form"]],
-                    target: "new",  // Open in dialog
-                    flags: { mode: "readonly" },
+                    target: "new",
+                    context: {
+                        'form_view_ref': 'health_landing.view_patient_client_info_modal',
+                    },
                 };
                 break;
 
             case "relations":
+                // Open Relations modal with hierarchy widget
                 action = {
                     type: "ir.actions.act_window",
                     name: "Patient Relationships",
-                    res_model: "health.client.relation",
-                    domain: [["client_id", "=", this.props.patientId]],
-                    views: [[false, "list"], [false, "form"]],
-                    target: "new",
-                    context: { default_client_id: this.props.patientId },
-                };
-                break;
-
-            case "map":
-                action = {
-                    type: "ir.actions.act_window",
                     res_model: "res.partner",
                     res_id: this.props.patientId,
                     views: [[false, "form"]],
                     target: "new",
-                    flags: { mode: "readonly" },
+                    context: {
+                        'form_view_ref': 'health_landing.view_patient_relations_modal',
+                    },
+                };
+                break;
+
+            case "map":
+                // Open Map modal with address and map widget
+                action = {
+                    type: "ir.actions.act_window",
+                    name: "Patient Location",
+                    res_model: "res.partner",
+                    res_id: this.props.patientId,
+                    views: [[false, "form"]],
+                    target: "new",
+                    context: {
+                        'form_view_ref': 'health_landing.view_patient_map_modal',
+                    },
                 };
                 break;
 
             case "packages":
+                // Open Packages modal with summary
                 action = {
                     type: "ir.actions.act_window",
                     name: "Service Packages",
-                    res_model: "health.service.package",
-                    domain: [
-                        ["patient_id", "=", this.props.patientId],
-                        ["state", "in", ["active", "partially_consumed"]],
-                    ],
-                    views: [[false, "list"], [false, "form"]],
+                    res_model: "res.partner",
+                    res_id: this.props.patientId,
+                    views: [[false, "form"]],
                     target: "new",
-                    context: { default_patient_id: this.props.patientId },
+                    context: {
+                        'form_view_ref': 'health_landing.view_patient_packages_modal',
+                    },
                 };
                 break;
 
             case "bookings":
+                // Open Bookings modal with appointments
                 action = {
                     type: "ir.actions.act_window",
                     name: "Patient Bookings",
-                    res_model: "health.fieldservice.order",
-                    domain: [["patient_id", "=", this.props.patientId]],
-                    views: [[false, "list"], [false, "form"]],
+                    res_model: "res.partner",
+                    res_id: this.props.patientId,
+                    views: [[false, "form"]],
                     target: "new",
-                    context: { default_patient_id: this.props.patientId },
+                    context: {
+                        'form_view_ref': 'health_landing.view_patient_bookings_modal',
+                    },
                 };
                 break;
 
             case "financials":
+                // Open Financials modal with invoice summary
                 action = {
                     type: "ir.actions.act_window",
                     name: "Patient Financials",
-                    res_model: "account.move",
-                    domain: [
-                        ["partner_id", "=", this.props.patientId],
-                        ["move_type", "=", "out_invoice"],
-                    ],
-                    views: [[false, "list"], [false, "form"]],
+                    res_model: "res.partner",
+                    res_id: this.props.patientId,
+                    views: [[false, "form"]],
                     target: "new",
+                    context: {
+                        'form_view_ref': 'health_landing.view_patient_financials_modal',
+                    },
                 };
                 break;
         }

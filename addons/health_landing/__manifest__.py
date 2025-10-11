@@ -48,6 +48,7 @@ Design inspired by modern SaaS applications with emphasis on usability and visua
         'views/landing_dashboard_views.xml',
         'views/landing_menus.xml',
         'views/patient_list_extension.xml',
+        'views/hub_spoke_modal_views.xml',
     ],
     'assets': {
         'web.assets_backend': [
