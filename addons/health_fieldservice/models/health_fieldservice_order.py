@@ -167,12 +167,19 @@ class HealthFieldServiceOrderUnified(models.Model):
     
     scheduled_time = fields.Float(
         'Scheduled Time',
-        compute='_compute_scheduled_time', 
+        compute='_compute_scheduled_time',
         inverse='_inverse_scheduled_time',
         store=True,
         help='Time in 24-hour format (e.g., 14.5 for 2:30 PM)'
     )
-    
+
+    scheduled_month = fields.Char(
+        'Scheduled Month',
+        compute='_compute_scheduled_month',
+        store=True,
+        help='Month and year for kanban grouping (e.g., "October 2025")'
+    )
+
     @api.depends('scheduled_datetime')
     def _compute_scheduled_date(self):
         for record in self:
@@ -196,7 +203,21 @@ class HealthFieldServiceOrderUnified(models.Model):
                 record.scheduled_time = local_dt.hour + local_dt.minute / 60.0
             else:
                 record.scheduled_time = 0.0
-    
+
+    @api.depends('scheduled_datetime')
+    def _compute_scheduled_month(self):
+        """Compute month-year label for kanban grouping"""
+        for record in self:
+            if record.scheduled_datetime:
+                # Convert from UTC storage to user's timezone
+                utc_dt = pytz.UTC.localize(record.scheduled_datetime)
+                user_tz = pytz.timezone(self.env.user.tz or 'UTC')
+                local_dt = utc_dt.astimezone(user_tz)
+                # Format as "October 2025"
+                record.scheduled_month = local_dt.strftime('%B %Y')
+            else:
+                record.scheduled_month = 'Unscheduled'
+
     @api.depends('assignment_ids')
     def _compute_assignment_count(self):
         """Compute the number of staff assignments for this FSO"""
