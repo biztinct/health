@@ -288,7 +288,6 @@ class HealthPaymentTransaction(models.Model):
                 'active_model': 'account.move',
                 'active_ids': [self.invoice_id.id] if self.invoice_id else [],
                 'default_amount': abs(self.amount),
-                'default_communication': self.display_name,
                 'default_partner_id': self.patient_id.id,
             }
         }
@@ -305,13 +304,45 @@ class HealthPaymentTransaction(models.Model):
             'target': 'current',
         }
     
+    def action_view_invoice(self):
+        """Open the related invoice in form view"""
+        self.ensure_one()
+
+        if not self.invoice_id:
+            raise UserError(_('No invoice is associated with this payment transaction.'))
+
+        return {
+            'name': _('Invoice'),
+            'type': 'ir.actions.act_window',
+            'res_model': 'account.move',
+            'res_id': self.invoice_id.id,
+            'view_mode': 'form',
+            'target': 'current',
+        }
+
+    def action_view_payment(self):
+        """Open the related AR payment in form view"""
+        self.ensure_one()
+
+        if not self.payment_id:
+            raise UserError(_('No AR payment record is associated with this transaction.'))
+
+        return {
+            'name': _('AR Payment'),
+            'type': 'ir.actions.act_window',
+            'res_model': 'account.payment',
+            'res_id': self.payment_id.id,
+            'view_mode': 'form',
+            'target': 'current',
+        }
+
     def action_create_refund(self):
         """Create refund transaction"""
         self.ensure_one()
-        
+
         if self.status == 'refunded':
             raise UserError(_('Payment is already refunded.'))
-        
+
         # Create refund transaction
         refund = self.create({
             'patient_id': self.patient_id.id,
@@ -325,10 +356,10 @@ class HealthPaymentTransaction(models.Model):
             'collected_by_id': self.env.user.employee_id.id,
             'transaction_notes': f'Refund for transaction {self.name}',
         })
-        
+
         # Update original transaction status
         self.status = 'refunded'
-        
+
         return {
             'name': _('Refund Transaction'),
             'type': 'ir.actions.act_window',

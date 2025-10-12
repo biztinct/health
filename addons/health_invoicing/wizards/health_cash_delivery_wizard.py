@@ -206,8 +206,6 @@ class HealthCashDeliveryWizard(models.TransientModel):
             'currency_id': self.transaction_id.currency_id.id,
             'date': self.delivery_date.date(),
             'journal_id': cash_journal.id,
-            'communication': f"Cash delivery: {self.transaction_id.display_name}",
-            'ref': self.transaction_id.name,
         }
         
         payment = self.env['account.payment'].create(payment_vals)

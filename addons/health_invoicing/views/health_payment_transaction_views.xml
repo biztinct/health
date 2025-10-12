@@ -80,33 +80,31 @@
                     
                     <!-- Smart Buttons -->
                     <div class="oe_button_box" name="button_box" groups="base.group_user">
-                        
+
                         <button type="object" name="action_view_proof_documents"
                                 class="oe_stat_button" icon="fa-camera"
                                 invisible="proof_count == 0">
                             <field name="proof_count" widget="statinfo" string="Proof Docs"/>
                         </button>
-                        
-                        <button type="action" name="%(account.action_move_out_invoice_type)d"
+
+                        <button type="object" name="action_view_invoice"
                                 class="oe_stat_button" icon="fa-file-text"
-                                invisible="not invoice_id"
-                                context="{'search_default_partner_id': [patient_id]}">
+                                invisible="not invoice_id">
                             <div class="o_field_widget o_stat_info">
                                 <span class="o_stat_value">Invoice</span>
                                 <span class="o_stat_text">View</span>
                             </div>
                         </button>
-                        
-                        <button type="action" name="%(account.action_account_payments)d"
+
+                        <button type="object" name="action_view_payment"
                                 class="oe_stat_button" icon="fa-money"
-                                invisible="not payment_id"
-                                context="{'search_default_partner_id': [patient_id]}">
+                                invisible="not payment_id">
                             <div class="o_field_widget o_stat_info">
                                 <span class="o_stat_value">AR Payment</span>
                                 <span class="o_stat_text">View</span>
                             </div>
                         </button>
-                        
+
                     </div>
                     
                     <!-- Transaction Title -->

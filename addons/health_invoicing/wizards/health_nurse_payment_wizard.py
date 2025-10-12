@@ -248,35 +248,65 @@ class HealthNursePaymentWizard(models.TransientModel):
         self.fso_id.write({
             'invoice_id': invoice.id,
             'is_invoiced': True,
-            'stage': 'completed',
+            'state': 'completed',
         })
         
         # Success message and return action
         return self._return_success_action(invoice, transaction)
     
     def _create_invoice(self):
-        """Create invoice for the FSO"""
-        invoice_lines = []
-        
-        # Main service line
-        service_description = f"{self.fso_id.service_type_id.name or 'Healthcare Service'}"
-        if self.fso_id.duration_hours:
-            service_description += f" ({self.fso_id.duration_hours}h)"
-        
-        invoice_lines.append((0, 0, {
-            'name': service_description,
-            'quantity': 1,
-            'price_unit': self.final_amount,
-            'product_uom_id': self.env.ref('uom.product_uom_unit').id,
-        }))
-        
-        # Create invoice
-        invoice = self.env['account.move'].create({
-            'move_type': 'out_invoice',
-            'partner_id': self.patient_id.id,
-            'invoice_origin': f'FSO: {self.fso_id.name}',
-            'invoice_line_ids': invoice_lines,
-        })
+        """Create invoice for the FSO - convert quote to invoice if exists"""
+
+        # If FSO has a quote/sale order, create invoice from it (preferred method)
+        if self.fso_id.sale_order_id and self.fso_id.sale_order_id.order_line:
+            sale_order = self.fso_id.sale_order_id
+
+            # Confirm the sale order if it's still in draft/sent state
+            if sale_order.state in ['draft', 'sent']:
+                sale_order.action_confirm()
+
+            # Use Odoo's standard method to create invoice from sale order
+            invoice = sale_order._create_invoices()
+
+            if not invoice:
+                raise UserError(_('Failed to create invoice from quote. Please contact support.'))
+
+            # If multiple invoices were created, use the first one
+            if len(invoice) > 1:
+                invoice = invoice[0]
+
+            # Link FSO origin
+            invoice.write({
+                'invoice_origin': f'FSO: {self.fso_id.name}, SO: {sale_order.name}',
+            })
+
+        else:
+            # Fallback: Create invoice manually if no quote exists
+            service_type_label = dict(self.fso_id._fields['service_type'].selection).get(
+                self.fso_id.service_type, 'Healthcare Service'
+            )
+
+            service_description = f"{service_type_label}"
+            if self.fso_id.appointment_type_id:
+                service_description = f"{self.fso_id.appointment_type_id.name}"
+
+            if self.fso_id.actual_duration:
+                service_description += f" ({self.fso_id.actual_duration:.1f}h)"
+
+            invoice_lines = [(0, 0, {
+                'name': service_description,
+                'quantity': 1,
+                'price_unit': self.final_amount,
+                'product_uom_id': self.env.ref('uom.product_uom_unit').id,
+            })]
+
+            # Create invoice manually
+            invoice = self.env['account.move'].create({
+                'move_type': 'out_invoice',
+                'partner_id': self.patient_id.id,
+                'invoice_origin': f'FSO: {self.fso_id.name}',
+                'invoice_line_ids': invoice_lines,
+            })
         
         # Post invoice and submit to tax authorities
         invoice.action_post()
@@ -439,8 +469,6 @@ class HealthNursePaymentWizard(models.TransientModel):
             'currency_id': self.currency_id.id,
             'date': fields.Date.today(),
             'journal_id': journal.id,
-            'communication': f"Nurse collection: {transaction.display_name}",
-            'ref': transaction.name,
         }
         
         payment = self.env['account.payment'].create(payment_vals)

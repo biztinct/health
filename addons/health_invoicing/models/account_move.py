@@ -195,6 +195,41 @@ class HealthcareInvoice(models.Model):
         help='Customer tax registration number'
     )
 
+    # Discount tracking fields
+    has_discounts = fields.Boolean(
+        'Has Discounts',
+        compute='_compute_has_discounts',
+        help='True if any invoice line has a discount applied'
+    )
+
+    total_discount_amount = fields.Monetary(
+        'Total Discount Amount',
+        compute='_compute_discount_totals',
+        currency_field='currency_id',
+        store=False,
+        help='Total amount discounted across all lines'
+    )
+
+    @api.depends('invoice_line_ids.discount')
+    def _compute_has_discounts(self):
+        """Check if invoice has any discounted lines"""
+        for invoice in self:
+            invoice.has_discounts = any(
+                line.discount > 0 for line in invoice.invoice_line_ids
+            )
+
+    @api.depends('invoice_line_ids.discount', 'invoice_line_ids.price_unit', 'invoice_line_ids.quantity')
+    def _compute_discount_totals(self):
+        """Calculate total discount amount"""
+        for invoice in self:
+            total_discount = 0.0
+            for line in invoice.invoice_line_ids:
+                if line.discount > 0:
+                    line_subtotal = line.price_unit * line.quantity
+                    discount_amount = line_subtotal * (line.discount / 100)
+                    total_discount += discount_amount
+            invoice.total_discount_amount = total_discount
+
     @api.model
     def create(self, vals):
         """Override create to handle healthcare invoice automation"""
@@ -896,3 +931,21 @@ class HealthcareInvoiceLine(models.Model):
         'Insurance Coverage %',
         help='Percentage covered by insurance'
     )
+
+    # Discount tracking and validation
+    discount_reason = fields.Char(
+        'Discount Reason',
+        help='Mandatory reason when discount is applied'
+    )
+
+    @api.constrains('discount', 'discount_reason')
+    def _check_discount_reason(self):
+        """Ensure discount reason is provided when discount > 0"""
+        for line in self:
+            if line.discount > 0 and not (line.discount_reason and line.discount_reason.strip()):
+                raise ValidationError(_(
+                    'Discount reason is mandatory when applying discounts!\n\n'
+                    'Line: %s\n'
+                    'Discount: %.2f%%\n\n'
+                    'Please provide a reason in the "Discount Reason" field.'
+                ) % (line.name or 'Unnamed', line.discount))

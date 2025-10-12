@@ -29,6 +29,16 @@
             <notebook position="inside">
                 <page string="Tax Authority &amp; Compliance" name="tax_compliance"
                       invisible="move_type not in ['out_invoice', 'out_refund']">
+
+                    <!-- Discount Warning Banner -->
+                    <field name="has_discounts" invisible="1"/>
+                    <field name="currency_id" invisible="1"/>
+                    <div class="alert alert-warning" role="alert" invisible="not has_discounts">
+                        <strong>⚠️ Discounts Applied:</strong> This invoice has discounts totaling
+                        <field name="total_discount_amount" widget="monetary" readonly="1"/>
+                        <br/>All discounted line items must have a reason in the "Discount Reason" field.
+                    </div>
+
                     <group>
                         <group string="Vietnamese Tax Authority">
                             <field name="tax_authority_submission_status" widget="badge"/>
@@ -36,7 +46,7 @@
                             <field name="tax_submission_reference" readonly="1"/>
                             <field name="tax_submission_error" readonly="1" invisible="not tax_submission_error"/>
                         </group>
-                        
+
                         <group string="MISA Integration">
                             <field name="misa_sync_status" widget="badge"/>
                             <field name="misa_invoice_id" readonly="1"/>
@@ -46,6 +56,36 @@
                     </group>
                 </page>
             </notebook>
+        </field>
+    </record>
+
+    <!-- Invoice Line - Add Discount Reason Field -->
+    <record id="view_move_line_form_discount_reason" model="ir.ui.view">
+        <field name="name">account.move.line.form.discount.reason</field>
+        <field name="model">account.move.line</field>
+        <field name="inherit_id" ref="account.view_move_line_form"/>
+        <field name="arch" type="xml">
+            <!-- Add discount_reason field after name in the form -->
+            <field name="name" position="after">
+                <field name="discount_reason"
+                       placeholder="Required when discount is applied"
+                       invisible="discount == 0"/>
+            </field>
+        </field>
+    </record>
+
+    <!-- Invoice Line Tree - Add Discount Reason Column (for invoice line editing) -->
+    <record id="view_move_line_tree_discount_reason" model="ir.ui.view">
+        <field name="name">account.move.line.tree.discount.reason</field>
+        <field name="model">account.move.line</field>
+        <field name="inherit_id" ref="account.view_move_line_tree"/>
+        <field name="arch" type="xml">
+            <!-- Add discount_reason after name column -->
+            <field name="name" position="after">
+                <field name="discount_reason"
+                       optional="show"
+                       placeholder="Required when discount > 0"/>
+            </field>
         </field>
     </record>
 
