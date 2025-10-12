@@ -7,7 +7,7 @@
         <field name="arch" type="xml">
             <xpath expr="//field[@name='active']" position="after">
                 <field name="use_advanced_pricing"/>
-                <field name="advanced_engine_id" 
+                <field name="advanced_engine_id"
                        invisible="not use_advanced_pricing"
                        required="use_advanced_pricing"/>
             </xpath>

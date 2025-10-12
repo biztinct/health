@@ -1,6 +1,6 @@
 {
     'name': 'Healthcare Base',
-    'version': '18.0.1.1.0',
+    'version': '18.0.1.2.0',
     'category': 'Healthcare',
     'summary': 'Foundation module for VAFHS Healthcare Management System with Clinical Intelligence',
     'description': """
@@ -34,10 +34,13 @@ Key Features:
         'data/health_data.xml',
         'data/health_cancellation_reasons.xml',
         'data/res_country_state_data.xml',
+        'data/vietnamese_public_holidays.xml',  # Public holidays with pricing multipliers
         'data/menu_access.xml',
         'views/health_lookup_views.xml',
         'views/health_facility_views.xml',
         'views/health_patient_views.xml',
+        'views/resource_calendar_leaves_views.xml',  # Public holiday management
+        'views/health_audit_log_views.xml',  # Audit log dashboard
         'views/health_menus.xml',
     ],
     'assets': {

@@ -84,190 +84,29 @@ referral_code = fields.Char('Referral Code', help='Tracking code from platform')
 
 ---
 
-### 2.2 Related Persons Bidirectional Dashboard ⚠️ PARTIAL - NEEDS ENHANCEMENT
-**Requirement:** "Dashboard showing linked clients ↔ related persons, multiple caregivers/payers allowed, graphical hierarchical view"
+### 2.2 Related Persons Bidirectional Dashboard ⚠️ PARTIAL
+**Requirement:** "Dashboard showing linked clients ↔ related persons"
 
-**Current Status Analysis:**
+**Current Status:** Related persons exist but no dashboard visualization
 
-✅ **What Already Exists:**
-- `health.client.relation` model - Full M:N relationship model with multiple roles (caregiver, payer, referrer, emergency contact, legal guardian)
-- Primary contact designation per role (`is_primary` field)
-- Healthcare permissions & financial responsibility tracking
-- Basic kanban/list/form views
-
-❌ **What's Missing:**
-- Many2many shortcut fields (`caregiver_ids`, `payer_ids` - only `primary_*_id` exists)
-- Smart buttons on patient form showing relationship counts
-- **Graphical hierarchical visualization** - Current kanban is flat, not intuitive (see client screenshots)
-- Bidirectional "My Patients" view for caregivers/payers
-
-**Design Solution:**
-
-#### Part 1: Add Multiple Relationships Support
-**Module:** `health_base/models/res_partner.py`
-
-**Add Fields:**
+**Design:**
+- **Module:** `health_base`
+- **Add Computed Fields:**
 ```python
-# Many2many shortcuts (in addition to existing primary_caregiver_id, etc.)
-caregiver_ids = fields.Many2many(
-    'res.partner',
-    relation='patient_caregiver_rel',
-    column1='patient_id',
-    column2='caregiver_id',
-    string='All Caregivers',
-    domain=[('is_caregiver', '=', True)]
-)
-
-payer_ids = fields.Many2many(
-    'res.partner',
-    relation='patient_payer_rel',
-    column1='patient_id',
-    column2='payer_id',
-    string='All Payers',
-    domain=[('is_payer', '=', True)]
-)
-
-# Link to health.client.relation records
-patient_relation_ids = fields.One2many(
-    'health.client.relation',
-    'client_id',
-    string='My Relationships'
-)
-
-representative_relation_ids = fields.One2many(
-    'health.client.relation',
-    'representative_id',
-    string='Patients I Represent'
-)
-
-# Computed counts for smart buttons
-total_caregivers = fields.Integer(compute='_compute_relationship_counts')
-total_payers = fields.Integer(compute='_compute_relationship_counts')
-total_emergency_contacts = fields.Integer(compute='_compute_relationship_counts')
-relationship_total_count = fields.Integer(compute='_compute_relationship_counts')
+# res.partner (patient)
+related_person_count = fields.Integer(compute='_compute_related_person_count')
+caregiver_ids = fields.One2many('health.client.relation', 'patient_id',
+                                 domain=[('relationship_type', 'in', ['caregiver', 'family_member'])])
+payer_ids = fields.One2many('health.client.relation', 'patient_id',
+                            domain=[('relationship_type', '=', 'payer')])
 ```
 
-#### Part 2: Smart Buttons on Patient Form
-**Module:** `health_base/views/res_partner_views.xml`
+**Views:**
+- Add smart buttons on patient form showing counts
+- Kanban view for related persons with relationship badges
+- Graph view showing relationship network
 
-**Add to button box:**
-```xml
-<button name="action_view_caregivers" type="object" class="oe_stat_button" icon="fa-users">
-    <field name="total_caregivers" widget="statinfo" string="Caregivers"/>
-</button>
-<button name="action_view_payers" type="object" class="oe_stat_button" icon="fa-money">
-    <field name="total_payers" widget="statinfo" string="Payers"/>
-</button>
-<button name="action_view_all_relationships" type="object" class="oe_stat_button" icon="fa-sitemap">
-    <field name="relationship_total_count" widget="statinfo" string="Relationships"/>
-</button>
-
-<!-- Reverse direction: For caregivers/payers -->
-<button name="action_view_my_patients_as_caregiver" invisible="not is_caregiver">
-    <field name="caregiver_patient_count" widget="statinfo" string="My Patients"/>
-</button>
-```
-
-#### Part 3: Graphical Hierarchical View (3 Options)
-
-**Option A: Hierarchy Widget** (Org-chart style)
-```xml
-<hierarchy string="Relationship Network">
-    <field name="name"/>
-    <field name="patient_relation_ids"/>
-    <!-- Shows patient at center, relationships branching out -->
-</hierarchy>
-```
-
-**Option B: D3.js Graph Widget** (Most intuitive - network diagram)
-- Create custom OWL widget: `relationship_graph_widget.js`
-- Force-directed graph with nodes (patients/representatives) and edges (relationships)
-- Color-coded by role, primary contacts highlighted
-
-**Option C: Enhanced Kanban** (Simpler, quicker)
-- Group by role (Caregiver, Payer, Emergency Contact)
-- Color-coded badges, ribbon for primary contacts
-- Avatar images, visual hierarchy
-
-**Recommended:** Start with Option C (enhanced kanban), add Option B (graph) in Phase 2
-
-#### Part 4: Enhanced Kanban View
-**Module:** `health_crm/views/health_client_relation_views.xml`
-
-**Update kanban:**
-```xml
-<kanban class="o_relationship_kanban" default_group_by="role">
-    <templates>
-        <t t-name="kanban-box">
-            <div class="oe_kanban_card" t-attf-class="{{record.is_primary.raw_value ? 'border-primary border-3' : ''}}">
-                <!-- PRIMARY ribbon for primary contacts -->
-                <div class="ribbon ribbon-top-right" t-if="record.is_primary.raw_value">
-                    <span class="bg-primary">PRIMARY</span>
-                </div>
-
-                <!-- Avatar image -->
-                <div class="o_kanban_record_top mb-2">
-                    <img t-att-src="kanban_image('res.partner', 'avatar_128', record.representative_id.raw_value)"
-                         class="o_kanban_image o_image_64_cover rounded-circle"/>
-                </div>
-
-                <!-- Representative name and patient -->
-                <div class="o_kanban_record_headings">
-                    <strong><field name="representative_id"/></strong>
-                    <div class="text-muted">
-                        <i class="fa fa-arrow-right"/> <field name="client_id"/>
-                    </div>
-                </div>
-
-                <!-- Role badges with color coding -->
-                <div class="o_kanban_record_body mt-2">
-                    <span class="badge bg-info"><field name="role"/></span>
-                    <span class="badge bg-secondary" t-if="record.relationship_type.value">
-                        <field name="relationship_type"/>
-                    </span>
-
-                    <!-- Permissions icons -->
-                    <div class="mt-2">
-                        <i class="fa fa-check-circle text-success" t-if="record.can_make_medical_decisions.value"/> Medical
-                        <i class="fa fa-money text-info" t-if="record.financial_responsibility.value"/>
-                        <field name="financial_responsibility"/>%
-                    </div>
-                </div>
-            </div>
-        </t>
-    </templates>
-</kanban>
-```
-
-#### Part 5: Action Methods
-**Module:** `health_base/models/res_partner.py`
-
-```python
-def action_view_caregivers(self):
-    return {
-        'name': 'Caregivers',
-        'type': 'ir.actions.act_window',
-        'res_model': 'health.client.relation',
-        'view_mode': 'kanban,list,form',
-        'domain': [('client_id', '=', self.id), ('role', '=', 'caregiver')],
-        'context': {'default_client_id': self.id, 'default_role': 'caregiver'}
-    }
-
-def action_view_all_relationships(self):
-    return {
-        'name': 'Relationship Network',
-        'type': 'ir.actions.act_window',
-        'res_model': 'health.client.relation',
-        'view_mode': 'kanban,list,form',
-        'domain': ['|', ('client_id', '=', self.id), ('representative_id', '=', self.id)],
-        'context': {'group_by': 'role'}
-    }
-```
-
-**Priority:**
-- P0: Smart buttons + Many2many fields + action methods (critical for workflow)
-- P1: Enhanced kanban with color coding
-- P2: D3.js graph visualization (nice to have)
+**Priority:** P1
 
 ---
 

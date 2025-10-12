@@ -79,3 +79,5 @@ access_res_partner_patient_finance,res.partner patient finance,base.model_res_pa
 access_res_partner_patient_manager,res.partner patient manager,base.model_res_partner,group_healthcare_manager,1,1,1,1
 access_res_partner_patient_admin,res.partner patient admin,base.model_res_partner,group_healthcare_admin,1,1,1,1
 access_res_partner_patient_owner,res.partner patient owner,base.model_res_partner,group_healthcare_owner,1,1,1,1
+access_health_audit_log_view_admin,health.audit.log.view admin,model_health_audit_log_view,group_healthcare_admin,1,0,0,0
+access_health_audit_log_view_owner,health.audit.log.view owner,model_health_audit_log_view,group_healthcare_owner,1,0,0,0

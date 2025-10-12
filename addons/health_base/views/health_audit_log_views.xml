@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Audit Log List View -->
+    <record id="view_health_audit_log_list" model="ir.ui.view">
+        <field name="name">health.audit.log.view.list</field>
+        <field name="model">health.audit.log.view</field>
+        <field name="arch" type="xml">
+            <list string="Audit Log"
+                  create="false" edit="false" delete="false"
+                  decoration-info="model in ['advanced.pricing.engine', 'advanced.pricing.rule', 'product.pricelist']"
+                  decoration-warning="model == 'account.move'">
+                <field name="date" widget="datetime"/>
+                <field name="user_id"/>
+                <field name="model_name"/>
+                <field name="record_name"/>
+                <field name="field_name"/>
+                <field name="old_value"/>
+                <field name="new_value"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Audit Log Search/Filter View -->
+    <record id="view_health_audit_log_search" model="ir.ui.view">
+        <field name="name">health.audit.log.view.search</field>
+        <field name="model">health.audit.log.view</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="user_id"/>
+                <field name="model"/>
+                <field name="model_name"/>
+                <field name="record_name"/>
+                <field name="field_name"/>
+
+                <separator/>
+                <!-- Quick filters -->
+                <filter name="pricing_changes" string="Pricing Changes"
+                        domain="[('model', 'in', ['advanced.pricing.engine', 'advanced.pricing.rule', 'product.pricelist'])]"/>
+                <filter name="invoice_changes" string="Invoice Changes"
+                        domain="[('model', '=', 'account.move')]"/>
+                <filter name="patient_changes" string="Patient Data Changes"
+                        domain="[('model', '=', 'res.partner')]"/>
+                <filter name="fso_changes" string="Service Order Changes"
+                        domain="[('model', '=', 'health.fieldservice.order')]"/>
+                <filter name="holiday_changes" string="Holiday Changes"
+                        domain="[('model', '=', 'resource.calendar.leaves')]"/>
+
+                <separator/>
+                <!-- Date filters -->
+                <filter name="today" string="Today"
+                        domain="[('date', '&gt;=', datetime.datetime.now().replace(hour=0, minute=0, second=0))]"/>
+                <filter name="this_week" string="This Week"
+                        domain="[('date', '&gt;=', (datetime.datetime.now() - datetime.timedelta(days=7)).strftime('%Y-%m-%d'))]"/>
+                <filter name="this_month" string="This Month"
+                        domain="[('date', '&gt;=', (datetime.datetime.now().replace(day=1)).strftime('%Y-%m-%d'))]"/>
+
+                <separator/>
+                <!-- Group by -->
+                <group expand="0" string="Group By">
+                    <filter name="group_user" string="User" context="{'group_by': 'user_id'}"/>
+                    <filter name="group_model" string="Model" context="{'group_by': 'model_name'}"/>
+                    <filter name="group_field" string="Field" context="{'group_by': 'field_name'}"/>
+                    <filter name="group_date" string="Date" context="{'group_by': 'date:day'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="action_health_audit_log" model="ir.actions.act_window">
+        <field name="name">Audit Log</field>
+        <field name="res_model">health.audit.log.view</field>
+        <field name="view_mode">list</field>
+        <field name="context">{'search_default_this_week': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_empty_folder">
+                No audit logs found
+            </p>
+            <p>
+                The audit log tracks all changes to critical healthcare data including pricing rules,
+                patient records, invoices, and service orders.
+            </p>
+        </field>
+    </record>
+
+    <!-- Menu under Configuration (Admin/Owner only) -->
+    <menuitem id="menu_health_audit_log"
+              name="Audit Log"
+              parent="menu_healthcare_lookups"
+              action="action_health_audit_log"
+              sequence="95"
+              groups="group_healthcare_admin,group_healthcare_owner"/>
+
+</odoo>

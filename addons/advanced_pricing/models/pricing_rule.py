@@ -8,26 +8,41 @@ _logger = logging.getLogger(__name__)
 class AdvancedPricingRule(models.Model):
     _name = 'advanced.pricing.rule'
     _description = 'Advanced Pricing Rule'
+    _inherit = ['mail.thread', 'mail.activity.mixin']
     _order = 'sequence, id'
-    
-    name = fields.Char('Rule Name', required=True)
-    sequence = fields.Integer('Sequence', default=10)
-    active = fields.Boolean('Active', default=True)
-    engine_id = fields.Many2one('advanced.pricing.engine', 'Pricing Engine', required=True)
-    company_id = fields.Many2one('res.company', 'Company', default=lambda self: self.env.company)
+
+    name = fields.Char('Rule Name', required=True, tracking=True)
+    sequence = fields.Integer('Sequence', default=10, tracking=True)
+    active = fields.Boolean('Active', compute='_compute_active', store=True, tracking=True)
+    engine_id = fields.Many2one('advanced.pricing.engine', 'Pricing Engine', required=True, tracking=True)
+    company_id = fields.Many2one('res.company', 'Company', default=lambda self: self.env.company, tracking=True)
+
+    # Approval workflow fields
+    approval_status = fields.Selection([
+        ('draft', 'Draft'),
+        ('pending', 'Pending Board Approval'),
+        ('approved', 'Approved'),
+        ('rejected', 'Rejected'),
+    ], default='draft', tracking=True, required=True, string='Approval Status',
+       help='Approval required for all changes - any modification resets to draft')
+
+    approved_by = fields.Many2one('res.users', string='Approved By', readonly=True, tracking=True)
+    approval_date = fields.Datetime('Approval Date', readonly=True, tracking=True)
+    approval_notes = fields.Text('Approval Notes', tracking=True)
+    rejection_reason = fields.Text('Rejection Reason', tracking=True)
     
     level = fields.Selection([
         ('1', 'Level 1 - Base Rules'),
         ('2', 'Level 2 - Cascading Rules')
-    ], string='Rule Level', default='1', required=True)
-    
+    ], string='Rule Level', default='1', required=True, tracking=True)
+
     rule_type = fields.Selection([
         ('condition', 'Conditional'),
         ('formula', 'Formula-based'),
         ('matrix', 'Matrix'),
         ('custom', 'Custom Python'),
         ('visual', 'Visual Rule')
-    ], string='Rule Type', default='condition', required=True)
+    ], string='Rule Type', default='condition', required=True, tracking=True)
     
     blockly_xml = fields.Text('Blockly XML')
     generated_code = fields.Text('Generated Code', readonly=True)
@@ -71,6 +86,12 @@ class AdvancedPricingRule(models.Model):
     
     is_weekend_required = fields.Boolean('Weekend Only', help='Apply only for weekend appointments')
     is_holiday_required = fields.Boolean('Holiday Only', help='Apply only for holiday appointments')
+    holiday_type = fields.Selection([
+        ('national', 'National Holiday'),
+        ('tet', 'TET Holiday'),
+        ('regional', 'Regional Holiday'),
+        ('observance', 'Observance'),
+    ], string='Holiday Type', help='Apply only for specific holiday type (requires Holiday Only to be checked)')
     is_after_hours_required = fields.Boolean('After Hours Only', help='Apply only for after-hours appointments')
     
     service_type = fields.Selection([
@@ -118,10 +139,10 @@ class AdvancedPricingRule(models.Model):
         ('percentage', 'Apply Percentage'),
         ('fixed', 'Set Fixed Price'),
         ('formula', 'Apply Formula')
-    ], string='Action Type', default='add')
-    
-    action_value = fields.Float('Action Value')
-    action_formula = fields.Text('Action Formula')
+    ], string='Action Type', default='add', tracking=True)
+
+    action_value = fields.Float('Action Value', tracking=True)
+    action_formula = fields.Text('Action Formula', tracking=True)
     
     min_quantity = fields.Float('Minimum Quantity', default=0.0)
     max_quantity = fields.Float('Maximum Quantity', default=0.0)
@@ -143,11 +164,164 @@ class AdvancedPricingRule(models.Model):
                               help='Specify a product category if this rule only applies to products belonging to this category or its children categories. Keep empty otherwise.')
     
     # Legacy fields for backward compatibility
-    product_ids = fields.Many2many('product.product', string='Products (Legacy)', 
+    product_ids = fields.Many2many('product.product', string='Products (Legacy)',
                                   help='Legacy field - use Product field instead')
     category_ids = fields.Many2many('product.category', string='Categories (Legacy)',
                                    help='Legacy field - use Product Category field instead')
-    
+
+    @api.depends('approval_status')
+    def _compute_active(self):
+        """Only approved rules are active"""
+        for rule in self:
+            rule.active = (rule.approval_status == 'approved')
+
+    def write(self, vals):
+        """
+        STRICT APPROVAL: Any modification to approved rule resets to draft
+        Requires re-approval before rule becomes active again
+        """
+        from odoo.exceptions import UserError, AccessError
+
+        # Check if this is an approval action (these fields can be updated without triggering reset)
+        approval_action_fields = {
+            'approval_status', 'approved_by', 'approval_date',
+            'approval_notes', 'rejection_reason'
+        }
+        is_approval_action = set(vals.keys()).issubset(approval_action_fields)
+
+        # Track which rules need notifications
+        rules_to_notify = {}
+
+        # If modifying an approved rule (and not an approval action), reset to draft
+        for rule in self:
+            if rule.approval_status == 'approved' and not is_approval_action and vals:
+                # Store who made the change
+                modified_by = self.env.user.name
+                modified_fields = ', '.join([k for k in vals.keys() if k not in approval_action_fields])
+
+                if modified_fields:  # Only reset if actual content fields changed
+                    vals.update({
+                        'approval_status': 'draft',
+                        'approved_by': False,
+                        'approval_date': False,
+                        'approval_notes': f'Rule modified by {modified_by}. Fields changed: {modified_fields}. Re-approval required.',
+                    })
+
+                    # Track this rule for notification after write
+                    rules_to_notify[rule.id] = {
+                        'modified_by': modified_by,
+                        'modified_fields': modified_fields
+                    }
+
+        result = super().write(vals)
+
+        # Send notifications after write
+        for rule in self:
+            if rule.id in rules_to_notify:
+                notif = rules_to_notify[rule.id]
+                rule.message_post(
+                    body=f"⚠️ Pricing rule modified by <b>{notif['modified_by']}</b>. "
+                         f"Rule has been reset to Draft status and requires re-approval before becoming active again.<br/>"
+                         f"<b>Fields modified:</b> {notif['modified_fields']}",
+                    message_type='notification',
+                    subtype_xmlid='mail.mt_note'
+                )
+
+                # Create activity for board approval
+                board_group = self.env.ref('health_base.group_healthcare_owner')
+                if board_group and board_group.users:
+                    rule.activity_schedule(
+                        'mail.mail_activity_data_todo',
+                        user_id=board_group.users[0].id,
+                        summary=f'Re-approval Required: {rule.name}',
+                        note=f'Pricing rule was modified and requires board re-approval before it can be used again.'
+                    )
+
+        return result
+
+    def action_submit_for_approval(self):
+        """Submit rule for board approval"""
+        from odoo.exceptions import UserError
+
+        self.ensure_one()
+        if self.approval_status != 'draft':
+            raise UserError('Only draft rules can be submitted for approval')
+
+        self.write({
+            'approval_status': 'pending',
+        })
+
+        # Create activity for all board members
+        board_group = self.env.ref('health_base.group_healthcare_owner')
+        if board_group:
+            for board_member in board_group.users:
+                self.activity_schedule(
+                    'mail.mail_activity_data_todo',
+                    user_id=board_member.id,
+                    summary=f'Pricing Rule Approval Required: {self.name}',
+                    note=f'Please review and approve pricing rule.<br/>'
+                         f'<b>Action:</b> {dict(self._fields["action_type"].selection).get(self.action_type)}<br/>'
+                         f'<b>Value:</b> {self.action_value}'
+                )
+
+        self.message_post(
+            body=f'📋 Rule submitted for board approval by {self.env.user.name}',
+            message_type='notification',
+            subtype_xmlid='mail.mt_note'
+        )
+
+    def action_approve(self):
+        """Approve pricing rule (Board/Owner only)"""
+        from odoo.exceptions import UserError, AccessError
+
+        self.ensure_one()
+
+        if not self.env.user.has_group('health_base.group_healthcare_owner'):
+            raise AccessError('Only Board members can approve pricing rules')
+
+        if self.approval_status != 'pending':
+            raise UserError('Only pending rules can be approved')
+
+        self.write({
+            'approval_status': 'approved',
+            'approved_by': self.env.user.id,
+            'approval_date': fields.Datetime.now(),
+        })
+
+        self.message_post(
+            body=f'✅ Rule approved by <b>{self.env.user.name}</b> and is now active',
+            message_type='notification',
+            subtype_xmlid='mail.mt_note'
+        )
+
+        # Mark activities as done
+        self.activity_ids.action_done()
+
+    def action_reject(self):
+        """Reject pricing rule with reason (opens wizard)"""
+        from odoo.exceptions import AccessError
+
+        self.ensure_one()
+
+        if not self.env.user.has_group('health_base.group_healthcare_owner'):
+            raise AccessError('Only Board members can reject pricing rules')
+
+        return {
+            'type': 'ir.actions.act_window',
+            'res_model': 'pricing.rule.reject.wizard',
+            'view_mode': 'form',
+            'target': 'new',
+            'context': {'default_rule_id': self.id}
+        }
+
+    def action_reset_to_draft(self):
+        """Reset rejected rule back to draft for editing"""
+        self.ensure_one()
+        self.write({
+            'approval_status': 'draft',
+            'rejection_reason': False,
+        })
+
     def evaluate_condition(self, product_id, partner_id, quantity, context_data):
         """Evaluate if this rule applies"""
         self.ensure_one()
@@ -261,6 +435,10 @@ class AdvancedPricingRule(models.Model):
         if self.is_holiday_required:
             if not context_data.get('is_holiday', False):
                 return False
+            # Check specific holiday type if specified
+            if self.holiday_type:
+                if context_data.get('holiday_type') != self.holiday_type:
+                    return False
         
         # After hours condition
         if self.is_after_hours_required:

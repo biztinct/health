@@ -79,10 +79,25 @@ class SaleOrder(models.Model):
                                store=True,
                                help='True if appointment is on weekend')
     
-    is_holiday = fields.Boolean('Holiday Service', 
-                               compute='_compute_time_factors', 
+    is_holiday = fields.Boolean('Holiday Service',
+                               compute='_compute_time_factors',
                                store=True,
                                help='True if appointment is on holiday')
+
+    holiday_type = fields.Selection([
+        ('national', 'National Holiday'),
+        ('tet', 'TET Holiday'),
+        ('regional', 'Regional Holiday'),
+        ('observance', 'Observance'),
+    ], string='Holiday Type',
+       compute='_compute_time_factors',
+       store=True,
+       help='Type of holiday for pricing calculations')
+
+    holiday_multiplier = fields.Float('Holiday Price Multiplier',
+                                     compute='_compute_time_factors',
+                                     store=True,
+                                     help='Price multiplier for holiday (e.g., 3.0 for TET)')
     
     is_after_hours = fields.Boolean('After Hours Service', 
                                    compute='_compute_time_factors', 
@@ -179,36 +194,76 @@ class SaleOrder(models.Model):
                 
                 # Weekend check (Saturday=5, Sunday=6)
                 order.is_weekend = dt_local.weekday() >= 5
-                
-                # Holiday check using hr_holidays module
-                order.is_holiday = self._check_holiday(dt_local.date())
-                
+
+                # Holiday check using resource.calendar.leaves with pricing info
+                holiday_info = order._check_holiday(dt_local.date())
+                order.is_holiday = holiday_info['is_holiday']
+                order.holiday_type = holiday_info.get('holiday_type', False)
+                order.holiday_multiplier = holiday_info.get('multiplier', 1.0)
+
                 # After hours check (before 8 AM or after 6 PM)
                 order.is_after_hours = dt_local.hour < 8 or dt_local.hour >= 18
-                
+
                 # Appointment hour for time-based rules
                 order.appointment_hour = dt_local.hour
             else:
                 order.is_weekend = False
                 order.is_holiday = False
+                order.holiday_type = False
+                order.holiday_multiplier = 1.0
                 order.is_after_hours = False
                 order.appointment_hour = 0
     
     def _check_holiday(self, date):
-        """Check if date is a holiday using hr_holidays calendar leaves"""
+        """Check if date is a holiday and return pricing information
+
+        Returns:
+            dict: {
+                'is_holiday': Boolean,
+                'holiday_type': Selection value or False,
+                'multiplier': Float (1.0 if not a pricing holiday),
+                'holiday_name': String or False
+            }
+        """
+        result = {
+            'is_holiday': False,
+            'holiday_type': False,
+            'multiplier': 1.0,
+            'holiday_name': False
+        }
+
         try:
-            # Check if hr_holidays module is installed
-            if 'resource.calendar.leaves' in self.env:
-                leave_dates = self.env['resource.calendar.leaves'].search([
-                    ('date_from', '<=', date),
-                    ('date_to', '>=', date),
-                    ('calendar_id', '=', False)  # Company-wide holidays
-                ])
-                return bool(leave_dates)
-        except Exception:
-            # If hr_holidays not available, no holidays
-            pass
-        return False
+            # Check if resource.calendar.leaves model is available
+            if 'resource.calendar.leaves' not in self.env:
+                return result
+
+            # Search for holidays on this date
+            # Priority: province-specific holidays first, then national holidays
+            holidays = self.env['resource.calendar.leaves'].search([
+                ('date_from', '<=', date),
+                ('date_to', '>=', date),
+                ('resource_id', '=', False),  # Not employee-specific
+                ('calendar_id', '=', False),  # Company-wide holidays
+                ('is_pricing_holiday', '=', True),  # Only pricing holidays
+            ], order='price_multiplier desc')  # Highest multiplier first (TET > National)
+
+            # If province filtering is implemented, add province check here
+            # For now, use first matching holiday (highest multiplier)
+            if holidays:
+                holiday = holidays[0]
+                result.update({
+                    'is_holiday': True,
+                    'holiday_type': holiday.holiday_type,
+                    'multiplier': holiday.price_multiplier or 1.0,
+                    'holiday_name': holiday.name
+                })
+        except Exception as e:
+            # If any error occurs, return default (no holiday)
+            import logging
+            _logger = logging.getLogger(__name__)
+            _logger.warning(f"Holiday check failed: {e}")
+
+        return result
     
     @api.depends('order_line', 'order_line.product_uom_qty')
     def _compute_service_units(self):
@@ -469,6 +524,8 @@ class SaleOrderLine(models.Model):
                     'appointment_hour': line.order_id.appointment_hour or 0,
                     'is_weekend': line.order_id.is_weekend,
                     'is_holiday': line.order_id.is_holiday,
+                    'holiday_type': line.order_id.holiday_type,
+                    'holiday_multiplier': line.order_id.holiday_multiplier,
                     'is_after_hours': line.order_id.is_after_hours,
                     'service_type': line.order_id.fso_service_type,
                     'service_location': line.order_id.fso_service_location,

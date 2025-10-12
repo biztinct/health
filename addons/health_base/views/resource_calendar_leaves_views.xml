@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Public Holiday List View -->
+    <record id="view_healthcare_public_holiday_list" model="ir.ui.view">
+        <field name="name">healthcare.public.holiday.list</field>
+        <field name="model">resource.calendar.leaves</field>
+        <field name="arch" type="xml">
+            <list string="Public Holidays"
+                  decoration-warning="holiday_type == 'tet'"
+                  decoration-info="holiday_type == 'national'"
+                  decoration-muted="not is_pricing_holiday">
+                <field name="name"/>
+                <field name="date_from"/>
+                <field name="date_to"/>
+                <field name="holiday_type"/>
+                <field name="price_multiplier" string="Price × "/>
+                <field name="province_id"/>
+                <field name="is_pricing_holiday" widget="boolean_toggle"/>
+                <field name="company_id" groups="base.group_multi_company"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Public Holiday Form View -->
+    <record id="view_healthcare_public_holiday_form" model="ir.ui.view">
+        <field name="name">healthcare.public.holiday.form</field>
+        <field name="model">resource.calendar.leaves</field>
+        <field name="arch" type="xml">
+            <form string="Public Holiday">
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="Holiday Name (e.g., TET Nguyen Dan 2025)"/>
+                        </h1>
+                    </div>
+
+                    <group>
+                        <group string="Holiday Dates">
+                            <field name="date_from"/>
+                            <field name="date_to"/>
+                            <field name="resource_id" invisible="1"/>
+                            <field name="calendar_id" invisible="1"/>
+                        </group>
+
+                        <group string="Pricing Configuration">
+                            <field name="holiday_type"/>
+                            <field name="price_multiplier" widget="monetary"/>
+                            <field name="is_pricing_holiday"/>
+                            <field name="province_id" placeholder="Leave blank for national holidays"/>
+                        </group>
+                    </group>
+
+                    <group string="Scope">
+                        <field name="company_id" groups="base.group_multi_company"/>
+                    </group>
+
+                    <notebook>
+                        <page string="Pricing Examples" name="pricing_examples">
+                            <group>
+                                <field name="price_multiplier" invisible="1"/>
+                                <div class="alert alert-info" role="alert">
+                                    <h4>Pricing Examples for <field name="name" readonly="1" nolabel="1"/> (<field name="price_multiplier" readonly="1" nolabel="1"/>x multiplier):</h4>
+                                    <ul>
+                                        <li>Base Price: 100,000 VND → Holiday Price: <strong><field name="price_multiplier" readonly="1" nolabel="1"/> × 100,000 = <field name="price_multiplier" readonly="1" widget="float" nolabel="1"/> VND</strong></li>
+                                        <li>Home Visit: 500,000 VND → Holiday Price: <strong>1,500,000 VND</strong> (if multiplier = 3.0)</li>
+                                        <li>Consultation: 200,000 VND → Holiday Price: <strong>600,000 VND</strong> (if multiplier = 3.0)</li>
+                                    </ul>
+                                </div>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Public Holiday Search View -->
+    <record id="view_healthcare_public_holiday_search" model="ir.ui.view">
+        <field name="name">healthcare.public.holiday.search</field>
+        <field name="model">resource.calendar.leaves</field>
+        <field name="arch" type="xml">
+            <search string="Public Holidays">
+                <field name="name" filter_domain="[('name', 'ilike', self)]"/>
+                <field name="holiday_type"/>
+                <field name="province_id"/>
+
+                <!-- Quick Filters -->
+                <filter name="pricing_holidays" string="Pricing Holidays"
+                        domain="[('is_pricing_holiday', '=', True)]"/>
+                <filter name="tet_holidays" string="TET Holidays"
+                        domain="[('holiday_type', '=', 'tet')]"/>
+                <filter name="national_holidays" string="National Holidays"
+                        domain="[('holiday_type', '=', 'national')]"/>
+                <filter name="regional_holidays" string="Regional Holidays"
+                        domain="[('holiday_type', '=', 'regional')]"/>
+
+                <!-- Date Filters -->
+                <separator/>
+                <filter name="upcoming" string="Upcoming"
+                        domain="[('date_from', '&gt;=', context_today())]"/>
+                <filter name="current_year" string="This Year"
+                        domain="[('date_from', '&gt;=', (context_today().replace(month=1, day=1)).strftime('%Y-%m-%d')),
+                                 ('date_from', '&lt;=', (context_today().replace(month=12, day=31)).strftime('%Y-%m-%d'))]"/>
+
+                <!-- Group By -->
+                <separator/>
+                <group expand="0" string="Group By">
+                    <filter name="group_holiday_type" string="Holiday Type"
+                            context="{'group_by': 'holiday_type'}"/>
+                    <filter name="group_province" string="Province"
+                            context="{'group_by': 'province_id'}"/>
+                    <filter name="group_year" string="Year"
+                            context="{'group_by': 'date_from:year'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Window Action for Public Holidays -->
+    <record id="action_healthcare_public_holidays" model="ir.actions.act_window">
+        <field name="name">Public Holidays</field>
+        <field name="res_model">resource.calendar.leaves</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('resource_id', '=', False), ('calendar_id', '=', False)]</field>
+        <field name="context">{'default_resource_id': False, 'default_calendar_id': False, 'default_is_pricing_holiday': True, 'search_default_pricing_holidays': 1, 'search_default_upcoming': 1}</field>
+        <field name="view_ids" eval="[(5, 0, 0),
+                                      (0, 0, {'view_mode': 'list', 'view_id': ref('view_healthcare_public_holiday_list')}),
+                                      (0, 0, {'view_mode': 'form', 'view_id': ref('view_healthcare_public_holiday_form')})]"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No public holidays defined yet!
+            </p>
+            <p>
+                Create public holidays with pricing multipliers for TET, National holidays, etc.
+            </p>
+        </field>
+    </record>
+
+    <!-- Menu Item under Configuration -->
+    <menuitem id="menu_healthcare_public_holidays"
+              name="Public Holidays"
+              parent="menu_healthcare_lookups"
+              action="action_healthcare_public_holidays"
+              sequence="90"
+              groups="group_healthcare_manager,group_healthcare_admin,group_healthcare_owner"/>
+
+</odoo>

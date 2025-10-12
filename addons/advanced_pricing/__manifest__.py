@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Advanced Pricing Engine',
-    'version': '18.0.1.0.0',
+    'version': '18.0.1.1.0',
     'category': 'Sales/Sales',
-    'summary': 'Enterprise-grade pricing engine with visual rule builder for Odoo 18 CE',
+    'summary': 'Enterprise-grade pricing engine with visual rule builder and holiday pricing for Odoo 18 CE',
     'description': """
 Advanced Pricing Engine for Odoo 18 CE
 =======================================
@@ -13,6 +13,7 @@ Features:
 * Multi-level cascading pricing rules
 * Dynamic field-based calculations
 * Integration with custom booking models
+* Holiday pricing with automatic multipliers (TET, National holidays)
 * Real-time price calculations
 * Performance optimized with caching
 * Complete audit trail and versioning
@@ -26,12 +27,15 @@ Features:
         'sale',
         'product',
         'web',
+        'mail',
+        'health_base',
         'health_fieldservice',
     ],
     'data': [
         'security/ir.model.access.csv',
         'views/pricing_engine_views.xml',
         'views/pricing_rule_views.xml',
+        'views/pricing_rule_reject_wizard_views.xml',
         'views/pricing_configuration_views.xml',
         'views/product_pricelist_views.xml',
         'views/sale_order_views.xml',

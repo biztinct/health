@@ -6,11 +6,44 @@
         <field name="arch" type="xml">
             <form string="Pricing Rule">
                 <header>
-                    <button name="action_open_visual_builder" type="object" 
+                    <!-- Approval Status Bar -->
+                    <field name="approval_status" widget="statusbar"
+                           statusbar_visible="draft,pending,approved"/>
+
+                    <!-- Draft actions -->
+                    <button name="action_submit_for_approval" string="Submit for Approval"
+                            type="object" class="oe_highlight"
+                            invisible="approval_status != 'draft'"/>
+
+                    <!-- Pending actions (Board only) -->
+                    <button name="action_approve" string="Approve"
+                            type="object" class="oe_highlight"
+                            invisible="approval_status != 'pending'"
+                            groups="health_base.group_healthcare_owner"/>
+                    <button name="action_reject" string="Reject"
+                            type="object" class="btn-danger"
+                            invisible="approval_status != 'pending'"
+                            groups="health_base.group_healthcare_owner"/>
+
+                    <!-- Rejected actions -->
+                    <button name="action_reset_to_draft" string="Reset to Draft"
+                            type="object"
+                            invisible="approval_status != 'rejected'"/>
+
+                    <!-- Visual Builder -->
+                    <button name="action_open_visual_builder" type="object"
                             string="🎨 Visual Builder" class="btn-primary"
                             help="Open drag-and-drop visual rule builder"/>
                 </header>
                 <sheet>
+                    <!-- Warning banner for non-approved rules -->
+                    <div class="alert alert-warning" role="alert"
+                         invisible="approval_status == 'approved'">
+                        <strong>⚠️ This rule is not active</strong>
+                        <span invisible="approval_status != 'draft'"> - Submit for board approval to activate</span>
+                        <span invisible="approval_status != 'pending'"> - Awaiting board approval</span>
+                        <span invisible="approval_status != 'rejected'"> - Rule has been rejected</span>
+                    </div>
                     <div class="oe_button_box" name="button_box">
                         <button name="action_create_visual_rule" type="object" 
                                 class="oe_stat_button" icon="fa-puzzle-piece"
@@ -28,11 +61,22 @@
                         </h1>
                     </div>
                     
+                    <!-- Approval Information -->
+                    <group string="Approval Status"
+                           invisible="approval_status == 'draft'">
+                        <field name="approved_by" invisible="approval_status != 'approved'"/>
+                        <field name="approval_date" invisible="approval_status != 'approved'"/>
+                        <field name="approval_notes"/>
+                        <field name="rejection_reason"
+                               invisible="approval_status != 'rejected'"
+                               class="text-danger"/>
+                    </group>
+
                     <group>
                         <group string="Basic Information">
                             <field name="engine_id"/>
                             <field name="sequence"/>
-                            <field name="active"/>
+                            <field name="active" invisible="1"/>
                         </group>
                         <group string="Rule Configuration">
                             <field name="level"/>
@@ -100,6 +144,7 @@
                         </page>
                     </notebook>
                 </sheet>
+                <chatter/>
             </form>
         </field>
     </record>
@@ -109,14 +154,23 @@
         <field name="name">advanced.pricing.rule.list</field>
         <field name="model">advanced.pricing.rule</field>
         <field name="arch" type="xml">
-            <list string="Pricing Rules" default_order="sequence">
+            <list string="Pricing Rules" default_order="sequence"
+                  decoration-success="approval_status == 'approved'"
+                  decoration-warning="approval_status == 'pending'"
+                  decoration-danger="approval_status == 'rejected'"
+                  decoration-muted="approval_status == 'draft'">
                 <header>
-                    <button name="action_create_visual_rule" type="object" 
+                    <button name="action_create_visual_rule" type="object"
                             string="🎨 Create Visual Rule" class="btn-primary"
                             help="Create a new visual pricing rule using drag-and-drop builder"/>
                 </header>
                 <field name="sequence" widget="handle"/>
                 <field name="name"/>
+                <field name="approval_status" widget="badge"
+                       decoration-success="approval_status == 'approved'"
+                       decoration-warning="approval_status == 'pending'"
+                       decoration-danger="approval_status == 'rejected'"
+                       decoration-info="approval_status == 'draft'"/>
                 <field name="engine_id"/>
                 <field name="applied_on"/>
                 <field name="level"/>
@@ -126,7 +180,7 @@
                 <field name="condition_value" optional="show"/>
                 <field name="action_type"/>
                 <field name="action_value"/>
-                <field name="active" widget="boolean_toggle"/>
+                <field name="active" widget="boolean_toggle" optional="hide"/>
                 <button name="action_open_visual_builder" type="object" 
                         string="Visual Builder" class="btn-primary btn-sm"
                         invisible="rule_type != 'visual'"

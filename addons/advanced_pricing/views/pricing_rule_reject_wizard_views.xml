@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_pricing_rule_reject_wizard_form" model="ir.ui.view">
+        <field name="name">pricing.rule.reject.wizard.form</field>
+        <field name="model">pricing.rule.reject.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Reject Pricing Rule">
+                <group>
+                    <field name="rule_id" invisible="1"/>
+                    <field name="rejection_reason"
+                           placeholder="Explain why this rule is being rejected (minimum 10 characters)..."
+                           widget="text"/>
+                </group>
+                <footer>
+                    <button string="Confirm Rejection"
+                            name="action_confirm_reject"
+                            type="object"
+                            class="btn-danger"/>
+                    <button string="Cancel" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+</odoo>
