@@ -18,29 +18,29 @@
                             invisible="state in ['completed', 'cancelled']"
                             help="Manually assign or modify staff assignments"/>
                     
-                    <button name="action_start_service" type="object" 
+                    <button name="action_start_service" type="object"
                             string="▶️ Start Service" class="oe_highlight"
-                            invisible="state in ['draft', 'in_progress', 'completed', 'cancelled']"/>
-                    
-                    <button name="action_complete_service" type="object" 
+                            invisible="state in ['draft', 'in_progress', 'completed', 'completed_pending_invoice', 'cancelled']"/>
+
+                    <button name="action_complete_service" type="object"
                             string="✅ Complete Service" class="oe_highlight"
                             invisible="state != 'in_progress'"/>
-                    
-                    <button name="action_create_final_invoice" type="object" 
+
+                    <button name="action_create_final_invoice" type="object"
                             string="💰 Create Invoice" class="btn-success"
-                            invisible="state != 'completed' or invoice_id"
+                            invisible="state not in ['completed', 'completed_pending_invoice'] or invoice_id"
                             help="Create final invoice and initiate payment workflow (Pay Now/Pay Later)"/>
-                    
+
                     <!-- View Invoice button removed - duplicate of Invoices smart button -->
-                    
-                    <button name="action_close_fso" type="object" 
-                            string="📁 Close FSO" 
-                            invisible="state != 'completed'"
+
+                    <button name="action_close_fso" type="object"
+                            string="📁 Close FSO"
+                            invisible="state not in ['completed', 'completed_pending_invoice']"
                             help="Close the field service order"/>
-                    
+
                     <button name="action_cancel_booking" type="object"
                             string="❌ Cancel Booking"
-                            invisible="state in ['completed', 'cancelled']"/>
+                            invisible="state in ['completed', 'completed_pending_invoice', 'cancelled']"/>
                     
                     <button name="action_confirm_booking" type="object" 
                             string="✅ Confirm Booking" class="oe_highlight"
@@ -68,12 +68,12 @@
                 </div>
                 
                 <!-- Empty Quote Warning Banner -->
-                <div class="alert alert-info" role="alert" 
+                <div class="alert alert-info" role="alert"
                      invisible="not sale_order_id or order_line_count > 0 or state != 'draft'">
                     <div class="d-flex align-items-center">
                         <i class="fa fa-info-circle me-2"/>
                         <div>
-                            <strong>📝 Quote Created:</strong> 
+                            <strong>📝 Quote Created:</strong>
                             Healthcare quote exists but needs items added before confirmation.
                             <a href="#" class="btn btn-link p-0" role="button" name="action_view_quote" type="object">
                                 Click here to add services
@@ -81,7 +81,42 @@
                         </div>
                     </div>
                 </div>
-                
+
+                <!-- Part-Time Staff Completion Banner -->
+                <div class="alert alert-warning" role="alert"
+                     invisible="state != 'completed_pending_invoice'"
+                     groups="health_base.group_healthcare_operations_manager">
+                    <div class="d-flex align-items-center">
+                        <i class="fa fa-clock-o me-2"/>
+                        <div>
+                            <strong>⏳ Awaiting Invoice:</strong>
+                            Service completed by part-time staff. Operations team needs to create the invoice.
+                            <a href="#" class="btn btn-link p-0" role="button" name="action_create_final_invoice" type="object">
+                                Click here to create invoice
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Completion Readiness Status Banner -->
+                <div class="alert alert-info" role="alert"
+                     invisible="state not in ['in_progress'] or (clinical_notes_submitted and invoice_submitted)">
+                    <div class="d-flex align-items-center">
+                        <i class="fa fa-exclamation-circle me-2"/>
+                        <div>
+                            <strong>📋 Service Completion Requirements:</strong>
+                            <ul class="mb-0 mt-2">
+                                <li invisible="clinical_notes_submitted">
+                                    <strong>Clinical Notes:</strong> Required - Please complete clinical documentation
+                                </li>
+                                <li invisible="invoice_submitted">
+                                    <strong>Quote/Invoice:</strong> Required - Please create a quote with service items
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
                 <sheet>
                     <div class="oe_button_box" name="button_box">
                         <!-- Smart buttons for enhanced user experience -->
@@ -203,7 +238,43 @@
                                 </group>
                             </group>
                         </page>
-                        
+
+                        <page string="Clinical Notes" name="clinical_notes">
+                            <div class="alert alert-warning" role="alert" invisible="clinical_notes_submitted">
+                                <p><strong>⚠️ Required:</strong> Clinical notes must be submitted before completing the service.</p>
+                            </div>
+                            <div class="alert alert-success" role="alert" invisible="not clinical_notes_submitted">
+                                <p><strong>✓ Clinical Notes Submitted:</strong> Clinical documentation is complete.</p>
+                            </div>
+                            <group>
+                                <group string="Clinical Documentation">
+                                    <field name="clinical_notes_submitted" invisible="1"/>
+                                    <field name="clinical_notes" widget="html" nolabel="1" placeholder="Enter clinical observations and notes..."/>
+                                </group>
+                            </group>
+                            <group>
+                                <group string="Treatment Details">
+                                    <field name="treatment_performed" placeholder="Describe treatment provided..."/>
+                                    <field name="medications_prescribed" placeholder="List medications prescribed..."/>
+                                </group>
+                                <group string="Patient Assessment">
+                                    <field name="patient_condition_before" placeholder="Patient condition before service..."/>
+                                    <field name="patient_condition_after" placeholder="Patient condition after service..."/>
+                                    <field name="vital_signs" placeholder="Record vital signs..."/>
+                                </group>
+                            </group>
+                            <group>
+                                <group string="Follow-up">
+                                    <field name="follow_up_required"/>
+                                    <field name="follow_up_date" invisible="not follow_up_required"/>
+                                    <field name="follow_up_notes" invisible="not follow_up_required" placeholder="Follow-up instructions..."/>
+                                </group>
+                                <group string="Service Quality">
+                                    <field name="service_rating"/>
+                                </group>
+                            </group>
+                        </page>
+
                         <page string="Real-time Communication" name="communication">
                             <field name="communication_ids" readonly="1">
                                 <list string="Communications" create="false">
@@ -235,6 +306,22 @@
                             </group>
                             <group string="Cancellation Notes">
                                 <field name="cancellation_notes" nolabel="1" readonly="1"/>
+                            </group>
+                        </page>
+
+                        <page string="Completion Details" name="completion" invisible="state != 'completed_pending_invoice'">
+                            <div class="alert alert-info" role="alert">
+                                <p><strong>ℹ️ Part-Time Staff Workflow:</strong> This service was completed by part-time/casual staff who do not have invoice creation permissions. Operations team has been notified to create the invoice.</p>
+                            </div>
+                            <group>
+                                <group string="Completion Information">
+                                    <field name="lead_staff_id" readonly="1"/>
+                                    <field name="actual_end_datetime" readonly="1"/>
+                                    <field name="actual_duration" readonly="1"/>
+                                </group>
+                            </group>
+                            <group string="Completion Notes">
+                                <field name="completion_notes" nolabel="1" readonly="1"/>
                             </group>
                         </page>
                     </notebook>

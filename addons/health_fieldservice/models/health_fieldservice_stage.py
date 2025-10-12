@@ -21,6 +21,7 @@ class HealthFieldServiceStage(models.Model):
         ('assigned', 'Assigned'),
         ('in_progress', 'In Progress'),
         ('completed', 'Completed'),
+        ('completed_pending_invoice', 'Completed - Pending Invoice'),
         ('cancelled', 'Cancelled'),
         ('closed', 'Closed'),
     ], string='Related State', required=False, default='draft',

@@ -74,6 +74,17 @@
         <field name="require_staff_assignment" eval="True"/>
     </record>
 
+    <record id="stage_completed_pending_invoice" model="health.fieldservice.stage">
+        <field name="name">Completed - Pending Invoice</field>
+        <field name="description">Service completed by part-time staff, awaiting Operations invoice creation</field>
+        <field name="sequence">65</field>
+        <field name="state">completed_pending_invoice</field>
+        <field name="color">8</field>
+        <field name="is_closed" eval="False"/>
+        <field name="allow_edit" eval="False"/>
+        <field name="require_staff_assignment" eval="True"/>
+    </record>
+
     <record id="stage_cancelled" model="health.fieldservice.stage">
         <field name="name">Cancelled</field>
         <field name="description">Service cancelled</field>

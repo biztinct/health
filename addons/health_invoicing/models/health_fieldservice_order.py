@@ -123,8 +123,8 @@ class HealthFieldserviceOrder(models.Model):
     def action_complete_service_with_payment(self):
         """Complete service and launch payment collection workflow"""
         self.ensure_one()
-        
-        if self.stage != 'in_progress':
+
+        if self.state != 'in_progress':
             raise UserError(_('Only services in progress can be completed.'))
         
         if self.is_invoiced:
@@ -272,13 +272,13 @@ class HealthFieldserviceOrder(models.Model):
                 self.service_type = self.package_id.service_type
     
     def write(self, vals):
-        """Override write to consume package services when FSO stage changes"""
+        """Override write to consume package services when FSO state changes"""
         result = super().write(vals)
-        
+
         # Auto-consume package services when FSO is completed
-        if 'stage' in vals and vals['stage'] in ['completed', 'done']:
+        if 'state' in vals and vals['state'] in ['completed', 'completed_pending_invoice']:
             for fso in self:
                 if fso.package_id and not fso.is_invoiced:
                     fso.action_consume_package_service()
-        
+
         return result

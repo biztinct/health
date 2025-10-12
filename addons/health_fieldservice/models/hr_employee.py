@@ -49,6 +49,21 @@ class HrEmployee(models.Model):
         ('suspended', 'Suspended'),
         ('terminated', 'Terminated')
     ], string='Employment Status', default='active', tracking=True)
+
+    # Part-Time Workflow Support
+    employment_type = fields.Selection([
+        ('full_time', 'Full-Time Staff'),
+        ('part_time', 'Part-Time Staff'),
+        ('casual', 'Casual/Contract'),
+    ], string='Employment Type', default='full_time', required=True, tracking=True,
+       help='Full-time staff can create invoices; part-time/casual staff require Operations invoicing')
+
+    can_create_invoices = fields.Boolean(
+        'Can Create Invoices',
+        compute='_compute_can_create_invoices',
+        store=True,
+        help='Computed based on employment type - full-time staff can create invoices'
+    )
     
     # Facility Assignment (consolidated)
     facility_ids = fields.Many2many(
@@ -295,6 +310,12 @@ class HrEmployee(models.Model):
         sequence = self.env['ir.sequence'].next_by_code('hr.employee.healthcare') or '0001'
         return f'S{sequence}'
     
+    @api.depends('employment_type')
+    def _compute_can_create_invoices(self):
+        """Compute invoice creation permission based on employment type"""
+        for employee in self:
+            employee.can_create_invoices = employee.employment_type == 'full_time'
+
     @api.depends('user_id')
     def _compute_current_assignments(self):
         """Calculate current active assignments"""

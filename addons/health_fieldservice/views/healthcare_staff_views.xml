@@ -46,10 +46,14 @@
                             <field name="is_healthcare_staff"/>
                             <field name="healthcare_role" required="is_healthcare_staff"/>
                             <field name="employment_status" required="is_healthcare_staff"/>
+                            <field name="employment_type" required="is_healthcare_staff"
+                                   help="Full-time staff can create invoices; Part-time/Casual require Operations invoicing"/>
+                            <field name="can_create_invoices" readonly="1"
+                                   invisible="not is_healthcare_staff"/>
                             <field name="license_number"/>
                             <field name="certification_expiry"/>
                         </group>
-                        
+
                         <group string="Assignment Preferences">
                             <field name="max_daily_assignments"/>
                             <field name="preferred_shift"/>
@@ -119,22 +123,31 @@
                 <field name="healthcare_skill_ids"/>
                 
                 <!-- Filters -->
-                <filter string="Active Staff" name="active_staff" 
+                <filter string="Active Staff" name="active_staff"
                         domain="[('employment_status', '=', 'active')]"/>
-                <filter string="Available" name="available" 
+                <filter string="Available" name="available"
                         domain="[('availability_status', '=', 'available')]"/>
-                <filter string="On Duty" name="on_duty" 
+                <filter string="On Duty" name="on_duty"
                         domain="[('availability_status', 'in', ['available', 'busy'])]"/>
-                
+
                 <separator/>
-                
-                <filter string="Doctors" name="doctors" 
+
+                <filter string="Full-Time Staff" name="full_time"
+                        domain="[('employment_type', '=', 'full_time')]"/>
+                <filter string="Part-Time Staff" name="part_time"
+                        domain="[('employment_type', '=', 'part_time')]"/>
+                <filter string="Casual/Contract" name="casual"
+                        domain="[('employment_type', '=', 'casual')]"/>
+
+                <separator/>
+
+                <filter string="Doctors" name="doctors"
                         domain="[('healthcare_role', 'ilike', 'doctor')]"/>
-                <filter string="Nurses" name="nurses" 
+                <filter string="Nurses" name="nurses"
                         domain="[('healthcare_role', 'ilike', 'nurse')]"/>
-                <filter string="Therapists" name="therapists" 
+                <filter string="Therapists" name="therapists"
                         domain="[('healthcare_role', 'ilike', 'therapist')]"/>
-                
+
                 <separator/>
                 
                 <filter string="High Performers" name="high_performers" 
@@ -144,13 +157,15 @@
                 
                 <!-- Group By -->
                 <group expand="0" string="Group By">
-                    <filter string="Healthcare Role" name="group_by_role" 
+                    <filter string="Healthcare Role" name="group_by_role"
                             context="{'group_by': 'healthcare_role'}"/>
-                    <filter string="Employment Status" name="group_by_status" 
+                    <filter string="Employment Status" name="group_by_status"
                             context="{'group_by': 'employment_status'}"/>
-                    <filter string="Availability" name="group_by_availability" 
+                    <filter string="Employment Type" name="group_by_employment_type"
+                            context="{'group_by': 'employment_type'}"/>
+                    <filter string="Availability" name="group_by_availability"
                             context="{'group_by': 'availability_status'}"/>
-                    <filter string="Department" name="group_by_department" 
+                    <filter string="Department" name="group_by_department"
                             context="{'group_by': 'department_id'}"/>
                 </group>
             </search>

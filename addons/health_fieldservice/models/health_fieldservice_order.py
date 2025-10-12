@@ -524,6 +524,7 @@ class HealthFieldServiceOrderUnified(models.Model):
         ('assigned', 'Assigned'),
         ('in_progress', 'In Progress'),
         ('completed', 'Completed'),
+        ('completed_pending_invoice', 'Completed - Pending Invoice'),
         ('cancelled', 'Cancelled'),
         ('closed', 'Closed'),
     ], string='Status', default='draft', tracking=True, required=True,
@@ -565,6 +566,13 @@ class HealthFieldServiceOrderUnified(models.Model):
     cancellation_notes = fields.Text(
         'Cancellation Notes',
         help='Additional notes about the cancellation'
+    )
+
+    # Completion fields for part-time workflow
+    completion_notes = fields.Text(
+        'Completion Notes',
+        tracking=True,
+        help='Notes about service completion, especially for part-time staff requiring Operations invoicing'
     )
 
     team_id = fields.Many2one(
@@ -734,11 +742,32 @@ class HealthFieldServiceOrderUnified(models.Model):
         """Check if service timer is currently active"""
         for record in self:
             record.service_timer_active = (
-                record.actual_start_datetime and 
-                not record.actual_end_datetime and 
+                record.actual_start_datetime and
+                not record.actual_end_datetime and
                 record.state == 'in_progress'
             )
-    
+
+    @api.depends('clinical_notes', 'treatment_performed')
+    def _compute_clinical_notes_status(self):
+        """Check if clinical notes have been submitted"""
+        for record in self:
+            # Clinical notes are considered submitted if either clinical_notes or treatment_performed has content
+            record.clinical_notes_submitted = bool(
+                (record.clinical_notes and record.clinical_notes.strip()) or
+                (record.treatment_performed and record.treatment_performed.strip())
+            )
+
+    @api.depends('invoice_id', 'invoice_id.state', 'sale_order_id', 'sale_order_id.order_line')
+    def _compute_invoice_status(self):
+        """Check if invoice has been submitted (not draft)"""
+        for record in self:
+            # Invoice is considered submitted if:
+            # 1. An invoice exists and is not in draft state, OR
+            # 2. A quote/sale order exists with line items (ready for invoicing)
+            has_invoice = record.invoice_id and record.invoice_id.state != 'draft'
+            has_quote_with_items = record.sale_order_id and record.sale_order_id.order_line
+            record.invoice_submitted = has_invoice or has_quote_with_items
+
     # Clinical Documentation
     clinical_notes = fields.Html('Clinical Notes', help='Clinical observations and notes from service provider')
     treatment_performed = fields.Text('Treatment Performed', help='Detailed description of treatment provided')
@@ -764,6 +793,21 @@ class HealthFieldServiceOrderUnified(models.Model):
     ], string='Service Rating', help='Patient rating of service quality')
     
     completion_notes = fields.Text('Completion Notes', help='Notes about service completion')
+
+    # Validation status for job completion
+    clinical_notes_submitted = fields.Boolean(
+        'Clinical Notes Submitted',
+        compute='_compute_clinical_notes_status',
+        store=True,
+        help='True if clinical notes have been entered'
+    )
+
+    invoice_submitted = fields.Boolean(
+        'Invoice Submitted',
+        compute='_compute_invoice_status',
+        store=True,
+        help='True if invoice has been created and submitted'
+    )
     
     # ============================================================================
     # COMMUNICATION & COORDINATION
@@ -1388,13 +1432,131 @@ class HealthFieldServiceOrderUnified(models.Model):
             'actual_start_datetime': fields.Datetime.now(),
         })
     
-    def action_complete_service(self):
-        """Complete the service"""
+    def _check_invoice_creation_permission(self):
+        """Check if assigned staff can create invoice based on employment type"""
         self.ensure_one()
-        self.write({
-            'state': 'completed',
-            'actual_end_datetime': fields.Datetime.now(),
-        })
+        if not self.lead_staff_id:
+            # If no lead staff, allow invoice creation (default behavior)
+            return True
+        return self.lead_staff_id.can_create_invoices
+
+    def _notify_operations_for_invoicing(self):
+        """Notify operations manager that part-time staff completed service and needs invoicing"""
+        self.ensure_one()
+
+        # Get operations manager group
+        ops_group = self.env.ref('health_base.group_healthcare_operations_manager', raise_if_not_found=False)
+        if not ops_group:
+            _logger.warning('Operations Manager group not found for notification')
+            return
+
+        # Get all operations managers
+        ops_managers = ops_group.users
+
+        if not ops_managers:
+            _logger.warning('No Operations Managers found for invoicing notification')
+            return
+
+        # Create activity for each operations manager
+        activity_type = self.env.ref('mail.mail_activity_data_todo', raise_if_not_found=False)
+        if not activity_type:
+            _logger.warning('Todo activity type not found')
+            return
+
+        for manager in ops_managers:
+            self.activity_schedule(
+                activity_type_id=activity_type.id,
+                summary=f'Create Invoice for Completed Service: {self.name}',
+                note=f"""
+                    <p><strong>Service completed by part-time staff - requires Operations invoicing</strong></p>
+                    <ul>
+                        <li><strong>Booking:</strong> {self.name}</li>
+                        <li><strong>Patient:</strong> {self.patient_id.name}</li>
+                        <li><strong>Service:</strong> {self._get_service_type_label()}</li>
+                        <li><strong>Completed By:</strong> {self.lead_staff_id.name} (Part-Time Staff)</li>
+                        <li><strong>Completion Date:</strong> {self.actual_end_datetime.strftime('%Y-%m-%d %H:%M') if self.actual_end_datetime else 'N/A'}</li>
+                    </ul>
+                    <p><strong>Completion Notes:</strong></p>
+                    <p>{self.completion_notes or 'No additional notes provided'}</p>
+                    <p><em>Please create and finalize the invoice for this completed service.</em></p>
+                """,
+                user_id=manager.id
+            )
+
+        # Log message in chatter
+        self.message_post(
+            body=f"""
+                <p><strong>Service Completed by Part-Time Staff</strong></p>
+                <p>Assigned staff: {self.lead_staff_id.name} (Part-Time)</p>
+                <p>Operations team has been notified to create invoice.</p>
+            """,
+            subject='Service Completed - Requires Operations Invoicing',
+            message_type='notification'
+        )
+
+    def action_complete_service(self):
+        """Complete the service - different workflow for part-time vs full-time staff"""
+        self.ensure_one()
+
+        # Mandatory validation: Clinical notes must be submitted
+        if not self.clinical_notes_submitted:
+            raise UserError(_(
+                'Clinical notes are required before completing the service.\n\n'
+                'Please fill in at least one of the following:\n'
+                '• Clinical Notes\n'
+                '• Treatment Performed'
+            ))
+
+        # Mandatory validation: Invoice/Quote must exist
+        if not self.invoice_submitted:
+            raise UserError(_(
+                'Invoice or Quote is required before completing the service.\n\n'
+                'Please create a quote with service items before completing.'
+            ))
+
+        # Check if staff can create invoice
+        if self._check_invoice_creation_permission():
+            # Full-time staff: Normal completion workflow
+            self.write({
+                'state': 'completed',
+                'actual_end_datetime': fields.Datetime.now(),
+            })
+
+            # Return notification
+            return {
+                'type': 'ir.actions.client',
+                'tag': 'display_notification',
+                'params': {
+                    'title': _('Service Completed'),
+                    'message': _('Service marked as completed. You can now create the invoice.'),
+                    'type': 'success',
+                    'sticky': False,
+                }
+            }
+        else:
+            # Part-time/casual staff: Mark for operations invoicing
+            completion_note = f'Completed by part-time staff ({self.lead_staff_id.name}) - requires Operations invoicing'
+
+            self.write({
+                'state': 'completed_pending_invoice',
+                'actual_end_datetime': fields.Datetime.now(),
+                'completion_notes': completion_note,
+            })
+
+            # Notify operations manager
+            self._notify_operations_for_invoicing()
+
+            # Return notification
+            return {
+                'type': 'ir.actions.client',
+                'tag': 'display_notification',
+                'params': {
+                    'title': _('Service Completed'),
+                    'message': _('Service completed. Operations team has been notified to create the invoice.'),
+                    'type': 'info',
+                    'sticky': False,
+                }
+            }
 
     def action_close_fso(self):
         """Close the FSO after completion (final state)"""

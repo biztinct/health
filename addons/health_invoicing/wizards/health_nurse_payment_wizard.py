@@ -159,14 +159,14 @@ class HealthNursePaymentWizard(models.TransientModel):
             if wizard.fso_id:
                 # Calculate amount based on FSO services, time, and equipment
                 amount = 0.0
-                
-                # Base service amount
-                if wizard.fso_id.service_type_id:
-                    amount += wizard.fso_id.service_type_id.base_price or 0.0
-                
-                # Time-based billing if configured
-                if wizard.fso_id.duration_hours and wizard.fso_id.service_type_id.hourly_rate:
-                    amount += wizard.fso_id.duration_hours * wizard.fso_id.service_type_id.hourly_rate
+
+                # Base service amount from appointment type or sale order
+                if wizard.fso_id.sale_order_id and wizard.fso_id.sale_order_id.order_line:
+                    # Use sale order line items for amount calculation
+                    amount += sum(line.price_subtotal for line in wizard.fso_id.sale_order_id.order_line)
+                elif wizard.fso_id.appointment_type_id:
+                    # Fallback to appointment type base price
+                    amount += wizard.fso_id.appointment_type_id.price or 0.0
                 
                 # Equipment charges
                 for equipment in wizard.fso_id.required_equipment_ids:
