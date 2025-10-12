@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Add Discount Reason to Healthcare Quote Form -->
+    <record id="view_healthcare_quote_form_discount_reason" model="ir.ui.view">
+        <field name="name">healthcare.quote.form.discount.reason</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="health_fieldservice.view_healthcare_quote_form_custom"/>
+        <field name="arch" type="xml">
+            <!-- Add discount_reason field after discount in order lines -->
+            <xpath expr="//field[@name='order_line']//field[@name='discount']" position="after">
+                <field name="discount_reason" string="Discount Reason"
+                       groups="sale.group_discount_per_so_line"
+                       optional="show"
+                       placeholder="Required when discount > 0"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

@@ -1,6 +1,6 @@
 {
     'name': 'VAFHS Healthcare Invoicing Integration',
-    'version': '18.0.1.0.11',
+    'version': '18.0.1.0.15',
     'category': 'Healthcare/Accounting',
     'summary': 'Healthcare invoicing integration inheriting from standard Odoo accounting',
     'description': """
@@ -97,6 +97,7 @@
         'views/account_move_views.xml',
         'views/res_partner_views.xml',
         'views/health_fieldservice_order_views.xml',
+        'views/health_quote_discount_views.xml',  # Add discount_reason to healthcare quotes
         'views/product_template_views.xml',
         
         # Enhanced Payment System Views

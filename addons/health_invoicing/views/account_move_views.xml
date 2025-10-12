@@ -89,4 +89,20 @@
         </field>
     </record>
 
+    <!-- Invoice Form - Add Discount Reason to Inline Invoice Lines -->
+    <record id="view_move_form_discount_reason_inline" model="ir.ui.view">
+        <field name="name">account.move.form.discount.reason.inline</field>
+        <field name="model">account.move</field>
+        <field name="inherit_id" ref="account.view_move_form"/>
+        <field name="arch" type="xml">
+            <!-- Add discount_reason field after discount in invoice_line_ids tree -->
+            <xpath expr="//field[@name='invoice_line_ids']//field[@name='discount']" position="after">
+                <field name="discount_reason"
+                       optional="show"
+                       placeholder="Required when discount > 0"
+                       width="150px"/>
+            </xpath>
+        </field>
+    </record>
+
 </odoo>

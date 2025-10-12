@@ -109,9 +109,12 @@
             'default_pricelist_id': 1,
             'healthcare_context': True
         }</field>
-        <field name="view_ids" eval="[(5, 0, 0), 
+        <field name="view_ids" eval="[(5, 0, 0),
                                       (0, 0, {'view_mode': 'list', 'view_id': ref('view_healthcare_quote_list')}),
                                       (0, 0, {'view_mode': 'form', 'view_id': ref('view_healthcare_quote_form_custom')})]"/>
     </record>
+
+    <!-- Add discount_reason field to healthcare quote (only if health_invoicing is installed) -->
+    <!-- This view inheritance will be loaded by health_invoicing module -->
 
 </odoo>

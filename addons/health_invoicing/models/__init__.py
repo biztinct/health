@@ -16,7 +16,8 @@
 # - Migration path: FSO completion -> auto package consumption
 
 from . import account_move
-from . import account_payment  
+from . import account_payment
+from . import sale_order  # NEW: Discount reason on sale order lines
 from . import misa_integration
 from . import healthcare_service_billing
 from . import health_service_package
