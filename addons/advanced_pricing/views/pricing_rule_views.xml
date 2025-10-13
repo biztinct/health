@@ -39,10 +39,14 @@
                     <!-- Warning banner for non-approved rules -->
                     <div class="alert alert-warning" role="alert"
                          invisible="approval_status == 'approved'">
-                        <strong>⚠️ This rule is not active</strong>
-                        <span invisible="approval_status != 'draft'"> - Submit for board approval to activate</span>
-                        <span invisible="approval_status != 'pending'"> - Awaiting board approval</span>
-                        <span invisible="approval_status != 'rejected'"> - Rule has been rejected</span>
+                        <strong>⚠️ This rule will NOT be used in pricing calculations</strong>
+                        <span invisible="approval_status != 'draft'"> - Submit for board approval to enable pricing</span>
+                        <span invisible="approval_status != 'pending'"> - Awaiting board approval before it can be used</span>
+                        <span invisible="approval_status != 'rejected'"> - Rule has been rejected and cannot be used</span>
+                    </div>
+                    <div class="alert alert-info" role="alert"
+                         invisible="approval_status != 'approved'">
+                        <strong>✅ This rule is approved</strong> - It will be used in pricing calculations when active (not archived).
                     </div>
                     <div class="oe_button_box" name="button_box">
                         <button name="action_create_visual_rule" type="object" 
@@ -149,6 +153,33 @@
         </field>
     </record>
     
+    <!-- Search View with Filters -->
+    <record id="view_pricing_rule_search" model="ir.ui.view">
+        <field name="name">advanced.pricing.rule.search</field>
+        <field name="model">advanced.pricing.rule</field>
+        <field name="arch" type="xml">
+            <search string="Search Pricing Rules">
+                <field name="name"/>
+                <field name="engine_id"/>
+                <field name="applied_on"/>
+                <separator/>
+                <filter string="Active" name="active" domain="[('active', '=', True)]"/>
+                <filter string="Inactive" name="inactive" domain="[('active', '=', False)]"/>
+                <separator/>
+                <filter string="Draft" name="draft" domain="[('approval_status', '=', 'draft')]"/>
+                <filter string="Pending Approval" name="pending" domain="[('approval_status', '=', 'pending')]"/>
+                <filter string="Approved" name="approved" domain="[('approval_status', '=', 'approved')]"/>
+                <filter string="Rejected" name="rejected" domain="[('approval_status', '=', 'rejected')]"/>
+                <separator/>
+                <group expand="0" string="Group By">
+                    <filter string="Approval Status" name="group_approval_status" context="{'group_by': 'approval_status'}"/>
+                    <filter string="Engine" name="group_engine" context="{'group_by': 'engine_id'}"/>
+                    <filter string="Rule Type" name="group_type" context="{'group_by': 'rule_type'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
     <!-- Regular List View (No Inline Editing) -->
     <record id="view_pricing_rule_list" model="ir.ui.view">
         <field name="name">advanced.pricing.rule.list</field>
@@ -194,14 +225,23 @@
         <field name="name">advanced.pricing.rule.list.quick.edit</field>
         <field name="model">advanced.pricing.rule</field>
         <field name="arch" type="xml">
-            <list string="Quick Edit Pricing Rules" editable="bottom" default_order="sequence">
+            <list string="Quick Edit Pricing Rules" editable="bottom" default_order="sequence"
+                  decoration-success="approval_status == 'approved'"
+                  decoration-warning="approval_status == 'pending'"
+                  decoration-danger="approval_status == 'rejected'"
+                  decoration-muted="approval_status == 'draft'">
                 <header>
-                    <button name="action_create_visual_rule" type="object" 
+                    <button name="action_create_visual_rule" type="object"
                             string="🎨 Create Visual Rule" class="btn-primary"
                             help="Create a new visual pricing rule using drag-and-drop builder"/>
                 </header>
                 <field name="sequence" widget="handle"/>
                 <field name="name" required="1"/>
+                <field name="approval_status" widget="badge" readonly="1"
+                       decoration-success="approval_status == 'approved'"
+                       decoration-warning="approval_status == 'pending'"
+                       decoration-danger="approval_status == 'rejected'"
+                       decoration-info="approval_status == 'draft'"/>
                 <field name="engine_id" options="{'no_create': True}"/>
                 <field name="applied_on" optional="show"/>
                 <field name="level"/>

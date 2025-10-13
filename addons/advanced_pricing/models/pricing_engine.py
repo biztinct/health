@@ -41,10 +41,10 @@ class AdvancedPricingEngine(models.Model):
         
         context_str = json.dumps(serializable_context, sort_keys=True)
         
-        # Apply Level 1 rules
+        # Apply Level 1 rules (only approved rules are used in pricing)
         if self.enable_multi_level:
-            level1_rules = self.rule_ids.filtered(lambda r: r.level == '1' and r.active)
-            _logger.info(f"Found {len(level1_rules)} active Level 1 rules")
+            level1_rules = self.rule_ids.filtered(lambda r: r.level == '1' and r.active and r.approval_status == 'approved')
+            _logger.info(f"Found {len(level1_rules)} approved Level 1 rules")
             for rule in level1_rules.sorted('sequence'):
                 _logger.info(f"Evaluating rule: {rule.name} (ID: {rule.id})")
                 if rule.evaluate_condition(product_id, partner_id, quantity, context_data):
@@ -54,10 +54,10 @@ class AdvancedPricingEngine(models.Model):
                     _logger.info(f"Price changed by rule {rule.name}: {old_price} → {base_price}")
                 else:
                     _logger.info(f"Rule {rule.name} does NOT match")
-        
-        # Apply Level 2 cascading rules
+
+        # Apply Level 2 cascading rules (only approved rules are used in pricing)
         if self.enable_cascade:
-            level2_rules = self.rule_ids.filtered(lambda r: r.level == '2' and r.active)
+            level2_rules = self.rule_ids.filtered(lambda r: r.level == '2' and r.active and r.approval_status == 'approved')
             for rule in level2_rules.sorted('sequence'):
                 if rule.evaluate_condition(product_id, partner_id, quantity, context_data):
                     base_price = rule.apply_cascading_action(base_price, context_data)

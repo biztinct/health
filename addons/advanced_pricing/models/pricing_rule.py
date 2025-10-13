@@ -13,7 +13,8 @@ class AdvancedPricingRule(models.Model):
 
     name = fields.Char('Rule Name', required=True, tracking=True)
     sequence = fields.Integer('Sequence', default=10, tracking=True)
-    active = fields.Boolean('Active', compute='_compute_active', store=True, tracking=True)
+    active = fields.Boolean('Active', default=True, tracking=True,
+                           help='Uncheck to archive this rule. Note: Only approved rules will be used in pricing calculations.')
     engine_id = fields.Many2one('advanced.pricing.engine', 'Pricing Engine', required=True, tracking=True)
     company_id = fields.Many2one('res.company', 'Company', default=lambda self: self.env.company, tracking=True)
 
@@ -168,12 +169,6 @@ class AdvancedPricingRule(models.Model):
                                   help='Legacy field - use Product field instead')
     category_ids = fields.Many2many('product.category', string='Categories (Legacy)',
                                    help='Legacy field - use Product Category field instead')
-
-    @api.depends('approval_status')
-    def _compute_active(self):
-        """Only approved rules are active"""
-        for rule in self:
-            rule.active = (rule.approval_status == 'approved')
 
     def write(self, vals):
         """
