@@ -22,6 +22,7 @@ Key Features:
     'license': 'LGPL-3',
     'depends': [
         'base',
+        'hr',
         'mail',
         'portal',
     ],
@@ -67,5 +68,5 @@ Key Features:
     'application': True,
     'auto_install': False,
     'sequence': 10,
-    # 'post_init_hook': 'hooks.post_init_hook',  # Disabled for development
+    'post_init_hook': 'post_init_hook',
 }

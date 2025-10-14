@@ -227,10 +227,55 @@ class ResPartner(models.Model):
         help='Number of patients I referred'
     )
     
-    def _generate_patient_code(self):
-        """Generate unique patient code"""
-        sequence = self.env['ir.sequence'].next_by_code('res.partner.patient') or '0001'
-        return f'P{sequence}'
+    def _generate_patient_code(self, facility=None):
+        """
+        Generate unique patient code in format: PP 00000YYYY
+        Where:
+        - PP = 2-digit province code from facility
+        - 00000 = sequential number (resets yearly, with leading zeros)
+        - YYYY = current year
+        """
+        from datetime import datetime
+
+        # Get facility (from parameter or primary facility)
+        if not facility and self.primary_facility_id:
+            facility = self.primary_facility_id
+        elif not facility:
+            # If no facility, use default province code '99'
+            province_code = '99'
+        else:
+            province_code = facility.province_code if facility.province_code else '99'
+
+        # Get current year
+        current_year = datetime.now().year
+
+        # Generate sequence code specific to province and year
+        sequence_code = f'patient.{province_code}.{current_year}'
+
+        # Check if sequence exists, if not create it
+        sequence = self.env['ir.sequence'].sudo().search([
+            ('code', '=', sequence_code)
+        ], limit=1)
+
+        if not sequence:
+            # Create new sequence for this province/year combination
+            sequence = self.env['ir.sequence'].sudo().create({
+                'name': f'Patient ID - Province {province_code} - {current_year}',
+                'code': sequence_code,
+                'implementation': 'standard',
+                'prefix': '',
+                'padding': 5,  # 5 digits with leading zeros
+                'number_increment': 1,
+                'number_next': 1,
+            })
+
+        # Get next sequence number
+        seq_number = sequence.next_by_id()
+
+        # Format: PP 00000YYYY (note the space)
+        patient_code = f'{province_code} {seq_number}{current_year}'
+
+        return patient_code
     
     @api.depends('province_code', 'named_area', 'apartment_number', 'building_name',
                  'house_number', 'sub_alley_number', 'alley_number', 'street', 'street2',

@@ -1,5 +1,6 @@
 from odoo import models, fields, api, _
 from odoo.exceptions import ValidationError
+import re
 
 
 class Facility(models.Model):
@@ -11,7 +12,14 @@ class Facility(models.Model):
 
     name = fields.Char('Facility Name', required=True, tracking=True)
     code = fields.Char('Facility Code', required=True, size=10, tracking=True)
-    
+    province_code = fields.Char(
+        'Province Code',
+        required=True,
+        size=2,
+        tracking=True,
+        help='2-digit province code for patient ID generation (e.g., 01=Hanoi, 02=HCM)'
+    )
+
     # Facility type
     facility_type = fields.Selection([
         ('main_clinic', 'Main Clinic'),
@@ -98,7 +106,12 @@ class Facility(models.Model):
     next_inspection_date = fields.Date('Next Inspection Date')
     
     # Manager and Staff
-    facility_manager_id = fields.Many2one('res.users', string='Facility Manager')
+    facility_manager_id = fields.Many2one(
+        'hr.employee',
+        string='Operations Manager',
+        domain="[('healthcare_role', '=', 'operations_manager')]",
+        tracking=True
+    )
     head_nurse_id = fields.Many2one('res.users', string='Head Nurse')
     total_staff_count = fields.Integer('Total Staff Count', default=0)
     
@@ -231,8 +244,17 @@ class Facility(models.Model):
                 }
             }
     
+    @api.constrains('province_code')
+    def _check_province_code(self):
+        """Validate province code is exactly 2 digits"""
+        for facility in self:
+            if facility.province_code:
+                if not re.match(r'^\d{2}$', facility.province_code):
+                    raise ValidationError(_('Province code must be exactly 2 digits (e.g., 01, 02, 03).'))
+
     _sql_constraints = [
         ('code_unique', 'unique(code)', 'Facility code must be unique!'),
+        ('province_code_unique', 'unique(province_code)', 'Province code must be unique!'),
         ('positive_beds', 'check(total_beds >= 0)', 'Total beds cannot be negative!'),
         ('positive_rooms', 'check(consultation_rooms > 0)', 'Must have at least one consultation room!'),
         ('positive_radius', 'check(home_visit_radius_km >= 0)', 'Home visit radius cannot be negative!')

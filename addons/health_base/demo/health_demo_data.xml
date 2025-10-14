@@ -5,6 +5,7 @@
     <record id="demo_facility_main_clinic" model="health.facility">
         <field name="name">VAFHS Main Clinic</field>
         <field name="code">MAIN001</field>
+        <field name="province_code">02</field>
         <field name="facility_type">main_clinic</field>
         <field name="street">123 Nguyen Hue Street</field>
         <field name="city">Ho Chi Minh City</field>
@@ -39,6 +40,7 @@ Sunday: Emergency only</field>
     <record id="demo_facility_branch_d2" model="health.facility">
         <field name="name">VAFHS District 2 Branch</field>
         <field name="code">BR002</field>
+        <field name="province_code">02</field>
         <field name="facility_type">branch_clinic</field>
         <field name="street">456 Tran Hung Dao Street</field>
         <field name="city">Ho Chi Minh City</field>
@@ -69,6 +71,7 @@ Sunday: Emergency only</field>
     <record id="demo_facility_home_care" model="health.facility">
         <field name="name">VAFHS Home Care Center</field>
         <field name="code">HOME001</field>
+        <field name="province_code">02</field>
         <field name="facility_type">home_care_center</field>
         <field name="street">789 Le Van Sy Street</field>
         <field name="city">Ho Chi Minh City</field>
@@ -93,6 +96,37 @@ Sunday: Emergency only</field>
         <field name="accepts_insurance">True</field>
         <field name="business_license_number">BL-HCMC-2024-003</field>
         <field name="health_license_number">HL-VAFHS-2024-003</field>
+        <field name="license_expiry_date">2025-12-31</field>
+    </record>
+
+    <record id="demo_facility_hanoi" model="health.facility">
+        <field name="name">Hanoi Facility</field>
+        <field name="code">HAN001</field>
+        <field name="province_code">01</field>
+        <field name="facility_type">branch_clinic</field>
+        <field name="street">Hanoi street</field>
+        <field name="city">Hanoi</field>
+        <field name="state_id" ref="base.state_vn_01"/>
+        <field name="zip">100000</field>
+        <field name="country_id" ref="base.vn"/>
+        <field name="phone">+84 24 3333 4444</field>
+        <field name="email">hanoi@vafhs.com</field>
+        <field name="facility_status">operational</field>
+        <field name="max_daily_patients">60</field>
+        <field name="total_beds">10</field>
+        <field name="consultation_rooms">5</field>
+        <field name="parking_spaces">20</field>
+        <field name="wheelchair_accessible">True</field>
+        <field name="has_emergency_services">False</field>
+        <field name="has_laboratory">True</field>
+        <field name="has_imaging">False</field>
+        <field name="has_pharmacy">True</field>
+        <field name="covers_home_visits">True</field>
+        <field name="home_visit_radius_km">20.0</field>
+        <field name="base_home_visit_fee">100000</field>
+        <field name="accepts_insurance">True</field>
+        <field name="business_license_number">BL-HN-2024-001</field>
+        <field name="health_license_number">HL-VAFHS-HN-2024-001</field>
         <field name="license_expiry_date">2025-12-31</field>
     </record>
 

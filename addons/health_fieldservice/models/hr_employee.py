@@ -5,25 +5,12 @@ from datetime import datetime, timedelta
 class HrEmployee(models.Model):
     """Extend HR Employee with healthcare staff assignment capabilities"""
     _inherit = 'hr.employee'
-    
+
     # ============================================================================
     # Healthcare Staff Classification
     # ============================================================================
-    
-    is_healthcare_staff = fields.Boolean(
-        'Healthcare Staff',
-        help='Check if this employee provides healthcare services'
-    )
-    
-    healthcare_role = fields.Selection([
-        ('doctor', 'Doctor'),
-        ('nurse', 'Nurse'),
-        ('specialist', 'Specialist'),
-        ('therapist', 'Therapist'),
-        ('technician', 'Technician'),
-        ('support', 'Support Staff')
-    ], string='Healthcare Role')
-    
+    # Note: is_healthcare_staff and healthcare_role are defined in health_base
+
     # Professional credentials (consolidated from all staff models)
     license_number = fields.Char('Professional License Number', tracking=True)
     license_expiry = fields.Date('License Expiry Date', tracking=True)

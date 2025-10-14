@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
 from odoo import models, fields, tools, api
+import logging
+
+_logger = logging.getLogger(__name__)
 
 
 class HealthAuditLogView(models.Model):
@@ -21,19 +24,19 @@ class HealthAuditLogView(models.Model):
     new_value = fields.Char('New Value', readonly=True)
 
     def init(self):
-        """Create SQL view for audit log"""
-        tools.drop_view_if_exists(self.env.cr, self._table)
-        self.env.cr.execute("""
+        """Create SQL view for consolidated audit log across healthcare models"""
+        tools.drop_view_if_exists(self._cr, self._table)
+        self._cr.execute("""
             CREATE OR REPLACE VIEW %s AS (
                 SELECT
                     mtv.id,
                     mm.date,
                     mm.author_id as user_id,
                     mm.model,
-                    im.name as model_name,
+                    COALESCE(im.name->>'en_US', mm.model) as model_name,
                     mm.res_id,
                     mm.record_name,
-                    mf.field_description as field_name,
+                    COALESCE(mf.field_description->>'en_US', mf.name) as field_name,
                     mtv.old_value_char as old_value,
                     mtv.new_value_char as new_value
                 FROM mail_tracking_value mtv

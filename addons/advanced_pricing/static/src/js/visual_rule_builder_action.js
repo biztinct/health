@@ -104,9 +104,7 @@ export class VisualRuleBuilderAction extends Component {
                 res_model: 'advanced.pricing.rule',
                 view_mode: 'list,form',
                 target: 'current',
-                context: {
-                    'search_default_active': 1,
-                },
+                context: {},
                 flags: {
                     'search_view': true,
                     'action_buttons': true,

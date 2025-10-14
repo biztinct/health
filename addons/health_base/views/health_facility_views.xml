@@ -9,6 +9,7 @@
             <list string="Healthcare Facilities" decoration-warning="facility_status=='maintenance'" decoration-danger="facility_status in ['closed_temporary', 'closed_permanent']">
                 <field name="name"/>
                 <field name="code"/>
+                <field name="province_code"/>
                 <field name="facility_type"/>
                 <field name="city"/>
                 <field name="state_id"/>
@@ -67,6 +68,14 @@
                             </div>
                         </div>
                     </div>
+
+                    <group>
+                        <group>
+                            <field name="province_code" placeholder="Province code (2 digits)..."/>
+                        </group>
+                        <group>
+                        </group>
+                    </group>
 
                     <notebook>
                         <page string="Basic Information" name="basic_info">
@@ -283,7 +292,7 @@
                 <field name="code" string="Facility Code"/>
                 <field name="city" string="City"/>
                 <field name="state_id" string="State"/>
-                <field name="facility_manager_id" string="Manager"/>
+                <field name="facility_manager_id" string="Operations Manager"/>
                 <field name="head_nurse_id" string="Head Nurse"/>
                 <separator/>
                 <filter name="operational" string="Operational" domain="[('facility_status', '=', 'operational')]"/>
@@ -306,7 +315,7 @@
                     <filter string="Facility Type" name="group_type" context="{'group_by': 'facility_type'}"/>
                     <filter string="Status" name="group_status" context="{'group_by': 'facility_status'}"/>
                     <filter string="State/Province" name="group_state" context="{'group_by': 'state_id'}"/>
-                    <filter string="Manager" name="group_manager" context="{'group_by': 'facility_manager_id'}"/>
+                    <filter string="Operations Manager" name="group_manager" context="{'group_by': 'facility_manager_id'}"/>
                     <filter string="Home Visit Coverage" name="group_home_visits" context="{'group_by': 'covers_home_visits'}"/>
                 </group>
             </search>
