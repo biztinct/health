@@ -95,7 +95,7 @@
                             <field name="phone" widget="phone"/>
                             <field name="email" widget="email"/>
                             <field name="patient_category_id" required="1"/>
-                            <field name="primary_facility_id"/>
+                            <field name="primary_facility_id" required="1"/>
                             <field name="source_type" required="1"/>
                         </group>
                     </group>

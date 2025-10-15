@@ -240,11 +240,13 @@ class ResPartner(models.Model):
         # Get facility (from parameter or primary facility)
         if not facility and self.primary_facility_id:
             facility = self.primary_facility_id
-        elif not facility:
+
+        # Get province code from facility
+        if facility:
+            province_code = facility.province_code if facility.province_code else '99'
+        else:
             # If no facility, use default province code '99'
             province_code = '99'
-        else:
-            province_code = facility.province_code if facility.province_code else '99'
 
         # Get current year
         current_year = datetime.now().year
@@ -419,7 +421,14 @@ class ResPartner(models.Model):
                 raise ValidationError(_('Please enter a valid phone number.'))
             if partner.mobile and not re.match(r'^\+?[\d\s\-\(\)]{7,15}$', partner.mobile):
                 raise ValidationError(_('Please enter a valid mobile number.'))
-    
+
+    @api.constrains('is_patient', 'primary_facility_id')
+    def _check_patient_facility(self):
+        """Ensure patients have a primary facility assigned"""
+        for partner in self:
+            if partner.is_patient and not partner.primary_facility_id:
+                raise ValidationError(_('Primary Facility is required for patients. Please select a facility to generate a valid Patient ID.'))
+
     @api.model_create_multi
     def create(self, vals_list):
         """Override create to set healthcare flags and customer rank for patients"""
