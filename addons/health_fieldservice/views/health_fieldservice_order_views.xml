@@ -13,18 +13,15 @@
                             invisible="True"
                             help="Automatically assign staff using AI matching"/>
                     
-                    <button name="action_manual_assign_staff" type="object" 
+                    <button name="action_manual_assign_staff" type="object"
                             string="👥 Manual Staff Assignment" class="btn-primary"
-                            invisible="state in ['completed', 'cancelled']"
+                            invisible="state != 'confirmed'"
                             help="Manually assign or modify staff assignments"/>
-                    
+
                     <button name="action_start_service" type="object"
                             string="▶️ Start Service" class="oe_highlight"
-                            invisible="state in ['draft', 'in_progress', 'completed', 'completed_pending_invoice', 'cancelled']"/>
-
-                    <button name="action_complete_service" type="object"
-                            string="✅ Complete Service" class="oe_highlight"
-                            invisible="state != 'in_progress'"/>
+                            invisible="state != 'assigned'"
+                            help="Start the service - only available when staff is assigned"/>
 
                     <button name="action_create_final_invoice" type="object"
                             string="💰 Create Invoice" class="btn-success"
@@ -199,12 +196,13 @@
                         </group>
                         
                         <group string="Assignment &amp; Staff">
-                            <field name="assigned_staff_ids" widget="many2many_tags" 
+                            <field name="assigned_staff_ids" widget="many2many_tags"
                                    domain="[('is_healthcare_staff', '=', True), ('employment_status', '=', 'active')]"
                                    options="{'color_field': 'color', 'no_create': True}"/>
-                            <field name="lead_staff_id" 
+                            <field name="lead_staff_id"
                                    domain="[('id', 'in', assigned_staff_ids)]"
                                    options="{'no_create': True}"/>
+                            <field name="assigned_doctor_id" readonly="1"/>
                         </group>
                     </group>
                     
@@ -213,6 +211,7 @@
                             <field name="service_location" readonly="1"/>
                             <field name="actual_start_datetime"/>
                             <field name="actual_end_datetime"/>
+                            <field name="adjusted_end_datetime"/>
                             <field name="actual_duration" readonly="1" string="Duration (Hours)"/>
                         </group>
                         

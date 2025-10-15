@@ -279,7 +279,21 @@ class HealthFieldServiceOrderUnified(models.Model):
         for record in self:
             lead_assignment = record.assignment_ids.filtered(lambda a: a.assignment_role == 'lead')
             record.lead_staff_id = lead_assignment.staff_id if lead_assignment else False
-    
+
+    @api.depends('assignment_ids.staff_id', 'assignment_ids.staff_id.job_title', 'primary_doctor_id')
+    def _compute_assigned_doctor(self):
+        """Compute assigned doctor from staff assignments or primary_doctor_id"""
+        for record in self:
+            # First check if primary_doctor_id is set
+            if record.primary_doctor_id:
+                record.assigned_doctor_id = record.primary_doctor_id
+            else:
+                # Look for doctor in assignments
+                doctor_assignment = record.assignment_ids.filtered(
+                    lambda a: a.staff_id and a.staff_id.job_title and 'doctor' in a.staff_id.job_title.lower()
+                )
+                record.assigned_doctor_id = doctor_assignment[0].staff_id if doctor_assignment else False
+
     def _inverse_scheduled_date(self):
         for record in self:
             if record.scheduled_date and record.scheduled_time:
@@ -380,10 +394,18 @@ class HealthFieldServiceOrderUnified(models.Model):
         domain=[('is_healthcare_staff', '=', True), ('job_title', 'ilike', 'doctor')],
         tracking=True
     )
-    
+
+    assigned_doctor_id = fields.Many2one(
+        'hr.employee',
+        string='Assigned Doctor',
+        compute='_compute_assigned_doctor',
+        store=False,
+        help='Doctor assigned from staff assignments (computed from assignments with doctor role)'
+    )
+
     primary_nurse_id = fields.Many2one(
         'hr.employee',
-        string='Primary Nurse', 
+        string='Primary Nurse',
         domain=[('is_healthcare_staff', '=', True), ('job_title', 'ilike', 'nurse')],
         tracking=True
     )
@@ -708,6 +730,14 @@ class HealthFieldServiceOrderUnified(models.Model):
     # Service execution timing
     actual_start_datetime = fields.Datetime('Actual Start Time', tracking=True)
     actual_end_datetime = fields.Datetime('Actual End Time', tracking=True)
+    adjusted_end_datetime = fields.Datetime(
+        'Adjusted End Time',
+        compute='_compute_adjusted_end_datetime',
+        inverse='_inverse_adjusted_end_datetime',
+        store=True,
+        tracking=True,
+        help='Adjusted end time (editable) - defaults to Actual End Time but can be manually adjusted'
+    )
     actual_duration = fields.Float('Actual Duration (Hours)', compute='_compute_actual_duration', store=True)
     actual_duration_display = fields.Char('Duration Display', compute='_compute_duration_display', store=True)
     service_timer_active = fields.Boolean('Timer Active', compute='_compute_timer_active', store=True)
@@ -747,6 +777,23 @@ class HealthFieldServiceOrderUnified(models.Model):
                 not record.actual_end_datetime and
                 record.state == 'in_progress'
             )
+
+    @api.depends('actual_end_datetime')
+    def _compute_adjusted_end_datetime(self):
+        """Compute adjusted end time - defaults to actual end time"""
+        for record in self:
+            if record.actual_end_datetime:
+                # Only update if adjusted_end_datetime is not manually set
+                if not record.adjusted_end_datetime or record.adjusted_end_datetime == record.actual_end_datetime:
+                    record.adjusted_end_datetime = record.actual_end_datetime
+            else:
+                record.adjusted_end_datetime = False
+
+    def _inverse_adjusted_end_datetime(self):
+        """Inverse method to allow manual editing of adjusted_end_datetime"""
+        # This method allows the field to be editable
+        # The value is already set by the user, so we don't need to do anything here
+        pass
 
     @api.depends('clinical_notes', 'treatment_performed')
     def _compute_clinical_notes_status(self):
@@ -1021,15 +1068,20 @@ class HealthFieldServiceOrderUnified(models.Model):
                 vals['state'] = new_stage.state
         
         result = super().write(vals)
-        
+
         # Handle state transitions
         if 'state' in vals:
             self._handle_state_change(vals['state'])
-        
+
         # Handle scheduling
         if 'scheduled_datetime' in vals and vals['scheduled_datetime']:
             self._handle_scheduling()
-        
+
+        # Auto-advance to 'assigned' state when staff is assigned
+        for record in self:
+            if record.state == 'confirmed' and record.assigned_staff_ids:
+                record.state = 'assigned'
+
         return result
     
     def _handle_state_change(self, new_state):
