@@ -1075,14 +1075,917 @@ window.healthPWA = {
     app.component('order-detail-view', {
       props: ['orderId', 'isOnline'],
       emits: ['navigate'],
+      setup(props, { emit }) {
+        const { ref, onMounted, computed, watch } = Vue;
+
+        const order = ref(null);
+        const isLoading = ref(true);
+        const error = ref(null);
+        const timerInterval = ref(null);
+        const currentTime = ref(new Date());
+        const showClinicalNotes = ref(false);
+        const showInvoice = ref(false);
+        const clinicalNotesData = ref({
+          clinical_notes: '',
+          diagnosis: '',
+          treatment_performed: '',
+          medications_prescribed: '',
+          vital_signs: ''
+        });
+        const capturedImages = ref([]);
+        const quoteData = ref(null);
+
+        // Computed elapsed time for timer
+        const elapsedTime = computed(() => {
+          if (!order.value || !order.value.actual_start_datetime) return '00:00:00';
+
+          const startTime = new Date(order.value.actual_start_datetime);
+          const endTime = order.value.actual_end_datetime ? new Date(order.value.actual_end_datetime) : currentTime.value;
+          const diff = Math.floor((endTime - startTime) / 1000);
+
+          const hours = Math.floor(diff / 3600);
+          const minutes = Math.floor((diff % 3600) / 60);
+          const seconds = diff % 60;
+
+          return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+        });
+
+        const loadOrder = async () => {
+          try {
+            isLoading.value = true;
+            error.value = null;
+
+            if (window.healthPWA?.storageManager) {
+              const orderData = await window.healthPWA.storageManager.getFieldServiceOrder(props.orderId);
+              if (orderData) {
+                order.value = orderData;
+                console.log('Loaded order details:', orderData);
+
+                // Load clinical notes if available
+                if (orderData.clinical_notes) {
+                  clinicalNotesData.value.clinical_notes = orderData.clinical_notes;
+                }
+                if (orderData.diagnosis) {
+                  clinicalNotesData.value.diagnosis = orderData.diagnosis;
+                }
+
+                // Start timer if service is in progress
+                if (orderData.state === 'in_progress' && orderData.actual_start_datetime && !orderData.actual_end_datetime) {
+                  startTimer();
+                }
+              } else {
+                error.value = 'Order not found';
+              }
+            } else {
+              error.value = 'Storage manager not available';
+            }
+          } catch (err) {
+            console.error('Failed to load order:', err);
+            error.value = err.message;
+          } finally {
+            isLoading.value = false;
+          }
+        };
+
+        const startTimer = () => {
+          if (timerInterval.value) clearInterval(timerInterval.value);
+          timerInterval.value = setInterval(() => {
+            currentTime.value = new Date();
+          }, 1000);
+        };
+
+        const stopTimer = () => {
+          if (timerInterval.value) {
+            clearInterval(timerInterval.value);
+            timerInterval.value = null;
+          }
+        };
+
+        const handleStartService = async () => {
+          if (!props.isOnline) {
+            window.healthPWA.showNotification('Cannot start service while offline', 'error');
+            return;
+          }
+
+          try {
+            const response = await fetch(`/health_pwa/api/fso/${props.orderId}/start`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({})
+            });
+
+            const data = await response.json();
+            console.log('Start service response:', data);
+
+            if (data.success && data.data) {
+              order.value.state = data.data.state;
+              order.value.actual_start_datetime = data.data.actual_start_datetime;
+              startTimer();
+              window.healthPWA.showNotification(data.data.message || 'Service started successfully!', 'success');
+
+              // Reload order data
+              await loadOrder();
+            } else {
+              window.healthPWA.showNotification('Failed to start service: ' + (data.error || 'Unknown error'), 'error');
+            }
+          } catch (err) {
+            console.error('Start service error:', err);
+            window.healthPWA.showNotification('Error starting service: ' + err.message, 'error');
+          }
+        };
+
+        const handleCompleteService = async (paymentOption = 'pay_now') => {
+          if (!props.isOnline) {
+            window.healthPWA.showNotification('Cannot complete service while offline', 'error');
+            return;
+          }
+
+          if (!confirm(`Complete service with ${paymentOption === 'pay_now' ? 'Pay Now' : 'Pay Later'}?`)) {
+            return;
+          }
+
+          try {
+            const response = await fetch(`/health_pwa/api/fso/${props.orderId}/complete`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                payment_option: paymentOption,
+                clinical_notes: clinicalNotesData.value.clinical_notes
+              })
+            });
+
+            const data = await response.json();
+            console.log('Complete service response:', data);
+
+            if (data.success && data.data) {
+              order.value.state = data.data.state;
+              order.value.actual_end_datetime = data.data.actual_end_datetime;
+              order.value.adjusted_end_datetime = data.data.adjusted_end_datetime;
+              stopTimer();
+              window.healthPWA.showNotification(data.data.message || 'Service completed successfully!', 'success');
+
+              // Reload order data
+              await loadOrder();
+            } else {
+              window.healthPWA.showNotification('Failed to complete service: ' + (data.error || 'Unknown error'), 'error');
+            }
+          } catch (err) {
+            console.error('Complete service error:', err);
+            window.healthPWA.showNotification('Error completing service: ' + err.message, 'error');
+          }
+        };
+
+        const saveClinicalNotes = async () => {
+          if (!props.isOnline) {
+            window.healthPWA.showNotification('Cannot save clinical notes while offline', 'error');
+            return;
+          }
+
+          try {
+            const response = await fetch(`/health_pwa/api/fso/${props.orderId}/clinical_notes`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify(clinicalNotesData.value)
+            });
+
+            const data = await response.json();
+            console.log('Clinical notes response:', data);
+
+            if (data.success) {
+              window.healthPWA.showNotification(data.data.message || 'Clinical notes saved successfully!', 'success');
+              showClinicalNotes.value = false;
+            } else {
+              window.healthPWA.showNotification('Failed to save clinical notes: ' + (data.error || 'Unknown error'), 'error');
+            }
+          } catch (err) {
+            console.error('Save clinical notes error:', err);
+            window.healthPWA.showNotification('Error saving clinical notes: ' + err.message, 'error');
+          }
+        };
+
+        const captureImage = () => {
+          const input = document.createElement('input');
+          input.type = 'file';
+          input.accept = 'image/*';
+          input.capture = 'environment'; // Use rear camera on mobile
+
+          input.onchange = async (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            if (!props.isOnline) {
+              window.healthPWA.showNotification('Cannot upload images while offline', 'error');
+              return;
+            }
+
+            try {
+              const formData = new FormData();
+              formData.append('image', file);
+
+              const response = await fetch(`/health_pwa/api/fso/${props.orderId}/upload_image`, {
+                method: 'POST',
+                body: formData
+              });
+
+              const data = await response.json();
+
+              if (data.success) {
+                capturedImages.value.push(data.data);
+                window.healthPWA.showNotification('Image uploaded successfully!', 'success');
+              } else {
+                window.healthPWA.showNotification('Failed to upload image: ' + data.error, 'error');
+              }
+            } catch (err) {
+              console.error('Image upload error:', err);
+              window.healthPWA.showNotification('Error uploading image: ' + err.message, 'error');
+            }
+          };
+
+          input.click();
+        };
+
+        const showProductCatalog = ref(false);
+        const productCatalog = ref([]);
+        const productSearch = ref('');
+        const editingLine = ref(null);
+        const showMap = ref(false);
+
+        const loadQuote = async () => {
+          if (!props.isOnline) {
+            window.healthPWA.showNotification('Cannot load invoice while offline', 'error');
+            return;
+          }
+
+          try {
+            const response = await fetch(`/health_pwa/api/fso/${props.orderId}/quote`);
+            const data = await response.json();
+
+            if (data.success) {
+              quoteData.value = data.data;
+              showInvoice.value = true;
+            } else {
+              window.healthPWA.showNotification('No quote found for this order', 'warning');
+            }
+          } catch (err) {
+            console.error('Load quote error:', err);
+            window.healthPWA.showNotification('Error loading quote: ' + err.message, 'error');
+          }
+        };
+
+        const loadProductCatalog = async () => {
+          if (!props.isOnline) {
+            window.healthPWA.showNotification('Cannot load catalog while offline', 'error');
+            return;
+          }
+
+          try {
+            const searchParam = productSearch.value ? `&search=${encodeURIComponent(productSearch.value)}` : '';
+            const response = await fetch(`/health_pwa/api/products/catalog?limit=50${searchParam}`);
+            const data = await response.json();
+
+            if (data.success) {
+              productCatalog.value = data.data.products || [];
+            }
+          } catch (err) {
+            console.error('Load catalog error:', err);
+          }
+        };
+
+        const addProductToQuote = async (product) => {
+          try {
+            const response = await fetch(`/health_pwa/api/fso/${props.orderId}/quote/update`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                action: 'add',
+                line_data: {
+                  product_id: product.id,
+                  quantity: 1.0
+                }
+              })
+            });
+
+            const data = await response.json();
+
+            if (data.success && data.data.quote) {
+              quoteData.value = data.data.quote;
+              showProductCatalog.value = false;
+              window.healthPWA.showNotification('Product added successfully!', 'success');
+            } else {
+              window.healthPWA.showNotification('Failed to add product: ' + (data.error || 'Unknown error'), 'error');
+            }
+          } catch (err) {
+            console.error('Add product error:', err);
+            window.healthPWA.showNotification('Error adding product: ' + err.message, 'error');
+          }
+        };
+
+        const updateQuoteLine = async (lineId, quantity, price) => {
+          try {
+            const response = await fetch(`/health_pwa/api/fso/${props.orderId}/quote/update`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                action: 'update',
+                line_data: {
+                  line_id: lineId,
+                  quantity: quantity,
+                  price: price
+                }
+              })
+            });
+
+            const data = await response.json();
+
+            if (data.success && data.data.quote) {
+              quoteData.value = data.data.quote;
+              editingLine.value = null;
+              window.healthPWA.showNotification('Line updated successfully!', 'success');
+            } else {
+              window.healthPWA.showNotification('Failed to update line: ' + (data.error || 'Unknown error'), 'error');
+            }
+          } catch (err) {
+            console.error('Update line error:', err);
+            window.healthPWA.showNotification('Error updating line: ' + err.message, 'error');
+          }
+        };
+
+        const removeQuoteLine = async (lineId) => {
+          if (!confirm('Remove this line from the quote?')) return;
+
+          try {
+            const response = await fetch(`/health_pwa/api/fso/${props.orderId}/quote/update`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                action: 'remove',
+                line_data: {
+                  line_id: lineId
+                }
+              })
+            });
+
+            const data = await response.json();
+
+            if (data.success && data.data.quote) {
+              quoteData.value = data.data.quote;
+              window.healthPWA.showNotification('Line removed successfully!', 'success');
+            } else {
+              window.healthPWA.showNotification('Failed to remove line: ' + (data.error || 'Unknown error'), 'error');
+            }
+          } catch (err) {
+            console.error('Remove line error:', err);
+            window.healthPWA.showNotification('Error removing line: ' + err.message, 'error');
+          }
+        };
+
+        const openMapLocation = () => {
+          if (!order.value || !order.value.address) {
+            window.healthPWA.showNotification('No address available', 'warning');
+            return;
+          }
+
+          // Show embedded map modal
+          showMap.value = true;
+        };
+
+        const formatDateTime = (dateTimeStr) => {
+          if (!dateTimeStr) return 'Not set';
+          const date = new Date(dateTimeStr);
+          return date.toLocaleString();
+        };
+
+        const getStatusBadgeClass = (state) => {
+          switch (state) {
+            case 'draft': return 'badge badge-secondary';
+            case 'confirmed': return 'badge badge-info';
+            case 'assigned': return 'badge badge-warning';
+            case 'in_progress': return 'badge badge-primary';
+            case 'completed': return 'badge badge-success';
+            case 'cancelled': return 'badge badge-danger';
+            default: return 'badge badge-secondary';
+          }
+        };
+
+        onMounted(() => {
+          loadOrder();
+        });
+
+        // Cleanup timer on unmount
+        watch(() => order.value, () => {
+          return () => stopTimer();
+        });
+
+        return {
+          order,
+          isLoading,
+          error,
+          elapsedTime,
+          showClinicalNotes,
+          showInvoice,
+          clinicalNotesData,
+          capturedImages,
+          quoteData,
+          showProductCatalog,
+          productCatalog,
+          productSearch,
+          editingLine,
+          showMap,
+          handleStartService,
+          handleCompleteService,
+          saveClinicalNotes,
+          captureImage,
+          loadQuote,
+          loadProductCatalog,
+          addProductToQuote,
+          updateQuoteLine,
+          removeQuoteLine,
+          openMapLocation,
+          formatDateTime,
+          getStatusBadgeClass
+        };
+      },
       template: `
         <div class="order-detail-view">
-          <div class="order-header">
-            <h2>Order Details</h2>
-            <p>ID: {{ orderId }}</p>
+          <!-- Loading State -->
+          <div v-if="isLoading" class="loading-state">
+            <div class="loading-spinner">
+              <div class="spinner"></div>
+            </div>
+            <p>Loading order details...</p>
           </div>
-          <div class="order-info">
-            <p>Detailed order information will be loaded here.</p>
+
+          <!-- Error State -->
+          <div v-else-if="error" class="error-state">
+            <div class="error-icon">
+              <i class="material-icons">error</i>
+            </div>
+            <h3>Error Loading Order</h3>
+            <p>{{ error }}</p>
+            <button @click="$emit('navigate', 'orders')" class="btn btn-primary">Back to Orders</button>
+          </div>
+
+          <!-- Order Details -->
+          <div v-else-if="order" class="order-details">
+            <!-- Order Header -->
+            <div class="order-header-card">
+              <div class="order-header-info">
+                <h2>{{ order.service_type_name || 'Service Order' }}</h2>
+                <p class="order-patient">{{ order.patient_name || 'Unknown Patient' }}</p>
+                <span :class="getStatusBadgeClass(order.state)">
+                  {{ order.state || 'Unknown' }}
+                </span>
+              </div>
+
+              <!-- Timer Display (shown when service is in progress) -->
+              <div v-if="order.state === 'in_progress' && order.actual_start_datetime && !order.actual_end_datetime"
+                   class="order-timer">
+                <div class="timer-icon">
+                  <i class="material-icons">timer</i>
+                </div>
+                <div class="timer-display">
+                  <span class="timer-time">{{ elapsedTime }}</span>
+                  <span class="timer-label">Elapsed Time</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="order-actions">
+              <!-- Location Map Button -->
+              <button @click="openMapLocation"
+                      class="btn btn-action btn-location"
+                      :disabled="!order.address">
+                <i class="material-icons">location_on</i>
+                <span>Location Map</span>
+              </button>
+
+              <!-- Start Service Button (only for assigned state) -->
+              <button v-if="order.state === 'assigned' || order.state === 'confirmed'"
+                      @click="handleStartService"
+                      class="btn btn-action btn-start"
+                      :disabled="!isOnline">
+                <i class="material-icons">play_arrow</i>
+                <span>Start Service</span>
+              </button>
+
+              <!-- Clinical Notes Button -->
+              <button @click="showClinicalNotes = true"
+                      class="btn btn-action btn-clinical"
+                      :disabled="order.state !== 'in_progress'">
+                <i class="material-icons">note_add</i>
+                <span>Clinical Notes</span>
+              </button>
+
+              <!-- Invoice Button -->
+              <button @click="loadQuote"
+                      class="btn btn-action btn-invoice"
+                      :disabled="!isOnline">
+                <i class="material-icons">receipt</i>
+                <span>Invoice</span>
+              </button>
+
+              <!-- Pay Now Button (only for in_progress state) -->
+              <button v-if="order.state === 'in_progress'"
+                      @click="handleCompleteService('pay_now')"
+                      class="btn btn-action btn-pay-now"
+                      :disabled="!isOnline">
+                <i class="material-icons">payment</i>
+                <span>Pay Now</span>
+              </button>
+
+              <!-- Pay Later Button (only for in_progress state) -->
+              <button v-if="order.state === 'in_progress'"
+                      @click="handleCompleteService('pay_later')"
+                      class="btn btn-action btn-pay-later"
+                      :disabled="!isOnline">
+                <i class="material-icons">schedule</i>
+                <span>Pay Later</span>
+              </button>
+            </div>
+
+            <!-- Order Information Sections -->
+            <div class="order-info-sections">
+
+              <!-- Patient Information -->
+              <div class="info-section">
+                <h3>
+                  <i class="material-icons">person</i>
+                  Patient Information
+                </h3>
+                <div class="info-grid">
+                  <div class="info-item">
+                    <label>Name</label>
+                    <span>{{ order.patient_name || 'Not specified' }}</span>
+                  </div>
+                  <div class="info-item" v-if="order.patient_details">
+                    <label>Age / Gender</label>
+                    <span>{{ order.patient_details.age || '-' }} / {{ order.patient_details.gender || '-' }}</span>
+                  </div>
+                  <div class="info-item" v-if="order.phone">
+                    <label>Phone</label>
+                    <span>{{ order.phone }}</span>
+                  </div>
+                  <div class="info-item full-width" v-if="order.address">
+                    <label>Address</label>
+                    <span>{{ order.address }}</span>
+                  </div>
+                  <div class="info-item full-width" v-if="order.patient_details && order.patient_details.allergies">
+                    <label>Allergies</label>
+                    <span class="text-danger">{{ order.patient_details.allergies }}</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Service Information -->
+              <div class="info-section">
+                <h3>
+                  <i class="material-icons">medical_services</i>
+                  Service Information
+                </h3>
+                <div class="info-grid">
+                  <div class="info-item">
+                    <label>Scheduled Time</label>
+                    <span>{{ formatDateTime(order.scheduled_datetime) }}</span>
+                  </div>
+                  <div class="info-item" v-if="order.estimated_duration">
+                    <label>Estimated Duration</label>
+                    <span>{{ order.estimated_duration }} hours</span>
+                  </div>
+                  <div class="info-item" v-if="order.team">
+                    <label>Team</label>
+                    <span>{{ order.team }}</span>
+                  </div>
+                  <div class="info-item" v-if="order.priority">
+                    <label>Priority</label>
+                    <span :class="order.priority === '3' ? 'text-danger' : ''">
+                      {{ order.priority === '3' ? 'High' : order.priority === '2' ? 'Medium' : 'Low' }}
+                    </span>
+                  </div>
+                  <div class="info-item full-width" v-if="order.description">
+                    <label>Description</label>
+                    <span>{{ order.description }}</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Service Status -->
+              <div class="info-section" v-if="order.actual_start_datetime">
+                <h3>
+                  <i class="material-icons">schedule</i>
+                  Service Status
+                </h3>
+                <div class="info-grid">
+                  <div class="info-item">
+                    <label>Started At</label>
+                    <span>{{ formatDateTime(order.actual_start_datetime) }}</span>
+                  </div>
+                  <div class="info-item" v-if="order.actual_end_datetime">
+                    <label>Completed At</label>
+                    <span>{{ formatDateTime(order.actual_end_datetime) }}</span>
+                  </div>
+                  <div class="info-item" v-if="order.actual_end_datetime">
+                    <label>Duration</label>
+                    <span>{{ order.actual_duration || '0' }} hours</span>
+                  </div>
+                  <div class="info-item" v-else>
+                    <label>Elapsed Time</label>
+                    <span class="text-primary">{{ elapsedTime }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Clinical Notes Modal -->
+            <div v-if="showClinicalNotes" class="modal-overlay" @click.self="showClinicalNotes = false">
+              <div class="modal-content clinical-notes-modal">
+                <div class="modal-header">
+                  <h3>
+                    <i class="material-icons">note_add</i>
+                    Clinical Notes
+                  </h3>
+                  <button @click="showClinicalNotes = false" class="modal-close">
+                    <i class="material-icons">close</i>
+                  </button>
+                </div>
+                <div class="modal-body">
+                  <div class="form-group">
+                    <label>Clinical Observations</label>
+                    <textarea v-model="clinicalNotesData.clinical_notes"
+                              rows="4"
+                              placeholder="Enter clinical observations and notes..."></textarea>
+                  </div>
+                  <div class="form-group">
+                    <label>Diagnosis</label>
+                    <textarea v-model="clinicalNotesData.diagnosis"
+                              rows="3"
+                              placeholder="Enter diagnosis..."></textarea>
+                  </div>
+                  <div class="form-group">
+                    <label>Treatment Performed</label>
+                    <textarea v-model="clinicalNotesData.treatment_performed"
+                              rows="3"
+                              placeholder="Describe treatment provided..."></textarea>
+                  </div>
+                  <div class="form-group">
+                    <label>Medications Prescribed</label>
+                    <textarea v-model="clinicalNotesData.medications_prescribed"
+                              rows="2"
+                              placeholder="List medications..."></textarea>
+                  </div>
+                  <div class="form-group">
+                    <label>Vital Signs</label>
+                    <textarea v-model="clinicalNotesData.vital_signs"
+                              rows="2"
+                              placeholder="Blood pressure, temperature, heart rate..."></textarea>
+                  </div>
+
+                  <!-- Image Capture Section -->
+                  <div class="form-group">
+                    <label>Clinical Images</label>
+                    <button @click="captureImage" class="btn btn-secondary btn-block">
+                      <i class="material-icons">camera_alt</i>
+                      Capture Image
+                    </button>
+
+                    <!-- Captured Images Display -->
+                    <div v-if="capturedImages.length > 0" class="captured-images">
+                      <div v-for="(image, index) in capturedImages" :key="index" class="captured-image">
+                        <img :src="image.url" :alt="image.filename" />
+                        <span>{{ image.filename }}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="modal-footer">
+                  <button @click="showClinicalNotes = false" class="btn btn-secondary">Cancel</button>
+                  <button @click="saveClinicalNotes" class="btn btn-primary" :disabled="!isOnline">
+                    <i class="material-icons">save</i>
+                    Save Notes
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Invoice Modal -->
+            <div v-if="showInvoice" class="modal-overlay" @click.self="showInvoice = false">
+              <div class="modal-content invoice-modal">
+                <div class="modal-header">
+                  <h3>
+                    <i class="material-icons">receipt</i>
+                    Invoice / Quote
+                  </h3>
+                  <button @click="showInvoice = false" class="modal-close">
+                    <i class="material-icons">close</i>
+                  </button>
+                </div>
+                <div class="modal-body" v-if="quoteData">
+                  <div class="invoice-header">
+                    <div class="invoice-info">
+                      <h4>{{ quoteData.name }}</h4>
+                      <span :class="'badge badge-' + (quoteData.state === 'sale' ? 'success' : 'info')">
+                        {{ quoteData.state }}
+                      </span>
+                    </div>
+                    <button @click="showProductCatalog = true; loadProductCatalog()" class="btn btn-sm btn-primary">
+                      <i class="material-icons">add_shopping_cart</i>
+                      Add Product
+                    </button>
+                  </div>
+
+                  <div class="invoice-lines">
+                    <table class="invoice-table">
+                      <thead>
+                        <tr>
+                          <th>Product</th>
+                          <th>Qty</th>
+                          <th>Price</th>
+                          <th>Total</th>
+                          <th>Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr v-for="line in quoteData.order_lines" :key="line.id">
+                          <td>{{ line.product_name }}</td>
+                          <td>
+                            <input v-if="editingLine === line.id"
+                                   type="number"
+                                   :value="line.quantity"
+                                   @change="line._newQty = $event.target.value"
+                                   class="input-sm"
+                                   min="0.01"
+                                   step="0.01" />
+                            <span v-else>{{ line.quantity }}</span>
+                          </td>
+                          <td>
+                            <input v-if="editingLine === line.id"
+                                   type="number"
+                                   :value="line.unit_price"
+                                   @change="line._newPrice = $event.target.value"
+                                   class="input-sm"
+                                   min="0"
+                                   step="0.01" />
+                            <span v-else>{{ line.unit_price.toLocaleString() }}</span>
+                          </td>
+                          <td>{{ line.total.toLocaleString() }}</td>
+                          <td>
+                            <div class="btn-group-sm">
+                              <button v-if="editingLine === line.id"
+                                      @click="updateQuoteLine(line.id, line._newQty || line.quantity, line._newPrice || line.unit_price)"
+                                      class="btn btn-xs btn-success"
+                                      title="Save">
+                                <i class="material-icons">check</i>
+                              </button>
+                              <button v-if="editingLine === line.id"
+                                      @click="editingLine = null"
+                                      class="btn btn-xs btn-secondary"
+                                      title="Cancel">
+                                <i class="material-icons">close</i>
+                              </button>
+                              <button v-if="editingLine !== line.id"
+                                      @click="editingLine = line.id"
+                                      class="btn btn-xs btn-info"
+                                      title="Edit">
+                                <i class="material-icons">edit</i>
+                              </button>
+                              <button @click="removeQuoteLine(line.id)"
+                                      class="btn btn-xs btn-danger"
+                                      title="Delete">
+                                <i class="material-icons">delete</i>
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      </tbody>
+                      <tfoot>
+                        <tr>
+                          <td colspan="4">Subtotal</td>
+                          <td>{{ quoteData.amount_untaxed.toLocaleString() }}</td>
+                        </tr>
+                        <tr>
+                          <td colspan="4">Tax</td>
+                          <td>{{ quoteData.amount_tax.toLocaleString() }}</td>
+                        </tr>
+                        <tr class="total-row">
+                          <td colspan="4"><strong>Total</strong></td>
+                          <td><strong>{{ quoteData.amount_total.toLocaleString() }} {{ quoteData.currency }}</strong></td>
+                        </tr>
+                      </tfoot>
+                    </table>
+                  </div>
+                </div>
+                <div class="modal-footer">
+                  <button @click="showInvoice = false" class="btn btn-secondary">Close</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Product Catalog Modal -->
+            <div v-if="showProductCatalog" class="modal-overlay" @click.self="showProductCatalog = false">
+              <div class="modal-content catalog-modal">
+                <div class="modal-header">
+                  <h3>
+                    <i class="material-icons">shopping_cart</i>
+                    Product Catalog
+                  </h3>
+                  <button @click="showProductCatalog = false" class="modal-close">
+                    <i class="material-icons">close</i>
+                  </button>
+                </div>
+                <div class="modal-body">
+                  <!-- Search Box -->
+                  <div class="search-container mb-3">
+                    <div class="search-icon">
+                      <i class="material-icons">search</i>
+                    </div>
+                    <input
+                      type="text"
+                      class="search-input"
+                      placeholder="Search products..."
+                      v-model="productSearch"
+                      @input="loadProductCatalog">
+                  </div>
+
+                  <!-- Product List -->
+                  <div class="product-list">
+                    <div v-for="product in productCatalog"
+                         :key="product.id"
+                         class="product-item"
+                         @click="addProductToQuote(product)">
+                      <div class="product-info">
+                        <h4>{{ product.name }}</h4>
+                        <p v-if="product.code">Code: {{ product.code }}</p>
+                        <p class="product-price">{{ product.price.toLocaleString() }} {{ product.currency }}</p>
+                      </div>
+                      <button class="btn btn-sm btn-primary">
+                        <i class="material-icons">add</i>
+                      </button>
+                    </div>
+                  </div>
+
+                  <div v-if="productCatalog.length === 0" class="empty-state">
+                    <i class="material-icons">inventory_2</i>
+                    <p>No products found</p>
+                  </div>
+                </div>
+                <div class="modal-footer">
+                  <button @click="showProductCatalog = false" class="btn btn-secondary">Close</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Map Modal -->
+            <div v-if="showMap" class="modal-overlay" @click.self="showMap = false">
+              <div class="modal-content map-modal">
+                <div class="modal-header">
+                  <h3>
+                    <i class="material-icons">map</i>
+                    Location Map
+                  </h3>
+                  <button @click="showMap = false" class="modal-close">
+                    <i class="material-icons">close</i>
+                  </button>
+                </div>
+                <div class="modal-body map-container">
+                  <div class="address-display">
+                    <i class="material-icons">place</i>
+                    <span>{{ order.address }}</span>
+                  </div>
+                  <iframe
+                    :src="'https://www.google.com/maps?q=' + encodeURIComponent(order.address) + '&output=embed'"
+                    width="100%"
+                    height="400"
+                    style="border:0;"
+                    allowfullscreen=""
+                    loading="lazy"
+                    referrerpolicy="no-referrer-when-downgrade">
+                  </iframe>
+                  <div class="map-actions">
+                    <a :href="'https://www.google.com/maps/dir/?api=1&destination=' + encodeURIComponent(order.address)"
+                       target="_blank"
+                       class="btn btn-primary">
+                      <i class="material-icons">directions</i>
+                      Get Directions
+                    </a>
+                  </div>
+                </div>
+                <div class="modal-footer">
+                  <button @click="showMap = false" class="btn btn-secondary">Close</button>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       `

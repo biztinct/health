@@ -48,21 +48,21 @@ class HealthStorageManager {
     const cacheKey = `patients_${JSON.stringify(options)}`;
     const cached = this.getCache(cacheKey);
     if (cached) return cached;
-    
+
     try {
       const {
-        limit = 50,
+        limit = null,  // No limit by default - load all patients
         skip = 0,
         search = '',
         status = ''
       } = options;
-      
+
       // Get all patients from local database
       let result = await this.db.patients.allDocs({
         include_docs: true,
-        limit: limit + skip
+        limit: limit ? limit + skip : undefined  // undefined = load all
       });
-      
+
       let patients = result.rows.map(row => row.doc).slice(skip);
       
       // Apply filters
@@ -171,10 +171,10 @@ class HealthStorageManager {
     const cacheKey = `orders_${JSON.stringify(options)}`;
     const cached = this.getCache(cacheKey);
     if (cached) return cached;
-    
+
     try {
       const {
-        limit = 50,
+        limit = null,  // No limit by default - load all orders
         skip = 0,
         teamId = null,
         stage = '',
@@ -182,12 +182,13 @@ class HealthStorageManager {
         dateFrom = null,
         dateTo = null
       } = options;
-      
+
+      // Load all documents or up to specified limit
       let result = await this.db.orders.allDocs({
         include_docs: true,
-        limit: limit + skip
+        limit: limit ? limit + skip : undefined  // undefined = load all
       });
-      
+
       let orders = result.rows.map(row => row.doc).slice(skip);
       
       // Apply filters

@@ -413,32 +413,32 @@ class HealthPWAAPIController(http.Controller):
         """Get dashboard statistics for mobile app"""
         if not self._check_api_access():
             return self._prepare_json_response(error='Access denied', status_code=403)
-        
+
         try:
             # Get current user's teams
             user_teams = request.env['health.fieldservice.team'].search([
                 ('member_ids', 'in', [request.env.user.id])
             ])
-            
+
             team_domain = [('team_id', 'in', user_teams.ids)] if user_teams else []
-            
+
             # Today's orders
             today = fields.Date.today()
             today_orders = request.env['health.fieldservice.order'].search_count(
                 team_domain + [('scheduled_datetime', '>=', today), ('scheduled_datetime', '<', today + timedelta(days=1))]
             )
-            
+
             # Pending orders
             pending_orders = request.env['health.fieldservice.order'].search_count(
                 team_domain + [('stage_id.name', 'not in', ['Completed', 'Cancelled'])]
             )
-            
+
             # Active patients count
             active_patients = request.env['res.partner'].search_count([
                 ('is_patient', '=', True),
                 ('patient_status', '=', 'active')
             ])
-            
+
             # This week's completed orders
             week_start = today - timedelta(days=today.weekday())
             completed_this_week = request.env['health.fieldservice.order'].search_count(
@@ -447,7 +447,7 @@ class HealthPWAAPIController(http.Controller):
                     ('scheduled_datetime', '>=', week_start)
                 ]
             )
-            
+
             stats_data = {
                 'today_orders': today_orders,
                 'pending_orders': pending_orders,
@@ -456,8 +456,396 @@ class HealthPWAAPIController(http.Controller):
                 'user_teams_count': len(user_teams),
                 'last_updated': fields.Datetime.now().isoformat(),
             }
-            
+
             return self._prepare_json_response(data=stats_data)
-            
+
+        except Exception as e:
+            return self._prepare_json_response(error=str(e), status_code=500)
+
+    @http.route('/health_pwa/api/fso/<int:order_id>/start', type='http', auth='user', methods=['POST'], csrf=False)
+    def api_fso_start_service(self, order_id, **kwargs):
+        """Start service timer for FSO from mobile app"""
+        if not self._check_api_access():
+            return self._prepare_json_response(error='Access denied', status_code=403)
+
+        try:
+            order = request.env['health.fieldservice.order'].browse(order_id)
+
+            if not order.exists():
+                return self._prepare_json_response(error='Order not found', status_code=404)
+
+            # Check if order is in assigned state
+            if order.state not in ['assigned', 'confirmed']:
+                return self._prepare_json_response(error=f'Cannot start service in {order.state} state', status_code=400)
+
+            # Start the service
+            order.action_start_service()
+
+            return self._prepare_json_response(data={
+                'actual_start_datetime': order.actual_start_datetime,
+                'state': order.state,
+                'message': 'Service started successfully'
+            })
+
+        except Exception as e:
+            return self._prepare_json_response(error=str(e), status_code=500)
+
+    @http.route('/health_pwa/api/fso/<int:order_id>/complete', type='http', auth='user', methods=['POST'], csrf=False)
+    def api_fso_complete_service(self, order_id, **kwargs):
+        """Complete service and stop timer for FSO from mobile app"""
+        if not self._check_api_access():
+            return self._prepare_json_response(error='Access denied', status_code=403)
+
+        try:
+            order = request.env['health.fieldservice.order'].browse(order_id)
+
+            if not order.exists():
+                return self._prepare_json_response(error='Order not found', status_code=404)
+
+            # Check if order is in progress
+            if order.state != 'in_progress':
+                return self._prepare_json_response(error=f'Cannot complete service in {order.state} state', status_code=400)
+
+            # Get payment option from request body
+            import json as json_module
+            try:
+                data = json_module.loads(request.httprequest.data.decode('utf-8')) if request.httprequest.data else {}
+            except:
+                data = {}
+
+            payment_option = data.get('payment_option', 'pay_now')
+            clinical_notes = data.get('clinical_notes', '')
+
+            # Update clinical notes if provided
+            if clinical_notes:
+                order.write({'clinical_notes': clinical_notes})
+
+            # Complete the service based on payment option
+            if payment_option == 'pay_later':
+                order.action_complete_service_pay_later()
+            else:
+                order.action_complete_service_collect_payment()
+
+            return self._prepare_json_response(data={
+                'actual_end_datetime': order.actual_end_datetime,
+                'adjusted_end_datetime': order.adjusted_end_datetime,
+                'actual_duration': order.actual_duration,
+                'state': order.state,
+                'message': 'Service completed successfully'
+            })
+
+        except Exception as e:
+            return self._prepare_json_response(error=str(e), status_code=500)
+
+    @http.route('/health_pwa/api/fso/<int:order_id>/clinical_notes', type='http', auth='user', methods=['POST'], csrf=False)
+    def api_fso_save_clinical_notes(self, order_id, **kwargs):
+        """Save clinical notes for FSO from mobile app"""
+        if not self._check_api_access():
+            return self._prepare_json_response(error='Access denied', status_code=403)
+
+        try:
+            order = request.env['health.fieldservice.order'].browse(order_id)
+
+            if not order.exists():
+                return self._prepare_json_response(error='Order not found', status_code=404)
+
+            # Get clinical notes from request body
+            import json as json_module
+            try:
+                data = json_module.loads(request.httprequest.data.decode('utf-8')) if request.httprequest.data else {}
+            except:
+                data = {}
+
+            clinical_notes = data.get('clinical_notes', '')
+            diagnosis = data.get('diagnosis', '')
+            treatment_performed = data.get('treatment_performed', '')
+            medications_prescribed = data.get('medications_prescribed', '')
+            vital_signs = data.get('vital_signs', '')
+
+            # Update order
+            update_vals = {}
+            if clinical_notes:
+                update_vals['clinical_notes'] = clinical_notes
+            if diagnosis:
+                update_vals['diagnosis'] = diagnosis
+            if treatment_performed:
+                update_vals['treatment_performed'] = treatment_performed
+            if medications_prescribed:
+                update_vals['medications_prescribed'] = medications_prescribed
+            if vital_signs:
+                update_vals['vital_signs'] = vital_signs
+
+            if update_vals:
+                order.write(update_vals)
+                # Mark clinical notes as submitted
+                order.write({'clinical_notes_submitted': True})
+
+            return self._prepare_json_response(data={
+                'clinical_notes_submitted': order.clinical_notes_submitted,
+                'message': 'Clinical notes saved successfully'
+            })
+
+        except Exception as e:
+            return self._prepare_json_response(error=str(e), status_code=500)
+
+    @http.route('/health_pwa/api/fso/<int:order_id>/upload_image', type='http', auth='user', methods=['POST'], csrf=False)
+    def api_fso_upload_image(self, order_id, **kwargs):
+        """Upload clinical image for FSO from mobile app"""
+        if not self._check_api_access():
+            return self._prepare_json_response(error='Access denied', status_code=403)
+
+        try:
+            order = request.env['health.fieldservice.order'].browse(order_id)
+
+            if not order.exists():
+                return self._prepare_json_response(error='Order not found', status_code=404)
+
+            # Get uploaded file
+            image_file = request.httprequest.files.get('image')
+            if not image_file:
+                return self._prepare_json_response(error='No image provided', status_code=400)
+
+            # Read image data
+            import base64
+            image_data = base64.b64encode(image_file.read())
+
+            # Create attachment for the image
+            attachment = request.env['ir.attachment'].create({
+                'name': f'Clinical_Image_{order.name}_{datetime.now().strftime("%Y%m%d_%H%M%S")}.jpg',
+                'type': 'binary',
+                'datas': image_data,
+                'res_model': 'health.fieldservice.order',
+                'res_id': order.id,
+                'mimetype': image_file.content_type or 'image/jpeg',
+            })
+
+            return self._prepare_json_response(data={
+                'attachment_id': attachment.id,
+                'filename': attachment.name,
+                'url': f'/web/content/{attachment.id}'
+            })
+
+        except Exception as e:
+            return self._prepare_json_response(error=str(e), status_code=500)
+
+    @http.route('/health_pwa/api/fso/<int:order_id>/quote', type='http', auth='user', methods=['GET'], csrf=False)
+    def api_fso_get_quote(self, order_id, **kwargs):
+        """Get quote/sale order for FSO from mobile app"""
+        if not self._check_api_access():
+            return self._prepare_json_response(error='Access denied', status_code=403)
+
+        try:
+            order = request.env['health.fieldservice.order'].browse(order_id)
+
+            if not order.exists():
+                return self._prepare_json_response(error='Order not found', status_code=404)
+
+            if not order.sale_order_id:
+                return self._prepare_json_response(error='No quote found for this order', status_code=404)
+
+            sale_order = order.sale_order_id
+
+            # Prepare quote data
+            quote_data = {
+                'id': sale_order.id,
+                'name': sale_order.name,
+                'state': sale_order.state,
+                'amount_total': float(sale_order.amount_total),
+                'amount_untaxed': float(sale_order.amount_untaxed),
+                'amount_tax': float(sale_order.amount_tax),
+                'currency': sale_order.currency_id.name if sale_order.currency_id else 'VND',
+                'order_lines': [],
+            }
+
+            # Add order lines
+            for line in sale_order.order_line:
+                quote_data['order_lines'].append({
+                    'id': line.id,
+                    'product_id': line.product_id.id if line.product_id else None,
+                    'product_name': line.product_id.name if line.product_id else line.name,
+                    'description': line.name,
+                    'quantity': float(line.product_uom_qty),
+                    'unit_price': float(line.price_unit),
+                    'subtotal': float(line.price_subtotal),
+                    'total': float(line.price_total),
+                })
+
+            return self._prepare_json_response(data=quote_data)
+
+        except Exception as e:
+            return self._prepare_json_response(error=str(e), status_code=500)
+
+    @http.route('/health_pwa/api/products/catalog', type='http', auth='user', methods=['GET'], csrf=False)
+    def api_get_product_catalog(self, **kwargs):
+        """Get product catalog for adding to quotes"""
+        if not self._check_api_access():
+            return self._prepare_json_response(error='Access denied', status_code=403)
+
+        try:
+            # Parse query parameters
+            limit = int(kwargs.get('limit', 50))
+            offset = int(kwargs.get('offset', 0))
+            search = kwargs.get('search', '')
+            category = kwargs.get('category', '')
+
+            # Build domain for product search
+            domain = [('sale_ok', '=', True)]
+
+            if search:
+                domain.extend([
+                    '|',
+                    ('name', 'ilike', search),
+                    ('default_code', 'ilike', search)
+                ])
+
+            if category:
+                domain.append(('categ_id.name', '=', category))
+
+            # Get products
+            products = request.env['product.product'].search(
+                domain, limit=limit, offset=offset, order='name asc'
+            )
+            total_count = request.env['product.product'].search_count(domain)
+
+            # Prepare product data
+            products_data = []
+            for product in products:
+                products_data.append({
+                    'id': product.id,
+                    'name': product.name,
+                    'code': product.default_code,
+                    'description': product.description_sale,
+                    'price': float(product.list_price),
+                    'category': product.categ_id.name if product.categ_id else None,
+                    'uom': product.uom_id.name if product.uom_id else None,
+                    'image_url': f'/web/image/product.product/{product.id}/image_128' if product.image_128 else None,
+                })
+
+            response_data = {
+                'products': products_data,
+                'total_count': total_count,
+                'limit': limit,
+                'offset': offset,
+                'has_more': (offset + limit) < total_count
+            }
+
+            return self._prepare_json_response(data=response_data)
+
+        except Exception as e:
+            return self._prepare_json_response(error=str(e), status_code=500)
+
+    @http.route('/health_pwa/api/fso/<int:order_id>/quote/update', type='http', auth='user', methods=['POST'], csrf=False)
+    def api_fso_update_quote(self, order_id, **kwargs):
+        """Update quote lines for FSO from mobile app"""
+        if not self._check_api_access():
+            return self._prepare_json_response(error='Access denied', status_code=403)
+
+        try:
+            order = request.env['health.fieldservice.order'].browse(order_id)
+
+            if not order.exists():
+                return self._prepare_json_response(error='Order not found', status_code=404)
+
+            if not order.sale_order_id:
+                return self._prepare_json_response(error='No quote found for this order', status_code=404)
+
+            sale_order = order.sale_order_id
+
+            # Get update data from request body
+            import json as json_module
+            try:
+                data = json_module.loads(request.httprequest.data.decode('utf-8')) if request.httprequest.data else {}
+            except:
+                data = {}
+
+            action = data.get('action')  # 'add', 'update', 'remove'
+            line_data = data.get('line_data', {})
+
+            if action == 'add':
+                # Add new product line
+                product_id = line_data.get('product_id')
+                quantity = line_data.get('quantity', 1.0)
+
+                if not product_id:
+                    return self._prepare_json_response(error='Product ID required', status_code=400)
+
+                product = request.env['product.product'].browse(product_id)
+                if not product.exists():
+                    return self._prepare_json_response(error='Product not found', status_code=404)
+
+                # Create order line
+                request.env['sale.order.line'].create({
+                    'order_id': sale_order.id,
+                    'product_id': product_id,
+                    'product_uom_qty': quantity,
+                    'price_unit': product.list_price,
+                })
+
+            elif action == 'update':
+                # Update existing line
+                line_id = line_data.get('line_id')
+                quantity = line_data.get('quantity')
+                price = line_data.get('price')
+
+                if not line_id:
+                    return self._prepare_json_response(error='Line ID required', status_code=400)
+
+                line = request.env['sale.order.line'].browse(line_id)
+                if not line.exists() or line.order_id.id != sale_order.id:
+                    return self._prepare_json_response(error='Line not found', status_code=404)
+
+                update_vals = {}
+                if quantity is not None:
+                    update_vals['product_uom_qty'] = float(quantity)
+                if price is not None:
+                    update_vals['price_unit'] = float(price)
+
+                if update_vals:
+                    line.write(update_vals)
+
+            elif action == 'remove':
+                # Remove line
+                line_id = line_data.get('line_id')
+
+                if not line_id:
+                    return self._prepare_json_response(error='Line ID required', status_code=400)
+
+                line = request.env['sale.order.line'].browse(line_id)
+                if not line.exists() or line.order_id.id != sale_order.id:
+                    return self._prepare_json_response(error='Line not found', status_code=404)
+
+                line.unlink()
+
+            else:
+                return self._prepare_json_response(error='Invalid action', status_code=400)
+
+            # Return updated quote data
+            updated_quote = {
+                'id': sale_order.id,
+                'name': sale_order.name,
+                'state': sale_order.state,
+                'amount_total': float(sale_order.amount_total),
+                'amount_untaxed': float(sale_order.amount_untaxed),
+                'amount_tax': float(sale_order.amount_tax),
+                'order_lines': [],
+            }
+
+            for line in sale_order.order_line:
+                updated_quote['order_lines'].append({
+                    'id': line.id,
+                    'product_id': line.product_id.id if line.product_id else None,
+                    'product_name': line.product_id.name if line.product_id else line.name,
+                    'description': line.name,
+                    'quantity': float(line.product_uom_qty),
+                    'unit_price': float(line.price_unit),
+                    'subtotal': float(line.price_subtotal),
+                    'total': float(line.price_total),
+                })
+
+            return self._prepare_json_response(data={
+                'quote': updated_quote,
+                'message': 'Quote updated successfully'
+            })
+
         except Exception as e:
             return self._prepare_json_response(error=str(e), status_code=500)
