@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Server Action for Bulk MOH Report Generation -->
+    <record id="action_generate_moh_report_bulk" model="ir.actions.server">
+        <field name="name">Generate MOH Compliance Report</field>
+        <field name="model_id" ref="model_health_fieldservice_order"/>
+        <field name="binding_model_id" ref="model_health_fieldservice_order"/>
+        <field name="binding_view_types">list</field>
+        <field name="state">code</field>
+        <field name="code">
+if records:
+    action = env.ref('health_fieldservice.action_report_moh_multi').report_action(records)
+        </field>
+    </record>
+
+</odoo>

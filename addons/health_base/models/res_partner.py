@@ -130,7 +130,29 @@ class ResPartner(models.Model):
     registration_date = fields.Datetime('Registration Date', default=fields.Datetime.now, readonly=True)
     last_visit_date = fields.Datetime('Last Visit', readonly=True)
     next_visit_date = fields.Datetime('Next Scheduled Visit')
-    
+
+    # MOH Compliance Fields
+    profession = fields.Char('Profession/Occupation', help='Patient occupation (Nghề nghiệp)')
+    ethnicity = fields.Selection([
+        ('kinh', 'Kinh (Vietnamese)'),
+        ('tay', 'Tày'),
+        ('thai', 'Thái'),
+        ('muong', 'Mường'),
+        ('khmer', 'Khmer'),
+        ('hoa', 'Hoa (Chinese)'),
+        ('nung', 'Nùng'),
+        ('hmong', 'H\'Mông'),
+        ('dao', 'Dao'),
+        ('gia_rai', 'Gia Rai'),
+        ('ede', 'Ê Đê'),
+        ('ba_na', 'Ba Na'),
+        ('sedang', 'Xơ Đăng'),
+        ('co_ho', 'Cơ Ho'),
+        ('cham', 'Chăm'),
+        ('san_chay', 'Sán Chay'),
+        ('other', 'Other')
+    ], string='Ethnicity', help='Patient ethnic group (Dân tộc)')
+
     # Source Tracking
     source_type = fields.Selection([
         ('facebook', 'Facebook'),

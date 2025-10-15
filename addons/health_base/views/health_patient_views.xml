@@ -146,7 +146,12 @@
                                         <small class="text-muted">⚠️ Critical for patient safety - please be thorough</small>
                                     </div>
                                 </group>
-                                
+
+                                <group string="MOH Compliance Information">
+                                    <field name="profession" placeholder="Patient's occupation (e.g., Teacher, Engineer)"/>
+                                    <field name="ethnicity"/>
+                                </group>
+
                                 <group string="Emergency Contact">
                                     <field name="emergency_contact_name" required="1"/>
                                     <field name="emergency_contact_phone" widget="phone" required="1"/>

@@ -126,6 +126,7 @@ class HealthFieldServiceOrderUnified(models.Model):
     
     # Service Requirements & Notes
     symptoms = fields.Text('Symptoms/Chief Complaint', help='Patient\'s reported symptoms or reason for visit')
+    diagnosis = fields.Html('Diagnosis', help='Medical diagnosis (Chuẩn đoán) - MOH compliance field')
     service_requirements = fields.Text('Service Requirements', help='Specific requirements for this service')
     patient_notes = fields.Text('Patient Notes', help='Additional notes from patient')
     special_requirements = fields.Text('Special Requirements', help='Accessibility, equipment, or other special needs')

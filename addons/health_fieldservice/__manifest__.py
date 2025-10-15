@@ -72,7 +72,13 @@
         'data/ir_sequence.xml',
         'data/health_staff_assignment_data.xml',
         'data/health_ai_assignment_cron.xml',
-        
+        'data/report_paperformat.xml',
+        'data/moh_server_actions.xml',
+
+        # Reports
+        'report/moh_reports.xml',
+        'report/moh_report_template.xml',
+
         # Wizards
         'views/health_staff_assignment_wizard_views.xml',
         'views/health_booking_cancel_wizard_views.xml',

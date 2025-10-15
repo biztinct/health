@@ -1,0 +1,306 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- MOH Report Template -->
+    <template id="report_moh_document">
+        <t t-call="web.external_layout">
+            <t t-foreach="docs" t-as="o">
+                <div class="page">
+                    <!-- Report Header -->
+                    <div class="text-center mb-4">
+                        <h3 style="margin-bottom: 5px;">
+                            <strong>MINISTRY OF HEALTH COMPLIANCE REPORT</strong>
+                        </h3>
+                        <h4 style="margin-top: 5px; margin-bottom: 20px;">
+                            BÁO CÁO TUÂN THỦ BỘ Y TẾ
+                        </h4>
+                    </div>
+
+                    <!-- Service Information -->
+                    <div class="row mb-3">
+                        <div class="col-6">
+                            <strong>Booking Reference / Mã đặt chỗ:</strong> <span t-field="o.name"/>
+                        </div>
+                        <div class="col-6">
+                            <strong>Service Date / Ngày dịch vụ:</strong>
+                            <span t-field="o.scheduled_datetime" t-options='{"widget": "datetime", "format": "dd/MM/yyyy HH:mm"}'/>
+                        </div>
+                    </div>
+
+                    <div class="row mb-4">
+                        <div class="col-6">
+                            <strong>Service Type / Loại dịch vụ:</strong>
+                            <span t-esc="dict(o._fields['service_type'].selection).get(o.service_type, '')"/>
+                        </div>
+                        <div class="col-6">
+                            <strong>Doctor / Bác sĩ:</strong>
+                            <span t-if="o.primary_doctor_id" t-field="o.primary_doctor_id.name"/>
+                            <span t-else="">-</span>
+                        </div>
+                    </div>
+
+                    <!-- Patient Details Table -->
+                    <h5 class="mt-4 mb-3"><strong>Patient Information / Thông tin bệnh nhân</strong></h5>
+                    <table class="table table-bordered table-sm" style="width: 100%; border: 1px solid black;">
+                        <thead style="background-color: #f0f0f0;">
+                            <tr>
+                                <th style="width: 5%; text-align: center; border: 1px solid black; padding: 8px;">
+                                    No.<br/>STT
+                                </th>
+                                <th style="width: 15%; border: 1px solid black; padding: 8px;">
+                                    Name of Patient<br/>Họ và tên
+                                </th>
+                                <th style="width: 5%; text-align: center; border: 1px solid black; padding: 8px;">
+                                    Age<br/>Tuổi
+                                </th>
+                                <th style="width: 8%; text-align: center; border: 1px solid black; padding: 8px;">
+                                    Gender<br/>Giới tính
+                                </th>
+                                <th style="width: 20%; border: 1px solid black; padding: 8px;">
+                                    Address<br/>Địa chỉ
+                                </th>
+                                <th style="width: 12%; border: 1px solid black; padding: 8px;">
+                                    Insurance No.<br/>Số thẻ BHYT
+                                </th>
+                                <th style="width: 12%; border: 1px solid black; padding: 8px;">
+                                    Profession<br/>Nghề nghiệp
+                                </th>
+                                <th style="width: 10%; border: 1px solid black; padding: 8px;">
+                                    Ethnicity<br/>Dân tộc
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td style="text-align: center; border: 1px solid black; padding: 8px;">1</td>
+                                <td style="border: 1px solid black; padding: 8px;">
+                                    <span t-field="o.patient_id.name"/>
+                                </td>
+                                <td style="text-align: center; border: 1px solid black; padding: 8px;">
+                                    <span t-field="o.patient_id.age"/>
+                                </td>
+                                <td style="text-align: center; border: 1px solid black; padding: 8px;">
+                                    <span t-if="o.patient_id.gender == 'male'">Male / Nam</span>
+                                    <span t-if="o.patient_id.gender == 'female'">Female / Nữ</span>
+                                    <span t-if="o.patient_id.gender not in ['male', 'female']">Other / Khác</span>
+                                </td>
+                                <td style="border: 1px solid black; padding: 8px; font-size: 10px;">
+                                    <span t-if="o.patient_id.vietnamese_address" t-field="o.patient_id.vietnamese_address"/>
+                                    <span t-else="">-</span>
+                                </td>
+                                <td style="border: 1px solid black; padding: 8px;">
+                                    <span t-if="o.patient_id.insurance_number" t-field="o.patient_id.insurance_number"/>
+                                    <span t-else="">-</span>
+                                </td>
+                                <td style="border: 1px solid black; padding: 8px;">
+                                    <span t-if="o.patient_id.profession" t-field="o.patient_id.profession"/>
+                                    <span t-else="">-</span>
+                                </td>
+                                <td style="border: 1px solid black; padding: 8px;">
+                                    <span t-if="o.patient_id.ethnicity">
+                                        <t t-esc="dict(o.patient_id._fields['ethnicity'].selection).get(o.patient_id.ethnicity, '-')"/>
+                                    </span>
+                                    <span t-else="">-</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <!-- Clinical Information Table -->
+                    <h5 class="mt-4 mb-3"><strong>Clinical Information / Thông tin lâm sàng</strong></h5>
+                    <table class="table table-bordered table-sm" style="width: 100%; border: 1px solid black;">
+                        <thead style="background-color: #f0f0f0;">
+                            <tr>
+                                <th style="width: 25%; border: 1px solid black; padding: 8px;">
+                                    Symptoms<br/>Triệu chứng
+                                </th>
+                                <th style="width: 25%; border: 1px solid black; padding: 8px;">
+                                    Diagnosis<br/>Chuẩn đoán
+                                </th>
+                                <th style="width: 25%; border: 1px solid black; padding: 8px;">
+                                    Treatment<br/>Phương pháp điều trị
+                                </th>
+                                <th style="width: 25%; border: 1px solid black; padding: 8px;">
+                                    Notes<br/>Ghi chú
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td style="border: 1px solid black; padding: 8px; vertical-align: top;">
+                                    <span t-if="o.symptoms" t-field="o.symptoms"/>
+                                    <span t-else="">-</span>
+                                </td>
+                                <td style="border: 1px solid black; padding: 8px; vertical-align: top;">
+                                    <span t-if="o.diagnosis" t-field="o.diagnosis"/>
+                                    <span t-else="">-</span>
+                                </td>
+                                <td style="border: 1px solid black; padding: 8px; vertical-align: top;">
+                                    <span t-if="o.treatment_performed" t-field="o.treatment_performed"/>
+                                    <span t-else="">-</span>
+                                </td>
+                                <td style="border: 1px solid black; padding: 8px; vertical-align: top;">
+                                    <span t-if="o.completion_notes" t-field="o.completion_notes"/>
+                                    <span t-else="">-</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <!-- Doctor Signature Section -->
+                    <div class="row mt-5">
+                        <div class="col-6">
+                            <div class="text-center">
+                                <p><strong>Patient Signature / Chữ ký bệnh nhân</strong></p>
+                                <div style="height: 80px;"></div>
+                                <p>_______________________</p>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="text-center">
+                                <p><strong>Doctor Signature / Chữ ký bác sĩ</strong></p>
+                                <div style="height: 80px;"></div>
+                                <p>_______________________</p>
+                                <p t-if="o.primary_doctor_id">
+                                    <span t-field="o.primary_doctor_id.name"/>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Footer -->
+                    <div class="text-center mt-4" style="font-size: 10px; color: #666;">
+                        <p>Generated: <span t-esc="context_timestamp(datetime.datetime.now()).strftime('%d/%m/%Y %H:%M')"/></p>
+                        <p>Vietnam-Australia Family Health Service Company Limited (VAFHS)</p>
+                    </div>
+                </div>
+            </t>
+        </t>
+    </template>
+
+    <!-- MOH Report Template for Multiple Bookings -->
+    <template id="report_moh_document_multi">
+        <t t-call="web.external_layout">
+            <div class="page">
+                <!-- Report Header -->
+                <div class="text-center mb-4">
+                    <h3 style="margin-bottom: 5px;">
+                        <strong>MINISTRY OF HEALTH COMPLIANCE REPORT</strong>
+                    </h3>
+                    <h4 style="margin-top: 5px; margin-bottom: 20px;">
+                        BÁO CÁO TUÂN THỦ BỘ Y TẾ
+                    </h4>
+                    <p><strong>Report Date / Ngày báo cáo:</strong> <span t-esc="context_timestamp(datetime.datetime.now()).strftime('%d/%m/%Y')"/></p>
+                </div>
+
+                <!-- Consolidated Patient Details Table -->
+                <table class="table table-bordered table-sm" style="width: 100%; border: 1px solid black; font-size: 9px;">
+                    <thead style="background-color: #f0f0f0;">
+                        <tr>
+                            <th style="width: 3%; text-align: center; border: 1px solid black; padding: 5px;">
+                                No.<br/>STT
+                            </th>
+                            <th style="width: 12%; border: 1px solid black; padding: 5px;">
+                                Name<br/>Họ và tên
+                            </th>
+                            <th style="width: 4%; text-align: center; border: 1px solid black; padding: 5px;">
+                                Age<br/>Tuổi
+                            </th>
+                            <th style="width: 6%; text-align: center; border: 1px solid black; padding: 5px;">
+                                Gender<br/>Giới tính
+                            </th>
+                            <th style="width: 15%; border: 1px solid black; padding: 5px;">
+                                Address<br/>Địa chỉ
+                            </th>
+                            <th style="width: 8%; border: 1px solid black; padding: 5px;">
+                                Insurance<br/>BHYT
+                            </th>
+                            <th style="width: 8%; border: 1px solid black; padding: 5px;">
+                                Profession<br/>Nghề nghiệp
+                            </th>
+                            <th style="width: 7%; border: 1px solid black; padding: 5px;">
+                                Ethnicity<br/>Dân tộc
+                            </th>
+                            <th style="width: 10%; border: 1px solid black; padding: 5px;">
+                                Symptoms<br/>Triệu chứng
+                            </th>
+                            <th style="width: 10%; border: 1px solid black; padding: 5px;">
+                                Diagnosis<br/>Chuẩn đoán
+                            </th>
+                            <th style="width: 10%; border: 1px solid black; padding: 5px;">
+                                Treatment<br/>Điều trị
+                            </th>
+                            <th style="width: 7%; border: 1px solid black; padding: 5px;">
+                                Doctor<br/>Bác sĩ
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <t t-set="row_number" t-value="0"/>
+                        <t t-foreach="docs" t-as="o">
+                            <t t-set="row_number" t-value="row_number + 1"/>
+                            <tr>
+                                <td style="text-align: center; border: 1px solid black; padding: 5px;">
+                                    <span t-esc="row_number"/>
+                                </td>
+                                <td style="border: 1px solid black; padding: 5px;">
+                                    <span t-field="o.patient_id.name"/>
+                                </td>
+                                <td style="text-align: center; border: 1px solid black; padding: 5px;">
+                                    <span t-field="o.patient_id.age"/>
+                                </td>
+                                <td style="text-align: center; border: 1px solid black; padding: 5px;">
+                                    <span t-if="o.patient_id.gender == 'male'">M</span>
+                                    <span t-elif="o.patient_id.gender == 'female'">F</span>
+                                    <span t-else="">-</span>
+                                </td>
+                                <td style="border: 1px solid black; padding: 5px; font-size: 8px;">
+                                    <span t-if="o.patient_id.vietnamese_address" t-esc="o.patient_id.vietnamese_address[:80]"/>
+                                    <span t-else="">-</span>
+                                </td>
+                                <td style="border: 1px solid black; padding: 5px;">
+                                    <span t-if="o.patient_id.insurance_number" t-field="o.patient_id.insurance_number"/>
+                                    <span t-else="">-</span>
+                                </td>
+                                <td style="border: 1px solid black; padding: 5px;">
+                                    <span t-if="o.patient_id.profession" t-field="o.patient_id.profession"/>
+                                    <span t-else="">-</span>
+                                </td>
+                                <td style="border: 1px solid black; padding: 5px;">
+                                    <span t-if="o.patient_id.ethnicity">
+                                        <t t-esc="dict(o.patient_id._fields['ethnicity'].selection).get(o.patient_id.ethnicity, '-')[:10]"/>
+                                    </span>
+                                    <span t-else="">-</span>
+                                </td>
+                                <td style="border: 1px solid black; padding: 5px;">
+                                    <span t-if="o.symptoms" t-esc="o.symptoms[:50]"/>
+                                    <span t-else="">-</span>
+                                </td>
+                                <td style="border: 1px solid black; padding: 5px;">
+                                    <span t-if="o.diagnosis" t-raw="o.diagnosis[:50]"/>
+                                    <span t-else="">-</span>
+                                </td>
+                                <td style="border: 1px solid black; padding: 5px;">
+                                    <span t-if="o.treatment_performed" t-esc="o.treatment_performed[:50]"/>
+                                    <span t-else="">-</span>
+                                </td>
+                                <td style="border: 1px solid black; padding: 5px;">
+                                    <span t-if="o.primary_doctor_id" t-field="o.primary_doctor_id.name"/>
+                                    <span t-else="">-</span>
+                                </td>
+                            </tr>
+                        </t>
+                    </tbody>
+                </table>
+
+                <!-- Footer -->
+                <div class="text-center mt-4" style="font-size: 10px; color: #666;">
+                    <p>Generated: <span t-esc="context_timestamp(datetime.datetime.now()).strftime('%d/%m/%Y %H:%M')"/></p>
+                    <p>Vietnam-Australia Family Health Service Company Limited (VAFHS)</p>
+                    <p>Total Records / Tổng số bản ghi: <strong><span t-esc="len(docs)"/></strong></p>
+                </div>
+            </div>
+        </t>
+    </template>
+
+</odoo>

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- MOH Report Action (Single Booking) -->
+    <record id="action_report_moh_single" model="ir.actions.report">
+        <field name="name">MOH Report</field>
+        <field name="model">health.fieldservice.order</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">health_fieldservice.report_moh_document</field>
+        <field name="report_file">health_fieldservice.report_moh_document</field>
+        <field name="paperformat_id" ref="paperformat_moh_report"/>
+        <field name="print_report_name">'MOH_Report_%s' % (object.name)</field>
+        <field name="binding_model_id" ref="model_health_fieldservice_order"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <!-- MOH Report Action (Multiple Bookings) -->
+    <record id="action_report_moh_multi" model="ir.actions.report">
+        <field name="name">MOH Compliance Report (Multi)</field>
+        <field name="model">health.fieldservice.order</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">health_fieldservice.report_moh_document_multi</field>
+        <field name="report_file">health_fieldservice.report_moh_document_multi</field>
+        <field name="paperformat_id" ref="paperformat_moh_report"/>
+        <field name="print_report_name">'MOH_Compliance_Report_%s' % (datetime.datetime.now().strftime('%Y%m%d_%H%M%S'))</field>
+        <field name="binding_model_id" ref="model_health_fieldservice_order"/>
+        <field name="binding_type">report</field>
+        <field name="multi" eval="True"/>
+    </record>
+
+</odoo>

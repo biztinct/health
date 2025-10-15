@@ -253,6 +253,11 @@
                                 </group>
                             </group>
                             <group>
+                                <group string="MOH Compliance - Diagnosis">
+                                    <field name="diagnosis" widget="html" nolabel="1" placeholder="Enter medical diagnosis (Chuẩn đoán)..."/>
+                                </group>
+                            </group>
+                            <group>
                                 <group string="Treatment Details">
                                     <field name="treatment_performed" placeholder="Describe treatment provided..."/>
                                     <field name="medications_prescribed" placeholder="List medications prescribed..."/>
