@@ -319,7 +319,13 @@ window.healthPWA = {
                 :is-online="state.isOnline"
                 @navigate="navigate">
               </orders-view>
-              
+
+              <!-- Past Bookings -->
+              <past-bookings-view v-else-if="state.currentRoute === 'past-bookings'"
+                :is-online="state.isOnline"
+                @navigate="navigate">
+              </past-bookings-view>
+
               <!-- Order Detail -->
               <order-detail-view v-else-if="state.currentRoute === 'order'"
                 :order-id="getCurrentRouteId()"
@@ -368,9 +374,9 @@ window.healthPWA = {
                 <span class="mobile-nav-label">Patients</span>
               </a>
               
-              <a @click.prevent="navigate('orders')" 
+              <a @click.prevent="navigate('orders')"
                  class="mobile-nav-item"
-                 :class="{ active: state.currentRoute === 'orders' || state.currentRoute === 'order' }">
+                 :class="{ active: state.currentRoute === 'orders' || state.currentRoute === 'order' || state.currentRoute === 'past-bookings' }">
                 <div class="mobile-nav-icon">
                   <i class="material-icons">assignment</i>
                 </div>
@@ -422,6 +428,7 @@ window.healthPWA = {
             patients: 'Patients',
             patient: 'Patient Details',
             orders: 'Field Orders',
+            'past-bookings': 'Past Bookings',
             order: 'Order Details',
             teams: 'Teams',
             profile: 'Profile'
@@ -940,20 +947,34 @@ window.healthPWA = {
       emits: ['navigate'],
       setup(props, { emit }) {
         const { ref, onMounted, computed } = Vue;
-        
+
         const orders = ref([]);
         const isLoading = ref(true);
         const error = ref(null);
-        
+
+        // Computed property to filter upcoming bookings only
+        const upcomingOrders = computed(() => {
+          const now = new Date();
+          return orders.value.filter(order => {
+            if (!order.scheduled_datetime) return false;
+            const scheduledDate = new Date(order.scheduled_datetime);
+            return scheduledDate >= now;
+          }).sort((a, b) => {
+            // Sort by scheduled_datetime ascending (earliest first)
+            return new Date(a.scheduled_datetime) - new Date(b.scheduled_datetime);
+          });
+        });
+
         const loadOrders = async () => {
           try {
             isLoading.value = true;
             error.value = null;
-            
+
             if (window.healthPWA?.storageManager) {
               const result = await window.healthPWA.storageManager.getFieldServiceOrders();
               orders.value = result.orders || [];
               console.log('Loaded orders:', orders.value.length);
+              console.log('Upcoming orders:', upcomingOrders.value.length);
             } else {
               console.error('Storage manager not available');
             }
@@ -1009,6 +1030,7 @@ window.healthPWA = {
         
         return {
           orders,
+          upcomingOrders,
           isLoading,
           error,
           formatDateTime,
@@ -1019,6 +1041,17 @@ window.healthPWA = {
       },
       template: `
         <div class="orders-view">
+          <!-- View Toggle Header -->
+          <div class="view-toggle-header" style="padding: 1rem; background: #f5f5f5; border-bottom: 1px solid #ddd;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <h3 style="margin: 0;">Upcoming Bookings</h3>
+              <button @click="$emit('navigate', 'past-bookings')" class="btn btn-secondary btn-sm">
+                <i class="material-icons" style="font-size: 18px; vertical-align: middle;">history</i>
+                View Past Bookings
+              </button>
+            </div>
+          </div>
+
           <!-- Loading State -->
           <div v-if="isLoading" class="loading-state">
             <div class="loading-spinner">
@@ -1036,20 +1069,21 @@ window.healthPWA = {
           </div>
           
           <!-- Empty State -->
-          <div v-else-if="orders.length === 0" class="empty-state">
+          <div v-else-if="upcomingOrders.length === 0" class="empty-state">
             <div class="empty-icon">
               <i class="material-icons">assignment_outlined</i>
             </div>
-            <h3>No Orders Found</h3>
-            <p>No field service orders have been synced yet.</p>
+            <h3>No Upcoming Orders</h3>
+            <p v-if="orders.length === 0">No field service orders have been synced yet.</p>
+            <p v-else>No upcoming bookings found. All orders are in the past.</p>
           </div>
           
           <!-- Orders List -->
           <div v-else class="list-view">
-            <div 
-              v-for="order in orders" 
+            <div
+              v-for="order in upcomingOrders"
               :key="order.id"
-              class="list-item" 
+              class="list-item"
               @click="viewOrder(order.id)">
               <div class="list-item-avatar">
                 <i class="material-icons">assignment</i>
@@ -1071,7 +1105,171 @@ window.healthPWA = {
         </div>
       `
     });
-    
+
+    app.component('past-bookings-view', {
+      props: ['isOnline'],
+      emits: ['navigate'],
+      setup(props, { emit }) {
+        const { ref, onMounted, computed } = Vue;
+
+        const orders = ref([]);
+        const isLoading = ref(true);
+        const error = ref(null);
+
+        // Computed property to filter past bookings only (last 50)
+        const pastOrders = computed(() => {
+          const now = new Date();
+          return orders.value.filter(order => {
+            if (!order.scheduled_datetime) return false;
+            const scheduledDate = new Date(order.scheduled_datetime);
+            return scheduledDate < now;
+          }).sort((a, b) => {
+            // Sort by scheduled_datetime descending (most recent first)
+            return new Date(b.scheduled_datetime) - new Date(a.scheduled_datetime);
+          }).slice(0, 50); // Limit to last 50 past bookings
+        });
+
+        const loadOrders = async () => {
+          try {
+            isLoading.value = true;
+            error.value = null;
+
+            if (window.healthPWA?.storageManager) {
+              const result = await window.healthPWA.storageManager.getFieldServiceOrders();
+              orders.value = result.orders || [];
+              console.log('Loaded orders:', orders.value.length);
+              console.log('Past orders:', pastOrders.value.length);
+            } else {
+              console.error('Storage manager not available');
+            }
+          } catch (err) {
+            console.error('Failed to load orders:', err);
+            error.value = err.message;
+          } finally {
+            isLoading.value = false;
+          }
+        };
+
+        onMounted(() => {
+          loadOrders();
+
+          // Listen for sync completion to refresh data
+          window.addEventListener('health-pwa-sync-completed', () => {
+            console.log('Sync completed, refreshing past orders...');
+            loadOrders();
+          });
+        });
+
+        const formatDateTime = (dateTimeStr) => {
+          if (!dateTimeStr) return 'Unscheduled';
+          const date = new Date(dateTimeStr);
+          return date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        };
+
+        const getStatusBadgeClass = (state) => {
+          switch (state) {
+            case 'draft': return 'badge badge-secondary';
+            case 'assigned': return 'badge badge-warning';
+            case 'in_progress': return 'badge badge-primary';
+            case 'completed': return 'badge badge-success';
+            case 'cancelled': return 'badge badge-danger';
+            default: return 'badge badge-secondary';
+          }
+        };
+
+        const getStatusLabel = (state) => {
+          switch (state) {
+            case 'draft': return 'Draft';
+            case 'assigned': return 'Assigned';
+            case 'in_progress': return 'In Progress';
+            case 'completed': return 'Completed';
+            case 'cancelled': return 'Cancelled';
+            default: return 'Unknown';
+          }
+        };
+
+        const viewOrder = (orderId) => {
+          emit('navigate', 'order', { id: orderId });
+        };
+
+        return {
+          orders,
+          pastOrders,
+          isLoading,
+          error,
+          formatDateTime,
+          getStatusBadgeClass,
+          getStatusLabel,
+          viewOrder
+        };
+      },
+      template: `
+        <div class="past-bookings-view">
+          <!-- View Toggle Header -->
+          <div class="view-toggle-header" style="padding: 1rem; background: #f5f5f5; border-bottom: 1px solid #ddd;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <h3 style="margin: 0;">Past Bookings (Last 50)</h3>
+              <button @click="$emit('navigate', 'orders')" class="btn btn-secondary btn-sm">
+                <i class="material-icons" style="font-size: 18px; vertical-align: middle;">event</i>
+                View Upcoming Bookings
+              </button>
+            </div>
+          </div>
+
+          <!-- Loading State -->
+          <div v-if="isLoading" class="loading-state">
+            <div class="loading-spinner">
+              <div class="spinner"></div>
+            </div>
+            <p>Loading past bookings...</p>
+          </div>
+
+          <!-- Error State -->
+          <div v-else-if="error" class="error-state">
+            <div class="error-icon">
+              <i class="material-icons">error</i>
+            </div>
+            <p>Failed to load past bookings: {{ error }}</p>
+          </div>
+
+          <!-- Empty State -->
+          <div v-else-if="pastOrders.length === 0" class="empty-state">
+            <div class="empty-icon">
+              <i class="material-icons">history</i>
+            </div>
+            <h3>No Past Bookings</h3>
+            <p v-if="orders.length === 0">No field service orders have been synced yet.</p>
+            <p v-else>No past bookings found. All orders are upcoming.</p>
+          </div>
+
+          <!-- Past Orders List -->
+          <div v-else class="list-view">
+            <div
+              v-for="order in pastOrders"
+              :key="order.id"
+              class="list-item"
+              @click="viewOrder(order.id)">
+              <div class="list-item-avatar">
+                <i class="material-icons">assignment</i>
+              </div>
+              <div class="list-item-content">
+                <h4 class="list-item-title">
+                  {{ order.service_type_name || 'Service Order' }} - {{ order.patient_name || 'Unknown Patient' }}
+                </h4>
+                <p class="list-item-subtitle">
+                  Scheduled: {{ formatDateTime(order.scheduled_datetime) }}
+                </p>
+              </div>
+              <div class="list-item-meta">
+                <span :class="getStatusBadgeClass(order.state)">{{ getStatusLabel(order.state) }}</span>
+                <i class="material-icons">chevron_right</i>
+              </div>
+            </div>
+          </div>
+        </div>
+      `
+    });
+
     app.component('order-detail-view', {
       props: ['orderId', 'isOnline'],
       emits: ['navigate'],
@@ -1542,15 +1740,22 @@ window.healthPWA = {
             <!-- Order Header -->
             <div class="order-header-card">
               <div class="order-header-info">
-                <h2>{{ order.service_type_name || 'Service Order' }}</h2>
-                <p class="order-patient">{{ order.patient_name || 'Unknown Patient' }}</p>
+                <div class="booking-number">
+                  <i class="material-icons">confirmation_number</i>
+                  <span>{{ order.name }}</span>
+                </div>
+                <h2>{{ order.service_type_name || order.service_type?.name || 'Service Order' }}</h2>
+                <p class="order-patient">
+                  <i class="material-icons">person</i>
+                  {{ order.patient?.name || order.patient_name || 'Unknown Patient' }}
+                </p>
                 <span :class="getStatusBadgeClass(order.state)">
-                  {{ order.state || 'Unknown' }}
+                  {{ order.state ? order.state.replace('_', ' ').toUpperCase() : 'UNKNOWN' }}
                 </span>
               </div>
 
               <!-- Timer Display (shown when service is in progress) -->
-              <div v-if="order.state === 'in_progress' && order.actual_start_datetime && !order.actual_end_datetime"
+              <div v-if="order.state === 'in_progress' && order.actual_start_datetime"
                    class="order-timer">
                 <div class="timer-icon">
                   <i class="material-icons">timer</i>

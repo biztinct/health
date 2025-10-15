@@ -290,6 +290,10 @@ class HealthPWASyncController(http.Controller):
                 'patient_notes': order.patient_notes,
                 'gps_coordinates': order.gps_coordinates,
                 'state': order.state,
+                'actual_start_datetime': order.actual_start_datetime if hasattr(order, 'actual_start_datetime') else None,
+                'actual_end_datetime': order.actual_end_datetime if hasattr(order, 'actual_end_datetime') else None,
+                'actual_duration': order.actual_duration if hasattr(order, 'actual_duration') else None,
+                'address': order.service_address,  # Add duplicate for compatibility
                 'created_date': order.create_date,
                 'updated_date': order.write_date,
                 'is_deleted': False,

@@ -227,6 +227,9 @@ class HealthPWAAPIController(http.Controller):
                 orders_data.append({
                     'id': order.id,
                     'name': order.name,
+                    'state': order.state,
+                    'actual_start_datetime': order.actual_start_datetime,
+                    'actual_end_datetime': order.actual_end_datetime if hasattr(order, 'actual_end_datetime') else None,
                     'patient_name': order.patient_id.name if order.patient_id else None,
                     'patient_code': order.patient_id.patient_code if order.patient_id else None,
                     'stage': order.stage_id.name if order.stage_id else None,
@@ -237,6 +240,7 @@ class HealthPWAAPIController(http.Controller):
                     'estimated_duration': order.estimated_duration,
                     'duration_minutes': order.duration_minutes,
                     'service_type': order.service_type_id.name if order.service_type_id else None,
+                    'service_type_name': order.service_type_id.name if order.service_type_id else None,
                     'team': order.team_id.name if order.team_id else None,
                     'assigned_user': order.user_id.name if order.user_id else None,
                     'address': order.service_address,
@@ -274,6 +278,9 @@ class HealthPWAAPIController(http.Controller):
             order_data = {
                 'id': order.id,
                 'name': order.name,
+                'state': order.state,
+                'actual_start_datetime': order.actual_start_datetime,
+                'actual_end_datetime': order.actual_end_datetime if hasattr(order, 'actual_end_datetime') else None,
                 'patient': {
                     'id': order.patient_id.id if order.patient_id else None,
                     'name': order.patient_id.name if order.patient_id else None,
@@ -306,6 +313,8 @@ class HealthPWAAPIController(http.Controller):
                 'phone': order.patient_phone,
                 'description': order.description,
                 'patient_notes': order.patient_notes,
+                'clinical_notes': order.clinical_notes if hasattr(order, 'clinical_notes') else None,
+                'diagnosis': order.diagnosis if hasattr(order, 'diagnosis') else None,
                 'location': {
                     'lat': order.service_lat,
                     'lng': order.service_lng,
@@ -516,22 +525,28 @@ class HealthPWAAPIController(http.Controller):
             payment_option = data.get('payment_option', 'pay_now')
             clinical_notes = data.get('clinical_notes', '')
 
-            # Update clinical notes if provided
+            # Update clinical notes and payment preference if provided
+            update_vals = {}
             if clinical_notes:
-                order.write({'clinical_notes': clinical_notes})
+                update_vals['clinical_notes'] = clinical_notes
 
-            # Complete the service based on payment option
-            if payment_option == 'pay_later':
-                order.action_complete_service_pay_later()
-            else:
-                order.action_complete_service_collect_payment()
+            # Store payment preference (you may need to add this field to the model if it doesn't exist)
+            if payment_option:
+                update_vals['payment_preference'] = payment_option
+
+            if update_vals:
+                order.write(update_vals)
+
+            # Complete the service using the standard method
+            order.action_complete_service()
 
             return self._prepare_json_response(data={
                 'actual_end_datetime': order.actual_end_datetime,
-                'adjusted_end_datetime': order.adjusted_end_datetime,
-                'actual_duration': order.actual_duration,
+                'adjusted_end_datetime': order.adjusted_end_datetime if hasattr(order, 'adjusted_end_datetime') else None,
+                'actual_duration': order.actual_duration if hasattr(order, 'actual_duration') else None,
                 'state': order.state,
-                'message': 'Service completed successfully'
+                'payment_preference': payment_option,
+                'message': f'Service completed successfully - {payment_option.replace("_", " ").title()}'
             })
 
         except Exception as e:
@@ -666,6 +681,8 @@ class HealthPWAAPIController(http.Controller):
                     'description': line.name,
                     'quantity': float(line.product_uom_qty),
                     'unit_price': float(line.price_unit),
+                    'discount': float(line.discount) if hasattr(line, 'discount') else 0.0,
+                    'discount_reason': line.discount_reason if hasattr(line, 'discount_reason') else '',
                     'subtotal': float(line.price_subtotal),
                     'total': float(line.price_total),
                 })
@@ -716,6 +733,7 @@ class HealthPWAAPIController(http.Controller):
                     'code': product.default_code,
                     'description': product.description_sale,
                     'price': float(product.list_price),
+                    'currency': product.currency_id.name if product.currency_id else 'VND',
                     'category': product.categ_id.name if product.categ_id else None,
                     'uom': product.uom_id.name if product.uom_id else None,
                     'image_url': f'/web/image/product.product/{product.id}/image_128' if product.image_128 else None,
@@ -786,6 +804,8 @@ class HealthPWAAPIController(http.Controller):
                 line_id = line_data.get('line_id')
                 quantity = line_data.get('quantity')
                 price = line_data.get('price')
+                discount = line_data.get('discount')
+                discount_reason = line_data.get('discount_reason')
 
                 if not line_id:
                     return self._prepare_json_response(error='Line ID required', status_code=400)
@@ -799,6 +819,10 @@ class HealthPWAAPIController(http.Controller):
                     update_vals['product_uom_qty'] = float(quantity)
                 if price is not None:
                     update_vals['price_unit'] = float(price)
+                if discount is not None:
+                    update_vals['discount'] = float(discount)
+                if discount_reason is not None:
+                    update_vals['discount_reason'] = discount_reason
 
                 if update_vals:
                     line.write(update_vals)
@@ -838,6 +862,8 @@ class HealthPWAAPIController(http.Controller):
                     'description': line.name,
                     'quantity': float(line.product_uom_qty),
                     'unit_price': float(line.price_unit),
+                    'discount': float(line.discount) if hasattr(line, 'discount') else 0.0,
+                    'discount_reason': line.discount_reason if hasattr(line, 'discount_reason') else '',
                     'subtotal': float(line.price_subtotal),
                     'total': float(line.price_total),
                 })
