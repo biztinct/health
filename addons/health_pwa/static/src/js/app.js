@@ -1756,13 +1756,15 @@ window.healthPWA = {
 
               <!-- Timer Display (shown when service is in progress) -->
               <div v-if="order.state === 'in_progress' && order.actual_start_datetime"
-                   class="order-timer">
-                <div class="timer-icon">
-                  <i class="material-icons">timer</i>
-                </div>
-                <div class="timer-display">
-                  <span class="timer-time">{{ elapsedTime }}</span>
-                  <span class="timer-label">Elapsed Time</span>
+                   style="background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%); border-radius: 20px; padding: 24px; margin-top: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); border: 1px solid #e1e8ed;">
+                <div style="display: flex; align-items: center; justify-content: center; gap: 16px;">
+                  <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); width: 64px; height: 64px; border-radius: 16px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);">
+                    <i class="material-icons" style="color: white; font-size: 36px;">timer</i>
+                  </div>
+                  <div style="flex: 1; display: flex; flex-direction: column;">
+                    <div style="font-size: 42px; font-weight: 700; color: #2c3e50; letter-spacing: 2px; font-family: 'SF Mono', 'Monaco', monospace; line-height: 1;">{{ elapsedTime }}</div>
+                    <div style="font-size: 13px; font-weight: 600; color: #95a5a6; text-transform: uppercase; letter-spacing: 1.5px; margin-top: 4px;">Elapsed Time</div>
+                  </div>
                 </div>
               </div>
             </div>

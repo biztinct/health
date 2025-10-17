@@ -525,14 +525,10 @@ class HealthPWAAPIController(http.Controller):
             payment_option = data.get('payment_option', 'pay_now')
             clinical_notes = data.get('clinical_notes', '')
 
-            # Update clinical notes and payment preference if provided
+            # Update clinical notes if provided
             update_vals = {}
             if clinical_notes:
                 update_vals['clinical_notes'] = clinical_notes
-
-            # Store payment preference (you may need to add this field to the model if it doesn't exist)
-            if payment_option:
-                update_vals['payment_preference'] = payment_option
 
             if update_vals:
                 order.write(update_vals)
@@ -540,13 +536,26 @@ class HealthPWAAPIController(http.Controller):
             # Complete the service using the standard method
             order.action_complete_service()
 
+            # Handle payment based on payment option
+            message = 'Service completed successfully'
+            if payment_option == 'pay_now':
+                # For Pay Now: Confirm the sale order and create invoice if not already done
+                if order.sale_order_id and order.sale_order_id.state == 'draft':
+                    order.sale_order_id.action_confirm()
+                    message = 'Service completed - Invoice created for immediate payment'
+                elif order.sale_order_id:
+                    message = 'Service completed - Ready for payment'
+            else:
+                # For Pay Later: Keep as quote/draft or just mark completed
+                message = 'Service completed - Invoice will be sent later'
+
             return self._prepare_json_response(data={
                 'actual_end_datetime': order.actual_end_datetime,
                 'adjusted_end_datetime': order.adjusted_end_datetime if hasattr(order, 'adjusted_end_datetime') else None,
                 'actual_duration': order.actual_duration if hasattr(order, 'actual_duration') else None,
                 'state': order.state,
-                'payment_preference': payment_option,
-                'message': f'Service completed successfully - {payment_option.replace("_", " ").title()}'
+                'payment_option': payment_option,
+                'message': message
             })
 
         except Exception as e:
