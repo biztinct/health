@@ -7,7 +7,7 @@
         <field name="description">FSO created but not yet dispatched</field>
         <field name="sequence">10</field>
         <field name="state">draft</field>
-        <field name="color">1</field>
+        <field name="color">1</field>   
         <field name="is_default" eval="True"/>
         <field name="allow_edit" eval="True"/>
     </record>
