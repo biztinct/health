@@ -67,7 +67,8 @@ class HealthStaffAssignment(models.Model):
     
     assignment_role = fields.Selection([
         ('lead', 'Lead Staff'),
-        ('support', 'Support Staff'), 
+        ('support', 'Support Staff'),
+        ('doctor', 'Doctor'),
         ('consultant', 'Consultant'),
         ('specialist', 'Specialist'),
         ('trainee', 'Trainee')

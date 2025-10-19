@@ -1292,6 +1292,13 @@ window.healthPWA = {
         });
         const capturedImages = ref([]);
         const quoteData = ref(null);
+        const showPaymentWizard = ref(false);
+        const paymentWizardData = ref({
+          payment_choice: 'pay_now',
+          payment_method: 'cash',
+          service_notes: '',
+          create_invoice_now: true
+        });
 
         // Computed elapsed time for timer
         const elapsedTime = computed(() => {
@@ -1394,13 +1401,34 @@ window.healthPWA = {
           }
         };
 
-        const handleCompleteService = async (paymentOption = 'pay_now') => {
-          if (!props.isOnline) {
-            window.healthPWA.showNotification('Cannot complete service while offline', 'error');
+        const openPaymentWizard = () => {
+          // Validate clinical notes are filled before allowing completion
+          if (!clinicalNotesData.value.clinical_notes || !clinicalNotesData.value.clinical_notes.trim()) {
+            window.healthPWA.showNotification(
+              'Please fill in Clinical Notes before completing the service. Click "Clinical Notes" button to add them.',
+              'warning',
+              7000
+            );
             return;
           }
 
-          if (!confirm(`Complete service with ${paymentOption === 'pay_now' ? 'Pay Now' : 'Pay Later'}?`)) {
+          if (!clinicalNotesData.value.treatment_performed || !clinicalNotesData.value.treatment_performed.trim()) {
+            window.healthPWA.showNotification(
+              'Please fill in Treatment Performed in Clinical Notes before completing the service.',
+              'warning',
+              7000
+            );
+            return;
+          }
+
+          // Load quote data to get calculated amount (but don't show invoice modal)
+          loadQuote(false);
+          showPaymentWizard.value = true;
+        };
+
+        const handleCompleteService = async () => {
+          if (!props.isOnline) {
+            window.healthPWA.showNotification('Cannot complete service while offline', 'error');
             return;
           }
 
@@ -1411,7 +1439,10 @@ window.healthPWA = {
                 'Content-Type': 'application/json',
               },
               body: JSON.stringify({
-                payment_option: paymentOption,
+                payment_choice: paymentWizardData.value.payment_choice,
+                payment_method: paymentWizardData.value.payment_method,
+                service_notes: paymentWizardData.value.service_notes,
+                create_invoice_now: paymentWizardData.value.create_invoice_now,
                 clinical_notes: clinicalNotesData.value.clinical_notes
               })
             });
@@ -1420,13 +1451,34 @@ window.healthPWA = {
             console.log('Complete service response:', data);
 
             if (data.success && data.data) {
+              // Stop timer first
+              stopTimer();
+
+              // Close payment wizard
+              showPaymentWizard.value = false;
+
+              // Show success notification
+              window.healthPWA.showNotification(data.data.message || 'Service completed successfully!', 'success');
+
+              // Update local order state immediately for UI responsiveness
               order.value.state = data.data.state;
               order.value.actual_end_datetime = data.data.actual_end_datetime;
               order.value.adjusted_end_datetime = data.data.adjusted_end_datetime;
-              stopTimer();
-              window.healthPWA.showNotification(data.data.message || 'Service completed successfully!', 'success');
 
-              // Reload order data
+              // Update PouchDB cache with new state
+              if (window.healthPWA?.storageManager) {
+                try {
+                  await window.healthPWA.storageManager.updateFieldServiceOrder(props.orderId, {
+                    state: data.data.state,
+                    actual_end_datetime: data.data.actual_end_datetime,
+                    adjusted_end_datetime: data.data.adjusted_end_datetime
+                  });
+                } catch (dbErr) {
+                  console.error('Failed to update PouchDB:', dbErr);
+                }
+              }
+
+              // Reload full order data from server to get latest information
               await loadOrder();
             } else {
               window.healthPWA.showNotification('Failed to complete service: ' + (data.error || 'Unknown error'), 'error');
@@ -1514,7 +1566,7 @@ window.healthPWA = {
         const editingLine = ref(null);
         const showMap = ref(false);
 
-        const loadQuote = async () => {
+        const loadQuote = async (showModal = true) => {
           if (!props.isOnline) {
             window.healthPWA.showNotification('Cannot load invoice while offline', 'error');
             return;
@@ -1526,13 +1578,19 @@ window.healthPWA = {
 
             if (data.success) {
               quoteData.value = data.data;
-              showInvoice.value = true;
+              if (showModal) {
+                showInvoice.value = true;
+              }
             } else {
-              window.healthPWA.showNotification('No quote found for this order', 'warning');
+              if (showModal) {
+                window.healthPWA.showNotification('No quote found for this order', 'warning');
+              }
             }
           } catch (err) {
             console.error('Load quote error:', err);
-            window.healthPWA.showNotification('Error loading quote: ' + err.message, 'error');
+            if (showModal) {
+              window.healthPWA.showNotification('Error loading quote: ' + err.message, 'error');
+            }
           }
         };
 
@@ -1701,7 +1759,10 @@ window.healthPWA = {
           productSearch,
           editingLine,
           showMap,
+          showPaymentWizard,
+          paymentWizardData,
           handleStartService,
+          openPaymentWizard,
           handleCompleteService,
           saveClinicalNotes,
           captureImage,
@@ -1804,22 +1865,14 @@ window.healthPWA = {
                 <span>Invoice</span>
               </button>
 
-              <!-- Pay Now Button (only for in_progress state) -->
+              <!-- Complete Service Button (only for in_progress state) -->
               <button v-if="order.state === 'in_progress'"
-                      @click="handleCompleteService('pay_now')"
-                      class="btn btn-action btn-pay-now"
-                      :disabled="!isOnline">
-                <i class="material-icons">payment</i>
-                <span>Pay Now</span>
-              </button>
-
-              <!-- Pay Later Button (only for in_progress state) -->
-              <button v-if="order.state === 'in_progress'"
-                      @click="handleCompleteService('pay_later')"
-                      class="btn btn-action btn-pay-later"
-                      :disabled="!isOnline">
-                <i class="material-icons">schedule</i>
-                <span>Pay Later</span>
+                      @click="openPaymentWizard"
+                      class="btn btn-action btn-complete"
+                      :disabled="!isOnline"
+                      style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none;">
+                <i class="material-icons">check_circle</i>
+                <span>Complete Service</span>
               </button>
             </div>
 
@@ -2190,6 +2243,102 @@ window.healthPWA = {
                 </div>
                 <div class="modal-footer">
                   <button @click="showMap = false" class="btn btn-secondary">Close</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Payment Wizard Modal -->
+            <div v-if="showPaymentWizard" class="modal-overlay" @click.self="showPaymentWizard = false">
+              <div class="modal-content payment-wizard-modal" style="max-width: 600px;">
+                <div class="modal-header">
+                  <h3>
+                    <i class="material-icons">payment</i>
+                    Complete Service - Payment Collection
+                  </h3>
+                  <button @click="showPaymentWizard = false" class="modal-close">
+                    <i class="material-icons">close</i>
+                  </button>
+                </div>
+                <div class="modal-body" style="max-height: 70vh; overflow-y: auto;">
+                  <!-- Service Summary -->
+                  <div class="form-section">
+                    <h4 style="font-size: 14px; font-weight: 600; color: #666; text-transform: uppercase; margin-bottom: 12px;">Service Summary</h4>
+                    <div class="info-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                      <div class="info-item">
+                        <label style="font-size: 12px; color: #999;">Field Service Order</label>
+                        <span style="font-size: 14px; color: #333;">{{ order.name }}</span>
+                      </div>
+                      <div class="info-item">
+                        <label style="font-size: 12px; color: #999;">Patient</label>
+                        <span style="font-size: 14px; color: #333;">{{ order.patient_name }}</span>
+                      </div>
+                      <div class="info-item">
+                        <label style="font-size: 12px; color: #999;">Calculated Invoice Amount</label>
+                        <span style="font-size: 14px; color: #333;">{{ quoteData ? quoteData.amount_total.toLocaleString() + ' ' + quoteData.currency : 'N/A' }}</span>
+                      </div>
+                      <div class="info-item">
+                        <label style="font-size: 12px; color: #999;">Final Invoice Amount</label>
+                        <span style="font-size: 14px; font-weight: 600; color: #667eea;">{{ quoteData ? quoteData.amount_total.toLocaleString() + ' ' + quoteData.currency : 'N/A' }}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Payment Collection -->
+                  <div class="form-section" style="margin-top: 20px;">
+                    <h4 style="font-size: 14px; font-weight: 600; color: #666; text-transform: uppercase; margin-bottom: 12px;">💰 Payment Collection</h4>
+                    <div class="form-group">
+                      <label style="display: flex; align-items: center; padding: 12px; border: 2px solid #e1e8ed; border-radius: 8px; margin-bottom: 8px; cursor: pointer;">
+                        <input type="radio" v-model="paymentWizardData.payment_choice" value="pay_now" style="margin-right: 10px;">
+                        <span style="font-weight: 500;">Pay Now - Collect Payment Immediately</span>
+                      </label>
+                      <label style="display: flex; align-items: center; padding: 12px; border: 2px solid #e1e8ed; border-radius: 8px; cursor: pointer;">
+                        <input type="radio" v-model="paymentWizardData.payment_choice" value="pay_later" style="margin-right: 10px;">
+                        <span style="font-weight: 500;">Pay Later - Send Invoice for Later Collection</span>
+                      </label>
+                    </div>
+
+                    <!-- Payment Method (shown only for Pay Now) -->
+                    <div v-if="paymentWizardData.payment_choice === 'pay_now'" class="form-group" style="margin-top: 16px;">
+                      <label style="font-size: 12px; font-weight: 600; color: #333; margin-bottom: 8px; display: block;">Payment Method</label>
+                      <select v-model="paymentWizardData.payment_method" class="form-control" style="padding: 10px; border: 1px solid #ddd; border-radius: 6px; width: 100%;">
+                        <option value="cash">Cash</option>
+                        <option value="bank_transfer">Bank Transfer</option>
+                        <option value="credit_card">Credit Card</option>
+                        <option value="qr_code">QR Code Payment</option>
+                        <option value="prepaid">Prepaid Service Package</option>
+                        <option value="other">Other Method</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <!-- Service Notes -->
+                  <div class="form-section" style="margin-top: 20px;">
+                    <h4 style="font-size: 14px; font-weight: 600; color: #666; text-transform: uppercase; margin-bottom: 12px;">📝 Service Notes</h4>
+                    <div class="form-group">
+                      <textarea v-model="paymentWizardData.service_notes"
+                                rows="3"
+                                placeholder="Additional notes about service delivery, patient condition, payment collection, etc."
+                                style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px;"></textarea>
+                    </div>
+                  </div>
+
+                  <!-- Invoice Processing -->
+                  <div class="form-section" style="margin-top: 20px;">
+                    <h4 style="font-size: 14px; font-weight: 600; color: #666; text-transform: uppercase; margin-bottom: 12px;">📋 Invoice Processing</h4>
+                    <div class="form-group">
+                      <label style="display: flex; align-items: center; cursor: pointer;">
+                        <input type="checkbox" v-model="paymentWizardData.create_invoice_now" checked style="margin-right: 10px;">
+                        <span style="font-weight: 500;">Create Invoice Now</span>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+                <div class="modal-footer">
+                  <button @click="showPaymentWizard = false" class="btn btn-secondary">Cancel</button>
+                  <button @click="handleCompleteService" class="btn btn-primary" :disabled="!isOnline">
+                    <i class="material-icons">check_circle</i>
+                    Complete Service
+                  </button>
                 </div>
               </div>
             </div>

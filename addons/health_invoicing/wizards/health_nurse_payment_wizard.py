@@ -244,11 +244,22 @@ class HealthNursePaymentWizard(models.TransientModel):
         else:
             transaction = self._process_pay_later(invoice)
         
-        # Mark FSO as invoiced and completed
+        # Find Completed stage
+        completed_stage = self.env['health.fieldservice.stage'].search([
+            ('state', '=', 'completed'),
+            ('active', '=', True)
+        ], order='sequence', limit=1)
+
+        if not completed_stage:
+            raise UserError(_('No Completed stage found. Please configure booking stages properly.'))
+
+        # Mark FSO as invoiced and completed (update both state and stage_id)
         self.fso_id.write({
             'invoice_id': invoice.id,
             'is_invoiced': True,
             'state': 'completed',
+            'stage_id': completed_stage.id,
+            'actual_end_datetime': fields.Datetime.now(),
         })
         
         # Success message and return action
@@ -429,14 +440,22 @@ class HealthNursePaymentWizard(models.TransientModel):
             subject="Service Completed & Payment Processed"
         )
         
-        # Return to FSO form
+        # Return to FSO form with reload to update UI
         return {
-            'name': _('Service Completed'),
-            'type': 'ir.actions.act_window',
-            'res_model': 'health.fieldservice.order',
-            'res_id': self.fso_id.id,
-            'view_mode': 'form',
-            'target': 'current',
+            'type': 'ir.actions.client',
+            'tag': 'reload',
+            'params': {
+                'next': {
+                    'type': 'ir.actions.client',
+                    'tag': 'display_notification',
+                    'params': {
+                        'title': _('Service Completed'),
+                        'message': message,
+                        'type': 'success',
+                        'sticky': False,
+                    }
+                }
+            }
         }
     
     def _create_ar_payment(self, transaction, invoice):

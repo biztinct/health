@@ -20,7 +20,7 @@
 
                     <button name="action_start_service" type="object"
                             string="▶️ Start Service" class="oe_highlight"
-                            invisible="state != 'assigned'"
+                            invisible="state not in ('confirmed', 'assigned') or not assignment_ids"
                             help="Start the service - only available when staff is assigned"/>
 
                     <button name="action_create_final_invoice" type="object"
@@ -45,7 +45,7 @@
                             groups="health_base.group_healthcare_operations_manager"
                             help="Confirm booking and move to next stage (requires quote with items)"/>
                     
-                    <field name="stage_id" widget="statusbar" options="{'clickable': '1'}"/>
+                    <field name="stage_id" widget="statusbar" options="{'clickable': '1', 'fold_field': 'fold'}"/>
                 </header>
                 
                 <!-- Quote Requirement Banner for Draft FSOs -->
@@ -167,6 +167,7 @@
                     <field name="service_timer_active" invisible="1"/>
                     <field name="actual_start_datetime" invisible="1"/>
                     <field name="actual_end_datetime" invisible="1"/>
+                    <field name="assignment_ids" invisible="1"/>
                     <div class="timer-top-right-container">
                         <field name="actual_duration_display" widget="service_timer" nolabel="1"
                                invisible="not id"/>

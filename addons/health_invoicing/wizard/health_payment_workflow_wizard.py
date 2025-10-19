@@ -237,9 +237,15 @@ class HealthPaymentWorkflowWizard(models.TransientModel):
         if self.tax_submission_required:
             self._submit_to_tax_authorities()
         
-        # Update FSO status
+        # Update FSO status - Move to Complete stage for Cash payment
+        completed_stage = self.env['health.fieldservice.stage'].search([
+            ('state', '=', 'completed'),
+            ('active', '=', True)
+        ], order='sequence', limit=1)
+
         self.fso_id.write({
-            'state': 'closed',  # Move to closed after payment
+            'stage_id': completed_stage.id if completed_stage else False,
+            'state': 'completed',  # Move to completed after cash payment
             'payment_status': 'paid',
         })
         
@@ -270,9 +276,15 @@ class HealthPaymentWorkflowWizard(models.TransientModel):
         # Create AR entry with positive outstanding balance (per Invoicing.md)
         self._create_ar_entry_with_balance()
         
-        # Update FSO status
+        # Update FSO status - Move to Completed-Pending Invoice stage for Pay Later
+        completed_pending_stage = self.env['health.fieldservice.stage'].search([
+            ('state', '=', 'completed_pending_invoice'),
+            ('active', '=', True)
+        ], order='sequence', limit=1)
+
         self.fso_id.write({
-            'state': 'closed',
+            'stage_id': completed_pending_stage.id if completed_pending_stage else False,
+            'state': 'completed_pending_invoice',
             'payment_status': 'pending',
         })
         

@@ -1,10 +1,13 @@
 # -*- coding: utf-8 -*-
 
 import json
+import logging
 from datetime import datetime, timedelta
 from odoo import http, fields
 from odoo.http import request
 from odoo.exceptions import ValidationError, UserError
+
+_logger = logging.getLogger(__name__)
 
 
 class HealthPWAAPIController(http.Controller):
@@ -522,13 +525,22 @@ class HealthPWAAPIController(http.Controller):
             except:
                 data = {}
 
-            payment_option = data.get('payment_option', 'pay_now')
+            # Get payment wizard data
+            payment_choice = data.get('payment_choice', 'pay_now')  # 'pay_now' or 'pay_later'
+            payment_method = data.get('payment_method', 'cash')  # 'cash', 'bank_transfer', 'credit_card', etc.
+            service_notes = data.get('service_notes', '')
+            create_invoice_now = data.get('create_invoice_now', True)
             clinical_notes = data.get('clinical_notes', '')
 
-            # Update clinical notes if provided
+            # Update clinical notes and service notes if provided
             update_vals = {}
             if clinical_notes:
                 update_vals['clinical_notes'] = clinical_notes
+            if service_notes:
+                update_vals['nurse_notes'] = service_notes if hasattr(order, 'nurse_notes') else None
+                # If nurse_notes doesn't exist, add to clinical notes
+                if service_notes and not hasattr(order, 'nurse_notes'):
+                    update_vals['clinical_notes'] = (update_vals.get('clinical_notes', clinical_notes or '') + '\n\nService Notes: ' + service_notes).strip()
 
             if update_vals:
                 order.write(update_vals)
@@ -536,25 +548,59 @@ class HealthPWAAPIController(http.Controller):
             # Complete the service using the standard method
             order.action_complete_service()
 
-            # Handle payment based on payment option
+            # Handle invoice creation and payment
             message = 'Service completed successfully'
-            if payment_option == 'pay_now':
-                # For Pay Now: Confirm the sale order and create invoice if not already done
-                if order.sale_order_id and order.sale_order_id.state == 'draft':
+
+            if create_invoice_now and order.sale_order_id:
+                # Confirm the sale order to create invoice
+                if order.sale_order_id.state in ['draft', 'sent']:
                     order.sale_order_id.action_confirm()
-                    message = 'Service completed - Invoice created for immediate payment'
-                elif order.sale_order_id:
-                    message = 'Service completed - Ready for payment'
+
+                # Create invoice from sale order if not exists
+                if not order.invoice_id:
+                    invoices = order.sale_order_id._create_invoices()
+                    if invoices:
+                        order.invoice_id = invoices[0] if len(invoices) == 1 else invoices
+                        # Post the invoice
+                        order.invoice_id.action_post()
+
+            # Process payment based on choice
+            if payment_choice == 'pay_now' and payment_method:
+                # Create payment transaction record
+                try:
+                    transaction_vals = {
+                        'patient_id': order.patient_id.id if order.patient_id else False,
+                        'fso_id': order.id,
+                        'invoice_id': order.invoice_id.id if order.invoice_id else False,
+                        'amount': order.invoice_id.amount_total if order.invoice_id else 0.0,
+                        'payment_method': payment_method,
+                        'transaction_type': 'immediate',
+                        'status': 'collected' if payment_method != 'cash' else 'pending_delivery',
+                        'collected_by_id': request.env.user.employee_id.id if request.env.user.employee_id else False,
+                        'transaction_notes': service_notes or f'Payment collected on service completion via mobile - {payment_method}',
+                    }
+
+                    # Create transaction if model exists
+                    if 'health.payment.transaction' in request.env:
+                        transaction = request.env['health.payment.transaction'].create(transaction_vals)
+                        message = f'Service completed - {payment_method.replace("_", " ").title()} payment collected'
+                    else:
+                        message = f'Service completed - {payment_method.replace("_", " ").title()} payment noted'
+
+                except Exception as e:
+                    _logger.warning(f'Could not create payment transaction: {str(e)}')
+                    message = f'Service completed - {payment_method.replace("_", " ").title()} payment noted'
             else:
-                # For Pay Later: Keep as quote/draft or just mark completed
-                message = 'Service completed - Invoice will be sent later'
+                # Pay Later
+                message = 'Service completed - Invoice will be sent for later payment'
 
             return self._prepare_json_response(data={
                 'actual_end_datetime': order.actual_end_datetime,
                 'adjusted_end_datetime': order.adjusted_end_datetime if hasattr(order, 'adjusted_end_datetime') else None,
                 'actual_duration': order.actual_duration if hasattr(order, 'actual_duration') else None,
                 'state': order.state,
-                'payment_option': payment_option,
+                'payment_choice': payment_choice,
+                'payment_method': payment_method,
                 'message': message
             })
 

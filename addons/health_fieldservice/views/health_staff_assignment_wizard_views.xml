@@ -20,18 +20,21 @@
                             <field name="patient_id" readonly="1"/>
                             <field name="service_type" readonly="1"/>
                             <field name="scheduled_datetime" readonly="1"/>
-                            <field name="new_scheduled_datetime" 
+                            <field name="new_scheduled_datetime"
                                    placeholder="Leave blank to keep current schedule"/>
                         </group>
-                        
+
                         <group string="Staff Assignment">
-                            <field name="assigned_staff_ids" 
+                            <field name="doctor_id"
+                                   options="{'no_create': True}"
+                                   placeholder="Select doctor (optional)..."/>
+                            <field name="assigned_staff_ids"
                                    widget="many2many_tags"
                                    options="{'color_field': 'color', 'no_create': True}"
-                                   placeholder="Select healthcare staff members..."/>
-                            <field name="lead_staff_id" 
+                                   placeholder="Select nurses/staff members..."/>
+                            <field name="lead_staff_id"
                                    options="{'no_create': True}"
-                                   placeholder="Select lead staff member..."/>
+                                   placeholder="Select lead nurse..."/>
                         </group>
                     </group>
                     

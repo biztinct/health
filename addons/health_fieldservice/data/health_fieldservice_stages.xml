@@ -34,34 +34,16 @@
     </record>
 
     <record id="stage_en_route" model="health.fieldservice.stage">
-        <field name="name">En Route</field>
+        <field name="name">In Progress</field>
         <field name="description">Staff traveling to patient location</field>
         <field name="sequence">30</field>
-        <field name="state">assigned</field>
+        <field name="state">in_progress</field>
         <field name="color">3</field>
         <field name="allow_edit" eval="True"/>
         <field name="require_staff_assignment" eval="True"/>
     </record>
 
-    <record id="stage_arrived" model="health.fieldservice.stage">
-        <field name="name">Arrived</field>
-        <field name="description">Staff arrived at patient location</field>
-        <field name="sequence">40</field>
-        <field name="state">assigned</field>
-        <field name="color">4</field>
-        <field name="allow_edit" eval="True"/>
-        <field name="require_staff_assignment" eval="True"/>
-    </record>
 
-    <record id="stage_in_progress" model="health.fieldservice.stage">
-        <field name="name">In Progress</field>
-        <field name="description">Service delivery in progress</field>
-        <field name="sequence">50</field>
-        <field name="state">in_progress</field>
-        <field name="color">5</field>
-        <field name="allow_edit" eval="True"/>
-        <field name="require_staff_assignment" eval="True"/>
-    </record>
 
     <record id="stage_completed" model="health.fieldservice.stage">
         <field name="name">Completed</field>

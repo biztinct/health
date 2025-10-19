@@ -940,11 +940,16 @@ class HealthFieldServiceOrderUnified(models.Model):
     
     @api.model
     def _get_default_stage(self):
-        """Get default stage for new FSOs"""
-        return self.env['health.fieldservice.stage'].search([
+        """Get default stage for new FSOs - always Draft stage"""
+        draft_stage = self.env['health.fieldservice.stage'].search([
             ('state', '=', 'draft'),
             ('active', '=', True)
         ], order='sequence', limit=1)
+
+        if not draft_stage:
+            _logger.warning('No Draft stage found! Please configure booking stages.')
+
+        return draft_stage
     
     @api.onchange('stage_id')
     def _onchange_stage_id(self):
@@ -1113,9 +1118,33 @@ class HealthFieldServiceOrderUnified(models.Model):
     def _handle_staff_assignment(self):
         """Handle automation when staff is assigned (through assignment model)"""
         for record in self:
-            # Auto-advance state to 'assigned' if assignments exist and in draft state
-            if record.assignment_ids and record.state == 'draft':
-                record.state = 'assigned'
+            # Auto-advance state to 'assigned' if assignments exist
+            # Also sync stage_id if state is already 'assigned' but stage doesn't match
+            if record.assignment_ids and record.state in ['draft', 'confirmed', 'assigned']:
+                # Find Assigned stage - use name to be more specific
+                assigned_stage = self.env['health.fieldservice.stage'].search([
+                    ('state', '=', 'assigned'),
+                    ('name', '=', 'Assigned'),
+                    ('active', '=', True)
+                ], order='sequence', limit=1)
+
+                if not assigned_stage:
+                    # Fallback to any stage with state='assigned'
+                    assigned_stage = self.env['health.fieldservice.stage'].search([
+                        ('state', '=', 'assigned'),
+                        ('active', '=', True)
+                    ], order='sequence', limit=1)
+
+                if assigned_stage:
+                    # Only update if stage is different (avoid infinite recursion)
+                    if record.stage_id != assigned_stage:
+                        record.write({
+                            'stage_id': assigned_stage.id,
+                            'state': 'assigned'
+                        })
+                        _logger.info(f'FSO {record.name} moved to Assigned stage (ID: {assigned_stage.id}, Name: {assigned_stage.name}) after staff assignment')
+                else:
+                    _logger.error(f'No Assigned stage found for FSO {record.name}')
     
     def _handle_scheduling(self):
         """Handle automation when service is scheduled"""
@@ -1478,12 +1507,51 @@ class HealthFieldServiceOrderUnified(models.Model):
     # action_confirm_booking method moved above with quote validation
     
     def action_start_service(self):
-        """Start the service execution"""
+        """Start the service execution - moves booking to In Progress stage"""
         self.ensure_one()
+
+        # Find In Progress stage - use name to be specific and avoid "En Route" or "Arrived"
+        in_progress_stage = self.env['health.fieldservice.stage'].search([
+            ('state', '=', 'in_progress'),
+            ('name', '=', 'In Progress'),
+            ('active', '=', True)
+        ], order='sequence', limit=1)
+
+        if not in_progress_stage:
+            # Fallback to any stage with state='in_progress'
+            in_progress_stage = self.env['health.fieldservice.stage'].search([
+                ('state', '=', 'in_progress'),
+                ('active', '=', True)
+            ], order='sequence', limit=1)
+
+        if not in_progress_stage:
+            raise UserError(_('No In Progress stage found. Please configure booking stages properly.'))
+
+        _logger.info(f'FSO {self.name}: Starting service, moving to In Progress stage (ID: {in_progress_stage.id}, Name: {in_progress_stage.name})')
+
         self.write({
+            'stage_id': in_progress_stage.id,
             'state': 'in_progress',
             'actual_start_datetime': fields.Datetime.now(),
         })
+
+        # Reload the form view to update UI (statusbar, timer, buttons)
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'reload',
+            'params': {
+                'next': {
+                    'type': 'ir.actions.client',
+                    'tag': 'display_notification',
+                    'params': {
+                        'title': _('Service Started'),
+                        'message': _('Booking moved to In Progress stage. Timer started.'),
+                        'type': 'success',
+                        'sticky': False,
+                    }
+                }
+            }
+        }
     
     def _check_invoice_creation_permission(self):
         """Check if assigned staff can create invoice based on employment type"""
@@ -1569,28 +1637,52 @@ class HealthFieldServiceOrderUnified(models.Model):
 
         # Check if staff can create invoice
         if self._check_invoice_creation_permission():
-            # Full-time staff: Normal completion workflow
+            # Full-time staff: Service completed successfully
+            # Move to Completed stage - staff can create invoice and process payment later
+            completed_stage = self.env['health.fieldservice.stage'].search([
+                ('state', '=', 'completed'),
+                ('active', '=', True)
+            ], order='sequence', limit=1)
+
+            if not completed_stage:
+                _logger.warning('No Completed stage found')
+
             self.write({
+                'stage_id': completed_stage.id if completed_stage else False,
                 'state': 'completed',
                 'actual_end_datetime': fields.Datetime.now(),
             })
 
-            # Return notification
             return {
                 'type': 'ir.actions.client',
                 'tag': 'display_notification',
                 'params': {
                     'title': _('Service Completed'),
-                    'message': _('Service marked as completed. You can now create the invoice.'),
+                    'message': _('Service marked as completed. Create invoice and process payment when ready.'),
                     'type': 'success',
                     'sticky': False,
                 }
             }
         else:
-            # Part-time/casual staff: Mark for operations invoicing
-            completion_note = f'Completed by part-time staff ({self.lead_staff_id.name}) - requires Operations invoicing'
+            # Part-time/casual staff: Move to Completed-Pending Invoice stage
+            completion_note = f'Completed by part-time staff ({self.lead_staff_id.name if self.lead_staff_id else "staff"}) - requires Operations invoicing'
+
+            # Find Completed-Pending Invoice stage
+            completed_pending_stage = self.env['health.fieldservice.stage'].search([
+                ('state', '=', 'completed_pending_invoice'),
+                ('active', '=', True)
+            ], order='sequence', limit=1)
+
+            if not completed_pending_stage:
+                _logger.warning('No Completed-Pending Invoice stage found')
+                # Fallback to completed stage
+                completed_pending_stage = self.env['health.fieldservice.stage'].search([
+                    ('state', '=', 'completed'),
+                    ('active', '=', True)
+                ], order='sequence', limit=1)
 
             self.write({
+                'stage_id': completed_pending_stage.id if completed_pending_stage else False,
                 'state': 'completed_pending_invoice',
                 'actual_end_datetime': fields.Datetime.now(),
                 'completion_notes': completion_note,
@@ -1612,11 +1704,47 @@ class HealthFieldServiceOrderUnified(models.Model):
             }
 
     def action_close_fso(self):
-        """Close the FSO after completion (final state)"""
+        """Close the FSO after completion (final state) - called after cash collection"""
         self.ensure_one()
+
+        # Validate that we're in the right state to close
+        if self.state not in ['completed', 'completed_pending_invoice']:
+            raise UserError(_(
+                'Booking can only be closed from Completed or Completed-Pending Invoice stages.\n'
+                'Current stage: %s'
+            ) % dict(self._fields['state'].selection).get(self.state))
+
+        # Find Closed stage
+        closed_stage = self.env['health.fieldservice.stage'].search([
+            ('state', '=', 'closed'),
+            ('active', '=', True)
+        ], order='sequence', limit=1)
+
+        if not closed_stage:
+            raise UserError(_('No Closed stage found. Please configure booking stages properly.'))
+
         self.write({
+            'stage_id': closed_stage.id,
             'state': 'closed',
         })
+
+        # Post message to chatter
+        self.message_post(
+            body=_('✅ <strong>Booking Closed:</strong> Cash collected by Operations Manager. Booking moved to Closed stage.'),
+            message_type='notification',
+            subtype_xmlid='mail.mt_note'
+        )
+
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'display_notification',
+            'params': {
+                'title': _('Booking Closed'),
+                'message': _('Booking has been closed successfully. Cash collection recorded.'),
+                'type': 'success',
+                'sticky': False,
+            }
+        }
     
     def action_cancel_booking(self):
         """Cancel the booking - opens wizard for structured cancellation"""
@@ -2002,8 +2130,8 @@ class HealthFieldServiceOrderUnified(models.Model):
     
     @api.model
     def _read_group_stage_ids(self, stages, domain, order):
-        """Return all stages for kanban view"""
-        return self.env['health.fieldservice.stage'].search([], order=order)
+        """Return all active stages for kanban view, ordered by sequence"""
+        return self.env['health.fieldservice.stage'].search([('active', '=', True)], order='sequence')
     
     def name_get(self):
         """Custom name display"""
