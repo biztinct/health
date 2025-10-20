@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Add FSO Dashboard Smart Button to FSO Form View -->
+    <record id="view_health_fieldservice_order_form_dashboard_button" model="ir.ui.view">
+        <field name="name">health.fieldservice.order.form.dashboard.button</field>
+        <field name="model">health.fieldservice.order</field>
+        <field name="inherit_id" ref="health_fieldservice.view_health_fieldservice_order_form"/>
+        <field name="arch" type="xml">
+            <!-- Add Dashboard button to button box -->
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button name="action_open_fso_dashboard"
+                        type="object"
+                        class="oe_stat_button"
+                        icon="fa-tachometer"
+                        string="Dashboard"
+                        help="Open FSO Workflow Dashboard"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

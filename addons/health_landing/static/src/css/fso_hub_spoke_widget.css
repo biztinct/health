@@ -1,0 +1,297 @@
+/* ============================================================================
+   FSO Flowchart Dashboard - Modern Workflow Visualization
+   Layout: Excalidraw flowchart with absolute positioning
+   ============================================================================ */
+
+/* Container */
+.fso_spoke_container {
+    padding: 40px 24px;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    min-height: 100vh;
+}
+
+/* Header */
+.fso_spoke_header {
+    text-align: center;
+    margin-bottom: 32px;
+}
+
+.fso_spoke_title {
+    font-size: 34px;
+    font-weight: 700;
+    color: #2c3e50;
+    margin-bottom: 8px;
+    letter-spacing: -0.5px;
+}
+
+.fso_spoke_title i {
+    color: #3498db;
+    margin-right: 12px;
+}
+
+.fso_spoke_subtitle {
+    font-size: 15px;
+    font-weight: 400;
+    color: #6c757d;
+    margin-top: 6px;
+}
+
+/* SVG Container */
+.fso_spoke_svg_container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.fso_spoke_svg {
+    max-width: 100%;
+    height: auto;
+    filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.08));
+}
+
+/* ============================================================================
+   FLOWCHART NODES
+   ============================================================================ */
+.fso_flowchart_node {
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
+}
+
+.fso_node_shape {
+    transition: all 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
+}
+
+/* Node Hover Effects - Subtle, no scale */
+.fso_flowchart_node:hover .fso_node_shape {
+    filter: drop-shadow(0 6px 18px rgba(0, 0, 0, 0.25));
+    stroke-width: 4;
+}
+
+.fso_flowchart_node:hover .fso_node_icon i {
+    transform: scale(1.1);
+}
+
+.fso_node_icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+    transition: all 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
+}
+
+.fso_node_label {
+    pointer-events: none;
+    transition: all 0.2s cubic-bezier(0.4, 0.0, 0.2, 1);
+}
+
+/* ============================================================================
+   ACTIVE NODE EFFECTS - STATIC GLOW (NO OSCILLATION)
+   ============================================================================ */
+.fso_node_active .fso_node_shape {
+    filter: url(#glowFilter) drop-shadow(0 0 15px currentColor) drop-shadow(0 0 8px currentColor);
+}
+
+/* Hub Node (Booking) - Always has glow */
+.fso_node_hub .fso_node_shape {
+    stroke-width: 4;
+    filter: url(#glowFilter) drop-shadow(0 0 12px #3498db);
+}
+
+.fso_node_hub:hover .fso_node_shape {
+    stroke-width: 5;
+    filter: url(#glowFilter) drop-shadow(0 0 18px #3498db) drop-shadow(0 4px 16px rgba(52, 152, 219, 0.4));
+}
+
+/* Action Nodes - Stronger Glow When Active */
+.fso_node_action.fso_node_active .fso_node_shape,
+.fso_node_transition.fso_node_active .fso_node_shape {
+    filter: url(#glowFilter) drop-shadow(0 0 18px currentColor) drop-shadow(0 0 10px currentColor);
+}
+
+/* Sub-Nodes - Subtle Effects */
+.fso_node_sub .fso_node_shape {
+    stroke-width: 2;
+}
+
+.fso_node_sub:hover .fso_node_shape {
+    stroke-width: 3;
+    filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.2));
+}
+
+/* ============================================================================
+   CONNECTION LINES - ARROWS
+   ============================================================================ */
+.fso_connection_line {
+    transition: all 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
+    opacity: 0.4;
+}
+
+/* ============================================================================
+   ACTIVE ARROW EFFECTS - STATIC GLOW + SUBTLE GROWTH
+   ============================================================================ */
+.fso_connection_active {
+    opacity: 1 !important;
+    animation: arrowGrowGlow 2.5s ease-in-out infinite;
+    filter: drop-shadow(0 0 8px #3498db) drop-shadow(0 0 12px #3498db);
+}
+
+@keyframes arrowGrowGlow {
+    0%, 100% {
+        stroke-width: 3;
+    }
+    50% {
+        stroke-width: 5;
+    }
+}
+
+/* Alternative: Lengthwise Arrow Growth (Stroke Dash Animation) */
+.fso_connection_active_dash {
+    stroke-dasharray: 1000;
+    stroke-dashoffset: 1000;
+    animation: arrowDashGrow 3s ease-in-out infinite;
+    filter: drop-shadow(0 0 10px #3498db);
+}
+
+@keyframes arrowDashGrow {
+    0% {
+        stroke-dashoffset: 1000;
+    }
+    50% {
+        stroke-dashoffset: 0;
+    }
+    100% {
+        stroke-dashoffset: -1000;
+    }
+}
+
+/* ============================================================================
+   ENTRANCE ANIMATIONS
+   ============================================================================ */
+.connection_lines path {
+    animation: lineEnter 0.8s cubic-bezier(0.4, 0.0, 0.2, 1) backwards;
+}
+
+@keyframes lineEnter {
+    from {
+        opacity: 0;
+        stroke-dasharray: 1000;
+        stroke-dashoffset: 1000;
+    }
+    to {
+        opacity: 0.4;
+        stroke-dasharray: none;
+        stroke-dashoffset: 0;
+    }
+}
+
+.flowchart_nodes g {
+    animation: nodeEnter 0.6s cubic-bezier(0.4, 0.0, 0.2, 1) backwards;
+}
+
+.flowchart_nodes g:nth-child(1) { animation-delay: 0.1s; }
+.flowchart_nodes g:nth-child(2) { animation-delay: 0.15s; }
+.flowchart_nodes g:nth-child(3) { animation-delay: 0.2s; }
+.flowchart_nodes g:nth-child(4) { animation-delay: 0.25s; }
+.flowchart_nodes g:nth-child(5) { animation-delay: 0.3s; }
+.flowchart_nodes g:nth-child(6) { animation-delay: 0.35s; }
+.flowchart_nodes g:nth-child(7) { animation-delay: 0.4s; }
+.flowchart_nodes g:nth-child(8) { animation-delay: 0.45s; }
+.flowchart_nodes g:nth-child(9) { animation-delay: 0.5s; }
+.flowchart_nodes g:nth-child(10) { animation-delay: 0.55s; }
+.flowchart_nodes g:nth-child(11) { animation-delay: 0.6s; }
+.flowchart_nodes g:nth-child(12) { animation-delay: 0.65s; }
+.flowchart_nodes g:nth-child(13) { animation-delay: 0.7s; }
+
+@keyframes nodeEnter {
+    from {
+        opacity: 0;
+        transform: scale(0.3);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* ============================================================================
+   LEGEND
+   ============================================================================ */
+.fso_spoke_legend {
+    margin-top: 28px;
+    padding: 18px 26px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    text-align: center;
+    max-width: 700px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.fso_spoke_legend p {
+    margin: 0;
+    font-size: 14px;
+    color: #6c757d;
+}
+
+.fso_spoke_legend i {
+    color: #f8b500;
+    margin-right: 6px;
+}
+
+/* ============================================================================
+   LOADING STATE
+   ============================================================================ */
+.health_landing_loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 80px 20px;
+    color: #6c757d;
+}
+
+.health_landing_loading_spinner {
+    font-size: 48px;
+    animation: spin 1.5s linear infinite;
+    margin-bottom: 16px;
+    color: #3498db;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* ============================================================================
+   RESPONSIVE DESIGN
+   ============================================================================ */
+@media (max-width: 1200px) {
+    .fso_spoke_svg {
+        width: 95vw;
+        height: auto;
+    }
+}
+
+@media (max-width: 768px) {
+    .fso_spoke_container {
+        padding: 20px 12px;
+    }
+
+    .fso_spoke_title {
+        font-size: 26px;
+    }
+
+    .fso_spoke_subtitle {
+        font-size: 13px;
+    }
+
+    .fso_node_icon {
+        font-size: 18px !important;
+    }
+
+    .fso_node_label {
+        font-size: 9px !important;
+    }
+}

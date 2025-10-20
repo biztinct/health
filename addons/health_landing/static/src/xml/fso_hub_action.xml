@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <!-- FSO Hub-and-Spoke Action Template -->
+    <t t-name="health_landing.FSOHubSpokeActionTemplate">
+        <div class="o_action">
+            <FSOHubSpokeWidget
+                fsoId="state.fsoId"
+                fsoName="state.fsoName"
+                onBack="() => this.onBack()"
+            />
+        </div>
+    </t>
+
+</templates>

@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- FSO Clinical Notes Wizard Form View -->
+    <record id="view_health_fso_clinical_notes_wizard_form" model="ir.ui.view">
+        <field name="name">health.fso.clinical.notes.wizard.form</field>
+        <field name="model">health.fso.clinical.notes.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Clinical Notes">
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <span>Clinical Notes</span>
+                        </h1>
+                    </div>
+
+                    <group>
+                        <group string="Booking Information">
+                            <field name="fso_id" readonly="1"/>
+                            <field name="patient_id" readonly="1"/>
+                            <field name="service_type" readonly="1"/>
+                            <field name="scheduled_datetime" readonly="1"/>
+                        </group>
+                        <group string="Service Timing">
+                            <field name="actual_start_datetime" readonly="1"/>
+                            <field name="actual_end_datetime" readonly="1"/>
+                            <field name="clinical_notes_submitted" widget="boolean_toggle"/>
+                        </group>
+                    </group>
+
+                    <notebook>
+                        <page string="Clinical Assessment">
+                            <group>
+                                <field name="symptoms" placeholder="Patient's reported symptoms or reason for visit..."/>
+                                <field name="diagnosis" placeholder="Medical diagnosis..."/>
+                                <field name="vital_signs" placeholder="Blood pressure, temperature, pulse, etc..."/>
+                            </group>
+                        </page>
+
+                        <page string="Patient Condition">
+                            <group>
+                                <field name="patient_condition_before" placeholder="Patient condition before service..."/>
+                                <field name="patient_condition_after" placeholder="Patient condition after service..."/>
+                            </group>
+                        </page>
+
+                        <page string="Treatment &amp; Medications">
+                            <group>
+                                <field name="clinical_notes" placeholder="Detailed clinical observations and notes..."/>
+                                <field name="treatment_performed" placeholder="Detailed description of treatment provided..."/>
+                                <field name="medications_prescribed" placeholder="Medications prescribed during service..."/>
+                            </group>
+                        </page>
+
+                        <page string="Follow-up">
+                            <group>
+                                <field name="follow_up_required"/>
+                                <field name="follow_up_date"/>
+                                <field name="follow_up_notes" placeholder="Follow-up instructions and notes..."/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+
+                <footer>
+                    <button name="action_save_and_close"
+                            string="Save &amp; Close"
+                            type="object"
+                            class="btn-primary"/>
+                    <button string="Cancel"
+                            class="btn-secondary"
+                            special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- FSO Cash Collection Wizard Form View -->
+    <record id="view_health_fso_cash_collection_wizard_form" model="ir.ui.view">
+        <field name="name">health.fso.cash.collection.wizard.form</field>
+        <field name="model">health.fso.cash.collection.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Collect Cash from Nurse">
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <span>Cash Collection from Nurse</span>
+                        </h1>
+                    </div>
+
+                    <group>
+                        <group string="Booking Information">
+                            <field name="fso_id" readonly="1"/>
+                            <field name="patient_id" readonly="1"/>
+                        </group>
+                        <group string="Cash Collection Details">
+                            <field name="lead_staff_id" readonly="1"/>
+                            <field name="total_price" readonly="1" widget="monetary"/>
+                        </group>
+                    </group>
+
+                    <group>
+                        <group string="Collection Amount">
+                            <field name="currency_id" invisible="1"/>
+                            <field name="cash_amount" widget="monetary"/>
+                            <field name="collection_date"/>
+                            <field name="collected_by_user_id" readonly="1"/>
+                        </group>
+                        <group string="Notes">
+                            <field name="collection_notes"
+                                   placeholder="Additional notes about cash collection..."
+                                   colspan="2"/>
+                        </group>
+                    </group>
+                </sheet>
+
+                <footer>
+                    <button name="action_confirm_and_close"
+                            string="Confirm Cash Collection"
+                            type="object"
+                            class="btn-primary"/>
+                    <button string="Cancel"
+                            class="btn-secondary"
+                            special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- FSO Invoice Wizard Form View -->
+    <record id="view_health_fso_invoice_wizard_form" model="ir.ui.view">
+        <field name="name">health.fso.invoice.wizard.form</field>
+        <field name="model">health.fso.invoice.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Invoice Details">
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <span>Invoice &amp; Quote Details</span>
+                        </h1>
+                    </div>
+
+                    <group>
+                        <group string="Booking Information">
+                            <field name="fso_id" readonly="1"/>
+                            <field name="patient_id" readonly="1"/>
+                        </group>
+                        <group string="Pricing">
+                            <field name="currency_id" invisible="1"/>
+                            <field name="base_price" readonly="1" widget="monetary"/>
+                            <field name="total_price" readonly="1" widget="monetary"/>
+                        </group>
+                    </group>
+
+                    <group>
+                        <group string="Quote Status">
+                            <field name="has_quote" invisible="1"/>
+                            <field name="sale_order_id" readonly="1"/>
+                            <field name="quote_state" readonly="1"/>
+                            <button name="action_view_quote"
+                                    string="View Quote"
+                                    type="object"
+                                    class="oe_link"
+                                    invisible="not has_quote"/>
+                            <button name="action_create_quote"
+                                    string="Create Quote"
+                                    type="object"
+                                    class="btn-primary"
+                                    invisible="has_quote"/>
+                        </group>
+                        <group string="Invoice Status">
+                            <field name="has_invoice" invisible="1"/>
+                            <field name="invoice_id" readonly="1"/>
+                            <field name="invoice_state" readonly="1"/>
+                            <field name="invoice_submitted" widget="boolean_toggle"/>
+                            <button name="action_view_invoice"
+                                    string="View Invoice"
+                                    type="object"
+                                    class="oe_link"
+                                    invisible="not has_invoice"/>
+                            <button name="action_create_invoice"
+                                    string="Create Invoice"
+                                    type="object"
+                                    class="btn-primary"
+                                    invisible="has_invoice"/>
+                        </group>
+                    </group>
+                </sheet>
+
+                <footer>
+                    <button string="Close"
+                            class="btn-secondary"
+                            special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- Wizard Actions -->
+    <record id="action_health_fso_clinical_notes_wizard" model="ir.actions.act_window">
+        <field name="name">Clinical Notes</field>
+        <field name="res_model">health.fso.clinical.notes.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+        <field name="view_id" ref="view_health_fso_clinical_notes_wizard_form"/>
+    </record>
+
+    <record id="action_health_fso_cash_collection_wizard" model="ir.actions.act_window">
+        <field name="name">Collect Cash from Nurse</field>
+        <field name="res_model">health.fso.cash.collection.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+        <field name="view_id" ref="view_health_fso_cash_collection_wizard_form"/>
+    </record>
+
+    <record id="action_health_fso_invoice_wizard" model="ir.actions.act_window">
+        <field name="name">Invoice Details</field>
+        <field name="res_model">health.fso.invoice.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+        <field name="view_id" ref="view_health_fso_invoice_wizard_form"/>
+    </record>
+
+</odoo>

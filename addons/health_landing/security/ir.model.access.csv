@@ -1,2 +1,5 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_health_landing_dashboard_user,health.landing.dashboard.user,base.model_ir_actions_client,health_base.group_healthcare_base,1,0,0,0
+access_health_fso_clinical_notes_wizard_user,health.fso.clinical.notes.wizard.user,model_health_fso_clinical_notes_wizard,health_base.group_healthcare_base,1,1,1,1
+access_health_fso_cash_collection_wizard_om,health.fso.cash.collection.wizard.om,model_health_fso_cash_collection_wizard,health_base.group_healthcare_operations_manager,1,1,1,1
+access_health_fso_invoice_wizard_user,health.fso.invoice.wizard.user,model_health_fso_invoice_wizard,health_base.group_healthcare_base,1,1,1,1

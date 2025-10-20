@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <!-- FSO Flowchart Dashboard Template - Excalidraw Layout -->
+    <t t-name="health_landing.FSOHubSpokeTemplate">
+        <div class="fso_spoke_container">
+
+            <!-- Header with breadcrumb and back button -->
+            <div class="fso_spoke_header">
+                <button class="health_landing_back_btn" t-on-click="props.onBack">
+                    <i class="fa fa-arrow-left"/> Back
+                </button>
+
+                <div class="health_landing_breadcrumb">
+                    <a href="#" class="health_landing_breadcrumb_item" t-on-click="props.onBack">
+                        <i class="fa fa-home"/> Home
+                    </a>
+                    <span class="health_landing_breadcrumb_separator">/</span>
+                    <a href="#" class="health_landing_breadcrumb_item" t-on-click="props.onBack">Field Service</a>
+                    <span class="health_landing_breadcrumb_separator">/</span>
+                    <a href="#" class="health_landing_breadcrumb_item" t-on-click="props.onBack">Booking</a>
+                    <span class="health_landing_breadcrumb_separator">/</span>
+                    <span class="health_landing_breadcrumb_item" t-esc="props.fsoName"/>
+                </div>
+
+                <h1 class="fso_spoke_title">
+                    <i class="fa fa-stethoscope"/> <t t-esc="props.fsoName"/>
+                </h1>
+                <p class="fso_spoke_subtitle">
+                    Workflow Visualization - Click on nodes to take action
+                </p>
+            </div>
+
+            <!-- Loading State -->
+            <div class="health_landing_loading" t-if="state.loading">
+                <i class="fa fa-spinner health_landing_loading_spinner"/>
+                <p>Loading workflow data...</p>
+            </div>
+
+            <!-- SVG Flowchart Layout -->
+            <div class="fso_spoke_svg_container" t-if="!state.loading">
+                <svg
+                    t-ref="hubSpokeSvg"
+                    class="fso_spoke_svg"
+                    t-att-width="svgWidth"
+                    t-att-height="svgHeight"
+                    t-att-viewBox="`0 0 ${svgWidth} ${svgHeight}`"
+                    preserveAspectRatio="xMidYMid meet"
+                >
+                    <defs>
+                        <!-- Glow filter for active nodes and arrows -->
+                        <filter id="glowFilter" x="-50%" y="-50%" width="200%" height="200%">
+                            <feGaussianBlur stdDeviation="8" result="coloredBlur"/>
+                            <feMerge>
+                                <feMergeNode in="coloredBlur"/>
+                                <feMergeNode in="coloredBlur"/>
+                                <feMergeNode in="SourceGraphic"/>
+                            </feMerge>
+                        </filter>
+
+                        <!-- Arrow marker -->
+                        <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+                            <polygon points="0 0, 10 3, 0 6" fill="#9E9E9E"/>
+                        </marker>
+                        <marker id="arrowheadActive" markerWidth="12" markerHeight="12" refX="10" refY="3.5" orient="auto">
+                            <polygon points="0 0, 12 3.5, 0 7" fill="#3498db"/>
+                        </marker>
+                    </defs>
+
+                    <!-- Connection Lines (rendered first, behind nodes) -->
+                    <g class="connection_lines">
+                        <t t-foreach="connections" t-as="connection" t-key="connection.from + '_' + connection.to">
+                            <path
+                                t-att-d="getLinePath(connection)"
+                                t-att-class="getConnectionClasses(connection)"
+                                t-att-stroke="isConnectionActive(connection) ? '#3498db' : '#D0D0D0'"
+                                stroke-width="3"
+                                fill="none"
+                                t-att-marker-end="isConnectionActive(connection) ? 'url(#arrowheadActive)' : 'url(#arrowhead)'"
+                            />
+                        </t>
+                    </g>
+
+                    <!-- All Nodes (rendered on top of connections) -->
+                    <g class="flowchart_nodes">
+                        <t t-foreach="allNodes" t-as="node" t-key="node.id">
+                            <g
+                                t-att-class="getNodeClasses(node)"
+                                t-on-click="() => this.onNodeClick(node)"
+                                t-on-mouseenter="() => this.onNodeMouseEnter(node)"
+                                t-on-mouseleave="() => this.onNodeMouseLeave()"
+                            >
+                                <!-- Render Rectangle -->
+                                <t t-if="node.shape === 'rect'">
+                                    <rect
+                                        t-att-x="node.x"
+                                        t-att-y="node.y"
+                                        t-att-width="node.width"
+                                        t-att-height="node.height"
+                                        t-att-fill="node.lightColor"
+                                        t-att-stroke="node.color"
+                                        stroke-width="3"
+                                        rx="8"
+                                        class="fso_node_shape"
+                                    />
+                                    <!-- Icon for rectangle -->
+                                    <foreignObject
+                                        t-att-x="node.x + (node.width / 2) - 18"
+                                        t-att-y="node.y + (node.height / 2) - 26"
+                                        width="36"
+                                        height="36"
+                                    >
+                                        <div xmlns="http://www.w3.org/1999/xhtml" class="fso_node_icon">
+                                            <i t-att-class="`fa ${node.icon}`" t-att-style="`color: ${node.color}; font-size: 24px;`"/>
+                                        </div>
+                                    </foreignObject>
+                                    <!-- Label for rectangle -->
+                                    <text
+                                        t-att-x="node.x + (node.width / 2)"
+                                        t-att-y="node.y + (node.height / 2) + 20"
+                                        class="fso_node_label"
+                                        text-anchor="middle"
+                                        t-att-fill="node.color"
+                                        font-size="11"
+                                        font-weight="600"
+                                        t-esc="node.label"
+                                    />
+                                </t>
+
+                                <!-- Render Oval/Ellipse -->
+                                <t t-if="node.shape === 'oval'">
+                                    <ellipse
+                                        t-att-cx="node.x"
+                                        t-att-cy="node.y"
+                                        t-att-rx="node.radius"
+                                        t-att-ry="node.radius * 0.7"
+                                        t-att-fill="node.lightColor"
+                                        t-att-stroke="node.color"
+                                        stroke-width="3"
+                                        class="fso_node_shape"
+                                    />
+                                    <!-- Icon for oval -->
+                                    <foreignObject
+                                        t-att-x="node.x - 18"
+                                        t-att-y="node.y - 28"
+                                        width="36"
+                                        height="36"
+                                    >
+                                        <div xmlns="http://www.w3.org/1999/xhtml" class="fso_node_icon">
+                                            <i t-att-class="`fa ${node.icon}`" t-att-style="`color: ${node.color}; font-size: 24px;`"/>
+                                        </div>
+                                    </foreignObject>
+                                    <!-- Label for oval -->
+                                    <text
+                                        t-att-x="node.x"
+                                        t-att-y="node.y + 20"
+                                        class="fso_node_label"
+                                        text-anchor="middle"
+                                        t-att-fill="node.color"
+                                        font-size="11"
+                                        font-weight="600"
+                                        t-esc="node.label"
+                                    />
+                                </t>
+                            </g>
+                        </t>
+                    </g>
+
+                </svg>
+
+                <!-- Legend -->
+                <div class="fso_spoke_legend">
+                    <p>
+                        <i class="fa fa-lightbulb-o"/> <strong>Tip:</strong> Active arrows and nodes glow to guide you through the workflow
+                    </p>
+                </div>
+            </div>
+        </div>
+    </t>
+
+</templates>
