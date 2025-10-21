@@ -10,7 +10,8 @@
         <field name="target">current</field>
         <field name="context">{
             'default_assignment_date': context_today(),
-            'timeline_default_group_by': 'lead_staff_id'
+            'timeline_default_group_by': 'staff_id',
+            'default_staff_id': False
         }</field>
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">
@@ -20,6 +21,16 @@
                 Use the professional timeline view to manage staff assignments with drag &amp; drop functionality.
                 Group by staff members and easily reschedule assignments by dragging them to new time slots.
             </p>
+            <p>
+                <strong>How to Create Assignments:</strong>
+            </p>
+            <ul>
+                <li><strong>Click on the UNASSIGNED row</strong> at a specific date/time to create a new unassigned assignment</li>
+                <li><strong>Or switch to List view</strong> (icon in top-right) and click the "New" button</li>
+                <li>The booking order (FSO) will be automatically filled in</li>
+                <li>Leave "Assigned Staff" empty to create an unassigned assignment</li>
+                <li>Drag the assignment card to a staff row to assign them</li>
+            </ul>
         </field>
     </record>
 

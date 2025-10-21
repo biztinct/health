@@ -76,10 +76,10 @@
                         </group>
                         
                         <group string="Staff Assignment" class="col-lg-6">
-                            <field name="staff_id" 
+                            <field name="staff_id"
                                    options="{'no_create': True, 'no_edit': True}"
                                    domain="[('is_healthcare_staff', '=', True), ('employment_status', '=', 'active')]"
-                                   required="1"/>
+                                   placeholder="Unassigned - Drag to assign in timeline view"/>
                             <field name="assignment_role"/>
                             <field name="staff_confirmed_date" readonly="1" invisible="not staff_confirmed_date"/>
                         </group>
@@ -247,7 +247,7 @@
         <field name="arch" type="xml">
             <search string="Staff Assignment Search">
                 <field name="name"/>
-                <field name="fso_id"/>
+                <field name="fso_id" filter_domain="[('fso_id.name', 'ilike', self)]"/>
                 <field name="staff_id"/>
                 <field name="assignment_role"/>
                 

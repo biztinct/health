@@ -13,20 +13,21 @@
                       default_group_by="staff_id"
                       event_open_popup="true"
                       colors="#f8f9fa:state=='draft';#e3f2fd:state=='assigned';#e8f5e8:state=='confirmed';#fff3e0:state=='in_progress';#e8f5e8:state=='completed';#ffebee:state=='cancelled'"
-                      quick_create="false">
+                      create="true"
+                      quick_create="false"
+                      mode="month">
                 
-                <!-- Timeline Fields -->
+                <!-- Timeline Fields - fso_id listed first to ensure context works -->
+                <field name="fso_id"/>
                 <field name="name"/>
                 <field name="state"/>
                 <field name="priority"/>
                 <field name="staff_id"/>
                 <field name="assignment_role"/>
-                <field name="fso_id"/>
                 <field name="assignment_type"/>
                 <field name="assignment_date"/>
                 <field name="display_name"/>
                 <field name="patient_name"/>
-                <field name="fso_id"/>
                 <field name="planned_start_time"/>
                 <field name="planned_end_time"/>
                 <field name="predicted_duration"/>
@@ -61,7 +62,7 @@
         <field name="type">list</field>
         <field name="priority">10</field>
         <field name="arch" type="xml">
-            <list string="Staff Assignments" default_order="assignment_date desc">
+            <list string="Staff Assignments" default_order="assignment_date desc" create="true">
                 <field name="name"/>
                 <field name="assignment_date"/>
                 <field name="staff_id"/>

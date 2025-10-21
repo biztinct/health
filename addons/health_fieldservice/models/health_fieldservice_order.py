@@ -2147,21 +2147,75 @@ class HealthFieldServiceOrderUnified(models.Model):
         return result
     
     def action_manual_assign_staff(self):
-        """Open manual staff assignment wizard"""
+        """Open timeline view for manual staff assignment - creates unassigned assignment if needed"""
         self.ensure_one()
-        
-        return {
-            'name': _('Assign Staff to Service'),
-            'type': 'ir.actions.act_window',
-            'res_model': 'health.staff.assignment.wizard',
-            'view_mode': 'form',
-            'target': 'new',
-            'context': {
-                'default_fso_id': self.id,
-                'default_service_type': self.service_type,
-                'default_scheduled_datetime': self.scheduled_datetime,
-                'default_patient_id': self.patient_id.id,
+
+        # If no assignments exist, create an unassigned one for drag-drop
+        if not self.assignment_ids:
+            # Map service location to assignment type
+            assignment_type_map = {
+                'home': 'home_visit',
+                'clinic': 'clinic_visit',
+                'hospital': 'clinic_visit',
+                'online': 'consultation',
+                'nursing_home': 'home_visit',
+                'office': 'consultation',
+                'other': 'clinic_visit',
             }
+
+            # Determine assignment type from service location
+            assignment_type = assignment_type_map.get(self.service_location, 'clinic_visit')
+
+            # Override with emergency if priority is high
+            if self.priority in ['3', '4']:
+                assignment_type = 'emergency'
+
+            # Create unassigned assignment for drag-drop
+            self.env['health.staff.assignment'].create({
+                'fso_id': self.id,
+                'staff_id': False,  # Unassigned - for drag-drop assignment in timeline
+                'assignment_date': self.scheduled_datetime or fields.Datetime.now(),
+                'planned_start_time': self.scheduled_datetime,
+                'planned_end_time': self.estimated_end_datetime,
+                'assignment_status': 'assigned',
+                'state': 'draft',
+                'assignment_type': assignment_type,
+                'priority': self.priority or '1',
+            })
+
+        # Open timeline view focused on appointment date
+        # Show all assignments so user can see staff availability and decide where to assign
+
+        # Get view references for explicit view specification
+        timeline_view = self.env.ref('health_fieldservice.health_staff_assignment_timeline_view', raise_if_not_found=False)
+        list_view = self.env.ref('health_fieldservice.view_health_staff_assignment_list', raise_if_not_found=False)
+        form_view = self.env.ref('health_fieldservice.view_health_staff_assignment_form', raise_if_not_found=False)
+
+        views = []
+        if timeline_view:
+            views.append((timeline_view.id, 'timeline'))
+        if list_view:
+            views.append((list_view.id, 'list'))
+        if form_view:
+            views.append((form_view.id, 'form'))
+
+        # Prepare context with FSO auto-population
+        ctx = {
+            'default_fso_id': self.id,  # Auto-populate FSO when creating new assignments
+            'default_assignment_date': self.scheduled_datetime or fields.Datetime.now(),
+            'default_staff_id': False,  # Leave staff unassigned for drag-drop
+            'initial_date': (self.scheduled_datetime or fields.Datetime.now()).strftime('%Y-%m-%d'),
+            'fso_context': self.id,  # Remember which FSO opened this timeline
+        }
+
+        return {
+            'name': _('Assign Staff - %s') % self.name,
+            'type': 'ir.actions.act_window',
+            'res_model': 'health.staff.assignment',
+            'view_mode': 'timeline,list,form',
+            'views': views if views else False,
+            'target': 'current',
+            'context': ctx,
         }
     
     def action_view_invoice(self):

@@ -59,10 +59,10 @@ class HealthStaffAssignment(models.Model):
     staff_id = fields.Many2one(
         'hr.employee',
         string='Assigned Staff',
-        required=True,
+        required=False,  # Allow unassigned staff in draft state for timeline drag-drop
         domain=[('is_healthcare_staff', '=', True), ('employment_status', '=', 'active')],
         tracking=True,
-        help='Individual staff member for this assignment'
+        help='Individual staff member for this assignment (can be unassigned in draft state)'
     )
     
     assignment_role = fields.Selection([
@@ -449,18 +449,40 @@ class HealthStaffAssignment(models.Model):
     # ============================================================================
     # CRUD Overrides
     # ============================================================================
-    
+
+    @api.model
+    def default_get(self, fields_list):
+        """Override to auto-populate FSO from context (for timeline view)"""
+        defaults = super().default_get(fields_list)
+
+        # Check if fso_id should be populated from context
+        if 'fso_id' in fields_list and not defaults.get('fso_id'):
+            # Try to get FSO from various context keys
+            fso_id = self.env.context.get('default_fso_id') or self.env.context.get('fso_context')
+            if fso_id:
+                defaults['fso_id'] = fso_id
+                _logger.info(f"Auto-populated fso_id={fso_id} from context for timeline view")
+
+        return defaults
+
     @api.model_create_multi
     def create(self, vals_list):
         """Override create to handle sequence generation for batch and single records"""
         for vals in vals_list:
             if vals.get('name', _('New Assignment')) == _('New Assignment'):
                 vals['name'] = self.env['ir.sequence'].next_by_code('health.staff.assignment') or _('New Assignment')
-            
+
+            #Auto-populate FSO from context if not in vals
+            if not vals.get('fso_id'):
+                fso_id = self.env.context.get('default_fso_id') or self.env.context.get('fso_context')
+                if fso_id:
+                    vals['fso_id'] = fso_id
+                    _logger.info(f"Auto-populated fso_id={fso_id} in create() from context")
+
             # Auto-assign state if staff are provided during creation
             if vals.get('staff_id') and vals.get('state', 'draft') == 'draft':
                 vals['state'] = 'assigned'
-                
+
         return super().create(vals_list)
     
     def write(self, vals):
