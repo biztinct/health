@@ -51,6 +51,7 @@ Design inspired by modern SaaS applications with emphasis on usability and visua
         'views/hub_spoke_modal_views.xml',
         'views/fso_dashboard_wizard_views.xml',
         'views/fso_dashboard_button.xml',
+        'views/fso_new_wizards_views.xml',
     ],
     'assets': {
         'web.assets_backend': [

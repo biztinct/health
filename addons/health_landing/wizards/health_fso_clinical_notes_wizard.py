@@ -133,7 +133,7 @@ class HealthFSOClinicalNotesWizard(models.TransientModel):
         return res
 
     def action_save_clinical_notes(self):
-        """Save clinical notes to FSO and close wizard"""
+        """Save clinical notes to FSO and return to dashboard"""
         self.ensure_one()
 
         # Update FSO with clinical notes
@@ -158,18 +158,15 @@ class HealthFSOClinicalNotesWizard(models.TransientModel):
             message_type='notification'
         )
 
+        return self._return_to_dashboard()
+
+    def _return_to_dashboard(self):
+        """Return to FSO dashboard after saving"""
         return {
             'type': 'ir.actions.client',
-            'tag': 'display_notification',
+            'tag': 'health_landing.fso_hub_spoke_action',
             'params': {
-                'title': _('Clinical Notes Saved'),
-                'message': _('Clinical notes have been updated successfully.'),
-                'type': 'success',
-                'sticky': False,
+                'fso_id': self.fso_id.id,
+                'fso_name': self.fso_id.name,
             }
         }
-
-    def action_save_and_close(self):
-        """Save and close wizard"""
-        self.action_save_clinical_notes()
-        return {'type': 'ir.actions.act_window_close'}

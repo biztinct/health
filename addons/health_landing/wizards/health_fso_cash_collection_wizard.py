@@ -83,7 +83,7 @@ class HealthFSOCashCollectionWizard(models.TransientModel):
         return res
 
     def action_confirm_cash_collection(self):
-        """Confirm cash collection and update FSO"""
+        """Confirm cash collection and return to dashboard"""
         self.ensure_one()
 
         # Validate cash amount
@@ -119,21 +119,15 @@ class HealthFSOCashCollectionWizard(models.TransientModel):
         if self.fso_id.state == 'completed_pending_invoice':
             self.fso_id.action_close_fso()
 
+        return self._return_to_dashboard()
+
+    def _return_to_dashboard(self):
+        """Return to FSO dashboard after saving"""
         return {
             'type': 'ir.actions.client',
-            'tag': 'display_notification',
+            'tag': 'health_landing.fso_hub_spoke_action',
             'params': {
-                'title': _('Cash Collection Confirmed'),
-                'message': _('Cash collection of %s %s has been recorded successfully.') % (
-                    self.cash_amount,
-                    self.currency_id.symbol
-                ),
-                'type': 'success',
-                'sticky': False,
+                'fso_id': self.fso_id.id,
+                'fso_name': self.fso_id.name,
             }
         }
-
-    def action_confirm_and_close(self):
-        """Confirm collection and close wizard"""
-        self.action_confirm_cash_collection()
-        return {'type': 'ir.actions.act_window_close'}

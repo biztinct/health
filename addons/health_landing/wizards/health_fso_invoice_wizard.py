@@ -151,3 +151,18 @@ class HealthFSOInvoiceWizard(models.TransientModel):
 
         # Create invoice using FSO method
         return self.fso_id.action_create_final_invoice()
+
+    def action_close(self):
+        """Close wizard and return to dashboard"""
+        return self._return_to_dashboard()
+
+    def _return_to_dashboard(self):
+        """Return to FSO dashboard after saving"""
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'health_landing.fso_hub_spoke_action',
+            'params': {
+                'fso_id': self.fso_id.id,
+                'fso_name': self.fso_id.name,
+            }
+        }

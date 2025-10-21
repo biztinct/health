@@ -2073,7 +2073,7 @@ class HealthFieldServiceOrderUnified(models.Model):
             'name': _('Communications'),
             'type': 'ir.actions.act_window',
             'res_model': 'health.fieldservice.communication',
-            'view_mode': 'tree,form',
+            'view_mode': 'list,form',
             'domain': [('fieldservice_order_id', '=', self.id)],
             'context': {'default_fieldservice_order_id': self.id},
         }
@@ -2114,7 +2114,7 @@ class HealthFieldServiceOrderUnified(models.Model):
             'name': _('Staff Assignments'),
             'type': 'ir.actions.act_window',
             'res_model': 'health.staff.assignment',
-            'view_mode': 'tree,form',
+            'view_mode': 'list,form',
             'domain': [('fso_id', '=', self.id)],
             'context': {'default_fso_id': self.id},
         }

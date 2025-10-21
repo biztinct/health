@@ -85,7 +85,7 @@ class ResPartner(models.Model):
             'type': 'ir.actions.act_window',
             'name': _('Field Service Orders'),
             'res_model': 'health.fieldservice.order',
-            'view_mode': 'tree,form',
+            'view_mode': 'list,form',
             'target': 'current',
             'domain': [('patient_id', '=', self.id)],
             'context': {

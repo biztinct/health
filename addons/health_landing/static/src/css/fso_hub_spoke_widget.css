@@ -5,7 +5,7 @@
 
 /* Container */
 .fso_spoke_container {
-    padding: 40px 24px;
+    padding: 20px 24px;
     background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
     min-height: 100vh;
 }
@@ -13,7 +13,7 @@
 /* Header */
 .fso_spoke_header {
     text-align: center;
-    margin-bottom: 32px;
+    margin-bottom: 20px;
 }
 
 .fso_spoke_title {
@@ -218,7 +218,7 @@
    LEGEND
    ============================================================================ */
 .fso_spoke_legend {
-    margin-top: 28px;
+    margin-top: 16px;
     padding: 18px 26px;
     background: white;
     border-radius: 12px;

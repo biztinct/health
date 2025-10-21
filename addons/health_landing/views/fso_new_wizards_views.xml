@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Service Packages Wizard View -->
+    <record id="view_health_fso_service_packages_wizard_form" model="ir.ui.view">
+        <field name="name">health.fso.service.packages.wizard.form</field>
+        <field name="model">health.fso.service.packages.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Service Packages">
+                <group>
+                    <group>
+                        <field name="fso_id" invisible="1"/>
+                        <field name="patient_id"/>
+                        <field name="service_type"/>
+                    </group>
+                </group>
+                <group>
+                    <field name="assigned_package_ids" widget="many2many_tags"/>
+                </group>
+                <group>
+                    <field name="package_notes" placeholder="Additional notes about service packages..."/>
+                </group>
+                <footer>
+                    <button name="action_save_packages" string="Save" type="object" class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- Equipment Wizard View -->
+    <record id="view_health_fso_equipment_wizard_form" model="ir.ui.view">
+        <field name="name">health.fso.equipment.wizard.form</field>
+        <field name="model">health.fso.equipment.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Equipment Requirements">
+                <group>
+                    <group>
+                        <field name="fso_id" invisible="1"/>
+                        <field name="patient_id"/>
+                        <field name="service_type"/>
+                        <field name="scheduled_datetime"/>
+                    </group>
+                </group>
+                <group>
+                    <field name="required_equipment_ids" widget="many2many_tags"/>
+                </group>
+                <group>
+                    <field name="equipment_checklist_done"/>
+                    <field name="equipment_notes" placeholder="Special instructions or notes about equipment..."/>
+                </group>
+                <footer>
+                    <button name="action_save_equipment" string="Save" type="object" class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- Confirm Booking Wizard View -->
+    <record id="view_health_fso_confirm_booking_wizard_form" model="ir.ui.view">
+        <field name="name">health.fso.confirm.booking.wizard.form</field>
+        <field name="model">health.fso.confirm.booking.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Confirm Booking">
+                <group>
+                    <group>
+                        <field name="fso_id" invisible="1"/>
+                        <field name="patient_id"/>
+                        <field name="service_type"/>
+                    </group>
+                    <group>
+                        <field name="scheduled_datetime"/>
+                    </group>
+                </group>
+                <group>
+                    <field name="patient_contacted"/>
+                    <field name="staff_notified"/>
+                </group>
+                <group>
+                    <field name="confirmation_notes" placeholder="Any special instructions or notes for this booking confirmation..."/>
+                </group>
+                <footer>
+                    <button name="action_confirm_booking" string="Confirm Booking" type="object" class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- Staff Assignment Wizard View -->
+    <record id="view_health_fso_staff_assignment_wizard_form" model="ir.ui.view">
+        <field name="name">health.fso.staff.assignment.wizard.form</field>
+        <field name="model">health.fso.staff.assignment.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Staff Assignment">
+                <group>
+                    <group>
+                        <field name="fso_id" invisible="1"/>
+                        <field name="patient_id"/>
+                        <field name="service_type"/>
+                        <field name="scheduled_datetime"/>
+                    </group>
+                </group>
+                <group>
+                    <field name="primary_staff_id"/>
+                    <field name="assigned_staff_ids" widget="many2many_tags"/>
+                </group>
+                <group>
+                    <field name="staff_availability_checked"/>
+                    <field name="assignment_notes" placeholder="Special instructions or notes for assigned staff..."/>
+                </group>
+                <footer>
+                    <button name="action_assign_staff" string="Assign Staff" type="object" class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- Start Service Wizard View -->
+    <record id="view_health_fso_start_service_wizard_form" model="ir.ui.view">
+        <field name="name">health.fso.start.service.wizard.form</field>
+        <field name="model">health.fso.start.service.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Start Service">
+                <group>
+                    <group>
+                        <field name="fso_id" invisible="1"/>
+                        <field name="patient_id"/>
+                        <field name="service_type"/>
+                    </group>
+                    <group>
+                        <field name="scheduled_datetime"/>
+                        <field name="assigned_staff"/>
+                    </group>
+                </group>
+                <group>
+                    <group>
+                        <field name="actual_start_datetime" required="1"/>
+                        <field name="patient_present"/>
+                        <field name="equipment_ready"/>
+                    </group>
+                </group>
+                <group>
+                    <field name="start_notes" placeholder="Any notes or observations at service start..."/>
+                </group>
+                <footer>
+                    <button name="action_start_service" string="Start Service" type="object" class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- Payment Received Wizard View -->
+    <record id="view_health_fso_payment_received_wizard_form" model="ir.ui.view">
+        <field name="name">health.fso.payment.received.wizard.form</field>
+        <field name="model">health.fso.payment.received.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Payment Received">
+                <group>
+                    <group>
+                        <field name="fso_id" invisible="1"/>
+                        <field name="patient_id"/>
+                        <field name="service_type"/>
+                        <field name="payment_method_display"/>
+                    </group>
+                </group>
+                <group>
+                    <group>
+                        <field name="currency_id" invisible="1"/>
+                        <field name="payment_amount" required="1"/>
+                        <field name="payment_date" required="1"/>
+                    </group>
+                    <group>
+                        <field name="payment_reference"/>
+                    </group>
+                </group>
+                <group>
+                    <field name="payment_notes" placeholder="Additional notes about the payment..."/>
+                </group>
+                <footer>
+                    <button name="action_confirm_payment" string="Confirm Payment" type="object" class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+</odoo>

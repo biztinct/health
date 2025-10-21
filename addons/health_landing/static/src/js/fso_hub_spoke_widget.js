@@ -44,7 +44,7 @@ export class FSOHubSpokeWidget extends Component {
         // Sub-nodes: Collect Cash, Payment Received
 
         this.allNodes = [
-            // Top row nodes - symmetrical horizontal alignment
+            // Top row nodes - compressed layout
             {
                 id: "service_packages",
                 label: "Service Packages",
@@ -53,10 +53,10 @@ export class FSOHubSpokeWidget extends Component {
                 lightColor: "#F3E5F5",
                 type: "info",
                 shape: "rect",
-                x: 100,
-                y: 80,
+                x: 120,
+                y: 40,
                 width: 140,
-                height: 65,
+                height: 60,
                 description: "View service packages"
             },
             {
@@ -67,10 +67,10 @@ export class FSOHubSpokeWidget extends Component {
                 lightColor: "#E3F2FD",
                 type: "info",
                 shape: "rect",
-                x: 390,
-                y: 50,
+                x: 400,
+                y: 15,
                 width: 120,
-                height: 65,
+                height: 60,
                 actionField: "sale_order_id",
                 description: "Healthcare quote"
             },
@@ -82,14 +82,14 @@ export class FSOHubSpokeWidget extends Component {
                 lightColor: "#E8F5E9",
                 type: "action",
                 shape: "oval",
-                x: 780,
-                y: 113,
-                radius: 60,
+                x: 740,
+                y: 70,
+                radius: 55,
                 actionField: "show_booked_indicator",
                 description: "Confirm the booking"
             },
 
-            // Middle row - perfectly aligned horizontally
+            // Middle row - compressed closer to hub
             {
                 id: "equipment",
                 label: "Equipment",
@@ -98,10 +98,10 @@ export class FSOHubSpokeWidget extends Component {
                 lightColor: "#ECEFF1",
                 type: "info",
                 shape: "rect",
-                x: 50,
-                y: 220,
+                x: 80,
+                y: 170,
                 width: 130,
-                height: 65,
+                height: 60,
                 description: "Required equipment"
             },
             {
@@ -112,10 +112,10 @@ export class FSOHubSpokeWidget extends Component {
                 lightColor: "#E3F2FD",
                 type: "hub",
                 shape: "rect",
-                x: 390,
-                y: 210,
+                x: 400,
+                y: 160,
                 width: 160,
-                height: 85,
+                height: 80,
                 description: "Main booking hub"
             },
             {
@@ -126,15 +126,15 @@ export class FSOHubSpokeWidget extends Component {
                 lightColor: "#F3E5F5",
                 type: "action",
                 shape: "rect",
-                x: 750,
-                y: 220,
+                x: 720,
+                y: 170,
                 width: 160,
-                height: 65,
+                height: 60,
                 actionField: "show_assigned_indicator",
                 description: "Assign staff to booking"
             },
 
-            // Start Service (below booking)
+            // Start Service (compressed closer to hub)
             {
                 id: "start_service",
                 label: "Start Service",
@@ -143,14 +143,14 @@ export class FSOHubSpokeWidget extends Component {
                 lightColor: "#FFF3E0",
                 type: "transition",
                 shape: "oval",
-                x: 470,
-                y: 380,
-                radius: 65,
+                x: 480,
+                y: 310,
+                radius: 60,
                 actionField: "show_in_progress_indicator",
                 description: "Start the service"
             },
 
-            // Bottom row (from start service)
+            // Bottom row (compressed)
             {
                 id: "clinical_notes",
                 label: "Clinical Notes",
@@ -159,10 +159,10 @@ export class FSOHubSpokeWidget extends Component {
                 lightColor: "#E0F7FA",
                 type: "action",
                 shape: "rect",
-                x: 50,
-                y: 510,
+                x: 80,
+                y: 430,
                 width: 130,
-                height: 60,
+                height: 55,
                 actionField: "show_clinical_notes_arrow",
                 description: "Fill clinical notes"
             },
@@ -174,10 +174,10 @@ export class FSOHubSpokeWidget extends Component {
                 lightColor: "#E8F5E9",
                 type: "action",
                 shape: "rect",
-                x: 250,
-                y: 510,
+                x: 270,
+                y: 430,
                 width: 120,
-                height: 60,
+                height: 55,
                 actionField: "show_invoice_arrow",
                 description: "Create invoice"
             },
@@ -190,9 +190,9 @@ export class FSOHubSpokeWidget extends Component {
                 type: "action",
                 shape: "rect",
                 x: 540,
-                y: 510,
+                y: 430,
                 width: 120,
-                height: 60,
+                height: 55,
                 actionField: "show_pay_now_arrow",
                 description: "Immediate payment"
             },
@@ -204,15 +204,15 @@ export class FSOHubSpokeWidget extends Component {
                 lightColor: "#F9FBE7",
                 type: "action",
                 shape: "rect",
-                x: 750,
-                y: 510,
+                x: 720,
+                y: 430,
                 width: 120,
-                height: 60,
+                height: 55,
                 actionField: "show_pay_later_arrow",
                 description: "Defer payment"
             },
 
-            // Sub-nodes
+            // Sub-nodes (compressed)
             {
                 id: "collect_cash",
                 label: "Collect Cash",
@@ -222,9 +222,9 @@ export class FSOHubSpokeWidget extends Component {
                 type: "sub",
                 shape: "rect",
                 x: 540,
-                y: 610,
+                y: 520,
                 width: 110,
-                height: 50,
+                height: 45,
                 parent: "pay_now",
                 actionField: "show_collect_cash_arrow",
                 description: "OM collect cash"
@@ -237,10 +237,10 @@ export class FSOHubSpokeWidget extends Component {
                 lightColor: "#E8F5E9",
                 type: "sub",
                 shape: "rect",
-                x: 750,
-                y: 610,
+                x: 720,
+                y: 520,
                 width: 120,
-                height: 50,
+                height: 45,
                 parent: "pay_later",
                 actionField: "show_payment_received_arrow",
                 description: "Payment received"
@@ -477,26 +477,88 @@ export class FSOHubSpokeWidget extends Component {
                 action = await this.openFSOForm();
                 break;
 
+            case "service_packages":
+                // Open service packages wizard
+                action = {
+                    type: "ir.actions.act_window",
+                    name: "Service Packages",
+                    res_model: "health.fso.service.packages.wizard",
+                    views: [[false, "form"]],
+                    target: "new",
+                    context: {
+                        default_fso_id: this.props.fsoId,
+                    },
+                };
+                break;
+
             case "quote":
-                // Open sale order if exists
-                if (this.state.fsoData.sale_order_id) {
-                    action = {
-                        type: "ir.actions.act_window",
-                        name: "Healthcare Quote",
-                        res_model: "sale.order",
-                        res_id: this.state.fsoData.sale_order_id[0],
-                        views: [[false, "form"]],
-                        view_mode: "form",
-                        target: "current",
-                    };
-                }
+                // Open invoice wizard to view/create quote
+                action = {
+                    type: "ir.actions.act_window",
+                    name: "Quote & Invoice",
+                    res_model: "health.fso.invoice.wizard",
+                    views: [[false, "form"]],
+                    target: "new",
+                    context: {
+                        default_fso_id: this.props.fsoId,
+                    },
+                };
                 break;
 
             case "confirm_booking":
+                // Open confirm booking wizard
+                action = {
+                    type: "ir.actions.act_window",
+                    name: "Confirm Booking",
+                    res_model: "health.fso.confirm.booking.wizard",
+                    views: [[false, "form"]],
+                    target: "new",
+                    context: {
+                        default_fso_id: this.props.fsoId,
+                    },
+                };
+                break;
+
+            case "equipment":
+                // Open equipment wizard
+                action = {
+                    type: "ir.actions.act_window",
+                    name: "Equipment Requirements",
+                    res_model: "health.fso.equipment.wizard",
+                    views: [[false, "form"]],
+                    target: "new",
+                    context: {
+                        default_fso_id: this.props.fsoId,
+                    },
+                };
+                break;
+
             case "staff_assignment":
+                // Open staff assignment wizard
+                action = {
+                    type: "ir.actions.act_window",
+                    name: "Staff Assignment",
+                    res_model: "health.fso.staff.assignment.wizard",
+                    views: [[false, "form"]],
+                    target: "new",
+                    context: {
+                        default_fso_id: this.props.fsoId,
+                    },
+                };
+                break;
+
             case "start_service":
-                // Status actions - open FSO form
-                action = await this.openFSOForm();
+                // Open start service wizard
+                action = {
+                    type: "ir.actions.act_window",
+                    name: "Start Service",
+                    res_model: "health.fso.start.service.wizard",
+                    views: [[false, "form"]],
+                    target: "new",
+                    context: {
+                        default_fso_id: this.props.fsoId,
+                    },
+                };
                 break;
 
             case "clinical_notes":
@@ -558,14 +620,17 @@ export class FSOHubSpokeWidget extends Component {
                 break;
 
             case "payment_received":
-                // Open payment tracking or invoice
-                action = await this.openFSOForm();
-                break;
-
-            case "service_packages":
-            case "equipment":
-                // Info nodes - open FSO form for reference
-                action = await this.openFSOForm();
+                // Open payment received wizard
+                action = {
+                    type: "ir.actions.act_window",
+                    name: "Payment Received",
+                    res_model: "health.fso.payment.received.wizard",
+                    views: [[false, "form"]],
+                    target: "new",
+                    context: {
+                        default_fso_id: this.props.fsoId,
+                    },
+                };
                 break;
         }
 

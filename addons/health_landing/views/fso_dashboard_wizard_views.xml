@@ -63,7 +63,7 @@
                 </sheet>
 
                 <footer>
-                    <button name="action_save_and_close"
+                    <button name="action_save_clinical_notes"
                             string="Save &amp; Close"
                             type="object"
                             class="btn-primary"/>
@@ -115,7 +115,7 @@
                 </sheet>
 
                 <footer>
-                    <button name="action_confirm_and_close"
+                    <button name="action_confirm_cash_collection"
                             string="Confirm Cash Collection"
                             type="object"
                             class="btn-primary"/>
@@ -188,7 +188,11 @@
                 </sheet>
 
                 <footer>
-                    <button string="Close"
+                    <button name="action_close"
+                            string="Close"
+                            type="object"
+                            class="btn-secondary"/>
+                    <button string="Cancel"
                             class="btn-secondary"
                             special="cancel"/>
                 </footer>
