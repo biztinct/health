@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <!-- Viet Uc Root Dashboard Template -->
+    <t t-name="health_landing.VietUcDashboardTemplate">
+        <div class="health_landing_dashboard">
+            <!-- Main Dashboard View -->
+            <t t-if="state.currentView === 'main'">
+                <!-- Dashboard Header -->
+                <div class="health_landing_dashboard_header">
+                    <h1 class="health_landing_dashboard_title">
+                        <i class="fa fa-globe"/> Viet Uc Healthcare
+                    </h1>
+                    <p class="health_landing_dashboard_subtitle">
+                        Vietnam-Australia Family Health Service - Comprehensive Healthcare Management
+                    </p>
+                </div>
+
+                <!-- Search Bar -->
+                <div class="health_landing_search_container">
+                    <div class="health_landing_search_wrapper">
+                        <i class="fa fa-search health_landing_search_icon"/>
+                        <input
+                            type="text"
+                            class="health_landing_search_input"
+                            placeholder="Search modules... (Ctrl+K)"
+                            t-model="state.searchQuery"
+                            t-on-input="onSearchInput"
+                            t-ref="searchInput"
+                        />
+                        <button
+                            class="health_landing_search_clear"
+                            t-if="state.searchQuery"
+                            t-on-click="clearSearch"
+                        >
+                            <i class="fa fa-times"/>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Main Module Cards (5 items) -->
+                <div class="health_landing_card_grid">
+                    <t t-foreach="getVietUcModules()" t-as="module" t-key="module.id">
+                        <div class="health_landing_card"
+                             tabindex="0"
+                             t-att-class="module.class"
+                             t-on-click="() => this.handleModuleClick(module)">
+                            <div class="health_landing_card_icon">
+                                <i t-att-class="'fa ' + module.icon"/>
+                            </div>
+                            <div class="health_landing_card_label" t-esc="module.name"/>
+                            <div class="health_landing_card_description" t-esc="module.description"/>
+                        </div>
+                    </t>
+                </div>
+
+                <!-- No Results Message -->
+                <div class="health_landing_empty" t-if="state.searchQuery and getVietUcModules().length === 0">
+                    <div class="health_landing_empty_icon">
+                        <i class="fa fa-search"/>
+                    </div>
+                    <p>No modules found for "<t t-esc="state.searchQuery"/>"</p>
+                </div>
+            </t>
+
+            <!-- Submenu View -->
+            <t t-if="state.currentView === 'submenu' and state.currentModule">
+                <!-- Breadcrumb -->
+                <div class="health_landing_breadcrumb">
+                    <span class="health_landing_breadcrumb_item">
+                        <a class="health_landing_breadcrumb_link" t-on-click="() => this.showMain()">
+                            <i class="fa fa-globe"/> Viet Uc
+                        </a>
+                    </span>
+                    <span class="health_landing_breadcrumb_separator">/</span>
+                    <span class="health_landing_breadcrumb_item" t-esc="state.currentModule.name"/>
+                </div>
+
+                <!-- Back Button -->
+                <button class="health_landing_back_btn" t-on-click="() => this.showMain()">
+                    <i class="fa fa-arrow-left"/> Back to Viet Uc Dashboard
+                </button>
+
+                <!-- Submenu Header -->
+                <div class="health_landing_dashboard_header">
+                    <h1 class="health_landing_dashboard_title">
+                        <i t-att-class="'fa ' + state.currentModule.icon"/> <t t-esc="state.currentModule.name"/>
+                    </h1>
+                    <p class="health_landing_dashboard_subtitle">
+                        <t t-esc="state.currentModule.description"/>
+                    </p>
+                </div>
+
+                <!-- Submenu Cards -->
+                <div class="health_landing_submenu_grid">
+                    <t t-foreach="state.currentModule.submenus or []" t-as="submenu" t-key="submenu.name">
+                        <div class="health_landing_card health_landing_submenu_card"
+                             t-att-class="state.currentModule.class"
+                             tabindex="0"
+                             t-on-click="() => this.launchAction(submenu.action, submenu.name, submenu.icon)">
+                            <div class="health_landing_card_icon">
+                                <i t-att-class="'fa ' + submenu.icon"/>
+                            </div>
+                            <div class="health_landing_card_label" t-esc="submenu.name"/>
+                            <div class="health_landing_card_description" t-esc="submenu.description"/>
+                        </div>
+                    </t>
+                </div>
+            </t>
+        </div>
+    </t>
+
+</templates>

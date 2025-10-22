@@ -1723,6 +1723,18 @@ window.healthPWA = {
           return date.toLocaleString();
         };
 
+        const getStatusLabel = (state) => {
+          switch (state) {
+            case 'draft': return 'Draft';
+            case 'confirmed': return 'Confirmed';
+            case 'assigned': return 'Assigned';
+            case 'in_progress': return 'In Progress';
+            case 'completed': return 'Completed';
+            case 'cancelled': return 'Cancelled';
+            default: return 'Unknown';
+          }
+        };
+
         const getStatusBadgeClass = (state) => {
           switch (state) {
             case 'draft': return 'badge badge-secondary';
@@ -1773,6 +1785,7 @@ window.healthPWA = {
           removeQuoteLine,
           openMapLocation,
           formatDateTime,
+          getStatusLabel,
           getStatusBadgeClass
         };
       },
@@ -1801,30 +1814,38 @@ window.healthPWA = {
             <!-- Order Header -->
             <div class="order-header-card">
               <div class="order-header-info">
-                <div class="booking-number">
-                  <i class="material-icons">confirmation_number</i>
-                  <span>{{ order.name }}</span>
+                <div class="order-header-bar">
+                  <div class="order-client-block">
+                    <h1 class="order-client-name">
+                      {{ order.patient?.name || order.patient_name || 'Unknown Client' }}
+                    </h1>
+                    <div class="order-client-meta">
+                      <span v-if="order.name" class="order-meta-id-text">
+                        <i class="material-icons">confirmation_number</i>
+                        {{ order.name }}
+                      </span>
+                      <span v-if="order.name && order.state" class="order-meta-separator" aria-hidden="true">•</span>
+                      <span v-if="order.state"
+                            class="order-status-badge"
+                            :class="getStatusBadgeClass(order.state)">
+                        {{ getStatusLabel(order.state) }}
+                      </span>
+                    </div>
+                  </div>
                 </div>
-                <h2>{{ order.service_type_name || order.service_type?.name || 'Service Order' }}</h2>
-                <p class="order-patient">
-                  <i class="material-icons">person</i>
-                  {{ order.patient?.name || order.patient_name || 'Unknown Patient' }}
-                </p>
-                <span :class="getStatusBadgeClass(order.state)">
-                  {{ order.state ? order.state.replace('_', ' ').toUpperCase() : 'UNKNOWN' }}
-                </span>
               </div>
 
               <!-- Timer Display (shown when service is in progress) -->
               <div v-if="order.state === 'in_progress' && order.actual_start_datetime"
-                   style="background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%); border-radius: 20px; padding: 24px; margin-top: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); border: 1px solid #e1e8ed;">
-                <div style="display: flex; align-items: center; justify-content: center; gap: 16px;">
-                  <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); width: 64px; height: 64px; border-radius: 16px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);">
-                    <i class="material-icons" style="color: white; font-size: 36px;">timer</i>
+                   class="order-timer-container">
+                <div class="order-timer">
+                  <div class="timer-icon-wrap">
+                    <i class="material-icons timer-icon">timer</i>
                   </div>
-                  <div style="flex: 1; display: flex; flex-direction: column;">
-                    <div style="font-size: 42px; font-weight: 700; color: #2c3e50; letter-spacing: 2px; font-family: 'SF Mono', 'Monaco', monospace; line-height: 1;">{{ elapsedTime }}</div>
-                    <div style="font-size: 13px; font-weight: 600; color: #95a5a6; text-transform: uppercase; letter-spacing: 1.5px; margin-top: 4px;">Elapsed Time</div>
+                  <div class="timer-display">
+                    <span class="timer-label">Elapsed Time</span>
+                    <span class="timer-time">{{ elapsedTime }}</span>
+                    <span v-if="order.actual_start_datetime" class="timer-subtext">Started {{ formatDateTime(order.actual_start_datetime) }}</span>
                   </div>
                 </div>
               </div>
@@ -1869,8 +1890,7 @@ window.healthPWA = {
               <button v-if="order.state === 'in_progress'"
                       @click="openPaymentWizard"
                       class="btn btn-action btn-complete"
-                      :disabled="!isOnline"
-                      style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none;">
+                      :disabled="!isOnline">
                 <i class="material-icons">check_circle</i>
                 <span>Complete Service</span>
               </button>

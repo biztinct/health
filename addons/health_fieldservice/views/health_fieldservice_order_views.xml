@@ -39,12 +39,12 @@
                             string="❌ Cancel Booking"
                             invisible="state in ['completed', 'completed_pending_invoice', 'cancelled']"/>
                     
-                    <button name="action_confirm_booking" type="object" 
+                    <button name="action_confirm_booking" type="object"
                             string="✅ Confirm Booking" class="oe_highlight"
                             invisible="state != 'draft'"
                             groups="health_base.group_healthcare_operations_manager"
                             help="Confirm booking and move to next stage (requires quote with items)"/>
-                    
+
                     <field name="stage_id" widget="statusbar" options="{'clickable': '1', 'fold_field': 'fold'}"/>
                 </header>
                 
@@ -429,7 +429,7 @@
     <record id="action_health_fieldservice_order" model="ir.actions.act_window">
         <field name="name">Field Service Orders</field>
         <field name="res_model">health.fieldservice.order</field>
-        <field name="view_mode">kanban,list,form</field>
+        <field name="view_mode">calendar,kanban,list,form</field>
         <field name="context">{}</field>
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">

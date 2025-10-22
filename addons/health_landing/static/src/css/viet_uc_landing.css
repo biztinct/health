@@ -1,0 +1,360 @@
+/* ============================================================================
+   Viet Uc Dashboard - CSS Styles
+   Reuses all glassmorphism styles from landing_dashboard.css
+   ============================================================================ */
+
+/* Import base styling (all variables, animations, and core styles) */
+@import url("./landing_dashboard.css");
+
+/* Viet Uc Specific Overrides & Optimizations */
+
+/* Viet Uc Card Grid - 5 items layout */
+.viet_uc_card_grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 24px;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+/* Responsive adjustments for Viet Uc */
+@media (max-width: 1024px) {
+    .viet_uc_card_grid {
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 20px;
+    }
+}
+
+@media (max-width: 768px) {
+    .viet_uc_card_grid {
+        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+        gap: 16px;
+    }
+}
+
+@media (max-width: 480px) {
+    .viet_uc_card_grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Viet Uc Dashboard Container */
+.viet_uc_dashboard {
+    padding: 48px 32px;
+    background: linear-gradient(135deg, #f5f7fa 0%, #e8eef5 100%);
+    min-height: 100vh;
+    animation: fadeIn 350ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+@media (max-width: 768px) {
+    .viet_uc_dashboard {
+        padding: 20px 16px;
+    }
+}
+
+/* Viet Uc Card Styling - Inherits from health_landing_card */
+.viet_uc_card {
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-radius: 20px;
+    padding: 28px 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 250ms cubic-bezier(0.4, 0, 0.2, 1);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.12), 0 2px 4px rgba(0, 0, 0, 0.08);
+    position: relative;
+    overflow: hidden;
+    will-change: transform, box-shadow;
+}
+
+/* Viet Uc Card Hover */
+.viet_uc_card:hover {
+    transform: translateY(-12px) scale(1.03);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.18), 0 8px 16px rgba(0, 0, 0, 0.12);
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+}
+
+/* Viet Uc Icon */
+.viet_uc_icon {
+    font-size: 52px;
+    margin-bottom: 16px;
+    display: inline-block;
+    transition: transform 250ms cubic-bezier(0.4, 0, 0.2, 1), filter 250ms cubic-bezier(0.4, 0, 0.2, 1);
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+}
+
+.viet_uc_card:hover .viet_uc_icon {
+    transform: scale(1.15) rotate(-5deg);
+    animation: shimmer 0.6s ease-in-out;
+}
+
+/* Shimmer animation for icons */
+@keyframes shimmer {
+    0% {
+        filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1)) brightness(1);
+    }
+    50% {
+        filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.15)) brightness(1.1);
+    }
+    100% {
+        filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1)) brightness(1);
+    }
+}
+
+/* Viet Uc Label */
+.viet_uc_label {
+    font-size: 18px;
+    font-weight: 600;
+    color: #2C3E50;
+    margin-bottom: 8px;
+    letter-spacing: -0.3px;
+    line-height: 1.3;
+}
+
+/* Viet Uc Description */
+.viet_uc_description {
+    font-size: 13px;
+    font-weight: 400;
+    color: #7F8C8D;
+    line-height: 1.4;
+    max-width: 200px;
+    margin: 0 auto;
+}
+
+/* Entrance animation */
+.viet_uc_card {
+    animation: cardEnter 350ms cubic-bezier(0, 0, 0.2, 1) backwards;
+}
+
+@keyframes cardEnter {
+    from {
+        opacity: 0;
+        transform: translateY(30px) scale(0.95);
+        filter: blur(4px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+        filter: blur(0);
+    }
+}
+
+/* Stagger animation delays */
+.viet_uc_card:nth-child(1) { animation-delay: 0ms; }
+.viet_uc_card:nth-child(2) { animation-delay: 50ms; }
+.viet_uc_card:nth-child(3) { animation-delay: 100ms; }
+.viet_uc_card:nth-child(4) { animation-delay: 150ms; }
+.viet_uc_card:nth-child(5) { animation-delay: 200ms; }
+
+/* Submenu Grid - Reuse health_landing_submenu_grid */
+.viet_uc_submenu_grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 16px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+@media (max-width: 768px) {
+    .viet_uc_submenu_grid {
+        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+        gap: 14px;
+    }
+}
+
+/* Breadcrumb styling - Reuse from landing_dashboard.css */
+.viet_uc_breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 24px;
+    font-size: 14px;
+    color: #546E7A;
+}
+
+.viet_uc_breadcrumb_link {
+    color: #1570D8;
+    text-decoration: none;
+    cursor: pointer;
+    transition: color 0.2s ease;
+}
+
+.viet_uc_breadcrumb_link:hover {
+    color: #0D47A1;
+    text-decoration: underline;
+}
+
+/* Back button styling */
+.viet_uc_back_btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    background: white;
+    border: 2px solid #1570D8;
+    color: #1570D8;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin-bottom: 24px;
+}
+
+.viet_uc_back_btn:hover {
+    background: #1570D8;
+    color: white;
+    transform: translateX(-4px);
+}
+
+/* Dashboard header */
+.viet_uc_dashboard_header {
+    margin-bottom: 48px;
+    text-align: center;
+}
+
+.viet_uc_dashboard_title {
+    font-size: 42px;
+    font-weight: 700;
+    color: #2C3E50;
+    margin-bottom: 12px;
+    letter-spacing: -0.5px;
+    line-height: 1.2;
+}
+
+.viet_uc_dashboard_title i {
+    color: #1570D8;
+    margin-right: 12px;
+    animation: heartbeat 1.5s ease-in-out infinite;
+}
+
+@keyframes heartbeat {
+    0%, 100% { transform: scale(1); }
+    10%, 30% { transform: scale(1.1); }
+    20%, 40% { transform: scale(1); }
+}
+
+.viet_uc_dashboard_subtitle {
+    font-size: 17px;
+    font-weight: 400;
+    color: #7F8C8D;
+    line-height: 1.5;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+/* Search container */
+.viet_uc_search_container {
+    max-width: 600px;
+    margin: 0 auto 32px;
+    position: relative;
+}
+
+.viet_uc_search_wrapper {
+    position: relative;
+}
+
+.viet_uc_search_icon {
+    position: absolute;
+    left: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 20px;
+    color: #95A5A6;
+    pointer-events: none;
+}
+
+.viet_uc_search_input {
+    width: 100%;
+    padding: 16px 20px 16px 56px;
+    font-size: 16px;
+    border: 2px solid rgba(0, 0, 0, 0.1);
+    border-radius: 50px;
+    background: white;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.08);
+    transition: all 150ms cubic-bezier(0.4, 0, 0.2, 1);
+    outline: none;
+}
+
+.viet_uc_search_input:focus {
+    border-color: #1570D8;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15), 0 4px 8px rgba(0, 0, 0, 0.10), 0 0 0 4px rgba(21, 112, 216, 0.1);
+}
+
+.viet_uc_search_clear {
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 32px;
+    height: 32px;
+    border: none;
+    background: rgba(0, 0, 0, 0.05);
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 150ms cubic-bezier(0.4, 0, 0.2, 1);
+    font-size: 14px;
+    color: #7F8C8D;
+}
+
+.viet_uc_search_clear:hover {
+    background: rgba(0, 0, 0, 0.1);
+}
+
+/* Empty state */
+.viet_uc_empty {
+    text-align: center;
+    padding: 60px 20px;
+    color: #7F8C8D;
+}
+
+.viet_uc_empty_icon {
+    font-size: 64px;
+    margin-bottom: 16px;
+    opacity: 0.3;
+}
+
+/* Module colors for Viet Uc */
+.viet_uc_card.module-patient {
+    border-color: #1570D8;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.85) 0%, rgba(255, 255, 255, 0.75) 100%),
+                linear-gradient(135deg, rgba(223, 243, 252, 0.4) 0%, rgba(223, 243, 252, 0.2) 100%);
+}
+
+.viet_uc_card.module-scheduling {
+    border-color: #00A5B8;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.85) 0%, rgba(255, 255, 255, 0.75) 100%),
+                linear-gradient(135deg, rgba(168, 234, 239, 0.4) 0%, rgba(168, 234, 239, 0.2) 100%);
+}
+
+.viet_uc_card.module-crm {
+    border-color: #008577;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.85) 0%, rgba(255, 255, 255, 0.75) 100%),
+                linear-gradient(135deg, rgba(209, 238, 232, 0.4) 0%, rgba(209, 238, 232, 0.2) 100%);
+}
+
+.viet_uc_card.module-billing {
+    border-color: #4AAD54;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.85) 0%, rgba(255, 255, 255, 0.75) 100%),
+                linear-gradient(135deg, rgba(212, 239, 212, 0.4) 0%, rgba(212, 239, 212, 0.2) 100%);
+}
+
+.viet_uc_card.module-config {
+    border-color: #5A7A8C;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.85) 0%, rgba(255, 255, 255, 0.75) 100%),
+                linear-gradient(135deg, rgba(228, 235, 237, 0.4) 0%, rgba(228, 235, 237, 0.2) 100%);
+}
+
+/* Icon colors */
+.viet_uc_card.module-patient .viet_uc_icon { color: #1570D8; }
+.viet_uc_card.module-scheduling .viet_uc_icon { color: #00A5B8; }
+.viet_uc_card.module-crm .viet_uc_icon { color: #008577; }
+.viet_uc_card.module-billing .viet_uc_icon { color: #4AAD54; }
+.viet_uc_card.module-config .viet_uc_icon { color: #5A7A8C; }

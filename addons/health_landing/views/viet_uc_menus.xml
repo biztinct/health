@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Viet Uc Root Menu Item - Main Dashboard with 5 Module Cards -->
+    <menuitem id="menu_health_viet_uc_root"
+              name="Viet Uc"
+              sequence="2"
+              action="action_viet_uc_dashboard"
+              web_icon="health_landing,static/description/icon.png"
+              groups="health_base.group_healthcare_base,health_base.group_healthcare_receptionist,health_base.group_healthcare_nurse,health_base.group_healthcare_doctor,health_base.group_healthcare_manager,health_base.group_healthcare_admin,health_base.group_healthcare_owner"/>
+
+</odoo>
