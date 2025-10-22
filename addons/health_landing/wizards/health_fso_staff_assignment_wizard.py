@@ -72,14 +72,10 @@ class HealthFSOStaffAssignmentWizard(models.TransientModel):
         if fso_id:
             fso = self.env['health.fieldservice.order'].browse(fso_id)
             # Pre-populate with any existing staff assignments
-            if fso.user_id:
-                # If user_id exists, try to find corresponding employee
-                employee = self.env['hr.employee'].search([
-                    ('user_id', '=', fso.user_id.id)
-                ], limit=1)
-                if employee:
-                    res['primary_staff_id'] = employee.id
-                    res['assigned_staff_ids'] = [(6, 0, [employee.id])]
+            if fso.lead_staff_id:
+                # If lead_staff_id exists, use it as primary staff
+                res['primary_staff_id'] = fso.lead_staff_id.id
+                res['assigned_staff_ids'] = [(6, 0, [fso.lead_staff_id.id])]
 
         return res
 
@@ -91,9 +87,9 @@ class HealthFSOStaffAssignmentWizard(models.TransientModel):
             raise UserError(_('Please assign at least one staff member before saving.'))
 
         # Update FSO with staff assignment
-        if self.primary_staff_id and self.primary_staff_id.user_id:
+        if self.primary_staff_id:
             self.fso_id.write({
-                'user_id': self.primary_staff_id.user_id.id,
+                'lead_staff_id': self.primary_staff_id.id,
             })
 
         # Update state to assigned if currently confirmed

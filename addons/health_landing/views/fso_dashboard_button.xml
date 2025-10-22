@@ -16,6 +16,13 @@
                         string="Dashboard"
                         help="Open FSO Workflow Dashboard"/>
             </xpath>
+            <!-- Add Dashboard button to header for calendar event popups -->
+            <xpath expr="//button[@name='action_confirm_booking']" position="after">
+                <button name="action_open_fso_dashboard" type="object"
+                        string="📊 Dashboard"
+                        class="btn-info"
+                        help="View FSO Hub-and-Spoke dashboard with patient and service details"/>
+            </xpath>
         </field>
     </record>
 

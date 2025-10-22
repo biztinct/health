@@ -425,6 +425,30 @@
         </field>
     </record>
 
+    <!-- Field Service Order Calendar View -->
+    <record id="view_health_fieldservice_order_calendar" model="ir.ui.view">
+        <field name="name">health.fieldservice.order.calendar</field>
+        <field name="model">health.fieldservice.order</field>
+        <field name="arch" type="xml">
+            <calendar string="Field Service Orders Calendar"
+                      date_start="scheduled_datetime"
+                      date_stop="estimated_end_datetime"
+                      color="lead_staff_id"
+                      mode="month"
+                      quick_create="0"
+                      event_open_popup="1"
+                      hide_time="true">
+                <field name="name"/>
+                <field name="patient_id"/>
+                <field name="lead_staff_id"
+                       filters="1"
+                       avatar_field="image_128"/>
+                <field name="service_type"/>
+                <field name="state"/>
+            </calendar>
+        </field>
+    </record>
+
     <!-- Actions -->
     <record id="action_health_fieldservice_order" model="ir.actions.act_window">
         <field name="name">Field Service Orders</field>

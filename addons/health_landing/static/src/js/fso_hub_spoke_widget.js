@@ -492,17 +492,33 @@ export class FSOHubSpokeWidget extends Component {
                 break;
 
             case "quote":
-                // Open invoice wizard to view/create quote
-                action = {
-                    type: "ir.actions.act_window",
-                    name: "Quote & Invoice",
-                    res_model: "health.fso.invoice.wizard",
-                    views: [[false, "form"]],
-                    target: "new",
-                    context: {
-                        default_fso_id: this.props.fsoId,
-                    },
-                };
+                // Open quote (same as Quote smart button)
+                (async () => {
+                    try {
+                        console.log("Calling action_view_quote for FSO:", this.props.fsoId);
+                        const result = await this.orm.call(
+                            "health.fieldservice.order",
+                            "action_view_quote",
+                            [this.props.fsoId]
+                        );
+                        console.log("Quote action result:", result);
+
+                        if (result && result.res_id) {
+                            // Add views array on the client side since RPC serialization strips it
+                            const quotAction = {
+                                ...result,
+                                views: [[result.view_id || false, 'form']],  // Ensure views array is present
+                            };
+                            console.log("Executing quote action with views:", quotAction);
+                            await this.actionService.doAction(quotAction);
+                        } else {
+                            console.warn("No quote action returned or missing res_id");
+                        }
+                    } catch (error) {
+                        console.error("Error opening quote:", error);
+                        console.error("Error stack:", error.stack);
+                    }
+                })();
                 break;
 
             case "confirm_booking":
@@ -534,18 +550,20 @@ export class FSOHubSpokeWidget extends Component {
                 break;
 
             case "staff_assignment":
-                // Open staff assignment wizard
-                action = {
-                    type: "ir.actions.act_window",
-                    name: "Staff Assignment",
-                    res_model: "health.fso.staff.assignment.wizard",
-                    views: [[false, "form"]],
-                    target: "new",
-                    context: {
-                        default_fso_id: this.props.fsoId,
-                    },
-                };
-                break;
+                // Open timeline view for manual staff assignment (same as Manual Staff Assignment button)
+                try {
+                    const result = await this.orm.call(
+                        "health.fieldservice.order",
+                        "action_manual_assign_staff",
+                        [this.props.fsoId]
+                    );
+                    if (result) {
+                        await this.actionService.doAction(result);
+                    }
+                } catch (error) {
+                    console.error("Error opening staff assignment timeline:", error);
+                }
+                return;
 
             case "start_service":
                 // Open start service wizard
@@ -576,17 +594,33 @@ export class FSOHubSpokeWidget extends Component {
                 break;
 
             case "invoice":
-                // Open invoice wizard
-                action = {
-                    type: "ir.actions.act_window",
-                    name: "Invoice Details",
-                    res_model: "health.fso.invoice.wizard",
-                    views: [[false, "form"]],
-                    target: "new",
-                    context: {
-                        default_fso_id: this.props.fsoId,
-                    },
-                };
+                // Open invoice if one exists
+                (async () => {
+                    try {
+                        console.log("Calling action_view_invoice for FSO:", this.props.fsoId);
+                        const result = await this.orm.call(
+                            "health.fieldservice.order",
+                            "action_view_invoice",
+                            [this.props.fsoId]
+                        );
+                        console.log("Invoice action result:", result);
+
+                        if (result && result.res_id) {
+                            // Add views array on the client side since RPC serialization strips it
+                            const invoiceAction = {
+                                ...result,
+                                views: [[result.view_id || false, 'form']],  // Ensure views array is present
+                            };
+                            console.log("Executing invoice action with views:", invoiceAction);
+                            await this.actionService.doAction(invoiceAction);
+                        } else {
+                            console.warn("No invoice action returned or missing res_id");
+                        }
+                    } catch (error) {
+                        console.error("Error opening invoice:", error);
+                        console.error("Error stack:", error.stack);
+                    }
+                })();
                 break;
 
             case "pay_now":

@@ -277,8 +277,20 @@ class HealthFieldServiceOrderUnified(models.Model):
     def _compute_lead_staff(self):
         """Compute lead staff from assignment records"""
         for record in self:
+            # Filter for lead assignments - get the staff member from the first one
             lead_assignment = record.assignment_ids.filtered(lambda a: a.assignment_role == 'lead')
-            record.lead_staff_id = lead_assignment.staff_id if lead_assignment else False
+
+            # Extract the first lead staff member if it exists
+            if lead_assignment:
+                # lead_assignment is a recordset, so [0] gets the first assignment record
+                # and .staff_id gets the Many2one field (single employee record or False)
+                first_assignment = lead_assignment[0]
+                if first_assignment and first_assignment.staff_id:
+                    record.lead_staff_id = first_assignment.staff_id
+                else:
+                    record.lead_staff_id = False
+            else:
+                record.lead_staff_id = False
 
     @api.depends('assignment_ids.staff_id', 'assignment_ids.staff_id.job_title', 'primary_doctor_id')
     def _compute_assigned_doctor(self):
@@ -1947,13 +1959,14 @@ class HealthFieldServiceOrderUnified(models.Model):
     
     def _open_quote_popup(self, quote):
         """Open quote in popup form to keep FSO visible in background"""
-        return {
+        view_id = self.env.ref('health_fieldservice.view_healthcare_quote_form_custom').id
+        action = {
             'name': _('Healthcare Quote - %s') % self.name,
             'type': 'ir.actions.act_window',
             'res_model': 'sale.order',
             'res_id': quote.id,
             'view_mode': 'form',
-            'view_id': self.env.ref('health_fieldservice.view_healthcare_quote_form_custom').id,
+            'views': [[view_id, 'form']],  # Required by Odoo 18 web framework for action preprocessing
             'target': 'new',  # Opens in popup
             'context': {
                 'form_view_initial_mode': 'edit',
@@ -1961,6 +1974,7 @@ class HealthFieldServiceOrderUnified(models.Model):
                 'fso_id': self.id,
             }
         }
+        return action
     
     def _add_quote_lines(self, quote):
         """Add service lines to the quote based on FSO data"""

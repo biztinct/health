@@ -336,16 +336,16 @@ class HealthStaffAssignment(models.Model):
             if not record.staff_id:
                 record.staff_current_load = 0.0
                 continue
-            
+
             # Calculate workload for individual staff member
             # Get staff's current assignments for today
             today_assignments = self.search_count([
-                ('staff_id', '=', staff.id),
+                ('staff_id', '=', record.staff_id.id),
                 ('assignment_status', 'in', ['assigned', 'confirmed', 'in_progress']),
                 ('assignment_date', '>=', fields.Date.today()),
                 ('assignment_date', '<', fields.Date.today() + timedelta(days=1))
             ])
-            
+
             # Assume max 8 assignments per day as 100% load
             record.staff_current_load = min((today_assignments / 8.0) * 100, 100)
     

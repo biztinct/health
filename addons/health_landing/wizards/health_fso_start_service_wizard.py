@@ -68,12 +68,12 @@ class HealthFSOStartServiceWizard(models.TransientModel):
         help='Confirm that all required equipment is ready'
     )
 
-    @api.depends('fso_id.user_id')
+    @api.depends('fso_id.lead_staff_id')
     def _compute_assigned_staff(self):
         """Compute assigned staff name"""
         for wizard in self:
-            if wizard.fso_id.user_id:
-                wizard.assigned_staff = wizard.fso_id.user_id.name
+            if wizard.fso_id.lead_staff_id:
+                wizard.assigned_staff = wizard.fso_id.lead_staff_id.name
             else:
                 wizard.assigned_staff = _('Not assigned')
 
