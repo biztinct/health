@@ -72,6 +72,27 @@
     transform: scale(1.1);
 }
 
+/* Disabled Node State */
+.fso_node_disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.fso_node_disabled .fso_node_shape {
+    fill-opacity: 0.5;
+    stroke-opacity: 0.5;
+}
+
+.fso_node_disabled:hover .fso_node_shape {
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+    stroke-width: 3;
+}
+
+.fso_node_disabled .fso_node_icon i,
+.fso_node_disabled .fso_node_label {
+    opacity: 0.6;
+}
+
 .fso_node_icon {
     display: flex;
     align-items: center;

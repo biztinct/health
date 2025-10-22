@@ -27,6 +27,7 @@ export class FSOHubSpokeWidget extends Component {
     setup() {
         this.orm = useService("orm");
         this.actionService = useService("action");
+        this.notificationService = useService("notification");
         this.svgRef = useRef("hubSpokeSvg");
 
         this.state = useState({
@@ -298,6 +299,7 @@ export class FSOHubSpokeWidget extends Component {
                         "show_clinical_notes_arrow", "show_invoice_arrow",
                         "show_pay_now_arrow", "show_pay_later_arrow",
                         "show_collect_cash_arrow", "show_payment_received_arrow",
+                        "payment_status", "invoice_id",
                     ],
                 }
             );
@@ -421,6 +423,27 @@ export class FSOHubSpokeWidget extends Component {
     }
 
     /**
+     * Check if a node is disabled
+     */
+    isNodeDisabled(node) {
+        if (!this.state.fsoData) return false;
+
+        // Disable Pay Now/Pay Later if payment is already done or no invoice
+        if ((node.id === "pay_now" || node.id === "pay_later")) {
+            // Disabled if payment is already paid
+            if (this.state.fsoData.payment_status === 'paid') {
+                return true;
+            }
+            // Disabled if no invoice exists
+            if (!this.state.fsoData.invoice_id) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
      * Get node classes for styling
      */
     getNodeClasses(node) {
@@ -436,6 +459,11 @@ export class FSOHubSpokeWidget extends Component {
 
         // Add type-specific class
         classes.push(`fso_node_${node.type}`);
+
+        // Add disabled class if node is disabled
+        if (this.isNodeDisabled(node)) {
+            classes.push("fso_node_disabled");
+        }
 
         return classes.join(" ");
     }
@@ -470,6 +498,24 @@ export class FSOHubSpokeWidget extends Component {
     async onNodeClick(node) {
         const nodeId = node.id;
         let action = null;
+
+        // Prevent Pay Now action if payment is already done
+        if ((nodeId === "pay_now" || nodeId === "pay_later") && this.state.fsoData.payment_status === 'paid') {
+            this.notificationService.add(
+                'Payment has already been received for this booking. No further payment actions are needed.',
+                { type: 'warning', title: 'Payment Completed' }
+            );
+            return;
+        }
+
+        // Prevent Pay Now if invoice doesn't exist
+        if ((nodeId === "pay_now" || nodeId === "pay_later") && !this.state.fsoData.invoice_id) {
+            this.notificationService.add(
+                'Please create an invoice before processing payment.',
+                { type: 'warning', title: 'Invoice Required' }
+            );
+            return;
+        }
 
         switch (nodeId) {
             case "booking_hub":
