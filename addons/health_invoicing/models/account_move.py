@@ -35,8 +35,8 @@ class HealthcareInvoice(models.Model):
     
     # patient_id = fields.Many2one(
     #     'health.patient',
-    #     string='Patient',
-    #     help='Patient receiving healthcare services'
+    #     string='Client',
+    #     help='client receiving healthcare services'
     # )
     
     healthcare_service_type = fields.Selection([
@@ -138,7 +138,7 @@ class HealthcareInvoice(models.Model):
     
     patient_responsibility_amount = fields.Monetary(
         'Patient Responsibility',
-        help='Amount patient is responsible for'
+        help='client is responsible for'
     )
 
     # Ministry of Health compliance

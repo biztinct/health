@@ -25,7 +25,7 @@ class HealthClientRelation(models.Model):
         required=True,
         domain=[("is_patient", "=", True)],
         ondelete="cascade",
-        help="The patient/client in this relationship"
+        help='Client/client in this relationship'
     )
     
     representative_id = fields.Many2one(
@@ -87,19 +87,19 @@ class HealthClientRelation(models.Model):
     can_make_medical_decisions = fields.Boolean(
         string="Can Make Medical Decisions",
         default=False,
-        help="Authorized to make medical decisions for the patient"
+        help='Can make medical decisions for the client'
     )
     
     can_receive_medical_info = fields.Boolean(
         string="Can Receive Medical Information",
         default=False,
-        help="Authorized to receive patient medical information"
+        help='Can receive medical information about the client'
     )
     
     can_schedule_appointments = fields.Boolean(
         string="Can Schedule Appointments",
         default=False,
-        help="Can schedule appointments on behalf of the patient"
+        help='Can schedule appointments for the client'
     )
     
     # Financial responsibility

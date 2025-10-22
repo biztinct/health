@@ -42,17 +42,17 @@ class HealthcareServiceBilling(models.Model):
     # Patient and customer information
     patient_id = fields.Many2one(
         'res.partner',
-        string='Patient',
+        string='Client',
         domain=[('is_patient', '=', True)],
         required=True,
-        help='Patient receiving the service'
+        help='client receiving the service'
     )
     
     customer_id = fields.Many2one(
         'res.partner',
         string='Customer',
         required=True,
-        help='Customer responsible for payment (may be different from patient)'
+        help='client)'
     )
     
     # Service details
@@ -122,7 +122,7 @@ class HealthcareServiceBilling(models.Model):
     # Insurance processing
     has_insurance = fields.Boolean(
         'Has Insurance Coverage',
-        help='Patient has insurance coverage for this service'
+        help='client has insurance coverage for this service'
     )
     
     insurance_provider_id = fields.Many2one(

@@ -24,7 +24,7 @@ class HealthBookingCancelWizard(models.TransientModel):
 
     patient_name = fields.Char(
         related='booking_id.patient_id.name',
-        string='Patient',
+        string='Client',
         readonly=True
     )
 

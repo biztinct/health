@@ -110,7 +110,7 @@ class HrEmployee(models.Model):
     advance_booking_days = fields.Integer(
         'Advance Booking Days', 
         default=30,
-        help='How many days in advance patients can book with this staff'
+        help='clients can book with this staff'
     )
     
     # Emergency Contact

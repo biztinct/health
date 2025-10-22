@@ -40,7 +40,7 @@ class HealthFieldServiceStage(models.Model):
     require_staff_assignment = fields.Boolean('Require Staff Assignment', default=False,
                                              help='Staff must be assigned to move to this stage')
     require_patient_contact = fields.Boolean('Require Patient Contact', default=False,
-                                            help='Patient contact must be confirmed to move to this stage')
+                                            help='client contact must be confirmed to move to this stage')
     
     # Stage behavior
     is_closed = fields.Boolean('Is Closed Stage', default=False, 

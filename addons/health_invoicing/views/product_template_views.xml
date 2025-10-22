@@ -14,7 +14,7 @@
                         class="oe_stat_button" icon="fa-users"
                         invisible="not is_healthcare_package or healthcare_package_instances_count == 0"
                         groups="health_invoicing.group_health_invoicing_user">
-                    <field name="healthcare_package_instances_count" widget="statinfo" string="Patient Packages"/>
+                    <field name="healthcare_package_instances_count" widget="statinfo" string='Client Packages'/>
                 </button>
             </xpath>
             

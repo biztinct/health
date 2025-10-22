@@ -70,18 +70,18 @@ class HealthFieldServiceOrderUnified(models.Model):
     
     patient_id = fields.Many2one(
         'res.partner',
-        string='Patient',
+        string='Client',
         required=True,
         tracking=True,
         domain=[('is_patient', '=', True)],
-        help='Patient receiving the healthcare service'
+        help='client receiving the healthcare service'
     )
     
     customer_id = fields.Many2one(
         'res.partner',
         string='Customer/Payer',
         tracking=True,
-        help='Customer responsible for payment (may be different from patient)'
+        help='client)'
     )
     
     # Patient Quick Info (for easy access)
@@ -125,10 +125,10 @@ class HealthFieldServiceOrderUnified(models.Model):
     )
     
     # Service Requirements & Notes
-    symptoms = fields.Text('Symptoms/Chief Complaint', help='Patient\'s reported symptoms or reason for visit')
+    symptoms = fields.Text('Symptoms/Chief Complaint', help='client\'s reported symptoms or reason for visit')
     diagnosis = fields.Html('Diagnosis', help='Medical diagnosis (Chuẩn đoán) - MOH compliance field')
     service_requirements = fields.Text('Service Requirements', help='Specific requirements for this service')
-    patient_notes = fields.Text('Patient Notes', help='Additional notes from patient')
+    patient_notes = fields.Text('Patient Notes', help='client')
     special_requirements = fields.Text('Special Requirements', help='Accessibility, equipment, or other special needs')
     
     # Clinical Priority (From Client Requirements)
@@ -578,7 +578,7 @@ class HealthFieldServiceOrderUnified(models.Model):
     
     # Additional workflow fields
     patient_contact_confirmed = fields.Boolean('Patient Contact Confirmed', default=False,
-                                              help='Patient has been contacted and confirmed the appointment')
+                                              help='client has been contacted and confirmed the appointment')
 
     # Cancellation fields
     cancellation_reason_id = fields.Many2one(
@@ -834,8 +834,8 @@ class HealthFieldServiceOrderUnified(models.Model):
     medications_prescribed = fields.Text('Medications Prescribed', help='Medications prescribed during service')
     
     # Patient condition and assessment
-    patient_condition_before = fields.Text('Patient Condition (Before)', help='Patient condition before service')
-    patient_condition_after = fields.Text('Patient Condition (After)', help='Patient condition after service')
+    patient_condition_before = fields.Text('Patient Condition (Before)', help='client condition before service')
+    patient_condition_after = fields.Text('Patient Condition (After)', help='client condition after service')
     vital_signs = fields.Text('Vital Signs', help='Recorded vital signs during service')
     
     # Follow-up requirements
@@ -850,7 +850,7 @@ class HealthFieldServiceOrderUnified(models.Model):
         ('3', '3 - Good'),
         ('4', '4 - Very Good'),
         ('5', '5 - Excellent'),
-    ], string='Service Rating', help='Patient rating of service quality')
+    ], string='Service Rating', help='client rating of service quality')
     
     completion_notes = fields.Text('Completion Notes', help='Notes about service completion')
 
@@ -896,7 +896,7 @@ class HealthFieldServiceOrderUnified(models.Model):
                 record.last_communication_date = False
     
     # Quick communication flags
-    patient_contacted = fields.Boolean('Patient Contacted', help='Patient has been contacted about this service')
+    patient_contacted = fields.Boolean('Patient Contacted', help='client has been contacted about this service')
     staff_notified = fields.Boolean('Staff Notified', help='Assigned staff have been notified')
     reminders_sent = fields.Boolean('Reminders Sent', help='Appointment reminders have been sent')
     

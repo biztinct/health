@@ -11,19 +11,19 @@ class Partner(models.Model):
     service_package_count = fields.Integer(
         'Package Count',
         compute='_compute_invoicing_counts',
-        help='Number of service packages for this patient'
+        help='client'
     )
     
     payment_transaction_count = fields.Integer(
         'Payment Count',
         compute='_compute_invoicing_counts',
-        help='Number of payment transactions for this patient'
+        help='client'
     )
     
     invoice_count = fields.Integer(
         'Invoice Count',
         compute='_compute_invoicing_counts',
-        help='Number of invoices for this patient'
+        help='client'
     )
     
     # Financial Summary Fields
@@ -31,21 +31,21 @@ class Partner(models.Model):
         'Total Invoiced',
         compute='_compute_financial_summary',
         currency_field='currency_id',
-        help='Total amount invoiced to this patient'
+        help='client'
     )
     
     total_paid = fields.Monetary(
         'Total Paid',
         compute='_compute_financial_summary',
         currency_field='currency_id',
-        help='Total amount paid by this patient'
+        help='client'
     )
     
     total_due = fields.Monetary(
         'Total Due',
         compute='_compute_financial_summary',
         currency_field='currency_id',
-        help='Outstanding amount due from this patient'
+        help='client'
     )
     
     # Package Summary Fields
@@ -75,7 +75,7 @@ class Partner(models.Model):
         'patient_id',
         string='Recent Payments',
         domain=[],
-        help='Recent payment transactions for this patient'
+        help='client'
     )
     
     # Active Package Details for Display

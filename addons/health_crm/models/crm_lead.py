@@ -69,19 +69,19 @@ class HealthLead(models.Model):
         ('friend', 'Friend'),
         ('professional', 'Professional Care Provider'),
     ], string='I am the:', default='client',
-       help='Specify your relationship to the client/patient')
+       help='client')
     
     client_name = fields.Char(
         string='Client Name',
-        help='Name of the actual client/patient (when you are not the client yourself)'
+        help='client (when you are not the client yourself)'
     )
 
     # Healthcare relationships
     patient_id = fields.Many2one(
         'res.partner', 
-        string='Patient',
+        string='Client',
         domain=[('is_patient', '=', True)],
-        help='Linked patient record if converted'
+        help='client record if converted'
     )
     
     appointment_ids = fields.One2many(

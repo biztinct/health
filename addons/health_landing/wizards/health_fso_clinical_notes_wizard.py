@@ -21,7 +21,7 @@ class HealthFSOClinicalNotesWizard(models.TransientModel):
     patient_id = fields.Many2one(
         'res.partner',
         related='fso_id.patient_id',
-        string='Patient',
+        string='Client',
         readonly=True
     )
 
@@ -52,7 +52,7 @@ class HealthFSOClinicalNotesWizard(models.TransientModel):
     # Editable Clinical Fields
     symptoms = fields.Text(
         string='Symptoms/Chief Complaint',
-        help='Patient\'s reported symptoms or reason for visit'
+        help='client\'s reported symptoms or reason for visit'
     )
 
     diagnosis = fields.Html(
@@ -81,13 +81,13 @@ class HealthFSOClinicalNotesWizard(models.TransientModel):
     )
 
     patient_condition_before = fields.Text(
-        string='Patient Condition (Before)',
-        help='Patient condition before service'
+        string='Client Condition (Before)',
+        help='client condition before service'
     )
 
     patient_condition_after = fields.Text(
-        string='Patient Condition (After)',
-        help='Patient condition after service'
+        string='Client Condition (After)',
+        help='client condition after service'
     )
 
     follow_up_required = fields.Boolean(

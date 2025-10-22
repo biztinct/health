@@ -60,13 +60,13 @@ class HealthContact(models.Model):
     is_patient = fields.Boolean(
         string='Is Patient',
         default=False,
-        help='This person is a patient/client who receives healthcare services'
+        help='client/client who receives healthcare services'
     )
     
     is_representative = fields.Boolean(
         string='Is Representative',
         default=False,
-        help='This person can represent or support patients/clients'
+        help='clients/clients'
     )
     
     # Legacy role flags - auto-synced from health.client.relation
@@ -75,7 +75,7 @@ class HealthContact(models.Model):
         string='Is Caregiver',
         compute='_compute_legacy_role_flags',
         store=True,
-        help='Auto-computed: This person provides care to patients (based on health.client.relation)'
+        help='clients (based on health.client.relation)'
     )
 
     is_payer = fields.Boolean(
@@ -89,7 +89,7 @@ class HealthContact(models.Model):
         string='Is Referrer',
         compute='_compute_legacy_role_flags',
         store=True,
-        help='Auto-computed: This person refers patients (based on health.client.relation)'
+        help='clients (based on health.client.relation)'
     )
 
     is_emergency_contact = fields.Boolean(
@@ -176,7 +176,7 @@ class HealthContact(models.Model):
         'health.client.relation',
         'representative_id',
         string='Clients I Represent',
-        help='Clients/patients I represent or support'
+        help='clients I represent or support'
     )
 
     # Computed fields for relationship counts (Section 2.2)
@@ -218,31 +218,31 @@ class HealthContact(models.Model):
 
     # Representative-side counts (how many patients I support in each role)
     caregiver_patient_count = fields.Integer(
-        string='Patients I Care For',
+        string='Clients I Care For',
         compute='_compute_representative_counts',
         store=False
     )
 
     payer_patient_count = fields.Integer(
-        string='Patients I Pay For',
+        string='Clients I Pay For',
         compute='_compute_representative_counts',
         store=False
     )
 
     referrer_patient_count = fields.Integer(
-        string='Patients I Referred',
+        string='Clients I Referred',
         compute='_compute_representative_counts',
         store=False
     )
 
     emergency_contact_patient_count = fields.Integer(
-        string='Patients I\'m Emergency Contact For',
+        string='Clients I\'m Emergency Contact For',
         compute='_compute_representative_counts',
         store=False
     )
 
     legal_guardian_patient_count = fields.Integer(
-        string='Patients I\'m Legal Guardian For',
+        string='Clients I\'m Legal Guardian For',
         compute='_compute_representative_counts',
         store=False
     )

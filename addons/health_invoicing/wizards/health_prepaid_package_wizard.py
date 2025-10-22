@@ -20,10 +20,10 @@ class HealthPrepaidPackageWizard(models.TransientModel):
     # Patient Information
     patient_id = fields.Many2one(
         'res.partner',
-        string='Patient',
+        string='Client',
         required=True,
         domain="[('is_patient', '=', True)]",
-        help='Patient purchasing this prepaid package'
+        help='client purchasing this prepaid package'
     )
     
     # Package Configuration - Product-Based Approach

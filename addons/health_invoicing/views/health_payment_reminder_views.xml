@@ -13,7 +13,7 @@
                   decoration-success="healthcare_payment_risk=='low'"
                   create="false" default_order="total_due desc">
                 
-                <field name="name" string="Patient Name"/>
+                <field name="name" string='Client Name'/>
                 <field name="healthcare_payment_risk" string="Risk Level" widget="badge"/>
                 <field name="healthcare_payment_score" string="Score" widget="progressbar"/>
                 <field name="total_due" string="Outstanding Amount" widget="monetary" sum="Total Outstanding"/>
@@ -54,16 +54,16 @@
                 <!-- Risk-based filters -->
                 <filter name="critical_risk" string="Critical Risk Patients"
                         domain="[('healthcare_payment_risk', '=', 'critical')]"
-                        help="Patients with very late payment patterns"/>
+                        help='Clients with very late payment patterns'/>
                 <filter name="high_risk" string="High Risk Patients"
                         domain="[('healthcare_payment_risk', '=', 'high')]"
-                        help="Patients often late with payments"/>
+                        help='Clients often late with payments'/>
                 <filter name="medium_risk" string="Medium Risk Patients"
                         domain="[('healthcare_payment_risk', '=', 'medium')]"
-                        help="Patients sometimes late with payments"/>
+                        help='Clients sometimes late with payments'/>
                 <filter name="low_risk" string="Low Risk Patients"
                         domain="[('healthcare_payment_risk', '=', 'low')]"
-                        help="Patients with prompt payment patterns"/>
+                        help='Clients with prompt payment patterns'/>
                 
                 <separator/>
                 
@@ -102,7 +102,7 @@
                 <separator/>
                 
                 <!-- Search fields -->
-                <field name="name" string="Patient Name"/>
+                <field name="name" string='Client Name'/>
                 <field name="email" string="Email"/>
                 <field name="mobile" string="Mobile"/>
                 <field name="total_due" string="Outstanding Amount"/>

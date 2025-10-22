@@ -48,11 +48,11 @@ class HealthPaymentTransaction(models.Model):
     # Patient and Service Links
     patient_id = fields.Many2one(
         'res.partner',
-        string='Patient',
+        string='Client',
         required=True,
         domain="[('is_patient', '=', True)]",
         tracking=True,
-        help='Patient who made the payment'
+        help='client who made the payment'
     )
     
     fso_id = fields.Many2one(
@@ -79,7 +79,7 @@ class HealthPaymentTransaction(models.Model):
         currency_field='currency_id',
         required=True,
         tracking=True,
-        help='Amount paid by patient'
+        help='client'
     )
     
     currency_id = fields.Many2one(

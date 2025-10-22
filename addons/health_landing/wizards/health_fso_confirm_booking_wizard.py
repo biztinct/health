@@ -21,7 +21,7 @@ class HealthFSOConfirmBookingWizard(models.TransientModel):
     patient_id = fields.Many2one(
         'res.partner',
         related='fso_id.patient_id',
-        string='Patient',
+        string='Client',
         readonly=True
     )
 
@@ -44,9 +44,9 @@ class HealthFSOConfirmBookingWizard(models.TransientModel):
     )
 
     patient_contacted = fields.Boolean(
-        string='Patient Contacted',
+        string='Client Contacted',
         default=False,
-        help='Confirm that patient has been contacted about this booking'
+        help='client has been contacted about this booking'
     )
 
     staff_notified = fields.Boolean(

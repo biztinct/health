@@ -103,7 +103,7 @@
         <field name="name">res.partner.relations.modal</field>
         <field name="model">res.partner</field>
         <field name="arch" type="xml">
-            <form string="Patient Relationships">
+            <form string='Client Relationships'>
                 <sheet>
                     <h1>
                         <field name="name" readonly="1" nolabel="1"/> - Relationships
@@ -131,7 +131,7 @@
         <field name="name">res.partner.map.modal</field>
         <field name="model">res.partner</field>
         <field name="arch" type="xml">
-            <form string="Patient Location">
+            <form string='Client Location'>
                 <sheet>
                     <h1>
                         <field name="name" readonly="1" nolabel="1"/> - Location
@@ -233,7 +233,7 @@
         <field name="name">res.partner.bookings.modal</field>
         <field name="model">res.partner</field>
         <field name="arch" type="xml">
-            <form string="Patient Bookings">
+            <form string='Client Bookings'>
                 <header>
                     <button name="action_view_bookings_calendar" type="object" string="Calendar View" class="btn-primary"/>
                 </header>
@@ -323,7 +323,7 @@
         <field name="name">res.partner.financials.modal</field>
         <field name="model">res.partner</field>
         <field name="arch" type="xml">
-            <form string="Patient Financials">
+            <form string='Client Financials'>
                 <sheet>
                     <h1>
                         <field name="name" readonly="1" nolabel="1"/> - Financials

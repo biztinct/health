@@ -10,7 +10,7 @@
         <field name="name">res.partner.patient.form</field>
         <field name="model">res.partner</field>
         <field name="arch" type="xml">
-            <form string="Patient Record" class="o_form_patient_record">
+            <form string='Client Record" class="o_form_patient_record'>
                 <header>
                     <field name="patient_status" widget="statusbar" statusbar_visible="new,active,inactive"/>
                     <button name="action_create_appointment" string="Schedule Appointment" type="object" class="oe_highlight"/>
@@ -18,7 +18,7 @@
                             invisible="patient_status == 'active'"/>
                 </header>
 
-                <sheet string="Patient">
+                <sheet string='Client'>
                     <div class="oe_button_box" name="button_box" groups="base.group_user">
                         <button name="action_view_appointments" type="object" class="oe_stat_button" icon="fa-calendar-check-o"
                                 invisible="not is_patient">
@@ -42,15 +42,15 @@
                         <!-- REPRESENTATIVE SIDE: My Patients -->
                         <button name="action_view_my_patients_as_caregiver" type="object" class="oe_stat_button" icon="fa-user-md"
                                 invisible="not is_caregiver or caregiver_patient_count == 0">
-                            <field name="caregiver_patient_count" string="Patients I Care For" widget="statinfo"/>
+                            <field name="caregiver_patient_count" string='Clients I Care For" widget="statinfo'/>
                         </button>
                         <button name="action_view_my_patients_as_payer" type="object" class="oe_stat_button" icon="fa-credit-card"
                                 invisible="not is_payer or payer_patient_count == 0">
-                            <field name="payer_patient_count" string="Patients I Pay For" widget="statinfo"/>
+                            <field name="payer_patient_count" string='Clients I Pay For" widget="statinfo'/>
                         </button>
                         <button name="action_view_my_patients_as_referrer" type="object" class="oe_stat_button" icon="fa-share-square-o"
                                 invisible="not is_referrer or referrer_patient_count == 0">
-                            <field name="referrer_patient_count" string="Patients I Referred" widget="statinfo"/>
+                            <field name="referrer_patient_count" string='Clients I Referred" widget="statinfo'/>
                         </button>
                     </div>
 
@@ -257,7 +257,7 @@
         <field name="name">res.partner.patient.list</field>
         <field name="model">res.partner</field>
         <field name="arch" type="xml">
-            <list string="Patient Registry" decoration-warning="patient_status=='new'" 
+            <list string='Client Registry' decoration-warning="patient_status=='new'" 
                   decoration-danger="patient_status=='deceased'" decoration-muted="patient_status=='inactive'"
                   decoration-success="patient_category_id and 'VIP' in patient_category_id.name"
                   create="true" edit="true" delete="true" sample="1">
@@ -356,9 +356,9 @@
         <field name="name">res.partner.patient.search</field>
         <field name="model">res.partner</field>
         <field name="arch" type="xml">
-            <search string="Patient Search">
-                <field name="name" string="Patient Name" filter_domain="['|', ('name', 'ilike', self), ('vietnamese_name', 'ilike', self)]"/>
-                <field name="patient_code" string="Patient ID"/>
+            <search string='Client Search'>
+                <field name="name" string='Client Name' filter_domain="[('|', ('name', 'ilike', self), ('vietnamese_name', 'ilike', self))]"/>
+                <field name="patient_code" string='Client ID'/>
                 <field name="mobile" string="Mobile"/>
                 <field name="national_id" string="National ID"/>
                 <field name="email"/>
@@ -464,7 +464,7 @@
         <field name="name">health.patient.category.list</field>
         <field name="model">health.patient.category</field>
         <field name="arch" type="xml">
-            <list string="Patient Categories" editable="bottom">
+            <list string='Client Categories" editable="bottom'>
                 <field name="sequence" widget="handle"/>
                 <field name="name"/>
                 <field name="description"/>
@@ -479,7 +479,7 @@
         <field name="name">health.patient.category.form</field>
         <field name="model">health.patient.category</field>
         <field name="arch" type="xml">
-            <form string="Patient Category">
+            <form string='Client Category'>
                 <sheet>
                     <group>
                         <group>

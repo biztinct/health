@@ -142,7 +142,7 @@
                 <!-- Group By -->
                 <separator/>
                 <group expand="0" string="Group By">
-                    <filter name="group_patient" string="Patient"
+                    <filter name="group_patient" string='Client'
                             context="{'group_by': 'patient_id'}"/>
                     <filter name="group_package" string="Package"
                             context="{'group_by': 'package_id'}"/>

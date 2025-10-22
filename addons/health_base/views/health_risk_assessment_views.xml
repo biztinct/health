@@ -17,7 +17,7 @@
                                 string="Generate Plan" class="oe_stat_button" icon="fa-clipboard"/>
                     </div>
                     <group>
-                        <group string="Patient Information">
+                        <group string='Client Information'>
                             <field name="patient_id"/>
                             <field name="assessment_date"/>
                             <field name="assessed_by"/>
@@ -85,7 +85,7 @@
                 <filter string="Today" name="today" domain="[('assessment_date', '>=', datetime.datetime.combine(context_today(), datetime.time(0,0,0)))]"/>
                 <group expand="0" string="Group By">
                     <filter string="Risk Level" name="group_risk" context="{'group_by': 'risk_level'}"/>
-                    <filter string="Patient" name="group_patient" context="{'group_by': 'patient_id'}"/>
+                    <filter string='Client' name="group_patient" context="{'group_by': 'patient_id'}"/>
                     <filter string="Assessment Date" name="group_date" context="{'group_by': 'assessment_date:day'}"/>
                 </group>
             </search>
@@ -124,7 +124,7 @@
                                 string="Generate Interventions" class="oe_stat_button" icon="fa-clipboard"/>
                     </div>
                     <group>
-                        <group string="Patient Information">
+                        <group string='Client Information'>
                             <field name="patient_id"/>
                             <field name="assessment_date"/>
                             <field name="age" readonly="1"/>

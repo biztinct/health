@@ -21,7 +21,7 @@ class HealthFSOInvoiceWizard(models.TransientModel):
     patient_id = fields.Many2one(
         'res.partner',
         related='fso_id.patient_id',
-        string='Patient',
+        string='Client',
         readonly=True
     )
 

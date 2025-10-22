@@ -15,7 +15,7 @@
                   create="false" delete="false" default_order="date_maturity">
                   
                 <!-- Healthcare-specific columns first -->
-                <field name="partner_id" string="Patient" readonly="1"/>
+                <field name="partner_id" string='Client" readonly="1'/>
                 <field name="move_id" string="Invoice" readonly="1"/>
                 <field name="invoice_date" readonly="1"/>
                 <field name="date_maturity" string="Due Date"/>
@@ -90,7 +90,7 @@
                 <separator/>
                 
                 <!-- Search fields -->
-                <field name="partner_id" string="Patient"/>
+                <field name="partner_id" string='Client'/>
                 <field name="move_id" string="Invoice"/>
                 <field name="invoice_origin" string="Service"/>
                 <field name="amount_residual" string="Outstanding Amount"/>
@@ -98,7 +98,7 @@
                 
                 <!-- Group by options -->
                 <group expand="0" string="Group By">
-                    <filter string="Patient" domain="[]" context="{'group_by': 'partner_id'}" name="group_by_patient"/>
+                    <filter string='Client' domain="[]" context="{'group_by': 'partner_id'}" name="group_by_patient"/>
                     <filter string="Due Date" domain="[]" context="{'group_by': 'date_maturity'}" name="group_by_due_date"/>
                     <filter string="Invoice Date" domain="[]" context="{'group_by': 'invoice_date'}" name="group_by_invoice_date"/>
                     <filter string="Payment Terms" domain="[]" context="{'group_by': 'payment_term_id'}" name="group_by_payment_terms"/>

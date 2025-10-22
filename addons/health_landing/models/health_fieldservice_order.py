@@ -93,7 +93,7 @@ class HealthFieldserviceOrderDashboard(models.Model):
     cash_collected_by_nurse = fields.Boolean(
         'Cash Collected by Nurse',
         default=False,
-        help='True when nurse has collected cash from patient'
+        help='client'
     )
 
     cash_received_by_om = fields.Boolean(

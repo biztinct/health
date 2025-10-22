@@ -21,7 +21,7 @@ class HealthFSOPaymentReceivedWizard(models.TransientModel):
     patient_id = fields.Many2one(
         'res.partner',
         related='fso_id.patient_id',
-        string='Patient',
+        string='Client',
         readonly=True
     )
 
@@ -42,7 +42,7 @@ class HealthFSOPaymentReceivedWizard(models.TransientModel):
         string='Payment Amount',
         required=True,
         currency_field='currency_id',
-        help='Amount received from patient'
+        help='client'
     )
 
     currency_id = fields.Many2one(

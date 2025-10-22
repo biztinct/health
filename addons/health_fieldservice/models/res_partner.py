@@ -11,7 +11,7 @@ class ResPartner(models.Model):
         'hr.employee',
         string='Preferred Healthcare Staff',
         domain=[('is_healthcare_staff', '=', True)],
-        help='Patient\'s preferred healthcare professional'
+        help='client\'s preferred healthcare professional'
     )
     
     assignment_notes = fields.Text(

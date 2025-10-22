@@ -43,7 +43,7 @@
                 <sheet>
                     <div class="oe_button_box" name="button_box">
                         <button name="action_view_patients" type="object" class="oe_stat_button" icon="fa-users">
-                            <field name="patient_count" string="Patients" widget="statinfo"/>
+                            <field name="patient_count" string='Clients' widget="statinfo"/>
                         </button>
                         <button name="action_view_appointments" type="object" class="oe_stat_button" icon="fa-calendar">
                             <div class="o_field_widget o_stat_info">

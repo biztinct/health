@@ -26,9 +26,9 @@ class HealthcarePayment(models.Model):
     
     patient_id = fields.Many2one(
         'res.partner',
-        string='Patient',
+        string='Client',
         domain="[('is_patient', '=', True)]",
-        help='Patient making or benefiting from this payment'
+        help='client making or benefiting from this payment'
     )
     
     fieldservice_order_id = fields.Many2one(

@@ -29,10 +29,10 @@ class HealthNursePaymentWizard(models.TransientModel):
     
     patient_id = fields.Many2one(
         'res.partner',
-        string='Patient',
+        string='Client',
         related='fso_id.patient_id',
         readonly=True,
-        help='Patient who received the service'
+        help='client who received the service'
     )
     
     nurse_id = fields.Many2one(
@@ -90,7 +90,7 @@ class HealthNursePaymentWizard(models.TransientModel):
         ('other', 'Other Method'),
     ], string='Payment Method',
        states={'invisible': [('payment_choice', '!=', 'pay_now')]},
-       help='Method patient will use to pay')
+       help='client will use to pay')
     
     # Prepaid Service Consumption
     prepaid_package_id = fields.Many2one(

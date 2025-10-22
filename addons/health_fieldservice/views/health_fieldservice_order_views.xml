@@ -262,7 +262,7 @@
                                     <field name="treatment_performed" placeholder="Describe treatment provided..."/>
                                     <field name="medications_prescribed" placeholder="List medications prescribed..."/>
                                 </group>
-                                <group string="Patient Assessment">
+                                <group string='Client Assessment'>
                                     <field name="patient_condition_before" placeholder="Patient condition before service..."/>
                                     <field name="patient_condition_after" placeholder="Patient condition after service..."/>
                                     <field name="vital_signs" placeholder="Record vital signs..."/>

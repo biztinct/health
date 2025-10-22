@@ -70,11 +70,11 @@ class HealthPrepaidService(models.Model):
     
     patient_id = fields.Many2one(
         'res.partner',
-        string='Patient',
+        string='Client',
         related='package_id.patient_id',
         store=True,
         readonly=True,
-        help='Patient who consumed this service'
+        help='client who consumed this service'
     )
     
     # Consumption Details

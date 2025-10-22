@@ -21,7 +21,7 @@ class HealthFSOStartServiceWizard(models.TransientModel):
     patient_id = fields.Many2one(
         'res.partner',
         related='fso_id.patient_id',
-        string='Patient',
+        string='Client',
         readonly=True
     )
 
@@ -57,9 +57,9 @@ class HealthFSOStartServiceWizard(models.TransientModel):
     )
 
     patient_present = fields.Boolean(
-        string='Patient Present and Verified',
+        string='Client Present and Verified',
         default=False,
-        help='Confirm that patient is present and identity verified'
+        help='client is present and identity verified'
     )
 
     equipment_ready = fields.Boolean(

@@ -86,7 +86,7 @@ class ProductTemplate(models.Model):
     healthcare_package_instances_count = fields.Integer(
         'Active Package Instances',
         compute='_compute_healthcare_package_instances_count',
-        help='Number of active patient package instances for this product'
+        help='client package instances for this product'
     )
     
     @api.depends('type')

@@ -22,10 +22,10 @@ class HealthAppointment(models.Model):
     
     patient_id = fields.Many2one(
         'res.partner',
-        string='Patient',
+        string='Client',
         required=True,
         domain=[('is_patient', '=', True)],
-        help="Patient for this appointment"
+        help='Client for this appointment'
     )
     
     start_datetime = fields.Datetime(
@@ -102,7 +102,7 @@ class HealthAppointment(models.Model):
         'Patient Address',
         related='patient_id.street',
         readonly=True,
-        help="Patient address for home visits"
+        help='Client address for home visits'
     )
     
     # ============================================================================

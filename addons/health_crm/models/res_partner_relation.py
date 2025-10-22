@@ -14,13 +14,13 @@ class ResPartnerRelation(models.Model):
         'health.client.relation',
         'client_id',
         string='My Representatives',
-        help='All representatives linked to me as a patient'
+        help='client'
     )
     representative_relation_ids = fields.One2many(
         'health.client.relation',
         'representative_id',
         string='My Patients',
-        help='All patients for whom I am a representative'
+        help='clients for whom I am a representative'
     )
 
     # Many2many shortcuts (computed from health.client.relation)
@@ -28,58 +28,58 @@ class ResPartnerRelation(models.Model):
         'res.partner',
         compute='_compute_relationship_shortcuts',
         string='All Caregivers',
-        help='All caregivers for this patient (primary + additional)'
+        help='client (primary + additional)'
     )
     payer_ids = fields.Many2many(
         'res.partner',
         compute='_compute_relationship_shortcuts',
         string='All Payers',
-        help='All payers for this patient (primary + additional)'
+        help='client (primary + additional)'
     )
     referrer_ids = fields.Many2many(
         'res.partner',
         compute='_compute_relationship_shortcuts',
         string='All Referrers',
-        help='All referrers for this patient'
+        help='client'
     )
     emergency_contact_ids = fields.Many2many(
         'res.partner',
         compute='_compute_relationship_shortcuts',
         string='All Emergency Contacts',
-        help='All emergency contacts for this patient'
+        help='client'
     )
     legal_guardian_ids = fields.Many2many(
         'res.partner',
         compute='_compute_relationship_shortcuts',
         string='All Legal Guardians',
-        help='All legal guardians for this patient'
+        help='client'
     )
 
     # Computed count fields for smart buttons
     total_caregivers = fields.Integer(
         'Total Caregivers',
         compute='_compute_relationship_counts_extended',
-        help='Total number of caregivers for this patient'
+        help='client'
     )
     total_payers = fields.Integer(
         'Total Payers',
         compute='_compute_relationship_counts_extended',
-        help='Total number of payers for this patient'
+        help='client'
     )
     total_referrers = fields.Integer(
         'Total Referrers',
         compute='_compute_relationship_counts_extended',
-        help='Total number of referrers for this patient'
+        help='client'
     )
     total_emergency_contacts = fields.Integer(
         'Total Emergency Contacts',
         compute='_compute_relationship_counts_extended',
-        help='Total number of emergency contacts for this patient'
+        help='client'
     )
     total_legal_guardians = fields.Integer(
         'Total Legal Guardians',
         compute='_compute_relationship_counts_extended',
-        help='Total number of legal guardians for this patient'
+        help='client'
     )
     relationship_total_count = fields.Integer(
         'Total Relationships',

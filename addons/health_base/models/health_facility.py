@@ -17,7 +17,7 @@ class Facility(models.Model):
         required=True,
         size=2,
         tracking=True,
-        help='2-digit province code for patient ID generation (e.g., 01=Hanoi, 02=HCM)'
+        help='client ID generation (e.g., 01=Hanoi, 02=HCM)'
     )
 
     # Facility type

@@ -57,7 +57,7 @@
                         domain="[('model', 'in', ['advanced.pricing.engine', 'advanced.pricing.rule', 'product.pricelist'])]"/>
                 <filter name="invoice_changes" string="Invoice Changes"
                         domain="[('model', '=', 'account.move')]"/>
-                <filter name="patient_changes" string="Patient Data Changes"
+                <filter name="patient_changes" string='Client Data Changes'
                         domain="[('model', '=', 'res.partner')]"/>
                 <filter name="fso_changes" string="Service Order Changes"
                         domain="[('model', '=', 'health.fieldservice.order')]"/>

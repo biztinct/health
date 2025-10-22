@@ -38,7 +38,7 @@ class HealthStaffAssignment(models.Model):
     # Strict patient name for timeline cards
     patient_name = fields.Char(
         related='fso_id.patient_id.name',
-        string='Patient Name',
+        string='Client Name',
         store=True,
         readonly=True
     )

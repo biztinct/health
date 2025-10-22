@@ -224,7 +224,7 @@
                 <!-- Group By -->
                 <separator/>
                 <group expand="0" string="Group By">
-                    <filter name="group_patient" string="Patient" 
+                    <filter name="group_patient" string='Client' 
                             context="{'group_by': 'patient_id'}"/>
                     <filter name="group_payment_method" string="Payment Method" 
                             context="{'group_by': 'payment_method'}"/>

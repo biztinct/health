@@ -19,10 +19,10 @@ class HealthPaymentCollectionWizard(models.TransientModel):
     # Patient Information
     patient_id = fields.Many2one(
         'res.partner',
-        string='Patient',
+        string='Client',
         required=True,
         domain="[('is_patient', '=', True)]",
-        help='Patient making the payment'
+        help='client making the payment'
     )
     
     # Payment Details
@@ -30,7 +30,7 @@ class HealthPaymentCollectionWizard(models.TransientModel):
         'Payment Amount',
         currency_field='currency_id',
         required=True,
-        help='Amount being collected from patient'
+        help='client'
     )
     
     currency_id = fields.Many2one(

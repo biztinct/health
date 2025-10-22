@@ -21,7 +21,7 @@ class ResPartner(models.Model):
     is_emergency_contact = fields.Boolean('Is Emergency Contact', default=False)
     is_caregiver = fields.Boolean('Is Caregiver', default=False, help='This contact is a caregiver')
     is_payer = fields.Boolean('Is Payer', default=False, help='This contact is responsible for payments')
-    is_referrer = fields.Boolean('Is Referrer', default=False, help='This contact refers patients')
+    is_referrer = fields.Boolean('Is Referrer', default=False, help='clients')
     
     # Patient Healthcare ID
     patient_code = fields.Char(
@@ -30,7 +30,7 @@ class ResPartner(models.Model):
         readonly=True,
         tracking=True,
         index=True,
-        help='Unique patient identifier (auto-generated)'
+        help='client identifier (auto-generated)'
     )
     patient_code_display = fields.Char('Patient ID Display', compute='_compute_patient_code_display')
 
@@ -49,7 +49,7 @@ class ResPartner(models.Model):
     ], string='Gender', tracking=True)
     
     # Healthcare Specific Fields
-    patient_category_id = fields.Many2one('health.patient.category', string='Patient Category')
+    patient_category_id = fields.Many2one('health.patient.category', string='Client Category')
     blood_group = fields.Selection([
         ('a+', 'A+'), ('a-', 'A-'),
         ('b+', 'B+'), ('b-', 'B-'),
@@ -71,39 +71,39 @@ class ResPartner(models.Model):
         'res.partner',
         string='Primary Caregiver',
         domain=[('is_caregiver', '=', True)],
-        help='Main person providing care for this patient'
+        help='client'
     )
     primary_payer_id = fields.Many2one(
         'res.partner', 
         string='Primary Payer',
         domain=[('is_payer', '=', True)],
-        help='Main person responsible for payments for this patient'
+        help='client'
     )
     primary_referrer_id = fields.Many2one(
         'res.partner',
         string='Primary Referrer', 
         domain=[('is_referrer', '=', True)],
-        help='Person who referred this patient'
+        help='client'
     )
     
     # Healthcare Relationships (Caregiver/Payer/Referrer Side - One2many)
     my_patients_as_caregiver = fields.One2many(
         'res.partner',
         'primary_caregiver_id',
-        string='Patients I Care For',
-        help='Patients for whom I am the primary caregiver'
+        string='Clients I Care For',
+        help='clients for whom I am the primary caregiver'
     )
     my_patients_as_payer = fields.One2many(
         'res.partner',
         'primary_payer_id',
-        string='Patients I Pay For',
-        help='Patients for whom I am the primary payer'
+        string='Clients I Pay For',
+        help='clients for whom I am the primary payer'
     )
     my_patients_as_referrer = fields.One2many(
         'res.partner',
         'primary_referrer_id',
-        string='Patients I Referred',
-        help='Patients I have referred to healthcare services'
+        string='Clients I Referred',
+        help='clients I have referred to healthcare services'
     )
 
     
@@ -121,18 +121,18 @@ class ResPartner(models.Model):
     
     # Patient Status & Tracking
     patient_status = fields.Selection([
-        ('new', 'New Patient'),
+        ('new', 'New Client'),
         ('active', 'Active'),
         ('inactive', 'Inactive'),
         ('deceased', 'Deceased')
-    ], string='Patient Status', default='new', tracking=True)
+    ], string='Client Status', default='new', tracking=True)
     
     registration_date = fields.Datetime('Registration Date', default=fields.Datetime.now, readonly=True)
     last_visit_date = fields.Datetime('Last Visit', readonly=True)
     next_visit_date = fields.Datetime('Next Scheduled Visit')
 
     # MOH Compliance Fields
-    profession = fields.Char('Profession/Occupation', help='Patient occupation (Nghề nghiệp)')
+    profession = fields.Char('Profession/Occupation', help='client occupation (Nghề nghiệp)')
     ethnicity = fields.Selection([
         ('kinh', 'Kinh (Vietnamese)'),
         ('tay', 'Tày'),
@@ -151,7 +151,7 @@ class ResPartner(models.Model):
         ('cham', 'Chăm'),
         ('san_chay', 'Sán Chay'),
         ('other', 'Other')
-    ], string='Ethnicity', help='Patient ethnic group (Dân tộc)')
+    ], string='Ethnicity', help='client ethnic group (Dân tộc)')
 
     # Source Tracking
     source_type = fields.Selection([
@@ -162,7 +162,7 @@ class ResPartner(models.Model):
         ('referral', 'Referral'),
         ('walk_in', 'Walk-in'),
         ('other', 'Other')
-    ], string='Patient Source', tracking=True)
+    ], string='Client Source', tracking=True)
     source_details = fields.Char('Source Details')
     referral_source = fields.Char('Referral Source')
     
@@ -236,17 +236,17 @@ class ResPartner(models.Model):
     caregiver_patient_count = fields.Integer(
         'Patients as Caregiver',
         compute='_compute_relationship_counts',
-        help='Number of patients I care for'
+        help='clients I care for'
     )
     payer_patient_count = fields.Integer(
         'Patients as Payer',
         compute='_compute_relationship_counts',
-        help='Number of patients I pay for'
+        help='clients I pay for'
     )
     referrer_patient_count = fields.Integer(
         'Patients as Referrer',
         compute='_compute_relationship_counts',
-        help='Number of patients I referred'
+        help='clients I referred'
     )
     
     def _generate_patient_code(self, facility=None):

@@ -14,7 +14,7 @@
                     </div>
                     
                     <group>
-                        <group string="Patient &amp; Payment">
+                        <group string='Client &amp; Payment'>
                             <field name="patient_id" options="{'no_create': True}"/>
                             <field name="currency_id" invisible="1"/>
                             <field name="amount"/>

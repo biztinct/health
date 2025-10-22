@@ -15,7 +15,7 @@ class RelationshipAddWizard(models.TransientModel):
         string='Client/Patient',
         required=True,
         readonly=True,
-        help='The patient receiving this relationship'
+        help='client receiving this relationship'
     )
 
     role = fields.Selection([
@@ -62,19 +62,19 @@ class RelationshipAddWizard(models.TransientModel):
     can_make_medical_decisions = fields.Boolean(
         string='Can Make Medical Decisions',
         default=False,
-        help='Authorized to make medical decisions for the patient'
+        help='client'
     )
 
     can_receive_medical_info = fields.Boolean(
         string='Can Receive Medical Information',
         default=False,
-        help='Authorized to receive patient medical information'
+        help='client medical information'
     )
 
     can_schedule_appointments = fields.Boolean(
         string='Can Schedule Appointments',
         default=False,
-        help='Can schedule appointments on behalf of the patient'
+        help='client'
     )
 
     # Financial responsibility

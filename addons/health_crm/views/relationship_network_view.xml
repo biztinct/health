@@ -9,7 +9,7 @@
             <form string="Relationship Network">
                 <sheet>
                     <div class="oe_title mb-3">
-                        <label for="name" class="o_form_label" string="Patient"/>
+                        <label for="name" class="o_form_label" string='Client'/>
                         <h1 class="d-flex">
                             <field name="name" class="o_text_overflow" readonly="1" placeholder="Patient Name"/>
                         </h1>

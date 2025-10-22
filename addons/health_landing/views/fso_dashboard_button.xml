@@ -21,7 +21,7 @@
                 <button name="action_open_fso_dashboard" type="object"
                         string="📊 Dashboard"
                         class="btn-info"
-                        help="View FSO Hub-and-Spoke dashboard with patient and service details"/>
+                        help='View client and service details'/>
             </xpath>
         </field>
     </record>

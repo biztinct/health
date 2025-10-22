@@ -44,11 +44,11 @@ class HealthServicePackage(models.Model):
     # Patient and Service Information
     patient_id = fields.Many2one(
         'res.partner',
-        string='Patient',
+        string='Client',
         required=True,
         domain="[('is_patient', '=', True)]",
         tracking=True,
-        help='Patient who purchased this package'
+        help='client who purchased this package'
     )
     
     service_type = fields.Selection([

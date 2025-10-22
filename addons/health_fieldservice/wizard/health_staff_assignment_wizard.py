@@ -21,7 +21,7 @@ class HealthStaffAssignmentWizard(models.TransientModel):
     
     patient_id = fields.Many2one(
         'res.partner',
-        string='Patient',
+        string='Client',
         related='fso_id.patient_id',
         readonly=True
     )

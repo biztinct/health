@@ -43,7 +43,7 @@ class HealthFieldServiceOrder(models.Model):
     
     patient_id = fields.Many2one(
         related='appointment_id.patient_id', 
-        string='Patient',
+        string='Client',
         store=True,
         readonly=True
     )
