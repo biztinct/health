@@ -170,7 +170,7 @@ export class FSOHubSpokeWidget extends Component {
             {
                 id: "invoice",
                 label: "Invoice",
-                icon: "fa-file-invoice",
+                icon: "fa-file-text-o",
                 color: "#4CAF50",
                 lightColor: "#E8F5E9",
                 type: "action",
@@ -217,7 +217,7 @@ export class FSOHubSpokeWidget extends Component {
             {
                 id: "collect_cash",
                 label: "Collect Cash",
-                icon: "fa-hand-holding-usd",
+                icon: "fa-dollar",
                 color: "#FFC107",
                 lightColor: "#FFF8E1",
                 type: "sub",
