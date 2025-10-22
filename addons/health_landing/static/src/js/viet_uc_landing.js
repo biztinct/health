@@ -178,6 +178,48 @@ class VietUcDashboard extends Component {
                         action: "health_base.action_health_urgency_level",
                         description: "Define urgency levels"
                     },
+                    {
+                        name: "Pricing Engines",
+                        icon: "fa-cogs",
+                        action: "advanced_pricing.action_advanced_pricing_engines",
+                        description: "Configure pricing engines"
+                    },
+                    {
+                        name: "Pricing Rules",
+                        icon: "fa-list-ul",
+                        action: "advanced_pricing.action_pricing_rules_with_visual",
+                        description: "Define pricing rules"
+                    },
+                    {
+                        name: "Quick Edit Rules",
+                        icon: "fa-edit",
+                        action: "advanced_pricing.action_pricing_rules_quick_edit",
+                        description: "Quick edit pricing rules"
+                    },
+                    {
+                        name: "Healthcare Facilities",
+                        icon: "fa-building",
+                        action: "health_base.action_health_facility",
+                        description: "Configure healthcare facilities"
+                    },
+                    {
+                        name: "Portable Equipment",
+                        icon: "fa-briefcase",
+                        action: "health_fieldservice.action_health_portable_equipment",
+                        description: "Track medical equipment"
+                    },
+                    {
+                        name: "Clinical Protocols",
+                        icon: "fa-file-text-o",
+                        action: "health_fieldservice.action_health_clinical_protocol",
+                        description: "Clinical guidelines"
+                    },
+                    {
+                        name: "Package Products",
+                        icon: "fa-cube",
+                        action: "health_invoicing.action_healthcare_package_products",
+                        description: "Configure service packages"
+                    },
                 ],
             },
         ];

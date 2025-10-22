@@ -9,4 +9,67 @@
               web_icon="health_landing,static/description/icon.png"
               groups="health_base.group_healthcare_base,health_base.group_healthcare_receptionist,health_base.group_healthcare_nurse,health_base.group_healthcare_doctor,health_base.group_healthcare_manager,health_base.group_healthcare_admin,health_base.group_healthcare_owner"/>
 
+    <!-- Configuration Submenu with Advanced Pricing Options -->
+    <menuitem id="menu_viet_uc_configuration"
+              name="Configuration"
+              parent="menu_health_viet_uc_root"
+              sequence="50"
+              groups="health_base.group_healthcare_manager,health_base.group_healthcare_admin,health_base.group_healthcare_owner"/>
+
+    <!-- Pricing Engines -->
+    <menuitem id="menu_viet_uc_pricing_engines"
+              name="Pricing Engines"
+              parent="menu_viet_uc_configuration"
+              action="advanced_pricing.action_advanced_pricing_engines"
+              sequence="10"
+              groups="health_base.group_healthcare_manager,health_base.group_healthcare_admin,health_base.group_healthcare_owner"/>
+
+    <!-- Pricing Rules -->
+    <menuitem id="menu_viet_uc_pricing_rules"
+              name="Pricing Rules"
+              parent="menu_viet_uc_configuration"
+              action="advanced_pricing.action_pricing_rules_with_visual"
+              sequence="20"
+              groups="health_base.group_healthcare_manager,health_base.group_healthcare_admin,health_base.group_healthcare_owner"/>
+
+    <!-- Quick Edit Rules -->
+    <menuitem id="menu_viet_uc_pricing_rules_quick_edit"
+              name="Quick Edit Rules"
+              parent="menu_viet_uc_configuration"
+              action="advanced_pricing.action_pricing_rules_quick_edit"
+              sequence="30"
+              groups="health_base.group_healthcare_manager,health_base.group_healthcare_admin,health_base.group_healthcare_owner"/>
+
+    <!-- Healthcare Facilities -->
+    <menuitem id="menu_viet_uc_healthcare_facilities"
+              name="Healthcare Facilities"
+              parent="menu_viet_uc_configuration"
+              action="health_base.action_health_facility"
+              sequence="40"
+              groups="health_base.group_healthcare_manager,health_base.group_healthcare_admin,health_base.group_healthcare_owner"/>
+
+    <!-- Portable Equipment -->
+    <menuitem id="menu_viet_uc_portable_equipment"
+              name="Portable Equipment"
+              parent="menu_viet_uc_configuration"
+              action="health_fieldservice.action_health_portable_equipment"
+              sequence="50"
+              groups="health_base.group_healthcare_manager,health_base.group_healthcare_admin,health_base.group_healthcare_owner"/>
+
+    <!-- Clinical Protocols -->
+    <menuitem id="menu_viet_uc_clinical_protocols"
+              name="Clinical Protocols"
+              parent="menu_viet_uc_configuration"
+              action="health_fieldservice.action_health_clinical_protocol"
+              sequence="60"
+              groups="health_base.group_healthcare_manager,health_base.group_healthcare_admin,health_base.group_healthcare_owner"/>
+
+    <!-- Package Products -->
+    <menuitem id="menu_viet_uc_package_products"
+              name="Package Products"
+              parent="menu_viet_uc_configuration"
+              action="health_invoicing.action_healthcare_package_products"
+              sequence="70"
+              groups="health_base.group_healthcare_manager,health_base.group_healthcare_admin,health_base.group_healthcare_owner"/>
+
 </odoo>
