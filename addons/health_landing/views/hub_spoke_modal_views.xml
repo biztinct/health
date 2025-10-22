@@ -13,7 +13,7 @@
                       mode="month"
                       quick_create="0"
                       event_open_popup="1"
-                      hide_time="false">
+                      hide_time="true">
                 <field name="name"/>
                 <field name="patient_id"/>
                 <field name="lead_staff_id"
