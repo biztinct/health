@@ -13,8 +13,7 @@
                       mode="month"
                       quick_create="0"
                       event_open_popup="1"
-                      hide_time="false"
-                      all_day="estimated_end_datetime">
+                      hide_time="false">
                 <field name="name"/>
                 <field name="patient_id"/>
                 <field name="lead_staff_id"
