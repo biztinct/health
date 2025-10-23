@@ -358,10 +358,10 @@
                 linear-gradient(135deg, rgba(245, 208, 254, 0.4) 0%, rgba(245, 208, 254, 0.2) 100%);
 }
 
-/* Icon colors */
-.viet_uc_card.module-patient .viet_uc_icon { color: #1570D8 !important; }
-.viet_uc_card.module-scheduling .viet_uc_icon { color: #00A5B8 !important; }
-.viet_uc_card.module-crm .viet_uc_icon { color: #008577 !important; }
-.viet_uc_card.module-billing .viet_uc_icon { color: #4AAD54 !important; }
-.viet_uc_card.module-config .viet_uc_icon { color: #5A7A8C !important; }
-.viet_uc_card.module-staff .viet_uc_icon { color: #D946EF !important; }
+/* Icon colors - Override parent CSS defaults to ensure colors display */
+.module-patient .health_landing_card_icon { color: #1570D8 !important; }
+.module-scheduling .health_landing_card_icon { color: #00A5B8 !important; }
+.module-crm .health_landing_card_icon { color: #008577 !important; }
+.module-billing .health_landing_card_icon { color: #4AAD54 !important; }
+.module-config .health_landing_card_icon { color: #5A7A8C !important; }
+.module-staff .health_landing_card_icon { color: #D946EF !important; }
