@@ -352,9 +352,16 @@
                 linear-gradient(135deg, rgba(228, 235, 237, 0.4) 0%, rgba(228, 235, 237, 0.2) 100%);
 }
 
+.viet_uc_card.module-staff {
+    border-color: #D946EF;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.85) 0%, rgba(255, 255, 255, 0.75) 100%),
+                linear-gradient(135deg, rgba(245, 208, 254, 0.4) 0%, rgba(245, 208, 254, 0.2) 100%);
+}
+
 /* Icon colors */
-.viet_uc_card.module-patient .viet_uc_icon { color: #1570D8; }
-.viet_uc_card.module-scheduling .viet_uc_icon { color: #00A5B8; }
-.viet_uc_card.module-crm .viet_uc_icon { color: #008577; }
-.viet_uc_card.module-billing .viet_uc_icon { color: #4AAD54; }
-.viet_uc_card.module-config .viet_uc_icon { color: #5A7A8C; }
+.viet_uc_card.module-patient .viet_uc_icon { color: #1570D8 !important; }
+.viet_uc_card.module-scheduling .viet_uc_icon { color: #00A5B8 !important; }
+.viet_uc_card.module-crm .viet_uc_icon { color: #008577 !important; }
+.viet_uc_card.module-billing .viet_uc_icon { color: #4AAD54 !important; }
+.viet_uc_card.module-config .viet_uc_icon { color: #5A7A8C !important; }
+.viet_uc_card.module-staff .viet_uc_icon { color: #D946EF !important; }

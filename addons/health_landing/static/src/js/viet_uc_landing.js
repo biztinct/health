@@ -55,6 +55,64 @@ class VietUcDashboard extends Component {
                 type: "direct_action", // Direct action, no submenu
             },
             {
+                id: "staff",
+                name: "Staff",
+                icon: "fa-tasks",
+                description: "Staff scheduling and workload management",
+                class: "module-staff",
+                type: "submenu",
+                submenus: [
+                    {
+                        name: "Assignment Dashboard",
+                        icon: "fa-dashboard",
+                        action: "health_fieldservice.action_fso_assignment_dashboard",
+                        description: "View staff assignments"
+                    },
+                    {
+                        name: "Visual Scheduler",
+                        icon: "fa-calendar",
+                        action: "health_fieldservice.action_assignment_scheduler_grid",
+                        description: "Visual scheduling interface"
+                    },
+                    {
+                        name: "Timeline View",
+                        icon: "fa-clock-o",
+                        action: "health_fieldservice.action_assignment_web_timeline_view",
+                        description: "Timeline of assignments"
+                    },
+                    {
+                        name: "Staff Availability",
+                        icon: "fa-user-circle",
+                        action: "health_fieldservice.action_health_staff_availability",
+                        description: "Manage staff availability"
+                    },
+                    {
+                        name: "Staff Workload",
+                        icon: "fa-bar-chart",
+                        action: "health_fieldservice.action_staff_workload_dashboard",
+                        description: "Monitor staff workload"
+                    },
+                    {
+                        name: "Healthcare Skills",
+                        icon: "fa-graduation-cap",
+                        action: "health_fieldservice.action_healthcare_skills",
+                        description: "Manage staff skills"
+                    },
+                    {
+                        name: "Service Areas",
+                        icon: "fa-map",
+                        action: "health_fieldservice.action_service_areas",
+                        description: "Configure service areas"
+                    },
+                    {
+                        name: "Healthcare Staff",
+                        icon: "fa-user-md",
+                        action: "health_fieldservice.action_healthcare_staff",
+                        description: "Manage healthcare staff"
+                    },
+                ],
+            },
+            {
                 id: "crm",
                 name: "CRM",
                 icon: "fa-handshake-o",
@@ -262,6 +320,14 @@ class VietUcDashboard extends Component {
     getConfigurationSubmenus() {
         const config = this.vietUcModules.find(m => m.id === "config");
         return config ? config.submenus : [];
+    }
+
+    /**
+     * Get Staff submenus
+     */
+    getStaffSubmenus() {
+        const staff = this.vietUcModules.find(m => m.id === "staff");
+        return staff ? staff.submenus : [];
     }
 
     /**

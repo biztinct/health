@@ -9,6 +9,77 @@
               web_icon="health_landing,static/description/icon.png"
               groups="health_base.group_healthcare_base,health_base.group_healthcare_receptionist,health_base.group_healthcare_nurse,health_base.group_healthcare_doctor,health_base.group_healthcare_manager,health_base.group_healthcare_admin,health_base.group_healthcare_owner"/>
 
+    <!-- Staff Submenu for Scheduling and Staff Management -->
+    <menuitem id="menu_viet_uc_staff"
+              name="Staff"
+              parent="menu_health_viet_uc_root"
+              sequence="40"
+              groups="health_base.group_healthcare_manager,health_base.group_healthcare_admin,health_base.group_healthcare_owner,health_base.group_healthcare_nurse,health_base.group_healthcare_doctor"/>
+
+    <!-- Assignment Dashboard -->
+    <menuitem id="menu_viet_uc_assignment_dashboard"
+              name="Assignment Dashboard"
+              parent="menu_viet_uc_staff"
+              action="health_fieldservice.action_fso_assignment_dashboard"
+              sequence="10"
+              groups="health_base.group_healthcare_manager,health_base.group_healthcare_admin,health_base.group_healthcare_owner"/>
+
+    <!-- Visual Scheduler -->
+    <menuitem id="menu_viet_uc_visual_scheduler"
+              name="Visual Scheduler"
+              parent="menu_viet_uc_staff"
+              action="health_fieldservice.action_assignment_scheduler_grid"
+              sequence="20"
+              groups="health_base.group_healthcare_manager,health_base.group_healthcare_admin,health_base.group_healthcare_owner"/>
+
+    <!-- Timeline View -->
+    <menuitem id="menu_viet_uc_timeline_view"
+              name="Timeline View"
+              parent="menu_viet_uc_staff"
+              action="health_fieldservice.action_assignment_web_timeline_view"
+              sequence="30"
+              groups="health_base.group_healthcare_manager,health_base.group_healthcare_admin,health_base.group_healthcare_owner"/>
+
+    <!-- Staff Availability -->
+    <menuitem id="menu_viet_uc_staff_availability"
+              name="Staff Availability"
+              parent="menu_viet_uc_staff"
+              action="health_fieldservice.action_health_staff_availability"
+              sequence="40"
+              groups="health_base.group_healthcare_manager,health_base.group_healthcare_admin,health_base.group_healthcare_owner"/>
+
+    <!-- Staff Workload -->
+    <menuitem id="menu_viet_uc_staff_workload"
+              name="Staff Workload"
+              parent="menu_viet_uc_staff"
+              action="health_fieldservice.action_staff_workload_dashboard"
+              sequence="50"
+              groups="health_base.group_healthcare_manager,health_base.group_healthcare_admin,health_base.group_healthcare_owner"/>
+
+    <!-- Healthcare Skills -->
+    <menuitem id="menu_viet_uc_healthcare_skills"
+              name="Healthcare Skills"
+              parent="menu_viet_uc_staff"
+              action="health_fieldservice.action_healthcare_skills"
+              sequence="60"
+              groups="health_base.group_healthcare_manager,health_base.group_healthcare_admin,health_base.group_healthcare_owner"/>
+
+    <!-- Service Areas -->
+    <menuitem id="menu_viet_uc_service_areas"
+              name="Service Areas"
+              parent="menu_viet_uc_staff"
+              action="health_fieldservice.action_service_areas"
+              sequence="70"
+              groups="health_base.group_healthcare_manager,health_base.group_healthcare_admin,health_base.group_healthcare_owner"/>
+
+    <!-- Healthcare Staff -->
+    <menuitem id="menu_viet_uc_healthcare_staff"
+              name="Healthcare Staff"
+              parent="menu_viet_uc_staff"
+              action="health_fieldservice.action_healthcare_staff"
+              sequence="80"
+              groups="health_base.group_healthcare_manager,health_base.group_healthcare_admin,health_base.group_healthcare_owner"/>
+
     <!-- Configuration Submenu with Advanced Pricing Options -->
     <menuitem id="menu_viet_uc_configuration"
               name="Configuration"
