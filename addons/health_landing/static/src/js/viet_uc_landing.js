@@ -22,6 +22,7 @@ class VietUcDashboard extends Component {
         this.state = useState({
             currentView: "main", // "main" or "submenu"
             currentModule: null,
+            parentModule: null, // Track parent module for breadcrumb navigation
             searchQuery: "",
             breadcrumb: ["Viet Uc"],
         });
@@ -32,6 +33,19 @@ class VietUcDashboard extends Component {
             if (this.searchInputRef.el) {
                 this.searchInputRef.el.focus();
             }
+
+            // Check if we need to navigate to a specific module
+            setTimeout(() => {
+                if (window.vietUcNavigateToModule) {
+                    const moduleId = window.vietUcNavigateToModule.moduleId;
+                    const module = this.vietUcModules.find(m => m.id === moduleId);
+                    if (module && module.type === 'submenu') {
+                        this.showSubmenu(module);
+                    }
+                    // Clean up the navigation context
+                    delete window.vietUcNavigateToModule;
+                }
+            }, 100);
         });
 
         // Main Viet Uc modules (5 items)
@@ -63,12 +77,6 @@ class VietUcDashboard extends Component {
                 type: "submenu",
                 submenus: [
                     {
-                        name: "Assignment Dashboard",
-                        icon: "fa-dashboard",
-                        action: "health_fieldservice.action_fso_assignment_dashboard",
-                        description: "View staff assignments"
-                    },
-                    {
                         name: "Visual Scheduler",
                         icon: "fa-calendar",
                         action: "health_fieldservice.action_assignment_scheduler_grid",
@@ -79,12 +87,6 @@ class VietUcDashboard extends Component {
                         icon: "fa-clock-o",
                         action: "health_fieldservice.action_assignment_web_timeline_view",
                         description: "Timeline of assignments"
-                    },
-                    {
-                        name: "Staff Availability",
-                        icon: "fa-user-circle",
-                        action: "health_fieldservice.action_health_staff_availability",
-                        description: "Manage staff availability"
                     },
                     {
                         name: "Staff Workload",
@@ -132,18 +134,6 @@ class VietUcDashboard extends Component {
                         action: "health_crm.action_healthcare_opportunities",
                         description: "Track customer interactions"
                     },
-                    {
-                        name: "Customers",
-                        icon: "fa-user-circle",
-                        action: "base.action_partner_form",
-                        description: "View all customers"
-                    },
-                    {
-                        name: "Healthcare Relationships",
-                        icon: "fa-users",
-                        action: "health_crm.action_health_client_relation",
-                        description: "Manage patient relationships"
-                    },
                 ],
             },
             {
@@ -155,34 +145,16 @@ class VietUcDashboard extends Component {
                 type: "submenu",
                 submenus: [
                     {
-                        name: "Service Billing",
-                        icon: "fa-file-text",
-                        action: "health_invoicing.action_health_service_billing",
-                        description: "Create and manage invoices"
-                    },
-                    {
                         name: "AR Dashboard",
                         icon: "fa-dashboard",
                         action: "health_invoicing.action_healthcare_ar_dashboard",
                         description: "Accounts receivable overview"
                     },
                     {
-                        name: "Overdue Patients",
-                        icon: "fa-exclamation-triangle",
-                        action: "health_invoicing.action_healthcare_overdue_patients",
-                        description: "Track outstanding payments"
-                    },
-                    {
                         name: "Payment Transactions",
                         icon: "fa-credit-card",
                         action: "health_invoicing.action_health_payment_transaction",
                         description: "View payment history"
-                    },
-                    {
-                        name: "Process Payments",
-                        icon: "fa-cogs",
-                        action: "health_invoicing.action_health_payment_workflow_wizard",
-                        description: "Payment workflow"
                     },
                 ],
             },
@@ -205,12 +177,6 @@ class VietUcDashboard extends Component {
                         icon: "fa-list-ul",
                         action: "health_base.action_health_service_type",
                         description: "Define service types"
-                    },
-                    {
-                        name: "Medical Specialties",
-                        icon: "fa-stethoscope",
-                        action: "health_base.action_health_specialty",
-                        description: "Manage medical specialties"
                     },
                     {
                         name: "Symptoms",
@@ -265,12 +231,6 @@ class VietUcDashboard extends Component {
                         icon: "fa-briefcase",
                         action: "health_fieldservice.action_health_portable_equipment",
                         description: "Track medical equipment"
-                    },
-                    {
-                        name: "Clinical Protocols",
-                        icon: "fa-file-text-o",
-                        action: "health_fieldservice.action_health_clinical_protocol",
-                        description: "Clinical guidelines"
                     },
                     {
                         name: "Package Products",
@@ -364,12 +324,116 @@ class VietUcDashboard extends Component {
 
     /**
      * Launch Odoo action
+     * Stores parent module context before launching action
      */
     async launchAction(actionXmlId, actionName, icon) {
         try {
-            await this.actionService.doAction(actionXmlId);
+            // Store the current module as parent so breadcrumb can navigate back to it
+            if (this.state.currentModule) {
+                this.state.parentModule = this.state.currentModule;
+                // Store breadcrumb context for the opened action
+                window.vietUcBreadcrumb = {
+                    parentModule: this.state.currentModule.name,
+                    parentModuleId: this.state.currentModule.id,
+                    actionName: actionName
+                };
+            }
+
+            // Launch action with custom context
+            const action = await this.actionService.doAction(actionXmlId);
+
+            // After action opens, inject breadcrumb if needed
+            setTimeout(() => {
+                this.injectBreadcrumb(actionName);
+            }, 500);
+
+            return action;
         } catch (error) {
             console.error("Failed to launch action:", actionXmlId, error);
+        }
+    }
+
+    /**
+     * Inject breadcrumb navigation into the action view
+     */
+    injectBreadcrumb(actionName) {
+        const breadcrumb = window.vietUcBreadcrumb;
+        if (!breadcrumb) return;
+
+        // Look for the page title area and modify it
+        const titleElements = document.querySelectorAll('.o_control_panel_main_buttons, .o_cp_top');
+
+        if (titleElements.length > 0) {
+            // Create custom breadcrumb element with data attributes for navigation
+            const breadcrumbHtml = `
+                <div class="viet_uc_action_breadcrumb" style="padding: 10px 16px; background: #f8f9fa; border-bottom: 1px solid #e0e0e0; display: flex; align-items: center; gap: 8px; font-size: 13px;">
+                    <i class="fa fa-home viet_uc_breadcrumb_home" style="cursor: pointer; color: #0084D8;" data-action="go-to-viet-uc"></i>
+                    <span>Viet Uc</span>
+                    <i class="fa fa-chevron-right" style="font-size: 10px; color: #999;"></i>
+                    <span class="viet_uc_breadcrumb_module" style="color: #0084D8; cursor: pointer;" data-module-id="${breadcrumb.parentModuleId}" data-module-name="${breadcrumb.parentModule}">${breadcrumb.parentModule}</span>
+                    <i class="fa fa-chevron-right" style="font-size: 10px; color: #999;"></i>
+                    <span>${actionName}</span>
+                </div>
+            `;
+
+            // Find the control panel and insert breadcrumb
+            const controlPanel = document.querySelector('.o_control_panel');
+            if (controlPanel && !document.querySelector('.viet_uc_action_breadcrumb')) {
+                const breadcrumbDiv = document.createElement('div');
+                breadcrumbDiv.innerHTML = breadcrumbHtml;
+                const breadcrumbElement = breadcrumbDiv.firstElementChild;
+                controlPanel.insertBefore(breadcrumbElement, controlPanel.firstChild);
+
+                // Add click handlers after insertion
+                setTimeout(() => {
+                    this.attachBreadcrumbHandlers();
+                }, 100);
+            }
+        }
+    }
+
+    /**
+     * Attach click handlers to breadcrumb elements
+     */
+    attachBreadcrumbHandlers() {
+        // Home icon click handler
+        const homeIcon = document.querySelector('.viet_uc_breadcrumb_home');
+        if (homeIcon) {
+            homeIcon.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                this.actionService.doAction('health_landing.action_viet_uc_dashboard');
+            });
+        }
+
+        // Module name click handler
+        const moduleSpan = document.querySelector('.viet_uc_breadcrumb_module');
+        if (moduleSpan) {
+            moduleSpan.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                const moduleId = moduleSpan.getAttribute('data-module-id');
+                const moduleName = moduleSpan.getAttribute('data-module-name');
+                // Store context and navigate to show the submenu
+                window.vietUcNavigateToModule = {
+                    moduleId: moduleId,
+                    moduleName: moduleName
+                };
+                this.actionService.doAction('health_landing.action_viet_uc_dashboard');
+            });
+        }
+    }
+
+    /**
+     * Go back to parent module (submenu) or root dashboard
+     */
+    goBack() {
+        if (this.state.parentModule) {
+            // Return to the parent submenu
+            this.showSubmenu(this.state.parentModule);
+        } else {
+            // Return to root dashboard
+            this.showMain();
         }
     }
 
@@ -413,6 +477,18 @@ class VietUcDashboard extends Component {
 }
 
 VietUcDashboard.template = "health_landing.VietUcDashboardTemplate";
+
+// Global function to navigate back to parent module
+window.vietUcGoBackToModule = function() {
+    const breadcrumb = window.vietUcBreadcrumb;
+    if (breadcrumb && breadcrumb.parentModuleId) {
+        // Navigate back to Viet Uc dashboard with the parent module
+        window.location.href = `/web#action=health_landing.action_viet_uc_dashboard&menu_id=${breadcrumb.parentModuleId}`;
+    } else {
+        // Fallback to main dashboard
+        window.location.href = '/web#action=health_landing.action_viet_uc_dashboard';
+    }
+};
 
 // Register components
 registry.category("actions").add("viet_uc_dashboard", VietUcDashboard);

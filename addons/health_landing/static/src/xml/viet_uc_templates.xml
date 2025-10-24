@@ -76,9 +76,15 @@
                     <span class="health_landing_breadcrumb_item" t-esc="state.currentModule.name"/>
                 </div>
 
-                <!-- Back Button -->
-                <button class="health_landing_back_btn" t-on-click="() => this.showMain()">
-                    <i class="fa fa-arrow-left"/> Back to Viet Uc Dashboard
+                <!-- Back Button - Goes to parent module or main dashboard -->
+                <button class="health_landing_back_btn" t-on-click="() => this.goBack()">
+                    <i class="fa fa-arrow-left"/>
+                    <t t-if="state.parentModule">
+                        Back to <t t-esc="state.parentModule.name"/>
+                    </t>
+                    <t t-else="">
+                        Back to Viet Uc Dashboard
+                    </t>
                 </button>
 
                 <!-- Submenu Header -->

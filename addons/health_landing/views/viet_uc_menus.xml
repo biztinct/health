@@ -16,14 +16,6 @@
               sequence="40"
               groups="health_base.group_healthcare_manager,health_base.group_healthcare_admin,health_base.group_healthcare_owner,health_base.group_healthcare_nurse,health_base.group_healthcare_doctor"/>
 
-    <!-- Assignment Dashboard -->
-    <menuitem id="menu_viet_uc_assignment_dashboard"
-              name="Assignment Dashboard"
-              parent="menu_viet_uc_staff"
-              action="health_fieldservice.action_fso_assignment_dashboard"
-              sequence="10"
-              groups="health_base.group_healthcare_manager,health_base.group_healthcare_admin,health_base.group_healthcare_owner"/>
-
     <!-- Visual Scheduler -->
     <menuitem id="menu_viet_uc_visual_scheduler"
               name="Visual Scheduler"
@@ -38,14 +30,6 @@
               parent="menu_viet_uc_staff"
               action="health_fieldservice.action_assignment_web_timeline_view"
               sequence="30"
-              groups="health_base.group_healthcare_manager,health_base.group_healthcare_admin,health_base.group_healthcare_owner"/>
-
-    <!-- Staff Availability -->
-    <menuitem id="menu_viet_uc_staff_availability"
-              name="Staff Availability"
-              parent="menu_viet_uc_staff"
-              action="health_fieldservice.action_health_staff_availability"
-              sequence="40"
               groups="health_base.group_healthcare_manager,health_base.group_healthcare_admin,health_base.group_healthcare_owner"/>
 
     <!-- Staff Workload -->
@@ -125,14 +109,6 @@
               parent="menu_viet_uc_configuration"
               action="health_fieldservice.action_health_portable_equipment"
               sequence="50"
-              groups="health_base.group_healthcare_manager,health_base.group_healthcare_admin,health_base.group_healthcare_owner"/>
-
-    <!-- Clinical Protocols -->
-    <menuitem id="menu_viet_uc_clinical_protocols"
-              name="Clinical Protocols"
-              parent="menu_viet_uc_configuration"
-              action="health_fieldservice.action_health_clinical_protocol"
-              sequence="60"
               groups="health_base.group_healthcare_manager,health_base.group_healthcare_admin,health_base.group_healthcare_owner"/>
 
     <!-- Package Products -->

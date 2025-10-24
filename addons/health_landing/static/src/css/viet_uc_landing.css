@@ -365,3 +365,42 @@
 .module-billing .health_landing_card_icon { color: #4AAD54 !important; }
 .module-config .health_landing_card_icon { color: #5A7A8C !important; }
 .module-staff .health_landing_card_icon { color: #D946EF !important; }
+
+/* Viet Uc Action Breadcrumb Navigation */
+.viet_uc_action_breadcrumb {
+    padding: 12px 16px !important;
+    background: linear-gradient(135deg, #f8f9fa 0%, #f0f2f5 100%) !important;
+    border-bottom: 1px solid #e0e0e0 !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 10px !important;
+    font-size: 13px !important;
+    font-weight: 500 !important;
+    color: #333 !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08) !important;
+}
+
+.viet_uc_action_breadcrumb i {
+    color: #666 !important;
+}
+
+.viet_uc_action_breadcrumb i.fa-home {
+    color: #0084D8 !important;
+    cursor: pointer !important;
+    transition: color 200ms !important;
+}
+
+.viet_uc_action_breadcrumb i.fa-home:hover {
+    color: #0066a1 !important;
+}
+
+.viet_uc_action_breadcrumb span[style*="color: #0084D8"] {
+    color: #0084D8 !important;
+    cursor: pointer !important;
+    font-weight: 600 !important;
+    transition: color 200ms !important;
+}
+
+.viet_uc_action_breadcrumb span[style*="color: #0084D8"]:hover {
+    color: #0066a1 !important;
+}
