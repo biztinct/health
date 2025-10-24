@@ -604,29 +604,8 @@ export class FSOHubSpokeWidget extends Component {
                         [this.props.fsoId]
                     );
                     if (result) {
-                        // Get FSO name for breadcrumb
-                        const fsoRecord = await this.orm.read(
-                            "health.fieldservice.order",
-                            [this.props.fsoId],
-                            ["name"]
-                        );
-                        const fsoName = fsoRecord[0]?.name || "Booking Dashboard";
-
-                        // Add proper breadcrumb using props.breadcrumbs
-                        await this.actionService.doAction(result, {
-                            props: {
-                                breadcrumbs: [{
-                                    jsId: this.props.fsoId,
-                                    name: fsoName,
-                                    action: {
-                                        type: "ir.actions.act_window",
-                                        res_model: "health.fieldservice.order",
-                                        res_id: this.props.fsoId,
-                                        views: [[false, "form"]],
-                                    },
-                                }],
-                            },
-                        });
+                        // Action name is already set to "Booking Dashboard" in Python
+                        await this.actionService.doAction(result);
                     }
                 } catch (error) {
                     console.error("Error opening staff assignment timeline:", error);

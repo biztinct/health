@@ -2223,14 +2223,13 @@ class HealthFieldServiceOrderUnified(models.Model):
         }
 
         return {
-            'name': _('Staff Assignment - %s') % self.name,
+            'name': _('Booking Dashboard'),  # Hardcoded breadcrumb name
             'type': 'ir.actions.act_window',
             'res_model': 'health.staff.assignment',
             'view_mode': 'timeline,list,form',
             'views': views if views else False,
             'target': 'current',
             'context': ctx,
-            'display_name': self.name,  # Set display name for breadcrumb
         }
     
     def action_view_invoice(self):
