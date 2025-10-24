@@ -4,61 +4,61 @@
    Features: Material elevation, smooth animations, responsive design, accessibility
    ============================================================================ */
 
-/* Theme Color Variables - Extended Palette (Enhanced Saturation) */
+/* Theme Color Variables - Việt Úc Brand Colors */
 :root {
-    /* Patient Management - Blue */
-    --color-patient-primary: #1570D8;
-    --color-patient-light: #DFF3FC;
+    /* Patient Management - Deep Blue (Primary Brand) */
+    --color-patient-primary: #1565C0;
+    --color-patient-light: #E4F4FD;
     --color-patient-dark: #0D47A1;
     --color-patient-accent: #42A5F5;
 
-    /* Scheduling & Staff - Cyan */
-    --color-scheduling-primary: #00A5B8;
-    --color-scheduling-light: #A8EAEF;
-    --color-scheduling-dark: #006064;
-    --color-scheduling-accent: #26C6DA;
+    /* Scheduling & Staff - Accent Blue */
+    --color-scheduling-primary: #42A5F5;
+    --color-scheduling-light: #E4F4FD;
+    --color-scheduling-dark: #1565C0;
+    --color-scheduling-accent: #83C5FA;
 
-    /* CRM - Teal */
-    --color-crm-primary: #008577;
-    --color-crm-light: #D1EEE8;
-    --color-crm-dark: #004D40;
-    --color-crm-accent: #26A69A;
+    /* CRM - Info Blue */
+    --color-crm-primary: #2A7ABF;
+    --color-crm-light: #E4F4FD;
+    --color-crm-dark: #1565C0;
+    --color-crm-accent: #42A5F5;
 
-    /* Field Service - Orange */
-    --color-fieldservice-primary: #E67E00;
-    --color-fieldservice-light: #FDD6AF;
-    --color-fieldservice-dark: #BF360C;
-    --color-fieldservice-accent: #FF9800;
+    /* Field Service - Hibiscus Orange */
+    --color-fieldservice-primary: #FB8C00;
+    --color-fieldservice-light: #FEE8C9;
+    --color-fieldservice-dark: #D46E00;
+    --color-fieldservice-accent: #FCB24D;
 
-    /* Service Packages - Purple */
-    --color-packages-primary: #7C56B8;
-    --color-packages-light: #E0D5F5;
-    --color-packages-dark: #4A148C;
-    --color-packages-accent: #9C27B0;
+    /* Service Packages - Accent Blue */
+    --color-packages-primary: #42A5F5;
+    --color-packages-light: #E4F4FD;
+    --color-packages-dark: #1565C0;
+    --color-packages-accent: #83C5FA;
 
-    /* Advanced Pricelist - Amber */
-    --color-pricing-primary: #F68400;
-    --color-pricing-light: #FFDBA0;
-    --color-pricing-dark: #E65100;
-    --color-pricing-accent: #FFA726;
+    /* Advanced Pricelist - Warning Amber */
+    --color-pricing-primary: #946200;
+    --color-pricing-light: #FEE8C9;
+    --color-pricing-dark: #6B4500;
+    --color-pricing-accent: #FB8C00;
 
-    /* Billing & Invoicing - Green */
-    --color-billing-primary: #4AAD54;
-    --color-billing-light: #D4EFD4;
-    --color-billing-dark: #2E7D32;
-    --color-billing-accent: #66BB6A;
+    /* Billing & Invoicing - Success Green */
+    --color-billing-primary: #176B47;
+    --color-billing-light: #DBF0DB;
+    --color-billing-dark: #2E6B33;
+    --color-billing-accent: #43A047;
 
-    /* Facilities - Red */
-    --color-facilities-primary: #D53B3E;
-    --color-facilities-light: #F5D5D3;
-    --color-facilities-dark: #B71C1C;
-    --color-facilities-accent: #EF5350;
+    /* Facilities - Danger Red */
+    --color-facilities-primary: #C0332A;
+    --color-facilities-light: #FBE3E1;
+    --color-facilities-dark: #8B1A1F;
+    --color-facilities-accent: #E53935;
 
-    /* Configuration - Grey */
-    --color-config-primary: #5A7A8C;
-    --color-config-light: #E4EBED;
-    --color-config-dark: #37474F;
-    --color-config-accent: #78909C;
+    /* Configuration - Text Secondary Grey */
+    --color-config-primary: #424242;
+    --color-config-light: #F5F5F5;
+    --color-config-dark: #212121;
+    --color-config-accent: #757575;
 
     /* UI Colors */
     --color-text-primary: #2C3E50;

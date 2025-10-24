@@ -40,8 +40,8 @@
 
 /* Status-specific colors */
 .service-timer-container.running {
-    background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
-    box-shadow: 0 2px 8px rgba(76, 175, 80, 0.25);
+    background: linear-gradient(135deg, #176B47 0%, #2E6B33 100%);
+    box-shadow: 0 2px 8px rgba(23, 107, 71, 0.25);
 }
 
 .service-timer-container.running::before {
@@ -49,8 +49,8 @@
 }
 
 .service-timer-container.completed {
-    background: linear-gradient(135deg, #2196F3 0%, #1976D2 100%);
-    box-shadow: 0 2px 8px rgba(33, 150, 243, 0.25);
+    background: linear-gradient(135deg, #1565C0 0%, #0D47A1 100%);
+    box-shadow: 0 2px 8px rgba(21, 101, 192, 0.25);
 }
 
 .service-timer-container.stopped {
@@ -224,11 +224,11 @@
 }
 
 .o_form_view .service-timer-container.running:hover {
-    box-shadow: 0 4px 12px rgba(76, 175, 80, 0.35);
+    box-shadow: 0 4px 12px rgba(23, 107, 71, 0.35);
 }
 
 .o_form_view .service-timer-container.completed:hover {
-    box-shadow: 0 4px 12px rgba(33, 150, 243, 0.35);
+    box-shadow: 0 4px 12px rgba(21, 101, 192, 0.35);
 }
 
 /* Ensure timer doesn't interfere with form content */

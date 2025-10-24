@@ -63,7 +63,7 @@
                             <polygon points="0 0, 10 3, 0 6" fill="#9E9E9E"/>
                         </marker>
                         <marker id="arrowheadActive" markerWidth="12" markerHeight="12" refX="10" refY="3.5" orient="auto">
-                            <polygon points="0 0, 12 3.5, 0 7" fill="#3498db"/>
+                            <polygon points="0 0, 12 3.5, 0 7" fill="#1565C0"/>
                         </marker>
                     </defs>
 
@@ -73,7 +73,7 @@
                             <path
                                 t-att-d="getLinePath(connection)"
                                 t-att-class="getConnectionClasses(connection)"
-                                t-att-stroke="isConnectionActive(connection) ? '#3498db' : '#D0D0D0'"
+                                t-att-stroke="isConnectionActive(connection) ? '#1565C0' : '#D0D0D0'"
                                 stroke-width="3"
                                 fill="none"
                                 t-att-marker-end="isConnectionActive(connection) ? 'url(#arrowheadActive)' : 'url(#arrowhead)'"

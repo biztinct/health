@@ -18,7 +18,7 @@
 
 /* Ultra-Compact Professional Timeline Controls */
 .o_timeline_controls {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #1565C0 0%, #0D47A1 100%);
     border-bottom: none;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     z-index: 100;
@@ -77,7 +77,7 @@
 
 .o_pill_active {
     background: white !important;
-    color: #667eea !important;
+    color: #1565C0 !important;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
@@ -361,15 +361,15 @@
 }
 
 .o_workload_fill.o_optimal {
-    background: linear-gradient(90deg, #28a745, #20c997);
+    background: linear-gradient(90deg, #176B47, #43A047);
 }
 
 .o_workload_fill.o_warning {
-    background: linear-gradient(90deg, #ffc107, #fd7e14);
+    background: linear-gradient(90deg, #946200, #FB8C00);
 }
 
 .o_workload_fill.o_overload {
-    background: linear-gradient(90deg, #dc3545, #e83e8c);
+    background: linear-gradient(90deg, #C0332A, #E53935);
 }
 
 .o_workload_text {
@@ -433,20 +433,20 @@
 
 /* Staff Drop Target States */
 .o_timeline_staff_row.o_valid_staff_drop_target {
-    background: rgba(40, 167, 69, 0.15);
-    border: 2px solid #28a745;
+    background: rgba(23, 107, 71, 0.15);
+    border: 2px solid #176B47;
     animation: staffDropPulse 1s ease-in-out infinite alternate;
 }
 
 .o_timeline_staff_row.o_invalid_staff_drop_target {
-    background: rgba(220, 53, 69, 0.15);
-    border: 2px solid #dc3545;
+    background: rgba(192, 51, 42, 0.15);
+    border: 2px solid #C0332A;
     opacity: 0.6;
 }
 
 @keyframes staffDropPulse {
-    from { background: rgba(40, 167, 69, 0.1); }
-    to { background: rgba(40, 167, 69, 0.2); }
+    from { background: rgba(23, 107, 71, 0.1); }
+    to { background: rgba(23, 107, 71, 0.2); }
 }
 
 /* Timeline Slots */
@@ -463,29 +463,29 @@
 
 /* Drop Zone States */
 .o_timeline_slot.o_potential_drop_zone {
-    background: rgba(40, 167, 69, 0.1);
-    border: 2px dashed #28a745;
+    background: rgba(23, 107, 71, 0.1);
+    border: 2px dashed #176B47;
     animation: dropZonePulse 1s ease-in-out infinite alternate;
 }
 
 .o_timeline_slot.o_invalid_drop_zone {
-    background: rgba(220, 53, 69, 0.1);
+    background: rgba(192, 51, 42, 0.1);
     opacity: 0.5;
 }
 
 .o_timeline_slot.o_valid_drop_target {
-    background: rgba(40, 167, 69, 0.2);
-    border: 2px solid #28a745;
+    background: rgba(23, 107, 71, 0.2);
+    border: 2px solid #176B47;
 }
 
 .o_timeline_slot.o_invalid_drop_target {
-    background: rgba(220, 53, 69, 0.2);
-    border: 2px solid #dc3545;
+    background: rgba(192, 51, 42, 0.2);
+    border: 2px solid #C0332A;
 }
 
 @keyframes dropZonePulse {
-    from { background: rgba(40, 167, 69, 0.05); }
-    to { background: rgba(40, 167, 69, 0.15); }
+    from { background: rgba(23, 107, 71, 0.05); }
+    to { background: rgba(23, 107, 71, 0.15); }
 }
 
 /* Assignment Blocks - Ultra Minimal Professional Design */
@@ -737,15 +737,15 @@
 .o_time_line {
     width: 2px;
     height: 100%;
-    background: #dc3545;
-    box-shadow: 0 0 4px rgba(220, 53, 69, 0.5);
+    background: #C0332A;
+    box-shadow: 0 0 4px rgba(192, 51, 42, 0.5);
 }
 
 .o_time_marker {
     position: absolute;
     top: -8px;
     left: -4px;
-    color: #dc3545;
+    color: #C0332A;
     font-size: 10px;
 }
 

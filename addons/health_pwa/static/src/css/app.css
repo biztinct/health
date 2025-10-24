@@ -448,14 +448,14 @@
 
 /* CSS Custom Properties for theming */
 :root {
-  --primary-color: #875A7B;
-  --primary-dark: #6B4561;
-  --secondary-color: #B33D6C;
-  --accent-color: #E8B4C8;
-  --success-color: #4CAF50;
-  --warning-color: #FF9800;
-  --error-color: #F44336;
-  --info-color: #2196F3;
+  --primary-color: #1565C0;
+  --primary-dark: #0D47A1;
+  --secondary-color: #42A5F5;
+  --accent-color: #E4F4FD;
+  --success-color: #176B47;
+  --warning-color: #946200;
+  --error-color: #C0332A;
+  --info-color: #2A7ABF;
   
   --text-primary: #333333;
   --text-secondary: #666666;
