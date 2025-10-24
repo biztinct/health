@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo noupdate="0">
 
-    <!-- Field Service Order Stages -->
+    <!-- Booking Stages -->
     <record id="stage_draft" model="health.fieldservice.stage">
         <field name="name">Draft</field>
         <field name="description">FSO created but not yet dispatched</field>

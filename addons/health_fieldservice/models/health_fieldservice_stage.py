@@ -7,7 +7,7 @@ class HealthFieldServiceStage(models.Model):
     Field Service Order Stages - Standalone model for FSO workflow stages
     """
     _name = 'health.fieldservice.stage'
-    _description = 'Healthcare Field Service Order Stages'
+    _description = 'Healthcare Booking Stages'
     _order = 'sequence, name'
     
     name = fields.Char('Stage Name', required=True, translate=True)
@@ -105,7 +105,7 @@ class HealthFieldServiceStage(models.Model):
         """Action to view FSOs in this stage"""
         self.ensure_one()
         return {
-            'name': f'Field Service Orders - {self.name}',
+            'name': f'Bookings - {self.name}',
             'type': 'ir.actions.act_window',
             'res_model': 'health.fieldservice.order',
             'view_mode': 'list,form,kanban',

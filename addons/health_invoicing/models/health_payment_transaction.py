@@ -57,7 +57,7 @@ class HealthPaymentTransaction(models.Model):
     
     fso_id = fields.Many2one(
         'health.fieldservice.order',
-        string='Field Service Order',
+        string='Booking',
         help='FSO associated with this payment'
     )
     

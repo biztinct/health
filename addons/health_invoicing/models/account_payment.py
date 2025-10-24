@@ -33,8 +33,8 @@ class HealthcarePayment(models.Model):
     
     fieldservice_order_id = fields.Many2one(
         'health.fieldservice.order',
-        string='Field Service Order',
-        help='Field service order this payment is for'
+        string='Booking',
+        help='Booking this payment is for'
     )
     
     appointment_id = fields.Many2one(

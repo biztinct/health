@@ -314,7 +314,7 @@ window.healthPWA = {
                 @navigate="navigate">
               </patient-detail-view>
               
-              <!-- Field Service Orders -->
+              <!-- Bookings -->
               <orders-view v-else-if="state.currentRoute === 'orders'"
                 :is-online="state.isOnline"
                 @navigate="navigate">
@@ -2285,7 +2285,7 @@ window.healthPWA = {
                     <h4 style="font-size: 14px; font-weight: 600; color: #666; text-transform: uppercase; margin-bottom: 12px;">Service Summary</h4>
                     <div class="info-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
                       <div class="info-item">
-                        <label style="font-size: 12px; color: #999;">Field Service Order</label>
+                        <label style="font-size: 12px; color: #999;">Booking</label>
                         <span style="font-size: 14px; color: #333;">{{ order.name }}</span>
                       </div>
                       <div class="info-item">

@@ -64,7 +64,7 @@ class HealthPrepaidService(models.Model):
     
     fso_id = fields.Many2one(
         'health.fieldservice.order',
-        string='Field Service Order',
+        string='Booking',
         help='FSO where this prepaid service was delivered'
     )
     
@@ -254,10 +254,10 @@ class HealthPrepaidService(models.Model):
         self.ensure_one()
         
         if not self.fso_id:
-            raise UserError(_('No Field Service Order associated with this consumption.'))
+            raise UserError(_('No Booking associated with this consumption.'))
         
         return {
-            'name': _('Field Service Order'),
+            'name': _('Booking'),
             'type': 'ir.actions.act_window',
             'res_model': 'health.fieldservice.order',
             'res_id': self.fso_id.id,

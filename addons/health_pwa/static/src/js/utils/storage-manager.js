@@ -166,7 +166,7 @@ class HealthStorageManager {
     }
   }
   
-  // Field Service Order operations
+  // Booking operations
   async getFieldServiceOrders(options = {}) {
     const cacheKey = `orders_${JSON.stringify(options)}`;
     const cached = this.getCache(cacheKey);

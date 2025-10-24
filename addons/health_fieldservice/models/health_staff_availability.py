@@ -56,7 +56,7 @@ class HealthStaffAvailabilityMatrix(models.Model):
         'health.fieldservice.order',
         string='Related Field Service Order',
         ondelete='cascade',
-        help='Field Service Order that booked this slot'
+        help='Booking that booked this slot'
     )
     
     assignment_id = fields.Many2one(

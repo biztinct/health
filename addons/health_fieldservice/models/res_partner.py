@@ -55,12 +55,12 @@ class ResPartner(models.Model):
     def action_create_fso(self):
         """Create a new Field Service Order for this patient"""
         if not self.is_patient:
-            raise UserError(_('Only patients can have Field Service Orders created.'))
+            raise UserError(_('Only patients can have Bookings created.'))
         
         # Create new FSO with patient pre-filled
         action = {
             'type': 'ir.actions.act_window',
-            'name': _('Create Field Service Order'),
+            'name': _('Create Booking'),
             'res_model': 'health.fieldservice.order',
             'view_mode': 'form',
             'target': 'current',
@@ -73,9 +73,9 @@ class ResPartner(models.Model):
         return action
     
     def action_view_fso_orders(self):
-        """View all Field Service Orders for this patient"""
+        """View all Bookings for this patient"""
         if not self.is_patient:
-            raise UserError(_('Only patients can have Field Service Orders.'))
+            raise UserError(_('Only patients can have Bookings.'))
         
         fso_orders = self.env['health.fieldservice.order'].search([
             ('patient_id', '=', self.id)
@@ -83,7 +83,7 @@ class ResPartner(models.Model):
         
         action = {
             'type': 'ir.actions.act_window',
-            'name': _('Field Service Orders'),
+            'name': _('Bookings'),
             'res_model': 'health.fieldservice.order',
             'view_mode': 'list,form',
             'target': 'current',

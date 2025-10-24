@@ -22,7 +22,7 @@ class HealthPaymentWorkflowWizard(models.TransientModel):
     # Source records
     fso_id = fields.Many2one(
         'health.fieldservice.order',
-        string='Field Service Order',
+        string='Booking',
         required=True
     )
     

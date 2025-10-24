@@ -29,7 +29,7 @@ class HealthcareServiceBilling(models.Model):
     # Source service records
     fieldservice_order_id = fields.Many2one(
         'health.fieldservice.order',
-        string='Field Service Order',
+        string='Booking',
         help='FSO that generated this billing'
     )
     
@@ -248,7 +248,7 @@ class HealthcareServiceBilling(models.Model):
         fso = self.env['health.fieldservice.order'].browse(fso_id)
         
         if not fso:
-            raise UserError(_('Field Service Order not found.'))
+            raise UserError(_('Booking not found.'))
         
         # Calculate service amounts based on FSO
         billing_vals = {

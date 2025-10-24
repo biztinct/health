@@ -16,7 +16,7 @@ class HealthFieldServiceCommunication(models.Model):
     # Core communication fields
     fieldservice_order_id = fields.Many2one(
         'health.fieldservice.order',
-        string='Field Service Order',
+        string='Booking',
         required=True,
         ondelete='cascade'
     )

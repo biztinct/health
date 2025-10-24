@@ -23,8 +23,8 @@ class HealthcareInvoice(models.Model):
     # Healthcare service integration
     fieldservice_order_id = fields.Many2one(
         'health.fieldservice.order',
-        string='Field Service Order',
-        help='Field Service Order that generated this invoice'
+        string='Booking',
+        help='Booking that generated this invoice'
     )
     
     # appointment_id = fields.Many2one(

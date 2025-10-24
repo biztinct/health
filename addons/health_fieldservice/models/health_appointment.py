@@ -72,7 +72,7 @@ class HealthAppointment(models.Model):
     # Field Service Order relationship
     fieldservice_order_id = fields.Many2one(
         'health.fieldservice.order',
-        string='Field Service Order',
+        string='Booking',
         readonly=True,
         help="Automatically generated field service order for home visits"
     )
@@ -235,14 +235,14 @@ class HealthAppointment(models.Model):
             return False
             
         if self.fieldservice_order_id:
-            raise UserError(_("Field Service Order already exists for this appointment."))
+            raise UserError(_("Booking already exists for this appointment."))
         
         # Validate required data
         if not self.patient_id:
-            raise UserError(_("Patient is required to create Field Service Order."))
+            raise UserError(_("Patient is required to create Booking."))
         
         if not self.appointment_type_id:
-            raise UserError(_("Service type is required to create Field Service Order."))
+            raise UserError(_("Service type is required to create Booking."))
         
         # Get appropriate clinical protocol
         protocol = self.env['health.clinical.protocol'].get_protocol_for_service(
@@ -336,7 +336,7 @@ class HealthAppointment(models.Model):
         self.ensure_one()
         
         if not self.fieldservice_order_id:
-            raise UserError(_("No Field Service Order exists for this appointment."))
+            raise UserError(_("No Booking exists for this appointment."))
         
         return {
             'name': f'Field Service Order - {self.fieldservice_order_id.name}',
@@ -352,17 +352,17 @@ class HealthAppointment(models.Model):
         self.ensure_one()
         
         if self.fieldservice_order_id:
-            raise UserError(_("Field Service Order already exists for this appointment."))
+            raise UserError(_("Booking already exists for this appointment."))
         
         if self.state != 'confirmed':
-            raise UserError(_("Appointment must be confirmed before creating Field Service Order."))
+            raise UserError(_("Appointment must be confirmed before creating Booking."))
         
         fso = self._create_field_service_order()
         
         if fso:
             return self.action_view_fieldservice_order()
         else:
-            raise UserError(_("Failed to create Field Service Order. Please check appointment details."))
+            raise UserError(_("Failed to create Booking. Please check appointment details."))
     
     # ============================================================================
     # Staff Assignment Workflow Methods

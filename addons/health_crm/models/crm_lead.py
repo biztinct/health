@@ -702,7 +702,7 @@ class HealthLead(models.Model):
         # Return action to open the created FSO booking form
         return {
             'type': 'ir.actions.act_window',
-            'name': _('Field Service Order'),
+            'name': _('Booking'),
             'res_model': 'health.fieldservice.order',
             'res_id': fso.id,
             'view_mode': 'form',

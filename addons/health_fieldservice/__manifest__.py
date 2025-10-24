@@ -10,7 +10,7 @@
         Unified healthcare field service management with AI-powered staff assignment:
         
         Field Service Management:
-        - Field Service Orders (FSO) for home visit coordination
+        - Bookings (FSO) for home visit coordination
         - Automatic FSO generation from confirmed appointments
         - Real-time communication system for field staff
         - Equipment tracking and management

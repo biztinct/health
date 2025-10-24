@@ -49,7 +49,7 @@ class HealthStaffAssignment(models.Model):
     
     fso_id = fields.Many2one(
         'health.fieldservice.order',
-        string='Field Service Order',
+        string='Booking',
         required=True,
         ondelete='cascade',
         tracking=True
@@ -2134,7 +2134,7 @@ class HealthStaffAssignmentEngine(models.Model):
         self.ensure_one()
         
         if not self.fieldservice_order_id:
-            raise UserError(_("No Field Service Order associated with this assignment."))
+            raise UserError(_("No Booking associated with this assignment."))
         
         return {
             'name': f'Field Service Order - {self.fieldservice_order_id.name}',

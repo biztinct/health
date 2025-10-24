@@ -5,11 +5,11 @@ class SaleOrder(models.Model):
     _inherit = 'sale.order'
     
     # Get FSO that created this quote (reverse relationship)
-    fso_id = fields.Many2one('health.fieldservice.order', 
-                            string='Field Service Order',
+    fso_id = fields.Many2one('health.fieldservice.order',
+                            string='Booking',
                             compute='_compute_fso_id',
                             store=True,
-                            help='FSO that created this quote')
+                            help='Booking that created this quote')
     
     # Pricing configuration
     use_advanced_pricing = fields.Boolean('Use Advanced Pricing', 

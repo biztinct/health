@@ -21,7 +21,7 @@ class HealthNursePaymentWizard(models.TransientModel):
     # FSO and Service Information
     fso_id = fields.Many2one(
         'health.fieldservice.order',
-        string='Field Service Order',
+        string='Booking',
         required=True,
         readonly=True,
         help='Completed field service order requiring payment'
@@ -233,7 +233,7 @@ class HealthNursePaymentWizard(models.TransientModel):
         self.ensure_one()
         
         if not self.fso_id:
-            raise UserError(_('No Field Service Order specified.'))
+            raise UserError(_('No Booking specified.'))
         
         # Create invoice first
         invoice = self._create_invoice()

@@ -18,7 +18,7 @@
         - Ministry of Health (MOH) regulatory compliance
         
         Healthcare Service Integration:
-        - Auto-invoice creation from Field Service Orders (FSO)  
+        - Auto-invoice creation from Bookings (FSO)  
         - Package service consumption via FSO completion (NEW APPROACH)
         - Reusable healthcare package products in product catalog
         - Appointment-based billing workflow

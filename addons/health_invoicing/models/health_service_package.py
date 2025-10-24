@@ -184,7 +184,7 @@ class HealthServicePackage(models.Model):
         'health.fieldservice.order',
         'package_id',
         string='Service Orders',
-        help='Field service orders that consumed from this package'
+        help='Bookings that consumed from this package'
     )
     
     consumption_count = fields.Integer(
