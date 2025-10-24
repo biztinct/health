@@ -33,6 +33,7 @@
                 <field name="planned_end_time"/>
                 <field name="predicted_duration"/>
                 <field name="formatted_datetime"/>
+                <field name="fso_duration_minutes"/>
                 
                 <templates>
                     <t t-name="timeline-item">
@@ -40,13 +41,8 @@
         <div class="hf-wt-card">
             <div class="hf-wt-title"><t t-esc="record.patient_name or 'Client'"/></div>
             <div class="hf-wt-meta">
-                <div class="hf-wt-left">
-                    <span t-esc="record.formatted_datetime"/>
-                </div>
-                <div class="hf-wt-right">
-                    <t t-set="dur" t-value="record.predicted_duration or 0"/>
-                    <span t-esc="dur + ' min'"/>
-                </div>
+                <t t-set="dur" t-value="record.fso_duration_minutes or 0"/>
+                <span><t t-esc="record.formatted_datetime"/> (<t t-esc="dur"/> min)</span>
             </div>
         </div>
                     </t>

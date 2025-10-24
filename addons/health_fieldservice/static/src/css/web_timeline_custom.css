@@ -92,3 +92,83 @@
 .vis-item.hfhs-timeline-card:not(.vis-background) {
   border-left-width: 4px !important;
 }
+
+/* ============================================================================ */
+/* Group Background Colors - Different color for each staff member/group       */
+/* ============================================================================ */
+
+/* UNASSIGNED group (gray) */
+.vis-timeline .vis-background .staff-bg-0,
+.vis-timeline .vis-labelset .staff-bg-0 {
+  background-color: #F5F5F5 !important; /* Light Gray */
+}
+
+/* Staff group color 1 - Light Blue */
+.vis-timeline .vis-background .staff-bg-1,
+.vis-timeline .vis-labelset .staff-bg-1 {
+  background-color: #E3F2FD !important;
+}
+
+/* Staff group color 2 - Light Purple */
+.vis-timeline .vis-background .staff-bg-2,
+.vis-timeline .vis-labelset .staff-bg-2 {
+  background-color: #F3E5F5 !important;
+}
+
+/* Staff group color 3 - Light Green */
+.vis-timeline .vis-background .staff-bg-3,
+.vis-timeline .vis-labelset .staff-bg-3 {
+  background-color: #E8F5E9 !important;
+}
+
+/* Staff group color 4 - Light Orange */
+.vis-timeline .vis-background .staff-bg-4,
+.vis-timeline .vis-labelset .staff-bg-4 {
+  background-color: #FFF3E0 !important;
+}
+
+/* Staff group color 5 - Light Pink */
+.vis-timeline .vis-background .staff-bg-5,
+.vis-timeline .vis-labelset .staff-bg-5 {
+  background-color: #FCE4EC !important;
+}
+
+/* Staff group color 6 - Light Teal */
+.vis-timeline .vis-background .staff-bg-6,
+.vis-timeline .vis-labelset .staff-bg-6 {
+  background-color: #E0F2F1 !important;
+}
+
+/* Staff group color 7 - Light Yellow */
+.vis-timeline .vis-background .staff-bg-7,
+.vis-timeline .vis-labelset .staff-bg-7 {
+  background-color: #FFF9C4 !important;
+}
+
+/* Staff group color 8 - Light Lavender */
+.vis-timeline .vis-background .staff-bg-8,
+.vis-timeline .vis-labelset .staff-bg-8 {
+  background-color: #F8BBD0 !important;
+}
+
+/* Ensure grid lines are still visible with semi-transparent backgrounds if needed */
+.vis-timeline .vis-grid.vis-vertical {
+  border-left: 1px solid #e0e0e0;
+  z-index: 1;
+}
+
+/* Make group names (staff names) bold in the left label panel */
+.vis-timeline .vis-labelset .vis-label .vis-inner {
+  font-weight: 700 !important;
+  font-size: 14px !important;
+}
+
+/* Ensure timeline items (cards) appear on top of weekend gray background */
+.vis-timeline .vis-item {
+  z-index: 10 !important;
+}
+
+/* Ensure weekend background stays behind items */
+.vis-timeline .vis-time-axis .vis-grid.vis-minor {
+  z-index: 0 !important;
+}

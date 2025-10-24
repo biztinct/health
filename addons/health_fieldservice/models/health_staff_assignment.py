@@ -87,6 +87,9 @@ class HealthStaffAssignment(models.Model):
 
     # Formatted datetime for timeline display (e.g., "21/Oct - 10:30 AM")
     formatted_datetime = fields.Char('Formatted DateTime', compute='_compute_formatted_datetime', store=False)
+
+    # Duration from FSO for timeline display
+    fso_duration_minutes = fields.Integer('Service Duration (Minutes)', compute='_compute_fso_duration', store=False)
     
     # Individual assignment status
     assignment_status = fields.Selection([
@@ -297,7 +300,7 @@ class HealthStaffAssignment(models.Model):
 
     @api.depends('planned_start_time', 'assignment_date')
     def _compute_formatted_datetime(self):
-        """Format datetime as '21/Oct - 10:30 AM' for timeline display"""
+        """Format datetime as '21/Oct-10:30 AM' for timeline display"""
         for record in self:
             dt = record.planned_start_time or record.assignment_date
             if dt:
@@ -305,10 +308,19 @@ class HealthStaffAssignment(models.Model):
                 user_tz = self.env.user.tz or 'UTC'
                 from pytz import timezone
                 local_dt = dt.replace(tzinfo=timezone('UTC')).astimezone(timezone(user_tz))
-                # Format: "21/Oct - 10:30 AM"
-                record.formatted_datetime = local_dt.strftime('%d/%b - %I:%M %p')
+                # Format: "21/Oct-10:30 AM" (no spaces around hyphen)
+                record.formatted_datetime = local_dt.strftime('%d/%b-%I:%M %p')
             else:
                 record.formatted_datetime = ''
+
+    @api.depends('fso_id.duration_minutes')
+    def _compute_fso_duration(self):
+        """Get duration from the FSO booking"""
+        for record in self:
+            if record.fso_id and record.fso_id.duration_minutes:
+                record.fso_duration_minutes = record.fso_id.duration_minutes
+            else:
+                record.fso_duration_minutes = 0
 
     @api.depends('staff_id', 'fso_id')
     def _compute_assignment_score(self):
