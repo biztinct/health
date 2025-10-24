@@ -604,7 +604,29 @@ export class FSOHubSpokeWidget extends Component {
                         [this.props.fsoId]
                     );
                     if (result) {
-                        await this.actionService.doAction(result);
+                        // Get FSO name for breadcrumb
+                        const fsoRecord = await this.orm.read(
+                            "health.fieldservice.order",
+                            [this.props.fsoId],
+                            ["name"]
+                        );
+                        const fsoName = fsoRecord[0]?.name || "Booking Dashboard";
+
+                        // Add proper breadcrumb using props.breadcrumbs
+                        await this.actionService.doAction(result, {
+                            props: {
+                                breadcrumbs: [{
+                                    jsId: this.props.fsoId,
+                                    name: fsoName,
+                                    action: {
+                                        type: "ir.actions.act_window",
+                                        res_model: "health.fieldservice.order",
+                                        res_id: this.props.fsoId,
+                                        views: [[false, "form"]],
+                                    },
+                                }],
+                            },
+                        });
                     }
                 } catch (error) {
                     console.error("Error opening staff assignment timeline:", error);
@@ -640,7 +662,7 @@ export class FSOHubSpokeWidget extends Component {
                 break;
 
             case "invoice":
-                // Open invoice if one exists
+                // Open invoice in modal if one exists
                 (async () => {
                     try {
                         console.log("Calling action_view_invoice for FSO:", this.props.fsoId);
@@ -653,9 +675,11 @@ export class FSOHubSpokeWidget extends Component {
 
                         if (result && result.res_id) {
                             // Add views array on the client side since RPC serialization strips it
+                            // Open as modal (target: "new") instead of full screen (target: "current")
                             const invoiceAction = {
                                 ...result,
                                 views: [[result.view_id || false, 'form']],  // Ensure views array is present
+                                target: 'new',  // Open as modal dialog instead of full screen
                             };
                             console.log("Executing invoice action with views:", invoiceAction);
                             await this.actionService.doAction(invoiceAction);
