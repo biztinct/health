@@ -354,7 +354,7 @@ export class TimelineRenderer extends Component {
             return records;
         }
         const groups = [];
-        groups.push({id: -1, content: _t("<b>UNASSIGNED</b>"), order: -1, className: 'staff-bg-0'});
+        groups.push({id: -1, content: _t("<b>UNASSIGNED</b>"), order: -1});
         var seq = 1;
         for (const evt of records) {
             const grouped_field = this.model.last_group_bys[0];
@@ -377,7 +377,6 @@ export class TimelineRenderer extends Component {
                         const is_inside = groups.some((gr) => gr.id === vals.id);
                         if (!is_inside) {
                             vals.order = seq;
-                            vals.className = `staff-bg-${(seq % 8) + 1}`;
                             seq += 1;
                             groups.push(vals);
                         }
@@ -387,7 +386,6 @@ export class TimelineRenderer extends Component {
                         id: group_name[0],
                         content: group_name[1],
                         order: seq,
-                        className: `staff-bg-${(seq % 8) + 1}`,
                     });
                     seq += 1;
                 }
