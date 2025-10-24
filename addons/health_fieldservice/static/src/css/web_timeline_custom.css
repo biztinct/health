@@ -7,6 +7,32 @@
   background: #fff !important;
 }
 
+/* Darker border colors on all 4 sides based on state backgrounds */
+.vis-item[style*="background-color: rgb(227, 242, 253)"] {
+  /* Light blue (#e3f2fd) - assigned state - darken to #1976d2 */
+  border: 3px solid #1976d2 !important;
+}
+
+.vis-item[style*="background-color: rgb(232, 245, 232)"] {
+  /* Light green (#e8f5e8) - confirmed/completed state - darken to #388e3c */
+  border: 3px solid #388e3c !important;
+}
+
+.vis-item[style*="background-color: rgb(255, 243, 224)"] {
+  /* Light orange (#fff3e0) - in_progress state - darken to #f57c00 */
+  border: 3px solid #f57c00 !important;
+}
+
+.vis-item[style*="background-color: rgb(255, 235, 238)"] {
+  /* Light red (#ffebee) - cancelled state - darken to #d32f2f */
+  border: 3px solid #d32f2f !important;
+}
+
+.vis-item[style*="background-color: rgb(248, 249, 250)"] {
+  /* Light gray (#f8f9fa) - draft state - darken to #6c757d */
+  border: 3px solid #6c757d !important;
+}
+
 .hfhs-timeline-card .vis-item-content,
 .hfhs-timeline-card .timeline-event-content {
   padding: 8px 10px !important;

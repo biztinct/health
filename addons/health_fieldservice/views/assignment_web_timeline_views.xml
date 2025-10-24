@@ -32,16 +32,16 @@
                 <field name="planned_start_time"/>
                 <field name="planned_end_time"/>
                 <field name="predicted_duration"/>
+                <field name="formatted_datetime"/>
                 
                 <templates>
                     <t t-name="timeline-item">
-                        
+
         <div class="hf-wt-card">
             <div class="hf-wt-title"><t t-esc="record.patient_name or 'Client'"/></div>
             <div class="hf-wt-meta">
                 <div class="hf-wt-left">
-                    <t t-set="dt" t-value="record.planned_start_time or record.assignment_date"/>
-                    <span t-esc="dt"/>
+                    <span t-esc="record.formatted_datetime"/>
                 </div>
                 <div class="hf-wt-right">
                     <t t-set="dur" t-value="record.predicted_duration or 0"/>

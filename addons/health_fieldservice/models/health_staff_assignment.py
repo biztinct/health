@@ -84,6 +84,9 @@ class HealthStaffAssignment(models.Model):
     planned_end_time = fields.Datetime('Planned End Time', help='When this staff member should finish')
     actual_start_time = fields.Datetime('Actual Start Time', help='When this staff member actually started')
     actual_end_time = fields.Datetime('Actual End Time', help='When this staff member actually finished')
+
+    # Formatted datetime for timeline display (e.g., "21/Oct - 10:30 AM")
+    formatted_datetime = fields.Char('Formatted DateTime', compute='_compute_formatted_datetime', store=False)
     
     # Individual assignment status
     assignment_status = fields.Selection([
@@ -283,7 +286,7 @@ class HealthStaffAssignment(models.Model):
             if not record.required_equipment_ids:
                 record.equipment_assigned = True
                 continue
-                
+
             # Check if FSO has equipment assigned
             if record.fso_id and record.fso_id.assigned_equipment_ids:
                 assigned_equipment = record.fso_id.assigned_equipment_ids
@@ -291,6 +294,21 @@ class HealthStaffAssignment(models.Model):
                 record.equipment_assigned = all(eq in assigned_equipment for eq in required_equipment)
             else:
                 record.equipment_assigned = False
+
+    @api.depends('planned_start_time', 'assignment_date')
+    def _compute_formatted_datetime(self):
+        """Format datetime as '21/Oct - 10:30 AM' for timeline display"""
+        for record in self:
+            dt = record.planned_start_time or record.assignment_date
+            if dt:
+                # Convert to user's timezone
+                user_tz = self.env.user.tz or 'UTC'
+                from pytz import timezone
+                local_dt = dt.replace(tzinfo=timezone('UTC')).astimezone(timezone(user_tz))
+                # Format: "21/Oct - 10:30 AM"
+                record.formatted_datetime = local_dt.strftime('%d/%b - %I:%M %p')
+            else:
+                record.formatted_datetime = ''
 
     @api.depends('staff_id', 'fso_id')
     def _compute_assignment_score(self):
