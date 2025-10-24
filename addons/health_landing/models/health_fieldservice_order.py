@@ -174,7 +174,7 @@ class HealthFieldserviceOrderDashboard(models.Model):
         self.ensure_one()
 
         return {
-            'name': _('Booking Dashboard'),  # Add name for breadcrumb
+            'name': _('%s Dashboard') % self.name,  # Use FSO name (e.g., "FSO-1075 Dashboard")
             'type': 'ir.actions.client',
             'tag': 'health_landing.fso_hub_spoke_action',
             'params': {

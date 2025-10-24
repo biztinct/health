@@ -2223,7 +2223,7 @@ class HealthFieldServiceOrderUnified(models.Model):
         }
 
         return {
-            'name': _('Booking Dashboard'),  # Hardcoded breadcrumb name
+            'name': _('Staff Assignment Timeline'),  # Page title
             'type': 'ir.actions.act_window',
             'res_model': 'health.staff.assignment',
             'view_mode': 'timeline,list,form',
