@@ -142,24 +142,68 @@
   display: flex;
   align-items: center;
   gap: var(--spacing-md);
-  border: 1px solid var(--border-color);
+  border: none;
+  color: white;
 }
 
 .stat-card:hover {
   transform: translateY(-2px);
   box-shadow: var(--shadow-2);
-  border-color: var(--primary-color);
 }
 
 .stat-card:active {
   transform: translateY(0);
 }
 
+/* Main Dashboard Cards - Vibrant Việt Úc Brand Colors */
+.stat-card.patients-card {
+  background: linear-gradient(135deg, #1565C0 0%, #0D47A1 100%);
+}
+
+.stat-card.orders-card {
+  background: linear-gradient(135deg, #E53935 0%, #C32B2E 100%);
+}
+
+.stat-card.teams-card {
+  background: linear-gradient(135deg, #43A047 0%, #2E6B33 100%);
+}
+
+/* Sub-view Cards - Lightest Version of Parent Color */
+.patients-view .stat-card {
+  background: #E4F4FD;
+  color: var(--text-primary);
+}
+
+.patients-view .list-view {
+  background: transparent;
+  box-shadow: none;
+}
+
+.orders-view .stat-card {
+  background: #FBE3E1;
+  color: var(--text-primary);
+}
+
+.orders-view .list-view {
+  background: transparent;
+  box-shadow: none;
+}
+
+.teams-view .stat-card {
+  background: #DBF0DB;
+  color: var(--text-primary);
+}
+
+.teams-view .list-view {
+  background: transparent;
+  box-shadow: none;
+}
+
 .stat-icon {
   width: 48px;
   height: 48px;
   border-radius: 50%;
-  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+  background: rgba(255, 255, 255, 0.2);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -171,14 +215,15 @@
 .stat-content h3 {
   margin: 0 0 var(--spacing-xs) 0;
   font-size: 1.1rem;
-  font-weight: 500;
-  color: var(--text-primary);
+  font-weight: 600;
+  color: inherit;
 }
 
 .stat-content p {
   margin: 0;
   font-size: 0.9rem;
-  color: var(--text-secondary);
+  color: inherit;
+  opacity: 0.9;
 }
 
 .dashboard-actions {
@@ -231,24 +276,45 @@
   display: flex;
   align-items: center;
   padding: var(--spacing-md);
-  border-bottom: 1px solid var(--divider-color);
+  border: none;
   text-decoration: none;
-  color: inherit;
+  color: var(--text-primary);
   min-height: 72px; /* Ensure good touch target */
-  transition: background-color 0.2s ease;
+  transition: all 0.2s ease;
   cursor: pointer;
+  background: var(--card-color);
+  border-radius: var(--border-radius-large);
+  margin-bottom: var(--spacing-sm);
+  box-shadow: var(--shadow-1);
 }
 
 .list-item:last-child {
-  border-bottom: none;
+  margin-bottom: 0;
 }
 
 .list-item:hover {
-  background: var(--surface-color);
+  box-shadow: var(--shadow-2);
+  transform: translateY(-1px);
 }
 
 .list-item:active {
-  background: rgba(135, 90, 123, 0.1);
+  transform: translateY(0);
+}
+
+/* Sub-view specific list item styling - Lightest backgrounds */
+.patients-view .list-item {
+  background: #E4F4FD;
+  border-left: 4px solid #1565C0;
+}
+
+.orders-view .list-item {
+  background: #FBE3E1;
+  border-left: 4px solid #E53935;
+}
+
+.teams-view .list-item {
+  background: #DBF0DB;
+  border-left: 4px solid #43A047;
 }
 
 .list-item-avatar {
@@ -263,6 +329,19 @@
   flex-shrink: 0;
   color: white;
   font-size: 1.2rem;
+}
+
+/* Sub-view avatars with parent brand colors */
+.patients-view .list-item-avatar {
+  background: linear-gradient(135deg, #1565C0, #42A5F5);
+}
+
+.orders-view .list-item-avatar {
+  background: linear-gradient(135deg, #E53935, #F07C75);
+}
+
+.teams-view .list-item-avatar {
+  background: linear-gradient(135deg, #43A047, #7BC685);
 }
 
 .list-item-content {
@@ -320,11 +399,20 @@
 .patient-detail-view,
 .order-detail-view {
   padding: var(--spacing-md);
+  background: var(--background-color);
 }
 
-.patient-header,
+.patient-header {
+  background: linear-gradient(135deg, #1565C0 0%, #0D47A1 100%);
+  color: white;
+  padding: var(--spacing-lg);
+  border-radius: var(--border-radius-large);
+  margin-bottom: var(--spacing-lg);
+  text-align: center;
+}
+
 .order-header {
-  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+  background: linear-gradient(135deg, #E53935 0%, #C32B2E 100%);
   color: white;
   padding: var(--spacing-lg);
   border-radius: var(--border-radius-large);
@@ -342,6 +430,7 @@
 .order-header p {
   margin: 0;
   opacity: 0.9;
+  color: white;
 }
 
 .patient-info,
@@ -350,6 +439,21 @@
   padding: var(--spacing-lg);
   border-radius: var(--border-radius);
   box-shadow: var(--shadow-1);
+  color: var(--text-primary);
+}
+
+/* Ensure text is dark in detail views */
+.patient-info *,
+.order-info * {
+  color: var(--text-primary);
+}
+
+.patient-info h3,
+.patient-info h4,
+.order-info h3,
+.order-info h4 {
+  color: var(--text-primary);
+  font-weight: 600;
 }
 
 /* Profile View */

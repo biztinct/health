@@ -493,7 +493,7 @@ window.healthPWA = {
           </div>
           
           <div class="dashboard-stats">
-            <div class="stat-card" @click="$emit('navigate', 'patients')">
+            <div class="stat-card patients-card" @click="$emit('navigate', 'patients')">
               <div class="stat-icon">
                 <i class="material-icons">people</i>
               </div>
@@ -502,8 +502,8 @@ window.healthPWA = {
                 <p>Manage patient records</p>
               </div>
             </div>
-            
-            <div class="stat-card" @click="$emit('navigate', 'orders')">
+
+            <div class="stat-card orders-card" @click="$emit('navigate', 'orders')">
               <div class="stat-icon">
                 <i class="material-icons">assignment</i>
               </div>
@@ -512,8 +512,8 @@ window.healthPWA = {
                 <p>View service orders</p>
               </div>
             </div>
-            
-            <div class="stat-card" @click="$emit('navigate', 'teams')">
+
+            <div class="stat-card teams-card" @click="$emit('navigate', 'teams')">
               <div class="stat-icon">
                 <i class="material-icons">group</i>
               </div>
@@ -1042,11 +1042,10 @@ window.healthPWA = {
       template: `
         <div class="orders-view">
           <!-- View Toggle Header -->
-          <div class="view-toggle-header" style="padding: 1rem; background: #f5f5f5; border-bottom: 1px solid #ddd;">
+          <div class="view-toggle-header" style="padding: 1rem; background: #FBE3E1; border: none; margin-bottom: 1rem; border-radius: 12px;">
             <div style="display: flex; justify-content: space-between; align-items: center;">
-              <h3 style="margin: 0;">Upcoming Bookings</h3>
-              <button @click="$emit('navigate', 'past-bookings')" class="btn btn-secondary btn-sm">
-                <i class="material-icons" style="font-size: 18px; vertical-align: middle;">history</i>
+              <h3 style="margin: 0; color: #333; font-weight: 600;">Upcoming Bookings</h3>
+              <button @click="$emit('navigate', 'past-bookings')" class="btn btn-secondary btn-sm" style="background: #E53935; color: white; border: none; padding: 0.5rem 1rem; border-radius: 8px;">
                 View Past Bookings
               </button>
             </div>
@@ -1206,12 +1205,11 @@ window.healthPWA = {
       template: `
         <div class="past-bookings-view">
           <!-- View Toggle Header -->
-          <div class="view-toggle-header" style="padding: 1rem; background: #f5f5f5; border-bottom: 1px solid #ddd;">
+          <div class="view-toggle-header" style="padding: 1rem; background: #FBE3E1; border: none; margin-bottom: 1rem; border-radius: 12px;">
             <div style="display: flex; justify-content: space-between; align-items: center;">
-              <h3 style="margin: 0;">Past Bookings (Last 50)</h3>
-              <button @click="$emit('navigate', 'orders')" class="btn btn-secondary btn-sm">
-                <i class="material-icons" style="font-size: 18px; vertical-align: middle;">event</i>
-                View Upcoming Bookings
+              <h3 style="margin: 0; color: #333; font-weight: 600;">Past Bookings</h3>
+              <button @click="$emit('navigate', 'orders')" class="btn btn-secondary btn-sm" style="background: #E53935; color: white; border: none; padding: 0.5rem 1rem; border-radius: 8px;">
+                View Upcoming
               </button>
             </div>
           </div>
