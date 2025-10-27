@@ -45,18 +45,18 @@ export class FSOHubSpokeWidget extends Component {
         // Sub-nodes: Collect Cash, Payment Received
 
         this.allNodes = [
-            // Top row nodes - compressed layout
+            // Top row nodes - Uniform sizing (160x60 standard)
             {
                 id: "service_packages",
                 label: "Service Packages",
                 icon: "fa-gift",
-                color: "#42A5F5",
-                lightColor: "#E4F4FD",
+                color: "#0ea5e9",  // Modern sky blue
+                lightColor: "#e0f2fe",
                 type: "info",
                 shape: "rect",
-                x: 120,
+                x: 100,
                 y: 40,
-                width: 140,
+                width: 160,
                 height: 60,
                 description: "View service packages"
             },
@@ -64,13 +64,13 @@ export class FSOHubSpokeWidget extends Component {
                 id: "quote",
                 label: "Quote",
                 icon: "fa-file-text-o",
-                color: "#1565C0",
-                lightColor: "#E4F4FD",
+                color: "#0284c7",  // Modern primary blue
+                lightColor: "#e0f2fe",
                 type: "info",
                 shape: "rect",
                 x: 400,
-                y: 15,
-                width: 120,
+                y: 40,
+                width: 160,
                 height: 60,
                 actionField: "sale_order_id",
                 description: "Healthcare quote"
@@ -79,29 +79,30 @@ export class FSOHubSpokeWidget extends Component {
                 id: "confirm_booking",
                 label: "Confirm Booking",
                 icon: "fa-check-circle",
-                color: "#176B47",
-                lightColor: "#DBF0DB",
+                color: "#10b981",  // Modern emerald green
+                lightColor: "#d1fae5",
                 type: "action",
                 shape: "oval",
                 x: 740,
                 y: 70,
-                radius: 55,
+                width: 200,
+                height: 60,
                 actionField: "show_booked_indicator",
                 description: "Confirm the booking"
             },
 
-            // Middle row - compressed closer to hub
+            // Middle row - Uniform sizing
             {
                 id: "equipment",
                 label: "Equipment",
                 icon: "fa-briefcase",
-                color: "#424242",
-                lightColor: "#F5F5F5",
+                color: "#64748b",  // Modern slate gray
+                lightColor: "#f1f5f9",
                 type: "info",
                 shape: "rect",
-                x: 80,
+                x: 60,
                 y: 170,
-                width: 130,
+                width: 160,
                 height: 60,
                 description: "Required equipment"
             },
@@ -109,8 +110,8 @@ export class FSOHubSpokeWidget extends Component {
                 id: "booking_hub",
                 label: "Booking",
                 icon: "fa-calendar",
-                color: "#1565C0",
-                lightColor: "#E4F4FD",
+                color: "#0284c7",  // Modern primary blue
+                lightColor: "#e0f2fe",
                 type: "hub",
                 shape: "rect",
                 x: 400,
@@ -123,8 +124,8 @@ export class FSOHubSpokeWidget extends Component {
                 id: "staff_assignment",
                 label: "Staff Assignment",
                 icon: "fa-user-md",
-                color: "#42A5F5",
-                lightColor: "#E4F4FD",
+                color: "#0ea5e9",  // Modern sky blue
+                lightColor: "#e0f2fe",
                 type: "action",
                 shape: "rect",
                 x: 720,
@@ -135,35 +136,36 @@ export class FSOHubSpokeWidget extends Component {
                 description: "Assign staff to booking"
             },
 
-            // Start Service (compressed closer to hub)
+            // Start Service - Oval centered below Booking
             {
                 id: "start_service",
                 label: "Start Service",
                 icon: "fa-play-circle",
-                color: "#FB8C00",
-                lightColor: "#FEE8C9",
+                color: "#f97316",  // Modern orange
+                lightColor: "#ffedd5",
                 type: "transition",
                 shape: "oval",
-                x: 480,
-                y: 310,
-                radius: 60,
+                x: 380,
+                y: 280,
+                width: 200,
+                height: 60,
                 actionField: "show_in_progress_indicator",
                 description: "Start the service"
             },
 
-            // Bottom row (compressed)
+            // Bottom row - Uniform sizing (160x60)
             {
                 id: "clinical_notes",
                 label: "Clinical Notes",
                 icon: "fa-stethoscope",
-                color: "#2A7ABF",
-                lightColor: "#E4F4FD",
+                color: "#3b82f6",  // Modern blue
+                lightColor: "#dbeafe",
                 type: "action",
                 shape: "rect",
-                x: 80,
+                x: 60,
                 y: 430,
-                width: 130,
-                height: 55,
+                width: 160,
+                height: 60,
                 actionField: "show_clinical_notes_arrow",
                 description: "Fill clinical notes"
             },
@@ -171,14 +173,14 @@ export class FSOHubSpokeWidget extends Component {
                 id: "invoice",
                 label: "Invoice",
                 icon: "fa-file-text-o",
-                color: "#176B47",
-                lightColor: "#DBF0DB",
+                color: "#10b981",  // Modern emerald
+                lightColor: "#d1fae5",
                 type: "action",
                 shape: "rect",
                 x: 270,
                 y: 430,
-                width: 120,
-                height: 55,
+                width: 160,
+                height: 60,
                 actionField: "show_invoice_arrow",
                 description: "Create invoice"
             },
@@ -186,14 +188,14 @@ export class FSOHubSpokeWidget extends Component {
                 id: "pay_now",
                 label: "Pay Now",
                 icon: "fa-money",
-                color: "#43A047",
-                lightColor: "#DBF0DB",
+                color: "#22c55e",  // Modern green
+                lightColor: "#dcfce7",
                 type: "action",
                 shape: "rect",
                 x: 540,
                 y: 430,
-                width: 120,
-                height: 55,
+                width: 160,
+                height: 60,
                 actionField: "show_pay_now_arrow",
                 description: "Immediate payment"
             },
@@ -201,31 +203,31 @@ export class FSOHubSpokeWidget extends Component {
                 id: "pay_later",
                 label: "Pay Later",
                 icon: "fa-clock-o",
-                color: "#946200",
-                lightColor: "#FEE8C9",
+                color: "#f59e0b",  // Modern amber
+                lightColor: "#fef3c7",
                 type: "action",
                 shape: "rect",
-                x: 720,
+                x: 750,
                 y: 430,
-                width: 120,
-                height: 55,
+                width: 160,
+                height: 60,
                 actionField: "show_pay_later_arrow",
                 description: "Defer payment"
             },
 
-            // Sub-nodes (compressed)
+            // Sub-nodes - Uniform sizing (160x60)
             {
                 id: "collect_cash",
                 label: "Collect Cash",
                 icon: "fa-dollar",
-                color: "#FB8C00",
-                lightColor: "#FEE8C9",
+                color: "#f97316",  // Modern orange
+                lightColor: "#ffedd5",
                 type: "sub",
                 shape: "rect",
                 x: 540,
-                y: 520,
-                width: 110,
-                height: 45,
+                y: 540,
+                width: 160,
+                height: 60,
                 parent: "pay_now",
                 actionField: "show_collect_cash_arrow",
                 description: "OM collect cash"
@@ -234,14 +236,14 @@ export class FSOHubSpokeWidget extends Component {
                 id: "payment_received",
                 label: "Payment Received",
                 icon: "fa-check-circle",
-                color: "#176B47",
-                lightColor: "#DBF0DB",
+                color: "#10b981",  // Modern emerald
+                lightColor: "#d1fae5",
                 type: "sub",
                 shape: "rect",
-                x: 720,
-                y: 520,
-                width: 120,
-                height: 45,
+                x: 750,
+                y: 540,
+                width: 160,
+                height: 60,
                 parent: "pay_later",
                 actionField: "show_payment_received_arrow",
                 description: "Payment received"
@@ -324,7 +326,11 @@ export class FSOHubSpokeWidget extends Component {
      */
     getNodeCenter(node) {
         if (node.shape === "oval") {
-            return { x: node.x, y: node.y };
+            // Oval with width/height - center is x + width/2, y + height/2
+            return {
+                x: node.x + (node.width / 2),
+                y: node.y + (node.height / 2)
+            };
         } else {
             // Rectangle - center is x + width/2, y + height/2
             return {
@@ -341,11 +347,18 @@ export class FSOHubSpokeWidget extends Component {
         const center = this.getNodeCenter(node);
 
         if (node.shape === "oval") {
-            // For oval, use radius
-            const radius = node.radius || 50;
+            // For oval with width/height, calculate ellipse edge
+            const rx = node.width / 2;
+            const ry = node.height / 2;
+
+            // Parametric ellipse equation
+            const cos = Math.cos(angle);
+            const sin = Math.sin(angle);
+            const scale = Math.sqrt((rx * rx * sin * sin) + (ry * ry * cos * cos));
+
             return {
-                x: center.x + radius * Math.cos(angle),
-                y: center.y + radius * Math.sin(angle)
+                x: center.x + (rx * ry * cos) / scale,
+                y: center.y + (rx * ry * sin) / scale
             };
         } else {
             // For rectangle, calculate intersection with edge
@@ -367,7 +380,7 @@ export class FSOHubSpokeWidget extends Component {
     }
 
     /**
-     * Get connecting line path between two nodes
+     * Get connecting line path between two nodes - straight for vertical, curved for others
      */
     getLinePath(connection) {
         const fromNode = this.getNode(connection.from);
@@ -385,7 +398,36 @@ export class FSOHubSpokeWidget extends Component {
         const startPoint = this.getNodeEdgePoint(fromNode, angle);
         const endPoint = this.getNodeEdgePoint(toNode, angle + Math.PI);
 
-        return `M ${startPoint.x} ${startPoint.y} L ${endPoint.x} ${endPoint.y}`;
+        // Calculate if connection is primarily vertical (within 30 degrees of vertical)
+        const dx = endPoint.x - startPoint.x;
+        const dy = endPoint.y - startPoint.y;
+        const absAngle = Math.abs(angle);
+        const isVertical = (absAngle > Math.PI / 3 && absAngle < 2 * Math.PI / 3) ||
+                          (absAngle > 4 * Math.PI / 3 && absAngle < 5 * Math.PI / 3);
+
+        // Use straight line for vertical connections
+        if (isVertical || Math.abs(dx) < 50) {
+            return `M ${startPoint.x} ${startPoint.y} L ${endPoint.x} ${endPoint.y}`;
+        }
+
+        // Use S-curve for horizontal/diagonal connections
+        const distance = Math.sqrt(dx * dx + dy * dy);
+
+        // Enhanced control point offset for visible curves
+        const controlOffset = distance * 0.5;
+
+        // Add perpendicular offset for visible curvature
+        const perpOffset = distance * 0.15;
+
+        // Calculate control points for smooth S-shaped curve with lateral deviation
+        const cp1x = startPoint.x + controlOffset * Math.cos(angle) + perpOffset * Math.cos(angle + Math.PI / 2);
+        const cp1y = startPoint.y + controlOffset * Math.sin(angle) + perpOffset * Math.sin(angle + Math.PI / 2);
+
+        const cp2x = endPoint.x - controlOffset * Math.cos(angle) - perpOffset * Math.cos(angle + Math.PI / 2);
+        const cp2y = endPoint.y - controlOffset * Math.sin(angle) - perpOffset * Math.sin(angle + Math.PI / 2);
+
+        // Create smooth cubic Bezier curve (S-shape)
+        return `M ${startPoint.x} ${startPoint.y} C ${cp1x} ${cp1y}, ${cp2x} ${cp2y}, ${endPoint.x} ${endPoint.y}`;
     }
 
     /**

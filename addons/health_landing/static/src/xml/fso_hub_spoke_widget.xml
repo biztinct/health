@@ -5,30 +5,57 @@
     <t t-name="health_landing.FSOHubSpokeTemplate">
         <div class="fso_spoke_container">
 
-            <!-- Header with breadcrumb and back button -->
+            <!-- Compact Header with FSO ID and Status Bar -->
             <div class="fso_spoke_header">
                 <button class="health_landing_back_btn" t-on-click="props.onBack">
                     <i class="fa fa-arrow-left"/> Back
                 </button>
 
-                <div class="health_landing_breadcrumb">
-                    <a href="#" class="health_landing_breadcrumb_item" t-on-click="props.onBack">
-                        <i class="fa fa-home"/> Home
-                    </a>
-                    <span class="health_landing_breadcrumb_separator">/</span>
-                    <a href="#" class="health_landing_breadcrumb_item" t-on-click="props.onBack">Field Service</a>
-                    <span class="health_landing_breadcrumb_separator">/</span>
-                    <a href="#" class="health_landing_breadcrumb_item" t-on-click="props.onBack">Booking</a>
-                    <span class="health_landing_breadcrumb_separator">/</span>
-                    <span class="health_landing_breadcrumb_item" t-esc="props.fsoName"/>
-                </div>
+                <!-- FSO ID and Status Bar on Same Line -->
+                <div class="fso_header_main" t-if="!state.loading &amp;&amp; state.fsoData">
+                    <h1 class="fso_spoke_title">
+                        <i class="fa fa-stethoscope"/> <t t-esc="props.fsoName"/>
+                    </h1>
 
-                <h1 class="fso_spoke_title">
-                    <i class="fa fa-stethoscope"/> <t t-esc="props.fsoName"/>
-                </h1>
-                <p class="fso_spoke_subtitle">
-                    Workflow Visualization - Click on nodes to take action
-                </p>
+                    <!-- Compact Status Bar -->
+                    <div class="fso_status_stages_compact">
+                        <div t-att-class="'fso_status_stage ' + (state.fsoData.show_draft_indicator ? 'active' : 'inactive')">
+                            <div class="fso_status_icon">
+                                <i class="fa fa-file-o"/>
+                            </div>
+                            <span class="fso_status_label">DRAFT</span>
+                        </div>
+                        <i class="fa fa-angle-right fso_status_arrow"/>
+                        <div t-att-class="'fso_status_stage ' + (state.fsoData.show_booked_indicator ? 'active' : 'inactive')">
+                            <div class="fso_status_icon">
+                                <i class="fa fa-calendar-check-o"/>
+                            </div>
+                            <span class="fso_status_label">BOOKED</span>
+                        </div>
+                        <i class="fa fa-angle-right fso_status_arrow"/>
+                        <div t-att-class="'fso_status_stage ' + (state.fsoData.show_assigned_indicator ? 'active' : 'inactive')">
+                            <div class="fso_status_icon">
+                                <i class="fa fa-user-check"/>
+                            </div>
+                            <span class="fso_status_label">ASSIGNED</span>
+                        </div>
+                        <i class="fa fa-angle-right fso_status_arrow"/>
+                        <div t-att-class="'fso_status_stage ' + (state.fsoData.show_in_progress_indicator ? 'active' : 'inactive')">
+                            <div class="fso_status_icon">
+                                <i class="fa fa-refresh fa-spin" t-if="state.fsoData.show_in_progress_indicator"/>
+                                <i class="fa fa-refresh" t-else=""/>
+                            </div>
+                            <span class="fso_status_label">IN PROGRESS</span>
+                        </div>
+                        <i class="fa fa-angle-right fso_status_arrow"/>
+                        <div t-att-class="'fso_status_stage ' + (state.fsoData.show_completed_indicator ? 'active completed' : 'inactive')">
+                            <div class="fso_status_icon">
+                                <i class="fa fa-check-circle"/>
+                            </div>
+                            <span class="fso_status_label">COMPLETED</span>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <!-- Loading State -->
@@ -58,23 +85,23 @@
                             </feMerge>
                         </filter>
 
-                        <!-- Arrow marker -->
-                        <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
-                            <polygon points="0 0, 10 3, 0 6" fill="#9E9E9E"/>
+                        <!-- Small Consistent Arrow markers -->
+                        <marker id="arrowhead" markerWidth="8" markerHeight="8" refX="7" refY="2.5" orient="auto">
+                            <polygon points="0 0, 8 2.5, 0 5" fill="#64748b"/>
                         </marker>
-                        <marker id="arrowheadActive" markerWidth="12" markerHeight="12" refX="10" refY="3.5" orient="auto">
-                            <polygon points="0 0, 12 3.5, 0 7" fill="#1565C0"/>
+                        <marker id="arrowheadActive" markerWidth="8" markerHeight="8" refX="7" refY="2.5" orient="auto">
+                            <polygon points="0 0, 8 2.5, 0 5" fill="#0284c7"/>
                         </marker>
                     </defs>
 
-                    <!-- Connection Lines (rendered first, behind nodes) -->
+                    <!-- Connection Lines with smooth curves (rendered first, behind nodes) -->
                     <g class="connection_lines">
                         <t t-foreach="connections" t-as="connection" t-key="connection.from + '_' + connection.to">
                             <path
                                 t-att-d="getLinePath(connection)"
                                 t-att-class="getConnectionClasses(connection)"
-                                t-att-stroke="isConnectionActive(connection) ? '#1565C0' : '#D0D0D0'"
-                                stroke-width="3"
+                                t-att-stroke="isConnectionActive(connection) ? '#0284c7' : '#64748b'"
+                                stroke-width="2"
                                 fill="none"
                                 t-att-marker-end="isConnectionActive(connection) ? 'url(#arrowheadActive)' : 'url(#arrowhead)'"
                             />
@@ -127,13 +154,13 @@
                                     />
                                 </t>
 
-                                <!-- Render Oval/Ellipse -->
+                                <!-- Render Oval/Ellipse with width/height -->
                                 <t t-if="node.shape === 'oval'">
                                     <ellipse
-                                        t-att-cx="node.x"
-                                        t-att-cy="node.y"
-                                        t-att-rx="node.radius"
-                                        t-att-ry="node.radius * 0.7"
+                                        t-att-cx="node.x + (node.width / 2)"
+                                        t-att-cy="node.y + (node.height / 2)"
+                                        t-att-rx="node.width / 2"
+                                        t-att-ry="node.height / 2"
                                         t-att-fill="node.lightColor"
                                         t-att-stroke="node.color"
                                         stroke-width="3"
@@ -141,8 +168,8 @@
                                     />
                                     <!-- Icon for oval -->
                                     <foreignObject
-                                        t-att-x="node.x - 18"
-                                        t-att-y="node.y - 28"
+                                        t-att-x="node.x + (node.width / 2) - 18"
+                                        t-att-y="node.y + (node.height / 2) - 28"
                                         width="36"
                                         height="36"
                                     >
@@ -152,8 +179,8 @@
                                     </foreignObject>
                                     <!-- Label for oval -->
                                     <text
-                                        t-att-x="node.x"
-                                        t-att-y="node.y + 20"
+                                        t-att-x="node.x + (node.width / 2)"
+                                        t-att-y="node.y + (node.height / 2) + 20"
                                         class="fso_node_label"
                                         text-anchor="middle"
                                         t-att-fill="node.color"
