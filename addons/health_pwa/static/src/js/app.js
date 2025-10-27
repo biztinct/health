@@ -1809,42 +1809,43 @@ window.healthPWA = {
 
           <!-- Order Details -->
           <div v-else-if="order" class="order-details">
-            <!-- Order Header -->
-            <div class="order-header-card">
-              <div class="order-header-info">
-                <div class="order-header-bar">
-                  <div class="order-client-block">
-                    <h1 class="order-client-name">
-                      {{ order.patient?.name || order.patient_name || 'Unknown Client' }}
-                    </h1>
-                    <div class="order-client-meta">
-                      <span v-if="order.name" class="order-meta-id-text">
-                        <i class="material-icons">confirmation_number</i>
-                        {{ order.name }}
-                      </span>
-                      <span v-if="order.name && order.state" class="order-meta-separator" aria-hidden="true">•</span>
-                      <span v-if="order.state"
-                            class="order-status-badge"
-                            :class="getStatusBadgeClass(order.state)">
-                        {{ getStatusLabel(order.state) }}
-                      </span>
-                    </div>
+            <!-- Client Header - Mobilesample clean design -->
+            <div class="order-client-header">
+              <h2>{{ order.patient?.name || order.patient_name || 'Unknown Client' }}</h2>
+              <div class="order-client-meta">
+                <span v-if="order.name" class="order-number">
+                  📋 {{ order.name }}
+                </span>
+                <span v-if="order.name && order.state" class="separator">•</span>
+                <span v-if="order.state"
+                      class="badge"
+                      :class="'status-' + order.state.replace('_', '-')">
+                  {{ getStatusLabel(order.state) }}
+                </span>
+              </div>
+            </div>
+
+              <!-- Timer Card - Mobilesample clean design (no icon) -->
+              <div v-if="order.state === 'in_progress' && order.actual_start_datetime"
+                   class="order-timer-card">
+                <!-- Timer Header: Label on left, Live indicator on right -->
+                <div class="timer-header">
+                  <span class="timer-label">Elapsed Time</span>
+                  <div class="timer-status">
+                    <div class="status-indicator"></div>
+                    <span>Live</span>
                   </div>
                 </div>
-              </div>
 
-              <!-- Timer Display (shown when service is in progress) -->
-              <div v-if="order.state === 'in_progress' && order.actual_start_datetime"
-                   class="order-timer-container">
-                <div class="order-timer">
-                  <div class="timer-icon-wrap">
-                    <i class="material-icons timer-icon">timer</i>
-                  </div>
-                  <div class="timer-display">
-                    <span class="timer-label">Elapsed Time</span>
-                    <span class="timer-time">{{ elapsedTime }}</span>
-                    <span v-if="order.actual_start_datetime" class="timer-subtext">Started {{ formatDateTime(order.actual_start_datetime) }}</span>
-                  </div>
+                <!-- Timer Display: Large number only -->
+                <div class="timer-display">
+                  <span class="timer-value">{{ elapsedTime }}</span>
+                </div>
+
+                <!-- Started Timestamp: Bottom with divider -->
+                <div v-if="order.actual_start_datetime" class="timer-started">
+                  <div class="timer-started-dot"></div>
+                  <span class="timer-started-text">Started {{ formatDateTime(order.actual_start_datetime) }}</span>
                 </div>
               </div>
             </div>

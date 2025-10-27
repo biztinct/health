@@ -448,6 +448,7 @@
 
 /* CSS Custom Properties for theming */
 :root {
+  /* Original brand colors */
   --primary-color: #1565C0;
   --primary-dark: #0D47A1;
   --secondary-color: #42A5F5;
@@ -456,6 +457,49 @@
   --warning-color: #946200;
   --error-color: #C0332A;
   --info-color: #2A7ABF;
+
+  /* Dark theme colors - Mobilesample inspired */
+  --bg-dark: #020617;           /* slate-950 */
+  --bg-dark-card: #0f172a;      /* slate-900 */
+  --bg-dark-card-alt: #1e293b;  /* slate-800 */
+  --bg-dark-border: rgba(51, 65, 85, 0.5); /* slate-700/50 */
+  --text-dark-primary: #ffffff;
+  --text-dark-secondary: #94a3b8; /* slate-400 */
+  --text-dark-muted: #64748b;   /* slate-500 */
+
+  /* Gradient colors for vibrant cards */
+  --gradient-blue-start: #2563EB;    /* blue-600 */
+  --gradient-blue-end: #1D4ED8;      /* blue-700 */
+  --gradient-red-start: #DC2626;     /* red-600 */
+  --gradient-red-end: #B91C1C;       /* red-700 */
+  --gradient-green-start: #16A34A;   /* green-600 */
+  --gradient-green-end: #15803D;     /* green-700 */
+  --gradient-orange-start: #FB8C00;  /* Hibiscus orange */
+  --gradient-orange-end: #EF6C00;    /* Dark orange */
+  --gradient-teal-start: #43A047;    /* Leaf green */
+  --gradient-teal-end: #388E3C;      /* Dark green */
+  --gradient-indigo-start: #1565C0;  /* Deep blue */
+  --gradient-indigo-end: #0D47A1;    /* Darker blue */
+
+  /* Shadow system */
+  --shadow-dark-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+  --shadow-dark-md: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+  --shadow-dark-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
+  --shadow-dark-xl: 0 25px 50px -12px rgba(0, 0, 0, 0.6);
+
+  /* Typography weights */
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  --font-weight-extrabold: 800;
+
+  /* Letter spacing */
+  --letter-spacing-tight: -0.05em;
+  --letter-spacing-normal: 0;
+  --letter-spacing-wide: 0.05em;
+  --letter-spacing-wider: 0.1em;
+  --letter-spacing-widest: 0.2em;
   
   --text-primary: #333333;
   --text-secondary: #666666;
@@ -691,63 +735,77 @@ p {
   color: var(--text-primary);
 }
 
-/* Button Styles */
+/* Button Styles - Mobilesample modern design */
 .btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   padding: var(--spacing-sm) var(--spacing-md);
   border: none;
-  border-radius: var(--border-radius);
+  border-radius: 0.75rem; /* 12px rounded */
   font-size: 1rem;
-  font-weight: 500;
+  font-weight: var(--font-weight-bold); /* Bold text */
   text-decoration: none;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   min-height: 44px; /* Touch target size */
   gap: var(--spacing-sm);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.btn:hover:not(:disabled) {
+  transform: scale(1.02);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.15);
+}
+
+.btn:active:not(:disabled) {
+  transform: scale(0.95);
+  transition: transform 0.1s;
 }
 
 .btn:disabled {
   opacity: 0.6;
   cursor: not-allowed;
+  transform: none;
 }
 
 .btn-primary {
-  background: var(--primary-color);
-  color: var(--text-on-primary);
-  box-shadow: var(--shadow-1);
+  background: linear-gradient(135deg, var(--gradient-blue-start) 0%, var(--gradient-blue-end) 100%);
+  color: white;
+  box-shadow: 0 10px 25px -5px rgba(37, 99, 235, 0.3);
 }
 
 .btn-primary:hover:not(:disabled) {
-  background: var(--primary-dark);
-  box-shadow: var(--shadow-2);
+  box-shadow: 0 20px 25px -5px rgba(37, 99, 235, 0.4);
 }
 
 .btn-secondary {
-  background: transparent;
-  color: var(--primary-color);
-  border: 1px solid var(--primary-color);
+  background: white;
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
 }
 
 .btn-secondary:hover:not(:disabled) {
-  background: var(--primary-color);
-  color: var(--text-on-primary);
+  background: #F8FAFC;
+  border-color: var(--text-disabled);
 }
 
 .btn-success {
-  background: var(--success-color);
-  color: var(--text-on-primary);
+  background: linear-gradient(135deg, var(--gradient-green-start) 0%, var(--gradient-green-end) 100%);
+  color: white;
+  box-shadow: 0 10px 25px -5px rgba(22, 163, 74, 0.3);
 }
 
 .btn-warning {
-  background: var(--warning-color);
-  color: var(--text-on-primary);
+  background: linear-gradient(135deg, #FB8C00 0%, #F57C00 100%);
+  color: white;
+  box-shadow: 0 10px 25px -5px rgba(251, 140, 0, 0.3);
 }
 
 .btn-error {
-  background: var(--error-color);
-  color: var(--text-on-primary);
+  background: linear-gradient(135deg, var(--gradient-red-start) 0%, var(--gradient-red-end) 100%);
+  color: white;
+  box-shadow: 0 10px 25px -5px rgba(220, 38, 38, 0.3);
 }
 
 .btn-small {
