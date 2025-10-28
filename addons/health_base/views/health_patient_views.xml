@@ -101,7 +101,7 @@
 
                     <notebook>
                         <!-- Address Information Page -->
-                        <page string="&#x1F4CD; Address Information" name="address_info">
+                        <page string="Address Information" name="address_info">
                             <group>
                                 <group>
                                     <!-- Vietnamese Address Fields Only (as per DESIGN_MISSING_FEATURES.md) -->
@@ -135,7 +135,7 @@
                         </page>
 
                         <!-- Medical Information -->
-                        <page string="&#x1F3E5; Medical Information" name="medical_info">
+                        <page string="Medical Information" name="medical_info">
                             <group>
                                 <group string="Vital Information">
                                     <field name="blood_group" required="1"/>
@@ -170,7 +170,7 @@
                         </page>
 
                         <!-- Insurance & Billing -->
-                        <page string="&#x1F4B3; Insurance &amp; Billing" name="insurance_billing">
+                        <page string="Insurance &amp; Billing" name="insurance_billing">
                             <group>
                                 <group string="Insurance Details">
                                     <field name="insurance_provider"/>
@@ -188,23 +188,23 @@
                         </page>
 
                         <!-- Service History -->
-                        <page string="&#x1F4CB; Service History" name="service_history">
+                        <page string="Service History" name="service_history">
                             <!-- Content will be injected by health_fieldservice module -->
                         </page>
 
                         <!-- Active Service Packages -->
-                        <page string="&#x1F4E6; Active Packages" name="active_packages">
+                        <page string="Active Packages" name="active_packages">
                             <!-- Content will be injected by health_invoicing module -->
                         </page>
 
                         <!-- Healthcare Relationships -->
-                        <page string="&#x1F465; Healthcare Relationships" name="healthcare_relationships">
+                        <page string="Healthcare Relationships" name="healthcare_relationships">
                             <field name="id" invisible="1"/>
                             <widget name="relationship_hierarchy"/>
                         </page>
 
                         <!-- Patient Journey & Analytics -->
-                        <page string="&#x1F680; Client Journey" name="patient_journey">
+                        <page string="Client Journey" name="patient_journey">
                             <group>
                                 <group string="Registration Details">
                                     <field name="source_details" placeholder="Specific source details"/>
@@ -229,7 +229,7 @@
                         </page>
 
                         <!-- Clinical Notes & Communications -->
-                        <page string="&#x1F4DD; Clinical Notes" name="clinical_notes">
+                        <page string="Clinical Notes" name="clinical_notes">
                             <div>
                                 <h4>Clinical Notes &amp; Provider Communications</h4>
                                 <p class="text-muted">

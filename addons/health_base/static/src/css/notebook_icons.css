@@ -3,84 +3,106 @@
    Professional icon styling for notebook tabs
    ============================================================================ */
 
-/* Hide emoji icons in notebook tabs by targeting specific page names */
-.o_notebook .nav-tabs .nav-link[data-bs-target*="address_info"],
-.o_notebook .nav-tabs .nav-link[data-bs-target*="medical_info"],
-.o_notebook .nav-tabs .nav-link[data-bs-target*="insurance_billing"],
-.o_notebook .nav-tabs .nav-link[data-bs-target*="service_history"],
-.o_notebook .nav-tabs .nav-link[data-bs-target*="active_packages"],
-.o_notebook .nav-tabs .nav-link[data-bs-target*="healthcare_relationships"],
-.o_notebook .nav-tabs .nav-link[data-bs-target*="patient_journey"],
-.o_notebook .nav-tabs .nav-link[data-bs-target*="clinical_notes"] {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
+/* ============================================================================
+   CRITICAL: Notebook Tabs - Multi-line Layout (Wrap Pages Instead of Horizontal Scroll)
+   ============================================================================ */
+
+/* Make notebook tabs wrap into multiple lines instead of horizontal scrolling */
+.o_notebook .nav-tabs {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 8px !important;
+    overflow: visible !important;
+    border-bottom: 2px solid #e5e7eb !important;
+    padding-bottom: 8px !important;
+    max-width: 100% !important;
 }
 
-/* Add Font Awesome icons via CSS ::before */
+/* Ensure individual tabs don't prevent wrapping */
+.o_notebook .nav-tabs .nav-link {
+    flex: 0 1 auto !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+}
+
+/* Style notebook tabs with flex layout for icons */
+.o_notebook .nav-tabs .nav-link {
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+}
+
+/* Add icons using data-page attribute approach - with proper font loading */
+.o_notebook .nav-tabs .nav-link::before {
+    display: inline-block !important;
+    width: 16px !important;
+    height: 16px !important;
+    margin-right: 6px !important;
+    flex-shrink: 0 !important;
+    font-family: 'FontAwesome' !important;
+    font-size: 14px !important;
+    font-weight: normal !important;
+    font-style: normal !important;
+    text-decoration: inherit !important;
+    -webkit-font-smoothing: antialiased !important;
+    -moz-osx-font-smoothing: grayscale !important;
+}
+
+/* Address Information - Pin Icon */
 .o_notebook .nav-tabs .nav-link[data-bs-target*="address_info"]::before {
-    font-family: 'FontAwesome';
-    content: '\f041';  /* fa-map-marker */
-    color: #1565C0;
-    font-size: 16px;
-    margin-right: 6px;
+    content: '📍';
+    font-size: 16px !important;
+    font-family: system-ui, -apple-system, sans-serif !important;
 }
 
+/* Medical Information - Heart Icon */
 .o_notebook .nav-tabs .nav-link[data-bs-target*="medical_info"]::before {
-    font-family: 'FontAwesome';
-    content: '\f21e';  /* fa-heartbeat */
-    color: #C32B2E;
-    font-size: 16px;
-    margin-right: 6px;
+    content: '❤️';
+    font-size: 14px !important;
+    font-family: system-ui, -apple-system, sans-serif !important;
 }
 
+/* Insurance & Billing - Credit Card Icon */
 .o_notebook .nav-tabs .nav-link[data-bs-target*="insurance_billing"]::before {
-    font-family: 'FontAwesome';
-    content: '\f09d';  /* fa-credit-card */
-    color: #43A047;
-    font-size: 16px;
-    margin-right: 6px;
+    content: '💳';
+    font-size: 16px !important;
+    font-family: system-ui, -apple-system, sans-serif !important;
 }
 
+/* Service History - List Icon */
 .o_notebook .nav-tabs .nav-link[data-bs-target*="service_history"]::before {
-    font-family: 'FontAwesome';
-    content: '\f022';  /* fa-list-alt */
-    color: #D46E00;
-    font-size: 16px;
-    margin-right: 6px;
+    content: '📋';
+    font-size: 16px !important;
+    font-family: system-ui, -apple-system, sans-serif !important;
 }
 
+/* Active Packages - Gift Icon */
 .o_notebook .nav-tabs .nav-link[data-bs-target*="active_packages"]::before {
-    font-family: 'FontAwesome';
-    content: '\f06b';  /* fa-gift */
-    color: #6B4BA8;
-    font-size: 16px;
-    margin-right: 6px;
+    content: '🎁';
+    font-size: 16px !important;
+    font-family: system-ui, -apple-system, sans-serif !important;
 }
 
+/* Healthcare Relationships - Users Icon */
 .o_notebook .nav-tabs .nav-link[data-bs-target*="healthcare_relationships"]::before {
-    font-family: 'FontAwesome';
-    content: '\f0c0';  /* fa-users */
-    color: #00796B;
-    font-size: 16px;
-    margin-right: 6px;
+    content: '👥';
+    font-size: 16px !important;
+    font-family: system-ui, -apple-system, sans-serif !important;
 }
 
+/* Client Journey - Road Icon */
 .o_notebook .nav-tabs .nav-link[data-bs-target*="patient_journey"]::before {
-    font-family: 'FontAwesome';
-    content: '\f018';  /* fa-road */
-    color: #F57C00;
-    font-size: 16px;
-    margin-right: 6px;
+    content: '🚀';
+    font-size: 16px !important;
+    font-family: system-ui, -apple-system, sans-serif !important;
 }
 
+/* Clinical Notes - File Icon */
 .o_notebook .nav-tabs .nav-link[data-bs-target*="clinical_notes"]::before {
-    font-family: 'FontAwesome';
-    content: '\f0f6';  /* fa-file-text-o */
-    color: #0097A7;
-    font-size: 16px;
-    margin-right: 6px;
+    content: '📄';
+    font-size: 16px !important;
+    font-family: system-ui, -apple-system, sans-serif !important;
 }
 
 /* Utility classes for manually adding Font Awesome icons to notebook tabs */
