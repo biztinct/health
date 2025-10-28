@@ -112,6 +112,10 @@
     color: #1e293b;
 }
 
+.fso_status_stage.inactive .fso_status_icon i {
+    color: white;
+}
+
 .fso_status_stage.active .fso_status_icon i {
     color: white;
 }
@@ -171,7 +175,8 @@
 .fso_flowchart_node {
     cursor: pointer;
     transition: all 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
-    transform-origin: center center;
+    transform-origin: 50% 50%;
+    transform-box: fill-box;
 }
 
 .fso_node_shape {
@@ -182,6 +187,8 @@
 /* Node Hover Effects - 20% uniform scale from center (entire group scales) */
 .fso_flowchart_node:hover {
     transform: scale(1.2);
+    transform-box: fill-box;
+    transform-origin: 50% 50%;
 }
 
 .fso_flowchart_node:hover .fso_node_shape {
@@ -192,6 +199,8 @@
 /* Node Active State - Pulsing glow effect */
 .fso_flowchart_node:active {
     transform: scale(1.15);
+    transform-box: fill-box;
+    transform-origin: 50% 50%;
     transition: transform 0.1s ease;
 }
 
@@ -282,6 +291,8 @@
 
 .fso_node_hub:hover {
     transform: scale(1.2);
+    transform-box: fill-box;
+    transform-origin: 50% 50%;
 }
 
 .fso_node_hub:hover .fso_node_shape {
@@ -309,6 +320,8 @@
 
 .fso_node_sub:hover {
     transform: scale(1.2);
+    transform-box: fill-box;
+    transform-origin: 50% 50%;
 }
 
 .fso_node_sub:hover .fso_node_shape {

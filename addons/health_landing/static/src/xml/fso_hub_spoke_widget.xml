@@ -35,7 +35,7 @@
                         <i class="fa fa-angle-right fso_status_arrow"/>
                         <div t-att-class="'fso_status_stage ' + (state.fsoData.show_assigned_indicator ? 'active' : 'inactive')">
                             <div class="fso_status_icon">
-                                <i class="fa fa-user-check"/>
+                                <i class="fa fa-user-md"/>
                             </div>
                             <span class="fso_status_label">ASSIGNED</span>
                         </div>

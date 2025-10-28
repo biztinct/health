@@ -20,7 +20,8 @@
                        filters="1"
                        avatar_field="image_128"/>
                 <field name="service_type"/>
-                <field name="state"/>
+                <field name="state"
+                       filters="1"/>
             </calendar>
         </field>
     </record>
