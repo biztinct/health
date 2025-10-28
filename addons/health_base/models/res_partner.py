@@ -132,7 +132,7 @@ class ResPartner(models.Model):
     next_visit_date = fields.Datetime('Next Scheduled Visit')
 
     # MOH Compliance Fields
-    profession = fields.Char('Profession/Occupation', help='client occupation (Nghề nghiệp)')
+    profession = fields.Char('Profession', help='client occupation (Nghề nghiệp)')
     ethnicity = fields.Selection([
         ('kinh', 'Kinh (Vietnamese)'),
         ('tay', 'Tày'),

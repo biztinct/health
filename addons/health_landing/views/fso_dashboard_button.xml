@@ -16,11 +16,11 @@
                         string="Dashboard"
                         help="Open Booking Workflow Dashboard"/>
             </xpath>
-            <!-- Add Dashboard button to header for calendar event popups -->
-            <xpath expr="//button[@name='action_confirm_booking']" position="after">
+            <!-- Add Dashboard button to header for calendar event popups - appears next to Edit/Delete buttons -->
+            <xpath expr="//button[@name='action_confirm_booking']" position="before">
                 <button name="action_open_fso_dashboard" type="object"
                         string="📊 Dashboard"
-                        class="btn-info"
+                        class="btn btn-info"
                         help='View client and service details'/>
             </xpath>
         </field>

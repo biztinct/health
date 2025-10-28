@@ -2251,11 +2251,11 @@ class HealthFieldServiceOrderUnified(models.Model):
     def action_auto_open_quote_after_catalog(self):
         """Auto-open Healthcare Quote after returning from catalog"""
         self.ensure_one()
-        
+
         # Check if we have a quote to open
         if not self.sale_order_id:
             return False
-            
+
         # Open the Healthcare Quote form immediately
         return {
             'type': 'ir.actions.act_window',
@@ -2267,6 +2267,25 @@ class HealthFieldServiceOrderUnified(models.Model):
             'target': 'main',  # Open in main window, not dialog
             'context': {
                 'from_catalog_redirect': True,
+            }
+        }
+
+    def action_open_fso_dashboard(self):
+        """Open the Booking workflow dashboard"""
+        self.ensure_one()
+
+        # Navigate to the client dashboard with booking context
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _('Booking Workflow Dashboard'),
+            'res_model': 'res.partner',
+            'res_id': self.patient_id.id,
+            'view_mode': 'form',
+            'view_id': self.env.ref('health_base.view_health_patient_form').id,
+            'target': 'current',
+            'context': {
+                'active_tab': 'address_info',  # Default to first tab
+                'booking_id': self.id,  # Pass booking context
             }
         }
 
