@@ -128,11 +128,13 @@
             'health_fieldservice/static/src/js/healthcare_quote_save.js',
             'health_fieldservice/static/src/js/healthcare_quote_form.js',
             'health_fieldservice/static/src/js/service_timer.js',
+            'health_fieldservice/static/src/js/fso_calendar_popover.js',
             # XML Templates
             'health_fieldservice/static/src/xml/assignment_dashboard.xml',
             'health_fieldservice/static/src/xml/assignment_timeline_view.xml',
             'health_fieldservice/static/src/xml/staff_workload_dashboard.xml',
             'health_fieldservice/static/src/xml/service_timer.xml',
+            'health_fieldservice/static/src/xml/fso_calendar_popover.xml',
         ],
     },
     'installable': True,
