@@ -153,7 +153,7 @@ export class FSOHubSpokeWidget extends Component {
                 description: "Start the service"
             },
 
-            // Bottom row - Uniform sizing (160x60)
+            // Bottom row - Moved up to fit screen (160x60)
             {
                 id: "clinical_notes",
                 label: "Clinical Notes",
@@ -163,7 +163,7 @@ export class FSOHubSpokeWidget extends Component {
                 type: "action",
                 shape: "rect",
                 x: 60,
-                y: 430,
+                y: 400,
                 width: 160,
                 height: 60,
                 actionField: "show_clinical_notes_arrow",
@@ -178,7 +178,7 @@ export class FSOHubSpokeWidget extends Component {
                 type: "action",
                 shape: "rect",
                 x: 270,
-                y: 430,
+                y: 400,
                 width: 160,
                 height: 60,
                 actionField: "show_invoice_arrow",
@@ -193,7 +193,7 @@ export class FSOHubSpokeWidget extends Component {
                 type: "action",
                 shape: "rect",
                 x: 540,
-                y: 430,
+                y: 400,
                 width: 160,
                 height: 60,
                 actionField: "show_pay_now_arrow",
@@ -208,14 +208,14 @@ export class FSOHubSpokeWidget extends Component {
                 type: "action",
                 shape: "rect",
                 x: 750,
-                y: 430,
+                y: 400,
                 width: 160,
                 height: 60,
                 actionField: "show_pay_later_arrow",
                 description: "Defer payment"
             },
 
-            // Sub-nodes - Uniform sizing (160x60)
+            // Sub-nodes - Moved up to fit screen (160x60)
             {
                 id: "collect_cash",
                 label: "Collect Cash",
@@ -225,7 +225,7 @@ export class FSOHubSpokeWidget extends Component {
                 type: "sub",
                 shape: "rect",
                 x: 540,
-                y: 540,
+                y: 490,
                 width: 160,
                 height: 60,
                 parent: "pay_now",
@@ -241,7 +241,7 @@ export class FSOHubSpokeWidget extends Component {
                 type: "sub",
                 shape: "rect",
                 x: 750,
-                y: 540,
+                y: 490,
                 width: 160,
                 height: 60,
                 parent: "pay_later",
@@ -271,9 +271,9 @@ export class FSOHubSpokeWidget extends Component {
             { from: "pay_later", to: "payment_received", activeField: "show_payment_received_arrow" },
         ];
 
-        // SVG dimensions - reduced to fit on screen
+        // SVG dimensions - adjusted to fit screen better
         this.svgWidth = 1000;
-        this.svgHeight = 700;
+        this.svgHeight = 600;
         this.centerX = this.svgWidth / 2;
         this.centerY = this.svgHeight / 2;
 
