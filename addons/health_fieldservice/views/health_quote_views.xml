@@ -9,9 +9,9 @@
         <field name="arch" type="xml">
             <form string="Healthcare Quote" class="o_sale_order" js_class="healthcare_quote_form">
                 <header>
-                    <button name="action_save_and_return_to_fso" type="object" 
-                            string="💾 Save &amp; Return to FSO" class="oe_highlight"
-                            help="Save quote and return to Field Service Order"/>
+                    <button name="action_save_and_return_to_fso" type="object"
+                            string="💾 Save &amp; Return to Booking" class="oe_highlight"
+                            help="Save quote and return to Booking"/>
                     
                     <button name="action_create_invoice_from_healthcare_quote" type="object" 
                             string="💰 Create Invoice" class="oe_highlight"
@@ -86,7 +86,7 @@
                   decoration-muted="state == 'cancel'"
                   decoration-bf="state == 'sale'">
                 <field name="name" string="Quote Number"/>
-                <field name="origin" string="FSO Reference"/>
+                <field name="origin" string="Booking Reference"/>
                 <field name="amount_total" widget="monetary"/>
                 <field name="currency_id" column_invisible="1"/>
                 <field name="state" string="Status"

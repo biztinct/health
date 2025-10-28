@@ -430,20 +430,20 @@ class HealthFieldServiceOrderUnified(models.Model):
         'health.staff.assignment',
         'fso_id',
         string='Staff Assignments',
-        help='Individual staff assignments for this FSO'
+        help='Individual staff assignments for this Booking'
     )
-    
+
     assignment_count = fields.Integer(
         'Assignment Count',
         compute='_compute_assignment_count',
-        help='Number of staff assignments for this FSO'
+        help='Number of staff assignments for this Booking'
     )
-    
+
     # Invoice-related computed fields
     invoice_count = fields.Integer(
         'Invoice Count',
         compute='_compute_invoice_count',
-        help='Number of invoices related to this FSO'
+        help='Number of invoices related to this Booking'
     )
     
     lead_assignment_id = fields.Many2one(
@@ -670,7 +670,7 @@ class HealthFieldServiceOrderUnified(models.Model):
     quote_count = fields.Integer(
         'Quote Count',
         compute='_compute_quote_count',
-        help='Number of quotes/sales orders related to this FSO'
+        help='Number of quotes/sales orders related to this Booking'
     )
     
     order_line_count = fields.Integer(
@@ -1368,7 +1368,7 @@ class HealthFieldServiceOrderUnified(models.Model):
             
             # Post confirmation message
             self.message_post(
-                body=_('✅ <strong>Booking Confirmed:</strong> FSO moved to %s stage. Quote %s is ready for service delivery.') % (confirmed_stage.name, self.sale_order_id.name),
+                body=_('✅ <strong>Booking Confirmed:</strong> Booking moved to %s stage. Quote %s is ready for service delivery.') % (confirmed_stage.name, self.sale_order_id.name),
                 message_type='notification',
                 subtype_xmlid='mail.mt_note'
             )
@@ -1922,7 +1922,7 @@ class HealthFieldServiceOrderUnified(models.Model):
         """View the healthcare quote"""
         self.ensure_one()
         if not self.sale_order_id:
-            raise UserError(_('No quote has been created for this FSO yet.'))
+            raise UserError(_('No quote has been created for this Booking yet.'))
         
         return self._open_quote_popup(self.sale_order_id)
     
@@ -1942,7 +1942,7 @@ class HealthFieldServiceOrderUnified(models.Model):
         quote_ids.extend(additional_quotes.ids)
         
         if not quote_ids:
-            raise UserError(_('No quotes have been created for this FSO yet.'))
+            raise UserError(_('No quotes have been created for this Booking yet.'))
         
         if len(quote_ids) == 1:
             return self._open_quote_popup(self.env['sale.order'].browse(quote_ids[0]))
@@ -2103,7 +2103,7 @@ class HealthFieldServiceOrderUnified(models.Model):
         # Check if staff already assigned
         existing = self.assignment_ids.filtered(lambda a: a.staff_id.id == staff_id)
         if existing:
-            raise UserError(_("Staff member is already assigned to this FSO"))
+            raise UserError(_("Staff member is already assigned to this Booking"))
         
         # Create assignment
         assignment = self.env['health.staff.assignment'].create({

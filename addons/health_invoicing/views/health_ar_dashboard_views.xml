@@ -54,7 +54,7 @@
                 <!-- Healthcare-specific filters -->
                 <filter name="outstanding_only" string="Outstanding Payments"
                         domain="[('reconciled', '=', False), ('parent_state', '=', 'posted')]"/>
-                <filter name="overdue_patients" string="Overdue Patients"
+                <filter name="overdue_patients" string="Overdue Clients"
                         domain="[('date_maturity', '&lt;', context_today()), ('reconciled', '=', False), ('parent_state', '=', 'posted')]"/>
                 <filter name="due_this_week" string="Due This Week"
                         domain="[('date_maturity', '&lt;=', (context_today() + relativedelta(weeks=1)).strftime('%Y-%m-%d')), ('reconciled', '=', False)]"/>
@@ -185,7 +185,7 @@
 
     <!-- Overdue Patients Action -->
     <record id="action_healthcare_overdue_patients" model="ir.actions.act_window">
-        <field name="name">Overdue Patient Payments</field>
+        <field name="name">Overdue Client Payments</field>
         <field name="res_model">account.move.line</field>
         <field name="view_mode">list,form</field>
         <field name="context">{

@@ -52,16 +52,16 @@
             <search string="Search Payment Reminders">
                 
                 <!-- Risk-based filters -->
-                <filter name="critical_risk" string="Critical Risk Patients"
+                <filter name="critical_risk" string="Critical Risk Clients"
                         domain="[('healthcare_payment_risk', '=', 'critical')]"
                         help='Clients with very late payment patterns'/>
-                <filter name="high_risk" string="High Risk Patients"
+                <filter name="high_risk" string="High Risk Clients"
                         domain="[('healthcare_payment_risk', '=', 'high')]"
                         help='Clients often late with payments'/>
-                <filter name="medium_risk" string="Medium Risk Patients"
+                <filter name="medium_risk" string="Medium Risk Clients"
                         domain="[('healthcare_payment_risk', '=', 'medium')]"
                         help='Clients sometimes late with payments'/>
-                <filter name="low_risk" string="Low Risk Patients"
+                <filter name="low_risk" string="Low Risk Clients"
                         domain="[('healthcare_payment_risk', '=', 'low')]"
                         help='Clients with prompt payment patterns'/>
                 

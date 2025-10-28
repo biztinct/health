@@ -7,10 +7,10 @@
         <field name="inherit_id" ref="health_base.view_health_patient_form"/>
         <field name="arch" type="xml">
             <header position="inside">
-                <button name="action_create_fso" 
-                        type="object" 
-                        string="Create Booking (FSO)" 
-                        class="btn-primary" 
+                <button name="action_create_fso"
+                        type="object"
+                        string="Booking"
+                        class="btn-primary"
                         invisible="not is_patient"/>
             </header>
         </field>

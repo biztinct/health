@@ -14,7 +14,7 @@
                         class="oe_stat_button"
                         icon="fa-tachometer"
                         string="Dashboard"
-                        help="Open FSO Workflow Dashboard"/>
+                        help="Open Booking Workflow Dashboard"/>
             </xpath>
             <!-- Add Dashboard button to header for calendar event popups -->
             <xpath expr="//button[@name='action_confirm_booking']" position="after">

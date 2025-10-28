@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-    <!-- Inherit health_base patient kanban and add Hub & Spoke button -->
+    <!-- Inherit health_base patient kanban and add Dashboard button -->
     <record id="view_health_patient_kanban_hub_spoke" model="ir.ui.view">
         <field name="name">res.partner.patient.kanban.hub.spoke</field>
         <field name="model">res.partner</field>
         <field name="inherit_id" ref="health_base.view_health_patient_kanban"/>
         <field name="arch" type="xml">
-            <!-- Replace Schedule button with Hub & Spoke button -->
+            <!-- Replace Schedule button with Dashboard button -->
             <xpath expr="//button[@name='action_create_appointment']" position="replace">
                 <button name="action_open_hub_spoke"
                         type="object"
                         class="btn btn-primary btn-sm">
-                    <i class="fa fa-sitemap"/> Hub &amp; Spoke
+                    <i class="fa fa-tachometer"/> Dashboard
                 </button>
             </xpath>
         </field>

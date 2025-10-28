@@ -6,14 +6,14 @@
               web_icon="health_base,static/description/icon.png"
               groups="group_healthcare_base,group_healthcare_receptionist,group_healthcare_nurse,group_healthcare_doctor,group_healthcare_manager,group_healthcare_admin,group_healthcare_owner"/>
 
-    <!-- Patient Management Menu -->
-    <menuitem id="menu_healthcare_patients" name="Patient Management" 
+    <!-- Client Management Menu -->
+    <menuitem id="menu_healthcare_patients" name="Client Management"
               parent="menu_healthcare_root" sequence="10"
               groups="group_healthcare_base,group_healthcare_receptionist,group_healthcare_nurse,group_healthcare_doctor,group_healthcare_manager,group_healthcare_admin,group_healthcare_owner"/>
     
-    <!-- Patient Registry Action -->
-    <menuitem id="menu_healthcare_patient_registry" name="Patient Registry" 
-              parent="menu_healthcare_patients" 
+    <!-- Client Registry Action -->
+    <menuitem id="menu_healthcare_patient_registry" name="Client Registry"
+              parent="menu_healthcare_patients"
               action="action_health_patient" sequence="10"
               groups="group_healthcare_base,group_healthcare_receptionist,group_healthcare_nurse,group_healthcare_doctor,group_healthcare_manager,group_healthcare_admin,group_healthcare_owner"/>
 
@@ -77,9 +77,9 @@
               parent="menu_healthcare_root" sequence="40"
               groups="group_healthcare_base,group_healthcare_receptionist,group_healthcare_nurse,group_healthcare_doctor,group_healthcare_manager,group_healthcare_admin,group_healthcare_owner"/>
 
-    <!-- Patient Categories -->
-    <menuitem id="menu_healthcare_patient_categories" name="Patient Categories" 
-              parent="menu_healthcare_lookups" 
+    <!-- Client Categories -->
+    <menuitem id="menu_healthcare_patient_categories" name="Client Categories"
+              parent="menu_healthcare_lookups"
               action="action_health_patient_category" sequence="10"
               groups="group_healthcare_receptionist,group_healthcare_manager,group_healthcare_admin,group_healthcare_owner"/>
 

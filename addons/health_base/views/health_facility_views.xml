@@ -37,7 +37,7 @@
                 <header>
                     <field name="facility_status" widget="statusbar" statusbar_visible="planning,construction,operational,maintenance"/>
                     <button name="action_check_license_expiry" string="Check License" type="object" class="health-btn health-btn-primary"/>
-                    <button name="action_view_patients" string="View Patients" type="object" class="health-btn health-btn-outline"/>
+                    <button name="action_view_patients" string="View Clients" type="object" class="health-btn health-btn-outline"/>
                     <button name="action_view_appointments" string="View Appointments" type="object" class="health-btn health-btn-outline"/>
                 </header>
                 <sheet>

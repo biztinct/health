@@ -467,6 +467,48 @@ body {
     transition: width 0.3s ease;
 }
 
+/* Odoo Progressbar Widget - Fix text visibility */
+.o_progressbar {
+    display: flex;
+    align-items: center;
+    height: 24px;
+    background-color: var(--health-gray-200);
+    border-radius: var(--health-radius);
+    overflow: hidden;
+    margin: var(--health-space-2) 0;
+    position: relative;
+}
+
+.o_progressbar_value {
+    position: absolute;
+    height: 100%;
+    background: linear-gradient(90deg, var(--health-success), var(--health-primary));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: width 0.3s ease;
+    z-index: 1;
+}
+
+.o_progressbar_text {
+    position: absolute;
+    left: var(--health-space-2);
+    right: var(--health-space-2);
+    text-align: center;
+    font-size: var(--health-font-size-xs);
+    font-weight: 600;
+    color: var(--health-gray-900);
+    z-index: 2;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Ensure text is white on darker backgrounds */
+.o_progressbar_value .o_progressbar_text {
+    color: white;
+}
+
 /* ============================================================================
    Dark Mode Support (for night shift staff)
    ============================================================================ */

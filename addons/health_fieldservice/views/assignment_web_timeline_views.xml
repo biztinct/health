@@ -108,15 +108,6 @@
                         </group>
                     </group>
                     <notebook>
-                        <page name="assignment_details" string="Assignment Details">
-                            <group>
-                                <field name="assignment_score" readonly="1"/>
-                                <field name="skill_match_score" readonly="1"/>
-                                <field name="proximity_score" readonly="1"/>
-                                <field name="workload_score" readonly="1"/>
-                                <field name="availability_score" readonly="1"/>
-                            </group>
-                        </page>
                     </notebook>
                 </sheet>
                 <!-- Odoo 18 Standard Chatter -->

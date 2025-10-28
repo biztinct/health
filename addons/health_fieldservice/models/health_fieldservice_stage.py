@@ -46,9 +46,9 @@ class HealthFieldServiceStage(models.Model):
     is_closed = fields.Boolean('Is Closed Stage', default=False, 
                               help="Indicates this is a final stage (completed/cancelled)")
     is_default = fields.Boolean('Default Stage', default=False,
-                               help="This stage is used as default for new FSOs")
+                               help="This stage is used as default for new Bookings")
     allow_edit = fields.Boolean('Allow Editing', default=True,
-                               help="Whether FSOs in this stage can be edited")
+                               help="Whether Bookings in this stage can be edited")
     
     # Active flag
     active = fields.Boolean('Active', default=True)

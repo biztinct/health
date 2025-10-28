@@ -56,12 +56,12 @@
     </record>
 
     <record id="lead_reason_patient_referral" model="health.lead.reason">
-        <field name="name">Patient Referral</field>
+        <field name="name">Client Referral</field>
         <field name="code">PAT_REF</field>
         <field name="category">referral</field>
         <field name="lead_type">both</field>
         <field name="sequence">60</field>
-        <field name="description">Referred by an existing patient</field>
+        <field name="description">Referred by an existing client</field>
         <field name="name_vietnamese">Giới thiệu từ bệnh nhân</field>
     </record>
 
@@ -156,7 +156,7 @@
         <field name="category">follow_up</field>
         <field name="lead_type">opportunity</field>
         <field name="sequence">150</field>
-        <field name="description">Follow-up service opportunity from existing patient relationship</field>
+        <field name="description">Follow-up service opportunity from existing client relationship</field>
         <field name="name_vietnamese">Cơ hội dịch vụ theo dõi</field>
     </record>
 

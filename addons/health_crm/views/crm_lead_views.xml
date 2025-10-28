@@ -165,7 +165,7 @@
                             <group>
                                 <!-- Client Information -->
                                 <group string="Client Information" col="2">
-                                    <field name="patient_id" string="Client/Patient" options="{'no_create': True}" colspan="2"/>
+                                    <field name="patient_id" string="Client" options="{'no_create': True}" colspan="2"/>
                                 </group>
                                 
                                 <!-- Care Team -->

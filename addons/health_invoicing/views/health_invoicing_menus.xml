@@ -77,10 +77,10 @@
         action="action_all_healthcare_products"
         sequence="20"/>
 
-    <!-- Patient Packages Menu (directly under Healthcare > Service Packages) -->
-    <menuitem 
+    <!-- Client Packages Menu (directly under Healthcare > Service Packages) -->
+    <menuitem
         id="menu_health_service_packages"
-        name="Patient Packages"
+        name="Client Packages"
         parent="health_base.menu_healthcare_service_packages"
         action="action_health_service_package"
         sequence="20"/>
@@ -104,9 +104,9 @@
         action="action_healthcare_ar_dashboard"
         sequence="10"/>
 
-    <menuitem 
+    <menuitem
         id="menu_health_overdue_patients"
-        name="Overdue Patients"
+        name="Overdue Clients"
         parent="menu_health_accounts_receivable"
         action="action_healthcare_overdue_patients"
         sequence="20"/>

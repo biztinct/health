@@ -13,8 +13,7 @@
             <form string='Client Record" class="o_form_patient_record'>
                 <header>
                     <field name="patient_status" widget="statusbar" statusbar_visible="new,active,inactive"/>
-                    <button name="action_create_appointment" string="Schedule Appointment" type="object" class="oe_highlight"/>
-                    <button name="action_activate_patient" string="Activate" type="object" class="oe_highlight" 
+                    <button name="action_activate_patient" string="Activate" type="object" class="oe_highlight"
                             invisible="patient_status == 'active'"/>
                 </header>
 
@@ -56,7 +55,7 @@
 
                     <div class="oe_title">
                         <h1 class="d-flex align-items-center gap-3">
-                            <field name="name" placeholder="Patient Full Name" required="1" class="o_text_overflow" style="flex-shrink: 1;"/>
+                            <field name="name" placeholder="Client Full Name" required="1" class="o_text_overflow" style="flex-shrink: 1;"/>
                             <!-- ID Badge - Light Blue with thick border (matching hierarchy widget) -->
                             <span class="badge text-white" style="background-color: #E4F4FD; color: #1565C0 !important; padding: 8px 28px; font-size: 28px; font-weight: 700; border-radius: 12px; border: 4px solid #1565C0; flex-shrink: 0;">
                                 <field name="patient_code_display" nolabel="1" style="color: #1565C0 !important; font-size: 28px; font-weight: 700;"/>
@@ -74,7 +73,7 @@
                         <field name="allergies" readonly="1"/>
                     </div>
                     <div class="alert alert-warning" role="alert" invisible="patient_status != 'new'">
-                        <strong><i class="fa fa-info-circle"/> NEW PATIENT:</strong>
+                        <strong><i class="fa fa-info-circle"/> NEW CLIENT:</strong>
                         Please complete all required information and verify insurance details.
                     </div>
 
@@ -143,12 +142,12 @@
                                     <label for="allergies"/>
                                     <div>
                                         <field name="allergies" placeholder="List all known allergies (medications, foods, environmental)"/>
-                                        <small class="text-muted">⚠️ Critical for patient safety - please be thorough</small>
+                                        <small class="text-muted">⚠️ Critical for client safety - please be thorough</small>
                                     </div>
                                 </group>
 
                                 <group string="MOH Compliance Information">
-                                    <field name="profession" placeholder="Patient's occupation (e.g., Teacher, Engineer)"/>
+                                    <field name="profession" placeholder="Client's occupation (e.g., Teacher, Engineer)"/>
                                     <field name="ethnicity"/>
                                 </group>
 
@@ -205,7 +204,7 @@
                         </page>
 
                         <!-- Patient Journey & Analytics -->
-                        <page string="&#x1F680; Patient Journey" name="patient_journey">
+                        <page string="&#x1F680; Client Journey" name="patient_journey">
                             <group>
                                 <group string="Registration Details">
                                     <field name="source_details" placeholder="Specific source details"/>
@@ -220,11 +219,11 @@
                                 </group>
                             </group>
 
-                            <!-- Patient Timeline Placeholder -->
+                            <!-- Client Timeline Placeholder -->
                             <div class="mt-3">
-                                <h4>Patient Timeline</h4>
+                                <h4>Client Timeline</h4>
                                 <div class="alert alert-info">
-                                    <i class="fa fa-timeline"/> Patient timeline with appointments, treatments, and key events will be displayed here.
+                                    <i class="fa fa-timeline"/> Client timeline with appointments, treatments, and key events will be displayed here.
                                 </div>
                             </div>
                         </page>
@@ -306,7 +305,7 @@
                     <t t-name="kanban-box">
                         <div class="o_patient_card">
                             <div class="o_kanban_image">
-                                <img t-att-src="kanban_image('res.partner', 'image_128', record.id.raw_value)" alt="Patient"/>
+                                <img t-att-src="kanban_image('res.partner', 'image_128', record.id.raw_value)" alt="Client"/>
                             </div>
                             
                             <div class="o_patient_card_content">
@@ -344,7 +343,7 @@
                     
                     <!-- Kanban Empty State Template -->
                     <t t-name="kanban-menu">
-                        <a role="menuitem" type="object" name="action_create_patient" class="dropdown-item">New Patient</a>
+                        <a role="menuitem" type="object" name="action_create_patient" class="dropdown-item">New Client</a>
                     </t>
                 </templates>
             </kanban>
@@ -405,7 +404,7 @@
 
     <!-- Main Patient Action -->
     <record id="action_health_patient" model="ir.actions.act_window">
-        <field name="name">Patient Registry</field>
+        <field name="name">Client Registry</field>
         <field name="res_model">res.partner</field>
         <field name="view_mode">kanban,list,form</field>
         <field name="view_id" ref="view_health_patient_kanban"/>
@@ -422,14 +421,14 @@
         }</field>
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">
-                Welcome to VAFHS Patient Management!
+                Welcome to VAFHS Client Management!
             </p>
             <p>
-                Create your first patient record to begin managing healthcare services.<br/>
-                Click the <strong>New</strong> button above to register your first patient.
+                Create your first client record to begin managing healthcare services.<br/>
+                Click the <strong>New</strong> button above to register your first client.
             </p>
             <p>
-                The system tracks patient demographics, medical history, appointments, and billing.
+                The system tracks client demographics, medical history, appointments, and billing.
             </p>
         </field>
     </record>
@@ -502,7 +501,7 @@
     </record>
 
     <record id="action_health_patient_category" model="ir.actions.act_window">
-        <field name="name">Patient Categories</field>
+        <field name="name">Client Categories</field>
         <field name="res_model">health.patient.category</field>
         <field name="view_mode">list,form</field>
     </record>

@@ -33,7 +33,7 @@
     </record>
 
     <record id="stage_healthcare_won" model="crm.stage">
-        <field name="name">Patient Acquired</field>
+        <field name="name">Client Acquired</field>
         <field name="sequence">6</field>
         <field name="is_won">True</field>
         <field name="team_id" ref="healthcare_crm_team"/>

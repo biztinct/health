@@ -86,25 +86,6 @@
                     </group>
 
                     <notebook>
-                        <page string="Assignment Details" name="details">
-                            <group>
-                                <group string="AI Assignment Scores" class="col-lg-6">
-                                    <field name="assignment_score" widget="progressbar"/>
-                                    <field name="skill_match_score" widget="progressbar"/>
-                                    <field name="proximity_score" widget="progressbar"/>
-                                    <field name="workload_score" widget="progressbar"/>
-                                    <field name="availability_score" widget="progressbar"/>
-                                </group>
-                                <group string="Performance Metrics" class="col-lg-6">
-                                    <field name="assignment_efficiency" widget="progressbar"/>
-                                    <field name="planning_accuracy" widget="progressbar"/>
-                                    <field name="time_variance_minutes"/>
-                                    <field name="staff_current_load" widget="progressbar"/>
-                                    <field name="daily_assignment_count"/>
-                                </group>
-                            </group>
-                        </page>
-
                         <page string="Location &amp; Travel" name="location" invisible="assignment_type != 'home_visit'">
                             <group>
                                 <group string="Location Details" class="col-lg-6">

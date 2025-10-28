@@ -6,11 +6,11 @@
         <field name="name">health.fieldservice.stage.form</field>
         <field name="model">health.fieldservice.stage</field>
         <field name="arch" type="xml">
-            <form string="FSO Stage Configuration">
+            <form string="Booking Stage Configuration">
                 <sheet>
                     <div class="oe_button_box" name="button_box">
                         <button name="action_view_fsos" type="object" class="oe_stat_button" icon="fa-tasks" invisible="fso_count == 0">
-                            <field name="fso_count" widget="statinfo" string="FSOs"/>
+                            <field name="fso_count" widget="statinfo" string="Bookings"/>
                         </button>
                     </div>
                     
@@ -59,7 +59,7 @@
         <field name="name">health.fieldservice.stage.list</field>
         <field name="model">health.fieldservice.stage</field>
         <field name="arch" type="xml">
-            <list string="FSO Stages" default_order="sequence,name" editable="bottom">
+            <list string="Booking Stages" default_order="sequence,name" editable="bottom">
                 <field name="sequence" widget="handle"/>
                 <field name="name"/>
                 <field name="state" widget="selection" readonly="0"
@@ -71,7 +71,7 @@
                 <field name="require_quote" widget="boolean_toggle"/>
                 <field name="require_quote_items" widget="boolean_toggle"/>
                 <field name="require_staff_assignment" widget="boolean_toggle"/>
-                <field name="fso_count" string="FSOs"/>
+                <field name="fso_count" string="Bookings"/>
                 <field name="is_default" widget="boolean_toggle"/>
                 <field name="active" widget="boolean_toggle"/>
                 <field name="color"/>
@@ -81,12 +81,12 @@
 
     <!-- Stage Action -->
     <record id="action_health_fieldservice_stage" model="ir.actions.act_window">
-        <field name="name">FSO Stages</field>
+        <field name="name">Booking Stages</field>
         <field name="res_model">health.fieldservice.stage</field>
         <field name="view_mode">list,form</field>
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">
-                Create your first FSO stage!
+                Create your first Booking stage!
             </p>
             <p>
                 Configure stages to define your field service workflow. Each stage can have:
