@@ -1,0 +1,491 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* health_pwa
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 18.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-10-29 05:48+0000\n"
+"PO-Revision-Date: 2025-10-29 05:48+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: health_pwa
+#: model_terms:ir.ui.view,arch_db:health_pwa.service_worker_js
+msgid ""
+"// Health PWA Service Worker v1.0.0\n"
+"\n"
+"const CACHE_NAME = 'health-pwa-v1.0.0';\n"
+"const OFFLINE_URL = '/health_pwa/offline';\n"
+"const API_CACHE_NAME = 'health-pwa-api-v1.0.0';\n"
+"\n"
+"// Files to cache for offline functionality\n"
+"const STATIC_CACHE_URLS = [\n"
+"    '/health_pwa',\n"
+"    '/health_pwa/offline',\n"
+"    '/health_pwa/static/src/css/app.css',\n"
+"    '/health_pwa/static/src/css/mobile.css',\n"
+"    '/health_pwa/static/src/js/app.js',\n"
+"    '/health_pwa/static/src/js/router.js',\n"
+"    '/health_pwa/static/icons/icon-192.png',\n"
+"    'https://unpkg.com/vue@3.4.0/dist/vue.global.prod.js',\n"
+"    'https://unpkg.com/quasar@2.14.0/dist/quasar.umd.min.js',\n"
+"    'https://unpkg.com/pouchdb@8.0.0/dist/pouchdb.min.js',\n"
+"];\n"
+"\n"
+"// API endpoints to cache\n"
+"const API_CACHE_PATTERNS = [\n"
+"    /^\\/health_pwa\\/api\\/patients/,\n"
+"    /^\\/health_pwa\\/api\\/fso/,\n"
+"    /^\\/health_pwa\\/api\\/teams/,\n"
+"    /^\\/health_pwa\\/api\\/user/,\n"
+"];\n"
+"\n"
+"// Install event - cache static files\n"
+"self.addEventListener('install', event =&gt; {\n"
+"    console.log('Service Worker installing...');\n"
+"    event.waitUntil(\n"
+"        caches.open(CACHE_NAME)\n"
+"            .then(cache =&gt; {\n"
+"                console.log('Caching static files');\n"
+"                return cache.addAll(STATIC_CACHE_URLS);\n"
+"            })\n"
+"            .then(() =&gt; {\n"
+"                console.log('Service Worker installed successfully');\n"
+"                return self.skipWaiting();\n"
+"            })\n"
+"            .catch(error =&gt; {\n"
+"                console.error('Service Worker installation failed:', error);\n"
+"            })\n"
+"    );\n"
+"});\n"
+"\n"
+"// Activate event - clean up old caches\n"
+"self.addEventListener('activate', event =&gt; {\n"
+"    console.log('Service Worker activating...');\n"
+"    event.waitUntil(\n"
+"        caches.keys().then(cacheNames =&gt; {\n"
+"            return Promise.all(\n"
+"                cacheNames.map(cacheName =&gt; {\n"
+"                    if (cacheName !== CACHE_NAME &amp;&amp; cacheName !== API_CACHE_NAME) {\n"
+"                        console.log('Deleting old cache:', cacheName);\n"
+"                        return caches.delete(cacheName);\n"
+"                    }\n"
+"                })\n"
+"            );\n"
+"        }).then(() =&gt; {\n"
+"            console.log('Service Worker activated');\n"
+"            return self.clients.claim();\n"
+"        })\n"
+"    );\n"
+"});\n"
+"\n"
+"// Fetch event - handle network requests with caching strategy\n"
+"self.addEventListener('fetch', event =&gt; {\n"
+"    const request = event.request;\n"
+"    const url = new URL(request.url);\n"
+"    \n"
+"    // Skip non-GET requests and chrome-extension requests\n"
+"    if (request.method !== 'GET' || url.protocol === 'chrome-extension:') {\n"
+"        return;\n"
+"    }\n"
+"    \n"
+"    // Handle PWA app requests\n"
+"    if (url.pathname.startsWith('/health_pwa')) {\n"
+"        if (url.pathname.startsWith('/health_pwa/api/') || url.pathname.startsWith('/health_pwa/sync/')) {\n"
+"            // API requests - Network First with Cache Fallback\n"
+"            event.respondWith(handleAPIRequest(request));\n"
+"        } else {\n"
+"            // Static files - Cache First\n"
+"            event.respondWith(handleStaticRequest(request));\n"
+"        }\n"
+"    }\n"
+"});\n"
+"\n"
+"// Handle API requests with Network First strategy\n"
+"async function handleAPIRequest(request) {\n"
+"    const url = new URL(request.url);\n"
+"    \n"
+"    try {\n"
+"        // Try network first\n"
+"        const response = await fetch(request);\n"
+"        \n"
+"        // Cache successful GET responses for offline use\n"
+"        if (response.ok &amp;&amp; request.method === 'GET') {\n"
+"            const cache = await caches.open(API_CACHE_NAME);\n"
+"            cache.put(request, response.clone());\n"
+"        }\n"
+"        \n"
+"        return response;\n"
+"    } catch (error) {\n"
+"        console.log('Network failed, trying cache for:', url.pathname);\n"
+"        \n"
+"        // Network failed, try cache\n"
+"        const cache = await caches.open(API_CACHE_NAME);\n"
+"        const cachedResponse = await cache.match(request);\n"
+"        \n"
+"        if (cachedResponse) {\n"
+"            // Add offline indicator header\n"
+"            const response = cachedResponse.clone();\n"
+"            response.headers.set('X-Served-By', 'ServiceWorker-Cache');\n"
+"            return response;\n"
+"        }\n"
+"        \n"
+"        // Return offline response for API requests\n"
+"        return new Response(JSON.stringify({\n"
+"            success: false,\n"
+"            error: 'Network unavailable and no cached data',\n"
+"            offline: true,\n"
+"            timestamp: new Date().toISOString()\n"
+"        }), {\n"
+"            status: 503,\n"
+"            headers: { 'Content-Type': 'application/json' }\n"
+"        });\n"
+"    }\n"
+"}\n"
+"\n"
+"// Handle static requests with Cache First strategy\n"
+"async function handleStaticRequest(request) {\n"
+"    const cache = await caches.open(CACHE_NAME);\n"
+"    const cachedResponse = await cache.match(request);\n"
+"    \n"
+"    if (cachedResponse) {\n"
+"        return cachedResponse;\n"
+"    }\n"
+"    \n"
+"    try {\n"
+"        const response = await fetch(request);\n"
+"        if (response.ok) {\n"
+"            cache.put(request, response.clone());\n"
+"        }\n"
+"        return response;\n"
+"    } catch (error) {\n"
+"        console.log('Static request failed:', request.url);\n"
+"        \n"
+"        // Return offline page for navigation requests\n"
+"        if (request.mode === 'navigate') {\n"
+"            const offlineResponse = await cache.match(OFFLINE_URL);\n"
+"            return offlineResponse || new Response('Offline', { status: 503 });\n"
+"        }\n"
+"        \n"
+"        // Return minimal response for other requests\n"
+"        return new Response('Offline', { status: 503 });\n"
+"    }\n"
+"}\n"
+"\n"
+"// Background sync for offline actions\n"
+"self.addEventListener('sync', event =&gt; {\n"
+"    console.log('Background sync triggered:', event.tag);\n"
+"    \n"
+"    if (event.tag === 'health-pwa-sync') {\n"
+"        event.waitUntil(performBackgroundSync());\n"
+"    }\n"
+"});\n"
+"\n"
+"// Perform background sync\n"
+"async function performBackgroundSync() {\n"
+"    try {\n"
+"        // Get pending sync data from IndexedDB (handled by PouchDB)\n"
+"        console.log('Performing background sync...');\n"
+"        \n"
+"        // Send message to active clients to trigger sync\n"
+"        const clients = await self.clients.matchAll();\n"
+"        clients.forEach(client =&gt; {\n"
+"            client.postMessage({\n"
+"                type: 'BACKGROUND_SYNC',\n"
+"                timestamp: new Date().toISOString()\n"
+"            });\n"
+"        });\n"
+"        \n"
+"    } catch (error) {\n"
+"        console.error('Background sync failed:', error);\n"
+"    }\n"
+"}\n"
+"\n"
+"// Push notification handler (for future use)\n"
+"self.addEventListener('push', event =&gt; {\n"
+"    console.log('Push notification received:', event);\n"
+"    \n"
+"    const options = {\n"
+"        body: event.data ? event.data.text() : 'New health update available',\n"
+"        icon: '/health_pwa/static/icons/icon-192.png',\n"
+"        badge: '/health_pwa/static/icons/icon-96.png',\n"
+"        vibrate: [200, 100, 200],\n"
+"        tag: 'health-pwa-notification',\n"
+"        actions: [\n"
+"            {\n"
+"                action: 'open',\n"
+"                title: 'Open App',\n"
+"                icon: '/health_pwa/static/icons/icon-96.png'\n"
+"            },\n"
+"            {\n"
+"                action: 'close',\n"
+"                title: 'Close',\n"
+"                icon: '/health_pwa/static/icons/icon-96.png'\n"
+"            }\n"
+"        ]\n"
+"    };\n"
+"    \n"
+"    event.waitUntil(\n"
+"        self.registration.showNotification('Health Mobile', options)\n"
+"    );\n"
+"});\n"
+"\n"
+"// Notification click handler\n"
+"self.addEventListener('notificationclick', event =&gt; {\n"
+"    console.log('Notification clicked:', event);\n"
+"    event.notification.close();\n"
+"    \n"
+"    if (event.action === 'open') {\n"
+"        event.waitUntil(\n"
+"            clients.matchAll().then(clientList =&gt; {\n"
+"                // Try to focus existing window\n"
+"                for (const client of clientList) {\n"
+"                    if (client.url.includes('/health_pwa') &amp;&amp; 'focus' in client) {\n"
+"                        return client.focus();\n"
+"                    }\n"
+"                }\n"
+"                \n"
+"                // Open new window if no existing window\n"
+"                if (clients.openWindow) {\n"
+"                    return clients.openWindow('/health_pwa');\n"
+"                }\n"
+"            })\n"
+"        );\n"
+"    }\n"
+"});\n"
+"\n"
+"console.log('Health PWA Service Worker loaded successfully');"
+msgstr ""
+
+#. module: health_pwa
+#: model_terms:ir.ui.view,arch_db:health_pwa.debug_shell
+msgid "<strong>Company:</strong>"
+msgstr ""
+
+#. module: health_pwa
+#: model_terms:ir.ui.view,arch_db:health_pwa.debug_shell
+msgid "<strong>Database:</strong>"
+msgstr ""
+
+#. module: health_pwa
+#: model_terms:ir.ui.view,arch_db:health_pwa.app_shell
+msgid ""
+"<strong>Install Health Mobile</strong>\n"
+"                        <span>Get the best mobile experience</span>"
+msgstr ""
+
+#. module: health_pwa
+#: model_terms:ir.ui.view,arch_db:health_pwa.debug_shell
+msgid "<strong>User ID:</strong>"
+msgstr ""
+
+#. module: health_pwa
+#: model_terms:ir.ui.view,arch_db:health_pwa.debug_shell
+msgid "<strong>User Name:</strong>"
+msgstr ""
+
+#. module: health_pwa
+#: model_terms:ir.ui.view,arch_db:health_pwa.access_denied
+msgid "Access Denied"
+msgstr ""
+
+#. module: health_pwa
+#: model_terms:ir.ui.view,arch_db:health_pwa.access_denied
+msgid "Back to Main System"
+msgstr ""
+
+#. module: health_pwa
+#: model_terms:ir.ui.view,arch_db:health_pwa.install_guide
+msgid "Click install"
+msgstr ""
+
+#. module: health_pwa
+#: model_terms:ir.ui.view,arch_db:health_pwa.install_guide
+msgid "Click the install icon and confirm to install Health Mobile"
+msgstr ""
+
+#. module: health_pwa
+#: model_terms:ir.ui.view,arch_db:health_pwa.install_guide
+msgid "Confirm installation"
+msgstr ""
+
+#. module: health_pwa
+#: model_terms:ir.ui.view,arch_db:health_pwa.install_guide
+msgid "Find and tap \"Add to Home screen\" or \"Install\" in the menu"
+msgstr ""
+
+#. module: health_pwa
+#: model_terms:ir.ui.view,arch_db:health_pwa.app_shell
+#: model_terms:ir.ui.view,arch_db:health_pwa.install_guide
+msgid "Health Mobile"
+msgstr ""
+
+#. module: health_pwa
+#: model_terms:ir.ui.view,arch_db:health_pwa.offline_page
+msgid ""
+"Health Mobile is not available right now. \n"
+"                    Please check your internet connection and try again."
+msgstr ""
+
+#. module: health_pwa
+#: model_terms:ir.ui.view,arch_db:health_pwa.install_guide
+msgid "Health Mobile will be available as a desktop application"
+msgstr ""
+
+#. module: health_pwa
+#: model_terms:ir.ui.view,arch_db:health_pwa.debug_shell
+msgid "Health PWA Debug Information"
+msgstr ""
+
+#. module: health_pwa
+#: model_terms:ir.ui.view,arch_db:health_pwa.app_shell
+msgid "Install"
+msgstr ""
+
+#. module: health_pwa
+#: model_terms:ir.ui.view,arch_db:health_pwa.install_guide
+msgid "Install our app for the best mobile experience"
+msgstr ""
+
+#. module: health_pwa
+#: model_terms:ir.ui.view,arch_db:health_pwa.debug_shell
+msgid "JavaScript Test"
+msgstr ""
+
+#. module: health_pwa
+#: model_terms:ir.ui.view,arch_db:health_pwa.app_shell
+msgid "Later"
+msgstr ""
+
+#. module: health_pwa
+#: model_terms:ir.ui.view,arch_db:health_pwa.install_guide
+msgid "Launch the app"
+msgstr ""
+
+#. module: health_pwa
+#: model_terms:ir.ui.view,arch_db:health_pwa.app_shell
+msgid "Loading healthcare data..."
+msgstr ""
+
+#. module: health_pwa
+#: model_terms:ir.ui.view,arch_db:health_pwa.install_guide
+msgid "Look for the install icon"
+msgstr ""
+
+#. module: health_pwa
+#: model_terms:ir.ui.view,arch_db:health_pwa.install_guide
+msgid "Look for the share icon at the bottom of your Safari browser"
+msgstr ""
+
+#. module: health_pwa
+#: model_terms:ir.ui.view,arch_db:health_pwa.install_guide
+msgid "Look for the three dots in the top-right corner of your Chrome browser"
+msgstr ""
+
+#. module: health_pwa
+#: model_terms:ir.ui.view,arch_db:health_pwa.debug_shell
+msgid "Next Steps"
+msgstr ""
+
+#. module: health_pwa
+#: model_terms:ir.ui.view,arch_db:health_pwa.install_guide
+msgid "Open Health Mobile"
+msgstr ""
+
+#. module: health_pwa
+#: model_terms:ir.ui.view,arch_db:health_pwa.install_guide
+msgid "Scroll down in the share menu and tap \"Add to Home Screen\""
+msgstr ""
+
+#. module: health_pwa
+#: model_terms:ir.ui.view,arch_db:health_pwa.install_guide
+msgid "Select \"Add to Home Screen\""
+msgstr ""
+
+#. module: health_pwa
+#: model_terms:ir.ui.view,arch_db:health_pwa.install_guide
+msgid "Select \"Add to Home screen\""
+msgstr ""
+
+#. module: health_pwa
+#: model_terms:ir.ui.view,arch_db:health_pwa.debug_shell
+msgid "Static Files Test"
+msgstr ""
+
+#. module: health_pwa
+#: model_terms:ir.ui.view,arch_db:health_pwa.install_guide
+msgid "Tap \"Add\" to install Health Mobile on your home screen"
+msgstr ""
+
+#. module: health_pwa
+#: model_terms:ir.ui.view,arch_db:health_pwa.install_guide
+msgid "Tap \"Install\" to add Health Mobile to your home screen"
+msgstr ""
+
+#. module: health_pwa
+#: model_terms:ir.ui.view,arch_db:health_pwa.install_guide
+msgid "Tap the Share button"
+msgstr ""
+
+#. module: health_pwa
+#: model_terms:ir.ui.view,arch_db:health_pwa.install_guide
+msgid "Tap the menu button"
+msgstr ""
+
+#. module: health_pwa
+#: model_terms:ir.ui.view,arch_db:health_pwa.debug_shell
+msgid "Test API"
+msgstr ""
+
+#. module: health_pwa
+#: model_terms:ir.ui.view,arch_db:health_pwa.debug_shell
+msgid "Test Debug Controller"
+msgstr ""
+
+#. module: health_pwa
+#: model_terms:ir.ui.view,arch_db:health_pwa.debug_shell
+msgid "Test Manifest"
+msgstr ""
+
+#. module: health_pwa
+#: model_terms:ir.ui.view,arch_db:health_pwa.debug_shell
+msgid "Testing CSS loading..."
+msgstr ""
+
+#. module: health_pwa
+#: model_terms:ir.ui.view,arch_db:health_pwa.debug_shell
+msgid "Testing debug endpoint..."
+msgstr ""
+
+#. module: health_pwa
+#: model_terms:ir.ui.view,arch_db:health_pwa.offline_page
+msgid "Try Again"
+msgstr ""
+
+#. module: health_pwa
+#: model_terms:ir.ui.view,arch_db:health_pwa.access_denied
+msgid ""
+"You don't have permission to access Health Mobile. \n"
+"                    Please contact your administrator to get access to the health modules."
+msgstr ""
+
+#. module: health_pwa
+#: model_terms:ir.ui.view,arch_db:health_pwa.install_guide
+msgid "You should see an install icon in your browser's address bar"
+msgstr ""
+
+#. module: health_pwa
+#: model_terms:ir.ui.view,arch_db:health_pwa.offline_page
+msgid "You're Offline"
+msgstr ""
+
+#. module: health_pwa
+#: model_terms:ir.ui.view,arch_db:health_pwa.debug_shell
+msgid "✓ Template Rendering Works"
+msgstr ""

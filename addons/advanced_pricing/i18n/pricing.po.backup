@@ -1,0 +1,1946 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* advanced_pricing
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 18.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-10-29 05:49+0000\n"
+"PO-Revision-Date: 2025-10-29 05:49+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: advanced_pricing
+#: model_terms:ir.ui.view,arch_db:advanced_pricing.view_visual_rule_builder_wizard_form
+msgid ""
+"<i class=\"fa fa-info-circle me-2\"/>\n"
+"                            Visual rule configuration is saved. You can modify it using the visual builder."
+msgstr ""
+
+#. module: advanced_pricing
+#: model_terms:ir.ui.view,arch_db:advanced_pricing.view_visual_rule_builder_wizard_form
+msgid "<i class=\"fa fa-puzzle-piece me-2\"/>Welcome to Visual Rule Builder!"
+msgstr ""
+
+#. module: advanced_pricing
+#: model_terms:ir.ui.view,arch_db:advanced_pricing.view_pricing_rule_form
+msgid ""
+"<span class=\"o_stat_text\">Create</span>\n"
+"                                <span class=\"o_stat_text\">Visual Rule</span>"
+msgstr ""
+
+#. module: advanced_pricing
+#: model_terms:ir.ui.view,arch_db:advanced_pricing.product_view_kanban_catalog_booking_quote
+msgid ""
+"<span class=\"text-muted\">\n"
+"                            Adding products to Healthcare Quote\n"
+"                        </span>"
+msgstr ""
+
+#. module: advanced_pricing
+#: model_terms:ir.ui.view,arch_db:advanced_pricing.view_order_form_advanced_pricing
+msgid ""
+"<span invisible=\"not parent.use_advanced_pricing\" class=\"text-muted px-2\">\n"
+"                    📊 Advanced Pricing Active\n"
+"                </span>"
+msgstr ""
+
+#. module: advanced_pricing
+#: model_terms:ir.ui.view,arch_db:advanced_pricing.view_visual_rule_builder_wizard_form
+msgid ""
+"<strong>Actions:</strong> Set what happens (add charges, apply discounts, "
+"multiply prices)"
+msgstr ""
+
+#. module: advanced_pricing
+#: model_terms:ir.ui.view,arch_db:advanced_pricing.view_visual_rule_builder_wizard_form
+msgid ""
+"<strong>Conditions:</strong> Define when rules apply (distance, quantity, "
+"customer type, etc.)"
+msgstr ""
+
+#. module: advanced_pricing
+#: model_terms:ir.ui.view,arch_db:advanced_pricing.view_visual_rule_builder_wizard_form
+msgid "<strong>Logic:</strong> Combine conditions with AND/OR operators"
+msgstr ""
+
+#. module: advanced_pricing
+#: model_terms:ir.ui.view,arch_db:advanced_pricing.view_pricing_rule_form
+msgid ""
+"<strong>⚠️ This rule will NOT be used in pricing calculations</strong>\n"
+"                        <span invisible=\"approval_status != 'draft'\"> - Submit for board approval to enable pricing</span>\n"
+"                        <span invisible=\"approval_status != 'pending'\"> - Awaiting board approval before it can be used</span>\n"
+"                        <span invisible=\"approval_status != 'rejected'\"> - Rule has been rejected and cannot be used</span>"
+msgstr ""
+
+#. module: advanced_pricing
+#: model_terms:ir.ui.view,arch_db:advanced_pricing.view_pricing_rule_form
+msgid ""
+"<strong>✅ This rule is approved</strong> - It will be used in pricing "
+"calculations when active (not archived)."
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_config__api_key
+msgid "API Key"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__action_formula
+msgid "Action Formula"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_engine__message_needaction
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__message_needaction
+msgid "Action Needed"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__action_type
+msgid "Action Type"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__action_value
+msgid "Action Value"
+msgstr ""
+
+#. module: advanced_pricing
+#: model_terms:ir.ui.view,arch_db:advanced_pricing.view_pricing_rule_form
+msgid "Actions"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_config__active
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_engine__active
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__active
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_visual_wizard__active
+#: model_terms:ir.ui.view,arch_db:advanced_pricing.view_pricing_rule_search
+msgid "Active"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_engine__activity_ids
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__activity_ids
+msgid "Activities"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_engine__activity_exception_decoration
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__activity_exception_decoration
+msgid "Activity Exception Decoration"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_engine__activity_state
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__activity_state
+msgid "Activity State"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_engine__activity_type_icon
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__activity_type_icon
+msgid "Activity Type Icon"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__action_type__add
+msgid "Add Amount"
+msgstr ""
+
+#. module: advanced_pricing
+#. odoo-javascript
+#: code:addons/advanced_pricing/static/src/xml/visual_rule_builder.xml:0
+msgid "Add conditions from the \"Conditions\" category"
+msgstr ""
+
+#. module: advanced_pricing
+#: model_terms:ir.ui.view,arch_db:advanced_pricing.view_healthcare_quote_form_catalog
+msgid "Add products from catalog"
+msgstr ""
+
+#. module: advanced_pricing
+#: model_terms:ir.actions.act_window,help:advanced_pricing.action_healthcare_product_catalog
+msgid "Add products to your catalog to get started."
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.ui.menu,name:advanced_pricing.menu_healthcare_advanced_pricelist
+msgid "Advanced Pricelist"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.ui.menu,name:advanced_pricing.menu_advanced_pricing_root
+#: model_terms:ir.ui.view,arch_db:advanced_pricing.view_order_form_advanced_pricing
+msgid "Advanced Pricing"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model,name:advanced_pricing.model_advanced_pricing_engine
+msgid "Advanced Pricing Calculation Engine"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model,name:advanced_pricing.model_advanced_pricing_config
+msgid "Advanced Pricing Configuration"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_product_pricelist__advanced_engine_id
+msgid "Advanced Pricing Engine"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model,name:advanced_pricing.model_advanced_pricing_rule
+msgid "Advanced Pricing Rule"
+msgstr ""
+
+#. module: advanced_pricing
+#. odoo-javascript
+#: code:addons/advanced_pricing/static/src/xml/pricing_templates.xml:0
+msgid "Advanced Pricing Rules"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__is_after_hours_required
+msgid "After Hours Only"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_sale_order__is_after_hours
+msgid "After Hours Service"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__applied_on__3_global
+msgid "All Products"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_sale_order_line__applied_rules
+msgid "Applied Rules"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__action_type__formula
+msgid "Apply Formula"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__applied_on
+msgid "Apply On"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__action_type__percentage
+msgid "Apply Percentage"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields,help:advanced_pricing.field_advanced_pricing_rule__is_after_hours_required
+msgid "Apply only for after-hours appointments"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields,help:advanced_pricing.field_advanced_pricing_rule__is_holiday_required
+msgid "Apply only for holiday appointments"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields,help:advanced_pricing.field_advanced_pricing_rule__service_city
+msgid "Apply only for services in this city"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields,help:advanced_pricing.field_advanced_pricing_rule__holiday_type
+msgid ""
+"Apply only for specific holiday type (requires Holiday Only to be checked)"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields,help:advanced_pricing.field_advanced_pricing_rule__priority
+msgid "Apply only for this priority level"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields,help:advanced_pricing.field_advanced_pricing_rule__service_location
+msgid "Apply only for this service location"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields,help:advanced_pricing.field_advanced_pricing_rule__service_type
+msgid "Apply only for this service type"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields,help:advanced_pricing.field_advanced_pricing_rule__urgency_level
+msgid "Apply only for this urgency level"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields,help:advanced_pricing.field_advanced_pricing_rule__is_weekend_required
+msgid "Apply only for weekend appointments"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_sale_order__appointment_hour
+#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__condition_field__appointment_hour
+msgid "Appointment Hour"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_sale_order__fso_appointment_time
+msgid "Appointment Time"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__approval_date
+msgid "Approval Date"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__approval_notes
+msgid "Approval Notes"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__approval_status
+#: model_terms:ir.ui.view,arch_db:advanced_pricing.view_pricing_rule_form
+#: model_terms:ir.ui.view,arch_db:advanced_pricing.view_pricing_rule_search
+msgid "Approval Status"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields,help:advanced_pricing.field_advanced_pricing_rule__approval_status
+msgid "Approval required for all changes - any modification resets to draft"
+msgstr ""
+
+#. module: advanced_pricing
+#: model_terms:ir.ui.view,arch_db:advanced_pricing.view_pricing_rule_form
+msgid "Approve"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__approval_status__approved
+#: model_terms:ir.ui.view,arch_db:advanced_pricing.view_pricing_rule_search
+msgid "Approved"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__approved_by
+msgid "Approved By"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_engine__message_attachment_count
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__message_attachment_count
+msgid "Attachment Count"
+msgstr ""
+
+#. module: advanced_pricing
+#: model_terms:ir.ui.view,arch_db:advanced_pricing.view_healthcare_quote_form_catalog
+msgid "Back to Quotation"
+msgstr ""
+
+#. module: advanced_pricing
+#. odoo-javascript
+#: code:addons/advanced_pricing/static/src/js/product_catalog_controller.js:0
+msgid "Back to Quote"
+msgstr ""
+
+#. module: advanced_pricing
+#. odoo-javascript
+#: code:addons/advanced_pricing/static/src/xml/visual_rule_builder.xml:0
+msgid "Back to Rules"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_sale_order_line__base_price
+msgid "Base Price"
+msgstr ""
+
+#. module: advanced_pricing
+#: model_terms:ir.ui.view,arch_db:advanced_pricing.view_pricing_rule_form
+msgid "Basic Information"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__condition_operator__between
+msgid "Between"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__blockly_xml
+msgid "Blockly XML"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields,help:advanced_pricing.field_advanced_pricing_rule__visual_config
+#: model:ir.model.fields,help:advanced_pricing.field_advanced_pricing_visual_wizard__visual_config
+msgid "Blockly workspace configuration"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_sale_order__fso_id
+msgid "Booking"
+msgstr ""
+
+#. module: advanced_pricing
+#: model_terms:ir.ui.view,arch_db:advanced_pricing.view_pricing_rule_form
+msgid "Booking Conditions"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields,help:advanced_pricing.field_sale_order__fso_id
+msgid "Booking that created this quote"
+msgstr ""
+
+#. module: advanced_pricing
+#. odoo-javascript
+#: code:addons/advanced_pricing/static/src/xml/visual_rule_builder.xml:0
+msgid "Bulk Discount"
+msgstr ""
+
+#. module: advanced_pricing
+#. odoo-javascript
+#: code:addons/advanced_pricing/static/src/xml/visual_rule_builder.xml:0
+msgid "Bulk Discount:"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_config__cache_duration
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_engine__cache_duration
+msgid "Cache Duration (seconds)"
+msgstr ""
+
+#. module: advanced_pricing
+#. odoo-javascript
+#: code:addons/advanced_pricing/static/src/xml/pricing_templates.xml:0
+#: code:addons/advanced_pricing/static/src/xml/visual_rule_builder.xml:0
+#: model_terms:ir.ui.view,arch_db:advanced_pricing.view_pricing_rule_reject_wizard_form
+#: model_terms:ir.ui.view,arch_db:advanced_pricing.view_visual_rule_builder_wizard_form
+msgid "Cancel"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__service_location__care_facility
+#: model:ir.model.fields.selection,name:advanced_pricing.selection__sale_order__fso_service_location__care_facility
+msgid "Care Facility"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__category_ids
+msgid "Categories (Legacy)"
+msgstr ""
+
+#. module: advanced_pricing
+#. odoo-javascript
+#: code:addons/advanced_pricing/static/src/xml/visual_rule_builder.xml:0
+msgid "Clear"
+msgstr ""
+
+#. module: advanced_pricing
+#: model_terms:ir.ui.view,arch_db:advanced_pricing.view_visual_rule_builder_wizard_form
+msgid "Click \"Open Visual Builder\" to start creating your rule!"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__service_location__clinic
+#: model:ir.model.fields.selection,name:advanced_pricing.selection__sale_order__fso_service_location__clinic
+msgid "Clinic"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__service_type__clinic_visit
+#: model:ir.model.fields.selection,name:advanced_pricing.selection__sale_order__fso_service_type__clinic_visit
+msgid "Clinic Visit"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields,help:advanced_pricing.field_advanced_pricing_visual_wizard__generated_code
+msgid "Code generated from visual blocks"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_config__company_id
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_engine__company_id
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__company_id
+msgid "Company"
+msgstr ""
+
+#. module: advanced_pricing
+#: model_terms:ir.ui.view,arch_db:advanced_pricing.view_order_form_advanced_pricing
+msgid "Computed Factors"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__condition_field
+msgid "Condition Field"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__condition_value
+msgid "Condition Value"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__rule_type__condition
+msgid "Conditional"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.actions.act_window,name:advanced_pricing.action_advanced_pricing_config
+#: model:ir.ui.menu,name:advanced_pricing.menu_pricing_config
+msgid "Configuration"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_config__name
+msgid "Configuration Name"
+msgstr ""
+
+#. module: advanced_pricing
+#: model_terms:ir.ui.view,arch_db:advanced_pricing.view_pricing_rule_reject_wizard_form
+msgid "Confirm Rejection"
+msgstr ""
+
+#. module: advanced_pricing
+#. odoo-javascript
+#: code:addons/advanced_pricing/static/src/xml/visual_rule_builder.xml:0
+msgid "Connect blocks by dragging"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__service_type__consultation
+#: model:ir.model.fields.selection,name:advanced_pricing.selection__sale_order__fso_service_type__consultation
+msgid "Consultation"
+msgstr ""
+
+#. module: advanced_pricing
+#: model_terms:ir.ui.view,arch_db:advanced_pricing.view_pricing_rule_list
+#: model_terms:ir.ui.view,arch_db:advanced_pricing.view_pricing_rule_list_quick_edit
+msgid "Create a new visual pricing rule using drag-and-drop builder"
+msgstr ""
+
+#. module: advanced_pricing
+#: model_terms:ir.ui.view,arch_db:advanced_pricing.view_visual_rule_builder_wizard_form
+msgid "Create pricing rules using drag-and-drop blocks:"
+msgstr ""
+
+#. module: advanced_pricing
+#: model_terms:ir.actions.act_window,help:advanced_pricing.action_pricing_rules_quick_edit
+#: model_terms:ir.actions.act_window,help:advanced_pricing.action_pricing_rules_with_visual
+msgid "Create your first pricing rule!"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_config__create_uid
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_engine__create_uid
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_import_wizard__create_uid
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__create_uid
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_visual_wizard__create_uid
+#: model:ir.model.fields,field_description:advanced_pricing.field_pricing_rule_reject_wizard__create_uid
+msgid "Created by"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_config__create_date
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_engine__create_date
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_import_wizard__create_date
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__create_date
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_visual_wizard__create_date
+#: model:ir.model.fields,field_description:advanced_pricing.field_pricing_rule_reject_wizard__create_date
+msgid "Created on"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__rule_type__custom
+msgid "Custom Python"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__condition_field__customer_type
+msgid "Customer Type"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_config__default_engine_id
+msgid "Default Pricing Engine"
+msgstr ""
+
+#. module: advanced_pricing
+#. odoo-javascript
+#: code:addons/advanced_pricing/static/src/xml/visual_rule_builder.xml:0
+msgid "Define actions from the \"Actions\" category"
+msgstr ""
+
+#. module: advanced_pricing
+#. odoo-javascript
+#: code:addons/advanced_pricing/static/src/xml/visual_rule_builder.xml:0
+msgid "Description:"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_config__display_name
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_engine__display_name
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_import_wizard__display_name
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__display_name
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_visual_wizard__display_name
+#: model:ir.model.fields,field_description:advanced_pricing.field_pricing_rule_reject_wizard__display_name
+msgid "Display Name"
+msgstr ""
+
+#. module: advanced_pricing
+#: model_terms:ir.ui.view,arch_db:advanced_pricing.view_pricing_rule_form
+msgid "Distance & Time"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_sale_order__fso_distance
+#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__condition_field__distance
+msgid "Distance (km)"
+msgstr ""
+
+#. module: advanced_pricing
+#. odoo-javascript
+#: code:addons/advanced_pricing/static/src/xml/visual_rule_builder.xml:0
+msgid "Distance Pricing"
+msgstr ""
+
+#. module: advanced_pricing
+#. odoo-javascript
+#: code:addons/advanced_pricing/static/src/xml/visual_rule_builder.xml:0
+msgid "Distance Pricing:"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__approval_status__draft
+#: model_terms:ir.ui.view,arch_db:advanced_pricing.view_pricing_rule_search
+msgid "Draft"
+msgstr ""
+
+#. module: advanced_pricing
+#. odoo-javascript
+#: code:addons/advanced_pricing/static/src/xml/visual_rule_builder.xml:0
+msgid "Drag blocks from the left panel to build your pricing rule."
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__service_type__emergency
+#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__urgency_level__emergency
+#: model:ir.model.fields.selection,name:advanced_pricing.selection__sale_order__fso_service_type__emergency
+#: model:ir.model.fields.selection,name:advanced_pricing.selection__sale_order__fso_urgency__emergency
+msgid "Emergency"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_config__enable_audit
+msgid "Enable Audit Trail"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_engine__enable_cascade
+msgid "Enable Cascading"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_engine__enable_multi_level
+msgid "Enable Multi-Level Rules"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_config__enable_caching
+msgid "Enable Price Caching"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_config__enable_api
+msgid "Enable REST API"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_config__enable_templates
+msgid "Enable Rule Templates"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_config__enable_visual_builder
+msgid "Enable Visual Rule Builder"
+msgstr ""
+
+#. module: advanced_pricing
+#: model_terms:ir.ui.view,arch_db:advanced_pricing.view_pricing_rule_search
+msgid "Engine"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_engine__name
+msgid "Engine Name"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__condition_operator__=
+msgid "Equal"
+msgstr ""
+
+#. module: advanced_pricing
+#. odoo-javascript
+#: code:addons/advanced_pricing/static/src/xml/visual_rule_builder.xml:0
+msgid "Example Rules:"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_visual_wizard__rule_id
+#: model_terms:ir.ui.view,arch_db:advanced_pricing.view_visual_rule_builder_wizard_form
+msgid "Existing Rule"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields,help:advanced_pricing.field_pricing_rule_reject_wizard__rejection_reason
+msgid ""
+"Explain why this pricing rule is being rejected (minimum 10 characters)"
+msgstr ""
+
+#. module: advanced_pricing
+#: model_terms:ir.ui.view,arch_db:advanced_pricing.view_pricing_rule_reject_wizard_form
+msgid "Explain why this rule is being rejected (minimum 10 characters)..."
+msgstr ""
+
+#. module: advanced_pricing
+#: model_terms:ir.ui.view,arch_db:advanced_pricing.view_order_form_advanced_pricing
+msgid "FSO Information"
+msgstr ""
+
+#. module: advanced_pricing
+#. odoo-javascript
+#: code:addons/advanced_pricing/static/src/js/visual_rule_builder.js:0
+msgid "Failed to load template: "
+msgstr ""
+
+#. module: advanced_pricing
+#. odoo-javascript
+#: code:addons/advanced_pricing/static/src/js/visual_rule_builder.js:0
+msgid "Failed to load visual rule builder: "
+msgstr ""
+
+#. module: advanced_pricing
+#. odoo-javascript
+#: code:addons/advanced_pricing/static/src/js/visual_rule_builder.js:0
+msgid "Failed to save rule"
+msgstr ""
+
+#. module: advanced_pricing
+#: model_terms:ir.ui.view,arch_db:advanced_pricing.view_pricing_config_form
+msgid "Features"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_import_wizard__file
+msgid "File"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_import_wizard__filename
+msgid "Filename"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__service_type__follow_up
+#: model:ir.model.fields.selection,name:advanced_pricing.selection__sale_order__fso_service_type__follow_up
+msgid "Follow-up"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_engine__message_follower_ids
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__message_follower_ids
+msgid "Followers"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_engine__message_partner_ids
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__message_partner_ids
+msgid "Followers (Partners)"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields,help:advanced_pricing.field_advanced_pricing_engine__activity_type_icon
+#: model:ir.model.fields,help:advanced_pricing.field_advanced_pricing_rule__activity_type_icon
+msgid "Font awesome icon e.g. fa-tasks"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__rule_type__formula
+msgid "Formula-based"
+msgstr ""
+
+#. module: advanced_pricing
+#: model_terms:ir.ui.view,arch_db:advanced_pricing.view_pricing_rule_form
+msgid "General Conditions"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__generated_code
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_visual_wizard__generated_code
+msgid "Generated Code"
+msgstr ""
+
+#. module: advanced_pricing
+#. odoo-javascript
+#: code:addons/advanced_pricing/static/src/xml/visual_rule_builder.xml:0
+msgid "Generated Logic:"
+msgstr ""
+
+#. module: advanced_pricing
+#: model_terms:ir.ui.view,arch_db:advanced_pricing.view_visual_rule_builder_wizard_form
+msgid "Getting Started"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__condition_operator__>
+msgid "Greater Than"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__condition_operator__>=
+msgid "Greater or Equal"
+msgstr ""
+
+#. module: advanced_pricing
+#: model_terms:ir.ui.view,arch_db:advanced_pricing.view_pricing_rule_search
+msgid "Group By"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_engine__has_message
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__has_message
+msgid "Has Message"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.actions.act_window,name:advanced_pricing.action_healthcare_product_catalog
+msgid "Healthcare Product Catalog"
+msgstr ""
+
+#. module: advanced_pricing
+#. odoo-javascript
+#: code:addons/advanced_pricing/static/src/js/product_catalog_controller.js:0
+msgid "Healthcare Quote"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__priority__2
+#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__urgency_level__high
+#: model:ir.model.fields.selection,name:advanced_pricing.selection__sale_order__fso_priority__2
+#: model:ir.model.fields.selection,name:advanced_pricing.selection__sale_order__fso_urgency__high
+msgid "High"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__is_holiday_required
+msgid "Holiday Only"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_sale_order__holiday_multiplier
+msgid "Holiday Price Multiplier"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_sale_order__is_holiday
+msgid "Holiday Service"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__holiday_type
+#: model:ir.model.fields,field_description:advanced_pricing.field_sale_order__holiday_type
+msgid "Holiday Type"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__service_location__home
+#: model:ir.model.fields.selection,name:advanced_pricing.selection__sale_order__fso_service_location__home
+msgid "Home"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__service_type__home_visit
+#: model:ir.model.fields.selection,name:advanced_pricing.selection__sale_order__fso_service_type__home_visit
+msgid "Home Visit"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__service_location__hospital
+#: model:ir.model.fields.selection,name:advanced_pricing.selection__sale_order__fso_service_location__hospital
+msgid "Hospital"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields,help:advanced_pricing.field_sale_order__appointment_hour
+msgid "Hour of appointment (0-23) for time-based rules"
+msgstr ""
+
+#. module: advanced_pricing
+#. odoo-javascript
+#: code:addons/advanced_pricing/static/src/xml/visual_rule_builder.xml:0
+msgid "How to Build Rules:"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_config__id
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_engine__id
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_import_wizard__id
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__id
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_visual_wizard__id
+#: model:ir.model.fields,field_description:advanced_pricing.field_pricing_rule_reject_wizard__id
+msgid "ID"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_engine__activity_exception_icon
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__activity_exception_icon
+msgid "Icon"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields,help:advanced_pricing.field_advanced_pricing_engine__activity_exception_icon
+#: model:ir.model.fields,help:advanced_pricing.field_advanced_pricing_rule__activity_exception_icon
+msgid "Icon to indicate an exception activity."
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields,help:advanced_pricing.field_advanced_pricing_engine__message_needaction
+#: model:ir.model.fields,help:advanced_pricing.field_advanced_pricing_rule__message_needaction
+msgid "If checked, new messages require your attention."
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields,help:advanced_pricing.field_advanced_pricing_engine__message_has_error
+#: model:ir.model.fields,help:advanced_pricing.field_advanced_pricing_engine__message_has_sms_error
+#: model:ir.model.fields,help:advanced_pricing.field_advanced_pricing_rule__message_has_error
+#: model:ir.model.fields,help:advanced_pricing.field_advanced_pricing_rule__message_has_sms_error
+msgid "If checked, some messages have a delivery error."
+msgstr ""
+
+#. module: advanced_pricing
+#. odoo-javascript
+#: code:addons/advanced_pricing/static/src/xml/visual_rule_builder.xml:0
+msgid "If distance > 15km, add $50"
+msgstr ""
+
+#. module: advanced_pricing
+#. odoo-javascript
+#: code:addons/advanced_pricing/static/src/xml/visual_rule_builder.xml:0
+msgid "If quantity >= 10, apply 10% discount"
+msgstr ""
+
+#. module: advanced_pricing
+#. odoo-javascript
+#: code:addons/advanced_pricing/static/src/xml/visual_rule_builder.xml:0
+msgid "If time > 5PM, multiply by 1.5"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model,name:advanced_pricing.model_advanced_pricing_import_wizard
+msgid "Import Pricing Rules Wizard"
+msgstr ""
+
+#. module: advanced_pricing
+#: model_terms:ir.ui.view,arch_db:advanced_pricing.view_pricing_rule_search
+msgid "Inactive"
+msgstr ""
+
+#. module: advanced_pricing
+#. odoo-javascript
+#: code:addons/advanced_pricing/static/src/xml/visual_rule_builder.xml:0
+msgid "Initializing Visual Rule Builder..."
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__condition_field__is_after_hours
+msgid "Is After Hours"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_engine__message_is_follower
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__message_is_follower
+msgid "Is Follower"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__condition_field__is_holiday
+msgid "Is Holiday"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__is_visual_rule
+msgid "Is Visual Rule"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__condition_field__is_weekend
+msgid "Is Weekend"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_config__write_uid
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_engine__write_uid
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_import_wizard__write_uid
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__write_uid
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_visual_wizard__write_uid
+#: model:ir.model.fields,field_description:advanced_pricing.field_pricing_rule_reject_wizard__write_uid
+msgid "Last Updated by"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_config__write_date
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_engine__write_date
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_import_wizard__write_date
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__write_date
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_visual_wizard__write_date
+#: model:ir.model.fields,field_description:advanced_pricing.field_pricing_rule_reject_wizard__write_date
+msgid "Last Updated on"
+msgstr ""
+
+#. module: advanced_pricing
+#: model_terms:ir.ui.view,arch_db:advanced_pricing.view_pricing_rule_form
+msgid "Leave blank to ignore"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields,help:advanced_pricing.field_advanced_pricing_visual_wizard__rule_id
+msgid "Leave empty to create new rule"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields,help:advanced_pricing.field_advanced_pricing_rule__category_ids
+msgid "Legacy field - use Product Category field instead"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields,help:advanced_pricing.field_advanced_pricing_rule__product_ids
+msgid "Legacy field - use Product field instead"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__condition_operator__<
+msgid "Less Than"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__condition_operator__<=
+msgid "Less or Equal"
+msgstr ""
+
+#. module: advanced_pricing
+#. odoo-javascript
+#: code:addons/advanced_pricing/static/src/xml/pricing_templates.xml:0
+msgid "Level"
+msgstr ""
+
+#. module: advanced_pricing
+#. odoo-javascript
+#: code:addons/advanced_pricing/static/src/xml/pricing_templates.xml:0
+#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__level__1
+#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_visual_wizard__level__1
+msgid "Level 1 - Base Rules"
+msgstr ""
+
+#. module: advanced_pricing
+#. odoo-javascript
+#: code:addons/advanced_pricing/static/src/xml/pricing_templates.xml:0
+#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__level__2
+msgid "Level 2 - Cascading Rules"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_visual_wizard__level__2
+msgid "Level 2 - Conditional Rules"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_visual_wizard__level__3
+msgid "Level 3 - Advanced Rules"
+msgstr ""
+
+#. module: advanced_pricing
+#. odoo-javascript
+#: code:addons/advanced_pricing/static/src/xml/visual_rule_builder.xml:0
+msgid "Loading Blockly..."
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__priority__0
+#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__urgency_level__low
+#: model:ir.model.fields.selection,name:advanced_pricing.selection__sale_order__fso_priority__0
+#: model:ir.model.fields.selection,name:advanced_pricing.selection__sale_order__fso_urgency__low
+msgid "Low"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__rule_type__matrix
+msgid "Matrix"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__distance_max
+msgid "Maximum Distance (km)"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__appointment_hour_max
+msgid "Maximum Hour"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__max_quantity
+msgid "Maximum Quantity"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__service_units_max
+msgid "Maximum Service Units"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields,help:advanced_pricing.field_advanced_pricing_rule__appointment_hour_max
+msgid "Maximum appointment hour (0-23) to apply this rule"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields,help:advanced_pricing.field_advanced_pricing_rule__service_units_max
+msgid "Maximum service units for bulk pricing"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields,help:advanced_pricing.field_advanced_pricing_rule__distance_max
+msgid "Maximum travel distance to apply this rule"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_engine__message_has_error
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__message_has_error
+msgid "Message Delivery error"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_engine__message_ids
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__message_ids
+msgid "Messages"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__distance_min
+msgid "Minimum Distance (km)"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__appointment_hour_min
+msgid "Minimum Hour"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__min_quantity
+msgid "Minimum Quantity"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__service_units_min
+msgid "Minimum Service Units"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields,help:advanced_pricing.field_advanced_pricing_rule__appointment_hour_min
+msgid "Minimum appointment hour (0-23) to apply this rule"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields,help:advanced_pricing.field_advanced_pricing_rule__service_units_min
+msgid "Minimum service units for bulk pricing"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields,help:advanced_pricing.field_advanced_pricing_rule__distance_min
+msgid "Minimum travel distance to apply this rule"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__action_type__multiply
+msgid "Multiply by Factor"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_engine__my_activity_date_deadline
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__my_activity_date_deadline
+msgid "My Activity Deadline"
+msgstr ""
+
+#. module: advanced_pricing
+#. odoo-javascript
+#: code:addons/advanced_pricing/static/src/xml/pricing_templates.xml:0
+msgid "Name"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__holiday_type__national
+#: model:ir.model.fields.selection,name:advanced_pricing.selection__sale_order__holiday_type__national
+msgid "National Holiday"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_engine__activity_calendar_event_id
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__activity_calendar_event_id
+msgid "Next Activity Calendar Event"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_engine__activity_date_deadline
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__activity_date_deadline
+msgid "Next Activity Deadline"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_engine__activity_summary
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__activity_summary
+msgid "Next Activity Summary"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_engine__activity_type_id
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__activity_type_id
+msgid "Next Activity Type"
+msgstr ""
+
+#. module: advanced_pricing
+#. odoo-javascript
+#: code:addons/advanced_pricing/static/src/xml/pricing_templates.xml:0
+msgid "No pricing rules configured."
+msgstr ""
+
+#. module: advanced_pricing
+#: model_terms:ir.actions.act_window,help:advanced_pricing.action_healthcare_product_catalog
+msgid "No products found!"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__priority__1
+#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__urgency_level__normal
+#: model:ir.model.fields.selection,name:advanced_pricing.selection__sale_order__fso_priority__1
+#: model:ir.model.fields.selection,name:advanced_pricing.selection__sale_order__fso_urgency__normal
+msgid "Normal"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_engine__message_needaction_counter
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__message_needaction_counter
+msgid "Number of Actions"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_engine__message_has_error_counter
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__message_has_error_counter
+msgid "Number of errors"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields,help:advanced_pricing.field_advanced_pricing_engine__message_needaction_counter
+#: model:ir.model.fields,help:advanced_pricing.field_advanced_pricing_rule__message_needaction_counter
+msgid "Number of messages requiring action"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields,help:advanced_pricing.field_advanced_pricing_engine__message_has_error_counter
+#: model:ir.model.fields,help:advanced_pricing.field_advanced_pricing_rule__message_has_error_counter
+msgid "Number of messages with delivery error"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__holiday_type__observance
+#: model:ir.model.fields.selection,name:advanced_pricing.selection__sale_order__holiday_type__observance
+msgid "Observance"
+msgstr ""
+
+#. module: advanced_pricing
+#: model_terms:ir.ui.view,arch_db:advanced_pricing.view_visual_rule_builder_wizard_form
+msgid "Open Visual Builder"
+msgstr ""
+
+#. module: advanced_pricing
+#: model_terms:ir.ui.view,arch_db:advanced_pricing.view_pricing_rule_form
+msgid "Open drag-and-drop visual rule builder"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__condition_operator
+msgid "Operator"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__condition_field__order_total
+msgid "Order Total"
+msgstr ""
+
+#. module: advanced_pricing
+#: model_terms:ir.ui.view,arch_db:advanced_pricing.view_pricing_rule_search
+msgid "Pending Approval"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__approval_status__pending
+msgid "Pending Board Approval"
+msgstr ""
+
+#. module: advanced_pricing
+#. odoo-python
+#: code:addons/advanced_pricing/wizards/visual_rule_builder_wizard.py:0
+msgid "Please build your rule using the visual builder first."
+msgstr ""
+
+#. module: advanced_pricing
+#. odoo-javascript
+#: code:addons/advanced_pricing/static/src/xml/visual_rule_builder.xml:0
+msgid "Premium Time:"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_sale_order_line__price_calculation_log
+msgid "Price Calculation Log"
+msgstr ""
+
+#. module: advanced_pricing
+#. odoo-javascript
+#: code:addons/advanced_pricing/static/src/xml/pricing_templates.xml:0
+msgid "Price Calculator"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields,help:advanced_pricing.field_sale_order__holiday_multiplier
+msgid "Price multiplier for holiday (e.g., 3.0 for TET)"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model,name:advanced_pricing.model_product_pricelist
+msgid "Pricelist"
+msgstr "Bảng giá"
+
+#. module: advanced_pricing
+#: model:ir.model.fields,help:advanced_pricing.field_advanced_pricing_rule__applied_on
+msgid "Pricelist Item applicable on selected option"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_sale_order__advanced_pricing_details
+msgid "Pricing Calculation Details"
+msgstr ""
+
+#. module: advanced_pricing
+#: model_terms:ir.ui.view,arch_db:advanced_pricing.view_pricing_config_form
+msgid "Pricing Configuration"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__engine_id
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_visual_wizard__engine_id
+#: model_terms:ir.ui.view,arch_db:advanced_pricing.view_pricing_engine_form
+msgid "Pricing Engine"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.actions.act_window,name:advanced_pricing.action_advanced_pricing_engines
+#: model:ir.ui.menu,name:advanced_pricing.menu_healthcare_pricing_engines
+#: model:ir.ui.menu,name:advanced_pricing.menu_pricing_engines
+#: model_terms:ir.ui.view,arch_db:advanced_pricing.view_pricing_engine_list
+msgid "Pricing Engines"
+msgstr ""
+
+#. module: advanced_pricing
+#. odoo-python
+#: code:addons/advanced_pricing/wizards/visual_rule_builder_wizard.py:0
+#: model:ir.model.fields,field_description:advanced_pricing.field_pricing_rule_reject_wizard__rule_id
+#: model_terms:ir.ui.view,arch_db:advanced_pricing.view_pricing_rule_form
+msgid "Pricing Rule"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.actions.act_window,name:advanced_pricing.action_advanced_pricing_rules
+#: model:ir.actions.act_window,name:advanced_pricing.action_pricing_rules_with_visual
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_engine__rule_ids
+#: model:ir.ui.menu,name:advanced_pricing.menu_healthcare_pricing_rules
+#: model:ir.ui.menu,name:advanced_pricing.menu_pricing_rules
+#: model_terms:ir.ui.view,arch_db:advanced_pricing.view_pricing_rule_list
+msgid "Pricing Rules"
+msgstr ""
+
+#. module: advanced_pricing
+#: model_terms:ir.actions.act_window,help:advanced_pricing.action_pricing_rules_with_visual
+msgid ""
+"Pricing rules allow you to automatically adjust prices based on various conditions.\n"
+"                Use the Visual Builder for an intuitive drag-and-drop experience."
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__priority
+#: model:ir.model.fields,field_description:advanced_pricing.field_sale_order__fso_priority
+#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__condition_field__priority
+msgid "Priority"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields,help:advanced_pricing.field_sale_order__fso_priority
+msgid "Priority from FSO for pricing rules"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__product_id
+#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__applied_on__1_product
+msgid "Product"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__categ_id
+#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__applied_on__2_product_category
+msgid "Product Category"
+msgstr ""
+
+#. module: advanced_pricing
+#: model_terms:ir.ui.view,arch_db:advanced_pricing.view_pricing_rule_form
+msgid "Product Selection"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__product_tmpl_id
+msgid "Product Template"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model,name:advanced_pricing.model_product_product
+#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__applied_on__0_product_variant
+msgid "Product Variant"
+msgstr "Biến thể sản phẩm"
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__product_ids
+msgid "Products (Legacy)"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__condition_field__quantity
+msgid "Quantity"
+msgstr ""
+
+#. module: advanced_pricing
+#: model_terms:ir.ui.view,arch_db:advanced_pricing.view_pricing_rule_form
+msgid "Quantity & Location"
+msgstr ""
+
+#. module: advanced_pricing
+#: model_terms:ir.ui.view,arch_db:advanced_pricing.view_pricing_rule_list_quick_edit
+msgid "Quick Edit Pricing Rules"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.actions.act_window,name:advanced_pricing.action_pricing_rules_quick_edit
+#: model:ir.ui.menu,name:advanced_pricing.menu_healthcare_pricing_rules_quick_edit
+#: model:ir.ui.menu,name:advanced_pricing.menu_pricing_rules_quick_edit
+msgid "Quick Edit Rules"
+msgstr ""
+
+#. module: advanced_pricing
+#. odoo-javascript
+#: code:addons/advanced_pricing/static/src/xml/visual_rule_builder.xml:0
+msgid "Quick Templates:"
+msgstr ""
+
+#. module: advanced_pricing
+#: model_terms:ir.actions.act_window,help:advanced_pricing.action_pricing_rules_quick_edit
+msgid ""
+"Quick edit pricing rules with inline editing. Click a cell to edit values directly.\n"
+"                ⚠️ Editing approved rules will reset them to Draft status requiring re-approval."
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_engine__rating_ids
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__rating_ids
+msgid "Ratings"
+msgstr ""
+
+#. module: advanced_pricing
+#: model_terms:ir.ui.view,arch_db:advanced_pricing.view_order_form_advanced_pricing
+msgid "Recalc Pricing"
+msgstr ""
+
+#. module: advanced_pricing
+#: model_terms:ir.ui.view,arch_db:advanced_pricing.view_healthcare_quote_form_catalog
+#: model_terms:ir.ui.view,arch_db:advanced_pricing.view_order_form_advanced_pricing
+msgid "Recalculate prices using advanced pricing rules"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__holiday_type__regional
+#: model:ir.model.fields.selection,name:advanced_pricing.selection__sale_order__holiday_type__regional
+msgid "Regional Holiday"
+msgstr ""
+
+#. module: advanced_pricing
+#: model_terms:ir.ui.view,arch_db:advanced_pricing.view_pricing_rule_form
+msgid "Reject"
+msgstr ""
+
+#. module: advanced_pricing
+#: model_terms:ir.ui.view,arch_db:advanced_pricing.view_pricing_rule_reject_wizard_form
+msgid "Reject Pricing Rule"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model,name:advanced_pricing.model_pricing_rule_reject_wizard
+msgid "Reject Pricing Rule with Mandatory Reason"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__approval_status__rejected
+#: model_terms:ir.ui.view,arch_db:advanced_pricing.view_pricing_rule_search
+msgid "Rejected"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__rejection_reason
+#: model:ir.model.fields,field_description:advanced_pricing.field_pricing_rule_reject_wizard__rejection_reason
+msgid "Rejection Reason"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__service_location__remote
+#: model:ir.model.fields.selection,name:advanced_pricing.selection__sale_order__fso_service_location__remote
+msgid "Remote/Online"
+msgstr ""
+
+#. module: advanced_pricing
+#: model_terms:ir.ui.view,arch_db:advanced_pricing.view_pricing_rule_form
+msgid "Reset to Draft"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_engine__activity_user_id
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__activity_user_id
+msgid "Responsible User"
+msgstr ""
+
+#. module: advanced_pricing
+#: model_terms:ir.ui.view,arch_db:advanced_pricing.product_view_kanban_catalog_booking_quote
+msgid "Return to Healthcare Quote"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__service_type__routine_checkup
+#: model:ir.model.fields.selection,name:advanced_pricing.selection__sale_order__fso_service_type__routine_checkup
+msgid "Routine Checkup"
+msgstr ""
+
+#. module: advanced_pricing
+#: model_terms:ir.ui.view,arch_db:advanced_pricing.view_pricing_rule_form
+msgid "Rule Configuration"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__level
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_visual_wizard__level
+msgid "Rule Level"
+msgstr ""
+
+#. module: advanced_pricing
+#. odoo-javascript
+#: code:addons/advanced_pricing/static/src/xml/pricing_templates.xml:0
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__name
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_visual_wizard__name
+#: model_terms:ir.ui.view,arch_db:advanced_pricing.view_pricing_rule_form
+#: model_terms:ir.ui.view,arch_db:advanced_pricing.view_visual_rule_builder_wizard_form
+msgid "Rule Name"
+msgstr ""
+
+#. module: advanced_pricing
+#. odoo-javascript
+#: code:addons/advanced_pricing/static/src/xml/visual_rule_builder.xml:0
+msgid "Rule Name:"
+msgstr ""
+
+#. module: advanced_pricing
+#. odoo-javascript
+#: code:addons/advanced_pricing/static/src/xml/visual_rule_builder.xml:0
+msgid "Rule Preview"
+msgstr ""
+
+#. module: advanced_pricing
+#: model_terms:ir.ui.view,arch_db:advanced_pricing.view_visual_rule_builder_wizard_form
+msgid "Rule Settings"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__rule_type
+#: model_terms:ir.ui.view,arch_db:advanced_pricing.view_pricing_rule_search
+msgid "Rule Type"
+msgstr ""
+
+#. module: advanced_pricing
+#: model_terms:ir.ui.view,arch_db:advanced_pricing.view_pricing_engine_form
+msgid "Rules"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_engine__message_has_sms_error
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__message_has_sms_error
+msgid "SMS Delivery error"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model,name:advanced_pricing.model_sale_order
+msgid "Sales Order"
+msgstr "Đơn bán hàng"
+
+#. module: advanced_pricing
+#: model:ir.model,name:advanced_pricing.model_sale_order_line
+msgid "Sales Order Line"
+msgstr "Dòng đơn bán hàng"
+
+#. module: advanced_pricing
+#. odoo-javascript
+#: code:addons/advanced_pricing/static/src/xml/pricing_templates.xml:0
+#: code:addons/advanced_pricing/static/src/xml/visual_rule_builder.xml:0
+#: model_terms:ir.ui.view,arch_db:advanced_pricing.view_visual_rule_builder_wizard_form
+msgid "Save Rule"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields,help:advanced_pricing.field_sale_order__fso_appointment_time
+msgid "Scheduled appointment time from FSO"
+msgstr ""
+
+#. module: advanced_pricing
+#: model_terms:ir.ui.view,arch_db:advanced_pricing.view_pricing_rule_search
+msgid "Search Pricing Rules"
+msgstr ""
+
+#. module: advanced_pricing
+#. odoo-javascript
+#: code:addons/advanced_pricing/static/src/xml/pricing_templates.xml:0
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_engine__sequence
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__sequence
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_visual_wizard__sequence
+msgid "Sequence"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__service_city
+#: model:ir.model.fields,field_description:advanced_pricing.field_sale_order__service_city
+#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__condition_field__service_city
+msgid "Service City"
+msgstr ""
+
+#. module: advanced_pricing
+#: model_terms:ir.ui.view,arch_db:advanced_pricing.view_pricing_rule_form
+msgid "Service Details"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__service_location
+#: model:ir.model.fields,field_description:advanced_pricing.field_sale_order__fso_service_location
+#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__condition_field__service_location
+msgid "Service Location"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__service_type
+#: model:ir.model.fields,field_description:advanced_pricing.field_sale_order__fso_service_type
+#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__condition_field__service_type
+msgid "Service Type"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_sale_order__service_units
+#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__condition_field__service_units
+msgid "Service Units"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields,help:advanced_pricing.field_sale_order__service_city
+msgid "Service city for location-based pricing rules"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields,help:advanced_pricing.field_sale_order__fso_service_location
+msgid "Service location from FSO"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields,help:advanced_pricing.field_sale_order__fso_service_type
+msgid "Service type from FSO for pricing rules"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__action_type__fixed
+msgid "Set Fixed Price"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields,help:advanced_pricing.field_advanced_pricing_rule__categ_id
+msgid ""
+"Specify a product category if this rule only applies to products belonging "
+"to this category or its children categories. Keep empty otherwise."
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields,help:advanced_pricing.field_advanced_pricing_rule__product_id
+msgid ""
+"Specify a product if this rule only applies to one product. Keep empty "
+"otherwise."
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields,help:advanced_pricing.field_advanced_pricing_rule__product_tmpl_id
+msgid ""
+"Specify a template if this rule only applies to one product template. Keep "
+"empty otherwise."
+msgstr ""
+
+#. module: advanced_pricing
+#. odoo-javascript
+#: code:addons/advanced_pricing/static/src/xml/visual_rule_builder.xml:0
+msgid "Start with a \"Pricing Rule\" block"
+msgstr ""
+
+#. module: advanced_pricing
+#. odoo-javascript
+#: code:addons/advanced_pricing/static/src/xml/pricing_templates.xml:0
+msgid "Status"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields,help:advanced_pricing.field_advanced_pricing_engine__activity_state
+#: model:ir.model.fields,help:advanced_pricing.field_advanced_pricing_rule__activity_state
+msgid ""
+"Status based on activities\n"
+"Overdue: Due date is already passed\n"
+"Today: Activity date is today\n"
+"Planned: Future activities."
+msgstr ""
+
+#. module: advanced_pricing
+#: model_terms:ir.ui.view,arch_db:advanced_pricing.view_pricing_rule_form
+msgid "Submit for Approval"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__holiday_type__tet
+#: model:ir.model.fields.selection,name:advanced_pricing.selection__sale_order__holiday_type__tet
+msgid "TET Holiday"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_import_wizard__engine_id
+msgid "Target Engine"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__service_type__telemedicine
+#: model:ir.model.fields.selection,name:advanced_pricing.selection__sale_order__fso_service_type__telemedicine
+msgid "Telemedicine"
+msgstr ""
+
+#. module: advanced_pricing
+#. odoo-javascript
+#: code:addons/advanced_pricing/static/src/xml/visual_rule_builder.xml:0
+msgid "This rule will be evaluated when processing prices."
+msgstr ""
+
+#. module: advanced_pricing
+#: model_terms:ir.ui.view,arch_db:advanced_pricing.view_pricing_rule_form
+msgid "Time-based Conditions"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields,help:advanced_pricing.field_sale_order__service_units
+msgid "Total service units/quantity for bulk pricing rules"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields,help:advanced_pricing.field_sale_order__fso_distance
+msgid "Travel distance from FSO for pricing rules"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields,help:advanced_pricing.field_sale_order__is_after_hours
+msgid "True if appointment is after business hours"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields,help:advanced_pricing.field_sale_order__is_holiday
+msgid "True if appointment is on holiday"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields,help:advanced_pricing.field_sale_order__is_weekend
+msgid "True if appointment is on weekend"
+msgstr ""
+
+#. module: advanced_pricing
+#. odoo-javascript
+#: code:addons/advanced_pricing/static/src/xml/pricing_templates.xml:0
+msgid "Type"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields,help:advanced_pricing.field_sale_order__holiday_type
+msgid "Type of holiday for pricing calculations"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields,help:advanced_pricing.field_advanced_pricing_engine__activity_exception_decoration
+#: model:ir.model.fields,help:advanced_pricing.field_advanced_pricing_rule__activity_exception_decoration
+msgid "Type of the exception activity on record."
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields,help:advanced_pricing.field_advanced_pricing_rule__active
+msgid ""
+"Uncheck to archive this rule. Note: Only approved rules will be used in "
+"pricing calculations."
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__urgency_level
+#: model:ir.model.fields,field_description:advanced_pricing.field_sale_order__fso_urgency
+#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__condition_field__urgency
+msgid "Urgency Level"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields,help:advanced_pricing.field_sale_order__fso_urgency
+msgid "Urgency level from FSO for pricing rules"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__urgency_level__urgent
+#: model:ir.model.fields.selection,name:advanced_pricing.selection__sale_order__fso_urgency__urgent
+msgid "Urgent"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_sale_order__use_advanced_pricing
+msgid "Use Advanced Pricing"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_product_pricelist__use_advanced_pricing
+msgid "Use Advanced Pricing Engine"
+msgstr ""
+
+#. module: advanced_pricing
+#. odoo-javascript
+#: code:addons/advanced_pricing/static/src/xml/visual_rule_builder.xml:0
+msgid "Use number blocks for values"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__service_type__vaccination
+#: model:ir.model.fields.selection,name:advanced_pricing.selection__sale_order__fso_service_type__vaccination
+msgid "Vaccination"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__priority__3
+#: model:ir.model.fields.selection,name:advanced_pricing.selection__sale_order__fso_priority__3
+msgid "Very High"
+msgstr ""
+
+#. module: advanced_pricing
+#: model_terms:ir.ui.view,arch_db:advanced_pricing.view_pricing_rule_list
+msgid "Visual Builder"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__visual_config
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_visual_wizard__visual_config
+msgid "Visual Configuration"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__rule_type__visual
+msgid "Visual Rule"
+msgstr ""
+
+#. module: advanced_pricing
+#. odoo-javascript
+#: code:addons/advanced_pricing/static/src/xml/pricing_templates.xml:0
+#: code:addons/advanced_pricing/static/src/xml/visual_rule_builder.xml:0
+#: model:ir.actions.act_window,name:advanced_pricing.action_visual_rule_builder_wizard
+#: model_terms:ir.ui.view,arch_db:advanced_pricing.view_visual_rule_builder_wizard_form
+msgid "Visual Rule Builder"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model,name:advanced_pricing.model_advanced_pricing_visual_wizard
+msgid "Visual Rule Builder Wizard"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_engine__website_message_ids
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__website_message_ids
+msgid "Website Messages"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields,help:advanced_pricing.field_advanced_pricing_engine__website_message_ids
+#: model:ir.model.fields,help:advanced_pricing.field_advanced_pricing_rule__website_message_ids
+msgid "Website communication history"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__is_weekend_required
+msgid "Weekend Only"
+msgstr ""
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_sale_order__is_weekend
+msgid "Weekend Service"
+msgstr ""
+
+#. module: advanced_pricing
+#. odoo-python
+#: code:addons/advanced_pricing/wizards/visual_rule_builder_wizard.py:0
+msgid "Wizard session expired. Please start again."
+msgstr ""
+
+#. module: advanced_pricing
+#: model_terms:ir.ui.view,arch_db:advanced_pricing.view_pricing_rule_list
+#: model_terms:ir.ui.view,arch_db:advanced_pricing.view_pricing_rule_list_quick_edit
+msgid "🎨 Create Visual Rule"
+msgstr ""
+
+#. module: advanced_pricing
+#: model_terms:ir.ui.view,arch_db:advanced_pricing.view_pricing_rule_form
+msgid "🎨 Visual Builder"
+msgstr ""
+
+#. module: advanced_pricing
+#: model_terms:ir.ui.view,arch_db:advanced_pricing.product_view_kanban_catalog_booking_quote
+msgid "🏥 Back to Booking Quote"
+msgstr ""
+
+#. module: advanced_pricing
+#: model_terms:ir.ui.view,arch_db:advanced_pricing.view_healthcare_quote_form_catalog
+msgid "💰 Recalc Pricing"
+msgstr ""
+
+#. module: advanced_pricing
+#: model_terms:ir.ui.view,arch_db:advanced_pricing.view_healthcare_quote_form_catalog
+msgid "📋 Add from Catalog"
+msgstr ""
+
+#. module: advanced_pricing
+#: model_terms:ir.ui.view,arch_db:advanced_pricing.product_view_kanban_catalog_booking_quote
+msgid "📋 Product Catalog"
+msgstr ""

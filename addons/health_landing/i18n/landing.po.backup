@@ -1,0 +1,1860 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* health_landing
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 18.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-10-29 05:48+0000\n"
+"PO-Revision-Date: 2025-10-29 05:48+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: health_landing
+#. odoo-python
+#: code:addons/health_landing/models/health_fieldservice_order.py:0
+msgid "%s Dashboard"
+msgstr ""
+
+#. module: health_landing
+#: model_terms:ir.ui.view,arch_db:health_landing.view_patient_bookings_modal
+msgid "- Bookings"
+msgstr ""
+
+#. module: health_landing
+#: model_terms:ir.ui.view,arch_db:health_landing.view_patient_client_info_modal
+msgid "- Client Info"
+msgstr ""
+
+#. module: health_landing
+#: model_terms:ir.ui.view,arch_db:health_landing.view_patient_financials_modal
+msgid "- Financials"
+msgstr ""
+
+#. module: health_landing
+#: model_terms:ir.ui.view,arch_db:health_landing.view_patient_map_modal
+msgid "- Location"
+msgstr ""
+
+#. module: health_landing
+#: model_terms:ir.ui.view,arch_db:health_landing.view_patient_relations_modal
+msgid "- Relationships"
+msgstr ""
+
+#. module: health_landing
+#: model_terms:ir.ui.view,arch_db:health_landing.view_patient_packages_modal
+msgid "- Service Packages"
+msgstr ""
+
+#. module: health_landing
+#: model_terms:ir.ui.view,arch_db:health_landing.view_patient_bookings_modal
+msgid ""
+"<i class=\"fa fa-clock-o me-1 text-muted\"/>\n"
+"                                                <strong>Scheduled:</strong>"
+msgstr ""
+
+#. module: health_landing
+#: model_terms:ir.ui.view,arch_db:health_landing.view_health_patient_kanban_hub_spoke
+msgid "<i class=\"fa fa-tachometer\"/> Dashboard"
+msgstr ""
+
+#. module: health_landing
+#: model_terms:ir.ui.view,arch_db:health_landing.view_patient_bookings_modal
+msgid ""
+"<i class=\"fa fa-user-md me-1 text-muted\"/>\n"
+"                                                <strong>Nurse:</strong>"
+msgstr ""
+
+#. module: health_landing
+#: model_terms:ir.ui.view,arch_db:health_landing.view_health_fso_cash_collection_wizard_form
+msgid "<span>Cash Collection from Nurse</span>"
+msgstr ""
+
+#. module: health_landing
+#: model_terms:ir.ui.view,arch_db:health_landing.view_health_fso_clinical_notes_wizard_form
+msgid "<span>Clinical Notes</span>"
+msgstr ""
+
+#. module: health_landing
+#: model_terms:ir.ui.view,arch_db:health_landing.view_health_fso_invoice_wizard_form
+msgid "<span>Invoice &amp; Quote Details</span>"
+msgstr ""
+
+#. module: health_landing
+#. odoo-python
+#: code:addons/health_landing/wizards/health_fso_cash_collection_wizard.py:0
+msgid ""
+"<strong>Cash Collected by Operations Manager</strong><br/>Amount: %s "
+"%s<br/>Collected from: %s<br/>Collected by: %s<br/>Date: %s<br/>Notes: %s"
+msgstr ""
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/xml/fso_hub_spoke_widget.xml:0
+msgid "ASSIGNED"
+msgstr ""
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/xml/fso_hub_spoke_widget.xml:0
+msgid "Active arrows and nodes glow to guide you through the workflow"
+msgstr ""
+
+#. module: health_landing
+#: model:ir.model.fields,field_description:health_landing.field_health_fso_start_service_wizard__actual_start_datetime
+msgid "Actual Start Time"
+msgstr ""
+
+#. module: health_landing
+#: model:ir.model.fields,help:health_landing.field_health_fso_start_service_wizard__actual_start_datetime
+msgid "Actual time when service started"
+msgstr ""
+
+#. module: health_landing
+#: model:ir.model.fields,help:health_landing.field_health_fso_cash_collection_wizard__collection_notes
+msgid "Additional notes about cash collection"
+msgstr ""
+
+#. module: health_landing
+#: model_terms:ir.ui.view,arch_db:health_landing.view_health_fso_cash_collection_wizard_form
+msgid "Additional notes about cash collection..."
+msgstr ""
+
+#. module: health_landing
+#: model:ir.model.fields,help:health_landing.field_health_fso_service_packages_wizard__package_notes
+msgid "Additional notes about service packages"
+msgstr ""
+
+#. module: health_landing
+#: model_terms:ir.ui.view,arch_db:health_landing.view_health_fso_service_packages_wizard_form
+msgid "Additional notes about service packages..."
+msgstr ""
+
+#. module: health_landing
+#: model:ir.model.fields,help:health_landing.field_health_fso_payment_received_wizard__payment_notes
+msgid "Additional notes about the payment"
+msgstr ""
+
+#. module: health_landing
+#: model_terms:ir.ui.view,arch_db:health_landing.view_health_fso_payment_received_wizard_form
+msgid "Additional notes about the payment..."
+msgstr ""
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/xml/patient_spoke_modal.xml:0
+msgid "Address"
+msgstr ""
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/xml/patient_spoke_modal.xml:0
+msgid "Age / Gender"
+msgstr ""
+
+#. module: health_landing
+#: model:ir.model.fields,help:health_landing.field_health_fso_cash_collection_wizard__cash_amount
+msgid "Amount of cash received from nurse"
+msgstr ""
+
+#. module: health_landing
+#: model:ir.model.fields,help:health_landing.field_health_fso_start_service_wizard__start_notes
+msgid "Any notes or observations at service start"
+msgstr ""
+
+#. module: health_landing
+#: model_terms:ir.ui.view,arch_db:health_landing.view_health_fso_start_service_wizard_form
+msgid "Any notes or observations at service start..."
+msgstr ""
+
+#. module: health_landing
+#: model:ir.model.fields,help:health_landing.field_health_fso_confirm_booking_wizard__confirmation_notes
+msgid "Any special instructions or notes for this booking confirmation"
+msgstr ""
+
+#. module: health_landing
+#: model_terms:ir.ui.view,arch_db:health_landing.view_health_fso_confirm_booking_wizard_form
+msgid "Any special instructions or notes for this booking confirmation..."
+msgstr ""
+
+#. module: health_landing
+#: model_terms:ir.ui.view,arch_db:health_landing.view_health_fso_staff_assignment_wizard_form
+msgid "Assign Staff"
+msgstr ""
+
+#. module: health_landing
+#: model_terms:ir.ui.view,arch_db:health_landing.view_patient_bookings_modal
+msgid "Assigned"
+msgstr ""
+
+#. module: health_landing
+#: model:ir.model.fields,field_description:health_landing.field_health_fso_service_packages_wizard__assigned_package_ids
+msgid "Assigned Service Packages"
+msgstr ""
+
+#. module: health_landing
+#: model:ir.model.fields,field_description:health_landing.field_health_fso_staff_assignment_wizard__assigned_staff_ids
+#: model:ir.model.fields,field_description:health_landing.field_health_fso_start_service_wizard__assigned_staff
+msgid "Assigned Staff"
+msgstr ""
+
+#. module: health_landing
+#: model:ir.model.fields,field_description:health_landing.field_health_fso_staff_assignment_wizard__assignment_notes
+msgid "Assignment Notes"
+msgstr ""
+
+#. module: health_landing
+#: model:ir.model.fields,help:health_landing.field_health_fso_invoice_wizard__sale_order_id
+msgid "Associated healthcare quote/sales order for this service"
+msgstr ""
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/xml/fso_hub_spoke_widget.xml:0
+msgid "BOOKED"
+msgstr ""
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/xml/fso_hub_spoke_widget.xml:0
+#: code:addons/health_landing/static/src/xml/hub_spoke_widget.xml:0
+msgid "Back"
+msgstr ""
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/xml/viet_uc_templates.xml:0
+msgid "Back to"
+msgstr ""
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/xml/landing_templates.xml:0
+msgid "Back to Main Dashboard"
+msgstr ""
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/xml/viet_uc_templates.xml:0
+msgid "Back to Viet Uc Dashboard"
+msgstr ""
+
+#. module: health_landing
+#: model:ir.model.fields.selection,name:health_landing.selection__health_fieldservice_order__payment_method__bank_transfer
+msgid "Bank Transfer"
+msgstr ""
+
+#. module: health_landing
+#: model:ir.model.fields,help:health_landing.field_health_fso_payment_received_wizard__payment_reference
+msgid "Bank transaction ID or payment reference number"
+msgstr ""
+
+#. module: health_landing
+#: model:ir.model.fields,field_description:health_landing.field_health_fso_invoice_wizard__base_price
+msgid "Base Service Price"
+msgstr ""
+
+#. module: health_landing
+#: model:ir.model.fields,help:health_landing.field_health_fso_invoice_wizard__base_price
+msgid "Base price for the service"
+msgstr ""
+
+#. module: health_landing
+#: model:ir.model.fields,help:health_landing.field_health_fieldservice_order__show_payment_received_arrow
+msgid "Blinks when Pay Later was selected and payment needs to be received"
+msgstr ""
+
+#. module: health_landing
+#: model:ir.model.fields,help:health_landing.field_health_fieldservice_order__show_collect_cash_arrow
+msgid "Blinks when cash payment was collected by nurse and needs OM pickup"
+msgstr ""
+
+#. module: health_landing
+#: model:ir.model.fields,help:health_landing.field_health_fieldservice_order__show_invoice_arrow
+msgid "Blinks when clinical notes are filled but invoice not yet created"
+msgstr ""
+
+#. module: health_landing
+#: model:ir.model.fields,help:health_landing.field_health_fieldservice_order__show_pay_later_arrow
+msgid ""
+"Blinks when service is in In Progress stage and payment can be deferred"
+msgstr ""
+
+#. module: health_landing
+#: model:ir.model.fields,help:health_landing.field_health_fieldservice_order__show_pay_now_arrow
+msgid "Blinks when service is in In Progress stage and ready for payment"
+msgstr ""
+
+#. module: health_landing
+#: model:ir.model.fields,help:health_landing.field_health_fieldservice_order__show_clinical_notes_arrow
+msgid "Blinks when service is in progress or clinical notes not yet filled"
+msgstr ""
+
+#. module: health_landing
+#: model_terms:ir.ui.view,arch_db:health_landing.view_health_fso_clinical_notes_wizard_form
+msgid "Blood pressure, temperature, pulse, etc..."
+msgstr ""
+
+#. module: health_landing
+#: model:ir.model.fields,field_description:health_landing.field_health_fso_cash_collection_wizard__fso_id
+#: model:ir.model.fields,field_description:health_landing.field_health_fso_clinical_notes_wizard__fso_id
+#: model:ir.model.fields,field_description:health_landing.field_health_fso_confirm_booking_wizard__fso_id
+#: model:ir.model.fields,field_description:health_landing.field_health_fso_equipment_wizard__fso_id
+#: model:ir.model.fields,field_description:health_landing.field_health_fso_invoice_wizard__fso_id
+#: model:ir.model.fields,field_description:health_landing.field_health_fso_payment_received_wizard__fso_id
+#: model:ir.model.fields,field_description:health_landing.field_health_fso_service_packages_wizard__fso_id
+#: model:ir.model.fields,field_description:health_landing.field_health_fso_staff_assignment_wizard__fso_id
+#: model:ir.model.fields,field_description:health_landing.field_health_fso_start_service_wizard__fso_id
+msgid "Booking"
+msgstr ""
+
+#. module: health_landing
+#: model_terms:ir.ui.view,arch_db:health_landing.view_health_fso_cash_collection_wizard_form
+#: model_terms:ir.ui.view,arch_db:health_landing.view_health_fso_clinical_notes_wizard_form
+#: model_terms:ir.ui.view,arch_db:health_landing.view_health_fso_invoice_wizard_form
+msgid "Booking Information"
+msgstr ""
+
+#. module: health_landing
+#. odoo-python
+#: code:addons/health_landing/wizards/health_fso_confirm_booking_wizard.py:0
+msgid "Booking confirmed."
+msgstr ""
+
+#. module: health_landing
+#: model_terms:ir.ui.view,arch_db:health_landing.view_fso_bookings_calendar
+msgid "Bookings Calendar"
+msgstr ""
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/xml/fso_hub_spoke_widget.xml:0
+msgid "COMPLETED"
+msgstr ""
+
+#. module: health_landing
+#: model_terms:ir.ui.view,arch_db:health_landing.view_patient_bookings_modal
+msgid "Calendar View"
+msgstr ""
+
+#. module: health_landing
+#: model_terms:ir.ui.view,arch_db:health_landing.view_health_fso_cash_collection_wizard_form
+#: model_terms:ir.ui.view,arch_db:health_landing.view_health_fso_clinical_notes_wizard_form
+#: model_terms:ir.ui.view,arch_db:health_landing.view_health_fso_confirm_booking_wizard_form
+#: model_terms:ir.ui.view,arch_db:health_landing.view_health_fso_equipment_wizard_form
+#: model_terms:ir.ui.view,arch_db:health_landing.view_health_fso_invoice_wizard_form
+#: model_terms:ir.ui.view,arch_db:health_landing.view_health_fso_payment_received_wizard_form
+#: model_terms:ir.ui.view,arch_db:health_landing.view_health_fso_service_packages_wizard_form
+#: model_terms:ir.ui.view,arch_db:health_landing.view_health_fso_staff_assignment_wizard_form
+#: model_terms:ir.ui.view,arch_db:health_landing.view_health_fso_start_service_wizard_form
+msgid "Cancel"
+msgstr ""
+
+#. module: health_landing
+#: model_terms:ir.ui.view,arch_db:health_landing.view_patient_bookings_modal
+msgid "Cancelled"
+msgstr ""
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/xml/patient_spoke_modal.xml:0
+msgid "Caregivers ("
+msgstr ""
+
+#. module: health_landing
+#: model:ir.model.fields.selection,name:health_landing.selection__health_fieldservice_order__payment_method__cash
+msgid "Cash"
+msgstr ""
+
+#. module: health_landing
+#: model:ir.model.fields,field_description:health_landing.field_health_fso_cash_collection_wizard__cash_amount
+msgid "Cash Amount Received"
+msgstr ""
+
+#. module: health_landing
+#: model:ir.model.fields,field_description:health_landing.field_health_fieldservice_order__cash_collected_by_nurse
+msgid "Cash Collected by Nurse"
+msgstr ""
+
+#. module: health_landing
+#: model_terms:ir.ui.view,arch_db:health_landing.view_health_fso_cash_collection_wizard_form
+msgid "Cash Collection Details"
+msgstr ""
+
+#. module: health_landing
+#: model:ir.model.fields,field_description:health_landing.field_health_fieldservice_order__cash_received_by_om
+msgid "Cash Received by OM"
+msgstr ""
+
+#. module: health_landing
+#. odoo-python
+#: code:addons/health_landing/wizards/health_fso_cash_collection_wizard.py:0
+msgid "Cash amount must be greater than zero."
+msgstr ""
+
+#. module: health_landing
+#. odoo-python
+#: code:addons/health_landing/models/health_fieldservice_order.py:0
+msgid "Cash has already been received by Operations Manager."
+msgstr ""
+
+#. module: health_landing
+#. odoo-python
+#: code:addons/health_landing/models/health_fieldservice_order.py:0
+msgid ""
+"Cash has not been collected from patient yet. Please collect cash from "
+"patient first."
+msgstr ""
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/xml/hub_spoke_widget.xml:0
+msgid "Click on any section to view details"
+msgstr ""
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/xml/hub_spoke_widget.xml:0
+#: model:ir.model.fields,field_description:health_landing.field_health_fso_cash_collection_wizard__patient_id
+#: model:ir.model.fields,field_description:health_landing.field_health_fso_clinical_notes_wizard__patient_id
+#: model:ir.model.fields,field_description:health_landing.field_health_fso_confirm_booking_wizard__patient_id
+#: model:ir.model.fields,field_description:health_landing.field_health_fso_equipment_wizard__patient_id
+#: model:ir.model.fields,field_description:health_landing.field_health_fso_invoice_wizard__patient_id
+#: model:ir.model.fields,field_description:health_landing.field_health_fso_payment_received_wizard__patient_id
+#: model:ir.model.fields,field_description:health_landing.field_health_fso_service_packages_wizard__patient_id
+#: model:ir.model.fields,field_description:health_landing.field_health_fso_staff_assignment_wizard__patient_id
+#: model:ir.model.fields,field_description:health_landing.field_health_fso_start_service_wizard__patient_id
+msgid "Client"
+msgstr ""
+
+#. module: health_landing
+#: model_terms:ir.ui.view,arch_db:health_landing.view_patient_bookings_modal
+msgid "Client Bookings"
+msgstr ""
+
+#. module: health_landing
+#: model_terms:ir.ui.view,arch_db:health_landing.view_health_fso_clinical_notes_wizard_form
+msgid "Client Condition"
+msgstr ""
+
+#. module: health_landing
+#: model:ir.model.fields,field_description:health_landing.field_health_fso_clinical_notes_wizard__patient_condition_after
+msgid "Client Condition (After)"
+msgstr ""
+
+#. module: health_landing
+#: model:ir.model.fields,field_description:health_landing.field_health_fso_clinical_notes_wizard__patient_condition_before
+msgid "Client Condition (Before)"
+msgstr ""
+
+#. module: health_landing
+#: model:ir.model.fields,field_description:health_landing.field_health_fso_confirm_booking_wizard__patient_contacted
+msgid "Client Contacted"
+msgstr ""
+
+#. module: health_landing
+#: model_terms:ir.ui.view,arch_db:health_landing.view_patient_financials_modal
+msgid "Client Financials"
+msgstr ""
+
+#. module: health_landing
+#: model_terms:ir.ui.view,arch_db:health_landing.view_patient_client_info_modal
+msgid "Client Information"
+msgstr ""
+
+#. module: health_landing
+#: model_terms:ir.ui.view,arch_db:health_landing.view_patient_map_modal
+msgid "Client Location"
+msgstr ""
+
+#. module: health_landing
+#: model:ir.model.fields,field_description:health_landing.field_health_fso_start_service_wizard__patient_present
+msgid "Client Present and Verified"
+msgstr ""
+
+#. module: health_landing
+#: model_terms:ir.ui.view,arch_db:health_landing.view_patient_relations_modal
+msgid "Client Relationships"
+msgstr ""
+
+#. module: health_landing
+#: model_terms:ir.ui.view,arch_db:health_landing.view_health_fso_clinical_notes_wizard_form
+msgid "Clinical Assessment"
+msgstr ""
+
+#. module: health_landing
+#: model:ir.actions.act_window,name:health_landing.action_health_fso_clinical_notes_wizard
+#: model:ir.model.fields,field_description:health_landing.field_health_fso_clinical_notes_wizard__clinical_notes
+#: model_terms:ir.ui.view,arch_db:health_landing.view_health_fso_clinical_notes_wizard_form
+msgid "Clinical Notes"
+msgstr ""
+
+#. module: health_landing
+#. odoo-python
+#: code:addons/health_landing/models/health_fieldservice_order.py:0
+msgid "Clinical Notes - %s"
+msgstr ""
+
+#. module: health_landing
+#: model:ir.model.fields,field_description:health_landing.field_health_fso_clinical_notes_wizard__clinical_notes_submitted
+msgid "Clinical Notes Submitted"
+msgstr ""
+
+#. module: health_landing
+#. odoo-python
+#: code:addons/health_landing/wizards/health_fso_clinical_notes_wizard.py:0
+msgid "Clinical notes updated from dashboard"
+msgstr ""
+
+#. module: health_landing
+#: model:ir.model.fields,help:health_landing.field_health_fso_clinical_notes_wizard__clinical_notes
+msgid "Clinical observations and notes from service provider"
+msgstr ""
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/xml/landing_templates.xml:0
+#: code:addons/health_landing/static/src/xml/patient_spoke_modal.xml:0
+#: model_terms:ir.ui.view,arch_db:health_landing.view_health_fso_invoice_wizard_form
+#: model_terms:ir.ui.view,arch_db:health_landing.view_patient_bookings_modal
+#: model_terms:ir.ui.view,arch_db:health_landing.view_patient_client_info_modal
+#: model_terms:ir.ui.view,arch_db:health_landing.view_patient_financials_modal
+#: model_terms:ir.ui.view,arch_db:health_landing.view_patient_map_modal
+#: model_terms:ir.ui.view,arch_db:health_landing.view_patient_packages_modal
+#: model_terms:ir.ui.view,arch_db:health_landing.view_patient_relations_modal
+msgid "Close"
+msgstr ""
+
+#. module: health_landing
+#: model:ir.actions.act_window,name:health_landing.action_health_fso_cash_collection_wizard
+#: model_terms:ir.ui.view,arch_db:health_landing.view_health_fso_cash_collection_wizard_form
+msgid "Collect Cash from Nurse"
+msgstr ""
+
+#. module: health_landing
+#. odoo-python
+#: code:addons/health_landing/models/health_fieldservice_order.py:0
+msgid "Collect Cash from Nurse - %s"
+msgstr ""
+
+#. module: health_landing
+#: model:ir.model.fields,field_description:health_landing.field_health_fso_cash_collection_wizard__collected_by_user_id
+msgid "Collected By"
+msgstr ""
+
+#. module: health_landing
+#: model_terms:ir.ui.view,arch_db:health_landing.view_health_fso_cash_collection_wizard_form
+msgid "Collection Amount"
+msgstr ""
+
+#. module: health_landing
+#: model:ir.model.fields,field_description:health_landing.field_health_fso_cash_collection_wizard__collection_date
+msgid "Collection Date & Time"
+msgstr ""
+
+#. module: health_landing
+#: model:ir.model.fields,field_description:health_landing.field_health_fso_cash_collection_wizard__collection_notes
+msgid "Collection Notes"
+msgstr ""
+
+#. module: health_landing
+#: model_terms:ir.ui.view,arch_db:health_landing.view_patient_bookings_modal
+msgid "Completed"
+msgstr ""
+
+#. module: health_landing
+#: model_terms:ir.ui.view,arch_db:health_landing.view_health_fso_confirm_booking_wizard_form
+msgid "Confirm Booking"
+msgstr ""
+
+#. module: health_landing
+#: model_terms:ir.ui.view,arch_db:health_landing.view_health_fso_cash_collection_wizard_form
+msgid "Confirm Cash Collection"
+msgstr ""
+
+#. module: health_landing
+#: model_terms:ir.ui.view,arch_db:health_landing.view_health_fso_payment_received_wizard_form
+msgid "Confirm Payment"
+msgstr ""
+
+#. module: health_landing
+#: model:ir.model.fields,help:health_landing.field_health_fso_start_service_wizard__equipment_ready
+msgid "Confirm that all required equipment is ready"
+msgstr ""
+
+#. module: health_landing
+#: model:ir.model.fields,help:health_landing.field_health_fso_confirm_booking_wizard__staff_notified
+msgid "Confirm that assigned staff has been notified"
+msgstr ""
+
+#. module: health_landing
+#: model:ir.model.fields,field_description:health_landing.field_health_fso_confirm_booking_wizard__confirmation_notes
+msgid "Confirmation Notes"
+msgstr ""
+
+#. module: health_landing
+#: model_terms:ir.ui.view,arch_db:health_landing.view_patient_bookings_modal
+msgid "Confirmed"
+msgstr ""
+
+#. module: health_landing
+#: model:ir.model,name:health_landing.model_res_partner
+msgid "Contact"
+msgstr "Liên hệ"
+
+#. module: health_landing
+#: model_terms:ir.ui.view,arch_db:health_landing.view_patient_client_info_modal
+msgid "Contact Information"
+msgstr ""
+
+#. module: health_landing
+#: model_terms:ir.ui.view,arch_db:health_landing.view_health_fso_invoice_wizard_form
+msgid "Create Invoice"
+msgstr ""
+
+#. module: health_landing
+#: model_terms:ir.ui.view,arch_db:health_landing.view_health_fso_invoice_wizard_form
+msgid "Create Quote"
+msgstr ""
+
+#. module: health_landing
+#: model:ir.model.fields,field_description:health_landing.field_health_fso_cash_collection_wizard__create_uid
+#: model:ir.model.fields,field_description:health_landing.field_health_fso_clinical_notes_wizard__create_uid
+#: model:ir.model.fields,field_description:health_landing.field_health_fso_confirm_booking_wizard__create_uid
+#: model:ir.model.fields,field_description:health_landing.field_health_fso_equipment_wizard__create_uid
+#: model:ir.model.fields,field_description:health_landing.field_health_fso_invoice_wizard__create_uid
+#: model:ir.model.fields,field_description:health_landing.field_health_fso_payment_received_wizard__create_uid
+#: model:ir.model.fields,field_description:health_landing.field_health_fso_service_packages_wizard__create_uid
+#: model:ir.model.fields,field_description:health_landing.field_health_fso_staff_assignment_wizard__create_uid
+#: model:ir.model.fields,field_description:health_landing.field_health_fso_start_service_wizard__create_uid
+msgid "Created by"
+msgstr ""
+
+#. module: health_landing
+#: model:ir.model.fields,field_description:health_landing.field_health_fso_cash_collection_wizard__create_date
+#: model:ir.model.fields,field_description:health_landing.field_health_fso_clinical_notes_wizard__create_date
+#: model:ir.model.fields,field_description:health_landing.field_health_fso_confirm_booking_wizard__create_date
+#: model:ir.model.fields,field_description:health_landing.field_health_fso_equipment_wizard__create_date
+#: model:ir.model.fields,field_description:health_landing.field_health_fso_invoice_wizard__create_date
+#: model:ir.model.fields,field_description:health_landing.field_health_fso_payment_received_wizard__create_date
+#: model:ir.model.fields,field_description:health_landing.field_health_fso_service_packages_wizard__create_date
+#: model:ir.model.fields,field_description:health_landing.field_health_fso_staff_assignment_wizard__create_date
+#: model:ir.model.fields,field_description:health_landing.field_health_fso_start_service_wizard__create_date
+msgid "Created on"
+msgstr ""
+
+#. module: health_landing
+#: model:ir.model.fields.selection,name:health_landing.selection__health_fieldservice_order__payment_method__card
+msgid "Credit/Debit Card"
+msgstr ""
+
+#. module: health_landing
+#: model:ir.model.fields,field_description:health_landing.field_health_fso_cash_collection_wizard__currency_id
+#: model:ir.model.fields,field_description:health_landing.field_health_fso_invoice_wizard__currency_id
+#: model:ir.model.fields,field_description:health_landing.field_health_fso_payment_received_wizard__currency_id
+msgid "Currency"
+msgstr ""
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/xml/fso_hub_spoke_widget.xml:0
+msgid "DRAFT"
+msgstr ""
+
+#. module: health_landing
+#: model_terms:ir.ui.view,arch_db:health_landing.view_health_fieldservice_order_form_dashboard_button
+msgid "Dashboard"
+msgstr ""
+
+#. module: health_landing
+#: model:ir.model.fields,help:health_landing.field_health_fieldservice_order__payment_received_date
+#: model:ir.model.fields,help:health_landing.field_health_fso_payment_received_wizard__payment_date
+msgid "Date when payment was received"
+msgstr ""
+
+#. module: health_landing
+#: model_terms:ir.ui.view,arch_db:health_landing.view_health_fso_clinical_notes_wizard_form
+msgid "Detailed clinical observations and notes..."
+msgstr ""
+
+#. module: health_landing
+#: model:ir.model.fields,help:health_landing.field_health_fso_clinical_notes_wizard__treatment_performed
+msgid "Detailed description of treatment provided"
+msgstr ""
+
+#. module: health_landing
+#: model_terms:ir.ui.view,arch_db:health_landing.view_health_fso_clinical_notes_wizard_form
+msgid "Detailed description of treatment provided..."
+msgstr ""
+
+#. module: health_landing
+#: model:ir.model.fields,field_description:health_landing.field_health_fso_clinical_notes_wizard__diagnosis
+msgid "Diagnosis"
+msgstr ""
+
+#. module: health_landing
+#: model:ir.model.fields,field_description:health_landing.field_health_fso_cash_collection_wizard__display_name
+#: model:ir.model.fields,field_description:health_landing.field_health_fso_clinical_notes_wizard__display_name
+#: model:ir.model.fields,field_description:health_landing.field_health_fso_confirm_booking_wizard__display_name
+#: model:ir.model.fields,field_description:health_landing.field_health_fso_equipment_wizard__display_name
+#: model:ir.model.fields,field_description:health_landing.field_health_fso_invoice_wizard__display_name
+#: model:ir.model.fields,field_description:health_landing.field_health_fso_payment_received_wizard__display_name
+#: model:ir.model.fields,field_description:health_landing.field_health_fso_service_packages_wizard__display_name
+#: model:ir.model.fields,field_description:health_landing.field_health_fso_staff_assignment_wizard__display_name
+#: model:ir.model.fields,field_description:health_landing.field_health_fso_start_service_wizard__display_name
+msgid "Display Name"
+msgstr ""
+
+#. module: health_landing
+#: model_terms:ir.ui.view,arch_db:health_landing.view_patient_bookings_modal
+msgid "Draft"
+msgstr ""
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/xml/patient_spoke_modal.xml:0
+msgid "Due:"
+msgstr ""
+
+#. module: health_landing
+#: model_terms:ir.ui.view,arch_db:health_landing.view_patient_bookings_modal
+msgid "Duration (hrs)"
+msgstr ""
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/xml/patient_spoke_modal.xml:0
+msgid "Edit Full Details"
+msgstr ""
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/xml/patient_spoke_modal.xml:0
+msgid "Email"
+msgstr ""
+
+#. module: health_landing
+#: model_terms:ir.ui.view,arch_db:health_landing.view_patient_client_info_modal
+msgid "Emergency Contact"
+msgstr ""
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/xml/patient_spoke_modal.xml:0
+msgid "Emergency Contacts ("
+msgstr ""
+
+#. module: health_landing
+#: model:ir.model.fields,field_description:health_landing.field_health_fso_equipment_wizard__equipment_checklist_done
+msgid "Equipment Checklist Completed"
+msgstr ""
+
+#. module: health_landing
+#: model:ir.model.fields,field_description:health_landing.field_health_fso_equipment_wizard__equipment_notes
+msgid "Equipment Notes"
+msgstr ""
+
+#. module: health_landing
+#: model:ir.model.fields,field_description:health_landing.field_health_fso_start_service_wizard__equipment_ready
+msgid "Equipment Ready"
+msgstr ""
+
+#. module: health_landing
+#: model_terms:ir.ui.view,arch_db:health_landing.view_health_fso_equipment_wizard_form
+msgid "Equipment Requirements"
+msgstr ""
+
+#. module: health_landing
+#: model:ir.model.fields,help:health_landing.field_health_fso_equipment_wizard__required_equipment_ids
+msgid "Equipment items required for this service"
+msgstr ""
+
+#. module: health_landing
+#. odoo-python
+#: code:addons/health_landing/wizards/health_fso_equipment_wizard.py:0
+msgid "Equipment updated: %s items - %s"
+msgstr ""
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/xml/patient_spoke_modal.xml:0
+msgid "Error:"
+msgstr ""
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/xml/patient_spoke_modal.xml:0
+msgid "Expires:"
+msgstr ""
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/xml/landing_templates.xml:0
+msgid "Explore the full range of features available in this module."
+msgstr ""
+
+#. module: health_landing
+#: model:ir.model,name:health_landing.model_health_fso_cash_collection_wizard
+msgid "FSO Cash Collection Wizard"
+msgstr ""
+
+#. module: health_landing
+#: model:ir.model,name:health_landing.model_health_fso_clinical_notes_wizard
+msgid "FSO Clinical Notes Wizard"
+msgstr ""
+
+#. module: health_landing
+#: model:ir.model,name:health_landing.model_health_fso_confirm_booking_wizard
+msgid "FSO Confirm Booking Wizard"
+msgstr ""
+
+#. module: health_landing
+#: model:ir.model,name:health_landing.model_health_fso_equipment_wizard
+msgid "FSO Equipment Wizard"
+msgstr ""
+
+#. module: health_landing
+#: model:ir.model,name:health_landing.model_health_fso_invoice_wizard
+msgid "FSO Invoice Wizard"
+msgstr ""
+
+#. module: health_landing
+#: model:ir.model,name:health_landing.model_health_fso_payment_received_wizard
+msgid "FSO Payment Received Wizard"
+msgstr ""
+
+#. module: health_landing
+#: model:ir.model,name:health_landing.model_health_fso_service_packages_wizard
+msgid "FSO Service Packages Wizard"
+msgstr ""
+
+#. module: health_landing
+#: model:ir.model,name:health_landing.model_health_fso_staff_assignment_wizard
+msgid "FSO Staff Assignment Wizard"
+msgstr ""
+
+#. module: health_landing
+#: model:ir.model,name:health_landing.model_health_fso_start_service_wizard
+msgid "FSO Start Service Wizard"
+msgstr ""
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/xml/landing_templates.xml:0
+msgid "Favorites"
+msgstr ""
+
+#. module: health_landing
+#: model_terms:ir.ui.view,arch_db:health_landing.view_patient_financials_modal
+msgid "Financial Summary"
+msgstr ""
+
+#. module: health_landing
+#: model_terms:ir.ui.view,arch_db:health_landing.view_health_fso_clinical_notes_wizard_form
+msgid "Follow-up"
+msgstr ""
+
+#. module: health_landing
+#: model:ir.model.fields,field_description:health_landing.field_health_fso_clinical_notes_wizard__follow_up_date
+msgid "Follow-up Date"
+msgstr ""
+
+#. module: health_landing
+#: model:ir.model.fields,field_description:health_landing.field_health_fso_clinical_notes_wizard__follow_up_notes
+msgid "Follow-up Notes"
+msgstr ""
+
+#. module: health_landing
+#: model:ir.model.fields,field_description:health_landing.field_health_fso_clinical_notes_wizard__follow_up_required
+msgid "Follow-up Required"
+msgstr ""
+
+#. module: health_landing
+#: model_terms:ir.ui.view,arch_db:health_landing.view_health_fso_clinical_notes_wizard_form
+msgid "Follow-up instructions and notes..."
+msgstr ""
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/xml/patient_spoke_modal.xml:0
+msgid "GPS Coordinates"
+msgstr ""
+
+#. module: health_landing
+#: model:ir.model.fields,field_description:health_landing.field_health_fso_invoice_wizard__has_invoice
+msgid "Has Invoice"
+msgstr ""
+
+#. module: health_landing
+#: model:ir.model.fields,field_description:health_landing.field_health_fso_invoice_wizard__has_quote
+msgid "Has Quote"
+msgstr ""
+
+#. module: health_landing
+#: model:ir.actions.client,name:health_landing.action_health_landing_dashboard
+msgid "Healthcare Dashboard"
+msgstr ""
+
+#. module: health_landing
+#: model:ir.model,name:health_landing.model_health_fieldservice_order
+msgid "Healthcare Field Service Order (Unified Booking System)"
+msgstr ""
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/xml/landing_templates.xml:0
+msgid "Healthcare Management System"
+msgstr ""
+
+#. module: health_landing
+#: model:ir.model.fields,field_description:health_landing.field_health_fso_invoice_wizard__sale_order_id
+msgid "Healthcare Quote"
+msgstr ""
+
+#. module: health_landing
+#. odoo-python
+#: code:addons/health_landing/wizards/health_fso_invoice_wizard.py:0
+msgid "Healthcare Quote - %s"
+msgstr ""
+
+#. module: health_landing
+#: model:ir.model.fields,help:health_landing.field_health_fso_staff_assignment_wizard__assigned_staff_ids
+msgid "Healthcare staff assigned to this service"
+msgstr ""
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/xml/hub_spoke_widget.xml:0
+#: code:addons/health_landing/static/src/xml/landing_templates.xml:0
+#: model:ir.ui.menu,name:health_landing.menu_health_landing_home
+msgid "Home"
+msgstr ""
+
+#. module: health_landing
+#: model:ir.model.fields,field_description:health_landing.field_health_fso_cash_collection_wizard__id
+#: model:ir.model.fields,field_description:health_landing.field_health_fso_clinical_notes_wizard__id
+#: model:ir.model.fields,field_description:health_landing.field_health_fso_confirm_booking_wizard__id
+#: model:ir.model.fields,field_description:health_landing.field_health_fso_equipment_wizard__id
+#: model:ir.model.fields,field_description:health_landing.field_health_fso_invoice_wizard__id
+#: model:ir.model.fields,field_description:health_landing.field_health_fso_payment_received_wizard__id
+#: model:ir.model.fields,field_description:health_landing.field_health_fso_service_packages_wizard__id
+#: model:ir.model.fields,field_description:health_landing.field_health_fso_staff_assignment_wizard__id
+#: model:ir.model.fields,field_description:health_landing.field_health_fso_start_service_wizard__id
+msgid "ID"
+msgstr ""
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/xml/fso_hub_spoke_widget.xml:0
+msgid "IN PROGRESS"
+msgstr ""
+
+#. module: health_landing
+#: model:ir.model.fields,field_description:health_landing.field_health_fso_invoice_wizard__invoice_id
+msgid "Invoice"
+msgstr ""
+
+#. module: health_landing
+#. odoo-python
+#: code:addons/health_landing/wizards/health_fso_invoice_wizard.py:0
+msgid "Invoice - %s"
+msgstr ""
+
+#. module: health_landing
+#: model:ir.actions.act_window,name:health_landing.action_health_fso_invoice_wizard
+#: model_terms:ir.ui.view,arch_db:health_landing.view_health_fso_invoice_wizard_form
+msgid "Invoice Details"
+msgstr ""
+
+#. module: health_landing
+#. odoo-python
+#: code:addons/health_landing/models/health_fieldservice_order.py:0
+msgid "Invoice Details - %s"
+msgstr ""
+
+#. module: health_landing
+#: model:ir.model.fields,field_description:health_landing.field_health_fso_invoice_wizard__invoice_state
+#: model_terms:ir.ui.view,arch_db:health_landing.view_health_fso_invoice_wizard_form
+msgid "Invoice Status"
+msgstr ""
+
+#. module: health_landing
+#: model:ir.model.fields,field_description:health_landing.field_health_fso_invoice_wizard__invoice_submitted
+msgid "Invoice Submitted"
+msgstr ""
+
+#. module: health_landing
+#: model:ir.model.fields,help:health_landing.field_health_fso_invoice_wizard__invoice_id
+msgid "Invoice generated for this service order"
+msgstr ""
+
+#. module: health_landing
+#: model_terms:ir.ui.view,arch_db:health_landing.view_patient_financials_modal
+msgid "Invoices"
+msgstr ""
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/xml/patient_spoke_modal.xml:0
+msgid "Last Payment:"
+msgstr ""
+
+#. module: health_landing
+#: model:ir.model.fields,field_description:health_landing.field_health_fso_cash_collection_wizard__write_uid
+#: model:ir.model.fields,field_description:health_landing.field_health_fso_clinical_notes_wizard__write_uid
+#: model:ir.model.fields,field_description:health_landing.field_health_fso_confirm_booking_wizard__write_uid
+#: model:ir.model.fields,field_description:health_landing.field_health_fso_equipment_wizard__write_uid
+#: model:ir.model.fields,field_description:health_landing.field_health_fso_invoice_wizard__write_uid
+#: model:ir.model.fields,field_description:health_landing.field_health_fso_payment_received_wizard__write_uid
+#: model:ir.model.fields,field_description:health_landing.field_health_fso_service_packages_wizard__write_uid
+#: model:ir.model.fields,field_description:health_landing.field_health_fso_staff_assignment_wizard__write_uid
+#: model:ir.model.fields,field_description:health_landing.field_health_fso_start_service_wizard__write_uid
+msgid "Last Updated by"
+msgstr ""
+
+#. module: health_landing
+#: model:ir.model.fields,field_description:health_landing.field_health_fso_cash_collection_wizard__write_date
+#: model:ir.model.fields,field_description:health_landing.field_health_fso_clinical_notes_wizard__write_date
+#: model:ir.model.fields,field_description:health_landing.field_health_fso_confirm_booking_wizard__write_date
+#: model:ir.model.fields,field_description:health_landing.field_health_fso_equipment_wizard__write_date
+#: model:ir.model.fields,field_description:health_landing.field_health_fso_invoice_wizard__write_date
+#: model:ir.model.fields,field_description:health_landing.field_health_fso_payment_received_wizard__write_date
+#: model:ir.model.fields,field_description:health_landing.field_health_fso_service_packages_wizard__write_date
+#: model:ir.model.fields,field_description:health_landing.field_health_fso_staff_assignment_wizard__write_date
+#: model:ir.model.fields,field_description:health_landing.field_health_fso_start_service_wizard__write_date
+msgid "Last Updated on"
+msgstr ""
+
+#. module: health_landing
+#: model_terms:ir.ui.view,arch_db:health_landing.view_fso_bookings_calendar_search
+msgid "Lead Staff"
+msgstr ""
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/xml/patient_spoke_modal.xml:0
+msgid "Loading data..."
+msgstr ""
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/xml/hub_spoke_widget.xml:0
+msgid "Loading patient data..."
+msgstr ""
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/xml/fso_hub_spoke_widget.xml:0
+msgid "Loading workflow data..."
+msgstr ""
+
+#. module: health_landing
+#: model_terms:ir.ui.view,arch_db:health_landing.view_patient_map_modal
+msgid "Location Map"
+msgstr ""
+
+#. module: health_landing
+#: model:ir.model.fields,help:health_landing.field_health_fso_staff_assignment_wizard__primary_staff_id
+msgid "Main staff member responsible for this service"
+msgstr ""
+
+#. module: health_landing
+#: model_terms:ir.ui.view,arch_db:health_landing.view_patient_client_info_modal
+msgid "Medical Information"
+msgstr ""
+
+#. module: health_landing
+#: model:ir.model.fields,help:health_landing.field_health_fso_clinical_notes_wizard__diagnosis
+msgid "Medical diagnosis (Chuẩn đoán) - MOH compliance field"
+msgstr ""
+
+#. module: health_landing
+#: model_terms:ir.ui.view,arch_db:health_landing.view_health_fso_clinical_notes_wizard_form
+msgid "Medical diagnosis..."
+msgstr ""
+
+#. module: health_landing
+#: model:ir.model.fields,field_description:health_landing.field_health_fso_clinical_notes_wizard__medications_prescribed
+msgid "Medications Prescribed"
+msgstr ""
+
+#. module: health_landing
+#: model:ir.model.fields,help:health_landing.field_health_fso_clinical_notes_wizard__medications_prescribed
+msgid "Medications prescribed during service"
+msgstr ""
+
+#. module: health_landing
+#: model_terms:ir.ui.view,arch_db:health_landing.view_health_fso_clinical_notes_wizard_form
+msgid "Medications prescribed during service..."
+msgstr ""
+
+#. module: health_landing
+#: model:ir.model.fields,help:health_landing.field_health_fieldservice_order__payment_method
+msgid "Method of payment selected"
+msgstr ""
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/xml/patient_spoke_modal.xml:0
+msgid "No active packages"
+msgstr ""
+
+#. module: health_landing
+#: model_terms:ir.ui.view,arch_db:health_landing.view_patient_packages_modal
+msgid "No active service packages for this patient."
+msgstr ""
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/xml/patient_spoke_modal.xml:0
+msgid "No bookings found"
+msgstr ""
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/xml/patient_spoke_modal.xml:0
+msgid "No financial data available"
+msgstr ""
+
+#. module: health_landing
+#. odoo-python
+#: code:addons/health_landing/wizards/health_fso_invoice_wizard.py:0
+msgid "No invoice has been created for this booking yet."
+msgstr ""
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/xml/viet_uc_templates.xml:0
+msgid "No modules found for \""
+msgstr ""
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/xml/landing_templates.xml:0
+msgid "No modules or features found for \""
+msgstr ""
+
+#. module: health_landing
+#. odoo-python
+#: code:addons/health_landing/wizards/health_fso_invoice_wizard.py:0
+msgid "No quote has been created for this booking yet."
+msgstr ""
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/xml/patient_spoke_modal.xml:0
+msgid "No relationships found"
+msgstr ""
+
+#. module: health_landing
+#. odoo-python
+#: code:addons/health_landing/wizards/health_fso_start_service_wizard.py:0
+msgid "Not assigned"
+msgstr ""
+
+#. module: health_landing
+#. odoo-python
+#: code:addons/health_landing/wizards/health_fso_payment_received_wizard.py:0
+msgid "Not specified"
+msgstr ""
+
+#. module: health_landing
+#: model_terms:ir.ui.view,arch_db:health_landing.view_health_fso_cash_collection_wizard_form
+msgid "Notes"
+msgstr ""
+
+#. module: health_landing
+#: model:ir.model.fields,field_description:health_landing.field_health_fso_cash_collection_wizard__lead_staff_id
+msgid "Nurse/Staff Who Collected Cash"
+msgstr ""
+
+#. module: health_landing
+#: model_terms:ir.ui.view,arch_db:health_landing.view_health_fieldservice_order_form_dashboard_button
+msgid "Open Booking Workflow Dashboard"
+msgstr ""
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/xml/patient_spoke_modal.xml:0
+msgid "Overdue Invoices"
+msgstr ""
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/xml/patient_spoke_modal.xml:0
+msgid "PRIMARY"
+msgstr ""
+
+#. module: health_landing
+#: model:ir.model.fields,field_description:health_landing.field_health_fso_service_packages_wizard__package_notes
+msgid "Package Notes"
+msgstr ""
+
+#. module: health_landing
+#: model:ir.model.fields,field_description:health_landing.field_res_partner__fso_past_ids
+#: model:ir.model.fields,field_description:health_landing.field_res_users__fso_past_ids
+#: model_terms:ir.ui.view,arch_db:health_landing.view_patient_bookings_modal
+msgid "Past Bookings"
+msgstr ""
+
+#. module: health_landing
+#: model:ir.model.fields,help:health_landing.field_res_partner__fso_past_ids
+#: model:ir.model.fields,help:health_landing.field_res_users__fso_past_ids
+msgid "Past field service orders"
+msgstr ""
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/xml/patient_spoke_modal.xml:0
+msgid "Patient ID"
+msgstr ""
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/xml/hub_spoke_widget.xml:0
+msgid "Patient Management"
+msgstr ""
+
+#. module: health_landing
+#: model_terms:ir.ui.view,arch_db:health_landing.view_health_fso_clinical_notes_wizard_form
+msgid "Patient condition after service..."
+msgstr ""
+
+#. module: health_landing
+#: model_terms:ir.ui.view,arch_db:health_landing.view_health_fso_clinical_notes_wizard_form
+msgid "Patient condition before service..."
+msgstr ""
+
+#. module: health_landing
+#: model_terms:ir.ui.view,arch_db:health_landing.view_health_fso_clinical_notes_wizard_form
+msgid "Patient's reported symptoms or reason for visit..."
+msgstr ""
+
+#. module: health_landing
+#: model:ir.model.fields.selection,name:health_landing.selection__health_fieldservice_order__payment_method__pay_later
+msgid "Pay Later"
+msgstr ""
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/xml/patient_spoke_modal.xml:0
+msgid "Payers ("
+msgstr ""
+
+#. module: health_landing
+#: model:ir.model.fields,field_description:health_landing.field_health_fso_payment_received_wizard__payment_amount
+msgid "Payment Amount"
+msgstr ""
+
+#. module: health_landing
+#: model:ir.model.fields,field_description:health_landing.field_health_fso_payment_received_wizard__payment_date
+msgid "Payment Date"
+msgstr ""
+
+#. module: health_landing
+#: model:ir.model.fields,field_description:health_landing.field_health_fieldservice_order__payment_method
+#: model:ir.model.fields,field_description:health_landing.field_health_fso_payment_received_wizard__payment_method_display
+msgid "Payment Method"
+msgstr ""
+
+#. module: health_landing
+#: model:ir.model.fields,field_description:health_landing.field_health_fso_payment_received_wizard__payment_notes
+msgid "Payment Notes"
+msgstr ""
+
+#. module: health_landing
+#: model_terms:ir.ui.view,arch_db:health_landing.view_health_fso_payment_received_wizard_form
+msgid "Payment Received"
+msgstr ""
+
+#. module: health_landing
+#: model:ir.model.fields,field_description:health_landing.field_health_fieldservice_order__payment_received_date
+msgid "Payment Received Date"
+msgstr ""
+
+#. module: health_landing
+#: model:ir.model.fields,field_description:health_landing.field_health_fso_payment_received_wizard__payment_reference
+msgid "Payment Reference"
+msgstr ""
+
+#. module: health_landing
+#. odoo-python
+#: code:addons/health_landing/wizards/health_fso_payment_received_wizard.py:0
+msgid "Payment amount must be greater than zero."
+msgstr ""
+
+#. module: health_landing
+#. odoo-python
+#: code:addons/health_landing/wizards/health_fso_payment_received_wizard.py:0
+msgid "Payment received: %s %s on %s. Reference: %s"
+msgstr ""
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/xml/patient_spoke_modal.xml:0
+msgid "Pending Invoices"
+msgstr ""
+
+#. module: health_landing
+#: model_terms:ir.ui.view,arch_db:health_landing.view_patient_client_info_modal
+msgid "Personal Details"
+msgstr ""
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/xml/patient_spoke_modal.xml:0
+msgid "Phone"
+msgstr ""
+
+#. module: health_landing
+#. odoo-python
+#: code:addons/health_landing/wizards/health_fso_staff_assignment_wizard.py:0
+msgid "Please assign at least one staff member before saving."
+msgstr ""
+
+#. module: health_landing
+#. odoo-python
+#: code:addons/health_landing/wizards/health_fso_start_service_wizard.py:0
+msgid ""
+"Please confirm that the patient is present and verified before starting the "
+"service."
+msgstr ""
+
+#. module: health_landing
+#. odoo-python
+#: code:addons/health_landing/wizards/health_fso_invoice_wizard.py:0
+msgid "Please create a quote first before creating an invoice."
+msgstr ""
+
+#. module: health_landing
+#: model_terms:ir.ui.view,arch_db:health_landing.view_patient_map_modal
+msgid "Postal Code"
+msgstr ""
+
+#. module: health_landing
+#: model_terms:ir.ui.view,arch_db:health_landing.view_health_fso_invoice_wizard_form
+msgid "Pricing"
+msgstr ""
+
+#. module: health_landing
+#: model:ir.model.fields,field_description:health_landing.field_health_fso_staff_assignment_wizard__primary_staff_id
+msgid "Primary Staff Member"
+msgstr ""
+
+#. module: health_landing
+#: model:ir.model.fields,help:health_landing.field_health_fso_cash_collection_wizard__lead_staff_id
+msgid ""
+"Primary staff member responsible for this service (computed from "
+"assignments)"
+msgstr ""
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/xml/landing_templates.xml:0
+msgid "Quick Actions"
+msgstr ""
+
+#. module: health_landing
+#: model:ir.model.fields,field_description:health_landing.field_health_fso_invoice_wizard__quote_state
+#: model_terms:ir.ui.view,arch_db:health_landing.view_health_fso_invoice_wizard_form
+msgid "Quote Status"
+msgstr ""
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/xml/patient_spoke_modal.xml:0
+msgid "Recent Bookings (Last 7 days)"
+msgstr ""
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/xml/landing_templates.xml:0
+msgid "Recently Accessed"
+msgstr ""
+
+#. module: health_landing
+#: model:ir.model.fields,help:health_landing.field_health_fso_clinical_notes_wizard__vital_signs
+msgid "Recorded vital signs during service"
+msgstr ""
+
+#. module: health_landing
+#: model:ir.model.fields,field_description:health_landing.field_health_fso_equipment_wizard__required_equipment_ids
+msgid "Required Equipment"
+msgstr ""
+
+#. module: health_landing
+#: model_terms:ir.ui.view,arch_db:health_landing.view_health_fso_equipment_wizard_form
+#: model_terms:ir.ui.view,arch_db:health_landing.view_health_fso_service_packages_wizard_form
+msgid "Save"
+msgstr ""
+
+#. module: health_landing
+#: model_terms:ir.ui.view,arch_db:health_landing.view_health_fso_clinical_notes_wizard_form
+msgid "Save & Close"
+msgstr ""
+
+#. module: health_landing
+#: model_terms:ir.ui.view,arch_db:health_landing.view_patient_bookings_modal
+msgid "Scheduled"
+msgstr ""
+
+#. module: health_landing
+#: model:ir.model.fields,field_description:health_landing.field_health_fso_clinical_notes_wizard__scheduled_datetime
+#: model:ir.model.fields,field_description:health_landing.field_health_fso_confirm_booking_wizard__scheduled_datetime
+#: model:ir.model.fields,field_description:health_landing.field_health_fso_equipment_wizard__scheduled_datetime
+#: model:ir.model.fields,field_description:health_landing.field_health_fso_staff_assignment_wizard__scheduled_datetime
+#: model:ir.model.fields,field_description:health_landing.field_health_fso_start_service_wizard__scheduled_datetime
+msgid "Scheduled Date & Time"
+msgstr ""
+
+#. module: health_landing
+#: model_terms:ir.ui.view,arch_db:health_landing.view_fso_bookings_calendar_search
+msgid "Search Bookings"
+msgstr ""
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/xml/landing_templates.xml:0
+msgid "Search modules and features... (Ctrl+K)"
+msgstr ""
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/xml/viet_uc_templates.xml:0
+msgid "Search modules... (Ctrl+K)"
+msgstr ""
+
+#. module: health_landing
+#: model:ir.actions.act_window,name:health_landing.action_patient_hub_spoke_list
+msgid "Select Patient"
+msgstr ""
+
+#. module: health_landing
+#: model:ir.model.fields,field_description:health_landing.field_health_fso_clinical_notes_wizard__actual_end_datetime
+msgid "Service End Time"
+msgstr ""
+
+#. module: health_landing
+#: model_terms:ir.ui.view,arch_db:health_landing.view_health_fso_service_packages_wizard_form
+#: model_terms:ir.ui.view,arch_db:health_landing.view_patient_packages_modal
+msgid "Service Packages"
+msgstr ""
+
+#. module: health_landing
+#: model:ir.model.fields,field_description:health_landing.field_health_fso_clinical_notes_wizard__actual_start_datetime
+msgid "Service Start Time"
+msgstr ""
+
+#. module: health_landing
+#: model_terms:ir.ui.view,arch_db:health_landing.view_health_fso_clinical_notes_wizard_form
+msgid "Service Timing"
+msgstr ""
+
+#. module: health_landing
+#: model:ir.model.fields,field_description:health_landing.field_health_fso_clinical_notes_wizard__service_type
+#: model:ir.model.fields,field_description:health_landing.field_health_fso_confirm_booking_wizard__service_type
+#: model:ir.model.fields,field_description:health_landing.field_health_fso_equipment_wizard__service_type
+#: model:ir.model.fields,field_description:health_landing.field_health_fso_payment_received_wizard__service_type
+#: model:ir.model.fields,field_description:health_landing.field_health_fso_service_packages_wizard__service_type
+#: model:ir.model.fields,field_description:health_landing.field_health_fso_staff_assignment_wizard__service_type
+#: model:ir.model.fields,field_description:health_landing.field_health_fso_start_service_wizard__service_type
+msgid "Service Type"
+msgstr ""
+
+#. module: health_landing
+#: model:ir.model.fields,help:health_landing.field_health_fso_service_packages_wizard__assigned_package_ids
+msgid "Service packages assigned to this booking"
+msgstr ""
+
+#. module: health_landing
+#. odoo-python
+#: code:addons/health_landing/wizards/health_fso_service_packages_wizard.py:0
+msgid "Service packages updated: %s packages assigned"
+msgstr ""
+
+#. module: health_landing
+#. odoo-python
+#: code:addons/health_landing/wizards/health_fso_start_service_wizard.py:0
+msgid "Service started at %s. Patient present: %s, Equipment ready: %s"
+msgstr ""
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/xml/patient_spoke_modal.xml:0
+msgid "Sessions:"
+msgstr ""
+
+#. module: health_landing
+#: model:ir.model.fields,field_description:health_landing.field_health_fieldservice_order__show_assigned_indicator
+msgid "Show Assigned Indicator"
+msgstr ""
+
+#. module: health_landing
+#: model:ir.model.fields,field_description:health_landing.field_health_fieldservice_order__show_booked_indicator
+msgid "Show Booked Indicator"
+msgstr ""
+
+#. module: health_landing
+#: model:ir.model.fields,field_description:health_landing.field_health_fieldservice_order__show_clinical_notes_arrow
+msgid "Show Clinical Notes Arrow"
+msgstr ""
+
+#. module: health_landing
+#: model:ir.model.fields,field_description:health_landing.field_health_fieldservice_order__show_collect_cash_arrow
+msgid "Show Collect Cash Arrow"
+msgstr ""
+
+#. module: health_landing
+#: model:ir.model.fields,field_description:health_landing.field_health_fieldservice_order__show_completed_indicator
+msgid "Show Completed Indicator"
+msgstr ""
+
+#. module: health_landing
+#: model:ir.model.fields,field_description:health_landing.field_health_fieldservice_order__show_draft_indicator
+msgid "Show Draft Indicator"
+msgstr ""
+
+#. module: health_landing
+#: model:ir.model.fields,field_description:health_landing.field_health_fieldservice_order__show_in_progress_indicator
+msgid "Show In Progress Indicator"
+msgstr ""
+
+#. module: health_landing
+#: model:ir.model.fields,field_description:health_landing.field_health_fieldservice_order__show_invoice_arrow
+msgid "Show Invoice Arrow"
+msgstr ""
+
+#. module: health_landing
+#: model:ir.model.fields,field_description:health_landing.field_health_fieldservice_order__show_pay_later_arrow
+msgid "Show Pay Later Arrow"
+msgstr ""
+
+#. module: health_landing
+#: model:ir.model.fields,field_description:health_landing.field_health_fieldservice_order__show_pay_now_arrow
+msgid "Show Pay Now Arrow"
+msgstr ""
+
+#. module: health_landing
+#: model:ir.model.fields,field_description:health_landing.field_health_fieldservice_order__show_payment_received_arrow
+msgid "Show Payment Received Arrow"
+msgstr ""
+
+#. module: health_landing
+#: model:ir.model.fields,help:health_landing.field_health_fso_equipment_wizard__equipment_notes
+msgid "Special instructions or notes about equipment"
+msgstr ""
+
+#. module: health_landing
+#: model_terms:ir.ui.view,arch_db:health_landing.view_health_fso_equipment_wizard_form
+msgid "Special instructions or notes about equipment..."
+msgstr ""
+
+#. module: health_landing
+#: model:ir.model.fields,help:health_landing.field_health_fso_staff_assignment_wizard__assignment_notes
+msgid "Special instructions or notes for assigned staff"
+msgstr ""
+
+#. module: health_landing
+#: model_terms:ir.ui.view,arch_db:health_landing.view_health_fso_staff_assignment_wizard_form
+msgid "Special instructions or notes for assigned staff..."
+msgstr ""
+
+#. module: health_landing
+#: model_terms:ir.ui.view,arch_db:health_landing.view_health_fso_staff_assignment_wizard_form
+msgid "Staff Assignment"
+msgstr ""
+
+#. module: health_landing
+#: model:ir.model.fields,field_description:health_landing.field_health_fso_staff_assignment_wizard__staff_availability_checked
+msgid "Staff Availability Verified"
+msgstr ""
+
+#. module: health_landing
+#: model:ir.model.fields,field_description:health_landing.field_health_fso_confirm_booking_wizard__staff_notified
+msgid "Staff Notified"
+msgstr ""
+
+#. module: health_landing
+#. odoo-python
+#: code:addons/health_landing/wizards/health_fso_staff_assignment_wizard.py:0
+msgid "Staff assigned: %s. Primary: %s"
+msgstr ""
+
+#. module: health_landing
+#: model:ir.model.fields,field_description:health_landing.field_health_fso_start_service_wizard__start_notes
+msgid "Start Notes"
+msgstr ""
+
+#. module: health_landing
+#: model_terms:ir.ui.view,arch_db:health_landing.view_health_fso_start_service_wizard_form
+msgid "Start Service"
+msgstr ""
+
+#. module: health_landing
+#: model_terms:ir.ui.view,arch_db:health_landing.view_fso_bookings_calendar_search
+msgid "State"
+msgstr ""
+
+#. module: health_landing
+#: model_terms:ir.ui.view,arch_db:health_landing.view_patient_relations_modal
+msgid "Summary"
+msgstr ""
+
+#. module: health_landing
+#: model:ir.model.fields,field_description:health_landing.field_health_fso_clinical_notes_wizard__symptoms
+msgid "Symptoms/Chief Complaint"
+msgstr ""
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/xml/fso_hub_spoke_widget.xml:0
+msgid "Tip:"
+msgstr ""
+
+#. module: health_landing
+#: model:ir.model.fields,field_description:health_landing.field_health_fso_cash_collection_wizard__total_price
+msgid "Total Amount"
+msgstr ""
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/xml/patient_spoke_modal.xml:0
+msgid "Total Pending"
+msgstr ""
+
+#. module: health_landing
+#: model:ir.model.fields,field_description:health_landing.field_health_fso_invoice_wizard__total_price
+msgid "Total Price"
+msgstr ""
+
+#. module: health_landing
+#: model_terms:ir.ui.view,arch_db:health_landing.view_health_fso_clinical_notes_wizard_form
+msgid "Treatment & Medications"
+msgstr ""
+
+#. module: health_landing
+#: model:ir.model.fields,field_description:health_landing.field_health_fso_clinical_notes_wizard__treatment_performed
+msgid "Treatment Performed"
+msgstr ""
+
+#. module: health_landing
+#: model:ir.model.fields,help:health_landing.field_health_fso_clinical_notes_wizard__clinical_notes_submitted
+msgid "True if clinical notes have been entered"
+msgstr ""
+
+#. module: health_landing
+#: model:ir.model.fields,help:health_landing.field_health_fso_invoice_wizard__invoice_submitted
+msgid "True if invoice has been created and submitted"
+msgstr ""
+
+#. module: health_landing
+#: model:ir.model.fields,help:health_landing.field_health_fieldservice_order__show_assigned_indicator
+msgid "True when FSO is in Assigned stage"
+msgstr ""
+
+#. module: health_landing
+#: model:ir.model.fields,help:health_landing.field_health_fieldservice_order__show_booked_indicator
+msgid "True when FSO is in Booked/Confirmed stage"
+msgstr ""
+
+#. module: health_landing
+#: model:ir.model.fields,help:health_landing.field_health_fieldservice_order__show_completed_indicator
+msgid "True when FSO is in Completed stage"
+msgstr ""
+
+#. module: health_landing
+#: model:ir.model.fields,help:health_landing.field_health_fieldservice_order__show_draft_indicator
+msgid "True when FSO is in Draft stage"
+msgstr ""
+
+#. module: health_landing
+#: model:ir.model.fields,help:health_landing.field_health_fieldservice_order__show_in_progress_indicator
+msgid "True when FSO is in In Progress stage"
+msgstr ""
+
+#. module: health_landing
+#: model:ir.model.fields,help:health_landing.field_health_fieldservice_order__cash_received_by_om
+msgid "True when Operations Manager has received cash from nurse"
+msgstr ""
+
+#. module: health_landing
+#: model:ir.model.fields,help:health_landing.field_health_fso_clinical_notes_wizard__service_type
+#: model:ir.model.fields,help:health_landing.field_health_fso_confirm_booking_wizard__service_type
+#: model:ir.model.fields,help:health_landing.field_health_fso_equipment_wizard__service_type
+#: model:ir.model.fields,help:health_landing.field_health_fso_payment_received_wizard__service_type
+#: model:ir.model.fields,help:health_landing.field_health_fso_service_packages_wizard__service_type
+#: model:ir.model.fields,help:health_landing.field_health_fso_staff_assignment_wizard__service_type
+#: model:ir.model.fields,help:health_landing.field_health_fso_start_service_wizard__service_type
+msgid "Type of healthcare service requested"
+msgstr ""
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/xml/patient_spoke_modal.xml:0
+#: model:ir.model.fields,field_description:health_landing.field_res_partner__fso_upcoming_ids
+#: model:ir.model.fields,field_description:health_landing.field_res_users__fso_upcoming_ids
+#: model_terms:ir.ui.view,arch_db:health_landing.view_patient_bookings_modal
+msgid "Upcoming Bookings"
+msgstr ""
+
+#. module: health_landing
+#: model:ir.model.fields,help:health_landing.field_res_partner__fso_upcoming_ids
+#: model:ir.model.fields,help:health_landing.field_res_users__fso_upcoming_ids
+msgid "Upcoming field service orders"
+msgstr ""
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/xml/viet_uc_templates.xml:0
+#: model:ir.ui.menu,name:health_landing.menu_health_viet_uc_root
+msgid "Viet Uc"
+msgstr ""
+
+#. module: health_landing
+#: model:ir.actions.client,name:health_landing.action_viet_uc_dashboard
+msgid "Viet Uc Dashboard"
+msgstr ""
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/xml/viet_uc_templates.xml:0
+msgid "Viet Uc Healthcare"
+msgstr ""
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/xml/viet_uc_templates.xml:0
+msgid "Viet Uc Logo"
+msgstr ""
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/xml/viet_uc_templates.xml:0
+msgid ""
+"Vietnam-Australia Family Health Service - Comprehensive Healthcare "
+"Management"
+msgstr ""
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/xml/landing_templates.xml:0
+msgid "Vietnam-Australia Family Health Service - Select a module to continue"
+msgstr ""
+
+#. module: health_landing
+#: model_terms:ir.ui.view,arch_db:health_landing.view_patient_map_modal
+msgid "Vietnamese Address"
+msgstr ""
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/xml/landing_templates.xml:0
+msgid "View All Features"
+msgstr ""
+
+#. module: health_landing
+#: model_terms:ir.ui.view,arch_db:health_landing.view_health_fso_invoice_wizard_form
+msgid "View Invoice"
+msgstr ""
+
+#. module: health_landing
+#: model_terms:ir.ui.view,arch_db:health_landing.view_health_fso_invoice_wizard_form
+msgid "View Quote"
+msgstr ""
+
+#. module: health_landing
+#: model_terms:ir.ui.view,arch_db:health_landing.view_health_fieldservice_order_form_dashboard_button
+msgid "View client and service details"
+msgstr ""
+
+#. module: health_landing
+#: model:ir.model.fields,field_description:health_landing.field_health_fso_clinical_notes_wizard__vital_signs
+msgid "Vital Signs"
+msgstr ""
+
+#. module: health_landing
+#: model:ir.model.fields,help:health_landing.field_health_fso_clinical_notes_wizard__scheduled_datetime
+#: model:ir.model.fields,help:health_landing.field_health_fso_confirm_booking_wizard__scheduled_datetime
+#: model:ir.model.fields,help:health_landing.field_health_fso_equipment_wizard__scheduled_datetime
+#: model:ir.model.fields,help:health_landing.field_health_fso_staff_assignment_wizard__scheduled_datetime
+#: model:ir.model.fields,help:health_landing.field_health_fso_start_service_wizard__scheduled_datetime
+msgid "When the service is scheduled to be performed"
+msgstr ""
+
+#. module: health_landing
+#: model:ir.model.fields,help:health_landing.field_health_fieldservice_order__cash_collected_by_nurse
+#: model:ir.model.fields,help:health_landing.field_health_fso_payment_received_wizard__payment_amount
+msgid "client"
+msgstr ""
+
+#. module: health_landing
+#: model:ir.model.fields,help:health_landing.field_health_fso_clinical_notes_wizard__patient_condition_after
+msgid "client condition after service"
+msgstr ""
+
+#. module: health_landing
+#: model:ir.model.fields,help:health_landing.field_health_fso_clinical_notes_wizard__patient_condition_before
+msgid "client condition before service"
+msgstr ""
+
+#. module: health_landing
+#: model:ir.model.fields,help:health_landing.field_health_fso_confirm_booking_wizard__patient_contacted
+msgid "client has been contacted about this booking"
+msgstr ""
+
+#. module: health_landing
+#: model:ir.model.fields,help:health_landing.field_health_fso_start_service_wizard__patient_present
+msgid "client is present and identity verified"
+msgstr ""
+
+#. module: health_landing
+#: model:ir.model.fields,help:health_landing.field_health_fso_cash_collection_wizard__patient_id
+#: model:ir.model.fields,help:health_landing.field_health_fso_clinical_notes_wizard__patient_id
+#: model:ir.model.fields,help:health_landing.field_health_fso_confirm_booking_wizard__patient_id
+#: model:ir.model.fields,help:health_landing.field_health_fso_equipment_wizard__patient_id
+#: model:ir.model.fields,help:health_landing.field_health_fso_invoice_wizard__patient_id
+#: model:ir.model.fields,help:health_landing.field_health_fso_payment_received_wizard__patient_id
+#: model:ir.model.fields,help:health_landing.field_health_fso_service_packages_wizard__patient_id
+#: model:ir.model.fields,help:health_landing.field_health_fso_staff_assignment_wizard__patient_id
+#: model:ir.model.fields,help:health_landing.field_health_fso_start_service_wizard__patient_id
+msgid "client receiving the healthcare service"
+msgstr ""
+
+#. module: health_landing
+#: model:ir.model.fields,help:health_landing.field_health_fso_clinical_notes_wizard__symptoms
+msgid "client's reported symptoms or reason for visit"
+msgstr ""
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/xml/patient_spoke_modal.xml:0
+msgid "on"
+msgstr ""
+
+#. module: health_landing
+#: model_terms:ir.ui.view,arch_db:health_landing.view_patient_packages_modal
+msgid "remaining"
+msgstr ""
+
+#. module: health_landing
+#: model_terms:ir.ui.view,arch_db:health_landing.view_patient_packages_modal
+msgid ""
+"services used\n"
+"                                                <br/>"
+msgstr ""
+
+#. module: health_landing
+#. odoo-javascript
+#: code:addons/health_landing/static/src/xml/patient_spoke_modal.xml:0
+msgid "years /"
+msgstr ""
+
+#. module: health_landing
+#: model_terms:ir.ui.view,arch_db:health_landing.view_health_fieldservice_order_form_dashboard_button
+msgid "📊 Dashboard"
+msgstr ""

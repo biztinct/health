@@ -1,0 +1,4678 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* health_base
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 18.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-10-29 04:27+0000\n"
+"PO-Revision-Date: 2025-10-29 04:27+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_patient_kanban
+msgid "<i class=\"fa fa-calendar-plus-o\"/> Schedule"
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_patient_form
+msgid ""
+"<i class=\"fa fa-exclamation-triangle\"/> Insurance has expired - please "
+"update"
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_patient_kanban
+msgid "<i class=\"fa fa-history\"/> History"
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_patient_form
+msgid ""
+"<i class=\"fa fa-stethoscope\"/> Clinical documentation system integration "
+"coming soon"
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_patient_form
+msgid ""
+"<i class=\"fa fa-timeline\"/> Client timeline with appointments, treatments,"
+" and key events will be displayed here."
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_facility_kanban
+msgid "<small class=\"health-text-xs\">Beds</small><br/>"
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_facility_kanban
+msgid "<small class=\"health-text-xs\">Capacity</small><br/>"
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_facility_kanban
+msgid "<small class=\"health-text-xs\">Facility Code</small><br/>"
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_facility_kanban
+msgid "<small class=\"health-text-xs\">Home Visits</small><br/>"
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_facility_kanban
+msgid "<small class=\"health-text-xs\">Location</small><br/>"
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_facility_kanban
+msgid "<small class=\"health-text-xs\">Monthly Revenue</small><br/>"
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_facility_kanban
+msgid "<small class=\"health-text-xs\">Patients</small><br/>"
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_facility_kanban
+msgid "<small class=\"health-text-xs\">Type</small><br/>"
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_patient_kanban
+msgid "<small class=\"text-muted\">Next Visit:</small><br/>"
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_patient_form
+msgid ""
+"<small class=\"text-muted\">⚠️ Critical for client safety - please be "
+"thorough</small>"
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_facility_form
+msgid "<span class=\"o_stat_text\">Beds</span>"
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_patient_form
+msgid ""
+"<span class=\"o_stat_value\">0</span>\n"
+"                                <span class=\"o_stat_text\">Lab Results</span>"
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_patient_form
+msgid ""
+"<span class=\"o_stat_value\">0</span>\n"
+"                                <span class=\"o_stat_text\">Prescriptions</span>"
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_patient_form
+msgid "<strong><i class=\"fa fa-exclamation-triangle\"/> ALLERGIES:</strong>"
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_patient_form
+msgid ""
+"<strong><i class=\"fa fa-info-circle\"/> NEW CLIENT:</strong>\n"
+"                        Please complete all required information and verify insurance details."
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_patient_kanban
+msgid "<strong>Age/Gender:</strong>"
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_patient_kanban
+msgid "<strong>ID:</strong>"
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_patient_kanban
+msgid "<strong>Mobile:</strong>"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields.selection,name:health_base.selection__res_partner__blood_group__ab+
+msgid "AB+"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields.selection,name:health_base.selection__res_partner__blood_group__ab-
+msgid "AB-"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_facility__accepted_insurance_providers
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_facility_form
+msgid "Accepted Insurance Providers"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_facility__accepts_insurance
+msgid "Accepts Insurance"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_facility__message_needaction
+msgid "Action Needed"
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_patient_form
+msgid "Activate"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_booking_cancellation_reason__active
+#: model:ir.model.fields,field_description:health_base.field_health_facility__active
+#: model:ir.model.fields,field_description:health_base.field_health_insurance_provider__active
+#: model:ir.model.fields,field_description:health_base.field_health_medical_specialty__active
+#: model:ir.model.fields,field_description:health_base.field_health_medication__active
+#: model:ir.model.fields,field_description:health_base.field_health_patient_category__active
+#: model:ir.model.fields,field_description:health_base.field_health_referral_source__active
+#: model:ir.model.fields,field_description:health_base.field_health_service_type__active
+#: model:ir.model.fields,field_description:health_base.field_health_symptom__active
+#: model:ir.model.fields,field_description:health_base.field_health_urgency_level__active
+#: model:ir.model.fields,field_description:health_base.field_health_vietnamese_district__active
+#: model:ir.model.fields.selection,name:health_base.selection__res_partner__patient_status__active
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_patient_search
+msgid "Active"
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_patient_form
+msgid "Active Packages"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_facility__activity_ids
+msgid "Activities"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_readmission_risk__adl_score
+msgid "Activities of Daily Living Score (0-6)"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_facility__activity_exception_decoration
+msgid "Activity Exception Decoration"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_facility__activity_state
+msgid "Activity State"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_facility__activity_type_icon
+msgid "Activity Type Icon"
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_facility_form
+msgid "Address"
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_patient_form
+msgid "Address Information"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_res_partner__address_search
+#: model:ir.model.fields,field_description:health_base.field_res_users__address_search
+msgid "Address Search"
+msgstr ""
+
+#. module: health_base
+#. odoo-python
+#: code:addons/health_base/models/res_partner.py:0
+msgid "Address geocoded: %.6f, %.6f"
+msgstr ""
+
+#. module: health_base
+#: model:res.groups,comment:health_base.group_healthcare_admin
+msgid "Administrator - system configuration, user management"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields.selection,name:health_base.selection__health_referral_source__source_type__advertisement
+msgid "Advertisement"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_readmission_risk__age
+#: model:ir.model.fields,field_description:health_base.field_res_partner__age
+#: model:ir.model.fields,field_description:health_base.field_res_users__age
+msgid "Age"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_res_partner__age_display
+#: model:ir.model.fields,field_description:health_base.field_res_users__age_display
+msgid "Age Display"
+msgstr ""
+
+#. module: health_base
+#. odoo-python
+#: code:addons/health_base/models/health_facility.py:0
+msgid "All facility licenses are current."
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_res_partner__alley_number
+#: model:ir.model.fields,field_description:health_base.field_res_users__alley_number
+msgid "Alley Number"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_fall_risk__ambulatory_aid
+msgid "Ambulatory Aid"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields.selection,name:health_base.selection__health_medication__therapeutic_category__analgesic
+msgid "Analgesic"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields.selection,name:health_base.selection__health_medication__therapeutic_category__antibiotic
+msgid "Antibiotic"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields.selection,name:health_base.selection__health_medication__therapeutic_category__antihypertensive
+msgid "Antihypertensive"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_res_partner__apartment_number
+#: model:ir.model.fields,field_description:health_base.field_res_users__apartment_number
+msgid "Apartment Number"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_resource_calendar_leaves__is_pricing_holiday
+msgid "Apply to Pricing"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields.selection,name:health_base.selection__health_protocol_intervention__frequency__as_needed
+msgid "As Needed"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_fall_risk__assessed_by
+msgid "Assessed By"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields.selection,name:health_base.selection__health_protocol_intervention__intervention_type__assessment
+msgid "Assessment"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_fall_risk__assessment_date
+#: model:ir.model.fields,field_description:health_base.field_health_readmission_risk__assessment_date
+msgid "Assessment Date"
+msgstr ""
+
+#. module: health_base
+#: model:health.booking.cancellation.reason,description:health_base.cancel_reason_provider_staffunavailable
+msgid "Assigned healthcare provider is unavailable"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_facility__message_attachment_count
+msgid "Attachment Count"
+msgstr ""
+
+#. module: health_base
+#: model:ir.actions.act_window,name:health_base.action_health_audit_log
+#: model:ir.ui.menu,name:health_base.menu_health_audit_log
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_audit_log_list
+msgid "Audit Log"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_urgency_level__auto_assign
+msgid "Auto Assign Staff"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,help:health_base.field_res_partner__is_payer
+#: model:ir.model.fields,help:health_base.field_res_users__is_payer
+msgid ""
+"Auto-computed: This person is responsible for payment (based on "
+"health.client.relation)"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,help:health_base.field_res_partner__is_emergency_contact
+#: model:ir.model.fields,help:health_base.field_res_users__is_emergency_contact
+msgid ""
+"Auto-computed: This person serves as emergency contact (based on "
+"health.client.relation)"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,help:health_base.field_res_partner__vietnamese_address
+#: model:ir.model.fields,help:health_base.field_res_users__vietnamese_address
+msgid "Automatically formatted Vietnamese address"
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_urgency_level_form
+msgid "Automation Settings"
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_service_type_form
+msgid "Availability"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_facility__available_beds
+msgid "Available Beds"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_service_type__available_home
+msgid "Available for Home Visits"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_service_type__available_clinic
+msgid "Available in Clinic"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_service_type__available_telemedicine
+msgid "Available via Telemedicine"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_vietnamese_district__average_travel_time
+msgid "Average Travel Time (Minutes)"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields.selection,name:health_base.selection__res_partner__ethnicity__ba_na
+msgid "Ba Na"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_facility__base_home_visit_fee
+msgid "Base Home Visit Fee (VND)"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_service_type__base_price
+msgid "Base Price (VND)"
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_healthcare_public_holiday_form
+msgid "Base Price: 100,000 VND → Holiday Price:"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_vietnamese_district__base_travel_fee
+msgid "Base Travel Fee (VND)"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.constraint,message:health_base.constraint_health_service_type_positive_price
+msgid "Base price must be positive!"
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_facility_form
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_insurance_provider_form
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_referral_source_form
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_service_type_form
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_urgency_level_form
+msgid "Basic Information"
+msgstr ""
+
+#. module: health_base
+#: model:res.groups,comment:health_base.group_healthcare_base
+msgid "Basic healthcare access - can view own data"
+msgstr ""
+
+#. module: health_base
+#: model:ir.ui.menu,name:health_base.menu_healthcare_billing
+msgid "Billing & Invoicing"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_res_partner__blood_group
+#: model:ir.model.fields,field_description:health_base.field_res_users__blood_group
+msgid "Blood Group"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model,name:health_base.model_health_booking_cancellation_reason
+msgid "Booking Cancellation Reason"
+msgstr ""
+
+#. module: health_base
+#: model:health.booking.cancellation.reason,description:health_base.cancel_reason_system_duplicate
+msgid "Booking was created in error or is a duplicate"
+msgstr ""
+
+#. module: health_base
+#: model:health.booking.cancellation.reason,description:health_base.cancel_reason_system_dataerror
+msgid "Booking was created with incorrect information"
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_patient_form
+msgid "Bookings"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields.selection,name:health_base.selection__health_facility__facility_type__branch_clinic
+msgid "Branch Clinic"
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_facility_search
+msgid "Branch Clinics"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_medication__brand_name
+msgid "Brand Name"
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_patient_form
+msgid ""
+"Brief summary of relevant medical history, chronic conditions, previous "
+"surgeries, etc."
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_res_partner__building_name
+#: model:ir.model.fields,field_description:health_base.field_res_users__building_name
+msgid "Building Name"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_facility__business_license_number
+msgid "Business License Number"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields.selection,name:health_base.selection__health_clinical_protocol__protocol_type__cdc
+msgid "CDC Guidelines"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.constraint,message:health_base.constraint_health_booking_cancellation_reason_name_unique
+msgid "Cancellation reason must be unique!"
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_facility_form
+msgid "Capabilities"
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_facility_form
+msgid "Capacity"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields.selection,name:health_base.selection__res_partner__payment_method__card
+msgid "Card"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields.selection,name:health_base.selection__health_medication__therapeutic_category__cardiac
+msgid "Cardiac Medication"
+msgstr ""
+
+#. module: health_base
+#: model:health.medical.specialty,name:health_base.specialty_cardiology
+msgid "Cardiology"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields.selection,name:health_base.selection__health_symptom__category__cardiovascular
+msgid "Cardiovascular"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields.selection,name:health_base.selection__res_partner__payment_method__cash
+msgid "Cash"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_service_type__category
+#: model:ir.model.fields,field_description:health_base.field_health_symptom__category
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_patient_search
+msgid "Category"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields.selection,name:health_base.selection__health_medication__pregnancy_category__a
+msgid "Category A"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields.selection,name:health_base.selection__health_medication__pregnancy_category__b
+msgid "Category B"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields.selection,name:health_base.selection__health_medication__pregnancy_category__c
+msgid "Category C"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields.selection,name:health_base.selection__health_medication__pregnancy_category__d
+msgid "Category D"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_patient_category__name
+msgid "Category Name"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields.selection,name:health_base.selection__health_medication__pregnancy_category__x
+msgid "Category X"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.constraint,message:health_base.constraint_health_patient_category_name_unique
+msgid "Category name must be unique!"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields.selection,name:health_base.selection__health_vietnamese_district__region__central
+msgid "Central Vietnam"
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_facility_form
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_facility_kanban
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_facility_list
+msgid "Check License"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,help:health_base.field_hr_employee__is_healthcare_staff
+msgid "Check if this employee provides healthcare services"
+msgstr ""
+
+#. module: health_base
+#: model:health.symptom,name:health_base.symptom_chest_pain
+msgid "Chest Pain"
+msgstr ""
+
+#. module: health_base
+#: model:health.patient.category,description:health_base.patient_category_pediatric
+msgid "Children under 18 years"
+msgstr ""
+
+#. module: health_base
+#: model:health.medical.specialty,description:health_base.specialty_pediatrics
+msgid "Children's healthcare"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_protocol_question__choice_options
+msgid "Choice Options (one per line)"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields.selection,name:health_base.selection__res_partner__ethnicity__cham
+msgid "Chăm"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_facility__city
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_facility_search
+msgid "City"
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_patient_form
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_patient_kanban
+msgid "Client"
+msgstr ""
+
+#. module: health_base
+#: model:ir.actions.act_window,name:health_base.action_health_patient_category
+#: model:ir.ui.menu,name:health_base.menu_healthcare_patient_categories
+msgid "Client Categories"
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_patient_category_tree
+msgid "Client Categories\" editable=\"bottom"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_res_partner__patient_category_id
+#: model:ir.model.fields,field_description:health_base.field_res_users__patient_category_id
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_patient_category_form
+msgid "Client Category"
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_audit_log_search
+msgid "Client Data Changes"
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_patient_form
+msgid "Client Full Name"
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_patient_search
+msgid "Client ID"
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_patient_form
+msgid "Client Journey"
+msgstr ""
+
+#. module: health_base
+#: model:ir.ui.menu,name:health_base.menu_healthcare_patients
+msgid "Client Management"
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_patient_search
+msgid "Client Name"
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_patient_form
+msgid "Client Record\" class=\"o_form_patient_record"
+msgstr ""
+
+#. module: health_base
+#: model:ir.actions.act_window,name:health_base.action_health_patient
+#: model:ir.ui.menu,name:health_base.menu_healthcare_patient_registry
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_patient_tree
+msgid "Client Registry"
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_patient_search
+msgid "Client Search"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_res_partner__source_type
+#: model:ir.model.fields,field_description:health_base.field_res_users__source_type
+msgid "Client Source"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_res_partner__patient_status
+#: model:ir.model.fields,field_description:health_base.field_res_users__patient_status
+msgid "Client Status"
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_patient_form
+msgid "Client Timeline"
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_patient_form
+msgid "Client's occupation (e.g., Teacher, Engineer)"
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_facility_form
+msgid "Clients"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_res_partner__caregiver_patient_count
+#: model:ir.model.fields,field_description:health_base.field_res_partner__my_patients_as_caregiver
+#: model:ir.model.fields,field_description:health_base.field_res_users__caregiver_patient_count
+#: model:ir.model.fields,field_description:health_base.field_res_users__my_patients_as_caregiver
+msgid "Clients I Care For"
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_patient_form
+msgid "Clients I Care For\" widget=\"statinfo"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_res_partner__my_patients_as_payer
+#: model:ir.model.fields,field_description:health_base.field_res_partner__payer_patient_count
+#: model:ir.model.fields,field_description:health_base.field_res_users__my_patients_as_payer
+#: model:ir.model.fields,field_description:health_base.field_res_users__payer_patient_count
+msgid "Clients I Pay For"
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_patient_form
+msgid "Clients I Pay For\" widget=\"statinfo"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_res_partner__my_patients_as_referrer
+#: model:ir.model.fields,field_description:health_base.field_res_partner__referrer_patient_count
+#: model:ir.model.fields,field_description:health_base.field_res_users__my_patients_as_referrer
+#: model:ir.model.fields,field_description:health_base.field_res_users__referrer_patient_count
+msgid "Clients I Referred"
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_patient_form
+msgid "Clients I Referred\" widget=\"statinfo"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields.selection,name:health_base.selection__health_service_type__category__clinic_visit
+msgid "Clinic Visit"
+msgstr ""
+
+#. module: health_base
+#: model:ir.ui.menu,name:health_base.menu_healthcare_clinical
+msgid "Clinical Intelligence"
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_patient_form
+msgid "Clinical Notes"
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_patient_form
+msgid "Clinical Notes &amp; Provider Communications"
+msgstr ""
+
+#. module: health_base
+#: model:ir.ui.menu,name:health_base.menu_healthcare_clinical_protocols
+msgid "Clinical Protocols"
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_facility_search
+msgid "Closed"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_urgency_level__code
+msgid "Code"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_readmission_risk__cognitive_impairment
+msgid "Cognitive Impairment"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_patient_category__color
+#: model:ir.model.fields,field_description:health_base.field_health_service_type__color
+#: model:ir.model.fields,field_description:health_base.field_health_symptom__color
+#: model:ir.model.fields,field_description:health_base.field_health_urgency_level__color
+msgid "Color Index"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_medication__side_effects
+msgid "Common Side Effects"
+msgstr ""
+
+#. module: health_base
+#: model:ir.ui.menu,name:health_base.menu_healthcare_lookups
+msgid "Configuration"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model,name:health_base.model_health_audit_log_view
+msgid "Consolidated Healthcare Audit Log"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields.selection,name:health_base.selection__health_service_type__category__consultation
+msgid "Consultation"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_facility__consultation_rooms
+msgid "Consultation Rooms"
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_healthcare_public_holiday_form
+msgid ""
+"Consultation: 200,000 VND → Holiday Price: <strong>600,000 VND</strong> (if "
+"multiplier = 3.0)"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model,name:health_base.model_res_partner
+#: model:ir.model.fields,field_description:health_base.field_health_facility__partner_id
+msgid "Contact"
+msgstr "Liên hệ"
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_insurance_provider__contact_email
+#: model:ir.model.fields,field_description:health_base.field_health_referral_source__contact_email
+msgid "Contact Email"
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_insurance_provider_form
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_patient_form
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_referral_source_form
+msgid "Contact Information"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_referral_source__contact_person
+msgid "Contact Person"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_insurance_provider__contact_phone
+#: model:ir.model.fields,field_description:health_base.field_health_referral_source__contact_phone
+msgid "Contact Phone"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_medication__contraindications
+msgid "Contraindications"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_referral_source__conversion_rate
+msgid "Conversion Rate (%)"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields.selection,name:health_base.selection__res_partner__payment_method__corporate
+msgid "Corporate"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_referral_source__cost_per_lead
+msgid "Cost per Lead (VND)"
+msgstr ""
+
+#. module: health_base
+#: model:health.symptom,name:health_base.symptom_cough
+msgid "Cough"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_facility__country_id
+msgid "Country"
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_facility_form
+msgid "Coverage Areas"
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_insurance_provider_form
+msgid "Coverage Details"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.constraint,message:health_base.constraint_health_insurance_provider_coverage_valid
+msgid "Coverage percentage must be between 0 and 100!"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_insurance_provider__covers_clinic_visits
+msgid "Covers Clinic Visits"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_insurance_provider__covers_emergency
+msgid "Covers Emergency"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_insurance_provider__covers_home_visits
+msgid "Covers Home Visits"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_insurance_provider__covers_telemedicine
+msgid "Covers Telemedicine"
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.actions.act_window,help:health_base.action_health_facility
+msgid "Create Facility"
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.actions.act_window,help:health_base.action_healthcare_public_holidays
+msgid ""
+"Create public holidays with pricing multipliers for TET, National holidays, "
+"etc."
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.actions.act_window,help:health_base.action_health_patient
+msgid ""
+"Create your first client record to begin managing healthcare services.<br>\n"
+"                Click the <strong>New</strong> button above to register your first client."
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.actions.act_window,help:health_base.action_health_facility
+msgid ""
+"Create your first healthcare facility to start managing locations and "
+"services."
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_booking_cancellation_reason__create_uid
+#: model:ir.model.fields,field_description:health_base.field_health_clinical_protocol__create_uid
+#: model:ir.model.fields,field_description:health_base.field_health_facility__create_uid
+#: model:ir.model.fields,field_description:health_base.field_health_fall_risk__create_uid
+#: model:ir.model.fields,field_description:health_base.field_health_insurance_provider__create_uid
+#: model:ir.model.fields,field_description:health_base.field_health_medical_specialty__create_uid
+#: model:ir.model.fields,field_description:health_base.field_health_medication__create_uid
+#: model:ir.model.fields,field_description:health_base.field_health_medication_interaction__create_uid
+#: model:ir.model.fields,field_description:health_base.field_health_medication_safety__create_uid
+#: model:ir.model.fields,field_description:health_base.field_health_patient_category__create_uid
+#: model:ir.model.fields,field_description:health_base.field_health_protocol_intervention__create_uid
+#: model:ir.model.fields,field_description:health_base.field_health_protocol_question__create_uid
+#: model:ir.model.fields,field_description:health_base.field_health_readmission_risk__create_uid
+#: model:ir.model.fields,field_description:health_base.field_health_referral_source__create_uid
+#: model:ir.model.fields,field_description:health_base.field_health_service_type__create_uid
+#: model:ir.model.fields,field_description:health_base.field_health_symptom__create_uid
+#: model:ir.model.fields,field_description:health_base.field_health_urgency_level__create_uid
+#: model:ir.model.fields,field_description:health_base.field_health_vietnamese_district__create_uid
+msgid "Created by"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_booking_cancellation_reason__create_date
+#: model:ir.model.fields,field_description:health_base.field_health_clinical_protocol__create_date
+#: model:ir.model.fields,field_description:health_base.field_health_facility__create_date
+#: model:ir.model.fields,field_description:health_base.field_health_fall_risk__create_date
+#: model:ir.model.fields,field_description:health_base.field_health_insurance_provider__create_date
+#: model:ir.model.fields,field_description:health_base.field_health_medical_specialty__create_date
+#: model:ir.model.fields,field_description:health_base.field_health_medication__create_date
+#: model:ir.model.fields,field_description:health_base.field_health_medication_interaction__create_date
+#: model:ir.model.fields,field_description:health_base.field_health_medication_safety__create_date
+#: model:ir.model.fields,field_description:health_base.field_health_patient_category__create_date
+#: model:ir.model.fields,field_description:health_base.field_health_protocol_intervention__create_date
+#: model:ir.model.fields,field_description:health_base.field_health_protocol_question__create_date
+#: model:ir.model.fields,field_description:health_base.field_health_readmission_risk__create_date
+#: model:ir.model.fields,field_description:health_base.field_health_referral_source__create_date
+#: model:ir.model.fields,field_description:health_base.field_health_service_type__create_date
+#: model:ir.model.fields,field_description:health_base.field_health_symptom__create_date
+#: model:ir.model.fields,field_description:health_base.field_health_urgency_level__create_date
+#: model:ir.model.fields,field_description:health_base.field_health_vietnamese_district__create_date
+msgid "Created on"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields.selection,name:health_base.selection__health_fall_risk__ambulatory_aid__crutches
+msgid "Crutches/Cane/Walker (15 points)"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_facility__currency_id
+#: model:ir.model.fields,field_description:health_base.field_health_insurance_provider__currency_id
+#: model:ir.model.fields,field_description:health_base.field_health_referral_source__currency_id
+#: model:ir.model.fields,field_description:health_base.field_health_service_type__currency_id
+#: model:ir.model.fields,field_description:health_base.field_health_vietnamese_district__currency_id
+msgid "Currency"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields.selection,name:health_base.selection__health_clinical_protocol__protocol_type__custom
+msgid "Custom Protocol"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields.selection,name:health_base.selection__res_partner__ethnicity__co_ho
+msgid "Cơ Ho"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields.selection,name:health_base.selection__health_protocol_intervention__frequency__daily
+msgid "Daily"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields.selection,name:health_base.selection__res_partner__ethnicity__dao
+msgid "Dao"
+msgstr ""
+
+#. module: health_base
+#: model:health.booking.cancellation.reason,name:health_base.cancel_reason_system_dataerror
+msgid "Data entry error"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_audit_log_view__date
+msgid "Date"
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_audit_log_search
+msgid "Date (Day)"
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_audit_log_search
+msgid "Date (Month)"
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_audit_log_search
+msgid "Date (Week)"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_res_partner__birth_date
+#: model:ir.model.fields,field_description:health_base.field_res_users__birth_date
+msgid "Date of Birth"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,help:health_base.field_res_partner__date_localization
+#: model:ir.model.fields,help:health_base.field_res_users__date_localization
+msgid "Date when coordinates were last updated"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields.selection,name:health_base.selection__res_partner__patient_status__deceased
+msgid "Deceased"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_insurance_provider__deductible_amount
+msgid "Deductible Amount (VND)"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_insurance_provider__coverage_percentage
+msgid "Default Coverage %"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_facility__default_currency_id
+msgid "Default Currency"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_symptom__urgency_level
+msgid "Default Urgency"
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_facility_kanban
+msgid "Delete"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_booking_cancellation_reason__description
+#: model:ir.model.fields,field_description:health_base.field_health_medical_specialty__description
+#: model:ir.model.fields,field_description:health_base.field_health_patient_category__description
+#: model:ir.model.fields,field_description:health_base.field_health_protocol_intervention__description
+#: model:ir.model.fields,field_description:health_base.field_health_referral_source__description
+#: model:ir.model.fields,field_description:health_base.field_health_service_type__description
+#: model:ir.model.fields,field_description:health_base.field_health_symptom__description
+#: model:ir.model.fields,field_description:health_base.field_health_urgency_level__description
+msgid "Description"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields.selection,name:health_base.selection__health_medication__therapeutic_category__diabetic
+msgid "Diabetic Medication"
+msgstr ""
+
+#. module: health_base
+#: model:health.symptom,description:health_base.symptom_shortness_breath
+msgid "Difficulty breathing or breathlessness"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields.selection,name:health_base.selection__health_symptom__category__digestive
+msgid "Digestive"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_audit_log_view__display_name
+#: model:ir.model.fields,field_description:health_base.field_health_booking_cancellation_reason__display_name
+#: model:ir.model.fields,field_description:health_base.field_health_clinical_protocol__display_name
+#: model:ir.model.fields,field_description:health_base.field_health_facility__display_name
+#: model:ir.model.fields,field_description:health_base.field_health_fall_risk__display_name
+#: model:ir.model.fields,field_description:health_base.field_health_insurance_provider__display_name
+#: model:ir.model.fields,field_description:health_base.field_health_medical_specialty__display_name
+#: model:ir.model.fields,field_description:health_base.field_health_medication__display_name
+#: model:ir.model.fields,field_description:health_base.field_health_medication_interaction__display_name
+#: model:ir.model.fields,field_description:health_base.field_health_medication_safety__display_name
+#: model:ir.model.fields,field_description:health_base.field_health_patient_category__display_name
+#: model:ir.model.fields,field_description:health_base.field_health_protocol_intervention__display_name
+#: model:ir.model.fields,field_description:health_base.field_health_protocol_question__display_name
+#: model:ir.model.fields,field_description:health_base.field_health_readmission_risk__display_name
+#: model:ir.model.fields,field_description:health_base.field_health_referral_source__display_name
+#: model:ir.model.fields,field_description:health_base.field_health_service_type__display_name
+#: model:ir.model.fields,field_description:health_base.field_health_symptom__display_name
+#: model:ir.model.fields,field_description:health_base.field_health_urgency_level__display_name
+#: model:ir.model.fields,field_description:health_base.field_health_vietnamese_district__display_name
+msgid "Display Name"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_vietnamese_district__name
+msgid "District Name"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.constraint,message:health_base.constraint_health_vietnamese_district_district_province_unique
+msgid "District name must be unique within province!"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields.selection,name:health_base.selection__hr_employee__healthcare_role__doctor
+#: model:ir.model.fields.selection,name:health_base.selection__res_users__healthcare_role__doctor
+msgid "Doctor"
+msgstr ""
+
+#. module: health_base
+#: model:res.groups,comment:health_base.group_healthcare_doctor
+msgid "Doctor - full clinical access, prescriptions, diagnoses"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields.selection,name:health_base.selection__health_referral_source__source_type__doctor
+msgid "Doctor Referral"
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_facility_kanban
+msgid "Dropdown menu"
+msgstr ""
+
+#. module: health_base
+#: model:health.booking.cancellation.reason,name:health_base.cancel_reason_system_duplicate
+msgid "Duplicate booking"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_service_type__duration_minutes
+msgid "Duration (Minutes)"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_protocol_intervention__duration
+msgid "Duration (days)"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.constraint,message:health_base.constraint_health_service_type_positive_duration
+msgid "Duration must be positive!"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_res_partner__ethnicity
+#: model:ir.model.fields,field_description:health_base.field_res_users__ethnicity
+msgid "Dân tộc"
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_facility_kanban
+msgid "Edit"
+msgstr ""
+
+#. module: health_base
+#: model:health.medical.specialty,description:health_base.specialty_geriatrics
+msgid "Elderly care and geriatric medicine"
+msgstr ""
+
+#. module: health_base
+#: model:health.symptom,description:health_base.symptom_fever
+msgid "Elevated body temperature"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_facility__email
+msgid "Email"
+msgstr ""
+
+#. module: health_base
+#: model:health.urgency.level,name:health_base.urgency_emergency
+#: model:ir.model.fields.selection,name:health_base.selection__health_service_type__category__emergency
+#: model:ir.model.fields.selection,name:health_base.selection__health_symptom__urgency_level__emergency
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_patient_search
+msgid "Emergency"
+msgstr ""
+
+#. module: health_base
+#: model:health.patient.category,name:health_base.patient_category_emergency
+msgid "Emergency Client"
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_patient_form
+msgid "Emergency Contact"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_res_partner__emergency_contact_name
+#: model:ir.model.fields,field_description:health_base.field_res_users__emergency_contact_name
+msgid "Emergency Contact Name"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_res_partner__emergency_contact_phone
+#: model:ir.model.fields,field_description:health_base.field_res_users__emergency_contact_phone
+msgid "Emergency Contact Phone"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_facility__has_emergency_services
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_facility_search
+msgid "Emergency Services"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_readmission_risk__emergency_visits
+msgid "Emergency Visits (Last 12 Months)"
+msgstr ""
+
+#. module: health_base
+#: model:health.patient.category,description:health_base.patient_category_emergency
+msgid "Emergency or urgent care patient"
+msgstr ""
+
+#. module: health_base
+#: model:health.booking.cancellation.reason,name:health_base.cancel_reason_provider_emergencypriority
+msgid "Emergency priority case"
+msgstr ""
+
+#. module: health_base
+#: model:health.booking.cancellation.reason,name:health_base.cancel_reason_patient_emergency
+msgid "Emergency situation"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields.selection,name:health_base.selection__health_booking_cancellation_reason__reason_type__emergency
+msgid "Emergency/Force Majeure"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model,name:health_base.model_hr_employee
+msgid "Employee"
+msgstr "Nhân viên"
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_service_type__equipment_required
+msgid "Equipment Required"
+msgstr ""
+
+#. module: health_base
+#: model:health.booking.cancellation.reason,name:health_base.cancel_reason_provider_equipment
+msgid "Equipment unavailable"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_medication_interaction__evidence_level
+msgid "Evidence Level"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields.selection,name:health_base.selection__health_readmission_risk__medication_compliance__excellent
+msgid "Excellent"
+msgstr ""
+
+#. module: health_base
+#: model:health.booking.cancellation.reason,description:health_base.cancel_reason_emergency_weather
+msgid "Extreme weather making travel unsafe"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields.selection,name:health_base.selection__health_referral_source__source_type__facebook
+#: model:ir.model.fields.selection,name:health_base.selection__res_partner__source_type__facebook
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_patient_search
+msgid "Facebook"
+msgstr ""
+
+#. module: health_base
+#: model:ir.ui.menu,name:health_base.menu_healthcare_facilities
+msgid "Facilities"
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_patient_search
+msgid "Facility"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_facility__code
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_facility_search
+msgid "Facility Code"
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_facility_form
+msgid "Facility Details"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_facility__name
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_facility_search
+msgid "Facility Name"
+msgstr ""
+
+#. module: health_base
+#. odoo-python
+#: code:addons/health_base/models/health_facility.py:0
+msgid "Facility Patients"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_res_partner__facility_id
+#: model:ir.model.fields,field_description:health_base.field_res_users__facility_id
+msgid "Facility Record"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_facility__facility_type
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_facility_search
+msgid "Facility Type"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.constraint,message:health_base.constraint_health_facility_code_unique
+msgid "Facility code must be unique!"
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_facility_form
+msgid "Facility code..."
+msgstr ""
+
+#. module: health_base
+#: model:health.booking.cancellation.reason,description:health_base.cancel_reason_provider_facility
+msgid "Facility is unavailable or has issues preventing service delivery"
+msgstr ""
+
+#. module: health_base
+#: model:health.booking.cancellation.reason,name:health_base.cancel_reason_provider_facility
+msgid "Facility issues"
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_facility_form
+msgid "Facility name..."
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields.selection,name:health_base.selection__health_readmission_risk__medication_compliance__fair
+msgid "Fair"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model,name:health_base.model_health_fall_risk
+msgid "Fall Risk Assessment"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields.selection,name:health_base.selection__res_partner__gender__female
+msgid "Female"
+msgstr ""
+
+#. module: health_base
+#: model:health.symptom,name:health_base.symptom_fever
+msgid "Fever"
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_audit_log_search
+msgid "Field"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_audit_log_view__field_name
+msgid "Field Changed"
+msgstr ""
+
+#. module: health_base
+#: model:res.groups,comment:health_base.group_healthcare_finance
+msgid "Finance - billing, invoicing, financial reports"
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_facility_form
+msgid "Financial & Insurance"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_readmission_risk__financial_constraints
+msgid "Financial Constraints"
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_facility_form
+msgid "Financial Settings"
+msgstr ""
+
+#. module: health_base
+#: model:health.booking.cancellation.reason,name:health_base.cancel_reason_patient_financial
+msgid "Financial constraints"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_res_partner__first_name
+#: model:ir.model.fields,field_description:health_base.field_res_users__first_name
+msgid "First Name"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields.selection,name:health_base.selection__health_protocol_intervention__intervention_type__follow_up
+msgid "Follow-up"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_facility__message_follower_ids
+msgid "Followers"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_facility__message_partner_ids
+msgid "Followers (Partners)"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,help:health_base.field_health_facility__activity_type_icon
+msgid "Font awesome icon e.g. fa-tasks"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_protocol_intervention__frequency
+msgid "Frequency"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields.selection,name:health_base.selection__health_referral_source__source_type__friend
+msgid "Friend/Family"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields.selection,name:health_base.selection__health_fall_risk__ambulatory_aid__furniture
+msgid "Furniture (30 points)"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_res_partner__geo_coordinates_display
+#: model:ir.model.fields,field_description:health_base.field_res_users__geo_coordinates_display
+msgid "GPS Coordinates"
+msgstr ""
+
+#. module: health_base
+#. odoo-javascript
+#: code:addons/health_base/static/src/xml/address_map_widget.xml:0
+msgid "GPS:"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_fall_risk__gait_transfer
+msgid "Gait/Transfer"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_readmission_risk__gender
+#: model:ir.model.fields,field_description:health_base.field_res_partner__gender
+msgid "Gender"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields.selection,name:health_base.selection__health_symptom__category__general
+msgid "General"
+msgstr ""
+
+#. module: health_base
+#: model:health.service.type,name:health_base.service_type_consultation
+msgid "General Consultation"
+msgstr ""
+
+#. module: health_base
+#: model:health.medical.specialty,name:health_base.specialty_general_medicine
+msgid "General Medicine"
+msgstr ""
+
+#. module: health_base
+#: model:health.service.type,description:health_base.service_type_consultation
+msgid "General medical consultation"
+msgstr ""
+
+#. module: health_base
+#: model:health.medical.specialty,description:health_base.specialty_general_medicine
+msgid "General medical practice"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_medication__generic_name
+msgid "Generic Name"
+msgstr ""
+
+#. module: health_base
+#. odoo-python
+#: code:addons/health_base/models/res_partner.py:0
+msgid "Geocoding Successful"
+msgstr ""
+
+#. module: health_base
+#. odoo-python
+#: code:addons/health_base/models/res_partner.py:0
+msgid "Geocoding failed: %s"
+msgstr ""
+
+#. module: health_base
+#. odoo-python
+#: code:addons/health_base/models/res_partner.py:0
+msgid "Geocoding service error (HTTP %s). Please try again later."
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,help:health_base.field_res_partner__partner_latitude
+#: model:ir.model.fields,help:health_base.field_res_users__partner_latitude
+msgid "Geographical latitude"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,help:health_base.field_res_partner__partner_longitude
+#: model:ir.model.fields,help:health_base.field_res_users__partner_longitude
+msgid "Geographical longitude"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_res_partner__date_localization
+#: model:ir.model.fields,field_description:health_base.field_res_users__date_localization
+msgid "Geolocation Date"
+msgstr "Ngày xác định vị trí"
+
+#. module: health_base
+#: model:health.medical.specialty,name:health_base.specialty_geriatrics
+msgid "Geriatrics"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields.selection,name:health_base.selection__res_partner__ethnicity__gia_rai
+msgid "Gia Rai"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields.selection,name:health_base.selection__health_readmission_risk__medication_compliance__good
+msgid "Good"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields.selection,name:health_base.selection__health_referral_source__source_type__google
+msgid "Google"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields.selection,name:health_base.selection__res_partner__payment_method__government
+msgid "Government"
+msgstr ""
+
+#. module: health_base
+#: model:health.booking.cancellation.reason,description:health_base.cancel_reason_emergency_pandemic
+msgid "Government restrictions or pandemic protocols"
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_audit_log_search
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_facility_search
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_patient_search
+#: model_terms:ir.ui.view,arch_db:health_base.view_healthcare_public_holiday_search
+msgid "Group By"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields.selection,name:health_base.selection__res_partner__ethnicity__hmong
+msgid "H'Mông"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_readmission_risk__has_caregiver
+msgid "Has Caregiver"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_facility__has_message
+msgid "Has Message"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_facility__head_nurse_id
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_facility_search
+msgid "Head Nurse"
+msgstr ""
+
+#. module: health_base
+#: model:res.groups,comment:health_base.group_healthcare_head_nurse
+msgid "Head Nurse - nurse supervision, advanced clinical access"
+msgstr ""
+
+#. module: health_base
+#: model:health.symptom,description:health_base.symptom_headache
+msgid "Head pain or discomfort"
+msgstr ""
+
+#. module: health_base
+#: model:health.symptom,name:health_base.symptom_headache
+msgid "Headache"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_facility__health_license_number
+msgid "Health License Number"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model,name:health_base.model_health_symptom
+msgid "Health Symptom"
+msgstr ""
+
+#. module: health_base
+#: model:ir.module.category,name:health_base.module_category_healthcare
+#: model:ir.ui.menu,name:health_base.menu_healthcare_root
+msgid "Healthcare"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model,name:health_base.model_health_clinical_protocol
+msgid "Healthcare Clinical Protocol Templates"
+msgstr ""
+
+#. module: health_base
+#: model:ir.actions.act_window,name:health_base.action_health_facility
+#: model:ir.ui.menu,name:health_base.menu_healthcare_facility_list
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_facility_list
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_facility_search
+msgid "Healthcare Facilities"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model,name:health_base.model_health_facility
+#: model:res.partner.category,name:health_base.facility_category
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_facility_form
+msgid "Healthcare Facility"
+msgstr ""
+
+#. module: health_base
+#: model:ir.module.category,description:health_base.module_category_healthcare
+msgid "Healthcare Management System"
+msgstr ""
+
+#. module: health_base
+#: model:res.partner.category,name:health_base.patient_category
+msgid "Healthcare Patient"
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_patient_form
+msgid "Healthcare Relationships"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_hr_employee__healthcare_role
+#: model:ir.model.fields,field_description:health_base.field_res_users__healthcare_role
+msgid "Healthcare Role"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model,name:health_base.model_health_service_type
+msgid "Healthcare Service Type"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_hr_employee__is_healthcare_staff
+#: model:res.partner.category,name:health_base.staff_category
+msgid "Healthcare Staff"
+msgstr ""
+
+#. module: health_base
+#: model:res.groups,name:health_base.group_healthcare_admin
+msgid "Healthcare: Administrator"
+msgstr ""
+
+#. module: health_base
+#: model:res.groups,name:health_base.group_healthcare_base
+msgid "Healthcare: Base Access"
+msgstr ""
+
+#. module: health_base
+#: model:res.groups,name:health_base.group_healthcare_doctor
+msgid "Healthcare: Doctor"
+msgstr ""
+
+#. module: health_base
+#: model:res.groups,name:health_base.group_healthcare_finance
+msgid "Healthcare: Finance"
+msgstr ""
+
+#. module: health_base
+#: model:res.groups,name:health_base.group_healthcare_head_nurse
+msgid "Healthcare: Head Nurse"
+msgstr ""
+
+#. module: health_base
+#: model:res.groups,name:health_base.group_healthcare_manager
+msgid "Healthcare: Manager"
+msgstr ""
+
+#. module: health_base
+#: model:res.groups,name:health_base.group_healthcare_nurse
+msgid "Healthcare: Nurse"
+msgstr ""
+
+#. module: health_base
+#: model:res.groups,name:health_base.group_healthcare_operations_manager
+msgid "Healthcare: Operations Manager"
+msgstr ""
+
+#. module: health_base
+#: model:res.groups,name:health_base.group_healthcare_owner
+msgid "Healthcare: Owner"
+msgstr ""
+
+#. module: health_base
+#: model:res.groups,name:health_base.group_healthcare_patient
+msgid "Healthcare: Patient Portal"
+msgstr ""
+
+#. module: health_base
+#: model:res.groups,name:health_base.group_healthcare_receptionist
+msgid "Healthcare: Receptionist"
+msgstr ""
+
+#. module: health_base
+#: model:res.groups,name:health_base.group_healthcare_sales
+msgid "Healthcare: Sales"
+msgstr ""
+
+#. module: health_base
+#: model:health.medical.specialty,description:health_base.specialty_cardiology
+msgid "Heart and cardiovascular care"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields.selection,name:health_base.selection__health_medication_interaction__evidence_level__high
+msgid "High"
+msgstr ""
+
+#. module: health_base
+#: model:health.urgency.level,name:health_base.urgency_high
+#: model:ir.model.fields.selection,name:health_base.selection__health_symptom__urgency_level__high
+msgid "High Priority"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields.selection,name:health_base.selection__health_readmission_risk__risk_level__high
+msgid "High Risk (61-100)"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields.selection,name:health_base.selection__health_fall_risk__risk_level__high
+msgid "High Risk (≥45)"
+msgstr ""
+
+#. module: health_base
+#: model:health.booking.cancellation.reason,description:health_base.cancel_reason_provider_emergencypriority
+msgid "Higher priority emergency case requires staff resources"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,help:health_base.field_health_urgency_level__priority_score
+msgid "Higher score = higher priority"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_fall_risk__history_of_falling
+msgid "History of Falling (25 points)"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields.selection,name:health_base.selection__res_partner__ethnicity__hoa
+msgid "Hoa (Chinese)"
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_audit_log_search
+msgid "Holiday Changes"
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_healthcare_public_holiday_form
+msgid "Holiday Dates"
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_healthcare_public_holiday_form
+msgid "Holiday Name (e.g., TET Nguyen Dan 2025)"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_resource_calendar_leaves__holiday_type
+#: model_terms:ir.ui.view,arch_db:health_base.view_healthcare_public_holiday_search
+msgid "Holiday Type"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields.selection,name:health_base.selection__health_facility__facility_type__home_care_center
+msgid "Home Care Center"
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_facility_search
+msgid "Home Care Centers"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_fall_risk__environmental_hazards
+msgid "Home Environment Assessment"
+msgstr ""
+
+#. module: health_base
+#: model:health.service.type,name:health_base.service_type_home_visit
+#: model:ir.model.fields.selection,name:health_base.selection__health_service_type__category__home_visit
+msgid "Home Visit"
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_facility_form
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_facility_search
+msgid "Home Visit Coverage"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_facility__home_visit_districts
+msgid "Home Visit Coverage Areas"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_facility__home_visit_radius_km
+msgid "Home Visit Radius (KM)"
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_facility_form
+msgid "Home Visit Settings"
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_healthcare_public_holiday_form
+msgid ""
+"Home Visit: 500,000 VND → Holiday Price: <strong>1,500,000 VND</strong> (if "
+"multiplier = 3.0)"
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_facility_search
+msgid "Home Visits Available"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.constraint,message:health_base.constraint_health_facility_positive_radius
+msgid "Home visit radius cannot be negative!"
+msgstr ""
+
+#. module: health_base
+#. odoo-python
+#: code:addons/health_base/models/health_facility.py:0
+msgid "Home visit radius cannot be negative."
+msgstr ""
+
+#. module: health_base
+#. odoo-python
+#: code:addons/health_base/models/health_facility.py:0
+msgid "Home visit radius seems too large (>100km)."
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields.selection,name:health_base.selection__health_referral_source__source_type__hospital
+msgid "Hospital Referral"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_res_partner__house_number
+#: model:ir.model.fields,field_description:health_base.field_res_users__house_number
+msgid "House Number"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_audit_log_view__id
+#: model:ir.model.fields,field_description:health_base.field_health_booking_cancellation_reason__id
+#: model:ir.model.fields,field_description:health_base.field_health_clinical_protocol__id
+#: model:ir.model.fields,field_description:health_base.field_health_facility__id
+#: model:ir.model.fields,field_description:health_base.field_health_fall_risk__id
+#: model:ir.model.fields,field_description:health_base.field_health_insurance_provider__id
+#: model:ir.model.fields,field_description:health_base.field_health_medical_specialty__id
+#: model:ir.model.fields,field_description:health_base.field_health_medication__id
+#: model:ir.model.fields,field_description:health_base.field_health_medication_interaction__id
+#: model:ir.model.fields,field_description:health_base.field_health_medication_safety__id
+#: model:ir.model.fields,field_description:health_base.field_health_patient_category__id
+#: model:ir.model.fields,field_description:health_base.field_health_protocol_intervention__id
+#: model:ir.model.fields,field_description:health_base.field_health_protocol_question__id
+#: model:ir.model.fields,field_description:health_base.field_health_readmission_risk__id
+#: model:ir.model.fields,field_description:health_base.field_health_referral_source__id
+#: model:ir.model.fields,field_description:health_base.field_health_service_type__id
+#: model:ir.model.fields,field_description:health_base.field_health_symptom__id
+#: model:ir.model.fields,field_description:health_base.field_health_urgency_level__id
+#: model:ir.model.fields,field_description:health_base.field_health_vietnamese_district__id
+msgid "ID"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_fall_risk__iv_therapy
+msgid "IV Therapy/Heparin Lock (20 points)"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_facility__activity_exception_icon
+msgid "Icon"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,help:health_base.field_health_facility__activity_exception_icon
+msgid "Icon to indicate an exception activity."
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,help:health_base.field_health_facility__message_needaction
+msgid "If checked, new messages require your attention."
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,help:health_base.field_health_facility__message_has_error
+#: model:ir.model.fields,help:health_base.field_health_facility__message_has_sms_error
+msgid "If checked, some messages have a delivery error."
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields.selection,name:health_base.selection__health_service_type__category__imaging
+msgid "Imaging"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_facility__has_imaging
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_facility_search
+msgid "Imaging Services"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields.selection,name:health_base.selection__health_fall_risk__gait_transfer__impaired
+msgid "Impaired (20 points)"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields.selection,name:health_base.selection__res_partner__patient_status__inactive
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_patient_search
+msgid "Inactive"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,help:health_base.field_resource_calendar_leaves__is_pricing_holiday
+msgid ""
+"Include this holiday in pricing calculations (TET, National holidays = True,"
+" Observances = False)"
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_facility_form
+msgid "Inspections"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_protocol_intervention__instructions
+msgid "Instructions"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields.selection,name:health_base.selection__res_partner__payment_method__insurance
+msgid "Insurance"
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_patient_form
+msgid "Insurance & Billing"
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_patient_form
+msgid "Insurance Details"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_res_partner__insurance_expiry
+#: model:ir.model.fields,field_description:health_base.field_res_users__insurance_expiry
+msgid "Insurance Expiry"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_res_partner__insurance_number
+#: model:ir.model.fields,field_description:health_base.field_res_users__insurance_number
+msgid "Insurance Number"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model,name:health_base.model_health_insurance_provider
+#: model:ir.model.fields,field_description:health_base.field_res_partner__insurance_provider
+#: model:ir.model.fields,field_description:health_base.field_res_users__insurance_provider
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_insurance_provider_form
+msgid "Insurance Provider"
+msgstr ""
+
+#. module: health_base
+#: model:ir.actions.act_window,name:health_base.action_health_insurance_provider
+#: model:ir.ui.menu,name:health_base.menu_healthcare_insurance_providers
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_insurance_provider_list
+msgid "Insurance Providers"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_medication_interaction__description
+msgid "Interaction Description"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.constraint,message:health_base.constraint_health_medication_interaction_unique_interaction
+msgid "Interaction between these medications already exists!"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_medication__interaction_ids
+msgid "Interactions"
+msgstr ""
+
+#. module: health_base
+#. odoo-javascript
+#: code:addons/health_base/static/src/xml/address_map_widget.xml:0
+msgid "Interactive map will display when coordinates are available"
+msgstr ""
+
+#. module: health_base
+#: model:health.medical.specialty,name:health_base.specialty_internal_medicine
+msgid "Internal Medicine"
+msgstr ""
+
+#. module: health_base
+#: model:health.medical.specialty,description:health_base.specialty_internal_medicine
+msgid "Internal medicine and adult healthcare"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_protocol_intervention__name
+msgid "Intervention Name"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_protocol_intervention__intervention_type
+msgid "Intervention Type"
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_audit_log_search
+msgid "Invoice Changes"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_res_partner__is_caregiver
+#: model:ir.model.fields,field_description:health_base.field_res_users__is_caregiver
+msgid "Is Caregiver"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_res_partner__is_emergency_contact
+#: model:ir.model.fields,field_description:health_base.field_res_users__is_emergency_contact
+msgid "Is Emergency Contact"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_facility__message_is_follower
+msgid "Is Follower"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_res_partner__is_healthcare_facility
+#: model:ir.model.fields,field_description:health_base.field_res_users__is_healthcare_facility
+msgid "Is Healthcare Facility"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_res_partner__is_healthcare_staff
+#: model:ir.model.fields,field_description:health_base.field_res_users__is_healthcare_staff
+msgid "Is Healthcare Staff"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_res_partner__is_patient
+#: model:ir.model.fields,field_description:health_base.field_res_users__is_patient
+msgid "Is Patient"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_res_partner__is_payer
+#: model:ir.model.fields,field_description:health_base.field_res_users__is_payer
+msgid "Is Payer"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_res_partner__is_referrer
+#: model:ir.model.fields,field_description:health_base.field_res_users__is_referrer
+msgid "Is Referrer"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields.selection,name:health_base.selection__res_partner__ethnicity__khmer
+msgid "Khmer"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,help:health_base.field_res_partner__named_area
+#: model:ir.model.fields,help:health_base.field_res_users__named_area
+msgid "Khu vực đặt tên"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields.selection,name:health_base.selection__res_partner__ethnicity__kinh
+msgid "Kinh (Vietnamese)"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_res_partner__allergies
+#: model:ir.model.fields,field_description:health_base.field_res_users__allergies
+msgid "Known Allergies"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields.selection,name:health_base.selection__health_service_type__category__laboratory
+msgid "Laboratory"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_facility__has_laboratory
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_facility_search
+msgid "Laboratory Services"
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_audit_log_search
+msgid "Last 30 Days"
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_audit_log_search
+msgid "Last 7 Days"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_facility__last_inspection_date
+msgid "Last Inspection Date"
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_audit_log_search
+msgid "Last Month"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_res_partner__last_name
+#: model:ir.model.fields,field_description:health_base.field_res_users__last_name
+msgid "Last Name"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_medication_interaction__last_updated
+msgid "Last Updated"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_booking_cancellation_reason__write_uid
+#: model:ir.model.fields,field_description:health_base.field_health_clinical_protocol__write_uid
+#: model:ir.model.fields,field_description:health_base.field_health_facility__write_uid
+#: model:ir.model.fields,field_description:health_base.field_health_fall_risk__write_uid
+#: model:ir.model.fields,field_description:health_base.field_health_insurance_provider__write_uid
+#: model:ir.model.fields,field_description:health_base.field_health_medical_specialty__write_uid
+#: model:ir.model.fields,field_description:health_base.field_health_medication__write_uid
+#: model:ir.model.fields,field_description:health_base.field_health_medication_interaction__write_uid
+#: model:ir.model.fields,field_description:health_base.field_health_medication_safety__write_uid
+#: model:ir.model.fields,field_description:health_base.field_health_patient_category__write_uid
+#: model:ir.model.fields,field_description:health_base.field_health_protocol_intervention__write_uid
+#: model:ir.model.fields,field_description:health_base.field_health_protocol_question__write_uid
+#: model:ir.model.fields,field_description:health_base.field_health_readmission_risk__write_uid
+#: model:ir.model.fields,field_description:health_base.field_health_referral_source__write_uid
+#: model:ir.model.fields,field_description:health_base.field_health_service_type__write_uid
+#: model:ir.model.fields,field_description:health_base.field_health_symptom__write_uid
+#: model:ir.model.fields,field_description:health_base.field_health_urgency_level__write_uid
+#: model:ir.model.fields,field_description:health_base.field_health_vietnamese_district__write_uid
+msgid "Last Updated by"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_booking_cancellation_reason__write_date
+#: model:ir.model.fields,field_description:health_base.field_health_clinical_protocol__write_date
+#: model:ir.model.fields,field_description:health_base.field_health_facility__write_date
+#: model:ir.model.fields,field_description:health_base.field_health_fall_risk__write_date
+#: model:ir.model.fields,field_description:health_base.field_health_insurance_provider__write_date
+#: model:ir.model.fields,field_description:health_base.field_health_medical_specialty__write_date
+#: model:ir.model.fields,field_description:health_base.field_health_medication__write_date
+#: model:ir.model.fields,field_description:health_base.field_health_medication_interaction__write_date
+#: model:ir.model.fields,field_description:health_base.field_health_medication_safety__write_date
+#: model:ir.model.fields,field_description:health_base.field_health_patient_category__write_date
+#: model:ir.model.fields,field_description:health_base.field_health_protocol_intervention__write_date
+#: model:ir.model.fields,field_description:health_base.field_health_protocol_question__write_date
+#: model:ir.model.fields,field_description:health_base.field_health_readmission_risk__write_date
+#: model:ir.model.fields,field_description:health_base.field_health_referral_source__write_date
+#: model:ir.model.fields,field_description:health_base.field_health_service_type__write_date
+#: model:ir.model.fields,field_description:health_base.field_health_symptom__write_date
+#: model:ir.model.fields,field_description:health_base.field_health_urgency_level__write_date
+#: model:ir.model.fields,field_description:health_base.field_health_vietnamese_district__write_date
+msgid "Last Updated on"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_res_partner__last_visit_date
+#: model:ir.model.fields,field_description:health_base.field_res_users__last_visit_date
+msgid "Last Visit"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_res_partner__partner_latitude
+#: model:ir.model.fields,field_description:health_base.field_res_users__partner_latitude
+msgid "Latitude"
+msgstr "Vĩ độ Địa lý"
+
+#. module: health_base
+#: model:ir.model.fields,help:health_base.field_res_partner__geo_coordinates_display
+#: model:ir.model.fields,help:health_base.field_res_users__geo_coordinates_display
+msgid "Latitude, Longitude coordinates"
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_healthcare_public_holiday_form
+msgid "Leave blank for national holidays"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,help:health_base.field_resource_calendar_leaves__province_id
+msgid ""
+"Leave blank for national holidays, or specify province for regional holidays"
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_facility_search
+msgid "License Expiring Soon"
+msgstr ""
+
+#. module: health_base
+#. odoo-python
+#: code:addons/health_base/models/health_facility.py:0
+msgid "License Expiry Alert"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_facility__license_expiry_date
+#: model:ir.model.fields,field_description:health_base.field_res_partner__license_expiry
+#: model:ir.model.fields,field_description:health_base.field_res_users__license_expiry
+msgid "License Expiry Date"
+msgstr ""
+
+#. module: health_base
+#. odoo-python
+#: code:addons/health_base/models/health_facility.py:0
+msgid "License Status"
+msgstr ""
+
+#. module: health_base
+#. odoo-python
+#: code:addons/health_base/models/health_facility.py:0
+msgid "License expiry date cannot be in the past."
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_facility_form
+msgid "Licensing"
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_facility_form
+msgid "Licensing & Compliance"
+msgstr ""
+
+#. module: health_base
+#: model:health.urgency.level,description:health_base.urgency_emergency
+msgid "Life-threatening condition requiring immediate attention"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,help:health_base.field_res_partner__facility_id
+#: model:ir.model.fields,help:health_base.field_res_users__facility_id
+msgid "Linked facility record if this contact is a healthcare facility"
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_patient_form
+msgid "List all known allergies (medications, foods, environmental)"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_readmission_risk__lives_alone
+msgid "Lives Alone"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields.selection,name:health_base.selection__health_clinical_protocol__protocol_type__local
+msgid "Local Protocol"
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_vietnamese_district_form
+msgid "Location Information"
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_service_type_form
+msgid "Logistics"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_res_partner__partner_longitude
+#: model:ir.model.fields,field_description:health_base.field_res_users__partner_longitude
+msgid "Longitude"
+msgstr "Kinh độ Địa lý"
+
+#. module: health_base
+#: model:ir.model.fields.selection,name:health_base.selection__health_medication_interaction__evidence_level__low
+msgid "Low"
+msgstr ""
+
+#. module: health_base
+#: model:health.urgency.level,name:health_base.urgency_low
+#: model:ir.model.fields.selection,name:health_base.selection__health_symptom__urgency_level__low
+msgid "Low Priority"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields.selection,name:health_base.selection__health_fall_risk__risk_level__low
+msgid "Low Risk (0-24)"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields.selection,name:health_base.selection__health_readmission_risk__risk_level__low
+msgid "Low Risk (0-30)"
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_patient_form
+msgid "MOH Compliance Information"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields.selection,name:health_base.selection__health_facility__facility_type__main_clinic
+msgid "Main Clinic"
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_facility_search
+msgid "Main Clinics"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields.selection,name:health_base.selection__health_medication_interaction__severity__major
+msgid "Major"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields.selection,name:health_base.selection__res_partner__gender__male
+msgid "Male"
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_facility_form
+msgid "Management"
+msgstr ""
+
+#. module: health_base
+#: model:res.groups,comment:health_base.group_healthcare_manager
+msgid "Manager - facility management, full operational access"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,help:health_base.field_res_users__is_healthcare_staff
+msgid "Mark if this user is healthcare staff"
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_referral_source_form
+msgid "Marketing Tracking"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_insurance_provider__max_coverage_annual
+msgid "Max Annual Coverage (VND)"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_facility__max_daily_patients
+msgid "Max Daily Patients"
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_patient_form
+msgid "Medical History"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_res_partner__medical_history
+#: model:ir.model.fields,field_description:health_base.field_res_users__medical_history
+msgid "Medical History Summary"
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_patient_form
+msgid "Medical Information"
+msgstr ""
+
+#. module: health_base
+#: model:ir.actions.act_window,name:health_base.action_health_medical_specialty
+#: model:ir.model.fields,field_description:health_base.field_health_facility__specialties
+#: model:ir.model.fields,field_description:health_base.field_res_partner__medical_specialties
+#: model:ir.model.fields,field_description:health_base.field_res_users__medical_specialties
+#: model:ir.ui.menu,name:health_base.menu_healthcare_medical_specialties
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_facility_form
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_medical_specialty_list
+msgid "Medical Specialties"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model,name:health_base.model_health_medical_specialty
+msgid "Medical Specialty"
+msgstr ""
+
+#. module: health_base
+#: model:health.service.type,description:health_base.service_type_home_visit
+msgid "Medical consultation at patient's home"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model,name:health_base.model_health_medication
+msgid "Medication"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_medication_interaction__medication1_id
+msgid "Medication 1"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_medication_interaction__medication2_id
+msgid "Medication 2"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_medication__medication_class
+msgid "Medication Class"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_readmission_risk__medication_compliance
+msgid "Medication Compliance"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model,name:health_base.model_health_medication_interaction
+msgid "Medication Interaction"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_medication__name
+msgid "Medication Name"
+msgstr ""
+
+#. module: health_base
+#: model:ir.ui.menu,name:health_base.menu_healthcare_medication
+msgid "Medication Safety"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model,name:health_base.model_health_medication_safety
+msgid "Medication Safety System"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.constraint,message:health_base.constraint_health_medication_name_unique
+msgid "Medication name must be unique!"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields.selection,name:health_base.selection__health_medication_interaction__evidence_level__medium
+msgid "Medium"
+msgstr ""
+
+#. module: health_base
+#: model:health.urgency.level,name:health_base.urgency_medium
+#: model:ir.model.fields.selection,name:health_base.selection__health_symptom__urgency_level__medium
+msgid "Medium Priority"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields.selection,name:health_base.selection__health_fall_risk__risk_level__medium
+msgid "Medium Risk (25-44)"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields.selection,name:health_base.selection__health_readmission_risk__risk_level__medium
+msgid "Medium Risk (31-60)"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields.selection,name:health_base.selection__health_symptom__category__mental_health
+msgid "Mental Health"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_fall_risk__mental_status
+msgid "Mental Status"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_facility__message_has_error
+msgid "Message Delivery error"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_facility__message_ids
+msgid "Messages"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_res_partner__middle_name
+#: model:ir.model.fields,field_description:health_base.field_res_users__middle_name
+msgid "Middle Name"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields.selection,name:health_base.selection__health_medication_interaction__severity__minor
+msgid "Minor"
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_patient_search
+msgid "Mobile"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields.selection,name:health_base.selection__health_facility__facility_type__mobile_unit
+msgid "Mobile Unit"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_readmission_risk__mobility_issues
+msgid "Mobility Issues"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_audit_log_view__model
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_audit_log_search
+msgid "Model"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_audit_log_view__model_name
+msgid "Model Name"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields.selection,name:health_base.selection__health_medication_interaction__severity__moderate
+msgid "Moderate"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields.selection,name:health_base.selection__health_protocol_intervention__intervention_type__monitoring
+msgid "Monitoring"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields.selection,name:health_base.selection__health_protocol_intervention__frequency__monthly
+msgid "Monthly"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_facility__monthly_revenue
+msgid "Monthly Revenue"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_fall_risk__morse_score
+msgid "Morse Fall Score"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields.selection,name:health_base.selection__health_protocol_question__question_type__multiple_choice
+msgid "Multiple Choice"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,help:health_base.field_health_patient_category__price_multiplier
+msgid "Multiplier for service pricing"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields.selection,name:health_base.selection__health_symptom__category__musculoskeletal
+msgid "Musculoskeletal"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.constraint,message:health_base.constraint_health_facility_positive_rooms
+msgid "Must have at least one consultation room!"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_facility__my_activity_date_deadline
+msgid "My Activity Deadline"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,help:health_base.field_res_partner__province_code
+#: model:ir.model.fields,help:health_base.field_res_users__province_code
+msgid "Mã tỉnh/thành phố"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields.selection,name:health_base.selection__res_partner__ethnicity__muong
+msgid "Mường"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_res_partner__named_area
+#: model:ir.model.fields,field_description:health_base.field_res_users__named_area
+msgid "Named Area"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields.selection,name:health_base.selection__resource_calendar_leaves__holiday_type__national
+msgid "National Holiday"
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_healthcare_public_holiday_search
+msgid "National Holidays"
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_patient_search
+msgid "National ID"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_res_partner__national_id
+#: model:ir.model.fields,field_description:health_base.field_res_users__national_id
+msgid "National ID (CCCD/CMND)"
+msgstr ""
+
+#. module: health_base
+#: model:health.booking.cancellation.reason,name:health_base.cancel_reason_emergency_disaster
+msgid "Natural disaster"
+msgstr ""
+
+#. module: health_base
+#: model:health.booking.cancellation.reason,description:health_base.cancel_reason_emergency_disaster
+msgid "Natural disaster affecting service delivery"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields.selection,name:health_base.selection__health_symptom__category__neurological
+msgid "Neurological"
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_patient_search
+msgid "New"
+msgstr ""
+
+#. module: health_base
+#. odoo-python
+#: code:addons/health_base/models/res_partner.py:0
+msgid "New Appointment"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields.selection,name:health_base.selection__res_partner__patient_status__new
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_patient_kanban
+msgid "New Client"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_audit_log_view__new_value
+msgid "New Value"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_facility__activity_calendar_event_id
+msgid "Next Activity Calendar Event"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_facility__activity_date_deadline
+msgid "Next Activity Deadline"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_facility__activity_summary
+msgid "Next Activity Summary"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_facility__activity_type_id
+msgid "Next Activity Type"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_facility__next_inspection_date
+msgid "Next Inspection Date"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_res_partner__next_visit_date
+#: model:ir.model.fields,field_description:health_base.field_res_users__next_visit_date
+msgid "Next Scheduled Visit"
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.actions.act_window,help:health_base.action_health_audit_log
+msgid "No audit logs found"
+msgstr ""
+
+#. module: health_base
+#. odoo-python
+#: code:addons/health_base/models/res_partner.py:0
+msgid ""
+"No coordinates found for this address. Please check the address details."
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.actions.act_window,help:health_base.action_health_facility
+msgid "No facilities"
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.actions.act_window,help:health_base.action_health_facility
+msgid "No healthcare facilities found"
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.actions.act_window,help:health_base.action_healthcare_public_holidays
+msgid "No public holidays defined yet!"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields.selection,name:health_base.selection__health_fall_risk__ambulatory_aid__none
+msgid "None/Bed rest/Nurse assist (0 points)"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields.selection,name:health_base.selection__health_fall_risk__gait_transfer__normal
+msgid "Normal/Bed rest/Immobile (0 points)"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields.selection,name:health_base.selection__health_vietnamese_district__region__north
+msgid "Northern Vietnam"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_insurance_provider__notes
+msgid "Notes"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_facility__message_needaction_counter
+msgid "Number of Actions"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_readmission_risk__chronic_conditions
+msgid "Number of Chronic Conditions"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_readmission_risk__medication_count
+msgid "Number of Medications"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_facility__message_has_error_counter
+msgid "Number of errors"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,help:health_base.field_health_facility__message_needaction_counter
+msgid "Number of messages requiring action"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,help:health_base.field_health_facility__message_has_error_counter
+msgid "Number of messages with delivery error"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields.selection,name:health_base.selection__health_protocol_question__question_type__numeric
+msgid "Numeric"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields.selection,name:health_base.selection__hr_employee__healthcare_role__nurse
+#: model:ir.model.fields.selection,name:health_base.selection__res_users__healthcare_role__nurse
+msgid "Nurse"
+msgstr ""
+
+#. module: health_base
+#: model:res.groups,comment:health_base.group_healthcare_nurse
+msgid "Nurse - patient care, basic clinical notes"
+msgstr ""
+
+#. module: health_base
+#: model:health.medical.specialty,name:health_base.specialty_nursing
+msgid "Nursing"
+msgstr ""
+
+#. module: health_base
+#: model:health.service.type,name:health_base.service_type_nursing_care
+#: model:ir.model.fields.selection,name:health_base.selection__health_service_type__category__nursing_care
+msgid "Nursing Care"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields.selection,name:health_base.selection__res_partner__ethnicity__nung
+msgid "Nùng"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields.selection,name:health_base.selection__resource_calendar_leaves__holiday_type__observance
+msgid "Observance"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_audit_log_view__old_value
+msgid "Old Value"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields.selection,name:health_base.selection__health_protocol_intervention__frequency__once
+msgid "Once"
+msgstr ""
+
+#. module: health_base
+#: model:health.service.type,description:health_base.service_type_telemedicine
+msgid "Online medical consultation via Zalo/Messenger"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_facility__operating_hours
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_facility_form
+msgid "Operating Hours"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields.selection,name:health_base.selection__health_facility__facility_status__operational
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_facility_search
+msgid "Operational"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_facility__facility_manager_id
+#: model:ir.model.fields.selection,name:health_base.selection__hr_employee__healthcare_role__operations_manager
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_facility_search
+msgid "Operations Manager"
+msgstr ""
+
+#. module: health_base
+#: model:res.groups,comment:health_base.group_healthcare_operations_manager
+msgid "Operations Manager - scheduling oversight, staff coordination"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields.selection,name:health_base.selection__health_clinical_protocol__compliance_level__optional
+msgid "Optional"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields.selection,name:health_base.selection__health_fall_risk__mental_status__oriented
+msgid "Oriented to own ability (0 points)"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields.selection,name:health_base.selection__health_medication__therapeutic_category__other
+#: model:ir.model.fields.selection,name:health_base.selection__health_referral_source__source_type__other
+#: model:ir.model.fields.selection,name:health_base.selection__health_service_type__category__other
+#: model:ir.model.fields.selection,name:health_base.selection__health_symptom__category__other
+#: model:ir.model.fields.selection,name:health_base.selection__res_partner__ethnicity__other
+#: model:ir.model.fields.selection,name:health_base.selection__res_partner__gender__other
+#: model:ir.model.fields.selection,name:health_base.selection__res_partner__source_type__other
+msgid "Other"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields.selection,name:health_base.selection__health_fall_risk__mental_status__overestimates
+msgid "Overestimates/Forgets limitations (15 points)"
+msgstr ""
+
+#. module: health_base
+#: model:res.groups,comment:health_base.group_healthcare_owner
+msgid "Owner - full system access, business oversight"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_referral_source__is_paid_source
+msgid "Paid Marketing Source"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields.selection,name:health_base.selection__health_symptom__category__pain
+msgid "Pain & Discomfort"
+msgstr ""
+
+#. module: health_base
+#: model:health.symptom,description:health_base.symptom_chest_pain
+msgid "Pain or discomfort in chest area"
+msgstr ""
+
+#. module: health_base
+#: model:health.booking.cancellation.reason,name:health_base.cancel_reason_emergency_pandemic
+msgid "Pandemic/Epidemic restrictions"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_facility__parking_spaces
+msgid "Parking Spaces"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields.selection,name:health_base.selection__health_facility__facility_type__partner_clinic
+msgid "Partner Clinic"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_fall_risk__patient_id
+#: model:ir.model.fields,field_description:health_base.field_health_readmission_risk__patient_id
+msgid "Patient"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model,name:health_base.model_health_patient_category
+msgid "Patient Category"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields.selection,name:health_base.selection__health_protocol_intervention__intervention_type__education
+msgid "Patient Education"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_res_partner__patient_code
+#: model:ir.model.fields,field_description:health_base.field_res_users__patient_code
+msgid "Patient ID"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_res_partner__patient_code_display
+#: model:ir.model.fields,field_description:health_base.field_res_users__patient_code_display
+msgid "Patient ID Display"
+msgstr ""
+
+#. module: health_base
+#: model:res.groups,comment:health_base.group_healthcare_patient
+msgid "Patient Portal - view own records, book appointments"
+msgstr ""
+
+#. module: health_base
+#: model:health.booking.cancellation.reason,description:health_base.cancel_reason_patient_financial
+msgid "Patient cannot afford the service at this time"
+msgstr ""
+
+#. module: health_base
+#: model:health.booking.cancellation.reason,description:health_base.cancel_reason_patient_transport
+msgid "Patient cannot arrange transportation to appointment"
+msgstr ""
+
+#. module: health_base
+#: model:health.booking.cancellation.reason,description:health_base.cancel_reason_patient_noshow
+msgid "Patient did not attend and did not notify in advance"
+msgstr ""
+
+#. module: health_base
+#: model:health.booking.cancellation.reason,description:health_base.cancel_reason_patient_emergency
+msgid "Patient has an emergency that prevents attendance"
+msgstr ""
+
+#. module: health_base
+#: model:health.booking.cancellation.reason,description:health_base.cancel_reason_patient_schedule
+msgid "Patient has another commitment or scheduling conflict"
+msgstr ""
+
+#. module: health_base
+#: model:health.booking.cancellation.reason,name:health_base.cancel_reason_patient_illness
+msgid "Patient is too ill to attend"
+msgstr ""
+
+#. module: health_base
+#: model:health.booking.cancellation.reason,name:health_base.cancel_reason_patient_noshow
+msgid "Patient no-show"
+msgstr ""
+
+#. module: health_base
+#: model:health.booking.cancellation.reason,description:health_base.cancel_reason_patient_nolongerneeded
+msgid "Patient's condition has improved or service is no longer required"
+msgstr ""
+
+#. module: health_base
+#: model:health.booking.cancellation.reason,description:health_base.cancel_reason_patient_illness
+msgid ""
+"Patient's condition has worsened or they are unable to attend due to illness"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields.selection,name:health_base.selection__health_booking_cancellation_reason__reason_type__patient
+msgid "Patient-initiated"
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_patient_form
+msgid "Payment Preferences"
+msgstr ""
+
+#. module: health_base
+#: model:health.patient.category,name:health_base.patient_category_pediatric
+msgid "Pediatric Client"
+msgstr ""
+
+#. module: health_base
+#: model:health.medical.specialty,name:health_base.specialty_pediatrics
+msgid "Pediatrics"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields.selection,name:health_base.selection__health_facility__facility_status__closed_permanent
+msgid "Permanently Closed"
+msgstr ""
+
+#. module: health_base
+#: model:health.symptom,description:health_base.symptom_cough
+msgid "Persistent coughing"
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_patient_form
+msgid "Personal Information"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_fall_risk__intervention_plan
+msgid "Personalized Fall Prevention Plan"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_facility__has_pharmacy
+msgid "Pharmacy"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_facility__phone
+msgid "Phone"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields.selection,name:health_base.selection__res_partner__source_type__phone
+msgid "Phone Call"
+msgstr ""
+
+#. module: health_base
+#: model:health.service.type,description:health_base.service_type_physiotherapy
+msgid "Physical therapy and rehabilitation"
+msgstr ""
+
+#. module: health_base
+#: model:health.service.type,name:health_base.service_type_physiotherapy
+#: model:ir.model.fields.selection,name:health_base.selection__health_service_type__category__physiotherapy
+msgid "Physiotherapy"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,help:health_base.field_res_partner__ward_commune
+#: model:ir.model.fields,help:health_base.field_res_users__ward_commune
+msgid "Phường/Xã"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields.selection,name:health_base.selection__health_facility__facility_status__planning
+msgid "Planning"
+msgstr ""
+
+#. module: health_base
+#. odoo-python
+#: code:addons/health_base/models/res_partner.py:0
+msgid "Please enter a valid email address."
+msgstr ""
+
+#. module: health_base
+#. odoo-python
+#: code:addons/health_base/models/res_partner.py:0
+msgid "Please enter a valid mobile number."
+msgstr ""
+
+#. module: health_base
+#. odoo-python
+#: code:addons/health_base/models/res_partner.py:0
+msgid "Please enter a valid phone number."
+msgstr ""
+
+#. module: health_base
+#. odoo-python
+#: code:addons/health_base/models/res_partner.py:0
+msgid "Please fill in at least the street or city before geocoding."
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields.selection,name:health_base.selection__health_readmission_risk__medication_compliance__poor
+msgid "Poor"
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_patient_form
+msgid "Postal Code"
+msgstr ""
+
+#. module: health_base
+#. odoo-javascript
+#: code:addons/health_base/static/src/xml/address_autocomplete_widget.xml:0
+msgid "Powered by Photon (OpenStreetMap)"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields.selection,name:health_base.selection__res_partner__gender__prefer_not_to_say
+msgid "Prefer not to say"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_medication__pregnancy_category
+msgid "Pregnancy Category"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_patient_category__price_multiplier
+#: model:ir.model.fields,field_description:health_base.field_resource_calendar_leaves__price_multiplier
+msgid "Price Multiplier"
+msgstr ""
+
+#. module: health_base
+#. odoo-python
+#: code:addons/health_base/models/resource_calendar_leaves.py:0
+msgid "Price multiplier must be positive"
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_healthcare_public_holiday_list
+msgid "Price ×"
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_audit_log_search
+msgid "Pricing Changes"
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_healthcare_public_holiday_form
+msgid "Pricing Configuration"
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_healthcare_public_holiday_form
+msgid "Pricing Examples"
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_healthcare_public_holiday_form
+msgid "Pricing Examples for"
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_healthcare_public_holiday_search
+msgid "Pricing Holidays"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,help:health_base.field_resource_calendar_leaves__price_multiplier
+msgid ""
+"Pricing multiplier for this holiday (e.g., 3.0 for TET = 3x normal price)"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_res_partner__primary_caregiver_id
+#: model:ir.model.fields,field_description:health_base.field_res_users__primary_caregiver_id
+msgid "Primary Caregiver"
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_patient_form
+msgid "Primary Contacts"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_res_partner__primary_facility_id
+#: model:ir.model.fields,field_description:health_base.field_res_users__primary_facility_id
+msgid "Primary Facility"
+msgstr ""
+
+#. module: health_base
+#. odoo-python
+#: code:addons/health_base/models/res_partner.py:0
+msgid ""
+"Primary Facility is required for patients. Please select a facility to "
+"generate a valid Patient ID."
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_res_partner__primary_payer_id
+#: model:ir.model.fields,field_description:health_base.field_res_users__primary_payer_id
+msgid "Primary Payer"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_res_partner__payment_method
+#: model:ir.model.fields,field_description:health_base.field_res_users__payment_method
+msgid "Primary Payment Method"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_res_partner__primary_referrer_id
+#: model:ir.model.fields,field_description:health_base.field_res_users__primary_referrer_id
+msgid "Primary Referrer"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_readmission_risk__prior_admissions
+msgid "Prior Admissions (Last 12 Months)"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_urgency_level__priority_score
+msgid "Priority Score"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.constraint,message:health_base.constraint_health_urgency_level_positive_score
+msgid "Priority score must be positive!"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_res_partner__profession
+#: model:ir.model.fields,field_description:health_base.field_res_users__profession
+msgid "Profession"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_res_partner__license_number
+#: model:ir.model.fields,field_description:health_base.field_res_users__license_number
+msgid "Professional License Number"
+msgstr ""
+
+#. module: health_base
+#: model:health.medical.specialty,description:health_base.specialty_nursing
+msgid "Professional nursing care"
+msgstr ""
+
+#. module: health_base
+#: model:health.service.type,description:health_base.service_type_nursing_care
+msgid "Professional nursing care services"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_protocol_intervention__protocol_id
+#: model:ir.model.fields,field_description:health_base.field_health_protocol_question__protocol_id
+msgid "Protocol"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model,name:health_base.model_health_protocol_question
+msgid "Protocol Assessment Question"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_clinical_protocol__description
+msgid "Protocol Description"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model,name:health_base.model_health_protocol_intervention
+msgid "Protocol Intervention"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_clinical_protocol__name
+msgid "Protocol Name"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_clinical_protocol__version
+msgid "Protocol Version"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_insurance_provider__code
+msgid "Provider Code"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_insurance_provider__name
+msgid "Provider Name"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.constraint,message:health_base.constraint_health_insurance_provider_name_unique
+msgid "Provider name must be unique!"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields.selection,name:health_base.selection__health_booking_cancellation_reason__reason_type__provider
+msgid "Provider-initiated"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_facility__covers_home_visits
+msgid "Provides Home Visits"
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_healthcare_public_holiday_search
+msgid "Province"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_facility__province_code
+#: model:ir.model.fields,field_description:health_base.field_res_partner__province_code
+#: model:ir.model.fields,field_description:health_base.field_res_users__province_code
+msgid "Province Code"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_vietnamese_district__province_name
+msgid "Province Name"
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_facility_form
+msgid "Province code (2 digits)..."
+msgstr ""
+
+#. module: health_base
+#. odoo-python
+#: code:addons/health_base/models/health_facility.py:0
+msgid "Province code must be exactly 2 digits (e.g., 01, 02, 03)."
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.constraint,message:health_base.constraint_health_facility_province_code_unique
+msgid "Province code must be unique!"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_resource_calendar_leaves__province_id
+msgid "Province/State"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields.selection,name:health_base.selection__health_medication__therapeutic_category__psychiatric
+msgid "Psychiatric Medication"
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_healthcare_public_holiday_form
+msgid "Public Holiday"
+msgstr ""
+
+#. module: health_base
+#: model:ir.actions.act_window,name:health_base.action_healthcare_public_holidays
+#: model:ir.ui.menu,name:health_base.menu_healthcare_public_holidays
+#: model_terms:ir.ui.view,arch_db:health_base.view_healthcare_public_holiday_list
+#: model_terms:ir.ui.view,arch_db:health_base.view_healthcare_public_holiday_search
+msgid "Public Holidays"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_protocol_question__name
+msgid "Question"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_protocol_question__question_type
+msgid "Question Type"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_facility__rating_ids
+msgid "Ratings"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model,name:health_base.model_health_readmission_risk
+msgid "Readmission Risk Assessment"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_booking_cancellation_reason__name
+msgid "Reason"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_booking_cancellation_reason__reason_type
+msgid "Reason Type"
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_patient_search
+msgid "Recent Visits"
+msgstr ""
+
+#. module: health_base
+#: model:res.groups,comment:health_base.group_healthcare_receptionist
+msgid "Receptionist - patient intake, appointment scheduling"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields.selection,name:health_base.selection__health_clinical_protocol__compliance_level__recommended
+msgid "Recommended"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_readmission_risk__recommended_interventions
+msgid "Recommended Interventions"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_audit_log_view__record_name
+msgid "Record"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_audit_log_view__res_id
+msgid "Record ID"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields.selection,name:health_base.selection__health_protocol_intervention__intervention_type__referral
+#: model:ir.model.fields.selection,name:health_base.selection__res_partner__source_type__referral
+msgid "Referral"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model,name:health_base.model_health_referral_source
+#: model:ir.model.fields,field_description:health_base.field_res_partner__referral_source
+#: model:ir.model.fields,field_description:health_base.field_res_users__referral_source
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_referral_source_form
+msgid "Referral Source"
+msgstr ""
+
+#. module: health_base
+#: model:ir.actions.act_window,name:health_base.action_health_referral_source
+#: model:ir.ui.menu,name:health_base.menu_healthcare_referral_sources
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_referral_source_list
+msgid "Referral Sources"
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_patient_search
+msgid "Referrals"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_vietnamese_district__region
+msgid "Region"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields.selection,name:health_base.selection__resource_calendar_leaves__holiday_type__regional
+msgid "Regional Holiday"
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_healthcare_public_holiday_search
+msgid "Regional Holidays"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_res_partner__registration_date
+#: model:ir.model.fields,field_description:health_base.field_res_users__registration_date
+msgid "Registration Date"
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_patient_form
+msgid "Registration Details"
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_patient_search
+msgid "Registration Month"
+msgstr ""
+
+#. module: health_base
+#: model:health.patient.category,name:health_base.patient_category_regular
+msgid "Regular Client"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_res_partner__emergency_contact_relation
+#: model:ir.model.fields,field_description:health_base.field_res_users__emergency_contact_relation
+msgid "Relation to Patient"
+msgstr ""
+
+#. module: health_base
+#: model:health.booking.cancellation.reason,description:health_base.cancel_reason_provider_equipment
+msgid "Required medical equipment is not available"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_service_type__requires_doctor
+msgid "Requires Doctor"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_urgency_level__requires_approval
+msgid "Requires Manager Approval"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_service_type__requires_nurse
+msgid "Requires Nurse"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_service_type__requires_travel
+msgid "Requires Travel"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model,name:health_base.model_resource_calendar_leaves
+msgid "Resource Time Off Detail"
+msgstr "Chi tiết ngày nghỉ của tài nguyên"
+
+#. module: health_base
+#: model:ir.model.fields.selection,name:health_base.selection__health_symptom__category__respiratory
+msgid "Respiratory"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields.selection,name:health_base.selection__health_medication__therapeutic_category__respiratory
+msgid "Respiratory Medication"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_facility__activity_user_id
+msgid "Responsible User"
+msgstr ""
+
+#. module: health_base
+#: model:ir.ui.menu,name:health_base.menu_healthcare_risk_assessment
+msgid "Risk Assessment"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_fall_risk__risk_level
+#: model:ir.model.fields,field_description:health_base.field_health_readmission_risk__risk_level
+msgid "Risk Level"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_readmission_risk__risk_score
+msgid "Risk Score (0-100)"
+msgstr ""
+
+#. module: health_base
+#: model:health.urgency.level,description:health_base.urgency_low
+msgid "Routine check-up or non-urgent consultation"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_facility__message_has_sms_error
+msgid "SMS Delivery error"
+msgstr ""
+
+#. module: health_base
+#: model:res.groups,comment:health_base.group_healthcare_sales
+msgid "Sales - lead management, initial patient contact"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields.selection,name:health_base.selection__health_protocol_question__question_type__scale
+msgid "Scale (1-10)"
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_patient_tree
+msgid "Schedule New Appointment"
+msgstr ""
+
+#. module: health_base
+#: model:health.booking.cancellation.reason,name:health_base.cancel_reason_patient_schedule
+msgid "Scheduling conflict"
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_healthcare_public_holiday_form
+msgid "Scope"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_protocol_question__score_no
+msgid "Score for No"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_protocol_question__score_yes
+msgid "Score for Yes"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_protocol_question__score_scale
+msgid "Score per Scale Point"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_fall_risk__secondary_diagnosis
+msgid "Secondary Diagnosis (15 points)"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_urgency_level__send_alerts
+msgid "Send Priority Alerts"
+msgstr ""
+
+#. module: health_base
+#: model:health.patient.category,name:health_base.patient_category_senior
+msgid "Senior Citizen"
+msgstr ""
+
+#. module: health_base
+#: model:health.patient.category,description:health_base.patient_category_senior
+msgid "Senior citizen (65+ years)"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_booking_cancellation_reason__sequence
+#: model:ir.model.fields,field_description:health_base.field_health_patient_category__sequence
+#: model:ir.model.fields,field_description:health_base.field_health_protocol_intervention__sequence
+#: model:ir.model.fields,field_description:health_base.field_health_protocol_question__sequence
+#: model:ir.model.fields,field_description:health_base.field_health_service_type__sequence
+msgid "Sequence"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_service_type__code
+msgid "Service Code"
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_vietnamese_district_form
+msgid "Service Delivery"
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_service_type_form
+msgid "Service Details"
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_patient_form
+msgid "Service History"
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_service_type_form
+msgid "Service Locations"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_service_type__name
+msgid "Service Name"
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_audit_log_search
+msgid "Service Order Changes"
+msgstr ""
+
+#. module: health_base
+#: model:ir.ui.menu,name:health_base.menu_healthcare_service_packages
+msgid "Service Packages"
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_service_type_form
+msgid "Service Type"
+msgstr ""
+
+#. module: health_base
+#: model:ir.actions.act_window,name:health_base.action_health_service_type
+#: model:ir.ui.menu,name:health_base.menu_healthcare_service_types
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_service_type_list
+msgid "Service Types"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.constraint,message:health_base.constraint_health_service_type_code_unique
+msgid "Service code must be unique!"
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_service_type_form
+msgid "Service code..."
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_service_type_form
+msgid "Service name..."
+msgstr ""
+
+#. module: health_base
+#: model:health.booking.cancellation.reason,name:health_base.cancel_reason_patient_nolongerneeded
+msgid "Service no longer needed"
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_facility_form
+msgid "Services & Capabilities"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_facility__services_offered
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_facility_form
+msgid "Services Offered"
+msgstr ""
+
+#. module: health_base
+#: model:health.booking.cancellation.reason,name:health_base.cancel_reason_emergency_weather
+msgid "Severe weather conditions"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_medication_interaction__severity
+msgid "Severity"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_symptom__severity_levels
+msgid "Severity Levels"
+msgstr ""
+
+#. module: health_base
+#: model:health.symptom,name:health_base.symptom_shortness_breath
+msgid "Shortness of Breath"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields.selection,name:health_base.selection__health_symptom__category__skin
+msgid "Skin & Dermatological"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_medication_interaction__source
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_patient_search
+msgid "Source"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_res_partner__source_details
+#: model:ir.model.fields,field_description:health_base.field_res_users__source_details
+msgid "Source Details"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_referral_source__name
+msgid "Source Name"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_referral_source__source_type
+msgid "Source Type"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.constraint,message:health_base.constraint_health_referral_source_name_unique
+msgid "Source name must be unique within the same source type!"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields.selection,name:health_base.selection__health_vietnamese_district__region__south
+msgid "Southern Vietnam"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_patient_category__special_requirements
+msgid "Special Requirements"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields.selection,name:health_base.selection__hr_employee__healthcare_role__specialist
+#: model:ir.model.fields.selection,name:health_base.selection__res_users__healthcare_role__specialist
+msgid "Specialist"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_medical_specialty__code
+msgid "Specialty Code"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_medical_specialty__name
+msgid "Specialty Name"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.constraint,message:health_base.constraint_health_medical_specialty_name_unique
+msgid "Specialty name must be unique!"
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_patient_form
+msgid "Specific source details"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_service_type__staff_count
+msgid "Staff Count Required"
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_service_type_form
+msgid "Staff Requirements"
+msgstr ""
+
+#. module: health_base
+#: model:health.booking.cancellation.reason,name:health_base.cancel_reason_provider_staffunavailable
+msgid "Staff unavailable"
+msgstr ""
+
+#. module: health_base
+#: model:health.patient.category,description:health_base.patient_category_regular
+msgid "Standard healthcare patient"
+msgstr ""
+
+#. module: health_base
+#: model:health.urgency.level,description:health_base.urgency_medium
+msgid "Standard medical appointment"
+msgstr ""
+
+#. module: health_base
+#. odoo-javascript
+#: code:addons/health_base/static/src/xml/address_autocomplete_widget.xml:0
+msgid "Start typing address (min 3 characters)..."
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,help:health_base.field_res_partner__address_search
+#: model:ir.model.fields,help:health_base.field_res_users__address_search
+msgid "Start typing to search addresses (minimum 3 characters)"
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_facility_search
+msgid "State"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_facility__state_id
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_facility_search
+msgid "State/Province"
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_facility_form
+msgid "Statistics"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_facility__facility_status
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_facility_search
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_patient_search
+msgid "Status"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,help:health_base.field_health_facility__activity_state
+msgid ""
+"Status based on activities\n"
+"Overdue: Due date is already passed\n"
+"Today: Activity date is today\n"
+"Planned: Future activities."
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_facility__street
+msgid "Street"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_facility__street2
+msgid "Street 2"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_res_partner__sub_alley_number
+#: model:ir.model.fields,field_description:health_base.field_res_users__sub_alley_number
+msgid "Sub-Alley Number"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields.selection,name:health_base.selection__hr_employee__healthcare_role__support
+#: model:ir.model.fields.selection,name:health_base.selection__res_users__healthcare_role__support
+msgid "Support Staff"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_vietnamese_district__supports_home_visits
+msgid "Supports Home Visits"
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_symptom_form
+msgid "Symptom"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_symptom__code
+msgid "Symptom Code"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_symptom__name
+msgid "Symptom Name"
+msgstr ""
+
+#. module: health_base
+#: model:ir.actions.act_window,name:health_base.action_health_symptom
+#: model:ir.ui.menu,name:health_base.menu_healthcare_symptoms
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_symptom_list
+msgid "Symptoms"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields.selection,name:health_base.selection__health_booking_cancellation_reason__reason_type__system
+msgid "System/Technical"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields.selection,name:health_base.selection__res_partner__ethnicity__san_chay
+msgid "Sán Chay"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,help:health_base.field_res_partner__apartment_number
+#: model:ir.model.fields,help:health_base.field_res_users__apartment_number
+msgid "Số căn hộ"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,help:health_base.field_res_partner__sub_alley_number
+#: model:ir.model.fields,help:health_base.field_res_users__sub_alley_number
+msgid "Số ngách"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,help:health_base.field_res_partner__alley_number
+#: model:ir.model.fields,help:health_base.field_res_users__alley_number
+msgid "Số ngõ"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,help:health_base.field_res_partner__house_number
+#: model:ir.model.fields,help:health_base.field_res_users__house_number
+msgid "Số nhà"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields.selection,name:health_base.selection__resource_calendar_leaves__holiday_type__tet
+msgid "TET Holiday"
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_healthcare_public_holiday_search
+msgid "TET Holidays"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_urgency_level__response_time_hours
+msgid "Target Response Time (Hours)"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields.selection,name:health_base.selection__hr_employee__healthcare_role__technician
+#: model:ir.model.fields.selection,name:health_base.selection__res_users__healthcare_role__technician
+msgid "Technician"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields.selection,name:health_base.selection__health_service_type__category__telemedicine
+msgid "Telemedicine"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields.selection,name:health_base.selection__health_facility__facility_type__telemedicine_center
+msgid "Telemedicine Center"
+msgstr ""
+
+#. module: health_base
+#: model:health.service.type,name:health_base.service_type_telemedicine
+msgid "Telemedicine Consultation"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields.selection,name:health_base.selection__health_facility__facility_status__closed_temporary
+msgid "Temporarily Closed"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields.selection,name:health_base.selection__health_protocol_question__question_type__text
+msgid "Text"
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.actions.act_window,help:health_base.action_health_audit_log
+msgid ""
+"The audit log tracks all changes to critical healthcare data including pricing rules,\n"
+"                patient records, invoices, and service orders."
+msgstr ""
+
+#. module: health_base
+#. odoo-python
+#: code:addons/health_base/models/health_facility.py:0
+msgid "The following facilities have licenses expiring within 30 days:\n"
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.actions.act_window,help:health_base.action_health_patient
+msgid ""
+"The system tracks client demographics, medical history, appointments, and "
+"billing."
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_medication__therapeutic_category
+msgid "Therapeutic Category"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields.selection,name:health_base.selection__hr_employee__healthcare_role__therapist
+#: model:ir.model.fields.selection,name:health_base.selection__res_users__healthcare_role__therapist
+msgid "Therapist"
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_audit_log_search
+msgid "This Month"
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_healthcare_public_holiday_search
+msgid "This Year"
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_patient_form
+msgid ""
+"This section will contain clinical notes, provider communications, and care "
+"coordination details."
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields.selection,name:health_base.selection__res_partner__ethnicity__thai
+msgid "Thái"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_facility__timezone
+msgid "Timezone"
+msgstr ""
+
+#. module: health_base
+#. odoo-javascript
+#: code:addons/health_base/static/src/xml/address_autocomplete_widget.xml:0
+msgid "Tip: Type street, city, or landmark name to search addresses"
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_audit_log_search
+msgid "Today"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_facility__total_beds
+msgid "Total Beds"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_facility__patient_count
+msgid "Total Patients"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_facility__total_staff_count
+msgid "Total Staff Count"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_res_partner__visit_count
+#: model:ir.model.fields,field_description:health_base.field_res_users__visit_count
+msgid "Total Visits"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.constraint,message:health_base.constraint_health_facility_positive_beds
+msgid "Total beds cannot be negative!"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_readmission_risk__transportation_issues
+msgid "Transportation Issues"
+msgstr ""
+
+#. module: health_base
+#: model:health.booking.cancellation.reason,name:health_base.cancel_reason_patient_transport
+msgid "Transportation issues"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_service_type__travel_time_minutes
+msgid "Travel Time (Minutes)"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_vietnamese_district__travel_zone
+msgid "Travel Zone"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields.selection,name:health_base.selection__health_protocol_intervention__intervention_type__treatment
+msgid "Treatment"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,help:health_base.field_resource_calendar_leaves__holiday_type
+msgid "Type of public holiday for pricing rules and scheduling"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,help:health_base.field_health_facility__activity_exception_decoration
+msgid "Type of the exception activity on record."
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields.selection,name:health_base.selection__res_partner__ethnicity__tay
+msgid "Tày"
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_patient_form
+msgid "Tên tiếng Việt"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,help:health_base.field_res_partner__building_name
+#: model:ir.model.fields,help:health_base.field_res_users__building_name
+msgid "Tên tòa nhà"
+msgstr ""
+
+#. module: health_base
+#. odoo-python
+#: code:addons/health_base/models/res_partner.py:0
+msgid ""
+"Unable to connect to geocoding service. Please check your internet "
+"connection."
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields.selection,name:health_base.selection__health_facility__facility_status__construction
+msgid "Under Construction"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields.selection,name:health_base.selection__health_facility__facility_status__maintenance
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_facility_search
+msgid "Under Maintenance"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields.selection,name:health_base.selection__health_medication_interaction__severity__unknown
+#: model:ir.model.fields.selection,name:health_base.selection__res_partner__blood_group__unknown
+msgid "Unknown"
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_healthcare_public_holiday_search
+msgid "Upcoming"
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_patient_search
+msgid "Upcoming Visits"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model,name:health_base.model_health_urgency_level
+#: model:ir.model.fields,field_description:health_base.field_health_urgency_level__name
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_urgency_level_form
+msgid "Urgency Level"
+msgstr ""
+
+#. module: health_base
+#: model:ir.actions.act_window,name:health_base.action_health_urgency_level
+#: model:ir.ui.menu,name:health_base.menu_healthcare_urgency_levels
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_urgency_level_list
+msgid "Urgency Levels"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.constraint,message:health_base.constraint_health_urgency_level_code_unique
+msgid "Urgency code must be unique!"
+msgstr ""
+
+#. module: health_base
+#: model:health.urgency.level,description:health_base.urgency_high
+msgid "Urgent medical condition requiring prompt attention"
+msgstr ""
+
+#. module: health_base
+#. odoo-javascript
+#: code:addons/health_base/static/src/xml/address_map_widget.xml:0
+msgid "Use address search above to set location"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model,name:health_base.model_res_users
+#: model:ir.model.fields,field_description:health_base.field_health_audit_log_view__user_id
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_audit_log_search
+msgid "User"
+msgstr "Người dùng"
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_patient_search
+msgid "VIP"
+msgstr ""
+
+#. module: health_base
+#: model:health.patient.category,name:health_base.patient_category_vip
+msgid "VIP Client"
+msgstr ""
+
+#. module: health_base
+#: model:health.patient.category,description:health_base.patient_category_vip
+msgid "VIP patient with premium services"
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_healthcare_public_holiday_form
+msgid "VND"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields.selection,name:health_base.selection__health_clinical_protocol__protocol_type__vietnam_moh
+msgid "Vietnam MOH"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_res_partner__vietnamese_address
+#: model:ir.model.fields,field_description:health_base.field_res_users__vietnamese_address
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_patient_form
+msgid "Vietnamese Address"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_medication__vietnamese_contraindications
+msgid "Vietnamese Contraindications"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_medication_interaction__vietnamese_description
+#: model:ir.model.fields,field_description:health_base.field_health_protocol_intervention__vietnamese_description
+msgid "Vietnamese Description"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model,name:health_base.model_health_vietnamese_district
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_vietnamese_district_form
+msgid "Vietnamese District"
+msgstr ""
+
+#. module: health_base
+#: model:ir.actions.act_window,name:health_base.action_health_vietnamese_district
+#: model:ir.ui.menu,name:health_base.menu_healthcare_vietnamese_districts
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_vietnamese_district_list
+msgid "Vietnamese Districts"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_fall_risk__vietnamese_environmental_hazards
+msgid "Vietnamese Environmental Hazards"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,help:health_base.field_res_partner__ethnicity
+#: model:ir.model.fields,help:health_base.field_res_users__ethnicity
+msgid "Vietnamese Ethnicity (from Excel CMF)"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_protocol_intervention__vietnamese_instructions
+msgid "Vietnamese Instructions"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_fall_risk__vietnamese_intervention_plan
+msgid "Vietnamese Intervention Plan"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_medication__vietnamese_name
+#: model:ir.model.fields,field_description:health_base.field_health_protocol_intervention__vietnamese_name
+#: model:ir.model.fields,field_description:health_base.field_res_partner__vietnamese_name
+#: model:ir.model.fields,field_description:health_base.field_res_users__vietnamese_name
+msgid "Vietnamese Name"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_protocol_question__vietnamese_options
+msgid "Vietnamese Options (one per line)"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_protocol_question__vietnamese_question
+msgid "Vietnamese Question"
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_patient_tree
+msgid "View Appointment History"
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_facility_form
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_facility_kanban
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_facility_list
+msgid "View Appointments"
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_facility_form
+msgid "View Clients"
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_facility_kanban
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_facility_list
+msgid "View Patients"
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_patient_form
+msgid "Visit Tracking"
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_patient_form
+msgid "Vital Information"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields.selection,name:health_base.selection__res_partner__source_type__walk_in
+msgid "Walk-in"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_res_partner__ward_commune
+#: model:ir.model.fields,field_description:health_base.field_res_users__ward_commune
+msgid "Ward/Commune"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields.selection,name:health_base.selection__health_fall_risk__gait_transfer__weak
+msgid "Weak (10 points)"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_facility__website
+#: model:ir.model.fields,field_description:health_base.field_health_insurance_provider__website
+#: model:ir.model.fields.selection,name:health_base.selection__health_referral_source__source_type__website
+#: model:ir.model.fields.selection,name:health_base.selection__res_partner__source_type__website
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_patient_search
+msgid "Website"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_facility__website_message_ids
+msgid "Website Messages"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,help:health_base.field_health_facility__website_message_ids
+msgid "Website communication history"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields.selection,name:health_base.selection__health_protocol_intervention__frequency__weekly
+msgid "Weekly"
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.actions.act_window,help:health_base.action_health_patient
+msgid "Welcome to VAFHS Client Management!"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_facility__wheelchair_accessible
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_facility_search
+msgid "Wheelchair Accessible"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields.selection,name:health_base.selection__res_partner__ethnicity__sedang
+msgid "Xơ Đăng"
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_healthcare_public_holiday_search
+msgid "Year"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields.selection,name:health_base.selection__health_protocol_question__question_type__yes_no
+msgid "Yes/No"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,field_description:health_base.field_health_facility__zip
+msgid "ZIP Code"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields.selection,name:health_base.selection__health_referral_source__source_type__zalo
+#: model:ir.model.fields.selection,name:health_base.selection__res_partner__source_type__zalo
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_patient_search
+msgid "Zalo"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields.selection,name:health_base.selection__health_vietnamese_district__travel_zone__zone_1
+msgid "Zone 1 (Inner City)"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields.selection,name:health_base.selection__health_vietnamese_district__travel_zone__zone_2
+msgid "Zone 2 (Suburban)"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields.selection,name:health_base.selection__health_vietnamese_district__travel_zone__zone_3
+msgid "Zone 3 (Outer Areas)"
+msgstr ""
+
+#. module: health_base
+#. odoo-javascript
+#: code:addons/health_base/static/src/xml/address_autocomplete_widget.xml:0
+msgid "address"
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_facility_kanban
+msgid "available"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,help:health_base.field_res_partner__primary_caregiver_id
+#: model:ir.model.fields,help:health_base.field_res_partner__primary_payer_id
+#: model:ir.model.fields,help:health_base.field_res_partner__primary_referrer_id
+#: model:ir.model.fields,help:health_base.field_res_users__primary_caregiver_id
+#: model:ir.model.fields,help:health_base.field_res_users__primary_payer_id
+#: model:ir.model.fields,help:health_base.field_res_users__primary_referrer_id
+msgid "client"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,help:health_base.field_health_facility__province_code
+msgid "client ID generation (e.g., 01=Hanoi, 02=HCM)"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,help:health_base.field_res_partner__patient_code
+#: model:ir.model.fields,help:health_base.field_res_users__patient_code
+msgid "client identifier (auto-generated)"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,help:health_base.field_res_partner__profession
+#: model:ir.model.fields,help:health_base.field_res_users__profession
+msgid "client occupation (Nghề nghiệp)"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,help:health_base.field_res_partner__is_patient
+#: model:ir.model.fields,help:health_base.field_res_users__is_patient
+msgid "client/client who receives healthcare services"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,help:health_base.field_res_partner__is_caregiver
+#: model:ir.model.fields,help:health_base.field_res_partner__is_referrer
+#: model:ir.model.fields,help:health_base.field_res_users__is_caregiver
+#: model:ir.model.fields,help:health_base.field_res_users__is_referrer
+msgid "clients (based on health.client.relation)"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,help:health_base.field_res_partner__caregiver_patient_count
+#: model:ir.model.fields,help:health_base.field_res_users__caregiver_patient_count
+msgid "clients I care for"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,help:health_base.field_res_partner__my_patients_as_referrer
+#: model:ir.model.fields,help:health_base.field_res_users__my_patients_as_referrer
+msgid "clients I have referred to healthcare services"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,help:health_base.field_res_partner__payer_patient_count
+#: model:ir.model.fields,help:health_base.field_res_users__payer_patient_count
+msgid "clients I pay for"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,help:health_base.field_res_partner__referrer_patient_count
+#: model:ir.model.fields,help:health_base.field_res_users__referrer_patient_count
+msgid "clients I referred"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,help:health_base.field_res_partner__my_patients_as_caregiver
+#: model:ir.model.fields,help:health_base.field_res_users__my_patients_as_caregiver
+msgid "clients for whom I am the primary caregiver"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,help:health_base.field_res_partner__my_patients_as_payer
+#: model:ir.model.fields,help:health_base.field_res_users__my_patients_as_payer
+msgid "clients for whom I am the primary payer"
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_service_type_form
+msgid "description"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields,help:health_base.field_health_clinical_protocol__name
+msgid "e.g., 'Blood Draw Protocol', 'Wound Care Protocol'"
+msgstr ""
+
+#. module: health_base
+#. odoo-javascript
+#: code:addons/health_base/static/src/xml/address_autocomplete_widget.xml:0
+msgid "es"
+msgstr ""
+
+#. module: health_base
+#. odoo-javascript
+#: code:addons/health_base/static/src/xml/address_autocomplete_widget.xml:0
+msgid "found"
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_facility_kanban
+msgid "km radius"
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_health_facility_kanban
+msgid "patients/day"
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_healthcare_public_holiday_form
+msgid "x multiplier):"
+msgstr ""
+
+#. module: health_base
+#: model:ir.model.fields.selection,name:health_base.selection__res_partner__ethnicity__ede
+msgid "Ê Đê"
+msgstr ""
+
+#. module: health_base
+#: model_terms:ir.ui.view,arch_db:health_base.view_healthcare_public_holiday_form
+msgid "× 100,000 ="
+msgstr ""
