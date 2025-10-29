@@ -47,14 +47,12 @@ class HealthFieldServiceOrderUnified(models.Model):
         help='Computed display name for views'
     )
     
-    @api.depends('name', 'patient_id', 'service_type', 'scheduled_datetime')
+    @api.depends('name', 'patient_id')
     def _compute_display_name(self):
-        """Compute rich display name for views"""
+        """Compute clean display name for views - format: Client Name (Booking ID)"""
         for record in self:
-            if record.patient_id and record.service_type:
-                service_name = dict(record._fields['service_type'].selection).get(record.service_type, '')
-                date_str = record.scheduled_datetime.strftime('%m/%d %H:%M') if record.scheduled_datetime else 'Unscheduled'
-                record.display_name = f"{record.name} - {record.patient_id.name} ({service_name}) - {date_str}"
+            if record.patient_id and record.name:
+                record.display_name = f"{record.patient_id.name} ({record.name})"
             else:
                 record.display_name = record.name or 'New Booking'
     
