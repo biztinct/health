@@ -41,8 +41,8 @@ class HealthFieldServiceOrderUnified(models.Model):
     )
     
     display_name = fields.Char(
-        'Display Name', 
-        compute='_compute_display_name', 
+        'Display Name',
+        compute='_compute_display_name',
         store=True,
         help='Computed display name for views'
     )
@@ -2146,13 +2146,11 @@ class HealthFieldServiceOrderUnified(models.Model):
         return self.env['health.fieldservice.stage'].search([('active', '=', True)], order='sequence')
     
     def name_get(self):
-        """Custom name display"""
+        """Custom name display - format: Client Name (Booking ID)"""
         result = []
         for record in self:
             if record.patient_id:
-                name = f"{record.name} - {record.patient_id.name}"
-                if record.scheduled_datetime:
-                    name += f" ({record.scheduled_datetime.strftime('%m/%d %H:%M')})"
+                name = f"{record.patient_id.name} ({record.name})"
             else:
                 name = record.name
             result.append((record.id, name))
