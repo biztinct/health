@@ -114,15 +114,18 @@
                                     <field name="apartment_number"/>
                                     <field name="building_name"/>
                                     <field name="zip" string="Postal Code"/>
-                                    <field name="vietnamese_address" readonly="1" string="Vietnamese Address"/>
 
-                                    <!-- Hidden standard Odoo fields -->
-                                    <field name="country_id" invisible="1"/>
+                                    <!-- Standard Address Fields (for geocoding) -->
+                                    <field name="street" placeholder="Street name / Main road"/>
+                                    <field name="city" placeholder="District / City" required="1"/>
+                                    <field name="state_id" string="Province" placeholder="Select province" options="{'no_create': True}" required="1"/>
+                                    <field name="country_id" string="Country" options="{'no_create': True}"/>
+
+                                    <!-- Auto-computed Vietnamese Address -->
+                                    <field name="vietnamese_address" readonly="1" string="Full Vietnamese Address" widget="text"/>
+
+                                    <!-- Hidden fields for geocoding -->
                                     <field name="address_search" invisible="1"/>
-                                    <field name="street" invisible="1"/>
-                                    <field name="street2" invisible="1"/>
-                                    <field name="city" invisible="1"/>
-                                    <field name="state_id" invisible="1"/>
                                     <field name="partner_latitude" invisible="1"/>
                                     <field name="partner_longitude" invisible="1"/>
                                     <field name="date_localization" invisible="1"/>
@@ -414,6 +417,7 @@
             'search_default_active_patients': 1,
             'default_is_patient': True,
             'default_customer_rank': 1,
+            'default_country_id': 241,
             'default_patient_status': 'new',
             'create': True,
             'edit': True,

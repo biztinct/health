@@ -397,11 +397,36 @@ class ResPartner(models.Model):
                 partner.geo_coordinates_display = "Not geolocated"
 
     def write(self, vals):
-        """Override write to auto-update date_localization when coordinates change"""
+        """Override write to auto-update date_localization and auto-geocode on address changes"""
         # Auto-set date_localization when coordinates are updated
         if ('partner_latitude' in vals or 'partner_longitude' in vals) and 'date_localization' not in vals:
             vals['date_localization'] = fields.Date.today()
-        return super(ResPartner, self).write(vals)
+
+        # Auto-geocode when Vietnamese address fields change
+        address_fields = [
+            'house_number', 'sub_alley_number', 'alley_number', 'street', 'street2',
+            'ward_commune', 'city', 'state_id', 'country_id', 'named_area',
+            'building_name', 'apartment_number', 'province_code'
+        ]
+
+        # Check if any address field was updated
+        address_changed = any(field in vals for field in address_fields)
+
+        # Execute the write first
+        result = super(ResPartner, self).write(vals)
+
+        # Auto-geocode after write if address changed
+        if address_changed:
+            for partner in self:
+                # Only auto-geocode if patient and has sufficient address info
+                if partner.is_patient and (partner.street or partner.city or partner.ward_commune):
+                    try:
+                        partner._auto_geocode_vietnamese_address()
+                    except Exception as e:
+                        # Log error but don't block the save
+                        _logger.warning(f"Auto-geocoding failed for partner {partner.id}: {e}")
+
+        return result
 
     def _compute_visit_count(self):
         """Compute total FSO bookings for patients"""
@@ -753,6 +778,103 @@ class ResPartner(models.Model):
             except Exception as e:
                 _logger.error(f"Geocoding error: {e}")
                 raise UserError(_('Geocoding failed: %s') % str(e))
+
+    def _auto_geocode_vietnamese_address(self):
+        """
+        Automatically geocode address using Vietnamese address fields.
+        Called automatically when address fields are updated.
+        Uses Photon API silently in background - no user notifications.
+        """
+        self.ensure_one()
+
+        # Build Vietnamese-style address query for better geocoding results
+        address_parts = []
+
+        # Start with house/street level details
+        street_parts = []
+        if self.house_number:
+            street_parts.append(self.house_number)
+        if self.alley_number:
+            street_parts.append(f"Ngõ {self.alley_number}")
+        if self.sub_alley_number:
+            street_parts.append(f"Ngách {self.sub_alley_number}")
+        if self.street:
+            street_parts.append(self.street)
+
+        if street_parts:
+            address_parts.append(' '.join(street_parts))
+
+        # Add ward/commune (important for Vietnam geocoding)
+        if self.ward_commune:
+            address_parts.append(self.ward_commune)
+
+        # Add city/district
+        if self.city:
+            address_parts.append(self.city)
+
+        # Add state/province
+        if self.state_id:
+            address_parts.append(self.state_id.name)
+
+        # Always add country for better results
+        if self.country_id:
+            address_parts.append(self.country_id.name)
+        else:
+            address_parts.append('Vietnam')  # Default to Vietnam
+
+        address = ', '.join(address_parts)
+
+        if not address or len(address) < 5:
+            _logger.debug(f"Address too short for geocoding: {address}")
+            return False
+
+        try:
+            # Call Photon API
+            url = 'https://photon.komoot.io/api/'
+            params = {
+                'q': address,
+                'limit': 1
+            }
+
+            # Add Vietnam center bias for better results
+            if not self.country_id or self.country_id.code.lower() == 'vn':
+                params['lat'] = 16.0
+                params['lon'] = 106.0
+
+            _logger.info(f"Auto-geocoding address for partner {self.id}: {address}")
+            response = requests.get(url, params=params, timeout=5)
+
+            if response.status_code == 200:
+                data = response.json()
+
+                if data.get('features') and len(data['features']) > 0:
+                    # Extract coordinates
+                    coords = data['features'][0]['geometry']['coordinates']
+                    longitude = coords[0]
+                    latitude = coords[1]
+
+                    # Update coordinates silently (use write to avoid recursion)
+                    super(ResPartner, self).write({
+                        'partner_longitude': longitude,
+                        'partner_latitude': latitude,
+                        'date_localization': fields.Date.today()
+                    })
+
+                    _logger.info(f"Auto-geocoded successfully: lat={latitude}, lon={longitude}")
+                    return True
+                else:
+                    _logger.debug(f"No geocoding results found for: {address}")
+                    return False
+            else:
+                _logger.warning(f"Geocoding API returned status {response.status_code}")
+                return False
+
+        except requests.RequestException as e:
+            _logger.warning(f"Auto-geocoding network error: {e}")
+            return False
+        except Exception as e:
+            _logger.warning(f"Auto-geocoding failed: {e}")
+            return False
 
     @api.model
     def photon_address_search(self, query, country_code=None, limit=10):
