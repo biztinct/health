@@ -74,10 +74,6 @@
                     </group>
                 </group>
                 <group>
-                    <field name="patient_contacted"/>
-                    <field name="staff_notified"/>
-                </group>
-                <group>
                     <field name="confirmation_notes" placeholder="Any special instructions or notes for this booking confirmation..."/>
                 </group>
                 <footer>

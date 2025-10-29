@@ -71,9 +71,6 @@ class HealthFSOConfirmBookingWizard(models.TransientModel):
         """Confirm booking and update FSO state"""
         self.ensure_one()
 
-        if not self.patient_contacted:
-            raise UserError(_('Please confirm that the patient has been contacted before confirming the booking.'))
-
         # Update FSO state to confirmed
         if self.fso_id.state == 'draft':
             self.fso_id.write({
@@ -82,10 +79,7 @@ class HealthFSOConfirmBookingWizard(models.TransientModel):
 
         # Post message to chatter
         self.fso_id.message_post(
-            body=_('Booking confirmed. Patient contacted: %s, Staff notified: %s') % (
-                'Yes' if self.patient_contacted else 'No',
-                'Yes' if self.staff_notified else 'No'
-            ),
+            body=_('Booking confirmed.'),
             subject='Booking Confirmed',
             message_type='notification'
         )
