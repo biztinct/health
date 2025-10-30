@@ -100,12 +100,6 @@
         </field>
     </record>
 
-    <!-- Menu under Configuration (Admin/Owner only) -->
-    <menuitem id="menu_health_audit_log"
-              name="Audit Log"
-              parent="menu_healthcare_lookups"
-              action="action_health_audit_log"
-              sequence="95"
-              groups="group_healthcare_admin,group_healthcare_owner"/>
+    <!-- Audit Log menu moved to top-level in health_menus.xml -->
 
 </odoo>

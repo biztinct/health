@@ -2,11 +2,11 @@
 <odoo>
 
     <!-- Healthcare CRM Menu under main Healthcare menu -->
-    <menuitem 
+    <menuitem
         id="menu_healthcare_crm_root"
         name="CRM"
         parent="health_base.menu_healthcare_root"
-        sequence="20"
+        sequence="5"
         groups="group_health_crm_user"/>
 
     <!-- Leads (formerly CRM Contacts) -->

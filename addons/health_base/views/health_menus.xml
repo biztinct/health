@@ -72,8 +72,14 @@
               action="action_health_facility" sequence="10"
               groups="group_healthcare_nurse,group_healthcare_head_nurse,group_healthcare_operations_manager,group_healthcare_manager,group_healthcare_admin,group_healthcare_owner"/>
 
+    <!-- Audit Log Menu -->
+    <menuitem id="menu_healthcare_audit_log_main" name="Audit Log"
+              parent="menu_healthcare_root" sequence="35"
+              action="action_health_audit_log"
+              groups="group_healthcare_admin,group_healthcare_owner"/>
+
     <!-- Configuration & Lookups Menu -->
-    <menuitem id="menu_healthcare_lookups" name="Configuration" 
+    <menuitem id="menu_healthcare_lookups" name="Configuration"
               parent="menu_healthcare_root" sequence="40"
               groups="group_healthcare_base,group_healthcare_receptionist,group_healthcare_nurse,group_healthcare_doctor,group_healthcare_manager,group_healthcare_admin,group_healthcare_owner"/>
 

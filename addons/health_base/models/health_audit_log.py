@@ -31,7 +31,16 @@ class HealthAuditLogView(models.Model):
                 SELECT
                     mtv.id,
                     mm.date,
-                    mm.author_id as user_id,
+                    COALESCE(
+                        -- Prefer the author_id from mail_message if it's not a system user
+                        CASE WHEN mm.author_id != (
+                            SELECT id FROM res_users WHERE login = 'Default User Template' LIMIT 1
+                        ) THEN mm.author_id
+                        -- Otherwise fall back to the message's actual user (create_uid)
+                        ELSE mm.create_uid
+                        END,
+                        mm.author_id
+                    ) as user_id,
                     mm.model,
                     COALESCE(im.name->>'en_US', mm.model) as model_name,
                     mm.res_id,

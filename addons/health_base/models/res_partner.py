@@ -402,7 +402,7 @@ class ResPartner(models.Model):
         if ('partner_latitude' in vals or 'partner_longitude' in vals) and 'date_localization' not in vals:
             vals['date_localization'] = fields.Date.today()
 
-        # Auto-geocode when Vietnamese address fields change
+        # Auto-geocode BEFORE write when Vietnamese address fields change
         address_fields = [
             'house_number', 'sub_alley_number', 'alley_number', 'street', 'street2',
             'ward_commune', 'city', 'state_id', 'country_id', 'named_area',
@@ -412,20 +412,33 @@ class ResPartner(models.Model):
         # Check if any address field was updated
         address_changed = any(field in vals for field in address_fields)
 
-        # Execute the write first
-        result = super(ResPartner, self).write(vals)
-
-        # Auto-geocode after write if address changed
+        # Pre-geocode BEFORE the main write so coordinates are included in the response
         if address_changed:
+            # Process each partner individually with its own vals dict copy
             for partner in self:
                 # Only auto-geocode if patient and has sufficient address info
-                if partner.is_patient and (partner.street or partner.city or partner.ward_commune):
-                    try:
-                        partner._auto_geocode_vietnamese_address()
-                    except Exception as e:
-                        # Log error but don't block the save
-                        _logger.warning(f"Auto-geocoding failed for partner {partner.id}: {e}")
+                if partner.is_patient:
+                    # Need to check with updated values
+                    street = vals.get('street', partner.street)
+                    city = vals.get('city', partner.city)
+                    ward_commune = vals.get('ward_commune', partner.ward_commune)
 
+                    if street or city or ward_commune:
+                        try:
+                            # Get coordinates synchronously BEFORE write
+                            coords = partner._get_geocode_coordinates_sync(vals)
+                            if coords:
+                                # Add coordinates to vals so they're saved in one write
+                                vals['partner_latitude'] = coords['latitude']
+                                vals['partner_longitude'] = coords['longitude']
+                                vals['date_localization'] = fields.Date.today()
+                                _logger.info(f"Pre-geocoded for partner {partner.id}: lat={coords['latitude']}, lon={coords['longitude']}")
+                        except Exception as e:
+                            # Log error but don't block the save
+                            _logger.warning(f"Pre-geocoding failed for partner {partner.id}: {e}")
+
+        # Execute the write with coordinates already in vals
+        result = super(ResPartner, self).write(vals)
         return result
 
     def _compute_visit_count(self):
@@ -779,11 +792,126 @@ class ResPartner(models.Model):
                 _logger.error(f"Geocoding error: {e}")
                 raise UserError(_('Geocoding failed: %s') % str(e))
 
+    def _get_geocode_coordinates_sync(self, vals=None):
+        """
+        Synchronously get geocode coordinates for Vietnamese address.
+        Returns dict with latitude/longitude or None if geocoding fails.
+
+        Args:
+            vals: dict of values being written (to handle new values before they're saved)
+
+        Returns:
+            dict: {'latitude': float, 'longitude': float} or None
+        """
+        self.ensure_one()
+
+        # Merge current values with new values from vals
+        if vals is None:
+            vals = {}
+
+        # Build Vietnamese-style address query
+        address_parts = []
+
+        # Start with house/street level details
+        street_parts = []
+        house_number = vals.get('house_number', self.house_number)
+        alley_number = vals.get('alley_number', self.alley_number)
+        sub_alley_number = vals.get('sub_alley_number', self.sub_alley_number)
+        street = vals.get('street', self.street)
+
+        if house_number:
+            street_parts.append(house_number)
+        if alley_number:
+            street_parts.append(f"Ngõ {alley_number}")
+        if sub_alley_number:
+            street_parts.append(f"Ngách {sub_alley_number}")
+        if street:
+            street_parts.append(street)
+
+        if street_parts:
+            address_parts.append(' '.join(street_parts))
+
+        # Add ward/commune
+        ward_commune = vals.get('ward_commune', self.ward_commune)
+        if ward_commune:
+            address_parts.append(ward_commune)
+
+        # Add city/district
+        city = vals.get('city', self.city)
+        if city:
+            address_parts.append(city)
+
+        # Add state/province
+        state_id = vals.get('state_id', self.state_id.id if self.state_id else None)
+        if state_id:
+            state = self.env['res.country.state'].browse(state_id)
+            if state:
+                address_parts.append(state.name)
+
+        # Add country
+        country_id = vals.get('country_id', self.country_id.id if self.country_id else None)
+        if country_id:
+            country = self.env['res.country'].browse(country_id)
+            if country:
+                address_parts.append(country.name)
+        else:
+            address_parts.append('Vietnam')  # Default
+
+        address = ', '.join(address_parts)
+
+        if not address or len(address) < 5:
+            _logger.debug(f"Address too short for geocoding: {address}")
+            return None
+
+        try:
+            # Call Photon API
+            url = 'https://photon.komoot.io/api/'
+            params = {
+                'q': address,
+                'limit': 1
+            }
+
+            # Add Vietnam center bias
+            if not country_id or country_id == 241:  # Vietnam ID
+                params['lat'] = 16.0
+                params['lon'] = 106.0
+
+            _logger.info(f"Geocoding address synchronously: {address}")
+            response = requests.get(url, params=params, timeout=5)
+
+            if response.status_code == 200:
+                data = response.json()
+
+                if data.get('features') and len(data['features']) > 0:
+                    # Extract coordinates
+                    coords = data['features'][0]['geometry']['coordinates']
+                    longitude = coords[0]
+                    latitude = coords[1]
+
+                    _logger.info(f"Geocoded successfully: lat={latitude}, lon={longitude}")
+                    return {
+                        'latitude': latitude,
+                        'longitude': longitude
+                    }
+                else:
+                    _logger.debug(f"No geocoding results for: {address}")
+                    return None
+            else:
+                _logger.warning(f"Geocoding API returned status {response.status_code}")
+                return None
+
+        except requests.RequestException as e:
+            _logger.warning(f"Geocoding network error: {e}")
+            return None
+        except Exception as e:
+            _logger.warning(f"Geocoding failed: {e}")
+            return None
+
     def _auto_geocode_vietnamese_address(self):
         """
         Automatically geocode address using Vietnamese address fields.
-        Called automatically when address fields are updated.
-        Uses Photon API silently in background - no user notifications.
+        DEPRECATED: Use _get_geocode_coordinates_sync() instead.
+        Kept for backward compatibility with manual geocode button.
         """
         self.ensure_one()
 
@@ -853,8 +981,9 @@ class ResPartner(models.Model):
                     longitude = coords[0]
                     latitude = coords[1]
 
-                    # Update coordinates silently (use write to avoid recursion)
-                    super(ResPartner, self).write({
+                    # Update coordinates using normal write to trigger frontend notification
+                    # Safe from recursion since address_fields won't be in this vals dict
+                    self.write({
                         'partner_longitude': longitude,
                         'partner_latitude': latitude,
                         'date_localization': fields.Date.today()

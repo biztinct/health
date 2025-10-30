@@ -7,12 +7,14 @@ import { useService } from "@web/core/utils/hooks";
 /**
  * Viet Uc Dashboard Component
  *
- * Main dashboard with 5 modules:
+ * Main dashboard with 7 modules:
+ * - CRM (Customer Relationship Management)
  * - Client (Patient Management)
  * - Booking (Appointments)
- * - CRM
+ * - Staff (Staff Scheduling & Workload)
  * - Accounts (Billing & Invoicing)
  * - Configuration
+ * - Audit Log (System Audit Log)
  */
 class VietUcDashboard extends Component {
     setup() {
@@ -48,8 +50,30 @@ class VietUcDashboard extends Component {
             }, 100);
         });
 
-        // Main Viet Uc modules (5 items)
+        // Main Viet Uc modules (7 items)
         this.vietUcModules = [
+            {
+                id: "crm",
+                name: "CRM",
+                icon: "fa-handshake-o",
+                description: "Customer relationship management",
+                class: "module-crm",
+                type: "submenu",
+                submenus: [
+                    {
+                        name: "Leads",
+                        icon: "fa-star-o",
+                        action: "crm.crm_lead_all_leads",
+                        description: "Manage potential customers"
+                    },
+                    {
+                        name: "CRM Contacts",
+                        icon: "fa-address-card",
+                        action: "health_crm.action_healthcare_opportunities",
+                        description: "Track customer interactions"
+                    },
+                ],
+            },
             {
                 id: "client",
                 name: "Client",
@@ -111,28 +135,6 @@ class VietUcDashboard extends Component {
                         icon: "fa-user-md",
                         action: "health_fieldservice.action_healthcare_staff",
                         description: "Manage healthcare staff"
-                    },
-                ],
-            },
-            {
-                id: "crm",
-                name: "CRM",
-                icon: "fa-handshake-o",
-                description: "Customer relationship management",
-                class: "module-crm",
-                type: "submenu",
-                submenus: [
-                    {
-                        name: "Leads",
-                        icon: "fa-star-o",
-                        action: "crm.crm_lead_all_leads",
-                        description: "Manage potential customers"
-                    },
-                    {
-                        name: "CRM Contacts",
-                        icon: "fa-address-card",
-                        action: "health_crm.action_healthcare_opportunities",
-                        description: "Track customer interactions"
                     },
                 ],
             },
@@ -239,6 +241,15 @@ class VietUcDashboard extends Component {
                         description: "Configure service packages"
                     },
                 ],
+            },
+            {
+                id: "audit_log",
+                name: "Audit Log",
+                icon: "fa-history",
+                description: "System audit log and change tracking",
+                class: "module-audit",
+                action: "health_base.action_health_audit_log",
+                type: "direct_action", // Direct action, no submenu
             },
         ];
     }

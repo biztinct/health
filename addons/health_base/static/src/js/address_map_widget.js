@@ -1,6 +1,6 @@
 /** @odoo-module **/
 
-import { Component, onWillStart, onMounted, onWillUpdateProps, useRef } from "@odoo/owl";
+import { Component, onWillStart, onMounted, onWillUpdateProps, onWillUnmount, useRef } from "@odoo/owl";
 import { registry } from "@web/core/registry";
 import { loadJS } from "@web/core/assets";
 
@@ -22,6 +22,9 @@ export class AddressMapWidget extends Component {
         this.mapContainer = useRef("mapContainer");
         this.map = null;
         this.marker = null;
+        this.lastLat = null;
+        this.lastLon = null;
+        this.coordsJustChanged = false; // Flag to track if we just updated coordinates
 
         onWillStart(async () => {
             // Load Leaflet.js library from CDN (free, no API key needed)
@@ -38,11 +41,66 @@ export class AddressMapWidget extends Component {
         });
 
         onMounted(() => {
+            console.log("🗺️ Map widget mounted");
             this.initMap();
+            // Store initial coordinates
+            this.lastLat = parseFloat(this.props.record.data.partner_latitude) || null;
+            this.lastLon = parseFloat(this.props.record.data.partner_longitude) || null;
+            console.log("🗺️ Initial coords - Lat:", this.lastLat, "Lon:", this.lastLon);
+
+            // Use polling mechanism to detect coordinate changes from invisible form fields
+            // (Odoo doesn't trigger reactive updates for invisible fields)
+            this.coordinatePoller = setInterval(() => {
+                const currentLat = parseFloat(this.props.record.data.partner_latitude);
+                const currentLon = parseFloat(this.props.record.data.partner_longitude);
+
+                if (currentLat !== this.lastLat || currentLon !== this.lastLon) {
+                    console.log("🗺️ Coordinates changed:", currentLat, currentLon);
+
+                    if (!isNaN(currentLat) && !isNaN(currentLon)) {
+                        this.lastLat = currentLat;
+                        this.lastLon = currentLon;
+                        this.updateMapWithCoords(currentLat, currentLon);
+                    }
+                }
+            }, 500);
+
+            // Also try the onUpdate mechanism if available
+            if (this.props.record && this.props.record.onUpdate) {
+                this.props.record.onUpdate((changes) => {
+                    if (changes && (changes.partner_latitude !== undefined || changes.partner_longitude !== undefined)) {
+                        const newLat = parseFloat(this.props.record.data.partner_latitude);
+                        const newLon = parseFloat(this.props.record.data.partner_longitude);
+
+                        if ((newLat !== this.lastLat || newLon !== this.lastLon) && !isNaN(newLat) && !isNaN(newLon)) {
+                            console.log("🗺️ Coordinates changed (via onUpdate):", newLat, newLon);
+                            this.lastLat = newLat;
+                            this.lastLon = newLon;
+                            this.updateMapWithCoords(newLat, newLon);
+                        }
+                    }
+                });
+            }
         });
 
-        onWillUpdateProps(() => {
-            this.updateMap();
+        onWillUpdateProps((nextProps) => {
+            // Check if coordinates actually changed
+            const newLat = parseFloat(nextProps.record.data.partner_latitude) || null;
+            const newLon = parseFloat(nextProps.record.data.partner_longitude) || null;
+
+            if (this.lastLat !== newLat || this.lastLon !== newLon) {
+                console.log("🗺️ Coordinates changed (via props):", newLat, newLon);
+                this.lastLat = newLat;
+                this.lastLon = newLon;
+                this.updateMapWithCoords(newLat, newLon);
+            }
+        });
+
+        onWillUnmount(() => {
+            console.log("🗺️ Cleaning up map widget");
+            if (this.coordinatePoller) {
+                clearInterval(this.coordinatePoller);
+            }
         });
     }
 
@@ -55,11 +113,12 @@ export class AddressMapWidget extends Component {
             return;
         }
 
-        const lat = this.props.record.data.partner_latitude || 16.0;
-        const lon = this.props.record.data.partner_longitude || 106.0;
-        const hasCoords = this.props.record.data.partner_latitude && this.props.record.data.partner_longitude;
+        const lat = parseFloat(this.props.record.data.partner_latitude) || 16.0;
+        const lon = parseFloat(this.props.record.data.partner_longitude) || 106.0;
+        const hasCoords = !!this.props.record.data.partner_latitude && !!this.props.record.data.partner_longitude;
 
         console.log("🗺️ Map Init - Lat:", lat, "Lon:", lon, "Has Coords:", hasCoords);
+        console.log("🗺️ Raw values - Lat:", this.props.record.data.partner_latitude, "Lon:", this.props.record.data.partner_longitude);
         console.log("🗺️ Record Data:", this.props.record.data);
 
         // Create map centered on coordinates
@@ -153,25 +212,94 @@ export class AddressMapWidget extends Component {
     }
 
     /**
-     * Update map when coordinates change
+     * Update map with specific coordinates
+     * Called when coordinates change
+     */
+    updateMapWithCoords(lat, lon) {
+        if (!this.map) {
+            console.warn("🗺️ Map not initialized");
+            return;
+        }
+
+        if (lat && lon && !isNaN(lat) && !isNaN(lon)) {
+            this.addMarker(lat, lon);
+
+            // Force map to refresh with animation
+            this.map.invalidateSize(true);
+
+            setTimeout(() => {
+                this.map.setView([lat, lon], 15, {
+                    animate: true,
+                    duration: 0.5
+                });
+
+                // Double-check: invalidate again after setView
+                setTimeout(() => {
+                    this.map.invalidateSize();
+                }, 600);
+            }, 100);
+
+            // Refresh record data to ensure UI is in sync
+            if (this.props.record && typeof this.props.record.load === 'function') {
+                this.props.record.load().catch(() => {
+                    // Silently ignore load errors
+                });
+            }
+        }
+    }
+
+    /**
+     * Update map when coordinates change (reads from current props)
      */
     updateMap() {
-        if (!this.map) return;
+        if (!this.map) {
+            console.warn("🗺️ Map not initialized, cannot update");
+            return;
+        }
 
-        const lat = this.props.record.data.partner_latitude;
-        const lon = this.props.record.data.partner_longitude;
+        const lat = parseFloat(this.props.record.data.partner_latitude);
+        const lon = parseFloat(this.props.record.data.partner_longitude);
 
-        if (lat && lon) {
+        console.log("🗺️ updateMap() called - Lat:", lat, "Lon:", lon);
+
+        if (lat && lon && !isNaN(lat) && !isNaN(lon)) {
+            console.log("🗺️ Valid coordinates found, adding/updating marker");
             this.addMarker(lat, lon);
+
+            // Force map to refresh its tiles and view
+            this.map.invalidateSize();
+            this.map.setView([lat, lon], 15, {
+                animate: true,
+                duration: 0.5
+            });
         } else {
+            console.log("🗺️ No coordinates, removing marker");
             // Remove marker if no coordinates
             if (this.marker) {
                 this.map.removeLayer(this.marker);
                 this.marker = null;
             }
-            // Reset to default view
+            // Reset to default view (Vietnam center)
             this.map.setView([16.0, 106.0], 6);
         }
+    }
+
+    /**
+     * Force refresh map from current record data
+     * This can be called after save operations to ensure map is in sync
+     */
+    refreshMap() {
+        console.log("🗺️ Force refresh called");
+        const currentLat = parseFloat(this.props.record.data.partner_latitude);
+        const currentLon = parseFloat(this.props.record.data.partner_longitude);
+
+        console.log("🗺️ Current coords in data:", currentLat, currentLon);
+        console.log("🗺️ Last stored coords:", this.lastLat, this.lastLon);
+
+        // Always update to ensure sync
+        this.lastLat = currentLat || null;
+        this.lastLon = currentLon || null;
+        this.updateMap();
     }
 
     /**
