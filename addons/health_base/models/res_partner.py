@@ -22,7 +22,7 @@ class ResPartner(models.Model):
     is_caregiver = fields.Boolean('Is Caregiver', default=False, help='This contact is a caregiver')
     is_payer = fields.Boolean('Is Payer', default=False, help='This contact is responsible for payments')
     is_referrer = fields.Boolean('Is Referrer', default=False, help='clients')
-    
+
     # Patient Healthcare ID
     patient_code = fields.Char(
         'Patient ID',
@@ -440,6 +440,100 @@ class ResPartner(models.Model):
         # Execute the write with coordinates already in vals
         result = super(ResPartner, self).write(vals)
         return result
+
+    def _message_track(self, tracked_fields, initial):
+        """
+        Override message tracking to hide field changes from chatter while keeping backend audit trail.
+
+        This method suppresses chatter messages for healthcare tracking fields, keeping them out of the
+        activity stream. However, all changes are still recorded in mail_tracking_value table for the
+        Audit Log (Consolidated Healthcare Audit Log view) to display.
+
+        This ensures:
+        - Clean chatter with only manual activities, files, and messages
+        - Complete audit trail in the Audit Log for compliance
+        - No loss of tracking data
+        """
+        # Call super to compute tracking values
+        # Returns tuple: (changes, tracking_value_ids) where:
+        # - changes: set of field names that changed
+        # - tracking_value_ids: list of ORM format dicts [0, 0, {'field': 'value', ...}]
+        changes, tracking_value_ids = super()._message_track(tracked_fields, initial)
+
+        # Define fields that should NOT appear in chatter but ARE tracked in audit log
+        # These are all healthcare-specific and administrative fields
+        hidden_from_chatter_fields = {
+            # Healthcare Classification
+            'is_patient',
+            'patient_code',
+
+            # Personal Details
+            'first_name',
+            'last_name',
+            'birth_date',
+            'gender',
+
+            # Patient Status
+            'patient_status',
+
+            # Source Tracking
+            'source_type',
+
+            # Address Fields (auto-geocoding updates)
+            'partner_latitude',
+            'partner_longitude',
+            'date_localization',
+            'street',
+            'street2',
+            'city',
+            'state_id',
+            'country_id',
+            'zip',
+            'ward_commune',
+            'house_number',
+            'alley_number',
+            'sub_alley_number',
+            'named_area',
+            'building_name',
+            'apartment_number',
+            'province_code',
+            'vietnamese_address',
+
+            # Other administrative fields
+            'geo_coordinates_display',
+        }
+
+        # Filter tracking_value_ids to exclude hidden fields
+        # tracking_value_ids is a list of ORM format dicts: [0, 0, {'field': 'field_name', ...}]
+        filtered_tracking_value_ids = []
+        hidden_count = 0
+
+        for tracking_value_dict in tracking_value_ids:
+            # ORM format: [0, 0, {'field': 'field_name', 'field_desc': '...', ...}]
+            if isinstance(tracking_value_dict, (list, tuple)) and len(tracking_value_dict) >= 3:
+                tracking_dict = tracking_value_dict[2]  # Get the actual dict
+                if isinstance(tracking_dict, dict):
+                    # The 'field' key contains the field name
+                    field_name = tracking_dict.get('field')
+                    if field_name and field_name in hidden_from_chatter_fields:
+                        hidden_count += 1
+                        continue  # Skip this one - don't add to filtered list
+                # If we got here, this field should be shown in chatter
+                filtered_tracking_value_ids.append(tracking_value_dict)
+            else:
+                # Not sure about format, include it to be safe
+                filtered_tracking_value_ids.append(tracking_value_dict)
+
+        # Also filter the changes set to match
+        filtered_changes = {f for f in changes if f not in hidden_from_chatter_fields}
+
+        _logger.debug(
+            f"Message tracking filtered: {len(changes)} total changes, "
+            f"{len(filtered_changes)} field changes shown in chatter, "
+            f"{len(changes) - len(filtered_changes)} hidden from chatter"
+        )
+
+        return filtered_changes, filtered_tracking_value_ids
 
     def _compute_visit_count(self):
         """Compute total FSO bookings for patients"""
