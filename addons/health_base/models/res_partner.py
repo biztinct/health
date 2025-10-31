@@ -4,6 +4,7 @@ from datetime import date
 import re
 import requests
 import logging
+import copy
 
 _logger = logging.getLogger(__name__)
 
@@ -441,99 +442,199 @@ class ResPartner(models.Model):
         result = super(ResPartner, self).write(vals)
         return result
 
-    def _message_track(self, tracked_fields, initial):
+    def _message_track(self, fields_iter, initial_values_dict):
         """
-        Override message tracking to hide field changes from chatter while keeping backend audit trail.
+        Override _message_track to create tracking for ALL fields (for Audit Log) but filter
+        what's displayed in chatter messages.
 
-        This method suppresses chatter messages for healthcare tracking fields, keeping them out of the
-        activity stream. However, all changes are still recorded in mail_tracking_value table for the
-        Audit Log (Consolidated Healthcare Audit Log view) to display.
-
-        This ensures:
-        - Clean chatter with only manual activities, files, and messages
-        - Complete audit trail in the Audit Log for compliance
-        - No loss of tracking data
+        Key insight: We must call parent with ALL fields to ensure tracking data is created,
+        then filter the messages that get posted.
         """
-        # Call super to compute tracking values
-        # Returns tuple: (changes, tracking_value_ids) where:
-        # - changes: set of field names that changed
-        # - tracking_value_ids: list of ORM format dicts [0, 0, {'field': 'value', ...}]
-        changes, tracking_value_ids = super()._message_track(tracked_fields, initial)
+        _logger.info(f"=== _message_track called ===")
 
-        # Define fields that should NOT appear in chatter but ARE tracked in audit log
-        # These are all healthcare-specific and administrative fields
         hidden_from_chatter_fields = {
-            # Healthcare Classification
-            'is_patient',
-            'patient_code',
-
-            # Personal Details
-            'first_name',
-            'last_name',
-            'birth_date',
-            'gender',
-
-            # Patient Status
-            'patient_status',
-
-            # Source Tracking
-            'source_type',
-
-            # Address Fields (auto-geocoding updates)
-            'partner_latitude',
-            'partner_longitude',
-            'date_localization',
-            'street',
-            'street2',
-            'city',
-            'state_id',
-            'country_id',
-            'zip',
-            'ward_commune',
-            'house_number',
-            'alley_number',
-            'sub_alley_number',
-            'named_area',
-            'building_name',
-            'apartment_number',
-            'province_code',
-            'vietnamese_address',
-
-            # Other administrative fields
+            'is_patient', 'patient_code', 'first_name', 'last_name', 'birth_date', 'gender',
+            'patient_status', 'source_type', 'partner_latitude', 'partner_longitude',
+            'date_localization', 'street', 'street2', 'city', 'state_id', 'country_id', 'zip',
+            'ward_commune', 'house_number', 'alley_number', 'sub_alley_number', 'named_area',
+            'building_name', 'apartment_number', 'province_code', 'vietnamese_address',
             'geo_coordinates_display',
         }
 
-        # Filter tracking_value_ids to exclude hidden fields
-        # tracking_value_ids is a list of ORM format dicts: [0, 0, {'field': 'field_name', ...}]
-        filtered_tracking_value_ids = []
-        hidden_count = 0
+        _logger.info(f"Original fields: {len(list(fields_iter))}")
 
-        for tracking_value_dict in tracking_value_ids:
-            # ORM format: [0, 0, {'field': 'field_name', 'field_desc': '...', ...}]
-            if isinstance(tracking_value_dict, (list, tuple)) and len(tracking_value_dict) >= 3:
-                tracking_dict = tracking_value_dict[2]  # Get the actual dict
+        # Call parent with ALL fields so tracking data is created for Audit Log
+        # The parent will create tracking data AND try to post messages
+        # But we have message_post() override to filter those messages
+        tracking = super()._message_track(fields_iter, initial_values_dict)
+
+        return tracking
+
+    def _filter_tracking_value_ids(self, tracking_value_ids):
+        """
+        Helper method to filter tracking_value_ids based on hidden fields.
+
+        Shared by both message_post() and _message_log() to ensure consistent filtering.
+        """
+        hidden_from_chatter_fields = {
+            'is_patient', 'patient_code', 'first_name', 'last_name', 'birth_date', 'gender',
+            'patient_status', 'source_type', 'partner_latitude', 'partner_longitude',
+            'date_localization', 'street', 'street2', 'city', 'state_id', 'country_id', 'zip',
+            'ward_commune', 'house_number', 'alley_number', 'sub_alley_number', 'named_area',
+            'building_name', 'apartment_number', 'province_code', 'vietnamese_address',
+            'geo_coordinates_display',
+        }
+
+        filtered_tracking = []
+        for tracking_value in tracking_value_ids:
+            should_include = True
+            if isinstance(tracking_value, (list, tuple)) and len(tracking_value) >= 3:
+                tracking_dict = tracking_value[2]
                 if isinstance(tracking_dict, dict):
-                    # The 'field' key contains the field name
-                    field_name = tracking_dict.get('field')
-                    if field_name and field_name in hidden_from_chatter_fields:
-                        hidden_count += 1
-                        continue  # Skip this one - don't add to filtered list
-                # If we got here, this field should be shown in chatter
-                filtered_tracking_value_ids.append(tracking_value_dict)
+                    field_id = tracking_dict.get('field_id')
+                    if field_id:
+                        try:
+                            field_record = self.env['ir.model.fields'].browse(field_id)
+                            field_name = field_record.name if field_record.exists() else None
+                            if field_name and field_name in hidden_from_chatter_fields:
+                                _logger.info(f"  Filtering out tracking for field: {field_name}")
+                                should_include = False
+                        except Exception as e:
+                            _logger.warning(f"  Could not look up field_id {field_id}: {e}")
+
+            if should_include:
+                filtered_tracking.append(tracking_value)
+
+        return filtered_tracking
+
+    def message_post(self, **kwargs):
+        """
+        Override message_post to filter tracking_value_ids at the point of posting.
+
+        This catches tracking messages from _message_track() before they're displayed.
+        """
+        if 'tracking_value_ids' in kwargs and kwargs['tracking_value_ids']:
+            _logger.info(f"=== message_post called with tracking_value_ids ===")
+            _logger.info(f"Original tracking_value_ids count: {len(kwargs['tracking_value_ids'])}")
+
+            filtered_tracking = self._filter_tracking_value_ids(kwargs['tracking_value_ids'])
+            _logger.info(f"Filtered tracking_value_ids: {len(filtered_tracking)} kept")
+
+            if filtered_tracking:
+                kwargs['tracking_value_ids'] = filtered_tracking
             else:
-                # Not sure about format, include it to be safe
-                filtered_tracking_value_ids.append(tracking_value_dict)
+                # Remove tracking_value_ids if none remain
+                kwargs.pop('tracking_value_ids', None)
+                _logger.info(f"All tracking values filtered out, removing tracking_value_ids key")
 
-        # Also filter the changes set to match
-        filtered_changes = {f for f in changes if f not in hidden_from_chatter_fields}
+        return super().message_post(**kwargs)
 
-        _logger.debug(
-            f"Message tracking filtered: {len(changes)} total changes, "
-            f"{len(filtered_changes)} field changes shown in chatter, "
-            f"{len(changes) - len(filtered_changes)} hidden from chatter"
-        )
+    def _message_log(self, **kwargs):
+        """
+        Override _message_log to hide tracking messages for sensitive fields from chatter.
 
-        return filtered_changes, filtered_tracking_value_ids
+        Strategy:
+        1. Separate hidden and visible tracking values based on field names
+        2. Post message with ONLY visible tracking values (for clean chatter)
+        3. Create tracking records for hidden fields WITHOUT attaching to any message
+
+        This ensures:
+        - Chatter displays only non-sensitive field changes
+        - Audit Log has complete tracking data (via mail.tracking.value records)
+        - NO empty/blank messages appear in chatter
+        """
+        hidden_from_chatter_fields = {
+            'is_patient', 'patient_code', 'first_name', 'last_name', 'birth_date', 'gender',
+            'patient_status', 'source_type', 'partner_latitude', 'partner_longitude',
+            'date_localization', 'street', 'street2', 'city', 'state_id', 'country_id', 'zip',
+            'ward_commune', 'house_number', 'alley_number', 'sub_alley_number', 'named_area',
+            'building_name', 'apartment_number', 'province_code', 'vietnamese_address',
+            'geo_coordinates_display',
+        }
+
+        original_tracking_ids = kwargs.get('tracking_value_ids', [])
+        base_kwargs = dict(kwargs)
+        if original_tracking_ids:
+            _logger.info(f"=== _message_log called with {len(original_tracking_ids)} tracking values ===")
+
+            # Separate hidden and visible tracking values
+            visible_tracking = []
+            hidden_tracking = []
+
+            for tracking_value in original_tracking_ids:
+                is_hidden = False
+                field_name = None
+
+                # Try to extract field name from tracking value
+                if isinstance(tracking_value, (list, tuple)) and len(tracking_value) >= 3:
+                    tracking_dict = tracking_value[2]
+                    if isinstance(tracking_dict, dict):
+                        field_id = tracking_dict.get('field_id')
+
+                        # Try to get field name from field_id
+                        if field_id:
+                            try:
+                                field_record = self.env['ir.model.fields'].browse(field_id)
+                                if field_record.exists():
+                                    field_name = field_record.name
+                                    _logger.info(f"  Field lookup success: ID {field_id} = {field_name}")
+                            except Exception as e:
+                                _logger.warning(f"  Field lookup failed for ID {field_id}: {e}")
+
+                        # Check if field should be hidden
+                        if field_name and field_name in hidden_from_chatter_fields:
+                            is_hidden = True
+                            _logger.info(f"  → Hidden: {field_name}")
+                        elif not field_name:
+                            _logger.warning(f"  ⚠ Could not determine field name for ID {field_id}")
+
+                if is_hidden:
+                    hidden_tracking.append(tracking_value)
+                else:
+                    visible_tracking.append(tracking_value)
+
+            _logger.info(f"  Result: {len(visible_tracking)} visible, {len(hidden_tracking)} hidden")
+
+            # Post message with only visible tracking values
+            message = None
+            if visible_tracking:
+                visible_kwargs = dict(base_kwargs)
+                visible_commands = [copy.deepcopy(cmd) for cmd in visible_tracking]
+                for command in visible_commands:
+                    if isinstance(command, (list, tuple)) and len(command) >= 3 and command[0] == 0:
+                        command[2].pop('mail_message_id', None)
+                visible_kwargs['tracking_value_ids'] = visible_commands
+                message = super()._message_log(**visible_kwargs)
+                _logger.info(f"Posted visible message {message.id}")
+
+            if hidden_tracking:
+                _logger.info(f"Creating hidden tracking message for {len(hidden_tracking)} fields")
+                hidden_kwargs = dict(base_kwargs)
+                hidden_commands = [copy.deepcopy(cmd) for cmd in hidden_tracking]
+                for command in hidden_commands:
+                    if isinstance(command, (list, tuple)) and len(command) >= 3 and command[0] == 0:
+                        command[2].pop('mail_message_id', None)
+                hidden_kwargs['tracking_value_ids'] = hidden_commands
+                hidden_kwargs['message_type'] = 'user_notification'
+                hidden_kwargs['partner_ids'] = False
+                hidden_kwargs['attachment_ids'] = False
+                hidden_kwargs['body'] = hidden_kwargs.get('body') or '<p></p>'
+
+                hidden_message = super()._message_log(**hidden_kwargs)
+                hidden_message.sudo().write({
+                    'message_type': 'user_notification',
+                    'subtype_id': False,
+                    'is_internal': True,
+                    'body': hidden_message.body or '<p></p>',
+                })
+                _logger.info(f"Stored hidden tracking message {hidden_message.id}")
+                if not message:
+                    message = hidden_message
+
+            return message
+        else:
+            # No tracking values, just call parent
+            return super()._message_log(**kwargs)
 
     def _compute_visit_count(self):
         """Compute total FSO bookings for patients"""
