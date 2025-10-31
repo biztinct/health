@@ -6,6 +6,7 @@ from datetime import datetime, timedelta
 import json
 import pytz
 import logging
+import copy
 
 _logger = logging.getLogger(__name__)
 
@@ -25,7 +26,7 @@ class HealthFieldServiceOrderUnified(models.Model):
     _inherit = ['mail.thread', 'mail.activity.mixin', 'portal.mixin']
     _order = 'scheduled_datetime desc, priority desc, create_date desc'
     _rec_name = 'display_name'
-    
+
     # ============================================================================
     # CORE IDENTIFICATION & DISPLAY
     # ============================================================================
@@ -61,6 +62,135 @@ class HealthFieldServiceOrderUnified(models.Model):
         self.ensure_one()
         service_type_dict = dict(self._fields['service_type'].selection)
         return service_type_dict.get(self.service_type, self.service_type or 'Unknown Service')
+
+    # ============================================================================
+    # CHATTER TRACKING CONTROL
+    # ============================================================================
+
+    def _get_hidden_tracking_fields(self):
+        """Return field names whose tracking should be hidden from chatter."""
+        return {
+            name
+            for name, field in self._fields.items()
+            if getattr(field, 'tracking', False)
+        }
+
+    def _filter_tracking_value_ids(self, tracking_value_ids):
+        """Filter tracking commands to remove hidden fields."""
+        hidden_fields = self._get_hidden_tracking_fields()
+        if not tracking_value_ids or not hidden_fields:
+            return tracking_value_ids
+
+        filtered_tracking = []
+        for tracking_value in tracking_value_ids:
+            include = True
+            if isinstance(tracking_value, (list, tuple)) and len(tracking_value) >= 3:
+                tracking_dict = tracking_value[2]
+                if isinstance(tracking_dict, dict):
+                    field_id = tracking_dict.get('field_id')
+                    if field_id:
+                        try:
+                            field_record = self.env['ir.model.fields'].browse(field_id)
+                            field_name = field_record.name if field_record.exists() else None
+                            if field_name and field_name in hidden_fields:
+                                include = False
+                                _logger.info("FSO chatter filter -> hidden field: %s", field_name)
+                        except Exception as e:
+                            _logger.warning("FSO chatter filter could not load field %s: %s", field_id, e)
+            # Append command only if still included
+            if include:
+                filtered_tracking.append(tracking_value)
+
+        return filtered_tracking
+
+    def message_post(self, **kwargs):
+        """
+        Hide tracked value commands for sensitive fields before posting notes.
+        """
+        if kwargs.get('tracking_value_ids'):
+            filtered_tracking = self._filter_tracking_value_ids(kwargs['tracking_value_ids'])
+            _logger.info("FSO message_post filtered tracking: kept %s of %s",
+                         len(filtered_tracking), len(kwargs['tracking_value_ids']))
+            if filtered_tracking:
+                kwargs['tracking_value_ids'] = filtered_tracking
+            else:
+                kwargs.pop('tracking_value_ids', None)
+        return super().message_post(**kwargs)
+
+    def _message_log(self, **kwargs):
+        """
+        Ensure tracked values for hidden fields are stored for Audit Log but
+        excluded from chatter.
+        """
+        hidden_fields = self._get_hidden_tracking_fields()
+        original_tracking_ids = kwargs.get('tracking_value_ids', [])
+        base_kwargs = dict(kwargs)
+
+        if original_tracking_ids and hidden_fields:
+            _logger.info("FSO _message_log received %s tracking commands", len(original_tracking_ids))
+            visible_tracking = []
+            hidden_tracking = []
+
+            for tracking_value in original_tracking_ids:
+                is_hidden = False
+                field_name = None
+                if isinstance(tracking_value, (list, tuple)) and len(tracking_value) >= 3:
+                    tracking_dict = tracking_value[2]
+                    if isinstance(tracking_dict, dict):
+                        field_id = tracking_dict.get('field_id')
+                        if field_id:
+                            try:
+                                field_record = self.env['ir.model.fields'].browse(field_id)
+                                if field_record.exists():
+                                    field_name = field_record.name
+                            except Exception as e:
+                                _logger.warning("FSO _message_log field lookup failed for %s: %s", field_id, e)
+                        if field_name and field_name in hidden_fields:
+                            is_hidden = True
+                            _logger.info("FSO _message_log hiding field: %s", field_name)
+
+                if is_hidden:
+                    hidden_tracking.append(tracking_value)
+                else:
+                    visible_tracking.append(tracking_value)
+
+            message = None
+            if visible_tracking:
+                visible_kwargs = dict(base_kwargs)
+                visible_commands = [copy.deepcopy(cmd) for cmd in visible_tracking]
+                for command in visible_commands:
+                    if isinstance(command, (list, tuple)) and len(command) >= 3 and command[0] == 0:
+                        command[2].pop('mail_message_id', None)
+                visible_kwargs['tracking_value_ids'] = visible_commands
+                message = super()._message_log(**visible_kwargs)
+                _logger.info("FSO _message_log posted visible message %s", message.id)
+
+            if hidden_tracking:
+                hidden_kwargs = dict(base_kwargs)
+                hidden_commands = [copy.deepcopy(cmd) for cmd in hidden_tracking]
+                for command in hidden_commands:
+                    if isinstance(command, (list, tuple)) and len(command) >= 3 and command[0] == 0:
+                        command[2].pop('mail_message_id', None)
+                hidden_kwargs['tracking_value_ids'] = hidden_commands
+                hidden_kwargs['message_type'] = 'user_notification'
+                hidden_kwargs['partner_ids'] = False
+                hidden_kwargs['attachment_ids'] = False
+                hidden_kwargs['body'] = hidden_kwargs.get('body') or '<p></p>'
+
+                hidden_message = super()._message_log(**hidden_kwargs)
+                hidden_message.sudo().write({
+                    'message_type': 'user_notification',
+                    'subtype_id': False,
+                    'is_internal': True,
+                    'body': hidden_message.body or '<p></p>',
+                })
+                _logger.info("FSO _message_log stored hidden message %s", hidden_message.id)
+                if not message:
+                    message = hidden_message
+
+            return message
+
+        return super()._message_log(**kwargs)
     
     # ============================================================================
     # PATIENT & CUSTOMER INFORMATION (From Client Requirements)
@@ -2284,5 +2414,3 @@ class HealthFieldServiceOrderUnified(models.Model):
                 'booking_id': self.id,  # Pass booking context
             }
         }
-
-
