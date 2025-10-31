@@ -14,13 +14,13 @@
 
     <record id="stage_booked" model="health.fieldservice.stage">
         <field name="name">Booked</field>
-        <field name="description">Booking confirmed with quote</field>
+        <field name="description">Booking confirmed - quote is optional</field>
         <field name="sequence">15</field>
         <field name="state">confirmed</field>
         <field name="color">9</field>
         <field name="allow_edit" eval="True"/>
-        <field name="require_quote" eval="True"/>
-        <field name="require_quote_items" eval="True"/>
+        <field name="require_quote" eval="False"/>
+        <field name="require_quote_items" eval="False"/>
     </record>
 
     <record id="stage_assigned" model="health.fieldservice.stage">
