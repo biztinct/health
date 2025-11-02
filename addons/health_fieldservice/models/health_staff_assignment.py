@@ -485,15 +485,167 @@ class HealthStaffAssignment(models.Model):
         """Override to auto-populate FSO from context (for timeline view)"""
         defaults = super().default_get(fields_list)
 
+        _logger.info("=== DEFAULT_GET DEBUG START ===")
+        _logger.info("fso_id in fields_list: %s", 'fso_id' in fields_list)
+        _logger.info("defaults.get('fso_id'): %s", defaults.get('fso_id'))
+        _logger.info("Context keys: %s", list(self.env.context.keys()))
+
         # Check if fso_id should be populated from context
         if 'fso_id' in fields_list and not defaults.get('fso_id'):
-            # Try to get FSO from various context keys
-            fso_id = self.env.context.get('default_fso_id') or self.env.context.get('fso_context')
+            _logger.info("Attempting to populate fso_id...")
+
+            # Try to get FSO from various context keys (passed from action)
+            fso_id = self.env.context.get('default_fso_id') or self.env.context.get('fso_id') or self.env.context.get('fso_context')
+            _logger.info("fso_id from context: %s", fso_id)
+
+            # Fallback 1: Look for unassigned assignment (we create one in action_manual_assign_staff for timeline drag-drop)
+            if not fso_id:
+                _logger.info("Fallback 1: Searching for most recent unassigned assignment...")
+                unassigned_records = self.search([('staff_id', '=', False), ('fso_id', '!=', False)], order='create_date desc', limit=1)
+                _logger.info("Found %d unassigned assignments", len(unassigned_records))
+
+                if unassigned_records:
+                    unassigned = unassigned_records[0]
+                    fso_id = unassigned.fso_id.id
+                    _logger.info("✅ Found unassigned assignment: ID=%s, FSO ID=%s, FSO Name=%s", unassigned.id, fso_id, unassigned.fso_id.name)
+                else:
+                    _logger.info("No unassigned assignments found")
+
+            # Fallback 2: if FSO not in context, find booking using default_assignment_date from context
+            if not fso_id:
+                default_assignment_date = self.env.context.get('default_assignment_date')
+                _logger.info("Fallback 2: Using default_assignment_date from context: %s", default_assignment_date)
+
+                if default_assignment_date:
+                    from datetime import datetime as dt
+
+                    assignment_dt = default_assignment_date
+                    _logger.info("Raw assignment_dt type: %s, value: %s", type(assignment_dt).__name__, assignment_dt)
+
+                    # Convert string to datetime if needed (Odoo web framework may stringify context values)
+                    if isinstance(assignment_dt, str):
+                        _logger.info("Converting string to datetime: %s", assignment_dt)
+                        try:
+                            # Parse ISO format string: "2025-11-02 05:00:00"
+                            assignment_dt = dt.fromisoformat(assignment_dt.replace(' ', 'T'))
+                            _logger.info("Successfully converted to datetime: %s", assignment_dt)
+                        except Exception as e:
+                            _logger.error("Failed to parse datetime string: %s, error: %s", assignment_dt, e)
+                            assignment_dt = None
+
+                    # Extract date and time components (ignoring seconds)
+                    if assignment_dt and isinstance(assignment_dt, dt):
+                        target_date = assignment_dt.date()
+                        target_hour = assignment_dt.hour
+                        target_minute = assignment_dt.minute
+                        _logger.info("Extracted from datetime: date=%s, hour=%s, minute=%s", target_date, target_hour, target_minute)
+                    else:
+                        _logger.warning("Could not convert to datetime, skipping booking search")
+                        assignment_dt = None
+                        target_date = None
+                        target_hour = None
+                        target_minute = None
+
+                    if assignment_dt and target_date:
+                        _logger.info("Searching for booking with: date=%s, hour=%s, minute=%s", target_date, target_hour, target_minute)
+
+                        # Query bookings for a scheduled_datetime matching the context's assignment_date
+                        # Match on date and hour:minute only (ignore seconds)
+                        matching_bookings = self.env['health.fieldservice.order'].search(
+                            [('state', 'in', ['draft', 'confirmed', 'assigned', 'in_progress'])],
+                            order='scheduled_datetime desc',
+                            limit=20
+                        )
+
+                        _logger.info("Found %d candidate bookings to check", len(matching_bookings))
+
+                        for booking in matching_bookings:
+                            try:
+                                if booking.scheduled_datetime:
+                                    booking_dt = booking.scheduled_datetime
+                                    _logger.info("Booking %s (FSO-%s) scheduled_datetime: %s",
+                                               booking.id, booking.name, booking_dt)
+
+                                    booking_date = booking_dt.date()
+                                    booking_hour = booking_dt.hour
+                                    booking_minute = booking_dt.minute
+
+                                    _logger.info("Comparing: target=%s %02d:%02d vs booking=%s %02d:%02d",
+                                               target_date, target_hour, target_minute,
+                                               booking_date, booking_hour, booking_minute)
+
+                                    # Match on date, hour, and minute (ignore seconds)
+                                    if (booking_date == target_date and
+                                        booking_hour == target_hour and
+                                        booking_minute == target_minute):
+                                        fso_id = booking.id
+                                        _logger.info("✅ MATCH FOUND! FSO ID: %s", fso_id)
+                                        break
+                            except Exception as e:
+                                _logger.warning("Error checking booking %s: %s", booking.id, str(e))
+                                continue
+
+                        if not fso_id:
+                            _logger.warning("❌ No matching booking found for date=%s, hour=%s, minute=%s", target_date, target_hour, target_minute)
+                    else:
+                        _logger.warning("Could not extract date/time from assignment_dt")
+
             if fso_id:
                 defaults['fso_id'] = fso_id
-                _logger.info(f"Auto-populated fso_id={fso_id} from context for timeline view")
+                _logger.info("✅ Setting defaults['fso_id'] = %s", fso_id)
+            else:
+                _logger.info("⚠️ fso_id could not be determined from context or booking search")
 
+        _logger.info("=== DEFAULT_GET DEBUG END ===")
         return defaults
+
+    @api.onchange('assignment_date')
+    def _onchange_assignment_date(self):
+        """Auto-populate FSO when assignment_date is set (for timeline creation)"""
+        if self.assignment_date and not self.fso_id:
+            from datetime import datetime as dt
+
+            assignment_dt = self.assignment_date
+
+            # Convert string to datetime if needed
+            if isinstance(assignment_dt, str):
+                try:
+                    assignment_dt = dt.fromisoformat(assignment_dt.replace(' ', 'T'))
+                except Exception:
+                    return  # Skip if conversion fails
+
+            # Extract date and time components (ignoring seconds)
+            if assignment_dt and isinstance(assignment_dt, dt):
+                target_date = assignment_dt.date()
+                target_hour = assignment_dt.hour
+                target_minute = assignment_dt.minute
+            else:
+                return  # Skip if not a valid datetime
+
+            # Query bookings for a scheduled_datetime matching the assignment_date
+            # Match on date and hour:minute only (ignore seconds)
+            matching_bookings = self.env['health.fieldservice.order'].search(
+                [('state', 'in', ['draft', 'confirmed', 'assigned', 'in_progress'])],
+                order='scheduled_datetime desc',
+                limit=20
+            )
+
+            for booking in matching_bookings:
+                try:
+                    if booking.scheduled_datetime:
+                        booking_dt = booking.scheduled_datetime
+                        booking_date = booking_dt.date()
+                        booking_hour = booking_dt.hour
+                        booking_minute = booking_dt.minute
+
+                        # Match on date, hour, and minute (ignore seconds)
+                        if (booking_date == target_date and
+                            booking_hour == target_hour and
+                            booking_minute == target_minute):
+                            self.fso_id = booking.id
+                            break
+                except Exception:
+                    continue
 
     @api.model_create_multi
     def create(self, vals_list):
@@ -502,12 +654,11 @@ class HealthStaffAssignment(models.Model):
             if vals.get('name', _('New Assignment')) == _('New Assignment'):
                 vals['name'] = self.env['ir.sequence'].next_by_code('health.staff.assignment') or _('New Assignment')
 
-            #Auto-populate FSO from context if not in vals
+            # Auto-populate FSO from context if not in vals
             if not vals.get('fso_id'):
-                fso_id = self.env.context.get('default_fso_id') or self.env.context.get('fso_context')
+                fso_id = self.env.context.get('default_fso_id') or self.env.context.get('fso_context') or self.env.context.get('fso_id')
                 if fso_id:
                     vals['fso_id'] = fso_id
-                    _logger.info(f"Auto-populated fso_id={fso_id} in create() from context")
 
             # Auto-assign state if staff are provided during creation
             if vals.get('staff_id') and vals.get('state', 'draft') == 'draft':

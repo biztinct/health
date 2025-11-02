@@ -2349,7 +2349,8 @@ class HealthFieldServiceOrderUnified(models.Model):
             'initial_date': appointment_date,  # Focus timeline on appointment day
             'timeline_date': appointment_date,  # Additional hint for day view
             'timeline_view': 'day',  # Request DAY view (not week or month)
-            'fso_context': self.id,  # Remember which FSO opened this timeline
+            'fso_id': self.id,  # Pass booking ID to timeline for context filtering
+            'active_fso_id': self.id,  # Additional hint for active FSO context
         }
 
         return {

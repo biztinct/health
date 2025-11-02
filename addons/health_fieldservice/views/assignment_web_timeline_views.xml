@@ -16,7 +16,8 @@
                       create="true"
                       quick_create="false"
                       mode="day"
-                      stack="true">
+                      stack="true"
+                      context="{'default_fso_id': context.get('default_fso_id'), 'fso_id': context.get('fso_id'), 'active_fso_id': context.get('active_fso_id')}">
                 
                 <!-- Timeline Fields - fso_id listed first to ensure context works -->
                 <field name="fso_id"/>

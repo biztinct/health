@@ -67,9 +67,8 @@
 
                     <group>
                         <group string="Assignment Information" class="col-lg-6">
-                            <field name="fso_id" 
-                                   options="{'no_create': True, 'no_edit': True}"
-                                   required="1"/>
+                            <field name="fso_id"
+                                   options="{'no_create': True}"/>
                             <field name="assignment_date" required="1"/>
                             <field name="assignment_type"/>
                             <field name="assigned_by" readonly="1" groups="base.group_user"/>
