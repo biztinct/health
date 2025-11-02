@@ -8,6 +8,7 @@
         <field name="view_mode">timeline,list,form</field>
         <field name="view_id" ref="health_staff_assignment_timeline_view"/>
         <field name="target">current</field>
+        <field name="domain">[('state', '!=', 'template')]</field>
         <field name="context">{
             'default_assignment_date': context_today(),
             'timeline_default_group_by': 'staff_id',

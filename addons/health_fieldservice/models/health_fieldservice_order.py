@@ -2407,6 +2407,7 @@ class HealthFieldServiceOrderUnified(models.Model):
             'view_mode': 'timeline,list,form',
             'views': views if views else False,
             'target': 'current',
+            'domain': [('state', '!=', 'template')],  # Hide template assignments from view
             'context': ctx,
         }
     
