@@ -1164,9 +1164,34 @@ class HealthFieldServiceOrderUnified(models.Model):
                     self.urgency_charge = self.base_price * 0.25  # 25% surcharge
     
     # ============================================================================
+    # HELPER METHODS
+    # ============================================================================
+
+    def _get_assignment_type(self):
+        """Get assignment type based on service location and priority"""
+        assignment_type_map = {
+            'home': 'home_visit',
+            'clinic': 'clinic_visit',
+            'hospital': 'clinic_visit',
+            'online': 'consultation',
+            'nursing_home': 'home_visit',
+            'office': 'consultation',
+            'other': 'clinic_visit',
+        }
+
+        # Get base type from service location
+        assignment_type = assignment_type_map.get(self.service_location, 'clinic_visit')
+
+        # Override with emergency if priority is high
+        if self.priority in ['3', '4']:
+            assignment_type = 'emergency'
+
+        return assignment_type
+
+    # ============================================================================
     # CRUD METHODS & AUTOMATION
     # ============================================================================
-    
+
     @api.model_create_multi
     def create(self, vals_list):
         """Create FSO with auto-generated reference and default stage"""
@@ -1249,6 +1274,14 @@ class HealthFieldServiceOrderUnified(models.Model):
                     record.actual_end_datetime = fields.Datetime.now()
                 # Send completion notifications
                 record._send_completion_notifications()
+                # Delete the template assignment for this booking
+                template_assignment = self.env['health.staff.assignment'].search([
+                    ('state', '=', 'template'),
+                    ('fso_id', '=', record.id)
+                ])
+                if template_assignment:
+                    _logger.info("🗑️ DELETING TEMPLATE ASSIGNMENT for completed booking: %s (Template ID: %s)", record.name, template_assignment.id)
+                    template_assignment.unlink()
                 # Note: Invoice creation is now manual per Invoicing.md workflow
             
             elif new_state == 'closed':
@@ -2287,41 +2320,43 @@ class HealthFieldServiceOrderUnified(models.Model):
         return result
     
     def action_manual_assign_staff(self):
-        """Open timeline view for manual staff assignment - creates unassigned assignment if needed"""
+        """Open timeline view for manual staff assignment"""
         self.ensure_one()
 
-        # If no assignments exist, create an unassigned one for drag-drop
-        if not self.assignment_ids:
-            # Map service location to assignment type
-            assignment_type_map = {
-                'home': 'home_visit',
-                'clinic': 'clinic_visit',
-                'hospital': 'clinic_visit',
-                'online': 'consultation',
-                'nursing_home': 'home_visit',
-                'office': 'consultation',
-                'other': 'clinic_visit',
-            }
+        _logger.info("=" * 100)
+        _logger.info("📋 ACTION_STAFF_ASSIGNMENT TRIGGERED")
+        _logger.info("=" * 100)
+        _logger.info("Booking: FSO-%s (ID: %s)", self.name, self.id)
+        _logger.info("Patient: %s", self.patient_id.name if self.patient_id else "N/A")
+        _logger.info("Scheduled DateTime: %s", self.scheduled_datetime)
+        _logger.info("=" * 100)
 
-            # Determine assignment type from service location
-            assignment_type = assignment_type_map.get(self.service_location, 'clinic_visit')
+        # Check if template exists for this booking
+        existing_template = self.env['health.staff.assignment'].search([
+            ('state', '=', 'template'),
+            ('fso_id', '=', self.id)
+        ], limit=1)
 
-            # Override with emergency if priority is high
-            if self.priority in ['3', '4']:
-                assignment_type = 'emergency'
-
-            # Create unassigned assignment for drag-drop
-            self.env['health.staff.assignment'].create({
+        if not existing_template:
+            # Create new template for this booking
+            template = self.env['health.staff.assignment'].create({
                 'fso_id': self.id,
-                'staff_id': False,  # Unassigned - for drag-drop assignment in timeline
+                'staff_id': False,
                 'assignment_date': self.scheduled_datetime or fields.Datetime.now(),
                 'planned_start_time': self.scheduled_datetime,
                 'planned_end_time': self.estimated_end_datetime,
                 'assignment_status': 'assigned',
-                'state': 'draft',
-                'assignment_type': assignment_type,
+                'state': 'template',
+                'assignment_type': self._get_assignment_type(),
                 'priority': self.priority or '1',
             })
+            _logger.info("📌 CREATED NEW TEMPLATE ASSIGNMENT:")
+            _logger.info("   Template ID: %s", template.id)
+            _logger.info("   FSO ID: %s", self.id)
+            _logger.info("   Scheduled DateTime: %s", self.scheduled_datetime)
+        else:
+            _logger.info("📌 REUSING EXISTING TEMPLATE:")
+            _logger.info("   Template ID: %s", existing_template.id)
 
         # Open timeline view focused on appointment date with DAY view
         # Calculate the appointment day for timeline focus
@@ -2342,9 +2377,13 @@ class HealthFieldServiceOrderUnified(models.Model):
             views.append((form_view.id, 'form'))
 
         # Prepare context with FSO auto-population and DAY view focus
+        # Note: Timeline widget overwrites default_assignment_date, so we use multiple context keys
         ctx = {
             'default_fso_id': self.id,  # Auto-populate FSO when creating new assignments
+            'fso_id_from_booking': self.id,  # CRITICAL: Extra key to preserve FSO ID (timeline may strip other keys)
             'default_assignment_date': appointment_datetime,
+            'fso_scheduled_datetime': appointment_datetime,  # BACKUP: Original booking scheduled time (not overwritten by timeline clicks)
+            'timeline_fso_id': self.id,  # BACKUP: Another key for FSO (case timeline strips 'default_fso_id')
             'default_staff_id': False,  # Leave staff unassigned for drag-drop
             'initial_date': appointment_date,  # Focus timeline on appointment day
             'timeline_date': appointment_date,  # Additional hint for day view
@@ -2352,6 +2391,14 @@ class HealthFieldServiceOrderUnified(models.Model):
             'fso_id': self.id,  # Pass booking ID to timeline for context filtering
             'active_fso_id': self.id,  # Additional hint for active FSO context
         }
+
+        _logger.info("📤 CONTEXT BEING PASSED TO TIMELINE:")
+        _logger.info("   default_fso_id: %s", ctx['default_fso_id'])
+        _logger.info("   fso_id_from_booking: %s (REDUNDANT KEY 1)", ctx['fso_id_from_booking'])
+        _logger.info("   timeline_fso_id: %s (REDUNDANT KEY 2)", ctx['timeline_fso_id'])
+        _logger.info("   default_assignment_date: %s", ctx['default_assignment_date'])
+        _logger.info("   fso_scheduled_datetime: %s", ctx['fso_scheduled_datetime'])
+        _logger.info("=" * 100)
 
         return {
             'name': _('Staff Assignment - %s') % appointment_date,  # Page title with date

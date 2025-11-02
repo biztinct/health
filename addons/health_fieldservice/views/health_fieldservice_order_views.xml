@@ -14,9 +14,9 @@
                             help="Automatically assign staff using AI matching"/>
                     
                     <button name="action_manual_assign_staff" type="object"
-                            string="👥 Manual Staff Assignment" class="btn-primary"
+                            string="👥 Staff Assignment" class="btn-primary"
                             invisible="state != 'confirmed'"
-                            help="Manually assign or modify staff assignments"/>
+                            help="Assign staff to this booking"/>
 
                     <button name="action_start_service" type="object"
                             string="▶️ Start Service" class="oe_highlight"

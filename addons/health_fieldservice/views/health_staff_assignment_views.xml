@@ -68,7 +68,8 @@
                     <group>
                         <group string="Assignment Information" class="col-lg-6">
                             <field name="fso_id"
-                                   options="{'no_create': True}"/>
+                                   options="{'no_create': True}"
+                                   readonly="1"/>
                             <field name="assignment_date" required="1"/>
                             <field name="assignment_type"/>
                             <field name="assigned_by" readonly="1" groups="base.group_user"/>
@@ -260,6 +261,7 @@
         <field name="res_model">health.staff.assignment</field>
         <field name="view_mode">list,form</field>
         <field name="search_view_id" ref="view_health_staff_assignment_search"/>
+        <field name="domain">[('state', '!=', 'template')]</field>
         <field name="context">{'search_default_today': 1}</field>
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">

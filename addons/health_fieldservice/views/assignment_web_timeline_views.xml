@@ -17,7 +17,8 @@
                       quick_create="false"
                       mode="day"
                       stack="true"
-                      context="{'default_fso_id': context.get('default_fso_id'), 'fso_id': context.get('fso_id'), 'active_fso_id': context.get('active_fso_id')}">
+                      domain="[('state', '!=', 'template')]"
+                      context="{'default_fso_id': context.get('default_fso_id'), 'fso_id_from_booking': context.get('fso_id_from_booking'), 'timeline_fso_id': context.get('timeline_fso_id'), 'fso_id': context.get('fso_id'), 'active_fso_id': context.get('active_fso_id'), 'default_assignment_date': context.get('default_assignment_date'), 'fso_scheduled_datetime': context.get('fso_scheduled_datetime')}">
                 
                 <!-- Timeline Fields - fso_id listed first to ensure context works -->
                 <field name="fso_id"/>
