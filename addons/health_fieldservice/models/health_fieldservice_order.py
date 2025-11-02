@@ -2323,8 +2323,10 @@ class HealthFieldServiceOrderUnified(models.Model):
                 'priority': self.priority or '1',
             })
 
-        # Open timeline view focused on appointment date
-        # Show all assignments so user can see staff availability and decide where to assign
+        # Open timeline view focused on appointment date with DAY view
+        # Calculate the appointment day for timeline focus
+        appointment_datetime = self.scheduled_datetime or fields.Datetime.now()
+        appointment_date = appointment_datetime.strftime('%Y-%m-%d')
 
         # Get view references for explicit view specification
         timeline_view = self.env.ref('health_fieldservice.health_staff_assignment_timeline_view', raise_if_not_found=False)
@@ -2339,17 +2341,19 @@ class HealthFieldServiceOrderUnified(models.Model):
         if form_view:
             views.append((form_view.id, 'form'))
 
-        # Prepare context with FSO auto-population
+        # Prepare context with FSO auto-population and DAY view focus
         ctx = {
             'default_fso_id': self.id,  # Auto-populate FSO when creating new assignments
-            'default_assignment_date': self.scheduled_datetime or fields.Datetime.now(),
+            'default_assignment_date': appointment_datetime,
             'default_staff_id': False,  # Leave staff unassigned for drag-drop
-            'initial_date': (self.scheduled_datetime or fields.Datetime.now()).strftime('%Y-%m-%d'),
+            'initial_date': appointment_date,  # Focus timeline on appointment day
+            'timeline_date': appointment_date,  # Additional hint for day view
+            'timeline_view': 'day',  # Request DAY view (not week or month)
             'fso_context': self.id,  # Remember which FSO opened this timeline
         }
 
         return {
-            'name': _('Staff Assignment Timeline'),  # Page title
+            'name': _('Staff Assignment - %s') % appointment_date,  # Page title with date
             'type': 'ir.actions.act_window',
             'res_model': 'health.staff.assignment',
             'view_mode': 'timeline,list,form',

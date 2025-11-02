@@ -183,12 +183,14 @@
                         
                         <group string="Assignment &amp; Staff">
                             <field name="assigned_staff_ids" widget="many2many_tags"
-                                   domain="[('is_healthcare_staff', '=', True), ('employment_status', '=', 'active')]"
+                                   readonly="1"
                                    options="{'color_field': 'color', 'no_create': True}"/>
                             <field name="lead_staff_id"
-                                   domain="[('id', 'in', assigned_staff_ids)]"
+                                   readonly="1"
                                    options="{'no_create': True}"/>
-                            <field name="assigned_doctor_id" readonly="1"/>
+                            <field name="assigned_doctor_id"
+                                   readonly="1"
+                                   options="{'no_create': True}"/>
                         </group>
                     </group>
                     
@@ -210,7 +212,11 @@
                     </group>
                     
                     <notebook>
-                        
+
+                        <page string="Staff Assignments" name="assignments">
+                            <field name="assignment_ids"/>
+                        </page>
+
                         <page string="Equipment" name="equipment">
                             <group>
                                 <group string="Required Equipment">
