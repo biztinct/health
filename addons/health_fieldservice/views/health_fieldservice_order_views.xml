@@ -15,7 +15,7 @@
                     
                     <button name="action_manual_assign_staff" type="object"
                             string="👥 Staff Assignment" class="btn-primary"
-                            invisible="state != 'confirmed'"
+                            invisible="state in ('completed', 'completed_pending_invoice', 'cancelled', 'closed')"
                             help="Assign staff to this booking"/>
 
                     <button name="action_start_service" type="object"

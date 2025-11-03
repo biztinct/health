@@ -2377,27 +2377,18 @@ class HealthFieldServiceOrderUnified(models.Model):
             views.append((form_view.id, 'form'))
 
         # Prepare context with FSO auto-population and DAY view focus
-        # Note: Timeline widget overwrites default_assignment_date, so we use multiple context keys
         ctx = {
             'default_fso_id': self.id,  # Auto-populate FSO when creating new assignments
-            'fso_id_from_booking': self.id,  # CRITICAL: Extra key to preserve FSO ID (timeline may strip other keys)
-            'default_assignment_date': appointment_datetime,
-            'fso_scheduled_datetime': appointment_datetime,  # BACKUP: Original booking scheduled time (not overwritten by timeline clicks)
-            'timeline_fso_id': self.id,  # BACKUP: Another key for FSO (case timeline strips 'default_fso_id')
+            'default_assignment_date': appointment_datetime,  # Used by template default_get()
             'default_staff_id': False,  # Leave staff unassigned for drag-drop
-            'initial_date': appointment_date,  # Focus timeline on appointment day
-            'timeline_date': appointment_date,  # Additional hint for day view
-            'timeline_view': 'day',  # Request DAY view (not week or month)
-            'fso_id': self.id,  # Pass booking ID to timeline for context filtering
-            'active_fso_id': self.id,  # Additional hint for active FSO context
+            'date': appointment_date,  # Timeline focus date (YYYY-MM-DD format)
+            'initial_date': appointment_date,  # Timeline focus date (backup key)
         }
 
         _logger.info("📤 CONTEXT BEING PASSED TO TIMELINE:")
         _logger.info("   default_fso_id: %s", ctx['default_fso_id'])
-        _logger.info("   fso_id_from_booking: %s (REDUNDANT KEY 1)", ctx['fso_id_from_booking'])
-        _logger.info("   timeline_fso_id: %s (REDUNDANT KEY 2)", ctx['timeline_fso_id'])
         _logger.info("   default_assignment_date: %s", ctx['default_assignment_date'])
-        _logger.info("   fso_scheduled_datetime: %s", ctx['fso_scheduled_datetime'])
+        _logger.info("   Timeline Focus Date: %s", ctx['date'])
         _logger.info("=" * 100)
 
         return {

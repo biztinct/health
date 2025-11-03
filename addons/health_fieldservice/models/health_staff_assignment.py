@@ -549,43 +549,48 @@ class HealthStaffAssignment(models.Model):
     
     def write(self, vals):
         """Override write to handle automatic state transitions and date changes"""
-        # Handle assignment_date changes for multi-assignment bookings
-        if 'assignment_date' in vals and vals['assignment_date']:
+        # Handle assignment_date changes - always update booking, and other assignments if they exist
+        # Skip this logic if we're updating other assignments (prevents infinite recursion)
+        if 'assignment_date' in vals and vals['assignment_date'] and not self.env.context.get('skip_multi_assignment_update'):
             for record in self:
                 # Skip template assignments - they don't need multi-assignment updates
                 if record.state == 'template':
                     continue
 
-                # Check if this assignment belongs to a booking with multiple assignments
+                # Check if this assignment belongs to a booking
                 if record.fso_id:
+                    new_date = vals['assignment_date']
+
+                    # ALWAYS update the booking's scheduled_datetime when assignment date changes
+                    _logger.info("📅 UPDATING ASSIGNMENT DATE")
+                    _logger.info("   Booking: %s", record.fso_id.name)
+                    _logger.info("   Old DateTime: %s", record.assignment_date)
+                    _logger.info("   New DateTime: %s", new_date)
+
+                    # Update the booking's scheduled_datetime
+                    record.fso_id.write({
+                        'scheduled_datetime': new_date,
+                        'estimated_end_datetime': self._calculate_estimated_end(record.fso_id, new_date)
+                    })
+                    _logger.info("✅ Updated booking scheduled_datetime to: %s", new_date)
+
+                    # Check for other assignments for this booking
                     other_assignments = self.search([
                         ('fso_id', '=', record.fso_id.id),
                         ('state', '!=', 'template'),
                         ('id', '!=', record.id)
                     ])
 
-                    # If there are other assignments, update all of them
+                    # If there are other assignments, update them too
                     if other_assignments:
-                        new_date = vals['assignment_date']
-                        _logger.info("📅 UPDATING MULTI-ASSIGNMENT BOOKING")
-                        _logger.info("   Booking: %s", record.fso_id.name)
-                        _logger.info("   Old DateTime: %s", record.assignment_date)
-                        _logger.info("   New DateTime: %s", new_date)
-                        _logger.info("   Updating %d other assignments", len(other_assignments))
+                        _logger.info("📅 ALSO UPDATING %d OTHER ASSIGNMENTS", len(other_assignments))
 
-                        # Update all other assignments to the same date
-                        (record | other_assignments).write({'assignment_date': new_date})
-
-                        # Update the booking's scheduled_datetime
-                        record.fso_id.write({
-                            'scheduled_datetime': new_date,
-                            'estimated_end_datetime': self._calculate_estimated_end(record.fso_id, new_date)
+                        # Update only the OTHER assignments (not the current record, it's already being updated)
+                        # Use with_context to prevent recursive triggering of this logic
+                        other_assignments.with_context(skip_multi_assignment_update=True).write({
+                            'assignment_date': new_date
                         })
-
-                        _logger.info("✅ Updated booking scheduled_datetime to: %s", new_date)
-
-                        # Skip parent write for this record to avoid double-update
-                        continue
+                        _logger.info("✅ Updated all other assignments to: %s", new_date)
 
         # Auto-transition from draft to assigned when staff are assigned
         if 'staff_id' in vals:
@@ -607,8 +612,7 @@ class HealthStaffAssignment(models.Model):
 
     @api.onchange('assignment_date')
     def _onchange_assignment_date(self):
-        """Handle assignment date changes for non-template assignments"""
-        # Detect if assignment_date has changed and warn about multi-assignment impact
+        """Always warn when assignment date changes - will update booking and other assignments"""
         if self.id and self.fso_id and self.state != 'template':
             # Check if there are other assignments for the same booking
             other_assignments = self.search([
@@ -617,13 +621,25 @@ class HealthStaffAssignment(models.Model):
                 ('id', '!=', self.id)
             ])
 
+            # Always show warning, with message based on whether there are other assignments
             if other_assignments:
-                return {
-                    'warning': {
-                        'title': _('Multi-Assignment Booking'),
-                        'message': _('⚠️ This booking has %d other assignments. Changing the assignment date will update ALL assignments and the booking scheduled time. Do you want to continue?') % len(other_assignments)
-                    }
+                message = _('⚠️ ATTENTION: Changing this assignment date will:\n'
+                           '• Update the booking appointment date/time\n'
+                           '• Update all %d other assignments for this booking\n\n'
+                           'Proceed with this change?') % len(other_assignments)
+                title = _('Multi-Assignment Update')
+            else:
+                message = _('⚠️ ATTENTION: Changing this assignment date will:\n'
+                           '• Update the booking appointment date/time\n\n'
+                           'Proceed with this change?')
+                title = _('Update Booking Date')
+
+            return {
+                'warning': {
+                    'title': title,
+                    'message': message
                 }
+            }
 
     # ============================================================================
     # Business Logic Methods
@@ -706,7 +722,59 @@ class HealthStaffAssignment(models.Model):
             
             # Free up staff availability
             record._release_staff_availability()
-    
+
+    def action_confirm_date_change(self):
+        """Show confirmation dialog for assignment date changes"""
+        self.ensure_one()
+
+        if not self.fso_id or self.state == 'template':
+            return
+
+        # Check if there are other assignments for this booking
+        other_assignments = self.search([
+            ('fso_id', '=', self.fso_id.id),
+            ('state', '!=', 'template'),
+            ('id', '!=', self.id)
+        ])
+
+        # Build the message
+        if other_assignments:
+            message = _('<b>⚠️ CONFIRM DATE CHANGE</b><br/><br/>'
+                       '<b>Changing this assignment date will:</b><br/>'
+                       '• Update the booking appointment date/time<br/>'
+                       '• Update all %d other assignments for this booking<br/><br/>'
+                       '<b>Old Date:</b> %s<br/>'
+                       '<b>New Date:</b> %s<br/><br/>'
+                       'Proceed with this change?') % (
+                           len(other_assignments),
+                           self.assignment_date,
+                           self.assignment_date  # Will be the new date when saved
+                       )
+            title = _('Multi-Assignment Update Required')
+        else:
+            message = _('<b>⚠️ CONFIRM DATE CHANGE</b><br/><br/>'
+                       '<b>Changing this assignment date will:</b><br/>'
+                       '• Update the booking appointment date/time<br/><br/>'
+                       '<b>Old Date:</b> %s<br/>'
+                       '<b>New Date:</b> %s<br/><br/>'
+                       'Proceed with this change?') % (
+                           self.assignment_date,
+                           self.assignment_date  # Will be the new date when saved
+                       )
+            title = _('Update Booking Date')
+
+        # Return a notification that will be displayed
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'display_notification',
+            'params': {
+                'title': title,
+                'message': message,
+                'type': 'warning',
+                'sticky': True,
+            }
+        }
+
     def action_reschedule_assignment(self):
         """Reschedule the assignment to a different time/staff"""
         return {

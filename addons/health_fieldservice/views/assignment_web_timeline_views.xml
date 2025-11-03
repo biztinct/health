@@ -18,7 +18,7 @@
                       mode="day"
                       stack="true"
                       domain="[('state', '!=', 'template')]"
-                      context="{'default_fso_id': context.get('default_fso_id'), 'fso_id_from_booking': context.get('fso_id_from_booking'), 'timeline_fso_id': context.get('timeline_fso_id'), 'fso_id': context.get('fso_id'), 'active_fso_id': context.get('active_fso_id'), 'default_assignment_date': context.get('default_assignment_date'), 'fso_scheduled_datetime': context.get('fso_scheduled_datetime')}">
+                      context="{'default_fso_id': context.get('default_fso_id'), 'default_assignment_date': context.get('default_assignment_date'), 'date': context.get('date'), 'initial_date': context.get('initial_date')}">
                 
                 <!-- Timeline Fields - fso_id listed first to ensure context works -->
                 <field name="fso_id"/>
@@ -88,6 +88,7 @@
                     <button name="action_start_assignment" type="object" string="Start" class="oe_highlight" invisible="state != 'confirmed'"/>
                     <button name="action_complete_assignment" type="object" string="Complete" class="oe_highlight" invisible="state != 'in_progress'"/>
                     <button name="action_cancel_assignment" type="object" string="Cancel" invisible="state in ['completed', 'cancelled']"/>
+                    <button name="action_confirm_date_change" type="object" string="⚠️ Confirm Date Change" class="btn-warning" invisible="state == 'template' or not fso_id" help="Show confirmation about booking and assignment date changes"/>
                     <field name="state" widget="statusbar" statusbar_visible="draft,assigned,confirmed,in_progress,completed"/>
                 </header>
                 <sheet>
