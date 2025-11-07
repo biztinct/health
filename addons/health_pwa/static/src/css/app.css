@@ -2111,6 +2111,30 @@ p {
   flex: 1;
 }
 
+.header-content {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  flex: 1;
+}
+
+.timer-badge {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  background: #f0f0f0;
+  padding: var(--spacing-sm) var(--spacing-md);
+  border-radius: var(--border-radius-small);
+  font-weight: 600;
+  color: var(--text-primary);
+  font-size: 0.9rem;
+}
+
+.timer-badge i {
+  font-size: 1rem;
+  color: #e74c3c;
+}
+
 .btn-modal-close {
   background: transparent;
   border: none;

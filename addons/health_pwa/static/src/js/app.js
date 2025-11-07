@@ -535,7 +535,7 @@ window.healthPWA = {
       props: ['user', 'isOnline'],
       emits: ['navigate', 'sync'],
       setup(props, { emit }) {
-        const { ref, onMounted, computed } = Vue;
+        const { ref, onMounted, onUnmounted, computed } = Vue;
 
         const bookings = ref([]);
         const isLoading = ref(true);
@@ -1143,11 +1143,93 @@ window.healthPWA = {
         const capturedPhoto = ref(null);
         const photoPreviewUrl = ref(null);
 
-        // Start service
-        const startService = () => {
+        // Timer state
+        const timerInterval = ref(null);
+        const currentTime = ref(new Date());
+        const showInvoiceModal = ref(false);
+        const quoteData = ref(null);
+
+        // Computed elapsed time for timer
+        const elapsedTime = computed(() => {
+          if (!selectedBookingDetail.value || !selectedBookingDetail.value.actual_start_datetime) return '00:00:00';
+
+          const startTime = new Date(selectedBookingDetail.value.actual_start_datetime);
+          const endTime = currentTime.value;
+          const diff = Math.floor((endTime - startTime) / 1000);
+
+          const hours = Math.floor(diff / 3600);
+          const minutes = Math.floor((diff % 3600) / 60);
+          const seconds = diff % 60;
+
+          return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+        });
+
+        // Start timer function
+        const startTimer = () => {
+          if (timerInterval.value) clearInterval(timerInterval.value);
+          timerInterval.value = setInterval(() => {
+            currentTime.value = new Date();
+          }, 1000);
+        };
+
+        // Stop timer function
+        const stopTimer = () => {
+          if (timerInterval.value) {
+            clearInterval(timerInterval.value);
+            timerInterval.value = null;
+          }
+        };
+
+        // Load quote data for invoice
+        const loadQuoteData = async (bookingId) => {
+          try {
+            const response = await fetch(`/health_pwa/api/fso/${bookingId}/quote`);
+            const result = await response.json();
+            if (result.success && result.data) {
+              quoteData.value = result.data;
+              console.log('Loaded quote data:', result.data);
+            } else {
+              console.error('Error loading quote:', result.error);
+            }
+          } catch (err) {
+            console.error('Error loading quote data:', err);
+          }
+        };
+
+        // Open invoice modal
+        const openInvoiceModal = async () => {
           if (selectedBookingId.value) {
-            serviceStartedForBooking.value = selectedBookingId.value;
-            console.log('Service started for booking:', selectedBookingId.value);
+            await loadQuoteData(selectedBookingId.value);
+            showInvoiceModal.value = true;
+          }
+        };
+
+        // Start service
+        const startService = async () => {
+          if (selectedBookingId.value) {
+            try {
+              // Call API to start service
+              const response = await fetch(`/health_pwa/api/fso/${selectedBookingId.value}/start`, {
+                method: 'POST'
+              });
+
+              const result = await response.json();
+              if (result.success) {
+                serviceStartedForBooking.value = selectedBookingId.value;
+                // Update the booking detail with new state
+                if (selectedBookingDetail.value) {
+                  selectedBookingDetail.value.state = result.data.state;
+                  selectedBookingDetail.value.actual_start_datetime = result.data.actual_start_datetime;
+                }
+                // Start the timer
+                startTimer();
+                console.log('Service started for booking:', selectedBookingId.value);
+              } else {
+                console.error('Error starting service:', result.error);
+              }
+            } catch (err) {
+              console.error('Error starting service:', err);
+            }
           }
         };
 
@@ -1218,6 +1300,11 @@ window.healthPWA = {
           loadMonthBookings(currentDate.value); // Load current month bookings
         });
 
+        onUnmounted(() => {
+          // Cleanup timer on unmount
+          stopTimer();
+        });
+
         return {
           bookings,
           groupedBookings,
@@ -1273,7 +1360,17 @@ window.healthPWA = {
           openClinicalNotesModal,
           closeClinicalNotesModal,
           capturePhoto,
-          saveClinicalNotes
+          saveClinicalNotes,
+          // Timer and invoice
+          timerInterval,
+          currentTime,
+          showInvoiceModal,
+          quoteData,
+          elapsedTime,
+          startTimer,
+          stopTimer,
+          loadQuoteData,
+          openInvoiceModal
         };
       },
       template: `
@@ -1526,7 +1623,14 @@ window.healthPWA = {
             <div v-else-if="selectedBookingDetail" class="booking-detail-modal-content">
               <!-- Modal header with close button -->
               <div class="modal-header">
-                <h3 class="modal-title">Booking Details</h3>
+                <div class="header-content">
+                  <h3 class="modal-title">Booking Details</h3>
+                  <!-- Timer Display when service is in progress -->
+                  <div v-if="serviceStartedForBooking === selectedBookingId" class="timer-badge">
+                    <i class="material-icons">schedule</i>
+                    <span>{{ elapsedTime }}</span>
+                  </div>
+                </div>
                 <button @click="toggleBookingDetail(selectedBookingId)" class="btn-modal-close">
                   <i class="material-icons">close</i>
                 </button>
@@ -1596,7 +1700,7 @@ window.healthPWA = {
                     <i class="material-icons">description</i>
                     <span>Clinical Notes</span>
                   </button>
-                  <button class="btn btn-invoice">
+                  <button @click="openInvoiceModal" class="btn btn-invoice">
                     <i class="material-icons">receipt</i>
                     <span>Invoice</span>
                   </button>
@@ -1716,6 +1820,69 @@ window.healthPWA = {
             <div class="clinical-modal-footer">
               <button @click="closeClinicalNotesModal" class="btn btn-secondary">Cancel</button>
               <button @click="saveClinicalNotes" class="btn btn-success">Save</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Invoice Modal -->
+        <div v-if="showInvoiceModal && quoteData" class="modal-overlay" @click.self="showInvoiceModal = false">
+          <div class="modal-content invoice-modal">
+            <div class="modal-header">
+              <h3>
+                <i class="material-icons">receipt</i>
+                Invoice / Quote
+              </h3>
+              <button @click="showInvoiceModal = false" class="modal-close">
+                <i class="material-icons">close</i>
+              </button>
+            </div>
+            <div class="modal-body" v-if="quoteData">
+              <div class="invoice-header">
+                <div class="invoice-info">
+                  <h4>{{ quoteData.name }}</h4>
+                  <span :class="'badge badge-' + (quoteData.state === 'sale' ? 'success' : 'info')">
+                    {{ quoteData.state }}
+                  </span>
+                </div>
+              </div>
+
+              <div class="invoice-lines">
+                <table class="invoice-table">
+                  <thead>
+                    <tr>
+                      <th>Product</th>
+                      <th>Qty</th>
+                      <th>Price</th>
+                      <th>Total</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr v-for="line in quoteData.order_lines" :key="line.id">
+                      <td>{{ line.product_name }}</td>
+                      <td>{{ line.quantity }}</td>
+                      <td>{{ line.unit_price.toLocaleString() }}</td>
+                      <td>{{ line.total.toLocaleString() }}</td>
+                    </tr>
+                  </tbody>
+                  <tfoot>
+                    <tr>
+                      <td colspan="3">Subtotal</td>
+                      <td>{{ quoteData.amount_untaxed.toLocaleString() }}</td>
+                    </tr>
+                    <tr>
+                      <td colspan="3">Tax</td>
+                      <td>{{ quoteData.amount_tax.toLocaleString() }}</td>
+                    </tr>
+                    <tr class="total-row">
+                      <td colspan="3"><strong>Total</strong></td>
+                      <td><strong>{{ quoteData.amount_total.toLocaleString() }} {{ quoteData.currency }}</strong></td>
+                    </tr>
+                  </tfoot>
+                </table>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button @click="showInvoiceModal = false" class="btn btn-secondary">Close</button>
             </div>
           </div>
         </div>
