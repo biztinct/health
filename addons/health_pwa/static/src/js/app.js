@@ -1208,13 +1208,20 @@ window.healthPWA = {
         const startService = async () => {
           if (selectedBookingId.value) {
             try {
+              console.log('Starting service for booking:', selectedBookingId.value);
+              console.log('Current booking state:', selectedBookingDetail.value?.state);
+
               // Call API to start service
               const response = await fetch(`/health_pwa/api/fso/${selectedBookingId.value}/start`, {
                 method: 'POST'
               });
 
               const result = await response.json();
+              console.log('API Response:', result);
+              console.log('Response Status:', response.status);
+
               if (result.success) {
+                console.log('Service started successfully');
                 serviceStartedForBooking.value = selectedBookingId.value;
                 // Update the booking detail with new state
                 if (selectedBookingDetail.value) {
@@ -1226,10 +1233,14 @@ window.healthPWA = {
                 console.log('Service started for booking:', selectedBookingId.value);
               } else {
                 console.error('Error starting service:', result.error);
+                alert('Error: ' + result.error);
               }
             } catch (err) {
               console.error('Error starting service:', err);
+              alert('Error starting service: ' + err.message);
             }
+          } else {
+            console.error('No booking selected');
           }
         };
 
@@ -1882,7 +1893,11 @@ window.healthPWA = {
               </div>
             </div>
             <div class="modal-footer">
-              <button @click="showInvoiceModal = false" class="btn btn-secondary">Close</button>
+              <button @click="showInvoiceModal = false" class="btn btn-secondary">Back</button>
+              <button @click="openPaymentWizard" class="btn btn-primary">
+                <i class="material-icons">payment</i>
+                <span>Payment</span>
+              </button>
             </div>
           </div>
         </div>
