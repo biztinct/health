@@ -279,6 +279,42 @@ class HealthPWAAPIController(http.Controller):
             if not order.exists():
                 return self._prepare_json_response(error='Order not found', status_code=404)
             
+            # Get primary contact from patient relations
+            primary_contact = None
+            if order.patient_id:
+                # Look for emergency contact marked as primary
+                contacts = request.env['health.client.relation'].search([
+                    ('client_id', '=', order.patient_id.id),
+                    ('role', '=', 'emergency_contact'),
+                    ('is_primary', '=', True)
+                ], limit=1)
+                if contacts and contacts[0].representative_id:
+                    contact_partner = contacts[0].representative_id
+                    primary_contact = {
+                        'name': contact_partner.name,
+                        'phone': contact_partner.mobile or contact_partner.phone,
+                        'relationship': contacts[0].relationship_type or 'Emergency Contact',
+                    }
+
+            # Use main patient contact if no primary relation found
+            if not primary_contact and order.patient_id:
+                primary_contact = {
+                    'name': order.patient_id.name,
+                    'phone': order.patient_id.mobile or order.patient_id.phone,
+                    'relationship': 'Patient',
+                }
+
+            # Get service items from quote
+            quote_items = []
+            if order.sale_order_id:
+                for line in order.sale_order_id.order_line:
+                    quote_items.append({
+                        'id': line.id,
+                        'product_name': line.product_id.name if line.product_id else line.name,
+                        'quantity': float(line.product_uom_qty),
+                        'unit_price': float(line.price_unit),
+                    })
+
             order_data = {
                 'id': order.id,
                 'name': order.name,
@@ -294,6 +330,7 @@ class HealthPWAAPIController(http.Controller):
                     'gender': order.patient_id.gender if order.patient_id else None,
                     'allergies': order.patient_id.allergies if order.patient_id else None,
                 },
+                'primary_contact': primary_contact,
                 'stage': order.stage_id.name if order.stage_id else None,
                 'stage_color': getattr(order.stage_id, 'color', 0) if order.stage_id else 0,
                 'priority': order.priority,
@@ -302,6 +339,11 @@ class HealthPWAAPIController(http.Controller):
                 'estimated_duration': order.estimated_duration,
                 'duration_minutes': order.duration_minutes,
                 'service_type': order._get_service_type_label() if hasattr(order, '_get_service_type_label') else order.service_type,
+                'package': {
+                    'id': order.package_id.id if order.package_id else None,
+                    'name': order.package_id.name if order.package_id else None,
+                } if hasattr(order, 'package_id') else None,
+                'quote_items': quote_items,
                 'team': {
                     'id': order.team_id.id if order.team_id else None,
                     'name': order.team_id.name if order.team_id else None,
@@ -316,9 +358,15 @@ class HealthPWAAPIController(http.Controller):
                 'patient_notes': order.patient_notes,
                 'clinical_notes': order.clinical_notes if hasattr(order, 'clinical_notes') else None,
                 'diagnosis': order.diagnosis if hasattr(order, 'diagnosis') else None,
+                'treatment_performed': order.treatment_performed if hasattr(order, 'treatment_performed') else None,
+                'medications_prescribed': order.medications_prescribed if hasattr(order, 'medications_prescribed') else None,
+                'vital_signs': order.vital_signs if hasattr(order, 'vital_signs') else None,
                 'location': {
-                    'lat': order.service_lat,
-                    'lng': order.service_lng,
+                    'lat': order.patient_id.partner_latitude if order.patient_id else None,
+                    'lng': order.patient_id.partner_longitude if order.patient_id else None,
+                    'gps_coordinates': order.gps_coordinates if hasattr(order, 'gps_coordinates') else None,
+                    'travel_distance': order.travel_distance if hasattr(order, 'travel_distance') else None,
+                    'travel_time_minutes': order.travel_time_minutes if hasattr(order, 'travel_time_minutes') else None,
                 },
                 'created_date': order.create_date,
                 'updated_date': order.write_date,

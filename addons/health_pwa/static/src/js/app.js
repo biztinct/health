@@ -734,8 +734,8 @@ window.healthPWA = {
                   appointment_type: '',
                   scheduled_datetime: order.scheduled_datetime,
                   scheduled_time: new Date(order.scheduled_datetime).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
-                  status: order.state,
-                  status_display: order.state,
+                  status: order.status,
+                  status_display: order.status_display,
                   location: order.address,
                   priority: order.priority,
                   duration_minutes: 0,
@@ -822,8 +822,8 @@ window.healthPWA = {
                   appointment_type: '',
                   scheduled_datetime: order.scheduled_datetime,
                   scheduled_time: new Date(order.scheduled_datetime).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
-                  status: order.state,
-                  status_display: order.state,
+                  status: order.status,
+                  status_display: order.status_display,
                   location: order.address,
                   priority: order.priority,
                   duration_minutes: 0,
@@ -1010,15 +1010,59 @@ window.healthPWA = {
           }
         };
 
-        const getStatusColor = (status) => {
+        // Check if booking is running late
+        const isRunningLate = (booking) => {
+          if (!booking || !booking.scheduled_datetime) return false;
+          const now = new Date();
+          const bookedTime = new Date(booking.scheduled_datetime);
+          // Check if current time is past booking time and status is pending (draft, confirmed, assigned)
+          const pendingStatuses = ['draft', 'confirmed', 'assigned'];
+          return now > bookedTime && pendingStatuses.includes(booking.status);
+        };
+
+        const getStatusColor = (booking) => {
+          if (!booking) return '#95a5a6';
+
+          const status = booking.status || '';
+
+          // Check for Running Late (orange)
+          if (isRunningLate(booking)) {
+            return '#f39c12'; // Orange
+          }
+
           const colors = {
-            'assigned': '#3498db',
-            'confirmed': '#2ecc71',
-            'in_progress': '#f39c12',
-            'completed': '#27ae60',
-            'cancelled': '#e74c3c'
+            'draft': '#3498db',                      // Blue - Booked
+            'confirmed': '#3498db',                  // Blue - Confirmed
+            'assigned': '#3498db',                   // Blue - Assigned
+            'in_progress': '#2ecc71',                // Green - In Progress
+            'completed': '#95a5a6',                  // Grey - Completed
+            'completed_pending_invoice': '#95a5a6', // Grey - Pending Invoice
+            'closed': '#95a5a6',                     // Grey - Closed
+            'cancelled': '#e74c3c'                   // Red - Cancelled
           };
           return colors[status] || '#95a5a6';
+        };
+
+        const getStatusDisplay = (booking) => {
+          if (!booking) return 'Unknown';
+
+          // Show "Running Late" if applicable
+          if (isRunningLate(booking)) {
+            return 'Running Late';
+          }
+
+          const status = booking.status || '';
+          const displayMap = {
+            'draft': 'Booked',
+            'confirmed': 'Confirmed',
+            'assigned': 'Assigned',
+            'in_progress': 'In Progress',
+            'completed': 'Completed',
+            'completed_pending_invoice': 'Pending Invoice',
+            'closed': 'Closed',
+            'cancelled': 'Cancelled'
+          };
+          return displayMap[status] || status || 'Unknown';
         };
 
         const callPatient = (phone) => {
@@ -1037,6 +1081,49 @@ window.healthPWA = {
             window.open(mapsUrl, '_blank');
           } else {
             alert('Location not available');
+          }
+        };
+
+        // Booking detail view state
+        const selectedBookingId = ref(null);
+        const selectedBookingDetail = ref(null);
+        const isLoadingDetail = ref(false);
+        const detailError = ref(null);
+
+        // Fetch full booking details for inline expansion
+        const fetchBookingDetail = async (bookingId) => {
+          try {
+            isLoadingDetail.value = true;
+            detailError.value = null;
+
+            const response = await fetch(`/health_pwa/api/fso/${bookingId}`);
+            const result = await response.json();
+
+            if (result.success && result.data) {
+              selectedBookingDetail.value = result.data;
+              console.log('Loaded booking detail:', result.data);
+            } else {
+              detailError.value = result.error || 'Failed to load booking details';
+              console.error('Error loading detail:', detailError.value);
+            }
+          } catch (err) {
+            console.error('Failed to fetch booking detail:', err);
+            detailError.value = err.message;
+          } finally {
+            isLoadingDetail.value = false;
+          }
+        };
+
+        // Toggle booking detail expansion
+        const toggleBookingDetail = async (bookingId) => {
+          if (selectedBookingId.value === bookingId) {
+            // Close if already open
+            selectedBookingId.value = null;
+            selectedBookingDetail.value = null;
+          } else {
+            // Open and fetch details
+            selectedBookingId.value = bookingId;
+            await fetchBookingDetail(bookingId);
           }
         };
 
@@ -1064,6 +1151,8 @@ window.healthPWA = {
           handleTouchStart,
           handleTouchEnd,
           getStatusColor,
+          getStatusDisplay,
+          isRunningLate,
           callPatient,
           openMap,
           isTransitioning,
@@ -1076,7 +1165,14 @@ window.healthPWA = {
           getCalendarDays,
           hasBookingsOnDate,
           getBookingCount,
-          datesWithBookings
+          datesWithBookings,
+          // Booking detail expansion
+          selectedBookingId,
+          selectedBookingDetail,
+          isLoadingDetail,
+          detailError,
+          fetchBookingDetail,
+          toggleBookingDetail
         };
       },
       template: `
@@ -1196,32 +1292,32 @@ window.healthPWA = {
             </div>
 
             <div v-else class="bookings-list">
-              <div v-for="booking in bookings" :key="booking.fso_id" class="booking-card">
-                <!-- Header with time and status -->
-                <div class="booking-card-header">
-                  <div class="booking-time-badge">{{ booking.scheduled_time }}</div>
-                  <div class="status-badge" :style="{ backgroundColor: getStatusColor(booking.status) }">
-                    {{ booking.status_display || booking.status }}
+              <div v-for="booking in bookings" :key="booking.fso_id" class="booking-card" @click="toggleBookingDetail(booking.fso_id)">
+                  <!-- Header with time and status -->
+                  <div class="booking-card-header">
+                    <div class="booking-time-badge">{{ booking.scheduled_time }}</div>
+                    <div class="status-badge" :style="{ backgroundColor: getStatusColor(booking) }">
+                      {{ getStatusDisplay(booking) }}
+                    </div>
                   </div>
-                </div>
 
-                <!-- Patient info -->
-                <div class="booking-patient-section">
-                  <h3 class="booking-patient-name">{{ booking.patient_name }}</h3>
-                </div>
-
-                <!-- Service type with action buttons inline -->
-                <div class="booking-service-row">
-                  <p v-if="booking.service_type" class="booking-service-type">{{ booking.service_type }}</p>
-                  <div class="booking-action-icons">
-                    <button @click="callPatient(booking.patient_phone)" class="btn-icon-action btn-icon-call" title="Call patient">
-                      <i class="material-icons">call</i>
-                    </button>
-                    <button @click="openMap(booking.location, booking.patient_name)" class="btn-icon-action btn-icon-map" title="Open map">
-                      <i class="material-icons">map</i>
-                    </button>
+                  <!-- Patient info -->
+                  <div class="booking-patient-section">
+                    <h3 class="booking-patient-name">{{ booking.patient_name }}</h3>
                   </div>
-                </div>
+
+                  <!-- Service type with action buttons inline -->
+                  <div class="booking-service-row">
+                    <p v-if="booking.service_type" class="booking-service-type">{{ booking.service_type }}</p>
+                    <div class="booking-action-icons">
+                      <button @click.stop="callPatient(booking.patient_phone)" class="btn-icon-action btn-icon-call" title="Call patient">
+                        <i class="material-icons">call</i>
+                      </button>
+                      <button @click.stop="openMap(booking.location, booking.patient_name)" class="btn-icon-action btn-icon-map" title="Open map">
+                        <i class="material-icons">map</i>
+                      </button>
+                    </div>
+                  </div>
               </div>
             </div>
           </div>
@@ -1236,30 +1332,33 @@ window.healthPWA = {
             <div v-else class="grouped-bookings-list">
               <div v-for="(dateBookings, dateStr) in groupedBookings" :key="dateStr" class="date-group">
                 <h4 class="date-group-title">{{ dateStr }}</h4>
-                <div v-for="booking in dateBookings" :key="booking.fso_id" class="booking-card">
-                  <!-- Header with time and status -->
-                  <div class="booking-card-header">
-                    <div class="booking-time-badge">{{ booking.scheduled_time }}</div>
-                    <div class="status-badge" :style="{ backgroundColor: getStatusColor(booking.status) }">
-                      {{ booking.status_display || booking.status }}
+                <div v-for="booking in dateBookings" :key="booking.fso_id" class="booking-card-container">
+                  <!-- Clickable booking card -->
+                  <div @click="toggleBookingDetail(booking.fso_id)" class="booking-card" :class="{ expanded: selectedBookingId === booking.fso_id }">
+                    <!-- Header with time and status -->
+                    <div class="booking-card-header">
+                      <div class="booking-time-badge">{{ booking.scheduled_time }}</div>
+                      <div class="status-badge" :style="{ backgroundColor: getStatusColor(booking) }">
+                        {{ getStatusDisplay(booking) }}
+                      </div>
                     </div>
-                  </div>
 
-                  <!-- Patient info -->
-                  <div class="booking-patient-section">
-                    <h3 class="booking-patient-name">{{ booking.patient_name }}</h3>
-                  </div>
+                    <!-- Patient info -->
+                    <div class="booking-patient-section">
+                      <h3 class="booking-patient-name">{{ booking.patient_name }}</h3>
+                    </div>
 
-                  <!-- Service type with action buttons inline -->
-                  <div class="booking-service-row">
-                    <p v-if="booking.service_type" class="booking-service-type">{{ booking.service_type }}</p>
-                    <div class="booking-action-icons">
-                      <button @click="callPatient(booking.patient_phone)" class="btn-icon-action btn-icon-call" title="Call patient">
-                        <i class="material-icons">call</i>
-                      </button>
-                      <button @click="openMap(booking.location, booking.patient_name)" class="btn-icon-action btn-icon-map" title="Open map">
-                        <i class="material-icons">map</i>
-                      </button>
+                    <!-- Service type with action buttons inline -->
+                    <div class="booking-service-row">
+                      <p v-if="booking.service_type" class="booking-service-type">{{ booking.service_type }}</p>
+                      <div class="booking-action-icons">
+                        <button @click.stop="callPatient(booking.patient_phone)" class="btn-icon-action btn-icon-call" title="Call patient">
+                          <i class="material-icons">call</i>
+                        </button>
+                        <button @click.stop="openMap(booking.location, booking.patient_name)" class="btn-icon-action btn-icon-map" title="Open map">
+                          <i class="material-icons">map</i>
+                        </button>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -1277,33 +1376,133 @@ window.healthPWA = {
             <div v-else class="grouped-bookings-list">
               <div v-for="(dateBookings, dateStr) in groupedBookings" :key="dateStr" class="date-group">
                 <h4 class="date-group-title">{{ dateStr }}</h4>
-                <div v-for="booking in dateBookings" :key="booking.fso_id" class="booking-card">
-                  <!-- Header with time and status -->
-                  <div class="booking-card-header">
-                    <div class="booking-time-badge">{{ booking.scheduled_time }}</div>
-                    <div class="status-badge" :style="{ backgroundColor: getStatusColor(booking.status) }">
-                      {{ booking.status_display || booking.status }}
+                <div v-for="booking in dateBookings" :key="booking.fso_id" class="booking-card-container">
+                  <!-- Clickable booking card -->
+                  <div @click="toggleBookingDetail(booking.fso_id)" class="booking-card" :class="{ expanded: selectedBookingId === booking.fso_id }">
+                    <!-- Header with time and status -->
+                    <div class="booking-card-header">
+                      <div class="booking-time-badge">{{ booking.scheduled_time }}</div>
+                      <div class="status-badge" :style="{ backgroundColor: getStatusColor(booking) }">
+                        {{ getStatusDisplay(booking) }}
+                      </div>
+                    </div>
+
+                    <!-- Patient info -->
+                    <div class="booking-patient-section">
+                      <h3 class="booking-patient-name">{{ booking.patient_name }}</h3>
+                    </div>
+
+                    <!-- Service type with action buttons inline -->
+                    <div class="booking-service-row">
+                      <p v-if="booking.service_type" class="booking-service-type">{{ booking.service_type }}</p>
+                      <div class="booking-action-icons">
+                        <button @click.stop="callPatient(booking.patient_phone)" class="btn-icon-action btn-icon-call" title="Call patient">
+                          <i class="material-icons">call</i>
+                        </button>
+                        <button @click.stop="openMap(booking.location, booking.patient_name)" class="btn-icon-action btn-icon-map" title="Open map">
+                          <i class="material-icons">map</i>
+                        </button>
+                      </div>
                     </div>
                   </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
 
-                  <!-- Patient info -->
-                  <div class="booking-patient-section">
-                    <h3 class="booking-patient-name">{{ booking.patient_name }}</h3>
+        <!-- Shared Booking Detail Modal -->
+        <div v-if="selectedBookingId" class="modal-backdrop" @click="toggleBookingDetail(selectedBookingId)">
+          <div class="booking-detail-modal" @click.stop>
+            <div v-if="isLoadingDetail" class="detail-loading">
+              <div class="spinner-small"></div>
+              <p>Loading details...</p>
+            </div>
+            <div v-else-if="detailError" class="detail-error">
+              <p>{{ detailError }}</p>
+              <button class="btn btn-secondary" @click="toggleBookingDetail(selectedBookingId)">Close</button>
+            </div>
+            <div v-else-if="selectedBookingDetail" class="booking-detail-modal-content">
+              <!-- Modal header with close button -->
+              <div class="modal-header">
+                <h3 class="modal-title">Booking Details</h3>
+                <button @click="toggleBookingDetail(selectedBookingId)" class="btn-modal-close">
+                  <i class="material-icons">close</i>
+                </button>
+              </div>
+
+              <!-- Modal scrollable content -->
+              <div class="modal-body">
+                <!-- Scheduled Visit Section -->
+                <div class="detail-section">
+                  <h4 class="section-title">Scheduled Visit</h4>
+                  <div class="detail-row">
+                    <span class="label">Date & Time:</span>
+                    <span class="value">{{ new Date(selectedBookingDetail.scheduled_datetime).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }) }}</span>
                   </div>
+                  <div v-if="selectedBookingDetail.quote_items.length > 0" class="detail-row">
+                    <span class="label">Services:</span>
+                    <span class="value">{{ selectedBookingDetail.quote_items.map(item => item.product_name).join(', ') }}</span>
+                  </div>
+                  <div v-if="selectedBookingDetail.package && selectedBookingDetail.package.name" class="detail-row">
+                    <span class="label">Package:</span>
+                    <span class="value">{{ selectedBookingDetail.package.name }}</span>
+                  </div>
+                </div>
 
-                  <!-- Service type with action buttons inline -->
-                  <div class="booking-service-row">
-                    <p v-if="booking.service_type" class="booking-service-type">{{ booking.service_type }}</p>
-                    <div class="booking-action-icons">
-                      <button @click="callPatient(booking.patient_phone)" class="btn-icon-action btn-icon-call" title="Call patient">
+                <!-- Contact Information Section -->
+                <div class="detail-section">
+                  <h4 class="section-title">Contact Information</h4>
+                  <div v-if="selectedBookingDetail.address" class="detail-row">
+                    <span class="label">
+                      <i class="material-icons icon-inline">location_on</i>
+                      Address:
+                    </span>
+                    <button @click="openMap(selectedBookingDetail.address, selectedBookingDetail.patient.name)" class="detail-link">
+                      {{ selectedBookingDetail.address }}
+                    </button>
+                  </div>
+                  <div v-if="selectedBookingDetail.primary_contact" class="detail-row">
+                    <span class="label">Primary Contact:</span>
+                    <div class="contact-info">
+                      <span class="contact-name">{{ selectedBookingDetail.primary_contact.name }}</span>
+                      <button @click.stop="callPatient(selectedBookingDetail.primary_contact.phone)" class="btn-icon-action btn-icon-call-small" title="Call">
                         <i class="material-icons">call</i>
-                      </button>
-                      <button @click="openMap(booking.location, booking.patient_name)" class="btn-icon-action btn-icon-map" title="Open map">
-                        <i class="material-icons">map</i>
                       </button>
                     </div>
                   </div>
                 </div>
+
+                <!-- Intake Summary Section -->
+                <div class="detail-section">
+                  <h4 class="section-title">Intake Summary</h4>
+                  <div v-if="selectedBookingDetail.diagnosis" class="intake-item">
+                    <span class="intake-label">Diagnosis:</span>
+                    <p class="intake-value" v-html="selectedBookingDetail.diagnosis"></p>
+                  </div>
+                  <div v-if="selectedBookingDetail.assigned_user && selectedBookingDetail.assigned_user.name" class="intake-item">
+                    <span class="intake-label">Referring Doctor:</span>
+                    <p class="intake-value">{{ selectedBookingDetail.assigned_user.name }}</p>
+                  </div>
+                  <div v-if="selectedBookingDetail.treatment_performed" class="intake-item">
+                    <span class="intake-label">Goal of Care:</span>
+                    <p class="intake-value">{{ selectedBookingDetail.treatment_performed }}</p>
+                  </div>
+                  <div v-if="selectedBookingDetail.medications_prescribed" class="intake-item">
+                    <span class="intake-label">Required Equipment:</span>
+                    <p class="intake-value">{{ selectedBookingDetail.medications_prescribed }}</p>
+                  </div>
+                  <div v-if="selectedBookingDetail.clinical_notes" class="intake-item">
+                    <span class="intake-label">Notes:</span>
+                    <p class="intake-value" v-html="selectedBookingDetail.clinical_notes"></p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Modal footer with action buttons -->
+              <div class="modal-footer">
+                <button class="btn btn-danger">Cancel/Refuse Visit</button>
+                <button class="btn btn-success">Start Service</button>
               </div>
             </div>
           </div>
