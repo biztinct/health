@@ -233,7 +233,7 @@ class HealthFieldServiceOrderUnified(models.Model):
         ('telemedicine', 'Telemedicine/Online'),
         ('vaccination', 'Vaccination'),
         ('diagnostic', 'Diagnostic Services'),
-    ], string='Service Type', required=True, tracking=True,
+    ], string='Service Type', required=True, tracking=True, default='home_visit',
        help='Type of healthcare service requested')
     
     service_category = fields.Selection([
@@ -806,7 +806,15 @@ class HealthFieldServiceOrderUnified(models.Model):
         compute='_compute_order_line_count',
         help='Number of order lines in the healthcare quote'
     )
-    
+
+    # Service Package (Alternative to Quote for prepaid services)
+    package_id = fields.Many2one(
+        'health.service.package',
+        string='Service Package',
+        tracking=True,
+        help='Prepaid service package selected for this booking'
+    )
+
     quote_state = fields.Selection(
         related='sale_order_id.state',
         string='Quote Status',
@@ -1509,34 +1517,69 @@ class HealthFieldServiceOrderUnified(models.Model):
                     message_type='notification',
                     subtype_xmlid='mail.mt_note'
                 )
-    
+
+    def _check_confirmation_requirements(self):
+        """
+        Check if booking meets requirements to be confirmed.
+        Requirements: MUST have EITHER:
+        1. A quote with at least one line item, OR
+        2. A service package selected
+
+        Returns: (bool, str) - (is_valid, error_message)
+        """
+        self.ensure_one()
+
+        has_quote_with_items = (
+            self.sale_order_id and
+            self.sale_order_id.order_line and
+            len(self.sale_order_id.order_line) > 0
+        )
+
+        has_package = self.package_id
+
+        if not has_quote_with_items and not has_package:
+            error_msg = _(
+                'Booking cannot be confirmed. You must complete ONE of the following:\n'
+                '• Create a Quote with at least one service/product line item\n'
+                '• Select a prepaid Service Package'
+            )
+            return False, error_msg
+
+        return True, None
+
     def action_confirm_booking(self):
         """Confirm booking and move to confirmed stage"""
         self.ensure_one()
-        
+
+        # Check confirmation requirements
+        is_valid, error_message = self._check_confirmation_requirements()
+        if not is_valid:
+            raise UserError(error_message)
+
         # Find confirmed stage
         confirmed_stage = self.env['health.fieldservice.stage'].search([
             ('state', '=', 'confirmed'),
             ('active', '=', True)
         ], order='sequence', limit=1)
-        
+
         if not confirmed_stage:
             raise UserError(_('No confirmed stage found. Please configure stages properly.'))
-        
+
         # Move to confirmed stage (validation will happen in write method)
         try:
             self.write({'stage_id': confirmed_stage.id})
-            
+
             # Post confirmation message
+            quote_or_package = self.sale_order_id.name if self.sale_order_id else self.package_id.name
             self.message_post(
-                body=_('✅ <strong>Booking Confirmed:</strong> Booking moved to %s stage. Quote %s is ready for service delivery.') % (confirmed_stage.name, self.sale_order_id.name),
+                body=_('✅ <strong>Booking Confirmed:</strong> Booking moved to %s stage. %s is ready for service delivery.') % (confirmed_stage.name, quote_or_package),
                 message_type='notification',
                 subtype_xmlid='mail.mt_note'
             )
         except UserError as e:
             # Re-raise with better context
             raise UserError(_('Cannot confirm booking:\n%s') % str(e))
-        
+
         return True
     
     def _get_next_stage(self):

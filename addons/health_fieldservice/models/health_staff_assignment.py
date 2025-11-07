@@ -672,6 +672,9 @@ class HealthStaffAssignment(models.Model):
                 if not record.staff_id:
                     raise UserError(_('Please assign staff members before moving to assigned state.'))
                 record.write({'state': 'assigned'})
+            elif record.state == 'assigned':
+                # Already in assigned state - silently return (auto-transition may have occurred)
+                pass
             else:
                 raise UserError(_('Only draft assignments can be moved to assigned state.'))
     

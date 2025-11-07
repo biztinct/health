@@ -371,7 +371,16 @@ class HealthPWAAPIController(http.Controller):
                 'created_date': order.create_date,
                 'updated_date': order.write_date,
             }
-            
+
+            # Add confirmation requirements info
+            is_valid, error_msg = order._check_confirmation_requirements()
+            order_data['confirmation_requirements'] = {
+                'is_valid': is_valid,
+                'error_message': error_msg,
+                'has_quote_with_items': bool(order.sale_order_id and order.sale_order_id.order_line),
+                'has_package': bool(order.package_id),
+            }
+
             return self._prepare_json_response(data=order_data)
             
         except Exception as e:
