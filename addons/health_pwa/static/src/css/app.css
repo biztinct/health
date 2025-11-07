@@ -1032,10 +1032,11 @@ p {
 }
 
 /* Header with navigation */
-.booking-header-top {
+.booking-header-main {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
+  gap: var(--spacing-md);
   padding: var(--spacing-md) var(--spacing-md);
   background: var(--card-color);
   border-bottom: 1px solid var(--border-color);
@@ -1043,13 +1044,27 @@ p {
   position: relative;
 }
 
-.booking-header-title {
-  margin: 0;
-  font-size: 1.2rem;
-  font-weight: 700;
+.btn-nav-arrow-header {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: var(--spacing-xs);
+  display: flex;
+  align-items: center;
+  justify-content: center;
   color: var(--text-primary);
-  text-align: center;
-  flex: 1;
+  transition: all 0.2s ease;
+  border-radius: var(--border-radius-small);
+}
+
+.btn-nav-arrow-header:hover {
+  color: var(--primary-color);
+  background: var(--surface-color);
+  transform: scale(1.05);
+}
+
+.btn-nav-arrow-header i {
+  font-size: 1.5rem;
 }
 
 .online-indicator {
@@ -1170,129 +1185,165 @@ p {
   border-bottom: 1px solid var(--divider-color);
 }
 
-/* Booking card - new compact design */
+/* Booking card - modern design */
 .booking-card {
   background: var(--card-color);
   border: 1px solid var(--border-color);
-  border-radius: 12px;
+  border-radius: 14px;
   padding: var(--spacing-md);
-  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
   position: relative;
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-sm);
+  gap: var(--spacing-xs);
+  transition: all 0.2s ease;
 }
 
 .booking-card:hover {
-  box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+  transform: translateY(-2px);
+}
+
+/* Card header - time and status */
+.booking-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--spacing-sm);
 }
 
 /* Time badge */
 .booking-time-badge {
-  font-size: 0.85rem;
-  font-weight: 600;
-  color: var(--text-primary);
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--primary-color);
   display: inline-block;
 }
 
-/* Status badge */
+/* Status badge - positioned in header */
 .status-badge {
   display: inline-block;
-  padding: 0.35rem 0.85rem;
+  padding: 0.4rem 0.9rem;
   border-radius: 20px;
   color: white;
-  font-size: 0.7rem;
+  font-size: 0.65rem;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  width: fit-content;
+  white-space: nowrap;
 }
 
-/* Patient name */
-.booking-patient-name {
-  margin: 0;
-  color: var(--text-primary);
-  font-size: 1rem;
-  font-weight: 600;
-}
-
-/* Booking details */
-.booking-details {
+/* Patient section */
+.booking-patient-section {
   display: flex;
   flex-direction: column;
   gap: var(--spacing-xs);
 }
 
-.detail-item {
+/* Patient name - bold */
+.booking-patient-name {
+  margin: 0;
+  color: var(--text-primary);
+  font-size: 1.05rem;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+/* Service type with inline icons row */
+.booking-service-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-md);
+}
+
+/* Service type */
+.booking-service-type {
   margin: 0;
   color: var(--text-secondary);
-  font-size: 0.9rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+  flex: 1;
+}
+
+/* Action icons container */
+.booking-action-icons {
   display: flex;
   align-items: center;
   gap: var(--spacing-sm);
-}
-
-.detail-item i {
-  color: var(--primary-color);
-  font-size: 1rem;
   flex-shrink: 0;
 }
 
-/* Booking footer with action buttons */
-.booking-footer {
-  display: flex;
-  gap: var(--spacing-sm);
-  justify-content: space-between;
-  margin-top: var(--spacing-sm);
-}
-
-.btn-call-primary {
-  flex: 1;
-  padding: 0.75rem;
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-  color: white;
+/* Minimalistic icon buttons */
+.btn-icon-action {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
   border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  font-weight: 600;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--spacing-xs);
-  transition: all 0.2s ease;
-}
-
-.btn-call-primary:hover {
-  transform: scale(1.02);
-  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
-}
-
-.btn-call-primary i {
-  font-size: 1.1rem;
-}
-
-.btn-view-details {
-  padding: 0.75rem var(--spacing-md);
-  background: var(--surface-color);
-  color: var(--primary-color);
-  border: 1px solid var(--border-color);
-  border-radius: 8px;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   transition: all 0.2s ease;
+  flex-shrink: 0;
+  font-size: 0;
+  padding: 0;
 }
 
-.btn-view-details:hover {
-  background: var(--primary-color);
-  color: white;
-  border-color: var(--primary-color);
-}
-
-.btn-view-details i {
+.btn-icon-action i {
   font-size: 1.2rem;
+  display: block;
 }
+
+/* Call button - green */
+.btn-icon-call {
+  background: rgba(16, 185, 129, 0.15);
+  color: #10b981;
+}
+
+.btn-icon-call:hover {
+  background: #10b981;
+  color: white;
+  transform: scale(1.1);
+}
+
+/* Map button - blue */
+.btn-icon-map {
+  background: rgba(59, 130, 246, 0.15);
+  color: #3b82f6;
+}
+
+.btn-icon-map:hover {
+  background: #3b82f6;
+  color: white;
+  transform: scale(1.1);
+}
+
+/* Location section */
+.booking-location-section {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-sm);
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  padding: var(--spacing-sm);
+  background: var(--surface-color);
+  border-radius: 8px;
+}
+
+.booking-location-section i {
+  color: var(--primary-color);
+  font-size: 1rem;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.booking-location-section span {
+  flex: 1;
+  line-height: 1.3;
+}
+
+/* Old booking-actions removed - icons now inline with service type */
 
 /* Empty state */
 .empty-state {

@@ -575,7 +575,15 @@ window.healthPWA = {
             const result = await response.json();
 
             if (result.success && result.data) {
-              bookings.value = result.data.bookings || [];
+              // Sort bookings by scheduled_datetime in ascending order
+              const bookingsList = result.data.bookings || [];
+              bookingsList.sort((a, b) => {
+                const timeA = new Date(a.scheduled_datetime).getTime();
+                const timeB = new Date(b.scheduled_datetime).getTime();
+                return timeA - timeB;
+              });
+
+              bookings.value = bookingsList;
               staffName.value = result.data.staff_name || 'Staff';
               displayDate.value = dateObj.toLocaleDateString('en-US', {
                 weekday: 'long',
@@ -586,11 +594,13 @@ window.healthPWA = {
               console.log('Loaded bookings for', dateStr, ':', bookings.value.length);
             } else {
               error.value = result.error || 'Failed to load bookings';
+              bookings.value = [];
               console.error('Error:', error.value);
             }
           } catch (err) {
             console.error('Failed to load bookings:', err);
             error.value = err.message;
+            bookings.value = [];
           } finally {
             isLoading.value = false;
           }
@@ -664,13 +674,9 @@ window.healthPWA = {
           isTransitioning.value = true;
           const today = new Date();
           currentDate.value = today;
-          if (viewMode.value === 'day') {
-            loadBookingsForDate(today);
-          } else if (viewMode.value === 'week') {
-            loadBookingsForWeek(today);
-          } else if (viewMode.value === 'month') {
-            loadBookingsForMonth(today);
-          }
+          // Always switch to day view when clicking "Today"
+          viewMode.value = 'day';
+          loadBookingsForDate(today);
           setTimeout(() => { isTransitioning.value = false; }, 300);
         };
 
@@ -738,9 +744,30 @@ window.healthPWA = {
                 });
               });
 
-              groupedBookings.value = grouped;
+              // Sort bookings within each date by scheduled time (ascending)
+              Object.keys(grouped).forEach(dateStr => {
+                grouped[dateStr].sort((a, b) => {
+                  const timeA = new Date(a.scheduled_datetime).getTime();
+                  const timeB = new Date(b.scheduled_datetime).getTime();
+                  return timeA - timeB;
+                });
+              });
+
+              // Sort date groups in ascending order (oldest date first)
+              const sortedGrouped = {};
+              Object.keys(grouped)
+                .sort((a, b) => {
+                  const dateA = new Date(grouped[a][0].scheduled_datetime);
+                  const dateB = new Date(grouped[b][0].scheduled_datetime);
+                  return dateA - dateB;
+                })
+                .forEach(dateStr => {
+                  sortedGrouped[dateStr] = grouped[dateStr];
+                });
+
+              groupedBookings.value = sortedGrouped;
               displayDate.value = `Week of ${weekStart.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`;
-              console.log('Loaded week bookings:', grouped);
+              console.log('Loaded week bookings:', sortedGrouped);
             } else {
               error.value = result.error || 'Failed to load week bookings';
             }
@@ -805,9 +832,30 @@ window.healthPWA = {
                 });
               });
 
-              groupedBookings.value = grouped;
+              // Sort bookings within each date by scheduled time (ascending)
+              Object.keys(grouped).forEach(dateStr => {
+                grouped[dateStr].sort((a, b) => {
+                  const timeA = new Date(a.scheduled_datetime).getTime();
+                  const timeB = new Date(b.scheduled_datetime).getTime();
+                  return timeA - timeB;
+                });
+              });
+
+              // Sort date groups in ascending order (oldest date first)
+              const sortedGrouped = {};
+              Object.keys(grouped)
+                .sort((a, b) => {
+                  const dateA = new Date(grouped[a][0].scheduled_datetime);
+                  const dateB = new Date(grouped[b][0].scheduled_datetime);
+                  return dateA - dateB;
+                })
+                .forEach(dateStr => {
+                  sortedGrouped[dateStr] = grouped[dateStr];
+                });
+
+              groupedBookings.value = sortedGrouped;
               displayDate.value = dateInMonth.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
-              console.log('Loaded month bookings:', grouped);
+              console.log('Loaded month bookings:', sortedGrouped);
             } else {
               error.value = result.error || 'Failed to load month bookings';
             }
@@ -981,6 +1029,17 @@ window.healthPWA = {
           }
         };
 
+        // Open Google Maps with location
+        const openMap = (location, patientName) => {
+          if (location) {
+            const encodedLocation = encodeURIComponent(location);
+            const mapsUrl = `https://www.google.com/maps/search/${encodedLocation}`;
+            window.open(mapsUrl, '_blank');
+          } else {
+            alert('Location not available');
+          }
+        };
+
         onMounted(() => {
           loadBookingsForDate(currentDate.value);
           loadMonthBookings(currentDate.value); // Load current month bookings
@@ -1006,6 +1065,7 @@ window.healthPWA = {
           handleTouchEnd,
           getStatusColor,
           callPatient,
+          openMap,
           isTransitioning,
           // Calendar functions
           isCalendarOpen,
@@ -1021,17 +1081,17 @@ window.healthPWA = {
       },
       template: `
         <div class="today-view" @touchstart="handleTouchStart" @touchend="handleTouchEnd">
-          <!-- Header with navigation arrows and clickable Today -->
-          <div class="booking-header-top">
-            <button @click="goToPrevious" class="btn-nav-arrow">
+          <!-- Header with centered navigation -->
+          <div class="booking-header-main">
+            <button @click="goToPrevious" class="btn-nav-arrow-header">
               <i class="material-icons">chevron_left</i>
             </button>
 
-            <button @click="goToToday" class="btn-today-title" :class="{ active: new Date().toDateString() === currentDate.toDateString() }">
+            <button @click="goToToday" class="tab-btn" :class="{ active: new Date().toDateString() === currentDate.toDateString() }">
               Today
             </button>
 
-            <button @click="goToNext" class="btn-nav-arrow">
+            <button @click="goToNext" class="btn-nav-arrow-header">
               <i class="material-icons">chevron_right</i>
             </button>
           </div>
@@ -1137,31 +1197,30 @@ window.healthPWA = {
 
             <div v-else class="bookings-list">
               <div v-for="booking in bookings" :key="booking.fso_id" class="booking-card">
-                <div class="booking-time-badge">{{ booking.scheduled_time }}</div>
-                <div class="status-badge" :style="{ backgroundColor: getStatusColor(booking.status) }">
-                  {{ booking.status_display || booking.status }}
+                <!-- Header with time and status -->
+                <div class="booking-card-header">
+                  <div class="booking-time-badge">{{ booking.scheduled_time }}</div>
+                  <div class="status-badge" :style="{ backgroundColor: getStatusColor(booking.status) }">
+                    {{ booking.status_display || booking.status }}
+                  </div>
                 </div>
 
-                <h3 class="booking-patient-name">{{ booking.patient_name }}</h3>
-
-                <div class="booking-details">
-                  <p v-if="booking.service_type" class="detail-item">
-                    <i class="material-icons">local_hospital</i>
-                    {{ booking.service_type }}
-                  </p>
-                  <p v-if="booking.location" class="detail-item">
-                    <i class="material-icons">location_on</i>
-                    {{ booking.location }}
-                  </p>
+                <!-- Patient info -->
+                <div class="booking-patient-section">
+                  <h3 class="booking-patient-name">{{ booking.patient_name }}</h3>
                 </div>
 
-                <div class="booking-footer">
-                  <button @click="callPatient(booking.patient_phone)" class="btn-call-primary" title="Call patient">
-                    <i class="material-icons">call</i>
-                  </button>
-                  <button @click="$emit('navigate', 'patient', { id: booking.patient_id })" class="btn-view-details" title="View details">
-                    <i class="material-icons">navigate_next</i>
-                  </button>
+                <!-- Service type with action buttons inline -->
+                <div class="booking-service-row">
+                  <p v-if="booking.service_type" class="booking-service-type">{{ booking.service_type }}</p>
+                  <div class="booking-action-icons">
+                    <button @click="callPatient(booking.patient_phone)" class="btn-icon-action btn-icon-call" title="Call patient">
+                      <i class="material-icons">call</i>
+                    </button>
+                    <button @click="openMap(booking.location, booking.patient_name)" class="btn-icon-action btn-icon-map" title="Open map">
+                      <i class="material-icons">map</i>
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
@@ -1178,31 +1237,30 @@ window.healthPWA = {
               <div v-for="(dateBookings, dateStr) in groupedBookings" :key="dateStr" class="date-group">
                 <h4 class="date-group-title">{{ dateStr }}</h4>
                 <div v-for="booking in dateBookings" :key="booking.fso_id" class="booking-card">
-                  <div class="booking-time-badge">{{ booking.scheduled_time }}</div>
-                  <div class="status-badge" :style="{ backgroundColor: getStatusColor(booking.status) }">
-                    {{ booking.status_display || booking.status }}
+                  <!-- Header with time and status -->
+                  <div class="booking-card-header">
+                    <div class="booking-time-badge">{{ booking.scheduled_time }}</div>
+                    <div class="status-badge" :style="{ backgroundColor: getStatusColor(booking.status) }">
+                      {{ booking.status_display || booking.status }}
+                    </div>
                   </div>
 
-                  <h3 class="booking-patient-name">{{ booking.patient_name }}</h3>
-
-                  <div class="booking-details">
-                    <p v-if="booking.service_type" class="detail-item">
-                      <i class="material-icons">local_hospital</i>
-                      {{ booking.service_type }}
-                    </p>
-                    <p v-if="booking.location" class="detail-item">
-                      <i class="material-icons">location_on</i>
-                      {{ booking.location }}
-                    </p>
+                  <!-- Patient info -->
+                  <div class="booking-patient-section">
+                    <h3 class="booking-patient-name">{{ booking.patient_name }}</h3>
                   </div>
 
-                  <div class="booking-footer">
-                    <button @click="callPatient(booking.patient_phone)" class="btn-call-primary">
-                      <i class="material-icons">call</i>
-                    </button>
-                    <button @click="$emit('navigate', 'patient', { id: booking.patient_id })" class="btn-view-details">
-                      <i class="material-icons">navigate_next</i>
-                    </button>
+                  <!-- Service type with action buttons inline -->
+                  <div class="booking-service-row">
+                    <p v-if="booking.service_type" class="booking-service-type">{{ booking.service_type }}</p>
+                    <div class="booking-action-icons">
+                      <button @click="callPatient(booking.patient_phone)" class="btn-icon-action btn-icon-call" title="Call patient">
+                        <i class="material-icons">call</i>
+                      </button>
+                      <button @click="openMap(booking.location, booking.patient_name)" class="btn-icon-action btn-icon-map" title="Open map">
+                        <i class="material-icons">map</i>
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -1220,31 +1278,30 @@ window.healthPWA = {
               <div v-for="(dateBookings, dateStr) in groupedBookings" :key="dateStr" class="date-group">
                 <h4 class="date-group-title">{{ dateStr }}</h4>
                 <div v-for="booking in dateBookings" :key="booking.fso_id" class="booking-card">
-                  <div class="booking-time-badge">{{ booking.scheduled_time }}</div>
-                  <div class="status-badge" :style="{ backgroundColor: getStatusColor(booking.status) }">
-                    {{ booking.status_display || booking.status }}
+                  <!-- Header with time and status -->
+                  <div class="booking-card-header">
+                    <div class="booking-time-badge">{{ booking.scheduled_time }}</div>
+                    <div class="status-badge" :style="{ backgroundColor: getStatusColor(booking.status) }">
+                      {{ booking.status_display || booking.status }}
+                    </div>
                   </div>
 
-                  <h3 class="booking-patient-name">{{ booking.patient_name }}</h3>
-
-                  <div class="booking-details">
-                    <p v-if="booking.service_type" class="detail-item">
-                      <i class="material-icons">local_hospital</i>
-                      {{ booking.service_type }}
-                    </p>
-                    <p v-if="booking.location" class="detail-item">
-                      <i class="material-icons">location_on</i>
-                      {{ booking.location }}
-                    </p>
+                  <!-- Patient info -->
+                  <div class="booking-patient-section">
+                    <h3 class="booking-patient-name">{{ booking.patient_name }}</h3>
                   </div>
 
-                  <div class="booking-footer">
-                    <button @click="callPatient(booking.patient_phone)" class="btn-call-primary">
-                      <i class="material-icons">call</i>
-                    </button>
-                    <button @click="$emit('navigate', 'patient', { id: booking.patient_id })" class="btn-view-details">
-                      <i class="material-icons">navigate_next</i>
-                    </button>
+                  <!-- Service type with action buttons inline -->
+                  <div class="booking-service-row">
+                    <p v-if="booking.service_type" class="booking-service-type">{{ booking.service_type }}</p>
+                    <div class="booking-action-icons">
+                      <button @click="callPatient(booking.patient_phone)" class="btn-icon-action btn-icon-call" title="Call patient">
+                        <i class="material-icons">call</i>
+                      </button>
+                      <button @click="openMap(booking.location, booking.patient_name)" class="btn-icon-action btn-icon-map" title="Open map">
+                        <i class="material-icons">map</i>
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
