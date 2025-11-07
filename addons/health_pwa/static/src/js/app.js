@@ -1127,6 +1127,92 @@ window.healthPWA = {
           }
         };
 
+        // Intake Summary Modal state
+        const showIntakeSummaryModal = ref(false);
+        const selectedBookingForIntake = ref(null);
+
+        // Toggle intake summary modal
+        const toggleIntakeSummaryModal = () => {
+          showIntakeSummaryModal.value = !showIntakeSummaryModal.value;
+        };
+
+        // Service Start state
+        const serviceStartedForBooking = ref(null); // Stores which booking has service started
+        const showClinicalNotesModal = ref(false);
+        const clinicalNotesText = ref('');
+        const capturedPhoto = ref(null);
+        const photoPreviewUrl = ref(null);
+
+        // Start service
+        const startService = () => {
+          if (selectedBookingId.value) {
+            serviceStartedForBooking.value = selectedBookingId.value;
+            console.log('Service started for booking:', selectedBookingId.value);
+          }
+        };
+
+        // Open clinical notes modal
+        const openClinicalNotesModal = () => {
+          showClinicalNotesModal.value = true;
+          clinicalNotesText.value = selectedBookingDetail.value?.clinical_notes || '';
+        };
+
+        // Close clinical notes modal
+        const closeClinicalNotesModal = () => {
+          showClinicalNotesModal.value = false;
+          clinicalNotesText.value = '';
+          capturedPhoto.value = null;
+          photoPreviewUrl.value = null;
+        };
+
+        // Capture photo from camera
+        const capturePhoto = async (event) => {
+          const file = event.target.files?.[0];
+          if (file) {
+            capturedPhoto.value = file;
+            // Create preview URL
+            photoPreviewUrl.value = URL.createObjectURL(file);
+            console.log('Photo captured:', file.name);
+          }
+        };
+
+        // Save clinical notes and photo
+        const saveClinicalNotes = async () => {
+          try {
+            if (!selectedBookingId.value) {
+              console.error('No booking selected');
+              return;
+            }
+
+            // Prepare form data
+            const formData = new FormData();
+            formData.append('clinical_notes', clinicalNotesText.value);
+            if (capturedPhoto.value) {
+              formData.append('photo', capturedPhoto.value);
+            }
+
+            // Send to API
+            const response = await fetch(`/health_pwa/api/fso/${selectedBookingId.value}/clinical-notes`, {
+              method: 'POST',
+              body: formData
+            });
+
+            const result = await response.json();
+            if (result.success) {
+              console.log('Clinical notes saved successfully');
+              // Update the booking detail with new notes
+              if (selectedBookingDetail.value) {
+                selectedBookingDetail.value.clinical_notes = clinicalNotesText.value;
+              }
+              closeClinicalNotesModal();
+            } else {
+              console.error('Failed to save clinical notes:', result.error);
+            }
+          } catch (err) {
+            console.error('Error saving clinical notes:', err);
+          }
+        };
+
         onMounted(() => {
           loadBookingsForDate(currentDate.value);
           loadMonthBookings(currentDate.value); // Load current month bookings
@@ -1172,7 +1258,22 @@ window.healthPWA = {
           isLoadingDetail,
           detailError,
           fetchBookingDetail,
-          toggleBookingDetail
+          toggleBookingDetail,
+          // Intake summary modal
+          showIntakeSummaryModal,
+          selectedBookingForIntake,
+          toggleIntakeSummaryModal,
+          // Service start and clinical notes
+          serviceStartedForBooking,
+          showClinicalNotesModal,
+          clinicalNotesText,
+          capturedPhoto,
+          photoPreviewUrl,
+          startService,
+          openClinicalNotesModal,
+          closeClinicalNotesModal,
+          capturePhoto,
+          saveClinicalNotes
         };
       },
       template: `
@@ -1473,37 +1574,148 @@ window.healthPWA = {
                   </div>
                 </div>
 
-                <!-- Intake Summary Section -->
-                <div class="detail-section">
-                  <h4 class="section-title">Intake Summary</h4>
-                  <div v-if="selectedBookingDetail.diagnosis" class="intake-item">
-                    <span class="intake-label">Diagnosis:</span>
-                    <p class="intake-value" v-html="selectedBookingDetail.diagnosis"></p>
-                  </div>
-                  <div v-if="selectedBookingDetail.assigned_user && selectedBookingDetail.assigned_user.name" class="intake-item">
-                    <span class="intake-label">Referring Doctor:</span>
-                    <p class="intake-value">{{ selectedBookingDetail.assigned_user.name }}</p>
-                  </div>
-                  <div v-if="selectedBookingDetail.treatment_performed" class="intake-item">
-                    <span class="intake-label">Goal of Care:</span>
-                    <p class="intake-value">{{ selectedBookingDetail.treatment_performed }}</p>
-                  </div>
-                  <div v-if="selectedBookingDetail.medications_prescribed" class="intake-item">
-                    <span class="intake-label">Required Equipment:</span>
-                    <p class="intake-value">{{ selectedBookingDetail.medications_prescribed }}</p>
-                  </div>
-                  <div v-if="selectedBookingDetail.clinical_notes" class="intake-item">
-                    <span class="intake-label">Notes:</span>
-                    <p class="intake-value" v-html="selectedBookingDetail.clinical_notes"></p>
-                  </div>
-                </div>
+                <!-- Intake Summary Button -->
+                <button @click="toggleIntakeSummaryModal" class="btn-intake-summary">
+                  <i class="material-icons">description</i>
+                  <span>View Intake Summary</span>
+                  <i class="material-icons">chevron_right</i>
+                </button>
               </div>
 
               <!-- Modal footer with action buttons -->
               <div class="modal-footer">
-                <button class="btn btn-danger">Cancel/Refuse Visit</button>
-                <button class="btn btn-success">Start Service</button>
+                <!-- Before service start -->
+                <div v-if="serviceStartedForBooking !== selectedBookingId" class="modal-footer-content">
+                  <button class="btn btn-danger">Cancel/Refuse Visit</button>
+                  <button @click="startService" class="btn btn-success">Start Service</button>
+                </div>
+
+                <!-- After service start -->
+                <div v-else class="modal-footer-content">
+                  <button @click="openClinicalNotesModal" class="btn btn-clinical-notes">
+                    <i class="material-icons">description</i>
+                    <span>Clinical Notes</span>
+                  </button>
+                  <button class="btn btn-invoice">
+                    <i class="material-icons">receipt</i>
+                    <span>Invoice</span>
+                  </button>
+                </div>
               </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Intake Summary Modal -->
+        <div v-if="showIntakeSummaryModal && selectedBookingDetail" class="modal-backdrop" @click="toggleIntakeSummaryModal">
+          <div class="intake-summary-modal" @click.stop>
+            <!-- Modal header with back button -->
+            <div class="modal-header">
+              <button @click="toggleIntakeSummaryModal" class="btn-modal-back">
+                <i class="material-icons">chevron_left</i>
+              </button>
+              <h3 class="modal-title">Intake Notes</h3>
+              <div style="width: 40px;"></div>
+            </div>
+
+            <!-- Modal scrollable content -->
+            <div class="modal-body">
+              <!-- Diagnosis -->
+              <div class="intake-form-group">
+                <label class="intake-form-label">Diagnosis</label>
+                <textarea class="intake-form-field" v-model="selectedBookingDetail.diagnosis" placeholder="Type here..." readonly></textarea>
+              </div>
+
+              <!-- Referring Doctor -->
+              <div class="intake-form-group">
+                <div class="intake-form-header">
+                  <label class="intake-form-label">Referring Doctor</label>
+                  <button v-if="selectedBookingDetail.assigned_user && selectedBookingDetail.assigned_user.name"
+                    @click="callPatient(selectedBookingDetail.primary_contact?.phone)"
+                    class="btn-icon-action btn-icon-call-small"
+                    title="Call">
+                    <i class="material-icons">call</i>
+                  </button>
+                </div>
+                <p class="intake-form-value">{{ selectedBookingDetail.assigned_user?.name || 'N/A' }}</p>
+              </div>
+
+              <!-- Goal of Care -->
+              <div class="intake-form-group">
+                <label class="intake-form-label">Goal of Care</label>
+                <textarea class="intake-form-field" v-model="selectedBookingDetail.treatment_performed" placeholder="Type here..." readonly></textarea>
+              </div>
+
+              <!-- Required Equipment -->
+              <div class="intake-form-group">
+                <label class="intake-form-label">Required Equipment</label>
+                <textarea class="intake-form-field" v-model="selectedBookingDetail.medications_prescribed" placeholder="Type here..." readonly></textarea>
+              </div>
+
+              <!-- Notes -->
+              <div class="intake-form-group">
+                <label class="intake-form-label">Notes</label>
+                <textarea class="intake-form-field" v-model="selectedBookingDetail.clinical_notes" placeholder="Type here..." readonly></textarea>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Clinical Notes Modal -->
+        <div v-if="showClinicalNotesModal && selectedBookingDetail" class="modal-backdrop" @click="closeClinicalNotesModal">
+          <div class="clinical-notes-modal" @click.stop>
+            <!-- Modal header -->
+            <div class="modal-header">
+              <h3 class="modal-title">Clinical Notes</h3>
+              <button @click="closeClinicalNotesModal" class="btn-modal-close">
+                <i class="material-icons">close</i>
+              </button>
+            </div>
+
+            <!-- Modal content -->
+            <div class="modal-body">
+              <!-- Notes textarea -->
+              <div class="clinical-form-group">
+                <label class="clinical-form-label">Notes</label>
+                <textarea
+                  v-model="clinicalNotesText"
+                  class="clinical-form-field"
+                  placeholder="Enter clinical notes..."
+                  rows="6"></textarea>
+              </div>
+
+              <!-- Photo capture section -->
+              <div class="clinical-form-group">
+                <label class="clinical-form-label">Attach Photo</label>
+                <div class="photo-upload-container">
+                  <input
+                    type="file"
+                    ref="photoInput"
+                    @change="capturePhoto"
+                    accept="image/*"
+                    capture="environment"
+                    class="photo-input"
+                  />
+                  <button @click="$refs.photoInput?.click()" class="btn-photo-capture">
+                    <i class="material-icons">camera_alt</i>
+                    <span>Take Photo</span>
+                  </button>
+                </div>
+
+                <!-- Photo preview -->
+                <div v-if="photoPreviewUrl" class="photo-preview">
+                  <img :src="photoPreviewUrl" alt="Preview" />
+                  <button @click="() => { capturedPhoto = null; photoPreviewUrl = null; }" class="btn-remove-photo">
+                    <i class="material-icons">close</i>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Modal footer -->
+            <div class="clinical-modal-footer">
+              <button @click="closeClinicalNotesModal" class="btn btn-secondary">Cancel</button>
+              <button @click="saveClinicalNotes" class="btn btn-success">Save</button>
             </div>
           </div>
         </div>

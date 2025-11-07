@@ -2262,6 +2262,446 @@ p {
   }
 }
 
+/* Intake Summary Button Styles */
+.btn-intake-summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: var(--spacing-md) var(--spacing-lg);
+  background: var(--surface-color);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  gap: var(--spacing-md);
+  transition: all 0.2s ease;
+}
+
+.btn-intake-summary:hover {
+  background: rgba(21, 101, 192, 0.1);
+  border-color: var(--primary-color);
+  color: var(--primary-color);
+}
+
+.btn-intake-summary i {
+  font-size: 1.3rem;
+  display: flex;
+  align-items: center;
+}
+
+.btn-intake-summary span {
+  flex: 1;
+  text-align: left;
+}
+
+/* Intake Summary Modal */
+.intake-summary-modal {
+  background: var(--card-color);
+  border-radius: 20px 20px 0 0;
+  width: 100%;
+  max-width: 100%;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 -5px 30px rgba(0, 0, 0, 0.15);
+  animation: slideUpModal 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  overflow: hidden;
+}
+
+/* Back Button in Modal Header */
+.btn-modal-back {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: var(--spacing-xs);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--primary-color);
+  border-radius: var(--border-radius-small);
+  transition: all 0.2s ease;
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+}
+
+.btn-modal-back:hover {
+  background: var(--surface-color);
+  transform: scale(1.1);
+}
+
+.btn-modal-back i {
+  font-size: 1.3rem;
+  display: block;
+}
+
+/* Intake Form Group */
+.intake-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+  padding-bottom: var(--spacing-lg);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.intake-form-group:last-child {
+  border-bottom: none;
+}
+
+.intake-form-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-md);
+}
+
+.intake-form-label {
+  display: block;
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.intake-form-field {
+  width: 100%;
+  padding: var(--spacing-sm) var(--spacing-md);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  font-size: 0.9rem;
+  background: var(--background-color);
+  color: var(--text-primary);
+  font-family: 'Roboto', sans-serif;
+  resize: none;
+  min-height: 60px;
+  line-height: 1.4;
+  transition: border-color 0.2s ease;
+}
+
+.intake-form-field:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  background: var(--card-color);
+}
+
+.intake-form-field:disabled {
+  background: var(--surface-color);
+  color: var(--text-secondary);
+  cursor: not-allowed;
+}
+
+.intake-form-value {
+  margin: 0;
+  color: var(--text-primary);
+  font-size: 0.95rem;
+  line-height: 1.4;
+}
+
+/* Responsive Intake Modal */
+@media (max-width: 768px) {
+  .intake-summary-modal {
+    border-radius: 24px 24px 0 0;
+    max-height: 95vh;
+  }
+
+  .intake-form-group {
+    padding-bottom: var(--spacing-md);
+  }
+}
+
+@media (max-width: 480px) {
+  .intake-summary-modal {
+    max-height: 100vh;
+    border-radius: 16px 16px 0 0;
+  }
+
+  .btn-intake-summary {
+    padding: var(--spacing-sm) var(--spacing-md);
+    font-size: 0.9rem;
+  }
+
+  .intake-form-field {
+    min-height: 50px;
+    font-size: 0.85rem;
+  }
+}
+
+/* Modal Footer Content Wrapper */
+.modal-footer-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--spacing-md);
+  width: 100%;
+}
+
+/* Clinical Notes Button */
+.btn-clinical-notes {
+  background: #2563eb;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-md) var(--spacing-lg);
+  border: none;
+  border-radius: var(--border-radius);
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-clinical-notes:hover {
+  background: #1d4ed8;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+}
+
+.btn-clinical-notes:active {
+  transform: scale(0.98);
+}
+
+.btn-clinical-notes i {
+  font-size: 1.2rem;
+}
+
+/* Invoice Button */
+.btn-invoice {
+  background: #7c3aed;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-md) var(--spacing-lg);
+  border: none;
+  border-radius: var(--border-radius);
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-invoice:hover {
+  background: #6d28d9;
+  box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3);
+}
+
+.btn-invoice:active {
+  transform: scale(0.98);
+}
+
+.btn-invoice i {
+  font-size: 1.2rem;
+}
+
+/* Clinical Notes Modal */
+.clinical-notes-modal {
+  background: var(--card-color);
+  border-radius: 20px 20px 0 0;
+  width: 100%;
+  max-width: 100%;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 -5px 30px rgba(0, 0, 0, 0.15);
+  animation: slideUpModal 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  overflow: hidden;
+}
+
+/* Clinical Form Styling */
+.clinical-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-lg);
+}
+
+.clinical-form-label {
+  display: block;
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.clinical-form-field {
+  width: 100%;
+  padding: var(--spacing-sm) var(--spacing-md);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  font-size: 0.9rem;
+  background: var(--background-color);
+  color: var(--text-primary);
+  font-family: 'Roboto', sans-serif;
+  resize: vertical;
+  line-height: 1.4;
+  transition: border-color 0.2s ease;
+}
+
+.clinical-form-field:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  background: var(--card-color);
+  box-shadow: 0 0 0 2px rgba(21, 101, 192, 0.1);
+}
+
+/* Photo Upload Container */
+.photo-upload-container {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+}
+
+.photo-input {
+  display: none;
+}
+
+.btn-photo-capture {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-sm) var(--spacing-lg);
+  background: rgba(16, 185, 129, 0.15);
+  color: #10b981;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  border-radius: var(--border-radius);
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-height: 44px;
+  flex: 1;
+}
+
+.btn-photo-capture:hover {
+  background: #10b981;
+  color: white;
+  border-color: #10b981;
+}
+
+.btn-photo-capture:active {
+  transform: scale(0.98);
+}
+
+.btn-photo-capture i {
+  font-size: 1.2rem;
+}
+
+/* Photo Preview */
+.photo-preview {
+  position: relative;
+  margin-top: var(--spacing-md);
+  border-radius: var(--border-radius);
+  overflow: hidden;
+  border: 2px solid var(--border-color);
+}
+
+.photo-preview img {
+  width: 100%;
+  height: auto;
+  display: block;
+  max-height: 300px;
+  object-fit: contain;
+  background: var(--surface-color);
+}
+
+.btn-remove-photo {
+  position: absolute;
+  top: var(--spacing-sm);
+  right: var(--spacing-sm);
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.6);
+  color: white;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.btn-remove-photo:hover {
+  background: rgba(0, 0, 0, 0.8);
+}
+
+.btn-remove-photo i {
+  font-size: 1.2rem;
+}
+
+/* Clinical Modal Footer */
+.clinical-modal-footer {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--spacing-md);
+  padding: var(--spacing-lg);
+  border-top: 1px solid var(--border-color);
+  background: var(--card-color);
+  flex-shrink: 0;
+}
+
+.clinical-modal-footer .btn {
+  padding: var(--spacing-md) var(--spacing-md);
+  font-size: 0.9rem;
+  min-height: 44px;
+}
+
+/* Responsive Clinical Notes Modal */
+@media (max-width: 768px) {
+  .clinical-notes-modal {
+    border-radius: 24px 24px 0 0;
+    max-height: 95vh;
+  }
+
+  .clinical-form-field {
+    font-size: 0.85rem;
+  }
+
+  .modal-footer-content {
+    gap: var(--spacing-sm);
+  }
+}
+
+@media (max-width: 480px) {
+  .clinical-notes-modal {
+    max-height: 100vh;
+    border-radius: 16px 16px 0 0;
+  }
+
+  .btn-clinical-notes,
+  .btn-invoice {
+    padding: var(--spacing-sm) var(--spacing-md);
+    font-size: 0.85rem;
+  }
+
+  .clinical-form-field {
+    min-height: 50px;
+    font-size: 0.85rem;
+  }
+
+  .btn-photo-capture {
+    padding: var(--spacing-sm) var(--spacing-md);
+    font-size: 0.85rem;
+  }
+
+  .clinical-modal-footer {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-md);
+  }
+
+  .modal-footer-content {
+    gap: var(--spacing-sm);
+  }
+}
+
 /* Print Styles */
 @media print {
   .no-print { display: none !important; }
