@@ -8,6 +8,7 @@
   "orientation": "portrait-primary",
   "theme_color": "#875A7B",
   "background_color": "#FFFFFF",
+  "color_scheme": "light",
   "categories": ["health", "medical", "productivity"],
   "lang": "en-US",
   "icons": [

@@ -448,6 +448,9 @@
 
 /* CSS Custom Properties for theming */
 :root {
+  /* Force light mode - no dark mode support */
+  color-scheme: light;
+
   /* Original brand colors */
   --primary-color: #1565C0;
   --primary-dark: #0D47A1;
@@ -528,21 +531,21 @@
   --spacing-xxl: 3rem;
 }
 
-/* Dark mode support */
-@media (prefers-color-scheme: dark) {
+/* Dark mode disabled - forced to light mode */
+/* @media (prefers-color-scheme: dark) {
   :root {
     --text-primary: #FFFFFF;
     --text-secondary: #CCCCCC;
     --text-disabled: #999999;
     --text-on-primary: #FFFFFF;
-    
+
     --background-color: #121212;
     --surface-color: #1E1E1E;
     --card-color: #2D2D2D;
     --border-color: #404040;
     --divider-color: #2D2D2D;
   }
-}
+} */
 
 /* Reset and base styles */
 * {
@@ -1013,6 +1016,676 @@ p {
 @media (min-width: 769px) {
   .d-lg-none { display: none; }
   .d-lg-block { display: block; }
+}
+
+/* Booking View Styles */
+.today-view {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  padding: 0;
+  touch-action: none;
+  user-select: none;
+  position: relative;
+  height: 100%;
+  overflow: hidden;
+}
+
+/* Header with navigation */
+.booking-header-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--spacing-md) var(--spacing-md);
+  background: var(--card-color);
+  border-bottom: 1px solid var(--border-color);
+  flex-shrink: 0;
+  position: relative;
+}
+
+.booking-header-title {
+  margin: 0;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  text-align: center;
+  flex: 1;
+}
+
+.online-indicator {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #ccc;
+  display: block;
+  margin-left: var(--spacing-sm);
+}
+
+.online-indicator.online {
+  background: #10b981;
+}
+
+/* View mode tabs */
+.view-tabs {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-md);
+  background: var(--card-color);
+  border-bottom: 1px solid var(--border-color);
+  flex-shrink: 0;
+  overflow-x: auto;
+}
+
+.tab-btn {
+  padding: 0.6rem 1.2rem;
+  background: var(--surface-color);
+  border: none;
+  border-radius: 20px;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.tab-btn.active {
+  background: var(--primary-color);
+  color: white;
+  box-shadow: 0 2px 8px rgba(21, 101, 192, 0.3);
+}
+
+.tab-btn:hover:not(.active) {
+  background: var(--border-color);
+}
+
+.btn-calendar-icon {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: var(--spacing-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-primary);
+  margin-left: auto;
+  transition: all 0.2s ease;
+}
+
+.btn-calendar-icon:hover {
+  color: var(--primary-color);
+  transform: scale(1.1);
+}
+
+.btn-calendar-icon i {
+  font-size: 1.5rem;
+}
+
+/* Booking date section */
+.booking-date-section {
+  padding: var(--spacing-md) var(--spacing-md);
+  text-align: center;
+  background: var(--card-color);
+  border-bottom: 1px solid var(--border-color);
+  flex-shrink: 0;
+}
+
+.staff-name {
+  margin: 0 0 var(--spacing-xs) 0;
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+}
+
+.date-display {
+  margin: 0;
+  color: var(--text-primary);
+  font-size: 1.3rem;
+  font-weight: 700;
+}
+
+/* Main content area */
+.bookings-list,
+.grouped-bookings-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--spacing-md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.date-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.date-group-title {
+  margin: var(--spacing-md) 0 var(--spacing-sm) 0;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  padding-bottom: var(--spacing-sm);
+  border-bottom: 1px solid var(--divider-color);
+}
+
+/* Booking card - new compact design */
+.booking-card {
+  background: var(--card-color);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: var(--spacing-md);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.booking-card:hover {
+  box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+}
+
+/* Time badge */
+.booking-time-badge {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  display: inline-block;
+}
+
+/* Status badge */
+.status-badge {
+  display: inline-block;
+  padding: 0.35rem 0.85rem;
+  border-radius: 20px;
+  color: white;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  width: fit-content;
+}
+
+/* Patient name */
+.booking-patient-name {
+  margin: 0;
+  color: var(--text-primary);
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+/* Booking details */
+.booking-details {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+}
+
+.detail-item {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.detail-item i {
+  color: var(--primary-color);
+  font-size: 1rem;
+  flex-shrink: 0;
+}
+
+/* Booking footer with action buttons */
+.booking-footer {
+  display: flex;
+  gap: var(--spacing-sm);
+  justify-content: space-between;
+  margin-top: var(--spacing-sm);
+}
+
+.btn-call-primary {
+  flex: 1;
+  padding: 0.75rem;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-xs);
+  transition: all 0.2s ease;
+}
+
+.btn-call-primary:hover {
+  transform: scale(1.02);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+.btn-call-primary i {
+  font-size: 1.1rem;
+}
+
+.btn-view-details {
+  padding: 0.75rem var(--spacing-md);
+  background: var(--surface-color);
+  color: var(--primary-color);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.btn-view-details:hover {
+  background: var(--primary-color);
+  color: white;
+  border-color: var(--primary-color);
+}
+
+.btn-view-details i {
+  font-size: 1.2rem;
+}
+
+/* Empty state */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem var(--spacing-md);
+  text-align: center;
+  color: var(--text-secondary);
+  flex: 1;
+  margin-top: 2rem;
+}
+
+.empty-state i {
+  font-size: 3rem;
+  margin-bottom: var(--spacing-md);
+  color: var(--text-disabled);
+}
+
+.empty-state p {
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+/* Error message */
+.error-message {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem var(--spacing-md);
+  text-align: center;
+  color: var(--error-color);
+  flex: 1;
+  margin-top: 2rem;
+}
+
+.error-message i {
+  font-size: 3rem;
+  margin-bottom: var(--spacing-md);
+}
+
+.error-message p {
+  margin: 0 0 var(--spacing-md) 0;
+  font-size: 0.95rem;
+}
+
+/* Calendar Picker Styles */
+.calendar-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: var(--spacing-md);
+}
+
+.calendar-modal {
+  background: var(--card-color);
+  border-radius: var(--border-radius-large);
+  padding: var(--spacing-lg);
+  box-shadow: var(--shadow-3);
+  max-width: 500px;
+  width: 100%;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.calendar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--spacing-lg);
+}
+
+.calendar-month-title {
+  margin: 0;
+  color: var(--text-primary);
+  font-size: 1.2rem;
+  font-weight: 600;
+  text-align: center;
+  flex: 1;
+}
+
+.btn-month-nav {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: var(--spacing-xs);
+  border-radius: 50%;
+  transition: all 0.2s ease;
+  color: var(--primary-color);
+}
+
+.btn-month-nav:hover {
+  background: var(--surface-color);
+  transform: scale(1.1);
+}
+
+.btn-month-nav i {
+  font-size: 1.5rem;
+}
+
+.calendar-weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: var(--spacing-xs);
+  margin-bottom: var(--spacing-md);
+}
+
+.weekday {
+  text-align: center;
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: var(--spacing-xs);
+  text-transform: uppercase;
+}
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: var(--spacing-xs);
+  margin-bottom: var(--spacing-lg);
+}
+
+.calendar-day {
+  aspect-ratio: 1;
+  background: var(--surface-color);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  font-size: 1rem;
+  color: var(--text-primary);
+  transition: all 0.2s ease;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 500;
+}
+
+.calendar-day:not(.empty):hover {
+  background: var(--primary-color);
+  color: white;
+  border-color: var(--primary-color);
+  transform: scale(1.05);
+}
+
+.calendar-day.empty {
+  background: transparent;
+  border: none;
+  cursor: default;
+}
+
+.calendar-day.has-booking {
+  border-color: var(--primary-color);
+  background: rgba(139, 92, 246, 0.1);
+}
+
+.calendar-day.is-today {
+  border-color: #10b981;
+  background: rgba(16, 185, 129, 0.1);
+  font-weight: 700;
+}
+
+.calendar-day.is-selected {
+  background: var(--primary-color);
+  color: white;
+  border-color: var(--primary-color);
+  font-weight: 700;
+}
+
+.booking-dot {
+  position: absolute;
+  bottom: 2px;
+  width: 6px;
+  height: 6px;
+  background: var(--primary-color);
+  border-radius: 50%;
+}
+
+.calendar-day.is-selected .booking-dot {
+  background: white;
+}
+
+.btn-close-calendar {
+  width: 100%;
+  padding: var(--spacing-md);
+  background: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: var(--border-radius);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-close-calendar:hover {
+  opacity: 0.9;
+  transform: scale(1.02);
+}
+
+/* Call View Styles */
+.call-view {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-lg);
+  min-height: calc(100vh - 200px);
+}
+
+.call-header {
+  text-align: center;
+  margin-bottom: var(--spacing-xl);
+  width: 100%;
+}
+
+.call-header h2 {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-md);
+  margin: 0;
+  color: var(--text-primary);
+}
+
+.call-header i {
+  color: var(--primary-color);
+}
+
+.call-container {
+  width: 100%;
+  max-width: 500px;
+}
+
+.clinic-card {
+  background: var(--card-color);
+  border-radius: var(--border-radius-large);
+  padding: var(--spacing-xl);
+  box-shadow: var(--shadow-2);
+  text-align: center;
+}
+
+.clinic-info {
+  margin-bottom: var(--spacing-lg);
+}
+
+.clinic-name {
+  margin: 0 0 var(--spacing-md) 0;
+  color: var(--text-primary);
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.clinic-phone-label {
+  margin: 0 0 var(--spacing-sm) 0;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.clinic-phone {
+  margin: 0;
+  color: var(--primary-color);
+  font-size: 1.3rem;
+  font-weight: 600;
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+}
+
+.call-actions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-lg);
+}
+
+.btn-call-primary {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: white;
+  border: none;
+  padding: var(--spacing-md) var(--spacing-lg);
+  border-radius: var(--border-radius-large);
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-md);
+  min-height: 56px;
+  transition: all 0.2s ease;
+  box-shadow: 0 10px 25px -5px rgba(16, 185, 129, 0.3);
+}
+
+.btn-call-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 15px 35px -5px rgba(16, 185, 129, 0.4);
+}
+
+.btn-call-primary:active {
+  transform: translateY(0);
+}
+
+.btn-copy {
+  background: var(--surface-color);
+  color: var(--primary-color);
+  border: 1px solid var(--border-color);
+  padding: var(--spacing-sm) var(--spacing-lg);
+  border-radius: var(--border-radius-large);
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-md);
+  min-height: 48px;
+  transition: all 0.2s ease;
+}
+
+.btn-copy:hover {
+  background: var(--primary-color);
+  color: white;
+  border-color: var(--primary-color);
+}
+
+.call-info-box {
+  background: rgba(21, 101, 192, 0.05);
+  border: 1px solid rgba(21, 101, 192, 0.2);
+  border-radius: var(--border-radius);
+  padding: var(--spacing-md);
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-md);
+  color: var(--primary-color);
+}
+
+.call-info-box i {
+  flex-shrink: 0;
+  font-size: 1.2rem;
+}
+
+.call-info-box p {
+  margin: 0;
+  font-size: 0.9rem;
+  text-align: left;
+  color: var(--text-secondary);
+}
+
+/* Responsive adjustments */
+@media (max-width: 480px) {
+  .today-view {
+    padding: var(--spacing-sm);
+  }
+
+  .booking-card {
+    padding: var(--spacing-sm);
+  }
+
+  .booking-actions {
+    flex-wrap: wrap;
+  }
+
+  .btn-call, .btn-view {
+    flex: 1;
+    min-width: 44px;
+  }
+
+  .call-view {
+    padding: var(--spacing-md);
+  }
+
+  .clinic-card {
+    padding: var(--spacing-lg);
+  }
+
+  .call-actions {
+    gap: var(--spacing-sm);
+  }
+
+  .btn-call-primary, .btn-copy {
+    font-size: 0.95rem;
+    min-height: 48px;
+  }
 }
 
 /* Print Styles */

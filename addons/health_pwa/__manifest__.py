@@ -61,7 +61,7 @@
     'data': [
         # Security
         'security/ir.model.access.csv',
-        
+
         # PWA Configuration Data
         'data/pwa_config.xml',
         

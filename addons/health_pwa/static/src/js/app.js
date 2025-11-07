@@ -99,7 +99,7 @@ window.healthPWA = {
         // Reactive state
         const state = reactive({
           isLoading: true,
-          currentRoute: 'dashboard',
+          currentRoute: 'today',
           user: null,
           isOnline: window.healthPWA.isOnline,
           syncStatus: 'idle', // idle, syncing, completed, error
@@ -215,9 +215,9 @@ window.healthPWA = {
           const hash = window.location.hash.slice(1);
           if (hash) {
             const parts = hash.split('/');
-            navigate(parts[1] || 'dashboard', { id: parts[2] });
+            navigate(parts[1] || 'today', { id: parts[2] });
           } else {
-            navigate('dashboard');
+            navigate('today');
           }
           
           // Perform initial sync if online
@@ -231,7 +231,7 @@ window.healthPWA = {
           const hash = window.location.hash.slice(1);
           if (hash) {
             const parts = hash.split('/');
-            state.currentRoute = parts[1] || 'dashboard';
+            state.currentRoute = parts[1] || 'today';
           }
         });
         
@@ -279,7 +279,7 @@ window.healthPWA = {
             <!-- Mobile Header -->
             <header class="mobile-header">
               <div class="mobile-header-left">
-                <button v-if="state.currentRoute !== 'dashboard'" @click="goBack" class="mobile-header-back">
+                <button v-if="state.currentRoute !== 'today'" @click="goBack" class="mobile-header-back">
                   <i class="material-icons">arrow_back</i>
                 </button>
               </div>
@@ -293,13 +293,13 @@ window.healthPWA = {
             
             <!-- Main Content -->
             <main class="mobile-content">
-              <!-- Dashboard -->
-              <dashboard-view v-if="state.currentRoute === 'dashboard'" 
+              <!-- Today -->
+              <today-view v-if="state.currentRoute === 'today'"
                 :user="state.user"
                 :is-online="state.isOnline"
                 @navigate="navigate"
                 @sync="syncData">
-              </dashboard-view>
+              </today-view>
               
               <!-- Patients -->
               <patients-view v-else-if="state.currentRoute === 'patients'"
@@ -350,22 +350,22 @@ window.healthPWA = {
               <div v-else class="error-view">
                 <h2>Page Not Found</h2>
                 <p>The requested page could not be found.</p>
-                <button @click="navigate('dashboard')" class="btn btn-primary">Go to Dashboard</button>
+                <button @click="navigate('today')" class="btn btn-primary">Go to Today</button>
               </div>
             </main>
             
             <!-- Mobile Bottom Navigation -->
             <nav v-if="state.bottomNavVisible" class="mobile-nav">
-              <a @click.prevent="navigate('dashboard')" 
-                 class="mobile-nav-item" 
-                 :class="{ active: state.currentRoute === 'dashboard' }">
+              <a @click.prevent="navigate('today')"
+                 class="mobile-nav-item"
+                 :class="{ active: state.currentRoute === 'today' }">
                 <div class="mobile-nav-icon">
-                  <i class="material-icons">dashboard</i>
+                  <i class="material-icons">calendar_today</i>
                 </div>
-                <span class="mobile-nav-label">Dashboard</span>
+                <span class="mobile-nav-label">Booking</span>
               </a>
-              
-              <a @click.prevent="navigate('patients')" 
+
+              <a @click.prevent="navigate('patients')"
                  class="mobile-nav-item"
                  :class="{ active: state.currentRoute === 'patients' || state.currentRoute === 'patient' }">
                 <div class="mobile-nav-icon">
@@ -373,26 +373,17 @@ window.healthPWA = {
                 </div>
                 <span class="mobile-nav-label">Patients</span>
               </a>
-              
-              <a @click.prevent="navigate('orders')"
+
+              <a @click.prevent="navigate('call')"
                  class="mobile-nav-item"
-                 :class="{ active: state.currentRoute === 'orders' || state.currentRoute === 'order' || state.currentRoute === 'past-bookings' }">
+                 :class="{ active: state.currentRoute === 'call' }">
                 <div class="mobile-nav-icon">
-                  <i class="material-icons">assignment</i>
+                  <i class="material-icons">call</i>
                 </div>
-                <span class="mobile-nav-label">Orders</span>
+                <span class="mobile-nav-label">Call</span>
               </a>
-              
-              <a @click.prevent="navigate('teams')" 
-                 class="mobile-nav-item"
-                 :class="{ active: state.currentRoute === 'teams' }">
-                <div class="mobile-nav-icon">
-                  <i class="material-icons">group</i>
-                </div>
-                <span class="mobile-nav-label">Teams</span>
-              </a>
-              
-              <a @click.prevent="navigate('profile')" 
+
+              <a @click.prevent="navigate('profile')"
                  class="mobile-nav-item"
                  :class="{ active: state.currentRoute === 'profile' }">
                 <div class="mobile-nav-icon">
@@ -424,13 +415,10 @@ window.healthPWA = {
       methods: {
         getRouteTitle() {
           const titles = {
-            dashboard: 'Dashboard',
+            today: 'Today',
             patients: 'Patients',
             patient: 'Patient Details',
-            orders: 'Field Orders',
-            'past-bookings': 'Past Bookings',
-            order: 'Order Details',
-            teams: 'Teams',
+            call: 'Call Clinic',
             profile: 'Profile'
           };
           return titles[this.state.currentRoute] || 'Health Mobile';
@@ -541,7 +529,731 @@ window.healthPWA = {
         </div>
       `
     });
-    
+
+    // Booking view - shows field service order bookings with date navigation and calendar picker
+    app.component('today-view', {
+      props: ['user', 'isOnline'],
+      emits: ['navigate', 'sync'],
+      setup(props, { emit }) {
+        const { ref, onMounted, computed } = Vue;
+
+        const bookings = ref([]);
+        const isLoading = ref(true);
+        const error = ref(null);
+        const staffName = ref('');
+        const displayDate = ref(new Date().toLocaleDateString());
+        const currentDate = ref(new Date());
+        const touchStartX = ref(0);
+        const touchStartY = ref(0);
+        const isTransitioning = ref(false);
+
+        // View mode: 'day', 'week', 'month'
+        const viewMode = ref('day');
+
+        // Calendar picker state
+        const isCalendarOpen = ref(false);
+        const calendarMonth = ref(new Date());
+        const datesWithBookings = ref(new Set());
+        const monthBookings = ref({});
+
+        // Grouped bookings for Week and Month views
+        const groupedBookings = ref({});
+
+        // Load bookings for a specific date
+        const loadBookingsForDate = async (dateObj) => {
+          try {
+            isLoading.value = true;
+            error.value = null;
+
+            // Format date for API (YYYY-MM-DD)
+            const year = dateObj.getFullYear();
+            const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+            const day = String(dateObj.getDate()).padStart(2, '0');
+            const dateStr = `${year}-${month}-${day}`;
+
+            const response = await fetch(`/health_pwa/api/assignments/today?date=${dateStr}`);
+            const result = await response.json();
+
+            if (result.success && result.data) {
+              bookings.value = result.data.bookings || [];
+              staffName.value = result.data.staff_name || 'Staff';
+              displayDate.value = dateObj.toLocaleDateString('en-US', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+              });
+              console.log('Loaded bookings for', dateStr, ':', bookings.value.length);
+            } else {
+              error.value = result.error || 'Failed to load bookings';
+              console.error('Error:', error.value);
+            }
+          } catch (err) {
+            console.error('Failed to load bookings:', err);
+            error.value = err.message;
+          } finally {
+            isLoading.value = false;
+          }
+        };
+
+        // Navigate forward (next day/week/month based on view mode)
+        const goToNext = () => {
+          if (isTransitioning.value) return;
+          isTransitioning.value = true;
+
+          if (viewMode.value === 'day') {
+            const nextDate = new Date(currentDate.value);
+            nextDate.setDate(nextDate.getDate() + 1);
+            currentDate.value = nextDate;
+            loadBookingsForDate(nextDate);
+          } else if (viewMode.value === 'week') {
+            const nextDate = new Date(currentDate.value);
+            nextDate.setDate(nextDate.getDate() + 7);
+            currentDate.value = nextDate;
+            loadBookingsForWeek(nextDate);
+          } else if (viewMode.value === 'month') {
+            const nextDate = new Date(currentDate.value);
+            nextDate.setMonth(nextDate.getMonth() + 1);
+            currentDate.value = nextDate;
+            loadBookingsForMonth(nextDate);
+          }
+
+          setTimeout(() => { isTransitioning.value = false; }, 300);
+        };
+
+        // Navigate backward (previous day/week/month based on view mode)
+        const goToPrevious = () => {
+          if (isTransitioning.value) return;
+          isTransitioning.value = true;
+
+          if (viewMode.value === 'day') {
+            const prevDate = new Date(currentDate.value);
+            prevDate.setDate(prevDate.getDate() - 1);
+            currentDate.value = prevDate;
+            loadBookingsForDate(prevDate);
+          } else if (viewMode.value === 'week') {
+            const prevDate = new Date(currentDate.value);
+            prevDate.setDate(prevDate.getDate() - 7);
+            currentDate.value = prevDate;
+            loadBookingsForWeek(prevDate);
+          } else if (viewMode.value === 'month') {
+            const prevDate = new Date(currentDate.value);
+            prevDate.setMonth(prevDate.getMonth() - 1);
+            currentDate.value = prevDate;
+            loadBookingsForMonth(prevDate);
+          }
+
+          setTimeout(() => { isTransitioning.value = false; }, 300);
+        };
+
+        // Change view mode
+        const setViewMode = (mode) => {
+          viewMode.value = mode;
+          if (mode === 'day') {
+            loadBookingsForDate(currentDate.value);
+          } else if (mode === 'week') {
+            loadBookingsForWeek(currentDate.value);
+          } else if (mode === 'month') {
+            loadBookingsForMonth(currentDate.value);
+          }
+        };
+
+        // Go back to today
+        const goToToday = () => {
+          if (isTransitioning.value) return;
+          isTransitioning.value = true;
+          const today = new Date();
+          currentDate.value = today;
+          if (viewMode.value === 'day') {
+            loadBookingsForDate(today);
+          } else if (viewMode.value === 'week') {
+            loadBookingsForWeek(today);
+          } else if (viewMode.value === 'month') {
+            loadBookingsForMonth(today);
+          }
+          setTimeout(() => { isTransitioning.value = false; }, 300);
+        };
+
+        // Load bookings for an entire week
+        const loadBookingsForWeek = async (dateInWeek) => {
+          try {
+            isLoading.value = true;
+            error.value = null;
+
+            // Get start of week (Sunday)
+            const weekStart = new Date(dateInWeek);
+            weekStart.setDate(weekStart.getDate() - weekStart.getDay());
+
+            // Get end of week (Saturday)
+            const weekEnd = new Date(weekStart);
+            weekEnd.setDate(weekEnd.getDate() + 6);
+
+            const year = weekStart.getFullYear();
+            const month = String(weekStart.getMonth() + 1).padStart(2, '0');
+            const day = String(weekStart.getDate()).padStart(2, '0');
+            const dateFrom = `${year}-${month}-${day}`;
+
+            const endYear = weekEnd.getFullYear();
+            const endMonth = String(weekEnd.getMonth() + 1).padStart(2, '0');
+            const endDay = String(weekEnd.getDate()).padStart(2, '0');
+            const dateTo = `${endYear}-${endMonth}-${endDay}`;
+
+            // Fetch all bookings for the week using FSO endpoint with date range
+            const response = await fetch(`/health_pwa/api/fso?date_from=${dateFrom}&date_to=${dateTo}&limit=200`);
+            const result = await response.json();
+
+            if (result.success && result.data) {
+              staffName.value = result.data.staff_name || 'Staff';
+
+              // Group bookings by date
+              const grouped = {};
+              (result.data.orders || []).forEach(order => {
+                const bookingDate = new Date(order.scheduled_datetime).toLocaleDateString('en-US', {
+                  weekday: 'long',
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric'
+                });
+                if (!grouped[bookingDate]) {
+                  grouped[bookingDate] = [];
+                }
+                grouped[bookingDate].push({
+                  id: order.id,
+                  fso_id: order.id,
+                  fso_name: order.name,
+                  patient_name: order.patient_name,
+                  patient_id: order.patient_id,
+                  patient_phone: order.phone,
+                  service_type: order.service_type,
+                  appointment_type: '',
+                  scheduled_datetime: order.scheduled_datetime,
+                  scheduled_time: new Date(order.scheduled_datetime).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
+                  status: order.state,
+                  status_display: order.state,
+                  location: order.address,
+                  priority: order.priority,
+                  duration_minutes: 0,
+                  assignment_role: 'staff',
+                  notes: order.description || ''
+                });
+              });
+
+              groupedBookings.value = grouped;
+              displayDate.value = `Week of ${weekStart.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`;
+              console.log('Loaded week bookings:', grouped);
+            } else {
+              error.value = result.error || 'Failed to load week bookings';
+            }
+          } catch (err) {
+            console.error('Failed to load week bookings:', err);
+            error.value = err.message;
+          } finally {
+            isLoading.value = false;
+          }
+        };
+
+        // Load bookings for an entire month
+        const loadBookingsForMonth = async (dateInMonth) => {
+          try {
+            isLoading.value = true;
+            error.value = null;
+
+            const year = dateInMonth.getFullYear();
+            const month = String(dateInMonth.getMonth() + 1).padStart(2, '0');
+
+            const dateFrom = `${year}-${month}-01`;
+            const lastDay = new Date(year, dateInMonth.getMonth() + 1, 0).getDate();
+            const dateTo = `${year}-${month}-${lastDay}`;
+
+            // Fetch all bookings for the month
+            const response = await fetch(`/health_pwa/api/fso?date_from=${dateFrom}&date_to=${dateTo}&limit=200`);
+            const result = await response.json();
+
+            if (result.success && result.data) {
+              staffName.value = result.data.staff_name || 'Staff';
+
+              // Group bookings by date
+              const grouped = {};
+              (result.data.orders || []).forEach(order => {
+                const bookingDate = new Date(order.scheduled_datetime).toLocaleDateString('en-US', {
+                  weekday: 'long',
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric'
+                });
+                if (!grouped[bookingDate]) {
+                  grouped[bookingDate] = [];
+                }
+                grouped[bookingDate].push({
+                  id: order.id,
+                  fso_id: order.id,
+                  fso_name: order.name,
+                  patient_name: order.patient_name,
+                  patient_id: order.patient_id,
+                  patient_phone: order.phone,
+                  service_type: order.service_type,
+                  appointment_type: '',
+                  scheduled_datetime: order.scheduled_datetime,
+                  scheduled_time: new Date(order.scheduled_datetime).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
+                  status: order.state,
+                  status_display: order.state,
+                  location: order.address,
+                  priority: order.priority,
+                  duration_minutes: 0,
+                  assignment_role: 'staff',
+                  notes: order.description || ''
+                });
+              });
+
+              groupedBookings.value = grouped;
+              displayDate.value = dateInMonth.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+              console.log('Loaded month bookings:', grouped);
+            } else {
+              error.value = result.error || 'Failed to load month bookings';
+            }
+          } catch (err) {
+            console.error('Failed to load month bookings:', err);
+            error.value = err.message;
+          } finally {
+            isLoading.value = false;
+          }
+        };
+
+        // Load all bookings for a month to determine which dates have bookings
+        const loadMonthBookings = async (monthDate) => {
+          try {
+            const year = monthDate.getFullYear();
+            const month = String(monthDate.getMonth() + 1).padStart(2, '0');
+
+            // Get first and last day of month
+            const firstDay = new Date(year, monthDate.getMonth(), 1);
+            const lastDay = new Date(year, monthDate.getMonth() + 1, 0);
+
+            const dateFrom = `${year}-${month}-01`;
+            const dateTo = `${year}-${month}-${lastDay.getDate()}`;
+
+            // Fetch bookings for entire month
+            const response = await fetch(
+              `/health_pwa/api/fso?date_from=${dateFrom}&date_to=${dateTo}&limit=100`
+            );
+            const result = await response.json();
+
+            if (result.success && result.data && result.data.orders) {
+              const datesSet = new Set();
+              const bookingsMap = {};
+
+              result.data.orders.forEach(order => {
+                if (order.scheduled_datetime) {
+                  const orderDate = new Date(order.scheduled_datetime);
+                  const dateStr = `${orderDate.getFullYear()}-${String(orderDate.getMonth() + 1).padStart(2, '0')}-${String(orderDate.getDate()).padStart(2, '0')}`;
+                  datesSet.add(dateStr);
+
+                  if (!bookingsMap[dateStr]) {
+                    bookingsMap[dateStr] = 0;
+                  }
+                  bookingsMap[dateStr]++;
+                }
+              });
+
+              datesWithBookings.value = datesSet;
+              monthBookings.value = bookingsMap;
+              console.log('Loaded month bookings:', datesWithBookings.value);
+            }
+          } catch (err) {
+            console.error('Failed to load month bookings:', err);
+          }
+        };
+
+        // Toggle calendar open/close
+        const toggleCalendar = async () => {
+          if (!isCalendarOpen.value) {
+            // Opening calendar - load month bookings
+            await loadMonthBookings(calendarMonth.value);
+          }
+          isCalendarOpen.value = !isCalendarOpen.value;
+        };
+
+        // Change calendar month
+        const changeCalendarMonth = async (offset) => {
+          const newMonth = new Date(calendarMonth.value);
+          newMonth.setMonth(newMonth.getMonth() + offset);
+          calendarMonth.value = newMonth;
+          await loadMonthBookings(newMonth);
+        };
+
+        // Select date from calendar
+        const selectCalendarDate = (day) => {
+          const selectedDate = new Date(calendarMonth.value.getFullYear(), calendarMonth.value.getMonth(), day);
+          currentDate.value = selectedDate;
+          viewMode.value = 'day'; // Highlight Day button when calendar date selected
+          loadBookingsForDate(selectedDate);
+          isCalendarOpen.value = false;
+        };
+
+        // Generate calendar grid
+        const getCalendarDays = computed(() => {
+          const year = calendarMonth.value.getFullYear();
+          const month = calendarMonth.value.getMonth();
+          const firstDay = new Date(year, month, 1);
+          const lastDay = new Date(year, month + 1, 0);
+          const daysInMonth = lastDay.getDate();
+          const startingDayOfWeek = firstDay.getDay();
+
+          const days = [];
+
+          // Empty cells for days before month starts
+          for (let i = 0; i < startingDayOfWeek; i++) {
+            days.push(null);
+          }
+
+          // Days of the month
+          for (let day = 1; day <= daysInMonth; day++) {
+            days.push(day);
+          }
+
+          return days;
+        });
+
+        // Check if a date has bookings
+        const hasBookingsOnDate = (day) => {
+          if (!day) return false;
+          const dateStr = `${calendarMonth.value.getFullYear()}-${String(calendarMonth.value.getMonth() + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+          return datesWithBookings.value.has(dateStr);
+        };
+
+        // Get booking count for a date
+        const getBookingCount = (day) => {
+          if (!day) return 0;
+          const dateStr = `${calendarMonth.value.getFullYear()}-${String(calendarMonth.value.getMonth() + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+          return monthBookings.value[dateStr] || 0;
+        };
+
+        // Touch handlers for swipe detection - only horizontal swipes
+        const handleTouchStart = (e) => {
+          if (e.touches && e.touches.length > 0) {
+            touchStartX.value = e.touches[0].clientX;
+            touchStartY.value = e.touches[0].clientY;
+            console.log('Touch start at X:', touchStartX.value, 'Y:', touchStartY.value);
+          }
+        };
+
+        const handleTouchEnd = (e) => {
+          if (e.changedTouches && e.changedTouches.length > 0) {
+            const touchEndX = e.changedTouches[0].clientX;
+            const touchEndY = e.changedTouches[0].clientY;
+            const diffX = touchStartX.value - touchEndX;
+            const diffY = Math.abs(touchStartY.value - touchEndY);
+            const threshold = 30; // Minimum swipe distance
+
+            console.log('Touch end - DiffX:', diffX, 'DiffY:', diffY, 'Threshold:', threshold);
+
+            // Only trigger horizontal swipe if horizontal movement is greater than vertical
+            if (Math.abs(diffX) > threshold && Math.abs(diffX) > diffY) {
+              if (diffX > 0) {
+                // Swiped left - next period
+                console.log('Swiped left - going to next');
+                goToNext();
+              } else {
+                // Swiped right - previous period
+                console.log('Swiped right - going to previous');
+                goToPrevious();
+              }
+            }
+          }
+        };
+
+        const getStatusColor = (status) => {
+          const colors = {
+            'assigned': '#3498db',
+            'confirmed': '#2ecc71',
+            'in_progress': '#f39c12',
+            'completed': '#27ae60',
+            'cancelled': '#e74c3c'
+          };
+          return colors[status] || '#95a5a6';
+        };
+
+        const callPatient = (phone) => {
+          if (phone) {
+            window.location.href = `tel:${phone}`;
+          } else {
+            alert('No phone number available');
+          }
+        };
+
+        onMounted(() => {
+          loadBookingsForDate(currentDate.value);
+          loadMonthBookings(currentDate.value); // Load current month bookings
+        });
+
+        return {
+          bookings,
+          groupedBookings,
+          isLoading,
+          error,
+          staffName,
+          displayDate,
+          currentDate,
+          viewMode,
+          loadBookingsForDate,
+          loadBookingsForWeek,
+          loadBookingsForMonth,
+          goToNext,
+          goToPrevious,
+          goToToday,
+          setViewMode,
+          handleTouchStart,
+          handleTouchEnd,
+          getStatusColor,
+          callPatient,
+          isTransitioning,
+          // Calendar functions
+          isCalendarOpen,
+          calendarMonth,
+          toggleCalendar,
+          changeCalendarMonth,
+          selectCalendarDate,
+          getCalendarDays,
+          hasBookingsOnDate,
+          getBookingCount,
+          datesWithBookings
+        };
+      },
+      template: `
+        <div class="today-view" @touchstart="handleTouchStart" @touchend="handleTouchEnd">
+          <!-- Header with navigation arrows and clickable Today -->
+          <div class="booking-header-top">
+            <button @click="goToPrevious" class="btn-nav-arrow">
+              <i class="material-icons">chevron_left</i>
+            </button>
+
+            <button @click="goToToday" class="btn-today-title" :class="{ active: new Date().toDateString() === currentDate.toDateString() }">
+              Today
+            </button>
+
+            <button @click="goToNext" class="btn-nav-arrow">
+              <i class="material-icons">chevron_right</i>
+            </button>
+          </div>
+
+          <!-- View mode tabs -->
+          <div class="view-tabs">
+            <button
+              @click="setViewMode('day')"
+              :class="{ active: viewMode === 'day' }"
+              class="tab-btn tab-day"
+            >
+              Day
+            </button>
+            <button
+              @click="setViewMode('week')"
+              :class="{ active: viewMode === 'week' }"
+              class="tab-btn tab-week"
+            >
+              Week
+            </button>
+            <button
+              @click="setViewMode('month')"
+              :class="{ active: viewMode === 'month' }"
+              class="tab-btn tab-month"
+            >
+              Month
+            </button>
+
+            <button @click="toggleCalendar" class="btn-calendar-icon" title="Select date">
+              <i class="material-icons">calendar_month</i>
+            </button>
+          </div>
+
+          <!-- Date and staff info -->
+          <div class="booking-date-section">
+            <p class="staff-name">{{ staffName }}</p>
+            <p class="date-display">{{ displayDate }}</p>
+          </div>
+
+          <!-- Calendar Picker Modal -->
+          <div v-if="isCalendarOpen" class="calendar-overlay" @click.self="toggleCalendar">
+            <div class="calendar-modal">
+              <div class="calendar-header">
+                <button @click="changeCalendarMonth(-1)" class="btn-month-nav">
+                  <i class="material-icons">chevron_left</i>
+                </button>
+                <h3 class="calendar-month-title">{{ calendarMonth.toLocaleDateString('en-US', { month: 'long', year: 'numeric' }) }}</h3>
+                <button @click="changeCalendarMonth(1)" class="btn-month-nav">
+                  <i class="material-icons">chevron_right</i>
+                </button>
+              </div>
+
+              <div class="calendar-weekdays">
+                <div class="weekday">Sun</div>
+                <div class="weekday">Mon</div>
+                <div class="weekday">Tue</div>
+                <div class="weekday">Wed</div>
+                <div class="weekday">Thu</div>
+                <div class="weekday">Fri</div>
+                <div class="weekday">Sat</div>
+              </div>
+
+              <div class="calendar-grid">
+                <button
+                  v-for="(day, index) in getCalendarDays"
+                  :key="index"
+                  @click="day ? selectCalendarDate(day) : null"
+                  :class="{
+                    'calendar-day': true,
+                    'empty': !day,
+                    'has-booking': day && hasBookingsOnDate(day),
+                    'is-today': day && new Date(calendarMonth.getFullYear(), calendarMonth.getMonth(), day).toDateString() === new Date().toDateString(),
+                    'is-selected': day && new Date(calendarMonth.getFullYear(), calendarMonth.getMonth(), day).toDateString() === currentDate.toDateString()
+                  }"
+                >
+                  {{ day }}
+                  <span v-if="day && hasBookingsOnDate(day)" class="booking-dot"></span>
+                </button>
+              </div>
+
+              <button @click="toggleCalendar" class="btn-close-calendar">Close</button>
+            </div>
+          </div>
+
+          <!-- Content based on view mode -->
+          <div v-if="isLoading" class="loading-spinner">
+            <div class="spinner"></div>
+            <p>Loading bookings...</p>
+          </div>
+
+          <div v-else-if="error" class="error-message">
+            <i class="material-icons">error</i>
+            <p>{{ error }}</p>
+            <button @click="goToToday" class="btn btn-secondary">Retry</button>
+          </div>
+
+          <!-- Day view -->
+          <div v-else-if="viewMode === 'day'">
+            <div v-if="bookings.length === 0" class="empty-state">
+              <i class="material-icons">event_note</i>
+              <p>No bookings scheduled for this day</p>
+            </div>
+
+            <div v-else class="bookings-list">
+              <div v-for="booking in bookings" :key="booking.fso_id" class="booking-card">
+                <div class="booking-time-badge">{{ booking.scheduled_time }}</div>
+                <div class="status-badge" :style="{ backgroundColor: getStatusColor(booking.status) }">
+                  {{ booking.status_display || booking.status }}
+                </div>
+
+                <h3 class="booking-patient-name">{{ booking.patient_name }}</h3>
+
+                <div class="booking-details">
+                  <p v-if="booking.service_type" class="detail-item">
+                    <i class="material-icons">local_hospital</i>
+                    {{ booking.service_type }}
+                  </p>
+                  <p v-if="booking.location" class="detail-item">
+                    <i class="material-icons">location_on</i>
+                    {{ booking.location }}
+                  </p>
+                </div>
+
+                <div class="booking-footer">
+                  <button @click="callPatient(booking.patient_phone)" class="btn-call-primary" title="Call patient">
+                    <i class="material-icons">call</i>
+                  </button>
+                  <button @click="$emit('navigate', 'patient', { id: booking.patient_id })" class="btn-view-details" title="View details">
+                    <i class="material-icons">navigate_next</i>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Week view -->
+          <div v-else-if="viewMode === 'week'">
+            <div v-if="Object.keys(groupedBookings).length === 0" class="empty-state">
+              <i class="material-icons">event_note</i>
+              <p>No bookings scheduled for this week</p>
+            </div>
+
+            <div v-else class="grouped-bookings-list">
+              <div v-for="(dateBookings, dateStr) in groupedBookings" :key="dateStr" class="date-group">
+                <h4 class="date-group-title">{{ dateStr }}</h4>
+                <div v-for="booking in dateBookings" :key="booking.fso_id" class="booking-card">
+                  <div class="booking-time-badge">{{ booking.scheduled_time }}</div>
+                  <div class="status-badge" :style="{ backgroundColor: getStatusColor(booking.status) }">
+                    {{ booking.status_display || booking.status }}
+                  </div>
+
+                  <h3 class="booking-patient-name">{{ booking.patient_name }}</h3>
+
+                  <div class="booking-details">
+                    <p v-if="booking.service_type" class="detail-item">
+                      <i class="material-icons">local_hospital</i>
+                      {{ booking.service_type }}
+                    </p>
+                    <p v-if="booking.location" class="detail-item">
+                      <i class="material-icons">location_on</i>
+                      {{ booking.location }}
+                    </p>
+                  </div>
+
+                  <div class="booking-footer">
+                    <button @click="callPatient(booking.patient_phone)" class="btn-call-primary">
+                      <i class="material-icons">call</i>
+                    </button>
+                    <button @click="$emit('navigate', 'patient', { id: booking.patient_id })" class="btn-view-details">
+                      <i class="material-icons">navigate_next</i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Month view -->
+          <div v-else-if="viewMode === 'month'">
+            <div v-if="Object.keys(groupedBookings).length === 0" class="empty-state">
+              <i class="material-icons">event_note</i>
+              <p>No bookings scheduled for this month</p>
+            </div>
+
+            <div v-else class="grouped-bookings-list">
+              <div v-for="(dateBookings, dateStr) in groupedBookings" :key="dateStr" class="date-group">
+                <h4 class="date-group-title">{{ dateStr }}</h4>
+                <div v-for="booking in dateBookings" :key="booking.fso_id" class="booking-card">
+                  <div class="booking-time-badge">{{ booking.scheduled_time }}</div>
+                  <div class="status-badge" :style="{ backgroundColor: getStatusColor(booking.status) }">
+                    {{ booking.status_display || booking.status }}
+                  </div>
+
+                  <h3 class="booking-patient-name">{{ booking.patient_name }}</h3>
+
+                  <div class="booking-details">
+                    <p v-if="booking.service_type" class="detail-item">
+                      <i class="material-icons">local_hospital</i>
+                      {{ booking.service_type }}
+                    </p>
+                    <p v-if="booking.location" class="detail-item">
+                      <i class="material-icons">location_on</i>
+                      {{ booking.location }}
+                    </p>
+                  </div>
+
+                  <div class="booking-footer">
+                    <button @click="callPatient(booking.patient_phone)" class="btn-call-primary">
+                      <i class="material-icons">call</i>
+                    </button>
+                    <button @click="$emit('navigate', 'patient', { id: booking.patient_id })" class="btn-view-details">
+                      <i class="material-icons">navigate_next</i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      `
+    });
+
     // Patients view with real data
     app.component('patients-view', {
       props: ['isOnline'],
@@ -2394,6 +3106,122 @@ window.healthPWA = {
               <i class="material-icons">sync</i>
               Sync Data
             </button>
+          </div>
+        </div>
+      `
+    });
+
+    // Call view - displays clinic phone and initiates calls
+    app.component('call-view', {
+      props: ['isOnline'],
+      emits: ['navigate'],
+      setup(props, { emit }) {
+        const { ref, onMounted } = Vue;
+
+        const clinicPhone = ref('');
+        const clinicName = ref('');
+        const isLoading = ref(true);
+        const error = ref(null);
+
+        const loadClinicConfig = async () => {
+          try {
+            isLoading.value = true;
+            error.value = null;
+
+            const response = await fetch('/health_pwa/api/config/clinic-phone');
+            const result = await response.json();
+
+            if (result.success && result.data) {
+              clinicPhone.value = result.data.clinic_phone_number || 'N/A';
+              clinicName.value = result.data.clinic_name || 'VAFHS Clinic';
+              console.log('Loaded clinic config:', clinicName.value, clinicPhone.value);
+            } else {
+              error.value = result.error || 'Failed to load clinic information';
+              console.error('Error:', error.value);
+            }
+          } catch (err) {
+            console.error('Failed to load clinic config:', err);
+            error.value = err.message;
+          } finally {
+            isLoading.value = false;
+          }
+        };
+
+        const initiateCall = () => {
+          if (clinicPhone.value && clinicPhone.value !== 'N/A') {
+            // Remove spaces and special characters for tel link
+            const phoneDigits = clinicPhone.value.replace(/[^\d+]/g, '');
+            window.location.href = `tel:${phoneDigits}`;
+          } else {
+            alert('Clinic phone number not available');
+          }
+        };
+
+        const copyPhone = () => {
+          if (clinicPhone.value && clinicPhone.value !== 'N/A') {
+            navigator.clipboard.writeText(clinicPhone.value);
+            alert('Phone number copied to clipboard!');
+          }
+        };
+
+        onMounted(() => {
+          loadClinicConfig();
+        });
+
+        return {
+          clinicPhone,
+          clinicName,
+          isLoading,
+          error,
+          initiateCall,
+          copyPhone,
+          loadClinicConfig
+        };
+      },
+      template: `
+        <div class="call-view">
+          <div class="call-header">
+            <h2>
+              <i class="material-icons">call</i>
+              Contact Clinic
+            </h2>
+          </div>
+
+          <div v-if="isLoading" class="loading-spinner">
+            <div class="spinner"></div>
+            <p>Loading clinic information...</p>
+          </div>
+
+          <div v-else-if="error" class="error-message">
+            <i class="material-icons">error</i>
+            <p>{{ error }}</p>
+            <button @click="loadClinicConfig" class="btn btn-secondary">Retry</button>
+          </div>
+
+          <div v-else class="call-container">
+            <div class="clinic-card">
+              <div class="clinic-info">
+                <h3 class="clinic-name">{{ clinicName }}</h3>
+                <p class="clinic-phone-label">Phone Number</p>
+                <p class="clinic-phone">{{ clinicPhone }}</p>
+              </div>
+
+              <div class="call-actions">
+                <button @click="initiateCall" class="btn btn-call-primary">
+                  <i class="material-icons">call</i>
+                  <span>Call Now</span>
+                </button>
+                <button @click="copyPhone" class="btn btn-copy">
+                  <i class="material-icons">content_copy</i>
+                  <span>Copy Number</span>
+                </button>
+              </div>
+
+              <div class="call-info-box">
+                <i class="material-icons">info</i>
+                <p>Tap "Call Now" to initiate a call to the clinic directly from your phone.</p>
+              </div>
+            </div>
           </div>
         </div>
       `

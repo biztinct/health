@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Access control for health.pwa.config will be handled by default Odoo access rules -->
+</odoo>

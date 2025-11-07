@@ -227,30 +227,31 @@ class HealthPWAAPIController(http.Controller):
             
             orders_data = []
             for order in orders:
+                # Format scheduled time
+                scheduled_time = ''
+                if order.scheduled_datetime:
+                    from datetime import datetime
+                    dt = datetime.fromisoformat(str(order.scheduled_datetime))
+                    scheduled_time = dt.strftime('%I:%M %p')
+
                 orders_data.append({
                     'id': order.id,
-                    'name': order.name,
-                    'state': order.state,
-                    'actual_start_datetime': order.actual_start_datetime,
-                    'actual_end_datetime': order.actual_end_datetime if hasattr(order, 'actual_end_datetime') else None,
+                    'fso_id': order.id,
+                    'fso_name': order.name,
                     'patient_name': order.patient_id.name if order.patient_id else None,
-                    'patient_code': order.patient_id.patient_code if order.patient_id else None,
-                    'stage': order.stage_id.name if order.stage_id else None,
-                    'stage_color': getattr(order.stage_id, 'color', 0) if order.stage_id else 0,
-                    'priority': order.priority,
+                    'patient_id': order.patient_id.id if order.patient_id else None,
+                    'patient_phone': order.patient_phone,
+                    'service_type': order._get_service_type_label() if hasattr(order, '_get_service_type_label') else order.service_type,
+                    'appointment_type': '',
                     'scheduled_datetime': order.scheduled_datetime,
-                    'estimated_end_datetime': order.estimated_end_datetime,
-                    'estimated_duration': order.estimated_duration,
+                    'scheduled_time': scheduled_time,
+                    'status': order.state,
+                    'status_display': order.state,
+                    'location': order.service_address,
+                    'priority': order.priority,
                     'duration_minutes': order.duration_minutes,
-                    'service_type': order.service_type_id.name if order.service_type_id else None,
-                    'service_type_name': order.service_type_id.name if order.service_type_id else None,
-                    'team': order.team_id.name if order.team_id else None,
-                    'assigned_user': order.user_id.name if order.user_id else None,
-                    'address': order.service_address,
-                    'phone': order.patient_phone,
-                    'description': order.description,
-                    'location_lat': order.service_lat,
-                    'location_lng': order.service_lng,
+                    'assignment_role': 'staff',
+                    'notes': order.symptoms or order.patient_notes or '',
                 })
             
             response_data = {
@@ -300,21 +301,18 @@ class HealthPWAAPIController(http.Controller):
                 'estimated_end_datetime': order.estimated_end_datetime,
                 'estimated_duration': order.estimated_duration,
                 'duration_minutes': order.duration_minutes,
-                'service_type': {
-                    'id': order.service_type_id.id if order.service_type_id else None,
-                    'name': order.service_type_id.name if order.service_type_id else None,
-                },
+                'service_type': order._get_service_type_label() if hasattr(order, '_get_service_type_label') else order.service_type,
                 'team': {
                     'id': order.team_id.id if order.team_id else None,
                     'name': order.team_id.name if order.team_id else None,
                 },
                 'assigned_user': {
-                    'id': order.user_id.id if order.user_id else None,
-                    'name': order.user_id.name if order.user_id else None,
+                    'id': order.lead_staff_id.id if order.lead_staff_id else None,
+                    'name': order.lead_staff_id.name if order.lead_staff_id else None,
                 },
                 'address': order.service_address,
                 'phone': order.patient_phone,
-                'description': order.description,
+                'description': order.symptoms or order.patient_notes or '',
                 'patient_notes': order.patient_notes,
                 'clinical_notes': order.clinical_notes if hasattr(order, 'clinical_notes') else None,
                 'diagnosis': order.diagnosis if hasattr(order, 'diagnosis') else None,
@@ -929,4 +927,155 @@ class HealthPWAAPIController(http.Controller):
             })
 
         except Exception as e:
+            return self._prepare_json_response(error=str(e), status_code=500)
+
+    @http.route('/health_pwa/api/assignments/today', type='http', auth='user', methods=['GET'], csrf=False)
+    def api_get_today_assignments(self, **kwargs):
+        """
+        Get field service order bookings for the logged-in nurse/doctor
+        Shows all bookings assigned to the current user for a given date (defaults to today)
+        Supports optional 'date' query parameter in YYYY-MM-DD format
+        """
+        if not self._check_api_access():
+            return self._prepare_json_response(error='Access denied', status_code=403)
+
+        try:
+            # Get logged-in user
+            current_user = request.env.user
+
+            # Get the employee record for the current user
+            employee = request.env['hr.employee'].search([
+                ('user_id', '=', current_user.id)
+            ], limit=1)
+
+            if not employee:
+                return self._prepare_json_response(
+                    error='No employee record found for current user',
+                    status_code=404
+                )
+
+            # Parse optional date parameter, default to today
+            date_param = kwargs.get('date')
+            if date_param:
+                try:
+                    # Parse YYYY-MM-DD format
+                    from datetime import datetime as dt
+                    target_date = dt.strptime(date_param, '%Y-%m-%d').date()
+                except ValueError:
+                    return self._prepare_json_response(
+                        error='Invalid date format. Use YYYY-MM-DD',
+                        status_code=400
+                    )
+            else:
+                target_date = fields.Date.today()
+
+            # Get field service orders for the target date where this staff member is assigned
+            today_start = f"{target_date} 00:00:00"
+            today_end = f"{target_date} 23:59:59"
+
+            # Find FSOs scheduled for today where current employee is assigned
+            fsos = request.env['health.fieldservice.order'].search([
+                ('scheduled_datetime', '>=', today_start),
+                ('scheduled_datetime', '<=', today_end),
+                ('state', 'not in', ['cancelled']),
+                # Filter by assignments where current employee is assigned as nurse/doctor
+                ('assignment_ids.staff_id', '=', employee.id)
+            ], order='scheduled_datetime asc')
+
+            # Prepare booking data
+            bookings_data = []
+            for fso in fsos:
+                patient = fso.patient_id
+
+                # Find the assignment record for this staff member
+                assignment = fso.assignment_ids.filtered(
+                    lambda a: a.staff_id.id == employee.id
+                )
+                assignment = assignment[0] if assignment else None
+
+                # Get service type display name
+                service_type_label = 'Service'
+                if fso.service_type:
+                    service_type_dict = dict(fso._fields['service_type'].selection)
+                    service_type_label = service_type_dict.get(fso.service_type, fso.service_type)
+
+                # Get appointment type name if available
+                appointment_type = ''
+                if fso.appointment_type_id:
+                    appointment_type = fso.appointment_type_id.name
+
+                bookings_data.append({
+                    'id': fso.id,
+                    'fso_id': fso.id,
+                    'fso_name': fso.name,
+                    'patient_name': patient.name if patient else 'Unknown',
+                    'patient_id': patient.id if patient else None,
+                    'patient_phone': patient.mobile or patient.phone if patient else None,
+                    'service_type': service_type_label,
+                    'appointment_type': appointment_type,
+                    'scheduled_datetime': fso.scheduled_datetime,
+                    'scheduled_time': fso.scheduled_datetime.strftime('%H:%M') if fso.scheduled_datetime else '',
+                    'status': fso.state,
+                    'status_display': fso.state or 'Unknown',
+                    'location': fso.service_location or fso.service_address or '',
+                    'priority': fso.priority,
+                    'priority_display': dict(fso._fields['priority'].selection).get(fso.priority, '') if 'priority' in fso._fields and hasattr(fso._fields['priority'], 'selection') else '',
+                    'duration_minutes': fso.duration_minutes if hasattr(fso, 'duration_minutes') and fso.duration_minutes else 0,
+                    'assignment_role': assignment.assignment_role if assignment else 'support',
+                    'notes': getattr(fso, 'patient_notes', '') or getattr(fso, 'symptoms', '') or '',
+                })
+
+            response_data = {
+                'bookings': bookings_data,
+                'total_count': len(bookings_data),
+                'staff_name': employee.name,
+                'staff_id': employee.id,
+                'date': target_date.isoformat(),
+                'requested_date': date_param or target_date.isoformat(),
+            }
+
+            return self._prepare_json_response(data=response_data)
+
+        except Exception as e:
+            _logger.error(f'Error fetching today bookings: {str(e)}')
+            return self._prepare_json_response(error=str(e), status_code=500)
+
+    @http.route('/health_pwa/api/config/clinic-phone', type='http', auth='user', methods=['GET'], csrf=False)
+    def api_get_clinic_phone(self, **kwargs):
+        """
+        Get clinic phone number and name from PWA configuration
+        Used for the Call feature in the mobile app
+        """
+        if not self._check_api_access():
+            return self._prepare_json_response(error='Access denied', status_code=403)
+
+        try:
+            # Get PWA configuration
+            pwa_config = request.env['health.pwa.config'].search(
+                [('active', '=', True)],
+                limit=1
+            )
+
+            if not pwa_config:
+                # Return default/fallback clinic info from company
+                company = request.env.company
+                config_data = {
+                    'clinic_phone_number': company.phone or '+1-800-CLINIC',
+                    'clinic_name': company.name or 'Clinic',
+                    'from_config': False
+                }
+            else:
+                config_data = {
+                    'clinic_phone_number': pwa_config.clinic_phone_number,
+                    'clinic_name': pwa_config.clinic_name,
+                    'enable_offline_mode': pwa_config.enable_offline_mode,
+                    'enable_gps_tracking': pwa_config.enable_gps_tracking,
+                    'enable_photo_capture': pwa_config.enable_photo_capture,
+                    'from_config': True
+                }
+
+            return self._prepare_json_response(data=config_data)
+
+        except Exception as e:
+            _logger.error(f'Error fetching clinic config: {str(e)}')
             return self._prepare_json_response(error=str(e), status_code=500)

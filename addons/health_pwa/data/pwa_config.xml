@@ -27,4 +27,18 @@
         <field name="value">600000</field>
     </record>
 
+    <!-- Health PWA Configuration Model Data -->
+    <!-- Disabled temporarily - will be created via API or management command -->
+    <!--
+    <record id="health_pwa_config_main" model="health.pwa.config">
+        <field name="name">Health PWA Configuration</field>
+        <field name="clinic_phone_number">+84 28 1234 5678</field>
+        <field name="clinic_name">VAFHS Clinic</field>
+        <field name="enable_offline_mode">True</field>
+        <field name="enable_gps_tracking">True</field>
+        <field name="enable_photo_capture">True</field>
+        <field name="active">True</field>
+    </record>
+    -->
+
 </odoo>
