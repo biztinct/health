@@ -1038,6 +1038,51 @@ class HealthPWAAPIController(http.Controller):
         except Exception as e:
             return self._prepare_json_response(error=str(e), status_code=500)
 
+    @http.route('/health_pwa/api/fso/<int:order_id>/quote/save', type='http', auth='user', methods=['POST'], csrf=False)
+    def api_fso_save_quote(self, order_id, **kwargs):
+        """Save quote with verification comments from mobile app"""
+        if not self._check_api_access():
+            return self._prepare_json_response(error='Access denied', status_code=403)
+
+        try:
+            order = request.env['health.fieldservice.order'].browse(order_id)
+
+            if not order.exists():
+                return self._prepare_json_response(error='Order not found', status_code=404)
+
+            if not order.sale_order_id:
+                return self._prepare_json_response(error='No quote found for this order', status_code=404)
+
+            sale_order = order.sale_order_id
+
+            # Get save data from request body
+            import json as json_module
+            try:
+                data = json_module.loads(request.httprequest.data.decode('utf-8')) if request.httprequest.data else {}
+            except:
+                data = {}
+
+            comments = data.get('comments', '')
+
+            # Save comments to the sale order note
+            if comments:
+                # Add comments to the internal notes of the quote
+                note_text = f"[Invoice Verification] {comments}"
+                if sale_order.note:
+                    sale_order.note = sale_order.note + "\n\n" + note_text
+                else:
+                    sale_order.note = note_text
+
+            return self._prepare_json_response(data={
+                'quote_id': sale_order.id,
+                'quote_name': sale_order.name,
+                'comments_saved': bool(comments),
+                'message': 'Invoice verified and saved successfully'
+            })
+
+        except Exception as e:
+            return self._prepare_json_response(error=str(e), status_code=500)
+
     @http.route('/health_pwa/api/assignments/today', type='http', auth='user', methods=['GET'], csrf=False)
     def api_get_today_assignments(self, **kwargs):
         """

@@ -2534,6 +2534,48 @@ p {
   font-size: 1.2rem;
 }
 
+/* Payment Button - appears after quote verification */
+.btn-payment {
+  background: #0891b2;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-md) var(--spacing-lg);
+  border: none;
+  border-radius: var(--border-radius);
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-payment:hover {
+  background: #0e7490;
+  box-shadow: 0 4px 12px rgba(8, 145, 178, 0.3);
+}
+
+.btn-payment:active {
+  transform: scale(0.98);
+}
+
+.btn-payment:disabled {
+  background: #d4d4d8;
+  color: #9ca3af;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.btn-payment:disabled:hover {
+  background: #d4d4d8;
+  box-shadow: none;
+}
+
+.btn-payment i {
+  font-size: 1.2rem;
+}
+
 /* Complete Service Button - spans both columns in second row */
 .btn-complete-service {
   grid-column: 1 / -1;

@@ -2806,6 +2806,10 @@ window.healthPWA = {
           create_invoice_now: true
         });
 
+        // Quote verification tracking
+        const quoteVerified = ref(false);
+        const quoteComments = ref('');
+
         // Computed elapsed time for timer
         const elapsedTime = computed(() => {
           if (!order.value || !order.value.actual_start_datetime) return '00:00:00';
@@ -3247,6 +3251,56 @@ window.healthPWA = {
           console.log('=== loadQuote completed ===');
         };
 
+        const saveQuoteWithComments = async () => {
+          console.log('=== saveQuoteWithComments called ===');
+
+          if (!props.isOnline) {
+            window.healthPWA.showNotification('Cannot save quote while offline', 'error');
+            return;
+          }
+
+          try {
+            console.log('Sending quote save request with comments:', quoteComments.value);
+            const response = await fetch(`/health_pwa/api/fso/${props.orderId}/quote/save`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                quote_id: quoteData.value.id,
+                comments: quoteComments.value
+              })
+            });
+
+            const data = await response.json();
+            console.log('Quote save response:', data);
+
+            if (data.success) {
+              console.log('✅ Quote saved successfully with comments');
+              quoteVerified.value = true;
+              showInvoice.value = false;
+              window.healthPWA.showNotification(
+                'Invoice verified and saved successfully!',
+                'success',
+                3000
+              );
+            } else {
+              console.log('❌ Quote save failed:', data.error);
+              window.healthPWA.showNotification(
+                'Failed to save quote: ' + (data.error || 'Unknown error'),
+                'error'
+              );
+            }
+          } catch (err) {
+            console.error('Save quote error:', err);
+            window.healthPWA.showNotification(
+              'Error saving quote: ' + err.message,
+              'error'
+            );
+          }
+          console.log('=== saveQuoteWithComments completed ===');
+        };
+
         const loadProductCatalog = async () => {
           if (!props.isOnline) {
             window.healthPWA.showNotification('Cannot load catalog while offline', 'error');
@@ -3444,7 +3498,10 @@ window.healthPWA = {
           openMapLocation,
           formatDateTime,
           getStatusLabel,
-          getStatusBadgeClass
+          getStatusBadgeClass,
+          quoteVerified,
+          quoteComments,
+          saveQuoteWithComments
         };
       },
       template: `
@@ -3537,28 +3594,29 @@ window.healthPWA = {
                 <span>Clinical Notes</span>
               </button>
 
-              <!-- Invoice Button -->
-              <button @click="loadQuote"
+              <!-- Verify Invoice Button (renamed from Invoice) -->
+              <button @click="loadQuote(true)"
                       class="btn btn-action btn-invoice"
                       :disabled="!isOnline || !order.confirmation_requirements?.has_quote_with_items"
-                      :title="!order.confirmation_requirements?.has_quote_with_items ? 'No quote associated with this booking' : 'View Invoice'">
+                      :title="!order.confirmation_requirements?.has_quote_with_items ? 'No quote associated with this booking' : 'Verify and review invoice'">
                 <i class="material-icons">receipt</i>
-                <span>Invoice</span>
+                <span>Verify Invoice</span>
+              </button>
+
+              <!-- Payment Button (appears only after quote is verified) -->
+              <button v-if="quoteVerified && order.state === 'in_progress'"
+                      @click="openPaymentWizard"
+                      class="btn btn-action btn-payment"
+                      :disabled="!isOnline"
+                      title="Proceed to payment collection">
+                <i class="material-icons">payment</i>
+                <span>Payment</span>
               </button>
 
               <!-- Complete Service Button - No Quote (when no quote exists) -->
               <button v-if="order.state === 'in_progress' && !order.confirmation_requirements?.has_quote_with_items"
                       @click="completeServiceWithoutQuote"
                       class="btn btn-action btn-complete-no-quote"
-                      :disabled="!isOnline">
-                <i class="material-icons">check_circle</i>
-                <span>Complete Service</span>
-              </button>
-
-              <!-- Complete Service Button (only for in_progress state) -->
-              <button v-if="order.state === 'in_progress'"
-                      @click="openPaymentWizard"
-                      class="btn btn-action btn-complete"
                       :disabled="!isOnline">
                 <i class="material-icons">check_circle</i>
                 <span>Complete Service</span>
@@ -3834,21 +3892,24 @@ window.healthPWA = {
                       </tfoot>
                     </table>
                   </div>
+
+                  <!-- Invoice Comments Section -->
+                  <div class="form-section" style="margin-top: 20px; border-top: 1px solid var(--border-color); padding-top: 20px;">
+                    <h4 style="font-size: 12px; font-weight: 600; color: #666; text-transform: uppercase; margin-bottom: 12px;">📝 Invoice Comments</h4>
+                    <div class="form-group">
+                      <textarea v-model="quoteComments"
+                                rows="3"
+                                placeholder="Add any comments or notes about this invoice (optional)..."
+                                style="width: 100%; padding: 10px; border: 1px solid var(--border-color); border-radius: 6px; font-size: 14%;"></textarea>
+                    </div>
+                  </div>
                 </div>
+
                 <div class="modal-footer">
                   <button @click="showInvoice = false" class="btn btn-secondary">Cancel</button>
-                  <button @click="() => {
-                    console.log('🔴 PAYMENT BUTTON CLICKED - IMMEDIATE LOG');
-                    console.log('showInvoice:', showInvoice.value);
-                    console.log('clinicalNotesData:', clinicalNotesData.value);
-                    console.log('About to set showInvoice = false and call openPaymentWizard');
-                    window.lastPaymentClick = Date.now();
-                    console.log('Set window.lastPaymentClick:', window.lastPaymentClick);
-                    showInvoice.value = false;
-                    openPaymentWizard();
-                  }" class="btn btn-primary" title="Click to proceed to payment">
-                    <i class="material-icons">payment</i>
-                    Pay Invoice
+                  <button @click="saveQuoteWithComments" class="btn btn-primary" title="Save invoice with comments">
+                    <i class="material-icons">save</i>
+                    Save Quote
                   </button>
                 </div>
               </div>
