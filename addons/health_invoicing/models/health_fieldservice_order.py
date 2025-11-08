@@ -275,13 +275,11 @@ class HealthFieldserviceOrder(models.Model):
                 self.service_type = self.package_id.service_type
     
     def write(self, vals):
-        """Override write to consume package services when FSO state changes"""
+        """Override write to handle package services"""
         result = super().write(vals)
 
-        # Auto-consume package services when FSO is completed
-        if 'state' in vals and vals['state'] in ['completed', 'completed_pending_invoice']:
-            for fso in self:
-                if fso.package_id and not fso.is_invoiced:
-                    fso.action_consume_package_service()
+        # NOTE: Package services are now reserved at booking confirmation time (via _reserve_package_service)
+        # We do NOT consume them again at completion to avoid double-consumption.
+        # The reservation that happens at booking confirmation is sufficient to manage package inventory.
 
         return result
