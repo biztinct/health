@@ -234,7 +234,10 @@ class HealthFieldserviceOrder(models.Model):
         
         if self.package_id.remaining_services < self.package_consumption_quantity:
             raise UserError(_(
-                'Cannot consume %d services from package "%s". Only %d services remaining.'
+                'Cannot consume %d service(s) from package "%s". Only %d service(s) remaining.\n\n'
+                'This may have happened because other field service orders completed and consumed '
+                'services from the same package. This validation is performed to ensure accurate '
+                'package tracking. Please contact operations management if this is unexpected.'
             ) % (self.package_consumption_quantity, self.package_id.name, self.package_id.remaining_services))
         
         # Consume services from package (direct consumption without separate model)
