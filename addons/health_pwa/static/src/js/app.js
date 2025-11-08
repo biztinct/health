@@ -2766,6 +2766,7 @@ window.healthPWA = {
       props: ['orderId', 'isOnline'],
       emits: ['navigate'],
       setup(props, { emit }) {
+        console.log('=== order-detail-view COMPONENT SETUP CALLED ===');
         const { ref, onMounted, computed, watch } = Vue;
 
         const order = ref(null);
@@ -2775,6 +2776,12 @@ window.healthPWA = {
         const currentTime = ref(new Date());
         const showClinicalNotes = ref(false);
         const showInvoice = ref(false);
+
+        // Add a watcher to log when showInvoice changes
+        watch(showInvoice, (newVal) => {
+          console.log('showInvoice changed to:', newVal);
+        });
+
         const clinicalNotesData = ref({
           clinical_notes: '',
           diagnosis: '',
@@ -2785,6 +2792,13 @@ window.healthPWA = {
         const capturedImages = ref([]);
         const quoteData = ref(null);
         const showPaymentWizard = ref(false);
+
+        // Add a watcher to log when showPaymentWizard changes
+        watch(showPaymentWizard, (newVal) => {
+          console.log('showPaymentWizard changed to:', newVal);
+          console.log('Current showPaymentWizard.value:', showPaymentWizard.value);
+        });
+
         const paymentWizardData = ref({
           payment_choice: 'pay_now',
           payment_method: 'cash',
@@ -2808,32 +2822,56 @@ window.healthPWA = {
         });
 
         const loadOrder = async () => {
+          console.log('=== loadOrder called ===');
           try {
             isLoading.value = true;
             error.value = null;
 
             if (window.healthPWA?.storageManager) {
+              console.log('Retrieving order data from PouchDB for orderId:', props.orderId);
               const orderData = await window.healthPWA.storageManager.getFieldServiceOrder(props.orderId);
+              console.log('Retrieved order data:', orderData);
+
               if (orderData) {
                 order.value = orderData;
                 console.log('Loaded order details:', orderData);
 
                 // Load clinical notes if available
+                console.log('Processing clinical notes from order...');
                 if (orderData.clinical_notes) {
+                  console.log('Setting clinical_notes:', orderData.clinical_notes);
                   clinicalNotesData.value.clinical_notes = orderData.clinical_notes;
                 }
                 if (orderData.diagnosis) {
+                  console.log('Setting diagnosis:', orderData.diagnosis);
                   clinicalNotesData.value.diagnosis = orderData.diagnosis;
                 }
+                if (orderData.treatment_performed) {
+                  console.log('Setting treatment_performed:', orderData.treatment_performed);
+                  clinicalNotesData.value.treatment_performed = orderData.treatment_performed;
+                }
+                if (orderData.medications_prescribed) {
+                  console.log('Setting medications_prescribed:', orderData.medications_prescribed);
+                  clinicalNotesData.value.medications_prescribed = orderData.medications_prescribed;
+                }
+                if (orderData.vital_signs) {
+                  console.log('Setting vital_signs:', orderData.vital_signs);
+                  clinicalNotesData.value.vital_signs = orderData.vital_signs;
+                }
+
+                console.log('Final clinicalNotesData.value:', clinicalNotesData.value);
 
                 // Start timer if service is in progress
                 if (orderData.state === 'in_progress' && orderData.actual_start_datetime && !orderData.actual_end_datetime) {
+                  console.log('Starting timer...');
                   startTimer();
                 }
               } else {
+                console.log('❌ Order not found in storage');
                 error.value = 'Order not found';
               }
             } else {
+              console.log('❌ Storage manager not available');
               error.value = 'Storage manager not available';
             }
           } catch (err) {
@@ -2841,6 +2879,7 @@ window.healthPWA = {
             error.value = err.message;
           } finally {
             isLoading.value = false;
+            console.log('=== loadOrder completed ===');
           }
         };
 
@@ -2894,8 +2933,16 @@ window.healthPWA = {
         };
 
         const openPaymentWizard = () => {
+          console.log('=== openPaymentWizard called ===');
+          console.log('clinicalNotesData.value:', clinicalNotesData.value);
+          console.log('clinicalNotesData.value.clinical_notes:', clinicalNotesData.value.clinical_notes);
+          console.log('showPaymentWizard.value (before):', showPaymentWizard.value);
+
           // Validate clinical notes are filled before allowing completion
+          // Only clinical_notes text is required (user provided clinical notes text)
           if (!clinicalNotesData.value.clinical_notes || !clinicalNotesData.value.clinical_notes.trim()) {
+            console.log('❌ Clinical notes validation FAILED');
+            console.log('clinical_notes is empty or whitespace:', !clinicalNotesData.value.clinical_notes || !clinicalNotesData.value.clinical_notes.trim());
             window.healthPWA.showNotification(
               'Please fill in Clinical Notes before completing the service. Click "Clinical Notes" button to add them.',
               'warning',
@@ -2904,18 +2951,16 @@ window.healthPWA = {
             return;
           }
 
-          if (!clinicalNotesData.value.treatment_performed || !clinicalNotesData.value.treatment_performed.trim()) {
-            window.healthPWA.showNotification(
-              'Please fill in Treatment Performed in Clinical Notes before completing the service.',
-              'warning',
-              7000
-            );
-            return;
-          }
+          console.log('✅ Clinical notes validation PASSED');
 
           // Load quote data to get calculated amount (but don't show invoice modal)
+          console.log('Calling loadQuote(false)...');
           loadQuote(false);
+
+          console.log('Setting showPaymentWizard.value = true');
           showPaymentWizard.value = true;
+          console.log('showPaymentWizard.value (after):', showPaymentWizard.value);
+          console.log('=== openPaymentWizard completed ===');
         };
 
         const handleCompleteService = async () => {
@@ -2982,12 +3027,16 @@ window.healthPWA = {
         };
 
         const saveClinicalNotes = async () => {
+          console.log('=== saveClinicalNotes called ===');
+          console.log('clinicalNotesData.value:', clinicalNotesData.value);
+
           if (!props.isOnline) {
             window.healthPWA.showNotification('Cannot save clinical notes while offline', 'error');
             return;
           }
 
           try {
+            console.log('Posting clinical notes to server...');
             const response = await fetch(`/health_pwa/api/fso/${props.orderId}/clinical_notes`, {
               method: 'POST',
               headers: {
@@ -3000,15 +3049,60 @@ window.healthPWA = {
             console.log('Clinical notes response:', data);
 
             if (data.success) {
+              console.log('✅ Clinical notes saved successfully');
               window.healthPWA.showNotification(data.data.message || 'Clinical notes saved successfully!', 'success');
               showClinicalNotes.value = false;
+
+              // Update local clinicalNotesData state immediately
+              // This ensures the payment wizard validation can pass without waiting for server reload
+              clinicalNotesData.value = {
+                ...clinicalNotesData.value,
+                // Keep the values the user just saved
+              };
+              console.log('Updated local clinicalNotesData:', clinicalNotesData.value);
+
+              // Reload order data from server to refresh cache
+              // This ensures PouchDB is updated with latest clinical notes
+              try {
+                console.log('Fetching fresh order data from server...');
+                const refreshResponse = await fetch(`/health_pwa/api/fso/${props.orderId}`, {
+                  headers: {
+                    'Content-Type': 'application/json',
+                  }
+                });
+                const refreshData = await refreshResponse.json();
+                console.log('Server refresh response:', refreshData);
+
+                if (refreshData.success && refreshData.data) {
+                  console.log('✅ Server returned fresh order data');
+                  console.log('Server clinical_notes:', refreshData.data.clinical_notes);
+                  // Update PouchDB with latest order data
+                  if (window.healthPWA?.storageManager) {
+                    console.log('Updating PouchDB...');
+                    await window.healthPWA.storageManager.updateFieldServiceOrder(props.orderId, refreshData.data);
+                    console.log('PouchDB updated, calling loadOrder()...');
+                    // Now reload to populate clinicalNotesData from refreshed cache
+                    await loadOrder();
+                    console.log('After loadOrder, clinicalNotesData.value:', clinicalNotesData.value);
+                  }
+                } else {
+                  console.log('❌ Server refresh returned success=false');
+                }
+              } catch (refreshErr) {
+                console.warn('Could not refresh order from server:', refreshErr);
+                console.log('Trying to load from local cache anyway...');
+                // Still try to load from local cache even if refresh fails
+                await loadOrder();
+              }
             } else {
+              console.log('❌ Clinical notes API returned success=false, error:', data.error);
               window.healthPWA.showNotification('Failed to save clinical notes: ' + (data.error || 'Unknown error'), 'error');
             }
           } catch (err) {
             console.error('Save clinical notes error:', err);
             window.healthPWA.showNotification('Error saving clinical notes: ' + err.message, 'error');
           }
+          console.log('=== saveClinicalNotes completed ===');
         };
 
         const completeServiceWithoutQuote = async () => {
@@ -3113,21 +3207,33 @@ window.healthPWA = {
         const showMap = ref(false);
 
         const loadQuote = async (showModal = true) => {
+          console.log('=== loadQuote called with showModal:', showModal, '===');
+
           if (!props.isOnline) {
+            console.log('❌ loadQuote: Not online');
             window.healthPWA.showNotification('Cannot load invoice while offline', 'error');
             return;
           }
 
           try {
+            console.log('Fetching quote from API for orderId:', props.orderId);
             const response = await fetch(`/health_pwa/api/fso/${props.orderId}/quote`);
             const data = await response.json();
 
+            console.log('Quote API response:', data);
+
             if (data.success) {
+              console.log('✅ Quote loaded successfully');
               quoteData.value = data.data;
+              console.log('quoteData.value set to:', quoteData.value);
               if (showModal) {
+                console.log('showModal is true, setting showInvoice.value = true');
                 showInvoice.value = true;
+              } else {
+                console.log('showModal is false, NOT showing invoice modal');
               }
             } else {
+              console.log('❌ Quote API returned success=false, error:', data.error);
               if (showModal) {
                 window.healthPWA.showNotification('No quote found for this order', 'warning');
               }
@@ -3138,6 +3244,7 @@ window.healthPWA = {
               window.healthPWA.showNotification('Error loading quote: ' + err.message, 'error');
             }
           }
+          console.log('=== loadQuote completed ===');
         };
 
         const loadProductCatalog = async () => {
@@ -3294,6 +3401,10 @@ window.healthPWA = {
         };
 
         onMounted(() => {
+          console.log('=== order-detail-view MOUNTED ===');
+          console.log('orderId:', props.orderId);
+          console.log('showPaymentWizard ref:', showPaymentWizard);
+          console.log('openPaymentWizard function:', typeof openPaymentWizard);
           loadOrder();
         });
 
@@ -3726,7 +3837,16 @@ window.healthPWA = {
                 </div>
                 <div class="modal-footer">
                   <button @click="showInvoice = false" class="btn btn-secondary">Cancel</button>
-                  <button @click="showInvoice = false; openPaymentWizard()" class="btn btn-primary">
+                  <button @click="() => {
+                    console.log('🔴 PAYMENT BUTTON CLICKED - IMMEDIATE LOG');
+                    console.log('showInvoice:', showInvoice.value);
+                    console.log('clinicalNotesData:', clinicalNotesData.value);
+                    console.log('About to set showInvoice = false and call openPaymentWizard');
+                    window.lastPaymentClick = Date.now();
+                    console.log('Set window.lastPaymentClick:', window.lastPaymentClick);
+                    showInvoice.value = false;
+                    openPaymentWizard();
+                  }" class="btn btn-primary" title="Click to proceed to payment">
                     <i class="material-icons">payment</i>
                     Pay Invoice
                   </button>
