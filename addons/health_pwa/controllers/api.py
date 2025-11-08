@@ -662,6 +662,58 @@ class HealthPWAAPIController(http.Controller):
         except Exception as e:
             return self._prepare_json_response(error=str(e), status_code=500)
 
+    @http.route('/health_pwa/api/fso/<int:order_id>/complete_without_quote', type='http', auth='user', methods=['POST'], csrf=False)
+    def api_fso_complete_service_without_quote(self, order_id, **kwargs):
+        """Complete service without quote - for cases where no invoice is needed"""
+        if not self._check_api_access():
+            return self._prepare_json_response(error='Access denied', status_code=403)
+
+        try:
+            order = request.env['health.fieldservice.order'].browse(order_id)
+
+            if not order.exists():
+                return self._prepare_json_response(error='Order not found', status_code=404)
+
+            # Check if order is in progress
+            if order.state != 'in_progress':
+                return self._prepare_json_response(error=f'Cannot complete service in {order.state} state', status_code=400)
+
+            # Get service notes from request body if provided
+            import json as json_module
+            try:
+                data = json_module.loads(request.httprequest.data.decode('utf-8')) if request.httprequest.data else {}
+            except:
+                data = {}
+
+            service_notes = data.get('service_notes', '')
+
+            # Update service notes if provided
+            if service_notes:
+                update_vals = {}
+                if hasattr(order, 'nurse_notes'):
+                    update_vals['nurse_notes'] = service_notes
+                else:
+                    # Add to clinical notes if nurse_notes doesn't exist
+                    clinical_notes = order.clinical_notes or ''
+                    update_vals['clinical_notes'] = (clinical_notes + '\n\nService Notes: ' + service_notes).strip()
+
+                if update_vals:
+                    order.write(update_vals)
+
+            # Complete the service without creating an invoice
+            order.action_complete_service()
+
+            return self._prepare_json_response(data={
+                'actual_end_datetime': order.actual_end_datetime,
+                'adjusted_end_datetime': order.adjusted_end_datetime if hasattr(order, 'adjusted_end_datetime') else None,
+                'actual_duration': order.actual_duration if hasattr(order, 'actual_duration') else None,
+                'state': order.state,
+                'message': 'Service completed successfully without invoice'
+            })
+
+        except Exception as e:
+            return self._prepare_json_response(error=str(e), status_code=500)
+
     @http.route('/health_pwa/api/fso/<int:order_id>/clinical_notes', type='http', auth='user', methods=['POST'], csrf=False)
     def api_fso_save_clinical_notes(self, order_id, **kwargs):
         """Save clinical notes for FSO from mobile app"""

@@ -1164,6 +1164,13 @@ window.healthPWA = {
           return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
         });
 
+        // Check if clinical notes are valid (has text OR image)
+        const isClinicalNotesComplete = computed(() => {
+          const hasNotes = clinicalNotesText.value && clinicalNotesText.value.trim().length > 0;
+          const hasImage = photoPreviewUrl.value !== null && photoPreviewUrl.value !== undefined && photoPreviewUrl.value !== '';
+          return hasNotes || hasImage;
+        });
+
         // Start timer function
         const startTimer = () => {
           if (timerInterval.value) clearInterval(timerInterval.value);
@@ -1277,32 +1284,127 @@ window.healthPWA = {
               return;
             }
 
-            // Prepare form data
-            const formData = new FormData();
-            formData.append('clinical_notes', clinicalNotesText.value);
-            if (capturedPhoto.value) {
-              formData.append('photo', capturedPhoto.value);
+            // Validate that at least clinical notes or photo is provided
+            const hasNotes = clinicalNotesText.value && clinicalNotesText.value.trim().length > 0;
+            const hasPhoto = capturedPhoto.value !== null;
+
+            if (!hasNotes && !hasPhoto) {
+              console.error('Please provide clinical notes or photo');
+              return;
             }
 
-            // Send to API
-            const response = await fetch(`/health_pwa/api/fso/${selectedBookingId.value}/clinical-notes`, {
-              method: 'POST',
-              body: formData
-            });
+            // Step 1: Upload photo if available
+            if (hasPhoto) {
+              console.log('Uploading photo...');
+              const photoFormData = new FormData();
+              photoFormData.append('image', capturedPhoto.value);
 
-            const result = await response.json();
-            if (result.success) {
-              console.log('Clinical notes saved successfully');
-              // Update the booking detail with new notes
-              if (selectedBookingDetail.value) {
-                selectedBookingDetail.value.clinical_notes = clinicalNotesText.value;
+              try {
+                const photoResponse = await fetch(`/health_pwa/api/fso/${selectedBookingId.value}/upload_image`, {
+                  method: 'POST',
+                  body: photoFormData
+                });
+
+                const photoResult = await photoResponse.text();
+                let parsedPhotoResult;
+                try {
+                  parsedPhotoResult = JSON.parse(photoResult);
+                } catch (e) {
+                  console.warn('Photo upload response parsing issue:', photoResult);
+                }
+
+                if (photoResponse.ok) {
+                  console.log('Photo uploaded successfully');
+                } else {
+                  console.warn('Photo upload returned non-200 status:', photoResponse.status);
+                }
+              } catch (photoErr) {
+                console.warn('Error uploading photo:', photoErr);
+                // Don't stop the process if photo upload fails
               }
-              closeClinicalNotesModal();
-            } else {
-              console.error('Failed to save clinical notes:', result.error);
             }
+
+            // Step 2: Save clinical notes if text is provided
+            if (hasNotes) {
+              console.log('Saving clinical notes...');
+              const requestData = {
+                clinical_notes: clinicalNotesText.value,
+                diagnosis: '',
+                treatment_performed: '',
+                medications_prescribed: '',
+                vital_signs: ''
+              };
+
+              const response = await fetch(`/health_pwa/api/fso/${selectedBookingId.value}/clinical_notes`, {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(requestData)
+              });
+
+              const responseText = await response.text();
+              let result;
+              try {
+                result = JSON.parse(responseText);
+              } catch (e) {
+                console.error('Failed to parse response:', responseText);
+                throw new Error('Invalid server response');
+              }
+
+              if (!response.ok || !result.data) {
+                throw new Error(result.error || 'Failed to save clinical notes');
+              }
+
+              console.log('Clinical notes saved successfully');
+            }
+
+            // Step 3: Update UI and close modal on success
+            if (selectedBookingDetail.value && hasNotes) {
+              selectedBookingDetail.value.clinical_notes = clinicalNotesText.value;
+            }
+            closeClinicalNotesModal();
           } catch (err) {
             console.error('Error saving clinical notes:', err);
+          }
+        };
+
+        // Complete service without quote (for today-view)
+        const completeServiceWithoutQuoteInTodayView = async () => {
+          if (!selectedBookingId.value) {
+            alert('No booking selected');
+            return;
+          }
+
+          try {
+            const response = await fetch(`/health_pwa/api/fso/${selectedBookingId.value}/complete_without_quote`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                service_notes: 'Service completed without invoice',
+              })
+            });
+
+            const data = await response.json();
+            console.log('Complete service without quote response:', data);
+
+            if (data.success && data.data) {
+              alert('Service completed successfully!');
+              // Reset the service started flag
+              serviceStartedForBooking.value = null;
+              // Close the booking detail
+              selectedBookingId.value = null;
+              selectedBookingDetail.value = null;
+              // Reload bookings for the current date
+              loadBookingsForDate(currentDate.value);
+            } else {
+              alert('Failed to complete service: ' + (data.error || 'Unknown error'));
+            }
+          } catch (err) {
+            console.error('Complete service without quote error:', err);
+            alert('Error completing service: ' + err.message);
           }
         };
 
@@ -1372,12 +1474,14 @@ window.healthPWA = {
           closeClinicalNotesModal,
           capturePhoto,
           saveClinicalNotes,
+          completeServiceWithoutQuoteInTodayView,
           // Timer and invoice
           timerInterval,
           currentTime,
           showInvoiceModal,
           quoteData,
           elapsedTime,
+          isClinicalNotesComplete,
           startTimer,
           stopTimer,
           loadQuoteData,
@@ -1700,20 +1804,37 @@ window.healthPWA = {
               <!-- Modal footer with action buttons -->
               <div class="modal-footer">
                 <!-- Before service start -->
-                <div v-if="serviceStartedForBooking !== selectedBookingId" class="modal-footer-content">
+                <div v-if="serviceStartedForBooking !== selectedBookingId && selectedBookingDetail?.state !== 'in_progress'" class="modal-footer-content">
                   <button class="btn btn-danger">Cancel/Refuse Visit</button>
                   <button @click="startService" class="btn btn-success">Start Service</button>
                 </div>
 
-                <!-- After service start -->
-                <div v-else class="modal-footer-content">
+                <!-- After service start or when already in progress -->
+                <div v-if="serviceStartedForBooking === selectedBookingId || selectedBookingDetail?.state === 'in_progress'" class="modal-footer-content">
                   <button @click="openClinicalNotesModal" class="btn btn-clinical-notes">
                     <i class="material-icons">description</i>
                     <span>Clinical Notes</span>
                   </button>
-                  <button @click="openInvoiceModal" class="btn btn-invoice">
+                  <!-- Invoice Button (always visible, disabled when no quote or clinical notes incomplete) -->
+                  <button @click="openInvoiceModal"
+                          :disabled="!selectedBookingDetail?.confirmation_requirements?.has_quote_with_items || !isClinicalNotesComplete"
+                          class="btn btn-invoice"
+                          :title="!selectedBookingDetail?.confirmation_requirements?.has_quote_with_items
+                            ? 'No quote available'
+                            : !isClinicalNotesComplete
+                            ? 'Please fill in the clinical notes or take image of the notes to raise Invoice'
+                            : 'View Invoice'">
                     <i class="material-icons">receipt</i>
                     <span>Invoice</span>
+                  </button>
+                  <!-- Complete Service Button (shown only when no quote) -->
+                  <button v-if="!selectedBookingDetail?.confirmation_requirements?.has_quote_with_items"
+                          @click="completeServiceWithoutQuoteInTodayView"
+                          :disabled="!isClinicalNotesComplete"
+                          class="btn btn-success btn-complete-service"
+                          :title="!isClinicalNotesComplete ? 'Please fill in the clinical notes or take image of the notes to Complete this service' : 'Complete Service'">
+                    <i class="material-icons">check_circle</i>
+                    <span>Complete Service</span>
                   </button>
                 </div>
               </div>
@@ -2879,6 +3000,60 @@ window.healthPWA = {
           }
         };
 
+        const completeServiceWithoutQuote = async () => {
+          if (!props.isOnline) {
+            window.healthPWA.showNotification('Cannot complete service while offline', 'error');
+            return;
+          }
+
+          try {
+            const response = await fetch(`/health_pwa/api/fso/${props.orderId}/complete_without_quote`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                service_notes: 'Service completed without invoice',
+              })
+            });
+
+            const data = await response.json();
+            console.log('Complete service without quote response:', data);
+
+            if (data.success && data.data) {
+              // Stop timer first
+              stopTimer();
+
+              // Show success notification
+              window.healthPWA.showNotification(data.data.message || 'Service completed successfully!', 'success');
+
+              // Update local order state immediately for UI responsiveness
+              order.value.state = data.data.state;
+              order.value.actual_end_datetime = data.data.actual_end_datetime;
+
+              // Update PouchDB cache with new state
+              if (window.healthPWA?.storageManager) {
+                try {
+                  await window.healthPWA.storageManager.updateFieldServiceOrder(props.orderId, {
+                    state: data.data.state,
+                    actual_end_datetime: data.data.actual_end_datetime
+                  });
+                } catch (dbErr) {
+                  console.error('Failed to update PouchDB:', dbErr);
+                }
+              }
+
+              // Reload full order data from server to get latest information
+              await loadOrder();
+            } else {
+              window.healthPWA.showNotification('Failed to complete service: ' + (data.error || 'Unknown error'), 'error');
+            }
+          } catch (err) {
+            console.error('Complete service without quote error:', err);
+            window.healthPWA.showNotification('Error completing service: ' + err.message, 'error');
+          }
+        };
+
         const captureImage = () => {
           const input = document.createElement('input');
           input.type = 'file';
@@ -3136,6 +3311,7 @@ window.healthPWA = {
           handleStartService,
           openPaymentWizard,
           handleCompleteService,
+          completeServiceWithoutQuote,
           saveClinicalNotes,
           captureImage,
           loadQuote,
@@ -3242,9 +3418,19 @@ window.healthPWA = {
               <!-- Invoice Button -->
               <button @click="loadQuote"
                       class="btn btn-action btn-invoice"
-                      :disabled="!isOnline">
+                      :disabled="!isOnline || !order.confirmation_requirements?.has_quote_with_items"
+                      :title="!order.confirmation_requirements?.has_quote_with_items ? 'No quote associated with this booking' : 'View Invoice'">
                 <i class="material-icons">receipt</i>
                 <span>Invoice</span>
+              </button>
+
+              <!-- Complete Service Button - No Quote (when no quote exists) -->
+              <button v-if="order.state === 'in_progress' && !order.confirmation_requirements?.has_quote_with_items"
+                      @click="completeServiceWithoutQuote"
+                      class="btn btn-action btn-complete-no-quote"
+                      :disabled="!isOnline">
+                <i class="material-icons">check_circle</i>
+                <span>Complete Service</span>
               </button>
 
               <!-- Complete Service Button (only for in_progress state) -->
@@ -3528,7 +3714,11 @@ window.healthPWA = {
                   </div>
                 </div>
                 <div class="modal-footer">
-                  <button @click="showInvoice = false" class="btn btn-secondary">Close</button>
+                  <button @click="showInvoice = false" class="btn btn-secondary">Cancel</button>
+                  <button @click="showInvoice = false; openPaymentWizard()" class="btn btn-primary">
+                    <i class="material-icons">payment</i>
+                    Pay Invoice
+                  </button>
                 </div>
               </div>
             </div>

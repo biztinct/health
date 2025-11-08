@@ -2518,8 +2518,63 @@ p {
   transform: scale(0.98);
 }
 
+.btn-invoice:disabled {
+  background: #d4d4d8;
+  color: #9ca3af;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.btn-invoice:disabled:hover {
+  background: #d4d4d8;
+  box-shadow: none;
+}
+
 .btn-invoice i {
   font-size: 1.2rem;
+}
+
+/* Complete Service Button - spans both columns in second row */
+.btn-complete-service {
+  grid-column: 1 / -1;
+  background: #10b981;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-md) var(--spacing-lg);
+  border: none;
+  border-radius: var(--border-radius);
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-complete-service:hover {
+  background: #059669;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+.btn-complete-service:active {
+  transform: scale(0.98);
+}
+
+.btn-complete-service i {
+  font-size: 1.2rem;
+}
+
+.btn-complete-service:disabled {
+  background: #d4d4d8;
+  color: #9ca3af;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.btn-complete-service:disabled:hover {
+  background: #d4d4d8;
+  box-shadow: none;
 }
 
 /* Clinical Notes Modal */
