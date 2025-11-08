@@ -1149,6 +1149,17 @@ window.healthPWA = {
         const showInvoiceModal = ref(false);
         const quoteData = ref(null);
 
+        // Invoice verification and payment workflow
+        const quoteVerified = ref(false);
+        const quoteComments = ref('');
+        const showPaymentWizard = ref(false);
+        const paymentWizardData = ref({
+          payment_choice: 'pay_now',
+          payment_method: 'cash',
+          service_notes: '',
+          create_invoice_now: true
+        });
+
         // Computed elapsed time for timer
         const elapsedTime = computed(() => {
           if (!selectedBookingDetail.value || !selectedBookingDetail.value.actual_start_datetime) return '00:00:00';
@@ -1210,11 +1221,96 @@ window.healthPWA = {
           }
         };
 
-        // Open invoice modal
+        // Open invoice modal - now for verification
         const openInvoiceModal = async () => {
           if (selectedBookingId.value) {
             await loadQuoteData(selectedBookingId.value);
+            quoteVerified.value = false; // Reset verification state
+            quoteComments.value = ''; // Clear comments
             showInvoiceModal.value = true;
+          }
+        };
+
+        // Save quote with verification comments
+        const saveQuoteWithComments = async () => {
+          if (!selectedBookingId.value || !quoteComments.value.trim()) {
+            console.error('Missing booking ID or comments');
+            return;
+          }
+
+          try {
+            const response = await fetch(`/health_pwa/api/fso/${selectedBookingId.value}/quote/save`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                comments: quoteComments.value
+              })
+            });
+
+            const result = await response.json();
+            if (result.success) {
+              console.log('Quote verified and saved:', result.data);
+              quoteVerified.value = true; // Mark as verified
+              // Comments are automatically saved, no need to keep them visible
+            } else {
+              console.error('Error saving quote:', result.error);
+              alert('Error saving quote: ' + result.error);
+            }
+          } catch (err) {
+            console.error('Error saving quote:', err);
+            alert('Failed to save quote: ' + err.message);
+          }
+        };
+
+        // Open payment wizard (only after quote verification)
+        const openPaymentWizard = () => {
+          if (!quoteVerified.value) {
+            alert('Please verify the invoice first by entering comments and clicking Save Quote.');
+            return;
+          }
+          showPaymentWizard.value = true;
+        };
+
+        // Complete payment and service
+        const completePayment = async () => {
+          if (!selectedBookingId.value) {
+            console.error('No booking selected');
+            return;
+          }
+
+          try {
+            const response = await fetch(`/health_pwa/api/fso/${selectedBookingId.value}/complete`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                payment_choice: paymentWizardData.value.payment_choice,
+                payment_method: paymentWizardData.value.payment_method,
+                service_notes: paymentWizardData.value.service_notes,
+                create_invoice_now: paymentWizardData.value.create_invoice_now
+              })
+            });
+
+            const result = await response.json();
+            if (result.success) {
+              console.log('Service completed successfully');
+              alert('Service completed successfully!');
+              showPaymentWizard.value = false;
+              showInvoiceModal.value = false;
+              quoteVerified.value = false;
+              quoteComments.value = '';
+              // Refresh booking list
+              loadBookingsForDate(currentDate.value);
+            } else {
+              console.error('Error completing payment:', result.error);
+              alert('Error completing payment: ' + result.error);
+            }
+          } catch (err) {
+            console.error('Error completing payment:', err);
+            alert('Failed to complete payment: ' + err.message);
           }
         };
 
@@ -1496,7 +1592,15 @@ window.healthPWA = {
           startTimer,
           stopTimer,
           loadQuoteData,
-          openInvoiceModal
+          openInvoiceModal,
+          // Invoice verification and payment workflow
+          quoteVerified,
+          quoteComments,
+          showPaymentWizard,
+          paymentWizardData,
+          saveQuoteWithComments,
+          openPaymentWizard,
+          completePayment
         };
       },
       template: `
@@ -1826,7 +1930,7 @@ window.healthPWA = {
                     <i class="material-icons">description</i>
                     <span>Clinical Notes</span>
                   </button>
-                  <!-- Invoice Button (always visible, disabled when no quote or clinical notes incomplete) -->
+                  <!-- Verify Invoice Button (always visible, disabled when no quote or clinical notes incomplete) -->
                   <button @click="openInvoiceModal"
                           :disabled="!selectedBookingDetail?.confirmation_requirements?.has_quote_with_items || !isClinicalNotesComplete"
                           class="btn btn-invoice"
@@ -1834,9 +1938,9 @@ window.healthPWA = {
                             ? 'No quote available'
                             : !isClinicalNotesComplete
                             ? 'Please fill in the clinical notes or take image of the notes to raise Invoice'
-                            : 'View Invoice'">
+                            : 'Verify Invoice'">
                     <i class="material-icons">receipt</i>
-                    <span>Invoice</span>
+                    <span>Verify Invoice</span>
                   </button>
                   <!-- Complete Service Button (shown only when no quote) -->
                   <button v-if="!selectedBookingDetail?.confirmation_requirements?.has_quote_with_items"
@@ -1967,19 +2071,20 @@ window.healthPWA = {
           </div>
         </div>
 
-        <!-- Invoice Modal -->
+        <!-- Invoice Verification Modal -->
         <div v-if="showInvoiceModal && quoteData" class="modal-overlay" @click.self="showInvoiceModal = false">
           <div class="modal-content invoice-modal">
             <div class="modal-header">
               <h3>
                 <i class="material-icons">receipt</i>
-                Invoice / Quote
+                Verify Invoice
               </h3>
               <button @click="showInvoiceModal = false" class="modal-close">
                 <i class="material-icons">close</i>
               </button>
             </div>
             <div class="modal-body" v-if="quoteData">
+              <!-- Quote Information -->
               <div class="invoice-header">
                 <div class="invoice-info">
                   <h4>{{ quoteData.name }}</h4>
@@ -1989,6 +2094,7 @@ window.healthPWA = {
                 </div>
               </div>
 
+              <!-- Quote Items Table -->
               <div class="invoice-lines">
                 <table class="invoice-table">
                   <thead>
@@ -2023,12 +2129,155 @@ window.healthPWA = {
                   </tfoot>
                 </table>
               </div>
+
+              <!-- Verification Comments Field -->
+              <div v-if="!quoteVerified" class="form-group">
+                <label class="clinical-form-label">Verification Notes</label>
+                <textarea
+                  v-model="quoteComments"
+                  class="clinical-form-field"
+                  placeholder="Enter any comments or notes about this invoice verification..."
+                  rows="4"></textarea>
+              </div>
+
+              <!-- Verification Success Message -->
+              <div v-if="quoteVerified" class="success-message">
+                <i class="material-icons">check_circle</i>
+                <p>Invoice verified successfully!</p>
+              </div>
             </div>
+
+            <!-- Modal Footer with Conditional Buttons -->
             <div class="modal-footer">
-              <button @click="showInvoiceModal = false" class="btn btn-secondary">Back</button>
-              <button @click="openPaymentWizard" class="btn btn-primary">
+              <button @click="showInvoiceModal = false" class="btn btn-secondary">Cancel</button>
+
+              <!-- Save Quote Button (before verification) -->
+              <button
+                v-if="!quoteVerified"
+                @click="saveQuoteWithComments"
+                :disabled="!quoteComments.trim()"
+                class="btn btn-primary">
+                <i class="material-icons">save</i>
+                <span>Save Quote</span>
+              </button>
+
+              <!-- Payment Button (after verification) -->
+              <button
+                v-else
+                @click="openPaymentWizard"
+                class="btn btn-success">
                 <i class="material-icons">payment</i>
                 <span>Payment</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Payment Wizard Modal -->
+        <div v-if="showPaymentWizard && quoteVerified" class="modal-overlay" @click.self="showPaymentWizard = false">
+          <div class="modal-content payment-wizard-modal">
+            <div class="modal-header">
+              <h3>
+                <i class="material-icons">payment</i>
+                Complete Service - Payment Collection
+              </h3>
+              <button @click="showPaymentWizard = false" class="modal-close">
+                <i class="material-icons">close</i>
+              </button>
+            </div>
+
+            <div class="modal-body">
+              <!-- Payment Choice Section -->
+              <div class="form-section">
+                <h4>Payment Timing</h4>
+                <div class="form-group">
+                  <label>
+                    <input
+                      type="radio"
+                      v-model="paymentWizardData.payment_choice"
+                      value="pay_now">
+                    <span>Pay Now</span>
+                  </label>
+                  <label>
+                    <input
+                      type="radio"
+                      v-model="paymentWizardData.payment_choice"
+                      value="pay_later">
+                    <span>Pay Later</span>
+                  </label>
+                </div>
+              </div>
+
+              <!-- Payment Method Section (only show if paying now) -->
+              <div v-if="paymentWizardData.payment_choice === 'pay_now'" class="form-section">
+                <h4>Payment Method</h4>
+                <div class="form-group">
+                  <label>
+                    <input
+                      type="radio"
+                      v-model="paymentWizardData.payment_method"
+                      value="cash">
+                    <span>Cash</span>
+                  </label>
+                  <label>
+                    <input
+                      type="radio"
+                      v-model="paymentWizardData.payment_method"
+                      value="card">
+                    <span>Card</span>
+                  </label>
+                  <label>
+                    <input
+                      type="radio"
+                      v-model="paymentWizardData.payment_method"
+                      value="bank_transfer">
+                    <span>Bank Transfer</span>
+                  </label>
+                </div>
+              </div>
+
+              <!-- Service Notes -->
+              <div class="form-section">
+                <h4>Service Notes</h4>
+                <div class="form-group">
+                  <textarea
+                    v-model="paymentWizardData.service_notes"
+                    class="clinical-form-field"
+                    placeholder="Enter any additional service or payment notes..."
+                    rows="3"></textarea>
+                </div>
+              </div>
+
+              <!-- Invoice Creation Option -->
+              <div class="form-section">
+                <div class="form-group">
+                  <label>
+                    <input
+                      type="checkbox"
+                      v-model="paymentWizardData.create_invoice_now">
+                    <span>Create Invoice Now</span>
+                  </label>
+                </div>
+              </div>
+
+              <!-- Order Summary -->
+              <div class="info-grid">
+                <div class="info-item">
+                  <label>Amount</label>
+                  <span>{{ quoteData?.amount_total?.toLocaleString() || '0' }} {{ quoteData?.currency || 'VND' }}</span>
+                </div>
+                <div class="info-item">
+                  <label>Payment</label>
+                  <span>{{ paymentWizardData.payment_choice === 'pay_now' ? 'Now' : 'Later' }}</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="modal-footer">
+              <button @click="showPaymentWizard = false" class="btn btn-secondary">Cancel</button>
+              <button @click="completePayment" class="btn btn-success">
+                <i class="material-icons">check_circle</i>
+                <span>Complete Service</span>
               </button>
             </div>
           </div>
@@ -2762,6 +3011,12 @@ window.healthPWA = {
       `
     });
 
+    /* ========================================
+       LEGACY CODE - Order Detail View Component
+       This component is no longer used - the Booking List Modal View is the active interface
+       Commented out to eliminate duplicate code and reduce confusion
+       ======================================== */
+    /*
     app.component('order-detail-view', {
       props: ['orderId', 'isOnline'],
       emits: ['navigate'],
@@ -4109,7 +4364,9 @@ window.healthPWA = {
         </div>
       `
     });
-    
+    */
+    /* END OF LEGACY ORDER-DETAIL-VIEW COMPONENT */
+
     app.component('teams-view', {
       props: ['isOnline'],
       emits: ['navigate'],

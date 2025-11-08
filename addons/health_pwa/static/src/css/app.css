@@ -3120,6 +3120,33 @@ p {
   font-weight: 500;
 }
 
+/* Success Message */
+.success-message {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-lg);
+  background: rgba(16, 185, 129, 0.1);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  border-radius: var(--border-radius);
+  text-align: center;
+  margin: var(--spacing-lg) 0;
+}
+
+.success-message i {
+  font-size: 2.5rem;
+  color: #10b981;
+  margin-bottom: var(--spacing-md);
+}
+
+.success-message p {
+  margin: 0;
+  color: #10b981;
+  font-weight: 600;
+  font-size: 1rem;
+}
+
 /* Print Styles */
 @media print {
   .no-print { display: none !important; }
