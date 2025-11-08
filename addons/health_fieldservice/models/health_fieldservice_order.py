@@ -1820,16 +1820,20 @@ class HealthFieldServiceOrderUnified(models.Model):
                 user_id=manager.id
             )
 
-        # Log message in chatter
-        self.message_post(
-            body=f"""
-                <p><strong>Service Completed by Part-Time Staff</strong></p>
-                <p>Assigned staff: {self.lead_staff_id.name} (Part-Time)</p>
-                <p>Operations team has been notified to create invoice.</p>
-            """,
-            subject='Service Completed - Requires Operations Invoicing',
-            message_type='notification'
-        )
+        # Log message in chatter (gracefully handle email configuration errors)
+        try:
+            self.message_post(
+                body=f"""
+                    <p><strong>Service Completed by Part-Time Staff</strong></p>
+                    <p>Assigned staff: {self.lead_staff_id.name} (Part-Time)</p>
+                    <p>Operations team has been notified to create invoice.</p>
+                """,
+                subject='Service Completed - Requires Operations Invoicing',
+                message_type='notification'
+            )
+        except Exception as msg_err:
+            # Log the error but don't fail the notification process
+            _logger.warning(f'Could not post chatter message for FSO {self.name}: {str(msg_err)}')
 
     def action_complete_service(self):
         """Complete the service - different workflow for part-time vs full-time staff"""
@@ -1844,11 +1848,12 @@ class HealthFieldServiceOrderUnified(models.Model):
                 '• Treatment Performed'
             ))
 
-        # Mandatory validation: Invoice/Quote must exist
-        if not self.invoice_submitted:
+        # Mandatory validation: Invoice/Quote must exist OR service package must be present (prepaid)
+        if not self.invoice_submitted and not self.package_id:
             raise UserError(_(
                 'Invoice or Quote is required before completing the service.\n\n'
-                'Please create a quote with service items before completing.'
+                'Alternatively, a service package must be assigned if payment is prepaid.\n'
+                'Please create a quote with service items or assign a service package.'
             ))
 
         # Check if staff can create invoice
@@ -1904,8 +1909,13 @@ class HealthFieldServiceOrderUnified(models.Model):
                 'completion_notes': completion_note,
             })
 
-            # Notify operations manager
-            self._notify_operations_for_invoicing()
+            # Notify operations manager (gracefully handle email errors)
+            try:
+                self._notify_operations_for_invoicing()
+            except Exception as notify_err:
+                # Log the notification error but don't fail the completion
+                _logger.warning(f'Could not send operations notification for FSO {self.name}: {str(notify_err)}')
+                # Service is still marked as completed, notification is optional
 
             # Return notification
             return {

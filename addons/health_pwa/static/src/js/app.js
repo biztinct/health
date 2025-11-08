@@ -1166,9 +1166,16 @@ window.healthPWA = {
 
         // Check if clinical notes are valid (has text OR image)
         const isClinicalNotesComplete = computed(() => {
-          const hasNotes = clinicalNotesText.value && clinicalNotesText.value.trim().length > 0;
-          const hasImage = photoPreviewUrl.value !== null && photoPreviewUrl.value !== undefined && photoPreviewUrl.value !== '';
-          return hasNotes || hasImage;
+          // Check local unsaved state
+          const hasLocalNotes = clinicalNotesText.value && clinicalNotesText.value.trim().length > 0;
+          const hasLocalImage = photoPreviewUrl.value !== null && photoPreviewUrl.value !== undefined && photoPreviewUrl.value !== '';
+
+          // Check server-saved state
+          const hasServerNotes = selectedBookingDetail.value?.clinical_notes &&
+                                  selectedBookingDetail.value.clinical_notes.trim().length > 0;
+
+          // Return true if either local unsaved OR server-saved clinical notes exist
+          return (hasLocalNotes || hasLocalImage) || hasServerNotes;
         });
 
         // Start timer function
@@ -1289,6 +1296,7 @@ window.healthPWA = {
             const hasPhoto = capturedPhoto.value !== null;
 
             if (!hasNotes && !hasPhoto) {
+              alert('Please provide clinical notes or take a photo before saving');
               console.error('Please provide clinical notes or photo');
               return;
             }
@@ -1317,10 +1325,11 @@ window.healthPWA = {
                   console.log('Photo uploaded successfully');
                 } else {
                   console.warn('Photo upload returned non-200 status:', photoResponse.status);
+                  alert('Warning: Photo upload failed but clinical notes will still be saved');
                 }
               } catch (photoErr) {
                 console.warn('Error uploading photo:', photoErr);
-                // Don't stop the process if photo upload fails
+                // Don't stop the process if photo upload fails - continue with notes
               }
             }
 
@@ -1363,9 +1372,11 @@ window.healthPWA = {
             if (selectedBookingDetail.value && hasNotes) {
               selectedBookingDetail.value.clinical_notes = clinicalNotesText.value;
             }
+            alert('Clinical notes saved successfully');
             closeClinicalNotesModal();
           } catch (err) {
             console.error('Error saving clinical notes:', err);
+            alert('Error saving clinical notes: ' + err.message);
           }
         };
 
