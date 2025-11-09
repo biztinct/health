@@ -2011,13 +2011,14 @@ class HealthFieldServiceOrderUnified(models.Model):
                 'completion_notes': completion_note,
             })
 
+            # NOTE: Email notifications disabled per user request
             # Notify operations manager (gracefully handle email errors)
-            try:
-                self._notify_operations_for_invoicing()
-            except Exception as notify_err:
-                # Log the notification error but don't fail the completion
-                _logger.warning(f'Could not send operations notification for FSO {self.name}: {str(notify_err)}')
-                # Service is still marked as completed, notification is optional
+            # try:
+            #     self._notify_operations_for_invoicing()
+            # except Exception as notify_err:
+            #     # Log the notification error but don't fail the completion
+            #     _logger.warning(f'Could not send operations notification for FSO {self.name}: {str(notify_err)}')
+            #     # Service is still marked as completed, notification is optional
 
             # Return notification
             return {

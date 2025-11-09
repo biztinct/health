@@ -1152,6 +1152,8 @@ window.healthPWA = {
         // Invoice verification and payment workflow
         const quoteVerified = ref(false);
         const quoteComments = ref('');
+        const lineItemEdits = ref({}); // Track which lines have been edited { lineId: { original_qty, original_discount } }
+        const lineItemComments = ref({}); // Store comments for each line { lineId: 'comment text' }
         const showPaymentWizard = ref(false);
         const paymentWizardData = ref({
           payment_choice: 'pay_now',
@@ -1227,25 +1229,65 @@ window.healthPWA = {
             await loadQuoteData(selectedBookingId.value);
             quoteVerified.value = false; // Reset verification state
             quoteComments.value = ''; // Clear comments
+            // Initialize line item tracking
+            lineItemEdits.value = {};
+            lineItemComments.value = {};
+            // Store original values for each line (to detect changes)
+            if (quoteData.value && quoteData.value.order_lines) {
+              quoteData.value.order_lines.forEach(line => {
+                if (!line.original_quantity) {
+                  line.original_quantity = line.quantity;
+                  line.original_discount = line.discount || 0;
+                }
+              });
+            }
             showInvoiceModal.value = true;
           }
         };
 
         // Save quote with verification comments
         const saveQuoteWithComments = async () => {
-          if (!selectedBookingId.value || !quoteComments.value.trim()) {
-            console.error('Missing booking ID or comments');
+          if (!selectedBookingId.value) {
+            console.error('Missing booking ID');
             return;
           }
 
+          // Validate line-level comments for modified lines
+          const modifiedLines = Object.keys(lineItemEdits.value);
+          for (const lineId of modifiedLines) {
+            const lineComment = lineItemComments.value[lineId];
+            if (!lineComment || !lineComment.trim()) {
+              alert(`Please add a comment for the product line where you changed Qty or Discount.`);
+              return;
+            }
+          }
+
           try {
+            // Prepare modified line items for backend sync
+            const modifiedLineItems = [];
+            if (quoteData.value && quoteData.value.order_lines) {
+              for (const line of quoteData.value.order_lines) {
+                if (lineItemEdits.value[line.id]) {
+                  // This line was modified, include the new values
+                  modifiedLineItems.push({
+                    line_id: line.id,
+                    quantity: line.quantity,
+                    discount: line.discount || 0,
+                    comment: lineItemComments.value[line.id] || ''
+                  });
+                }
+              }
+            }
+
             const response = await fetch(`/health_pwa/api/fso/${selectedBookingId.value}/quote/save`, {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',
               },
               body: JSON.stringify({
-                comments: quoteComments.value
+                comments: quoteComments.value,
+                line_comments: lineItemComments.value,
+                modified_lines: modifiedLineItems  // Send actual modified line data
               })
             });
 
@@ -1264,10 +1306,36 @@ window.healthPWA = {
           }
         };
 
+        // Track line item edits - detect if Qty or Discount changed
+        const trackLineEdit = (lineId) => {
+          // Find the line to check if it was actually changed
+          const line = quoteData.value?.order_lines?.find(l => l.id === lineId);
+          if (!line) return;
+
+          const qtyChanged = line.quantity !== line.original_quantity;
+          const discountChanged = (line.discount || 0) !== line.original_discount;
+
+          if (qtyChanged || discountChanged) {
+            // Mark this line as edited only if values actually changed
+            if (!lineItemEdits.value[lineId]) {
+              lineItemEdits.value[lineId] = {
+                original_qty: line.original_quantity,
+                original_discount: line.original_discount,
+                current_qty: line.quantity,
+                current_discount: line.discount || 0
+              };
+            }
+          } else {
+            // If values were reverted to original, remove from edits
+            delete lineItemEdits.value[lineId];
+            delete lineItemComments.value[lineId];
+          }
+        };
+
         // Open payment wizard (only after quote verification)
         const openPaymentWizard = () => {
           if (!quoteVerified.value) {
-            alert('Please verify the invoice first by entering comments and clicking Save Quote.');
+            alert('Please verify the invoice first and click Save Quote.');
             return;
           }
           showPaymentWizard.value = true;
@@ -1596,9 +1664,12 @@ window.healthPWA = {
           // Invoice verification and payment workflow
           quoteVerified,
           quoteComments,
+          lineItemEdits,
+          lineItemComments,
           showPaymentWizard,
           paymentWizardData,
           saveQuoteWithComments,
+          trackLineEdit,
           openPaymentWizard,
           completePayment
         };
@@ -1918,8 +1989,8 @@ window.healthPWA = {
 
               <!-- Modal footer with action buttons -->
               <div class="modal-footer">
-                <!-- Before service start -->
-                <div v-if="serviceStartedForBooking !== selectedBookingId && selectedBookingDetail?.state !== 'in_progress'" class="modal-footer-content">
+                <!-- Before service start (hidden when completed) -->
+                <div v-if="serviceStartedForBooking !== selectedBookingId && selectedBookingDetail?.state !== 'in_progress' && selectedBookingDetail?.state !== 'completed'" class="modal-footer-content">
                   <button class="btn btn-danger">Cancel/Refuse Visit</button>
                   <button @click="startService" class="btn btn-success">Start Service</button>
                 </div>
@@ -2094,40 +2165,74 @@ window.healthPWA = {
                 </div>
               </div>
 
-              <!-- Quote Items Table -->
+              <!-- Quote Items Table with Editable Fields -->
               <div class="invoice-lines">
-                <table class="invoice-table">
+                <table class="invoice-table editable-invoice-table">
                   <thead>
                     <tr>
                       <th>Product</th>
                       <th>Qty</th>
+                      <th>Discount %</th>
                       <th>Price</th>
                       <th>Total</th>
                     </tr>
                   </thead>
                   <tbody>
-                    <tr v-for="line in quoteData.order_lines" :key="line.id">
-                      <td>{{ line.product_name }}</td>
-                      <td>{{ line.quantity }}</td>
+                    <tr v-for="line in quoteData.order_lines" :key="line.id" :class="{ 'edited-row': lineItemEdits[line.id] }">
+                      <td class="product-name">{{ line.product_name }}</td>
+                      <td class="qty-cell">
+                        <input
+                          type="number"
+                          v-model.number="line.quantity"
+                          @change="trackLineEdit(line.id)"
+                          class="editable-input"
+                          min="1">
+                      </td>
+                      <td class="discount-cell">
+                        <input
+                          type="number"
+                          v-model.number="line.discount"
+                          @change="trackLineEdit(line.id)"
+                          class="editable-input"
+                          min="0"
+                          max="100"
+                          placeholder="0">
+                      </td>
                       <td>{{ line.unit_price.toLocaleString() }}</td>
-                      <td>{{ line.total.toLocaleString() }}</td>
+                      <td>{{ (line.quantity * line.unit_price * (1 - (line.discount || 0) / 100)).toLocaleString() }}</td>
                     </tr>
                   </tbody>
                   <tfoot>
                     <tr>
-                      <td colspan="3">Subtotal</td>
-                      <td>{{ quoteData.amount_untaxed.toLocaleString() }}</td>
+                      <td colspan="4">Subtotal</td>
+                      <td>{{ quoteData.order_lines.reduce((sum, line) => sum + (line.quantity * line.unit_price * (1 - (line.discount || 0) / 100)), 0).toLocaleString() }}</td>
                     </tr>
                     <tr>
-                      <td colspan="3">Tax</td>
+                      <td colspan="4">Tax</td>
                       <td>{{ quoteData.amount_tax.toLocaleString() }}</td>
                     </tr>
                     <tr class="total-row">
-                      <td colspan="3"><strong>Total</strong></td>
-                      <td><strong>{{ quoteData.amount_total.toLocaleString() }} {{ quoteData.currency }}</strong></td>
+                      <td colspan="4"><strong>Total</strong></td>
+                      <td><strong>{{ (quoteData.order_lines.reduce((sum, line) => sum + (line.quantity * line.unit_price * (1 - (line.discount || 0) / 100)), 0) + quoteData.amount_tax).toLocaleString() }} {{ quoteData.currency }}</strong></td>
                     </tr>
                   </tfoot>
                 </table>
+              </div>
+
+              <!-- Line-Level Comments Section -->
+              <div v-if="!quoteVerified && Object.keys(lineItemEdits).length > 0" class="line-comments-section">
+                <h5>Line-Level Comments <span class="required-indicator">*</span> (Required for modified items)</h5>
+                <div v-for="line in quoteData.order_lines" :key="'comment-' + line.id" v-if="lineItemEdits[line.id]" class="line-comment-group">
+                  <label class="clinical-form-label">
+                    {{ line.product_name }}
+                    <span class="required-indicator">*</span>
+                  </label>
+                  <textarea
+                    v-model="lineItemComments[line.id]"
+                    class="clinical-form-field"
+                    placeholder="Add a comment explaining the change..."
+                    rows="2"></textarea>
+                </div>
               </div>
 
               <!-- Verification Comments Field -->
@@ -2155,7 +2260,6 @@ window.healthPWA = {
               <button
                 v-if="!quoteVerified"
                 @click="saveQuoteWithComments"
-                :disabled="!quoteComments.trim()"
                 class="btn btn-primary">
                 <i class="material-icons">save</i>
                 <span>Save Quote</span>

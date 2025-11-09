@@ -1040,7 +1040,7 @@ class HealthPWAAPIController(http.Controller):
 
     @http.route('/health_pwa/api/fso/<int:order_id>/quote/save', type='http', auth='user', methods=['POST'], csrf=False)
     def api_fso_save_quote(self, order_id, **kwargs):
-        """Save quote with verification comments from mobile app"""
+        """Save quote with verification comments and sync modified line items from mobile app"""
         if not self._check_api_access():
             return self._prepare_json_response(error='Access denied', status_code=403)
 
@@ -1063,8 +1063,39 @@ class HealthPWAAPIController(http.Controller):
                 data = {}
 
             comments = data.get('comments', '')
+            line_comments = data.get('line_comments', {})
+            modified_lines = data.get('modified_lines', [])
 
-            # Save comments to the sale order note
+            # Process modified line items - update Qty and Discount on sale.order.line
+            for line_update in modified_lines:
+                line_id = line_update.get('line_id')
+                quantity = line_update.get('quantity')
+                discount = line_update.get('discount', 0)
+                line_comment = line_update.get('comment', '')
+
+                if line_id:
+                    sale_line = request.env['sale.order.line'].browse(line_id)
+                    if sale_line.exists() and sale_line.order_id.id == sale_order.id:
+                        # Update the quantity and discount on the sale order line
+                        update_vals = {}
+                        if quantity is not None:
+                            update_vals['product_uom_qty'] = float(quantity)
+                        if discount is not None:
+                            update_vals['discount'] = float(discount)
+
+                        # Add line comment to the line's internal note field
+                        if line_comment:
+                            note_text = f"[Line Modification] {line_comment}"
+                            if hasattr(sale_line, 'notes') and sale_line.notes:
+                                update_vals['notes'] = sale_line.notes + "\n\n" + note_text
+                            else:
+                                # If notes field doesn't exist, add to sale order notes
+                                pass
+
+                        if update_vals:
+                            sale_line.write(update_vals)
+
+            # Save general comments to the sale order note
             if comments:
                 # Add comments to the internal notes of the quote
                 note_text = f"[Invoice Verification] {comments}"
@@ -1077,6 +1108,7 @@ class HealthPWAAPIController(http.Controller):
                 'quote_id': sale_order.id,
                 'quote_name': sale_order.name,
                 'comments_saved': bool(comments),
+                'modified_lines_count': len(modified_lines),
                 'message': 'Invoice verified and saved successfully'
             })
 

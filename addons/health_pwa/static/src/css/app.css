@@ -3003,6 +3003,73 @@ p {
   font-size: 0.85rem;
 }
 
+/* Editable Invoice Table Styles */
+.editable-invoice-table .qty-cell,
+.editable-invoice-table .discount-cell {
+  text-align: center;
+}
+
+.editable-input {
+  width: 70px;
+  padding: 6px 8px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-small);
+  font-size: 0.85rem;
+  text-align: center;
+  background: var(--background-color);
+  color: var(--text-primary);
+  transition: all 0.2s ease;
+}
+
+.editable-input:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  background: var(--card-color);
+  box-shadow: 0 0 0 2px rgba(21, 101, 192, 0.1);
+}
+
+.edited-row {
+  background-color: rgba(16, 185, 129, 0.08);
+}
+
+.edited-row .product-name {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+/* Line-Level Comments Section */
+.line-comments-section {
+  margin-top: var(--spacing-lg);
+  padding-top: var(--spacing-lg);
+  border-top: 1px solid var(--border-color);
+}
+
+.line-comments-section h5 {
+  margin: 0 0 var(--spacing-md) 0;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.line-comment-group {
+  margin-bottom: var(--spacing-md);
+}
+
+.line-comment-group label {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-bottom: 6px;
+}
+
+.required-indicator {
+  color: #ef4444;
+  font-weight: 700;
+}
+
 .btn-group-sm {
   display: flex;
   gap: var(--spacing-xs);
