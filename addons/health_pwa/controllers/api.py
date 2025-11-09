@@ -1270,3 +1270,206 @@ class HealthPWAAPIController(http.Controller):
         except Exception as e:
             _logger.error(f'Error fetching clinic config: {str(e)}')
             return self._prepare_json_response(error=str(e), status_code=500)
+
+    @http.route('/health_pwa/api/fso/<int:order_id>/next_visit_status', type='http', auth='user', methods=['GET'], csrf=False)
+    def api_fso_next_visit_status(self, order_id, **kwargs):
+        """Check if patient has a scheduled next visit"""
+        if not self._check_api_access():
+            return self._prepare_json_response(error='Access denied', status_code=403)
+
+        try:
+            order = request.env['health.fieldservice.order'].browse(order_id)
+
+            if not order.exists():
+                return self._prepare_json_response(error='Order not found', status_code=404)
+
+            if not order.patient_id:
+                return self._prepare_json_response(error='No patient associated with this order', status_code=400)
+
+            patient = order.patient_id
+            has_next_visit = bool(patient.next_visit_date)
+
+            response_data = {
+                'has_next_visit': has_next_visit,
+                'patient_name': patient.name,
+                'patient_id': patient.id,
+                'next_visit_date': patient.next_visit_date.isoformat() if patient.next_visit_date else None,
+                'assignment_notes': patient.assignment_notes or '',
+            }
+
+            # If next visit exists, get the FSO details
+            if has_next_visit:
+                next_fso = request.env['health.fieldservice.order'].search([
+                    ('patient_id', '=', patient.id),
+                    ('state', 'in', ['draft', 'assigned', 'confirmed', 'in_progress']),
+                    ('scheduled_datetime', '!=', False)
+                ], order='scheduled_datetime ASC', limit=1)
+
+                if next_fso:
+                    response_data['next_fso_id'] = next_fso.id
+                    response_data['assigned_nurse'] = {
+                        'id': next_fso.lead_staff_id.id if next_fso.lead_staff_id else None,
+                        'name': next_fso.lead_staff_id.name if next_fso.lead_staff_id else None,
+                    }
+
+                    # Get quote line items
+                    quote_items = []
+                    if next_fso.sale_order_id:
+                        for line in next_fso.sale_order_id.order_line:
+                            quote_items.append({
+                                'id': line.id,
+                                'product_id': line.product_id.id,
+                                'product_name': line.product_id.name if line.product_id else line.name,
+                                'quantity': float(line.product_uom_qty),
+                                'unit_price': float(line.price_unit),
+                            })
+                    response_data['quote_items'] = quote_items
+
+            return self._prepare_json_response(data=response_data)
+
+        except Exception as e:
+            _logger.error(f'Error checking next visit status: {str(e)}')
+            return self._prepare_json_response(error=str(e), status_code=500)
+
+    @http.route('/health_pwa/api/fso/<int:order_id>/no_future_visit', type='http', auth='user', methods=['POST'], csrf=False)
+    def api_fso_no_future_visit(self, order_id, **kwargs):
+        """Record that patient doesn't want/need future visits"""
+        if not self._check_api_access():
+            return self._prepare_json_response(error='Access denied', status_code=403)
+
+        try:
+            order = request.env['health.fieldservice.order'].browse(order_id)
+
+            if not order.exists():
+                return self._prepare_json_response(error='Order not found', status_code=404)
+
+            if not order.patient_id:
+                return self._prepare_json_response(error='No patient associated with this order', status_code=400)
+
+            # Get request data
+            import json as json_module
+            try:
+                data = json_module.loads(request.httprequest.data.decode('utf-8')) if request.httprequest.data else {}
+            except:
+                data = {}
+
+            reason = data.get('reason', '')
+            other_reason_text = data.get('other_reason_text', '')
+
+            # Build the reason string
+            if reason == 'Other':
+                reason_note = f"[No Future Visit] {reason}: {other_reason_text}"
+            else:
+                reason_note = f"[No Future Visit] {reason}"
+
+            patient = order.patient_id
+
+            # Append to assignment_notes
+            if patient.assignment_notes:
+                patient.write({
+                    'assignment_notes': patient.assignment_notes + '\n' + reason_note,
+                    'next_visit_date': False  # Clear next visit date
+                })
+            else:
+                patient.write({
+                    'assignment_notes': reason_note,
+                    'next_visit_date': False  # Clear next visit date
+                })
+
+            return self._prepare_json_response(data={
+                'message': 'Visit cancellation reason recorded successfully',
+                'patient_id': patient.id
+            })
+
+        except Exception as e:
+            _logger.error(f'Error recording no future visit: {str(e)}')
+            return self._prepare_json_response(error=str(e), status_code=500)
+
+    @http.route('/health_pwa/api/fso/<int:order_id>/schedule_next_visit', type='http', auth='user', methods=['POST'], csrf=False)
+    def api_fso_schedule_next_visit(self, order_id, **kwargs):
+        """Create new FSO or update existing next visit"""
+        if not self._check_api_access():
+            return self._prepare_json_response(error='Access denied', status_code=403)
+
+        try:
+            order = request.env['health.fieldservice.order'].browse(order_id)
+
+            if not order.exists():
+                return self._prepare_json_response(error='Order not found', status_code=404)
+
+            if not order.patient_id:
+                return self._prepare_json_response(error='No patient associated with this order', status_code=400)
+
+            # Get request data
+            import json as json_module
+            try:
+                data = json_module.loads(request.httprequest.data.decode('utf-8')) if request.httprequest.data else {}
+            except:
+                data = {}
+
+            next_visit_date = data.get('next_visit_date')
+            quote_items = data.get('quote_items', [])
+            assigned_staff_id = data.get('assigned_staff_id')
+            next_fso_id = data.get('next_fso_id')  # From status check
+
+            patient = order.patient_id
+
+            # Determine if we're updating existing FSO or creating new one
+            if next_fso_id:
+                # Update existing FSO
+                next_fso = request.env['health.fieldservice.order'].browse(next_fso_id)
+                if next_fso.exists() and next_fso.patient_id.id == patient.id:
+                    update_vals = {'scheduled_datetime': next_visit_date}
+                    if assigned_staff_id:
+                        update_vals['lead_staff_id'] = assigned_staff_id
+                    else:
+                        update_vals['lead_staff_id'] = False
+                    next_fso.write(update_vals)
+                else:
+                    return self._prepare_json_response(error='Invalid FSO or patient mismatch', status_code=400)
+            else:
+                # Create new FSO
+                next_fso = request.env['health.fieldservice.order'].create({
+                    'patient_id': patient.id,
+                    'customer_id': patient.id,
+                    'scheduled_datetime': next_visit_date,
+                    'lead_staff_id': assigned_staff_id if assigned_staff_id else False,
+                    'state': 'draft',
+                })
+
+            # Create or update quote with line items
+            if next_fso.sale_order_id:
+                quote = next_fso.sale_order_id
+                # Remove existing lines
+                quote.order_line.unlink()
+            else:
+                # Create new quote
+                quote = request.env['sale.order'].create({
+                    'partner_id': patient.id,
+                    'order_line': [],
+                })
+                next_fso.write({'sale_order_id': quote.id})
+
+            # Add line items to quote
+            for item in quote_items:
+                request.env['sale.order.line'].create({
+                    'order_id': quote.id,
+                    'product_id': item.get('product_id'),
+                    'product_uom_qty': item.get('quantity', 1),
+                    'price_unit': item.get('unit_price', 0),
+                })
+
+            # Update patient's next_visit_date
+            patient.write({'next_visit_date': next_visit_date})
+
+            return self._prepare_json_response(data={
+                'message': 'Next visit scheduled successfully',
+                'fso_id': next_fso.id,
+                'fso_name': next_fso.name,
+                'patient_id': patient.id,
+                'next_visit_date': next_visit_date
+            })
+
+        except Exception as e:
+            _logger.error(f'Error scheduling next visit: {str(e)}')
+            return self._prepare_json_response(error=str(e), status_code=500)

@@ -2404,6 +2404,164 @@ window.healthPWA = {
             </div>
           </div>
         </div>
+
+        <!-- Next Visit Modal A: No future visit scheduled -->
+        <div v-if="showNextVisitModalA" class="modal-overlay" @click.self="showNextVisitModalA = false">
+          <div class="modal-content next-visit-modal">
+            <div class="modal-header">
+              <h3>
+                <i class="material-icons">calendar_today</i>
+                Schedule Next Appointment?
+              </h3>
+              <button @click="showNextVisitModalA = false" class="modal-close">
+                <i class="material-icons">close</i>
+              </button>
+            </div>
+            <div class="modal-body">
+              <p class="next-visit-message">
+                No future visits are currently scheduled for <strong>{{ nextVisitData.patient_name }}</strong>
+              </p>
+
+              <div class="next-visit-actions">
+                <!-- Button 1: Schedule Next Visit -->
+                <button @click="() => { showNextVisitModalA = false; showNextVisitModalB = true; }" class="btn btn-primary btn-lg">
+                  <i class="material-icons">add_event</i>
+                  Schedule Next Visit
+                </button>
+
+                <!-- Button 2: Client does not need future visits -->
+                <button @click="showNoFutureVisitDropdown = !showNoFutureVisitDropdown" class="btn btn-secondary btn-lg">
+                  <i class="material-icons">block</i>
+                  Client does not need or want a next visit
+                </button>
+              </div>
+
+              <!-- Dropdown for no future visit reasons -->
+              <div v-if="showNoFutureVisitDropdown" class="no-future-visit-section">
+                <label class="form-label">Why is there no future visit?</label>
+                <select v-model="nextVisitFormData.no_future_visit_reason" class="form-control">
+                  <option value="">-- Select a reason --</option>
+                  <option v-for="reason in noFutureVisitReasons" :key="reason.value" :value="reason.value">
+                    {{ reason.label }}
+                  </option>
+                </select>
+
+                <!-- Text input for "Other" reason -->
+                <div v-if="nextVisitFormData.no_future_visit_reason === 'other'" class="other-reason-section">
+                  <label class="form-label">Please explain:</label>
+                  <textarea
+                    v-model="nextVisitFormData.other_reason_text"
+                    class="form-control"
+                    placeholder="Explain why there is no future visit..."
+                    rows="3"></textarea>
+                </div>
+
+                <!-- Submit button for no future visit -->
+                <div class="form-actions">
+                  <button @click="showNoFutureVisitDropdown = false" class="btn btn-secondary">Cancel</button>
+                  <button @click="submitNoFutureVisit" class="btn btn-success">Submit</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Next Visit Modal B: Schedule next appointment -->
+        <div v-if="showNextVisitModalB" class="modal-overlay" @click.self="showNextVisitModalB = false">
+          <div class="modal-content next-visit-modal">
+            <div class="modal-header">
+              <h3>
+                <i class="material-icons">event</i>
+                Schedule Next Appointment
+              </h3>
+              <button @click="showNextVisitModalB = false" class="modal-close">
+                <i class="material-icons">close</i>
+              </button>
+            </div>
+            <div class="modal-body">
+              <!-- Date and Time Section -->
+              <div class="form-section">
+                <h4>Appointment Date &amp; Time</h4>
+                <div class="form-row">
+                  <div class="form-group">
+                    <label class="form-label">Date</label>
+                    <input
+                      type="date"
+                      v-model="nextVisitFormData.scheduled_date"
+                      class="form-control">
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Time</label>
+                    <input
+                      type="time"
+                      v-model="nextVisitFormData.scheduled_time"
+                      class="form-control">
+                  </div>
+                </div>
+              </div>
+
+              <!-- Services Section -->
+              <div class="form-section">
+                <h4>Services to be Provided</h4>
+                <div v-if="nextVisitFormData.quote_items && nextVisitFormData.quote_items.length > 0" class="services-list">
+                  <div v-for="(item, index) in nextVisitFormData.quote_items" :key="index" class="service-item">
+                    <span class="service-name">{{ item.product_name || item.name }}</span>
+                    <span class="service-qty">Qty: {{ item.quantity }}</span>
+                    <button @click="nextVisitFormData.quote_items.splice(index, 1)" class="btn-remove">
+                      <i class="material-icons">delete</i>
+                    </button>
+                  </div>
+                </div>
+                <div v-else class="no-services-message">
+                  No services selected yet
+                </div>
+                <button @click="loadProductCatalog" class="btn btn-secondary btn-sm">
+                  <i class="material-icons">add</i>
+                  Add from Catalog
+                </button>
+              </div>
+
+              <!-- Assigned Nurse Section -->
+              <div class="form-section">
+                <h4>Assigned Healthcare Staff</h4>
+                <div class="form-group">
+                  <input
+                    type="text"
+                    v-model="nextVisitFormData.assigned_nurse_id"
+                    placeholder="Search and select a nurse..."
+                    class="form-control"
+                    @focus="() => { }">
+                  <button v-if="nextVisitFormData.assigned_nurse_id" @click="nextVisitFormData.assigned_nurse_id = null" class="btn-clear">
+                    <i class="material-icons">clear</i>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Order Summary -->
+              <div class="order-summary">
+                <div class="summary-item">
+                  <label>Services</label>
+                  <span>{{ nextVisitFormData.quote_items?.length || 0 }} item(s)</span>
+                </div>
+                <div class="summary-item">
+                  <label>Scheduled For</label>
+                  <span v-if="nextVisitFormData.scheduled_date && nextVisitFormData.scheduled_time">
+                    {{ nextVisitFormData.scheduled_date }} at {{ nextVisitFormData.scheduled_time }}
+                  </span>
+                  <span v-else>Not set</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="modal-footer">
+              <button @click="showNextVisitModalB = false" class="btn btn-secondary">Cancel</button>
+              <button @click="scheduleNextVisit" class="btn btn-success">
+                <i class="material-icons">check_circle</i>
+                Schedule Visit
+              </button>
+            </div>
+          </div>
+        </div>
       `
     });
 
@@ -3187,6 +3345,37 @@ window.healthPWA = {
         const quoteVerified = ref(false);
         const quoteComments = ref('');
 
+        // Next Visit Modal State Management
+        const showNextVisitModalA = ref(false);  // Modal for "No next visit scheduled"
+        const showNextVisitModalB = ref(false);  // Modal for "Schedule next visit"
+        const nextVisitData = ref({
+          has_next_visit: false,
+          patient_name: '',
+          next_visit_date: null,
+          next_fso_id: null,
+          quote_items: [],
+          assigned_nurse_id: null,
+          assigned_nurse_name: ''
+        });
+        const nextVisitFormData = ref({
+          scheduled_date: null,
+          scheduled_time: null,
+          quote_items: [],
+          assigned_nurse_id: null,
+          no_future_visit_reason: '',
+          other_reason_text: ''
+        });
+        const showNoFutureVisitDropdown = ref(false);
+        const noFutureVisitReasons = [
+          { value: 'patient_died', label: 'Patient died' },
+          { value: 'improved', label: 'Patient improved/recovered' },
+          { value: 'hospital', label: 'Patient admitted to hospital' },
+          { value: 'declined', label: 'Patient declined further visits' },
+          { value: 'moved', label: 'Patient moved/relocated' },
+          { value: 'referral', label: 'Referred to another provider' },
+          { value: 'other', label: 'Other' }
+        ];
+
         // Computed elapsed time for timer
         const elapsedTime = computed(() => {
           if (!order.value || !order.value.actual_start_datetime) return '00:00:00';
@@ -3531,12 +3720,170 @@ window.healthPWA = {
 
               // Reload full order data from server to get latest information
               await loadOrder();
+
+              // Check next visit status and show appropriate modal
+              setTimeout(() => {
+                checkNextVisitAndShowModal();
+              }, 500);
             } else {
               window.healthPWA.showNotification('Failed to complete service: ' + (data.error || 'Unknown error'), 'error');
             }
           } catch (err) {
             console.error('Complete service without quote error:', err);
             window.healthPWA.showNotification('Error completing service: ' + err.message, 'error');
+          }
+        };
+
+        // API Functions for Next Visit Workflow
+        const checkNextVisitAndShowModal = async () => {
+          if (!props.isOnline) {
+            window.healthPWA.showNotification('Cannot check next visit while offline', 'error');
+            return;
+          }
+
+          try {
+            console.log('Checking next visit status for orderId:', props.orderId);
+            const response = await fetch(`/health_pwa/api/fso/${props.orderId}/next_visit_status`);
+            const data = await response.json();
+            console.log('Next visit status response:', data);
+
+            if (data.success) {
+              nextVisitData.value = data.data;
+
+              if (data.data.has_next_visit) {
+                // Scenario B: Next visit exists - populate form with existing data
+                const nextDate = new Date(data.data.next_visit_date);
+                nextVisitFormData.value.scheduled_date = nextDate.toISOString().split('T')[0];
+                nextVisitFormData.value.scheduled_time = nextDate.toTimeString().slice(0, 5);
+                nextVisitFormData.value.quote_items = data.data.quote_items || [];
+                nextVisitFormData.value.assigned_nurse_id = data.data.assigned_nurse_id;
+                showNextVisitModalB.value = true;
+              } else {
+                // Scenario A: No next visit scheduled
+                showNextVisitModalA.value = true;
+              }
+            } else {
+              window.healthPWA.showNotification('Failed to check next visit status', 'error');
+            }
+          } catch (err) {
+            console.error('Check next visit error:', err);
+            window.healthPWA.showNotification('Error checking next visit: ' + err.message, 'error');
+          }
+        };
+
+        const submitNoFutureVisit = async () => {
+          if (!nextVisitFormData.value.no_future_visit_reason) {
+            window.healthPWA.showNotification('Please select a reason', 'error');
+            return;
+          }
+
+          if (nextVisitFormData.value.no_future_visit_reason === 'other' && !nextVisitFormData.value.other_reason_text) {
+            window.healthPWA.showNotification('Please enter explanation for "Other" reason', 'error');
+            return;
+          }
+
+          if (!props.isOnline) {
+            window.healthPWA.showNotification('Cannot submit while offline', 'error');
+            return;
+          }
+
+          try {
+            const reasonLabel = noFutureVisitReasons.find(r => r.value === nextVisitFormData.value.no_future_visit_reason)?.label || nextVisitFormData.value.no_future_visit_reason;
+            const finalReason = nextVisitFormData.value.no_future_visit_reason === 'other'
+              ? `Other: ${nextVisitFormData.value.other_reason_text}`
+              : reasonLabel;
+
+            const response = await fetch(`/health_pwa/api/fso/${props.orderId}/no_future_visit`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                reason: finalReason
+              })
+            });
+
+            const data = await response.json();
+            console.log('No future visit response:', data);
+
+            if (data.success) {
+              window.healthPWA.showNotification('Noted: Patient does not need future visits', 'success');
+              showNextVisitModalA.value = false;
+              // Reset form
+              nextVisitFormData.value.no_future_visit_reason = '';
+              nextVisitFormData.value.other_reason_text = '';
+            } else {
+              window.healthPWA.showNotification('Failed to submit: ' + (data.error || 'Unknown error'), 'error');
+            }
+          } catch (err) {
+            console.error('Submit no future visit error:', err);
+            window.healthPWA.showNotification('Error submitting: ' + err.message, 'error');
+          }
+        };
+
+        const scheduleNextVisit = async () => {
+          // Validation
+          if (!nextVisitFormData.value.scheduled_date) {
+            window.healthPWA.showNotification('Please select a date', 'error');
+            return;
+          }
+
+          if (!nextVisitFormData.value.scheduled_time) {
+            window.healthPWA.showNotification('Please select a time', 'error');
+            return;
+          }
+
+          if (!nextVisitFormData.value.quote_items || nextVisitFormData.value.quote_items.length === 0) {
+            window.healthPWA.showNotification('Please add at least one service', 'error');
+            return;
+          }
+
+          if (!nextVisitFormData.value.assigned_nurse_id) {
+            window.healthPWA.showNotification('Please assign a nurse', 'error');
+            return;
+          }
+
+          if (!props.isOnline) {
+            window.healthPWA.showNotification('Cannot schedule while offline', 'error');
+            return;
+          }
+
+          try {
+            const dateTimeStr = `${nextVisitFormData.value.scheduled_date}T${nextVisitFormData.value.scheduled_time}:00`;
+
+            const response = await fetch(`/health_pwa/api/fso/${props.orderId}/schedule_next_visit`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                scheduled_datetime: dateTimeStr,
+                quote_items: nextVisitFormData.value.quote_items,
+                assigned_nurse_id: nextVisitFormData.value.assigned_nurse_id
+              })
+            });
+
+            const data = await response.json();
+            console.log('Schedule next visit response:', data);
+
+            if (data.success) {
+              window.healthPWA.showNotification('Next visit scheduled successfully!', 'success');
+              showNextVisitModalB.value = false;
+              // Reset form
+              nextVisitFormData.value = {
+                scheduled_date: null,
+                scheduled_time: null,
+                quote_items: [],
+                assigned_nurse_id: null,
+                no_future_visit_reason: '',
+                other_reason_text: ''
+              };
+            } else {
+              window.healthPWA.showNotification('Failed to schedule: ' + (data.error || 'Unknown error'), 'error');
+            }
+          } catch (err) {
+            console.error('Schedule next visit error:', err);
+            window.healthPWA.showNotification('Error scheduling: ' + err.message, 'error');
           }
         };
 
@@ -3878,7 +4225,17 @@ window.healthPWA = {
           getStatusBadgeClass,
           quoteVerified,
           quoteComments,
-          saveQuoteWithComments
+          saveQuoteWithComments,
+          // Next Visit Modal
+          showNextVisitModalA,
+          showNextVisitModalB,
+          nextVisitData,
+          nextVisitFormData,
+          showNoFutureVisitDropdown,
+          noFutureVisitReasons,
+          checkNextVisitAndShowModal,
+          submitNoFutureVisit,
+          scheduleNextVisit
         };
       },
       template: `

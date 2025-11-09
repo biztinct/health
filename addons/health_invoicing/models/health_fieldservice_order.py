@@ -246,23 +246,32 @@ class HealthFieldserviceOrder(models.Model):
         # Check if package is exhausted
         if self.package_id.remaining_services == 0:
             self.package_id.state = 'exhausted'
-            self.package_id.message_post(
-                body=f"Package exhausted by FSO {self.name} - all {self.package_id.total_services} services consumed.",
-                subject="Package Services Exhausted"
-            )
+            try:
+                self.package_id.message_post(
+                    body=f"Package exhausted by FSO {self.name} - all {self.package_id.total_services} services consumed.",
+                    subject="Package Services Exhausted"
+                )
+            except Exception:
+                pass  # Silently fail - no email notifications required
         else:
-            self.package_id.message_post(
-                body=f"FSO {self.name} consumed {self.package_consumption_quantity} service(s). "
-                     f"{self.package_id.remaining_services} services remaining.",
+            try:
+                self.package_id.message_post(
+                    body=f"FSO {self.name} consumed {self.package_consumption_quantity} service(s). "
+                         f"{self.package_id.remaining_services} services remaining.",
+                    subject="Package Service Consumed"
+                )
+            except Exception:
+                pass  # Silently fail - no email notifications required
+
+        # Record consumption in FSO message
+        try:
+            self.message_post(
+                body=f"Consumed {self.package_consumption_quantity} service(s) from package '{self.package_id.name}'. "
+                     f"Service value: {self.package_service_value:,.0f} {self.currency_id.symbol}",
                 subject="Package Service Consumed"
             )
-        
-        # Record consumption in FSO message
-        self.message_post(
-            body=f"Consumed {self.package_consumption_quantity} service(s) from package '{self.package_id.name}'. "
-                 f"Service value: {self.package_service_value:,.0f} {self.currency_id.symbol}",
-            subject="Package Service Consumed"
-        )
+        except Exception:
+            pass  # Silently fail - no email notifications required
         
         return True
     

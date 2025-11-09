@@ -1514,11 +1514,14 @@ class HealthFieldServiceOrderUnified(models.Model):
         if self.env.user.has_group('health_base.group_healthcare_operations_manager'):
             if not self.sale_order_id:
                 # Post informational message to chatter
-                self.message_post(
-                    body=_('📋 <strong>Quote Required:</strong> This booking needs a healthcare quote before it can be confirmed. Use the "Create Quote" smart button to add services and pricing.'),
-                    message_type='notification',
-                    subtype_xmlid='mail.mt_note'
-                )
+                try:
+                    self.message_post(
+                        body=_('📋 <strong>Quote Required:</strong> This booking needs a healthcare quote before it can be confirmed. Use the "Create Quote" smart button to add services and pricing.'),
+                        message_type='notification',
+                        subtype_xmlid='mail.mt_note'
+                    )
+                except Exception:
+                    pass  # Silently fail - no email notifications required
 
     def _update_patient_next_visit_date(self):
         """Update patient's next_visit_date with the earliest scheduled FSO date"""
@@ -1698,11 +1701,14 @@ class HealthFieldServiceOrderUnified(models.Model):
 
             # Post confirmation message
             quote_or_package = self.sale_order_id.name if self.sale_order_id else self.package_id.name
-            self.message_post(
-                body=_('✅ <strong>Booking Confirmed:</strong> Booking moved to %s stage. %s is ready for service delivery.') % (confirmed_stage.name, quote_or_package),
-                message_type='notification',
-                subtype_xmlid='mail.mt_note'
-            )
+            try:
+                self.message_post(
+                    body=_('✅ <strong>Booking Confirmed:</strong> Booking moved to %s stage. %s is ready for service delivery.') % (confirmed_stage.name, quote_or_package),
+                    message_type='notification',
+                    subtype_xmlid='mail.mt_note'
+                )
+            except Exception:
+                pass  # Silently fail - no email notifications required
         except UserError as e:
             # Re-raise with better context
             raise UserError(_('Cannot confirm booking:\n%s') % str(e))
@@ -1752,20 +1758,26 @@ class HealthFieldServiceOrderUnified(models.Model):
             '⚠️ Please add at least one service or product to the quote by clicking the "Quote" smart button.'
         )
         # Post message to chatter for persistent notification
-        self.message_post(
-            body=message,
-            message_type='notification',
-            subtype_xmlid='mail.mt_note'
-        )
+        try:
+            self.message_post(
+                body=message,
+                message_type='notification',
+                subtype_xmlid='mail.mt_note'
+            )
+        except Exception:
+            pass  # Silently fail - no email notifications required
     
     def _show_quote_recommendation(self):
         """Show recommendation message for non-OM users"""
         message = _('💡 Consider asking Operations Manager to create a quote for this FSO.')
-        self.message_post(
-            body=message,
-            message_type='notification',
-            subtype_xmlid='mail.mt_note'
-        )
+        try:
+            self.message_post(
+                body=message,
+                message_type='notification',
+                subtype_xmlid='mail.mt_note'
+            )
+        except Exception:
+            pass  # Silently fail - no email notifications required
     
     def _send_staff_assignment_notification(self, staff):
         """Send notification to assigned staff"""
@@ -1956,8 +1968,7 @@ class HealthFieldServiceOrderUnified(models.Model):
                     <p>Operations team has been notified to create invoice.</p>
                 """,
                 subject='Service Completed - Requires Operations Invoicing',
-                message_type='notification',
-                raise_on_email=False  # Allow posting without user email address
+                message_type='notification'
             )
         except Exception as msg_err:
             # Log the error but don't fail the notification process
@@ -2078,11 +2089,14 @@ class HealthFieldServiceOrderUnified(models.Model):
         })
 
         # Post message to chatter
-        self.message_post(
-            body=_('✅ <strong>Booking Closed:</strong> Cash collected by Operations Manager. Booking moved to Closed stage.'),
-            message_type='notification',
-            subtype_xmlid='mail.mt_note'
-        )
+        try:
+            self.message_post(
+                body=_('✅ <strong>Booking Closed:</strong> Cash collected by Operations Manager. Booking moved to Closed stage.'),
+                message_type='notification',
+                subtype_xmlid='mail.mt_note'
+            )
+        except Exception:
+            pass  # Silently fail - no email notifications required
 
         return {
             'type': 'ir.actions.client',
