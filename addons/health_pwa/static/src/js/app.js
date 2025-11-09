@@ -1212,6 +1212,13 @@ window.healthPWA = {
             const result = await response.json();
             if (result.success && result.data) {
               quoteData.value = result.data;
+              // Store original values for each line immediately upon loading
+              if (quoteData.value && quoteData.value.order_lines) {
+                quoteData.value.order_lines.forEach(line => {
+                  line.original_quantity = line.quantity;
+                  line.original_discount = line.discount || 0;
+                });
+              }
               console.log('Loaded quote data:', result.data);
             } else {
               console.error('Error loading quote:', result.error);
@@ -1227,15 +1234,6 @@ window.healthPWA = {
             await loadQuoteData(selectedBookingId.value);
             quoteVerified.value = false; // Reset verification state
             quoteComments.value = ''; // Clear comments
-            // Store original values for each line (to detect changes)
-            if (quoteData.value && quoteData.value.order_lines) {
-              quoteData.value.order_lines.forEach(line => {
-                if (!line.original_quantity) {
-                  line.original_quantity = line.quantity;
-                  line.original_discount = line.discount || 0;
-                }
-              });
-            }
             showInvoiceModal.value = true;
           }
         };
@@ -1320,8 +1318,15 @@ window.healthPWA = {
           if (!quoteData.value || !quoteData.value.order_lines) return false;
           return quoteData.value.order_lines.some(line => {
             if (!line) return false;
-            const qtyChanged = line.quantity !== (line.original_quantity || line.quantity);
-            const discountChanged = (line.discount || 0) !== (line.original_discount !== undefined ? line.original_discount : 0);
+            // Compare current values with original values
+            const originalQty = line.original_quantity !== undefined ? line.original_quantity : line.quantity;
+            const originalDiscount = line.original_discount !== undefined ? line.original_discount : (line.discount || 0);
+
+            const qtyChanged = line.quantity !== originalQty;
+            const discountChanged = (line.discount || 0) !== originalDiscount;
+
+            console.log(`Line ${line.product_name}: qty ${line.quantity} vs ${originalQty} (changed: ${qtyChanged}), discount ${line.discount || 0} vs ${originalDiscount} (changed: ${discountChanged})`);
+
             return qtyChanged || discountChanged;
           });
         });
