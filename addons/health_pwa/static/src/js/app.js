@@ -1160,6 +1160,45 @@ window.healthPWA = {
           create_invoice_now: true
         });
 
+        // Next Visit Modal State Management
+        const showNextVisitModalA = ref(false);  // Modal for "No next visit scheduled"
+        const showNextVisitModalB = ref(false);  // Modal for "Schedule next visit"
+        const nextVisitData = ref({
+          has_next_visit: false,
+          patient_name: '',
+          patient_id: null,
+          next_visit_date: null,
+          next_fso_id: null,
+          quote_items: [],
+          assigned_nurse_id: null,
+          assigned_nurse_name: '',
+          assignment_notes: ''
+        });
+        const nextVisitFormData = ref({
+          scheduled_date: null,
+          scheduled_time: null,
+          quote_items: [],
+          assigned_nurse_id: null,
+          no_future_visit_reason: '',
+          other_reason_text: ''
+        });
+        const noFutureVisitReasons = [
+          { value: 'patient_died', label: 'Patient died' },
+          { value: 'improved', label: 'Patient improved/recovered' },
+          { value: 'hospital', label: 'Patient admitted to hospital' },
+          { value: 'declined', label: 'Patient declined further visits' },
+          { value: 'moved', label: 'Patient moved/relocated' },
+          { value: 'referral', label: 'Referred to another provider' },
+          { value: 'other', label: 'Other' }
+        ];
+        const showNoFutureVisitDropdown = ref(false);
+
+        // Stub function for loading product catalog (to be implemented later)
+        const loadProductCatalog = () => {
+          console.log('Loading product catalog - to be implemented');
+          alert('Product catalog feature coming soon');
+        };
+
         // Computed elapsed time for timer
         const elapsedTime = computed(() => {
           if (!selectedBookingDetail.value || !selectedBookingDetail.value.actual_start_datetime) return '00:00:00';
@@ -1387,13 +1426,42 @@ window.healthPWA = {
             const result = await response.json();
             if (result.success) {
               console.log('Service completed successfully');
-              alert('Service completed successfully!');
               showPaymentWizard.value = false;
               showInvoiceModal.value = false;
               quoteVerified.value = false;
               quoteComments.value = '';
-              // Refresh booking list
-              loadBookingsForDate(currentDate.value);
+
+              // Check for next visit and open appropriate modal
+              console.log('Checking next visit status for patient...');
+              const statusResponse = await fetch(`/health_pwa/api/fso/${selectedBookingId.value}/next_visit_status`);
+              const statusData = await statusResponse.json();
+
+              if (statusData.success) {
+                // Update next visit data from status response
+                nextVisitData.value.has_next_visit = statusData.data.has_next_visit;
+                nextVisitData.value.patient_name = statusData.data.patient_name;
+                nextVisitData.value.patient_id = statusData.data.patient_id;
+                nextVisitData.value.next_visit_date = statusData.data.next_visit_date;
+                nextVisitData.value.next_fso_id = statusData.data.next_fso_id;
+                nextVisitData.value.assignment_notes = statusData.data.assignment_notes;
+
+                if (statusData.data.has_next_visit) {
+                  // Next visit already scheduled - just show success and refresh
+                  console.log('Next visit already scheduled for:', statusData.data.next_visit_date);
+                  alert('Service completed successfully! Next visit already scheduled.');
+                  loadBookingsForDate(currentDate.value);
+                } else {
+                  // No next visit - open Modal A to ask if patient wants future visit
+                  console.log('No next visit scheduled - opening modal');
+                  showNextVisitModalA.value = true;
+                  // Don't refresh yet - wait for modal response
+                }
+              } else {
+                // Error checking next visit - just refresh
+                console.error('Error checking next visit:', statusData.error);
+                alert('Service completed successfully!');
+                loadBookingsForDate(currentDate.value);
+              }
             } else {
               console.error('Error completing payment:', result.error);
               alert('Error completing payment: ' + result.error);
@@ -1588,20 +1656,162 @@ window.healthPWA = {
             console.log('Complete service without quote response:', data);
 
             if (data.success && data.data) {
-              alert('Service completed successfully!');
+              console.log('Service completed successfully');
               // Reset the service started flag
               serviceStartedForBooking.value = null;
               // Close the booking detail
               selectedBookingId.value = null;
               selectedBookingDetail.value = null;
-              // Reload bookings for the current date
-              loadBookingsForDate(currentDate.value);
+
+              // Check for next visit and open appropriate modal
+              console.log('Checking next visit status for patient...');
+              const statusResponse = await fetch(`/health_pwa/api/fso/${selectedBookingId.value}/next_visit_status`);
+              const statusData = await statusResponse.json();
+
+              if (statusData.success) {
+                // Update next visit data from status response
+                nextVisitData.value.has_next_visit = statusData.data.has_next_visit;
+                nextVisitData.value.patient_name = statusData.data.patient_name;
+                nextVisitData.value.patient_id = statusData.data.patient_id;
+                nextVisitData.value.next_visit_date = statusData.data.next_visit_date;
+                nextVisitData.value.next_fso_id = statusData.data.next_fso_id;
+                nextVisitData.value.assignment_notes = statusData.data.assignment_notes;
+
+                if (statusData.data.has_next_visit) {
+                  // Next visit already scheduled - just show success and refresh
+                  console.log('Next visit already scheduled for:', statusData.data.next_visit_date);
+                  alert('Service completed successfully! Next visit already scheduled.');
+                  loadBookingsForDate(currentDate.value);
+                } else {
+                  // No next visit - open Modal A to ask if patient wants future visit
+                  console.log('No next visit scheduled - opening modal');
+                  showNextVisitModalA.value = true;
+                  // Don't refresh yet - wait for modal response
+                }
+              } else {
+                // Error checking next visit - just refresh
+                console.error('Error checking next visit:', statusData.error);
+                alert('Service completed successfully!');
+                loadBookingsForDate(currentDate.value);
+              }
             } else {
               alert('Failed to complete service: ' + (data.error || 'Unknown error'));
             }
           } catch (err) {
             console.error('Complete service without quote error:', err);
             alert('Error completing service: ' + err.message);
+          }
+        };
+
+        // Handle "No Future Visit" submission from Modal A
+        const submitNoFutureVisit = async () => {
+          if (!nextVisitFormData.value.no_future_visit_reason) {
+            alert('Please select a reason');
+            return;
+          }
+
+          if (nextVisitFormData.value.no_future_visit_reason === 'other' && !nextVisitFormData.value.other_reason_text) {
+            alert('Please enter explanation for "Other" reason');
+            return;
+          }
+
+          try {
+            const reasonLabel = noFutureVisitReasons.find(r => r.value === nextVisitFormData.value.no_future_visit_reason)?.label || nextVisitFormData.value.no_future_visit_reason;
+            const finalReason = nextVisitFormData.value.no_future_visit_reason === 'other'
+              ? `Other: ${nextVisitFormData.value.other_reason_text}`
+              : reasonLabel;
+
+            const response = await fetch(`/health_pwa/api/fso/${selectedBookingId.value}/no_future_visit`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                reason: finalReason
+              })
+            });
+
+            const data = await response.json();
+            console.log('No future visit response:', data);
+
+            if (data.success) {
+              alert('Noted: Patient does not need future visits');
+              showNextVisitModalA.value = false;
+              // Reset form
+              nextVisitFormData.value.no_future_visit_reason = '';
+              nextVisitFormData.value.other_reason_text = '';
+              // Refresh bookings
+              loadBookingsForDate(currentDate.value);
+            } else {
+              alert('Failed to submit: ' + (data.error || 'Unknown error'));
+            }
+          } catch (err) {
+            console.error('Submit no future visit error:', err);
+            alert('Error submitting: ' + err.message);
+          }
+        };
+
+        // Handle "Schedule Next Visit" from Modal B
+        const scheduleNextVisit = async () => {
+          // Validation
+          if (!nextVisitFormData.value.scheduled_date) {
+            alert('Please select a date');
+            return;
+          }
+
+          if (!nextVisitFormData.value.scheduled_time) {
+            alert('Please select a time');
+            return;
+          }
+
+          if (!nextVisitFormData.value.quote_items || nextVisitFormData.value.quote_items.length === 0) {
+            alert('Please add at least one service');
+            return;
+          }
+
+          if (!nextVisitFormData.value.assigned_nurse_id) {
+            alert('Please assign a nurse');
+            return;
+          }
+
+          try {
+            const dateTimeStr = `${nextVisitFormData.value.scheduled_date}T${nextVisitFormData.value.scheduled_time}:00`;
+
+            const response = await fetch(`/health_pwa/api/fso/${selectedBookingId.value}/schedule_next_visit`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                scheduled_datetime: dateTimeStr,
+                quote_items: nextVisitFormData.value.quote_items,
+                assigned_nurse_id: nextVisitFormData.value.assigned_nurse_id
+              })
+            });
+
+            const data = await response.json();
+            console.log('Schedule next visit response:', data);
+
+            if (data.success) {
+              alert('Next visit scheduled successfully!');
+              showNextVisitModalB.value = false;
+              // Reset form
+              nextVisitFormData.value = {
+                scheduled_date: null,
+                scheduled_time: null,
+                quote_items: [],
+                assigned_nurse_id: null,
+                no_future_visit_reason: '',
+                other_reason_text: ''
+              };
+              // Refresh bookings
+              loadBookingsForDate(currentDate.value);
+            } else {
+              alert('Failed to schedule: ' + (data.error || 'Unknown error'));
+            }
+          } catch (err) {
+            console.error('Schedule next visit error:', err);
+            alert('Error scheduling: ' + err.message);
           }
         };
 
@@ -1692,7 +1902,17 @@ window.healthPWA = {
           paymentWizardData,
           saveQuoteWithComments,
           openPaymentWizard,
-          completePayment
+          completePayment,
+          // Next visit modal workflow
+          showNextVisitModalA,
+          showNextVisitModalB,
+          nextVisitData,
+          nextVisitFormData,
+          noFutureVisitReasons,
+          showNoFutureVisitDropdown,
+          submitNoFutureVisit,
+          scheduleNextVisit,
+          loadProductCatalog
         };
       },
       template: `
