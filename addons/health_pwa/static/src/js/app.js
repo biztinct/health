@@ -1265,15 +1265,23 @@ window.healthPWA = {
                 const discountChanged = (line.discount || 0) !== (line.original_discount !== undefined ? line.original_discount : 0);
 
                 if (qtyChanged || discountChanged) {
+                  // Validate that discount reason is provided if discount is applied
+                  if (line.discount > 0 && !line.discount_reason?.trim()) {
+                    alert(`Please provide a discount reason for: ${line.product_name}`);
+                    return;
+                  }
+
                   console.log(`Collecting modified line ${line.id}:`, {
                     quantity: line.quantity,
-                    discount: line.discount || 0
+                    discount: line.discount || 0,
+                    discount_reason: line.discount_reason || ''
                   });
 
                   modifiedLineItems.push({
                     line_id: line.id,
                     quantity: line.quantity,
-                    discount: line.discount || 0
+                    discount: line.discount || 0,
+                    discount_reason: line.discount_reason || ''
                   });
                 }
               }
@@ -2161,29 +2169,44 @@ window.healthPWA = {
                     </tr>
                   </thead>
                   <tbody>
-                    <tr v-for="line in quoteData.order_lines" :key="line.id">
-                      <td class="product-name">{{ line.product_name }}</td>
-                      <td class="qty-cell">
-                        <input
-                          type="number"
-                          v-model.number="line.quantity"
-                          class="editable-input"
-                          min="1"
-                          step="0.01">
-                      </td>
-                      <td class="discount-cell">
-                        <input
-                          type="number"
-                          v-model.number="line.discount"
-                          class="editable-input"
-                          min="0"
-                          max="100"
-                          step="0.01"
-                          placeholder="0">
-                      </td>
-                      <td>{{ line.unit_price.toLocaleString() }}</td>
-                      <td>{{ (line.quantity * line.unit_price * (1 - (line.discount || 0) / 100)).toLocaleString() }}</td>
-                    </tr>
+                    <template v-for="line in quoteData.order_lines" :key="line.id">
+                      <tr>
+                        <td class="product-name">{{ line.product_name }}</td>
+                        <td class="qty-cell">
+                          <input
+                            type="number"
+                            v-model.number="line.quantity"
+                            class="editable-input"
+                            min="1"
+                            step="0.01">
+                        </td>
+                        <td class="discount-cell">
+                          <input
+                            type="number"
+                            v-model.number="line.discount"
+                            class="editable-input"
+                            min="0"
+                            max="100"
+                            step="0.01"
+                            placeholder="0">
+                        </td>
+                        <td>{{ line.unit_price.toLocaleString() }}</td>
+                        <td>{{ (line.quantity * line.unit_price * (1 - (line.discount || 0) / 100)).toLocaleString() }}</td>
+                      </tr>
+                      <tr v-if="line.discount > 0" class="discount-reason-row">
+                        <td colspan="5">
+                          <div class="discount-reason-container">
+                            <label class="discount-reason-label">Discount Reason:</label>
+                            <input
+                              type="text"
+                              v-model="line.discount_reason"
+                              class="editable-input discount-reason-input-full"
+                              placeholder="Required: Explain discount"
+                              required>
+                          </div>
+                        </td>
+                      </tr>
+                    </template>
                   </tbody>
                   <tfoot>
                     <tr>
@@ -2193,6 +2216,11 @@ window.healthPWA = {
                     <tr>
                       <td colspan="4">Tax</td>
                       <td>{{ quoteData.amount_tax.toLocaleString() }}</td>
+                    </tr>
+                    <tr v-if="hasLineModifications" class="info-row">
+                      <td colspan="5" class="info-message">
+                        💾 Save Quote to display updated Total
+                      </td>
                     </tr>
                     <tr class="total-row">
                       <td colspan="4"><strong>Total</strong></td>

@@ -3028,6 +3028,58 @@ p {
   box-shadow: 0 0 0 2px rgba(21, 101, 192, 0.1);
 }
 
+.discount-reason-row {
+  background-color: #f5f5f5;
+  border-top: 1px solid var(--border-color);
+}
+
+.discount-reason-row td {
+  padding: var(--spacing-md) !important;
+}
+
+.discount-reason-container {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  width: 100%;
+}
+
+.discount-reason-label {
+  font-weight: 500;
+  color: var(--text-primary);
+  white-space: nowrap;
+  margin: 0;
+}
+
+.discount-reason-input-full {
+  flex: 1;
+  min-width: 200px;
+  text-align: left;
+  width: 100%;
+}
+
+.text-muted {
+  color: #999;
+  font-size: 0.9rem;
+}
+
+.info-row {
+  background-color: #e3f2fd;
+  border: 2px solid #90caf9;
+}
+
+.info-row td {
+  padding: var(--spacing-lg) !important;
+}
+
+.info-message {
+  text-align: center;
+  color: #1565c0;
+  font-weight: 600;
+  font-size: 0.95rem;
+  padding: var(--spacing-lg) !important;
+}
+
 .edited-row {
   background-color: rgba(16, 185, 129, 0.08);
 }

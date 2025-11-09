@@ -313,6 +313,8 @@ class HealthPWAAPIController(http.Controller):
                         'product_name': line.product_id.name if line.product_id else line.name,
                         'quantity': float(line.product_uom_qty),
                         'unit_price': float(line.price_unit),
+                        'discount': float(line.discount) if line.discount else 0.0,
+                        'discount_reason': line.discount_reason if hasattr(line, 'discount_reason') and line.discount_reason else '',
                     })
 
             order_data = {
@@ -1071,6 +1073,7 @@ class HealthPWAAPIController(http.Controller):
                 line_id = line_update.get('line_id')
                 quantity = line_update.get('quantity')
                 discount = line_update.get('discount', 0)
+                discount_reason = line_update.get('discount_reason', '')
                 line_comment = line_update.get('comment', '')
 
                 if line_id:
@@ -1082,6 +1085,8 @@ class HealthPWAAPIController(http.Controller):
                             update_vals['product_uom_qty'] = float(quantity)
                         if discount is not None:
                             update_vals['discount'] = float(discount)
+                        if discount_reason:
+                            update_vals['discount_reason'] = discount_reason
 
                         # Add line comment to the line's internal note field
                         if line_comment:
