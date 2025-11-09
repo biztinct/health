@@ -1152,8 +1152,6 @@ window.healthPWA = {
         // Invoice verification and payment workflow
         const quoteVerified = ref(false);
         const quoteComments = ref('');
-        const lineItemEdits = ref({}); // Track which lines have been edited { lineId: { original_qty, original_discount } }
-        const lineItemComments = ref({}); // Store comments for each line { lineId: 'comment text' }
         const showPaymentWizard = ref(false);
         const paymentWizardData = ref({
           payment_choice: 'pay_now',
@@ -1229,9 +1227,6 @@ window.healthPWA = {
             await loadQuoteData(selectedBookingId.value);
             quoteVerified.value = false; // Reset verification state
             quoteComments.value = ''; // Clear comments
-            // Initialize line item tracking
-            lineItemEdits.value = {};
-            lineItemComments.value = {};
             // Store original values for each line (to detect changes)
             if (quoteData.value && quoteData.value.order_lines) {
               quoteData.value.order_lines.forEach(line => {
@@ -1252,14 +1247,10 @@ window.healthPWA = {
             return;
           }
 
-          // Validate line-level comments for modified lines
-          const modifiedLines = Object.keys(lineItemEdits.value);
-          for (const lineId of modifiedLines) {
-            const lineComment = lineItemComments.value[lineId];
-            if (!lineComment || !lineComment.trim()) {
-              alert(`Please add a comment for the product line where you changed Qty or Discount.`);
-              return;
-            }
+          // Validate that Verification Notes are filled if any line modifications exist
+          if (hasLineModifications.value && (!quoteComments.value || !quoteComments.value.trim())) {
+            alert('Please add verification notes explaining the changes made to Qty or Discount.');
+            return;
           }
 
           try {
@@ -1267,17 +1258,28 @@ window.healthPWA = {
             const modifiedLineItems = [];
             if (quoteData.value && quoteData.value.order_lines) {
               for (const line of quoteData.value.order_lines) {
-                if (lineItemEdits.value[line.id]) {
-                  // This line was modified, include the new values
+                if (!line) continue;
+
+                // Check if this line has Qty or Discount changes
+                const qtyChanged = line.quantity !== (line.original_quantity || line.quantity);
+                const discountChanged = (line.discount || 0) !== (line.original_discount !== undefined ? line.original_discount : 0);
+
+                if (qtyChanged || discountChanged) {
+                  console.log(`Collecting modified line ${line.id}:`, {
+                    quantity: line.quantity,
+                    discount: line.discount || 0
+                  });
+
                   modifiedLineItems.push({
                     line_id: line.id,
                     quantity: line.quantity,
-                    discount: line.discount || 0,
-                    comment: lineItemComments.value[line.id] || ''
+                    discount: line.discount || 0
                   });
                 }
               }
             }
+
+            console.log('Modified lines to save:', modifiedLineItems);
 
             const response = await fetch(`/health_pwa/api/fso/${selectedBookingId.value}/quote/save`, {
               method: 'POST',
@@ -1286,7 +1288,6 @@ window.healthPWA = {
               },
               body: JSON.stringify({
                 comments: quoteComments.value,
-                line_comments: lineItemComments.value,
                 modified_lines: modifiedLineItems  // Send actual modified line data
               })
             });
@@ -1306,31 +1307,16 @@ window.healthPWA = {
           }
         };
 
-        // Track line item edits - detect if Qty or Discount changed
-        const trackLineEdit = (lineId) => {
-          // Find the line to check if it was actually changed
-          const line = quoteData.value?.order_lines?.find(l => l.id === lineId);
-          if (!line) return;
-
-          const qtyChanged = line.quantity !== line.original_quantity;
-          const discountChanged = (line.discount || 0) !== line.original_discount;
-
-          if (qtyChanged || discountChanged) {
-            // Mark this line as edited only if values actually changed
-            if (!lineItemEdits.value[lineId]) {
-              lineItemEdits.value[lineId] = {
-                original_qty: line.original_quantity,
-                original_discount: line.original_discount,
-                current_qty: line.quantity,
-                current_discount: line.discount || 0
-              };
-            }
-          } else {
-            // If values were reverted to original, remove from edits
-            delete lineItemEdits.value[lineId];
-            delete lineItemComments.value[lineId];
-          }
-        };
+        // Detect if any line items have modifications (Qty or Discount changes)
+        const hasLineModifications = computed(() => {
+          if (!quoteData.value || !quoteData.value.order_lines) return false;
+          return quoteData.value.order_lines.some(line => {
+            if (!line) return false;
+            const qtyChanged = line.quantity !== (line.original_quantity || line.quantity);
+            const discountChanged = (line.discount || 0) !== (line.original_discount !== undefined ? line.original_discount : 0);
+            return qtyChanged || discountChanged;
+          });
+        });
 
         // Open payment wizard (only after quote verification)
         const openPaymentWizard = () => {
@@ -1664,12 +1650,9 @@ window.healthPWA = {
           // Invoice verification and payment workflow
           quoteVerified,
           quoteComments,
-          lineItemEdits,
-          lineItemComments,
           showPaymentWizard,
           paymentWizardData,
           saveQuoteWithComments,
-          trackLineEdit,
           openPaymentWizard,
           completePayment
         };
@@ -2165,7 +2148,7 @@ window.healthPWA = {
                 </div>
               </div>
 
-              <!-- Quote Items Table with Editable Fields -->
+              <!-- Quote Items Table - Editable Qty and Discount -->
               <div class="invoice-lines">
                 <table class="invoice-table editable-invoice-table">
                   <thead>
@@ -2178,24 +2161,24 @@ window.healthPWA = {
                     </tr>
                   </thead>
                   <tbody>
-                    <tr v-for="line in quoteData.order_lines" :key="line.id" :class="{ 'edited-row': lineItemEdits[line.id] }">
+                    <tr v-for="line in quoteData.order_lines" :key="line.id">
                       <td class="product-name">{{ line.product_name }}</td>
                       <td class="qty-cell">
                         <input
                           type="number"
                           v-model.number="line.quantity"
-                          @change="trackLineEdit(line.id)"
                           class="editable-input"
-                          min="1">
+                          min="1"
+                          step="0.01">
                       </td>
                       <td class="discount-cell">
                         <input
                           type="number"
                           v-model.number="line.discount"
-                          @change="trackLineEdit(line.id)"
                           class="editable-input"
                           min="0"
                           max="100"
+                          step="0.01"
                           placeholder="0">
                       </td>
                       <td>{{ line.unit_price.toLocaleString() }}</td>
@@ -2205,7 +2188,7 @@ window.healthPWA = {
                   <tfoot>
                     <tr>
                       <td colspan="4">Subtotal</td>
-                      <td>{{ quoteData.order_lines.reduce((sum, line) => sum + (line.quantity * line.unit_price * (1 - (line.discount || 0) / 100)), 0).toLocaleString() }}</td>
+                      <td>{{ quoteData.amount_untaxed.toLocaleString() }}</td>
                     </tr>
                     <tr>
                       <td colspan="4">Tax</td>
@@ -2213,63 +2196,40 @@ window.healthPWA = {
                     </tr>
                     <tr class="total-row">
                       <td colspan="4"><strong>Total</strong></td>
-                      <td><strong>{{ (quoteData.order_lines.reduce((sum, line) => sum + (line.quantity * line.unit_price * (1 - (line.discount || 0) / 100)), 0) + quoteData.amount_tax).toLocaleString() }} {{ quoteData.currency }}</strong></td>
+                      <td><strong>{{ quoteData.amount_total.toLocaleString() }} {{ quoteData.currency }}</strong></td>
                     </tr>
                   </tfoot>
                 </table>
               </div>
 
-              <!-- Line-Level Comments Section -->
-              <div v-if="!quoteVerified && Object.keys(lineItemEdits).length > 0" class="line-comments-section">
-                <h5>Line-Level Comments <span class="required-indicator">*</span> (Required for modified items)</h5>
-                <div v-for="line in quoteData.order_lines" :key="'comment-' + line.id" v-if="lineItemEdits[line.id]" class="line-comment-group">
-                  <label class="clinical-form-label">
-                    {{ line.product_name }}
-                    <span class="required-indicator">*</span>
-                  </label>
-                  <textarea
-                    v-model="lineItemComments[line.id]"
-                    class="clinical-form-field"
-                    placeholder="Add a comment explaining the change..."
-                    rows="2"></textarea>
-                </div>
-              </div>
-
-              <!-- Verification Comments Field -->
+              <!-- Verification Notes - Mandatory if changes made -->
               <div v-if="!quoteVerified" class="form-group">
-                <label class="clinical-form-label">Verification Notes</label>
+                <label class="clinical-form-label">
+                  Verification Notes
+                  <span v-if="hasLineModifications" class="required-indicator">*</span>
+                </label>
                 <textarea
                   v-model="quoteComments"
                   class="clinical-form-field"
-                  placeholder="Enter any comments or notes about this invoice verification..."
-                  rows="4"></textarea>
+                  :placeholder="hasLineModifications ? 'Required: Explain the changes made to Qty or Discount...' : 'Add any general comments about this invoice...'"
+                  rows="3"></textarea>
               </div>
 
-              <!-- Verification Success Message -->
+              <!-- Success Message -->
               <div v-if="quoteVerified" class="success-message">
                 <i class="material-icons">check_circle</i>
                 <p>Invoice verified successfully!</p>
               </div>
             </div>
 
-            <!-- Modal Footer with Conditional Buttons -->
+            <!-- Modal Footer -->
             <div class="modal-footer">
               <button @click="showInvoiceModal = false" class="btn btn-secondary">Cancel</button>
-
-              <!-- Save Quote Button (before verification) -->
-              <button
-                v-if="!quoteVerified"
-                @click="saveQuoteWithComments"
-                class="btn btn-primary">
+              <button v-if="!quoteVerified" @click="saveQuoteWithComments" class="btn btn-primary">
                 <i class="material-icons">save</i>
                 <span>Save Quote</span>
               </button>
-
-              <!-- Payment Button (after verification) -->
-              <button
-                v-else
-                @click="openPaymentWizard"
-                class="btn btn-success">
+              <button v-else @click="openPaymentWizard" class="btn btn-success">
                 <i class="material-icons">payment</i>
                 <span>Payment</span>
               </button>
