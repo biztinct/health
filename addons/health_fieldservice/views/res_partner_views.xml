@@ -22,6 +22,12 @@
         <field name="inherit_id" ref="health_base.view_health_patient_form"/>
         <field name="arch" type="xml">
             <page name="service_history" position="inside">
+                <!-- Client Timeline Section -->
+                <group string="Client Timeline" invisible="not is_patient">
+                    <field name="timeline_html" widget="html" readonly="1" nolabel="1"/>
+                </group>
+
+                <!-- Service History Summary -->
                 <group string="Service History Summary" invisible="not is_patient">
                     <group>
                         <field name="total_assignments" readonly="1"/>

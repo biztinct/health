@@ -1220,14 +1220,16 @@ class HealthFieldServiceOrderUnified(models.Model):
                     vals['state'] = default_stage.state
         
         orders = super().create(vals_list)
-        
+
         # Post-creation automation
         for order in orders:
             # Send notifications
             order._send_booking_notifications()
             # Show quote creation notification for Operations Managers
             order._show_quote_creation_notification()
-        
+            # Update patient's next visit date
+            order._update_patient_next_visit_date()
+
         return orders
     
     def write(self, vals):
@@ -1517,6 +1519,29 @@ class HealthFieldServiceOrderUnified(models.Model):
                     message_type='notification',
                     subtype_xmlid='mail.mt_note'
                 )
+
+    def _update_patient_next_visit_date(self):
+        """Update patient's next_visit_date with the earliest scheduled FSO date"""
+        self.ensure_one()
+
+        if not self.patient_id:
+            return
+
+        # Find all scheduled/upcoming FSOs for this patient (excluding completed/cancelled ones)
+        upcoming_fsos = self.env['health.fieldservice.order'].search([
+            ('patient_id', '=', self.patient_id.id),
+            ('state', 'in', ['draft', 'assigned', 'confirmed', 'in_progress']),
+            ('scheduled_datetime', '!=', False)
+        ], order='scheduled_datetime ASC', limit=1)
+
+        if upcoming_fsos:
+            # Update patient's next_visit_date with the earliest scheduled datetime
+            next_visit = upcoming_fsos[0].scheduled_datetime
+            self.patient_id.write({'next_visit_date': next_visit})
+            _logger.info(f'Updated next_visit_date for patient {self.patient_id.name} to {next_visit}')
+        else:
+            # No scheduled FSO found - clear the next_visit_date
+            self.patient_id.write({'next_visit_date': False})
 
     def _reserve_package_service(self):
         """
