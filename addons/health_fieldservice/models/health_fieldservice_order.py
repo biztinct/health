@@ -1922,7 +1922,7 @@ class HealthFieldServiceOrderUnified(models.Model):
                 user_id=manager.id
             )
 
-        # Log message in chatter (gracefully handle email configuration errors)
+        # Log message in chatter (no email required, just internal note)
         try:
             self.message_post(
                 body=f"""
@@ -1931,7 +1931,8 @@ class HealthFieldServiceOrderUnified(models.Model):
                     <p>Operations team has been notified to create invoice.</p>
                 """,
                 subject='Service Completed - Requires Operations Invoicing',
-                message_type='notification'
+                message_type='notification',
+                raise_on_email=False  # Allow posting without user email address
             )
         except Exception as msg_err:
             # Log the error but don't fail the notification process
