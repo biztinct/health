@@ -179,7 +179,8 @@ class HealthStaffAssignmentWizard(models.TransientModel):
 
         self.fso_id.message_post(
             body=message_body,
-            subject="Staff Assignment & Schedule Updated"
+            subject="Staff Assignment & Schedule Updated",
+            raise_on_email=False
         )
 
         return {

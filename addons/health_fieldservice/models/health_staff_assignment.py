@@ -826,7 +826,8 @@ class HealthStaffAssignment(models.Model):
                 self.message_post(
                     body=_('Assignment confirmed for FSO %s') % self.fso_id.name,
                     partner_ids=user.partner_id.ids,
-                    message_type='notification'
+                    message_type='notification',
+                    raise_on_email=False
                 )
         except ValueError:
             # If group doesn't exist, skip notification
@@ -963,12 +964,13 @@ class HealthStaffAssignment(models.Model):
                       "AI Score: <strong>%.1f%%</strong><br/>"
                       "Confidence: <strong>%.1f%%</strong><br/>"
                       "Skills Match: <strong>%.1f%%</strong>") % (
-                    optimal_staff.name, 
+                    optimal_staff.name,
                     best_suggestion['recommendation_score'] * 100,
                     best_suggestion['confidence'] * 100,
                     best_suggestion['skills_match'] * 100
                 ),
-                subject=_("AI Assignment Optimization Applied")
+                subject=_("AI Assignment Optimization Applied"),
+                raise_on_email=False
             )
             
             return {
@@ -1036,7 +1038,8 @@ class HealthStaffAssignment(models.Model):
                     predictions.get('success_probability', 0.0),
                     len(predictions.get('suggestions', []))
                 ),
-                subject=_("AI Predictions Updated")
+                subject=_("AI Predictions Updated"),
+                raise_on_email=False
             )
             
             return {

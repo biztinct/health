@@ -2012,14 +2012,8 @@ class HealthFieldServiceOrderUnified(models.Model):
                 'completion_notes': completion_note,
             })
 
-            # NOTE: Email notifications disabled per user request
-            # Notify operations manager (gracefully handle email errors)
-            # try:
-            #     self._notify_operations_for_invoicing()
-            # except Exception as notify_err:
-            #     # Log the notification error but don't fail the completion
-            #     _logger.warning(f'Could not send operations notification for FSO {self.name}: {str(notify_err)}')
-            #     # Service is still marked as completed, notification is optional
+            # NOTE: Invoice is already created by nurse during quote verification
+            # No additional notification needed for invoice creation
 
             # Return notification
             return {
@@ -2027,8 +2021,8 @@ class HealthFieldServiceOrderUnified(models.Model):
                 'tag': 'display_notification',
                 'params': {
                     'title': _('Service Completed'),
-                    'message': _('Service completed. Operations team has been notified to create the invoice.'),
-                    'type': 'info',
+                    'message': _('Service completed successfully. Invoice has been created during quote verification.'),
+                    'type': 'success',
                     'sticky': False,
                 }
             }

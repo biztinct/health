@@ -285,7 +285,8 @@ class HealthFieldServiceCommunication(models.Model):
                 body=self.message,
                 subject=self.subject,
                 partner_ids=[recipient.partner_id.id],
-                subtype_xmlid='mail.mt_comment'
+                subtype_xmlid='mail.mt_comment',
+                raise_on_email=False
             )
     
     def _send_sms_notifications(self, recipients):

@@ -379,7 +379,8 @@ class HealthAppointment(models.Model):
         self.message_post(
             body=f"Sales approval completed by {self.env.user.name}",
             subject="Sales Approval",
-            subtype_xmlid='mail.mt_comment'
+            subtype_xmlid='mail.mt_comment',
+            raise_on_email=False
         )
         
         return True
@@ -395,7 +396,8 @@ class HealthAppointment(models.Model):
         self.message_post(
             body=f"Operations review completed by {self.env.user.name}",
             subject="Operations Approval",
-            subtype_xmlid='mail.mt_comment'
+            subtype_xmlid='mail.mt_comment',
+            raise_on_email=False
         )
         
         return True
@@ -412,9 +414,10 @@ class HealthAppointment(models.Model):
         self.message_post(
             body=f"Staff assignment initiated by {self.env.user.name}",
             subject="Staff Assignment",
-            subtype_xmlid='mail.mt_comment'
+            subtype_xmlid='mail.mt_comment',
+            raise_on_email=False
         )
-        
+
         # Open staff assignment wizard if available
         return {
             'name': 'Assign Staff',
@@ -435,9 +438,10 @@ class HealthAppointment(models.Model):
         self.message_post(
             body=f"Assignment confirmed by {self.env.user.name}",
             subject="Assignment Confirmation",
-            subtype_xmlid='mail.mt_comment'
+            subtype_xmlid='mail.mt_comment',
+            raise_on_email=False
         )
-        
+
         # Trigger final preparation if all conditions met
         if self.assignment_state == 'staff_confirmed':
             self._check_ready_for_service()
@@ -460,5 +464,6 @@ class HealthAppointment(models.Model):
             self.message_post(
                 body="Appointment ready for service delivery",
                 subject="Ready for Service",
-                subtype_xmlid='mail.mt_comment'
+                subtype_xmlid='mail.mt_comment',
+                raise_on_email=False
             )

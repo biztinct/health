@@ -80,7 +80,8 @@ class SaleOrder(models.Model):
             fso.message_post(
                 body=_('Invoice %s created from healthcare quote %s') % (invoice.name, self.name),
                 message_type='notification',
-                subtype_xmlid='mail.mt_note'
+                subtype_xmlid='mail.mt_note',
+                raise_on_email=False
             )
         
         # Close the quote popup and return to FSO
