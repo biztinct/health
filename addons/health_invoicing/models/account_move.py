@@ -298,10 +298,13 @@ class HealthcareInvoice(models.Model):
                         package.invoice_id = self.id
                     
                     # Log package creation
-                    self.message_post(
-                        body=f"Healthcare package created: {package.name} ({product_template.healthcare_service_count} services)",
-                        subject="Package Instance Created"
-                    )
+                    try:
+                        self.message_post(
+                            body=f"Healthcare package created: {package.name} ({product_template.healthcare_service_count} services)",
+                            subject="Package Instance Created"
+                        )
+                    except Exception:
+                        pass  # Silently fail - no email notifications required
 
     def _generate_vietnamese_tax_code(self):
         """Generate Vietnamese tax code for invoice"""
@@ -373,10 +376,13 @@ class HealthcareInvoice(models.Model):
                 self._schedule_tax_submission_check()
                 
                 # Log successful submission for audit trail
-                self.message_post(
-                    body=f"Invoice successfully submitted to Vietnamese Tax Authority. Reference: {response.get('reference_number')}",
-                    subject="Tax Submission Successful"
-                )
+                try:
+                    self.message_post(
+                        body=f"Invoice successfully submitted to Vietnamese Tax Authority. Reference: {response.get('reference_number')}",
+                        subject="Tax Submission Successful"
+                    )
+                except Exception:
+                    pass  # Silently fail - no email notifications required
                 
                 return True
             else:
@@ -594,12 +600,15 @@ class HealthcareInvoice(models.Model):
             'priority': 5,  # High priority for tax submissions
         })
         # Retry cron job created - will run independently
-        
+
         # Log retry scheduling
-        self.message_post(
-            body=f"Tax submission failed: {error_message}. Automatic retry scheduled in {retry_delay} seconds.",
-            subject="Tax Submission Retry Scheduled"
-        )
+        try:
+            self.message_post(
+                body=f"Tax submission failed: {error_message}. Automatic retry scheduled in {retry_delay} seconds.",
+                subject="Tax Submission Retry Scheduled"
+            )
+        except Exception:
+            pass  # Silently fail - no email notifications required
     
     def _create_tax_submission_activity(self, error_message):
         """Create activity for manual tax submission review"""

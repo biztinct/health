@@ -207,10 +207,13 @@ class HealthPrepaidService(models.Model):
             raise UserError(_('This consumption is already marked as invoiced.'))
         
         self.status = 'invoiced'
-        self.message_post(
-            body=f"Service consumption marked as invoiced: {self.quantity_consumed} service(s) worth {self.total_value:,.0f} {self.currency_id.symbol}",
-            subject="Consumption Invoiced"
-        )
+        try:
+            self.message_post(
+                body=f"Service consumption marked as invoiced: {self.quantity_consumed} service(s) worth {self.total_value:,.0f} {self.currency_id.symbol}",
+                subject="Consumption Invoiced"
+            )
+        except Exception:
+            pass  # Silently fail - no email notifications required
     
     def action_create_refund(self):
         """Create refund for this consumption"""

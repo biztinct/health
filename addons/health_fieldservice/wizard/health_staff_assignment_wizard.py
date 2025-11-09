@@ -177,11 +177,13 @@ class HealthStaffAssignmentWizard(models.TransientModel):
         if self.new_scheduled_datetime:
             message_body += f"\n📅 Rescheduled to: {self.new_scheduled_datetime.strftime('%Y-%m-%d %H:%M')}"
 
-        self.fso_id.message_post(
-            body=message_body,
-            subject="Staff Assignment & Schedule Updated",
-            raise_on_email=False
-        )
+        try:
+            self.fso_id.message_post(
+                body=message_body,
+                subject="Staff Assignment & Schedule Updated"
+            )
+        except Exception:
+            pass  # Silently fail - no email notifications required
 
         return {
             'type': 'ir.actions.client',

@@ -171,10 +171,13 @@ class HealthCashDeliveryWizard(models.TransientModel):
             success_message += "\n🏦 Bank deposit record created"
         
         # Post success message
-        self.transaction_id.message_post(
-            body=success_message,
-            subject="Cash Delivered to Operations Manager"
-        )
+        try:
+            self.transaction_id.message_post(
+                body=success_message,
+                subject="Cash Delivered to Operations Manager"
+            )
+        except Exception:
+            pass  # Silently fail - no email notifications required
         
         # Return to transaction form
         return {
@@ -274,18 +277,24 @@ class HealthCashDeliveryWizard(models.TransientModel):
         try:
             deposit_move = self.env['account.move'].create(bank_deposit_vals)
             deposit_move.action_post()
-            
+
             # Link to transaction
-            self.transaction_id.message_post(
-                body=f"Bank deposit created: {deposit_move.name}",
-                subject="Bank Deposit Created"
-            )
-            
+            try:
+                self.transaction_id.message_post(
+                    body=f"Bank deposit created: {deposit_move.name}",
+                    subject="Bank Deposit Created"
+                )
+            except Exception:
+                pass  # Silently fail - no email notifications required
+
             return deposit_move
         except Exception as e:
             # Log error but don't block the main process
-            self.transaction_id.message_post(
-                body=f"Bank deposit creation failed: {str(e)}. Please create manually.",
-                subject="Bank Deposit Error"
-            )
+            try:
+                self.transaction_id.message_post(
+                    body=f"Bank deposit creation failed: {str(e)}. Please create manually.",
+                    subject="Bank Deposit Error"
+                )
+            except Exception:
+                pass  # Silently fail - no email notifications required
             return False

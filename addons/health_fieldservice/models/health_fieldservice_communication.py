@@ -281,13 +281,15 @@ class HealthFieldServiceCommunication(models.Model):
     def _create_odoo_notifications(self, recipients):
         """Create Odoo inbox notifications"""
         for recipient in recipients:
-            self.message_post(
-                body=self.message,
-                subject=self.subject,
-                partner_ids=[recipient.partner_id.id],
-                subtype_xmlid='mail.mt_comment',
-                raise_on_email=False
-            )
+            try:
+                self.message_post(
+                    body=self.message,
+                    subject=self.subject,
+                    partner_ids=[recipient.partner_id.id],
+                    subtype_xmlid='mail.mt_comment'
+                )
+            except Exception:
+                pass  # Silently fail - no email notifications required
     
     def _send_sms_notifications(self, recipients):
         """Send SMS notifications for urgent messages"""

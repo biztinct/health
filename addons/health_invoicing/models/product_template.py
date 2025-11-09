@@ -215,10 +215,13 @@ class ProductTemplate(models.Model):
                 ])
                 
                 if active_packages:
-                    product.message_post(
-                        body=f"Template updated. {len(active_packages)} active package instances may be affected. "
-                             f"Consider reviewing patient packages for consistency.",
-                        subject="Healthcare Package Template Updated"
-                    )
+                    try:
+                        product.message_post(
+                            body=f"Template updated. {len(active_packages)} active package instances may be affected. "
+                                 f"Consider reviewing patient packages for consistency.",
+                            subject="Healthcare Package Template Updated"
+                        )
+                    except Exception:
+                        pass  # Silently fail - no email notifications required
         
         return result

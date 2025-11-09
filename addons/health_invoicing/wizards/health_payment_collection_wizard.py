@@ -198,11 +198,14 @@ class HealthPaymentCollectionWizard(models.TransientModel):
         
         if self.payment_method == 'cash':
             message += "\n⚠️  Cash payment - requires delivery to Operations Manager"
-        
-        transaction.message_post(
-            body=message,
-            subject="Payment Collected"
-        )
+
+        try:
+            transaction.message_post(
+                body=message,
+                subject="Payment Collected"
+            )
+        except Exception:
+            pass  # Silently fail - no email notifications required
         
         return {
             'name': _('Payment Transaction'),

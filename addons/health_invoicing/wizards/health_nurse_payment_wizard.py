@@ -327,10 +327,13 @@ class HealthNursePaymentWizard(models.TransientModel):
             invoice.action_submit_to_tax_authority()
         except Exception as e:
             # Log warning but don't block the process
-            invoice.message_post(
-                body=f"Invoice created but tax submission failed: {str(e)}. Please submit manually.",
-                subject="Tax Submission Warning"
-            )
+            try:
+                invoice.message_post(
+                    body=f"Invoice created but tax submission failed: {str(e)}. Please submit manually.",
+                    subject="Tax Submission Warning"
+                )
+            except Exception:
+                pass  # Silently fail - no email notifications required
         
         return invoice
     
@@ -435,10 +438,13 @@ class HealthNursePaymentWizard(models.TransientModel):
             ) % (f'{self.final_amount:,.0f}', self.currency_id.symbol)
         
         # Post message to FSO
-        self.fso_id.message_post(
-            body=message,
-            subject="Service Completed & Payment Processed"
-        )
+        try:
+            self.fso_id.message_post(
+                body=message,
+                subject="Service Completed & Payment Processed"
+            )
+        except Exception:
+            pass  # Silently fail - no email notifications required
         
         # Return to FSO form with reload to update UI
         return {

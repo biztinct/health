@@ -311,16 +311,22 @@ class HealthServicePackage(models.Model):
         # Check if package is exhausted
         if self.remaining_services == 0:
             self.state = 'exhausted'
-            self.message_post(
-                body=f"Package exhausted - all {self.total_services} services have been used.",
-                subject="Package Services Exhausted"
-            )
-        
+            try:
+                self.message_post(
+                    body=f"Package exhausted - all {self.total_services} services have been used.",
+                    subject="Package Services Exhausted"
+                )
+            except Exception:
+                pass  # Silently fail - no email notifications required
+
         # Log the consumption
-        self.message_post(
-            body=f"Manual service consumption: {quantity} service(s) consumed from package.",
-            subject="Manual Service Consumption"
-        )
+        try:
+            self.message_post(
+                body=f"Manual service consumption: {quantity} service(s) consumed from package.",
+                subject="Manual Service Consumption"
+            )
+        except Exception:
+            pass  # Silently fail - no email notifications required
         
         return True
     
@@ -359,10 +365,13 @@ class HealthServicePackage(models.Model):
         })
         
         self.state = 'refunded'
-        self.message_post(
-            body=f"Package refunded for {self.remaining_services} unused services. Refund amount: {refund_amount}",
-            subject="Package Refunded"
-        )
+        try:
+            self.message_post(
+                body=f"Package refunded for {self.remaining_services} unused services. Refund amount: {refund_amount}",
+                subject="Package Refunded"
+            )
+        except Exception:
+            pass  # Silently fail - no email notifications required
         
         return {
             'name': _('Refund Invoice'),

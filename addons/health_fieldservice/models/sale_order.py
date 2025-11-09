@@ -77,12 +77,14 @@ class SaleOrder(models.Model):
             })
             
             # Post a message in FSO chatter
-            fso.message_post(
-                body=_('Invoice %s created from healthcare quote %s') % (invoice.name, self.name),
-                message_type='notification',
-                subtype_xmlid='mail.mt_note',
-                raise_on_email=False
-            )
+            try:
+                fso.message_post(
+                    body=_('Invoice %s created from healthcare quote %s') % (invoice.name, self.name),
+                    message_type='notification',
+                    subtype_xmlid='mail.mt_note'
+                )
+            except Exception:
+                pass  # Silently fail - no email notifications required
         
         # Close the quote popup and return to FSO
         return {

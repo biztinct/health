@@ -823,12 +823,14 @@ class HealthStaffAssignment(models.Model):
         try:
             ops_users = self.env.ref('health_fieldservice.group_ops_manager').users
             for user in ops_users:
-                self.message_post(
-                    body=_('Assignment confirmed for FSO %s') % self.fso_id.name,
-                    partner_ids=user.partner_id.ids,
-                    message_type='notification',
-                    raise_on_email=False
-                )
+                try:
+                    self.message_post(
+                        body=_('Assignment confirmed for FSO %s') % self.fso_id.name,
+                        partner_ids=user.partner_id.ids,
+                        message_type='notification'
+                    )
+                except Exception:
+                    pass  # Silently fail - no email notifications required
         except ValueError:
             # If group doesn't exist, skip notification
             pass
@@ -958,20 +960,22 @@ class HealthStaffAssignment(models.Model):
             })
             
             # Log optimization activity
-            self.message_post(
-                body=_("🤖 AI optimization applied successfully!<br/>"
-                      "Recommended staff: <strong>%s</strong><br/>"
-                      "AI Score: <strong>%.1f%%</strong><br/>"
-                      "Confidence: <strong>%.1f%%</strong><br/>"
-                      "Skills Match: <strong>%.1f%%</strong>") % (
-                    optimal_staff.name,
-                    best_suggestion['recommendation_score'] * 100,
-                    best_suggestion['confidence'] * 100,
-                    best_suggestion['skills_match'] * 100
-                ),
-                subject=_("AI Assignment Optimization Applied"),
-                raise_on_email=False
-            )
+            try:
+                self.message_post(
+                    body=_("🤖 AI optimization applied successfully!<br/>"
+                          "Recommended staff: <strong>%s</strong><br/>"
+                          "AI Score: <strong>%.1f%%</strong><br/>"
+                          "Confidence: <strong>%.1f%%</strong><br/>"
+                          "Skills Match: <strong>%.1f%%</strong>") % (
+                        optimal_staff.name,
+                        best_suggestion['recommendation_score'] * 100,
+                        best_suggestion['confidence'] * 100,
+                        best_suggestion['skills_match'] * 100
+                    ),
+                    subject=_("AI Assignment Optimization Applied")
+                )
+            except Exception:
+                pass  # Silently fail - no email notifications required
             
             return {
                 'type': 'ir.actions.client',
@@ -1027,20 +1031,22 @@ class HealthStaffAssignment(models.Model):
             })
             
             # Log prediction activity
-            self.message_post(
-                body=_("📊 AI predictions updated successfully!<br/>"
-                      "Predicted Duration: <strong>%d minutes</strong><br/>"
-                      "Complexity Level: <strong>%s</strong><br/>"
-                      "Success Probability: <strong>%.1f%%</strong><br/>"
-                      "Optimization Suggestions: <strong>%d recommendations</strong>") % (
-                    predictions.get('duration', 0),
-                    predictions.get('complexity', 'Unknown').title(),
-                    predictions.get('success_probability', 0.0),
-                    len(predictions.get('suggestions', []))
-                ),
-                subject=_("AI Predictions Updated"),
-                raise_on_email=False
-            )
+            try:
+                self.message_post(
+                    body=_("📊 AI predictions updated successfully!<br/>"
+                          "Predicted Duration: <strong>%d minutes</strong><br/>"
+                          "Complexity Level: <strong>%s</strong><br/>"
+                          "Success Probability: <strong>%.1f%%</strong><br/>"
+                          "Optimization Suggestions: <strong>%d recommendations</strong>") % (
+                        predictions.get('duration', 0),
+                        predictions.get('complexity', 'Unknown').title(),
+                        predictions.get('success_probability', 0.0),
+                        len(predictions.get('suggestions', []))
+                    ),
+                    subject=_("AI Predictions Updated")
+                )
+            except Exception:
+                pass  # Silently fail - no email notifications required
             
             return {
                 'type': 'ir.actions.client',

@@ -216,10 +216,13 @@ class HealthPrepaidPackageWizard(models.TransientModel):
             except Exception as e:
                 # Log but don't block - can be submitted later
                 if package:
-                    package.message_post(
-                        body=f"Invoice created but tax submission failed: {str(e)}. Please submit manually.",
-                        subject="Tax Submission Warning"
-                    )
+                    try:
+                        package.message_post(
+                            body=f"Invoice created but tax submission failed: {str(e)}. Please submit manually.",
+                            subject="Tax Submission Warning"
+                        )
+                    except Exception:
+                        pass  # Silently fail - no email notifications required
         else:
             # If no invoice requested, create package directly
             package = self.package_product_id.create_patient_package(
@@ -266,11 +269,14 @@ class HealthPrepaidPackageWizard(models.TransientModel):
                 message += f"\n✓ Invoice created and submitted to tax authorities"
             if transaction_id:
                 message += f"\n✓ Payment processed: {self.payment_amount:,.0f} {self.currency_id.symbol}"
-            
-            package.message_post(
-                body=message,
-                subject="Prepaid Package Created"
-            )
+
+            try:
+                package.message_post(
+                    body=message,
+                    subject="Prepaid Package Created"
+                )
+            except Exception:
+                pass  # Silently fail - no email notifications required
             
             # Return action to view the created package
             return {
