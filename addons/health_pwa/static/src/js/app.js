@@ -1215,8 +1215,12 @@ window.healthPWA = {
               // Store original values for each line immediately upon loading
               if (quoteData.value && quoteData.value.order_lines) {
                 quoteData.value.order_lines.forEach(line => {
-                  line.original_quantity = line.quantity;
-                  line.original_discount = line.discount || 0;
+                  // Ensure values are stored as numbers for proper comparison
+                  line.original_quantity = parseFloat(line.quantity) || 0;
+                  line.original_discount = parseFloat(line.discount) || 0;
+                  // Ensure current values are also numbers
+                  line.quantity = parseFloat(line.quantity) || 0;
+                  line.discount = parseFloat(line.discount) || 0;
                 });
               }
               console.log('Loaded quote data:', result.data);
@@ -1302,7 +1306,10 @@ window.healthPWA = {
             if (result.success) {
               console.log('Quote verified and saved:', result.data);
               quoteVerified.value = true; // Mark as verified
-              // Comments are automatically saved, no need to keep them visible
+              // Reload quote data to get updated totals from backend
+              await loadQuoteData(selectedBookingId.value);
+              // Reset comments field after successful save
+              quoteComments.value = '';
             } else {
               console.error('Error saving quote:', result.error);
               alert('Error saving quote: ' + result.error);
@@ -1329,6 +1336,22 @@ window.healthPWA = {
 
             return qtyChanged || discountChanged;
           });
+        });
+
+        // Simple flag to show message - directly check if any line has qty or discount changes
+        const showSaveMessage = computed(() => {
+          if (!quoteData.value || !quoteData.value.order_lines) return false;
+          for (const line of quoteData.value.order_lines) {
+            if (!line) continue;
+            const qtyDifferent = line.original_quantity !== undefined && line.quantity !== line.original_quantity;
+            // Check if discount CHANGED from original, not just if it exists
+            const originalDiscount = line.original_discount !== undefined ? line.original_discount : 0;
+            const discountDifferent = (line.discount || 0) !== originalDiscount;
+            if (qtyDifferent || discountDifferent) {
+              return true;
+            }
+          }
+          return false;
         });
 
         // Open payment wizard (only after quote verification)
@@ -1663,6 +1686,8 @@ window.healthPWA = {
           // Invoice verification and payment workflow
           quoteVerified,
           quoteComments,
+          hasLineModifications,
+          showSaveMessage,
           showPaymentWizard,
           paymentWizardData,
           saveQuoteWithComments,
@@ -2163,6 +2188,11 @@ window.healthPWA = {
 
               <!-- Quote Items Table - Editable Qty and Discount -->
               <div class="invoice-lines">
+                <!-- Message to Save Quote if modifications detected -->
+                <div v-if="showSaveMessage" class="info-message-box">
+                  Save Quote to display updated Total
+                </div>
+
                 <table class="invoice-table editable-invoice-table">
                   <thead>
                     <tr>
@@ -2221,11 +2251,6 @@ window.healthPWA = {
                     <tr>
                       <td colspan="4">Tax</td>
                       <td>{{ quoteData.amount_tax.toLocaleString() }}</td>
-                    </tr>
-                    <tr v-if="hasLineModifications" class="info-row">
-                      <td colspan="5" class="info-message">
-                        💾 Save Quote to display updated Total
-                      </td>
                     </tr>
                     <tr class="total-row">
                       <td colspan="4"><strong>Total</strong></td>
