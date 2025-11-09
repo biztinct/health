@@ -1287,43 +1287,51 @@ class HealthPWAAPIController(http.Controller):
                 return self._prepare_json_response(error='No patient associated with this order', status_code=400)
 
             patient = order.patient_id
-            has_next_visit = bool(patient.next_visit_date)
+
+            # Search for future FSOs (excluding the current one being completed)
+            # This is more reliable than checking patient.next_visit_date field
+            next_fso = request.env['health.fieldservice.order'].search([
+                ('patient_id', '=', patient.id),
+                ('id', '!=', order.id),  # Exclude current order
+                ('state', 'in', ['draft', 'assigned', 'confirmed', 'in_progress']),
+                ('scheduled_datetime', '!=', False)
+            ], order='scheduled_datetime ASC', limit=1)
+
+            # Determine if next visit exists based on actual FSO search
+            has_next_visit = bool(next_fso)
+            next_visit_date = None
 
             response_data = {
                 'has_next_visit': has_next_visit,
                 'patient_name': patient.name,
                 'patient_id': patient.id,
-                'next_visit_date': patient.next_visit_date.isoformat() if patient.next_visit_date else None,
                 'assignment_notes': patient.assignment_notes or '',
             }
 
-            # If next visit exists, get the FSO details
-            if has_next_visit:
-                next_fso = request.env['health.fieldservice.order'].search([
-                    ('patient_id', '=', patient.id),
-                    ('state', 'in', ['draft', 'assigned', 'confirmed', 'in_progress']),
-                    ('scheduled_datetime', '!=', False)
-                ], order='scheduled_datetime ASC', limit=1)
+            # If next visit exists, populate FSO details
+            if has_next_visit and next_fso:
+                next_visit_date = next_fso.scheduled_datetime.isoformat() if next_fso.scheduled_datetime else None
+                response_data['next_visit_date'] = next_visit_date
+                response_data['next_fso_id'] = next_fso.id
+                response_data['assigned_nurse'] = {
+                    'id': next_fso.lead_staff_id.id if next_fso.lead_staff_id else None,
+                    'name': next_fso.lead_staff_id.name if next_fso.lead_staff_id else None,
+                }
 
-                if next_fso:
-                    response_data['next_fso_id'] = next_fso.id
-                    response_data['assigned_nurse'] = {
-                        'id': next_fso.lead_staff_id.id if next_fso.lead_staff_id else None,
-                        'name': next_fso.lead_staff_id.name if next_fso.lead_staff_id else None,
-                    }
-
-                    # Get quote line items
-                    quote_items = []
-                    if next_fso.sale_order_id:
-                        for line in next_fso.sale_order_id.order_line:
-                            quote_items.append({
-                                'id': line.id,
-                                'product_id': line.product_id.id,
-                                'product_name': line.product_id.name if line.product_id else line.name,
-                                'quantity': float(line.product_uom_qty),
-                                'unit_price': float(line.price_unit),
-                            })
-                    response_data['quote_items'] = quote_items
+                # Get quote line items
+                quote_items = []
+                if next_fso.sale_order_id:
+                    for line in next_fso.sale_order_id.order_line:
+                        quote_items.append({
+                            'id': line.id,
+                            'product_id': line.product_id.id,
+                            'product_name': line.product_id.name if line.product_id else line.name,
+                            'quantity': float(line.product_uom_qty),
+                            'unit_price': float(line.price_unit),
+                        })
+                response_data['quote_items'] = quote_items
+            else:
+                response_data['next_visit_date'] = None
 
             return self._prepare_json_response(data=response_data)
 
