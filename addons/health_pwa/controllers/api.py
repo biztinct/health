@@ -1481,3 +1481,28 @@ class HealthPWAAPIController(http.Controller):
         except Exception as e:
             _logger.error(f'Error scheduling next visit: {str(e)}')
             return self._prepare_json_response(error=str(e), status_code=500)
+
+    @http.route('/health_pwa/api/current_user', type='http', auth='user', methods=['GET'], csrf=False)
+    def api_get_current_user(self, **kwargs):
+        """Get current logged-in user's information"""
+        try:
+            user = request.env.user
+
+            # Get employee record if exists
+            employee = request.env['hr.employee'].search([
+                ('user_id', '=', user.id)
+            ], limit=1)
+
+            user_data = {
+                'id': user.id,
+                'name': user.name,
+                'email': user.email,
+                'employee_id': employee.id if employee else None,
+                'employee_name': employee.name if employee else user.name,
+            }
+
+            return self._prepare_json_response(data=user_data)
+
+        except Exception as e:
+            _logger.error(f'Error getting current user: {str(e)}')
+            return self._prepare_json_response(error=str(e), status_code=500)

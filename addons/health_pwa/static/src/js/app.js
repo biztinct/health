@@ -1193,10 +1193,83 @@ window.healthPWA = {
         ];
         const showNoFutureVisitDropdown = ref(false);
 
-        // Stub function for loading product catalog (to be implemented later)
-        const loadProductCatalog = () => {
-          console.log('Loading product catalog - to be implemented');
-          alert('Product catalog feature coming soon');
+        // Product Catalog Modal State
+        const showProductCatalogModal = ref(false);
+        const catalogProducts = ref([]);
+        const catalogSearchQuery = ref('');
+        const catalogLoading = ref(false);
+        const catalogError = ref(null);
+
+        // Current User Information
+        const currentUser = ref({
+          id: null,
+          name: 'Loading...',
+          employee_id: null,
+          employee_name: ''
+        });
+
+        // Load product catalog
+        const loadProductCatalog = async () => {
+          try {
+            catalogLoading.value = true;
+            catalogError.value = null;
+
+            let url = '/health_pwa/api/products/catalog?limit=100';
+            if (catalogSearchQuery.value) {
+              url += `&search=${encodeURIComponent(catalogSearchQuery.value)}`;
+            }
+
+            const response = await fetch(url);
+            const result = await response.json();
+
+            if (result.success && result.data) {
+              catalogProducts.value = result.data.products || [];
+              console.log('Loaded products:', catalogProducts.value.length);
+            } else {
+              catalogError.value = result.error || 'Failed to load products';
+              console.error('Error loading catalog:', catalogError.value);
+            }
+          } catch (err) {
+            console.error('Error loading product catalog:', err);
+            catalogError.value = err.message;
+          } finally {
+            catalogLoading.value = false;
+          }
+        };
+
+        // Add product to next visit quote
+        const addProductToQuote = (product) => {
+          if (!nextVisitFormData.value.quote_items) {
+            nextVisitFormData.value.quote_items = [];
+          }
+
+          // Add product to quote items
+          nextVisitFormData.value.quote_items.push({
+            product_id: product.id,
+            product_name: product.name,
+            quantity: 1,
+            unit_price: product.price
+          });
+
+          console.log('Product added to quote:', product.name);
+          // Close modal or keep it open for selecting more products
+        };
+
+        // Load current user information
+        const loadCurrentUser = async () => {
+          try {
+            const response = await fetch('/health_pwa/api/current_user');
+            const result = await response.json();
+
+            if (result.success && result.data) {
+              currentUser.value = result.data;
+              // Pre-populate assigned nurse ID when opening modal
+            } else {
+              console.error('Failed to load current user:', result.error);
+            }
+          } catch (err) {
+            console.error('Error loading current user:', err);
+          }
         };
 
         // Computed elapsed time for timer
@@ -1785,7 +1858,7 @@ window.healthPWA = {
               body: JSON.stringify({
                 scheduled_datetime: dateTimeStr,
                 quote_items: nextVisitFormData.value.quote_items,
-                assigned_nurse_id: nextVisitFormData.value.assigned_nurse_id
+                assigned_staff_id: nextVisitFormData.value.assigned_nurse_id  // Backend expects assigned_staff_id
               })
             });
 
@@ -1815,9 +1888,25 @@ window.healthPWA = {
           }
         };
 
+        // Open Modal B with current user pre-populated
+        const openNextVisitModal = () => {
+          // Reset form with current user's employee ID
+          nextVisitFormData.value = {
+            scheduled_date: null,
+            scheduled_time: null,
+            quote_items: [],
+            assigned_nurse_id: currentUser.value.employee_id,  // Pre-populate with current user's employee ID
+            no_future_visit_reason: '',
+            other_reason_text: ''
+          };
+          showNextVisitModalA.value = false;
+          showNextVisitModalB.value = true;
+        };
+
         onMounted(() => {
           loadBookingsForDate(currentDate.value);
           loadMonthBookings(currentDate.value); // Load current month bookings
+          loadCurrentUser(); // Load current user info
         });
 
         onUnmounted(() => {
@@ -1912,7 +2001,17 @@ window.healthPWA = {
           showNoFutureVisitDropdown,
           submitNoFutureVisit,
           scheduleNextVisit,
-          loadProductCatalog
+          openNextVisitModal,
+          // Product catalog modal
+          showProductCatalogModal,
+          catalogProducts,
+          catalogSearchQuery,
+          catalogLoading,
+          catalogError,
+          loadProductCatalog,
+          addProductToQuote,
+          // Current user info
+          currentUser
         };
       },
       template: `
@@ -2644,7 +2743,7 @@ window.healthPWA = {
 
               <div class="next-visit-actions">
                 <!-- Button 1: Schedule Next Visit -->
-                <button @click="() => { showNextVisitModalA = false; showNextVisitModalB = true; }" class="btn btn-primary btn-lg">
+                <button @click="openNextVisitModal" class="btn btn-primary btn-lg">
                   <i class="material-icons">add_event</i>
                   Schedule Next Visit
                 </button>
@@ -2682,6 +2781,72 @@ window.healthPWA = {
                   <button @click="submitNoFutureVisit" class="btn btn-success">Submit</button>
                 </div>
               </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Product Catalog Modal -->
+        <div v-if="showProductCatalogModal" class="modal-overlay" @click.self="showProductCatalogModal = false">
+          <div class="modal-content product-catalog-modal">
+            <div class="modal-header">
+              <h3>
+                <i class="material-icons">shopping_cart</i>
+                Select Services from Catalog
+              </h3>
+              <button @click="showProductCatalogModal = false" class="modal-close">
+                <i class="material-icons">close</i>
+              </button>
+            </div>
+            <div class="modal-body">
+              <!-- Search Section -->
+              <div class="form-section">
+                <div class="form-group">
+                  <label class="form-label">Search Products</label>
+                  <input
+                    type="text"
+                    v-model="catalogSearchQuery"
+                    placeholder="Search by product name or code..."
+                    class="form-control"
+                    @keyup="loadProductCatalog">
+                </div>
+              </div>
+
+              <!-- Loading State -->
+              <div v-if="catalogLoading" class="loading-state">
+                <p>Loading products...</p>
+              </div>
+
+              <!-- Error State -->
+              <div v-else-if="catalogError" class="error-state">
+                <p style="color: #e74c3c;">Error: {{ catalogError }}</p>
+              </div>
+
+              <!-- Products Grid -->
+              <div v-else-if="catalogProducts.length > 0" class="products-grid">
+                <div v-for="product in catalogProducts" :key="product.id" class="product-card">
+                  <div class="product-info">
+                    <h5 class="product-name">{{ product.name }}</h5>
+                    <p class="product-code" v-if="product.code">Code: {{ product.code }}</p>
+                    <p class="product-price">
+                      {{ product.price.toLocaleString() }} {{ product.currency }}
+                    </p>
+                    <p class="product-category" v-if="product.category">{{ product.category }}</p>
+                  </div>
+                  <button @click="addProductToQuote(product); showProductCatalogModal = false;" class="btn btn-primary btn-sm">
+                    <i class="material-icons">add_shopping_cart</i>
+                    Add
+                  </button>
+                </div>
+              </div>
+
+              <!-- Empty State -->
+              <div v-else class="empty-state">
+                <p>No products found</p>
+              </div>
+            </div>
+
+            <div class="modal-footer">
+              <button @click="showProductCatalogModal = false" class="btn btn-secondary">Close</button>
             </div>
           </div>
         </div>
@@ -2735,7 +2900,7 @@ window.healthPWA = {
                 <div v-else class="no-services-message">
                   No services selected yet
                 </div>
-                <button @click="loadProductCatalog" class="btn btn-secondary btn-sm">
+                <button @click="() => { showProductCatalogModal = true; loadProductCatalog(); }" class="btn btn-secondary btn-sm">
                   <i class="material-icons">add</i>
                   Add from Catalog
                 </button>
@@ -2745,15 +2910,13 @@ window.healthPWA = {
               <div class="form-section">
                 <h4>Assigned Healthcare Staff</h4>
                 <div class="form-group">
-                  <input
-                    type="text"
-                    v-model="nextVisitFormData.assigned_nurse_id"
-                    placeholder="Search and select a nurse..."
-                    class="form-control"
-                    @focus="() => { }">
-                  <button v-if="nextVisitFormData.assigned_nurse_id" @click="nextVisitFormData.assigned_nurse_id = null" class="btn-clear">
-                    <i class="material-icons">clear</i>
-                  </button>
+                  <p class="assigned-staff-display" v-if="currentUser.name">
+                    <strong>{{ currentUser.name }}</strong> (Current User)
+                  </p>
+                  <p class="assigned-staff-display" v-else>
+                    <em>Loading staff information...</em>
+                  </p>
+                  <small style="color: #666;">This booking will be assigned to the current user</small>
                 </div>
               </div>
 
