@@ -1251,7 +1251,7 @@ window.healthPWA = {
           }
         };
 
-        // Add product to next visit quote and close catalog modal
+        // Add product to next visit quote (keep catalog modal open for multiple selections)
         const addProductToQuote = (product) => {
           if (!nextVisitFormData.value.quote_items) {
             nextVisitFormData.value.quote_items = [];
@@ -1266,8 +1266,8 @@ window.healthPWA = {
           });
 
           console.log('Product added to quote:', product.name);
-          // Close catalog modal - parent modal (Modal B) will remain open
-          showProductCatalogModal.value = false;
+          // Keep catalog modal open so user can add more products
+          // Don't close here - let user click "Done" button to close
         };
 
         // Load current user information
@@ -1889,6 +1889,7 @@ window.healthPWA = {
                 'Content-Type': 'application/json',
               },
               body: JSON.stringify({
+                next_visit_date: dateTimeStr,
                 scheduled_datetime: dateTimeStr,
                 quote_items: nextVisitFormData.value.quote_items,
                 assigned_staff_id: nextVisitFormData.value.assigned_nurse_id  // Backend expects assigned_staff_id
@@ -1901,8 +1902,9 @@ window.healthPWA = {
             if (data.success) {
               alert('Next visit scheduled successfully!');
               showNextVisitModalB.value = false;
-              // Show client details instead of refreshing bookings
-              showClientDetails(nextVisitData.value);
+              showProductCatalogModal.value = false; // Close catalog modal if still open
+              // Refresh bookings for the newly scheduled date
+              await loadBookingsForDate(nextVisitFormData.value.scheduled_date);
               completedBookingId.value = null;
               // Reset form
               nextVisitFormData.value = {
