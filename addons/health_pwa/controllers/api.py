@@ -1436,13 +1436,25 @@ class HealthPWAAPIController(http.Controller):
                 else:
                     return self._prepare_json_response(error='Invalid FSO or patient mismatch', status_code=400)
             else:
+                # Determine state: 'assigned' if staff assigned, 'confirmed' if unassigned
+                # First check if assigned_staff_id is provided and has a user_id
+                fso_state = 'draft'
+                if assigned_staff_id:
+                    # Check if the staff member has a user_id
+                    staff = request.env['hr.employee'].browse(assigned_staff_id)
+                    if staff.exists() and staff.user_id:
+                        fso_state = 'assigned'
+                else:
+                    # No staff assigned - create in confirmed state
+                    fso_state = 'confirmed'
+
                 # Create new FSO
                 next_fso = request.env['health.fieldservice.order'].create({
                     'patient_id': patient.id,
                     'customer_id': patient.id,
                     'scheduled_datetime': next_visit_date,
                     'lead_staff_id': assigned_staff_id if assigned_staff_id else False,
-                    'state': 'draft',
+                    'state': fso_state,
                 })
 
             # Create or update quote with line items

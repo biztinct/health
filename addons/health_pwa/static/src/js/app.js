@@ -1251,21 +1251,30 @@ window.healthPWA = {
           }
         };
 
-        // Add product to next visit quote (keep catalog modal open for multiple selections)
+        // Add product to next visit quote (or increment quantity if already added)
         const addProductToQuote = (product) => {
           if (!nextVisitFormData.value.quote_items) {
             nextVisitFormData.value.quote_items = [];
           }
 
-          // Add product to quote items
-          nextVisitFormData.value.quote_items.push({
-            product_id: product.id,
-            product_name: product.name,
-            quantity: 1,
-            unit_price: product.price
-          });
+          // Check if product already exists in quote items
+          const existingItem = nextVisitFormData.value.quote_items.find(item => item.product_id === product.id);
 
-          console.log('Product added to quote:', product.name);
+          if (existingItem) {
+            // If product already exists, increment quantity
+            existingItem.quantity += 1;
+            console.log(`Quantity increased for ${product.name} to ${existingItem.quantity}`);
+          } else {
+            // If product doesn't exist, add it
+            nextVisitFormData.value.quote_items.push({
+              product_id: product.id,
+              product_name: product.name,
+              quantity: 1,
+              unit_price: product.price
+            });
+            console.log('Product added to quote:', product.name);
+          }
+
           // Keep catalog modal open so user can add more products
           // Don't close here - let user click "Done" button to close
         };
@@ -1875,13 +1884,11 @@ window.healthPWA = {
             return;
           }
 
-          if (!nextVisitFormData.value.assigned_nurse_id) {
-            alert('Please assign a nurse');
-            return;
-          }
+          // Optional: assigned_nurse_id can be null for unassigned bookings
+          // No validation needed - user can choose to leave it unassigned
 
           try {
-            const dateTimeStr = `${nextVisitFormData.value.scheduled_date}T${nextVisitFormData.value.scheduled_time}:00`;
+            const dateTimeStr = `${nextVisitFormData.value.scheduled_date} ${nextVisitFormData.value.scheduled_time}:00`;
 
             const response = await fetch(`/health_pwa/api/fso/${completedBookingId.value}/schedule_next_visit`, {
               method: 'POST',
@@ -2966,13 +2973,21 @@ window.healthPWA = {
               <div class="form-section">
                 <h4>Assigned Healthcare Staff</h4>
                 <div class="form-group">
-                  <p class="assigned-staff-display" v-if="currentUser.name">
-                    <strong>{{ currentUser.name }}</strong> (Current User)
-                  </p>
-                  <p class="assigned-staff-display" v-else>
-                    <em>Loading staff information...</em>
-                  </p>
-                  <small style="color: #666;">This booking will be assigned to the current user</small>
+                  <div v-if="nextVisitFormData.assigned_nurse_id" class="assigned-staff-box">
+                    <div class="assigned-staff-display">
+                      <i class="material-icons">person_check</i>
+                      <strong>{{ currentUser.name }}</strong> (Current User)
+                    </div>
+                    <button @click="nextVisitFormData.assigned_nurse_id = null" class="btn-clear-assignment">
+                      <i class="material-icons">close</i>
+                      Clear Assignment
+                    </button>
+                  </div>
+                  <div v-else class="unassigned-staff-box">
+                    <i class="material-icons">person_outline</i>
+                    <strong>No staff assigned</strong>
+                    <small>Booking will be created in CONFIRMED state (unassigned)</small>
+                  </div>
                 </div>
               </div>
 
@@ -3015,6 +3030,22 @@ window.healthPWA = {
               </button>
             </div>
             <div class="modal-body">
+              <!-- Selected Products Summary - Show at Top -->
+              <div v-if="nextVisitFormData.quote_items && nextVisitFormData.quote_items.length > 0" class="form-section selected-items-summary">
+                <h4>Selected Services</h4>
+                <div class="selected-items-list">
+                  <div v-for="(item, index) in nextVisitFormData.quote_items" :key="index" class="selected-item">
+                    <div class="selected-item-info">
+                      <span class="selected-item-name">{{ item.product_name }}</span>
+                      <span class="selected-item-qty">Qty: {{ item.quantity }}</span>
+                    </div>
+                    <button @click="nextVisitFormData.quote_items.splice(index, 1)" class="btn-remove-small">
+                      <i class="material-icons">close</i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+
               <!-- Search Section -->
               <div class="form-section">
                 <div class="form-group">
