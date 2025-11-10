@@ -1163,6 +1163,17 @@ window.healthPWA = {
         // Track the completed booking ID for modal workflows
         const completedBookingId = ref(null);
 
+        // Client Details View State
+        const showClientDetailsView = ref(false);
+        const currentClientData = ref({
+          id: null,
+          name: '',
+          phone: '',
+          age: null,
+          gender: '',
+          patient_code: ''
+        });
+
         // Next Visit Modal State Management
         const showNextVisitModalA = ref(false);  // Modal for "No next visit scheduled"
         const showNextVisitModalB = ref(false);  // Modal for "Schedule next visit"
@@ -1831,12 +1842,12 @@ window.healthPWA = {
             if (data.success) {
               alert('Noted: Patient does not need future visits');
               showNextVisitModalA.value = false;
+              // Show client details instead of refreshing bookings
+              showClientDetails(nextVisitData.value);
               completedBookingId.value = null;
               // Reset form
               nextVisitFormData.value.no_future_visit_reason = '';
               nextVisitFormData.value.other_reason_text = '';
-              // Refresh bookings
-              loadBookingsForDate(currentDate.value);
             } else {
               alert('Failed to submit: ' + (data.error || 'Unknown error'));
             }
@@ -1890,6 +1901,8 @@ window.healthPWA = {
             if (data.success) {
               alert('Next visit scheduled successfully!');
               showNextVisitModalB.value = false;
+              // Show client details instead of refreshing bookings
+              showClientDetails(nextVisitData.value);
               completedBookingId.value = null;
               // Reset form
               nextVisitFormData.value = {
@@ -1900,14 +1913,52 @@ window.healthPWA = {
                 no_future_visit_reason: '',
                 other_reason_text: ''
               };
-              // Refresh bookings
-              loadBookingsForDate(currentDate.value);
             } else {
               alert('Failed to schedule: ' + (data.error || 'Unknown error'));
             }
           } catch (err) {
             console.error('Schedule next visit error:', err);
             alert('Error scheduling: ' + err.message);
+          }
+        };
+
+        // Show client details view after booking completion
+        const showClientDetails = (patientData) => {
+          currentClientData.value = {
+            id: patientData.patient_id,
+            name: patientData.patient_name,
+            phone: patientData.phone || 'N/A',
+            age: patientData.age,
+            gender: patientData.gender || 'N/A',
+            patient_code: patientData.patient_code || 'N/A'
+          };
+          showClientDetailsView.value = true;
+          showNextVisitModalA.value = false;
+          showNextVisitModalB.value = false;
+        };
+
+        // Open next booking modal from client details
+        const openNextBookingFromClientDetails = async () => {
+          try {
+            // For now, directly open Modal A (we can enhance to check if next visit exists)
+            // Reset form with current user's employee ID
+            nextVisitFormData.value = {
+              scheduled_date: null,
+              scheduled_time: null,
+              quote_items: [],
+              assigned_nurse_id: currentUser.value.employee_id,
+              no_future_visit_reason: '',
+              other_reason_text: ''
+            };
+            // Update nextVisitData with current patient
+            nextVisitData.value.patient_id = currentClientData.value.id;
+            nextVisitData.value.patient_name = currentClientData.value.name;
+
+            showClientDetailsView.value = false;
+            showNextVisitModalA.value = true;
+          } catch (err) {
+            console.error('Error opening next booking:', err);
+            alert('Error: ' + err.message);
           }
         };
 
@@ -2026,6 +2077,11 @@ window.healthPWA = {
           submitNoFutureVisit,
           scheduleNextVisit,
           openNextVisitModal,
+          // Client details view
+          showClientDetailsView,
+          currentClientData,
+          showClientDetails,
+          openNextBookingFromClientDetails,
           // Product catalog modal
           showProductCatalogModal,
           catalogProducts,
@@ -2749,6 +2805,45 @@ window.healthPWA = {
           </div>
         </div>
 
+        <!-- Client Details View -->
+        <div v-if="showClientDetailsView" class="client-details-view">
+          <div class="client-details-container">
+            <div class="client-details-header">
+              <h2>
+                <i class="material-icons">person</i>
+                {{ currentClientData.name }}
+              </h2>
+              <button @click="showClientDetailsView = false" class="btn-back">
+                <i class="material-icons">arrow_back</i>
+              </button>
+            </div>
+
+            <div class="client-details-card">
+              <div class="detail-item">
+                <label>Patient Code</label>
+                <span>{{ currentClientData.patient_code }}</span>
+              </div>
+              <div class="detail-item">
+                <label>Phone</label>
+                <span>{{ currentClientData.phone }}</span>
+              </div>
+              <div class="detail-item">
+                <label>Age</label>
+                <span>{{ currentClientData.age || 'N/A' }}</span>
+              </div>
+              <div class="detail-item">
+                <label>Gender</label>
+                <span>{{ currentClientData.gender }}</span>
+              </div>
+            </div>
+
+            <button @click="openNextBookingFromClientDetails" class="btn btn-primary btn-lg next-booking-btn">
+              <i class="material-icons">add_event</i>
+              Next Booking
+            </button>
+          </div>
+        </div>
+
         <!-- Next Visit Modal A: No future visit scheduled -->
         <div v-if="showNextVisitModalA" class="modal-overlay" @click.self="showNextVisitModalA = false">
           <div class="modal-content next-visit-modal">
@@ -2806,72 +2901,6 @@ window.healthPWA = {
                   <button @click="submitNoFutureVisit" class="btn btn-success">Submit</button>
                 </div>
               </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Product Catalog Modal -->
-        <div v-if="showProductCatalogModal" class="modal-overlay" @click.self="showProductCatalogModal = false">
-          <div class="modal-content product-catalog-modal">
-            <div class="modal-header">
-              <h3>
-                <i class="material-icons">shopping_cart</i>
-                Select Services from Catalog
-              </h3>
-              <button @click="showProductCatalogModal = false" class="modal-close">
-                <i class="material-icons">close</i>
-              </button>
-            </div>
-            <div class="modal-body">
-              <!-- Search Section -->
-              <div class="form-section">
-                <div class="form-group">
-                  <label class="form-label">Search Products</label>
-                  <input
-                    type="text"
-                    v-model="catalogSearchQuery"
-                    placeholder="Search by product name or code..."
-                    class="form-control"
-                    @keyup="loadProductCatalog">
-                </div>
-              </div>
-
-              <!-- Loading State -->
-              <div v-if="catalogLoading" class="loading-state">
-                <p>Loading products...</p>
-              </div>
-
-              <!-- Error State -->
-              <div v-else-if="catalogError" class="error-state">
-                <p style="color: #e74c3c;">Error: {{ catalogError }}</p>
-              </div>
-
-              <!-- Products Grid -->
-              <div v-else-if="catalogProducts.length > 0" class="products-grid">
-                <div v-for="product in catalogProducts" :key="product.id" class="product-card">
-                  <div class="product-info">
-                    <h5 class="product-name">{{ product.name }}</h5>
-                    <p class="product-code" v-if="product.code">Code: {{ product.code }}</p>
-                    <p class="product-price">
-                      {{ product.price.toLocaleString() }} {{ product.currency }}
-                    </p>
-                    <p class="product-category" v-if="product.category">{{ product.category }}</p>
-                  </div>
-                  <button @click="addProductToQuote(product)" class="btn btn-primary btn-sm">
-                    <i class="material-icons">add_shopping_cart</i>
-                    Add
-                  </button>
-                </div>
-              </div>
-
-              <!-- Empty State -->
-              <div v-else class="empty-state">
-                <p>No products found</p>
-              </div>
-            </div>
-
-            <div class="modal-footer">
-              <button @click="showProductCatalogModal = false" class="btn btn-secondary">Close</button>
             </div>
           </div>
         </div>
@@ -2967,6 +2996,72 @@ window.healthPWA = {
                 <i class="material-icons">check_circle</i>
                 Schedule Visit
               </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Product Catalog Modal - LAST for highest z-index layering -->
+        <div v-if="showProductCatalogModal" class="modal-overlay catalog-modal-overlay" @click.self="showProductCatalogModal = false">
+          <div class="modal-content product-catalog-modal">
+            <div class="modal-header">
+              <h3>
+                <i class="material-icons">shopping_cart</i>
+                Select Services from Catalog
+              </h3>
+              <button @click="showProductCatalogModal = false" class="modal-close">
+                <i class="material-icons">close</i>
+              </button>
+            </div>
+            <div class="modal-body">
+              <!-- Search Section -->
+              <div class="form-section">
+                <div class="form-group">
+                  <label class="form-label">Search Products</label>
+                  <input
+                    type="text"
+                    v-model="catalogSearchQuery"
+                    placeholder="Search by product name or code..."
+                    class="form-control"
+                    @keyup="loadProductCatalog">
+                </div>
+              </div>
+
+              <!-- Loading State -->
+              <div v-if="catalogLoading" class="loading-state">
+                <p>Loading products...</p>
+              </div>
+
+              <!-- Error State -->
+              <div v-else-if="catalogError" class="error-state">
+                <p style="color: #e74c3c;">Error: {{ catalogError }}</p>
+              </div>
+
+              <!-- Products Grid -->
+              <div v-else-if="catalogProducts.length > 0" class="products-grid">
+                <div v-for="product in catalogProducts" :key="product.id" class="product-card">
+                  <div class="product-info">
+                    <h5 class="product-name">{{ product.name }}</h5>
+                    <p class="product-code" v-if="product.code">Code: {{ product.code }}</p>
+                    <p class="product-price">
+                      {{ product.price.toLocaleString() }} {{ product.currency }}
+                    </p>
+                    <p class="product-category" v-if="product.category">{{ product.category }}</p>
+                  </div>
+                  <button @click="addProductToQuote(product)" class="btn btn-primary btn-sm">
+                    <i class="material-icons">add_shopping_cart</i>
+                    Add
+                  </button>
+                </div>
+              </div>
+
+              <!-- Empty State -->
+              <div v-else class="empty-state">
+                <p>No products found</p>
+              </div>
+            </div>
+
+            <div class="modal-footer">
+              <button @click="showProductCatalogModal = false" class="btn btn-secondary">Close</button>
             </div>
           </div>
         </div>
