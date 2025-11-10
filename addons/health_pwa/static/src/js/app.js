@@ -1160,6 +1160,9 @@ window.healthPWA = {
           create_invoice_now: true
         });
 
+        // Track the completed booking ID for modal workflows
+        const completedBookingId = ref(null);
+
         // Next Visit Modal State Management
         const showNextVisitModalA = ref(false);  // Modal for "No next visit scheduled"
         const showNextVisitModalB = ref(false);  // Modal for "Schedule next visit"
@@ -1237,7 +1240,7 @@ window.healthPWA = {
           }
         };
 
-        // Add product to next visit quote
+        // Add product to next visit quote and close catalog modal
         const addProductToQuote = (product) => {
           if (!nextVisitFormData.value.quote_items) {
             nextVisitFormData.value.quote_items = [];
@@ -1252,7 +1255,8 @@ window.healthPWA = {
           });
 
           console.log('Product added to quote:', product.name);
-          // Close modal or keep it open for selecting more products
+          // Close catalog modal - parent modal (Modal B) will remain open
+          showProductCatalogModal.value = false;
         };
 
         // Load current user information
@@ -1270,6 +1274,13 @@ window.healthPWA = {
           } catch (err) {
             console.error('Error loading current user:', err);
           }
+        };
+
+        // Open product catalog modal
+        const openProductCatalogModal = async () => {
+          console.log('Opening product catalog modal');
+          showProductCatalogModal.value = true;
+          await loadProductCatalog();
         };
 
         // Computed elapsed time for timer
@@ -1504,9 +1515,17 @@ window.healthPWA = {
               quoteVerified.value = false;
               quoteComments.value = '';
 
+              // Save the completed booking ID for modal workflows
+              completedBookingId.value = selectedBookingId.value;
+
+              // Close the completed booking detail view to prevent confusion
+              console.log('Closing completed booking detail view');
+              selectedBookingId.value = null;
+              selectedBookingDetail.value = null;
+
               // Check for next visit and open appropriate modal
               console.log('Checking next visit status for patient...');
-              const statusResponse = await fetch(`/health_pwa/api/fso/${selectedBookingId.value}/next_visit_status`);
+              const statusResponse = await fetch(`/health_pwa/api/fso/${completedBookingId.value}/next_visit_status`);
               const statusData = await statusResponse.json();
 
               if (statusData.success) {
@@ -1519,13 +1538,13 @@ window.healthPWA = {
                 nextVisitData.value.assignment_notes = statusData.data.assignment_notes;
 
                 if (statusData.data.has_next_visit) {
-                  // Next visit already scheduled - just show success and refresh
+                  // Next visit already scheduled - close modal and refresh
                   console.log('Next visit already scheduled for:', statusData.data.next_visit_date);
                   alert('Service completed successfully! Next visit already scheduled.');
                   loadBookingsForDate(currentDate.value);
                 } else {
                   // No next visit - open Modal A to ask if patient wants future visit
-                  console.log('No next visit scheduled - opening modal');
+                  console.log('No next visit scheduled - opening modal to schedule');
                   showNextVisitModalA.value = true;
                   // Don't refresh yet - wait for modal response
                 }
@@ -1730,6 +1749,8 @@ window.healthPWA = {
 
             if (data.success && data.data) {
               console.log('Service completed successfully');
+              // Save the completed booking ID for modal workflows
+              completedBookingId.value = selectedBookingId.value;
               // Reset the service started flag
               serviceStartedForBooking.value = null;
               // Close the booking detail
@@ -1738,7 +1759,7 @@ window.healthPWA = {
 
               // Check for next visit and open appropriate modal
               console.log('Checking next visit status for patient...');
-              const statusResponse = await fetch(`/health_pwa/api/fso/${selectedBookingId.value}/next_visit_status`);
+              const statusResponse = await fetch(`/health_pwa/api/fso/${completedBookingId.value}/next_visit_status`);
               const statusData = await statusResponse.json();
 
               if (statusData.success) {
@@ -1794,7 +1815,7 @@ window.healthPWA = {
               ? `Other: ${nextVisitFormData.value.other_reason_text}`
               : reasonLabel;
 
-            const response = await fetch(`/health_pwa/api/fso/${selectedBookingId.value}/no_future_visit`, {
+            const response = await fetch(`/health_pwa/api/fso/${completedBookingId.value}/no_future_visit`, {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',
@@ -1810,6 +1831,7 @@ window.healthPWA = {
             if (data.success) {
               alert('Noted: Patient does not need future visits');
               showNextVisitModalA.value = false;
+              completedBookingId.value = null;
               // Reset form
               nextVisitFormData.value.no_future_visit_reason = '';
               nextVisitFormData.value.other_reason_text = '';
@@ -1850,7 +1872,7 @@ window.healthPWA = {
           try {
             const dateTimeStr = `${nextVisitFormData.value.scheduled_date}T${nextVisitFormData.value.scheduled_time}:00`;
 
-            const response = await fetch(`/health_pwa/api/fso/${selectedBookingId.value}/schedule_next_visit`, {
+            const response = await fetch(`/health_pwa/api/fso/${completedBookingId.value}/schedule_next_visit`, {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',
@@ -1868,6 +1890,7 @@ window.healthPWA = {
             if (data.success) {
               alert('Next visit scheduled successfully!');
               showNextVisitModalB.value = false;
+              completedBookingId.value = null;
               // Reset form
               nextVisitFormData.value = {
                 scheduled_date: null,
@@ -1993,6 +2016,7 @@ window.healthPWA = {
           openPaymentWizard,
           completePayment,
           // Next visit modal workflow
+          completedBookingId,
           showNextVisitModalA,
           showNextVisitModalB,
           nextVisitData,
@@ -2010,6 +2034,7 @@ window.healthPWA = {
           catalogError,
           loadProductCatalog,
           addProductToQuote,
+          openProductCatalogModal,
           // Current user info
           currentUser
         };
@@ -2832,7 +2857,7 @@ window.healthPWA = {
                     </p>
                     <p class="product-category" v-if="product.category">{{ product.category }}</p>
                   </div>
-                  <button @click="addProductToQuote(product); showProductCatalogModal = false;" class="btn btn-primary btn-sm">
+                  <button @click="addProductToQuote(product)" class="btn btn-primary btn-sm">
                     <i class="material-icons">add_shopping_cart</i>
                     Add
                   </button>
@@ -2900,7 +2925,7 @@ window.healthPWA = {
                 <div v-else class="no-services-message">
                   No services selected yet
                 </div>
-                <button @click="() => { showProductCatalogModal = true; loadProductCatalog(); }" class="btn btn-secondary btn-sm">
+                <button @click="openProductCatalogModal" class="btn btn-secondary btn-sm">
                   <i class="material-icons">add</i>
                   Add from Catalog
                 </button>
