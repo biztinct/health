@@ -3918,6 +3918,11 @@ p {
   font-size: 1.2rem;
 }
 
+.button-row {
+  display: flex;
+  margin-top: var(--spacing-md);
+}
+
 /* Print Styles */
 @media print {
   .no-print { display: none !important; }

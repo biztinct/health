@@ -1910,8 +1910,9 @@ window.healthPWA = {
               alert('Next visit scheduled successfully!');
               showNextVisitModalB.value = false;
               showProductCatalogModal.value = false; // Close catalog modal if still open
-              // Refresh bookings for the newly scheduled date
-              await loadBookingsForDate(nextVisitFormData.value.scheduled_date);
+              // Refresh bookings for the newly scheduled date - convert string to Date object
+              const scheduledDateObj = new Date(nextVisitFormData.value.scheduled_date + 'T00:00:00');
+              await loadBookingsForDate(scheduledDateObj);
               completedBookingId.value = null;
               // Reset form
               nextVisitFormData.value = {
@@ -2976,17 +2977,19 @@ window.healthPWA = {
                   <div v-if="nextVisitFormData.assigned_nurse_id" class="assigned-staff-box">
                     <div class="assigned-staff-display">
                       <i class="material-icons">person_check</i>
-                      <strong>{{ currentUser.name }}</strong> (Current User)
+                      <strong>{{ currentUser.name }}</strong>
                     </div>
-                    <button @click="nextVisitFormData.assigned_nurse_id = null" class="btn-clear-assignment">
-                      <i class="material-icons">close</i>
-                      Clear Assignment
-                    </button>
                   </div>
                   <div v-else class="unassigned-staff-box">
                     <i class="material-icons">person_outline</i>
                     <strong>No staff assigned</strong>
                     <small>Booking will be created in CONFIRMED state (unassigned)</small>
+                  </div>
+                  <div v-if="nextVisitFormData.assigned_nurse_id" class="button-row">
+                    <button @click="nextVisitFormData.assigned_nurse_id = null" class="btn-clear-assignment">
+                      <i class="material-icons">close</i>
+                      Clear Assignment
+                    </button>
                   </div>
                 </div>
               </div>

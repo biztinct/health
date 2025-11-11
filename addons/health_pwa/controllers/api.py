@@ -1457,6 +1457,45 @@ class HealthPWAAPIController(http.Controller):
                     'state': fso_state,
                 })
 
+                # Create Assignment records if staff is assigned
+                # Pattern: Create template (for adding more staff later) + actual assignment (for lead staff)
+                if assigned_staff_id:
+                    try:
+                        assignment_date = next_fso.scheduled_datetime or request.env['ir.fields.datetime'].now()
+
+                        # 1. Create template assignment (state='template', staff_id=False)
+                        # This allows backend forms to add more staff to the same booking
+                        try:
+                            template_assignment = request.env['health.staff.assignment'].create({
+                                'fso_id': next_fso.id,
+                                'staff_id': False,  # Empty - template for adding more staff
+                                'assignment_date': assignment_date,
+                                'state': 'template',
+                                'assignment_type': 'clinic_visit',
+                                'priority': next_fso.priority or '1',
+                            })
+                            _logger.info(f'✅ Created template assignment {template_assignment.id} for FSO {next_fso.id}')
+                        except Exception as template_error:
+                            _logger.error(f'❌ Failed to create template assignment: {str(template_error)}')
+                            raise
+
+                        # 2. Create actual assignment (with staff_id - will auto-set state='assigned')
+                        try:
+                            actual_assignment = request.env['health.staff.assignment'].create({
+                                'fso_id': next_fso.id,
+                                'staff_id': assigned_staff_id,
+                                'assignment_date': assignment_date,
+                                'assignment_role': 'lead',  # Mark as lead staff
+                                'assignment_type': 'clinic_visit',
+                                'priority': next_fso.priority or '1',
+                            })
+                            _logger.info(f'✅ Created actual assignment {actual_assignment.id} for FSO {next_fso.id} with staff {assigned_staff_id}')
+                        except Exception as actual_error:
+                            _logger.error(f'❌ Failed to create actual assignment: {str(actual_error)}')
+                            raise
+                    except Exception as e:
+                        _logger.error(f'❌ Error creating assignment records: {str(e)}', exc_info=True)
+
             # Create or update quote with line items
             if next_fso.sale_order_id:
                 quote = next_fso.sale_order_id
