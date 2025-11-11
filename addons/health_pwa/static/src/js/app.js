@@ -1836,10 +1836,35 @@ window.healthPWA = {
                 nextVisitData.value.assignment_notes = statusData.data.assignment_notes;
 
                 if (statusData.data.has_next_visit) {
-                  // Next visit already scheduled - just show success and refresh
+                  // Next visit already scheduled - populate Modal B with existing FSO details
                   console.log('Next visit already scheduled for:', statusData.data.next_visit_date);
-                  alert('Service completed successfully! Next visit already scheduled.');
-                  loadBookingsForDate(currentDate.value);
+
+                  // Store the next FSO ID for potential assignment deletion
+                  nextVisitData.value.next_fso_id = statusData.data.next_fso_id;
+
+                  // Parse and populate the date/time
+                  if (statusData.data.next_visit_date) {
+                    const nextDate = parseOdooDateTime(statusData.data.next_visit_date);
+                    nextVisitFormData.value.scheduled_date = nextDate.toISOString().split('T')[0]; // YYYY-MM-DD format
+                    nextVisitFormData.value.scheduled_time = `${String(nextDate.getHours()).padStart(2, '0')}:${String(nextDate.getMinutes()).padStart(2, '0')}`; // HH:MM format
+                  }
+
+                  // Populate assigned nurse
+                  if (statusData.data.assigned_nurse && statusData.data.assigned_nurse.id) {
+                    nextVisitFormData.value.assigned_nurse_id = statusData.data.assigned_nurse.id;
+                  } else {
+                    nextVisitFormData.value.assigned_nurse_id = null;
+                  }
+
+                  // Populate quote items if available
+                  if (statusData.data.quote_items && statusData.data.quote_items.length > 0) {
+                    nextVisitFormData.value.quote_items = statusData.data.quote_items;
+                  } else {
+                    nextVisitFormData.value.quote_items = [];
+                  }
+
+                  // Open Modal B with pre-populated data
+                  showNextVisitModalB.value = true;
                 } else {
                   // No next visit - open Modal A to ask if patient wants future visit
                   console.log('No next visit scheduled - opening modal');
@@ -1908,6 +1933,31 @@ window.healthPWA = {
           } catch (err) {
             console.error('Submit no future visit error:', err);
             alert('Error submitting: ' + err.message);
+          }
+        };
+
+        // Handle assignment deletion for next visit when nurse is cleared
+        const deleteNextVisitAssignment = async (fsoId) => {
+          try {
+            if (!fsoId) return;
+
+            // Call API to delete assignments for this FSO
+            const response = await fetch(`/health_pwa/api/fso/${fsoId}/delete_assignments`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({})
+            });
+
+            const data = await response.json();
+            if (data.success) {
+              console.log('Assignments deleted successfully');
+            } else {
+              console.error('Failed to delete assignments:', data.error);
+            }
+          } catch (err) {
+            console.error('Error deleting assignments:', err);
           }
         };
 
@@ -2132,6 +2182,7 @@ window.healthPWA = {
           showNoFutureVisitDropdown,
           submitNoFutureVisit,
           scheduleNextVisit,
+          deleteNextVisitAssignment,
           openNextVisitModal,
           // Client details view
           showClientDetailsView,
@@ -2965,10 +3016,15 @@ window.healthPWA = {
         <div v-if="showNextVisitModalB" class="modal-overlay" @click.self="showNextVisitModalB = false">
           <div class="modal-content next-visit-modal">
             <div class="modal-header">
-              <h3>
-                <i class="material-icons">event</i>
-                Schedule Next Appointment
-              </h3>
+              <div class="header-content">
+                <h3>
+                  <i class="material-icons">event</i>
+                  Schedule Next Appointment
+                </h3>
+                <button @click="toggleCalendar" class="btn-icon-action" title="Check my schedule">
+                  <i class="material-icons">calendar_today</i>
+                </button>
+              </div>
               <button @click="showNextVisitModalB = false" class="modal-close">
                 <i class="material-icons">close</i>
               </button>
@@ -2977,20 +3033,24 @@ window.healthPWA = {
               <!-- Date and Time Section -->
               <div class="form-section">
                 <h4>Appointment Date &amp; Time</h4>
-                <div class="form-row">
-                  <div class="form-group">
-                    <label class="form-label">Date</label>
-                    <input
-                      type="date"
-                      v-model="nextVisitFormData.scheduled_date"
-                      class="form-control">
+                <div class="form-row date-time-row">
+                  <div class="form-group date-time-group">
+                    <div class="date-time-input">
+                      <label class="date-time-label">Date</label>
+                      <input
+                        type="date"
+                        v-model="nextVisitFormData.scheduled_date"
+                        class="form-control date-time-control">
+                    </div>
                   </div>
-                  <div class="form-group">
-                    <label class="form-label">Time</label>
-                    <input
-                      type="time"
-                      v-model="nextVisitFormData.scheduled_time"
-                      class="form-control">
+                  <div class="form-group date-time-group">
+                    <div class="date-time-input">
+                      <label class="date-time-label">Time</label>
+                      <input
+                        type="time"
+                        v-model="nextVisitFormData.scheduled_time"
+                        class="form-control date-time-control">
+                    </div>
                   </div>
                 </div>
               </div>
@@ -3032,7 +3092,10 @@ window.healthPWA = {
                     <small>Booking will be created in CONFIRMED state (unassigned)</small>
                   </div>
                   <div v-if="nextVisitFormData.assigned_nurse_id" class="button-row">
-                    <button @click="nextVisitFormData.assigned_nurse_id = null" class="btn-clear-assignment">
+                    <button @click="() => {
+                      deleteNextVisitAssignment(nextVisitData.next_fso_id);
+                      nextVisitFormData.assigned_nurse_id = null;
+                    }" class="btn-clear-assignment">
                       <i class="material-icons">close</i>
                       Clear Assignment
                     </button>
@@ -3096,16 +3159,14 @@ window.healthPWA = {
               </div>
 
               <!-- Search Section -->
-              <div class="form-section">
-                <div class="form-group">
-                  <label class="form-label">Search Products</label>
-                  <input
-                    type="text"
-                    v-model="catalogSearchQuery"
-                    placeholder="Search by product name or code..."
-                    class="form-control"
-                    @keyup="loadProductCatalog">
-                </div>
+              <div class="form-section search-section-compact">
+                <label class="search-label-centered">Search Products</label>
+                <input
+                  type="text"
+                  v-model="catalogSearchQuery"
+                  placeholder="Search by product name or code..."
+                  class="form-control search-control-clean"
+                  @keyup="loadProductCatalog">
               </div>
 
               <!-- Loading State -->

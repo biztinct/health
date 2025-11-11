@@ -3923,6 +3923,94 @@ p {
   margin-top: var(--spacing-md);
 }
 
+/* Modal B - Date/Time styling */
+.header-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  gap: var(--spacing-md);
+}
+
+.header-content h3 {
+  flex: 1;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.date-time-row {
+  display: flex;
+  gap: var(--spacing-md);
+  justify-content: space-between;
+}
+
+.date-time-group {
+  flex: 1;
+  margin-bottom: 0;
+}
+
+.date-time-input {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: var(--spacing-xs);
+}
+
+.date-time-label {
+  font-weight: 600;
+  color: var(--text-primary);
+  font-size: 0.95rem;
+  margin-bottom: 0;
+}
+
+.date-time-control {
+  border: none;
+  background: var(--surface-color);
+  text-align: center;
+  font-size: 1rem;
+  padding: var(--spacing-sm) var(--spacing-md);
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.date-time-control:focus {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 2px;
+  background: var(--background-color);
+}
+
+/* Product Catalog Modal - Search styling */
+.search-section-compact {
+  margin-bottom: var(--spacing-md);
+  padding: 0;
+}
+
+.search-label-centered {
+  display: block;
+  text-align: center;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: var(--spacing-sm);
+  font-size: 0.95rem;
+}
+
+.search-control-clean {
+  border: none;
+  background: var(--surface-color);
+  padding: var(--spacing-sm) var(--spacing-md);
+  border-radius: 8px;
+  font-size: 0.95rem;
+}
+
+.search-control-clean:focus {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 2px;
+  background: var(--background-color);
+}
+
 /* Print Styles */
 @media print {
   .no-print { display: none !important; }
