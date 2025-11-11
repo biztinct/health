@@ -3940,6 +3940,31 @@ p {
   gap: var(--spacing-sm);
 }
 
+/* Calendar button in Modal B header */
+.header-content .btn-icon-action {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: var(--spacing-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-primary);
+  transition: all 0.2s ease;
+  border-radius: var(--border-radius-small);
+  flex-shrink: 0;
+}
+
+.header-content .btn-icon-action:hover {
+  color: var(--primary-color);
+  background: var(--surface-color);
+  transform: scale(1.1);
+}
+
+.header-content .btn-icon-action i {
+  font-size: 1.5rem;
+}
+
 .date-time-row {
   display: flex;
   gap: var(--spacing-md);
@@ -3967,18 +3992,20 @@ p {
 }
 
 .date-time-control {
-  border: none;
-  background: var(--surface-color);
+  border: 2px solid var(--border-color);
+  background: var(--background-color);
   text-align: center;
   font-size: 1rem;
   padding: var(--spacing-sm) var(--spacing-md);
   border-radius: 8px;
   cursor: pointer;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .date-time-control:focus {
-  outline: 2px solid var(--primary-color);
-  outline-offset: 2px;
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(135, 90, 123, 0.15);
   background: var(--background-color);
 }
 
@@ -3998,16 +4025,18 @@ p {
 }
 
 .search-control-clean {
-  border: none;
-  background: var(--surface-color);
+  border: 2px solid var(--border-color);
+  background: var(--background-color);
   padding: var(--spacing-sm) var(--spacing-md);
   border-radius: 8px;
   font-size: 0.95rem;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .search-control-clean:focus {
-  outline: 2px solid var(--primary-color);
-  outline-offset: 2px;
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(135, 90, 123, 0.15);
   background: var(--background-color);
 }
 

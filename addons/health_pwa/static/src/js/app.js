@@ -594,6 +594,13 @@ window.healthPWA = {
           return new Date(dateTimeStr);
         };
 
+        // Format booking time with correct timezone handling
+        const getFormattedBookingTime = (booking) => {
+          if (!booking || !booking.scheduled_datetime) return '--:--';
+          const dateObj = parseOdooDateTime(booking.scheduled_datetime);
+          return dateObj.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false });
+        };
+
         // Load bookings for a specific date
         const loadBookingsForDate = async (dateObj) => {
           try {
@@ -616,6 +623,11 @@ window.healthPWA = {
                 const timeA = parseOdooDateTime(a.scheduled_datetime).getTime();
                 const timeB = parseOdooDateTime(b.scheduled_datetime).getTime();
                 return timeA - timeB;
+              });
+
+              // Add formatted time to each booking
+              bookingsList.forEach(booking => {
+                booking.formatted_time = getFormattedBookingTime(booking);
               });
 
               bookings.value = bookingsList;
@@ -1865,11 +1877,18 @@ window.healthPWA = {
 
                   // Open Modal B with pre-populated data
                   showNextVisitModalB.value = true;
+                  // Refresh bookings after a short delay to ensure UI updates
+                  setTimeout(() => {
+                    loadBookingsForDate(currentDate.value);
+                  }, 300);
                 } else {
                   // No next visit - open Modal A to ask if patient wants future visit
                   console.log('No next visit scheduled - opening modal');
                   showNextVisitModalA.value = true;
-                  // Don't refresh yet - wait for modal response
+                  // Refresh bookings after a short delay to ensure UI updates
+                  setTimeout(() => {
+                    loadBookingsForDate(currentDate.value);
+                  }, 300);
                 }
               } else {
                 // Error checking next visit - just refresh
@@ -2322,7 +2341,7 @@ window.healthPWA = {
               <div v-for="booking in bookings" :key="booking.fso_id" class="booking-card" @click="toggleBookingDetail(booking.fso_id)">
                   <!-- Header with time and status -->
                   <div class="booking-card-header">
-                    <div class="booking-time-badge">{{ booking.scheduled_time }}</div>
+                    <div class="booking-time-badge">{{ booking.formatted_time || booking.scheduled_time }}</div>
                     <div class="status-badge" :style="{ backgroundColor: getStatusColor(booking) }">
                       {{ getStatusDisplay(booking) }}
                     </div>
