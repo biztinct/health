@@ -559,6 +559,41 @@ window.healthPWA = {
         // Grouped bookings for Week and Month views
         const groupedBookings = ref({});
 
+        // Helper function to parse datetime from API (Odoo returns UTC datetimes)
+        // Convert UTC datetime string to local timezone Date object
+        const parseOdooDateTime = (dateTimeStr) => {
+          if (!dateTimeStr) return new Date();
+
+          // Handle ISO format with Z (UTC indicator)
+          if (dateTimeStr.includes('T') && dateTimeStr.includes('Z')) {
+            return new Date(dateTimeStr);
+          }
+
+          // Handle format: "2025-01-15 15:00:00" (Odoo format, assumed UTC)
+          // Split datetime and parse
+          const parts = dateTimeStr.split(' ');
+          if (parts.length >= 2) {
+            const dateParts = parts[0].split('-'); // YYYY-MM-DD
+            const timeParts = parts[1].split(':'); // HH:MM:SS
+
+            if (dateParts.length === 3 && timeParts.length >= 2) {
+              const year = parseInt(dateParts[0]);
+              const month = parseInt(dateParts[1]) - 1; // JS months are 0-indexed
+              const day = parseInt(dateParts[2]);
+              const hours = parseInt(timeParts[0]);
+              const minutes = parseInt(timeParts[1]);
+              const seconds = parseInt(timeParts[2]) || 0;
+
+              // Create UTC date
+              const utcDate = new Date(Date.UTC(year, month, day, hours, minutes, seconds));
+              return utcDate;
+            }
+          }
+
+          // Fallback to standard parsing
+          return new Date(dateTimeStr);
+        };
+
         // Load bookings for a specific date
         const loadBookingsForDate = async (dateObj) => {
           try {
@@ -578,8 +613,8 @@ window.healthPWA = {
               // Sort bookings by scheduled_datetime in ascending order
               const bookingsList = result.data.bookings || [];
               bookingsList.sort((a, b) => {
-                const timeA = new Date(a.scheduled_datetime).getTime();
-                const timeB = new Date(b.scheduled_datetime).getTime();
+                const timeA = parseOdooDateTime(a.scheduled_datetime).getTime();
+                const timeB = parseOdooDateTime(b.scheduled_datetime).getTime();
                 return timeA - timeB;
               });
 
@@ -714,7 +749,7 @@ window.healthPWA = {
               // Group bookings by date
               const grouped = {};
               (result.data.orders || []).forEach(order => {
-                const bookingDate = new Date(order.scheduled_datetime).toLocaleDateString('en-US', {
+                const bookingDate = parseOdooDateTime(order.scheduled_datetime).toLocaleDateString('en-US', {
                   weekday: 'long',
                   year: 'numeric',
                   month: 'long',
@@ -733,7 +768,7 @@ window.healthPWA = {
                   service_type: order.service_type,
                   appointment_type: '',
                   scheduled_datetime: order.scheduled_datetime,
-                  scheduled_time: new Date(order.scheduled_datetime).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
+                  scheduled_time: parseOdooDateTime(order.scheduled_datetime).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
                   status: order.status,
                   status_display: order.status_display,
                   location: order.address,
@@ -747,8 +782,8 @@ window.healthPWA = {
               // Sort bookings within each date by scheduled time (ascending)
               Object.keys(grouped).forEach(dateStr => {
                 grouped[dateStr].sort((a, b) => {
-                  const timeA = new Date(a.scheduled_datetime).getTime();
-                  const timeB = new Date(b.scheduled_datetime).getTime();
+                  const timeA = parseOdooDateTime(a.scheduled_datetime).getTime();
+                  const timeB = parseOdooDateTime(b.scheduled_datetime).getTime();
                   return timeA - timeB;
                 });
               });
@@ -757,8 +792,8 @@ window.healthPWA = {
               const sortedGrouped = {};
               Object.keys(grouped)
                 .sort((a, b) => {
-                  const dateA = new Date(grouped[a][0].scheduled_datetime);
-                  const dateB = new Date(grouped[b][0].scheduled_datetime);
+                  const dateA = parseOdooDateTime(grouped[a][0].scheduled_datetime);
+                  const dateB = parseOdooDateTime(grouped[b][0].scheduled_datetime);
                   return dateA - dateB;
                 })
                 .forEach(dateStr => {
@@ -802,7 +837,7 @@ window.healthPWA = {
               // Group bookings by date
               const grouped = {};
               (result.data.orders || []).forEach(order => {
-                const bookingDate = new Date(order.scheduled_datetime).toLocaleDateString('en-US', {
+                const bookingDate = parseOdooDateTime(order.scheduled_datetime).toLocaleDateString('en-US', {
                   weekday: 'long',
                   year: 'numeric',
                   month: 'long',
@@ -821,7 +856,7 @@ window.healthPWA = {
                   service_type: order.service_type,
                   appointment_type: '',
                   scheduled_datetime: order.scheduled_datetime,
-                  scheduled_time: new Date(order.scheduled_datetime).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
+                  scheduled_time: parseOdooDateTime(order.scheduled_datetime).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
                   status: order.status,
                   status_display: order.status_display,
                   location: order.address,
@@ -835,8 +870,8 @@ window.healthPWA = {
               // Sort bookings within each date by scheduled time (ascending)
               Object.keys(grouped).forEach(dateStr => {
                 grouped[dateStr].sort((a, b) => {
-                  const timeA = new Date(a.scheduled_datetime).getTime();
-                  const timeB = new Date(b.scheduled_datetime).getTime();
+                  const timeA = parseOdooDateTime(a.scheduled_datetime).getTime();
+                  const timeB = parseOdooDateTime(b.scheduled_datetime).getTime();
                   return timeA - timeB;
                 });
               });
@@ -845,8 +880,8 @@ window.healthPWA = {
               const sortedGrouped = {};
               Object.keys(grouped)
                 .sort((a, b) => {
-                  const dateA = new Date(grouped[a][0].scheduled_datetime);
-                  const dateB = new Date(grouped[b][0].scheduled_datetime);
+                  const dateA = parseOdooDateTime(grouped[a][0].scheduled_datetime);
+                  const dateB = parseOdooDateTime(grouped[b][0].scheduled_datetime);
                   return dateA - dateB;
                 })
                 .forEach(dateStr => {
@@ -892,7 +927,7 @@ window.healthPWA = {
 
               result.data.orders.forEach(order => {
                 if (order.scheduled_datetime) {
-                  const orderDate = new Date(order.scheduled_datetime);
+                  const orderDate = parseOdooDateTime(order.scheduled_datetime);
                   const dateStr = `${orderDate.getFullYear()}-${String(orderDate.getMonth() + 1).padStart(2, '0')}-${String(orderDate.getDate()).padStart(2, '0')}`;
                   datesSet.add(dateStr);
 
@@ -1014,7 +1049,7 @@ window.healthPWA = {
         const isRunningLate = (booking) => {
           if (!booking || !booking.scheduled_datetime) return false;
           const now = new Date();
-          const bookedTime = new Date(booking.scheduled_datetime);
+          const bookedTime = parseOdooDateTime(booking.scheduled_datetime);
           // Check if current time is past booking time and status is pending (draft, confirmed, assigned)
           const pendingStatuses = ['draft', 'confirmed', 'assigned'];
           return now > bookedTime && pendingStatuses.includes(booking.status);
@@ -1126,6 +1161,15 @@ window.healthPWA = {
             await fetchBookingDetail(bookingId);
           }
         };
+
+        // Computed property for formatted scheduled datetime (handles timezone correctly)
+        const formattedScheduledDateTime = computed(() => {
+          if (!selectedBookingDetail.value || !selectedBookingDetail.value.scheduled_datetime) {
+            return 'TBD';
+          }
+          const dateObj = parseOdooDateTime(selectedBookingDetail.value.scheduled_datetime);
+          return dateObj.toLocaleString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+        });
 
         // Intake Summary Modal state
         const showIntakeSummaryModal = ref(false);
@@ -1307,7 +1351,7 @@ window.healthPWA = {
         const elapsedTime = computed(() => {
           if (!selectedBookingDetail.value || !selectedBookingDetail.value.actual_start_datetime) return '00:00:00';
 
-          const startTime = new Date(selectedBookingDetail.value.actual_start_datetime);
+          const startTime = parseOdooDateTime(selectedBookingDetail.value.actual_start_datetime);
           const endTime = currentTime.value;
           const diff = Math.floor((endTime - startTime) / 1000);
 
@@ -1851,12 +1895,13 @@ window.healthPWA = {
             if (data.success) {
               alert('Noted: Patient does not need future visits');
               showNextVisitModalA.value = false;
-              // Show client details instead of refreshing bookings
-              showClientDetails(nextVisitData.value);
+              // Close modal and refresh to show today's bookings
               completedBookingId.value = null;
               // Reset form
               nextVisitFormData.value.no_future_visit_reason = '';
               nextVisitFormData.value.other_reason_text = '';
+              // Refresh bookings list to reflect the change
+              await loadBookingsForDate(currentDate.value);
             } else {
               alert('Failed to submit: ' + (data.error || 'Unknown error'));
             }
@@ -1911,7 +1956,7 @@ window.healthPWA = {
               showNextVisitModalB.value = false;
               showProductCatalogModal.value = false; // Close catalog modal if still open
               // Refresh bookings for the newly scheduled date - convert string to Date object
-              const scheduledDateObj = new Date(nextVisitFormData.value.scheduled_date + 'T00:00:00');
+              const scheduledDateObj = parseOdooDateTime(nextVisitFormData.value.scheduled_date + ' 00:00:00');
               await loadBookingsForDate(scheduledDateObj);
               completedBookingId.value = null;
               // Reset form
@@ -2039,6 +2084,7 @@ window.healthPWA = {
           detailError,
           fetchBookingDetail,
           toggleBookingDetail,
+          formattedScheduledDateTime,
           // Intake summary modal
           showIntakeSummaryModal,
           selectedBookingForIntake,
@@ -2375,7 +2421,7 @@ window.healthPWA = {
                   <h4 class="section-title">Scheduled Visit</h4>
                   <div class="detail-row">
                     <span class="label">Date & Time:</span>
-                    <span class="value">{{ new Date(selectedBookingDetail.scheduled_datetime).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }) }}</span>
+                    <span class="value">{{ formattedScheduledDateTime }}</span>
                   </div>
                   <div v-if="selectedBookingDetail.quote_items.length > 0" class="detail-row">
                     <span class="label">Services:</span>
@@ -3519,11 +3565,11 @@ window.healthPWA = {
           const now = new Date();
           return orders.value.filter(order => {
             if (!order.scheduled_datetime) return false;
-            const scheduledDate = new Date(order.scheduled_datetime);
+            const scheduledDate = parseOdooDateTime(order.scheduled_datetime);
             return scheduledDate >= now;
           }).sort((a, b) => {
             // Sort by scheduled_datetime ascending (earliest first)
-            return new Date(a.scheduled_datetime) - new Date(b.scheduled_datetime);
+            return parseOdooDateTime(a.scheduled_datetime) - parseOdooDateTime(b.scheduled_datetime);
           });
         });
 
@@ -3682,11 +3728,11 @@ window.healthPWA = {
           const now = new Date();
           return orders.value.filter(order => {
             if (!order.scheduled_datetime) return false;
-            const scheduledDate = new Date(order.scheduled_datetime);
+            const scheduledDate = parseOdooDateTime(order.scheduled_datetime);
             return scheduledDate < now;
           }).sort((a, b) => {
             // Sort by scheduled_datetime descending (most recent first)
-            return new Date(b.scheduled_datetime) - new Date(a.scheduled_datetime);
+            return parseOdooDateTime(b.scheduled_datetime) - parseOdooDateTime(a.scheduled_datetime);
           }).slice(0, 50); // Limit to last 50 past bookings
         });
 
@@ -3919,8 +3965,8 @@ window.healthPWA = {
         const elapsedTime = computed(() => {
           if (!order.value || !order.value.actual_start_datetime) return '00:00:00';
 
-          const startTime = new Date(order.value.actual_start_datetime);
-          const endTime = order.value.actual_end_datetime ? new Date(order.value.actual_end_datetime) : currentTime.value;
+          const startTime = parseOdooDateTime(order.value.actual_start_datetime);
+          const endTime = order.value.actual_end_datetime ? parseOdooDateTime(order.value.actual_end_datetime) : currentTime.value;
           const diff = Math.floor((endTime - startTime) / 1000);
 
           const hours = Math.floor(diff / 3600);
@@ -4351,6 +4397,8 @@ window.healthPWA = {
               // Reset form
               nextVisitFormData.value.no_future_visit_reason = '';
               nextVisitFormData.value.other_reason_text = '';
+              // Close modal and navigate back to today's bookings
+              emit('navigate', 'today');
             } else {
               window.healthPWA.showNotification('Failed to submit: ' + (data.error || 'Unknown error'), 'error');
             }
