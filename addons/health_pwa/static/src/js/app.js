@@ -564,9 +564,15 @@ window.healthPWA = {
         const parseOdooDateTime = (dateTimeStr) => {
           if (!dateTimeStr) return new Date();
 
-          // Handle ISO format with Z (UTC indicator)
-          if (dateTimeStr.includes('T') && dateTimeStr.includes('Z')) {
-            return new Date(dateTimeStr);
+          // Handle ISO format (with or without Z suffix)
+          // ISO format: YYYY-MM-DDTHH:MM:SS or YYYY-MM-DDTHH:MM:SSZ
+          if (dateTimeStr.includes('T')) {
+            // If it's ISO format but missing Z suffix, append it to force UTC parsing
+            let isoString = dateTimeStr;
+            if (!isoString.endsWith('Z') && !isoString.includes('+') && !isoString.includes('-', isoString.indexOf('T'))) {
+              isoString += 'Z';
+            }
+            return new Date(isoString);
           }
 
           // Handle format: "2025-01-15 15:00:00" (Odoo format, assumed UTC)
@@ -590,7 +596,11 @@ window.healthPWA = {
             }
           }
 
-          // Fallback to standard parsing
+          // Fallback to standard parsing (as UTC if possible)
+          // Try to interpret as UTC by appending Z if it doesn't have timezone info
+          if (!dateTimeStr.includes('Z') && !dateTimeStr.includes('+') && !dateTimeStr.includes('GMT')) {
+            return new Date(dateTimeStr + 'Z');
+          }
           return new Date(dateTimeStr);
         };
 
@@ -1583,7 +1593,23 @@ window.healthPWA = {
               })
             });
 
-            const result = await response.json();
+            // Check if response status is OK
+            if (!response.ok) {
+              const errorText = await response.text();
+              console.error(`Server error (${response.status}): ${errorText}`);
+              alert(`Error: Server returned status ${response.status}. Please try again.`);
+              return;
+            }
+
+            let result;
+            try {
+              result = await response.json();
+            } catch (jsonError) {
+              const responseText = await response.text();
+              console.error('Failed to parse JSON response:', responseText);
+              alert('Error: Invalid response from server. Details: ' + responseText.substring(0, 100));
+              return;
+            }
             if (result.success) {
               console.log('Service completed successfully');
               showPaymentWizard.value = false;
@@ -1614,15 +1640,49 @@ window.healthPWA = {
                 nextVisitData.value.assignment_notes = statusData.data.assignment_notes;
 
                 if (statusData.data.has_next_visit) {
-                  // Next visit already scheduled - close modal and refresh
+                  // Next visit already scheduled - populate Modal B with existing FSO details
                   console.log('Next visit already scheduled for:', statusData.data.next_visit_date);
-                  alert('Service completed successfully! Next visit already scheduled.');
-                  loadBookingsForDate(currentDate.value);
+
+                  // Store the next FSO ID for potential assignment deletion
+                  nextVisitData.value.next_fso_id = statusData.data.next_fso_id;
+
+                  // Parse and populate the date/time
+                  if (statusData.data.next_visit_date) {
+                    const nextDate = parseOdooDateTime(statusData.data.next_visit_date);
+                    nextVisitFormData.value.scheduled_date = nextDate.toISOString().split('T')[0]; // YYYY-MM-DD format
+                    nextVisitFormData.value.scheduled_time = `${String(nextDate.getHours()).padStart(2, '0')}:${String(nextDate.getMinutes()).padStart(2, '0')}`; // HH:MM format
+                  }
+
+                  // Populate assigned nurse with both ID and name
+                  if (statusData.data.assigned_nurse && statusData.data.assigned_nurse.id) {
+                    nextVisitFormData.value.assigned_nurse_id = statusData.data.assigned_nurse.id;
+                    nextVisitFormData.value.assigned_nurse_name = statusData.data.assigned_nurse.name || '';
+                  } else {
+                    nextVisitFormData.value.assigned_nurse_id = null;
+                    nextVisitFormData.value.assigned_nurse_name = '';
+                  }
+
+                  // Populate quote items if available
+                  if (statusData.data.quote_items && statusData.data.quote_items.length > 0) {
+                    nextVisitFormData.value.quote_items = statusData.data.quote_items;
+                  } else {
+                    nextVisitFormData.value.quote_items = [];
+                  }
+
+                  // Open Modal B with pre-populated data
+                  showNextVisitModalB.value = true;
+                  // Refresh bookings after a short delay to ensure UI updates
+                  setTimeout(() => {
+                    loadBookingsForDate(currentDate.value);
+                  }, 300);
                 } else {
                   // No next visit - open Modal A to ask if patient wants future visit
                   console.log('No next visit scheduled - opening modal to schedule');
                   showNextVisitModalA.value = true;
-                  // Don't refresh yet - wait for modal response
+                  // Refresh bookings after a short delay to ensure UI updates
+                  setTimeout(() => {
+                    loadBookingsForDate(currentDate.value);
+                  }, 300);
                 }
               } else {
                 // Error checking next visit - just refresh
@@ -1861,11 +1921,13 @@ window.healthPWA = {
                     nextVisitFormData.value.scheduled_time = `${String(nextDate.getHours()).padStart(2, '0')}:${String(nextDate.getMinutes()).padStart(2, '0')}`; // HH:MM format
                   }
 
-                  // Populate assigned nurse
+                  // Populate assigned nurse with both ID and name
                   if (statusData.data.assigned_nurse && statusData.data.assigned_nurse.id) {
                     nextVisitFormData.value.assigned_nurse_id = statusData.data.assigned_nurse.id;
+                    nextVisitFormData.value.assigned_nurse_name = statusData.data.assigned_nurse.name || '';
                   } else {
                     nextVisitFormData.value.assigned_nurse_id = null;
+                    nextVisitFormData.value.assigned_nurse_name = '';
                   }
 
                   // Populate quote items if available
@@ -2273,51 +2335,6 @@ window.healthPWA = {
             <p class="date-display">{{ displayDate }}</p>
           </div>
 
-          <!-- Calendar Picker Modal -->
-          <div v-if="isCalendarOpen" class="calendar-overlay" @click.self="toggleCalendar">
-            <div class="calendar-modal">
-              <div class="calendar-header">
-                <button @click="changeCalendarMonth(-1)" class="btn-month-nav">
-                  <i class="material-icons">chevron_left</i>
-                </button>
-                <h3 class="calendar-month-title">{{ calendarMonth.toLocaleDateString('en-US', { month: 'long', year: 'numeric' }) }}</h3>
-                <button @click="changeCalendarMonth(1)" class="btn-month-nav">
-                  <i class="material-icons">chevron_right</i>
-                </button>
-              </div>
-
-              <div class="calendar-weekdays">
-                <div class="weekday">Sun</div>
-                <div class="weekday">Mon</div>
-                <div class="weekday">Tue</div>
-                <div class="weekday">Wed</div>
-                <div class="weekday">Thu</div>
-                <div class="weekday">Fri</div>
-                <div class="weekday">Sat</div>
-              </div>
-
-              <div class="calendar-grid">
-                <button
-                  v-for="(day, index) in getCalendarDays"
-                  :key="index"
-                  @click="day ? selectCalendarDate(day) : null"
-                  :class="{
-                    'calendar-day': true,
-                    'empty': !day,
-                    'has-booking': day && hasBookingsOnDate(day),
-                    'is-today': day && new Date(calendarMonth.getFullYear(), calendarMonth.getMonth(), day).toDateString() === new Date().toDateString(),
-                    'is-selected': day && new Date(calendarMonth.getFullYear(), calendarMonth.getMonth(), day).toDateString() === currentDate.toDateString()
-                  }"
-                >
-                  {{ day }}
-                  <span v-if="day && hasBookingsOnDate(day)" class="booking-dot"></span>
-                </button>
-              </div>
-
-              <button @click="toggleCalendar" class="btn-close-calendar">Close</button>
-            </div>
-          </div>
-
           <!-- Content based on view mode -->
           <div v-if="isLoading" class="loading-spinner">
             <div class="spinner"></div>
@@ -2719,29 +2736,29 @@ window.healthPWA = {
                   Save Quote to display updated Total
                 </div>
 
-                <table class="invoice-table editable-invoice-table">
-                  <thead>
-                    <tr>
-                      <th>Product</th>
-                      <th>Qty</th>
-                      <th>Discount %</th>
-                      <th>Price</th>
-                      <th>Total</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <template v-for="line in quoteData.order_lines" :key="line.id">
-                      <tr>
-                        <td class="product-name">{{ line.product_name }}</td>
-                        <td class="qty-cell">
+                <!-- Invoice Items - Card Layout -->
+                <div class="invoice-items-container">
+                  <template v-for="line in quoteData.order_lines" :key="line.id">
+                    <!-- Product Card -->
+                    <div class="invoice-item-card">
+                      <!-- Row 1: Product Name (Full Width) -->
+                      <div class="invoice-item-row-product">
+                        <div class="product-name-cell">{{ line.product_name }}</div>
+                      </div>
+
+                      <!-- Row 2: Qty, Disc%, Price, Total -->
+                      <div class="invoice-item-row-details">
+                        <div class="detail-cell qty-cell">
+                          <label>Qty</label>
                           <input
                             type="number"
                             v-model.number="line.quantity"
                             class="editable-input"
                             min="1"
                             step="0.01">
-                        </td>
-                        <td class="discount-cell">
+                        </div>
+                        <div class="detail-cell disc-cell">
+                          <label>Disc %</label>
                           <input
                             type="number"
                             v-model.number="line.discount"
@@ -2750,40 +2767,46 @@ window.healthPWA = {
                             max="100"
                             step="0.01"
                             placeholder="0">
-                        </td>
-                        <td>{{ line.unit_price.toLocaleString() }}</td>
-                        <td>{{ (line.quantity * line.unit_price * (1 - (line.discount || 0) / 100)).toLocaleString() }}</td>
-                      </tr>
-                      <tr v-if="line.discount > 0" class="discount-reason-row">
-                        <td colspan="5">
-                          <div class="discount-reason-container">
-                            <label class="discount-reason-label">Discount Reason:</label>
-                            <input
-                              type="text"
-                              v-model="line.discount_reason"
-                              class="editable-input discount-reason-input-full"
-                              placeholder="Required: Explain discount"
-                              required>
-                          </div>
-                        </td>
-                      </tr>
-                    </template>
-                  </tbody>
-                  <tfoot>
-                    <tr>
-                      <td colspan="4">Subtotal</td>
-                      <td>{{ quoteData.amount_untaxed.toLocaleString() }}</td>
-                    </tr>
-                    <tr>
-                      <td colspan="4">Tax</td>
-                      <td>{{ quoteData.amount_tax.toLocaleString() }}</td>
-                    </tr>
-                    <tr class="total-row">
-                      <td colspan="4"><strong>Total</strong></td>
-                      <td><strong>{{ quoteData.amount_total.toLocaleString() }} {{ quoteData.currency }}</strong></td>
-                    </tr>
-                  </tfoot>
-                </table>
+                        </div>
+                        <div class="detail-cell price-cell">
+                          <label>Price</label>
+                          <span>{{ line.unit_price.toLocaleString() }}</span>
+                        </div>
+                        <div class="detail-cell total-cell">
+                          <label>Total</label>
+                          <span>{{ (line.quantity * line.unit_price * (1 - (line.discount || 0) / 100)).toLocaleString() }}</span>
+                        </div>
+                      </div>
+
+                      <!-- Row 3: Discount Reason (When Applicable) -->
+                      <div v-if="line.discount > 0" class="invoice-item-row-reason">
+                        <label class="discount-reason-label">Discount Reason:</label>
+                        <input
+                          type="text"
+                          v-model="line.discount_reason"
+                          class="editable-input discount-reason-input-full"
+                          placeholder="Required: Explain discount"
+                          required>
+                      </div>
+                    </div>
+                  </template>
+                </div>
+
+                <!-- Totals Section -->
+                <div class="invoice-totals">
+                  <div class="totals-row">
+                    <span>Subtotal</span>
+                    <span>{{ quoteData.amount_untaxed.toLocaleString() }}</span>
+                  </div>
+                  <div class="totals-row">
+                    <span>Tax</span>
+                    <span>{{ quoteData.amount_tax.toLocaleString() }}</span>
+                  </div>
+                  <div class="totals-row totals-total">
+                    <strong>Total</strong>
+                    <strong>{{ quoteData.amount_total.toLocaleString() }} {{ quoteData.currency }}</strong>
+                  </div>
+                </div>
               </div>
 
               <!-- Verification Notes - Mandatory if changes made -->
@@ -3040,15 +3063,20 @@ window.healthPWA = {
                   <i class="material-icons">event</i>
                   Schedule Next Appointment
                 </h3>
-                <button @click="toggleCalendar" class="btn-icon-action" title="Check my schedule">
-                  <i class="material-icons">calendar_today</i>
-                </button>
               </div>
               <button @click="showNextVisitModalB = false" class="modal-close">
                 <i class="material-icons">close</i>
               </button>
             </div>
             <div class="modal-body">
+              <!-- Check My Schedule Button -->
+              <div class="check-schedule-section">
+                <button @click="toggleCalendar" class="btn btn-secondary btn-check-schedule">
+                  <i class="material-icons">calendar_today</i>
+                  Check my schedule
+                </button>
+              </div>
+
               <!-- Date and Time Section -->
               <div class="form-section">
                 <h4>Appointment Date &amp; Time</h4>
@@ -3102,7 +3130,7 @@ window.healthPWA = {
                   <div v-if="nextVisitFormData.assigned_nurse_id" class="assigned-staff-box">
                     <div class="assigned-staff-display">
                       <i class="material-icons">person_check</i>
-                      <strong>{{ currentUser.name }}</strong>
+                      <strong>{{ nextVisitFormData.assigned_nurse_name || currentUser.name }}</strong>
                     </div>
                   </div>
                   <div v-else class="unassigned-staff-box">
@@ -3225,6 +3253,51 @@ window.healthPWA = {
             <div class="modal-footer">
               <button @click="showProductCatalogModal = false" class="btn btn-secondary">Close</button>
             </div>
+          </div>
+        </div>
+
+        <!-- Calendar Picker Modal - LAST for highest z-index layering -->
+        <div v-if="isCalendarOpen" class="calendar-overlay" @click.self="toggleCalendar">
+          <div class="calendar-modal">
+            <div class="calendar-header">
+              <button @click="changeCalendarMonth(-1)" class="btn-month-nav">
+                <i class="material-icons">chevron_left</i>
+              </button>
+              <h3 class="calendar-month-title">{{ calendarMonth.toLocaleDateString('en-US', { month: 'long', year: 'numeric' }) }}</h3>
+              <button @click="changeCalendarMonth(1)" class="btn-month-nav">
+                <i class="material-icons">chevron_right</i>
+              </button>
+            </div>
+
+            <div class="calendar-weekdays">
+              <div class="weekday">Sun</div>
+              <div class="weekday">Mon</div>
+              <div class="weekday">Tue</div>
+              <div class="weekday">Wed</div>
+              <div class="weekday">Thu</div>
+              <div class="weekday">Fri</div>
+              <div class="weekday">Sat</div>
+            </div>
+
+            <div class="calendar-grid">
+              <button
+                v-for="(day, index) in getCalendarDays"
+                :key="index"
+                @click="day ? selectCalendarDate(day) : null"
+                :class="{
+                  'calendar-day': true,
+                  'empty': !day,
+                  'has-booking': day && hasBookingsOnDate(day),
+                  'is-today': day && new Date(calendarMonth.getFullYear(), calendarMonth.getMonth(), day).toDateString() === new Date().toDateString(),
+                  'is-selected': day && new Date(calendarMonth.getFullYear(), calendarMonth.getMonth(), day).toDateString() === currentDate.toDateString()
+                }"
+              >
+                {{ day }}
+                <span v-if="day && hasBookingsOnDate(day)" class="booking-dot"></span>
+              </button>
+            </div>
+
+            <button @click="toggleCalendar" class="btn-close-calendar">Close</button>
           </div>
         </div>
       `

@@ -1160,9 +1160,25 @@ class HealthPWAAPIController(http.Controller):
             else:
                 target_date = fields.Date.today()
 
-            # Get field service orders for the target date where this staff member is assigned
-            today_start = f"{target_date} 00:00:00"
-            today_end = f"{target_date} 23:59:59"
+            # Create timezone-aware datetime range for the target date
+            # Convert local date to UTC datetime range for database query
+            from datetime import datetime as dt, timedelta
+            import pytz
+
+            # Get the user's timezone or use server timezone
+            user_tz = pytz.timezone(request.env.user.tz or 'UTC')
+
+            # Create datetime objects for the target date in the user's timezone
+            local_start = user_tz.localize(dt.combine(target_date, dt.min.time()))
+            local_end = user_tz.localize(dt.combine(target_date, dt.max.time()))
+
+            # Convert to UTC for database query
+            utc_start = local_start.astimezone(pytz.UTC)
+            utc_end = local_end.astimezone(pytz.UTC)
+
+            # Format as strings for the query (Odoo will handle timezone conversion)
+            today_start = utc_start.strftime('%Y-%m-%d %H:%M:%S')
+            today_end = utc_end.strftime('%Y-%m-%d %H:%M:%S')
 
             # Find FSOs scheduled for today where current employee is assigned
             fsos = request.env['health.fieldservice.order'].search([
