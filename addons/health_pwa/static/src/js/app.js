@@ -2133,6 +2133,7 @@ window.healthPWA = {
               scheduled_time: null,
               quote_items: [],
               assigned_nurse_id: currentUser.value.employee_id,
+              assigned_nurse_name: '',
               no_future_visit_reason: '',
               other_reason_text: ''
             };
@@ -2156,6 +2157,7 @@ window.healthPWA = {
             scheduled_time: null,
             quote_items: [],
             assigned_nurse_id: currentUser.value.employee_id,  // Pre-populate with current user's employee ID
+            assigned_nurse_name: currentUser.value.name || '',  // Pre-populate with current user's name
             no_future_visit_reason: '',
             other_reason_text: ''
           };
