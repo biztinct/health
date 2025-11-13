@@ -609,6 +609,58 @@ window.healthPWA = {
           return new Date(dateTimeStr);
         };
 
+        // Convert local date and time to ISO format with timezone for API submission
+        // Takes local date (YYYY-MM-DD), local time (HH:MM), and user timezone
+        const convertLocalDateTimeToISO = (localDate, localTime, userTimezone) => {
+          if (!localDate || !localTime) return null;
+
+          try {
+            // Create a date object from local date/time
+            const [year, month, day] = localDate.split('-').map(Number);
+            const [hours, minutes] = localTime.split(':').map(Number);
+
+            // Use Intl API to get the correct offset for the given timezone
+            // This accounts for DST properly
+            const tempDate = new Date(year, month - 1, day, hours, minutes, 0);
+
+            // Get timezone offset in minutes
+            const formatter = new Intl.DateTimeFormat('en-US', {
+              timeZone: userTimezone,
+              year: 'numeric',
+              month: '2-digit',
+              day: '2-digit',
+              hour: '2-digit',
+              minute: '2-digit',
+              second: '2-digit',
+              hour12: false
+            });
+
+            const parts = formatter.formatToParts(tempDate);
+            const tzDate = new Date(
+              parseInt(parts.find(p => p.type === 'year').value),
+              parseInt(parts.find(p => p.type === 'month').value) - 1,
+              parseInt(parts.find(p => p.type === 'day').value),
+              parseInt(parts.find(p => p.type === 'hour').value),
+              parseInt(parts.find(p => p.type === 'minute').value),
+              parseInt(parts.find(p => p.type === 'second').value)
+            );
+
+            // Calculate offset in milliseconds
+            const offset = tempDate.getTime() - tzDate.getTime();
+            const offsetHours = Math.floor(Math.abs(offset) / (1000 * 60 * 60));
+            const offsetMinutes = Math.floor((Math.abs(offset) % (1000 * 60 * 60)) / (1000 * 60));
+            const sign = offset >= 0 ? '+' : '-';
+            const tzString = `${sign}${String(offsetHours).padStart(2, '0')}:${String(offsetMinutes).padStart(2, '0')}`;
+
+            // Return ISO format with timezone
+            return `${localDate}T${localTime}:00${tzString}`;
+          } catch (err) {
+            console.error('Error converting datetime:', err);
+            // Fallback: just return the date-time string without timezone
+            return `${localDate}T${localTime}:00`;
+          }
+        };
+
         // Format booking time with correct timezone handling
         const getFormattedBookingTime = (booking) => {
           if (!booking || !booking.scheduled_datetime) return '--:--';
@@ -1324,7 +1376,8 @@ window.healthPWA = {
           id: null,
           name: 'Loading...',
           employee_id: null,
-          employee_name: ''
+          employee_name: '',
+          timezone: 'UTC'
         });
 
         // Load product catalog
@@ -2111,12 +2164,17 @@ window.healthPWA = {
           // No validation needed - user can choose to leave it unassigned
 
           try {
-            const dateTimeStr = `${nextVisitFormData.value.scheduled_date} ${nextVisitFormData.value.scheduled_time}:00`;
+            // Convert local date/time to ISO format with timezone
+            const isoDateTime = convertLocalDateTimeToISO(
+              nextVisitFormData.value.scheduled_date,
+              nextVisitFormData.value.scheduled_time,
+              currentUser.value.timezone || 'UTC'
+            );
 
             // Build request body - don't send assigned_staff_id when editing existing appointment
             const requestBody = {
-              next_visit_date: dateTimeStr,
-              scheduled_datetime: dateTimeStr,
+              next_visit_date: isoDateTime,
+              scheduled_datetime: isoDateTime,
               quote_items: nextVisitFormData.value.quote_items,
             };
 
@@ -2356,7 +2414,9 @@ window.healthPWA = {
           addProductToQuote,
           openProductCatalogModal,
           // Current user info
-          currentUser
+          currentUser,
+          // Timezone conversion helper
+          convertLocalDateTimeToISO
         };
       },
       template: `

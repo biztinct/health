@@ -1669,6 +1669,7 @@ class HealthPWAAPIController(http.Controller):
                 'email': user.email,
                 'employee_id': employee.id if employee else None,
                 'employee_name': employee.name if employee else user.name,
+                'timezone': user.tz or 'UTC',  # User's timezone for proper datetime handling
             }
 
             return self._prepare_json_response(data=user_data)
