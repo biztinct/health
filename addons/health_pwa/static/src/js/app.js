@@ -1290,6 +1290,7 @@ window.healthPWA = {
           quote_items: [],
           assigned_nurse_id: null,
           assigned_nurse_name: '',
+          assigned_staff: [],
           assignment_notes: ''
         });
         const nextVisitFormData = ref({
@@ -2112,17 +2113,28 @@ window.healthPWA = {
           try {
             const dateTimeStr = `${nextVisitFormData.value.scheduled_date} ${nextVisitFormData.value.scheduled_time}:00`;
 
+            // Build request body - don't send assigned_staff_id when editing existing appointment
+            const requestBody = {
+              next_visit_date: dateTimeStr,
+              scheduled_datetime: dateTimeStr,
+              quote_items: nextVisitFormData.value.quote_items,
+            };
+
+            // Only send assigned_staff_id and next_fso_id for new appointments
+            // When editing existing appointment (has_next_visit=true), do NOT update assignments
+            if (!nextVisitData.value.has_next_visit) {
+              requestBody.assigned_staff_id = nextVisitFormData.value.assigned_nurse_id;
+            } else {
+              // When editing existing, send next_fso_id so backend knows to update
+              requestBody.next_fso_id = nextVisitData.value.next_fso_id;
+            }
+
             const response = await fetch(`/health_pwa/api/fso/${completedBookingId.value}/schedule_next_visit`, {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',
               },
-              body: JSON.stringify({
-                next_visit_date: dateTimeStr,
-                scheduled_datetime: dateTimeStr,
-                quote_items: nextVisitFormData.value.quote_items,
-                assigned_staff_id: nextVisitFormData.value.assigned_nurse_id  // Backend expects assigned_staff_id
-              })
+              body: JSON.stringify(requestBody)
             });
 
             const data = await response.json();
@@ -2144,6 +2156,16 @@ window.healthPWA = {
                 assigned_nurse_id: null,
                 no_future_visit_reason: '',
                 other_reason_text: ''
+              };
+              // Reset next visit data
+              nextVisitData.value = {
+                has_next_visit: false,
+                patient_name: '',
+                patient_id: null,
+                next_visit_date: null,
+                next_fso_id: null,
+                assigned_staff: [],
+                assignment_notes: ''
               };
             } else {
               alert('Failed to schedule: ' + (data.error || 'Unknown error'));
@@ -3113,7 +3135,12 @@ window.healthPWA = {
           <div class="modal-content next-visit-modal">
             <div class="modal-header">
               <div class="header-content">
-                <h3>
+                <!-- Show "Next Appointment Details" when editing existing, otherwise "Schedule Next Appointment" -->
+                <h3 v-if="nextVisitData.has_next_visit">
+                  <i class="material-icons">edit</i>
+                  Next Appointment Details
+                </h3>
+                <h3 v-else>
                   <i class="material-icons">event</i>
                   Schedule Next Appointment
                 </h3>
@@ -3177,22 +3204,40 @@ window.healthPWA = {
                 </button>
               </div>
 
-              <!-- Assigned Nurse Section -->
+              <!-- Assigned Healthcare Staff Section -->
               <div class="form-section">
                 <h4>Assigned Healthcare Staff</h4>
                 <div class="form-group">
-                  <div v-if="nextVisitFormData.assigned_nurse_id" class="assigned-staff-box">
+                  <!-- Show all assigned staff when editing existing appointment -->
+                  <div v-if="nextVisitData.has_next_visit && nextVisitData.assigned_staff && nextVisitData.assigned_staff.length > 0" class="assigned-staff-list">
+                    <div v-for="staff in nextVisitData.assigned_staff" :key="staff.id" class="assigned-staff-box">
+                      <div class="assigned-staff-display">
+                        <i class="material-icons">person_check</i>
+                        <div class="staff-info">
+                          <strong>{{ staff.name }}</strong>
+                          <small class="staff-role">{{ staff.role }}</small>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Show single nurse for new appointment -->
+                  <div v-else-if="!nextVisitData.has_next_visit && nextVisitFormData.assigned_nurse_id" class="assigned-staff-box">
                     <div class="assigned-staff-display">
                       <i class="material-icons">person_check</i>
                       <strong>{{ nextVisitFormData.assigned_nurse_name || currentUser.name }}</strong>
                     </div>
                   </div>
+
+                  <!-- Show unassigned message -->
                   <div v-else class="unassigned-staff-box">
                     <i class="material-icons">person_outline</i>
                     <strong>No staff assigned</strong>
-                    <small>Booking will be created in CONFIRMED state (unassigned)</small>
+                    <small v-if="!nextVisitData.has_next_visit">Booking will be created in CONFIRMED state (unassigned)</small>
                   </div>
-                  <div v-if="nextVisitFormData.assigned_nurse_id" class="button-row">
+
+                  <!-- Show clear assignment button only for new appointments -->
+                  <div v-if="!nextVisitData.has_next_visit && nextVisitFormData.assigned_nurse_id" class="button-row">
                     <button @click="() => {
                       deleteNextVisitAssignment(nextVisitData.next_fso_id);
                       nextVisitFormData.assigned_nurse_id = null;
@@ -4210,7 +4255,8 @@ window.healthPWA = {
           next_fso_id: null,
           quote_items: [],
           assigned_nurse_id: null,
-          assigned_nurse_name: ''
+          assigned_nurse_name: '',
+          assigned_staff: []
         });
         const nextVisitFormData = ref({
           scheduled_date: null,

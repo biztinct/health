@@ -1329,10 +1329,35 @@ class HealthPWAAPIController(http.Controller):
                 next_visit_date = next_fso.scheduled_datetime.isoformat() if next_fso.scheduled_datetime else None
                 response_data['next_visit_date'] = next_visit_date
                 response_data['next_fso_id'] = next_fso.id
-                response_data['assigned_nurse'] = {
-                    'id': next_fso.lead_staff_id.id if next_fso.lead_staff_id else None,
-                    'name': next_fso.lead_staff_id.name if next_fso.lead_staff_id else None,
-                }
+
+                # Get all assignments for this FSO (excluding template assignments)
+                assignments = request.env['health.staff.assignment'].search([
+                    ('fso_id', '=', next_fso.id),
+                    ('staff_id', '!=', False),  # Only show assignments with actual staff
+                    ('state', '!=', 'template'),  # Exclude template assignments
+                ], order='assignment_role DESC')  # Lead role first
+
+                assigned_staff = []
+                for assignment in assignments:
+                    assigned_staff.append({
+                        'id': assignment.staff_id.id,
+                        'name': assignment.staff_id.name,
+                        'role': assignment.assignment_role or 'Staff',
+                    })
+
+                response_data['assigned_staff'] = assigned_staff
+
+                # Also keep single assigned_nurse for backward compatibility
+                if assignments:
+                    response_data['assigned_nurse'] = {
+                        'id': assignments[0].staff_id.id,
+                        'name': assignments[0].staff_id.name,
+                    }
+                else:
+                    response_data['assigned_nurse'] = {
+                        'id': None,
+                        'name': None,
+                    }
 
                 # Get quote line items
                 quote_items = []
