@@ -1116,7 +1116,8 @@ window.healthPWA = {
         const getStatusColor = (booking) => {
           if (!booking) return '#95a5a6';
 
-          const status = booking.status || '';
+          // Support both 'status' (old) and 'state' (new API) properties
+          const status = booking.status || booking.state || '';
 
           // Check for Running Late (orange)
           if (isRunningLate(booking)) {
@@ -1144,7 +1145,8 @@ window.healthPWA = {
             return 'Running Late';
           }
 
-          const status = booking.status || '';
+          // Support both 'status' (old) and 'state' (new API) properties
+          const status = booking.status || booking.state || '';
           const displayMap = {
             'draft': 'Booked',
             'confirmed': 'Confirmed',
@@ -4613,7 +4615,15 @@ window.healthPWA = {
                 nextVisitFormData.value.scheduled_date = `${year}-${month}-${day}`;
                 nextVisitFormData.value.scheduled_time = `${String(nextDate.getHours()).padStart(2, '0')}:${String(nextDate.getMinutes()).padStart(2, '0')}`;
                 nextVisitFormData.value.quote_items = data.data.quote_items || [];
-                nextVisitFormData.value.assigned_nurse_id = data.data.assigned_nurse_id;
+
+                // Populate assigned nurse with both ID and name from API response
+                if (data.data.assigned_nurse && data.data.assigned_nurse.id) {
+                  nextVisitFormData.value.assigned_nurse_id = data.data.assigned_nurse.id;
+                  nextVisitFormData.value.assigned_nurse_name = data.data.assigned_nurse.name || '';
+                } else {
+                  nextVisitFormData.value.assigned_nurse_id = null;
+                  nextVisitFormData.value.assigned_nurse_name = '';
+                }
                 showNextVisitModalB.value = true;
               } else {
                 // Scenario A: No next visit scheduled
