@@ -1554,6 +1554,60 @@ p {
   transform: scale(1.02);
 }
 
+/* Future Bookings Modal Styles */
+.future-bookings-modal {
+  width: 95%;
+  max-width: 500px;
+  max-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.future-bookings-top-bar {
+  padding: var(--spacing-md);
+  border-bottom: 1px solid #e0e0e0;
+  display: flex;
+  justify-content: flex-start;
+}
+
+.btn-close-modal {
+  background: var(--primary-color);
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-close-modal:hover {
+  opacity: 0.9;
+  transform: scale(1.02);
+}
+
+.future-bookings-header {
+  padding: var(--spacing-md);
+  background: transparent;
+  border-bottom: none;
+}
+
+.future-bookings-header h3 {
+  margin: 0;
+  color: var(--text-primary);
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.future-bookings-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--spacing-md);
+}
+
+/* Future bookings modal now uses grouped-bookings-list - existing style in weekview */
+
 /* Call View Styles */
 .call-view {
   display: flex;

@@ -1495,7 +1495,7 @@ class HealthPWAAPIController(http.Controller):
                             _logger.error(f'❌ Failed to create template assignment: {str(template_error)}')
                             raise
 
-                        # 2. Create actual assignment (with staff_id - will auto-set state='assigned')
+                        # 2. Create actual assignment (with staff_id - set state='assigned')
                         try:
                             actual_assignment = request.env['health.staff.assignment'].create({
                                 'fso_id': next_fso.id,
@@ -1504,6 +1504,7 @@ class HealthPWAAPIController(http.Controller):
                                 'assignment_role': 'lead',  # Mark as lead staff
                                 'assignment_type': 'clinic_visit',
                                 'priority': next_fso.priority or '1',
+                                'state': 'assigned',  # Explicitly set default state to assigned
                             })
                             _logger.info(f'✅ Created actual assignment {actual_assignment.id} for FSO {next_fso.id} with staff {assigned_staff_id}')
                         except Exception as actual_error:
@@ -1547,6 +1548,83 @@ class HealthPWAAPIController(http.Controller):
 
         except Exception as e:
             _logger.error(f'Error scheduling next visit: {str(e)}')
+            return self._prepare_json_response(error=str(e), status_code=500)
+
+    @http.route('/health_pwa/api/future_bookings', type='http', auth='user', methods=['GET'], csrf=False)
+    def api_get_future_bookings(self, **kwargs):
+        """Get all future bookings for current user (staff), grouped by date"""
+        if not self._check_api_access():
+            return self._prepare_json_response(error='Access denied', status_code=403)
+
+        try:
+            user = request.env.user
+
+            # Get employee record for current user
+            employee = request.env['hr.employee'].search([
+                ('user_id', '=', user.id)
+            ], limit=1)
+
+            if not employee:
+                return self._prepare_json_response(data={'bookings_by_date': {}})
+
+            # Get current datetime
+            from datetime import datetime as dt
+            import pytz
+
+            user_tz = pytz.timezone(request.env.user.tz or 'UTC')
+            now = dt.now(user_tz)
+
+            # Find all future FSOs where current employee is assigned
+            # Search by assignments where staff_id matches current employee
+            fsos = request.env['health.fieldservice.order'].search([
+                ('scheduled_datetime', '>', now.isoformat()),
+                ('state', 'not in', ['cancelled', 'completed']),
+                ('assignment_ids.staff_id', '=', employee.id)
+            ], order='scheduled_datetime asc')
+
+            # Group bookings by date
+            bookings_by_date = {}
+
+            for fso in fsos:
+                if fso.scheduled_datetime:
+                    # Parse the datetime and convert to user's timezone
+                    fso_dt = fso.scheduled_datetime
+                    if isinstance(fso_dt, str):
+                        fso_dt = dt.fromisoformat(fso_dt.replace('Z', '+00:00'))
+
+                    # Convert to user timezone
+                    if fso_dt.tzinfo is None:
+                        fso_dt = pytz.UTC.localize(fso_dt)
+                    fso_dt_user_tz = fso_dt.astimezone(user_tz)
+
+                    # Format date as YYYY-MM-DD
+                    date_str = fso_dt_user_tz.strftime('%Y-%m-%d')
+                    date_display = fso_dt_user_tz.strftime('%d %b %Y')  # e.g., "25 Nov 2025"
+
+                    if date_str not in bookings_by_date:
+                        bookings_by_date[date_str] = {
+                            'date_display': date_display,
+                            'bookings': []
+                        }
+
+                    # Add booking info
+                    bookings_by_date[date_str]['bookings'].append({
+                        'id': fso.id,
+                        'name': fso.name,
+                        'patient_name': fso.patient_id.name if fso.patient_id else 'Unknown',
+                        'patient_id': fso.patient_id.id if fso.patient_id else None,
+                        'scheduled_time': fso_dt_user_tz.strftime('%H:%M'),
+                        'scheduled_datetime': fso.scheduled_datetime,
+                        'service_type': fso._get_service_type_label() if hasattr(fso, '_get_service_type_label') else fso.service_type,
+                        'state': fso.state,
+                        'phone': fso.patient_id.mobile or fso.patient_id.phone if fso.patient_id else '',
+                        'address': fso.service_address or '',
+                    })
+
+            return self._prepare_json_response(data={'bookings_by_date': bookings_by_date})
+
+        except Exception as e:
+            _logger.error(f'Error fetching future bookings: {str(e)}')
             return self._prepare_json_response(error=str(e), status_code=500)
 
     @http.route('/health_pwa/api/current_user', type='http', auth='user', methods=['GET'], csrf=False)

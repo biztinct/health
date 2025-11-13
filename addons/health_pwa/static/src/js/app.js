@@ -559,6 +559,11 @@ window.healthPWA = {
         // Grouped bookings for Week and Month views
         const groupedBookings = ref({});
 
+        // Future bookings modal state
+        const isFutureBookingsOpen = ref(false);
+        const futureBookingsByDate = ref({});
+        const loadingFutureBookings = ref(false);
+
         // Helper function to parse datetime from API (Odoo returns UTC datetimes)
         // Convert UTC datetime string to local timezone Date object
         const parseOdooDateTime = (dateTimeStr) => {
@@ -976,6 +981,37 @@ window.healthPWA = {
             await loadMonthBookings(calendarMonth.value);
           }
           isCalendarOpen.value = !isCalendarOpen.value;
+        };
+
+        // Toggle future bookings modal
+        const toggleFutureBookings = async () => {
+          if (!isFutureBookingsOpen.value) {
+            // Opening future bookings - load all upcoming bookings
+            await loadFutureBookings();
+          }
+          isFutureBookingsOpen.value = !isFutureBookingsOpen.value;
+        };
+
+        // Load future bookings from API
+        const loadFutureBookings = async () => {
+          loadingFutureBookings.value = true;
+          try {
+            const response = await fetch('/health_pwa/api/future_bookings');
+            if (!response.ok) {
+              throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            const data = await response.json();
+            if (data.data && data.data.bookings_by_date) {
+              futureBookingsByDate.value = data.data.bookings_by_date;
+            } else {
+              futureBookingsByDate.value = {};
+            }
+          } catch (error) {
+            console.error('Error loading future bookings:', error);
+            futureBookingsByDate.value = {};
+          } finally {
+            loadingFutureBookings.value = false;
+          }
         };
 
         // Change calendar month
@@ -1649,7 +1685,11 @@ window.healthPWA = {
                   // Parse and populate the date/time
                   if (statusData.data.next_visit_date) {
                     const nextDate = parseOdooDateTime(statusData.data.next_visit_date);
-                    nextVisitFormData.value.scheduled_date = nextDate.toISOString().split('T')[0]; // YYYY-MM-DD format
+                    // Use local date methods to get the correct local date
+                    const year = nextDate.getFullYear();
+                    const month = String(nextDate.getMonth() + 1).padStart(2, '0');
+                    const day = String(nextDate.getDate()).padStart(2, '0');
+                    nextVisitFormData.value.scheduled_date = `${year}-${month}-${day}`; // YYYY-MM-DD format
                     nextVisitFormData.value.scheduled_time = `${String(nextDate.getHours()).padStart(2, '0')}:${String(nextDate.getMinutes()).padStart(2, '0')}`; // HH:MM format
                   }
 
@@ -1917,7 +1957,11 @@ window.healthPWA = {
                   // Parse and populate the date/time
                   if (statusData.data.next_visit_date) {
                     const nextDate = parseOdooDateTime(statusData.data.next_visit_date);
-                    nextVisitFormData.value.scheduled_date = nextDate.toISOString().split('T')[0]; // YYYY-MM-DD format
+                    // Use local date methods to get the correct local date
+                    const year = nextDate.getFullYear();
+                    const month = String(nextDate.getMonth() + 1).padStart(2, '0');
+                    const day = String(nextDate.getDate()).padStart(2, '0');
+                    nextVisitFormData.value.scheduled_date = `${year}-${month}-${day}`; // YYYY-MM-DD format
                     nextVisitFormData.value.scheduled_time = `${String(nextDate.getHours()).padStart(2, '0')}:${String(nextDate.getMinutes()).padStart(2, '0')}`; // HH:MM format
                   }
 
@@ -2210,6 +2254,12 @@ window.healthPWA = {
           hasBookingsOnDate,
           getBookingCount,
           datesWithBookings,
+          // Future bookings modal
+          isFutureBookingsOpen,
+          futureBookingsByDate,
+          loadingFutureBookings,
+          loadFutureBookings,
+          toggleFutureBookings,
           // Booking detail expansion
           selectedBookingId,
           selectedBookingDetail,
@@ -3073,7 +3123,7 @@ window.healthPWA = {
             <div class="modal-body">
               <!-- Check My Schedule Button -->
               <div class="check-schedule-section">
-                <button @click="toggleCalendar" class="btn btn-secondary btn-check-schedule">
+                <button @click="toggleFutureBookings" class="btn btn-secondary btn-check-schedule">
                   <i class="material-icons">calendar_today</i>
                   Check my schedule
                 </button>
@@ -3258,7 +3308,7 @@ window.healthPWA = {
           </div>
         </div>
 
-        <!-- Calendar Picker Modal - LAST for highest z-index layering -->
+        <!-- Calendar Picker Modal -->
         <div v-if="isCalendarOpen" class="calendar-overlay" @click.self="toggleCalendar">
           <div class="calendar-modal">
             <div class="calendar-header">
@@ -3300,6 +3350,69 @@ window.healthPWA = {
             </div>
 
             <button @click="toggleCalendar" class="btn-close-calendar">Close</button>
+          </div>
+        </div>
+
+        <!-- Future Bookings Modal -->
+        <div v-if="isFutureBookingsOpen" class="calendar-overlay" @click.self="toggleFutureBookings">
+          <div class="calendar-modal future-bookings-modal">
+            <div class="future-bookings-top-bar">
+              <button @click="toggleFutureBookings" class="btn-close-modal">
+                <span>Close</span>
+              </button>
+            </div>
+
+            <div class="future-bookings-header">
+              <h3>Upcoming Bookings</h3>
+            </div>
+
+            <div class="future-bookings-content">
+              <div v-if="loadingFutureBookings" class="loading-spinner">
+                <div class="spinner"></div>
+                <p>Loading bookings...</p>
+              </div>
+
+              <div v-else-if="Object.keys(futureBookingsByDate).length === 0" class="empty-state">
+                <i class="material-icons">calendar_today</i>
+                <p>No upcoming bookings scheduled</p>
+              </div>
+
+              <div v-else class="grouped-bookings-list">
+                <div v-for="(dateData, dateStr) in futureBookingsByDate" :key="dateStr" class="date-group">
+                  <h4 class="date-group-title">{{ dateData.date_display }}</h4>
+                  <div v-for="booking in dateData.bookings" :key="booking.id" class="booking-card-container">
+                    <!-- Booking card -->
+                    <div class="booking-card">
+                      <!-- Header with time and status -->
+                      <div class="booking-card-header">
+                        <div class="booking-time-badge">{{ booking.scheduled_time }}</div>
+                        <div class="status-badge" :style="{ backgroundColor: getStatusColor({state: booking.state}) }">
+                          {{ getStatusDisplay({state: booking.state}) }}
+                        </div>
+                      </div>
+
+                      <!-- Patient info -->
+                      <div class="booking-patient-section">
+                        <h3 class="booking-patient-name">{{ booking.patient_name }}</h3>
+                      </div>
+
+                      <!-- Service type with action buttons inline -->
+                      <div class="booking-service-row">
+                        <p v-if="booking.service_type" class="booking-service-type">{{ booking.service_type }}</p>
+                        <div class="booking-action-icons">
+                          <button @click.stop="callPatient(booking.phone)" class="btn-icon-action btn-icon-call" title="Call patient">
+                            <i class="material-icons">call</i>
+                          </button>
+                          <button v-if="booking.address" @click.stop="openMap({gps_coordinates: booking.address}, booking.patient_name)" class="btn-icon-action btn-icon-map" title="Open map">
+                            <i class="material-icons">map</i>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       `
@@ -4493,8 +4606,12 @@ window.healthPWA = {
               if (data.data.has_next_visit) {
                 // Scenario B: Next visit exists - populate form with existing data
                 const nextDate = new Date(data.data.next_visit_date);
-                nextVisitFormData.value.scheduled_date = nextDate.toISOString().split('T')[0];
-                nextVisitFormData.value.scheduled_time = nextDate.toTimeString().slice(0, 5);
+                // Use local date methods to get the correct local date
+                const year = nextDate.getFullYear();
+                const month = String(nextDate.getMonth() + 1).padStart(2, '0');
+                const day = String(nextDate.getDate()).padStart(2, '0');
+                nextVisitFormData.value.scheduled_date = `${year}-${month}-${day}`;
+                nextVisitFormData.value.scheduled_time = `${String(nextDate.getHours()).padStart(2, '0')}:${String(nextDate.getMinutes()).padStart(2, '0')}`;
                 nextVisitFormData.value.quote_items = data.data.quote_items || [];
                 nextVisitFormData.value.assigned_nurse_id = data.data.assigned_nurse_id;
                 showNextVisitModalB.value = true;
