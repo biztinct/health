@@ -1294,11 +1294,16 @@ window.healthPWA = {
 
         // Service Start state
         const serviceStartedForBooking = ref(null); // Stores which booking has service started
-        const showClinicalNotesModal = ref(false);
-        const clinicalNotesText = ref('');
-        const clinicalObservations = ref('');  // Doctor-specific field
-        const diagnosis = ref('');  // Doctor-specific field
-        const treatmentPerformed = ref('');  // Doctor-specific field
+        const showIntakeNotesModal = ref(false);
+        const showReferringDoctorDropdown = ref(false);
+        const intakeNotesData = ref({
+          diagnosis: '',
+          referring_doctor_id: null,
+          referring_doctor_name: '',
+          goal_of_care: '',
+          required_equipment: '',
+          notes: ''
+        });
         const capturedPhoto = ref(null);
         const photoPreviewUrl = ref(null);
 
@@ -1840,27 +1845,33 @@ window.healthPWA = {
           }
         };
 
-        // Open clinical notes modal
-        const openClinicalNotesModal = () => {
-          showClinicalNotesModal.value = true;
-          if (currentUser.value.is_doctor) {
-            // Doctor mode: populate three separate fields
-            clinicalObservations.value = selectedBookingDetail.value?.clinical_notes || '';
-            diagnosis.value = selectedBookingDetail.value?.diagnosis || '';
-            treatmentPerformed.value = selectedBookingDetail.value?.treatment_performed || '';
-          } else {
-            // Non-doctor mode: use single notes field
-            clinicalNotesText.value = selectedBookingDetail.value?.clinical_notes || '';
+        // Open intake notes modal
+        const openIntakeNotesModal = () => {
+          showIntakeNotesModal.value = true;
+          // Load current booking data into intake notes form
+          if (selectedBookingDetail.value) {
+            intakeNotesData.value = {
+              diagnosis: selectedBookingDetail.value?.diagnosis || '',
+              referring_doctor_id: selectedBookingDetail.value?.referring_doctor_id || null,
+              referring_doctor_name: selectedBookingDetail.value?.referring_doctor_name || '',
+              goal_of_care: selectedBookingDetail.value?.goal_of_care || '',
+              required_equipment: selectedBookingDetail.value?.required_equipment || '',
+              notes: selectedBookingDetail.value?.intake_notes || ''
+            };
           }
         };
 
-        // Close clinical notes modal
-        const closeClinicalNotesModal = () => {
-          showClinicalNotesModal.value = false;
-          clinicalNotesText.value = '';
-          clinicalObservations.value = '';
-          diagnosis.value = '';
-          treatmentPerformed.value = '';
+        // Close intake notes modal
+        const closeIntakeNotesModal = () => {
+          showIntakeNotesModal.value = false;
+          intakeNotesData.value = {
+            diagnosis: '',
+            referring_doctor_id: null,
+            referring_doctor_name: '',
+            goal_of_care: '',
+            required_equipment: '',
+            notes: ''
+          };
           capturedPhoto.value = null;
           photoPreviewUrl.value = null;
         };
@@ -1876,121 +1887,63 @@ window.healthPWA = {
           }
         };
 
-        // Save clinical notes and photo
-        const saveClinicalNotes = async () => {
+        // Save intake notes
+        const saveIntakeNotes = async () => {
           try {
             if (!selectedBookingId.value) {
               console.error('No booking selected');
               return;
             }
 
-            // Determine validation based on user role
-            let hasNotes = false;
-            let requestData = {};
+            // Validate that at least one field has content
+            const hasContent =
+              (intakeNotesData.value.diagnosis && intakeNotesData.value.diagnosis.trim().length > 0) ||
+              (intakeNotesData.value.goal_of_care && intakeNotesData.value.goal_of_care.trim().length > 0) ||
+              (intakeNotesData.value.required_equipment && intakeNotesData.value.required_equipment.trim().length > 0) ||
+              (intakeNotesData.value.notes && intakeNotesData.value.notes.trim().length > 0);
 
-            if (currentUser.value.is_doctor) {
-              // Doctor mode: validate three fields
-              hasNotes =
-                (clinicalObservations.value && clinicalObservations.value.trim().length > 0) ||
-                (diagnosis.value && diagnosis.value.trim().length > 0) ||
-                (treatmentPerformed.value && treatmentPerformed.value.trim().length > 0);
-
-              requestData = {
-                clinical_notes: clinicalObservations.value,
-                diagnosis: diagnosis.value,
-                treatment_performed: treatmentPerformed.value,
-                medications_prescribed: '',
-                vital_signs: ''
-              };
-            } else {
-              // Non-doctor mode: validate single field
-              hasNotes = clinicalNotesText.value && clinicalNotesText.value.trim().length > 0;
-              requestData = {
-                clinical_notes: clinicalNotesText.value,
-                diagnosis: '',
-                treatment_performed: '',
-                medications_prescribed: '',
-                vital_signs: ''
-              };
-            }
-
-            const hasPhoto = capturedPhoto.value !== null;
-
-            if (!hasNotes && !hasPhoto) {
-              alert('Please provide clinical notes or take a photo before saving');
-              console.error('Please provide clinical notes or photo');
+            if (!hasContent) {
+              alert('Please fill in at least one field before saving');
               return;
             }
 
-            // Step 1: Upload photo if available
-            if (hasPhoto) {
-              console.log('Uploading photo...');
-              const photoFormData = new FormData();
-              photoFormData.append('image', capturedPhoto.value);
+            console.log('Saving intake notes...');
 
-              try {
-                const photoResponse = await fetch(`/health_pwa/api/fso/${selectedBookingId.value}/upload_image`, {
-                  method: 'POST',
-                  body: photoFormData
-                });
+            const requestData = {
+              diagnosis: intakeNotesData.value.diagnosis,
+              referring_doctor_id: intakeNotesData.value.referring_doctor_id,
+              goal_of_care: intakeNotesData.value.goal_of_care,
+              required_equipment: intakeNotesData.value.required_equipment,
+              intake_notes: intakeNotesData.value.notes
+            };
 
-                const photoResult = await photoResponse.text();
-                let parsedPhotoResult;
-                try {
-                  parsedPhotoResult = JSON.parse(photoResult);
-                } catch (e) {
-                  console.warn('Photo upload response parsing issue:', photoResult);
-                }
+            const response = await fetch(`/health_pwa/api/fso/${selectedBookingId.value}/intake_notes`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify(requestData)
+            });
 
-                if (photoResponse.ok) {
-                  console.log('Photo uploaded successfully');
-                } else {
-                  console.warn('Photo upload returned non-200 status:', photoResponse.status);
-                  alert('Warning: Photo upload failed but clinical notes will still be saved');
-                }
-              } catch (photoErr) {
-                console.warn('Error uploading photo:', photoErr);
-                // Don't stop the process if photo upload fails - continue with notes
-              }
+            const responseText = await response.text();
+            let result;
+            try {
+              result = JSON.parse(responseText);
+            } catch (e) {
+              console.error('Failed to parse response:', responseText);
+              throw new Error('Invalid server response');
             }
 
-            // Step 2: Save clinical notes if text is provided
-            if (hasNotes) {
-              console.log('Saving clinical notes...');
-
-              const response = await fetch(`/health_pwa/api/fso/${selectedBookingId.value}/clinical_notes`, {
-                method: 'POST',
-                headers: {
-                  'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(requestData)
-              });
-
-              const responseText = await response.text();
-              let result;
-              try {
-                result = JSON.parse(responseText);
-              } catch (e) {
-                console.error('Failed to parse response:', responseText);
-                throw new Error('Invalid server response');
-              }
-
-              if (!response.ok || !result.data) {
-                throw new Error(result.error || 'Failed to save clinical notes');
-              }
-
-              console.log('Clinical notes saved successfully');
+            if (!response.ok || !result.success) {
+              throw new Error(result.error || 'Failed to save intake notes');
             }
 
-            // Step 3: Update UI and close modal on success
-            if (selectedBookingDetail.value && hasNotes) {
-              selectedBookingDetail.value.clinical_notes = clinicalNotesText.value;
-            }
-            alert('Clinical notes saved successfully');
-            closeClinicalNotesModal();
+            console.log('Intake notes saved successfully');
+            alert('Intake notes saved successfully');
+            closeIntakeNotesModal();
           } catch (err) {
-            console.error('Error saving clinical notes:', err);
-            alert('Error saving clinical notes: ' + err.message);
+            console.error('Error saving intake notes:', err);
+            alert('Error saving intake notes: ' + err.message);
           }
         };
 
@@ -2392,18 +2345,16 @@ window.healthPWA = {
           toggleIntakeSummaryModal,
           // Service start and clinical notes
           serviceStartedForBooking,
-          showClinicalNotesModal,
-          clinicalNotesText,
-          clinicalObservations,  // Doctor-specific field
-          diagnosis,  // Doctor-specific field
-          treatmentPerformed,  // Doctor-specific field
           capturedPhoto,
           photoPreviewUrl,
           startService,
-          openClinicalNotesModal,
-          closeClinicalNotesModal,
+          showIntakeNotesModal,
+          showReferringDoctorDropdown,
+          intakeNotesData,
+          openIntakeNotesModal,
+          closeIntakeNotesModal,
           capturePhoto,
-          saveClinicalNotes,
+          saveIntakeNotes,
           completeServiceWithoutQuoteInTodayView,
           // Timer and invoice
           timerInterval,
@@ -2736,9 +2687,9 @@ window.healthPWA = {
 
                 <!-- After service start or when already in progress -->
                 <div v-if="serviceStartedForBooking === selectedBookingId || selectedBookingDetail?.state === 'in_progress'" class="modal-footer-content">
-                  <button @click="openClinicalNotesModal" class="btn btn-clinical-notes">
-                    <i class="material-icons">description</i>
-                    <span>Clinical Notes</span>
+                  <button @click="openIntakeNotesModal" class="btn btn-intake-notes">
+                    <i class="material-icons">edit_note</i>
+                    <span>Intake Notes</span>
                   </button>
                   <!-- Verify Invoice Button (always visible, disabled when no quote or clinical notes incomplete) -->
                   <button @click="openInvoiceModal"
@@ -2822,96 +2773,89 @@ window.healthPWA = {
           </div>
         </div>
 
-        <!-- Clinical Notes Modal -->
-        <div v-if="showClinicalNotesModal && selectedBookingDetail" class="modal-backdrop" @click="closeClinicalNotesModal">
-          <div class="clinical-notes-modal" @click.stop>
+        <!-- Intake Notes Modal -->
+        <div v-if="showIntakeNotesModal && selectedBookingDetail" class="modal-backdrop" @click="closeIntakeNotesModal">
+          <div class="intake-notes-modal" @click.stop>
             <!-- Modal header -->
             <div class="modal-header">
-              <h3 class="modal-title">{{ currentUser.is_doctor ? 'Clinical Notes' : 'Clinical Notes' }}</h3>
-              <button @click="closeClinicalNotesModal" class="btn-modal-close">
+              <button @click="closeIntakeNotesModal" class="btn-nav-arrow">
+                <i class="material-icons">chevron_left</i>
+              </button>
+              <h3 class="modal-title">Intake Notes</h3>
+              <button @click="closeIntakeNotesModal" class="btn-modal-close">
                 <i class="material-icons">close</i>
               </button>
             </div>
 
             <!-- Modal content -->
             <div class="modal-body">
-              <!-- Doctor mode: Three separate fields -->
-              <template v-if="currentUser.is_doctor">
-                <!-- Clinical Observations -->
-                <div class="clinical-form-group">
-                  <label class="clinical-form-label">Clinical Observations</label>
-                  <textarea
-                    v-model="clinicalObservations"
-                    class="clinical-form-field"
-                    placeholder="Enter clinical observations..."
-                    rows="4"></textarea>
-                </div>
+              <!-- Diagnosis -->
+              <div class="intake-form-group">
+                <label class="intake-form-label">Diagnosis</label>
+                <textarea
+                  v-model="intakeNotesData.diagnosis"
+                  class="intake-form-field"
+                  placeholder="Enter diagnosis..."
+                  rows="3"></textarea>
+              </div>
 
-                <!-- Diagnosis -->
-                <div class="clinical-form-group">
-                  <label class="clinical-form-label">Diagnosis</label>
-                  <textarea
-                    v-model="diagnosis"
-                    class="clinical-form-field"
-                    placeholder="Enter diagnosis..."
-                    rows="4"></textarea>
+              <!-- Referring Doctor -->
+              <div class="intake-form-group">
+                <label class="intake-form-label">Referring Doctor</label>
+                <input
+                  v-model="intakeNotesData.referring_doctor_name"
+                  type="text"
+                  class="intake-form-field"
+                  placeholder="Select referring doctor..."
+                  readonly
+                  @click="showReferringDoctorDropdown = !showReferringDoctorDropdown" />
+                <!-- Simple dropdown for referring doctor -->
+                <div v-if="showReferringDoctorDropdown" class="dropdown-list">
+                  <div class="dropdown-item" @click="intakeNotesData.referring_doctor_id = null; intakeNotesData.referring_doctor_name = ''; showReferringDoctorDropdown = false">
+                    Clear Selection
+                  </div>
+                  <!-- Note: This would be populated from a list of healthcare contacts -->
+                  <div class="dropdown-item" @click="showReferringDoctorDropdown = false">
+                    (Add healthcare contacts from backend)
+                  </div>
                 </div>
+              </div>
 
-                <!-- Treatment Performed -->
-                <div class="clinical-form-group">
-                  <label class="clinical-form-label">Treatment Performed</label>
-                  <textarea
-                    v-model="treatmentPerformed"
-                    class="clinical-form-field"
-                    placeholder="Describe treatment provided..."
-                    rows="4"></textarea>
-                </div>
-              </template>
+              <!-- Goal of Care -->
+              <div class="intake-form-group">
+                <label class="intake-form-label">Goal of Care</label>
+                <textarea
+                  v-model="intakeNotesData.goal_of_care"
+                  class="intake-form-field"
+                  placeholder="Enter goal of care..."
+                  rows="3"></textarea>
+              </div>
 
-              <!-- Non-doctor mode: Single notes field -->
-              <template v-else>
-                <div class="clinical-form-group">
-                  <label class="clinical-form-label">Notes</label>
-                  <textarea
-                    v-model="clinicalNotesText"
-                    class="clinical-form-field"
-                    placeholder="Enter clinical notes..."
-                    rows="6"></textarea>
-                </div>
-              </template>
+              <!-- Required Equipment -->
+              <div class="intake-form-group">
+                <label class="intake-form-label">Required Equipment</label>
+                <textarea
+                  v-model="intakeNotesData.required_equipment"
+                  class="intake-form-field"
+                  placeholder="Enter required equipment..."
+                  rows="3"></textarea>
+              </div>
 
-              <!-- Photo capture section (for both modes) -->
-              <div class="clinical-form-group">
-                <label class="clinical-form-label">Attach Photo</label>
-                <div class="photo-upload-container">
-                  <input
-                    type="file"
-                    ref="photoInput"
-                    @change="capturePhoto"
-                    accept="image/*"
-                    capture="environment"
-                    class="photo-input"
-                  />
-                  <button @click="$refs.photoInput?.click()" class="btn-photo-capture">
-                    <i class="material-icons">camera_alt</i>
-                    <span>Take Photo</span>
-                  </button>
-                </div>
-
-                <!-- Photo preview -->
-                <div v-if="photoPreviewUrl" class="photo-preview">
-                  <img :src="photoPreviewUrl" alt="Preview" />
-                  <button @click="() => { capturedPhoto = null; photoPreviewUrl = null; }" class="btn-remove-photo">
-                    <i class="material-icons">close</i>
-                  </button>
-                </div>
+              <!-- Notes -->
+              <div class="intake-form-group">
+                <label class="intake-form-label">Notes</label>
+                <textarea
+                  v-model="intakeNotesData.notes"
+                  class="intake-form-field"
+                  placeholder="Enter additional notes..."
+                  rows="4"></textarea>
               </div>
             </div>
 
             <!-- Modal footer -->
-            <div class="clinical-modal-footer">
-              <button @click="closeClinicalNotesModal" class="btn btn-secondary">Cancel</button>
-              <button @click="saveClinicalNotes" class="btn btn-success">Save</button>
+            <div class="intake-modal-footer">
+              <button @click="closeIntakeNotesModal" class="btn btn-secondary">Cancel</button>
+              <button @click="saveIntakeNotes" class="btn btn-success">Save</button>
             </div>
           </div>
         </div>

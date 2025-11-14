@@ -258,7 +258,17 @@ class HealthFieldServiceOrderUnified(models.Model):
     service_requirements = fields.Text('Service Requirements', help='Specific requirements for this service')
     patient_notes = fields.Text('Patient Notes', help='client')
     special_requirements = fields.Text('Special Requirements', help='Accessibility, equipment, or other special needs')
-    
+
+    # Intake Notes Fields (editable at booking level - independent from patient record)
+    referring_doctor_id = fields.Many2one(
+        'res.partner',
+        string='Referring Doctor',
+        help='Contact who referred this patient'
+    )
+    goal_of_care = fields.Text('Goal of Care', help='Primary goal or objective of care for this booking')
+    required_equipment = fields.Text('Required Equipment', help='Equipment or supplies required for this service')
+    intake_notes = fields.Html('Intake Notes', help='Additional intake assessment notes')
+
     # Clinical Priority (From Client Requirements)
     priority = fields.Selection([
         ('0', 'Low'),
@@ -1120,12 +1130,12 @@ class HealthFieldServiceOrderUnified(models.Model):
     
     @api.onchange('patient_id')
     def _onchange_patient_id(self):
-        """Auto-populate customer and address when patient is selected"""
+        """Auto-populate customer, address, and intake fields when patient is selected"""
         if self.patient_id:
             # Set customer to patient if not already set
             if not self.customer_id:
                 self.customer_id = self.patient_id
-            
+
             # Auto-populate service address for home visits
             if self.service_location == 'home' and self.patient_id.street:
                 address_parts = [
@@ -1136,6 +1146,23 @@ class HealthFieldServiceOrderUnified(models.Model):
                     self.patient_id.zip,
                 ]
                 self.service_address = ', '.join(filter(None, address_parts))
+
+            # Auto-populate intake fields from patient record
+            # These fields remain independently editable in the FSO
+            if hasattr(self.patient_id, 'intake_diagnosis'):
+                self.diagnosis = self.patient_id.intake_diagnosis or ''
+
+            if hasattr(self.patient_id, 'intake_referring_doctor_id'):
+                self.referring_doctor_id = self.patient_id.intake_referring_doctor_id
+
+            if hasattr(self.patient_id, 'intake_goal_of_care'):
+                self.goal_of_care = self.patient_id.intake_goal_of_care or ''
+
+            if hasattr(self.patient_id, 'intake_required_equipment'):
+                self.required_equipment = self.patient_id.intake_required_equipment or ''
+
+            if hasattr(self.patient_id, 'intake_notes'):
+                self.intake_notes = self.patient_id.intake_notes or ''
     
     @api.onchange('service_type')
     def _onchange_service_type(self):

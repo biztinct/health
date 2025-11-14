@@ -363,6 +363,12 @@ class HealthPWAAPIController(http.Controller):
                 'treatment_performed': order.treatment_performed if hasattr(order, 'treatment_performed') else None,
                 'medications_prescribed': order.medications_prescribed if hasattr(order, 'medications_prescribed') else None,
                 'vital_signs': order.vital_signs if hasattr(order, 'vital_signs') else None,
+                # Intake notes fields
+                'referring_doctor_id': order.referring_doctor_id.id if hasattr(order, 'referring_doctor_id') and order.referring_doctor_id else None,
+                'referring_doctor_name': order.referring_doctor_id.name if hasattr(order, 'referring_doctor_id') and order.referring_doctor_id else None,
+                'goal_of_care': order.goal_of_care if hasattr(order, 'goal_of_care') else None,
+                'required_equipment': order.required_equipment if hasattr(order, 'required_equipment') else None,
+                'intake_notes': order.intake_notes if hasattr(order, 'intake_notes') else None,
                 'location': {
                     'lat': order.patient_id.partner_latitude if order.patient_id else None,
                     'lng': order.patient_id.partner_longitude if order.patient_id else None,
@@ -765,6 +771,56 @@ class HealthPWAAPIController(http.Controller):
             })
 
         except Exception as e:
+            return self._prepare_json_response(error=str(e), status_code=500)
+
+    @http.route('/health_pwa/api/fso/<int:order_id>/intake_notes', type='http', auth='user', methods=['POST'], csrf=False)
+    def api_fso_save_intake_notes(self, order_id, **kwargs):
+        """Save intake notes for FSO from mobile app"""
+        if not self._check_api_access():
+            return self._prepare_json_response(error='Access denied', status_code=403)
+
+        try:
+            order = request.env['health.fieldservice.order'].browse(order_id)
+
+            if not order.exists():
+                return self._prepare_json_response(error='Order not found', status_code=404)
+
+            # Get intake notes from request body
+            import json as json_module
+            try:
+                data = json_module.loads(request.httprequest.data.decode('utf-8')) if request.httprequest.data else {}
+            except:
+                data = {}
+
+            diagnosis = data.get('diagnosis', '')
+            referring_doctor_id = data.get('referring_doctor_id')
+            goal_of_care = data.get('goal_of_care', '')
+            required_equipment = data.get('required_equipment', '')
+            intake_notes = data.get('intake_notes', '')
+
+            # Update order
+            update_vals = {}
+            if diagnosis:
+                update_vals['diagnosis'] = diagnosis
+            if referring_doctor_id:
+                update_vals['referring_doctor_id'] = referring_doctor_id
+            if goal_of_care:
+                update_vals['goal_of_care'] = goal_of_care
+            if required_equipment:
+                update_vals['required_equipment'] = required_equipment
+            if intake_notes:
+                update_vals['intake_notes'] = intake_notes
+
+            if update_vals:
+                order.write(update_vals)
+
+            return self._prepare_json_response(success=True, data={
+                'message': 'Intake notes saved successfully',
+                'order_id': order.id
+            })
+
+        except Exception as e:
+            _logger.error(f'Error saving intake notes: {str(e)}')
             return self._prepare_json_response(error=str(e), status_code=500)
 
     @http.route('/health_pwa/api/fso/<int:order_id>/upload_image', type='http', auth='user', methods=['POST'], csrf=False)
