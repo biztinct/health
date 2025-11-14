@@ -2747,32 +2747,32 @@ window.healthPWA = {
               <div class="intake-form-group">
                 <div class="intake-form-header">
                   <label class="intake-form-label">Referring Doctor</label>
-                  <button v-if="selectedBookingDetail.assigned_user && selectedBookingDetail.assigned_user.name"
-                    @click="callPatient(selectedBookingDetail.primary_contact?.phone)"
+                  <button v-if="selectedBookingDetail.referring_doctor_name"
+                    @click="callPatient(selectedBookingDetail.referring_doctor_phone || '')"
                     class="btn-icon-action btn-icon-call-small"
-                    title="Call">
+                    title="Call Referring Doctor">
                     <i class="material-icons">call</i>
                   </button>
                 </div>
-                <p class="intake-form-value">{{ selectedBookingDetail.assigned_user?.name || 'N/A' }}</p>
+                <p class="intake-form-value">{{ selectedBookingDetail.referring_doctor_name || 'N/A' }}</p>
               </div>
 
               <!-- Goal of Care -->
               <div class="intake-form-group">
                 <label class="intake-form-label">Goal of Care</label>
-                <textarea class="intake-form-field" v-model="selectedBookingDetail.treatment_performed" placeholder="Type here..." readonly></textarea>
+                <textarea class="intake-form-field" v-model="selectedBookingDetail.goal_of_care" placeholder="Type here..." readonly></textarea>
               </div>
 
               <!-- Required Equipment -->
               <div class="intake-form-group">
                 <label class="intake-form-label">Required Equipment</label>
-                <textarea class="intake-form-field" v-model="selectedBookingDetail.medications_prescribed" placeholder="Type here..." readonly></textarea>
+                <textarea class="intake-form-field" v-model="selectedBookingDetail.required_equipment" placeholder="Type here..." readonly></textarea>
               </div>
 
-              <!-- Notes -->
+              <!-- Intake Notes -->
               <div class="intake-form-group">
-                <label class="intake-form-label">Notes</label>
-                <textarea class="intake-form-field" v-model="selectedBookingDetail.clinical_notes" placeholder="Type here..." readonly></textarea>
+                <label class="intake-form-label">Intake Notes</label>
+                <textarea class="intake-form-field" v-model="selectedBookingDetail.intake_notes" placeholder="Type here..." readonly></textarea>
               </div>
             </div>
           </div>

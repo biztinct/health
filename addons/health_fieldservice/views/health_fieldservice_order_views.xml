@@ -269,7 +269,7 @@
                             </group>
                             <group>
                                 <group string="MOH Compliance - Diagnosis">
-                                    <field name="diagnosis" widget="html" nolabel="1" placeholder="Enter medical diagnosis (Chuẩn đoán)..."/>
+                                    <field name="diagnosis" nolabel="1" placeholder="Enter medical diagnosis (Chuẩn đoán)..."/>
                                 </group>
                             </group>
                             <group>

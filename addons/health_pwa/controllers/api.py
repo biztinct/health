@@ -366,6 +366,7 @@ class HealthPWAAPIController(http.Controller):
                 # Intake notes fields
                 'referring_doctor_id': order.referring_doctor_id.id if hasattr(order, 'referring_doctor_id') and order.referring_doctor_id else None,
                 'referring_doctor_name': order.referring_doctor_id.name if hasattr(order, 'referring_doctor_id') and order.referring_doctor_id else None,
+                'referring_doctor_phone': order.referring_doctor_id.mobile or order.referring_doctor_id.phone if hasattr(order, 'referring_doctor_id') and order.referring_doctor_id else None,
                 'goal_of_care': order.goal_of_care if hasattr(order, 'goal_of_care') else None,
                 'required_equipment': order.required_equipment if hasattr(order, 'required_equipment') else None,
                 'intake_notes': order.intake_notes if hasattr(order, 'intake_notes') else None,
