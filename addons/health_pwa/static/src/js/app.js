@@ -1296,6 +1296,9 @@ window.healthPWA = {
         const serviceStartedForBooking = ref(null); // Stores which booking has service started
         const showClinicalNotesModal = ref(false);
         const clinicalNotesText = ref('');
+        const clinicalObservations = ref('');  // Doctor-specific field
+        const diagnosis = ref('');  // Doctor-specific field
+        const treatmentPerformed = ref('');  // Doctor-specific field
         const capturedPhoto = ref(null);
         const photoPreviewUrl = ref(null);
 
@@ -1377,7 +1380,8 @@ window.healthPWA = {
           name: 'Loading...',
           employee_id: null,
           employee_name: '',
-          timezone: 'UTC'
+          timezone: 'UTC',
+          is_doctor: false
         });
 
         // Load product catalog
@@ -1839,13 +1843,24 @@ window.healthPWA = {
         // Open clinical notes modal
         const openClinicalNotesModal = () => {
           showClinicalNotesModal.value = true;
-          clinicalNotesText.value = selectedBookingDetail.value?.clinical_notes || '';
+          if (currentUser.value.is_doctor) {
+            // Doctor mode: populate three separate fields
+            clinicalObservations.value = selectedBookingDetail.value?.clinical_notes || '';
+            diagnosis.value = selectedBookingDetail.value?.diagnosis || '';
+            treatmentPerformed.value = selectedBookingDetail.value?.treatment_performed || '';
+          } else {
+            // Non-doctor mode: use single notes field
+            clinicalNotesText.value = selectedBookingDetail.value?.clinical_notes || '';
+          }
         };
 
         // Close clinical notes modal
         const closeClinicalNotesModal = () => {
           showClinicalNotesModal.value = false;
           clinicalNotesText.value = '';
+          clinicalObservations.value = '';
+          diagnosis.value = '';
+          treatmentPerformed.value = '';
           capturedPhoto.value = null;
           photoPreviewUrl.value = null;
         };
@@ -1869,8 +1884,36 @@ window.healthPWA = {
               return;
             }
 
-            // Validate that at least clinical notes or photo is provided
-            const hasNotes = clinicalNotesText.value && clinicalNotesText.value.trim().length > 0;
+            // Determine validation based on user role
+            let hasNotes = false;
+            let requestData = {};
+
+            if (currentUser.value.is_doctor) {
+              // Doctor mode: validate three fields
+              hasNotes =
+                (clinicalObservations.value && clinicalObservations.value.trim().length > 0) ||
+                (diagnosis.value && diagnosis.value.trim().length > 0) ||
+                (treatmentPerformed.value && treatmentPerformed.value.trim().length > 0);
+
+              requestData = {
+                clinical_notes: clinicalObservations.value,
+                diagnosis: diagnosis.value,
+                treatment_performed: treatmentPerformed.value,
+                medications_prescribed: '',
+                vital_signs: ''
+              };
+            } else {
+              // Non-doctor mode: validate single field
+              hasNotes = clinicalNotesText.value && clinicalNotesText.value.trim().length > 0;
+              requestData = {
+                clinical_notes: clinicalNotesText.value,
+                diagnosis: '',
+                treatment_performed: '',
+                medications_prescribed: '',
+                vital_signs: ''
+              };
+            }
+
             const hasPhoto = capturedPhoto.value !== null;
 
             if (!hasNotes && !hasPhoto) {
@@ -1914,13 +1957,6 @@ window.healthPWA = {
             // Step 2: Save clinical notes if text is provided
             if (hasNotes) {
               console.log('Saving clinical notes...');
-              const requestData = {
-                clinical_notes: clinicalNotesText.value,
-                diagnosis: '',
-                treatment_performed: '',
-                medications_prescribed: '',
-                vital_signs: ''
-              };
 
               const response = await fetch(`/health_pwa/api/fso/${selectedBookingId.value}/clinical_notes`, {
                 method: 'POST',
@@ -2358,6 +2394,9 @@ window.healthPWA = {
           serviceStartedForBooking,
           showClinicalNotesModal,
           clinicalNotesText,
+          clinicalObservations,  // Doctor-specific field
+          diagnosis,  // Doctor-specific field
+          treatmentPerformed,  // Doctor-specific field
           capturedPhoto,
           photoPreviewUrl,
           startService,
@@ -2788,7 +2827,7 @@ window.healthPWA = {
           <div class="clinical-notes-modal" @click.stop>
             <!-- Modal header -->
             <div class="modal-header">
-              <h3 class="modal-title">Clinical Notes</h3>
+              <h3 class="modal-title">{{ currentUser.is_doctor ? 'Clinical Notes' : 'Clinical Notes' }}</h3>
               <button @click="closeClinicalNotesModal" class="btn-modal-close">
                 <i class="material-icons">close</i>
               </button>
@@ -2796,17 +2835,52 @@ window.healthPWA = {
 
             <!-- Modal content -->
             <div class="modal-body">
-              <!-- Notes textarea -->
-              <div class="clinical-form-group">
-                <label class="clinical-form-label">Notes</label>
-                <textarea
-                  v-model="clinicalNotesText"
-                  class="clinical-form-field"
-                  placeholder="Enter clinical notes..."
-                  rows="6"></textarea>
-              </div>
+              <!-- Doctor mode: Three separate fields -->
+              <template v-if="currentUser.is_doctor">
+                <!-- Clinical Observations -->
+                <div class="clinical-form-group">
+                  <label class="clinical-form-label">Clinical Observations</label>
+                  <textarea
+                    v-model="clinicalObservations"
+                    class="clinical-form-field"
+                    placeholder="Enter clinical observations..."
+                    rows="4"></textarea>
+                </div>
 
-              <!-- Photo capture section -->
+                <!-- Diagnosis -->
+                <div class="clinical-form-group">
+                  <label class="clinical-form-label">Diagnosis</label>
+                  <textarea
+                    v-model="diagnosis"
+                    class="clinical-form-field"
+                    placeholder="Enter diagnosis..."
+                    rows="4"></textarea>
+                </div>
+
+                <!-- Treatment Performed -->
+                <div class="clinical-form-group">
+                  <label class="clinical-form-label">Treatment Performed</label>
+                  <textarea
+                    v-model="treatmentPerformed"
+                    class="clinical-form-field"
+                    placeholder="Describe treatment provided..."
+                    rows="4"></textarea>
+                </div>
+              </template>
+
+              <!-- Non-doctor mode: Single notes field -->
+              <template v-else>
+                <div class="clinical-form-group">
+                  <label class="clinical-form-label">Notes</label>
+                  <textarea
+                    v-model="clinicalNotesText"
+                    class="clinical-form-field"
+                    placeholder="Enter clinical notes..."
+                    rows="6"></textarea>
+                </div>
+              </template>
+
+              <!-- Photo capture section (for both modes) -->
               <div class="clinical-form-group">
                 <label class="clinical-form-label">Attach Photo</label>
                 <div class="photo-upload-container">

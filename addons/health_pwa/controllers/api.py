@@ -1663,6 +1663,13 @@ class HealthPWAAPIController(http.Controller):
                 ('user_id', '=', user.id)
             ], limit=1)
 
+            # Check if user is a doctor by checking healthcare_role field
+            is_doctor = False
+            if employee:
+                # Check if healthcare_role field exists and is set to 'doctor'
+                if hasattr(employee, 'healthcare_role') and employee.healthcare_role:
+                    is_doctor = employee.healthcare_role.lower() == 'doctor'
+
             user_data = {
                 'id': user.id,
                 'name': user.name,
@@ -1670,6 +1677,7 @@ class HealthPWAAPIController(http.Controller):
                 'employee_id': employee.id if employee else None,
                 'employee_name': employee.name if employee else user.name,
                 'timezone': user.tz or 'UTC',  # User's timezone for proper datetime handling
+                'is_doctor': is_doctor,  # True if user is a doctor
             }
 
             return self._prepare_json_response(data=user_data)
