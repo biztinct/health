@@ -61,7 +61,18 @@ class ResPartner(models.Model):
     
     allergies = fields.Text('Known Allergies')
     medical_history = fields.Text('Medical History Summary')
-    
+
+    # Intake Notes Fields
+    intake_diagnosis = fields.Text('Diagnosis', help='Medical diagnosis from intake')
+    intake_referring_doctor_id = fields.Many2one(
+        'res.partner',
+        string='Referring Doctor',
+        help='Contact who referred this patient'
+    )
+    intake_goal_of_care = fields.Text('Goal of Care', help='Primary goal or objective of care')
+    intake_required_equipment = fields.Text('Required Equipment', help='Equipment or supplies required for care')
+    intake_notes = fields.Text('Intake Notes', help='Additional notes from intake assessment')
+
     # Emergency Contact Information
     emergency_contact_name = fields.Char('Emergency Contact Name')
     emergency_contact_phone = fields.Char('Emergency Contact Phone')

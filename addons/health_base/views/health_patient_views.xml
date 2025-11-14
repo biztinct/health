@@ -172,6 +172,25 @@
                             </group>
                         </page>
 
+                        <!-- Intake Notes -->
+                        <page string="Intake Notes" name="intake_notes">
+                            <group>
+                                <group string="Assessment Information">
+                                    <field name="intake_diagnosis" placeholder="Medical diagnosis and assessment findings" nolabel="1"/>
+                                </group>
+
+                                <group string="Care Planning">
+                                    <field name="intake_referring_doctor_id" placeholder="Select referring doctor or contact" options="{'no_create': True}"/>
+                                    <field name="intake_goal_of_care" placeholder="Primary goal or objective of care"/>
+                                    <field name="intake_required_equipment" placeholder="Equipment or supplies required for care"/>
+                                </group>
+
+                                <group string="Additional Notes">
+                                    <field name="intake_notes" placeholder="Additional intake assessment notes and observations" nolabel="1"/>
+                                </group>
+                            </group>
+                        </page>
+
                         <!-- Insurance & Billing -->
                         <page string="Insurance &amp; Billing" name="insurance_billing">
                             <group>

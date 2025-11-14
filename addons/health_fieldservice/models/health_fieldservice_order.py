@@ -254,7 +254,7 @@ class HealthFieldServiceOrderUnified(models.Model):
     
     # Service Requirements & Notes
     symptoms = fields.Text('Symptoms/Chief Complaint', help='client\'s reported symptoms or reason for visit')
-    diagnosis = fields.Html('Diagnosis', help='Medical diagnosis (Chuẩn đoán) - MOH compliance field')
+    diagnosis = fields.Text('Diagnosis', help='Medical diagnosis (Chuẩn đoán) - MOH compliance field')
     service_requirements = fields.Text('Service Requirements', help='Specific requirements for this service')
     patient_notes = fields.Text('Patient Notes', help='client')
     special_requirements = fields.Text('Special Requirements', help='Accessibility, equipment, or other special needs')
@@ -267,7 +267,7 @@ class HealthFieldServiceOrderUnified(models.Model):
     )
     goal_of_care = fields.Text('Goal of Care', help='Primary goal or objective of care for this booking')
     required_equipment = fields.Text('Required Equipment', help='Equipment or supplies required for this service')
-    intake_notes = fields.Html('Intake Notes', help='Additional intake assessment notes')
+    intake_notes = fields.Text('Intake Notes', help='Additional intake assessment notes')
 
     # Clinical Priority (From Client Requirements)
     priority = fields.Selection([
@@ -1149,20 +1149,14 @@ class HealthFieldServiceOrderUnified(models.Model):
 
             # Auto-populate intake fields from patient record
             # These fields remain independently editable in the FSO
-            if hasattr(self.patient_id, 'intake_diagnosis'):
-                self.diagnosis = self.patient_id.intake_diagnosis or ''
-
-            if hasattr(self.patient_id, 'intake_referring_doctor_id'):
+            try:
+                self.diagnosis = self.patient_id.intake_diagnosis
                 self.referring_doctor_id = self.patient_id.intake_referring_doctor_id
-
-            if hasattr(self.patient_id, 'intake_goal_of_care'):
-                self.goal_of_care = self.patient_id.intake_goal_of_care or ''
-
-            if hasattr(self.patient_id, 'intake_required_equipment'):
-                self.required_equipment = self.patient_id.intake_required_equipment or ''
-
-            if hasattr(self.patient_id, 'intake_notes'):
-                self.intake_notes = self.patient_id.intake_notes or ''
+                self.goal_of_care = self.patient_id.intake_goal_of_care
+                self.required_equipment = self.patient_id.intake_required_equipment
+                self.intake_notes = self.patient_id.intake_notes
+            except Exception as e:
+                _logger.warning(f"Error copying intake fields from patient: {str(e)}")
     
     @api.onchange('service_type')
     def _onchange_service_type(self):

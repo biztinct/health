@@ -295,6 +295,25 @@
                             </group>
                         </page>
 
+                        <page string="Intake Notes" name="intake_notes">
+                            <group>
+                                <group string="Referring Information">
+                                    <field name="referring_doctor_id" placeholder="Select referring doctor or contact" options="{'no_create': True}"/>
+                                </group>
+                            </group>
+                            <group>
+                                <group string="Care Planning">
+                                    <field name="goal_of_care" placeholder="Primary goal or objective of care"/>
+                                    <field name="required_equipment" placeholder="Equipment or supplies required for care"/>
+                                </group>
+                            </group>
+                            <group>
+                                <group string="Additional Notes">
+                                    <field name="intake_notes" nolabel="1" placeholder="Additional intake assessment notes and observations"/>
+                                </group>
+                            </group>
+                        </page>
+
                         <page string="Real-time Communication" name="communication">
                             <field name="communication_ids" readonly="1">
                                 <list string="Communications" create="false">
