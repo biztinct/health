@@ -1248,6 +1248,8 @@ window.healthPWA = {
 
             if (result.success && result.data) {
               selectedBookingDetail.value = result.data;
+              // Initialize clinical notes text from loaded booking
+              clinicalNotesText.value = result.data.clinical_notes || '';
               console.log('Loaded booking detail:', result.data);
             } else {
               detailError.value = result.error || 'Failed to load booking details';
@@ -1267,6 +1269,7 @@ window.healthPWA = {
             // Close if already open
             selectedBookingId.value = null;
             selectedBookingDetail.value = null;
+            clinicalNotesText.value = '';
           } else {
             // Open and fetch details
             selectedBookingId.value = bookingId;
@@ -1306,6 +1309,7 @@ window.healthPWA = {
         });
         const capturedPhoto = ref(null);
         const photoPreviewUrl = ref(null);
+        const clinicalNotesText = ref('');
 
         // Timer state
         const timerInterval = ref(null);
@@ -2347,6 +2351,7 @@ window.healthPWA = {
           serviceStartedForBooking,
           capturedPhoto,
           photoPreviewUrl,
+          clinicalNotesText,
           startService,
           showIntakeNotesModal,
           showReferringDoctorDropdown,
