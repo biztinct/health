@@ -111,6 +111,9 @@ class HealthStaffAssignment(models.Model):
     # Formatted datetime for timeline display (e.g., "21/Oct - 10:30 AM")
     formatted_datetime = fields.Char('Formatted DateTime', compute='_compute_formatted_datetime', store=False)
 
+    # Formatted time only for timeline display (e.g., "09:30 AM")
+    formatted_time = fields.Char('Formatted Time', compute='_compute_formatted_time', store=False)
+
     # Duration from FSO for timeline display
     fso_duration_minutes = fields.Integer('Service Duration (Minutes)', compute='_compute_fso_duration', store=False)
     
@@ -336,6 +339,21 @@ class HealthStaffAssignment(models.Model):
                 record.formatted_datetime = local_dt.strftime('%d/%b-%I:%M %p')
             else:
                 record.formatted_datetime = ''
+
+    @api.depends('planned_start_time', 'assignment_date')
+    def _compute_formatted_time(self):
+        """Format time only as '09:30 AM' for timeline display"""
+        for record in self:
+            dt = record.planned_start_time or record.assignment_date
+            if dt:
+                # Convert to user's timezone
+                user_tz = self.env.user.tz or 'UTC'
+                from pytz import timezone
+                local_dt = dt.replace(tzinfo=timezone('UTC')).astimezone(timezone(user_tz))
+                # Format: "09:30 AM" (time only, no date)
+                record.formatted_time = local_dt.strftime('%I:%M %p')
+            else:
+                record.formatted_time = ''
 
     @api.depends('fso_id.scheduled_duration')
     def _compute_fso_duration(self):

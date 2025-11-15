@@ -36,6 +36,7 @@
                 <field name="planned_end_time"/>
                 <field name="predicted_duration"/>
                 <field name="formatted_datetime"/>
+                <field name="formatted_time"/>
                 <field name="fso_duration_minutes"/>
                 
                 <templates>
@@ -45,7 +46,7 @@
             <div class="hf-wt-title"><t t-esc="record.patient_name or 'Client'"/></div>
             <div class="hf-wt-meta">
                 <t t-set="dur" t-value="record.fso_duration_minutes or 0"/>
-                <span><t t-esc="record.formatted_datetime"/> (<t t-esc="dur"/> min)</span>
+                <span><t t-esc="record.formatted_time"/> (<t t-esc="dur"/> min)</span>
             </div>
         </div>
                     </t>

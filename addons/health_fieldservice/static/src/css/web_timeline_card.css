@@ -6,11 +6,19 @@
     gap: 6px;
     padding: 8px 10px;
     background: #fff;
-    border: 1px solid rgba(0,0,0,0.06);
+    border: 2px solid #3b82f6;
     border-radius: 10px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    box-shadow: 0 2px 8px rgba(59, 130, 246, 0.2);
     max-width: 320px;
     line-height: 1.25;
+    transition: all 0.2s ease;
+}
+
+/* Hover effect - scale and stronger shadow */
+.hf-wt-card:hover {
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 4px 16px rgba(59, 130, 246, 0.4);
+    border-color: #2563eb;
 }
 .hf-wt-title { 
     font-size: 14px; 
@@ -62,4 +70,22 @@
 
 .o_timeline_view .vis-item.vis-range .vis-item-content {
     width: 100%;
+}
+
+/* Week/Month view: Ensure minimum width for visibility */
+/* When timeline is in week view (showing 7+ days), make items span more space */
+.o_timeline_view .vis-item.vis-range {
+    min-width: 120px !important;
+}
+
+/* For very zoomed out views (month view), make cards even wider */
+.o_timeline_view[data-mode="month"] .vis-item.vis-range,
+.o_timeline_view .vis-timeline-group .vis-item.vis-range {
+    min-width: 200px !important;
+}
+
+/* Ensure card content is visible and doesn't get compressed */
+.o_timeline_view .vis-item.vis-range .hf-wt-card {
+    min-width: 280px;
+    white-space: normal;
 }
