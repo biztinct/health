@@ -79,12 +79,32 @@ class HealthStaffAssignment(models.Model):
        help='Role of this staff member in the service delivery')
 
     # Assignment metadata
-    assignment_date = fields.Datetime('Assignment Date', default=fields.Datetime.now, required=True)
+    assignment_date = fields.Datetime(
+        'Assignment Date',
+        compute='_compute_assignment_date',
+        store=True,
+        readonly=False,
+        default=fields.Datetime.now,
+        required=True,
+        help='Auto-synced with FSO scheduled_datetime when FSO is present'
+    )
     assigned_by = fields.Many2one('res.users', string='Assigned By', default=lambda self: self.env.user)
     
     # Individual timing for this staff member
-    planned_start_time = fields.Datetime('Planned Start Time', help='When this staff member should start')
-    planned_end_time = fields.Datetime('Planned End Time', help='When this staff member should finish')
+    planned_start_time = fields.Datetime(
+        'Planned Start Time',
+        compute='_compute_planned_start_time',
+        store=True,
+        readonly=False,
+        help='Auto-populated from FSO scheduled_datetime (can be manually overridden)'
+    )
+    planned_end_time = fields.Datetime(
+        'Planned End Time',
+        compute='_compute_planned_end_time',
+        store=True,
+        readonly=False,
+        help='Auto-calculated from planned_start_time + FSO scheduled_duration'
+    )
     actual_start_time = fields.Datetime('Actual Start Time', help='When this staff member actually started')
     actual_end_time = fields.Datetime('Actual End Time', help='When this staff member actually finished')
 
@@ -326,6 +346,41 @@ class HealthStaffAssignment(models.Model):
             else:
                 record.fso_duration_minutes = 60  # Default to 60 minutes if not set
 
+    @api.depends('fso_id.scheduled_datetime')
+    def _compute_assignment_date(self):
+        """Sync assignment_date with FSO's scheduled_datetime to prevent timeline override"""
+        for record in self:
+            # When FSO exists, always use its scheduled_datetime
+            # This prevents timeline click position from overriding FSO datetime
+            if record.fso_id and record.fso_id.scheduled_datetime:
+                record.assignment_date = record.fso_id.scheduled_datetime
+            # If no FSO and no assignment_date set, use current time
+            elif not record.assignment_date:
+                record.assignment_date = fields.Datetime.now()
+
+    @api.depends('fso_id.scheduled_datetime', 'assignment_date')
+    def _compute_planned_start_time(self):
+        """Auto-populate from FSO scheduled_datetime"""
+        for record in self:
+            if record.fso_id and record.fso_id.scheduled_datetime:
+                record.planned_start_time = record.fso_id.scheduled_datetime
+            elif record.assignment_date:
+                record.planned_start_time = record.assignment_date
+            else:
+                record.planned_start_time = False
+
+    @api.depends('planned_start_time', 'fso_id.scheduled_duration')
+    def _compute_planned_end_time(self):
+        """Auto-calculate planned end time = planned_start_time + FSO scheduled_duration"""
+        from datetime import timedelta
+        for record in self:
+            if record.planned_start_time:
+                # Use FSO's scheduled_duration if available, otherwise default to 60 minutes
+                duration_minutes = record.fso_id.scheduled_duration if record.fso_id and record.fso_id.scheduled_duration else 60
+                record.planned_end_time = record.planned_start_time + timedelta(minutes=duration_minutes)
+            else:
+                record.planned_end_time = False
+
     @api.depends('staff_id', 'fso_id')
     def _compute_assignment_score(self):
         """Calculate comprehensive assignment quality score"""
@@ -537,9 +592,25 @@ class HealthStaffAssignment(models.Model):
     @api.model_create_multi
     def create(self, vals_list):
         """Override create to handle sequence generation for batch and single records"""
+        from datetime import timedelta
+
         for vals in vals_list:
             if vals.get('name', _('New Assignment')) == _('New Assignment'):
                 vals['name'] = self.env['ir.sequence'].next_by_code('health.staff.assignment') or _('New Assignment')
+
+            # CRITICAL: If FSO is present, force datetime fields from FSO (ignore timeline click position)
+            if vals.get('fso_id'):
+                fso = self.env['health.fieldservice.order'].browse(vals['fso_id'])
+                if fso.scheduled_datetime:
+                    # Override any timeline-provided datetimes with FSO's actual datetime
+                    vals['assignment_date'] = fso.scheduled_datetime
+                    vals['planned_start_time'] = fso.scheduled_datetime
+
+                    # Calculate end time from FSO's scheduled_duration
+                    duration_minutes = fso.scheduled_duration if fso.scheduled_duration else 60
+                    vals['planned_end_time'] = fso.scheduled_datetime + timedelta(minutes=duration_minutes)
+
+                    _logger.info(f"✅ Forced assignment datetime from FSO: {fso.scheduled_datetime} (duration: {duration_minutes} min)")
 
             # Auto-assign state if staff are provided during creation
             if vals.get('staff_id') and vals.get('state', 'draft') == 'draft':
@@ -549,6 +620,30 @@ class HealthStaffAssignment(models.Model):
     
     def write(self, vals):
         """Override write to handle automatic state transitions and date changes"""
+        # CRITICAL: Protect FSO-linked assignments from timeline widget overrides
+        # When an assignment has an FSO, timeline should NOT override computed datetime fields
+        has_fso_records = any(record.fso_id for record in self)
+
+        if has_fso_records:
+            # Remove timeline-written datetime fields for FSO-linked assignments
+            # They'll be recomputed from FSO's scheduled_datetime and scheduled_duration
+            protected_fields = []
+
+            if 'assignment_date' in vals:
+                vals.pop('assignment_date')
+                protected_fields.append('assignment_date')
+
+            if 'planned_start_time' in vals:
+                vals.pop('planned_start_time')
+                protected_fields.append('planned_start_time')
+
+            if 'planned_end_time' in vals:
+                vals.pop('planned_end_time')
+                protected_fields.append('planned_end_time')
+
+            if protected_fields:
+                _logger.info(f"🛡️  Protected {', '.join(protected_fields)} from timeline override for FSO-linked assignments")
+
         # Handle assignment_date changes - always update booking, and other assignments if they exist
         # Skip this logic if we're updating other assignments (prevents infinite recursion)
         if 'assignment_date' in vals and vals['assignment_date'] and not self.env.context.get('skip_multi_assignment_update'):

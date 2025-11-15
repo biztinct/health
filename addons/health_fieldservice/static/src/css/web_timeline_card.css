@@ -29,6 +29,37 @@
 }
 .hf-wt-left, .hf-wt-right { display: flex; align-items: center; gap: 6px; }
 
-/* Safeguards to avoid affecting the connector line alignment */
-.o_timeline_view .vis-item .hf-wt-card { padding-top: 6px; padding-bottom: 6px; }
-.o_timeline_view .vis-item { border: none; background: transparent; } /* keep outer visuals neutral */
+/* Timeline item configuration for duration-based width */
+.o_timeline_view .vis-item .hf-wt-card {
+    padding-top: 6px;
+    padding-bottom: 6px;
+}
+
+/* Hide vertical connector line and ensure range display */
+.o_timeline_view .vis-item {
+    border: none !important;
+    background: transparent !important;
+    box-shadow: none !important;
+}
+
+/* Remove the vertical line that connects items to time axis */
+.o_timeline_view .vis-item.vis-line {
+    border-left: none !important;
+}
+
+.o_timeline_view .vis-item.vis-dot {
+    border: none !important;
+}
+
+/* Ensure range items (with start & end) display with proper width */
+.o_timeline_view .vis-item.vis-range {
+    border-radius: 0;
+}
+
+.o_timeline_view .vis-item.vis-range .vis-item-overflow {
+    overflow: visible;
+}
+
+.o_timeline_view .vis-item.vis-range .vis-item-content {
+    width: 100%;
+}

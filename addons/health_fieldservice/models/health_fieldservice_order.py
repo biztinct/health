@@ -2565,8 +2565,7 @@ class HealthFieldServiceOrderUnified(models.Model):
                 'fso_id': self.id,
                 'staff_id': False,
                 'assignment_date': self.scheduled_datetime or fields.Datetime.now(),
-                'planned_start_time': self.scheduled_datetime,
-                'planned_end_time': self.estimated_end_datetime,
+                # planned_start_time and planned_end_time are auto-computed from FSO
                 'assignment_status': 'assigned',
                 'state': 'template',
                 'assignment_type': self._get_assignment_type(),
