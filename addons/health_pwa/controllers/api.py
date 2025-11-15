@@ -615,7 +615,17 @@ class HealthPWAAPIController(http.Controller):
             # Handle invoice creation and payment
             message = 'Service completed successfully'
 
-            if create_invoice_now and order.sale_order_id:
+            # Check if invoice should be created (skip if amount is zero or prepaid)
+            should_create_invoice = create_invoice_now and order.sale_order_id
+            if should_create_invoice:
+                # Check if sale order total is zero - skip invoice if so
+                sale_order_total = order.sale_order_id.amount_total or 0.0
+                if sale_order_total <= 0.0:
+                    should_create_invoice = False
+                    message = 'Service completed - No invoice created (zero amount)'
+                    _logger.info(f'Skipping invoice creation for FSO {order.name} - Sale order total is zero')
+
+            if should_create_invoice:
                 # Confirm the sale order to create invoice
                 if order.sale_order_id.state in ['draft', 'sent']:
                     order.sale_order_id.action_confirm()
@@ -628,8 +638,8 @@ class HealthPWAAPIController(http.Controller):
                         # Post the invoice
                         order.invoice_id.action_post()
 
-            # Process payment based on choice
-            if payment_choice == 'pay_now' and payment_method:
+            # Process payment based on choice (only if invoice was created)
+            if payment_choice == 'pay_now' and payment_method and order.invoice_id:
                 # Create payment transaction record
                 try:
                     transaction_vals = {
@@ -654,9 +664,13 @@ class HealthPWAAPIController(http.Controller):
                 except Exception as e:
                     _logger.warning(f'Could not create payment transaction: {str(e)}')
                     message = f'Service completed - {payment_method.replace("_", " ").title()} payment noted'
-            else:
-                # Pay Later
+            elif payment_choice == 'pay_later' and order.invoice_id:
+                # Pay Later (only if invoice exists)
                 message = 'Service completed - Invoice will be sent for later payment'
+            elif not order.invoice_id:
+                # No invoice created (zero amount or prepaid)
+                if 'zero amount' not in message:
+                    message = 'Service completed - No payment required'
 
             return self._prepare_json_response(data={
                 'actual_end_datetime': order.actual_end_datetime,

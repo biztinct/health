@@ -204,8 +204,8 @@ class HealthNursePaymentWizard(models.TransientModel):
     @api.constrains('final_amount')
     def _check_final_amount(self):
         for wizard in self:
-            if wizard.final_amount <= 0:
-                raise ValidationError(_('Invoice amount must be positive.'))
+            if wizard.final_amount < 0:
+                raise ValidationError(_('Invoice amount cannot be negative.'))
     
     @api.constrains('payment_method', 'payment_proof_attachment_ids')
     def _check_payment_proof(self):
@@ -249,15 +249,17 @@ class HealthNursePaymentWizard(models.TransientModel):
                     '• Other Method'
                 ))
 
-        # Create invoice first
+        # Create invoice first (returns False if amount is zero)
         invoice = self._create_invoice()
-        
-        # Process payment based on choice
-        if self.payment_choice == 'pay_now':
-            transaction = self._process_pay_now(invoice)
-        else:
-            transaction = self._process_pay_later(invoice)
-        
+
+        # Process payment based on choice (only if invoice was created)
+        transaction = False
+        if invoice:
+            if self.payment_choice == 'pay_now':
+                transaction = self._process_pay_now(invoice)
+            else:
+                transaction = self._process_pay_later(invoice)
+
         # Find Completed stage
         completed_stage = self.env['health.fieldservice.stage'].search([
             ('state', '=', 'completed'),
@@ -267,24 +269,42 @@ class HealthNursePaymentWizard(models.TransientModel):
         if not completed_stage:
             raise UserError(_('No Completed stage found. Please configure booking stages properly.'))
 
-        # Mark FSO as invoiced and completed (update both state and stage_id)
-        self.fso_id.write({
-            'invoice_id': invoice.id,
-            'is_invoiced': True,
+        # Mark FSO as completed
+        update_vals = {
             'state': 'completed',
             'stage_id': completed_stage.id,
             'actual_end_datetime': fields.Datetime.now(),
-        })
-        
+        }
+
+        # Only set invoice fields if invoice was created
+        if invoice:
+            update_vals['invoice_id'] = invoice.id
+            update_vals['is_invoiced'] = True
+
+        self.fso_id.write(update_vals)
+
         # Success message and return action
         return self._return_success_action(invoice, transaction)
     
     def _create_invoice(self):
-        """Create invoice for the FSO - convert quote to invoice if exists"""
+        """Create invoice for the FSO - convert quote to invoice if exists
+
+        Returns:
+            account.move: Created invoice, or False if invoice not needed (zero amount)
+        """
+
+        # Check if invoice should be created based on amount
+        # Skip invoice creation if final amount is zero (similar to prepaid services)
+        if self.final_amount <= 0.0:
+            return False
 
         # If FSO has a quote/sale order, create invoice from it (preferred method)
         if self.fso_id.sale_order_id and self.fso_id.sale_order_id.order_line:
             sale_order = self.fso_id.sale_order_id
+
+            # Check sale order total - skip invoice if zero
+            if sale_order.amount_total <= 0.0:
+                return False
 
             # Confirm the sale order if it's still in draft/sent state
             if sale_order.state in ['draft', 'sent']:
@@ -418,7 +438,15 @@ class HealthNursePaymentWizard(models.TransientModel):
     
     def _return_success_action(self, invoice, transaction):
         """Return success action based on payment method"""
-        if self.payment_choice == 'pay_now':
+        # Handle zero-amount services (no invoice created)
+        if not invoice:
+            message = _(
+                'Service Completed Successfully!\n\n'
+                '✅ Service Amount: %s %s (Zero)\n'
+                '📋 No invoice created (zero amount service)\n\n'
+                'Service marked as completed - No payment required.'
+            ) % (f'{self.final_amount:,.0f}', self.currency_id.symbol)
+        elif self.payment_choice == 'pay_now':
             if self.payment_method == 'cash':
                 message = _(
                     'Payment Collected Successfully!\n\n'
@@ -431,7 +459,7 @@ class HealthNursePaymentWizard(models.TransientModel):
                 message = _(
                     'Prepaid Service Consumed!\n\n'
                     '🎁 Package: %s\n'
-                    '✅ Services consumed: %d\n' 
+                    '✅ Services consumed: %d\n'
                     '📊 Services remaining: %d\n\n'
                     'Service completed and invoice submitted to Tax Authorities.'
                 ) % (self.prepaid_package_id.name, self.services_to_consume, remaining)
