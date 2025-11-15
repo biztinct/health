@@ -217,7 +217,15 @@ class HealthFieldServiceOrderUnified(models.Model):
     patient_phone = fields.Char('Patient Phone', related='patient_id.mobile', readonly=True)
     patient_email = fields.Char('Patient Email', related='patient_id.email', readonly=True)
     patient_age = fields.Char('Patient Age', related='patient_id.age_display', readonly=True)
-    
+
+    # Booking Creator Tracking (PWA Mobile Booking System)
+    created_by_employee_id = fields.Many2one(
+        'hr.employee',
+        'Created By (Staff)',
+        readonly=True,
+        help='Healthcare staff member who created this booking via mobile PWA'
+    )
+
     # ============================================================================
     # SERVICE DETAILS (Core Booking Information)
     # ============================================================================

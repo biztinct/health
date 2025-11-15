@@ -72,6 +72,7 @@
                         <field name="completed_assignments"/>
                         <field name="assignment_success_rate" widget="percentage"/>
                         <field name="average_patient_rating" widget="progressbar"/>
+                        <field name="booking_credit"/>
                     </group>
                     
                     <separator string="Emergency Contact Information"/>

@@ -221,7 +221,15 @@ class HrEmployee(models.Model):
         'Total Appointments',
         compute='_compute_performance_metrics'
     )
-    
+
+    # Booking Credits (PWA Mobile Booking System)
+    booking_credit = fields.Integer(
+        'Booking Credits',
+        default=0,
+        help='Number of bookings created by this staff member via mobile PWA',
+        tracking=True
+    )
+
     # Additional computed fields
     total_assignments = fields.Integer(
         'Total Assignments',

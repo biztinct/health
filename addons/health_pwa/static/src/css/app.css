@@ -4138,6 +4138,14 @@ p {
   font-weight: 400;
 }
 
+.booking-credit-display {
+  display: block;
+  color: #28a745;
+  font-size: 0.75rem;
+  margin-top: 4px;
+  font-weight: 500;
+}
+
 .assigned-staff-list {
   display: flex;
   flex-direction: column;

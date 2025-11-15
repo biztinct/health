@@ -1384,7 +1384,8 @@ window.healthPWA = {
           employee_id: null,
           employee_name: '',
           timezone: 'UTC',
-          is_doctor: false
+          is_doctor: false,
+          booking_credit: 0
         });
 
         // Load product catalog
@@ -3362,7 +3363,12 @@ window.healthPWA = {
                   <div v-else-if="!nextVisitData.has_next_visit && nextVisitFormData.assigned_nurse_id" class="assigned-staff-box">
                     <div class="assigned-staff-display">
                       <i class="material-icons">person_check</i>
-                      <strong>{{ nextVisitFormData.assigned_nurse_name || currentUser.name }}</strong>
+                      <div class="staff-info">
+                        <strong>{{ nextVisitFormData.assigned_nurse_name || currentUser.name }}</strong>
+                        <small class="booking-credit-display" v-if="currentUser.booking_credit > 0">
+                          Booking credit: {{ currentUser.booking_credit }}
+                        </small>
+                      </div>
                     </div>
                   </div>
 
@@ -4598,6 +4604,14 @@ window.healthPWA = {
           if (!props.isOnline) {
             window.healthPWA.showNotification('Cannot complete service while offline', 'error');
             return;
+          }
+
+          // Validate payment method selection when "Pay Now" is chosen
+          if (paymentWizardData.value.payment_choice === 'pay_now') {
+            if (!paymentWizardData.value.payment_method || paymentWizardData.value.payment_method.trim() === '') {
+              alert('Please select a Payment Method before collecting payment.');
+              return;
+            }
           }
 
           try {

@@ -1518,6 +1518,34 @@ class HealthPWAAPIController(http.Controller):
             assigned_staff_id = data.get('assigned_staff_id')
             next_fso_id = data.get('next_fso_id')  # From status check
 
+            # Parse ISO format datetime string to Odoo-compatible format
+            # Frontend sends: '2025-11-21T14:23:00+00:00' (ISO 8601 with timezone)
+            # Odoo expects: '2025-11-21 14:23:00' (without timezone, stored as UTC)
+            if next_visit_date:
+                try:
+                    # Remove timezone suffix and replace 'T' with space
+                    # Convert '2025-11-21T14:23:00+00:00' to '2025-11-21 14:23:00'
+                    if 'T' in next_visit_date:
+                        # Split by 'T' to get date and time parts
+                        date_part, time_with_tz = next_visit_date.split('T')
+                        # Remove timezone info from time part (everything after +/- or Z)
+                        # Handle +00:00, -05:00, Z formats
+                        if '+' in time_with_tz:
+                            time_part = time_with_tz.split('+')[0]
+                        elif time_with_tz.count('-') > 0:
+                            # Split only on the last occurrence of '-' (for timezone)
+                            # This preserves negative times if any
+                            time_part = time_with_tz.rsplit('-', 1)[0]
+                        elif 'Z' in time_with_tz:
+                            time_part = time_with_tz.split('Z')[0]
+                        else:
+                            time_part = time_with_tz
+                        # Reconstruct as Odoo-compatible format
+                        next_visit_date = f'{date_part} {time_part}'
+                except Exception as e:
+                    _logger.error(f'Error parsing datetime: {next_visit_date}, error: {str(e)}')
+                    return self._prepare_json_response(error=f'Invalid datetime format: {str(e)}', status_code=400)
+
             patient = order.patient_id
 
             # Determine if we're updating existing FSO or creating new one
@@ -1546,6 +1574,9 @@ class HealthPWAAPIController(http.Controller):
                     # No staff assigned - create in confirmed state
                     fso_state = 'confirmed'
 
+                # Get current user's employee record for booking credit tracking
+                current_employee = request.env.user.employee_id
+
                 # Create new FSO
                 next_fso = request.env['health.fieldservice.order'].create({
                     'patient_id': patient.id,
@@ -1553,7 +1584,13 @@ class HealthPWAAPIController(http.Controller):
                     'scheduled_datetime': next_visit_date,
                     'lead_staff_id': assigned_staff_id if assigned_staff_id else False,
                     'state': fso_state,
+                    'created_by_employee_id': current_employee.id if current_employee else False,
                 })
+
+                # Increment booking credit for the staff member who created this booking
+                if current_employee and current_employee.is_healthcare_staff:
+                    current_employee.booking_credit += 1
+                    _logger.info(f'✅ Booking credit incremented for {current_employee.name}: {current_employee.booking_credit}')
 
                 # Create Assignment records if staff is assigned
                 # Pattern: Create template (for adding more staff later) + actual assignment (for lead staff)
@@ -1735,6 +1772,7 @@ class HealthPWAAPIController(http.Controller):
                 'employee_name': employee.name if employee else user.name,
                 'timezone': user.tz or 'UTC',  # User's timezone for proper datetime handling
                 'is_doctor': is_doctor,  # True if user is a doctor
+                'booking_credit': employee.booking_credit if employee else 0,  # PWA booking credits
             }
 
             return self._prepare_json_response(data=user_data)
