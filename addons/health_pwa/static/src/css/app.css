@@ -2610,10 +2610,16 @@ p {
   .modal-footer {
     gap: var(--spacing-sm);
     padding: var(--spacing-md) var(--spacing-lg);
+    padding-bottom: calc(var(--spacing-md) + 70px); /* Add bottom padding to account for bottom navigation */
   }
 
   .modal-footer .btn {
     font-size: 0.85rem;
+  }
+
+  /* Modal footer content with bottom navigation clearance */
+  .modal-footer-content {
+    padding-bottom: 70px; /* Add bottom padding to account for bottom navigation */
   }
 }
 
@@ -2638,6 +2644,12 @@ p {
   .modal-footer {
     grid-template-columns: 1fr;
     padding: var(--spacing-md);
+    padding-bottom: calc(var(--spacing-md) + 70px); /* Add bottom padding to account for bottom navigation */
+  }
+
+  /* Modal footer content with bottom navigation clearance */
+  .modal-footer-content {
+    padding-bottom: 70px; /* Add bottom padding to account for bottom navigation */
   }
 }
 
@@ -3171,6 +3183,7 @@ p {
     grid-template-columns: 1fr;
     gap: var(--spacing-sm);
     padding: var(--spacing-md);
+    padding-bottom: calc(var(--spacing-md) + 70px); /* Add bottom padding to account for bottom navigation */
   }
 
   .modal-footer-content {

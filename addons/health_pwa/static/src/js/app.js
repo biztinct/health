@@ -3669,7 +3669,25 @@ window.healthPWA = {
         const viewPatient = (patientId) => {
           emit('navigate', 'patient', { id: patientId });
         };
-        
+
+        const callPatient = (phone) => {
+          if (phone) {
+            window.location.href = `tel:${phone}`;
+          } else {
+            alert('No phone number available');
+          }
+        };
+
+        const openMap = (location, patientName) => {
+          if (location) {
+            const encodedLocation = encodeURIComponent(location);
+            const mapsUrl = `https://www.google.com/maps/search/${encodedLocation}`;
+            window.open(mapsUrl, '_blank');
+          } else {
+            alert('Location not available');
+          }
+        };
+
         return {
           patients,
           filteredPatients,
@@ -3677,7 +3695,9 @@ window.healthPWA = {
           isLoading,
           error,
           formatDate,
-          viewPatient
+          viewPatient,
+          callPatient,
+          openMap
         };
       },
       template: `
@@ -3720,26 +3740,29 @@ window.healthPWA = {
           </div>
           
           <!-- Patients List -->
-          <div v-else class="list-view">
-            <div 
-              v-for="patient in filteredPatients" 
+          <div v-else class="bookings-list">
+            <div
+              v-for="patient in filteredPatients"
               :key="patient.id"
-              class="list-item" 
+              class="booking-card"
               @click="viewPatient(patient.id)">
-              <div class="list-item-avatar">
-                <i class="material-icons">person</i>
+
+              <!-- Patient name with phone and map icons -->
+              <div class="booking-service-row">
+                <h3 class="booking-patient-name" style="color: #9C4C00;">{{ patient.name || 'Unnamed Patient' }}</h3>
+                <div class="booking-action-icons">
+                  <button v-if="patient.phone" @click.stop="callPatient(patient.phone)" class="btn-icon-action btn-icon-call" title="Call patient">
+                    <i class="material-icons">call</i>
+                  </button>
+                  <button @click.stop="openMap(patient.street || patient.street2, patient.name)" class="btn-icon-action btn-icon-map" title="Open map">
+                    <i class="material-icons">map</i>
+                  </button>
+                </div>
               </div>
-              <div class="list-item-content">
-                <h4 class="list-item-title">{{ patient.name || 'Unnamed Patient' }}</h4>
-                <p class="list-item-subtitle">
-                  <span v-if="patient.patient_code">ID: {{ patient.patient_code }}</span>
-                  <span v-if="patient.patient_code && patient.phone"> • </span>
-                  <span v-if="patient.phone">{{ patient.phone }}</span>
-                </p>
-              </div>
-              <div class="list-item-meta">
-                <div class="list-item-time">{{ formatDate(patient.last_visit_date) }}</div>
-                <i class="material-icons">chevron_right</i>
+
+              <!-- Patient address -->
+              <div class="booking-patient-section">
+                <span class="booking-service-type">{{ patient.street || patient.street2 || 'No address provided' }}</span>
               </div>
             </div>
           </div>
