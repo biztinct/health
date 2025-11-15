@@ -245,11 +245,11 @@ class HealthPWAAPIController(http.Controller):
                     'appointment_type': '',
                     'scheduled_datetime': order.scheduled_datetime,
                     'scheduled_time': scheduled_time,
+                    'scheduled_duration': order.scheduled_duration,
                     'status': order.state,
                     'status_display': order.state,
                     'location': order.service_address,
                     'priority': order.priority,
-                    'duration_minutes': order.duration_minutes,
                     'assignment_role': 'staff',
                     'notes': order.symptoms or order.patient_notes or '',
                 })
@@ -337,9 +337,9 @@ class HealthPWAAPIController(http.Controller):
                 'stage_color': getattr(order.stage_id, 'color', 0) if order.stage_id else 0,
                 'priority': order.priority,
                 'scheduled_datetime': order.scheduled_datetime,
+                'scheduled_duration': order.scheduled_duration,
                 'estimated_end_datetime': order.estimated_end_datetime,
                 'estimated_duration': order.estimated_duration,
-                'duration_minutes': order.duration_minutes,
                 'service_type': order._get_service_type_label() if hasattr(order, '_get_service_type_label') else order.service_type,
                 'package': {
                     'id': order.package_id.id if order.package_id else None,
@@ -1298,7 +1298,7 @@ class HealthPWAAPIController(http.Controller):
                     'location': fso.service_location or fso.service_address or '',
                     'priority': fso.priority,
                     'priority_display': dict(fso._fields['priority'].selection).get(fso.priority, '') if 'priority' in fso._fields and hasattr(fso._fields['priority'], 'selection') else '',
-                    'duration_minutes': fso.duration_minutes if hasattr(fso, 'duration_minutes') and fso.duration_minutes else 0,
+                    'scheduled_duration': fso.scheduled_duration if fso.scheduled_duration else 60,
                     'assignment_role': assignment.assignment_role if assignment else 'support',
                     'notes': getattr(fso, 'patient_notes', '') or getattr(fso, 'symptoms', '') or '',
                 })

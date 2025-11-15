@@ -8,7 +8,8 @@
         <field name="type">timeline</field>
         <field name="priority">10</field>
         <field name="arch" type="xml">
-            <timeline date_start="assignment_date"
+            <timeline date_start="planned_start_time"
+                      date_stop="planned_end_time"
                       string="display_name"
                       default_group_by="staff_id"
                       event_open_popup="true"

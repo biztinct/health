@@ -848,11 +848,11 @@ window.healthPWA = {
                   appointment_type: '',
                   scheduled_datetime: order.scheduled_datetime,
                   scheduled_time: parseOdooDateTime(order.scheduled_datetime).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
+                  scheduled_duration: order.scheduled_duration || 60,
                   status: order.status,
                   status_display: order.status_display,
                   location: order.address,
                   priority: order.priority,
-                  duration_minutes: 0,
                   assignment_role: 'staff',
                   notes: order.description || ''
                 });
@@ -936,11 +936,11 @@ window.healthPWA = {
                   appointment_type: '',
                   scheduled_datetime: order.scheduled_datetime,
                   scheduled_time: parseOdooDateTime(order.scheduled_datetime).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
+                  scheduled_duration: order.scheduled_duration || 60,
                   status: order.status,
                   status_display: order.status_display,
                   location: order.address,
                   priority: order.priority,
-                  duration_minutes: 0,
                   assignment_role: 'staff',
                   notes: order.description || ''
                 });
@@ -2537,7 +2537,9 @@ window.healthPWA = {
               <div v-for="booking in bookings" :key="booking.fso_id" class="booking-card" @click="toggleBookingDetail(booking.fso_id)">
                   <!-- Header with time and status -->
                   <div class="booking-card-header">
-                    <div class="booking-time-badge">{{ booking.formatted_time || booking.scheduled_time }}</div>
+                    <div class="booking-time-badge">
+                      {{ booking.scheduled_duration }}min · {{ booking.formatted_time || booking.scheduled_time }}
+                    </div>
                     <div class="status-badge" :style="{ backgroundColor: getStatusColor(booking) }">
                       {{ getStatusDisplay(booking) }}
                     </div>
@@ -2579,7 +2581,9 @@ window.healthPWA = {
                   <div @click="toggleBookingDetail(booking.fso_id)" class="booking-card" :class="{ expanded: selectedBookingId === booking.fso_id }">
                     <!-- Header with time and status -->
                     <div class="booking-card-header">
-                      <div class="booking-time-badge">{{ booking.scheduled_time }}</div>
+                      <div class="booking-time-badge">
+                        {{ booking.scheduled_duration || 60 }}min · {{ booking.scheduled_time }}
+                      </div>
                       <div class="status-badge" :style="{ backgroundColor: getStatusColor(booking) }">
                         {{ getStatusDisplay(booking) }}
                       </div>
@@ -2623,7 +2627,9 @@ window.healthPWA = {
                   <div @click="toggleBookingDetail(booking.fso_id)" class="booking-card" :class="{ expanded: selectedBookingId === booking.fso_id }">
                     <!-- Header with time and status -->
                     <div class="booking-card-header">
-                      <div class="booking-time-badge">{{ booking.scheduled_time }}</div>
+                      <div class="booking-time-badge">
+                        {{ booking.scheduled_duration || 60 }}min · {{ booking.scheduled_time }}
+                      </div>
                       <div class="status-badge" :style="{ backgroundColor: getStatusColor(booking) }">
                         {{ getStatusDisplay(booking) }}
                       </div>
@@ -3575,7 +3581,9 @@ window.healthPWA = {
                     <div class="booking-card">
                       <!-- Header with time and status -->
                       <div class="booking-card-header">
-                        <div class="booking-time-badge">{{ booking.scheduled_time }}</div>
+                        <div class="booking-time-badge">
+                          {{ booking.scheduled_duration || 60 }}min · {{ booking.scheduled_time }}
+                        </div>
                         <div class="status-badge" :style="{ backgroundColor: getStatusColor({state: booking.state}) }">
                           {{ getStatusDisplay({state: booking.state}) }}
                         </div>

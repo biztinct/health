@@ -487,40 +487,38 @@ class HealthFieldServiceOrderUnified(models.Model):
                 record.scheduled_datetime = utc_dt.replace(tzinfo=None)  # Store as naive UTC
     
     # Duration and timing
+    scheduled_duration = fields.Integer(
+        'Scheduled Duration (Minutes)',
+        default=60,
+        required=True,
+        tracking=True,
+        help='Scheduled duration of the booking in minutes (used for timeline display and scheduling)'
+    )
+
     estimated_duration = fields.Float(
         'Estimated Duration (Hours)',
-        default=1.0,
-        help='Estimated duration of the service in hours'
-    )
-    
-    duration_minutes = fields.Integer(
-        'Duration (Minutes)',
-        compute='_compute_duration_minutes',
-        inverse='_inverse_duration_minutes',
+        compute='_compute_estimated_duration',
         store=True,
-        help='Duration in minutes for easier scheduling'
+        help='Computed from scheduled_duration for backward compatibility with pricing calculations'
     )
-    
-    @api.depends('estimated_duration')
-    def _compute_duration_minutes(self):
+
+    @api.depends('scheduled_duration')
+    def _compute_estimated_duration(self):
+        """Compute hours from minutes for backward compatibility"""
         for record in self:
-            record.duration_minutes = int(record.estimated_duration * 60)
-    
-    def _inverse_duration_minutes(self):
-        for record in self:
-            record.estimated_duration = record.duration_minutes / 60.0
-    
+            record.estimated_duration = record.scheduled_duration / 60.0 if record.scheduled_duration else 0.0
+
     estimated_end_datetime = fields.Datetime(
         'Estimated End Time',
         compute='_compute_estimated_end_datetime',
         store=True
     )
-    
-    @api.depends('scheduled_datetime', 'estimated_duration')
+
+    @api.depends('scheduled_datetime', 'scheduled_duration')
     def _compute_estimated_end_datetime(self):
         for record in self:
-            if record.scheduled_datetime and record.estimated_duration:
-                record.estimated_end_datetime = record.scheduled_datetime + timedelta(hours=record.estimated_duration)
+            if record.scheduled_datetime and record.scheduled_duration:
+                record.estimated_end_datetime = record.scheduled_datetime + timedelta(minutes=record.scheduled_duration)
             else:
                 record.estimated_end_datetime = False
     
@@ -1184,7 +1182,7 @@ class HealthFieldServiceOrderUnified(models.Model):
         """Auto-populate duration and pricing from appointment type"""
         if self.appointment_type_id:
             if self.appointment_type_id.duration_minutes:
-                self.duration_minutes = self.appointment_type_id.duration_minutes
+                self.scheduled_duration = self.appointment_type_id.duration_minutes
             if self.appointment_type_id.price:
                 self.base_price = self.appointment_type_id.price
     

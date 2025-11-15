@@ -317,14 +317,14 @@ class HealthStaffAssignment(models.Model):
             else:
                 record.formatted_datetime = ''
 
-    @api.depends('fso_id.duration_minutes')
+    @api.depends('fso_id.scheduled_duration')
     def _compute_fso_duration(self):
         """Get duration from the FSO booking"""
         for record in self:
-            if record.fso_id and record.fso_id.duration_minutes:
-                record.fso_duration_minutes = record.fso_id.duration_minutes
+            if record.fso_id and record.fso_id.scheduled_duration:
+                record.fso_duration_minutes = record.fso_id.scheduled_duration
             else:
-                record.fso_duration_minutes = 0
+                record.fso_duration_minutes = 60  # Default to 60 minutes if not set
 
     @api.depends('staff_id', 'fso_id')
     def _compute_assignment_score(self):
