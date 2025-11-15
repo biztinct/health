@@ -231,10 +231,24 @@ class HealthNursePaymentWizard(models.TransientModel):
     def action_process_payment(self):
         """Main action - processes payment based on nurse selection"""
         self.ensure_one()
-        
+
         if not self.fso_id:
             raise UserError(_('No Booking specified.'))
-        
+
+        # Validate payment method selection when "Pay Now" is chosen
+        if self.payment_choice == 'pay_now':
+            if not self.payment_method:
+                raise UserError(_(
+                    'Please select a Payment Method before collecting payment.\n\n'
+                    'Available options:\n'
+                    '• Cash\n'
+                    '• Bank Transfer\n'
+                    '• Credit Card\n'
+                    '• QR Code Payment\n'
+                    '• Prepaid Service Package\n'
+                    '• Other Method'
+                ))
+
         # Create invoice first
         invoice = self._create_invoice()
         
