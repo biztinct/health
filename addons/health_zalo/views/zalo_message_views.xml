@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Zalo Message Form View -->
+    <record id="zalo_message_view_form" model="ir.ui.view">
+        <field name="name">Zalo Message Form</field>
+        <field name="model">zalo.message</field>
+        <field name="arch" type="xml">
+            <form string="Zalo Message">
+                <header>
+                    <button name="action_send_message" type="object" string="Send" class="oe_highlight" invisible="state != 'draft'"/>
+                    <button name="action_retry_send" type="object" string="Retry" invisible="state != 'failed'"/>
+                    <button name="action_mark_as_read" type="object" string="Mark as Read" invisible="is_read or direction == 'outgoing'"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,sent,delivered"/>
+                </header>
+                <sheet string="Zalo Message">
+                    <group>
+                        <group string="Message Info">
+                            <field name="conversation_id"/>
+                            <field name="direction"/>
+                            <field name="message_type"/>
+                            <field name="sent_date"/>
+                        </group>
+                        <group string="Status">
+                            <field name="zalo_message_id" readonly="1"/>
+                            <field name="is_read" invisible="direction == 'outgoing'"/>
+                            <field name="delivered_date" readonly="1"/>
+                            <field name="read_date" readonly="1"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Sender/Recipient">
+                            <field name="from_id"/>
+                            <field name="to_id"/>
+                        </group>
+                        <group string="Error Info" invisible="state != 'failed'">
+                            <field name="error_message" readonly="1"/>
+                        </group>
+                    </group>
+                    <group string="Content">
+                        <field name="text" widget="text" nolabel="1"/>
+                    </group>
+                    <group string="Attachments" invisible="attachment_count == 0">
+                        <field name="attachment_count" readonly="1"/>
+                        <field name="attachment_ids" nolabel="1">
+                            <list string="Attachments">
+                                <field name="name"/>
+                                <field name="attachment_type"/>
+                                <field name="file_size"/>
+                            </list>
+                        </field>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Zalo Message List View -->
+    <record id="zalo_message_view_list" model="ir.ui.view">
+        <field name="name">Zalo Message List</field>
+        <field name="model">zalo.message</field>
+        <field name="arch" type="xml">
+            <list string="Zalo Messages" default_order="sent_date desc">
+                <field name="sent_date"/>
+                <field name="conversation_id"/>
+                <field name="direction"/>
+                <field name="message_type"/>
+                <field name="text"/>
+                <field name="state" decoration-success="state in ['delivered', 'read']" decoration-danger="state=='failed'"/>
+                <field name="is_read" invisible="1"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Zalo Message Search View -->
+    <record id="zalo_message_view_search" model="ir.ui.view">
+        <field name="name">Zalo Message Search</field>
+        <field name="model">zalo.message</field>
+        <field name="arch" type="xml">
+            <search string="Search Messages">
+                <field name="text"/>
+                <field name="conversation_id"/>
+                <filter string="Incoming" name="incoming" domain="[('direction', '=', 'incoming')]"/>
+                <filter string="Outgoing" name="outgoing" domain="[('direction', '=', 'outgoing')]"/>
+                <filter string="Unread" name="unread" domain="[('is_read', '=', False), ('direction', '=', 'incoming')]"/>
+                <filter string="Failed" name="failed" domain="[('state', '=', 'failed')]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Conversation" name="group_conversation" context="{'group_by': 'conversation_id'}"/>
+                    <filter string="Direction" name="group_direction" context="{'group_by': 'direction'}"/>
+                    <filter string="Type" name="group_type" context="{'group_by': 'message_type'}"/>
+                    <filter string="Date" name="group_date" context="{'group_by': 'sent_date'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Zalo Message Action -->
+    <record id="zalo_message_action" model="ir.actions.act_window">
+        <field name="name">Zalo Messages</field>
+        <field name="res_model">zalo.message</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No messages yet
+            </p>
+            <p>
+                Messages sent and received via Zalo will appear here.
+            </p>
+        </field>
+    </record>
+
+</odoo>

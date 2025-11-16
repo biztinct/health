@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Zalo Configuration Form View -->
+    <record id="zalo_config_view_form" model="ir.ui.view">
+        <field name="name">Zalo Configuration Form</field>
+        <field name="model">zalo.config</field>
+        <field name="arch" type="xml">
+            <form string="Zalo Configuration">
+                <header>
+                    <button name="action_connect_zalo" type="object" string="Connect to Zalo" class="oe_highlight" invisible="state != 'draft'"/>
+                    <button name="action_test_connection" type="object" string="Test Connection" class="oe_highlight" invisible="state != 'connected'"/>
+                    <button name="action_refresh_token" type="object" string="Refresh Token" invisible="state != 'connected'"/>
+                    <button name="action_disconnect_zalo" type="object" string="Disconnect" invisible="state not in ['connected', 'error']"/>
+                    <button name="action_enable_webhook" type="object" string="Enable Webhook" invisible="webhook_enabled or state != 'connected'"/>
+                    <button name="action_disable_webhook" type="object" string="Disable Webhook" invisible="not webhook_enabled"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,connected"/>
+                </header>
+                <sheet string="Zalo Configuration">
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" class="o_text_overflow"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group string="Basic Information">
+                            <field name="company_id" options="{'no_create': True}"/>
+                            <field name="active"/>
+                        </group>
+                        <group string="API Information">
+                            <field name="api_base_url"/>
+                            <field name="api_version"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Zalo Official Account Credentials">
+                            <field name="app_id"/>
+                            <field name="app_secret" password="True"/>
+                            <field name="oa_id"/>
+                        </group>
+                        <group string="OAuth Status">
+                            <field name="token_expires_at" readonly="1"/>
+                            <field name="oauth_redirect_uri" readonly="1" widget="url"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Webhook Configuration">
+                            <field name="webhook_enabled" readonly="1"/>
+                            <field name="webhook_url" readonly="1" widget="url"/>
+                        </group>
+                        <group string="Statistics">
+                            <field name="total_messages_sent" readonly="1"/>
+                            <field name="total_messages_received" readonly="1"/>
+                            <field name="last_sync_date" readonly="1"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="OAuth Tokens" groups="base.group_system">
+                            <group>
+                                <field name="access_token" password="True" readonly="1"/>
+                                <field name="refresh_token" password="True" readonly="1"/>
+                                <field name="token_type" readonly="1"/>
+                            </group>
+                        </page>
+                        <page string="Webhook Settings" groups="base.group_system">
+                            <group>
+                                <field name="webhook_secret" password="True"/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter reload_on_follower="True"/>
+            </form>
+        </field>
+    </record>
+
+    <!-- Zalo Configuration List View -->
+    <record id="zalo_config_view_list" model="ir.ui.view">
+        <field name="name">Zalo Configuration List</field>
+        <field name="model">zalo.config</field>
+        <field name="arch" type="xml">
+            <list string="Zalo Configurations">
+                <field name="name"/>
+                <field name="company_id"/>
+                <field name="oa_id"/>
+                <field name="state" decoration-success="state=='connected'" decoration-warning="state=='draft'" decoration-danger="state=='error'"/>
+                <field name="webhook_enabled"/>
+                <field name="total_messages_sent"/>
+                <field name="total_messages_received"/>
+                <field name="active"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Zalo Configuration Action -->
+    <record id="zalo_config_action" model="ir.actions.act_window">
+        <field name="name">Zalo Configuration</field>
+        <field name="res_model">zalo.config</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Configure Zalo Official Account Integration
+            </p>
+            <p>
+                Set up your Zalo Official Account credentials to enable messaging and notifications.
+            </p>
+        </field>
+    </record>
+
+</odoo>

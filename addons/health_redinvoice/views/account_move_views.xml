@@ -61,11 +61,6 @@
                             <field name="response_code"/>
                         </list>
                     </field>
-                    <group string="Details" col="2">
-                        <group>
-                            <field name="red_invoice_request_ids" context="{'default_move_id': id}" mode="list,form" readonly="1"/>
-                        </group>
-                    </group>
                 </page>
             </notebook>
         </field>

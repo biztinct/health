@@ -27,7 +27,7 @@ class AccountMove(models.Model):
     red_invoice_series = fields.Char(string='Red Invoice Series', copy=False)
     red_invoice_template_code = fields.Char(string='Red Invoice Template', copy=False)
     red_invoice_reservation_code = fields.Char(string='Reservation Code', copy=False)
-    red_invoice_transaction_uuid = fields.Char(string='Transaction UUID', copy=False, default=lambda self: str(uuid.uuid4()))
+    red_invoice_transaction_uuid = fields.Char(string='Transaction UUID', copy=False)
     red_invoice_transaction_id = fields.Char(string='Transaction ID', copy=False)
     red_invoice_code_of_tax = fields.Char(string='Tax Office Code', copy=False)
     red_invoice_last_error = fields.Text(string='Red Invoice Error', copy=False)
@@ -119,6 +119,9 @@ class AccountMove(models.Model):
             'Content-Type': 'application/json',
         }
         cookies = self._redinvoice_auth_cookies()
+        # Always use a fresh UUID per submit attempt to avoid cached server errors
+        payload['generalInvoiceInfo']['transactionUuid'] = str(uuid.uuid4())
+        self.red_invoice_transaction_uuid = payload['generalInvoiceInfo']['transactionUuid']
         self.write({'red_invoice_state': 'issuing'})
 
         try:
@@ -292,7 +295,9 @@ class AccountMove(models.Model):
             raise UserError(_('Red Invoice template code/series not configured.'))
 
         issue_dt = self.invoice_date or fields.Date.context_today(self)
-        issue_ms = int(datetime.datetime.combine(issue_dt, datetime.time.min).timestamp() * 1000)
+        # Use current datetime in company timezone for timestamp (ms)
+        issue_dt_full = fields.Datetime.context_timestamp(self, fields.Datetime.now())
+        issue_ms = int(issue_dt_full.timestamp() * 1000)
         payment_status = self.payment_state in ('paid', 'in_payment')
         currency_code = self.currency_id.name or 'VND'
 
@@ -391,8 +396,54 @@ class AccountMove(models.Model):
         return list(buckets.values())
 
     def _redinvoice_metadata(self):
-        # Placeholder for dynamic metadata (custom fields)
-        return []
+        """Fetch and include required custom fields for the template if available."""
+        company = self.company_id
+        template_code = self.red_invoice_template_code or company.red_invoice_template_code
+        tax_code = company.red_supplier_tax_code
+        if not template_code or not tax_code:
+            return []
+
+        # Try to cached metadata on company to reduce calls
+        cache_key = f"redinvoice.metadata.{tax_code}.{template_code}"
+        cache_val = self.env['ir.config_parameter'].sudo().get_param(cache_key)
+        if cache_val:
+            try:
+                return json.loads(cache_val)
+            except Exception:
+                pass
+
+        # Call getCustomFields API
+        base = company.red_invoice_api_base
+        if not base:
+            return []
+        endpoint = f"{base.rstrip('/')}/InvoiceAPI/InvoiceWS/getCustomFields"
+        params = {
+            'taxCode': tax_code,
+            'templateCode': template_code,
+        }
+        cookies = self._redinvoice_auth_cookies()
+        try:
+            resp = requests.get(endpoint, params=params, cookies=cookies, timeout=30)
+            if resp.status_code != 200:
+                return []
+            data = resp.json() if resp.text else {}
+            custom_fields = data.get('data') or []
+            # Map to metadata payload format
+            metadata = []
+            for field in custom_fields:
+                entry = {
+                    'keyTag': field.get('keyTag'),
+                    'valueType': field.get('valueType'),
+                    'stringValue': field.get('stringValue'),
+                    'numberValue': field.get('numberValue'),
+                    'dateValue': field.get('dateValue'),
+                }
+                metadata.append(entry)
+            if metadata:
+                self.env['ir.config_parameter'].sudo().set_param(cache_key, json.dumps(metadata))
+            return metadata
+        except Exception:
+            return []
 
     def _redinvoice_prepare_items(self):
         """Build itemInfo list from invoice lines; skip sections/notes."""

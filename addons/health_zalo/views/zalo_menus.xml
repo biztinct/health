@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Main Zalo Menu -->
+    <menuitem id="menu_zalo_root" name="Zalo" sequence="100" web_icon="health_zalo,static/description/icon.png"/>
+
+    <!-- Zalo Conversations Menu -->
+    <menuitem id="menu_zalo_conversations" name="Conversations" parent="menu_zalo_root" action="zalo_conversation_action" sequence="10"/>
+
+    <!-- Zalo Messages Menu -->
+    <menuitem id="menu_zalo_messages" name="Messages" parent="menu_zalo_root" action="zalo_message_action" sequence="20"/>
+
+    <!-- Zalo Configuration Menu -->
+    <menuitem id="menu_zalo_configuration" name="Configuration" parent="menu_zalo_root" sequence="100"/>
+
+    <menuitem id="menu_zalo_config" name="Zalo Settings" parent="menu_zalo_configuration" action="zalo_config_action" sequence="10" groups="health_zalo.group_zalo_admin"/>
+
+</odoo>

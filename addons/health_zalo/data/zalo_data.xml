@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+
+    <!-- Cron Job: Auto-refresh expiring tokens -->
+    <record id="ir_cron_zalo_refresh_tokens" model="ir.cron">
+        <field name="name">Zalo: Refresh Expiring Tokens</field>
+        <field name="model_id" ref="model_zalo_config"/>
+        <field name="state">code</field>
+        <field name="code">model.cron_refresh_expiring_tokens()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">hours</field>
+        <field name="active" eval="True"/>
+    </record>
+
+</odoo>

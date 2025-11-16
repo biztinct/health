@@ -1,0 +1,15 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_zalo_config_admin,zalo.config.admin,model_zalo_config,group_zalo_admin,1,1,1,1
+access_zalo_config_manager,zalo.config.manager,model_zalo_config,group_zalo_manager,1,1,1,0
+access_zalo_config_user,zalo.config.user,model_zalo_config,group_zalo_user,1,0,0,0
+access_zalo_conversation_admin,zalo.conversation.admin,model_zalo_conversation,group_zalo_admin,1,1,1,1
+access_zalo_conversation_manager,zalo.conversation.manager,model_zalo_conversation,group_zalo_manager,1,1,1,1
+access_zalo_conversation_user,zalo.conversation.user,model_zalo_conversation,group_zalo_user,1,1,1,0
+access_zalo_message_admin,zalo.message.admin,model_zalo_message,group_zalo_admin,1,1,1,1
+access_zalo_message_manager,zalo.message.manager,model_zalo_message,group_zalo_manager,1,1,1,1
+access_zalo_message_user,zalo.message.user,model_zalo_message,group_zalo_user,1,1,1,0
+access_zalo_attachment_admin,zalo.attachment.admin,model_zalo_attachment,group_zalo_admin,1,1,1,1
+access_zalo_attachment_manager,zalo.attachment.manager,model_zalo_attachment,group_zalo_manager,1,1,1,1
+access_zalo_attachment_user,zalo.attachment.user,model_zalo_attachment,group_zalo_user,1,1,1,0
+access_zalo_token_manager,zalo.token.manager.all,model_zalo_token_manager,base.group_user,1,0,0,0
+access_zalo_message_handler,zalo.message.handler.all,model_zalo_message_handler,base.group_user,1,0,0,0
