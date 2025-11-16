@@ -13,7 +13,6 @@
                       string="display_name"
                       default_group_by="staff_id"
                       event_open_popup="true"
-                      colors="#f8f9fa:state=='draft';#e3f2fd:state=='assigned';#e8f5e8:state=='confirmed';#fff3e0:state=='in_progress';#e8f5e8:state=='completed';#ffebee:state=='cancelled'"
                       create="true"
                       quick_create="false"
                       mode="day"

@@ -126,6 +126,7 @@
             'health_fieldservice/static/src/js/staff_workload_dashboard.js',
             'health_fieldservice/static/src/js/timeline_card_enhancer.js',
             'health_fieldservice/static/src/js/timeline_initial_date.esm.js',
+            'health_fieldservice/static/src/js/timeline_group_colors.esm.js',
             'health_fieldservice/static/src/js/healthcare_quote_save.js',
             'health_fieldservice/static/src/js/healthcare_quote_form.js',
             'health_fieldservice/static/src/js/service_timer.js',

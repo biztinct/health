@@ -6,19 +6,11 @@
     gap: 6px;
     padding: 8px 10px;
     background: #fff;
-    border: 2px solid #3b82f6;
-    border-radius: 10px;
-    box-shadow: 0 2px 8px rgba(59, 130, 246, 0.2);
+    border: none;
+    border-radius: 6px;
     max-width: 320px;
     line-height: 1.25;
     transition: all 0.2s ease;
-}
-
-/* Hover effect - scale and stronger shadow */
-.hf-wt-card:hover {
-    transform: translateY(-2px) scale(1.02);
-    box-shadow: 0 4px 16px rgba(59, 130, 246, 0.4);
-    border-color: #2563eb;
 }
 .hf-wt-title { 
     font-size: 14px; 
@@ -37,20 +29,25 @@
 }
 .hf-wt-left, .hf-wt-right { display: flex; align-items: center; gap: 6px; }
 
-/* Timeline item configuration for duration-based width */
-.o_timeline_view .vis-item .hf-wt-card {
-    padding-top: 6px;
-    padding-bottom: 6px;
-}
-
-/* Hide vertical connector line and ensure range display */
-.o_timeline_view .vis-item {
-    border: none !important;
+/* Timeline item configuration - Apply staff group color as uniform thick border */
+.o_timeline_view .vis-item.vis-range {
+    /* Thick uniform border - color will be applied by JavaScript from group color */
+    border: 4px solid #666 !important;
+    border-radius: 8px !important;
     background: transparent !important;
-    box-shadow: none !important;
+    padding: 0 !important;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15) !important;
+    transition: all 0.2s ease !important;
 }
 
-/* Remove the vertical line that connects items to time axis */
+/* Hover effect on timeline items */
+.o_timeline_view .vis-item.vis-range:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.25) !important;
+    border-width: 5px !important;
+}
+
+/* Remove connector lines */
 .o_timeline_view .vis-item.vis-line {
     border-left: none !important;
 }
@@ -59,33 +56,34 @@
     border: none !important;
 }
 
-/* Ensure range items (with start & end) display with proper width */
-.o_timeline_view .vis-item.vis-range {
-    border-radius: 0;
-}
-
 .o_timeline_view .vis-item.vis-range .vis-item-overflow {
     overflow: visible;
 }
 
 .o_timeline_view .vis-item.vis-range .vis-item-content {
     width: 100%;
+    padding: 0;
 }
 
-/* Week/Month view: Ensure minimum width for visibility */
-/* When timeline is in week view (showing 7+ days), make items span more space */
-.o_timeline_view .vis-item.vis-range {
-    min-width: 120px !important;
+.o_timeline_view .vis-item .hf-wt-card {
+    margin: 0;
 }
 
-/* For very zoomed out views (month view), make cards even wider */
-.o_timeline_view[data-mode="month"] .vis-item.vis-range,
-.o_timeline_view .vis-timeline-group .vis-item.vis-range {
-    min-width: 200px !important;
+/* Month view: Left-positioned items (odd days) */
+.o_timeline_view[data-timeline-mode="month"] .vis-item.vis-range.month-day-left {
+    width: 48% !important;
+    left: 1% !important;
 }
 
-/* Ensure card content is visible and doesn't get compressed */
-.o_timeline_view .vis-item.vis-range .hf-wt-card {
-    min-width: 280px;
+/* Month view: Right-positioned items (even days) */
+.o_timeline_view[data-timeline-mode="month"] .vis-item.vis-range.month-day-right {
+    width: 48% !important;
+    left: 51% !important;
+}
+
+/* Prevent card content from being compressed in week/month view */
+.o_timeline_view[data-timeline-mode="week"] .vis-item.vis-range .hf-wt-card,
+.o_timeline_view[data-timeline-mode="month"] .vis-item.vis-range .hf-wt-card {
     white-space: normal;
+    max-width: 100%;
 }
