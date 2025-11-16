@@ -12,13 +12,13 @@
     line-height: 1.25;
     transition: all 0.2s ease;
 }
-.hf-wt-title { 
-    font-size: 14px; 
-    font-weight: 700; 
-    color: #111; 
-    overflow: hidden; 
-    white-space: nowrap; 
-    text-overflow: ellipsis; 
+.hf-wt-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: #111;
+    /* Allow name to overflow outside the box - keep on one line */
+    overflow: visible;
+    white-space: nowrap;
 }
 .hf-wt-meta {
     display: flex;
@@ -29,14 +29,14 @@
 }
 .hf-wt-left, .hf-wt-right { display: flex; align-items: center; gap: 6px; }
 
-/* Timeline item configuration - Apply staff group color as uniform thick border */
+/* Timeline item configuration - Simple blue border for all cards */
 .o_timeline_view .vis-item.vis-range {
-    /* Thick uniform border - color will be applied by JavaScript from group color */
-    border: 4px solid #666 !important;
+    /* Thick uniform blue border for all cards - improves drag & drop performance */
+    border: 4px solid #3b82f6 !important;
     border-radius: 8px !important;
     background: transparent !important;
     padding: 0 !important;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.15) !important;
+    box-shadow: 0 2px 6px rgba(59, 130, 246, 0.2) !important;
     transition: all 0.2s ease !important;
 }
 
@@ -57,16 +57,18 @@
 }
 
 .o_timeline_view .vis-item.vis-range .vis-item-overflow {
-    overflow: visible;
+    overflow: visible !important;
 }
 
 .o_timeline_view .vis-item.vis-range .vis-item-content {
     width: 100%;
     padding: 0;
+    overflow: visible !important;
 }
 
 .o_timeline_view .vis-item .hf-wt-card {
     margin: 0;
+    overflow: visible !important;
 }
 
 /* Month view: Left-positioned items (odd days) */

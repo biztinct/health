@@ -9,81 +9,15 @@ const {DateTime} = luxon;
 
 patch(TimelineRenderer.prototype, {
     /**
-     * Override on_data_loaded to apply group colors after items are rendered
+     * Override on_data_loaded to handle week/month width after timeline renders
      */
     async on_data_loaded(records, adjust_window) {
         await super.on_data_loaded(records, adjust_window);
 
-        // Apply group colors to item borders and handle week/month width after timeline renders
+        // Only handle week/month width adjustments
         setTimeout(() => {
-            this._applyGroupColorsToBorders();
             this._handleWeekMonthFullDayWidth();
         }, 100);
-    },
-
-    /**
-     * Apply group colors from vis-timeline groups to item borders
-     * This uses the group's background color as the item border
-     */
-    _applyGroupColorsToBorders() {
-        if (!this.timeline) return;
-
-        // Get group colors from the groups data
-        const groups = this.timeline.groupsData;
-        if (!groups) return;
-
-        const groupColors = {};
-        const groupsArray = groups.get();
-
-        // Extract colors from groups (vis-timeline auto-assigns colors to groups)
-        groupsArray.forEach(group => {
-            if (group.id !== undefined) {
-                // Get the DOM element for this group to find its color
-                const groupElements = this.rootRef.el?.querySelectorAll('.vis-label');
-                groupElements?.forEach(groupEl => {
-                    const groupContent = groupEl.querySelector('.vis-inner');
-                    if (groupContent && groupContent.textContent.includes(group.content)) {
-                        const computedStyle = window.getComputedStyle(groupEl);
-                        const bgColor = computedStyle.backgroundColor;
-                        if (bgColor && bgColor !== 'transparent' && bgColor !== 'rgba(0, 0, 0, 0)') {
-                            groupColors[group.id] = bgColor;
-                        }
-                    }
-                });
-            }
-        });
-
-        // Apply group colors to items
-        const items = this.rootRef.el?.querySelectorAll('.vis-item.vis-range');
-        if (!items) return;
-
-        items.forEach(item => {
-            // Get the item's group from data attribute or class
-            const itemId = item.getAttribute('data-id');
-            if (!itemId) return;
-
-            const itemsData = this.timeline.itemsData;
-            const itemData = itemsData?.get(parseInt(itemId));
-
-            if (itemData && itemData.group !== undefined) {
-                const groupColor = groupColors[itemData.group];
-
-                // If we found a group color, apply it; otherwise use a default
-                let borderColor = groupColor || item.style.backgroundColor;
-
-                // If still no color, try to get from computed style
-                if (!borderColor || borderColor === 'transparent' || borderColor === 'rgba(0, 0, 0, 0)') {
-                    const computedStyle = window.getComputedStyle(item);
-                    borderColor = computedStyle.backgroundColor;
-                }
-
-                if (borderColor && borderColor !== 'transparent' && borderColor !== 'rgba(0, 0, 0, 0)') {
-                    // Apply thick uniform border with group color
-                    item.style.setProperty('border', '4px solid ' + borderColor, 'important');
-                    item.style.setProperty('background-color', 'transparent', 'important');
-                }
-            }
-        });
     },
 
     /**
@@ -125,9 +59,6 @@ patch(TimelineRenderer.prototype, {
             if (this.mode.data === 'month') {
                 setTimeout(() => this._applyMonthPositioning(), 50);
             }
-
-            // Reapply colors after update
-            setTimeout(() => this._applyGroupColorsToBorders(), 50);
         }
     },
 
@@ -232,9 +163,6 @@ patch(TimelineRenderer.prototype, {
             }
             itemsData.clear();
             itemsData.add(data);
-
-            // Reapply colors after restoring
-            setTimeout(() => this._applyGroupColorsToBorders(), 100);
         }
     }
 });
