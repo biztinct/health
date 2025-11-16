@@ -15,6 +15,12 @@ class Company(models.Model):
         ('usb_token', 'USB Token'),
         ('cloud_ca', 'Cloud CA'),
     ], string='Red Invoice Signing Mode', default='server')
+    red_invoice_type = fields.Selection([
+        ('1', 'Invoice Type 1 (TT78)'),
+        ('2', 'Invoice Type 2'),
+        ('3', 'Invoice Type 3'),
+        ('4', 'Invoice Type 4'),
+    ], string='Red Invoice Type', default='1')
     red_invoice_template_code = fields.Char(string='Default Template Code')
     red_invoice_series = fields.Char(string='Default Invoice Series')
     red_invoice_exchange_user = fields.Char(string='Default Exchange User')

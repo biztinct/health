@@ -1,2 +1,3 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_redinvoice_request_manager,access_redinvoice_request_manager,model_redinvoice_request,health_redinvoice.group_health_redinvoice_manager,1,1,1,1
+access_redinvoice_request_account_manager,access_redinvoice_request_account_manager,model_redinvoice_request,account.group_account_manager,1,1,1,1

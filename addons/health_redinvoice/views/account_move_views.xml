@@ -51,6 +51,22 @@
                         </group>
                     </group>
                 </page>
+                <page string="Red Invoice Log" name="red_invoice_log"
+                      modifiers='{"invisible": [["move_type", "not in", ["out_invoice","out_refund"]]]}'>
+                    <field name="red_invoice_request_ids" readonly="1" nolabel="1">
+                        <list>
+                            <field name="create_date"/>
+                            <field name="state"/>
+                            <field name="endpoint"/>
+                            <field name="response_code"/>
+                        </list>
+                    </field>
+                    <group string="Details" col="2">
+                        <group>
+                            <field name="red_invoice_request_ids" context="{'default_move_id': id}" mode="list,form" readonly="1"/>
+                        </group>
+                    </group>
+                </page>
             </notebook>
         </field>
     </record>

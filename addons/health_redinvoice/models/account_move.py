@@ -48,6 +48,7 @@ class AccountMove(models.Model):
     ], string='Red Invoice Payment Method', copy=False)
     red_invoice_payment_method_name = fields.Char(string='Payment Method Name', copy=False)
     red_invoice_lookup_url = fields.Char(string='Lookup URL', copy=False, readonly=True)
+    red_invoice_request_ids = fields.One2many('redinvoice.request', 'move_id', string='Red Invoice Requests', readonly=True)
 
     def action_post(self):
         res = super().action_post()
@@ -295,33 +296,16 @@ class AccountMove(models.Model):
         payment_status = self.payment_state in ('paid', 'in_payment')
         currency_code = self.currency_id.name or 'VND'
 
+        payment_method_code = self.red_invoice_payment_method or '2'  # default bank transfer per spec
+        payment_method_name = self.red_invoice_payment_method_name or ('CK' if payment_method_code in ('2', '7') else 'Cash, bank transfer')
         payments = [{
-            'paymentMethod': self.red_invoice_payment_method or '5',
-            'paymentMethodName': self.red_invoice_payment_method_name or 'Other',
+            'paymentMethod': payment_method_code,
+            'paymentMethodName': payment_method_name,
         }]
 
-        item_info = []
-        line_number = 1
-        for line in self.invoice_line_ids.filtered(lambda l: not l.display_type):
-            tax_percentage = self._redinvoice_tax_percentage(line)
-            item = {
-                'lineNumber': line_number,
-                'itemCode': line.product_id.default_code or '',
-                'itemName': line.name or line.product_id.name,
-                'unitName': line.product_uom_id.name if line.product_uom_id else '',
-                'unitPrice': line.price_unit,
-                'quantity': line.quantity,
-                'itemTotalAmountWithoutTax': line.price_subtotal,
-                'itemTotalAmountWithTax': line.price_total,
-                'itemTotalAmountAfterDiscount': line.price_subtotal,
-                'taxPercentage': tax_percentage,
-                'taxAmount': line.price_total - line.price_subtotal,
-                'discount': line.discount or 0,
-                'itemDiscount': 0,
-                'isIncreaseItem': True,
-            }
-            item_info.append(item)
-            line_number += 1
+        item_info = self._redinvoice_prepare_items()
+        if not item_info:
+            raise UserError(_('No invoice lines available to send to SInvoice. Please add at least one product/service line.'))
 
         summarize = {
             'sumOfTotalLineAmountWithoutTax': sum(item['itemTotalAmountWithoutTax'] for item in item_info),
@@ -337,7 +321,7 @@ class AccountMove(models.Model):
         payload = {
             'generalInvoiceInfo': {
                 'transactionUuid': self.red_invoice_transaction_uuid,
-                'invoiceType': '',  # optional depending on template
+                'invoiceType': company.red_invoice_type or '1',
                 'templateCode': template_code,
                 'invoiceSeries': series,
                 'invoiceIssuedDate': issue_ms,
@@ -409,3 +393,31 @@ class AccountMove(models.Model):
     def _redinvoice_metadata(self):
         # Placeholder for dynamic metadata (custom fields)
         return []
+
+    def _redinvoice_prepare_items(self):
+        """Build itemInfo list from invoice lines; skip sections/notes."""
+        items = []
+        line_number = 1
+        # Keep only real product/service lines (skip sections/notes)
+        lines = self.invoice_line_ids.filtered(lambda l: l.display_type not in ('line_section', 'line_note'))
+        for line in lines:
+            tax_percentage = self._redinvoice_tax_percentage(line)
+            item = {
+                'lineNumber': line_number,
+                'itemCode': line.product_id.default_code or '',
+                'itemName': line.name or line.product_id.name,
+                'unitName': line.product_uom_id.name if line.product_uom_id else '',
+                'unitPrice': line.price_unit,
+                'quantity': line.quantity,
+                'itemTotalAmountWithoutTax': line.price_subtotal,
+                'itemTotalAmountWithTax': line.price_total,
+                'itemTotalAmountAfterDiscount': line.price_subtotal,
+                'taxPercentage': tax_percentage,
+                'taxAmount': line.price_total - line.price_subtotal,
+                'discount': line.discount or 0,
+                'itemDiscount': 0,
+                'isIncreaseItem': True,
+            }
+            items.append(item)
+            line_number += 1
+        return items

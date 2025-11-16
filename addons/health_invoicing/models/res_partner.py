@@ -202,6 +202,10 @@ class Partner(models.Model):
                 ('state', '!=', 'cancel')
             ],
             'view_mode': 'list,form',
+            'views': [
+                (self.env.ref('account.view_move_tree').id, 'list'),
+                (self.env.ref('account.view_move_form').id, 'form'),
+            ],
             'target': 'current',
         }
     
@@ -220,6 +224,10 @@ class Partner(models.Model):
                 ('amount_residual', '>', 0)
             ],
             'view_mode': 'list,form',
+            'views': [
+                (self.env.ref('account.view_move_tree').id, 'list'),
+                (self.env.ref('account.view_move_form').id, 'form'),
+            ],
             'target': 'current',
         }
     

@@ -8,27 +8,52 @@
             <xpath expr="//app[@name='general_settings']" position="inside">
                 <block title="Red Invoice (Viettel SInvoice)" name="redinvoice_block">
                     <setting string="Credentials &amp; Defaults" name="redinvoice_credentials">
-                        <field name="red_supplier_tax_code"/>
-                        <field name="red_invoice_api_base" placeholder="https://api-vinvoice.viettel.vn/services/einvoiceapplication/api"/>
-                        <field name="red_invoice_username"/>
-                        <field name="red_invoice_password" password="True"/>
-                        <field name="red_invoice_signing_mode"/>
-                        <field name="red_invoice_template_code"/>
-                        <field name="red_invoice_series"/>
-                        <field name="red_invoice_exchange_user"/>
+                        <div class="content-group">
+                            <label for="red_supplier_tax_code"/>
+                            <field name="red_supplier_tax_code"/>
+                            <label for="red_invoice_api_base"/>
+                            <field name="red_invoice_api_base" placeholder="https://api-vinvoice.viettel.vn/services/einvoiceapplication/api"/>
+                            <label for="red_invoice_username"/>
+                            <field name="red_invoice_username"/>
+                            <label for="red_invoice_password"/>
+                            <field name="red_invoice_password" password="True"/>
+                            <label for="red_invoice_type"/>
+                            <field name="red_invoice_type"/>
+                            <label for="red_invoice_signing_mode"/>
+                            <field name="red_invoice_signing_mode"/>
+                            <label for="red_invoice_template_code"/>
+                            <field name="red_invoice_template_code"/>
+                            <label for="red_invoice_series"/>
+                            <field name="red_invoice_series"/>
+                            <label for="red_invoice_exchange_user"/>
+                            <field name="red_invoice_exchange_user"/>
+                        </div>
                     </setting>
                     <setting string="Seller Payment / QR78" name="redinvoice_qr78">
-                        <field name="red_invoice_bank_name"/>
-                        <field name="red_invoice_bank_account"/>
-                        <field name="red_invoice_country_code"/>
-                        <field name="red_invoice_district_name"/>
-                        <field name="red_invoice_merchant_code"/>
-                        <field name="red_invoice_merchant_name"/>
-                        <field name="red_invoice_merchant_city"/>
+                        <div class="content-group">
+                            <label for="red_invoice_bank_name"/>
+                            <field name="red_invoice_bank_name"/>
+                            <label for="red_invoice_bank_account"/>
+                            <field name="red_invoice_bank_account"/>
+                            <label for="red_invoice_country_code"/>
+                            <field name="red_invoice_country_code"/>
+                            <label for="red_invoice_district_name"/>
+                            <field name="red_invoice_district_name"/>
+                            <label for="red_invoice_merchant_code"/>
+                            <field name="red_invoice_merchant_code"/>
+                            <label for="red_invoice_merchant_name"/>
+                            <field name="red_invoice_merchant_name"/>
+                            <label for="red_invoice_merchant_city"/>
+                            <field name="red_invoice_merchant_city"/>
+                        </div>
                     </setting>
                     <setting string="Automation" name="redinvoice_automation">
-                        <field name="red_invoice_auto_issue"/>
-                        <field name="red_invoice_allow_download_pdf"/>
+                        <div class="content-group">
+                            <label for="red_invoice_auto_issue"/>
+                            <field name="red_invoice_auto_issue"/>
+                            <label for="red_invoice_allow_download_pdf"/>
+                            <field name="red_invoice_allow_download_pdf"/>
+                        </div>
                     </setting>
                 </block>
             </xpath>

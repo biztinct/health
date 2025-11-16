@@ -11,6 +11,7 @@ class ResConfigSettings(models.TransientModel):
     red_invoice_username = fields.Char(related='company_id.red_invoice_username', readonly=False)
     red_invoice_password = fields.Char(related='company_id.red_invoice_password', readonly=False)
     red_invoice_signing_mode = fields.Selection(related='company_id.red_invoice_signing_mode', readonly=False)
+    red_invoice_type = fields.Selection(related='company_id.red_invoice_type', readonly=False)
     red_invoice_template_code = fields.Char(related='company_id.red_invoice_template_code', readonly=False)
     red_invoice_series = fields.Char(related='company_id.red_invoice_series', readonly=False)
     red_invoice_exchange_user = fields.Char(related='company_id.red_invoice_exchange_user', readonly=False)
