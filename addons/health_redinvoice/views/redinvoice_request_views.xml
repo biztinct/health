@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record id="view_redinvoice_request_tree" model="ir.ui.view">
+        <field name="name">redinvoice.request.tree</field>
+        <field name="model">redinvoice.request</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="create_date"/>
+                <field name="name"/>
+                <field name="move_id"/>
+                <field name="state"/>
+                <field name="endpoint"/>
+                <field name="response_code"/>
+                <field name="retry_count"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_redinvoice_request_form" model="ir.ui.view">
+        <field name="name">redinvoice.request.form</field>
+        <field name="model">redinvoice.request</field>
+        <field name="arch" type="xml">
+            <form string="Red Invoice Request">
+                <header>
+                    <field name="state" widget="statusbar" statusbar_visible="pending,sent,succeeded,failed"/>
+                </header>
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="move_id"/>
+                        <field name="company_id"/>
+                        <field name="endpoint"/>
+                        <field name="state"/>
+                        <field name="retry_count"/>
+                        <field name="response_code"/>
+                    </group>
+                    <notebook>
+                        <page string="Payload">
+                            <field name="payload" widget="text" nolabel="1" readonly="1"/>
+                        </page>
+                        <page string="Response">
+                            <field name="response_body" widget="text" nolabel="1" readonly="1"/>
+                            <field name="error_message" widget="text" nolabel="1" readonly="1"/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_redinvoice_requests" model="ir.actions.act_window">
+        <field name="name">Red Invoice Requests</field>
+        <field name="res_model">redinvoice.request</field>
+        <field name="view_mode">tree,form</field>
+        <field name="context">{}</field>
+    </record>
+
+    <menuitem id="menu_health_redinvoice_root" name="Red Invoices" parent="account.menu_finance" sequence="190" groups="health_redinvoice.group_health_redinvoice_manager"/>
+    <menuitem id="menu_health_redinvoice_requests" name="API Requests" parent="menu_health_redinvoice_root" action="action_redinvoice_requests" sequence="10" groups="health_redinvoice.group_health_redinvoice_manager"/>
+</odoo>

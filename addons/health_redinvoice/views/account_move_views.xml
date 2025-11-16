@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_move_form_redinvoice" model="ir.ui.view">
+        <field name="name">account.move.form.redinvoice</field>
+        <field name="model">account.move</field>
+        <field name="inherit_id" ref="account.view_move_form"/>
+        <field name="arch" type="xml">
+            <header position="inside">
+                <button name="action_redinvoice_generate" type="object" string="Generate Red Invoice"
+                        class="btn-primary"
+                        modifiers='{"invisible": ["|", ["move_type", "not in", ["out_invoice","out_refund"]], ["state","!=", "posted"]]}'/>
+                <button name="action_redinvoice_download_zip" type="object" string="Download Red Invoice"
+                        class="btn-secondary"
+                        modifiers='{"invisible": ["|", ["red_invoice_state","!=","issued"], ["move_type","not in", ["out_invoice","out_refund"]]]}'/>
+                <button name="action_redinvoice_download_pdf" type="object" string="Download PDF"
+                        class="btn-secondary"
+                        modifiers='{"invisible": ["|", ["red_invoice_state","!=","issued"], ["move_type","not in", ["out_invoice","out_refund"]]]}'/>
+                <button name="action_redinvoice_cancel" type="object" string="Cancel Red Invoice"
+                        modifiers='{"invisible": ["|", ["red_invoice_state","!=","issued"], ["move_type","not in", ["out_invoice","out_refund"]]]}'/>
+            </header>
+
+            <notebook position="inside">
+                <page string="Red Invoice" name="red_invoice_tab"
+                      modifiers='{"invisible": [["move_type", "not in", ["out_invoice","out_refund"]]]}'>
+                    <group>
+                        <group string="Status">
+                            <field name="red_invoice_state" widget="badge"/>
+                            <field name="red_invoice_last_sync"/>
+                            <field name="red_invoice_last_error" readonly="1"/>
+                        </group>
+                        <group string="Identifiers">
+                            <field name="red_invoice_no"/>
+                            <field name="red_invoice_template_code"/>
+                            <field name="red_invoice_series"/>
+                            <field name="red_invoice_reservation_code"/>
+                            <field name="red_invoice_transaction_uuid" readonly="1"/>
+                            <field name="red_invoice_transaction_id" readonly="1"/>
+                            <field name="red_invoice_code_of_tax" readonly="1"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Payment">
+                            <field name="red_invoice_payment_method"/>
+                            <field name="red_invoice_payment_method_name"/>
+                            <field name="red_invoice_secret_mode"/>
+                        </group>
+                        <group string="Files">
+                            <field name="red_invoice_download_attachment_id"/>
+                            <field name="red_invoice_pdf_attachment_id"/>
+                            <field name="red_invoice_lookup_url" readonly="1"/>
+                        </group>
+                    </group>
+                </page>
+            </notebook>
+        </field>
+    </record>
+</odoo>

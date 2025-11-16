@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record id="view_res_config_settings_redinvoice" model="ir.ui.view">
+        <field name="name">res.config.settings.redinvoice</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="base.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//app[@name='general_settings']" position="inside">
+                <block title="Red Invoice (Viettel SInvoice)" name="redinvoice_block">
+                    <setting string="Credentials &amp; Defaults" name="redinvoice_credentials">
+                        <field name="red_supplier_tax_code"/>
+                        <field name="red_invoice_api_base" placeholder="https://api-vinvoice.viettel.vn/services/einvoiceapplication/api"/>
+                        <field name="red_invoice_username"/>
+                        <field name="red_invoice_password" password="True"/>
+                        <field name="red_invoice_signing_mode"/>
+                        <field name="red_invoice_template_code"/>
+                        <field name="red_invoice_series"/>
+                        <field name="red_invoice_exchange_user"/>
+                    </setting>
+                    <setting string="Seller Payment / QR78" name="redinvoice_qr78">
+                        <field name="red_invoice_bank_name"/>
+                        <field name="red_invoice_bank_account"/>
+                        <field name="red_invoice_country_code"/>
+                        <field name="red_invoice_district_name"/>
+                        <field name="red_invoice_merchant_code"/>
+                        <field name="red_invoice_merchant_name"/>
+                        <field name="red_invoice_merchant_city"/>
+                    </setting>
+                    <setting string="Automation" name="redinvoice_automation">
+                        <field name="red_invoice_auto_issue"/>
+                        <field name="red_invoice_allow_download_pdf"/>
+                    </setting>
+                </block>
+            </xpath>
+        </field>
+    </record>
+</odoo>
