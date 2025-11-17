@@ -68,12 +68,16 @@ class AccountMove(models.Model):
 
     def action_redinvoice_download_zip(self):
         for move in self:
-            move._redinvoice_download(file_type='ZIP')
+            action = move._redinvoice_download(file_type='ZIP')
+            if action:
+                return action
         return True
 
     def action_redinvoice_download_pdf(self):
         for move in self:
-            move._redinvoice_download(file_type='PDF')
+            action = move._redinvoice_download(file_type='PDF')
+            if action:
+                return action
         return True
 
     def action_redinvoice_cancel(self):
@@ -201,6 +205,20 @@ class AccountMove(models.Model):
         if file_type.upper() == 'PDF':
             path = '/InvoiceAPI/InvoiceWS/createExchangeInvoiceFile'
         endpoint = f"{base.rstrip('/')}{path}"
+        # Prefer existing attachment if already downloaded
+        if file_type.upper() == 'ZIP' and self.red_invoice_download_attachment_id:
+            return {
+                'type': 'ir.actions.act_url',
+                'url': f'/web/content/{self.red_invoice_download_attachment_id.id}?download=1',
+                'target': 'self',
+            }
+        if file_type.upper() == 'PDF' and self.red_invoice_pdf_attachment_id:
+            return {
+                'type': 'ir.actions.act_url',
+                'url': f'/web/content/{self.red_invoice_pdf_attachment_id.id}?download=1',
+                'target': 'self',
+            }
+
         payload = {
             'supplierTaxCode': company.red_supplier_tax_code,
             'invoiceNo': self.red_invoice_no,
@@ -229,8 +247,14 @@ class AccountMove(models.Model):
                 self.red_invoice_download_attachment_id = attachment.id
             else:
                 self.red_invoice_pdf_attachment_id = attachment.id
+            return {
+                'type': 'ir.actions.act_url',
+                'url': f'/web/content/{attachment.id}?download=1',
+                'target': 'self',
+            }
         except Exception as exc:
             _logger.warning("Red Invoice download error for %s: %s", self.name, exc)
+            return
 
     def _redinvoice_attach_file(self, filename, file_bytes, file_type):
         """Create attachment from base64 string."""
