@@ -106,7 +106,8 @@ class AccountMove(models.Model):
             return
 
         payload = self._prepare_redinvoice_payload()
-        endpoint = f"{company.red_invoice_api_base.rstrip('/')}/InvoiceAPI/InvoiceWS/createInvoice/{company.red_supplier_tax_code}"
+        base_url = self._redinvoice_base_url()
+        endpoint = f"{base_url}/InvoiceAPI/InvoiceWS/createInvoice/{company.red_supplier_tax_code}"
         request_log = self.env['redinvoice.request'].create({
             'name': f"Red Invoice for {self.name}",
             'move_id': self.id,
@@ -118,14 +119,22 @@ class AccountMove(models.Model):
         headers = {
             'Content-Type': 'application/json',
         }
-        cookies = self._redinvoice_auth_cookies()
+        cookies, auth_headers = self._redinvoice_auth_cookies()
         # Always use a fresh UUID per submit attempt to avoid cached server errors
         payload['generalInvoiceInfo']['transactionUuid'] = str(uuid.uuid4())
         self.red_invoice_transaction_uuid = payload['generalInvoiceInfo']['transactionUuid']
         self.write({'red_invoice_state': 'issuing'})
 
+        merged_headers = dict(headers)
+        merged_headers.update(auth_headers)
+        # Log the outgoing request for troubleshooting (no passwords here)
         try:
-            response = requests.post(endpoint, json=payload, headers=headers, cookies=cookies, timeout=60)
+            _logger.info("RedInvoice POST %s headers=%s cookies=%s payload=%s", endpoint, merged_headers, cookies, payload)
+        except Exception:
+            pass
+
+        try:
+            response = requests.post(endpoint, json=payload, headers=merged_headers, cookies=cookies, timeout=60)
             request_log.mark_sent(code=str(response.status_code), body=response.text)
         except Exception as exc:
             self.write({
@@ -202,11 +211,11 @@ class AccountMove(models.Model):
             payload['strIssueDate'] = fields.Date.to_string(self.invoice_date or fields.Date.context_today(self))
             payload['exchangeUser'] = company.red_invoice_exchange_user or company.name
         headers = {'Content-Type': 'application/json' if file_type.upper() == 'ZIP' else 'application/x-www-form-urlencoded'}
-        cookies = self._redinvoice_auth_cookies()
+        cookies, auth_headers = self._redinvoice_auth_cookies()
         try:
             resp = requests.post(endpoint, json=payload if headers['Content-Type'] == 'application/json' else None,
                                   data=None if headers['Content-Type'] == 'application/json' else payload,
-                                  headers=headers, cookies=cookies, timeout=60)
+                                  headers={**headers, **auth_headers}, cookies=cookies, timeout=60)
             if resp.status_code != 200:
                 _logger.warning("Red Invoice download failed %s: %s", self.name, resp.text)
                 return
@@ -250,9 +259,9 @@ class AccountMove(models.Model):
             'reasonDelete': _('Cancelled from Odoo'),
         }
         headers = {'Content-Type': 'application/x-www-form-urlencoded'}
-        cookies = self._redinvoice_auth_cookies()
+        cookies, auth_headers = self._redinvoice_auth_cookies()
         try:
-            resp = requests.post(endpoint, data=payload, headers=headers, cookies=cookies, timeout=60)
+            resp = requests.post(endpoint, data=payload, headers={**headers, **auth_headers}, cookies=cookies, timeout=60)
             if resp.status_code == 200:
                 result = resp.json() if resp.text else {}
                 if result.get('errorCode'):
@@ -263,27 +272,55 @@ class AccountMove(models.Model):
         except Exception as exc:
             raise UserError(str(exc))
 
+    def _redinvoice_base_url(self):
+        """Normalize base URL:
+        - If admin pasted /auth/login, strip only that segment
+        - Otherwise return as-is (so full service path is preserved)
+        """
+        base = (self.company_id.red_invoice_api_base or '').strip()
+        if not base:
+            return ''
+        if '/auth/login' in base:
+            base = base.split('/auth/login')[0]
+        return base.rstrip('/')
+
     def _redinvoice_auth_cookies(self):
         company = self.company_id
         if not company.red_invoice_username or not company.red_invoice_password:
-            return {}
-        login_endpoint = f"{company.red_invoice_api_base.rstrip('/')}/auth/login"
+            return {}, {}
+        base_url = self._redinvoice_base_url()
+        login_endpoint = f"{base_url}/auth/login"
         payload = {
             'username': company.red_invoice_username,
             'password': company.red_invoice_password,
         }
+        basic_header = {}
+        try:
+            import base64
+            userpass = f"{company.red_invoice_username}:{company.red_invoice_password}"
+            basic_token = base64.b64encode(userpass.encode()).decode()
+            basic_header = {"Authorization": f"Basic {basic_token}"}
+        except Exception:
+            basic_header = {}
         try:
             resp = requests.post(login_endpoint, json=payload, timeout=30)
             if resp.status_code != 200:
                 _logger.warning("Red Invoice auth failed: %s", resp.text)
-                return {}
+                # Fall back to basic header only
+                return {}, basic_header
             data = resp.json()
             token = data.get('access_token')
             if token:
-                return {'access_token': token}
+                # Provide both requests cookies and header for compatibility
+                headers = {'Cookie': f'access_token={token}'}
+                headers.update(basic_header)
+                return {'access_token': token}, headers
+            # Fallback: no token, try basic only
+            if basic_header:
+                return {}, basic_header
         except Exception as exc:
             _logger.warning("Red Invoice auth error: %s", exc)
-        return {}
+        return {}, basic_header
 
     def _prepare_redinvoice_payload(self):
         self.ensure_one()
