@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Link Partner Wizard Form -->
+    <record id="zalo_link_partner_wizard_form" model="ir.ui.view">
+        <field name="name">Link Zalo to Contact</field>
+        <field name="model">zalo.link.partner.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Link Zalo to Contact">
+                <group>
+                    <group string="Zalo User Information">
+                        <field name="conversation_id" invisible="1"/>
+                        <field name="zalo_user_id" readonly="1"/>
+                        <field name="zalo_user_name" readonly="1"/>
+                    </group>
+                    <group>
+                        <field name="create_new_partner"/>
+                    </group>
+                </group>
+
+                <group invisible="create_new_partner">
+                    <group string="Link to Existing Contact">
+                        <field name="partner_id" options="{'no_create': True}"/>
+                    </group>
+                </group>
+
+                <group invisible="not create_new_partner">
+                    <group string="Create New Contact">
+                        <field name="new_partner_name" required="create_new_partner"/>
+                        <field name="new_partner_phone"/>
+                        <field name="new_partner_email" widget="email"/>
+                        <field name="new_partner_is_patient"/>
+                    </group>
+                </group>
+
+                <footer>
+                    <button string="Link Contact" type="object" name="action_link_partner" class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- Send Notification Wizard Form -->
+    <record id="zalo_send_notification_wizard_form" model="ir.ui.view">
+        <field name="name">Send Zalo Notification</field>
+        <field name="model">zalo.send.notification.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Send Zalo Notification">
+                <group>
+                    <group string="Recipient">
+                        <field name="partner_id" options="{'no_create': True}"/>
+                        <field name="zalo_user_id" readonly="1"/>
+                        <field name="has_zalo" invisible="1"/>
+                    </group>
+                    <group string="Message Type">
+                        <field name="message_type"/>
+                    </group>
+                </group>
+
+                <group invisible="message_type != 'text'">
+                    <field name="message_text" widget="text" placeholder="Enter your message here..." required="message_type == 'text'"/>
+                </group>
+
+                <group invisible="message_type != 'template'">
+                    <field name="template_id"/>
+                    <div class="alert alert-info">
+                        <p>Template notifications (ZNS) coming soon!</p>
+                    </div>
+                </group>
+
+                <footer>
+                    <button string="Send Message" type="object" name="action_send_message" class="btn-primary" invisible="not has_zalo"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+</odoo>

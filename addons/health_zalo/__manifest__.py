@@ -52,14 +52,19 @@ Technical Stack:
         'views/zalo_message_views.xml',
         'views/res_partner_views.xml',
         'views/zalo_menus.xml',
+        'views/zalo_templates.xml',
+
+        # Wizards
+        'wizard/zalo_wizard_views.xml',
     ],
-    # 'assets': {
-    #     'web.assets_backend': [
-    #         'health_zalo/static/src/js/zalo_chat_widget.js',
-    #         'health_zalo/static/src/js/zalo_bus_service.js',
-    #         'health_zalo/static/src/scss/zalo_chat.scss',
-    #     ],
-    # },
+    'assets': {
+        'web.assets_backend': [
+            'health_zalo/static/src/js/zalo_chat_widget.js',
+            'health_zalo/static/src/js/zalo_bus_service.js',
+            'health_zalo/static/src/xml/zalo_chat_widget.xml',
+            'health_zalo/static/src/scss/zalo_chat.scss',
+        ],
+    },
     'external_dependencies': {
         'python': ['requests'],
     },

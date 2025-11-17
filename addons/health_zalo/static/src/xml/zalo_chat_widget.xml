@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="health_zalo.ZaloChatWidget" owl="1">
+        <div class="zalo-chat-widget">
+            <!-- Loading State -->
+            <t t-if="state.loading">
+                <div class="zalo-chat-loading">
+                    <i class="fa fa-spinner fa-spin fa-2x"/>
+                    <p>Loading conversation...</p>
+                </div>
+            </t>
+
+            <!-- Chat Interface -->
+            <t t-else="">
+                <!-- Chat Header -->
+                <div class="zalo-chat-header">
+                    <div class="zalo-chat-header-avatar">
+                        <img t-if="state.conversation?.zalo_user_avatar"
+                             t-att-src="state.conversation.zalo_user_avatar"
+                             alt="Avatar"/>
+                        <i t-else="" class="fa fa-user-circle fa-2x"/>
+                    </div>
+                    <div class="zalo-chat-header-info">
+                        <h4 t-esc="state.conversation?.name || 'Zalo Chat'"/>
+                        <span class="text-muted">Zalo Conversation</span>
+                    </div>
+                </div>
+
+                <!-- Messages Container -->
+                <div class="zalo-chat-messages">
+                    <t t-if="state.messages.length === 0">
+                        <div class="zalo-chat-empty">
+                            <i class="fa fa-comments-o fa-3x"/>
+                            <p>No messages yet. Start a conversation!</p>
+                        </div>
+                    </t>
+
+                    <t t-else="">
+                        <t t-foreach="state.messages" t-as="message" t-key="message.id">
+                            <!-- Date Separator -->
+                            <t t-if="shouldShowDateSeparator(message_index)">
+                                <div class="zalo-chat-date-separator">
+                                    <span t-esc="formatDate(message.sent_date)"/>
+                                </div>
+                            </t>
+
+                            <!-- Message Bubble -->
+                            <div t-att-class="'zalo-chat-message ' + (message.direction === 'outgoing' ? 'zalo-chat-message-outgoing' : 'zalo-chat-message-incoming')">
+                                <div class="zalo-chat-message-content">
+                                    <!-- Text Message -->
+                                    <t t-if="message.message_type === 'text'">
+                                        <p t-esc="message.text"/>
+                                    </t>
+
+                                    <!-- Image Message -->
+                                    <t t-elif="message.message_type === 'image'">
+                                        <div class="zalo-chat-message-image">
+                                            <i class="fa fa-image"/> Image
+                                        </div>
+                                    </t>
+
+                                    <!-- File Message -->
+                                    <t t-elif="message.message_type === 'file'">
+                                        <div class="zalo-chat-message-file">
+                                            <i class="fa fa-file"/> File
+                                        </div>
+                                    </t>
+
+                                    <!-- Other Types -->
+                                    <t t-else="">
+                                        <div class="zalo-chat-message-other">
+                                            <i class="fa fa-info-circle"/> <t t-esc="message.message_type"/>
+                                        </div>
+                                    </t>
+
+                                    <div class="zalo-chat-message-time">
+                                        <small t-esc="formatTime(message.sent_date)"/>
+                                        <t t-if="message.direction === 'outgoing'">
+                                            <i t-if="message.state === 'sent'" class="fa fa-check" title="Sent"/>
+                                            <i t-elif="message.state === 'delivered'" class="fa fa-check-double" title="Delivered"/>
+                                            <i t-elif="message.state === 'failed'" class="fa fa-exclamation-circle text-danger" title="Failed"/>
+                                        </t>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+                    </t>
+
+                    <!-- Scroll anchor -->
+                    <div t-ref="messagesEnd"/>
+                </div>
+
+                <!-- Message Input -->
+                <div class="zalo-chat-input">
+                    <textarea
+                        t-ref="messageInput"
+                        class="form-control zalo-chat-input-field"
+                        placeholder="Type a message..."
+                        t-model="state.inputText"
+                        t-on-keydown="onKeyDown"
+                        rows="1"
+                        t-att-disabled="state.sending"/>
+                    <button
+                        class="btn btn-primary zalo-chat-send-btn"
+                        t-on-click="sendMessage"
+                        t-att-disabled="state.sending or !state.inputText.trim()">
+                        <i t-if="!state.sending" class="fa fa-paper-plane"/>
+                        <i t-else="" class="fa fa-spinner fa-spin"/>
+                    </button>
+                </div>
+            </t>
+        </div>
+    </t>
+
+</templates>

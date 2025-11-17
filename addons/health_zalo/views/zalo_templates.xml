@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- OAuth Error Template -->
+    <template id="oauth_error" name="Zalo OAuth Error">
+        <t t-call="web.layout">
+            <div class="container mt-5">
+                <div class="row justify-content-center">
+                    <div class="col-md-8">
+                        <div class="card shadow">
+                            <div class="card-body text-center p-5">
+                                <i class="fa fa-exclamation-triangle fa-4x text-danger mb-4"/>
+                                <h2 class="mb-3">Zalo OAuth Error</h2>
+                                <p class="lead text-muted mb-4">
+                                    There was a problem connecting to Zalo.
+                                </p>
+
+                                <div class="alert alert-danger text-left">
+                                    <h5>Error Details:</h5>
+                                    <p><strong>Error Code:</strong> <t t-esc="error"/></p>
+                                    <p><strong>Description:</strong> <t t-esc="error_description"/></p>
+                                </div>
+
+                                <div class="mt-4">
+                                    <h5>What to do next:</h5>
+                                    <ul class="list-unstyled text-left">
+                                        <li class="mb-2">
+                                            <i class="fa fa-check text-success"/> Verify your App ID and App Secret are correct
+                                        </li>
+                                        <li class="mb-2">
+                                            <i class="fa fa-check text-success"/> Ensure OAuth redirect URI matches in Zalo app settings
+                                        </li>
+                                        <li class="mb-2">
+                                            <i class="fa fa-check text-success"/> Check that your Zalo Official Account is approved
+                                        </li>
+                                        <li class="mb-2">
+                                            <i class="fa fa-check text-success"/> Try the connection again
+                                        </li>
+                                    </ul>
+                                </div>
+
+                                <div class="mt-4">
+                                    <a href="/web#menu_id=health_zalo.menu_zalo_configuration" class="btn btn-primary btn-lg">
+                                        <i class="fa fa-arrow-left"/> Back to Zalo Settings
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+
+</odoo>

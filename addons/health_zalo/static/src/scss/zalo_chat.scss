@@ -1,0 +1,317 @@
+/**
+ * Zalo Chat Widget Styles
+ *
+ * Professional chat interface styling inspired by modern messaging apps
+ */
+
+// Variables
+$zalo-blue: #0068FF;
+$zalo-light-blue: #E3F2FD;
+$incoming-bg: #F0F0F0;
+$outgoing-bg: $zalo-blue;
+$border-radius: 18px;
+$message-max-width: 65%;
+
+// Main Chat Widget Container
+.zalo-chat-widget {
+    display: flex;
+    flex-direction: column;
+    height: 600px;
+    max-height: 80vh;
+    width: 100%;
+    max-width: 800px;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    overflow: hidden;
+}
+
+// Loading State
+.zalo-chat-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    color: #666;
+    gap: 16px;
+
+    p {
+        margin: 0;
+        font-size: 14px;
+    }
+}
+
+// Chat Header
+.zalo-chat-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 20px;
+    background: linear-gradient(135deg, $zalo-blue 0%, #0052CC 100%);
+    color: #fff;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+
+    .zalo-chat-header-avatar {
+        img {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        i {
+            color: rgba(255, 255, 255, 0.9);
+        }
+    }
+
+    .zalo-chat-header-info {
+        flex: 1;
+
+        h4 {
+            margin: 0 0 4px 0;
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        span {
+            font-size: 12px;
+            opacity: 0.8;
+        }
+    }
+}
+
+// Messages Container
+.zalo-chat-messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px;
+    background: #F8F9FA;
+
+    // Smooth scrolling
+    scroll-behavior: smooth;
+
+    // Custom scrollbar
+    &::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    &::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background: #D0D0D0;
+        border-radius: 3px;
+
+        &:hover {
+            background: #B0B0B0;
+        }
+    }
+}
+
+// Empty State
+.zalo-chat-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    color: #999;
+    gap: 16px;
+
+    i {
+        color: #CCC;
+    }
+
+    p {
+        margin: 0;
+        font-size: 14px;
+    }
+}
+
+// Date Separator
+.zalo-chat-date-separator {
+    text-align: center;
+    margin: 24px 0 16px 0;
+
+    span {
+        display: inline-block;
+        padding: 4px 16px;
+        background: rgba(0, 0, 0, 0.05);
+        border-radius: 12px;
+        font-size: 12px;
+        color: #666;
+        font-weight: 500;
+    }
+}
+
+// Message Bubble
+.zalo-chat-message {
+    display: flex;
+    margin-bottom: 12px;
+    animation: slideIn 0.2s ease-out;
+
+    &.zalo-chat-message-incoming {
+        justify-content: flex-start;
+
+        .zalo-chat-message-content {
+            background: $incoming-bg;
+            color: #000;
+            border-bottom-left-radius: 4px;
+        }
+    }
+
+    &.zalo-chat-message-outgoing {
+        justify-content: flex-end;
+
+        .zalo-chat-message-content {
+            background: $outgoing-bg;
+            color: #fff;
+            border-bottom-right-radius: 4px;
+        }
+    }
+}
+
+.zalo-chat-message-content {
+    max-width: $message-max-width;
+    padding: 10px 14px;
+    border-radius: $border-radius;
+    word-wrap: break-word;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+
+    p {
+        margin: 0;
+        font-size: 14px;
+        line-height: 1.4;
+        white-space: pre-wrap;
+    }
+
+    .zalo-chat-message-time {
+        margin-top: 4px;
+        font-size: 11px;
+        opacity: 0.7;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        justify-content: flex-end;
+
+        i {
+            font-size: 10px;
+        }
+    }
+
+    // Special message types
+    .zalo-chat-message-image,
+    .zalo-chat-message-file,
+    .zalo-chat-message-other {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 13px;
+        padding: 4px 0;
+
+        i {
+            font-size: 16px;
+        }
+    }
+}
+
+// Message Input Area
+.zalo-chat-input {
+    display: flex;
+    align-items: flex-end;
+    gap: 12px;
+    padding: 16px 20px;
+    background: #fff;
+    border-top: 1px solid #E0E0E0;
+
+    .zalo-chat-input-field {
+        flex: 1;
+        resize: none;
+        min-height: 40px;
+        max-height: 120px;
+        padding: 10px 14px;
+        border: 1px solid #D0D0D0;
+        border-radius: 20px;
+        font-size: 14px;
+        line-height: 1.4;
+        transition: border-color 0.2s;
+
+        &:focus {
+            outline: none;
+            border-color: $zalo-blue;
+            box-shadow: 0 0 0 2px rgba($zalo-blue, 0.1);
+        }
+
+        &::placeholder {
+            color: #999;
+        }
+    }
+
+    .zalo-chat-send-btn {
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        background: $zalo-blue;
+        border: none;
+        color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.2s;
+        flex-shrink: 0;
+
+        &:hover:not(:disabled) {
+            background: darken($zalo-blue, 10%);
+            transform: scale(1.05);
+        }
+
+        &:active:not(:disabled) {
+            transform: scale(0.95);
+        }
+
+        &:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        i {
+            font-size: 16px;
+        }
+    }
+}
+
+// Animations
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+// Responsive Design
+@media (max-width: 768px) {
+    .zalo-chat-widget {
+        height: 100vh;
+        max-height: 100vh;
+        border-radius: 0;
+    }
+
+    .zalo-chat-message-content {
+        max-width: 80%;
+    }
+}
+
+// Integration with Odoo Modal/Dialog
+.modal .zalo-chat-widget {
+    height: 500px;
+    box-shadow: none;
+    border-radius: 0;
+}

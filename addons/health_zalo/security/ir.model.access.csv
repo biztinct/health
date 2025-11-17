@@ -13,3 +13,5 @@ access_zalo_attachment_manager,zalo.attachment.manager,model_zalo_attachment,gro
 access_zalo_attachment_user,zalo.attachment.user,model_zalo_attachment,group_zalo_user,1,1,1,0
 access_zalo_token_manager,zalo.token.manager.all,model_zalo_token_manager,base.group_user,1,0,0,0
 access_zalo_message_handler,zalo.message.handler.all,model_zalo_message_handler,base.group_user,1,0,0,0
+access_zalo_link_partner_wizard_user,zalo.link.partner.wizard.user,model_zalo_link_partner_wizard,group_zalo_user,1,1,1,1
+access_zalo_send_notification_wizard_user,zalo.send.notification.wizard.user,model_zalo_send_notification_wizard,group_zalo_user,1,1,1,1
