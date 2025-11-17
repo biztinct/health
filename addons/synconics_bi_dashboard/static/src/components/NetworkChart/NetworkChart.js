@@ -40,22 +40,11 @@ export class NetworkChart extends Component {
   }
 
   render_network_chart() {
-    console.log("=== NetworkChart: render_network_chart called ===");
-    console.log("NetworkChart: chartId =", this.props.chartId);
-    console.log("NetworkChart: recordSets =", this.props.recordSets);
-    console.log("NetworkChart: theme =", this.props.theme);
-
     var data = this.props.recordSets;
-    console.log("NetworkChart: data type =", typeof data);
-    console.log("NetworkChart: is Array? =", Array.isArray(data));
-
     if (this.root) {
-      console.log("NetworkChart: Disposing existing root");
       this.root.dispose();
     }
-
     if (typeof data == "object" && !Array.isArray(data)) {
-      console.log("NetworkChart: ERROR - Data is object but not array", data);
       this.state.isError = true;
       this.state.errorMessage = data.message;
       return;
@@ -65,19 +54,14 @@ export class NetworkChart extends Component {
     this.state.errorMessage = false;
 
     if (!data || !data.length) {
-      console.log("NetworkChart: ERROR - No data or empty array");
       this.state.isError = true;
       this.state.errorMessage = "No Data to display!";
       return;
     }
 
-    console.log("NetworkChart: Data validation passed, creating chart...");
-    console.log("NetworkChart: Container ID =", "network_chart__" + this.props.chartId);
-
     this.root = am5.Root.new("network_chart__" + this.props.chartId);
     const theme = this.themeMap[this.props.theme];
     this.root.setThemes([theme.new(this.root)]);
-    console.log("NetworkChart: Root created and theme applied");
 
     // Create hierarchical network structure
     const networkData = data.map((record) => ({
@@ -85,7 +69,6 @@ export class NetworkChart extends Component {
       name: record.category,
       value: record.value || 0,
     }));
-    console.log("NetworkChart: Transformed networkData =", networkData);
 
     // Create container
     var container = this.root.container.children.push(
@@ -95,7 +78,6 @@ export class NetworkChart extends Component {
         layout: this.root.verticalLayout,
       })
     );
-    console.log("NetworkChart: Container created");
 
     // Create series
     var series = container.children.push(
@@ -111,7 +93,6 @@ export class NetworkChart extends Component {
         centerStrength: 0.8,
       })
     );
-    console.log("NetworkChart: Series created");
 
     // Configure nodes
     series.nodes.template.setAll({
@@ -147,23 +128,17 @@ export class NetworkChart extends Component {
     });
 
     series.data.setAll(networkData);
-    console.log("NetworkChart: Data set on series");
-
     series.appear(1000, 100);
-    console.log("NetworkChart: Appear animation triggered");
 
     let exporting = am5plugins_exporting.Exporting.new(this.root, {
       filePrefix: "network_chart",
       dataSource: series,
     });
-    console.log("NetworkChart: Exporting configured");
 
     this.root.events.once("frameended", () => {
-      console.log("NetworkChart: First frame rendered");
       if (this.props.export) {
         this.props.export(exporting);
       }
     });
-    console.log("=== NetworkChart: render_network_chart completed ===");
   }
 }

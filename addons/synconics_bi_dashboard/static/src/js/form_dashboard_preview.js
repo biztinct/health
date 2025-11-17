@@ -16,6 +16,14 @@ import { RadarChart } from "../components/RadarChart/RadarChart";
 import { StackedColumnChart } from "../components/StackedColumnChart/StackedColumnChart";
 import { RadialChart } from "../components/RadialChart/RadialChart";
 import { ScatterChart } from "../components/ScatterChart/ScatterChart";
+import { SankeyChart } from "../components/SankeyChart/SankeyChart";
+import { ChordChart } from "../components/ChordChart/ChordChart";
+import { TreemapChart } from "../components/TreemapChart/TreemapChart";
+import { HeatmapChart } from "../components/HeatmapChart/HeatmapChart";
+import { WaterfallChart } from "../components/WaterfallChart/WaterfallChart";
+import { CandlestickChart } from "../components/CandlestickChart/CandlestickChart";
+import { BoxPlotChart } from "../components/BoxPlotChart/BoxPlotChart";
+import { NetworkChart } from "../components/NetworkChart/NetworkChart";
 import { MapChart } from "../components/MapChart/MapChart";
 import { MeterChart } from "../components/MeterChart/MeterChart";
 import { ListView } from "../components/ListView/ListView";
@@ -227,6 +235,14 @@ FormDashboardPreviewComponent.components = {
   StackedColumnChart,
   RadialChart,
   ScatterChart,
+  SankeyChart,
+  ChordChart,
+  TreemapChart,
+  HeatmapChart,
+  WaterfallChart,
+  CandlestickChart,
+  BoxPlotChart,
+  NetworkChart,
   MapChart,
   MeterChart,
   ListView,

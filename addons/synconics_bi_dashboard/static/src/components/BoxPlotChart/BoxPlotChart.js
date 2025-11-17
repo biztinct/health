@@ -40,21 +40,11 @@ export class BoxPlotChart extends Component {
   }
 
   render_boxplot_chart() {
-    console.log("=== BoxPlotChart: render_boxplot_chart called ===");
-    console.log("BoxPlotChart: chartId =", this.props.chartId);
-    console.log("BoxPlotChart: recordSets =", this.props.recordSets);
-
     var data = this.props.recordSets;
-    console.log("BoxPlotChart: data type =", typeof data);
-    console.log("BoxPlotChart: is Array? =", Array.isArray(data));
-
     if (this.root) {
-      console.log("BoxPlotChart: Disposing existing root");
       this.root.dispose();
     }
-
     if (typeof data == "object" && !Array.isArray(data)) {
-      console.log("BoxPlotChart: ERROR - Data is object but not array", data);
       this.state.isError = true;
       this.state.errorMessage = data.message;
       return;
@@ -64,17 +54,14 @@ export class BoxPlotChart extends Component {
     this.state.errorMessage = false;
 
     if (!data || !data.length) {
-      console.log("BoxPlotChart: ERROR - No data or empty array");
       this.state.isError = true;
       this.state.errorMessage = "No Data to display!";
       return;
     }
 
-    console.log("BoxPlotChart: Data validation passed, creating chart...");
     this.root = am5.Root.new("boxplot_chart__" + this.props.chartId);
     const theme = this.themeMap[this.props.theme];
     this.root.setThemes([theme.new(this.root)]);
-    console.log("BoxPlotChart: Root created and theme applied");
 
     // Simulate box plot stats from value
     const boxplotData = data.map((record) => {
@@ -90,7 +77,6 @@ export class BoxPlotChart extends Component {
         high: value + stdDev * 2,
       };
     });
-    console.log("BoxPlotChart: Transformed boxplotData =", boxplotData);
 
     // Create chart
     var chart = this.root.container.children.push(
@@ -164,24 +150,18 @@ export class BoxPlotChart extends Component {
     });
 
     series.data.setAll(boxplotData);
-    console.log("BoxPlotChart: Data set on series");
-
     series.appear(1000, 100);
     chart.appear(1000, 100);
-    console.log("BoxPlotChart: Appear animations triggered");
 
     let exporting = am5plugins_exporting.Exporting.new(this.root, {
       filePrefix: "boxplot_chart",
       dataSource: series,
     });
-    console.log("BoxPlotChart: Exporting configured");
 
     this.root.events.once("frameended", () => {
-      console.log("BoxPlotChart: First frame rendered");
       if (this.props.export) {
         this.props.export(exporting);
       }
     });
-    console.log("=== BoxPlotChart: render_boxplot_chart completed ===");
   }
 }

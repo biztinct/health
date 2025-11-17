@@ -1369,22 +1369,10 @@ class DashboardChart(models.Model):
             "kpi": self.get_kpi_data,
             "to_do": self.get_todo_data,
         }
-        _logger.info(f"=== get_chart_data called for chart_type: {chart_type} ===")
-        handler = chart_handlers.get(chart_type)
-        if not handler:
-            _logger.warning(f"No handler found for chart_type: {chart_type}, returning empty data")
-            prepared_data = []
-        else:
-            _logger.info(f"Using handler: {handler.__name__}")
-            prepared_data = handler(conf)
-            _logger.info(f"Handler returned {len(prepared_data) if isinstance(prepared_data, list) else 'non-list'} records")
-            _logger.info(f"Sample data: {prepared_data[:2] if isinstance(prepared_data, list) and len(prepared_data) > 0 else prepared_data}")
-
-        result = self._build_final_response(
+        prepared_data = chart_handlers.get(chart_type, lambda x: [])(conf)
+        return self._build_final_response(
             prepared_data, domain, chart_type, view_item, extra_action
         )
-        _logger.info(f"Final response keys: {result.keys() if isinstance(result, dict) else 'non-dict'}")
-        return result
 
     def _init_configuration(self):
         """
