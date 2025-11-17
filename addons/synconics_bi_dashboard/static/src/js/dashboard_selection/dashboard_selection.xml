@@ -5,7 +5,8 @@
             <div class="dashboard-selection pb-3">
                 <div t-foreach="options" t-as="option" t-key="option[0]" t-attf-class="select-option #{option[0] === value ? 'selected' : ''}" t-on-click="(ev) => this.onClickDashboard(ev, stringify(option[0]))">
                     <div class="">
-                        <img t-att-src="'/synconics_bi_dashboard/static/description/chart_images/'+ option[0] + '.png'" height="40" width="40" />
+                        <img t-att-src="'/synconics_bi_dashboard/static/description/chart_images/'+ option[0] + '.png'" height="40" width="40" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+                        <div style="display:none; width:40px; height:40px; align-items:center; justify-content:center; background:#f0f0f0; border-radius:4px; font-size:20px;">📊</div>
                     </div>
                     <div t-out="option[1]" />
                 </div>

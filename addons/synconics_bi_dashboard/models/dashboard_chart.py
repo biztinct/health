@@ -101,6 +101,14 @@ class DashboardChart(models.Model):
             ("scatter_chart", "Scatter Chart"),
             ("map_chart", "Map Chart"),
             ("meter_chart", "Meter Chart"),
+            ("sankey_chart", "Sankey Diagram"),
+            ("chord_chart", "Chord Diagram"),
+            ("treemap_chart", "Treemap"),
+            ("heatmap_chart", "Heatmap"),
+            ("waterfall_chart", "Waterfall Chart"),
+            ("candlestick_chart", "Candlestick Chart"),
+            ("boxplot_chart", "Box Plot"),
+            ("network_chart", "Network Diagram"),
             ("to_do", "To Do"),
             ("list", "List View"),
         ],
@@ -1346,6 +1354,14 @@ class DashboardChart(models.Model):
             "pyramid_chart": self.get_category_value_data,
             "pie_chart": self.get_category_value_data,
             "radar_chart": self.get_category_value_data,
+            "sankey_chart": self.get_category_value_data,
+            "chord_chart": self.get_category_value_data,
+            "treemap_chart": self.get_category_value_data,
+            "heatmap_chart": self.get_category_value_data,
+            "waterfall_chart": self.get_category_value_data,
+            "candlestick_chart": self.get_category_value_data,
+            "boxplot_chart": self.get_category_value_data,
+            "network_chart": self.get_category_value_data,
             "map_chart": self.get_map_chart_data,
             "meter_chart": self.get_meter_chart_data,
             "list": self.get_list_view_data,
@@ -1353,10 +1369,22 @@ class DashboardChart(models.Model):
             "kpi": self.get_kpi_data,
             "to_do": self.get_todo_data,
         }
-        prepared_data = chart_handlers.get(chart_type, lambda x: [])(conf)
-        return self._build_final_response(
+        _logger.info(f"=== get_chart_data called for chart_type: {chart_type} ===")
+        handler = chart_handlers.get(chart_type)
+        if not handler:
+            _logger.warning(f"No handler found for chart_type: {chart_type}, returning empty data")
+            prepared_data = []
+        else:
+            _logger.info(f"Using handler: {handler.__name__}")
+            prepared_data = handler(conf)
+            _logger.info(f"Handler returned {len(prepared_data) if isinstance(prepared_data, list) else 'non-list'} records")
+            _logger.info(f"Sample data: {prepared_data[:2] if isinstance(prepared_data, list) and len(prepared_data) > 0 else prepared_data}")
+
+        result = self._build_final_response(
             prepared_data, domain, chart_type, view_item, extra_action
         )
+        _logger.info(f"Final response keys: {result.keys() if isinstance(result, dict) else 'non-dict'}")
+        return result
 
     def _init_configuration(self):
         """

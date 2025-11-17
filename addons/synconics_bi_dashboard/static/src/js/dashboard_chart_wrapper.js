@@ -16,6 +16,14 @@ import { RadialChart } from "../components/RadialChart/RadialChart";
 import { ScatterChart } from "../components/ScatterChart/ScatterChart";
 import { MapChart } from "../components/MapChart/MapChart";
 import { MeterChart } from "../components/MeterChart/MeterChart";
+import { SankeyChart } from "../components/SankeyChart/SankeyChart";
+import { ChordChart } from "../components/ChordChart/ChordChart";
+import { TreemapChart } from "../components/TreemapChart/TreemapChart";
+import { HeatmapChart } from "../components/HeatmapChart/HeatmapChart";
+import { WaterfallChart } from "../components/WaterfallChart/WaterfallChart";
+import { CandlestickChart } from "../components/CandlestickChart/CandlestickChart";
+import { BoxPlotChart } from "../components/BoxPlotChart/BoxPlotChart";
+import { NetworkChart } from "../components/NetworkChart/NetworkChart";
 import { ListView } from "../components/ListView/ListView";
 import { TileView } from "../components/TileView/TileView";
 import { KPIView } from "../components/KPIView/KPIView";
@@ -388,6 +396,14 @@ DashboardChartWrapper.components = {
   ScatterChart,
   MapChart,
   MeterChart,
+  SankeyChart,
+  ChordChart,
+  TreemapChart,
+  HeatmapChart,
+  WaterfallChart,
+  CandlestickChart,
+  BoxPlotChart,
+  NetworkChart,
   ListView,
   TileView,
   KPIView,

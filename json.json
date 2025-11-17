@@ -1,0 +1,88 @@
+curl --location 'https://api-vinvoice.viettel.vn/services/einvoiceapplication/api/InvoiceAPI/InvoiceWS/createInvoice/0100109106-507' \
+--header 'Content-Type: application/json' \
+--header 'Authorization: Basic MDEwMDEwOTEwNi01MDc6MndzeENERSM=' \
+--data-raw '{
+  "generalInvoiceInfo": {
+    "invoiceType": "1",
+    "templateCode": "1/779",
+    "invoiceSeries": "K24MTB",
+    "invoiceIssuedDate": 1763372969000,
+    "currencyCode": "VND",
+    "adjustmentType": "1",
+    "paymentStatus": false,
+    "cusGetInvoiceRight": true,
+    "reservationCode": ""
+  },
+  "sellerInfo": {
+    "sellerLegalName": "Viet UC (HCM)",
+    "sellerTaxCode": "0100109106-507",
+    "sellerAddressLine": "215 Dinh Tien Hoang street",
+    "sellerPhoneNumber": "7878587587",
+    "sellerEmail": "ash@biztinct.com",
+    "sellerBankName": "",
+    "sellerBankAccount": "",
+    "sellerDistrictName": "",
+    "sellerCityName": "Ho Chi Minh City",
+    "sellerCountryCode": "",
+    "merchantCode": "",
+    "merchantName": "",
+    "merchantCity": ""
+  },
+  "buyerInfo": {
+    "buyerName": "Client2025",
+    "buyerLegalName": "Client2025",
+    "buyerTaxCode": "",
+    "buyerAddressLine": "",
+    "buyerPostalCode": "",
+    "buyerDistrictName": "",
+    "buyerCityName": "Dong Da",
+    "buyerCountryCode": "",
+    "buyerPhoneNumber": "",
+    "buyerEmail": "",
+    "buyerBankName": "",
+    "buyerBankAccount": "",
+    "buyerIdType": "",
+    "buyerIdNo": "",
+    "buyerNotGetInvoice": 0
+  },
+  "payments": [
+    {
+      "paymentMethod": "2",
+      "paymentMethodName": "CK"
+    }
+  ],
+  "itemInfo": [
+    {
+      "lineNumber": 1,
+      "itemCode": "",
+      "itemName": "Blood Pressure management",
+      "unitName": "Units",
+      "unitPrice": 3600.0,
+      "quantity": 1.0,
+      "itemTotalAmountWithoutTax": 3600.0,
+      "itemTotalAmountWithTax": 3600.0,
+      "itemTotalAmountAfterDiscount": 3600.0,
+      "taxPercentage": -1,
+      "taxAmount": 0.0,
+      "discount": 0,
+      "itemDiscount": 0,
+      "isIncreaseItem": true
+    }
+  ],
+  "taxBreakdowns": [
+    {
+      "taxPercentage": -1,
+      "taxableAmount": 3600.0,
+      "taxAmount": 0.0
+    }
+  ],
+  "summarizeInfo": {
+    "sumOfTotalLineAmountWithoutTax": 3600.0,
+    "totalAmountWithoutTax": 3600.0,
+    "totalTaxAmount": 0.0,
+    "totalAmountWithTax": 3600.0,
+    "totalAmountAfterDiscount": 3600.0,
+    "totalAmountWithTaxInWords": "Three Thousand, Six Hundred Dong"
+  }
+}
+'
