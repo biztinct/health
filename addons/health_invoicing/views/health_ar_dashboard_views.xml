@@ -230,19 +230,22 @@
                 <field name="name" string="Invoice Number" readonly="1"/>
                 <field name="partner_id" string="Client" readonly="1"/>
                 <field name="invoice_date" readonly="1"/>
-                <field name="invoice_date_due" readonly="1"/>
+                <field name="invoice_date_due" widget="remaining_days" optional="show" invisible="payment_state in ('paid', 'in_payment')"/>
                 <field name="amount_total" readonly="1" sum="Total Amount"/>
                 <field name="amount_residual" readonly="1" sum="Amount Due" string="Amount Due"/>
 
-                <!-- Payment and invoice state -->
-                <field name="state" readonly="1" widget="badge"/>
-                <field name="payment_state" readonly="1" widget="badge"/>
+                <!-- Payment state -->
+                <field name="payment_state" readonly="1" widget="badge"
+                       decoration-success="payment_state=='paid'"
+                       decoration-warning="payment_state in ('partial', 'in_payment')"
+                       decoration-danger="payment_state=='not_paid'"/>
 
                 <!-- Optional fields -->
                 <field name="invoice_origin" readonly="1" optional="show" string="Source Document"/>
                 <field name="healthcare_service_type" readonly="1" optional="hide" string="Service Type"/>
 
                 <!-- Hidden fields for functionality -->
+                <field name="state" invisible="1"/>
                 <field name="company_id" invisible="1"/>
                 <field name="currency_id" invisible="1"/>
                 <field name="move_type" invisible="1"/>
