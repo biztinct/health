@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Healthcare Landing Dashboard',
-    'version': '18.0.1.0.0',
+    'version': '18.0.1.0.1',
     'category': 'Healthcare',
     'summary': 'Modern landing dashboard with icon-driven navigation for VAFHS Healthcare System',
     'description': """

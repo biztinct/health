@@ -44,25 +44,13 @@ class HealthPaymentWorkflowWizard(models.TransientModel):
         """Override default_get to auto-populate FSO from invoice"""
         res = super(HealthPaymentWorkflowWizard, self).default_get(fields_list)
 
-        _logger.info("=== Payment Workflow Wizard - default_get ===")
-        _logger.info(f"Context: {self.env.context}")
-        _logger.info(f"Default values from context: {res}")
-
         # If invoice_id is provided in context but fso_id is not, get it from invoice
         if 'invoice_id' in res and res.get('invoice_id'):
             if 'fso_id' not in res or not res.get('fso_id'):
                 invoice = self.env['account.move'].browse(res['invoice_id'])
-                _logger.info(f"Invoice ID: {invoice.id}, Invoice Name: {invoice.name}")
-                _logger.info(f"Invoice fieldservice_order_id: {invoice.fieldservice_order_id}")
-                _logger.info(f"Invoice fieldservice_order_id.id: {invoice.fieldservice_order_id.id if invoice.fieldservice_order_id else 'None'}")
-
                 if invoice and invoice.fieldservice_order_id:
                     res['fso_id'] = invoice.fieldservice_order_id.id
-                    _logger.info(f"✅ Set fso_id to: {res['fso_id']}")
-                else:
-                    _logger.warning(f"⚠️ Invoice {invoice.name} has NO fieldservice_order_id!")
 
-        _logger.info(f"Final default values: {res}")
         return res
 
     @api.onchange('invoice_id')

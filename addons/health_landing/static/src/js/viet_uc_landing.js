@@ -158,6 +158,12 @@ class VietUcDashboard extends Component {
                         action: "health_invoicing.action_health_payment_transaction",
                         description: "View payment history"
                     },
+                    {
+                        name: "Invoices",
+                        icon: "fa-file-text-o",
+                        action: "health_invoicing.action_healthcare_invoices",
+                        description: "View all invoices"
+                    },
                 ],
             },
             {
