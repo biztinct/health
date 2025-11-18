@@ -27,8 +27,8 @@
                             <field name="amount_total" readonly="1" widget="monetary"/>
                         </group>
                         <group>
-                            <field name="fso_id" readonly="1"/>
-                            <field name="invoice_id" readonly="1"/>
+                            <field name="fso_id" readonly="1" options="{'no_create': True, 'no_open': True}"/>
+                            <field name="invoice_id" readonly="1" options="{'no_create': True, 'no_open': True}"/>
                             <field name="currency_id" invisible="1"/>
                         </group>
                     </group>

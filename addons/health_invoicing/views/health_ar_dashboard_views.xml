@@ -245,10 +245,10 @@
                 <field name="healthcare_service_type" readonly="1" optional="hide" string="Service Type"/>
 
                 <!-- Hidden fields for functionality -->
-                <field name="state" invisible="1"/>
-                <field name="company_id" invisible="1"/>
-                <field name="currency_id" invisible="1"/>
-                <field name="move_type" invisible="1"/>
+                <field name="state" column_invisible="1"/>
+                <field name="company_id" column_invisible="1"/>
+                <field name="currency_id" column_invisible="1"/>
+                <field name="move_type" column_invisible="1"/>
 
             </list>
         </field>

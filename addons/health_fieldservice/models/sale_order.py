@@ -1,11 +1,50 @@
 from odoo import models, fields, api, _
 from odoo.exceptions import UserError
+import logging
+
+_logger = logging.getLogger(__name__)
 
 
 class SaleOrder(models.Model):
     """Extend sale.order to add healthcare quote validation and invoice creation"""
     _inherit = 'sale.order'
-    
+
+    def _prepare_invoice(self):
+        """Override to add fieldservice_order_id to invoice when creating from healthcare quote"""
+        invoice_vals = super(SaleOrder, self)._prepare_invoice()
+
+        # Check if this quote is linked to an FSO (via origin or context)
+        fso_id = False
+
+        # Method 1: Get FSO from context (when invoice is created from FSO workflow)
+        if self.env.context.get('fso_id'):
+            fso_id = self.env.context.get('fso_id')
+            _logger.info(f"Found FSO ID in context: {fso_id}")
+
+        # Method 2: Get FSO from origin field (format: "FSO00123")
+        elif self.origin and 'FSO' in self.origin:
+            fso_ref = self.origin.split(',')[0].strip() if ',' in self.origin else self.origin.strip()
+            fso = self.env['health.fieldservice.order'].search([('name', '=', fso_ref)], limit=1)
+            if fso:
+                fso_id = fso.id
+                _logger.info(f"Found FSO via origin '{self.origin}': {fso_id}")
+
+        # Method 3: Search FSO that has this sale order as quote
+        if not fso_id:
+            fso = self.env['health.fieldservice.order'].search([('sale_order_id', '=', self.id)], limit=1)
+            if fso:
+                fso_id = fso.id
+                _logger.info(f"Found FSO via sale_order_id link: {fso_id}")
+
+        # Add fieldservice_order_id to invoice if found
+        if fso_id:
+            invoice_vals['fieldservice_order_id'] = fso_id
+            _logger.info(f"✅ Added fieldservice_order_id={fso_id} to invoice for quote {self.name}")
+        else:
+            _logger.warning(f"⚠️ No FSO found for quote {self.name} (origin: {self.origin})")
+
+        return invoice_vals
+
     def action_confirm(self):
         """Override confirm to validate quote lines"""
         for order in self:

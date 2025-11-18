@@ -233,28 +233,24 @@ class HealthcareInvoice(models.Model):
     @api.model
     def create(self, vals):
         """Override create to handle healthcare invoice automation"""
-        # Auto-link patient if FSO or appointment provided
-        if vals.get('fieldservice_order_id') and not vals.get('patient_id'):
+        # Auto-set healthcare service type from FSO
+        if vals.get('fieldservice_order_id'):
             fso = self.env['health.fieldservice.order'].browse(vals['fieldservice_order_id'])
-            if fso.patient_id:
-                vals['patient_id'] = fso.patient_id.id
+            if fso and not vals.get('healthcare_service_type'):
                 vals['healthcare_service_type'] = fso.service_category or 'home_visit'
-        
-        if vals.get('appointment_id') and not vals.get('patient_id'):
-            appointment = self.env['health.appointment'].browse(vals['appointment_id'])
-            if appointment.patient_id:
-                vals['patient_id'] = appointment.patient_id.id
-                vals['healthcare_service_type'] = 'clinic_visit'
-        
+
+        # Note: patient_id field is not defined on account.move
+        # Patient info is accessible via fieldservice_order_id.patient_id if needed
+
         # Set Vietnamese tax code if not provided
         if not vals.get('vietnamese_tax_code'):
             vals['vietnamese_tax_code'] = self._generate_vietnamese_tax_code()
-        
+
         invoice = super().create(vals)
-        
+
         # Schedule tax submission after creation is complete (not during create)
         # This will be handled by the invoice posting process instead
-        
+
         return invoice
 
     def write(self, vals):
@@ -886,6 +882,7 @@ class HealthcareInvoice(models.Model):
             'target': 'new',
             'context': {
                 'default_invoice_id': self.id,
+                'default_fso_id': self.fieldservice_order_id.id if self.fieldservice_order_id else False,
                 'default_amount': self.amount_residual,
                 'default_partner_id': self.partner_id.id,
             }
