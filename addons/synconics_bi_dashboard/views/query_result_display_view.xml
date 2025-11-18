@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Query Result Display Form View -->
+    <record id="view_query_result_display_form" model="ir.ui.view">
+        <field name="name">query.result.display.form</field>
+        <field name="model">query.result.display</field>
+        <field name="arch" type="xml">
+            <form string="Query Results">
+                <sheet>
+                    <div class="oe_title">
+                        <h2>
+                            <span>Query Results - </span>
+                            <field name="query_id" readonly="1" class="o_text_overflow"/>
+                        </h2>
+                    </div>
+
+                    <div class="alert alert-success" role="alert">
+                        <strong>Query executed successfully!</strong>
+                        <br/>
+                        Rows returned: <strong><field name="result_count" readonly="1" class="o_inline"/></strong>
+                        &amp; Execution time: <strong><field name="execution_time" readonly="1" widget="float_time" class="o_inline"/> ms</strong>
+                        <span invisible="is_cached == False">
+                            <br/><em class="text-muted">Results from cache</em>
+                        </span>
+                    </div>
+
+                    <notebook>
+                        <page string="Results Table">
+                            <field name="result_html" widget="html" readonly="1" nolabel="1"/>
+                        </page>
+
+                        <page string="Column Information">
+                            <field name="result_fields_json" widget="text" readonly="1" nolabel="1" class="text-monospace"/>
+                        </page>
+
+                        <page string="Raw JSON Data">
+                            <div class="alert alert-info" role="alert">
+                                <strong>Tip:</strong> Copy and paste this JSON data to export results or use in other applications.
+                            </div>
+                            <field name="result_data_json" widget="text" readonly="1" nolabel="1" class="text-monospace" style="font-family: monospace; white-space: pre-wrap;"/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+</odoo>

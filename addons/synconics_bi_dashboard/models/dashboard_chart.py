@@ -204,6 +204,17 @@ class DashboardChart(models.Model):
         "ir.model", string="Model", ondelete="set null", tracking=True
     )
     model = fields.Char(string="Model Ref.", related="model_id.model")
+
+    # Data Source Configuration
+    data_source = fields.Selection([
+        ('model', 'Odoo Model'),
+        ('query', 'Custom Query')
+    ], string='Data Source', default='model', tracking=True,
+    help='Select data source: Odoo Model for standard data or Custom Query for SQL/Visual builder')
+    query_id = fields.Many2one('dashboard.query', string='Custom Query',
+                               ondelete='set null', tracking=True,
+                               help='Select a custom query for advanced data retrieval')
+
     measurement_field_ids = fields.Many2many(
         "ir.model.fields",
         "ir_fields_chart_rel",
@@ -1341,6 +1352,11 @@ class DashboardChart(models.Model):
                 conf.sort_field = view_item.sort_field_id.name
                 conf.sort_order = view_item.sort_order
                 conf.limit_record = view_item.limit_record
+
+        # Check if using custom query as data source
+        if self.data_source == 'query' and self.query_id:
+            return self._get_data_from_query(chart_type, domain, view_item, extra_action)
+
         chart_handlers = {
             "area_chart": self.get_measurement_group_data,
             "bar_chart": self.get_measurement_group_data,
@@ -1373,6 +1389,53 @@ class DashboardChart(models.Model):
         return self._build_final_response(
             prepared_data, domain, chart_type, view_item, extra_action
         )
+
+    def _get_data_from_query(self, chart_type, domain, view_item, extra_action):
+        """
+        Get chart data from custom query instead of model
+        """
+        self.ensure_one()
+
+        try:
+            # Execute the query
+            query_result = self.query_id.execute_query(limit=self.limit_record or 1000)
+            query_data = query_result.get('data', [])
+
+            # Transform query results to chart-compatible format
+            # Query results should have 'category' and 'value' fields for most charts
+            # Or the fields expected by the specific chart type
+
+            prepared_data = []
+            for row in query_data:
+                # Try to extract category and value from query results
+                # This works for simple queries with category/value structure
+                if 'category' in row and 'value' in row:
+                    prepared_data.append({
+                        'category': row['category'],
+                        'value': row['value'],
+                        'record_id': row.get('category', '')
+                    })
+                else:
+                    # For queries with different structure, use first two columns
+                    # as category and value
+                    keys = list(row.keys())
+                    if len(keys) >= 2:
+                        prepared_data.append({
+                            'category': str(row[keys[0]]),
+                            'value': float(row[keys[1]]) if isinstance(row[keys[1]], (int, float)) else 0,
+                            'record_id': str(row[keys[0]])
+                        })
+
+            return self._build_final_response(
+                prepared_data, domain, chart_type, view_item, extra_action
+            )
+
+        except Exception as e:
+            _logger.error(f'Error getting data from query {self.query_id.name}: {str(e)}')
+            # Return empty data on error
+            return self._build_final_response(
+                [], domain, chart_type, view_item, extra_action
+            )
 
     def _init_configuration(self):
         """

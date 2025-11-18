@@ -5,3 +5,4 @@ from . import list_field
 from . import dashboard_action
 from . import dashboard
 from . import dashboard_chart
+from . import dashboard_query

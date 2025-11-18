@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Dashboard Query Form View -->
+    <record id="view_dashboard_query_form" model="ir.ui.view">
+        <field name="name">dashboard.query.form</field>
+        <field name="model">dashboard.query</field>
+        <field name="arch" type="xml">
+            <form string="Custom Query">
+                <header>
+                    <button name="action_test_query" string="Test Query" type="object" class="btn-primary" groups="synconics_bi_dashboard.group_dashboard_query_manager"/>
+                    <button name="clear_cache" string="Clear Cache" type="object" groups="synconics_bi_dashboard.group_dashboard_query_manager"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button class="oe_stat_button" type="object" name="action_test_query" icon="fa-play-circle">
+                            <div class="o_stat_info">
+                                <span class="o_stat_text">Test</span>
+                            </div>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="Query Name..." class="o_text_overflow"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="query_type" widget="radio"/>
+                            <field name="active"/>
+                            <field name="is_read_only"/>
+                        </group>
+                        <group>
+                            <field name="cache_duration"/>
+                            <field name="last_execution" readonly="1"/>
+                            <field name="execution_time" readonly="1" widget="float_time"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Visual Builder" invisible="query_type != 'visual'">
+                            <group>
+                                <field name="model_ids" widget="many2many_tags"/>
+                            </group>
+                            <separator string="Visual Configuration"/>
+                            <field name="visual_config" widget="json"/>
+                            <div class="alert alert-info" role="alert">
+                                <strong>Visual Builder:</strong> Configure your query using the visual interface. Select models, fields, filters, and grouping options.
+                            </div>
+                        </page>
+                        <page string="SQL Editor" invisible="query_type != 'sql'">
+                            <separator string="SQL Query"/>
+                            <field name="sql_query" widget="text" placeholder="SELECT * FROM model_name WHERE condition LIMIT 100"/>
+                            <div class="alert alert-warning" role="alert">
+                                <strong>Security Notice:</strong> Only SELECT statements are allowed. INSERT, UPDATE, DELETE, and DDL operations are forbidden for security reasons.
+                            </div>
+                            <div class="alert alert-info" role="alert">
+                                <strong>Tips:</strong>
+                                <ul>
+                                    <li>Use table names as they appear in PostgreSQL (e.g., res_partner, sale_order)</li>
+                                    <li>Results are cached for the duration specified above</li>
+                                    <li>Queries timeout after 30 seconds</li>
+                                    <li>Use LIMIT to control result size (default: 1000 rows)</li>
+                                </ul>
+                            </div>
+                        </page>
+                        <page string="Results">
+                            <div class="alert alert-success" role="alert">
+                                <strong>Success!</strong> Query executed in <field name="execution_time" widget="float_time"/> seconds.
+                            </div>
+                            <separator string="Result Columns"/>
+                            <field name="result_fields" widget="json" readonly="1"/>
+                            <separator string="Query Results (JSON)"/>
+                            <field name="result_cache" widget="json" readonly="1" nolabel="1"/>
+                        </page>
+                        <page string="Security">
+                            <group>
+                                <group>
+                                    <field name="allowed_user_ids" widget="many2many_tags"/>
+                                </group>
+                                <group>
+                                    <field name="allowed_group_ids" widget="many2many_tags"/>
+                                </group>
+                            </group>
+                            <div class="alert alert-info" role="alert">
+                                <strong>Access Control:</strong> Leave empty to allow all users with Query Builder permissions. Specify users/groups to restrict access.
+                            </div>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter reload_on_follower="True"/>
+            </form>
+        </field>
+    </record>
+
+    <!-- Dashboard Query List View -->
+    <record id="view_dashboard_query_list" model="ir.ui.view">
+        <field name="name">dashboard.query.list</field>
+        <field name="model">dashboard.query</field>
+        <field name="arch" type="xml">
+            <list string="Custom Queries" sample="1">
+                <field name="name"/>
+                <field name="query_type"/>
+                <field name="last_execution"/>
+                <field name="execution_time" widget="float_time"/>
+                <field name="cache_duration"/>
+                <field name="active" widget="boolean_toggle"/>
+                <field name="user_id"/>
+                <field name="company_id" groups="base.group_multi_company"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Dashboard Query Search View -->
+    <record id="view_dashboard_query_search" model="ir.ui.view">
+        <field name="name">dashboard.query.search</field>
+        <field name="model">dashboard.query</field>
+        <field name="arch" type="xml">
+            <search string="Search Queries">
+                <field name="name" string="Query Name"/>
+                <field name="query_type"/>
+                <field name="user_id"/>
+                <field name="allowed_user_ids"/>
+                <filter string="My Queries" name="my_queries" domain="[('user_id', '=', uid)]"/>
+                <filter string="Visual Builder" name="visual" domain="[('query_type', '=', 'visual')]"/>
+                <filter string="SQL Editor" name="sql" domain="[('query_type', '=', 'sql')]"/>
+                <separator/>
+                <filter string="Active" name="active" domain="[('active', '=', True)]"/>
+                <filter string="Archived" name="inactive" domain="[('active', '=', False)]"/>
+                <separator/>
+                <filter string="Recently Executed" name="recent" domain="[('last_execution', '!=', False)]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Query Type" name="group_by_type" context="{'group_by': 'query_type'}"/>
+                    <filter string="Created By" name="group_by_user" context="{'group_by': 'user_id'}"/>
+                    <filter string="Company" name="group_by_company" context="{'group_by': 'company_id'}" groups="base.group_multi_company"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Dashboard Query Action -->
+    <record id="action_dashboard_query" model="ir.actions.act_window">
+        <field name="name">Query Builder</field>
+        <field name="res_model">dashboard.query</field>
+        <field name="view_mode">list,form</field>
+        <field name="context">{'search_default_my_queries': 1, 'search_default_active': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first custom query
+            </p>
+            <p>
+                Use the Query Builder to create advanced data queries using either:
+                <ul>
+                    <li><b>Visual Builder:</b> Point-and-click interface for building queries</li>
+                    <li><b>SQL Editor:</b> Write custom SQL SELECT queries with full control</li>
+                </ul>
+                Queries can be cached for performance and reused across multiple dashboard charts.
+            </p>
+        </field>
+    </record>
+
+    <!-- Menu Item -->
+    <menuitem
+        id="menu_dashboard_query"
+        name="Query Builder"
+        parent="synconics_bi_dashboard.dashboard_configuration_menu"
+        action="action_dashboard_query"
+        sequence="15"
+        groups="synconics_bi_dashboard.group_dashboard_query_manager"/>
+
+</odoo>

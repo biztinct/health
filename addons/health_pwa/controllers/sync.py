@@ -277,7 +277,7 @@ class HealthPWASyncController(http.Controller):
                 'scheduled_datetime': order.scheduled_datetime,
                 'estimated_end_datetime': order.estimated_end_datetime,
                 'estimated_duration': order.estimated_duration,
-                'duration_minutes': order.duration_minutes,
+                'duration_minutes': order.scheduled_duration,
                 'service_type': order.service_type,
                 'service_type_name': dict(order._fields['service_type'].selection).get(order.service_type, ''),
                 'team_id': order.team_id.id if order.team_id else None,

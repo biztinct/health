@@ -2,3 +2,4 @@
 
 from . import dashboard_access
 from . import mail_compose_message
+from . import query_result_display

@@ -38,7 +38,9 @@
                             <group>
                                 <group>
                                     <field name="dashboard_id" options="{'no_create': 1}" domain="[('created_menu_id', '!=', False)]"/>
-                                    <field name="model_id" domain="[('access_ids', '!=', False), ('transient', '=', False), ('model', 'not ilike', 'base_import%'), '|', ('model', 'not ilike', 'ir.%'), ('model', '=ilike', '_%ir.%'), ('model', 'not ilike', 'web_editor.%'), ('model', 'not ilike', 'web_tour.%'), ('model', '!=', 'mail.thread')]" options="{'no_create': 1}" required="chart_type in ['to_do'] and todo_layout == 'activity'" context="{'dashboard_model': True}" invisible="chart_type in ['to_do'] and todo_layout != 'activity'"/>
+                                    <field name="data_source" widget="radio" options="{'horizontal': True}" invisible="chart_type in ['to_do', 'list']"/>
+                                    <field name="query_id" options="{'no_create': 1}" domain="[('active', '=', True)]" invisible="data_source != 'query' or chart_type in ['to_do', 'list']" required="data_source == 'query' and chart_type not in ['to_do', 'list']" groups="synconics_bi_dashboard.group_dashboard_query_user"/>
+                                    <field name="model_id" domain="[('access_ids', '!=', False), ('transient', '=', False), ('model', 'not ilike', 'base_import%'), '|', ('model', 'not ilike', 'ir.%'), ('model', '=ilike', '_%ir.%'), ('model', 'not ilike', 'web_editor.%'), ('model', 'not ilike', 'web_tour.%'), ('model', '!=', 'mail.thread')]" options="{'no_create': 1}" required="(chart_type in ['to_do'] and todo_layout == 'activity') or (data_source == 'model' and chart_type not in ['to_do', 'list'])" context="{'dashboard_model': True}" invisible="(chart_type in ['to_do'] and todo_layout != 'activity') or data_source == 'query'"/>
                                     <field name="active" widget="boolean_toggle" />
                                 </group>
                                 <group>
@@ -49,7 +51,11 @@
                             </group>
                             <notebook>
                                 <page string="Data" name="data">
-                                    <group invisible="not model_id">
+                                    <div class="alert alert-info" role="alert" invisible="data_source != 'query' or not query_id">
+                                        <strong>Custom Query Mode:</strong> Chart data will be fetched from the selected custom query.
+                                        The query should return data with 'category' and 'value' fields, or the first two columns will be used as category and value.
+                                    </div>
+                                    <group invisible="not model_id or data_source == 'query'">
                                         <group>
                                             <field name="image" widget="image" force_save="1" invisible="1"/>
                                             <!-- List Chart Fields -->

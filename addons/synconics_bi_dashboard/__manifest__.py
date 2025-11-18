@@ -92,6 +92,7 @@ Transform your data into compelling dashboard visualizations
     ],
     "data": [
         "security/dashboard_security.xml",
+        "security/dashboard_query_security.xml",
         "security/ir.model.access.csv",
         "data/mail_template.xml",
         "views/ir_ui_menu_views.xml",
@@ -100,6 +101,8 @@ Transform your data into compelling dashboard visualizations
         "views/dashboard_view.xml",
         "data/dashboard_data.xml",
         "views/dashboard_chart_view.xml",
+        "views/dashboard_query_view.xml",
+        "views/query_result_display_view.xml",
         "views/res_users_view.xml",
     ],
     "images": ["static/description/main_screen.gif"],
