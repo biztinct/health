@@ -170,7 +170,7 @@ class HealthStaffAssignment(models.Model):
         ('completed', 'Completed'),
         ('cancelled', 'Cancelled'),
         ('deferred', 'Deferred')
-    ], string='Assignment State', default='draft', tracking=True)
+    ], string='Assignment State', default='assigned', tracking=True)
     
     priority = fields.Selection([
         ('0', 'Low'),

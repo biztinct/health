@@ -89,14 +89,17 @@
                     <button name="action_start_assignment" type="object" string="Start" class="oe_highlight" invisible="state != 'confirmed'"/>
                     <button name="action_complete_assignment" type="object" string="Complete" class="oe_highlight" invisible="state != 'in_progress'"/>
                     <button name="action_cancel_assignment" type="object" string="Cancel" invisible="state in ['completed', 'cancelled']"/>
-                    <button name="action_confirm_date_change" type="object" string="⚠️ Confirm Date Change" class="btn-warning" invisible="state == 'template' or not fso_id" help="Show confirmation about booking and assignment date changes"/>
+                    <button name="action_confirm_date_change" type="object" string="⚠️ Confirm Date Change" class="btn-warning" invisible="1" help="Show confirmation about booking and assignment date changes"/>
                     <field name="state" widget="statusbar" statusbar_visible="draft,assigned,confirmed,in_progress,completed"/>
                 </header>
                 <sheet>
                     <div class="oe_title">
                         <h1>
-                            <field name="name" readonly="1"/>
+                            <field name="patient_name" readonly="1"/>
                         </h1>
+                        <div class="text-muted">
+                            <field name="name" readonly="1" class="text-muted"/>
+                        </div>
                     </div>
                     <group>
                         <group name="assignment_info">

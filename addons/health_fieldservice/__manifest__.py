@@ -1,6 +1,6 @@
 {
     'name': 'VAFHS Healthcare Field Service & Staff Assignment',
-    'version': '18.0.2.2.3',
+    'version': '18.0.2.2.4',
     'category': 'Healthcare/Field Service',
     'summary': 'Unified field service management and AI staff assignment for healthcare home visits',
     'description': """
@@ -122,6 +122,7 @@
             'health_fieldservice/static/src/js/assignment_dashboard.js',
             'health_fieldservice/static/src/js/assignment_kanban.js',
             'health_fieldservice/static/src/js/assignment_timeline_view.js',
+            'health_fieldservice/static/src/js/assignment_dialog_title.js',
             'health_fieldservice/static/src/js/scheduler_grid.js',
             'health_fieldservice/static/src/js/staff_workload_dashboard.js',
             'health_fieldservice/static/src/js/timeline_card_enhancer.js',
