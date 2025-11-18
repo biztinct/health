@@ -120,18 +120,26 @@
 
 
     <!-- Payment Management Menu (under Healthcare > Billing & Invoicing) -->
-    <menuitem 
+    <menuitem
         id="menu_health_payment_management"
         name="Payment Management"
         parent="health_base.menu_healthcare_billing"
         sequence="30"/>
 
-    <menuitem 
+    <menuitem
         id="menu_health_payment_transactions"
         name="Payment Transactions"
         parent="menu_health_payment_management"
         action="action_health_payment_transaction"
         sequence="10"/>
+
+    <!-- Invoices Menu (under Healthcare > Billing & Invoicing) -->
+    <menuitem
+        id="menu_health_invoices"
+        name="Invoices"
+        parent="health_base.menu_healthcare_billing"
+        action="action_healthcare_invoices"
+        sequence="35"/>
 
     <!-- Payment Workflow Menu -->
     <menuitem 

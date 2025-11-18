@@ -213,4 +213,110 @@
         </field>
     </record>
 
+    <!-- Healthcare Invoices List View with Red Invoice State -->
+    <record id="view_healthcare_invoices_list" model="ir.ui.view">
+        <field name="name">Healthcare Invoices List</field>
+        <field name="model">account.move</field>
+        <field name="priority">15</field>
+        <field name="arch" type="xml">
+            <list string="Healthcare Invoices"
+                  decoration-success="state=='posted' and payment_state=='paid'"
+                  decoration-warning="state=='draft'"
+                  decoration-info="state=='posted' and payment_state in ('partial', 'not_paid')"
+                  decoration-danger="state=='cancel'"
+                  create="false" delete="false">
+
+                <!-- Key invoice information -->
+                <field name="name" string="Invoice Number" readonly="1"/>
+                <field name="partner_id" string="Client" readonly="1"/>
+                <field name="invoice_date" readonly="1"/>
+                <field name="invoice_date_due" readonly="1"/>
+                <field name="amount_total" readonly="1" sum="Total Amount"/>
+                <field name="amount_residual" readonly="1" sum="Amount Due" string="Amount Due"/>
+
+                <!-- Payment and invoice state -->
+                <field name="state" readonly="1" widget="badge"/>
+                <field name="payment_state" readonly="1" widget="badge"/>
+
+                <!-- Optional fields -->
+                <field name="invoice_origin" readonly="1" optional="show" string="Source Document"/>
+                <field name="healthcare_service_type" readonly="1" optional="hide" string="Service Type"/>
+
+                <!-- Hidden fields for functionality -->
+                <field name="company_id" invisible="1"/>
+                <field name="currency_id" invisible="1"/>
+                <field name="move_type" invisible="1"/>
+
+            </list>
+        </field>
+    </record>
+
+    <!-- Healthcare Invoices Search View -->
+    <record id="view_healthcare_invoices_filter" model="ir.ui.view">
+        <field name="name">Healthcare Invoices Search</field>
+        <field name="model">account.move</field>
+        <field name="priority">15</field>
+        <field name="arch" type="xml">
+            <search string="Search Healthcare Invoices">
+
+                <!-- Quick filters -->
+                <filter name="posted_invoices" string="Posted Invoices"
+                        domain="[('state', '=', 'posted')]"/>
+                <filter name="draft_invoices" string="Draft Invoices"
+                        domain="[('state', '=', 'draft')]"/>
+                <filter name="unpaid_invoices" string="Unpaid Invoices"
+                        domain="[('state', '=', 'posted'), ('payment_state', 'in', ('not_paid', 'partial'))]"/>
+
+                <separator/>
+
+                <!-- Date filters -->
+                <filter string="Invoice Date" name="invoice_date" date="invoice_date"/>
+                <filter string="Due Date" name="invoice_date_due" date="invoice_date_due"/>
+
+                <separator/>
+
+                <!-- Search fields -->
+                <field name="name" string="Invoice Number"/>
+                <field name="partner_id" string="Client"/>
+                <field name="invoice_origin" string="Source"/>
+                <field name="amount_total"/>
+
+                <!-- Group by options -->
+                <group expand="0" string="Group By">
+                    <filter string="Client" domain="[]" context="{'group_by': 'partner_id'}" name="group_by_client"/>
+                    <filter string="State" domain="[]" context="{'group_by': 'state'}" name="group_by_state"/>
+                    <filter string="Payment State" domain="[]" context="{'group_by': 'payment_state'}" name="group_by_payment_state"/>
+                    <filter string="Invoice Date" domain="[]" context="{'group_by': 'invoice_date'}" name="group_by_invoice_date"/>
+                </group>
+
+            </search>
+        </field>
+    </record>
+
+    <!-- Healthcare Invoices Dashboard Action -->
+    <record id="action_healthcare_invoices" model="ir.actions.act_window">
+        <field name="name">Healthcare Invoices</field>
+        <field name="res_model">account.move</field>
+        <field name="view_mode">list,form</field>
+        <field name="context">{
+            'default_move_type': 'out_invoice',
+            'search_default_posted_invoices': 1
+        }</field>
+        <field name="view_ids" eval="[(5, 0, 0),
+            (0, 0, {'view_mode': 'list', 'view_id': ref('view_healthcare_invoices_list')})]"/>
+        <field name="search_view_id" ref="view_healthcare_invoices_filter"/>
+        <field name="domain">[
+            ('move_type', '=', 'out_invoice')
+        ]</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No healthcare invoices found!
+            </p>
+            <p>
+                This view shows all healthcare invoices with their payment and submission status.
+                Use filters to find invoices by payment state, invoice state, or client.
+            </p>
+        </field>
+    </record>
+
 </odoo>
