@@ -30,12 +30,64 @@ class HealthPWAController(http.Controller):
             # Check if user has access to health modules
             if not self._check_health_access():
                 return request.render('health_pwa.access_denied')
-                
+            
+            user_lang = request.env.user.lang or request.lang or 'en_US'
+            # Preload translations for this module to avoid frontend fetch issues
+            l10n_map = {}
+            try:
+                translations = request.env['ir.translation'].sudo().search([
+                    ('lang', '=', user_lang),
+                    ('module', '=', 'health_pwa'),
+                    ('src', '!=', False),
+                    ('value', '!=', False),
+                ])
+                l10n_map = {t.src: t.value for t in translations}
+            except Exception:
+                # If translation model not available yet, continue without preload
+                l10n_map = {}
+
+            # Minimal hardcoded fallback for key UI strings if DB preload failed
+            fallback_map = {
+                'Day': 'Ngày',
+                'Week': 'Tuần',
+                'Month': 'Tháng',
+                'Today': 'Hôm nay',
+                'Select date': 'Chọn ngày',
+                'Loading bookings...': 'Đang tải lịch hẹn...',
+                'Loading details...': 'Đang tải chi tiết...',
+                'Close': 'Đóng',
+                'Booking Details': 'Chi tiết đặt lịch',
+                'Scheduled Visit': 'Lịch thăm khám',
+                'Date & Time:': 'Ngày & Giờ:',
+                'Services:': 'Dịch vụ:',
+                'Package:': 'Gói:',
+                'Contact Information': 'Thông tin liên hệ',
+                'Address:': 'Địa chỉ:',
+                'Primary Contact:': 'Liên hệ chính:',
+                'Call': 'Gọi',
+                'View Intake Summary': 'Xem tóm tắt tiếp nhận',
+                'Cancel/Refuse Visit': 'Hủy/Từ chối lượt thăm',
+                'Start Service': 'Bắt đầu dịch vụ',
+                'Clinical Notes': 'Ghi chú lâm sàng',
+                'Not set': 'Chưa thiết lập',
+                'Draft': 'Nháp',
+                'Confirmed': 'Đã xác nhận',
+                'Assigned': 'Đã phân công',
+                'In Progress': 'Đang thực hiện',
+                'Completed': 'Đã hoàn thành',
+                'Cancelled': 'Đã hủy',
+                'Unknown': 'Không xác định',
+            }
+            for k, v in fallback_map.items():
+                l10n_map.setdefault(k, v)
+
             return request.render('health_pwa.app_shell', {
                 'user_id': request.env.user.id,
                 'user_name': request.env.user.name,
                 'company_name': request.env.company.name,
                 'db_name': request.db,
+                'user_lang': user_lang,
+                'health_pwa_l10n': l10n_map,
             })
         except Exception as e:
             # Return simple HTML for debugging
@@ -47,7 +99,6 @@ class HealthPWAController(http.Controller):
                     <p><strong>Error:</strong> {str(e)}</p>
                     <p><strong>User:</strong> {request.env.user.name if request.env.user else 'No user'}</p>
                     <p><strong>Database:</strong> {request.db}</p>
-                    <p><strong>Debug mode:</strong> {request.debug}</p>
                     <p><a href="/health_pwa/debug">Test Controller</a></p>
                 </body>
                 </html>

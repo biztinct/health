@@ -19,6 +19,9 @@
                 <!-- Icons -->
                 <link rel="icon" type="image/png" sizes="192x192" href="/health_pwa/static/icons/icon-192.png"/>
                 <link rel="apple-touch-icon" sizes="192x192" href="/health_pwa/static/icons/icon-192.png"/>
+
+                <!-- Load translations for health_pwa (include db to avoid redirect/html) -->
+                <script t-att-src="'/web/webclient/translations?db=' + (db_name or '') + '&amp;mods=health_pwa&amp;lang=' + (user_lang or 'en_US')"></script>
                 
                 <!-- Quasar CSS -->
                 <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900|Material+Icons" rel="stylesheet" type="text/css"/>
@@ -37,6 +40,16 @@
             </t>
             
             <div id="health-pwa-app" class="pwa-container">
+                <script type="text/javascript">
+                    window.healthPWA = window.healthPWA || {};
+                    window.healthPWA.l10n = <t t-esc="json.dumps(health_pwa_l10n, ensure_ascii=False)"/>;
+                    console.log('[health_pwa] preload l10n entries', Object.keys(window.healthPWA.l10n || {}).length);
+                    const sampleKeys = Object.keys(window.healthPWA.l10n || {}).slice(0, 5);
+                    if (sampleKeys.length) {
+                        console.log('[health_pwa] preload l10n sample', sampleKeys.reduce((acc,k)=>{acc[k]=window.healthPWA.l10n[k];return acc;}, {}));
+                    }
+                </script>
+
                 <!-- PWA Loading Screen -->
                 <div id="pwa-loading" class="pwa-loading-screen">
                     <div class="loading-container">
@@ -74,12 +87,13 @@
             </div>
             
             <!-- JavaScript Configuration -->
-            <script type="text/javascript">
+                <script type="text/javascript">
                 window.healthPWAConfig = {
                     userId: <t t-esc="user_id"/>,
                     userName: '<t t-esc="user_name"/>',
                     companyName: '<t t-esc="company_name"/>',
                     dbName: '<t t-esc="db_name"/>',
+                    lang: '<t t-esc="user_lang"/>',
                     apiBaseUrl: '/health_pwa/api',
                     syncUrl: '/health_pwa/sync',
                     websocketUrl: '/longpolling',

@@ -1,8 +1,28 @@
 // Health PWA - Vue.js 3 Main Application
 
+// Lightweight translation helper: use Odoo _t if present, else fallback to a preload map from server.
+// Emits a console warning once if nothing is available.
+let __pwaWarnedMissingT = false;
+const _t = (s) => {
+  if (window.odoo && typeof window.odoo._t === 'function') {
+    return window.odoo._t(s);
+  }
+  if (window.healthPWA && window.healthPWA.l10n && window.healthPWA.l10n[s]) {
+    return window.healthPWA.l10n[s];
+  }
+  if (!__pwaWarnedMissingT) {
+    console.warn('[health_pwa] translation unavailable; using raw strings. Ensure translations JS loads or preload is present.');
+    __pwaWarnedMissingT = true;
+  }
+  return s;
+};
+
 // Global app state and utilities
+const __existingHealthPWA = window.healthPWA || {};
 window.healthPWA = {
-  config: window.healthPWAConfig || {},
+  // preserve any preloaded l10n or other props set before this script
+  ...__existingHealthPWA,
+  config: window.healthPWAConfig || __existingHealthPWA.config || {},
   db: null,
   syncManager: null,
   storageManager: null,
@@ -15,6 +35,14 @@ window.healthPWA = {
   // App lifecycle methods
   init: function() {
     console.log('Health PWA initializing...', this.config);
+    console.log('[health_pwa] translation debug', {
+      hasOdoo: !!window.odoo,
+      has_t: !!(window.odoo && window.odoo._t),
+      lang: window.odoo?.session_info?.user_context?.lang || window.healthPWAConfig?.lang,
+      sampleDay: _t('Day'),
+      preloadEntries: window.healthPWA?.l10n ? Object.keys(window.healthPWA.l10n).length : 0,
+      preloadHasDay: !!(window.healthPWA?.l10n && window.healthPWA.l10n['Day']),
+    });
     
     // Initialize PouchDB
     this.initDatabase();
@@ -2459,7 +2487,9 @@ window.healthPWA = {
           // Current user info
           currentUser,
           // Timezone conversion helper
-          convertLocalDateTimeToISO
+          convertLocalDateTimeToISO,
+          // Translation helper
+          _t
         };
       },
       template: `
@@ -2471,7 +2501,7 @@ window.healthPWA = {
             </button>
 
             <button @click="goToToday" class="tab-btn" :class="{ active: new Date().toDateString() === currentDate.toDateString() }">
-              Today
+              {{ _t('Today') }}
             </button>
 
             <button @click="goToNext" class="btn-nav-arrow-header">
@@ -2486,24 +2516,24 @@ window.healthPWA = {
               :class="{ active: viewMode === 'day' }"
               class="tab-btn tab-day"
             >
-              Day
+              {{ _t('Day') }}
             </button>
             <button
               @click="setViewMode('week')"
               :class="{ active: viewMode === 'week' }"
               class="tab-btn tab-week"
             >
-              Week
+              {{ _t('Week') }}
             </button>
             <button
               @click="setViewMode('month')"
               :class="{ active: viewMode === 'month' }"
               class="tab-btn tab-month"
             >
-              Month
+              {{ _t('Month') }}
             </button>
 
-            <button @click="toggleCalendar" class="btn-calendar-icon" title="Select date">
+            <button @click="toggleCalendar" class="btn-calendar-icon" :title="_t('Select date')">
               <i class="material-icons">calendar_month</i>
             </button>
           </div>
@@ -2515,10 +2545,10 @@ window.healthPWA = {
           </div>
 
           <!-- Content based on view mode -->
-          <div v-if="isLoading" class="loading-spinner">
-            <div class="spinner"></div>
-            <p>Loading bookings...</p>
-          </div>
+            <div v-if="isLoading" class="loading-spinner">
+              <div class="spinner"></div>
+              <p>{{ _t('Loading bookings...') }}</p>
+            </div>
 
           <div v-else-if="error" class="error-message">
             <i class="material-icons">error</i>
@@ -2664,17 +2694,17 @@ window.healthPWA = {
           <div class="booking-detail-modal" @click.stop>
             <div v-if="isLoadingDetail" class="detail-loading">
               <div class="spinner-small"></div>
-              <p>Loading details...</p>
+              <p>{{ _t('Loading details...') }}</p>
             </div>
             <div v-else-if="detailError" class="detail-error">
               <p>{{ detailError }}</p>
-              <button class="btn btn-secondary" @click="toggleBookingDetail(selectedBookingId)">Close</button>
+              <button class="btn btn-secondary" @click="toggleBookingDetail(selectedBookingId)">{{ _t('Close') }}</button>
             </div>
             <div v-else-if="selectedBookingDetail" class="booking-detail-modal-content">
               <!-- Modal header with close button -->
               <div class="modal-header">
                 <div class="header-content">
-                  <h3 class="modal-title">Booking Details</h3>
+                  <h3 class="modal-title">{{ _t('Booking Details') }}</h3>
                   <!-- Timer Display when service is in progress -->
                   <div v-if="serviceStartedForBooking === selectedBookingId" class="timer-badge">
                     <i class="material-icons">schedule</i>
@@ -2690,38 +2720,38 @@ window.healthPWA = {
               <div class="modal-body">
                 <!-- Scheduled Visit Section -->
                 <div class="detail-section">
-                  <h4 class="section-title">Scheduled Visit</h4>
+                  <h4 class="section-title">{{ _t('Scheduled Visit') }}</h4>
                   <div class="detail-row">
-                    <span class="label">Date & Time:</span>
+                    <span class="label">{{ _t('Date & Time:') }}</span>
                     <span class="value">{{ formattedScheduledDateTime }}</span>
                   </div>
                   <div v-if="selectedBookingDetail.quote_items.length > 0" class="detail-row">
-                    <span class="label">Services:</span>
+                    <span class="label">{{ _t('Services:') }}</span>
                     <span class="value">{{ selectedBookingDetail.quote_items.map(item => item.product_name).join(', ') }}</span>
                   </div>
                   <div v-if="selectedBookingDetail.package && selectedBookingDetail.package.name" class="detail-row">
-                    <span class="label">Package:</span>
+                    <span class="label">{{ _t('Package:') }}</span>
                     <span class="value">{{ selectedBookingDetail.package.name }}</span>
                   </div>
                 </div>
 
                 <!-- Contact Information Section -->
                 <div class="detail-section">
-                  <h4 class="section-title">Contact Information</h4>
+                  <h4 class="section-title">{{ _t('Contact Information') }}</h4>
                   <div v-if="selectedBookingDetail.address" class="detail-row">
                     <span class="label">
                       <i class="material-icons icon-inline">location_on</i>
-                      Address:
+                      {{ _t('Address:') }}
                     </span>
                     <button @click="openMap(selectedBookingDetail.address, selectedBookingDetail.patient.name)" class="detail-link">
                       {{ selectedBookingDetail.address }}
                     </button>
                   </div>
                   <div v-if="selectedBookingDetail.primary_contact" class="detail-row">
-                    <span class="label">Primary Contact:</span>
+                    <span class="label">{{ _t('Primary Contact:') }}</span>
                     <div class="contact-info">
                       <span class="contact-name">{{ selectedBookingDetail.primary_contact.name }}</span>
-                      <button @click.stop="callPatient(selectedBookingDetail.primary_contact.phone)" class="btn-icon-action btn-icon-call-small" title="Call">
+                      <button @click.stop="callPatient(selectedBookingDetail.primary_contact.phone)" class="btn-icon-action btn-icon-call-small" :title="_t('Call')">
                         <i class="material-icons">call</i>
                       </button>
                     </div>
@@ -2731,7 +2761,7 @@ window.healthPWA = {
                 <!-- Intake Summary Button -->
                 <button @click="toggleIntakeSummaryModal" class="btn-intake-summary">
                   <i class="material-icons">description</i>
-                  <span>View Intake Summary</span>
+                  <span>{{ _t('View Intake Summary') }}</span>
                   <i class="material-icons">chevron_right</i>
                 </button>
               </div>
@@ -2740,15 +2770,15 @@ window.healthPWA = {
               <div class="modal-footer">
                 <!-- Before service start (hidden when completed) -->
                 <div v-if="serviceStartedForBooking !== selectedBookingId && selectedBookingDetail?.state !== 'in_progress' && selectedBookingDetail?.state !== 'completed'" class="modal-footer-content">
-                  <button class="btn btn-danger">Cancel/Refuse Visit</button>
-                  <button @click="startService" class="btn btn-success">Start Service</button>
+                  <button class="btn btn-danger">{{ _t('Cancel/Refuse Visit') }}</button>
+                  <button @click="startService" class="btn btn-success">{{ _t('Start Service') }}</button>
                 </div>
 
                 <!-- After service start or when already in progress -->
                 <div v-if="serviceStartedForBooking === selectedBookingId || selectedBookingDetail?.state === 'in_progress'" class="modal-footer-content">
                   <button @click="openClinicalNotesModal" class="btn btn-clinical-notes">
                     <i class="material-icons">description</i>
-                    <span>Clinical Notes</span>
+                    <span>{{ _t('Clinical Notes') }}</span>
                   </button>
                   <!-- Verify Invoice Button (always visible, disabled when no quote or clinical notes incomplete) -->
                   <button @click="openInvoiceModal"
@@ -5246,20 +5276,20 @@ window.healthPWA = {
         };
 
         const formatDateTime = (dateTimeStr) => {
-          if (!dateTimeStr) return 'Not set';
+          if (!dateTimeStr) return _t('Not set');
           const date = new Date(dateTimeStr);
           return date.toLocaleString();
         };
 
         const getStatusLabel = (state) => {
           switch (state) {
-            case 'draft': return 'Draft';
-            case 'confirmed': return 'Confirmed';
-            case 'assigned': return 'Assigned';
-            case 'in_progress': return 'In Progress';
-            case 'completed': return 'Completed';
-            case 'cancelled': return 'Cancelled';
-            default: return 'Unknown';
+            case 'draft': return _t('Draft');
+            case 'confirmed': return _t('Confirmed');
+            case 'assigned': return _t('Assigned');
+            case 'in_progress': return _t('In Progress');
+            case 'completed': return _t('Completed');
+            case 'cancelled': return _t('Cancelled');
+            default: return _t('Unknown');
           }
         };
 
