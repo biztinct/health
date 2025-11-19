@@ -2823,14 +2823,14 @@ window.healthPWA = {
             <div class="modal-body">
               <!-- Diagnosis -->
               <div class="intake-form-group">
-                <label class="intake-form-label">Diagnosis</label>
-                <textarea class="intake-form-field" v-model="selectedBookingDetail.diagnosis" placeholder="Type here..." readonly></textarea>
+                <label class="intake-form-label">{{ _t('Diagnosis') }}</label>
+                <textarea class="intake-form-field" v-model="selectedBookingDetail.diagnosis" :placeholder="_t('Type here...')" readonly></textarea>
               </div>
 
               <!-- Referring Doctor -->
               <div class="intake-form-group">
                 <div class="intake-form-header">
-                  <label class="intake-form-label">Referring Doctor</label>
+                  <label class="intake-form-label">{{ _t('Referring Doctor') }}</label>
                   <button v-if="selectedBookingDetail.referring_doctor_name"
                     @click="callPatient(selectedBookingDetail.referring_doctor_phone || '')"
                     class="btn-icon-action btn-icon-call-small"
@@ -2843,20 +2843,20 @@ window.healthPWA = {
 
               <!-- Goal of Care -->
               <div class="intake-form-group">
-                <label class="intake-form-label">Goal of Care</label>
-                <textarea class="intake-form-field" v-model="selectedBookingDetail.goal_of_care" placeholder="Type here..." readonly></textarea>
+                <label class="intake-form-label">{{ _t('Goal of Care') }}</label>
+                <textarea class="intake-form-field" v-model="selectedBookingDetail.goal_of_care" :placeholder="_t('Type here...')" readonly></textarea>
               </div>
 
               <!-- Required Equipment -->
               <div class="intake-form-group">
-                <label class="intake-form-label">Required Equipment</label>
-                <textarea class="intake-form-field" v-model="selectedBookingDetail.required_equipment" placeholder="Type here..." readonly></textarea>
+                <label class="intake-form-label">{{ _t('Required Equipment') }}</label>
+                <textarea class="intake-form-field" v-model="selectedBookingDetail.required_equipment" :placeholder="_t('Type here...')" readonly></textarea>
               </div>
 
               <!-- Intake Notes -->
               <div class="intake-form-group">
-                <label class="intake-form-label">Intake Notes</label>
-                <textarea class="intake-form-field" v-model="selectedBookingDetail.intake_notes" placeholder="Type here..." readonly></textarea>
+                <label class="intake-form-label">{{ _t('Intake Notes') }}</label>
+                <textarea class="intake-form-field" v-model="selectedBookingDetail.intake_notes" :placeholder="_t('Type here...')" readonly></textarea>
               </div>
             </div>
           </div>
@@ -2867,7 +2867,7 @@ window.healthPWA = {
           <div class="clinical-notes-modal" @click.stop>
             <!-- Modal header -->
             <div class="modal-header">
-              <h3 class="modal-title">{{ currentUser.is_doctor ? 'Clinical Notes' : 'Clinical Notes' }}</h3>
+                  <h3 class="modal-title">{{ _t('Clinical Notes') }}</h3>
               <button @click="closeClinicalNotesModal" class="btn-modal-close">
                 <i class="material-icons">close</i>
               </button>
@@ -2879,31 +2879,31 @@ window.healthPWA = {
               <template v-if="currentUser.is_doctor">
                 <!-- Clinical Observations -->
                 <div class="clinical-form-group">
-                  <label class="clinical-form-label">Clinical Observations</label>
+                  <label class="clinical-form-label">{{ _t('Clinical Observations') }}</label>
                   <textarea
                     v-model="clinicalObservations"
                     class="clinical-form-field"
-                    placeholder="Enter clinical observations..."
+                    :placeholder="_t('Enter clinical observations...')"
                     rows="4"></textarea>
                 </div>
 
                 <!-- Diagnosis -->
                 <div class="clinical-form-group">
-                  <label class="clinical-form-label">Diagnosis</label>
+                  <label class="clinical-form-label">{{ _t('Diagnosis') }}</label>
                   <textarea
                     v-model="diagnosis"
                     class="clinical-form-field"
-                    placeholder="Enter diagnosis..."
+                    :placeholder="_t('Enter diagnosis...')"
                     rows="4"></textarea>
                 </div>
 
                 <!-- Treatment Performed -->
                 <div class="clinical-form-group">
-                  <label class="clinical-form-label">Treatment Performed</label>
+                  <label class="clinical-form-label">{{ _t('Treatment Performed') }}</label>
                   <textarea
                     v-model="treatmentPerformed"
                     class="clinical-form-field"
-                    placeholder="Describe treatment provided..."
+                    :placeholder="_t('Describe treatment provided...')"
                     rows="4"></textarea>
                 </div>
               </template>
@@ -2911,18 +2911,18 @@ window.healthPWA = {
               <!-- Non-doctor mode: Single notes field -->
               <template v-else>
                 <div class="clinical-form-group">
-                  <label class="clinical-form-label">Notes</label>
+                  <label class="clinical-form-label">{{ _t('Notes') }}</label>
                   <textarea
                     v-model="clinicalNotesText"
                     class="clinical-form-field"
-                    placeholder="Enter clinical notes..."
+                    :placeholder="_t('Enter clinical notes...')"
                     rows="6"></textarea>
                 </div>
               </template>
 
               <!-- Photo capture section (for both modes) -->
               <div class="clinical-form-group">
-                <label class="clinical-form-label">Attach Photo</label>
+                <label class="clinical-form-label">{{ _t('Attach Photo') }}</label>
                 <div class="photo-upload-container">
                   <input
                     type="file"
@@ -2934,7 +2934,7 @@ window.healthPWA = {
                   />
                   <button @click="$refs.photoInput?.click()" class="btn-photo-capture">
                     <i class="material-icons">camera_alt</i>
-                    <span>Take Photo</span>
+                    <span>{{ _t('Take Photo') }}</span>
                   </button>
                 </div>
 
@@ -2962,7 +2962,7 @@ window.healthPWA = {
             <div class="modal-header">
               <h3>
                 <i class="material-icons">receipt</i>
-                Verify Invoice
+                {{ _t('Verify Invoice') }}
               </h3>
               <button @click="showInvoiceModal = false" class="modal-close">
                 <i class="material-icons">close</i>
@@ -2999,7 +2999,7 @@ window.healthPWA = {
                       <!-- Row 2: Qty, Disc%, Price, Total -->
                       <div class="invoice-item-row-details">
                         <div class="detail-cell qty-cell">
-                          <label>Qty</label>
+                          <label>{{ _t('Qty') }}</label>
                           <input
                             type="number"
                             v-model.number="line.quantity"
@@ -3008,7 +3008,7 @@ window.healthPWA = {
                             step="0.01">
                         </div>
                         <div class="detail-cell disc-cell">
-                          <label>Disc %</label>
+                          <label>{{ _t('Disc %') }}</label>
                           <input
                             type="number"
                             v-model.number="line.discount"
@@ -3019,23 +3019,23 @@ window.healthPWA = {
                             placeholder="0">
                         </div>
                         <div class="detail-cell price-cell">
-                          <label>Price</label>
+                          <label>{{ _t('Price') }}</label>
                           <span>{{ line.unit_price.toLocaleString() }}</span>
                         </div>
                         <div class="detail-cell total-cell">
-                          <label>Total</label>
+                          <label>{{ _t('Total') }}</label>
                           <span>{{ (line.quantity * line.unit_price * (1 - (line.discount || 0) / 100)).toLocaleString() }}</span>
                         </div>
                       </div>
 
                       <!-- Row 3: Discount Reason (When Applicable) -->
                       <div v-if="line.discount > 0" class="invoice-item-row-reason">
-                        <label class="discount-reason-label">Discount Reason:</label>
+                        <label class="discount-reason-label">{{ _t('Discount Reason:') }}</label>
                         <input
                           type="text"
                           v-model="line.discount_reason"
                           class="editable-input discount-reason-input-full"
-                          placeholder="Required: Explain discount"
+                          :placeholder="_t('Required: Explain discount')"
                           required>
                       </div>
                     </div>
@@ -3045,15 +3045,15 @@ window.healthPWA = {
                 <!-- Totals Section -->
                 <div class="invoice-totals">
                   <div class="totals-row">
-                    <span>Subtotal</span>
+                    <span>{{ _t('Subtotal') }}</span>
                     <span>{{ quoteData.amount_untaxed.toLocaleString() }}</span>
                   </div>
                   <div class="totals-row">
-                    <span>Tax</span>
+                    <span>{{ _t('Tax') }}</span>
                     <span>{{ quoteData.amount_tax.toLocaleString() }}</span>
                   </div>
                   <div class="totals-row totals-total">
-                    <strong>Total</strong>
+                    <strong>{{ _t('Total') }}</strong>
                     <strong>{{ quoteData.amount_total.toLocaleString() }} {{ quoteData.currency }}</strong>
                   </div>
                 </div>
@@ -3062,109 +3062,109 @@ window.healthPWA = {
               <!-- Verification Notes - Mandatory if changes made -->
               <div v-if="!quoteVerified" class="form-group">
                 <label class="clinical-form-label">
-                  Verification Notes
+                  {{ _t('Verification Notes') }}
                   <span v-if="hasLineModifications" class="required-indicator">*</span>
                 </label>
                 <textarea
                   v-model="quoteComments"
                   class="clinical-form-field"
-                  :placeholder="hasLineModifications ? 'Required: Explain the changes made to Qty or Discount...' : 'Add any general comments about this invoice...'"
+                  :placeholder="hasLineModifications ? _t('Required: Explain the changes made to Qty or Discount...') : _t('Add any general comments about this invoice...')"
                   rows="3"></textarea>
               </div>
 
               <!-- Success Message -->
               <div v-if="quoteVerified" class="success-message">
                 <i class="material-icons">check_circle</i>
-                <p>Invoice verified successfully!</p>
+                <p>{{ _t('Invoice verified successfully!') }}</p>
               </div>
             </div>
 
             <!-- Modal Footer -->
             <div class="modal-footer">
-              <button @click="showInvoiceModal = false" class="btn btn-secondary">Cancel</button>
+              <button @click="showInvoiceModal = false" class="btn btn-secondary">{{ _t('Cancel') }}</button>
               <button v-if="!quoteVerified" @click="saveQuoteWithComments" class="btn btn-primary">
                 <i class="material-icons">save</i>
-                <span>Save Quote</span>
+                <span>{{ _t('Save Quote') }}</span>
               </button>
               <button v-else @click="openPaymentWizard" class="btn btn-success">
                 <i class="material-icons">payment</i>
-                <span>Payment</span>
+                <span>{{ _t('Payment') }}</span>
               </button>
             </div>
           </div>
         </div>
 
-        <!-- Payment Wizard Modal -->
-        <div v-if="showPaymentWizard && quoteVerified" class="modal-overlay" @click.self="showPaymentWizard = false">
-          <div class="modal-content payment-wizard-modal">
-            <div class="modal-header">
-              <h3>
-                <i class="material-icons">payment</i>
-                Complete Service - Payment Collection
-              </h3>
-              <button @click="showPaymentWizard = false" class="modal-close">
-                <i class="material-icons">close</i>
-              </button>
-            </div>
+            <!-- Payment Wizard Modal -->
+            <div v-if="showPaymentWizard && quoteVerified" class="modal-overlay" @click.self="showPaymentWizard = false">
+              <div class="modal-content payment-wizard-modal">
+                <div class="modal-header">
+                  <h3>
+                    <i class="material-icons">payment</i>
+                    {{ _t('Complete Service - Payment Collection') }}
+                  </h3>
+                  <button @click="showPaymentWizard = false" class="modal-close">
+                    <i class="material-icons">close</i>
+                  </button>
+                </div>
 
-            <div class="modal-body">
-              <!-- Payment Choice Section -->
-              <div class="form-section">
-                <h4>Payment Timing</h4>
+              <div class="modal-body">
+                <!-- Payment Choice Section -->
+                <div class="form-section">
+                <h4>{{ _t('Payment Timing') }}</h4>
                 <div class="form-group">
                   <label>
                     <input
                       type="radio"
                       v-model="paymentWizardData.payment_choice"
                       value="pay_now">
-                    <span>Pay Now</span>
+                    <span>{{ _t('Pay Now') }}</span>
                   </label>
                   <label>
                     <input
                       type="radio"
                       v-model="paymentWizardData.payment_choice"
                       value="pay_later">
-                    <span>Pay Later</span>
+                    <span>{{ _t('Pay Later') }}</span>
                   </label>
                 </div>
               </div>
 
               <!-- Payment Method Section (only show if paying now) -->
               <div v-if="paymentWizardData.payment_choice === 'pay_now'" class="form-section">
-                <h4>Payment Method</h4>
+                <h4>{{ _t('Payment Method') }}</h4>
                 <div class="form-group">
                   <label>
                     <input
                       type="radio"
                       v-model="paymentWizardData.payment_method"
                       value="cash">
-                    <span>Cash</span>
+                    <span>{{ _t('Cash') }}</span>
                   </label>
                   <label>
                     <input
                       type="radio"
                       v-model="paymentWizardData.payment_method"
                       value="card">
-                    <span>Card</span>
+                    <span>{{ _t('Card') }}</span>
                   </label>
                   <label>
                     <input
                       type="radio"
                       v-model="paymentWizardData.payment_method"
                       value="bank_transfer">
-                    <span>Bank Transfer</span>
+                    <span>{{ _t('Bank Transfer') }}</span>
                   </label>
                 </div>
               </div>
 
               <!-- Service Notes -->
               <div class="form-section">
-                <h4>Service Notes</h4>
+                <h4>{{ _t('Service Notes') }}</h4>
                 <div class="form-group">
                   <textarea
                     v-model="paymentWizardData.service_notes"
                     class="clinical-form-field"
-                    placeholder="Enter any additional service or payment notes..."
+                    :placeholder="_t('Enter any additional service or payment notes...')"
                     rows="3"></textarea>
                 </div>
               </div>
@@ -3176,7 +3176,7 @@ window.healthPWA = {
                     <input
                       type="checkbox"
                       v-model="paymentWizardData.create_invoice_now">
-                    <span>Create Invoice Now</span>
+                    <span>{{ _t('Create Invoice Now') }}</span>
                   </label>
                 </div>
               </div>
@@ -3184,12 +3184,12 @@ window.healthPWA = {
               <!-- Order Summary -->
               <div class="info-grid">
                 <div class="info-item">
-                  <label>Amount</label>
+                  <label>{{ _t('Amount') }}</label>
                   <span>{{ quoteData?.amount_total?.toLocaleString() || '0' }} {{ quoteData?.currency || 'VND' }}</span>
                 </div>
                 <div class="info-item">
-                  <label>Payment</label>
-                  <span>{{ paymentWizardData.payment_choice === 'pay_now' ? 'Now' : 'Later' }}</span>
+                  <label>{{ _t('Payment') }}</label>
+                  <span>{{ paymentWizardData.payment_choice === 'pay_now' ? _t('Now') : _t('Later') }}</span>
                 </div>
               </div>
             </div>

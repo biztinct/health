@@ -1445,3 +1445,219 @@ msgstr "Bắt đầu dịch vụ"
 #: code:addons/health_pwa/static/src/js/app.js:2751
 msgid "Clinical Notes"
 msgstr "Ghi chú lâm sàng"
+
+#. module: health_pwa
+#: code:addons/health_pwa/static/src/js/app.js:2826
+msgid "Diagnosis"
+msgstr "Chẩn đoán"
+
+#. module: health_pwa
+#: code:addons/health_pwa/static/src/js/app.js:2827
+msgid "Type here..."
+msgstr "Nhập tại đây..."
+
+#. module: health_pwa
+#: code:addons/health_pwa/static/src/js/app.js:2833
+msgid "Referring Doctor"
+msgstr "Bác sĩ giới thiệu"
+
+#. module: health_pwa
+#: code:addons/health_pwa/static/src/js/app.js:2846
+msgid "Goal of Care"
+msgstr "Mục tiêu chăm sóc"
+
+#. module: health_pwa
+#: code:addons/health_pwa/static/src/js/app.js:2852
+msgid "Required Equipment"
+msgstr "Thiết bị yêu cầu"
+
+#. module: health_pwa
+#: code:addons/health_pwa/static/src/js/app.js:2858
+msgid "Intake Notes"
+msgstr "Ghi chú tiếp nhận"
+
+#. module: health_pwa
+#: code:addons/health_pwa/static/src/js/app.js:3065
+msgid "Verification Notes"
+msgstr "Ghi chú xác minh"
+
+#. module: health_pwa
+#: code:addons/health_pwa/static/src/js/app.js:3072
+msgid "Required: Explain the changes made to Qty or Discount..."
+msgstr "Bắt buộc: Giải thích các thay đổi về Số lượng hoặc Chiết khấu..."
+
+#. module: health_pwa
+#: code:addons/health_pwa/static/src/js/app.js:3072
+msgid "Add any general comments about this invoice..."
+msgstr "Thêm bất kỳ ghi chú chung nào về hóa đơn này..."
+
+#. module: health_pwa
+#: code:addons/health_pwa/static/src/js/app.js:3078
+msgid "Invoice verified successfully!"
+msgstr "Xác minh hóa đơn thành công!"
+
+#. module: health_pwa
+#: code:addons/health_pwa/static/src/js/app.js:3084
+msgid "Cancel"
+msgstr "Hủy"
+
+#. module: health_pwa
+#: code:addons/health_pwa/static/src/js/app.js:3087
+msgid "Save Quote"
+msgstr "Lưu báo giá"
+
+#. module: health_pwa
+#: code:addons/health_pwa/static/src/js/app.js:3091
+msgid "Payment"
+msgstr "Thanh toán"
+
+#. module: health_pwa
+#: code:addons/health_pwa/static/src/js/app.js:3103
+msgid "Complete Service - Payment Collection"
+msgstr "Hoàn tất dịch vụ - Thu tiền"
+
+#. module: health_pwa
+#: code:addons/health_pwa/static/src/js/app.js:3113
+msgid "Payment Timing"
+msgstr "Thời điểm thanh toán"
+
+#. module: health_pwa
+#: code:addons/health_pwa/static/src/js/app.js:3120
+msgid "Pay Now"
+msgstr "Trả ngay"
+
+#. module: health_pwa
+#: code:addons/health_pwa/static/src/js/app.js:3127
+msgid "Pay Later"
+msgstr "Trả sau"
+
+#. module: health_pwa
+#: code:addons/health_pwa/static/src/js/app.js:3134
+msgid "Payment Method"
+msgstr "Phương thức thanh toán"
+
+#. module: health_pwa
+#: code:addons/health_pwa/static/src/js/app.js:3141
+msgid "Cash"
+msgstr "Tiền mặt"
+
+#. module: health_pwa
+#: code:addons/health_pwa/static/src/js/app.js:3148
+msgid "Card"
+msgstr "Thẻ"
+
+#. module: health_pwa
+#: code:addons/health_pwa/static/src/js/app.js:3155
+msgid "Bank Transfer"
+msgstr "Chuyển khoản"
+
+#. module: health_pwa
+#: code:addons/health_pwa/static/src/js/app.js:3162
+msgid "Service Notes"
+msgstr "Ghi chú dịch vụ"
+
+#. module: health_pwa
+#: code:addons/health_pwa/static/src/js/app.js:3167
+msgid "Enter any additional service or payment notes..."
+msgstr "Nhập thêm ghi chú dịch vụ hoặc thanh toán..."
+
+#. module: health_pwa
+#: code:addons/health_pwa/static/src/js/app.js:3179
+msgid "Create Invoice Now"
+msgstr "Tạo hóa đơn ngay"
+
+#. module: health_pwa
+#: code:addons/health_pwa/static/src/js/app.js:3187
+msgid "Amount"
+msgstr "Số tiền"
+
+#. module: health_pwa
+#. module: health_pwa
+#: code:addons/health_pwa/static/src/js/app.js:3192
+msgid "Now"
+msgstr "Ngay"
+
+#. module: health_pwa
+#: code:addons/health_pwa/static/src/js/app.js:3199
+msgid "Complete Payment"
+msgstr "Hoàn tất thanh toán"
+
+#. module: health_pwa
+#: code:addons/health_pwa/static/src/js/app.js:2826
+msgid "Clinical Observations"
+msgstr "Quan sát lâm sàng"
+
+#. module: health_pwa
+#: code:addons/health_pwa/static/src/js/app.js:2886
+msgid "Enter clinical observations..."
+msgstr "Nhập quan sát lâm sàng..."
+
+#. module: health_pwa
+#: code:addons/health_pwa/static/src/js/app.js:2896
+msgid "Enter diagnosis..."
+msgstr "Nhập chẩn đoán..."
+
+#. module: health_pwa
+#: code:addons/health_pwa/static/src/js/app.js:2906
+msgid "Describe treatment provided..."
+msgstr "Mô tả điều trị đã thực hiện..."
+
+#. module: health_pwa
+#: code:addons/health_pwa/static/src/js/app.js:2918
+msgid "Enter clinical notes..."
+msgstr "Nhập ghi chú lâm sàng..."
+
+#. module: health_pwa
+#: code:addons/health_pwa/static/src/js/app.js:2925
+msgid "Attach Photo"
+msgstr "Đính kèm ảnh"
+
+#. module: health_pwa
+#: code:addons/health_pwa/static/src/js/app.js:2937
+msgid "Take Photo"
+msgstr "Chụp ảnh"
+
+#. module: health_pwa
+#: code:addons/health_pwa/static/src/js/app.js:2965
+msgid "Verify Invoice"
+msgstr "Xác minh hóa đơn"
+
+#. module: health_pwa
+#: code:addons/health_pwa/static/src/js/app.js:3002
+msgid "Qty"
+msgstr "SL"
+
+#. module: health_pwa
+#: code:addons/health_pwa/static/src/js/app.js:3011
+msgid "Disc %"
+msgstr "CK %"
+
+#. module: health_pwa
+#: code:addons/health_pwa/static/src/js/app.js:3022
+msgid "Price"
+msgstr "Giá"
+
+#. module: health_pwa
+#: code:addons/health_pwa/static/src/js/app.js:3026
+msgid "Total"
+msgstr "Tổng"
+
+#. module: health_pwa
+#: code:addons/health_pwa/static/src/js/app.js:3033
+msgid "Discount Reason:"
+msgstr "Lý do giảm giá:"
+
+#. module: health_pwa
+#: code:addons/health_pwa/static/src/js/app.js:3038
+msgid "Required: Explain discount"
+msgstr "Bắt buộc: Giải thích chiết khấu"
+
+#. module: health_pwa
+#: code:addons/health_pwa/static/src/js/app.js:3048
+msgid "Subtotal"
+msgstr "Tạm tính"
+
+#. module: health_pwa
+#: code:addons/health_pwa/static/src/js/app.js:3052
+msgid "Tax"
+msgstr "Thuế"

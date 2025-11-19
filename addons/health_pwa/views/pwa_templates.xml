@@ -20,9 +20,6 @@
                 <link rel="icon" type="image/png" sizes="192x192" href="/health_pwa/static/icons/icon-192.png"/>
                 <link rel="apple-touch-icon" sizes="192x192" href="/health_pwa/static/icons/icon-192.png"/>
 
-                <!-- Load translations for health_pwa (include db to avoid redirect/html) -->
-                <script t-att-src="'/web/webclient/translations?db=' + (db_name or '') + '&amp;mods=health_pwa&amp;lang=' + (user_lang or 'en_US')"></script>
-                
                 <!-- Quasar CSS -->
                 <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900|Material+Icons" rel="stylesheet" type="text/css"/>
                 <link href="https://unpkg.com/quasar@2.14.0/dist/quasar.prod.css" rel="stylesheet" type="text/css"/>
