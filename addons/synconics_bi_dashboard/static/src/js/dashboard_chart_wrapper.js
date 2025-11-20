@@ -88,6 +88,25 @@ export class DashboardChartWrapper extends Component {
       this.props.editChart(chartId, this.state.name, this.onHandleEdit);
     };
 
+    this.onMaximizeView = (ev) => {
+      // Open embedded view in full screen for embedded Odoo views
+      if (['odoo_list_view', 'odoo_kanban_view', 'odoo_pivot_view', 'odoo_calendar_view'].includes(this.state.chart_type)) {
+        const viewConfig = this.state.recordSets;
+        if (viewConfig && viewConfig.type === 'embedded_view') {
+          const { model, view_type, domain, context, view_id } = viewConfig;
+          this.action.doAction({
+            type: "ir.actions.act_window",
+            name: this.state.name,
+            res_model: model,
+            views: [[view_id || false, view_type]],
+            domain: domain || [],
+            context: context || {},
+            target: "current",
+          });
+        }
+      }
+    };
+
     this.setExporting = (exporting) => {
       this.state.exporting = exporting;
       if (this.props.onUpdateExport) {
