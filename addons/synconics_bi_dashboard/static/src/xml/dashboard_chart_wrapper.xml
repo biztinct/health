@@ -7,10 +7,15 @@
                 <div class="chart-header" t-att-style="['tile', 'kpi'].includes(state.chart_type) &amp;&amp; !state.isKpiError ? 'position: absolute; right: 0; z-index: 9; background-color:' + state.background_color +'!important;' : 'height: 6%;'">
                     <span class="title" t-out="(state.isKpiError || !['tile', 'kpi'].includes(state.chart_type)) ? state.name : ''"></span>
                     <div class="button-box">
-                        <!-- Maximize button for embedded views -->
-                        <button t-if="['odoo_list_view', 'odoo_kanban_view', 'odoo_pivot_view', 'odoo_calendar_view'].includes(state.chart_type)" class="btn" title="Open in Full Screen" t-on-click="(ev) => onMaximizeView(ev)">
-                            <i class="fa fa-external-link" />
-                        </button>
+                        <!-- External window and maximize buttons for embedded views -->
+                        <t t-if="['odoo_list_view', 'odoo_kanban_view', 'odoo_pivot_view', 'odoo_calendar_view'].includes(state.chart_type)">
+                            <button class="btn" title="Open in New Window" t-on-click="(ev) => onOpenExternalWindow(ev)">
+                                <i class="fa fa-window-restore" />
+                            </button>
+                            <button class="btn" title="Open in Full Screen" t-on-click="(ev) => onMaximizeView(ev)">
+                                <i class="fa fa-external-link" />
+                            </button>
+                        </t>
                         <!-- Download dropdown for other chart types -->
                         <div t-else="" class="dropdown">
                           <button class="btn dropdown-toggle" title="Download Chart" type="button" id="downloadMenuButton" data-bs-toggle="dropdown" aria-expanded="false" style="padding-right: 5px;">
