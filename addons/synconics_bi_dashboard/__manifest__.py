@@ -82,6 +82,7 @@ Transform your data into compelling dashboard visualizations
             "synconics_bi_dashboard/static/src/js/dashboard_amcharts.js",
             "synconics_bi_dashboard/static/src/xml/dashboard_amcharts.xml",
             "synconics_bi_dashboard/static/src/js/dashboard_selection/*",
+            "synconics_bi_dashboard/static/src/components/OdooEmbeddedView/OdooEmbeddedView.scss",
             "synconics_bi_dashboard/static/src/components/**/*",
             "synconics_bi_dashboard/static/src/components/KPILayouts/**/*",
             "synconics_bi_dashboard/static/src/components/TileLayouts/**/*",

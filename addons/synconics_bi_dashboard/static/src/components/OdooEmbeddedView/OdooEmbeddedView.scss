@@ -1,0 +1,28 @@
+// Embedded Odoo View Styles
+// Hide duplicate breadcrumb/title in embedded views since the chart wrapper already shows the title
+.o_embedded_view_container {
+    .o_control_panel {
+        .o_control_panel_breadcrumbs {
+            .breadcrumb {
+                display: none !important;
+            }
+        }
+    }
+
+    // Ensure the view takes full height
+    .o_content {
+        height: 100% !important;
+    }
+
+    // Ensure proper scrolling only on the list content, not the whole view
+    .o_list_view {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+
+        .o_list_table_wrapper {
+            flex: 1;
+            overflow: auto;
+        }
+    }
+}
