@@ -91,41 +91,24 @@ export class DashboardChartWrapper extends Component {
     this.onOpenExternalWindow = async (ev) => {
       // Open embedded view in new browser tab/window
       if (['odoo_list_view', 'odoo_kanban_view', 'odoo_pivot_view', 'odoo_calendar_view'].includes(this.state.chart_type)) {
-        const viewConfig = this.state.recordSets;
-        if (viewConfig && viewConfig.type === 'embedded_view') {
-          const { model, view_type, domain, context, view_id } = viewConfig;
+        try {
+          // Call backend to get proper action URL
+          const result = await this.orm.call(
+            'dashboard.chart',
+            'get_action_url_for_embedded_view',
+            [parseInt(this.state.chartId)]
+          );
 
-          // Get current URL base
-          const baseUrl = window.location.origin;
-          const pathname = window.location.pathname;
+          if (result && result.url_hash) {
+            // Construct full URL with the action hash
+            const baseUrl = window.location.origin + window.location.pathname;
+            const fullUrl = baseUrl + result.url_hash;
 
-          // Try to get menu_id for the model if available
-          let menuId = null;
-          try {
-            const menus = await this.orm.searchRead(
-              "ir.ui.menu",
-              [["action.res_model", "=", model]],
-              ["id"],
-              { limit: 1 }
-            );
-            if (menus.length > 0) {
-              menuId = menus[0].id;
-            }
-          } catch (e) {
-            console.log("Could not find menu for model:", model);
+            // Open in new tab
+            window.open(fullUrl, '_blank');
           }
-
-          // Construct URL using menu_id if available, otherwise use model/view_type
-          let url;
-          if (menuId) {
-            url = `${baseUrl}${pathname}#menu_id=${menuId}&model=${model}&view_type=${view_type}`;
-          } else {
-            // Use cids (company ids) parameter - 1 is usually the main company
-            url = `${baseUrl}${pathname}#model=${model}&view_type=${view_type}&cids=1`;
-          }
-
-          // Open in new browser tab
-          window.open(url, '_blank');
+        } catch (error) {
+          console.error('Error opening view in new window:', error);
         }
       }
     };

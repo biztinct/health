@@ -2447,6 +2447,61 @@ class DashboardChart(models.Model):
 
         return view_config
 
+    def get_action_url_for_embedded_view(self):
+        """
+        Generate a proper action URL for opening embedded view in a new window/tab
+        Returns action ID and URL hash for webclient navigation
+        """
+        self.ensure_one()
+
+        # Only for embedded view chart types
+        if self.chart_type not in ['odoo_list_view', 'odoo_kanban_view', 'odoo_pivot_view', 'odoo_calendar_view']:
+            return False
+
+        # Get view configuration using existing method
+        view_config = self.get_embedded_view_data(self)
+        if not view_config or view_config.get('type') == 'error':
+            return False
+
+        # Prepare action values
+        action_vals = {
+            'name': self.name,
+            'type': 'ir.actions.act_window',
+            'res_model': view_config['model'],
+            'view_mode': view_config['view_type'],
+            'domain': str(view_config['domain']),
+            'context': str(view_config['context']),
+            'limit': view_config.get('limit', 80),
+        }
+
+        # Add specific view if provided
+        if view_config.get('view_id'):
+            action_vals['views'] = [(view_config['view_id'], view_config['view_type'])]
+
+        # Try to find existing action for this chart
+        action_xml_id = f'action_embedded_view_chart_{self.id}'
+        action = self.env.ref(f'synconics_bi_dashboard.{action_xml_id}', raise_if_not_found=False)
+
+        if not action:
+            # Create new action
+            action = self.env['ir.actions.act_window'].sudo().create(action_vals)
+            # Create external identifier for future reference
+            self.env['ir.model.data'].sudo().create({
+                'name': action_xml_id,
+                'module': 'synconics_bi_dashboard',
+                'model': 'ir.actions.act_window',
+                'res_id': action.id,
+            })
+        else:
+            # Update existing action with current configuration
+            action.sudo().write(action_vals)
+
+        # Return action ID for URL construction
+        return {
+            'action_id': action.id,
+            'url_hash': f'#action={action.id}',
+        }
+
     def _get_view_item(self, extra_action):
         """
         To get chart views
