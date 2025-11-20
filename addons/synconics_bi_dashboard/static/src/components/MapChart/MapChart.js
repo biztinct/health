@@ -54,6 +54,10 @@ export class MapChart extends Component {
     }
 
     this.root = am5.Root.new("map_chart__" + this.props.chartId);
+    // Remove amCharts branding/logo
+    if (this.root._logo) {
+      this.root._logo.dispose();
+    }
     this.root.setThemes([am5themes_Animated.new(this.root)]);
     const formatLabel = (text, maxLength = 15) => {
       if (!text) return text;

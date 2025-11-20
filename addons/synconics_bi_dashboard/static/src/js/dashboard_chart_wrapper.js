@@ -100,8 +100,8 @@ export class DashboardChartWrapper extends Component {
           );
 
           if (result && result.url_hash) {
-            // Construct full URL with the action hash
-            const baseUrl = window.location.origin + window.location.pathname;
+            // Construct full URL with /web as base path
+            const baseUrl = window.location.origin + '/web';
             const fullUrl = baseUrl + result.url_hash;
 
             // Open in new tab

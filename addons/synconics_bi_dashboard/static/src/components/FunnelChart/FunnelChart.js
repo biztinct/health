@@ -54,6 +54,10 @@ export class FunnelChart extends Component {
     this.state.isError = false;
     this.state.errorMessage = false;
     this.root = am5.Root.new("funnel_chart__" + this.props.chartId);
+    // Remove amCharts branding/logo
+    if (this.root._logo) {
+      this.root._logo.dispose();
+    }
     const theme = this.themeMap[this.props.theme];
     this.root.setThemes([theme.new(this.root)]);
 
