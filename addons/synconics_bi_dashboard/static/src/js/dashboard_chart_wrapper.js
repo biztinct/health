@@ -89,7 +89,7 @@ export class DashboardChartWrapper extends Component {
     };
 
     this.onMaximizeView = (ev) => {
-      // Open embedded view in full screen for embedded Odoo views
+      // Open embedded view in new window for embedded Odoo views
       if (['odoo_list_view', 'odoo_kanban_view', 'odoo_pivot_view', 'odoo_calendar_view'].includes(this.state.chart_type)) {
         const viewConfig = this.state.recordSets;
         if (viewConfig && viewConfig.type === 'embedded_view') {
@@ -101,7 +101,7 @@ export class DashboardChartWrapper extends Component {
             views: [[view_id || false, view_type]],
             domain: domain || [],
             context: context || {},
-            target: "current",
+            target: "new",
           });
         }
       }

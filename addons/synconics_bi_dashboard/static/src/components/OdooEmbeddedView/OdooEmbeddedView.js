@@ -1,6 +1,6 @@
 /** @odoo-module **/
 
-import { Component, onWillStart, useState, useSubEnv } from "@odoo/owl";
+import { Component, onWillStart, onMounted, useState, useSubEnv } from "@odoo/owl";
 import { useService } from "@web/core/utils/hooks";
 import { View } from "@web/views/view";
 
@@ -35,6 +35,19 @@ export class OdooEmbeddedView extends Component {
 
     onWillStart(async () => {
       await this.loadViewConfig();
+    });
+
+    // Ensure view scrolls to top when mounted
+    onMounted(() => {
+      const container = document.querySelector('.o_embedded_view_container');
+      if (container) {
+        container.scrollTop = 0;
+        // Also scroll any child elements to top
+        const contentArea = container.querySelector('.o_content');
+        if (contentArea) {
+          contentArea.scrollTop = 0;
+        }
+      }
     });
   }
 
