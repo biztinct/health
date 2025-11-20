@@ -111,6 +111,10 @@ class DashboardChart(models.Model):
             ("network_chart", "Network Diagram"),
             ("to_do", "To Do"),
             ("list", "List View"),
+            ("odoo_list_view", "Embedded List View"),
+            ("odoo_kanban_view", "Embedded Kanban View"),
+            ("odoo_pivot_view", "Embedded Pivot View"),
+            ("odoo_calendar_view", "Embedded Calendar View"),
         ],
         default="kpi",
         required=True,
@@ -272,6 +276,49 @@ class DashboardChart(models.Model):
         copy=True,
         auto_join=True,
         help="Set action for information purpose.",
+    )
+
+    # Embedded Odoo View Configuration
+    embedded_view_model_id = fields.Many2one(
+        "ir.model",
+        string="Embedded View Model",
+        ondelete="set null",
+        tracking=True,
+        help="Select the Odoo model to display in the embedded view",
+    )
+    embedded_view_model = fields.Char(
+        string="Embedded Model Ref", related="embedded_view_model_id.model"
+    )
+    embedded_view_type = fields.Selection(
+        [
+            ("list", "List"),
+            ("kanban", "Kanban"),
+            ("pivot", "Pivot"),
+            ("calendar", "Calendar"),
+        ],
+        string="Embedded View Type",
+        help="Select the type of Odoo view to embed",
+    )
+    embedded_view_id = fields.Many2one(
+        "ir.ui.view",
+        string="Specific View",
+        ondelete="set null",
+        help="Optional: Select a specific view. Leave empty to use default view.",
+    )
+    embedded_view_domain = fields.Char(
+        string="Domain Filter",
+        default="[]",
+        help="Domain filter for records (e.g., [('state', '=', 'done')])",
+    )
+    embedded_view_context = fields.Char(
+        string="Context",
+        default="{}",
+        help="Additional context for the view (e.g., {'group_by': 'partner_id'})",
+    )
+    embedded_view_limit = fields.Integer(
+        string="Record Limit",
+        default=80,
+        help="Maximum number of records to display in the embedded view",
     )
 
     image = fields.Binary(string="Image", help="Set image for mail")
@@ -1384,6 +1431,10 @@ class DashboardChart(models.Model):
             "tile": self.get_tile_data,
             "kpi": self.get_kpi_data,
             "to_do": self.get_todo_data,
+            "odoo_list_view": self.get_embedded_view_data,
+            "odoo_kanban_view": self.get_embedded_view_data,
+            "odoo_pivot_view": self.get_embedded_view_data,
+            "odoo_calendar_view": self.get_embedded_view_data,
         }
         prepared_data = chart_handlers.get(chart_type, lambda x: [])(conf)
         return self._build_final_response(
@@ -1526,6 +1577,15 @@ class DashboardChart(models.Model):
                 {"list_field_id": f.list_field_id.id, "sequence": f.sequence}
                 for f in self.list_field_ids
             ],
+            # Embedded Odoo View fields
+            chart_type=self.chart_type,
+            embedded_view_model_id=self.embedded_view_model_id,
+            embedded_view_model=self.embedded_view_model,
+            embedded_view_type=self.embedded_view_type,
+            embedded_view_id=self.embedded_view_id,
+            embedded_view_domain=self.embedded_view_domain,
+            embedded_view_context=self.embedded_view_context,
+            embedded_view_limit=self.embedded_view_limit,
         )
         return conf, conf.domain.copy()
 
@@ -2335,6 +2395,57 @@ class DashboardChart(models.Model):
             "name": conf_obj.name,
             "records": activities_data,
         }
+
+    def get_embedded_view_data(self, conf_obj):
+        """
+        Prepare configuration data for embedded Odoo views (list, kanban, pivot, calendar)
+        Returns view configuration that will be used by frontend to render standard Odoo views
+        """
+        # Validate required fields
+        if not conf_obj.embedded_view_model_id:
+            return {"type": "error", "message": "Please select a model for the embedded view!"}
+
+        if not conf_obj.embedded_view_type:
+            # Determine view type from chart_type
+            view_type_mapping = {
+                "odoo_list_view": "list",
+                "odoo_kanban_view": "kanban",
+                "odoo_pivot_view": "pivot",
+                "odoo_calendar_view": "calendar",
+            }
+            embedded_view_type = view_type_mapping.get(conf_obj.chart_type, "list")
+        else:
+            embedded_view_type = conf_obj.embedded_view_type
+
+        # Parse domain and context
+        try:
+            domain = safe_eval(conf_obj.embedded_view_domain or "[]")
+        except Exception as e:
+            _logger.warning(f"Invalid domain for embedded view {conf_obj.name}: {e}")
+            domain = []
+
+        try:
+            context = safe_eval(conf_obj.embedded_view_context or "{}")
+        except Exception as e:
+            _logger.warning(f"Invalid context for embedded view {conf_obj.name}: {e}")
+            context = {}
+
+        # Prepare view configuration
+        view_config = {
+            "type": "embedded_view",
+            "name": conf_obj.name,
+            "model": conf_obj.embedded_view_model,
+            "view_type": embedded_view_type,
+            "domain": domain,
+            "context": context,
+            "limit": conf_obj.embedded_view_limit or 80,
+        }
+
+        # Add specific view_id if provided
+        if conf_obj.embedded_view_id:
+            view_config["view_id"] = conf_obj.embedded_view_id.id
+
+        return view_config
 
     def _get_view_item(self, extra_action):
         """

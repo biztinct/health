@@ -52,7 +52,7 @@ Transform your data into compelling dashboard visualizations
     "author": "Synconics Technologies Pvt. Ltd.",
     "website": "https://www.synconics.com",
     "category": "web",
-    "version": "1.0",
+    "version": "1.1.0",
     "depends": ["web", "mail"],
     "external_dependencies": {"python": ["imgkit"]},
     "assets": {

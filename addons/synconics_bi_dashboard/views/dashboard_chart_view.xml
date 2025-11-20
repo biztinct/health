@@ -127,6 +127,19 @@
                                             </field>
                                         </group>
                                     </group>
+                                    <group invisible="chart_type not in ['odoo_list_view', 'odoo_kanban_view', 'odoo_pivot_view', 'odoo_calendar_view']">
+                                        <group>
+                                            <!-- Embedded Odoo View Configuration -->
+                                            <field name="embedded_view_model_id" required="chart_type in ['odoo_list_view', 'odoo_kanban_view', 'odoo_pivot_view', 'odoo_calendar_view']" options="{'no_create': 1}"/>
+                                            <field name="embedded_view_type" required="chart_type in ['odoo_list_view', 'odoo_kanban_view', 'odoo_pivot_view', 'odoo_calendar_view']"/>
+                                            <field name="embedded_view_id" domain="[('model', '=', embedded_view_model), ('type', '=', embedded_view_type)]" options="{'no_create': 1}"/>
+                                        </group>
+                                        <group>
+                                            <field name="embedded_view_domain" widget="domain" options="{'model': 'embedded_view_model'}" placeholder="e.g., [('state', '=', 'done')]"/>
+                                            <field name="embedded_view_context" placeholder="e.g., {'group_by': 'partner_id'}"/>
+                                            <field name="embedded_view_limit"/>
+                                        </group>
+                                    </group>
                                     <group invisible="not model_id">
                                         <group>
                                             <field name="sort_field_id" domain="[('model_id', '=', model_id), ('name', '!=', 'id'), ('name', '!=', 'sequence'), ('store', '=', True), ('ttype', 'not in', ['one2many', 'many2many', 'binary', 'char', 'text', 'boolean', 'html'])]" invisible="not model_id or chart_type in ['kpi', 'tile', 'to_do']" options="{'no_create': 1}"/>

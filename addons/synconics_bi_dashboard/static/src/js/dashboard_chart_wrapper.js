@@ -28,6 +28,7 @@ import { ListView } from "../components/ListView/ListView";
 import { TileView } from "../components/TileView/TileView";
 import { KPIView } from "../components/KPIView/KPIView";
 import { TodoView } from "../components/TodoView/TodoView";
+import { OdooEmbeddedView } from "../components/OdooEmbeddedView/OdooEmbeddedView";
 import { WarningDialog } from "@web/core/errors/error_dialogs";
 import { _t } from "@web/core/l10n/translation";
 
@@ -408,4 +409,5 @@ DashboardChartWrapper.components = {
   TileView,
   KPIView,
   TodoView,
+  OdooEmbeddedView,
 };
