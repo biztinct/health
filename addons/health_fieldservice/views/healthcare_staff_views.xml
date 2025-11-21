@@ -42,7 +42,7 @@
             <xpath expr="//notebook/page[1]" position="before">
                 <page string="Healthcare Information" name="healthcare_info">
                     <group>
-                        <group string="Healthcare Role &amp; Status">
+                        <group string="Healthcare Role and Status">
                             <field name="is_healthcare_staff"/>
                             <field name="healthcare_role" required="is_healthcare_staff"/>
                             <field name="employment_status" required="is_healthcare_staff"/>
@@ -62,7 +62,7 @@
                         </group>
                     </group>
                     
-                    <group string="Skills &amp; Competencies" col="1">
+                    <group string="Skills and Competencies" col="1">
                         <field name="healthcare_skill_ids" widget="many2many_tags" 
                                options="{'color_field': 'weight', 'no_create_edit': True}"/>
                     </group>

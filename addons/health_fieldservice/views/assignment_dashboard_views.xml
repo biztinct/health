@@ -49,7 +49,7 @@
                                 </div>
                             </div>
                             
-                            <!-- Appointment Date & Time -->
+                            <!-- Appointment Date and Time -->
                             <div class="text-muted small mb-2">
                                 <div class="d-flex align-items-center gap-1">
                                     <span class="fa fa-clock-o text-info"></span>
@@ -57,7 +57,7 @@
                                 </div>
                             </div>
                             
-                            <!-- Duration & Location -->
+                            <!-- Duration and Location -->
                             <div class="text-muted small mb-3">
                                 <div class="d-flex align-items-center gap-1 mb-1">
                                     <span class="fa fa-clock text-success"></span>

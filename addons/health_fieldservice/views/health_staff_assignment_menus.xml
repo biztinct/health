@@ -3,12 +3,12 @@
 <data>
 
     <!-- =====================================================================
-         FSO Scheduling & Staff Management Menu Structure  
+         FSO Scheduling and Staff Management Menu Structure  
          ===================================================================== -->
 
     <!-- FSO Scheduling Submenu under Healthcare -->
     <record id="menu_health_staff_assignment_root" model="ir.ui.menu">
-        <field name="name">Scheduling &amp; Staff</field>
+        <field name="name">Scheduling and Staff</field>
         <field name="parent_id" ref="health_base.menu_healthcare_root"/>
         <field name="sequence">15</field>
     </record>

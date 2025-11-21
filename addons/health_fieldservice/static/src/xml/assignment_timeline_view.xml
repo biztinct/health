@@ -42,7 +42,7 @@
                         <button class="o_today_btn" t-on-click="() => this.onNavigate('today')">Today</button>
                     </div>
                     
-                    <!-- Zoom & Actions -->
+                    <!-- Zoom and Actions -->
                     <div class="o_actions_compact">
                         <div class="o_zoom_compact">
                             <button class="o_zoom_btn" t-on-click="() => this.onZoomChange(state.zoomLevel * 0.8)">−</button>

@@ -144,4 +144,5 @@
     'auto_install': False,
     'application': False,  # This extends health_base with unified FSO
     'sequence': 110,
+    'pre_init_hook': 'pre_init_hook',
 }

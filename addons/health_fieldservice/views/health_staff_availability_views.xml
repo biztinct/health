@@ -84,7 +84,7 @@
                             </group>
                         </page>
                         
-                        <page string="Buffer &amp; Travel" name="buffer">
+                        <page string="Buffer and Travel" name="buffer">
                             <group>
                                 <group string="Buffer Times">
                                     <field name="buffer_before"/>

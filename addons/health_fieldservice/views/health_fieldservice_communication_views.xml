@@ -49,7 +49,7 @@
                             <field name="create_date" readonly="1"/>
                         </group>
                         
-                        <group string="Recipients &amp; Response">
+                        <group string="Recipients and Response">
                             <field name="recipient_ids" widget="many2many_tags"/>
                             <field name="recipient_role"/>
                             <field name="requires_response"/>

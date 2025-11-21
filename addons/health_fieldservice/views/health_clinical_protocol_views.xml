@@ -56,7 +56,7 @@
                             <field name="required_equipment_ids"/>
                         </page>
                         
-                        <page string="Safety &amp; Compliance" name="safety">
+                        <page string="Safety and Compliance" name="safety">
                             <group>
                                 <group string="Safety Requirements">
                                     <field name="safety_requirements"/>

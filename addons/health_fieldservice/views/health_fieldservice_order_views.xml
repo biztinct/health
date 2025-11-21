@@ -196,173 +196,360 @@
                         </div>
                     </div>
                     
-                    <group>
-                        <group string="Service Information">
-                            <field name="patient_id" readonly="1"
-                                   context="{'form_view_ref': 'health_base.view_health_patient_form'}"/>
-                            <field name="service_type"/>
-                            <field name="scheduled_datetime"/>
-                            <field name="scheduled_duration" widget="integer"/>
-                            <field name="team_id"/>
-                        </group>
-                        
-                        <group string="Assignment &amp; Staff">
-                            <field name="assigned_staff_ids" widget="many2many_tags"
-                                   readonly="1"
-                                   options="{'color_field': 'color', 'no_create': True}"/>
-                            <field name="lead_staff_id"
-                                   readonly="1"
-                                   options="{'no_create': True}"/>
-                            <field name="assigned_doctor_id"
-                                   readonly="1"
-                                   options="{'no_create': True}"/>
-                        </group>
-                    </group>
+                    <div class="vu-section">
+                        <div class="vu-section__title">
+                            <span class="vu-section__icon" data-icon="heart-pulse"/>
+                            <div>
+                            <span>Service Overview</span>
+                                <small class="text-muted d-block">Client, service type and staffing snapshot</small>
+                            </div>
+                        </div>
+                        <div class="vu-section-grid">
+                            <div class="vu-card">
+                                <div class="vu-card__title">
+                                    <span class="vu-section__icon" data-icon="file-text"/>
+                                    <span>Service Information</span>
+                                </div>
+                                <group col="2">
+                                    <field name="patient_id" readonly="1"
+                                           context="{'form_view_ref': 'health_base.view_health_patient_form'}"/>
+                                    <field name="service_type"/>
+                                    <field name="scheduled_datetime"/>
+                                    <field name="scheduled_duration" widget="integer"/>
+                                    <field name="team_id"/>
+                                </group>
+                            </div>
+
+                            <div class="vu-card">
+                                <div class="vu-card__title">
+                                    <span class="vu-section__icon" data-icon="users-group"/>
+                                    <span>Assignment and Staff</span>
+                                </div>
+                                <group col="2">
+                                    <field name="assigned_staff_ids" widget="many2many_tags"
+                                           readonly="1"
+                                           options="{'color_field': 'color', 'no_create': True}"/>
+                                    <field name="lead_staff_id"
+                                           readonly="1"
+                                           options="{'no_create': True}"/>
+                                    <field name="assigned_doctor_id"
+                                           readonly="1"
+                                           options="{'no_create': True}"/>
+                                </group>
+                            </div>
+                        </div>
+                    </div>
                     
-                    <group>
-                        <group string="Location &amp; Timing">
-                            <field name="service_location" readonly="1"/>
-                            <field name="actual_start_datetime"/>
-                            <field name="actual_end_datetime"/>
-                            <field name="adjusted_end_datetime"/>
-                            <field name="actual_duration" readonly="1" string="Duration (Hours)"/>
-                        </group>
-                        
-                        <group string="Quote &amp; Invoice Status">
-                            <field name="sale_order_id" readonly="1" string="Healthcare Quote"/>
-                            <field name="quote_state" widget="badge" invisible="not sale_order_id"/>
-                            <field name="invoice_id" readonly="1"/>
-                            <field name="invoice_state" widget="badge" invisible="not invoice_id"/>
-                        </group>
-                    </group>
+                    <div class="vu-section">
+                        <div class="vu-section__title">
+                            <span class="vu-section__icon" data-icon="timeline"/>
+                            <div>
+                                <span>Execution and Financials</span>
+                                <small class="text-muted d-block">Actual delivery data plus quote/invoice status</small>
+                            </div>
+                        </div>
+                        <div class="vu-section-grid">
+                            <div class="vu-card">
+                                <div class="vu-card__title">
+                                    <span class="vu-section__icon" data-icon="map-pin"/>
+                                    <span>Location and Timing</span>
+                                </div>
+                                <group col="2">
+                                    <field name="service_location" readonly="1"/>
+                                    <field name="actual_start_datetime"/>
+                                    <field name="actual_end_datetime"/>
+                                    <field name="adjusted_end_datetime"/>
+                                    <field name="actual_duration" readonly="1" string="Duration (Hours)"/>
+                                </group>
+                            </div>
+                            
+                            <div class="vu-card">
+                                <div class="vu-card__title">
+                                    <span class="vu-section__icon" data-icon="credit-card"/>
+                                    <span>Quote and Invoice Status</span>
+                                </div>
+                                <group col="2">
+                                    <field name="sale_order_id" readonly="1" string="Healthcare Quote"/>
+                                    <field name="quote_state" widget="badge" invisible="not sale_order_id"/>
+                                    <field name="invoice_id" readonly="1"/>
+                                    <field name="invoice_state" widget="badge" invisible="not invoice_id"/>
+                                </group>
+                            </div>
+                        </div>
+                    </div>
                     
                     <notebook>
 
                         <page string="Staff Assignments" name="assignments">
-                            <field name="assignment_ids"/>
+                            <div class="vu-card">
+                                <div class="vu-card__title">
+                                    <span class="vu-section__icon" data-icon="users-group"/>
+                                    <span>Assignments</span>
+                                </div>
+                                <field name="assignment_ids"/>
+                            </div>
                         </page>
 
                         <page string="Equipment" name="equipment">
-                            <group>
-                                <group string="Required Equipment">
-                                    <field name="required_equipment_ids" widget="many2many_tags"/>
-                                    <field name="equipment_checklist_complete" widget="boolean_toggle"/>
-                                </group>
-                                
-                                <group string="Assigned Equipment">
-                                    <field name="assigned_equipment_ids" widget="many2many_tags"/>
-                                </group>
-                            </group>
+                            <div class="vu-section">
+                                <div class="vu-section__title">
+                                    <span class="vu-section__icon" data-icon="package"/>
+                                    <div>
+                                        <span>Equipment</span>
+                                        <small class="text-muted d-block">Required supplies and assigned kits</small>
+                                    </div>
+                                </div>
+                                <div class="vu-section-grid">
+                                    <div class="vu-card">
+                                        <div class="vu-card__title">
+                                            <span class="vu-section__icon" data-icon="package"/>
+                                            <span>Required Equipment</span>
+                                        </div>
+                                        <group>
+                                            <field name="required_equipment_ids" widget="many2many_tags"/>
+                                            <field name="equipment_checklist_complete" widget="boolean_toggle"/>
+                                        </group>
+                                    </div>
+                                    
+                                    <div class="vu-card">
+                                        <div class="vu-card__title">
+                                            <span class="vu-section__icon" data-icon="package"/>
+                                            <span>Assigned Equipment</span>
+                                        </div>
+                                        <group>
+                                            <field name="assigned_equipment_ids" widget="many2many_tags"/>
+                                        </group>
+                                    </div>
+                                </div>
+                            </div>
                         </page>
 
                         <page string="Clinical Notes" name="clinical_notes">
-                            <div class="alert alert-warning" role="alert" invisible="clinical_notes_submitted">
-                                <p><strong>⚠️ Required:</strong> Clinical notes must be submitted before completing the service.</p>
+                            <div class="vu-section">
+                                <div class="vu-section__title">
+                                    <span class="vu-section__icon" data-icon="stethoscope"/>
+                                    <div>
+                                        <span>Clinical Documentation</span>
+                                        <small class="text-muted d-block">Notes, diagnosis, treatment and follow-up</small>
+                                    </div>
+                                </div>
+                                <div class="alert alert-warning" role="alert" invisible="clinical_notes_submitted">
+                                    <p><strong>⚠️ Required:</strong> Clinical notes must be submitted before completing the service.</p>
+                                </div>
+                                <div class="alert alert-success" role="alert" invisible="not clinical_notes_submitted">
+                                    <p><strong>✓ Clinical Notes Submitted:</strong> Clinical documentation is complete.</p>
+                                </div>
+                                <div class="vu-section-grid">
+                                    <div class="vu-card">
+                                        <div class="vu-card__title">
+                                            <span class="vu-section__icon" data-icon="file-text"/>
+                                            <span>Clinical Documentation</span>
+                                        </div>
+                                        <group>
+                                            <field name="clinical_notes_submitted" invisible="1"/>
+                                            <field name="clinical_notes" widget="html" nolabel="1" placeholder="Enter clinical observations and notes..."/>
+                                        </group>
+                                    </div>
+                                    <div class="vu-card">
+                                        <div class="vu-card__title">
+                                            <span class="vu-section__icon" data-icon="heart-pulse"/>
+                                            <span>MOH Compliance - Diagnosis</span>
+                                        </div>
+                                        <group>
+                                            <field name="diagnosis" nolabel="1" placeholder="Enter medical diagnosis (Chuẩn đoán)..."/>
+                                        </group>
+                                    </div>
+                                </div>
+                                <div class="vu-section-grid">
+                                    <div class="vu-card">
+                                        <div class="vu-card__title">
+                                            <span class="vu-section__icon" data-icon="stethoscope"/>
+                                            <span>Treatment Details</span>
+                                        </div>
+                                        <group>
+                                            <field name="treatment_performed" placeholder="Describe treatment provided..."/>
+                                            <field name="medications_prescribed" placeholder="List medications prescribed..."/>
+                                        </group>
+                                    </div>
+                                    <div class="vu-card">
+                                        <div class="vu-card__title">
+                                            <span class="vu-section__icon" data-icon="activity"/>
+                                            <span>Client Assessment</span>
+                                        </div>
+                                        <group>
+                                            <field name="patient_condition_before" placeholder="Patient condition before service..."/>
+                                            <field name="patient_condition_after" placeholder="Patient condition after service..."/>
+                                            <field name="vital_signs" placeholder="Record vital signs..."/>
+                                        </group>
+                                    </div>
+                                </div>
+                                <div class="vu-section-grid">
+                                    <div class="vu-card">
+                                        <div class="vu-card__title">
+                                            <span class="vu-section__icon" data-icon="timeline"/>
+                                            <span>Follow-up</span>
+                                        </div>
+                                        <group>
+                                            <field name="follow_up_required"/>
+                                            <field name="follow_up_date" invisible="not follow_up_required"/>
+                                            <field name="follow_up_notes" invisible="not follow_up_required" placeholder="Follow-up instructions..."/>
+                                        </group>
+                                    </div>
+                                    <div class="vu-card">
+                                        <div class="vu-card__title">
+                                            <span class="vu-section__icon" data-icon="users-group"/>
+                                            <span>Service Quality</span>
+                                        </div>
+                                        <group>
+                                            <field name="service_rating"/>
+                                        </group>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="alert alert-success" role="alert" invisible="not clinical_notes_submitted">
-                                <p><strong>✓ Clinical Notes Submitted:</strong> Clinical documentation is complete.</p>
-                            </div>
-                            <group>
-                                <group string="Clinical Documentation">
-                                    <field name="clinical_notes_submitted" invisible="1"/>
-                                    <field name="clinical_notes" widget="html" nolabel="1" placeholder="Enter clinical observations and notes..."/>
-                                </group>
-                            </group>
-                            <group>
-                                <group string="MOH Compliance - Diagnosis">
-                                    <field name="diagnosis" nolabel="1" placeholder="Enter medical diagnosis (Chuẩn đoán)..."/>
-                                </group>
-                            </group>
-                            <group>
-                                <group string="Treatment Details">
-                                    <field name="treatment_performed" placeholder="Describe treatment provided..."/>
-                                    <field name="medications_prescribed" placeholder="List medications prescribed..."/>
-                                </group>
-                                <group string='Client Assessment'>
-                                    <field name="patient_condition_before" placeholder="Patient condition before service..."/>
-                                    <field name="patient_condition_after" placeholder="Patient condition after service..."/>
-                                    <field name="vital_signs" placeholder="Record vital signs..."/>
-                                </group>
-                            </group>
-                            <group>
-                                <group string="Follow-up">
-                                    <field name="follow_up_required"/>
-                                    <field name="follow_up_date" invisible="not follow_up_required"/>
-                                    <field name="follow_up_notes" invisible="not follow_up_required" placeholder="Follow-up instructions..."/>
-                                </group>
-                                <group string="Service Quality">
-                                    <field name="service_rating"/>
-                                </group>
-                            </group>
                         </page>
 
                         <page string="Intake Notes" name="intake_notes">
-                            <group>
-                                <group string="Referring Information">
-                                    <field name="referring_doctor_id" placeholder="Select referring doctor or contact" options="{'no_create': True}"/>
-                                </group>
-                            </group>
-                            <group>
-                                <group string="Care Planning">
-                                    <field name="goal_of_care" placeholder="Primary goal or objective of care"/>
-                                    <field name="required_equipment" placeholder="Equipment or supplies required for care"/>
-                                </group>
-                            </group>
-                            <group>
-                                <group string="Additional Notes">
-                                    <field name="intake_notes" nolabel="1" placeholder="Additional intake assessment notes and observations"/>
-                                </group>
-                            </group>
+                            <div class="vu-section">
+                                <div class="vu-section__title">
+                                    <span class="vu-section__icon" data-icon="clipboard-list"/>
+                                    <div>
+                                        <span>Intake Notes</span>
+                                        <small class="text-muted d-block">Referring details and planning notes</small>
+                                    </div>
+                                </div>
+                                <div class="vu-section-grid">
+                                    <div class="vu-card">
+                                        <div class="vu-card__title">
+                                            <span class="vu-section__icon" data-icon="users-group"/>
+                                            <span>Referring Information</span>
+                                        </div>
+                                        <group>
+                                            <field name="referring_doctor_id" placeholder="Select referring doctor or contact" options="{'no_create': True}"/>
+                                        </group>
+                                    </div>
+                                    <div class="vu-card">
+                                        <div class="vu-card__title">
+                                            <span class="vu-section__icon" data-icon="heart-pulse"/>
+                                            <span>Care Planning</span>
+                                        </div>
+                                        <group>
+                                            <field name="goal_of_care" placeholder="Primary goal or objective of care"/>
+                                            <field name="required_equipment" placeholder="Equipment or supplies required for care"/>
+                                        </group>
+                                    </div>
+                                </div>
+                                <div class="vu-card">
+                                    <div class="vu-card__title">
+                                        <span class="vu-section__icon" data-icon="file-text"/>
+                                        <span>Additional Notes</span>
+                                    </div>
+                                    <group>
+                                        <field name="intake_notes" nolabel="1" placeholder="Additional intake assessment notes and observations"/>
+                                    </group>
+                                </div>
+                            </div>
                         </page>
 
                         <page string="Real-time Communication" name="communication">
-                            <field name="communication_ids" readonly="1">
-                                <list string="Communications" create="false">
-                                    <field name="create_date"/>
-                                    <field name="sender_id"/>
-                                    <field name="message_type"/>
-                                    <field name="priority" decoration-danger="priority == 'urgent'"/>
-                                    <field name="message"/>
-                                    <field name="is_read" widget="boolean_toggle"/>
-                                </list>
-                            </field>
+                            <div class="vu-card">
+                                <div class="vu-card__title">
+                                    <span class="vu-section__icon" data-icon="timeline"/>
+                                    <span>Communications</span>
+                                </div>
+                                <field name="communication_ids" readonly="1">
+                                    <list string="Communications" create="false">
+                                        <field name="create_date"/>
+                                        <field name="sender_id"/>
+                                        <field name="message_type"/>
+                                        <field name="priority" decoration-danger="priority == 'urgent'"/>
+                                        <field name="message"/>
+                                        <field name="is_read" widget="boolean_toggle"/>
+                                    </list>
+                                </field>
+                            </div>
                         </page>
                         
                         <page string="GPS Tracking" name="tracking">
-                            <group>
-                                <group string="Current Location">
+                            <div class="vu-card">
+                                <div class="vu-card__title">
+                                    <span class="vu-section__icon" data-icon="map-pin"/>
+                                    <span>Current Location</span>
+                                </div>
+                                <group>
                                     <field name="gps_coordinates" readonly="1"/>
                                 </group>
-                            </group>
+                            </div>
                         </page>
 
                         <page string="Cancellation Details" name="cancellation" invisible="state != 'cancelled'">
-                            <group>
-                                <group string="Cancellation Information">
-                                    <field name="cancellation_reason_id" readonly="1"/>
-                                    <field name="cancelled_by" readonly="1"/>
-                                    <field name="cancellation_date" readonly="1"/>
-                                </group>
-                            </group>
-                            <group string="Cancellation Notes">
-                                <field name="cancellation_notes" nolabel="1" readonly="1"/>
-                            </group>
+                            <div class="vu-section">
+                                <div class="vu-section__title">
+                                    <span class="vu-section__icon" data-icon="alert-triangle"/>
+                                    <div>
+                                        <span>Cancellation Details</span>
+                                        <small class="text-muted d-block">Reason, owner and supporting notes</small>
+                                    </div>
+                                </div>
+                                <div class="vu-section-grid">
+                                    <div class="vu-card">
+                                        <div class="vu-card__title">
+                                            <span class="vu-section__icon" data-icon="file-text"/>
+                                            <span>Information</span>
+                                        </div>
+                                        <group>
+                                            <field name="cancellation_reason_id" readonly="1"/>
+                                            <field name="cancelled_by" readonly="1"/>
+                                            <field name="cancellation_date" readonly="1"/>
+                                        </group>
+                                    </div>
+                                    <div class="vu-card">
+                                        <div class="vu-card__title">
+                                            <span class="vu-section__icon" data-icon="file-text"/>
+                                            <span>Notes</span>
+                                        </div>
+                                        <group>
+                                            <field name="cancellation_notes" nolabel="1" readonly="1"/>
+                                        </group>
+                                    </div>
+                                </div>
+                            </div>
                         </page>
 
                         <page string="Completion Details" name="completion" invisible="state != 'completed_pending_invoice'">
-                            <div class="alert alert-info" role="alert">
-                                <p><strong>ℹ️ Part-Time Staff Workflow:</strong> This service was completed by part-time/casual staff who do not have invoice creation permissions. Operations team has been notified to create the invoice.</p>
+                            <div class="vu-section">
+                                <div class="vu-section__title">
+                                    <span class="vu-section__icon" data-icon="timeline"/>
+                                    <div>
+                                        <span>Completion Details</span>
+                                        <small class="text-muted d-block">Part-time workflow and summary notes</small>
+                                    </div>
+                                </div>
+                                <div class="alert alert-info" role="alert">
+                                    <p><strong>ℹ️ Part-Time Staff Workflow:</strong> This service was completed by part-time/casual staff who do not have invoice creation permissions. Operations team has been notified to create the invoice.</p>
+                                </div>
+                                <div class="vu-section-grid">
+                                    <div class="vu-card">
+                                        <div class="vu-card__title">
+                                            <span class="vu-section__icon" data-icon="users-group"/>
+                                            <span>Completion Information</span>
+                                        </div>
+                                        <group>
+                                            <field name="lead_staff_id" readonly="1"/>
+                                            <field name="actual_end_datetime" readonly="1"/>
+                       	                    <field name="actual_duration" readonly="1"/>
+                                        </group>
+                                    </div>
+                                    <div class="vu-card">
+                                        <div class="vu-card__title">
+                                            <span class="vu-section__icon" data-icon="file-text"/>
+                                            <span>Completion Notes</span>
+                                        </div>
+                                        <group>
+                                            <field name="completion_notes" nolabel="1" readonly="1"/>
+                                        </group>
+                                    </div>
+                                </div>
                             </div>
-                            <group>
-                                <group string="Completion Information">
-                                    <field name="lead_staff_id" readonly="1"/>
-                                    <field name="actual_end_datetime" readonly="1"/>
-                                    <field name="actual_duration" readonly="1"/>
-                                </group>
-                            </group>
-                            <group string="Completion Notes">
-                                <field name="completion_notes" nolabel="1" readonly="1"/>
-                            </group>
                         </page>
                     </notebook>
                 </sheet>

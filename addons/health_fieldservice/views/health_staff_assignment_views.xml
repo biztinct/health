@@ -65,132 +65,232 @@
                         </div>
                     </div>
 
-                    <group>
-                        <group string="Assignment Information" class="col-lg-6">
-                            <field name="fso_id"
-                                   options="{'no_create': True}"
-                                   readonly="1"/>
-                            <field name="assignment_date" required="1"/>
-                            <field name="assignment_type"/>
-                            <field name="assigned_by" readonly="1" groups="base.group_user"/>
-                        </group>
-                        
-                        <group string="Staff Assignment" class="col-lg-6">
-                            <field name="staff_id"
-                                   options="{'no_create': True, 'no_edit': True}"
-                                   domain="[('is_healthcare_staff', '=', True), ('employment_status', '=', 'active')]"
-                                   placeholder="Unassigned - Drag to assign in timeline view"/>
-                            <field name="assignment_role"/>
-                            <field name="staff_confirmed_date" readonly="1" invisible="not staff_confirmed_date"/>
-                        </group>
-                    </group>
+                    <div class="vu-section">
+                        <div class="vu-section__title">
+                            <span class="vu-section__icon" data-icon="users-group"/>
+                            <div>
+                                <span>Assignment Overview</span>
+                                <small class="text-muted d-block">Booking link, assignment type and staff</small>
+                            </div>
+                        </div>
+                        <div class="vu-section-grid">
+                            <div class="vu-card">
+                                <div class="vu-card__title">
+                                    <span class="vu-section__icon" data-icon="file-text"/>
+                                    <span>Assignment Information</span>
+                                </div>
+                                <group col="2">
+                                    <field name="fso_id"
+                                           options="{'no_create': True}"
+                                           readonly="1"/>
+                                    <field name="assignment_date" required="1"/>
+                                    <field name="assignment_type"/>
+                                    <field name="assigned_by" readonly="1" groups="base.group_user"/>
+                                </group>
+                            </div>
+                            
+                            <div class="vu-card">
+                                <div class="vu-card__title">
+                                    <span class="vu-section__icon" data-icon="users-group"/>
+                                    <span>Staff Assignment</span>
+                                </div>
+                                <group col="2">
+                                    <field name="staff_id"
+                                           options="{'no_create': True, 'no_edit': True}"
+                                           domain="[('is_healthcare_staff', '=', True), ('employment_status', '=', 'active')]"
+                                           placeholder="Unassigned - Drag to assign in timeline view"/>
+                                    <field name="assignment_role"/>
+                                    <field name="staff_confirmed_date" readonly="1" invisible="not staff_confirmed_date"/>
+                                </group>
+                            </div>
+                        </div>
+                    </div>
 
                     <notebook>
-                        <page string="Location &amp; Travel" name="location" invisible="assignment_type != 'home_visit'">
-                            <group>
-                                <group string="Location Details" class="col-lg-6">
-                                    <field name="origin_location" placeholder="Staff starting location"/>
-                                    <field name="destination_location" placeholder="Patient address"/>
-                                    <field name="current_location" readonly="1"/>
-                                    <field name="location_last_updated" readonly="1"/>
-                                </group>
-                                
-                                <group string="Travel Planning" class="col-lg-6">
-                                    <field name="estimated_travel_time" widget="float_time"/>
-                                    <field name="estimated_travel_distance"/>
-                                    <field name="departure_time"/>
-                                    <field name="arrival_time"/>
-                                    <field name="traffic_factor"/>
-                                </group>
-                            </group>
-                            
-                            <group string="Route Optimization" invisible="not optimal_route_json">
-                                <field name="optimal_route_json" widget="ace" options="{'mode': 'json'}" readonly="1"/>
-                            </group>
-                        </page>
-
-                        <page string="Tracking &amp; Timeline" name="tracking">
-                            <group>
-                                <group string="Actual Timeline" class="col-lg-6">
-                                    <field name="actual_departure_time" readonly="1"/>
-                                    <field name="actual_arrival_time" readonly="1"/>
-                                    <field name="actual_completion_time" readonly="1"/>
-                                    <field name="real_time_status" widget="badge"/>
-                                </group>
-                                
-                                <group string="Quality Assessment" class="col-lg-6">
-                                    <field name="patient_satisfaction" widget="progressbar"/>
-                                    <field name="staff_performance_rating" widget="progressbar"/>
-                                    <field name="buffer_before"/>
-                                    <field name="buffer_after"/>
-                                </group>
-                            </group>
-                        </page>
-
-                        <page string="🤖 AI Insights" name="ai_insights" groups="health_staff_assignment.group_head_nurse health_staff_assignment.group_assignment_manager">
-                            <div class="row">
-                                <div class="col-12">
-                                    <div class="alert alert-info" role="alert" invisible="ml_optimization_applied">
-                                        <i class="fa fa-lightbulb-o"/> <strong>AI Optimization Available!</strong><br/>
-                                        Click "Apply AI Optimization" above to get the best staff recommendations powered by machine learning.
+                        <page string="Location and Travel" name="location" invisible="assignment_type != 'home_visit'">
+                            <div class="vu-section">
+                                <div class="vu-section__title">
+                                    <span class="vu-section__icon" data-icon="map-pin"/>
+                                    <div>
+                                        <span>Location and Travel</span>
+                                        <small class="text-muted d-block">Origin, destination and route insights</small>
+                                    </div>
+                                </div>
+                                <div class="vu-section-grid">
+                                    <div class="vu-card">
+                                        <div class="vu-card__title">
+                                            <span class="vu-section__icon" data-icon="map-pin"/>
+                                            <span>Location Details</span>
+                                        </div>
+                                        <group>
+                                            <field name="origin_location" placeholder="Staff starting location"/>
+                                            <field name="destination_location" placeholder="Patient address"/>
+                                            <field name="current_location" readonly="1"/>
+                                            <field name="location_last_updated" readonly="1"/>
+                                        </group>
                                     </div>
                                     
-                                    <div class="alert alert-success" role="alert" invisible="not ml_optimization_applied">
-                                        <i class="fa fa-check-circle"/> <strong>AI Optimized Assignment</strong><br/>
-                                        This assignment has been optimized using AI/ML algorithms for best results.
+                                    <div class="vu-card">
+                                        <div class="vu-card__title">
+                                            <span class="vu-section__icon" data-icon="timeline"/>
+                                            <span>Travel Planning</span>
+                                        </div>
+                                        <group>
+                                            <field name="estimated_travel_time" widget="float_time"/>
+                                            <field name="estimated_travel_distance"/>
+                                            <field name="departure_time"/>
+                                            <field name="arrival_time"/>
+                                            <field name="traffic_factor"/>
+                                        </group>
+                                    </div>
+                                </div>
+                                
+                                <div class="vu-card" invisible="not optimal_route_json">
+                                    <div class="vu-card__title">
+                                        <span class="vu-section__icon" data-icon="timeline"/>
+                                        <span>Route Optimization</span>
+                                    </div>
+                                    <group>
+                                        <field name="optimal_route_json" widget="ace" options="{'mode': 'json'}" readonly="1"/>
+                                    </group>
+                                </div>
+                            </div>
+                        </page>
+
+                        <page string="Tracking and Timeline" name="tracking">
+                            <div class="vu-section">
+                                <div class="vu-section__title">
+                                    <span class="vu-section__icon" data-icon="timeline"/>
+                                    <div>
+                                        <span>Tracking and Timeline</span>
+                                        <small class="text-muted d-block">Actual timestamps and quality metrics</small>
+                                    </div>
+                                </div>
+                                <div class="vu-section-grid">
+                                    <div class="vu-card">
+                                        <div class="vu-card__title">
+                                            <span class="vu-section__icon" data-icon="timeline"/>
+                                            <span>Actual Timeline</span>
+                                        </div>
+                                        <group>
+                                            <field name="actual_departure_time" readonly="1"/>
+                                            <field name="actual_arrival_time" readonly="1"/>
+                                            <field name="actual_completion_time" readonly="1"/>
+                                            <field name="real_time_status" widget="badge"/>
+                                        </group>
+                                    </div>
+                                    
+                                    <div class="vu-card">
+                                        <div class="vu-card__title">
+                                            <span class="vu-section__icon" data-icon="heart-pulse"/>
+                                            <span>Quality Assessment</span>
+                                        </div>
+                                        <group>
+                                            <field name="patient_satisfaction" widget="progressbar"/>
+                                            <field name="staff_performance_rating" widget="progressbar"/>
+                                            <field name="buffer_before"/>
+                                            <field name="buffer_after"/>
+                                        </group>
                                     </div>
                                 </div>
                             </div>
-                            
-                            <group>
-                                <group string="🎯 AI Assignment Intelligence" class="col-lg-6">
-                                    <field name="ai_assignment_score" widget="progressbar" 
-                                           help="Overall AI assessment of assignment quality (0-100%)"/>
-                                    <field name="assignment_confidence" widget="progressbar"
-                                           help="AI confidence in assignment success (0-100%)"/>
-                                    <field name="predicted_success_probability" widget="progressbar"
-                                           help="ML predicted probability of successful completion"/>
-                                    <field name="predicted_complexity" widget="badge"
-                                           help="AI assessment of assignment complexity level"/>
-                                    <field name="predicted_duration" widget="float_time"
-                                           help="AI predicted duration for this assignment"/>
-                                </group>
+                        </page>
+
+                        <page string="🤖 AI Insights" name="ai_insights" groups="health_staff_assignment.group_head_nurse health_staff_assignment.group_assignment_manager">
+                            <div class="vu-section">
+                                <div class="vu-section__title">
+                                    <span class="vu-section__icon" data-icon="timeline"/>
+                                    <div>
+                                        <span>AI Insights</span>
+                                        <small class="text-muted d-block">Optimization signals, recommendations and quick actions</small>
+                                    </div>
+                                </div>
+                                <div class="alert alert-info" role="alert" invisible="ml_optimization_applied">
+                                    <i class="fa fa-lightbulb-o"/> <strong>AI Optimization Available!</strong><br/>
+                                    Click "Apply AI Optimization" above to get the best staff recommendations powered by machine learning.
+                                </div>
                                 
-                                <group string="🔧 ML Optimization Status" class="col-lg-6">
-                                    <field name="ml_optimization_applied" widget="boolean_toggle"
-                                           help="Whether ML optimization has been applied"/>
-                                    <field name="optimization_timestamp" readonly="1"
-                                           help="When AI optimization was last applied"/>
-                                    <field name="required_skills_json" widget="ace" options="{'mode': 'json'}" readonly="1"
-                                           invisible="not required_skills_json"/>
-                                    <field name="staff_skills_match" widget="ace" options="{'mode': 'json'}" readonly="1"
-                                           invisible="not staff_skills_match"/>
-                                </group>
-                            </group>
-                            
-                            <separator string="AI-Generated Recommendations" class="mt-3"/>
-                            <group>
-                                <group string="Optimal Staff Suggestions" class="col-lg-6">
-                                    <field name="optimal_staff_suggestions" widget="ace" options="{'mode': 'json'}" 
-                                           placeholder="💭 AI-generated staff suggestions will appear here after optimization. Click 'Apply AI Optimization' to get recommendations."/>
-                                </group>
-                                <group string="Optimization Insights" class="col-lg-6">
-                                    <field name="optimization_suggestions" widget="ace" options="{'mode': 'json'}" 
-                                           placeholder="💡 Optimization recommendations and insights will appear here after AI analysis."/>
-                                </group>
-                            </group>
-                            
-                            <div class="row mt-3">
-                                <div class="col-12">
-                                    <h5><i class="fa fa-rocket"/> Quick Actions</h5>
-                                    <button name="action_apply_ai_optimization" type="object" 
-                                            string="🤖 Apply AI Optimization" class="btn btn-primary me-2"
-                                            invisible="state not in ('draft', 'assigned')"
-                                            help="Apply AI optimization to get the best staff recommendations"/>
-                                    <button name="action_get_ai_predictions" type="object" 
-                                            string="📊 Update AI Predictions" class="btn btn-secondary"
-                                            invisible="state in ('completed', 'cancelled')"
-                                            help="Generate fresh AI predictions for this assignment"/>
+                                <div class="alert alert-success" role="alert" invisible="not ml_optimization_applied">
+                                    <i class="fa fa-check-circle"/> <strong>AI Optimized Assignment</strong><br/>
+                                    This assignment has been optimized using AI/ML algorithms for best results.
+                                </div>
+                                
+                                <div class="vu-section-grid">
+                                    <div class="vu-card">
+                                        <div class="vu-card__title">
+                                            <span class="vu-section__icon" data-icon="activity"/>
+                                            <span>AI Assignment Intelligence</span>
+                                        </div>
+                                        <group>
+                                            <field name="ai_assignment_score" widget="progressbar" 
+                                                   help="Overall AI assessment of assignment quality (0-100%)"/>
+                                            <field name="assignment_confidence" widget="progressbar"
+                                                   help="AI confidence in assignment success (0-100%)"/>
+                                            <field name="predicted_success_probability" widget="progressbar"
+                                                   help="ML predicted probability of successful completion"/>
+                                            <field name="predicted_complexity" widget="badge"
+                                                   help="AI assessment of assignment complexity level"/>
+                                            <field name="predicted_duration" widget="float_time"
+                                                   help="AI predicted duration for this assignment"/>
+                                        </group>
+                                    </div>
+                                    
+                                    <div class="vu-card">
+                                        <div class="vu-card__title">
+                                            <span class="vu-section__icon" data-icon="timeline"/>
+                                            <span>ML Optimization Status</span>
+                                        </div>
+                                        <group>
+                                            <field name="ml_optimization_applied" widget="boolean_toggle"
+                                                   help="Whether ML optimization has been applied"/>
+                                            <field name="optimization_timestamp" readonly="1"
+                                                   help="When AI optimization was last applied"/>
+                                            <field name="required_skills_json" widget="ace" options="{'mode': 'json'}" readonly="1"
+                                                   invisible="not required_skills_json"/>
+                                            <field name="staff_skills_match" widget="ace" options="{'mode': 'json'}" readonly="1"
+                                                   invisible="not staff_skills_match"/>
+                                        </group>
+                                    </div>
+                                </div>
+                                
+                                <div class="vu-section-grid">
+                                    <div class="vu-card">
+                                        <div class="vu-card__title">
+                                            <span class="vu-section__icon" data-icon="users-group"/>
+                                            <span>Optimal Staff Suggestions</span>
+                                        </div>
+                                        <group>
+                                            <field name="optimal_staff_suggestions" widget="ace" options="{'mode': 'json'}" 
+                                                   placeholder="💭 AI-generated staff suggestions will appear here after optimization. Click 'Apply AI Optimization' to get recommendations."/>
+                                        </group>
+                                    </div>
+                                    <div class="vu-card">
+                                        <div class="vu-card__title">
+                                            <span class="vu-section__icon" data-icon="file-text"/>
+                                            <span>Optimization Insights</span>
+                                        </div>
+                                        <group>
+                                            <field name="optimization_suggestions" widget="ace" options="{'mode': 'json'}" 
+                                                   placeholder="💡 Optimization recommendations and insights will appear here after AI analysis."/>
+                                        </group>
+                                    </div>
+                                </div>
+                                
+                                <div class="vu-card">
+                                    <div class="vu-card__title">
+                                        <span class="vu-section__icon" data-icon="timeline"/>
+                                        <span>Quick Actions</span>
+                                    </div>
+                                    <div class="d-flex gap-3 flex-wrap">
+                                        <button name="action_apply_ai_optimization" type="object" 
+                                                string="🤖 Apply AI Optimization" class="btn btn-primary"
+                                                invisible="state not in ('draft', 'assigned')"
+                                                help="Apply AI optimization to get the best staff recommendations"/>
+                                        <button name="action_get_ai_predictions" type="object" 
+                                                string="📊 Update AI Predictions" class="btn btn-secondary"
+                                                invisible="state in ('completed', 'cancelled')"
+                                                help="Generate fresh AI predictions for this assignment"/>
+                                    </div>
                                 </div>
                             </div>
                         </page>
