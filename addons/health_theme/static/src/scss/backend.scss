@@ -53,7 +53,7 @@ a {
     background: var(--vu-surface-card);
     border: 1px solid var(--vu-border-soft);
     border-radius: var(--vu-radius-md);
-    box-shadow: var(--vu-shadow-sm);
+    box-shadow: var(--vu-shadow-lg);
 }
 
 .o_form_view .o_group:not(.o_inner_group) > table {
@@ -73,7 +73,7 @@ a {
     background: var(--vu-surface-card);
     border: 1px solid var(--vu-border-soft);
     border-radius: var(--vu-radius-md);
-    box-shadow: var(--vu-shadow-xs);
+    box-shadow: var(--vu-shadow-lg);
 }
 
 .o_form_view .o_group.o_group_no_card {
