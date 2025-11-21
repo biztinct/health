@@ -99,6 +99,13 @@ export class DoughnutChart extends Component {
 
     // Helper function to capitalize first letter
     const capitalizeFirst = (str) => {
+      // Handle keys that start with " - " prefix (e.g., " - count")
+      const dashPrefix = ' - ';
+      if (str.startsWith(dashPrefix)) {
+        const word = str.substring(dashPrefix.length);
+        return dashPrefix + word.charAt(0).toUpperCase() + word.slice(1);
+      }
+      // Normal capitalization for keys without prefix
       return str.charAt(0).toUpperCase() + str.slice(1);
     };
 

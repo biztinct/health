@@ -144,13 +144,28 @@ export class ColumnChart extends Component {
     var self = this;
     // Helper function to capitalize first letter
     const capitalizeFirst = (str) => {
-      return str.charAt(0).toUpperCase() + str.slice(1);
+      console.log('[ColumnChart] capitalizeFirst input:', str);
+      // Handle keys that start with " - " prefix (e.g., " - count")
+      const dashPrefix = ' - ';
+      if (str.startsWith(dashPrefix)) {
+        const word = str.substring(dashPrefix.length);
+        const result = dashPrefix + word.charAt(0).toUpperCase() + word.slice(1);
+        console.log('[ColumnChart] capitalizeFirst output (with prefix):', result);
+        return result;
+      }
+      // Normal capitalization for keys without prefix
+      const result = str.charAt(0).toUpperCase() + str.slice(1);
+      console.log('[ColumnChart] capitalizeFirst output:', result);
+      return result;
     };
 
     function makeSeries(name, fieldName) {
+      console.log('[ColumnChart] makeSeries called with name:', name, 'fieldName:', fieldName);
+      const capitalizedName = capitalizeFirst(name);
+      console.log('[ColumnChart] Series will use name:', capitalizedName);
       var series = chart.series.push(
         am5xy.ColumnSeries.new(self.root, {
-          name: capitalizeFirst(name),
+          name: capitalizedName,
           xAxis: xAxis,
           yAxis: yAxis,
           valueYField: fieldName,
@@ -197,8 +212,10 @@ export class ColumnChart extends Component {
     let keys = Object.keys(data[0]).filter(
       (k) => k !== "category" && k !== "record_id" && k !== "isSubGroupBy",
     );
+    console.log('[ColumnChart] Data keys found:', keys);
 
     for (let key = 0; key < keys.length; key++) {
+      console.log('[ColumnChart] Creating series for key:', keys[key]);
       makeSeries(keys[key], keys[key]);
     }
 
