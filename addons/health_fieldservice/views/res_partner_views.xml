@@ -22,21 +22,48 @@
         <field name="inherit_id" ref="health_base.view_health_patient_form"/>
         <field name="arch" type="xml">
             <page name="service_history" position="inside">
-                <!-- Client Timeline Section -->
-                <group string="Client Timeline" invisible="not is_patient">
-                    <field name="timeline_html" widget="html" readonly="1" nolabel="1"/>
-                </group>
+                <group col="1" invisible="not is_patient">
+                    <div class="vu-section">
+                        <div class="vu-section__title">
+                            <span class="vu-section__icon" data-icon="timeline"/>
+                            <div>
+                                <span>Service History Summary</span>
+                                <small class="text-muted d-block">Lifecycle of visits and preferred staffing</small>
+                            </div>
+                        </div>
 
-                <!-- Service History Summary -->
-                <group string="Service History Summary" invisible="not is_patient">
-                    <group>
-                        <field name="total_assignments" readonly="1"/>
-                        <field name="last_assignment_date" readonly="1"/>
-                    </group>
-                    <group>
-                        <field name="preferred_staff_id"/>
-                        <field name="assignment_notes" placeholder="Special assignment notes (accessibility, language, etc.)"/>
-                    </group>
+                        <div class="vu-card">
+                            <div class="vu-card__title">
+                                <span class="vu-section__icon" data-icon="history"/>
+                                <span>Client Timeline</span>
+                            </div>
+                            <field name="timeline_html" widget="html" readonly="1" nolabel="1"/>
+                        </div>
+
+                        <div class="vu-section-grid">
+                            <div class="vu-card">
+                                <div class="vu-card__title">
+                                    <span class="vu-section__icon" data-icon="history"/>
+                                    <span>Assignment Stats</span>
+                                </div>
+                                <group col="2">
+                                    <field name="total_assignments" readonly="1"/>
+                                    <field name="last_assignment_date" readonly="1"/>
+                                </group>
+                            </div>
+
+                            <div class="vu-card">
+                                <div class="vu-card__title">
+                                    <span class="vu-section__icon" data-icon="users-group"/>
+                                    <span>Preferred Healthcare Staff</span>
+                                </div>
+                                <group col="1">
+                                    <field name="preferred_staff_id"/>
+                                    <field name="assignment_notes" placeholder="Special assignment notes (accessibility, language, etc.)"/>
+                                </group>
+                            </div>
+                        </div>
+                    </div>
                 </group>
             </page>
         </field>

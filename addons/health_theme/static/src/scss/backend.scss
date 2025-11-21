@@ -279,8 +279,8 @@ a {
 
 // Buttons to feel modern
 .btn-primary, .o_form_button_save {
-    background: linear-gradient(135deg, var(--vu-brand-primary), var(--vu-brand-secondary));
-    border: none;
+    background: var(--vu-brand-primary);
+    border: 1px solid var(--vu-brand-primary-dark);
     border-radius: var(--vu-radius-md);
     box-shadow: var(--vu-shadow-md);
     padding: var(--vu-space-sm) var(--vu-space-lg);
@@ -451,6 +451,37 @@ a {
             }
         }
     }
+}
+
+// Remove harsh blue focus ring; rely on underline/brand color
+.o_form_view .o_field_widget input:focus,
+.o_form_view .o_field_widget textarea:focus,
+.o_form_view .o_field_widget select:focus {
+    box-shadow: none !important;
+    outline: none !important;
+    border-color: var(--vu-brand-primary) !important;
+}
+
+// Patient badges smaller/right aligned
+.o_form_patient_record .patient-badges {
+    display: inline-flex;
+    gap: var(--vu-space-sm);
+    margin-left: auto;
+}
+
+.o_form_patient_record .patient-badge {
+    background-color: var(--vu-surface-muted) !important;
+    color: var(--vu-brand-primary) !important;
+    border: 2px solid var(--vu-brand-primary) !important;
+    border-radius: 999px;
+    padding: 6px 16px !important;
+    font-size: var(--vu-font-size-md) !important;
+    font-weight: 600 !important;
+}
+
+.o_form_patient_record .patient-badge.badge-age {
+    color: #BF5B04 !important;
+    border-color: #BF5B04 !important;
 }
 
 // Icon utilities

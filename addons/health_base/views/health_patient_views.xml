@@ -10,14 +10,14 @@
         <field name="name">res.partner.patient.form</field>
         <field name="model">res.partner</field>
         <field name="arch" type="xml">
-            <form string='Client Record" class="o_form_patient_record'>
+            <form string="Client Record" class="o_form_patient_record">
                 <header>
                     <field name="patient_status" widget="statusbar" statusbar_visible="new,active,inactive"/>
                     <button name="action_activate_patient" string="Activate" type="object" class="oe_highlight"
                             invisible="patient_status == 'active'"/>
                 </header>
 
-                <sheet string='Client'>
+                <sheet string="Client">
                     <div class="oe_button_box" name="button_box" groups="base.group_user">
                         <button name="action_view_appointments" type="object" class="oe_stat_button" icon="fa-calendar-check-o"
                                 invisible="not is_patient">
@@ -41,29 +41,29 @@
                         <!-- REPRESENTATIVE SIDE: My Patients -->
                         <button name="action_view_my_patients_as_caregiver" type="object" class="oe_stat_button" icon="fa-user-md"
                                 invisible="not is_caregiver or caregiver_patient_count == 0">
-                            <field name="caregiver_patient_count" string='Clients I Care For" widget="statinfo'/>
+                            <field name="caregiver_patient_count" string="Clients I Care For" widget="statinfo"/>
                         </button>
                         <button name="action_view_my_patients_as_payer" type="object" class="oe_stat_button" icon="fa-credit-card"
                                 invisible="not is_payer or payer_patient_count == 0">
-                            <field name="payer_patient_count" string='Clients I Pay For" widget="statinfo'/>
+                            <field name="payer_patient_count" string="Clients I Pay For" widget="statinfo"/>
                         </button>
                         <button name="action_view_my_patients_as_referrer" type="object" class="oe_stat_button" icon="fa-share-square-o"
                                 invisible="not is_referrer or referrer_patient_count == 0">
-                            <field name="referrer_patient_count" string='Clients I Referred" widget="statinfo'/>
+                            <field name="referrer_patient_count" string="Clients I Referred" widget="statinfo"/>
                         </button>
                     </div>
 
                     <div class="oe_title">
                         <h1 class="d-flex align-items-center gap-3">
-                            <field name="name" placeholder="Client Full Name" required="1" class="o_text_overflow" style="flex-shrink: 1;"/>
-                            <!-- ID Badge - Light Blue with thick border (matching hierarchy widget) -->
-                            <span class="badge text-white" style="background-color: #E4F4FD; color: #1565C0 !important; padding: 8px 28px; font-size: 28px; font-weight: 700; border-radius: 12px; border: 4px solid #1565C0; flex-shrink: 0;">
-                                <field name="patient_code_display" nolabel="1" style="color: #1565C0 !important; font-size: 28px; font-weight: 700;"/>
-                            </span>
-                            <!-- Age Badge - Light Orange with thick border (matching payer color) -->
-                            <span class="badge text-white" style="background-color: #FEE8C9; color: #D46E00 !important; padding: 8px 28px; font-size: 28px; font-weight: 700; border-radius: 12px; border: 4px solid #D46E00; flex-shrink: 0;">
-                                <field name="age_display" nolabel="1" style="color: #D46E00 !important; font-size: 28px; font-weight: 700;"/>
-                            </span>
+                            <field name="name" placeholder="Client Full Name" required="1" class="o_text_overflow flex-grow-1"/>
+                            <div class="patient-badges">
+                                <span class="badge patient-badge">
+                                    <field name="patient_code_display" nolabel="1"/>
+                                </span>
+                                <span class="badge patient-badge badge-age">
+                                    <field name="age_display" nolabel="1"/>
+                                </span>
+                            </div>
                         </h1>
                     </div>
 
@@ -77,190 +77,388 @@
                         Please complete all required information and verify insurance details.
                     </div>
 
-                    <group>
-                        <group string="Personal Information">
-                            <field name="first_name" required="1"/>
-                            <field name="last_name" required="1"/>
-                            <field name="middle_name"/>
-                            <field name="vietnamese_name" placeholder="Tên tiếng Việt"/>
-                            <field name="birth_date" required="1"/>
-                            <field name="age" readonly="1"/>
-                            <field name="gender" required="1"/>
-                            <field name="national_id"/>
-                        </group>
-                        
-                        <group string="Contact Information">
-                            <field name="mobile" widget="phone" required="1"/>
-                            <field name="phone" widget="phone"/>
-                            <field name="email" widget="email"/>
-                            <field name="patient_category_id" required="1"/>
-                            <field name="primary_facility_id" required="1"/>
-                            <field name="source_type" required="1"/>
-                        </group>
-                    </group>
+                    <div class="vu-section">
+                        <div class="vu-section__title">
+                            <span class="vu-section__icon" data-icon="id-card"/>
+                            <div>
+                                <span>Profile Overview</span>
+                                <small class="text-muted d-block">Identity, contact and onboarding source</small>
+                            </div>
+                        </div>
+                        <div class="vu-section-grid">
+                            <div class="vu-card">
+                                <div class="vu-card__title">
+                                    <span class="vu-section__icon" data-icon="id-card"/>
+                                    <span>Personal Information</span>
+                                </div>
+                                <group col="2">
+                                    <field name="first_name" required="1"/>
+                                    <field name="last_name" required="1"/>
+                                    <field name="middle_name"/>
+                                    <field name="vietnamese_name" placeholder="Tên tiếng Việt"/>
+                                    <field name="birth_date" required="1"/>
+                                    <field name="age" readonly="1"/>
+                                    <field name="gender" required="1"/>
+                                    <field name="national_id"/>
+                                </group>
+                            </div>
+
+                            <div class="vu-card">
+                                <div class="vu-card__title">
+                                    <span class="vu-section__icon" data-icon="users-group"/>
+                                    <span>Contact Information</span>
+                                </div>
+                                <group col="2">
+                                    <field name="mobile" widget="phone" required="1"/>
+                                    <field name="phone" widget="phone"/>
+                                    <field name="email" widget="email"/>
+                                    <field name="patient_category_id" required="1"/>
+                                    <field name="primary_facility_id" required="1"/>
+                                    <field name="source_type" required="1"/>
+                                </group>
+                            </div>
+                        </div>
+                    </div>
 
                     <notebook>
                         <!-- Address Information Page -->
                         <page string="Address Information" name="address_info">
-                            <group>
-                                <group>
-                                    <!-- Vietnamese Address Fields Only (as per DESIGN_MISSING_FEATURES.md) -->
-                                    <field name="province_code"/>
-                                    <field name="house_number"/>
-                                    <field name="sub_alley_number"/>
-                                    <field name="alley_number"/>
-                                    <field name="ward_commune"/>
-                                    <field name="named_area"/>
-                                    <field name="apartment_number"/>
-                                    <field name="building_name"/>
-                                    <field name="zip" string="Postal Code"/>
-
-                                    <!-- Standard Address Fields (for geocoding) -->
-                                    <field name="street" placeholder="Street name / Main road"/>
-                                    <field name="city" placeholder="District / City" required="1"/>
-                                    <field name="state_id" string="Province" placeholder="Select province" options="{'no_create': True}" required="1"/>
-                                    <field name="country_id" string="Country" options="{'no_create': True}"/>
-
-                                    <!-- Auto-computed Vietnamese Address -->
-                                    <field name="vietnamese_address" readonly="1" string="Full Vietnamese Address" widget="text"/>
-
-                                    <!-- Hidden fields for geocoding -->
-                                    <field name="address_search" invisible="1"/>
-                                    <field name="partner_latitude" invisible="1"/>
-                                    <field name="partner_longitude" invisible="1"/>
-                                    <field name="date_localization" invisible="1"/>
-                                </group>
-                                <group>
-                                    <!-- Interactive OpenStreetMap Display -->
-                                    <field name="geo_coordinates_display" widget="address_map" nolabel="1"/>
-                                </group>
-                            </group>
-                        </page>
-
-                        <!-- Medical Information -->
-                        <page string="Medical Information" name="medical_info">
-                            <group>
-                                <group string="Vital Information">
-                                    <field name="blood_group" required="1"/>
-                                    <label for="allergies"/>
+                            <div class="vu-section">
+                                <div class="vu-section__title">
+                                    <span class="vu-section__icon" data-icon="map-pin"/>
                                     <div>
-                                        <field name="allergies" placeholder="List all known allergies (medications, foods, environmental)"/>
-                                        <small class="text-muted">⚠️ Critical for client safety - please be thorough</small>
+                                        <span>Address Information</span>
+                                        <small class="text-muted d-block">Full Vietnamese address plus geo location</small>
                                     </div>
-                                </group>
+                                </div>
+                                <div class="vu-section-grid">
+                                    <div class="vu-card">
+                                        <div class="vu-card__title">
+                                            <span class="vu-section__icon" data-icon="file-text"/>
+                                            <span>Address Details</span>
+                                        </div>
+                                        <group col="2">
+                                            <!-- Vietnamese Address Fields Only -->
+                                            <field name="province_code"/>
+                                            <field name="house_number"/>
+                                            <field name="sub_alley_number"/>
+                                            <field name="alley_number"/>
+                                            <field name="ward_commune"/>
+                                            <field name="named_area"/>
+                                            <field name="apartment_number"/>
+                                            <field name="building_name"/>
+                                            <field name="zip" string="Postal Code"/>
 
-                                <group string="MOH Compliance Information">
-                                    <field name="profession" placeholder="Client's occupation (e.g., Teacher, Engineer)"/>
-                                    <field name="ethnicity"/>
-                                </group>
+                                            <!-- Standard Address Fields -->
+                                            <field name="street" placeholder="Street name / Main road"/>
+                                            <field name="city" placeholder="District / City" required="1"/>
+                                            <field name="state_id" string="Province" placeholder="Select province" options="{'no_create': True}" required="1"/>
+                                            <field name="country_id" string="Country" options="{'no_create': True}"/>
 
-                                <group string="Emergency Contact">
-                                    <field name="emergency_contact_name" required="1"/>
-                                    <field name="emergency_contact_phone" widget="phone" required="1"/>
-                                    <field name="emergency_contact_relation"/>
-                                </group>
-                                
-                                <group string="Primary Contacts">
-                                    <field name="primary_caregiver_id" options="{'no_create': True}"/>
-                                    <field name="primary_payer_id" options="{'no_create': True}"/>
-                                    <field name="primary_referrer_id" options="{'no_create': True}"/>
-                                </group>
-                            </group>
+                                            <!-- Auto-computed Vietnamese Address -->
+                                            <field name="vietnamese_address" readonly="1" string="Full Vietnamese Address" widget="text"/>
 
-                            <group string="Medical History">
-                                <field name="medical_history" placeholder="Brief summary of relevant medical history, chronic conditions, previous surgeries, etc." nolabel="1"/>
-                            </group>
-                        </page>
-
-                        <!-- Intake Notes -->
-                        <page string="Intake Notes" name="intake_notes">
-                            <group>
-                                <group string="Assessment Information">
-                                    <field name="intake_diagnosis" placeholder="Medical diagnosis and assessment findings" nolabel="1"/>
-                                </group>
-
-                                <group string="Care Planning">
-                                    <field name="intake_referring_doctor_id" placeholder="Select referring doctor or contact" options="{'no_create': True}"/>
-                                    <field name="intake_goal_of_care" placeholder="Primary goal or objective of care"/>
-                                    <field name="intake_required_equipment" placeholder="Equipment or supplies required for care"/>
-                                </group>
-
-                                <group string="Additional Notes">
-                                    <field name="intake_notes" placeholder="Additional intake assessment notes and observations" nolabel="1"/>
-                                </group>
-                            </group>
-                        </page>
-
-                        <!-- Insurance & Billing -->
-                        <page string="Insurance &amp; Billing" name="insurance_billing">
-                            <group>
-                                <group string="Insurance Details">
-                                    <field name="insurance_provider"/>
-                                    <field name="insurance_number"/>
-                                    <field name="insurance_expiry"/>
-                                    <div class="alert alert-warning" invisible="not insurance_expiry or insurance_expiry &gt; context_today()" role="alert">
-                                        <i class="fa fa-exclamation-triangle"/> Insurance has expired - please update
+                                            <!-- Hidden fields for geocoding -->
+                                            <field name="address_search" invisible="1"/>
+                                            <field name="partner_latitude" invisible="1"/>
+                                            <field name="partner_longitude" invisible="1"/>
+                                            <field name="date_localization" invisible="1"/>
+                                        </group>
                                     </div>
-                                </group>
-                                
-                                <group string="Payment Preferences">
-                                    <field name="payment_method" required="1"/>
-                                </group>
-                            </group>
-                        </page>
-
-                        <!-- Service History -->
-                        <page string="Service History" name="service_history">
-                            <!-- Content will be injected by health_fieldservice module -->
-                        </page>
-
-                        <!-- Active Service Packages -->
-                        <page string="Active Packages" name="active_packages">
-                            <!-- Content will be injected by health_invoicing module -->
-                        </page>
-
-                        <!-- Healthcare Relationships -->
-                        <page string="Healthcare Relationships" name="healthcare_relationships">
-                            <field name="id" invisible="1"/>
-                            <widget name="relationship_hierarchy"/>
-                        </page>
-
-                        <!-- Patient Journey & Analytics -->
-                        <page string="Client Journey" name="patient_journey">
-                            <group>
-                                <group string="Registration Details">
-                                    <field name="source_details" placeholder="Specific source details"/>
-                                    <field name="referral_source" invisible="source_type != 'referral'"/>
-                                    <field name="registration_date" readonly="1"/>
-                                </group>
-                                
-                                <group string="Visit Tracking">
-                                    <field name="last_visit_date" readonly="1"/>
-                                    <field name="next_visit_date"/>
-                                    <field name="visit_count" readonly="1"/>
-                                </group>
-                            </group>
-
-                            <!-- Client Timeline Placeholder -->
-                            <div class="mt-3">
-                                <h4>Client Timeline</h4>
-                                <div class="alert alert-info">
-                                    <i class="fa fa-timeline"/> Client timeline with appointments, treatments, and key events will be displayed here.
+                                    <div class="vu-card">
+                                        <div class="vu-card__title">
+                                            <span class="vu-section__icon" data-icon="map-pin"/>
+                                            <span>Map Location</span>
+                                        </div>
+                                        <field name="geo_coordinates_display" widget="address_map" nolabel="1"/>
+                                    </div>
                                 </div>
                             </div>
                         </page>
 
-                        <!-- Clinical Notes & Communications -->
+                        <!-- Medical Information -->
+                        <page string="Medical Information" name="medical_info">
+                            <div class="vu-section">
+                                <div class="vu-section__title">
+                                    <span class="vu-section__icon" data-icon="heart-pulse"/>
+                                    <div>
+                                        <span>Medical Information</span>
+                                        <small class="text-muted d-block">Vitals, compliance and primary contacts</small>
+                                    </div>
+                                </div>
+                                <div class="vu-section-grid">
+                                    <div class="vu-card">
+                                        <div class="vu-card__title">
+                                            <span class="vu-section__icon" data-icon="stethoscope"/>
+                                            <span>Vital Information</span>
+                                        </div>
+                                        <group col="2">
+                                            <field name="blood_group" required="1"/>
+                                            <label for="allergies"/>
+                                            <field name="allergies" placeholder="List all known allergies (medications, foods, environmental)"/>
+                                        </group>
+                                        <small class="text-muted">⚠️ Critical for client safety - please be thorough</small>
+                                    </div>
+
+                                    <div class="vu-card">
+                                        <div class="vu-card__title">
+                                            <span class="vu-section__icon" data-icon="id-card"/>
+                                            <span>MOH Compliance</span>
+                                        </div>
+                                        <group col="2">
+                                            <field name="profession" placeholder="Client's occupation (e.g., Teacher, Engineer)"/>
+                                            <field name="ethnicity"/>
+                                        </group>
+                                    </div>
+
+                                    <div class="vu-card">
+                                        <div class="vu-card__title">
+                                            <span class="vu-section__icon" data-icon="life-ring"/>
+                                            <span>Emergency Contact</span>
+                                        </div>
+                                        <group col="2">
+                                            <field name="emergency_contact_name" required="1"/>
+                                            <field name="emergency_contact_phone" widget="phone" required="1"/>
+                                            <field name="emergency_contact_relation"/>
+                                        </group>
+                                    </div>
+
+                                    <div class="vu-card">
+                                        <div class="vu-card__title">
+                                            <span class="vu-section__icon" data-icon="users-group"/>
+                                            <span>Primary Contacts</span>
+                                        </div>
+                                        <group col="2">
+                                            <field name="primary_caregiver_id" options="{'no_create': True}"/>
+                                            <field name="primary_payer_id" options="{'no_create': True}"/>
+                                            <field name="primary_referrer_id" options="{'no_create': True}"/>
+                                        </group>
+                                    </div>
+                                </div>
+
+                                <div class="vu-card">
+                                    <div class="vu-card__title">
+                                        <span class="vu-section__icon" data-icon="file-text"/>
+                                        <span>Medical History</span>
+                                    </div>
+                                    <group>
+                                        <field name="medical_history" placeholder="Brief summary of relevant medical history, chronic conditions, previous surgeries, etc." nolabel="1"/>
+                                    </group>
+                                </div>
+                            </div>
+                        </page>
+
+                        <!-- Intake Notes -->
+                        <page string="Intake Notes" name="intake_notes">
+                            <div class="vu-section">
+                                <div class="vu-section__title">
+                                    <span class="vu-section__icon" data-icon="clipboard-list"/>
+                                    <div>
+                                        <span>Intake Notes</span>
+                                        <small class="text-muted d-block">Assessment snapshots and initial planning</small>
+                                    </div>
+                                </div>
+                                <div class="vu-section-grid">
+                                    <div class="vu-card">
+                                        <div class="vu-card__title">
+                                            <span class="vu-section__icon" data-icon="file-text"/>
+                                            <span>Assessment Information</span>
+                                        </div>
+                                        <group col="1">
+                                            <field name="intake_diagnosis" placeholder="Medical diagnosis and assessment findings" nolabel="1"/>
+                                        </group>
+                                    </div>
+                                    <div class="vu-card">
+                                        <div class="vu-card__title">
+                                            <span class="vu-section__icon" data-icon="heart-pulse"/>
+                                            <span>Care Planning</span>
+                                        </div>
+                                        <group col="2">
+                                            <field name="intake_referring_doctor_id" placeholder="Select referring doctor or contact" options="{'no_create': True}"/>
+                                            <field name="intake_goal_of_care" placeholder="Primary goal or objective of care"/>
+                                            <field name="intake_required_equipment" placeholder="Equipment or supplies required for care"/>
+                                        </group>
+                                    </div>
+                                </div>
+                                <div class="vu-card">
+                                    <div class="vu-card__title">
+                                        <span class="vu-section__icon" data-icon="file-text"/>
+                                        <span>Additional Notes</span>
+                                    </div>
+                                    <group>
+                                    <field name="intake_notes" placeholder="Additional intake assessment notes and observations" nolabel="1"/>
+                                    </group>
+                                </div>
+                            </div>
+                        </page>
+
+                        <!-- Insurance &amp; Billing -->
+                        <page string="Insurance &amp; Billing" name="insurance_billing">
+                            <div class="vu-section">
+                                <div class="vu-section__title">
+                                    <span class="vu-section__icon" data-icon="credit-card"/>
+                                    <div>
+                                        <span>Insurance &amp; Billing</span>
+                                        <small class="text-muted d-block">Coverage, payment preferences and reminders</small>
+                                    </div>
+                                </div>
+                                <div class="vu-section-grid">
+                                    <div class="vu-card">
+                                        <div class="vu-card__title">
+                                            <span class="vu-section__icon" data-icon="shield-check"/>
+                                            <span>Insurance Details</span>
+                                        </div>
+                                        <group col="2">
+                                            <field name="insurance_provider"/>
+                                            <field name="insurance_number"/>
+                                            <field name="insurance_expiry"/>
+                                        </group>
+                                        <div class="alert alert-warning" invisible="not insurance_expiry or insurance_expiry &gt; context_today()" role="alert">
+                                            <i class="fa fa-exclamation-triangle"/> Insurance has expired - please update
+                                        </div>
+                                    </div>
+                                    <div class="vu-card">
+                                        <div class="vu-card__title">
+                                            <span class="vu-section__icon" data-icon="credit-card"/>
+                                            <span>Payment Preferences</span>
+                                        </div>
+                                        <group col="1">
+                                            <field name="payment_method" required="1"/>
+                                        </group>
+                                    </div>
+                                </div>
+                            </div>
+                        </page>
+
+                        <!-- Service History -->
+                        <page string="Service History" name="service_history">
+                            <div class="vu-section">
+                                <div class="vu-section__title">
+                                    <span class="vu-section__icon" data-icon="history"/>
+                                    <div>
+                                        <span>Service History</span>
+                                        <small class="text-muted d-block">Field service visits and care interactions</small>
+                                    </div>
+                                </div>
+                                <div class="vu-card">
+                                    <div class="vu-card__title">
+                                        <span class="vu-section__icon" data-icon="history"/>
+                                        <span>History Timeline</span>
+                                    </div>
+                                    <p>
+                                        Service history entries will be displayed here once the <strong>health_fieldservice</strong> module injects the timeline widget.
+                                    </p>
+                                </div>
+                            </div>
+                        </page>
+
+                        <!-- Active Service Packages -->
+                        <page string="Active Packages" name="active_packages">
+                            <div class="vu-section">
+                                <div class="vu-section__title">
+                                    <span class="vu-section__icon" data-icon="package"/>
+                                    <div>
+                                        <span>Active Packages</span>
+                                        <small class="text-muted d-block">Bundles and prepaid services currently assigned</small>
+                                    </div>
+                                </div>
+                                <div class="vu-card">
+                                    <div class="vu-card__title">
+                                        <span class="vu-section__icon" data-icon="package"/>
+                                        <span>Package Summary</span>
+                                    </div>
+                                    <p>
+                                        Package information will be injected by the <strong>health_invoicing</strong> module.
+                                    </p>
+                                </div>
+                            </div>
+                        </page>
+
+                        <!-- Healthcare Relationships -->
+                        <page string="Healthcare Relationships" name="healthcare_relationships">
+                            <div class="vu-section">
+                                <div class="vu-section__title">
+                                    <span class="vu-section__icon" data-icon="users-group"/>
+                                    <div>
+                                        <span>Healthcare Relationships</span>
+                                        <small class="text-muted d-block">Visual hierarchy of clients and stakeholders</small>
+                                    </div>
+                                </div>
+                                <div class="vu-card">
+                                    <div class="vu-card__title">
+                                        <span class="vu-section__icon" data-icon="users-group"/>
+                                        <span>Relationship Map</span>
+                                    </div>
+                                    <field name="id" invisible="1"/>
+                                    <widget name="relationship_hierarchy"/>
+                                </div>
+                            </div>
+                        </page>
+
+                        <!-- Patient Journey &amp; Analytics -->
+                        <page string="Client Journey" name="patient_journey">
+                            <div class="vu-section">
+                                <div class="vu-section__title">
+                                    <span class="vu-section__icon" data-icon="timeline"/>
+                                    <div>
+                                        <span>Client Journey</span>
+                                        <small class="text-muted d-block">Registration milestones and visit cadence</small>
+                                    </div>
+                                </div>
+                                <div class="vu-section-grid">
+                                    <div class="vu-card">
+                                        <div class="vu-card__title">
+                                            <span class="vu-section__icon" data-icon="file-text"/>
+                                            <span>Registration Details</span>
+                                        </div>
+                                        <group col="2">
+                                            <field name="source_details" placeholder="Specific source details"/>
+                                            <field name="referral_source" invisible="source_type != 'referral'"/>
+                                            <field name="registration_date" readonly="1"/>
+                                        </group>
+                                    </div>
+                                    <div class="vu-card">
+                                        <div class="vu-card__title">
+                                            <span class="vu-section__icon" data-icon="timeline"/>
+                                            <span>Visit Tracking</span>
+                                        </div>
+                                        <group col="2">
+                                            <field name="last_visit_date" readonly="1"/>
+                                            <field name="next_visit_date"/>
+                                            <field name="visit_count" readonly="1"/>
+                                        </group>
+                                    </div>
+                                </div>
+                                <div class="vu-card">
+                                    <div class="vu-card__title">
+                                        <span class="vu-section__icon" data-icon="timeline"/>
+                                        <span>Client Timeline</span>
+                                    </div>
+                                    <div class="alert alert-info">
+                                        <i class="fa fa-timeline"/> Client timeline with appointments, treatments, and key events will be displayed here.
+                                    </div>
+                                </div>
+                            </div>
+                        </page>
+
+                        <!-- Clinical Notes &amp; Communications -->
                         <page string="Clinical Notes" name="clinical_notes">
-                            <div>
-                                <h4>Clinical Notes &amp; Provider Communications</h4>
-                                <p class="text-muted">
-                                    This section will contain clinical notes, provider communications, and care coordination details.
-                                </p>
-                                
-                                <!-- Placeholder for clinical notes -->
-                                <div class="alert alert-secondary">
-                                    <i class="fa fa-stethoscope"/> Clinical documentation system integration coming soon
+                            <div class="vu-section">
+                                <div class="vu-section__title">
+                                    <span class="vu-section__icon" data-icon="file-text"/>
+                                    <div>
+                                        <span>Clinical Notes &amp; Communications</span>
+                                        <small class="text-muted d-block">Care coordination and documentation coming soon</small>
+                                    </div>
+                                </div>
+                                <div class="vu-card">
+                                    <div class="vu-card__title">
+                                        <span class="vu-section__icon" data-icon="file-text"/>
+                                        <span>Clinical Documentation</span>
+                                    </div>
+                                    <div class="alert alert-secondary">
+                                        <i class="fa fa-stethoscope"/> Clinical documentation system integration coming soon.
+                                    </div>
                                 </div>
                             </div>
                         </page>
@@ -278,11 +476,11 @@
         <field name="name">res.partner.patient.list</field>
         <field name="model">res.partner</field>
         <field name="arch" type="xml">
-            <list string='Client Registry' decoration-warning="patient_status=='new'" 
+            <list string="Client Registry" decoration-warning="patient_status=='new'"
                   decoration-danger="patient_status=='deceased'" decoration-muted="patient_status=='inactive'"
                   decoration-success="patient_category_id and 'VIP' in patient_category_id.name"
                   create="true" edit="true" delete="true" sample="1">
-                  
+
                 <field name="patient_code"/>
                 <field name="name"/>
                 <field name="age_display"/>
@@ -294,11 +492,11 @@
                 <field name="last_visit_date"/>
                 <field name="next_visit_date"/>
                 <field name="visit_count"/>
-                
+
                 <!-- Quick Actions -->
-                <button name="action_create_appointment" type="object" icon="fa-calendar-plus-o" 
+                <button name="action_create_appointment" type="object" icon="fa-calendar-plus-o"
                         title="Schedule New Appointment"/>
-                <button name="action_view_appointments" type="object" icon="fa-calendar" 
+                <button name="action_view_appointments" type="object" icon="fa-calendar"
                         title="View Appointment History"/>
             </list>
         </field>
@@ -309,7 +507,8 @@
         <field name="name">res.partner.patient.kanban</field>
         <field name="model">res.partner</field>
         <field name="arch" type="xml">
-            <kanban default_group_by="patient_category_id" class="o_patient_kanban" create="true" quick_create="false" sample="1" group_create="false" group_edit="false" group_delete="false">
+            <kanban default_group_by="patient_category_id" class="o_patient_kanban" create="true" quick_create="false" sample="1"
+                    group_create="false" group_edit="false" group_delete="false">
                 <field name="id"/>
                 <field name="name"/>
                 <field name="patient_code"/>
@@ -322,14 +521,14 @@
                 <field name="next_visit_date"/>
                 <field name="source_type"/>
                 <field name="image_128"/>
-                
+
                 <templates>
                     <t t-name="kanban-box">
                         <div class="o_patient_card">
                             <div class="o_kanban_image">
                                 <img t-att-src="kanban_image('res.partner', 'image_128', record.id.raw_value)" alt="Client"/>
                             </div>
-                            
+
                             <div class="o_patient_card_content">
                                 <div class="o_patient_card_header">
                                     <strong><field name="name"/></strong>
@@ -339,18 +538,18 @@
                                         </span>
                                     </span>
                                 </div>
-                                
+
                                 <div class="o_patient_card_info">
                                     <div><strong>ID:</strong> <field name="patient_code"/></div>
                                     <div><strong>Age/Gender:</strong> <field name="age_display"/> • <field name="gender"/></div>
                                     <div><strong>Mobile:</strong> <field name="mobile"/></div>
-                                    
+
                                     <div t-if="record.next_visit_date.raw_value" class="mt-1">
                                         <small class="text-muted">Next Visit:</small><br/>
                                         <field name="next_visit_date"/>
                                     </div>
                                 </div>
-                                
+
                                 <div class="o_patient_card_footer">
                                     <button name="action_create_appointment" type="object" class="btn btn-primary btn-sm">
                                         <i class="fa fa-calendar-plus-o"/> Schedule
@@ -362,7 +561,7 @@
                             </div>
                         </div>
                     </t>
-                    
+
                     <!-- Kanban Empty State Template -->
                     <t t-name="kanban-menu">
                         <a role="menuitem" type="object" name="action_create_patient" class="dropdown-item">New Client</a>
@@ -377,42 +576,42 @@
         <field name="name">res.partner.patient.search</field>
         <field name="model">res.partner</field>
         <field name="arch" type="xml">
-            <search string='Client Search'>
-                <field name="name" string='Client Name' filter_domain="[('|', ('name', 'ilike', self), ('vietnamese_name', 'ilike', self))]"/>
-                <field name="patient_code" string='Client ID'/>
+            <search string="Client Search">
+                <field name="name" string="Client Name" filter_domain="[('|', ('name', 'ilike', self), ('vietnamese_name', 'ilike', self))]"/>
+                <field name="patient_code" string="Client ID"/>
                 <field name="mobile" string="Mobile"/>
                 <field name="national_id" string="National ID"/>
                 <field name="email"/>
-                
+
                 <separator/>
-                
+
                 <!-- Status Filters -->
                 <filter name="active_patients" string="Active" domain="[('patient_status', '=', 'active')]"/>
                 <filter name="new_patients" string="New" domain="[('patient_status', '=', 'new')]"/>
                 <filter name="inactive_patients" string="Inactive" domain="[('patient_status', '=', 'inactive')]"/>
-                
+
                 <separator/>
-                
+
                 <!-- Category Filters -->
                 <filter name="vip_patients" string="VIP" domain="[('patient_category_id.name', 'ilike', 'VIP')]"/>
                 <filter name="emergency_patients" string="Emergency" domain="[('patient_category_id.name', 'ilike', 'Emergency')]"/>
-                
+
                 <separator/>
-                
+
                 <!-- Visit Filters -->
-                <filter name="upcoming_visits" string="Upcoming Visits" 
+                <filter name="upcoming_visits" string="Upcoming Visits"
                         domain="[('next_visit_date', '&gt;=', context_today())]"/>
-                <filter name="recent_visits" string="Recent Visits" 
+                <filter name="recent_visits" string="Recent Visits"
                         domain="[('last_visit_date', '&gt;=', (context_today() - datetime.timedelta(days=30)))]"/>
-                
+
                 <separator/>
-                
+
                 <!-- Source Filters -->
                 <filter name="facebook_patients" string="Facebook" domain="[('source_type', '=', 'facebook')]"/>
                 <filter name="zalo_patients" string="Zalo" domain="[('source_type', '=', 'zalo')]"/>
                 <filter name="website_patients" string="Website" domain="[('source_type', '=', 'website')]"/>
                 <filter name="referral_patients" string="Referrals" domain="[('source_type', '=', 'referral')]"/>
-                
+
                 <group expand="0" string="Group By">
                     <filter string="Status" name="group_status" context="{'group_by': 'patient_status'}"/>
                     <filter string="Category" name="group_category" context="{'group_by': 'patient_category_id'}"/>
@@ -477,16 +676,13 @@
         <field name="view_id" ref="view_health_patient_form"/>
         <field name="act_window_id" ref="action_health_patient"/>
     </record>
-    
-
-
 
     <!-- Patient Category Management -->
     <record id="view_health_patient_category_tree" model="ir.ui.view">
         <field name="name">health.patient.category.list</field>
         <field name="model">health.patient.category</field>
         <field name="arch" type="xml">
-            <list string='Client Categories" editable="bottom'>
+            <list string="Client Categories" editable="bottom">
                 <field name="sequence" widget="handle"/>
                 <field name="name"/>
                 <field name="description"/>
@@ -501,7 +697,7 @@
         <field name="name">health.patient.category.form</field>
         <field name="model">health.patient.category</field>
         <field name="arch" type="xml">
-            <form string='Client Category'>
+            <form string="Client Category">
                 <sheet>
                     <group>
                         <group>
