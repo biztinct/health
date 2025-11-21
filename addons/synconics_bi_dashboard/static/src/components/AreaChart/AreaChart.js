@@ -124,10 +124,15 @@ export class AreaChart extends Component {
       (k) => k !== "category" && k !== "record_id" && k !== "isSubGroupBy",
     );
 
+    // Helper function to capitalize first letter
+    const capitalizeFirst = (str) => {
+      return str.charAt(0).toUpperCase() + str.slice(1);
+    };
+
     for (let key of keys) {
       let series = chart.series.push(
         am5radar.RadarColumnSeries.new(this.root, {
-          name: key,
+          name: capitalizeFirst(key),
           xAxis: xAxis,
           yAxis: yAxis,
           valueYField: key,

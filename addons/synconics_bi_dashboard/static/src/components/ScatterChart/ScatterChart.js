@@ -157,12 +157,17 @@ export class ScatterChart extends Component {
 
     // Create dynamic series
     var self = this;
+    // Helper function to capitalize first letter
+    const capitalizeFirst = (str) => {
+      return str.charAt(0).toUpperCase() + str.slice(1);
+    };
+
     companies.forEach((company) => {
       valueTypes.forEach((type, i) => {
         const field = `${company}_${type}`;
         const series = chart.series.push(
           am5xy.LineSeries.new(self.root, {
-            name: `${company} (${type})`,
+            name: `${capitalizeFirst(company)} (${capitalizeFirst(type)})`,
             xAxis: xAxis,
             yAxis: yAxis,
             categoryXField: "category",

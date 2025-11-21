@@ -23,20 +23,6 @@
                                 invisible="not is_patient">
                             <field name="visit_count" string="Bookings" widget="statinfo"/>
                         </button>
-                        <button name="action_view_lab_results" type="object" class="oe_stat_button" icon="fa-flask"
-                                invisible="not is_patient">
-                            <div class="o_field_widget o_stat_info">
-                                <span class="o_stat_value">0</span>
-                                <span class="o_stat_text">Lab Results</span>
-                            </div>
-                        </button>
-                        <button name="action_view_prescriptions" type="object" class="oe_stat_button" icon="fa-medkit"
-                                invisible="not is_patient">
-                            <div class="o_field_widget o_stat_info">
-                                <span class="o_stat_value">0</span>
-                                <span class="o_stat_text">Prescriptions</span>
-                            </div>
-                        </button>
 
                         <!-- REPRESENTATIVE SIDE: My Patients -->
                         <button name="action_view_my_patients_as_caregiver" type="object" class="oe_stat_button" icon="fa-user-md"

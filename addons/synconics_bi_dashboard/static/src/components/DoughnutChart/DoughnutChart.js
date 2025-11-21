@@ -97,6 +97,11 @@ export class DoughnutChart extends Component {
     );
     var self = this;
 
+    // Helper function to capitalize first letter
+    const capitalizeFirst = (str) => {
+      return str.charAt(0).toUpperCase() + str.slice(1);
+    };
+
     var legend = chartContainer.children.push(
       am5.Legend.new(this.root, {
         width: 300,
@@ -120,7 +125,7 @@ export class DoughnutChart extends Component {
       var series = chart.series.push(
         am5percent.PieSeries.new(this.root, {
           valueField: keys[key],
-          name: keys[key],
+          name: capitalizeFirst(keys[key]),
           categoryField: "category",
           alignLabels: false,
         }),

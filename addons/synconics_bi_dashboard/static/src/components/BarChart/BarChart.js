@@ -310,10 +310,15 @@ export class BarChart extends Component {
 
       var self = this;
 
+      // Helper function to capitalize first letter
+      const capitalizeFirst = (str) => {
+        return str.charAt(0).toUpperCase() + str.slice(1);
+      };
+
       function createSeries(field, name) {
         var series = chart.series.push(
           am5xy.ColumnSeries.new(self.root, {
-            name: name,
+            name: capitalizeFirst(name),
             xAxis: xAxis,
             yAxis: yAxis,
             valueXField: field,

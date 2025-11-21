@@ -172,10 +172,15 @@ export class LineChart extends Component {
 
     var self = this;
 
+    // Helper function to capitalize first letter
+    const capitalizeFirst = (str) => {
+      return str.charAt(0).toUpperCase() + str.slice(1);
+    };
+
     function createSeries(name, field) {
       var series = chart.series.push(
         am5xy.LineSeries.new(self.root, {
-          name: name,
+          name: capitalizeFirst(name),
           xAxis: xAxis,
           yAxis: yAxis,
           valueYField: field,

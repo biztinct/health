@@ -125,11 +125,16 @@ export class RadialChart extends Component {
     let keys = Object.keys(data[0]).filter(
       (k) => k !== "category" && k !== "record_id" && k !== "isSubGroupBy",
     );
+    // Helper function to capitalize first letter
+    const capitalizeFirst = (str) => {
+      return str.charAt(0).toUpperCase() + str.slice(1);
+    };
+
     for (var key = 0; key < keys.length; key++) {
       var series = chart.series.push(
         am5radar.RadarColumnSeries.new(this.root, {
           stacked: true,
-          name: keys[key],
+          name: capitalizeFirst(keys[key]),
           xAxis: xAxis,
           yAxis: yAxis,
           valueXField: keys[key],

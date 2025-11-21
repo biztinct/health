@@ -142,10 +142,15 @@ export class ColumnChart extends Component {
     );
 
     var self = this;
+    // Helper function to capitalize first letter
+    const capitalizeFirst = (str) => {
+      return str.charAt(0).toUpperCase() + str.slice(1);
+    };
+
     function makeSeries(name, fieldName) {
       var series = chart.series.push(
         am5xy.ColumnSeries.new(self.root, {
-          name: name,
+          name: capitalizeFirst(name),
           xAxis: xAxis,
           yAxis: yAxis,
           valueYField: fieldName,
