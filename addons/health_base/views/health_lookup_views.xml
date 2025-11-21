@@ -49,38 +49,87 @@
 
                     <notebook>
                         <page string="Basic Information" name="basic_info">
-                            <group>
-                                <group name="service_details" string="Service Details">
-                                    <field name="category"/>
-                                    <field name="base_price" widget="monetary"/>
-                                    <field name="duration_minutes"/>
-                                    <field name="sequence"/>
-                                    <field name="color" widget="color"/>
-                                </group>
-                                <group name="logistics" string="Logistics">
-                                    <field name="requires_travel" widget="boolean_toggle"/>
-                                    <field name="travel_time_minutes" invisible="not requires_travel"/>
-                                    <field name="staff_count"/>
-                                </group>
-                            </group>
-                            
-                            <group name="description" string="description">
-                                <field name="description"/>
-                                <field name="equipment_required"/>
-                            </group>
+                            <div class="vu-section">
+                                <div class="vu-section__title">
+                                    <span class="vu-section__icon" data-icon="tag"/>
+                                    <div>
+                                        <span>Service Details</span>
+                                        <small class="text-muted d-block">Pricing, duration and logistics metadata</small>
+                                    </div>
+                                </div>
+                                <div class="vu-section-grid">
+                                    <div class="vu-card">
+                                        <div class="vu-card__title">
+                                            <span class="vu-section__icon" data-icon="tag"/>
+                                            <span>Service Details</span>
+                                        </div>
+                                        <group col="2">
+                                            <field name="category"/>
+                                            <field name="base_price" widget="monetary"/>
+                                            <field name="duration_minutes"/>
+                                            <field name="sequence"/>
+                                            <field name="color" widget="color"/>
+                                        </group>
+                                    </div>
+                                    <div class="vu-card">
+                                        <div class="vu-card__title">
+                                            <span class="vu-section__icon" data-icon="activity"/>
+                                            <span>Logistics</span>
+                                        </div>
+                                        <group col="2">
+                                            <field name="requires_travel" widget="boolean_toggle"/>
+                                            <field name="travel_time_minutes" invisible="not requires_travel"/>
+                                            <field name="staff_count"/>
+                                        </group>
+                                    </div>
+                                </div>
+
+                                <div class="vu-card">
+                                    <div class="vu-card__title">
+                                        <span class="vu-section__icon" data-icon="file-text"/>
+                                        <span>Description &amp; Equipment</span>
+                                    </div>
+                                    <group>
+                                    <field name="description"/>
+                                    <field name="equipment_required"/>
+                                    </group>
+                                </div>
+                            </div>
                         </page>
 
                         <page string="Availability" name="availability">
-                            <group name="service_locations" string="Service Locations">
-                                <field name="available_home" widget="boolean_toggle"/>
-                                <field name="available_clinic" widget="boolean_toggle"/>
-                                <field name="available_telemedicine" widget="boolean_toggle"/>
-                            </group>
-
-                            <group name="staff_requirements" string="Staff Requirements">
-                                <field name="requires_doctor" widget="boolean_toggle"/>
-                                <field name="requires_nurse" widget="boolean_toggle"/>
-                            </group>
+                            <div class="vu-section">
+                                <div class="vu-section__title">
+                                    <span class="vu-section__icon" data-icon="map-pin"/>
+                                    <div>
+                                        <span>Availability</span>
+                                        <small class="text-muted d-block">Delivery locations and staffing requirements</small>
+                                    </div>
+                                </div>
+                                <div class="vu-section-grid">
+                                    <div class="vu-card">
+                                        <div class="vu-card__title">
+                                            <span class="vu-section__icon" data-icon="map-pin"/>
+                                            <span>Service Locations</span>
+                                        </div>
+                                        <group col="2">
+                                            <field name="available_home" widget="boolean_toggle"/>
+                                            <field name="available_clinic" widget="boolean_toggle"/>
+                       		                <field name="available_telemedicine" widget="boolean_toggle"/>
+                                        </group>
+                                    </div>
+                                    <div class="vu-card">
+                                        <div class="vu-card__title">
+                                            <span class="vu-section__icon" data-icon="users-group"/>
+                                            <span>Staff Requirements</span>
+                                        </div>
+                                        <group col="2">
+                                            <field name="requires_doctor" widget="boolean_toggle"/>
+                                            <field name="requires_nurse" widget="boolean_toggle"/>
+                                        </group>
+                                    </div>
+                                </div>
+                            </div>
                         </page>
                     </notebook>
                 </sheet>
@@ -138,22 +187,41 @@
         <field name="arch" type="xml">
             <form string="Symptom">
                 <sheet>
-                    <group>
-                        <group>
-                            <field name="name"/>
-                            <field name="code"/>
-                            <field name="category"/>
-                        </group>
-                        <group>
-                            <field name="urgency_level"/>
-                            <field name="color" widget="color"/>
-                            <field name="active"/>
-                        </group>
-                    </group>
-                    <group>
-                        <field name="description"/>
-                        <field name="severity_levels"/>
-                    </group>
+                    <div class="vu-section">
+                        <div class="vu-section__title">
+                            <span class="vu-section__icon" data-icon="alert-triangle"/>
+                            <div>
+                                <span>Symptom Definition</span>
+                                <small class="text-muted d-block">Classification and severity guidance</small>
+                            </div>
+                        </div>
+                        <div class="vu-section-grid">
+                            <div class="vu-card">
+                                <div class="vu-card__title">
+                                    <span class="vu-section__icon" data-icon="tag"/>
+                                    <span>Symptom Details</span>
+                                </div>
+                                <group col="2">
+                                    <field name="name"/>
+                                    <field name="code"/>
+                                    <field name="category"/>
+                                    <field name="urgency_level"/>
+                                    <field name="color" widget="color"/>
+                                    <field name="active"/>
+                                </group>
+                            </div>
+                            <div class="vu-card">
+                                <div class="vu-card__title">
+                                    <span class="vu-section__icon" data-icon="file-text"/>
+                                    <span>Description</span>
+                                </div>
+                                <group>
+                                    <field name="description"/>
+                                    <field name="severity_levels"/>
+                                </group>
+                            </div>
+                        </div>
+                    </div>
                 </sheet>
             </form>
         </field>
@@ -190,32 +258,62 @@
         <field name="arch" type="xml">
             <form string="Referral Source">
                 <sheet>
-                    <group>
-                        <group name="basic_info" string="Basic Information">
-                            <field name="name"/>
-                            <field name="source_type"/>
-                            <field name="active"/>
-                        </group>
-                        <group name="contact_info" string="Contact Information">
-                            <field name="contact_person"/>
-                            <field name="contact_phone" widget="phone"/>
-                            <field name="contact_email" widget="email"/>
-                        </group>
-                    </group>
-                    
-                    <group name="tracking_info" string="Marketing Tracking">
-                        <group>
-                            <field name="is_paid_source" widget="boolean_toggle"/>
-                            <field name="cost_per_lead" widget="monetary" invisible="not is_paid_source"/>
-                        </group>
-                        <group>
-                            <field name="conversion_rate"/>
-                        </group>
-                    </group>
-                    
-                    <group>
-                        <field name="description"/>
-                    </group>
+                    <div class="vu-section">
+                        <div class="vu-section__title">
+                            <span class="vu-section__icon" data-icon="users-group"/>
+                            <div>
+                                <span>Referral Source</span>
+                                <small class="text-muted d-block">Channel ownership, contacts and marketing metrics</small>
+                            </div>
+                        </div>
+                        <div class="vu-section-grid">
+                            <div class="vu-card">
+                                <div class="vu-card__title">
+                                    <span class="vu-section__icon" data-icon="tag"/>
+                                    <span>Basic Information</span>
+                                </div>
+                                <group col="2">
+                                    <field name="name"/>
+                                    <field name="source_type"/>
+                                    <field name="active"/>
+                                </group>
+                            </div>
+                            <div class="vu-card">
+                                <div class="vu-card__title">
+                                    <span class="vu-section__icon" data-icon="users-group"/>
+                                    <span>Contact Information</span>
+                                </div>
+                                <group col="2">
+                                    <field name="contact_person"/>
+                                    <field name="contact_phone" widget="phone"/>
+                                    <field name="contact_email" widget="email"/>
+                                </group>
+                            </div>
+                        </div>
+
+                        <div class="vu-section-grid">
+                            <div class="vu-card">
+                                <div class="vu-card__title">
+                                    <span class="vu-section__icon" data-icon="credit-card"/>
+                                    <span>Marketing Tracking</span>
+                                </div>
+                                <group col="2">
+                                    <field name="is_paid_source" widget="boolean_toggle"/>
+                                    <field name="cost_per_lead" widget="monetary" invisible="not is_paid_source"/>
+                                    <field name="conversion_rate"/>
+                                </group>
+                            </div>
+                            <div class="vu-card">
+                                <div class="vu-card__title">
+                                    <span class="vu-section__icon" data-icon="file-text"/>
+                                    <span>Notes</span>
+                                </div>
+                                <group>
+                                    <field name="description"/>
+                                </group>
+                            </div>
+                        </div>
+                    </div>
                 </sheet>
             </form>
         </field>
@@ -253,36 +351,75 @@
         <field name="arch" type="xml">
             <form string="Insurance Provider">
                 <sheet>
-                    <group>
-                        <group name="basic_info" string="Basic Information">
-                            <field name="name"/>
-                            <field name="code"/>
-                            <field name="active"/>
-                        </group>
-                        <group name="contact_info" string="Contact Information">
-                            <field name="contact_phone" widget="phone"/>
-                            <field name="contact_email" widget="email"/>
-                            <field name="website" widget="url"/>
-                        </group>
-                    </group>
-                    
-                    <group name="coverage_info" string="Coverage Details">
-                        <group>
-                            <field name="coverage_percentage"/>
-                            <field name="deductible_amount" widget="monetary"/>
-                            <field name="max_coverage_annual" widget="monetary"/>
-                        </group>
-                        <group>
-                            <field name="covers_home_visits" widget="boolean_toggle"/>
-                            <field name="covers_clinic_visits" widget="boolean_toggle"/>
-                            <field name="covers_telemedicine" widget="boolean_toggle"/>
-                            <field name="covers_emergency" widget="boolean_toggle"/>
-                        </group>
-                    </group>
-                    
-                    <group>
-                        <field name="notes"/>
-                    </group>
+                    <div class="vu-section">
+                        <div class="vu-section__title">
+                            <span class="vu-section__icon" data-icon="shield-check"/>
+                            <div>
+                                <span>Provider Overview</span>
+                                <small class="text-muted d-block">Contact info and coverage details</small>
+                            </div>
+                        </div>
+                        <div class="vu-section-grid">
+                            <div class="vu-card">
+                                <div class="vu-card__title">
+                                    <span class="vu-section__icon" data-icon="tag"/>
+                                    <span>Basic Information</span>
+                                </div>
+                                <group col="2">
+                                    <field name="name"/>
+                                    <field name="code"/>
+                                    <field name="active"/>
+                                </group>
+                            </div>
+                            <div class="vu-card">
+                                <div class="vu-card__title">
+                                    <span class="vu-section__icon" data-icon="users-group"/>
+                                    <span>Contact Information</span>
+                                </div>
+                                <group col="2">
+                                    <field name="contact_phone" widget="phone"/>
+                                    <field name="contact_email" widget="email"/>
+                                    <field name="website" widget="url"/>
+                                </group>
+                            </div>
+                        </div>
+
+                        <div class="vu-section-grid">
+                            <div class="vu-card">
+                                <div class="vu-card__title">
+                                    <span class="vu-section__icon" data-icon="credit-card"/>
+                                    <span>Coverage Details</span>
+                                </div>
+                                <group col="2">
+                                    <field name="coverage_percentage"/>
+                                    <field name="deductible_amount" widget="monetary"/>
+                                    <field name="max_coverage_annual" widget="monetary"/>
+                                </group>
+                            </div>
+                            <div class="vu-card">
+                                <div class="vu-card__title">
+                                    <span class="vu-section__icon" data-icon="map-pin"/>
+                                    <span>Care Settings</span>
+                                </div>
+                                <group col="2">
+                                    <field name="covers_home_visits" widget="boolean_toggle"/>
+                                    <field name="covers_clinic_visits" widget="boolean_toggle"/>
+                                    <field name="covers_telemedicine" widget="boolean_toggle"/>
+                                    <field name="covers_emergency" widget="boolean_toggle"/>
+                                </group>
+                            </div>
+                        </div>
+
+                        <div class="vu-card">
+                            <div class="vu-card__title">
+                                <span class="vu-section__icon" data-icon="file-text"/>
+                                <span>Notes</span>
+                            </div>
+                            <group>
+                                <field name="notes"/>
+                            </group>
+                        </div>
+                    </div>
                 </sheet>
             </form>
         </field>
@@ -319,25 +456,52 @@
         <field name="arch" type="xml">
             <form string="Urgency Level">
                 <sheet>
-                    <group>
-                        <group name="basic_info" string="Basic Information">
-                            <field name="name"/>
-                            <field name="code"/>
-                            <field name="priority_score"/>
-                            <field name="response_time_hours"/>
-                        </group>
-                        <group name="automation" string="Automation Settings">
-                            <field name="auto_assign" widget="boolean_toggle"/>
-                            <field name="send_alerts" widget="boolean_toggle"/>
-                            <field name="requires_approval" widget="boolean_toggle"/>
-                            <field name="color" widget="color"/>
-                            <field name="active"/>
-                        </group>
-                    </group>
-                    
-                    <group>
-                        <field name="description"/>
-                    </group>
+                    <div class="vu-section">
+                        <div class="vu-section__title">
+                            <span class="vu-section__icon" data-icon="alert-triangle"/>
+                            <div>
+                                <span>Urgency Configuration</span>
+                                <small class="text-muted d-block">Prioritization and automation behavior</small>
+                            </div>
+                        </div>
+                        <div class="vu-section-grid">
+                            <div class="vu-card">
+                                <div class="vu-card__title">
+                                    <span class="vu-section__icon" data-icon="tag"/>
+                                    <span>Basic Information</span>
+                                </div>
+                                <group col="2">
+                                    <field name="name"/>
+                                    <field name="code"/>
+                                    <field name="priority_score"/>
+                                    <field name="response_time_hours"/>
+                                </group>
+                            </div>
+                            <div class="vu-card">
+                                <div class="vu-card__title">
+                                    <span class="vu-section__icon" data-icon="activity"/>
+                                    <span>Automation Settings</span>
+                                </div>
+                                <group col="2">
+                                    <field name="auto_assign" widget="boolean_toggle"/>
+                                    <field name="send_alerts" widget="boolean_toggle"/>
+                                    <field name="requires_approval" widget="boolean_toggle"/>
+                                    <field name="color" widget="color"/>
+                                    <field name="active"/>
+                                </group>
+                            </div>
+                        </div>
+
+                        <div class="vu-card">
+                            <div class="vu-card__title">
+                                <span class="vu-section__icon" data-icon="file-text"/>
+                                <span>Description</span>
+                            </div>
+                            <group>
+                                <field name="description"/>
+                            </group>
+                        </div>
+                    </div>
                 </sheet>
             </form>
         </field>
@@ -374,20 +538,41 @@
         <field name="arch" type="xml">
             <form string="Vietnamese District">
                 <sheet>
-                    <group>
-                        <group name="location_info" string="Location Information">
-                            <field name="name"/>
-                            <field name="province_name"/>
-                            <field name="region"/>
-                            <field name="active"/>
-                        </group>
-                        <group name="service_info" string="Service Delivery">
-                            <field name="supports_home_visits" widget="boolean_toggle"/>
-                            <field name="travel_zone"/>
-                            <field name="base_travel_fee" widget="monetary"/>
-                            <field name="average_travel_time"/>
-                        </group>
-                    </group>
+                    <div class="vu-section">
+                        <div class="vu-section__title">
+                            <span class="vu-section__icon" data-icon="map-pin"/>
+                            <div>
+                                <span>District Profile</span>
+                                <small class="text-muted d-block">Location metadata and service coverage</small>
+                            </div>
+                        </div>
+                        <div class="vu-section-grid">
+                            <div class="vu-card">
+                                <div class="vu-card__title">
+                                    <span class="vu-section__icon" data-icon="map-pin"/>
+                                    <span>Location Information</span>
+                                </div>
+                                <group col="2">
+                                    <field name="name"/>
+                                    <field name="province_name"/>
+                                    <field name="region"/>
+                                    <field name="active"/>
+                                </group>
+                            </div>
+                            <div class="vu-card">
+                                <div class="vu-card__title">
+                                    <span class="vu-section__icon" data-icon="activity"/>
+                                    <span>Service Delivery</span>
+                                </div>
+                                <group col="2">
+                                    <field name="supports_home_visits" widget="boolean_toggle"/>
+                                    <field name="travel_zone"/>
+                                    <field name="base_travel_fee" widget="monetary"/>
+                                    <field name="average_travel_time"/>
+                                </group>
+                            </div>
+                        </div>
+                    </div>
                 </sheet>
             </form>
         </field>

@@ -699,21 +699,48 @@
         <field name="arch" type="xml">
             <form string="Client Category">
                 <sheet>
-                    <group>
-                        <group>
-                            <field name="name" required="1"/>
-                            <field name="sequence"/>
-                            <field name="active"/>
-                        </group>
-                        <group>
-                            <field name="price_multiplier"/>
-                            <field name="color" widget="color"/>
-                        </group>
-                    </group>
-                    <group>
-                        <field name="description"/>
-                        <field name="special_requirements"/>
-                    </group>
+                    <div class="vu-section">
+                        <div class="vu-section__title">
+                            <span class="vu-section__icon" data-icon="tag"/>
+                            <div>
+                                <span>Client Category</span>
+                                <small class="text-muted d-block">Pricing multiplier and descriptive notes</small>
+                            </div>
+                        </div>
+                        <div class="vu-section-grid">
+                            <div class="vu-card">
+                                <div class="vu-card__title">
+                                    <span class="vu-section__icon" data-icon="tag"/>
+                                    <span>Basics</span>
+                                </div>
+                                <group col="2">
+                                    <field name="name" required="1"/>
+                                    <field name="sequence"/>
+                                    <field name="active"/>
+                                </group>
+                            </div>
+                            <div class="vu-card">
+                                <div class="vu-card__title">
+                                    <span class="vu-section__icon" data-icon="credit-card"/>
+                                    <span>Pricing</span>
+                                </div>
+                                <group col="2">
+                                    <field name="price_multiplier"/>
+                                    <field name="color" widget="color"/>
+                                </group>
+                            </div>
+                        </div>
+                        <div class="vu-card">
+                            <div class="vu-card__title">
+                                <span class="vu-section__icon" data-icon="file-text"/>
+                                <span>Description</span>
+                            </div>
+                            <group>
+                                <field name="description"/>
+                                <field name="special_requirements"/>
+                            </group>
+                        </div>
+                    </div>
                 </sheet>
             </form>
         </field>

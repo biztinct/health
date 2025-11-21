@@ -226,6 +226,86 @@ a {
     }
 }
 
+.vu-section__icon[data-icon="building"] {
+    background: rgba(21, 101, 192, 0.12);
+    color: #1B4F91;
+
+    &::after {
+        mask-image: url('/health_base/static/src/img/lucide/building-2.svg');
+        -webkit-mask-image: url('/health_base/static/src/img/lucide/building-2.svg');
+    }
+}
+
+.vu-section__icon[data-icon="book-open"] {
+    background: rgba(106, 27, 154, 0.12);
+    color: #6A1B9A;
+
+    &::after {
+        mask-image: url('/health_base/static/src/img/lucide/book-open.svg');
+        -webkit-mask-image: url('/health_base/static/src/img/lucide/book-open.svg');
+    }
+}
+
+.vu-section__icon[data-icon="globe"] {
+    background: rgba(2, 119, 189, 0.12);
+    color: #0E5C88;
+
+    &::after {
+        mask-image: url('/health_base/static/src/img/lucide/globe.svg');
+        -webkit-mask-image: url('/health_base/static/src/img/lucide/globe.svg');
+    }
+}
+
+.vu-section__icon[data-icon="pill"] {
+    background: rgba(236, 64, 122, 0.15);
+    color: #C2185B;
+
+    &::after {
+        mask-image: url('/health_base/static/src/img/lucide/pill.svg');
+        -webkit-mask-image: url('/health_base/static/src/img/lucide/pill.svg');
+    }
+}
+
+.vu-section__icon[data-icon="alert-triangle"] {
+    background: rgba(251, 140, 0, 0.15);
+    color: #BF5B04;
+
+    &::after {
+        mask-image: url('/health_base/static/src/img/lucide/alert-triangle.svg');
+        -webkit-mask-image: url('/health_base/static/src/img/lucide/alert-triangle.svg');
+    }
+}
+
+.vu-section__icon[data-icon="activity"] {
+    background: rgba(0, 150, 136, 0.12);
+    color: #00695C;
+
+    &::after {
+        mask-image: url('/health_base/static/src/img/lucide/activity.svg');
+        -webkit-mask-image: url('/health_base/static/src/img/lucide/activity.svg');
+    }
+}
+
+.vu-section__icon[data-icon="tag"] {
+    background: rgba(158, 158, 158, 0.18);
+    color: #424242;
+
+    &::after {
+        mask-image: url('/health_base/static/src/img/lucide/tag.svg');
+        -webkit-mask-image: url('/health_base/static/src/img/lucide/tag.svg');
+    }
+}
+
+.vu-section__icon[data-icon="calendar"] {
+    background: rgba(33, 150, 243, 0.15);
+    color: #1E88E5;
+
+    &::after {
+        mask-image: url('/health_base/static/src/img/lucide/calendar.svg');
+        -webkit-mask-image: url('/health_base/static/src/img/lucide/calendar.svg');
+    }
+}
+
 .vu-section-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
@@ -281,25 +361,27 @@ a {
 .btn-primary, .o_form_button_save {
     background: var(--vu-brand-primary);
     border: 1px solid var(--vu-brand-primary-dark);
-    border-radius: var(--vu-radius-md);
-    box-shadow: var(--vu-shadow-md);
-    padding: var(--vu-space-sm) var(--vu-space-lg);
+    border-radius: var(--vu-radius-sm);
+    box-shadow: var(--vu-shadow-sm);
+    padding: 6px 16px;
     font-weight: 600;
-    transition: transform var(--vu-transition-fast), box-shadow var(--vu-transition-fast);
+    font-size: var(--vu-font-size-sm);
+    transition: background var(--vu-transition-fast), box-shadow var(--vu-transition-fast);
 
     &:hover {
-        transform: translateY(-1px);
-        box-shadow: var(--vu-shadow-lg);
+        background: var(--vu-brand-primary-dark);
+        box-shadow: var(--vu-shadow-md);
     }
 }
 
 .btn-secondary, .o_form_button_cancel {
     background: var(--vu-surface-muted);
     border: 1px solid var(--vu-border-soft);
-    border-radius: var(--vu-radius-md);
+    border-radius: var(--vu-radius-sm);
     color: var(--vu-text-secondary);
-    padding: var(--vu-space-sm) var(--vu-space-lg);
-    transition: background var(--vu-transition-fast);
+    padding: 6px 16px;
+    font-size: var(--vu-font-size-sm);
+    transition: background var(--vu-transition-fast), color var(--vu-transition-fast);
 
     &:hover {
         background: var(--vu-surface-hover);

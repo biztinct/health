@@ -20,48 +20,97 @@
                             <field name="name" class="o_text_overflow" placeholder="Protocol Name"/>
                         </h1>
                     </div>
-                    <group>
-                        <group string="Protocol Information">
-                            <field name="protocol_type"/>
-                            <field name="evidence_source"/>
-                            <field name="implementation_date"/>
-                            <field name="last_review_date"/>
-                            <field name="next_review_date"/>
-                        </group>
-                        <group string="Vietnamese Localization">
-                            <field name="vietnamese_name" placeholder="Vietnamese Name"/>
-                        </group>
-                    </group>
+                    <div class="vu-section">
+                        <div class="vu-section__title">
+                            <span class="vu-section__icon" data-icon="book-open"/>
+                            <div>
+                                <span>Protocol Overview</span>
+                                <small class="text-muted d-block">Evidence sources, effective dates and localization</small>
+                            </div>
+                        </div>
+                        <div class="vu-section-grid">
+                            <div class="vu-card">
+                                <div class="vu-card__title">
+                                    <span class="vu-section__icon" data-icon="book-open"/>
+                                    <span>Protocol Information</span>
+                                </div>
+                                <group col="2">
+                                    <field name="protocol_type"/>
+                                    <field name="evidence_source"/>
+                                    <field name="implementation_date"/>
+                                    <field name="last_review_date"/>
+                                    <field name="next_review_date"/>
+                                </group>
+                            </div>
+                            <div class="vu-card">
+                                <div class="vu-card__title">
+                                    <span class="vu-section__icon" data-icon="globe"/>
+                                    <span>Vietnamese Localization</span>
+                                </div>
+                                <group>
+                                    <field name="vietnamese_name" placeholder="Vietnamese Name"/>
+                                </group>
+                            </div>
+                        </div>
+                    </div>
                     <notebook>
                         <page string="Description" name="description">
-                            <field name="description" placeholder="Protocol description..."/>
-                            <field name="vietnamese_description" placeholder="Vietnamese description..."/>
+                            <div class="vu-card">
+                                <div class="vu-card__title">
+                                    <span class="vu-section__icon" data-icon="file-text"/>
+                                    <span>Protocol Description</span>
+                                </div>
+                                <group>
+                                    <field name="description" placeholder="Protocol description..."/>
+                                    <field name="vietnamese_description" placeholder="Vietnamese description..."/>
+                                </group>
+                            </div>
                         </page>
                         <page string="Assessment Questions" name="questions">
-                            <field name="assessment_questions">
-                                <tree editable="bottom">
-                                    <field name="sequence" widget="handle"/>
-                                    <field name="question_text"/>
-                                    <field name="question_type"/>
-                                    <field name="has_scoring"/>
-                                    <field name="vietnamese_question"/>
-                                </tree>
-                            </field>
+                            <div class="vu-card">
+                                <div class="vu-card__title">
+                                    <span class="vu-section__icon" data-icon="clipboard-list"/>
+                                    <span>Assessment Questions</span>
+                                </div>
+                                <field name="assessment_questions">
+                                    <tree editable="bottom">
+                                        <field name="sequence" widget="handle"/>
+                                        <field name="question_text"/>
+                                        <field name="question_type"/>
+                                        <field name="has_scoring"/>
+                                        <field name="vietnamese_question"/>
+                                    </tree>
+                                </field>
+                            </div>
                         </page>
                         <page string="Interventions" name="interventions">
-                            <field name="interventions">
-                                <tree editable="bottom">
-                                    <field name="sequence" widget="handle"/>
-                                    <field name="intervention_name"/>
-                                    <field name="intervention_type"/>
-                                    <field name="frequency"/>
-                                    <field name="priority"/>
-                                    <field name="vietnamese_name"/>
-                                </tree>
-                            </field>
+                            <div class="vu-card">
+                                <div class="vu-card__title">
+                                    <span class="vu-section__icon" data-icon="stethoscope"/>
+                                    <span>Interventions</span>
+                                </div>
+                                <field name="interventions">
+                                    <tree editable="bottom">
+                                        <field name="sequence" widget="handle"/>
+                                        <field name="intervention_name"/>
+                                        <field name="intervention_type"/>
+                                        <field name="frequency"/>
+                                        <field name="priority"/>
+                                        <field name="vietnamese_name"/>
+                                    </tree>
+                                </field>
+                            </div>
                         </page>
                         <page string="Care Recommendations" name="recommendations">
-                            <field name="care_recommendations" placeholder="AI-generated recommendations..."/>
+                            <div class="vu-card">
+                                <div class="vu-card__title">
+                                    <span class="vu-section__icon" data-icon="heart-pulse"/>
+                                    <span>Care Recommendations</span>
+                                </div>
+                                <group>
+                                    <field name="care_recommendations" placeholder="AI-generated recommendations..."/>
+                                </group>
+                            </div>
                         </page>
                     </notebook>
                 </sheet>

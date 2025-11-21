@@ -69,115 +69,233 @@
                         </div>
                     </div>
 
-                    <group>
-                        <group>
-                            <field name="province_code" placeholder="Province code (2 digits)..."/>
-                        </group>
-                        <group>
-                        </group>
-                    </group>
-
                     <notebook>
                         <page string="Basic Information" name="basic_info">
-                            <group>
-                                <group name="facility_details" string="Facility Details">
-                                    <field name="facility_type"/>
-                                    <field name="phone" widget="phone"/>
-                                    <field name="email" widget="email"/>
-                                    <field name="website" widget="url"/>
-                                    <field name="timezone"/>
-                                </group>
-                                <group name="management" string="Management">
-                                    <field name="facility_manager_id"/>
-                                    <field name="head_nurse_id"/>
-                                    <field name="total_staff_count"/>
-                                    <field name="active"/>
-                                </group>
-                            </group>
-                            
-                            <group name="address" string="Address">
-                                <field name="street"/>
-                                <field name="street2"/>
-                                <field name="city"/>
-                                <field name="state_id"/>
-                                <field name="zip"/>
-                                <field name="country_id"/>
-                            </group>
-                            
-                            <group name="operating_hours" string="Operating Hours">
-                                <field name="operating_hours"/>
-                            </group>
+                            <div class="vu-section">
+                                <div class="vu-section__title">
+                                    <span class="vu-section__icon" data-icon="building"/>
+                                    <div>
+                                        <span>Facility Identity</span>
+                                        <small class="text-muted d-block">Contact, leadership and address details</small>
+                                    </div>
+                                </div>
+                                <div class="vu-section-grid">
+                                    <div class="vu-card">
+                                        <div class="vu-card__title">
+                                            <span class="vu-section__icon" data-icon="building"/>
+                                            <span>Facility Details</span>
+                                        </div>
+                                        <group col="2">
+                                            <field name="facility_type"/>
+                                            <field name="province_code" placeholder="Province code (2 digits)..."/>
+                                            <field name="phone" widget="phone"/>
+                                            <field name="email" widget="email"/>
+                                            <field name="website" widget="url"/>
+                                            <field name="timezone"/>
+                                        </group>
+                                    </div>
+                                    <div class="vu-card">
+                                        <div class="vu-card__title">
+                                            <span class="vu-section__icon" data-icon="users-group"/>
+                                            <span>Leadership</span>
+                                        </div>
+                                        <group col="2">
+                                            <field name="facility_manager_id"/>
+                                            <field name="head_nurse_id"/>
+                                            <field name="total_staff_count"/>
+                                            <field name="active"/>
+                                        </group>
+                                    </div>
+                                    <div class="vu-card">
+                                        <div class="vu-card__title">
+                                            <span class="vu-section__icon" data-icon="map-pin"/>
+                                            <span>Location</span>
+                                        </div>
+                                        <group col="2">
+                                            <field name="street"/>
+                                            <field name="street2"/>
+                                            <field name="city"/>
+                                            <field name="state_id"/>
+                                            <field name="zip"/>
+                                            <field name="country_id"/>
+                                        </group>
+                                    </div>
+                                </div>
+
+                                <div class="vu-card">
+                                    <div class="vu-card__title">
+                                        <span class="vu-section__icon" data-icon="timeline"/>
+                                        <span>Operating Hours</span>
+                                    </div>
+                                    <group>
+                                        <field name="operating_hours"/>
+                                    </group>
+                                </div>
+                            </div>
                         </page>
 
                         <page string="Services &amp; Capabilities" name="services">
-                            <group>
-                                <group name="capacity" string="Capacity">
-                                    <field name="max_daily_patients"/>
-                                    <field name="total_beds"/>
-                                    <field name="available_beds" readonly="1"/>
-                                    <field name="consultation_rooms"/>
-                                    <field name="parking_spaces"/>
-                                    <field name="wheelchair_accessible" widget="boolean_toggle"/>
-                                </group>
-                                <group name="capabilities" string="Capabilities">
-                                    <field name="has_emergency_services" widget="boolean_toggle"/>
-                                    <field name="has_laboratory" widget="boolean_toggle"/>
-                                    <field name="has_imaging" widget="boolean_toggle"/>
-                                    <field name="has_pharmacy" widget="boolean_toggle"/>
-                                </group>
-                            </group>
-                            
-                            <group name="services_offered" string="Services Offered">
-                                <field name="services_offered" widget="many2many_tags"/>
-                            </group>
-                            
-                            <group name="specialties" string="Medical Specialties">
-                                <field name="specialties" widget="many2many_tags"/>
-                            </group>
+                            <div class="vu-section">
+                                <div class="vu-section__title">
+                                    <span class="vu-section__icon" data-icon="stethoscope"/>
+                                    <div>
+                                        <span>Services &amp; Capacity</span>
+                                        <small class="text-muted d-block">Operational capacity and available care</small>
+                                    </div>
+                                </div>
+                                <div class="vu-section-grid">
+                                    <div class="vu-card">
+                                        <div class="vu-card__title">
+                                            <span class="vu-section__icon" data-icon="activity"/>
+                                            <span>Capacity</span>
+                                        </div>
+                                        <group col="2">
+                                            <field name="max_daily_patients"/>
+                                            <field name="total_beds"/>
+                                            <field name="available_beds" readonly="1"/>
+                                            <field name="consultation_rooms"/>
+                                            <field name="parking_spaces"/>
+                                            <field name="wheelchair_accessible" widget="boolean_toggle"/>
+                                        </group>
+                                    </div>
+                                    <div class="vu-card">
+                                        <div class="vu-card__title">
+                                            <span class="vu-section__icon" data-icon="heart-pulse"/>
+                                            <span>Capabilities</span>
+                                        </div>
+                                        <group col="2">
+                                            <field name="has_emergency_services" widget="boolean_toggle"/>
+                                            <field name="has_laboratory" widget="boolean_toggle"/>
+                                            <field name="has_imaging" widget="boolean_toggle"/>
+                                            <field name="has_pharmacy" widget="boolean_toggle"/>
+                                        </group>
+                                    </div>
+                                </div>
+
+                                <div class="vu-section-grid">
+                                    <div class="vu-card">
+                                        <div class="vu-card__title">
+                                            <span class="vu-section__icon" data-icon="tag"/>
+                                            <span>Services Offered</span>
+                                        </div>
+                                        <group>
+                                            <field name="services_offered" widget="many2many_tags"/>
+                                        </group>
+                                    </div>
+                                    <div class="vu-card">
+                                        <div class="vu-card__title">
+                                            <span class="vu-section__icon" data-icon="file-text"/>
+                                            <span>Medical Specialties</span>
+                                        </div>
+                                        <group>
+                                            <field name="specialties" widget="many2many_tags"/>
+                                        </group>
+                                    </div>
+                                </div>
+                            </div>
                         </page>
 
                         <page string="Home Visit Coverage" name="home_visits">
-                            <group>
-                                <group name="home_visit_settings" string="Home Visit Settings">
-                                    <field name="covers_home_visits" widget="boolean_toggle"/>
-                                    <field name="home_visit_radius_km" invisible="not covers_home_visits"/>
-                                    <field name="base_home_visit_fee" widget="monetary" invisible="not covers_home_visits"/>
-                                </group>
-                            </group>
-                            
-                            <group name="coverage_areas" string="Coverage Areas" invisible="not covers_home_visits">
-                                <field name="home_visit_districts" widget="many2many_tags"/>
-                            </group>
+                            <div class="vu-section">
+                                <div class="vu-section__title">
+                                    <span class="vu-section__icon" data-icon="map-pin"/>
+                                    <div>
+                                        <span>Home Visit Coverage</span>
+                                        <small class="text-muted d-block">Radius, pricing and supported districts</small>
+                                    </div>
+                                </div>
+                                <div class="vu-section-grid">
+                                    <div class="vu-card">
+                                        <div class="vu-card__title">
+                                            <span class="vu-section__icon" data-icon="map-pin"/>
+                                            <span>Settings</span>
+                                        </div>
+                                        <group col="2">
+                                            <field name="covers_home_visits" widget="boolean_toggle"/>
+                                            <field name="home_visit_radius_km" invisible="not covers_home_visits"/>
+                                            <field name="base_home_visit_fee" widget="monetary" invisible="not covers_home_visits"/>
+                                        </group>
+                                    </div>
+                                    <div class="vu-card">
+                                        <div class="vu-card__title">
+                                            <span class="vu-section__icon" data-icon="map-pin"/>
+                                            <span>Coverage Areas</span>
+                                        </div>
+                                        <group>
+                                            <field name="home_visit_districts" widget="many2many_tags" invisible="not covers_home_visits"/>
+                                        </group>
+                                    </div>
+                                </div>
+                            </div>
                         </page>
 
                         <page string="Financial &amp; Insurance" name="financial">
-                            <group>
-                                <group name="financial_settings" string="Financial Settings">
-                                    <field name="default_currency_id"/>
-                                    <field name="accepts_insurance" widget="boolean_toggle"/>
-                                </group>
-                                <group name="statistics" string="Statistics">
-                                    <field name="monthly_revenue" widget="monetary" readonly="1"/>
-                                </group>
-                            </group>
-                            
-                            <group name="accepted_insurance" string="Accepted Insurance Providers" invisible="not accepts_insurance">
-                                <field name="accepted_insurance_providers" widget="many2many_tags"/>
-                            </group>
+                            <div class="vu-section">
+                                <div class="vu-section__title">
+                                    <span class="vu-section__icon" data-icon="credit-card"/>
+                                    <div>
+                                        <span>Financial Controls</span>
+                                        <small class="text-muted d-block">Currencies, revenue and insurance partners</small>
+                                    </div>
+                                </div>
+                                <div class="vu-section-grid">
+                                    <div class="vu-card">
+                                        <div class="vu-card__title">
+                                            <span class="vu-section__icon" data-icon="credit-card"/>
+                                            <span>Financial Settings</span>
+                                        </div>
+                                        <group col="2">
+                                            <field name="default_currency_id"/>
+                                            <field name="accepts_insurance" widget="boolean_toggle"/>
+                                            <field name="monthly_revenue" widget="monetary" readonly="1"/>
+                                        </group>
+                                    </div>
+                                    <div class="vu-card">
+                                        <div class="vu-card__title">
+                                            <span class="vu-section__icon" data-icon="shield-check"/>
+                                            <span>Accepted Insurance Providers</span>
+                                        </div>
+                                        <group>
+                                            <field name="accepted_insurance_providers" widget="many2many_tags" invisible="not accepts_insurance"/>
+                                        </group>
+                                    </div>
+                                </div>
+                            </div>
                         </page>
 
                         <page string="Licensing &amp; Compliance" name="compliance">
-                            <group>
-                                <group name="licensing" string="Licensing">
-                                    <field name="business_license_number"/>
-                                    <field name="health_license_number"/>
-                                    <field name="license_expiry_date"/>
-                                </group>
-                                <group name="inspections" string="Inspections">
-                                    <field name="last_inspection_date"/>
-                                    <field name="next_inspection_date"/>
-                                </group>
-                            </group>
+                            <div class="vu-section">
+                                <div class="vu-section__title">
+                                    <span class="vu-section__icon" data-icon="shield-check"/>
+                                    <div>
+                                        <span>Licensing &amp; Compliance</span>
+                                        <small class="text-muted d-block">Regulatory identifiers and inspection cadence</small>
+                                    </div>
+                                </div>
+                                <div class="vu-section-grid">
+                                    <div class="vu-card">
+                                        <div class="vu-card__title">
+                                            <span class="vu-section__icon" data-icon="id-card"/>
+                                            <span>Licensing</span>
+                                        </div>
+                                        <group col="2">
+                                            <field name="business_license_number"/>
+                                            <field name="health_license_number"/>
+                                            <field name="license_expiry_date"/>
+                                        </group>
+                                    </div>
+                                    <div class="vu-card">
+                                        <div class="vu-card__title">
+                                            <span class="vu-section__icon" data-icon="timeline"/>
+                                            <span>Inspections</span>
+                                        </div>
+                                        <group col="2">
+                                            <field name="last_inspection_date"/>
+                                            <field name="next_inspection_date"/>
+                                        </group>
+                                    </div>
+                                </div>
+                            </div>
                         </page>
                     </notebook>
                 </sheet>

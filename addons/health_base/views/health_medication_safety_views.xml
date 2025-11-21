@@ -20,35 +20,78 @@
                             <field name="name" class="o_text_overflow" placeholder="Medication Name"/>
                         </h1>
                     </div>
-                    <group>
-                        <group string="Medication Information">
-                            <field name="generic_name"/>
-                            <field name="brand_name"/>
-                            <field name="medication_class"/>
-                            <field name="therapeutic_category"/>
-                        </group>
-                        <group string="Safety Information">
-                            <field name="pregnancy_category"/>
-                            <field name="vietnamese_name"/>
-                        </group>
-                    </group>
+                    <div class="vu-section">
+                        <div class="vu-section__title">
+                            <span class="vu-section__icon" data-icon="pill"/>
+                            <div>
+                                <span>Medication Profile</span>
+                                <small class="text-muted d-block">Classification and localized naming</small>
+                            </div>
+                        </div>
+                        <div class="vu-section-grid">
+                            <div class="vu-card">
+                                <div class="vu-card__title">
+                                    <span class="vu-section__icon" data-icon="pill"/>
+                                    <span>Medication Information</span>
+                                </div>
+                                <group col="2">
+                                    <field name="generic_name"/>
+                                    <field name="brand_name"/>
+                                    <field name="medication_class"/>
+                                    <field name="therapeutic_category"/>
+                                </group>
+                            </div>
+                            <div class="vu-card">
+                                <div class="vu-card__title">
+                                    <span class="vu-section__icon" data-icon="alert-triangle"/>
+                                    <span>Safety Information</span>
+                                </div>
+                                <group col="2">
+                                    <field name="pregnancy_category"/>
+                                    <field name="vietnamese_name"/>
+                                </group>
+                            </div>
+                        </div>
+                    </div>
                     <notebook>
                         <page string="Contraindications" name="contraindications">
-                            <field name="contraindications" placeholder="List contraindications..."/>
-                            <field name="vietnamese_contraindications" placeholder="Vietnamese contraindications..."/>
+                            <div class="vu-card">
+                                <div class="vu-card__title">
+                                    <span class="vu-section__icon" data-icon="alert-triangle"/>
+                                    <span>Contraindications</span>
+                                </div>
+                                <group>
+                                    <field name="contraindications" placeholder="List contraindications..."/>
+                                    <field name="vietnamese_contraindications" placeholder="Vietnamese contraindications..."/>
+                                </group>
+                            </div>
                         </page>
                         <page string="Side Effects" name="side_effects">
-                            <field name="side_effects" placeholder="Common side effects..."/>
+                            <div class="vu-card">
+                                <div class="vu-card__title">
+                                    <span class="vu-section__icon" data-icon="file-text"/>
+                                    <span>Side Effects</span>
+                                </div>
+                                <group>
+                                    <field name="side_effects" placeholder="Common side effects..."/>
+                                </group>
+                            </div>
                         </page>
                         <page string="Interactions" name="interactions">
-                            <field name="interaction_ids" readonly="1">
-                                <tree>
-                                    <field name="medication2_id"/>
-                                    <field name="severity"/>
-                                    <field name="description"/>
-                                    <field name="evidence_level"/>
-                                </tree>
-                            </field>
+                            <div class="vu-card">
+                                <div class="vu-card__title">
+                                    <span class="vu-section__icon" data-icon="life-ring"/>
+                                    <span>Interactions</span>
+                                </div>
+                                <field name="interaction_ids" readonly="1">
+                                    <tree>
+                                        <field name="medication2_id"/>
+                                        <field name="severity"/>
+                                        <field name="description"/>
+                                        <field name="evidence_level"/>
+                                    </tree>
+                                </field>
+                            </div>
                         </page>
                     </notebook>
                 </sheet>
@@ -114,22 +157,51 @@
         <field name="arch" type="xml">
             <form string="Medication Interaction" class="o_form_record_class">
                 <sheet string="Interaction">
-                    <group>
-                        <group string="Medications">
-                            <field name="medication1_id"/>
-                            <field name="medication2_id"/>
-                        </group>
-                        <group string="Interaction Details">
-                            <field name="severity"/>
-                            <field name="evidence_level"/>
-                            <field name="source"/>
-                            <field name="last_updated"/>
-                        </group>
-                    </group>
+                    <div class="vu-section">
+                        <div class="vu-section__title">
+                            <span class="vu-section__icon" data-icon="pill"/>
+                            <div>
+                                <span>Interaction Details</span>
+                                <small class="text-muted d-block">Paired medications and severity scoring</small>
+                            </div>
+                        </div>
+                        <div class="vu-section-grid">
+                            <div class="vu-card">
+                                <div class="vu-card__title">
+                                    <span class="vu-section__icon" data-icon="pill"/>
+                                    <span>Medications</span>
+                                </div>
+                                <group col="2">
+                                    <field name="medication1_id"/>
+                                    <field name="medication2_id"/>
+                                </group>
+                            </div>
+                            <div class="vu-card">
+                                <div class="vu-card__title">
+                                    <span class="vu-section__icon" data-icon="alert-triangle"/>
+                                    <span>Interaction Details</span>
+                                </div>
+                                <group col="2">
+                                    <field name="severity"/>
+                                    <field name="evidence_level"/>
+                                    <field name="source"/>
+                                    <field name="last_updated"/>
+                                </group>
+                            </div>
+                        </div>
+                    </div>
                     <notebook>
                         <page string="Description" name="description">
-                            <field name="description" placeholder="Interaction description..."/>
-                            <field name="vietnamese_description" placeholder="Vietnamese description..."/>
+                            <div class="vu-card">
+                                <div class="vu-card__title">
+                                    <span class="vu-section__icon" data-icon="file-text"/>
+                                    <span>Description</span>
+                                </div>
+                                <group>
+                                    <field name="description" placeholder="Interaction description..."/>
+                                    <field name="vietnamese_description" placeholder="Vietnamese description..."/>
+                                </group>
+                            </div>
                         </page>
                     </notebook>
                 </sheet>

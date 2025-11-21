@@ -16,21 +16,46 @@
                         <button name="generate_intervention_plan" type="object" 
                                 string="Generate Plan" class="oe_stat_button" icon="fa-clipboard"/>
                     </div>
-                    <group>
-                        <group string='Client Information'>
-                            <field name="patient_id"/>
-                            <field name="assessment_date"/>
-                            <field name="assessed_by"/>
-                        </group>
-                        <group string="Risk Score">
-                            <field name="morse_score" readonly="1"/>
-                            <field name="risk_level" readonly="1"/>
-                        </group>
-                    </group>
+                    <div class="vu-section">
+                        <div class="vu-section__title">
+                            <span class="vu-section__icon" data-icon="activity"/>
+                            <div>
+                                <span>Assessment Overview</span>
+                                <small class="text-muted d-block">Who was assessed and the resulting Morse score</small>
+                            </div>
+                        </div>
+                        <div class="vu-section-grid">
+                            <div class="vu-card">
+                                <div class="vu-card__title">
+                                    <span class="vu-section__icon" data-icon="users-group"/>
+                                    <span>Client Information</span>
+                                </div>
+                                <group col="2">
+                                    <field name="patient_id"/>
+                                    <field name="assessment_date"/>
+                                    <field name="assessed_by"/>
+                                </group>
+                            </div>
+                            <div class="vu-card">
+                                <div class="vu-card__title">
+                                    <span class="vu-section__icon" data-icon="alert-triangle"/>
+                                    <span>Risk Score</span>
+                                </div>
+                                <group col="2">
+                                    <field name="morse_score" readonly="1"/>
+                                    <field name="risk_level" readonly="1"/>
+                                </group>
+                            </div>
+                        </div>
+                    </div>
                     <notebook>
                         <page string="Morse Fall Scale" name="morse_scale">
-                            <group>
-                                <group string="Assessment Components">
+                            <div class="vu-card">
+                                <div class="vu-card__title">
+                                    <span class="vu-section__icon" data-icon="clipboard-list"/>
+                                    <span>Assessment Components</span>
+                                </div>
+                                <group col="2">
                                     <field name="history_of_falling"/>
                                     <field name="secondary_diagnosis"/>
                                     <field name="ambulatory_aid"/>
@@ -38,15 +63,31 @@
                                     <field name="gait_transfer"/>
                                     <field name="mental_status"/>
                                 </group>
-                            </group>
+                            </div>
                         </page>
                         <page string="Environmental Assessment" name="environmental">
-                            <field name="environmental_hazards" placeholder="Home environment assessment..."/>
-                            <field name="vietnamese_environmental_hazards" placeholder="Vietnamese environmental assessment..."/>
+                            <div class="vu-card">
+                                <div class="vu-card__title">
+                                    <span class="vu-section__icon" data-icon="map-pin"/>
+                                    <span>Environmental Assessment</span>
+                                </div>
+                                <group>
+                                    <field name="environmental_hazards" placeholder="Home environment assessment..."/>
+                                    <field name="vietnamese_environmental_hazards" placeholder="Vietnamese environmental assessment..."/>
+                                </group>
+                            </div>
                         </page>
                         <page string="Intervention Plan" name="intervention">
-                            <field name="intervention_plan" placeholder="Personalized fall prevention plan..."/>
-                            <field name="vietnamese_intervention_plan" placeholder="Vietnamese intervention plan..."/>
+                            <div class="vu-card">
+                                <div class="vu-card__title">
+                                    <span class="vu-section__icon" data-icon="heart-pulse"/>
+                                    <span>Intervention Plan</span>
+                                </div>
+                                <group>
+                                    <field name="intervention_plan" placeholder="Personalized fall prevention plan..."/>
+                                    <field name="vietnamese_intervention_plan" placeholder="Vietnamese intervention plan..."/>
+                                </group>
+                            </div>
                         </page>
                     </notebook>
                 </sheet>
@@ -123,53 +164,112 @@
                         <button name="generate_interventions" type="object" 
                                 string="Generate Interventions" class="oe_stat_button" icon="fa-clipboard"/>
                     </div>
-                    <group>
-                        <group string='Client Information'>
-                            <field name="patient_id"/>
-                            <field name="assessment_date"/>
-                            <field name="age" readonly="1"/>
-                            <field name="gender" readonly="1"/>
-                        </group>
-                        <group string="Risk Score">
-                            <field name="risk_score" readonly="1"/>
-                            <field name="risk_level" readonly="1"/>
-                        </group>
-                    </group>
+                    <div class="vu-section">
+                        <div class="vu-section__title">
+                            <span class="vu-section__icon" data-icon="activity"/>
+                            <div>
+                                <span>Assessment Snapshot</span>
+                                <small class="text-muted d-block">Patient demographics and risk scoring</small>
+                            </div>
+                        </div>
+                        <div class="vu-section-grid">
+                            <div class="vu-card">
+                                <div class="vu-card__title">
+                                    <span class="vu-section__icon" data-icon="users-group"/>
+                                    <span>Client Information</span>
+                                </div>
+                                <group col="2">
+                                    <field name="patient_id"/>
+                                    <field name="assessment_date"/>
+                                    <field name="age" readonly="1"/>
+                                    <field name="gender" readonly="1"/>
+                                </group>
+                            </div>
+                            <div class="vu-card">
+                                <div class="vu-card__title">
+                                    <span class="vu-section__icon" data-icon="alert-triangle"/>
+                                    <span>Risk Score</span>
+                                </div>
+                                <group col="2">
+                                    <field name="risk_score" readonly="1"/>
+                                    <field name="risk_level" readonly="1"/>
+                                </group>
+                            </div>
+                        </div>
+                    </div>
                     <notebook>
                         <page string="Medical History" name="medical">
-                            <group>
-                                <group string="Medical Factors">
-                                    <field name="chronic_conditions"/>
-                                    <field name="prior_admissions"/>
-                                    <field name="emergency_visits"/>
-                                </group>
-                                <group string="Functional Status">
-                                    <field name="adl_score"/>
-                                    <field name="mobility_issues"/>
-                                    <field name="cognitive_impairment"/>
-                                </group>
-                            </group>
+                            <div class="vu-section-grid">
+                                <div class="vu-card">
+                                    <div class="vu-card__title">
+                                        <span class="vu-section__icon" data-icon="stethoscope"/>
+                                        <span>Medical Factors</span>
+                                    </div>
+                                    <group col="2">
+                                        <field name="chronic_conditions"/>
+                                        <field name="prior_admissions"/>
+                                        <field name="emergency_visits"/>
+                                    </group>
+                                </div>
+                                <div class="vu-card">
+                                    <div class="vu-card__title">
+                                        <span class="vu-section__icon" data-icon="activity"/>
+                                        <span>Functional Status</span>
+                                    </div>
+                                    <group col="2">
+                                        <field name="adl_score"/>
+                                        <field name="mobility_issues"/>
+                                        <field name="cognitive_impairment"/>
+                                    </group>
+                                </div>
+                            </div>
                         </page>
                         <page string="Social Factors" name="social">
-                            <group>
-                                <group string="Living Situation">
-                                    <field name="lives_alone"/>
-                                    <field name="has_caregiver"/>
-                                </group>
-                                <group string="Access Issues">
-                                    <field name="transportation_issues"/>
-                                    <field name="financial_constraints"/>
-                                </group>
-                            </group>
+                            <div class="vu-section-grid">
+                                <div class="vu-card">
+                                    <div class="vu-card__title">
+                                        <span class="vu-section__icon" data-icon="users-group"/>
+                                        <span>Living Situation</span>
+                                    </div>
+                                    <group col="2">
+                                        <field name="lives_alone"/>
+                                        <field name="has_caregiver"/>
+                                    </group>
+                                </div>
+                                <div class="vu-card">
+                                    <div class="vu-card__title">
+                                        <span class="vu-section__icon" data-icon="credit-card"/>
+                                        <span>Access Issues</span>
+                                    </div>
+                                    <group col="2">
+                                        <field name="transportation_issues"/>
+                                        <field name="financial_constraints"/>
+                                    </group>
+                                </div>
+                            </div>
                         </page>
                         <page string="Medication Factors" name="medication">
-                            <group>
-                                <field name="medication_count"/>
-                                <field name="medication_compliance"/>
-                            </group>
+                            <div class="vu-card">
+                                <div class="vu-card__title">
+                                    <span class="vu-section__icon" data-icon="pill"/>
+                                    <span>Medication Factors</span>
+                                </div>
+                                <group col="2">
+                                    <field name="medication_count"/>
+                                    <field name="medication_compliance"/>
+                                </group>
+                            </div>
                         </page>
                         <page string="Recommended Interventions" name="interventions">
-                            <field name="recommended_interventions" placeholder="Recommended interventions..."/>
+                            <div class="vu-card">
+                                <div class="vu-card__title">
+                                    <span class="vu-section__icon" data-icon="heart-pulse"/>
+                                    <span>Recommended Interventions</span>
+                                </div>
+                                <group>
+                                    <field name="recommended_interventions" placeholder="Recommended interventions..."/>
+                                </group>
+                            </div>
                         </page>
                     </notebook>
                 </sheet>
