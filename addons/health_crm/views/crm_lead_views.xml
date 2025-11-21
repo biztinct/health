@@ -88,120 +88,219 @@
                     </div>
                     
                     <!-- Relationship Selection -->
-                    <group style="padding: 10px 0;">
-                        <field name="contact_relationship_type" string="I am the:" widget="radio" 
-                               options="{'horizontal': true}" style="font-size: 14px; font-weight: normal;"/>
-                        <field name="client_name" string="Client Name" placeholder="Enter client name..." 
-                               style="font-size: 14px; font-weight: normal;"
-                               invisible="contact_relationship_type == 'client'"
-                               required="contact_relationship_type != 'client'"/>
-                    </group>
+                    <div class="vu-card" style="margin-bottom: var(--vu-space-lg);">
+                        <div class="vu-card__title">
+                            <span class="vu-section__icon" data-icon="users-group"/>
+                            <span>Relationship Context</span>
+                        </div>
+                        <group col="2">
+                            <field name="contact_relationship_type" string="I am the:" widget="radio"
+                                   options="{'horizontal': true}" style="font-size: 14px; font-weight: normal;"/>
+                            <field name="client_name" string="Client Name" placeholder="Enter client name..."
+                                   style="font-size: 14px; font-weight: normal;"
+                                   invisible="contact_relationship_type == 'client'"
+                                   required="contact_relationship_type != 'client'"/>
+                        </group>
+                    </div>
                     
                     <!-- Main Content Tabs -->
                     <notebook>
                         <!-- Contact Details Tab -->
                         <page string="Contact Details" name="contact_details">
-                            <group>
-                                <!-- Basic Contact Information -->
-                                <group string="Contact Information" col="2">
-                                    <field name="email_from" string="Email" widget="email"/>
-                                    <field name="phone" widget="phone"/>
-                                    <field name="mobile" widget="phone"/>
-                                    <field name="contact_datetime" string="Contact Date/Time"/>
-                                </group>
-                                
-                                <!-- Address Information -->
-                                <group string="Address Information" col="2">
-                                    <field name="street" string="Street"/>
-                                    <field name="street2" string="Street 2"/>
-                                    <field name="city" string="City"/>
-                                    <field name="zip" string="ZIP"/>
-                                    <field name="state_id" string="State" options="{'no_create': True}"/>
-                                    <field name="country_id" string="Country" options="{'no_create': True}"/>
-                                    <field name="province_code" string="Province/City" options="{'no_create': True}"/>
-                                    <field name="facility_id" string="Healthcare Facility" options="{'no_create': True}"/>
-                                </group>
-                                
-                                <!-- Contact Classification -->
-                                <group string="Contact Classification" col="2">
-                                    <field name="contact_type" string="Contact Type"/>
-                                    <field name="contact_reason_id" string="Contact Reason" options="{'no_create': True}"/>
-                                    <field name="reason_if_rejected" string="Reason if Rejected" invisible="stage_id != 'lost'"/>
-                                </group>
-                            </group>
+                            <div class="vu-section">
+                                <div class="vu-section__title">
+                                    <span class="vu-section__icon" data-icon="users-group"/>
+                                    <div>
+                                        <span>Contact Details</span>
+                                        <small class="text-muted d-block">Communication channels and classification</small>
+                                    </div>
+                                </div>
+                                <div class="vu-section-grid">
+                                    <div class="vu-card">
+                                        <div class="vu-card__title">
+                                            <span class="vu-section__icon" data-icon="users-group"/>
+                                            <span>Contact Information</span>
+                                        </div>
+                                        <group col="2">
+                                            <field name="email_from" string="Email" widget="email"/>
+                                            <field name="phone" widget="phone"/>
+                                            <field name="mobile" widget="phone"/>
+                                            <field name="contact_datetime" string="Contact Date and Time"/>
+                                        </group>
+                                    </div>
+                                    
+                                    <div class="vu-card">
+                                        <div class="vu-card__title">
+                                            <span class="vu-section__icon" data-icon="map-pin"/>
+                                            <span>Address Information</span>
+                                        </div>
+                                        <group col="2">
+                                            <field name="street" string="Street"/>
+                                            <field name="street2" string="Street 2"/>
+                                            <field name="city" string="City"/>
+                                            <field name="zip" string="ZIP"/>
+                                            <field name="state_id" string="State" options="{'no_create': True}"/>
+                                            <field name="country_id" string="Country" options="{'no_create': True}"/>
+                                            <field name="province_code" string="Province or City" options="{'no_create': True}"/>
+                                            <field name="facility_id" string="Healthcare Facility" options="{'no_create': True}"/>
+                                        </group>
+                                    </div>
+                                    
+                                    <div class="vu-card">
+                                        <div class="vu-card__title">
+                                            <span class="vu-section__icon" data-icon="tag"/>
+                                            <span>Contact Classification</span>
+                                        </div>
+                                        <group col="2">
+                                            <field name="contact_type" string="Contact Type"/>
+                                            <field name="contact_reason_id" string="Contact Reason" options="{'no_create': True}"/>
+                                            <field name="reason_if_rejected" string="Reason if Rejected" invisible="stage_id != 'lost'"/>
+                                        </group>
+                                    </div>
+                                </div>
+                            </div>
                         </page>
                         
-                        <!-- Source &amp; Campaign Tab -->
-                        <page string="Source &amp; Campaign" name="source_campaign">
-                            <group>
-                                <group string="Source Tracking" col="2">
-                                    <field name="source_id" string="Source" options="{'no_create': True}"/>
-                                    <field name="medium_id" string="Medium" options="{'no_create': True}"/>
-                                    <field name="campaign_id" string="Campaign" options="{'no_create': True}"/>
-                                </group>
-                            </group>
+                        <!-- Source and Campaign Tab -->
+                        <page string="Source and Campaign" name="source_campaign">
+                            <div class="vu-section">
+                                <div class="vu-section__title">
+                                    <span class="vu-section__icon" data-icon="timeline"/>
+                                    <div>
+                                        <span>Source Tracking</span>
+                                        <small class="text-muted d-block">Marketing attribution and campaign context</small>
+                                    </div>
+                                </div>
+                                <div class="vu-card">
+                                    <group col="2">
+                                        <field name="source_id" string="Source" options="{'no_create': True}"/>
+                                        <field name="medium_id" string="Medium" options="{'no_create': True}"/>
+                                        <field name="campaign_id" string="Campaign" options="{'no_create': True}"/>
+                                    </group>
+                                </div>
+                            </div>
                         </page>
                         
-                        <!-- Service &amp; Booking Tab -->
-                        <page string="Service &amp; Booking" name="service_booking">
-                            <group>
-                                <group string="Service Information" col="2">
-                                    <field name="service_interest" string="Service Interest"/>
-                                    <field name="booking_status" string="Booking Status"/>
-                                    <field name="lead_reason_id" string="Lead Reason" options="{'no_create': True}"/>
-                                </group>
-                                
-                                <group string="Follow-up Management" col="2">
-                                    <field name="follow_up_count" string="Follow-up Count" readonly="1"/>
-                                    <field name="next_follow_up_date" string="Next Follow-up Date"/>
-                                    <field name="lead_followup_required" string="Follow-up Required"/>
-                                    <field name="follow_up_notes" string="Follow-up Notes" colspan="2"/>
-                                </group>
-                            </group>
+                        <!-- Service and Booking Tab -->
+                        <page string="Service and Booking" name="service_booking">
+                            <div class="vu-section">
+                                <div class="vu-section__title">
+                                    <span class="vu-section__icon" data-icon="heart-pulse"/>
+                                    <div>
+                                        <span>Service and Booking</span>
+                                        <small class="text-muted d-block">Interest captured and follow-up plan</small>
+                                    </div>
+                                </div>
+                                <div class="vu-section-grid">
+                                    <div class="vu-card">
+                                        <div class="vu-card__title">
+                                            <span class="vu-section__icon" data-icon="file-text"/>
+                                            <span>Service Information</span>
+                                        </div>
+                                        <group col="2">
+                                            <field name="service_interest" string="Service Interest"/>
+                                            <field name="booking_status" string="Booking Status"/>
+                                            <field name="lead_reason_id" string="Lead Reason" options="{'no_create': True}"/>
+                                        </group>
+                                    </div>
+                                    
+                                    <div class="vu-card">
+                                        <div class="vu-card__title">
+                                            <span class="vu-section__icon" data-icon="timeline"/>
+                                            <span>Follow-up Management</span>
+                                        </div>
+                                        <group col="2">
+                                            <field name="follow_up_count" string="Follow-up Count" readonly="1"/>
+                                            <field name="next_follow_up_date" string="Next Follow-up Date"/>
+                                            <field name="lead_followup_required" string="Follow-up Required"/>
+                                            <field name="follow_up_notes" string="Follow-up Notes" colspan="2"/>
+                                        </group>
+                                    </div>
+                                </div>
+                            </div>
                         </page>
                         
                         <!-- Relationships Tab -->
                         <page string="Healthcare Relationships" name="relationships">
-                            <group>
-                                <!-- Client Information -->
-                                <group string="Client Information" col="2">
-                                    <field name="patient_id" string="Client" options="{'no_create': True}" colspan="2"/>
-                                </group>
-                                
-                                <!-- Care Team -->
-                                <group string="Care Team" col="2">
-                                    <field name="primary_caregiver_id" string="Primary Caregiver" options="{'no_create': True}"/>
-                                    <field name="secondary_caregiver_id" string="Secondary Caregiver" options="{'no_create': True}"/>
-                                    <field name="primary_payer_id" string="Payer" options="{'no_create': True}"/>
-                                    <field name="client_representative_id" string="Client Representative" options="{'no_create': True}"/>
-                                </group>
-                                
-                                <!-- Referral &amp; Emergency -->
-                                <group string="Referral &amp; Emergency Information" col="2">
-                                    <field name="referrer_id" string="Referrer" options="{'no_create': True}"/>
-                                    <field name="emergency_contact_id" string="Emergency Contact" options="{'no_create': True}"/>
-                                </group>
-                            </group>
+                            <div class="vu-section">
+                                <div class="vu-section__title">
+                                    <span class="vu-section__icon" data-icon="users-group"/>
+                                    <div>
+                                        <span>Healthcare Relationships</span>
+                                        <small class="text-muted d-block">Client and care team linkages</small>
+                                    </div>
+                                </div>
+                                <div class="vu-section-grid">
+                                    <div class="vu-card">
+                                        <div class="vu-card__title">
+                                            <span class="vu-section__icon" data-icon="id-card"/>
+                                            <span>Client Information</span>
+                                        </div>
+                                        <group>
+                                            <field name="patient_id" string="Client" options="{'no_create': True}" colspan="2"/>
+                                        </group>
+                                    </div>
+                                    
+                                    <div class="vu-card">
+                                        <div class="vu-card__title">
+                                            <span class="vu-section__icon" data-icon="users-group"/>
+                                            <span>Care Team</span>
+                                        </div>
+                                        <group col="2">
+                                            <field name="primary_caregiver_id" string="Primary Caregiver" options="{'no_create': True}"/>
+                                            <field name="secondary_caregiver_id" string="Secondary Caregiver" options="{'no_create': True}"/>
+                                            <field name="primary_payer_id" string="Payer" options="{'no_create': True}"/>
+                                            <field name="client_representative_id" string="Client Representative" options="{'no_create': True}"/>
+                                        </group>
+                                    </div>
+                                    
+                                    <div class="vu-card">
+                                        <div class="vu-card__title">
+                                            <span class="vu-section__icon" data-icon="life-ring"/>
+                                            <span>Referral and Emergency</span>
+                                        </div>
+                                        <group col="2">
+                                            <field name="referrer_id" string="Referrer" options="{'no_create': True}"/>
+                                            <field name="emergency_contact_id" string="Emergency Contact" options="{'no_create': True}"/>
+                                        </group>
+                                    </div>
+                                </div>
+                            </div>
                         </page>
                         
                         <!-- Analytics Tab -->
-                        <page string="Analytics &amp; Tracking" name="analytics">
-                            <group>
-                                <group string="Duration Tracking" col="2">
-                                    <field name="day_open" string="Days Open" readonly="1"/>
-                                    <field name="day_close" string="Days to Close" readonly="1"/>
-                                    <field name="create_date" string="Created On" readonly="1"/>
-                                    <field name="date_closed" string="Closed On" readonly="1"/>
-                                </group>
-                            </group>
+                        <page string="Analytics and Tracking" name="analytics">
+                            <div class="vu-section">
+                                <div class="vu-section__title">
+                                    <span class="vu-section__icon" data-icon="timeline"/>
+                                    <div>
+                                        <span>Analytics and Tracking</span>
+                                        <small class="text-muted d-block">Lifecycle timing metrics</small>
+                                    </div>
+                                </div>
+                                <div class="vu-card">
+                                    <group col="2">
+                                        <field name="day_open" string="Days Open" readonly="1"/>
+                                        <field name="day_close" string="Days to Close" readonly="1"/>
+                                        <field name="create_date" string="Created On" readonly="1"/>
+                                        <field name="date_closed" string="Closed On" readonly="1"/>
+                                    </group>
+                                </div>
+                            </div>
                         </page>
                         
                         <!-- Notes Tab -->
                         <page string="Internal Notes" name="notes">
-                            <group>
-                                <field name="description" string="Internal Notes" nolabel="1" 
-                                       placeholder="Internal notes about this healthcare contact..."/>
-                            </group>
+                            <div class="vu-card">
+                                <div class="vu-card__title">
+                                    <span class="vu-section__icon" data-icon="file-text"/>
+                                    <span>Internal Notes</span>
+                                </div>
+                                <group>
+                                    <field name="description" string="Internal Notes" nolabel="1"
+                                           placeholder="Internal notes about this healthcare contact..."/>
+                                </group>
+                            </div>
                         </page>
                     </notebook>
                 </sheet>

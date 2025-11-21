@@ -21,48 +21,111 @@
                             <field name="display_name" readonly="1"/>
                         </h1>
                     </div>
-                    <group>
-                        <group string="Relationship Details">
-                            <field name="client_id" options="{'no_create': True}"/>
-                            <field name="representative_id" options="{'no_create': True}"/>
-                            <field name="role"/>
-                            <field name="relationship_type"/>
-                            <field name="is_primary"/>
-                        </group>
-                        <group string="Date Range">
-                            <field name="start_date"/>
-                            <field name="end_date"/>
-                            <field name="priority_order"/>
-                        </group>
-                    </group>
+                    <div class="vu-section">
+                        <div class="vu-section__title">
+                            <span class="vu-section__icon" data-icon="users-group"/>
+                            <div>
+                                <span>Relationship Overview</span>
+                                <small class="text-muted d-block">Client linkage and active period</small>
+                            </div>
+                        </div>
+                        <div class="vu-section-grid">
+                            <div class="vu-card">
+                                <div class="vu-card__title">
+                                    <span class="vu-section__icon" data-icon="users-group"/>
+                                    <span>Relationship Details</span>
+                                </div>
+                                <group col="2">
+                                    <field name="client_id" options="{'no_create': True}"/>
+                                    <field name="representative_id" options="{'no_create': True}"/>
+                                    <field name="role"/>
+                                    <field name="relationship_type"/>
+                                    <field name="is_primary"/>
+                                </group>
+                            </div>
+                            <div class="vu-card">
+                                <div class="vu-card__title">
+                                    <span class="vu-section__icon" data-icon="timeline"/>
+                                    <span>Date Range</span>
+                                </div>
+                                <group col="2">
+                                    <field name="start_date"/>
+                                    <field name="end_date"/>
+                                    <field name="priority_order"/>
+                                </group>
+                            </div>
+                        </div>
+                    </div>
                     
                     <notebook>
                         <page string="Healthcare Permissions">
-                            <group>
-                                <group string="Medical Permissions">
-                                    <field name="can_make_medical_decisions"/>
-                                    <field name="can_receive_medical_info"/>
-                                    <field name="can_schedule_appointments"/>
-                                </group>
-                                <group string="Financial Responsibility">
-                                    <field name="financial_responsibility" widget="percentage"/>
-                                </group>
-                            </group>
+                            <div class="vu-section">
+                                <div class="vu-section__title">
+                                    <span class="vu-section__icon" data-icon="heart-pulse"/>
+                                    <div>
+                                        <span>Permissions</span>
+                                        <small class="text-muted d-block">Medical authority and financial coverage</small>
+                                    </div>
+                                </div>
+                                <div class="vu-section-grid">
+                                    <div class="vu-card">
+                                        <div class="vu-card__title">
+                                            <span class="vu-section__icon" data-icon="stethoscope"/>
+                                            <span>Medical Permissions</span>
+                                        </div>
+                                        <group>
+                                            <field name="can_make_medical_decisions"/>
+                                            <field name="can_receive_medical_info"/>
+                                            <field name="can_schedule_appointments"/>
+                                        </group>
+                                    </div>
+                                    <div class="vu-card">
+                                        <div class="vu-card__title">
+                                            <span class="vu-section__icon" data-icon="credit-card"/>
+                                            <span>Financial Responsibility</span>
+                                        </div>
+                                        <group>
+                                            <field name="financial_responsibility" widget="percentage"/>
+                                        </group>
+                                    </div>
+                                </div>
+                            </div>
                         </page>
                         
                         <page string="Legal Documentation">
-                            <group>
-                                <group string="Vietnamese Legal Documents">
-                                    <field name="legal_document_type"/>
-                                    <field name="legal_document_number"/>
-                                    <field name="issued_by"/>
-                                    <field name="issued_date"/>
-                                </group>
-                                <group string="Additional Information">
+                            <div class="vu-section">
+                                <div class="vu-section__title">
+                                    <span class="vu-section__icon" data-icon="file-text"/>
+                                    <div>
+                                        <span>Legal Documentation</span>
+                                        <small class="text-muted d-block">Supporting paperwork for the relationship</small>
+                                    </div>
+                                </div>
+                                <div class="vu-section-grid">
+                                    <div class="vu-card">
+                                        <div class="vu-card__title">
+                                            <span class="vu-section__icon" data-icon="id-card"/>
+                                            <span>Vietnamese Legal Documents</span>
+                                        </div>
+                                        <group col="2">
+                                            <field name="legal_document_type"/>
+                                            <field name="legal_document_number"/>
+                                            <field name="issued_by"/>
+                                            <field name="issued_date"/>
+                                        </group>
+                                    </div>
+                                    <div class="vu-card">
+                                <div class="vu-card__title">
+                                    <span class="vu-section__icon" data-icon="file-text"/>
+                                    <span>Additional Information</span>
+                                </div>
+                                <group>
                                     <field name="notes" nolabel="1"/>
                                 </group>
-                            </group>
-                        </page>
+                            </div>
+                        </div>
+                    </div>
+                </page>
                     </notebook>
                 </sheet>
                 <chatter reload_on_follower="True"/>
@@ -165,7 +228,7 @@
                                         </div>
                                     </div>
 
-                                    <!-- Permissions & Responsibilities -->
+                                <!-- Permissions and Responsibilities -->
                                     <div class="mt-2" style="font-size: 11px;">
                                         <div t-if="record.can_make_medical_decisions.value" class="mb-1">
                                             <i class="fa fa-check-circle text-success"/> Medical Decisions
