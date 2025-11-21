@@ -182,3 +182,120 @@ $font-weight-normal: 400;
 $font-weight-semibold: 600;
 $font-weight-bold: 700;
 $font-weight-extrabold: 800;
+
+// ===== DESIGN TOKENS / CSS VARIABLES =====
+
+:root {
+    /* Core Palette */
+    --vu-surface-app: #{$vu-white};
+    --vu-surface-panel: #{$vu-gray-lighter};
+    --vu-surface-card: #{$vu-card-bg};
+    --vu-surface-muted: #{$vu-gray-light};
+    --vu-surface-hover: #{$vu-deep-blue-lightest};
+
+    --vu-text-primary: #{$vu-text-primary};
+    --vu-text-secondary: #{$vu-text-secondary};
+    --vu-text-inverse: #{$vu-white};
+
+    --vu-border-soft: #{$vu-card-border};
+    --vu-border-strong: #{darken($vu-card-border, 10%)};
+
+    --vu-brand-primary: #{$vu-deep-blue};
+    --vu-brand-primary-dark: #{$vu-deep-blue-darker};
+    --vu-brand-secondary: #{$vu-accent-blue};
+    --vu-brand-accent: #{$vu-hibiscus-orange};
+
+    --vu-status-success: #{$vu-success};
+    --vu-status-info: #{$vu-info};
+    --vu-status-warning: #{$vu-warning};
+    --vu-status-danger: #{$vu-danger};
+
+    /* Typography Scale */
+    --vu-font-family-base: #{$font-family-sans-serif};
+    --vu-font-family-headings: #{$font-family-headings};
+    --vu-font-size-xs: 0.75rem;
+    --vu-font-size-sm: 0.875rem;
+    --vu-font-size-md: 1rem;
+    --vu-font-size-lg: 1.125rem;
+    --vu-font-size-xl: 1.5rem;
+    --vu-font-size-hero: 2rem;
+
+    --vu-line-height-tight: 1.2;
+    --vu-line-height-normal: 1.5;
+    --vu-line-height-relaxed: 1.75;
+
+    /* Spacing Scale (4px grid) */
+    --vu-space-xxs: 4px;
+    --vu-space-xs: 8px;
+    --vu-space-sm: 12px;
+    --vu-space-md: 16px;
+    --vu-space-lg: 24px;
+    --vu-space-xl: 32px;
+    --vu-space-xxl: 48px;
+
+    /* Elevation */
+    --vu-shadow-sm: #{$vu-shadow-sm};
+    --vu-shadow-md: #{$vu-shadow-md};
+    --vu-shadow-lg: #{$vu-shadow-lg};
+
+    /* Radii */
+    --vu-radius-sm: 6px;
+    --vu-radius-md: 10px;
+    --vu-radius-lg: 16px;
+
+    /* Transitions */
+    --vu-transition-fast: 120ms ease;
+    --vu-transition-base: 200ms ease;
+
+    /* Icon defaults */
+    --vu-icon-size: 20px;
+}
+
+[data-theme='dark'] {
+    --vu-surface-app: #{$vu-text-primary};
+    --vu-surface-panel: #{darken($vu-text-primary, 5%)};
+    --vu-surface-card: #{darken($vu-text-primary, 8%)};
+    --vu-surface-muted: #{darken($vu-text-primary, 12%)};
+    --vu-text-primary: #{$vu-white};
+    --vu-text-secondary: #{rgba($vu-white, 0.75)};
+    --vu-border-soft: #{rgba($vu-white, 0.15)};
+    --vu-border-strong: #{rgba($vu-white, 0.3)};
+    --vu-shadow-sm: 0 2px 6px rgba(0,0,0,0.4);
+    --vu-shadow-md: 0 6px 20px rgba(0,0,0,0.45);
+    --vu-shadow-lg: 0 10px 30px rgba(0,0,0,0.55);
+}
+
+// ===== MIXINS =====
+
+@mixin vu-card($padding: var(--vu-space-lg)) {
+    background: var(--vu-surface-card);
+    border-radius: var(--vu-radius-md);
+    box-shadow: var(--vu-shadow-sm);
+    padding: $padding;
+    border: 1px solid var(--vu-border-soft);
+}
+
+@mixin vu-section-title($icon-color: var(--vu-brand-primary)) {
+    font-family: var(--vu-font-family-headings);
+    font-size: var(--vu-font-size-lg);
+    font-weight: 600;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    color: var(--vu-text-secondary);
+    display: flex;
+    align-items: center;
+    gap: var(--vu-space-sm);
+
+    &::before {
+        content: '';
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        background: rgba($icon-color, .12);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        mask-size: contain;
+        mask-repeat: no-repeat;
+    }
+}

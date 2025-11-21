@@ -2,27 +2,308 @@
 // Additional styling for healthcare-specific UI elements
 
 // Light, clean healthcare backgrounds
+body {
+    font-family: var(--vu-font-family-base);
+    background: var(--vu-surface-app);
+    color: var(--vu-text-primary);
+    font-size: var(--vu-font-size-md);
+    line-height: var(--vu-line-height-normal);
+}
+
 .o_action_manager .o_view_controller .o_content {
-    background-color: #FAFAFA; // Clean neutral background
+    background-color: var(--vu-surface-panel);
+    padding: var(--vu-space-md);
 }
 
 .o_control_panel {
-    background-color: #F5F5F5; // Subtle separation
-    border-bottom: 1px solid #E0E0E0; // Neutral border
+    background-color: var(--vu-surface-muted);
+    border-bottom: 1px solid var(--vu-border-soft);
+    box-shadow: var(--vu-shadow-sm);
+    padding-top: var(--vu-space-sm);
+    padding-bottom: var(--vu-space-sm);
 }
 
 // Ensure proper link colors
 a {
-    color: #1565C0; // Deep Blue
+    color: var(--vu-brand-primary);
+    transition: color var(--vu-transition-fast);
 
     &:hover {
-        color: darken(#1565C0, 10%);
+        color: var(--vu-brand-primary-dark);
     }
 }
 
 // Clean card styling for healthcare forms
+.o_form_sheet_bg {
+    background: var(--vu-surface-panel);
+    padding: var(--vu-space-lg);
+}
+
 .o_form_sheet {
-    background-color: #ffffff;
+    @include vu-card(var(--vu-space-xl));
+    font-family: var(--vu-font-family-base);
+}
+
+.o_form_view .o_group {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: var(--vu-space-lg);
+}
+
+.vu-section {
+    display: flex;
+    flex-direction: column;
+    gap: var(--vu-space-lg);
+    padding: var(--vu-space-lg);
+    background: var(--vu-surface-card);
+    border-radius: var(--vu-radius-lg);
+    border: 1px solid var(--vu-border-soft);
+    box-shadow: var(--vu-shadow-sm);
+}
+
+.vu-section__title {
+    font-size: var(--vu-font-size-lg);
+    font-weight: 600;
+    letter-spacing: .02em;
+    color: var(--vu-text-primary);
+    display: flex;
+    align-items: center;
+    gap: var(--vu-space-sm);
+}
+
+.vu-section__icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    background: var(--vu-surface-hover);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    color: var(--vu-brand-primary);
+
+    &::after {
+        content: '';
+        width: 20px;
+        height: 20px;
+        mask-repeat: no-repeat;
+        mask-position: center;
+        mask-size: contain;
+        -webkit-mask-repeat: no-repeat;
+        -webkit-mask-position: center;
+        -webkit-mask-size: contain;
+        background-color: currentColor;
+    }
+}
+
+.vu-section__icon[data-icon="map-pin"] {
+    background: rgba(66, 165, 245, 0.15);
+    color: #1F5E97;
+
+    &::after {
+        mask-image: url('/health_base/static/src/img/lucide/map-pin.svg');
+        -webkit-mask-image: url('/health_base/static/src/img/lucide/map-pin.svg');
+    }
+}
+
+.vu-section__icon[data-icon="heart-pulse"] {
+    background: rgba(23, 107, 71, 0.15);
+    color: #176B47;
+
+    &::after {
+        mask-image: url('/health_base/static/src/img/lucide/heart-pulse.svg');
+        -webkit-mask-image: url('/health_base/static/src/img/lucide/heart-pulse.svg');
+    }
+}
+
+.vu-section__icon[data-icon="stethoscope"] {
+    background: rgba(106, 27, 154, 0.15);
+    color: #6A1B9A;
+
+    &::after {
+        mask-image: url('/health_base/static/src/img/lucide/stethoscope.svg');
+        -webkit-mask-image: url('/health_base/static/src/img/lucide/stethoscope.svg');
+    }
+}
+
+.vu-section__icon[data-icon="id-card"] {
+    background: rgba(251, 140, 0, 0.15);
+    color: #D46E00;
+
+    &::after {
+        mask-image: url('/health_base/static/src/img/lucide/id-card.svg');
+        -webkit-mask-image: url('/health_base/static/src/img/lucide/id-card.svg');
+    }
+}
+
+.vu-section__icon[data-icon="life-ring"] {
+    background: rgba(63, 81, 181, 0.15);
+    color: #3F51B5;
+
+    &::after {
+        mask-image: url('/health_base/static/src/img/lucide/life-ring.svg');
+        -webkit-mask-image: url('/health_base/static/src/img/lucide/life-ring.svg');
+    }
+}
+
+.vu-section__icon[data-icon="users-group"] {
+    background: rgba(0, 150, 136, 0.15);
+    color: #009688;
+
+    &::after {
+        mask-image: url('/health_base/static/src/img/lucide/users-group.svg');
+        -webkit-mask-image: url('/health_base/static/src/img/lucide/users-group.svg');
+    }
+}
+
+.vu-section__icon[data-icon="file-text"] {
+    background: rgba(96, 125, 139, 0.15);
+    color: #607D8B;
+
+    &::after {
+        mask-image: url('/health_base/static/src/img/lucide/file-text.svg');
+        -webkit-mask-image: url('/health_base/static/src/img/lucide/file-text.svg');
+    }
+}
+
+.vu-section__icon[data-icon="clipboard-list"] {
+    background: rgba(0, 150, 136, 0.12);
+    color: #00796B;
+
+    &::after {
+        mask-image: url('/health_base/static/src/img/lucide/clipboard-list.svg');
+        -webkit-mask-image: url('/health_base/static/src/img/lucide/clipboard-list.svg');
+    }
+}
+
+.vu-section__icon[data-icon="credit-card"] {
+    background: rgba(25, 118, 210, 0.12);
+    color: #1E5FAF;
+
+    &::after {
+        mask-image: url('/health_base/static/src/img/lucide/credit-card.svg');
+        -webkit-mask-image: url('/health_base/static/src/img/lucide/credit-card.svg');
+    }
+}
+
+.vu-section__icon[data-icon="shield-check"] {
+    background: rgba(56, 142, 60, 0.12);
+    color: #2E7D32;
+
+    &::after {
+        mask-image: url('/health_base/static/src/img/lucide/shield-check.svg');
+        -webkit-mask-image: url('/health_base/static/src/img/lucide/shield-check.svg');
+    }
+}
+
+.vu-section__icon[data-icon="history"] {
+    background: rgba(251, 192, 45, 0.2);
+    color: #F9A825;
+
+    &::after {
+        mask-image: url('/health_base/static/src/img/lucide/history.svg');
+        -webkit-mask-image: url('/health_base/static/src/img/lucide/history.svg');
+    }
+}
+
+.vu-section__icon[data-icon="package"] {
+    background: rgba(255, 152, 0, 0.15);
+    color: #EF6C00;
+
+    &::after {
+        mask-image: url('/health_base/static/src/img/lucide/package.svg');
+        -webkit-mask-image: url('/health_base/static/src/img/lucide/package.svg');
+    }
+}
+
+.vu-section__icon[data-icon="timeline"] {
+    background: rgba(84, 110, 122, 0.15);
+    color: #455A64;
+
+    &::after {
+        mask-image: url('/health_base/static/src/img/lucide/timeline.svg');
+        -webkit-mask-image: url('/health_base/static/src/img/lucide/timeline.svg');
+    }
+}
+
+.vu-section-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: var(--vu-space-lg);
+    width: 100%;
+}
+
+.vu-card {
+    @include vu-card(var(--vu-space-lg));
+    display: flex;
+    flex-direction: column;
+    gap: var(--vu-space-md);
+}
+
+.vu-card__title {
+    display: flex;
+    align-items: center;
+    gap: var(--vu-space-sm);
+    font-size: var(--vu-font-size-md);
+    font-weight: 600;
+    color: var(--vu-text-secondary);
+}
+
+.vu-field-label {
+    font-size: var(--vu-font-size-sm);
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    font-weight: 600;
+    color: var(--vu-text-secondary);
+    margin-bottom: var(--vu-space-xxs);
+}
+
+.vu-field-value {
+    font-size: var(--vu-font-size-lg);
+    color: var(--vu-text-primary);
+    font-weight: 500;
+}
+
+.vu-action-bar {
+    position: sticky;
+    bottom: 0;
+    background: rgba(var(--vu-surface-card), 0.95);
+    padding: var(--vu-space-md) var(--vu-space-lg);
+    border-top: 1px solid var(--vu-border-soft);
+    box-shadow: var(--vu-shadow-sm);
+    display: flex;
+    gap: var(--vu-space-sm);
+    justify-content: flex-end;
+    z-index: 5;
+}
+
+// Buttons to feel modern
+.btn-primary, .o_form_button_save {
+    background: linear-gradient(135deg, var(--vu-brand-primary), var(--vu-brand-secondary));
+    border: none;
+    border-radius: var(--vu-radius-md);
+    box-shadow: var(--vu-shadow-md);
+    padding: var(--vu-space-sm) var(--vu-space-lg);
+    font-weight: 600;
+    transition: transform var(--vu-transition-fast), box-shadow var(--vu-transition-fast);
+
+    &:hover {
+        transform: translateY(-1px);
+        box-shadow: var(--vu-shadow-lg);
+    }
+}
+
+.btn-secondary, .o_form_button_cancel {
+    background: var(--vu-surface-muted);
+    border: 1px solid var(--vu-border-soft);
+    border-radius: var(--vu-radius-md);
+    color: var(--vu-text-secondary);
+    padding: var(--vu-space-sm) var(--vu-space-lg);
+    transition: background var(--vu-transition-fast);
+
+    &:hover {
+        background: var(--vu-surface-hover);
+    }
 }
 
 // Professional selection highlighting
@@ -126,4 +407,63 @@ a {
         box-shadow: 0 3px 8px rgba(21, 101, 192, 0.25) !important;
         transform: translateY(-1px);
     }
+}
+
+// Modern tabs
+.o_notebook {
+    border-bottom: 1px solid var(--vu-border-soft);
+    margin-bottom: var(--vu-space-md);
+
+    > ul {
+        display: flex;
+        gap: var(--vu-space-md);
+        border: none;
+        padding-bottom: var(--vu-space-xs);
+
+        > li > a {
+            font-weight: 600;
+            letter-spacing: .04em;
+            color: var(--vu-text-secondary);
+            padding: var(--vu-space-xs) 0;
+            position: relative;
+            transition: color var(--vu-transition-fast);
+
+            &::after {
+                content: '';
+                position: absolute;
+                left: 0;
+                right: 0;
+                bottom: -6px;
+                height: 3px;
+                background: transparent;
+                border-radius: 99px;
+                transition: background var(--vu-transition-fast), transform var(--vu-transition-fast);
+                transform: scaleX(0);
+            }
+        }
+
+        > li.ui-tabs-active > a {
+            color: var(--vu-brand-primary);
+
+            &::after {
+                background: var(--vu-brand-primary);
+                transform: scaleX(1);
+            }
+        }
+    }
+}
+
+// Icon utilities
+.vu-icon {
+    width: var(--vu-icon-size);
+    height: var(--vu-icon-size);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--vu-brand-primary);
+
+    &--success { color: var(--vu-status-success); }
+    &--info { color: var(--vu-status-info); }
+    &--warning { color: var(--vu-status-warning); }
+    &--danger { color: var(--vu-status-danger); }
 }
