@@ -37,11 +37,23 @@ a {
 .o_form_sheet_bg {
     background: var(--vu-surface-panel);
     padding: var(--vu-space-lg);
+    border: 0 !important;
+    box-shadow: none !important;
 }
 
 .o_form_sheet {
     @include vu-card(var(--vu-space-xl));
     font-family: var(--vu-font-family-base);
+    border: 0;
+    box-shadow: var(--vu-shadow-lg);
+    --formView-sheet-border-width: 0;
+    --formView-sheet-margin-x: 0;
+    border-width: 0 !important;
+}
+
+.o_form_sheet::after,
+.o_form_sheet_bg::after {
+    display: none !important;
 }
 
 .o_form_view .o_group:not(.o_inner_group),
@@ -64,6 +76,11 @@ a {
     display: flex;
     flex-wrap: wrap;
     gap: var(--vu-space-lg);
+    justify-content: flex-start;
+    margin-left: 0;
+    margin-right: 0;
+    padding-left: var(--vu-space-md);
+    padding-right: var(--vu-space-md);
 }
 
 .o_form_view .o_group.row:not(.o_inner_group) > .o_inner_group {
@@ -86,6 +103,23 @@ a {
     border: 0;
     border-radius: 0;
     box-shadow: none;
+}
+
+.o_form_view .o_horizontal_separator {
+    box-shadow: none !important;
+    border: 0 !important;
+    background: transparent !important;
+    text-transform: uppercase;
+    font-weight: 600;
+    letter-spacing: .05em;
+    color: var(--vu-text-secondary);
+    padding-bottom: var(--vu-space-xs);
+    margin: var(--vu-space-md) 0;
+}
+
+.o_form_view .o_horizontal_separator::after,
+.o_form_view .o_horizontal_separator::before {
+    display: none !important;
 }
 
 .vu-section .o_group,
