@@ -81,11 +81,19 @@ a {
     margin-right: 0;
     padding-left: var(--vu-space-md);
     padding-right: var(--vu-space-md);
+    align-items: stretch !important;
 }
 
 .o_form_view .o_group.row:not(.o_inner_group) > .o_inner_group {
-    flex: 1 1 320px;
-    min-width: 280px;
+    flex: 1 1 420px;
+    min-width: 320px;
+    width: 100% !important;
+    max-width: none !important;
+    --bs-rows: auto;
+    grid-template-rows: auto;
+    grid-auto-rows: max-content;
+    align-content: flex-start !important;
+    justify-content: flex-start;
     padding: var(--vu-space-md);
     background: var(--vu-surface-card);
     border: 1px solid var(--vu-border-soft);
