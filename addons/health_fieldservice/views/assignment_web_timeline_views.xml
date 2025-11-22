@@ -101,19 +101,40 @@
                             <field name="name" readonly="1" class="text-muted"/>
                         </div>
                     </div>
-                    <group>
-                        <group name="assignment_info">
-                            <field name="fso_id" options="{'no_create': True}"/>
-                            <field name="assignment_date"/>
-                            <field name="assignment_type"/>
-                            <field name="priority"/>
-                        </group>
-                        <group name="staff_info">
-                            <field name="staff_id" options="{'no_create': True}"/>
-                            <field name="assignment_role"/>
-                            <field name="assigned_by" readonly="1"/>
-                        </group>
-                    </group>
+                    <div class="vu-section">
+                        <div class="vu-section__title">
+                            <span class="vu-section__icon" data-icon="users-group"/>
+                            <div>
+                                <span>Assignment Details</span>
+                                <small class="text-muted d-block">Booking, schedule and staff context</small>
+                            </div>
+                        </div>
+                        <div class="vu-section-grid">
+                            <div class="vu-card">
+                                <div class="vu-card__title">
+                                    <span class="vu-section__icon" data-icon="file-text"/>
+                                    <span>Assignment Information</span>
+                                </div>
+                                <group col="2">
+                                    <field name="fso_id" options="{'no_create': True}"/>
+                                    <field name="assignment_date"/>
+                                    <field name="assignment_type"/>
+                                    <field name="priority"/>
+                                </group>
+                            </div>
+                            <div class="vu-card">
+                                <div class="vu-card__title">
+                                    <span class="vu-section__icon" data-icon="users-group"/>
+                                    <span>Staff Information</span>
+                                </div>
+                                <group col="2">
+                                    <field name="staff_id" options="{'no_create': True}"/>
+                                    <field name="assignment_role"/>
+                                    <field name="assigned_by" readonly="1"/>
+                                </group>
+                            </div>
+                        </div>
+                    </div>
                     <notebook>
                     </notebook>
                 </sheet>
