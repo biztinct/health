@@ -122,6 +122,16 @@ a {
     display: none !important;
 }
 
+.o_form_view .o_notebook {
+    border-bottom: 0 !important;
+    box-shadow: none !important;
+    background: transparent !important;
+}
+
+.o_form_view .o_notebook .nav-tabs {
+    border-bottom: 0 !important;
+}
+
 .vu-section .o_group,
 .vu-card .o_group {
     display: grid;
