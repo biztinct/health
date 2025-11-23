@@ -28,13 +28,13 @@
             <form string="AI Assignment Engine Analysis">
                 <header>
                     <button name="train_assignment_model" type="object" string="🧠 Train AI Model" 
-                            class="btn-primary" groups="health_staff_assignment.group_assignment_manager"
+                            class="btn-primary" groups="health_base.group_healthcare_operations_manager"
                             help="Train the machine learning model with historical assignment data"/>
                     <button name="generate_optimal_assignments" type="object" string="🎯 Generate Optimal Assignments" 
-                            class="btn-secondary" groups="health_staff_assignment.group_head_nurse health_staff_assignment.group_assignment_manager"
+                            class="btn-secondary" groups="health_base.group_healthcare_operations_manager"
                             help="Generate AI-powered staff assignment suggestions for unassigned appointments"/>
                     <button name="optimize_daily_assignments" type="object" string="⚡ Optimize Daily Assignments" 
-                            class="btn-secondary" groups="health_staff_assignment.group_head_nurse health_staff_assignment.group_assignment_manager"
+                            class="btn-secondary" groups="health_base.group_healthcare_operations_manager"
                             help="Run comprehensive daily assignment optimization across all assignments"/>
                 </header>
                 <sheet>
@@ -44,38 +44,80 @@
                         </h1>
                     </div>
                     
-                    <group>
-                        <group string="Analysis Period">
-                            <field name="analysis_date"/>
-                            <field name="analysis_period_start"/>
-                            <field name="analysis_period_end"/>
-                            <field name="active"/>
-                            <field name="company_id" groups="base.group_multi_company"/>
-                        </group>
-                        
-                        <group string="AI Model Status">
-                            <field name="model_trained" widget="boolean_toggle"/>
-                            <field name="model_accuracy" widget="progressbar"/>
-                            <field name="training_data_points"/>
-                            <field name="last_training_date"/>
-                        </group>
-                    </group>
+                    <div class="vu-section">
+                        <div class="vu-section__title">
+                            <span class="vu-section__icon" data-icon="timeline"/>
+                            <div>
+                                <span>Analysis Overview</span>
+                                <small class="text-muted d-block">Period selection and AI model health</small>
+                            </div>
+                        </div>
+                        <div class="vu-section-grid">
+                            <div class="vu-card">
+                                <div class="vu-card__title">
+                                    <span class="vu-section__icon" data-icon="calendar"/>
+                                    <span>Analysis Period</span>
+                                </div>
+                                <group col="2">
+                                    <field name="analysis_date"/>
+                                    <field name="analysis_period_start"/>
+                                    <field name="analysis_period_end"/>
+                                    <field name="active"/>
+                                    <field name="company_id" groups="base.group_multi_company"/>
+                                </group>
+                            </div>
+                            
+                            <div class="vu-card">
+                                <div class="vu-card__title">
+                                    <span class="vu-section__icon" data-icon="activity"/>
+                                    <span>AI Model Status</span>
+                                </div>
+                                <group col="2">
+                                    <field name="model_trained" widget="boolean_toggle"/>
+                                    <field name="model_accuracy" widget="progressbar"/>
+                                    <field name="training_data_points"/>
+                                    <field name="last_training_date"/>
+                                </group>
+                            </div>
+                        </div>
+                    </div>
                     
                     <notebook>
                         <page string="Performance Metrics" name="performance">
-                            <group>
-                                <group string="Assignment Intelligence">
-                                    <field name="assignment_success_rate" widget="progressbar"/>
-                                    <field name="assignment_efficiency" widget="progressbar"/>
-                                    <field name="staff_satisfaction_score" widget="progressbar"/>
-                                    <field name="patient_satisfaction_impact" widget="progressbar"/>
-                                </group>
-                                
-                                <group string="Geographic Optimization">
-                                    <field name="travel_optimization_score" widget="progressbar"/>
-                                    <field name="route_efficiency" widget="progressbar"/>
-                                </group>
-                            </group>
+                            <div class="vu-section">
+                                <div class="vu-section__title">
+                                    <span class="vu-section__icon" data-icon="activity"/>
+                                    <div>
+                                        <span>Performance Metrics</span>
+                                        <small class="text-muted d-block">Assignment intelligence and geographic optimization</small>
+                                    </div>
+                                </div>
+                                <div class="vu-section-grid">
+                                    <div class="vu-card">
+                                        <div class="vu-card__title">
+                                            <span class="vu-section__icon" data-icon="timeline"/>
+                                            <span>Assignment Intelligence</span>
+                                        </div>
+                                        <group col="2">
+                                            <field name="assignment_success_rate" widget="progressbar"/>
+                                            <field name="assignment_efficiency" widget="progressbar"/>
+                       	                    <field name="staff_satisfaction_score" widget="progressbar"/>
+                                            <field name="patient_satisfaction_impact" widget="progressbar"/>
+                                        </group>
+                                    </div>
+                                    
+                                    <div class="vu-card">
+                                        <div class="vu-card__title">
+                                            <span class="vu-section__icon" data-icon="map-pin"/>
+                                            <span>Geographic Optimization</span>
+                                        </div>
+                                        <group>
+                                            <field name="travel_optimization_score" widget="progressbar"/>
+                                            <field name="route_efficiency" widget="progressbar"/>
+                                        </group>
+                                    </div>
+                                </div>
+                            </div>
                         </page>
                         
                         <page string="Optimal Assignments" name="optimal_assignments">

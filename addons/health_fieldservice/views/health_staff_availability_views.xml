@@ -63,18 +63,40 @@
                         </div>
                     </div>
 
-                    <group>
-                        <group string="Schedule Details" class="o_label_nowrap">
-                            <field name="availability_date" required="1"/>
-                            <field name="start_time" required="1" widget="float_time" string="Start Time"/>
-                            <field name="end_time" required="1" widget="float_time" string="End Time"/>
-                        </group>
-                        <group string="Capacity" class="o_label_nowrap">
-                            <field name="capacity"/>
-                            <field name="booked_count" readonly="1"/>
-                            <field name="remaining_capacity" readonly="1"/>
-                        </group>
-                    </group>
+                    <div class="vu-section">
+                        <div class="vu-section__title">
+                            <span class="vu-section__icon" data-icon="timeline"/>
+                            <div>
+                                <span>Availability Overview</span>
+                                <small class="text-muted d-block">Schedule timing and capacity utilization</small>
+                            </div>
+                        </div>
+                        <div class="vu-section-grid">
+                            <div class="vu-card">
+                                <div class="vu-card__title">
+                                    <span class="vu-section__icon" data-icon="calendar"/>
+                                    <span>Schedule Details</span>
+                                </div>
+                                <group col="2" class="o_label_nowrap">
+                                    <field name="availability_date" required="1"/>
+                                    <field name="start_time" required="1" widget="float_time" string="Start Time"/>
+                                    <field name="end_time" required="1" widget="float_time" string="End Time"/>
+                                </group>
+                            </div>
+                            
+                            <div class="vu-card">
+                                <div class="vu-card__title">
+                                    <span class="vu-section__icon" data-icon="activity"/>
+                                    <span>Capacity</span>
+                                </div>
+                                <group col="2" class="o_label_nowrap">
+                                    <field name="capacity"/>
+                                    <field name="booked_count" readonly="1"/>
+                                    <field name="remaining_capacity" readonly="1"/>
+                                </group>
+                            </div>
+                        </div>
+                    </div>
                     
                     <notebook>
                         <page string="Assignments" name="assignments">
@@ -85,17 +107,38 @@
                         </page>
                         
                         <page string="Buffer and Travel" name="buffer">
-                            <group>
-                                <group string="Buffer Times">
-                                    <field name="buffer_before"/>
-                                    <field name="buffer_after"/>
-                                </group>
-                                <group string="Travel Times">
-                                    <field name="travel_time_from_previous" widget="float_time"/>
-                                    <field name="travel_time_to_next" widget="float_time"/>
-                                    <field name="location_type" readonly="1"/>
-                                </group>
-                            </group>
+                            <div class="vu-section">
+                                <div class="vu-section__title">
+                                    <span class="vu-section__icon" data-icon="map-pin"/>
+                                    <div>
+                                        <span>Buffer &amp; Travel</span>
+                                        <small class="text-muted d-block">Travel allowances and buffer windows</small>
+                                    </div>
+                                </div>
+                                <div class="vu-section-grid">
+                                    <div class="vu-card">
+                                        <div class="vu-card__title">
+                                            <span class="vu-section__icon" data-icon="timeline"/>
+                                            <span>Buffer Times</span>
+                                        </div>
+                                        <group>
+                                            <field name="buffer_before"/>
+                                            <field name="buffer_after"/>
+                                        </group>
+                                    </div>
+                                    <div class="vu-card">
+                                        <div class="vu-card__title">
+                                            <span class="vu-section__icon" data-icon="map-pin"/>
+                                            <span>Travel Times</span>
+                                        </div>
+                                        <group>
+                                            <field name="travel_time_from_previous" widget="float_time"/>
+                                            <field name="travel_time_to_next" widget="float_time"/>
+                                            <field name="location_type" readonly="1"/>
+                                        </group>
+                                    </div>
+                                </div>
+                            </div>
                         </page>
                         
                         <page string="Conflicts" name="conflicts">

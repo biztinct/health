@@ -23,21 +23,45 @@
         <field name="arch" type="xml">
             <form string="Healthcare Skill">
                 <sheet>
-                    <group>
-                        <group>
-                            <field name="name"/>
-                            <field name="skill_category"/>
-                            <field name="required_certification"/>
-                        </group>
-                        <group>
-                            <field name="weight"/>
-                            <field name="certification_body"/>
-                            <field name="is_active"/>
-                        </group>
-                    </group>
-                    <group>
-                        <field name="description"/>
-                    </group>
+                    <div class="vu-section">
+                        <div class="vu-section__title">
+                            <span class="vu-section__icon" data-icon="stethoscope"/>
+                            <div>
+                                <span>Skill Details</span>
+                                <small class="text-muted d-block">Classification and certification</small>
+                            </div>
+                        </div>
+                        <div class="vu-section-grid">
+                            <div class="vu-card">
+                                <group col="2">
+                                    <field name="name"/>
+                                    <field name="skill_category"/>
+                                    <field name="required_certification"/>
+                                </group>
+                            </div>
+                            <div class="vu-card">
+                                <group col="2">
+                                    <field name="weight"/>
+                                    <field name="certification_body"/>
+                                    <field name="is_active"/>
+                                </group>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="vu-section">
+                        <div class="vu-section__title">
+                            <span class="vu-section__icon" data-icon="file-text"/>
+                            <div>
+                                <span>Description</span>
+                                <small class="text-muted d-block">Guidance for assignment matching</small>
+                            </div>
+                        </div>
+                        <div class="vu-section-grid">
+                            <div class="vu-card">
+                                <field name="description"/>
+                            </div>
+                        </div>
+                    </div>
                     <notebook>
                         <page name="employees" string="Employees with this Skill">
                             <field name="employee_ids">
@@ -92,27 +116,57 @@
         <field name="arch" type="xml">
             <form string="Service Area">
                 <sheet>
-                    <group>
-                        <group>
-                            <field name="name"/>
-                            <field name="area_code"/>
-                            <field name="priority"/>
-                            <field name="is_active"/>
-                        </group>
-                        <group>
-                            <field name="travel_time_minutes"/>
-                            <field name="radius_km"/>
-                            <field name="assignment_count"/>
-                            <field name="average_response_time"/>
-                        </group>
-                    </group>
-                    <group>
-                        <field name="description"/>
-                    </group>
-                    <group string="Geographic Coordinates" col="4">
-                        <field name="center_latitude"/>
-                        <field name="center_longitude"/>
-                    </group>
+                    <div class="vu-section">
+                        <div class="vu-section__title">
+                            <span class="vu-section__icon" data-icon="map-pin"/>
+                            <div>
+                                <span>Service Area Details</span>
+                                <small class="text-muted d-block">Code, priority and activation</small>
+                            </div>
+                        </div>
+                        <div class="vu-section-grid">
+                            <div class="vu-card">
+                                <group col="2">
+                                    <field name="name"/>
+                                    <field name="area_code"/>
+                                    <field name="priority"/>
+                                    <field name="is_active"/>
+                                </group>
+                            </div>
+                            <div class="vu-card">
+                                <group col="2">
+                                    <field name="travel_time_minutes"/>
+                                    <field name="radius_km"/>
+                                    <field name="assignment_count"/>
+                                    <field name="average_response_time"/>
+                                </group>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="vu-section">
+                        <div class="vu-section__title">
+                            <span class="vu-section__icon" data-icon="file-text"/>
+                            <div>
+                                <span>Description &amp; Coordinates</span>
+                                <small class="text-muted d-block">Narrative notes and geo center</small>
+                            </div>
+                        </div>
+                        <div class="vu-section-grid">
+                            <div class="vu-card">
+                                <field name="description"/>
+                            </div>
+                            <div class="vu-card">
+                                <div class="vu-card__title">
+                                    <span class="vu-section__icon" data-icon="map-pin"/>
+                                    <span>Geographic Coordinates</span>
+                                </div>
+                                <group col="2">
+                                    <field name="center_latitude"/>
+                                    <field name="center_longitude"/>
+                                </group>
+                            </div>
+                        </div>
+                    </div>
                 </sheet>
             </form>
         </field>

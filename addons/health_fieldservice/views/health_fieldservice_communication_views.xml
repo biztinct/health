@@ -24,6 +24,7 @@
                 <sheet>
                     <div class="oe_button_box" name="button_box">
                         <button name="action_quick_status_update" type="object"
+                                context="{'status': 'arrived'}"
                                 class="oe_stat_button" icon="fa-tachometer">
                             <div class="o_field_widget o_stat_info">
                                 <span class="o_stat_text">Quick Status</span>
@@ -41,38 +42,80 @@
                         </div>
                     </div>
                     
-                    <group>
-                        <group string="Communication Details">
-                            <field name="fieldservice_order_id" options="{'no_create': True}"/>
-                            <field name="sender_id" readonly="1"/>
-                            <field name="communication_channel" readonly="1"/>
-                            <field name="create_date" readonly="1"/>
-                        </group>
-                        
-                        <group string="Recipients and Response">
-                            <field name="recipient_ids" widget="many2many_tags"/>
-                            <field name="recipient_role"/>
-                            <field name="requires_response"/>
-                            <field name="response_deadline" invisible="not requires_response"/>
-                            <field name="response_received" readonly="1"/>
-                        </group>
-                    </group>
+                    <div class="vu-section">
+                        <div class="vu-section__title">
+                            <span class="vu-section__icon" data-icon="timeline"/>
+                            <div>
+                                <span>Communication Context</span>
+                                <small class="text-muted d-block">Message metadata, recipients and response expectations</small>
+                            </div>
+                        </div>
+                        <div class="vu-section-grid">
+                            <div class="vu-card">
+                                <div class="vu-card__title">
+                                    <span class="vu-section__icon" data-icon="file-text"/>
+                                    <span>Communication Details</span>
+                                </div>
+                                <group col="2">
+                                    <field name="fieldservice_order_id" options="{'no_create': True}"/>
+                                    <field name="sender_id" readonly="1"/>
+                                    <field name="communication_channel" readonly="1"/>
+                                    <field name="create_date" readonly="1"/>
+                                </group>
+                            </div>
+                            
+                            <div class="vu-card">
+                                <div class="vu-card__title">
+                                    <span class="vu-section__icon" data-icon="users-group"/>
+                                    <span>Recipients &amp; Response</span>
+                                </div>
+                                <group col="2">
+                                    <field name="recipient_ids" widget="many2many_tags"/>
+                                    <field name="recipient_role"/>
+                                    <field name="requires_response"/>
+                                    <field name="response_deadline" invisible="not requires_response"/>
+                                    <field name="response_received" readonly="1"/>
+                                </group>
+                            </div>
+                        </div>
+                    </div>
                     
-                    <group>
-                        <group string="Status">
-                            <field name="is_read" widget="boolean_toggle"/>
-                            <field name="read_date" readonly="1" invisible="not is_read"/>
-                            <field name="is_overdue" widget="boolean_toggle" readonly="1"/>
-                            <field name="urgency_score" readonly="1"/>
-                        </group>
-                        
-                        <group string="Escalation">
-                            <field name="escalation_level" readonly="1"/>
-                            <field name="escalated_to_ids" widget="many2many_tags" readonly="1"/>
-                            <field name="auto_escalate"/>
-                            <field name="escalation_minutes" invisible="not auto_escalate"/>
-                        </group>
-                    </group>
+                    <div class="vu-section">
+                        <div class="vu-section__title">
+                            <span class="vu-section__icon" data-icon="alert-triangle"/>
+                            <div>
+                                <span>Status &amp; Escalation</span>
+                                <small class="text-muted d-block">Read confirmations, urgency and escalation handling</small>
+                            </div>
+                        </div>
+                        <div class="vu-section-grid">
+                            <div class="vu-card">
+                                <div class="vu-card__title">
+                                    <span class="vu-section__icon" data-icon="activity"/>
+                                    <span>Status Tracking</span>
+                                </div>
+                                <group col="2">
+                                    <field name="is_read" widget="boolean_toggle"/>
+                                    <field name="read_date" readonly="1" invisible="not is_read"/>
+                                    <field name="is_overdue" widget="boolean_toggle" readonly="1"/>
+                                    <field name="urgency_score" readonly="1"/>
+                                </group>
+                            </div>
+                            
+                            <div class="vu-card">
+                                <div class="vu-card__title">
+                                    <span class="vu-section__icon" data-icon="users-group"/>
+                                    <span>Escalation</span>
+                                </div>
+                                <group col="2">
+                                    <field name="escalation_level" readonly="1"/>
+                                    <field name="escalated_to_ids" widget="many2many_tags" readonly="1"/>
+                                    <field name="auto_escalate"/>
+                                    <field name="escalation_minutes" invisible="not auto_escalate"/>
+                                </group>
+                            </div>
+                        </div>
+                    </div>
                     
                     <notebook>
                         <page string="Message" name="message">

@@ -33,69 +33,153 @@
                         </button>
                     </div>
                     
-                    <group>
-                        <group string="Equipment Information">
-                            <field name="name"/>
-                            <field name="equipment_type"/>
-                            <field name="category"/>
-                            <field name="manufacturer"/>
-                            <field name="model_number"/>
-                            <field name="serial_number"/>
-                        </group>
-                        
-                        <group string="Current Status">
-                            <field name="current_fso_id" readonly="1"/>
-                            <field name="assigned_team_id"/>
-                            <field name="assigned_staff_id"/>
-                            <field name="usage_count" readonly="1"/>
-                            <field name="total_usage_hours" readonly="1"/>
-                        </group>
-                    </group>
+                    <div class="vu-section">
+                        <div class="vu-section__title">
+                            <span class="vu-section__icon" data-icon="stethoscope"/>
+                            <div>
+                                <span>Equipment Overview</span>
+                                <small class="text-muted d-block">Asset details and assignment status</small>
+                            </div>
+                        </div>
+                        <div class="vu-section-grid">
+                            <div class="vu-card">
+                                <div class="vu-card__title">
+                                    <span class="vu-section__icon" data-icon="file-text"/>
+                                    <span>Equipment Information</span>
+                                </div>
+                                <group col="2">
+                                    <field name="name"/>
+                                    <field name="equipment_type"/>
+                                    <field name="category"/>
+                                    <field name="manufacturer"/>
+                                    <field name="model_number"/>
+                                    <field name="serial_number"/>
+                                </group>
+                            </div>
+                            
+                            <div class="vu-card">
+                                <div class="vu-card__title">
+                                    <span class="vu-section__icon" data-icon="users-group"/>
+                                    <span>Current Status</span>
+                                </div>
+                                <group col="2">
+                                    <field name="current_fso_id" readonly="1"/>
+                                    <field name="assigned_team_id"/>
+                                    <field name="assigned_staff_id"/>
+                                    <field name="usage_count" readonly="1"/>
+                                    <field name="total_usage_hours" readonly="1"/>
+                                </group>
+                            </div>
+                        </div>
+                    </div>
                     
                     <notebook>
                         <page string="Specifications" name="specs">
-                            <group>
-                                <group string="Physical">
-                                    <field name="weight_kg"/>
-                                    <field name="dimensions"/>
-                                </group>
-                                <group string="Power">
-                                    <field name="power_source"/>
-                                    <field name="battery_life_hours"/>
-                                </group>
-                            </group>
+                            <div class="vu-section">
+                                <div class="vu-section__title">
+                                    <span class="vu-section__icon" data-icon="activity"/>
+                                    <div>
+                                        <span>Specifications</span>
+                                        <small class="text-muted d-block">Physical and power details</small>
+                                    </div>
+                                </div>
+                                <div class="vu-section-grid">
+                                    <div class="vu-card">
+                                        <div class="vu-card__title">
+                                            <span class="vu-section__icon" data-icon="timeline"/>
+                                            <span>Physical</span>
+                                        </div>
+                                        <group>
+                                            <field name="weight_kg"/>
+                                            <field name="dimensions"/>
+                                        </group>
+                                    </div>
+                                    <div class="vu-card">
+                                        <div class="vu-card__title">
+                                            <span class="vu-section__icon" data-icon="activity"/>
+                                            <span>Power</span>
+                                        </div>
+                                        <group>
+                                            <field name="power_source"/>
+                                            <field name="battery_life_hours"/>
+                                        </group>
+                                    </div>
+                                </div>
+                            </div>
                         </page>
                         
                         <page string="Maintenance" name="maintenance">
-                            <group>
-                                <group string="Maintenance Schedule">
-                                    <field name="last_maintenance_date"/>
-                                    <field name="next_maintenance_date"/>
-                                    <field name="maintenance_interval_days"/>
-                                    <field name="is_maintenance_due" widget="boolean_toggle"/>
-                                    <field name="days_until_maintenance"/>
-                                </group>
-                                <group string="Calibration">
-                                    <field name="calibration_due_date"/>
-                                    <field name="calibration_interval_days"/>
-                                    <field name="is_calibration_due" widget="boolean_toggle"/>
-                                </group>
-                            </group>
+                            <div class="vu-section">
+                                <div class="vu-section__title">
+                                    <span class="vu-section__icon" data-icon="life-ring"/>
+                                    <div>
+                                        <span>Maintenance &amp; Calibration</span>
+                                        <small class="text-muted d-block">Schedules and compliance</small>
+                                    </div>
+                                </div>
+                                <div class="vu-section-grid">
+                                    <div class="vu-card">
+                                        <div class="vu-card__title">
+                                            <span class="vu-section__icon" data-icon="timeline"/>
+                                            <span>Maintenance Schedule</span>
+                                        </div>
+                                        <group col="2">
+                                            <field name="last_maintenance_date"/>
+                                            <field name="next_maintenance_date"/>
+                       	                    <field name="maintenance_interval_days"/>
+                                            <field name="is_maintenance_due" widget="boolean_toggle"/>
+                                            <field name="days_until_maintenance"/>
+                                        </group>
+                                    </div>
+                                    <div class="vu-card">
+                                        <div class="vu-card__title">
+                                            <span class="vu-section__icon" data-icon="activity"/>
+                                            <span>Calibration</span>
+                                        </div>
+                                        <group>
+                                            <field name="calibration_due_date"/>
+                                            <field name="calibration_interval_days"/>
+                                            <field name="is_calibration_due" widget="boolean_toggle"/>
+                                        </group>
+                                    </div>
+                                </div>
+                            </div>
                         </page>
                         
                         <page string="Compliance" name="compliance">
-                            <group>
-                                <group string="Certification">
-                                    <field name="certification_number"/>
-                                    <field name="certification_expiry"/>
-                                    <field name="regulatory_approval"/>
-                                </group>
-                                <group string="Financial">
-                                    <field name="purchase_date"/>
-                                    <field name="purchase_cost"/>
-                                    <field name="currency_id" invisible="1"/>
-                                </group>
-                            </group>
+                            <div class="vu-section">
+                                <div class="vu-section__title">
+                                    <span class="vu-section__icon" data-icon="file-text"/>
+                                    <div>
+                                        <span>Compliance &amp; Financials</span>
+                                        <small class="text-muted d-block">Certification and purchase data</small>
+                                    </div>
+                                </div>
+                                <div class="vu-section-grid">
+                                    <div class="vu-card">
+                                        <div class="vu-card__title">
+                                            <span class="vu-section__icon" data-icon="shield"/>
+                                            <span>Certification</span>
+                                        </div>
+                                        <group>
+                                            <field name="certification_number"/>
+                                            <field name="certification_expiry"/>
+                                            <field name="regulatory_approval"/>
+                                        </group>
+                                    </div>
+                                    <div class="vu-card">
+                                        <div class="vu-card__title">
+                                            <span class="vu-section__icon" data-icon="credit-card"/>
+                                            <span>Financial</span>
+                                        </div>
+                                        <group>
+                                            <field name="purchase_date"/>
+                                            <field name="purchase_cost"/>
+                                            <field name="currency_id" invisible="1"/>
+                                        </group>
+                                    </div>
+                                </div>
+                            </div>
                         </page>
                         
                         <page string="Service Requirements" name="services">

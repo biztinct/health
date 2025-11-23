@@ -20,35 +20,80 @@
                         </h1>
                     </div>
                     
-                    <group>
-                        <group string="Basic Information">
-                            <field name="sequence"/>
-                            <field name="state" widget="selection"/>
-                            <field name="active"/>
-                            <field name="is_default"/>
-                        </group>
-                        <group string="Visual Settings">
-                            <field name="color"/>
-                            <field name="fold"/>
-                            <field name="is_closed"/>
-                            <field name="allow_edit"/>
-                        </group>
-                    </group>
+                    <div class="vu-section">
+                        <div class="vu-section__title">
+                            <span class="vu-section__icon" data-icon="timeline"/>
+                            <div>
+                                <span>Stage Configuration</span>
+                                <small class="text-muted d-block">State mapping and visual behavior</small>
+                            </div>
+                        </div>
+                        <div class="vu-section-grid">
+                            <div class="vu-card">
+                                <div class="vu-card__title">
+                                    <span class="vu-section__icon" data-icon="file-text"/>
+                                    <span>Basic Information</span>
+                                </div>
+                                <group col="2">
+                                    <field name="sequence"/>
+                                    <field name="state" widget="selection"/>
+                                    <field name="active"/>
+                                    <field name="is_default"/>
+                                </group>
+                            </div>
+                            <div class="vu-card">
+                                <div class="vu-card__title">
+                                    <span class="vu-section__icon" data-icon="activity"/>
+                                    <span>Visual Settings</span>
+                                </div>
+                                <group col="2">
+                                    <field name="color"/>
+                                    <field name="fold"/>
+                                    <field name="is_closed"/>
+                                    <field name="allow_edit"/>
+                                </group>
+                            </div>
+                        </div>
+                    </div>
                     
-                    <group string="Stage Requirements" name="requirements">
-                        <group>
-                            <field name="require_quote"/>
-                            <field name="require_quote_items"/>
-                        </group>
-                        <group>
-                            <field name="require_staff_assignment"/>
-                            <field name="require_patient_contact"/>
-                        </group>
-                    </group>
+                    <div class="vu-section">
+                        <div class="vu-section__title">
+                            <span class="vu-section__icon" data-icon="alert-triangle"/>
+                            <div>
+                                <span>Stage Requirements</span>
+                                <small class="text-muted d-block">Operational prerequisites</small>
+                            </div>
+                        </div>
+                        <div class="vu-section-grid">
+                            <div class="vu-card">
+                                <group>
+                                    <field name="require_quote"/>
+                                    <field name="require_quote_items"/>
+                                </group>
+                            </div>
+                            <div class="vu-card">
+                                <group>
+                                    <field name="require_staff_assignment"/>
+                                    <field name="require_patient_contact"/>
+                                </group>
+                            </div>
+                        </div>
+                    </div>
                     
-                    <group string="Description">
-                        <field name="description" nolabel="1" placeholder="Describe what happens in this stage..."/>
-                    </group>
+                    <div class="vu-section">
+                        <div class="vu-section__title">
+                            <span class="vu-section__icon" data-icon="file-text"/>
+                            <div>
+                                <span>Description</span>
+                                <small class="text-muted d-block">Guidance for dispatch teams</small>
+                            </div>
+                        </div>
+                        <div class="vu-section-grid">
+                            <div class="vu-card">
+                                <field name="description" nolabel="1" placeholder="Describe what happens in this stage..."/>
+                            </div>
+                        </div>
+                    </div>
                 </sheet>
             </form>
         </field>

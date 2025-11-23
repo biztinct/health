@@ -14,35 +14,63 @@
                         </h1>
                     </div>
                     
-                    <group>
-                        <group string="Service Information">
-                            <field name="fso_id" readonly="1"/>
-                            <field name="patient_id" readonly="1"/>
-                            <field name="service_type" readonly="1"/>
-                            <field name="scheduled_datetime" readonly="1"/>
-                            <field name="new_scheduled_datetime"
-                                   placeholder="Leave blank to keep current schedule"/>
-                        </group>
-
-                        <group string="Staff Assignment">
-                            <field name="doctor_id"
-                                   options="{'no_create': True}"
-                                   placeholder="Select doctor (optional)..."/>
-                            <field name="assigned_staff_ids"
-                                   widget="many2many_tags"
-                                   options="{'color_field': 'color', 'no_create': True}"
-                                   placeholder="Select nurses/staff members..."/>
-                            <field name="lead_staff_id"
-                                   options="{'no_create': True}"
-                                   placeholder="Select lead nurse..."/>
-                        </group>
-                    </group>
+                    <div class="vu-section">
+                        <div class="vu-section__title">
+                            <span class="vu-section__icon" data-icon="timeline"/>
+                            <div>
+                                <span>Service Information</span>
+                                <small class="text-muted d-block">Booking, patient and schedule</small>
+                            </div>
+                        </div>
+                        <div class="vu-section-grid">
+                            <div class="vu-card">
+                                <group col="2">
+                                    <field name="fso_id" readonly="1"/>
+                                    <field name="patient_id" readonly="1"/>
+                                    <field name="service_type" readonly="1"/>
+                                    <field name="scheduled_datetime" readonly="1"/>
+                                    <field name="new_scheduled_datetime"
+                                           placeholder="Leave blank to keep current schedule"/>
+                                </group>
+                            </div>
+                            
+                            <div class="vu-card">
+                                <div class="vu-card__title">
+                                    <span class="vu-section__icon" data-icon="users-group"/>
+                                    <span>Staff Assignment</span>
+                                </div>
+                                <group col="2">
+                                    <field name="doctor_id"
+                                           options="{'no_create': True}"
+                                           placeholder="Select doctor (optional)..."/>
+                                    <field name="assigned_staff_ids"
+                                           widget="many2many_tags"
+                                           options="{'color_field': 'color', 'no_create': True}"
+                                           placeholder="Select nurses/staff members..."/>
+                                    <field name="lead_staff_id"
+                                           options="{'no_create': True}"
+                                           placeholder="Select lead nurse..."/>
+                                </group>
+                            </div>
+                        </div>
+                    </div>
                     
-                    <group>
-                        <field name="assignment_notes" 
-                               placeholder="Optional notes about the staff assignment..."
-                               colspan="2"/>
-                    </group>
+                    <div class="vu-section">
+                        <div class="vu-section__title">
+                            <span class="vu-section__icon" data-icon="file-text"/>
+                            <div>
+                                <span>Notes</span>
+                                <small class="text-muted d-block">Optional context for the assignment</small>
+                            </div>
+                        </div>
+                        <div class="vu-section-grid">
+                            <div class="vu-card">
+                                <field name="assignment_notes" 
+                                       placeholder="Optional notes about the staff assignment..."
+                                       colspan="2"/>
+                            </div>
+                        </div>
+                    </div>
                 </sheet>
                 
                 <footer>

@@ -8,21 +8,45 @@
         <field name="arch" type="xml">
             <form string="Field Service Team">
                 <sheet>
-                    <group>
-                        <group>
-                            <field name="name"/>
-                            <field name="leader_id"/>
-                            <field name="active"/>
-                        </group>
-                        <group>
-                            <field name="current_fso_count"/>
-                            <field name="completed_fso_count"/>
-                            <field name="team_efficiency" widget="progressbar"/>
-                        </group>
-                    </group>
-                    <group>
-                        <field name="description"/>
-                    </group>
+                    <div class="vu-section">
+                        <div class="vu-section__title">
+                            <span class="vu-section__icon" data-icon="users-group"/>
+                            <div>
+                                <span>Team Overview</span>
+                                <small class="text-muted d-block">Leadership and performance</small>
+                            </div>
+                        </div>
+                        <div class="vu-section-grid">
+                            <div class="vu-card">
+                                <group col="2">
+                                    <field name="name"/>
+                                    <field name="leader_id"/>
+                                    <field name="active"/>
+                                </group>
+                            </div>
+                            <div class="vu-card">
+                                <group col="2">
+                                    <field name="current_fso_count"/>
+                                    <field name="completed_fso_count"/>
+                                    <field name="team_efficiency" widget="progressbar"/>
+                                </group>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="vu-section">
+                        <div class="vu-section__title">
+                            <span class="vu-section__icon" data-icon="file-text"/>
+                            <div>
+                                <span>Description</span>
+                                <small class="text-muted d-block">Team focus and specialization</small>
+                            </div>
+                        </div>
+                        <div class="vu-section-grid">
+                            <div class="vu-card">
+                                <field name="description"/>
+                            </div>
+                        </div>
+                    </div>
                     <notebook>
                         <page string="Team Members">
                             <field name="member_ids" widget="many2many_tags"/>

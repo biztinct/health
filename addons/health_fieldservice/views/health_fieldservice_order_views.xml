@@ -53,7 +53,7 @@
                      invisible="not sale_order_id or state != 'draft'"
                      groups="health_base.group_healthcare_operations_manager">
                     <div class="d-flex align-items-center">
-                        <i class="fa fa-info-circle me-2"/>
+                        <i class="fa fa-info-circle me-2" title="Information"/>
                         <div>
                             <strong>📋 Quote Available:</strong>
                             A quote exists for this booking. You can add items or confirm without a quote.
@@ -69,7 +69,7 @@
                      invisible="state != 'completed_pending_invoice'"
                      groups="health_base.group_healthcare_operations_manager">
                     <div class="d-flex align-items-center">
-                        <i class="fa fa-clock-o me-2"/>
+                        <i class="fa fa-clock-o me-2" title="Pending invoice reminder"/>
                         <div>
                             <strong>⏳ Awaiting Invoice:</strong>
                             Service completed by part-time staff. Operations team needs to create the invoice.
@@ -84,7 +84,7 @@
                 <div class="alert alert-info" role="alert"
                      invisible="state not in ['in_progress'] or (clinical_notes_submitted and invoice_submitted)">
                     <div class="d-flex align-items-center">
-                        <i class="fa fa-exclamation-circle me-2"/>
+                        <i class="fa fa-exclamation-circle me-2" title="Completion requirements"/>
                         <div>
                             <strong>📋 Service Completion Requirements:</strong>
                             <ul class="mb-0 mt-2">
@@ -104,7 +104,7 @@
                      invisible="state != 'draft'"
                      groups="health_base.group_healthcare_operations_manager">
                     <div class="d-flex align-items-center">
-                        <i class="fa fa-exclamation-triangle me-2"/>
+                        <i class="fa fa-exclamation-triangle me-2" title="Confirmation requirements"/>
                         <div>
                             <strong>✅ Service Confirmation Requirements:</strong>
                             <p class="mb-0 mt-2">Before confirming this booking, you must complete ONE of the following:</p>
@@ -619,7 +619,7 @@
                                 <div class="o_kanban_record_body">
                                     <field name="assigned_staff_ids" widget="many2many_tags"/>
                                     <br/>
-                                    <i class="fa fa-clock-o"/> <field name="scheduled_datetime"/>
+                                    <i class="fa fa-clock-o" title="Scheduled time"/> <field name="scheduled_datetime"/>
                                 </div>
                                 
                                 <div class="o_kanban_record_bottom">
@@ -634,7 +634,7 @@
                                     <div class="oe_kanban_bottom_right">
                                         <span t-if="record.priority.raw_value == '3'" 
                                               class="badge badge-danger">
-                                            <i class="fa fa-exclamation"/> 
+                                            <i class="fa fa-exclamation" title="Alert"/> 
                                             High Priority
                                         </span>
                                     </div>

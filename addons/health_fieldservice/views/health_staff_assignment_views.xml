@@ -41,7 +41,7 @@
                             string="🤖 Apply AI Optimization" 
                             class="btn-secondary" 
                             invisible="state not in ('draft', 'assigned')"
-                            groups="health_staff_assignment.group_head_nurse health_staff_assignment.group_assignment_manager"
+                            groups="health_base.group_healthcare_operations_manager"
                             help="Use AI to optimize this assignment with the best staff recommendations"/>
                     
                     <button name="action_get_ai_predictions" 
@@ -49,7 +49,7 @@
                             string="📊 Get AI Predictions" 
                             class="btn-info" 
                             invisible="state in ('completed', 'cancelled')"
-                            groups="health_staff_assignment.group_head_nurse health_staff_assignment.group_assignment_manager"
+                            groups="health_base.group_healthcare_operations_manager"
                             help="Generate AI predictions for assignment complexity and duration"/>
                     
                     <field name="state" widget="statusbar" statusbar_visible="draft,assigned,confirmed,in_progress,completed"/>
@@ -196,7 +196,7 @@
                             </div>
                         </page>
 
-                        <page string="🤖 AI Insights" name="ai_insights" groups="health_staff_assignment.group_head_nurse health_staff_assignment.group_assignment_manager">
+                        <page string="🤖 AI Insights" name="ai_insights" groups="health_base.group_healthcare_operations_manager">
                             <div class="vu-section">
                                 <div class="vu-section__title">
                                     <span class="vu-section__icon" data-icon="timeline"/>
@@ -206,12 +206,12 @@
                                     </div>
                                 </div>
                                 <div class="alert alert-info" role="alert" invisible="ml_optimization_applied">
-                                    <i class="fa fa-lightbulb-o"/> <strong>AI Optimization Available!</strong><br/>
+                                    <i class="fa fa-lightbulb-o" title="AI tip"/> <strong>AI Optimization Available!</strong><br/>
                                     Click "Apply AI Optimization" above to get the best staff recommendations powered by machine learning.
                                 </div>
                                 
                                 <div class="alert alert-success" role="alert" invisible="not ml_optimization_applied">
-                                    <i class="fa fa-check-circle"/> <strong>AI Optimized Assignment</strong><br/>
+                                    <i class="fa fa-check-circle" title="AI optimized"/> <strong>AI Optimized Assignment</strong><br/>
                                     This assignment has been optimized using AI/ML algorithms for best results.
                                 </div>
                                 

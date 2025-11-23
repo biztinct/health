@@ -16,26 +16,60 @@
                 </header>
                 
                 <sheet>
-                    <group>
-                        <group string="Protocol Information">
-                            <field name="name"/>
-                            <field name="version"/>
-                            <field name="effective_date"/>
-                            <field name="expiry_date"/>
-                            <field name="active"/>
-                        </group>
-                        
-                        <group string="Classification">
-                            <field name="complexity_level"/>
-                            <field name="duration_estimate_minutes"/>
-                            <field name="infection_control_level"/>
-                            <field name="usage_count" readonly="1"/>
-                        </group>
-                    </group>
+                    <div class="vu-section">
+                        <div class="vu-section__title">
+                            <span class="vu-section__icon" data-icon="stethoscope"/>
+                            <div>
+                                <span>Protocol Overview</span>
+                                <small class="text-muted d-block">Key information and clinical classification</small>
+                            </div>
+                        </div>
+                        <div class="vu-section-grid">
+                            <div class="vu-card">
+                                <div class="vu-card__title">
+                                    <span class="vu-section__icon" data-icon="file-text"/>
+                                    <span>Protocol Information</span>
+                                </div>
+                                <group col="2">
+                                    <field name="name"/>
+                                    <field name="version"/>
+                                    <field name="effective_date"/>
+                                    <field name="expiry_date"/>
+                                    <field name="active"/>
+                                </group>
+                            </div>
+                            
+                            <div class="vu-card">
+                                <div class="vu-card__title">
+                                    <span class="vu-section__icon" data-icon="timeline"/>
+                                    <span>Classification</span>
+                                </div>
+                                <group col="2">
+                                    <field name="complexity_level"/>
+                                    <field name="duration_estimate_minutes"/>
+                                    <field name="infection_control_level"/>
+                                    <field name="usage_count" readonly="1"/>
+                                </group>
+                            </div>
+                        </div>
+                    </div>
                     
-                    <group>
-                        <field name="description"/>
-                    </group>
+                    <div class="vu-section">
+                        <div class="vu-section__title">
+                            <span class="vu-section__icon" data-icon="file-text"/>
+                            <div>
+                                <span>Description</span>
+                                <small class="text-muted d-block">Narrative details for staff reference</small>
+                            </div>
+                        </div>
+                        <div class="vu-section-grid">
+                            <div class="vu-card">
+                                <group>
+                                    <field name="description"/>
+                                </group>
+                            </div>
+                        </div>
+                    </div>
                     
                     <notebook>
                         <page string="Action Steps Template" name="steps">
@@ -57,17 +91,38 @@
                         </page>
                         
                         <page string="Safety and Compliance" name="safety">
-                            <group>
-                                <group string="Safety Requirements">
-                                    <field name="safety_requirements"/>
-                                    <field name="required_qualifications"/>
-                                </group>
-                                
-                                <group string="Documentation">
-                                    <field name="documentation_required"/>
-                                    <field name="documentation_template" invisible="not documentation_required"/>
-                                </group>
-                            </group>
+                            <div class="vu-section">
+                                <div class="vu-section__title">
+                                    <span class="vu-section__icon" data-icon="alert-triangle"/>
+                                    <div>
+                                <span>Safety &amp; Compliance</span>
+                                        <small class="text-muted d-block">Requirements and supporting documentation</small>
+                                    </div>
+                                </div>
+                                <div class="vu-section-grid">
+                                    <div class="vu-card">
+                                        <div class="vu-card__title">
+                                            <span class="vu-section__icon" data-icon="heart-pulse"/>
+                                            <span>Safety Requirements</span>
+                                        </div>
+                                        <group>
+                                            <field name="safety_requirements"/>
+                                            <field name="required_qualifications"/>
+                                        </group>
+                                    </div>
+                                    
+                                    <div class="vu-card">
+                                        <div class="vu-card__title">
+                                            <span class="vu-section__icon" data-icon="file-text"/>
+                                            <span>Documentation</span>
+                                        </div>
+                                        <group>
+                                            <field name="documentation_required"/>
+                                            <field name="documentation_template" invisible="not documentation_required"/>
+                                        </group>
+                                    </div>
+                                </div>
+                            </div>
                         </page>
                     </notebook>
                 </sheet>
