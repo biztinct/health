@@ -101,6 +101,28 @@ a {
     box-shadow: var(--vu-shadow-lg);
 }
 
+.oe_chatter,
+.o-mail-Chatter {
+    font-size: var(--vu-font-size-sm);
+    line-height: var(--vu-line-height-normal);
+}
+
+.oe_chatter .o-mail-Thread .o-mail-Message-body,
+.oe_chatter .o-mail-Composer,
+.oe_chatter .o_chatter_button_icon,
+.oe_chatter .o_chatter_button_text,
+.o-mail-Chatter .o-mail-Thread,
+.o-mail-Chatter .o-mail-Message-body,
+.o-mail-Chatter .o-mail-Chatter-topbar,
+.o-mail-Chatter .o-mail-Chatter-content,
+.o-mail-Chatter .o-mail-Chatter-sendMessage,
+.o-mail-Chatter .o-mail-Chatter-logNote,
+.o-mail-Chatter .o-mail-Chatter-activity,
+.o-mail-Chatter .o-mail-Message-textContent {
+    font-size: inherit;
+    line-height: inherit;
+}
+
 .o_form_view .o_group.o_group_no_card {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
