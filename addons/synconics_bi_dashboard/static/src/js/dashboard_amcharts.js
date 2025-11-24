@@ -5,6 +5,8 @@ import { registry } from "@web/core/registry";
 import { _t } from "@web/core/l10n/translation";
 import { useService } from "@web/core/utils/hooks";
 import { DashboardChartWrapper } from "../js/dashboard_chart_wrapper";
+import { FilterPills } from "../components/shared/FilterPills/FilterPills";
+import { DateFilterPicker } from "../components/shared/DateFilterPicker/DateFilterPicker";
 import { loadJS } from "@web/core/assets";
 import { isMobileOS } from "@web/core/browser/feature_detection";
 import { ConfirmationDialog } from "@web/core/confirmation_dialog/confirmation_dialog";
@@ -355,6 +357,6 @@ export class DashboardAmcharts extends Component {
 }
 
 DashboardAmcharts.template = "synconics_bi_dashboard.DashboardAmcharts";
-DashboardAmcharts.components = { DashboardChartWrapper };
+DashboardAmcharts.components = { DashboardChartWrapper, FilterPills, DateFilterPicker };
 
 registry.category("actions").add("dashboard_amcharts", DashboardAmcharts);

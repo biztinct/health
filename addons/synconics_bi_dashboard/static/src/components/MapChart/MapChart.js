@@ -11,6 +11,7 @@ export class MapChart extends Component {
     isDirty: { optional: true, type: Boolean },
     data: { optional: true, type: Object },
     update_chart: { optional: true, type: Function },
+    apply_cross_filter: { optional: true, type: Function },
     theme: String,
     recordSets: Object,
     export: { optional: true, type: Function },

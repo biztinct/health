@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<templates xml:space="preserve">
+    <t t-name="synconics_bi_dashboard.FilterPills">
+        <div class="o_filter_pills_container" t-if="state.filterCount > 0 or state.hasDateFilter">
+            <div class="o_filter_pills_header">
+                <span class="o_filter_pills_title">
+                    <i class="fa fa-filter me-2"/>
+                    Active Filters (<t t-esc="state.filterCount"/>)
+                </span>
+                <button
+                    class="btn btn-sm btn-link o_clear_all_filters"
+                    t-on-click="() => this.onClearAll()"
+                    title="Clear all filters">
+                    <i class="fa fa-times me-1"/>
+                    Clear All
+                </button>
+            </div>
+            <div class="o_filter_pills_list">
+                <!-- Date Filter Pill -->
+                <div t-if="state.hasDateFilter" class="o_filter_pill o_date_filter_pill">
+                    <span class="o_filter_pill_content">
+                        <i class="fa fa-calendar me-2" style="color: #0066cc;"/>
+                        <strong>Date Range</strong>:
+                        <t t-esc="state.dateFilterLabel"/>
+                    </span>
+                    <button
+                        class="btn btn-sm o_filter_pill_remove"
+                        t-on-click="() => this.onRemoveDateFilter()"
+                        title="Remove date filter">
+                        <i class="fa fa-times"/>
+                    </button>
+                </div>
+
+                <!-- Cross-Filter Pills -->
+                <t t-foreach="state.activeFilters" t-as="filter" t-key="filter.chartId">
+                    <div class="o_filter_pill">
+                        <span class="o_filter_pill_content">
+                            <strong t-esc="filter.chartName"/>:
+                            <t t-esc="filter.displayValue"/>
+                        </span>
+                        <button
+                            class="btn btn-sm o_filter_pill_remove"
+                            t-on-click="() => this.onRemoveFilter(filter.chartId)"
+                            t-att-title="'Remove filter from ' + filter.chartName">
+                            <i class="fa fa-times"/>
+                        </button>
+                    </div>
+                </t>
+            </div>
+        </div>
+    </t>
+</templates>

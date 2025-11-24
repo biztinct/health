@@ -11,6 +11,7 @@ export class BarChart extends Component {
     isDirty: { optional: true, type: Boolean },
     data: { optional: true, type: Object },
     update_chart: { optional: true, type: Function },
+    apply_cross_filter: { optional: true, type: Function },
     theme: String,
     recordSets: Object,
     export: { optional: true, type: Function },
@@ -192,11 +193,29 @@ export class BarChart extends Component {
       });
       var self = this;
       series.columns.template.events.on("click", function (ev) {
+        const dataContext = ev.target.dataItem.dataContext;
+
+        // Apply cross-filter if callback provided
+        if (self.props.apply_cross_filter && dataContext) {
+          const category = dataContext.category;
+          const recordId = dataContext.record_id;
+
+          // Apply cross-filter based on the clicked category/record
+          // Note: We filter by category value, backend will determine the actual field
+          self.props.apply_cross_filter(
+            'category',  // Field name - will be resolved by backend
+            self.props.name + ' - ' + category,  // Label for filter pill
+            [recordId || category],  // Values to filter
+            null  // Model - will be determined by backend
+          );
+        }
+
+        // Also trigger drill-down if available
         if (self.props.update_chart) {
           self.props.update_chart(
             parseInt(self.props.chartId),
             "bar_chart",
-            ev.target.dataItem.dataContext,
+            dataContext,
           );
         }
       });
@@ -343,11 +362,28 @@ export class BarChart extends Component {
           strokeOpacity: 0,
         });
         series.columns.template.events.on("click", function (ev) {
+          const dataContext = ev.target.dataItem.dataContext;
+
+          // Apply cross-filter if callback provided
+          if (self.props.apply_cross_filter && dataContext) {
+            const category = dataContext.category;
+            const recordId = dataContext.record_id;
+
+            // Apply cross-filter based on the clicked category/record
+            self.props.apply_cross_filter(
+              'category',  // Field name - will be resolved by backend
+              self.props.name + ' - ' + category,  // Label for filter pill
+              [recordId || category],  // Values to filter
+              null  // Model - will be determined by backend
+            );
+          }
+
+          // Also trigger drill-down if available
           if (self.props.update_chart) {
             self.props.update_chart(
               parseInt(self.props.chartId),
               "bar_chart",
-              ev.target.dataItem.dataContext,
+              dataContext,
             );
           }
         });

@@ -1357,6 +1357,8 @@ class DashboardChart(models.Model):
         data=False,
         extra_action=False,
         print_options=False,
+        cross_filter_domain=None,
+        dashboard_date_filter=None,
     ):
         """
         this function is called from chart wrapper and form preview.
@@ -1387,10 +1389,59 @@ class DashboardChart(models.Model):
                 conf.limit_record = view_item.limit_record
         else:
             domain = self._process_domain(domain, extra_action, self.group_by_id)
+
+            # Merge cross-filter domain if provided
+            if cross_filter_domain:
+                _logger.info(f"[CrossFilter] Merging cross-filter domain: {cross_filter_domain}")
+                # Cross-filter domains are combined with AND logic
+                if isinstance(cross_filter_domain, list) and cross_filter_domain:
+                    domain.extend(cross_filter_domain)
+                    _logger.info(f"[CrossFilter] Final merged domain: {domain}")
+
+            # Apply dashboard-level date filter if provided
+            if dashboard_date_filter and dashboard_date_filter.get('active'):
+                start_date = dashboard_date_filter.get('startDate')
+                end_date = dashboard_date_filter.get('endDate')
+
+                # Check if this chart has a date_filter_field_id configured
+                if self.date_filter_field_id and start_date and end_date:
+                    date_field_name = self.date_filter_field_id.name
+                    date_field = self.date_filter_field_id
+
+                    _logger.info(f"[DateFilter] Applying date filter to field '{date_field_name}' (type: {date_field.ttype}): {start_date} to {end_date}")
+
+                    # For datetime fields, we need to include the entire end date
+                    # For date fields, we can use the date directly
+                    if date_field.ttype == 'datetime':
+                        # For datetime: use >= start and < (end + 1 day) to include entire end date
+                        from datetime import datetime, timedelta
+                        start_datetime = f"{start_date} 00:00:00"
+                        # Add one day to end_date and use '<' to include all of end_date
+                        end_date_obj = datetime.strptime(end_date, '%Y-%m-%d')
+                        next_day = end_date_obj + timedelta(days=1)
+                        end_datetime = next_day.strftime('%Y-%m-%d %H:%M:%S')
+
+                        domain.append((date_field_name, '>=', start_datetime))
+                        domain.append((date_field_name, '<', end_datetime))
+                        _logger.info(f"[DateFilter] DateTime range: {start_datetime} to < {end_datetime}")
+                    else:
+                        # For date fields, use the date directly
+                        domain.append((date_field_name, '>=', start_date))
+                        domain.append((date_field_name, '<=', end_date))
+                        _logger.info(f"[DateFilter] Date range: {start_date} to {end_date}")
+
+                    _logger.info(f"[DateFilter] Final domain with date filter: {domain}")
+                elif not self.date_filter_field_id:
+                    _logger.warning(f"[DateFilter] Chart {self.id} ({self.name}) has no date_filter_field_id configured, skipping date filter")
+
+            # Always update conf.domain with processed domain (including date filters)
+            conf.domain = domain
+            _logger.info(f"[Domain DEBUG] Set conf.domain to: {domain}")
+
             view_item = self._get_view_item(extra_action)
             if view_item:
                 chart_type = view_item.chart_type
-                conf.domain = domain
+                # conf.domain already set above
                 if not conf.measurement_field_id and conf.measurement_field_ids:
                     conf.measurement_field_id = conf.measurement_field_ids[0]
                 if not conf.measurement_field_ids:
@@ -1913,6 +1964,7 @@ class DashboardChart(models.Model):
         message = ""
         today_date = False
         domain = conf_obj.domain.copy()
+        _logger.info(f"[Tile DEBUG] Initial domain from conf_obj: {domain}")
         if conf_obj.company and "company_id" in record_obj._fields:
             domain.append(("company_id", "in", [conf_obj.company, False]))
 
@@ -1921,6 +1973,7 @@ class DashboardChart(models.Model):
             and conf_obj.date_filter_option
             and conf_obj.date_filter_option != "none"
         ):
+            _logger.info(f"[Tile DEBUG] Chart has date_filter_option: {conf_obj.date_filter_option}")
             date_filter_domain = self.get_date_filter_domain(
                 record_obj,
                 conf_obj.date_filter_field,
@@ -1944,10 +1997,15 @@ class DashboardChart(models.Model):
                     and start_date.date() != end_date.date()
                 ):
                     domain.extend(date_filter_domain["domain"])
+                    _logger.info(f"[Tile DEBUG] Extended domain with chart date filter: {date_filter_domain['domain']}")
                 else:
                     today_date = start_date.date()
+        else:
+            _logger.info(f"[Tile DEBUG] Chart has NO date_filter_option set (or is 'none')")
 
+        _logger.info(f"[Tile DEBUG] Final domain before search: {domain}")
         all_records = record_obj.search(domain)
+        _logger.info(f"[Tile DEBUG] Records found: {len(all_records)}")
         if today_date:
             all_records = all_records.filtered(
                 lambda record: getattr(record, conf_obj.date_filter_field)
@@ -2789,6 +2847,7 @@ class DashboardChart(models.Model):
         record_obj = self.env[conf_obj.model]
         today_date = False
         domain = conf_obj.domain
+        _logger.info(f"[MeasurementGroup DEBUG] Initial domain from conf_obj: {domain}")
         if conf_obj.company and "company_id" in record_obj._fields:
             domain.append(("company_id", "in", [conf_obj.company, False]))
         if (
@@ -2796,6 +2855,7 @@ class DashboardChart(models.Model):
             and conf_obj.date_filter_option
             and conf_obj.date_filter_option != "none"
         ):
+            _logger.info(f"[MeasurementGroup DEBUG] Chart has date_filter_option: {conf_obj.date_filter_option}")
             date_domain = self.get_date_filter_domain(
                 record_obj,
                 conf_obj.date_filter_field,
@@ -2815,10 +2875,15 @@ class DashboardChart(models.Model):
                     and start_date.date() != end_date.date()
                 ):
                     domain.extend(date_domain["domain"])
+                    _logger.info(f"[MeasurementGroup DEBUG] Extended domain with chart date filter: {date_domain['domain']}")
                 else:
                     today_date = start_date.date()
+        else:
+            _logger.info(f"[MeasurementGroup DEBUG] Chart has NO date_filter_option set (or is 'none')")
 
+        _logger.info(f"[MeasurementGroup DEBUG] Final domain before search: {domain}")
         records = record_obj.search(domain)
+        _logger.info(f"[MeasurementGroup DEBUG] Records found: {len(records)}")
         if today_date:
             records = records.filtered(
                 lambda record: getattr(record, conf_obj.date_filter_field)
@@ -3006,6 +3071,7 @@ class DashboardChart(models.Model):
         record_obj = self.env[conf_obj.model]
         today_date = False
         domain = conf_obj.domain
+        _logger.info(f"[CategoryValue DEBUG] Initial domain from conf_obj: {domain}")
         if conf_obj.company and "company_id" in record_obj._fields:
             domain.append(("company_id", "in", [conf_obj.company, False]))
         if (
@@ -3013,6 +3079,7 @@ class DashboardChart(models.Model):
             and conf_obj.date_filter_option
             and conf_obj.date_filter_option != "none"
         ):
+            _logger.info(f"[CategoryValue DEBUG] Chart has date_filter_option: {conf_obj.date_filter_option}")
             date_domain = self.get_date_filter_domain(
                 record_obj,
                 conf_obj.date_filter_field,
@@ -3032,10 +3099,15 @@ class DashboardChart(models.Model):
                     and start_date.date() != end_date.date()
                 ):
                     domain.extend(date_domain["domain"])
+                    _logger.info(f"[CategoryValue DEBUG] Extended domain with chart date filter: {date_domain['domain']}")
                 else:
                     today_date = start_date.date()
+        else:
+            _logger.info(f"[CategoryValue DEBUG] Chart has NO date_filter_option set (or is 'none')")
 
+        _logger.info(f"[CategoryValue DEBUG] Final domain before search: {domain}")
         all_records = record_obj.search(domain)
+        _logger.info(f"[CategoryValue DEBUG] Records found: {len(all_records)}")
 
         if today_date:
             all_records = all_records.filtered(

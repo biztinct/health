@@ -1,6 +1,6 @@
 /** @odoo-module **/
 
-import { Component, useState, onWillUpdateProps } from "@odoo/owl";
+import { Component, useState, onWillUpdateProps, onWillUnmount, onWillStart } from "@odoo/owl";
 import { useService } from "@web/core/utils/hooks";
 import { AreaChart } from "../components/AreaChart/AreaChart";
 import { BarChart } from "../components/BarChart/BarChart";
@@ -74,6 +74,34 @@ export class DashboardChartWrapper extends Component {
     this.orm = useService("orm");
     this.action = useService("action");
     this.dialog = useService("dialog");
+    this.filterService = useService("dashboardFilterService");
+
+    // Track cross-filter subscription
+    this.filterUnsubscribe = null;
+
+    // Subscribe to cross-filter changes
+    onWillStart(() => {
+      this.filterUnsubscribe = this.filterService.subscribe((filterData) => {
+        console.log('[ChartWrapper] Cross-filter changed for chart:', this.state.chartId);
+        // Refresh chart data with new filters
+        this.update_record_sets(
+          this.state.chartId,
+          this.state.chart_type,
+          false,
+          this.state.name,
+          Object,
+          filterData.domain  // Pass cross-filter domain
+        );
+      });
+    });
+
+    // Cleanup subscription on unmount
+    onWillUnmount(() => {
+      if (this.filterUnsubscribe) {
+        this.filterUnsubscribe();
+      }
+    });
+
     onWillUpdateProps((nextprops) => {
       this.update_record_sets(
         nextprops.chartId,
@@ -141,6 +169,30 @@ export class DashboardChartWrapper extends Component {
           chart_type: this.state.chart_type,
         });
       }
+    };
+
+    /**
+     * Apply cross-filter from chart click
+     * Called by child chart components when user clicks a data point
+     */
+    this.onApplyCrossFilter = (field, label, values, model) => {
+      console.log('[ChartWrapper] Applying cross-filter:', {
+        chartId: this.state.chartId,
+        field,
+        label,
+        values,
+        model
+      });
+
+      // Apply filter through the filter service
+      this.filterService.applyFilter(
+        this.state.chartId,
+        field,
+        label,
+        values,
+        model,
+        this.state.chart_type
+      );
     };
 
     this.onDownloadCSV = (ev) => {
@@ -394,12 +446,37 @@ export class DashboardChartWrapper extends Component {
     return new Blob([array], { type: mime });
   }
 
-  async update_record_sets(recordId, chart_type, isDirty, name, data) {
+  async update_record_sets(recordId, chart_type, isDirty, name, data, cross_filter_domain = null) {
+    // Get cross-filter domain if not provided
+    if (cross_filter_domain === null && this.filterService) {
+      cross_filter_domain = this.filterService.getActiveDomain();
+    }
+
+    // Get date filter state
+    let date_filter = null;
+    if (this.filterService && this.filterService.hasActiveDateFilter()) {
+      date_filter = this.filterService.getDateFilterState();
+      console.log('[ChartWrapper] Date filter active for chart', recordId, ':', date_filter);
+    }
+
+    console.log('[ChartWrapper] Calling get_chart_data for chart', recordId, 'with:', {
+      chart_type,
+      cross_filter_domain: cross_filter_domain || [],
+      dashboard_date_filter: date_filter,
+    });
+
     let recordSets = await this.orm.call(
       "dashboard.chart",
       "get_chart_data",
       [parseInt(recordId)],
-      { chart_type, name, isDirty, data },
+      {
+        chart_type,
+        name,
+        isDirty,
+        data,
+        cross_filter_domain: cross_filter_domain || [],  // Pass cross-filter domain
+        dashboard_date_filter: date_filter,  // Pass dashboard-level date filter
+      },
     );
     if (
       ["kpi", "tile"].includes(chart_type) &&

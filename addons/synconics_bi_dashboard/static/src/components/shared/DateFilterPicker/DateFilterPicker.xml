@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<templates xml:space="preserve">
+    <t t-name="synconics_bi_dashboard.DateFilterPicker">
+        <div class="o_date_filter_container">
+            <!-- Date Filter Button -->
+            <button class="btn btn-secondary o_date_filter_button d-flex align-items-center gap-2"
+                    t-on-click="() => this.togglePicker()"
+                    title="Filter by date range">
+                <i class="fa fa-calendar"/>
+                <span class="o_date_filter_label" t-esc="state.dateFilterLabel"/>
+                <i t-attf-class="fa fa-chevron-{{ state.showPicker ? 'up' : 'down' }} ms-1"/>
+            </button>
+
+            <!-- Date Filter Picker Dropdown -->
+            <div class="o_date_filter_picker" t-if="state.showPicker">
+                <div class="o_date_filter_header">
+                    <h6 class="mb-0">
+                        <i class="fa fa-calendar me-2"/>
+                        Date Range Filter
+                    </h6>
+                </div>
+
+                <!-- Quick Filters -->
+                <div class="o_quick_filters">
+                    <div class="o_quick_filters_label">Quick Filters:</div>
+                    <div class="o_quick_filters_grid">
+                        <t t-foreach="quickFilters" t-as="filter" t-key="filter.id">
+                            <button
+                                class="btn btn-sm o_quick_filter_btn"
+                                t-att-class="state.activeQuickFilter === filter.id ? 'active' : ''"
+                                t-on-click="() => this.onQuickFilter(filter.id)"
+                                t-att-title="filter.label">
+                                <i t-attf-class="fa {{ filter.icon }} me-2"/>
+                                <span t-esc="filter.label"/>
+                            </button>
+                        </t>
+                    </div>
+                </div>
+
+                <!-- Custom Date Range -->
+                <div class="o_custom_date_range" t-if="state.activeQuickFilter === 'custom' || state.startDate">
+                    <div class="o_date_inputs">
+                        <div class="o_date_input_group">
+                            <label for="startDate" class="form-label">Start Date</label>
+                            <input
+                                type="date"
+                                id="startDate"
+                                class="form-control"
+                                t-ref="startDate"
+                                t-att-value="state.startDate"
+                                t-on-change="(ev) => this.onStartDateChange(ev)"
+                            />
+                        </div>
+                        <div class="o_date_input_separator">
+                            <i class="fa fa-arrow-right"/>
+                        </div>
+                        <div class="o_date_input_group">
+                            <label for="endDate" class="form-label">End Date</label>
+                            <input
+                                type="date"
+                                id="endDate"
+                                class="form-control"
+                                t-ref="endDate"
+                                t-att-value="state.endDate"
+                                t-on-change="(ev) => this.onEndDateChange(ev)"
+                            />
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="o_date_filter_actions">
+                    <button
+                        class="btn btn-secondary btn-sm"
+                        t-on-click="() => this.onClearFilter()"
+                        title="Clear date filter">
+                        <i class="fa fa-times me-1"/>
+                        Clear
+                    </button>
+                    <button
+                        class="btn btn-primary btn-sm"
+                        t-on-click="() => this.onApplyFilter()"
+                        t-att-disabled="!state.startDate || !state.endDate"
+                        title="Apply date filter">
+                        <i class="fa fa-check me-1"/>
+                        Apply Filter
+                    </button>
+                </div>
+            </div>
+        </div>
+    </t>
+</templates>
