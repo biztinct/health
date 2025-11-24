@@ -202,6 +202,31 @@ a {
     box-shadow: var(--vu-shadow-sm);
 }
 
+.vu-section:has(>.vu-section-grid) {
+    padding: 0;
+    background: transparent;
+    border: 0;
+    box-shadow: none;
+}
+
+.vu-section:not(:has(.vu-card:has(.o_wrap_field:not(.o_invisible_modifier), .o_row:not(.o_invisible_modifier), .o_col:not(.o_invisible_modifier), field))) {
+    display: none;
+}
+
+.vu-card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--vu-space-md);
+}
+
+.vu-card:not(:has(.o_wrap_field:not(.o_invisible_modifier), .o_row:not(.o_invisible_modifier), .o_col:not(.o_invisible_modifier), field)) {
+    display: none;
+}
+
+.vu-section-grid:not(:has(.vu-card:has(.o_wrap_field:not(.o_invisible_modifier), .o_row:not(.o_invisible_modifier), .o_col:not(.o_invisible_modifier), field))) {
+    display: none;
+}
+
 .vu-section__title {
     font-size: var(--vu-font-size-lg);
     font-weight: 600;
