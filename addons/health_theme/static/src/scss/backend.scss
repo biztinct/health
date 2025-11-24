@@ -68,6 +68,14 @@ a {
     box-shadow: var(--vu-shadow-lg);
 }
 
+.o_form_view .o_group:not(.o_inner_group):has(>.o_group.row:not(.o_inner_group)),
+.o_form_view .o_group:not(.o_inner_group):has(>.o_inner_group) {
+    padding: 0;
+    background: transparent;
+    border: 0;
+    box-shadow: none;
+}
+
 .o_form_view .o_group:not(.o_inner_group) > table {
     width: 100%;
 }
@@ -99,6 +107,14 @@ a {
     border: 1px solid var(--vu-border-soft);
     border-radius: var(--vu-radius-md);
     box-shadow: var(--vu-shadow-lg);
+}
+
+.o_form_view .o_group.row:not(.o_inner_group) > .o_inner_group:not(:has(.o_wrap_field:not(.o_invisible_modifier), .o_row:not(.o_invisible_modifier), .o_col:not(.o_invisible_modifier))) {
+    display: none;
+}
+
+.o_form_view .o_group.row:not(.o_inner_group):not(:has(.o_inner_group:has(.o_wrap_field:not(.o_invisible_modifier), .o_row:not(.o_invisible_modifier), .o_col:not(.o_invisible_modifier)))) {
+    display: none;
 }
 
 .oe_chatter,
