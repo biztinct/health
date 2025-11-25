@@ -2953,9 +2953,9 @@ class DashboardChart(models.Model):
                 record_group_by = record_selections.get(
                     getattr(record, conf_obj.group_by)
                 )
-                record_group_id = record_selections.get(
-                    getattr(record, conf_obj.group_by)
-                )
+                # FIX: Keep the original technical key for record_group_id (not the label)
+                # This ensures domain filtering works correctly for selection fields
+                record_group_id = getattr(record, conf_obj.group_by)
             elif isinstance(record_group_by, models.Model):
                 record_group_by = record_group_by.display_name
                 record_group_id = record_group_id.id
@@ -3178,7 +3178,10 @@ class DashboardChart(models.Model):
                     record_selections = dict(record_selections)
                 return record_selections.get(getattr(rec, conf_obj.group_by))
 
-        for group_by, records in groupby(all_records, key=group_by_func):
+        for group_by, records_iter in groupby(all_records, key=group_by_func):
+            # Convert iterator to list to allow multiple iterations
+            records = list(records_iter)
+
             category_value = 0
             if conf_obj.data_type == "count":
                 category_value = len(records)
@@ -3190,6 +3193,12 @@ class DashboardChart(models.Model):
                     category_value *= conf_obj.chart_multiplier_ids[0].get("multiplier")
             category_instance = group_by
             record_id = group_by
+
+            # FIX: For selection fields, get the original technical key (not the label)
+            # The group_by_func returns the label for selection fields, so we need the original value
+            if records and hasattr(records[0]._fields[conf_obj.group_by], "selection"):
+                record_id = getattr(records[0], conf_obj.group_by)
+
             if isinstance(category_instance, models.Model):
                 record_id = record_id.id
                 category_instance = category_instance.display_name
