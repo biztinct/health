@@ -130,6 +130,12 @@ export class DoughnutChart extends Component {
       cornerRadiusBR: 5,
     });
 
+    // Configure legend value labels based on show_data_value_type setting
+    const showDataValueType = this.props.show_data_value_type || 'value';
+    const legendValueText = showDataValueType === 'percent'
+      ? "{valuePercentTotal.formatNumber('#.0')}%"
+      : "{value}";
+
     for (let key = 0; key < keys.length; key++) {
       var series = chart.series.push(
         am5percent.PieSeries.new(this.root, {
@@ -137,6 +143,7 @@ export class DoughnutChart extends Component {
           name: capitalizeFirst(keys[key]),
           categoryField: "category",
           alignLabels: false,
+          legendValueText: legendValueText,
         }),
       );
       var bgColor = this.root.interfaceColors.get("background");
@@ -153,7 +160,6 @@ export class DoughnutChart extends Component {
       series.labels.template.setAll({ forceHidden: true });
 
       // Set tooltip text based on show_data_value_type setting
-      const showDataValueType = self.props.show_data_value_type || 'value';
       const tooltipText = showDataValueType === 'percent'
         ? "{name}, {category}: {valuePercentTotal.formatNumber('#.0')}%"
         : "{name}, {category}: {value}";
