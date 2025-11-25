@@ -695,6 +695,7 @@ class Dashboard(models.Model):
                     "theme": chart.theme,
                     "recordset": chart.get_chart_data(chart.chart_type, chart.name),
                     "background_color": chart.background_color,
+                    "action_id": chart.action_id.id if chart.action_id else False,
                     **{k: dim[k] for k in ("x", "y", "h", "w", "minh")},
                 }
             )

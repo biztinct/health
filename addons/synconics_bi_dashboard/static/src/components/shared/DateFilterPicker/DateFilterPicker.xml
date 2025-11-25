@@ -1,17 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <templates xml:space="preserve">
     <t t-name="synconics_bi_dashboard.DateFilterPicker">
-        <div class="o_date_filter_container">
-            <!-- Date Filter Button -->
-            <button class="btn btn-secondary o_date_filter_button d-flex align-items-center gap-2"
-                    t-on-click="() => this.togglePicker()"
-                    title="Filter by date range">
-                <i class="fa fa-calendar"/>
-                <span class="o_date_filter_label" t-esc="state.dateFilterLabel"/>
-                <i t-attf-class="fa fa-chevron-{{ state.showPicker ? 'up' : 'down' }} ms-1"/>
-            </button>
+        <div class="o_date_filter_wrapper">
+            <!-- Quick Access Buttons (Top Row) -->
+            <div class="o_quick_access_buttons d-flex gap-2 mb-2">
+                <t t-foreach="quickAccessButtons" t-as="button" t-key="button.id">
+                    <button
+                        t-attf-class="btn btn-sm o_quick_access_btn {{ state.activeQuickFilter === button.id ? 'active' : '' }}"
+                        t-on-click="() => this.onQuickFilter(button.id, true)"
+                        t-att-title="'Quick filter: ' + button.label">
+                        <span t-esc="button.label"/>
+                    </button>
+                </t>
 
-            <!-- Date Filter Picker Dropdown -->
+                <!-- More Options Button -->
+                <button class="btn btn-sm btn-secondary o_more_options_btn d-flex align-items-center gap-1"
+                        t-on-click="() => this.togglePicker()"
+                        title="More date filter options">
+                    <i class="fa fa-calendar"/>
+                    <span>More</span>
+                    <i t-attf-class="fa fa-chevron-{{ state.showPicker ? 'up' : 'down' }}"/>
+                </button>
+            </div>
+
+            <!-- Date Filter Picker Dropdown (Hidden by Default) -->
             <div class="o_date_filter_picker" t-if="state.showPicker">
                 <div class="o_date_filter_header">
                     <h6 class="mb-0">

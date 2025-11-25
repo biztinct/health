@@ -43,6 +43,7 @@ export class DashboardChartWrapper extends Component {
     background_color: String,
     reloadKey: Number,
     onUpdateExport: { optional: true, type: Function },
+    action_id: { optional: true, type: [Number, Boolean] },
   };
 
   setup() {
@@ -497,6 +498,46 @@ export class DashboardChartWrapper extends Component {
     );
     if (chart_color_id.length) {
       this.state.background_color = chart_color_id[0].background_color;
+    }
+  }
+
+  /**
+   * Handle click on Tile or KPI chart
+   * Executes the configured window action if action_id is set
+   */
+  async onChartClick() {
+    if (!this.props.action_id || !['kpi', 'tile'].includes(this.props.chart_type)) {
+      return;
+    }
+
+    console.log('[ChartWrapper] Executing action', this.props.action_id, 'for chart', this.props.chartId);
+
+    try {
+      // Read the action configuration
+      const actions = await this.orm.read("ir.actions.act_window", [this.props.action_id], [
+        "name",
+        "type",
+        "res_model",
+        "view_mode",
+        "views",
+        "domain",
+        "context",
+        "limit",
+      ]);
+
+      if (actions.length > 0) {
+        const actionData = actions[0];
+        console.log('[ChartWrapper] Opening action:', actionData.name);
+
+        // Execute the action using Odoo's action service
+        this.action.doAction(actionData);
+      }
+    } catch (error) {
+      console.error('[ChartWrapper] Error executing action:', error);
+      this.dialog.add(WarningDialog, {
+        title: _t("Action Error"),
+        message: _t("Failed to execute the configured action. Please check the action configuration."),
+      });
     }
   }
 }

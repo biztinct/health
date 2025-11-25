@@ -1,6 +1,6 @@
 /** @odoo-module **/
 
-import { Component, useState, useRef, onMounted } from "@odoo/owl";
+import { Component, useState, useRef, onMounted, onWillStart, onWillUnmount } from "@odoo/owl";
 import { useService } from "@web/core/utils/hooks";
 
 /**
@@ -32,6 +32,24 @@ export class DateFilterPicker extends Component {
 
         this.startDateRef = useRef("startDate");
         this.endDateRef = useRef("endDate");
+
+        // Subscribe to filter changes to update active state
+        this.unsubscribe = null;
+        onWillStart(() => {
+            this.unsubscribe = this.filterService.subscribe(() => {
+                const dateFilter = this.filterService.getDateFilterState();
+                if (!dateFilter.active) {
+                    this.state.activeQuickFilter = null;
+                    this.state.dateFilterLabel = 'All Time';
+                }
+            });
+        });
+
+        onWillUnmount(() => {
+            if (this.unsubscribe) {
+                this.unsubscribe();
+            }
+        });
     }
 
     /**
@@ -53,6 +71,19 @@ export class DateFilterPicker extends Component {
     }
 
     /**
+     * Quick access buttons (most commonly used filters)
+     */
+    get quickAccessButtons() {
+        return [
+            { id: 'today', label: 'Today' },
+            { id: 'this_week', label: 'This Week' },
+            { id: 'this_month', label: 'This Month' },
+            { id: 'this_year', label: 'This Year' },
+            { id: 'last_year', label: 'Last Year' },
+        ];
+    }
+
+    /**
      * Toggle date picker dropdown
      */
     togglePicker() {
@@ -62,7 +93,7 @@ export class DateFilterPicker extends Component {
     /**
      * Apply quick filter
      */
-    onQuickFilter(filterId) {
+    onQuickFilter(filterId, applyImmediately = false) {
         const dateRange = this.calculateDateRange(filterId);
 
         if (filterId === 'custom') {
@@ -76,7 +107,10 @@ export class DateFilterPicker extends Component {
         this.state.endDate = dateRange.end;
         this.state.dateFilterLabel = this.quickFilters.find(f => f.id === filterId).label;
 
-        // Don't apply immediately - wait for user to click Apply button
+        // If applyImmediately is true (from quick button), apply the filter right away
+        if (applyImmediately) {
+            this.onApplyFilter();
+        }
     }
 
     /**

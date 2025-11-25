@@ -53,8 +53,16 @@
                 <BoxPlotChart t-if="state.chart_type == 'boxplot_chart'" theme="state.theme" chartId="state.chartId" name="state.name" export="setExporting" recordSets="state.recordSets" update_chart="this.update_chart" apply_cross_filter="this.onApplyCrossFilter" />
                 <NetworkChart t-if="state.chart_type == 'network_chart'" theme="state.theme" chartId="state.chartId" name="state.name" export="setExporting" recordSets="state.recordSets" update_chart="this.update_chart" apply_cross_filter="this.onApplyCrossFilter" />
                 <ListView t-if="state.chart_type == 'list'" theme="state.theme" chartId="state.chartId" name="state.name" recordSets="state.recordSets" update_chart="this.update_chart" />
-                <TileView t-if="state.chart_type == 'tile'" theme="state.theme" chartId="state.chartId" name="state.name" recordSets="state.recordSets" update_chart="this.update_chart" />
-                <KPIView t-if="state.chart_type == 'kpi'" theme="state.theme" chartId="state.chartId" name="state.name" recordSets="state.recordSets" update_chart="this.update_chart" />
+                <div t-if="state.chart_type == 'tile'"
+                     t-attf-style="height: 100%; {{ props.action_id ? 'cursor: pointer;' : '' }}"
+                     t-on-click="() => this.onChartClick()">
+                    <TileView theme="state.theme" chartId="state.chartId" name="state.name" recordSets="state.recordSets" update_chart="this.update_chart" />
+                </div>
+                <div t-if="state.chart_type == 'kpi'"
+                     t-attf-style="height: 100%; {{ props.action_id ? 'cursor: pointer;' : '' }}"
+                     t-on-click="() => this.onChartClick()">
+                    <KPIView theme="state.theme" chartId="state.chartId" name="state.name" recordSets="state.recordSets" update_chart="this.update_chart" />
+                </div>
                 <TodoView t-if="state.chart_type == 'to_do'" theme="state.theme" chartId="state.chartId" name="state.name" recordSets="state.recordSets" update_chart="this.update_chart" />
                 <OdooEmbeddedView t-if="['odoo_list_view', 'odoo_kanban_view', 'odoo_pivot_view', 'odoo_calendar_view'].includes(state.chart_type)" theme="state.theme" chartId="state.chartId" name="state.name" recordSets="state.recordSets" />
             </div>

@@ -209,6 +209,16 @@ class DashboardChart(models.Model):
     )
     model = fields.Char(string="Model Ref.", related="model_id.model")
 
+    # Action Configuration (for Tile/KPI click action)
+    action_id = fields.Many2one(
+        "ir.actions.act_window",
+        string="Click Action",
+        ondelete="set null",
+        tracking=True,
+        domain="[('res_model', '=', model)]",
+        help="Window action to execute when clicking on Tile or KPI chart. Filtered by chart's model."
+    )
+
     # Data Source Configuration
     data_source = fields.Selection([
         ('model', 'Odoo Model'),
@@ -614,7 +624,7 @@ class DashboardChart(models.Model):
             if chart.limit_record and chart.limit_record < 0:
                 raise ValidationError(
                     _(
-                        "Oops! The record limit can’t be less than zero. Please enter a value of zero or higher to continue."
+                        "Oops! The record limit can't be less than zero. Please enter a value of zero or higher to continue."
                     )
                 )
 
