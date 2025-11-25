@@ -15,6 +15,7 @@ export class DoughnutChart extends Component {
     theme: String,
     recordSets: Object,
     export: { optional: true, type: Function },
+    show_data_value_type: { optional: true, type: String },
   };
 
   setup() {
@@ -150,10 +151,17 @@ export class DoughnutChart extends Component {
       });
       series.ticks.template.setAll({ forceHidden: true });
       series.labels.template.setAll({ forceHidden: true });
+
+      // Set tooltip text based on show_data_value_type setting
+      const showDataValueType = self.props.show_data_value_type || 'value';
+      const tooltipText = showDataValueType === 'percent'
+        ? "{name}, {category}: {valuePercentTotal.formatNumber('#.0')}%"
+        : "{name}, {category}: {value}";
+
       series.slices.template.setAll({
         stroke: bgColor,
         strokeWidth: 2,
-        tooltipText: "{name}, {category}:{value}",
+        tooltipText: tooltipText,
       });
       series.slices.template.states.create("hover", { scale: 0.95 });
       series.data.setAll(data);

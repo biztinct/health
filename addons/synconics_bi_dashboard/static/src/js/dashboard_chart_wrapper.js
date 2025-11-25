@@ -44,6 +44,7 @@ export class DashboardChartWrapper extends Component {
     reloadKey: Number,
     onUpdateExport: { optional: true, type: Function },
     action_id: { optional: true, type: [Number, Boolean] },
+    show_data_value_type: { optional: true, type: String },
   };
 
   setup() {
@@ -59,6 +60,7 @@ export class DashboardChartWrapper extends Component {
       recordSets: this.props.recordSets,
       exporting: false,
       background_color: this.props.background_color,
+      show_data_value_type: this.props.show_data_value_type || 'value',
     });
     if (
       ["kpi", "tile"].includes(this.props.chart_type) &&

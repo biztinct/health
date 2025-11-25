@@ -559,6 +559,13 @@ class DashboardChart(models.Model):
         help="Select unit type for axis.",
     )
     custom_unit = fields.Char("Custom Unit", help="Set custom unit type on 'Y' axis.")
+    show_data_value_type = fields.Selection(
+        [("value", "Value"), ("percent", "Percent")],
+        string="Show Data Value Type",
+        default="value",
+        tracking=True,
+        help="Display data values as actual numbers or percentages in Doughnut/Pie charts.",
+    )
     group_ids = fields.Many2many(
         "res.groups",
         "chart_group_rel",

@@ -84,8 +84,8 @@
                                             </field>
 
                                             <field name="data_type" widget="radio" options="{'horizontal': True}" invisible="chart_type in ['list', 'to_do'] or not model_id" required="chart_type in ['list', 'to_do']"/>
-                                            <field name="measurement_field_ids" widget="many2many_tags" domain="[('model_id', '=', model_id), ('name', '!=', 'id'), ('name', '!=', 'sequence'), ('store', '=', True), '|', '|', ('ttype', '=', 'integer'), ('ttype', '=', 'float'), ('ttype', '=', 'monetary')]" invisible="chart_type not in ['area_chart', 'bar_chart', 'column_chart', 'doughnut_chart', 'line_chart', 'stackedcolumn_chart', 'radial_chart', 'scatter_chart'] or data_type == 'count'" options="{'no_create': 1}"/>
-                                            <field name="measurement_field_id" domain="[('model_id', '=', model_id), ('name', '!=', 'id'), ('store', '=', True), '|', '|', ('ttype', '=', 'integer'), ('ttype', '=', 'float'), ('ttype', '=', 'monetary')]" invisible="chart_type not in ['funnel_chart', 'pyramid_chart', 'pie_chart', 'radar_chart', 'meter_chart', 'map_chart', 'kpi', 'tile'] or data_type == 'count'" required="chart_type in ['funnel_chart', 'pyramid_chart', 'pie_chart', 'meter_chart', 'radar_chart', 'map_chart', 'kpi', 'tile'] and data_type != 'count'" options="{'no_create': 1}"/>
+                                            <field name="measurement_field_ids" widget="many2many_tags" domain="[('model_id', '=', model_id), ('name', '!=', 'id'), ('name', '!=', 'sequence'), '|', '|', ('ttype', '=', 'integer'), ('ttype', '=', 'float'), ('ttype', '=', 'monetary')]" invisible="chart_type not in ['area_chart', 'bar_chart', 'column_chart', 'doughnut_chart', 'line_chart', 'stackedcolumn_chart', 'radial_chart', 'scatter_chart'] or data_type == 'count'" options="{'no_create': 1}"/>
+                                            <field name="measurement_field_id" domain="[('model_id', '=', model_id), ('name', '!=', 'id'), '|', '|', ('ttype', '=', 'integer'), ('ttype', '=', 'float'), ('ttype', '=', 'monetary')]" invisible="chart_type not in ['funnel_chart', 'pyramid_chart', 'pie_chart', 'radar_chart', 'meter_chart', 'map_chart', 'kpi', 'tile'] or data_type == 'count'" required="chart_type in ['funnel_chart', 'pyramid_chart', 'pie_chart', 'meter_chart', 'radar_chart', 'map_chart', 'kpi', 'tile'] and data_type != 'count'" options="{'no_create': 1}"/>
                                         </group>
                                         <group>
                                             <field name="meter_target" invisible="chart_type != 'meter_chart'" />
@@ -180,7 +180,7 @@
                                         <group>
                                             <field name="kpi_model_id" domain="[('access_ids', '!=', False), ('transient', '=', False), ('model', 'not ilike', 'base_import%'), '|', ('model', 'not ilike', 'ir.%'), ('model', '=ilike', '_%ir.%'), ('model', 'not ilike', 'web_editor.%'), ('model', 'not ilike', 'web_tour.%'), ('model', '!=', 'mail.thread')]" options="{'no_create': 1}"/>
                                             <field name="kpi_data_type" widget="radio" options="{'horizontal': True}" invisible="chart_type in ['list', 'to_do'] or not kpi_model_id" required="chart_type in ['list', 'to_do']"/>
-                                            <field name="kpi_measurement_field_id" domain="[('model_id', '=', kpi_model_id), ('name', '!=', 'id'), ('store', '=', True), '|', '|', ('ttype', '=', 'integer'), ('ttype', '=', 'float'), ('ttype', '=', 'monetary')]" invisible="chart_type not in ['funnel_chart', 'pyramid_chart', 'pie_chart', 'radar_chart', 'map_chart', 'kpi', 'tile'] or kpi_data_type == 'count' or not kpi_model_id" required="chart_type in ['funnel_chart', 'pyramid_chart', 'pie_chart', 'radar_chart', 'map_chart', 'kpi', 'tile'] and kpi_data_type != 'count'" options="{'no_create': 1}"/>
+                                            <field name="kpi_measurement_field_id" domain="[('model_id', '=', kpi_model_id), ('name', '!=', 'id'), '|', '|', ('ttype', '=', 'integer'), ('ttype', '=', 'float'), ('ttype', '=', 'monetary')]" invisible="chart_type not in ['funnel_chart', 'pyramid_chart', 'pie_chart', 'radar_chart', 'map_chart', 'kpi', 'tile'] or kpi_data_type == 'count' or not kpi_model_id" required="chart_type in ['funnel_chart', 'pyramid_chart', 'pie_chart', 'radar_chart', 'map_chart', 'kpi', 'tile'] and kpi_data_type != 'count'" options="{'no_create': 1}"/>
                                             <field name="kpi_limit_record" />
                                         </group>
                                         <group>
@@ -213,6 +213,7 @@
                                     <group  invisible="chart_type in ['tile', 'kpi']">
                                         <group>
                                             <field name="theme" required="1" widget="selection_badge"/>
+                                            <field name="show_data_value_type" widget="radio" options="{'horizontal': True}" invisible="chart_type not in ['doughnut_chart', 'pie_chart']" />
                                         </group>
                                     </group>
                                     <group invisible="chart_type not in ['tile', 'kpi', 'to_do']">

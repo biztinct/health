@@ -15,6 +15,7 @@ export class PieChart extends Component {
     theme: String,
     recordSets: Object,
     export: { optional: true, type: Function },
+    show_data_value_type: { optional: true, type: String },
   };
 
   setup() {
@@ -86,6 +87,17 @@ export class PieChart extends Component {
       }),
     );
     var self = this;
+
+    // Set tooltip text based on show_data_value_type setting
+    const showDataValueType = this.props.show_data_value_type || 'value';
+    const tooltipText = showDataValueType === 'percent'
+      ? "{category}: {valuePercentTotal.formatNumber('#.0')}%"
+      : "{category}: {value}";
+
+    series.slices.template.setAll({
+      tooltipText: tooltipText,
+    });
+
     series.slices.template.events.on("click", function (ev) {
       if (self.props.update_chart) {
         self.props.update_chart(

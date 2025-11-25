@@ -49,7 +49,7 @@
                      <!-- style="max-height: 84vh; overflow: auto;" -->
                     <t t-foreach="state.charts" t-as="chart" t-key="chart.id">
                         <div class="grid-stack-item m-1" t-att-data-chart-id="chart.id" t-att-gs-w="chart.w" t-att-gs-h="chart.h" t-att-gs-min-h="chart.minh" t-att-gs-x="chart.x" t-att-gs-y="chart.y">
-                            <DashboardChartWrapper editChart="editChart" theme="chart.theme" onUpdateExport="onUpdateExport" reloadKey="reloadKey.value" chart_type="chart.chart_type" chartId="chart.id" name="chart.name" recordSets="chart.recordset" background_color="chart.background_color" action_id="chart.action_id" />
+                            <DashboardChartWrapper editChart="editChart" theme="chart.theme" onUpdateExport="onUpdateExport" reloadKey="reloadKey.value" chart_type="chart.chart_type" chartId="chart.id" name="chart.name" recordSets="chart.recordset" background_color="chart.background_color" action_id="chart.action_id" show_data_value_type="chart.show_data_value_type" />
                         </div>
                     </t>
                 </div>
