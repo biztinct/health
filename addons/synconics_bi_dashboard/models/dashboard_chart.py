@@ -1526,24 +1526,50 @@ class DashboardChart(models.Model):
 
             prepared_data = []
             for row in query_data:
-                # Try to extract category and value from query results
-                # This works for simple queries with category/value structure
-                if 'category' in row and 'value' in row:
-                    prepared_data.append({
-                        'category': row['category'],
-                        'value': row['value'],
-                        'record_id': row.get('category', '')
-                    })
+                # Normalize column names: support both standard and custom names
+                # Standard: category/value, Custom: bucket/outstanding_amount, etc.
+                category_value = None
+                value_value = None
+
+                # Try standard column names first
+                if 'category' in row:
+                    category_value = row['category']
+                elif 'bucket' in row:  # Support aging buckets
+                    category_value = row['bucket']
+
+                if 'value' in row:
+                    value_value = row['value']
+                elif 'outstanding_amount' in row:  # Support aging amounts
+                    value_value = row['outstanding_amount']
+                elif 'amount' in row:  # Generic amount field
+                    value_value = row['amount']
+
+                # If we found both category and value
+                if category_value is not None and value_value is not None:
+                    data_item = {
+                        'category': str(category_value),
+                        'value': float(value_value) if isinstance(value_value, (int, float)) else 0,
+                        'record_id': str(category_value)
+                    }
+                    # Support drill-down: If query provides record_ids, include them
+                    # This allows clicking on chart items to open filtered actions
+                    if 'record_ids' in row and row['record_ids']:
+                        data_item['record_ids'] = row['record_ids']
+                    prepared_data.append(data_item)
                 else:
-                    # For queries with different structure, use first two columns
+                    # Fallback: For queries with different structure, use first two columns
                     # as category and value
                     keys = list(row.keys())
                     if len(keys) >= 2:
-                        prepared_data.append({
+                        data_item = {
                             'category': str(row[keys[0]]),
                             'value': float(row[keys[1]]) if isinstance(row[keys[1]], (int, float)) else 0,
                             'record_id': str(row[keys[0]])
-                        })
+                        }
+                        # Support drill-down for non-standard queries
+                        if 'record_ids' in row and row['record_ids']:
+                            data_item['record_ids'] = row['record_ids']
+                        prepared_data.append(data_item)
 
             return self._build_final_response(
                 prepared_data, domain, chart_type, view_item, extra_action
@@ -1961,9 +1987,21 @@ class DashboardChart(models.Model):
             domain = extra_action.get("prev_domains", domain)
             if extra_action.get("current_group_by"):
                 group_by_id = group_by_id.browse(extra_action["current_group_by"])
-            domain.append(
-                (group_by_id.name, "=", extra_action["domain"].get("record_id"))
-            )
+
+            # Check if this is a query-based chart with record_ids array
+            clicked_data = extra_action["domain"]
+            if "record_ids" in clicked_data and clicked_data["record_ids"]:
+                # Query-based chart: use record IDs for filtering
+                record_ids = clicked_data["record_ids"]
+                # Ensure it's a list (in case it's a single ID)
+                if not isinstance(record_ids, list):
+                    record_ids = [record_ids]
+                domain.append(("id", "in", record_ids))
+            else:
+                # Model-based chart: use field-based filtering
+                domain.append(
+                    (group_by_id.name, "=", clicked_data.get("record_id"))
+                )
         return domain
 
     def get_tile_data(self, conf_obj, previous=0):
