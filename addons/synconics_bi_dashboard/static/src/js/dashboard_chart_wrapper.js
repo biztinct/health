@@ -515,6 +515,12 @@ export class DashboardChartWrapper extends Component {
     console.log('[ChartWrapper] Executing action', this.props.action_id, 'for chart', this.props.chartId);
 
     try {
+      // Read the chart configuration to get its domain
+      const charts = await this.orm.read("bi_dashboard.chart", [parseInt(this.props.chartId)], [
+        "domain",
+        "model_id",
+      ]);
+
       // Read the action configuration
       const actions = await this.orm.read("ir.actions.act_window", [this.props.action_id], [
         "name",
@@ -527,12 +533,44 @@ export class DashboardChartWrapper extends Component {
         "limit",
       ]);
 
-      if (actions.length > 0) {
+      if (actions.length > 0 && charts.length > 0) {
         const actionData = actions[0];
-        console.log('[ChartWrapper] Opening action:', actionData.name);
+        const chartData = charts[0];
 
-        // Execute the action using Odoo's action service
-        this.action.doAction(actionData);
+        console.log('[ChartWrapper] Opening action:', actionData.name);
+        console.log('[ChartWrapper] Chart domain:', chartData.domain);
+
+        // Parse the chart's domain (it's stored as a string)
+        let chartDomain = [];
+        if (chartData.domain) {
+          try {
+            chartDomain = JSON.parse(chartData.domain);
+          } catch (e) {
+            console.warn('[ChartWrapper] Failed to parse chart domain:', e);
+          }
+        }
+
+        // Parse the action's default domain
+        let actionDomain = [];
+        if (actionData.domain) {
+          try {
+            actionDomain = typeof actionData.domain === 'string'
+              ? JSON.parse(actionData.domain)
+              : actionData.domain;
+          } catch (e) {
+            console.warn('[ChartWrapper] Failed to parse action domain:', e);
+          }
+        }
+
+        // Merge domains: combine chart domain with action domain
+        const combinedDomain = [...chartDomain, ...actionDomain];
+        console.log('[ChartWrapper] Combined domain:', combinedDomain);
+
+        // Execute the action with the combined domain
+        this.action.doAction({
+          ...actionData,
+          domain: combinedDomain,
+        });
       }
     } catch (error) {
       console.error('[ChartWrapper] Error executing action:', error);
