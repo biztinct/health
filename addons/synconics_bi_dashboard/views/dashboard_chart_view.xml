@@ -213,7 +213,7 @@
                                     <group  invisible="chart_type in ['tile', 'kpi']">
                                         <group>
                                             <field name="theme" required="1" widget="selection_badge"/>
-                                            <field name="show_data_value_type" widget="radio" options="{'horizontal': True}" invisible="chart_type not in ['doughnut_chart', 'pie_chart']" />
+                                            <field name="show_data_value_type" widget="radio" options="{'horizontal': True}" invisible="chart_type not in ['doughnut_chart', 'pie_chart', 'funnel_chart', 'pyramid_chart']" />
                                             <field name="show_unit" widget="boolean_toggle" invisible="chart_type in ['funnel_chart', 'pyramid_chart']" />
                                             <field name="unit_type" widget="radio" options="{'horizontal': True}" invisible="not show_unit" required="show_unit" />
                                             <field name="custom_unit" invisible="not show_unit or unit_type == 'monetary'" />

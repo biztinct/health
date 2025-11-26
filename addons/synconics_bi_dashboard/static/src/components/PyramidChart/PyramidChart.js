@@ -15,6 +15,7 @@ export class PyramidChart extends Component {
     theme: String,
     recordSets: Object,
     export: { optional: true, type: Function },
+    show_data_value_type: { optional: true, type: String },
   };
 
   setup() {
@@ -78,18 +79,44 @@ export class PyramidChart extends Component {
       }
     }
 
+    // Determine if we should show values or percentages
+    const showDataValueType = this.props.show_data_value_type || 'value';
+    const tooltipText = showDataValueType === 'percent'
+      ? "{category}: {valuePercentTotal.formatNumber('#.0')}%"
+      : "{category}: {value}";
+    const legendValueText = showDataValueType === 'percent'
+      ? "{valuePercentTotal.formatNumber('#.0')}%"
+      : "{value}";
+    const labelText = showDataValueType === 'percent'
+      ? "{category}: {valuePercentTotal.formatNumber('#.0')}%"
+      : "{category}: {value}";
+
     var series = chart.series.push(
       am5percent.PyramidSeries.new(this.root, {
         alignLabels: false,
         orientation: "vertical",
         valueField: "value",
         categoryField: "category",
+        legendValueText: legendValueText,
         ...(isDescending
           ? {}
           : { topWidth: am5.percent(100), bottomWidth: am5.percent(0) }),
       }),
     );
     var self = this;
+
+    // Configure tooltip based on show_data_value_type setting
+    series.slices.template.setAll({
+      tooltipText: tooltipText,
+    });
+
+    // Configure slice labels to show values or percentages
+    series.labels.template.setAll({
+      text: labelText,
+      fontSize: 12,
+      fill: am5.color(0xffffff),
+    });
+
     series.slices.template.events.on("click", function (ev) {
       if (self.props.update_chart) {
         self.props.update_chart(

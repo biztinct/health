@@ -31,6 +31,7 @@ import { TodoView } from "../components/TodoView/TodoView";
 import { OdooEmbeddedView } from "../components/OdooEmbeddedView/OdooEmbeddedView";
 import { WarningDialog } from "@web/core/errors/error_dialogs";
 import { _t } from "@web/core/l10n/translation";
+import { Domain } from "@web/core/domain";
 
 export class DashboardChartWrapper extends Component {
   static props = {
@@ -516,7 +517,7 @@ export class DashboardChartWrapper extends Component {
 
     try {
       // Read the chart configuration to get its domain
-      const charts = await this.orm.read("bi_dashboard.chart", [parseInt(this.props.chartId)], [
+      const charts = await this.orm.read("dashboard.chart", [parseInt(this.props.chartId)], [
         "domain",
         "model_id",
       ]);
@@ -540,43 +541,68 @@ export class DashboardChartWrapper extends Component {
         console.log('[ChartWrapper] Opening action:', actionData.name);
         console.log('[ChartWrapper] Chart domain:', chartData.domain);
 
-        // Parse the chart's domain (it's stored as a string)
+        // Parse the chart's domain (it's stored as a Python-formatted string)
         let chartDomain = [];
         if (chartData.domain) {
           try {
-            chartDomain = JSON.parse(chartData.domain);
+            chartDomain = new Domain(chartData.domain).toList();
+            console.log('[ChartWrapper] Parsed chart domain:', chartDomain);
           } catch (e) {
             console.warn('[ChartWrapper] Failed to parse chart domain:', e);
           }
         }
 
-        // Parse the action's default domain
+        // Parse the action's default domain (also Python-formatted)
         let actionDomain = [];
         if (actionData.domain) {
           try {
             actionDomain = typeof actionData.domain === 'string'
-              ? JSON.parse(actionData.domain)
+              ? new Domain(actionData.domain).toList()
               : actionData.domain;
+            console.log('[ChartWrapper] Parsed action domain:', actionDomain);
           } catch (e) {
             console.warn('[ChartWrapper] Failed to parse action domain:', e);
           }
         }
 
-        // Merge domains: combine chart domain with action domain
-        const combinedDomain = [...chartDomain, ...actionDomain];
+        // Merge domains: combine chart domain with action domain using Domain.and()
+        let combinedDomain;
+        if (chartDomain.length > 0 && actionDomain.length > 0) {
+          combinedDomain = Domain.and([chartDomain, actionDomain]).toList();
+        } else if (chartDomain.length > 0) {
+          combinedDomain = chartDomain;
+        } else if (actionDomain.length > 0) {
+          combinedDomain = actionDomain;
+        } else {
+          combinedDomain = [];
+        }
         console.log('[ChartWrapper] Combined domain:', combinedDomain);
 
         // Execute the action with the combined domain
+        // Only pass specific fields to avoid format issues
         this.action.doAction({
-          ...actionData,
+          name: actionData.name,
+          type: actionData.type || 'ir.actions.act_window',
+          res_model: actionData.res_model,
+          view_mode: actionData.view_mode,
+          views: actionData.views || [],
           domain: combinedDomain,
+          context: actionData.context || {},
+          limit: actionData.limit,
+        });
+      } else {
+        console.error('[ChartWrapper] Missing action or chart data');
+        this.dialog.add(WarningDialog, {
+          title: _t("Action Error"),
+          message: _t("Chart or action configuration not found."),
         });
       }
     } catch (error) {
       console.error('[ChartWrapper] Error executing action:', error);
+      console.error('[ChartWrapper] Error details:', error.message, error.stack);
       this.dialog.add(WarningDialog, {
         title: _t("Action Error"),
-        message: _t("Failed to execute the configured action. Please check the action configuration."),
+        message: _t("Failed to execute the configured action: ") + (error.message || "Unknown error"),
       });
     }
   }
