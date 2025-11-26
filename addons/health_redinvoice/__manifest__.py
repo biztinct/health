@@ -15,6 +15,7 @@
         'security/ir.model.access.csv',
         'views/redinvoice_request_views.xml',
         'views/account_move_views.xml',
+        'views/redinvoice_pdf_preview_views.xml',
         'views/res_config_settings_views.xml',
     ],
     'installable': True,

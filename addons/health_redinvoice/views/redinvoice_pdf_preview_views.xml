@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_redinvoice_pdf_preview_wizard" model="ir.ui.view">
+        <field name="name">redinvoice.pdf.preview.wizard.form</field>
+        <field name="model">redinvoice.pdf.preview.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Red Invoice PDF" create="0" edit="0">
+                <group>
+                    <field name="pdf_binary" widget="pdf_viewer" readonly="1" filename="filename"/>
+                </group>
+                <footer>
+                    <button string="Close" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>

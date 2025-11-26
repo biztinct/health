@@ -7,8 +7,8 @@
         <field name="model">account.move</field>
         <field name="inherit_id" ref="health_invoicing.view_healthcare_invoices_list"/>
         <field name="arch" type="xml">
-            <!-- Add Red Invoice State column after payment_state -->
-            <field name="payment_state" position="after">
+            <!-- Add Red Invoice State column and quick action after payment_state -->
+            <xpath expr="//field[@name='payment_state']" position="after">
                 <field name="red_invoice_state" widget="badge"
                        decoration-success="red_invoice_state=='issued'"
                        decoration-warning="red_invoice_state=='pending'"
@@ -16,7 +16,14 @@
                        decoration-danger="red_invoice_state=='failed'"
                        decoration-muted="red_invoice_state in ('not_required', 'cancelled')"
                        string="Red Invoice Status"/>
-            </field>
+                <button name="action_view_red_invoice_pdf" type="object"
+                        class="oe_link"
+                        string="Red Invoice"
+                        icon="fa-file-pdf-o"
+                        />
+                <field name="red_invoice_pdf_attachment_id" invisible="1"/>
+                <field name="red_invoice_download_attachment_id" invisible="1"/>
+            </xpath>
         </field>
     </record>
 

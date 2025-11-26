@@ -85,6 +85,31 @@ class AccountMove(models.Model):
             move._redinvoice_cancel_remote()
         return True
 
+    def action_view_red_invoice_pdf(self):
+        self.ensure_one()
+        attachment = self.red_invoice_pdf_attachment_id or self.red_invoice_download_attachment_id
+        if not attachment:
+            raise UserError(_('No Red Invoice PDF is available for this document.'))
+
+        mimetype = (attachment.mimetype or '').lower()
+        filename = (attachment.name or '').lower()
+        if mimetype not in ('application/pdf', 'application/octet-stream') and not filename.endswith('.pdf'):
+            raise UserError(
+                _('The stored Red Invoice attachment (%s) is not a PDF file.') % (attachment.name or attachment.id)
+            )
+
+        return {
+            'name': _('Red Invoice PDF'),
+            'type': 'ir.actions.act_window',
+            'res_model': 'redinvoice.pdf.preview.wizard',
+            'view_mode': 'form',
+            'target': 'new',
+            'context': {
+                'default_move_id': self.id,
+                'default_attachment_id': attachment.id,
+            },
+        }
+
     # -------------------------------------------------------------------------
     # Core helpers
     # -------------------------------------------------------------------------
