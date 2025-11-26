@@ -211,7 +211,7 @@ export class ColumnChart extends Component {
     }
 
     let keys = Object.keys(data[0]).filter(
-      (k) => k !== "category" && k !== "record_id" && k !== "isSubGroupBy",
+      (k) => k !== "category" && k !== "record_id" && k !== "record_ids" && k !== "isSubGroupBy",
     );
     console.log('[ColumnChart] Data keys found:', keys);
 

@@ -124,7 +124,7 @@ export class RadialChart extends Component {
     );
     var self = this;
     let keys = Object.keys(data[0]).filter(
-      (k) => k !== "category" && k !== "record_id" && k !== "isSubGroupBy",
+      (k) => k !== "category" && k !== "record_id" && k !== "record_ids" && k !== "isSubGroupBy",
     );
     // Helper function to capitalize first letter
     const capitalizeFirst = (str) => {

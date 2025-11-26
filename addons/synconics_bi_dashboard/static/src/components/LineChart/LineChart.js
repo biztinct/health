@@ -87,7 +87,7 @@ export class LineChart extends Component {
     let valueTypes = [];
     let companies = new Set();
     Object.keys(rawData[0]).forEach((key) => {
-      if (key !== "category" && key !== "record_id" && key !== "isSubGroupBy") {
+      if (key !== "category" && key !== "record_id" && key !== "record_ids" && key !== "isSubGroupBy") {
         let [company, valueType] = key.split(" - ");
         companies.add(company);
         if (!valueTypes.includes(valueType)) {

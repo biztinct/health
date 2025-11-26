@@ -430,7 +430,7 @@ export class BarChart extends Component {
         return series;
       }
       let keys = Object.keys(data[0]).filter(
-        (k) => k !== "category" && k !== "record_id" && k !== "isSubGroupBy",
+        (k) => k !== "category" && k !== "record_id" && k !== "record_ids" && k !== "isSubGroupBy",
       );
       for (let key = 0; key < keys.length; key++) {
         createSeries(keys[key], keys[key]);
