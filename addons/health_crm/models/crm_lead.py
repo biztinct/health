@@ -178,7 +178,12 @@ class HealthLead(models.Model):
         ('completed', 'Booking Completed'),
         ('cancelled', 'Booking Cancelled')
     ], string='Booking Status', help='From Excel: Booking Status [Compulsory]', default='no_booking')
-    
+
+    booking_lost_reason = fields.Text(
+        string='Booking Lost Reason',
+        help='Reason why the booking was lost'
+    )
+
     # Healthcare lead source tracking (moved from res.partner)
     healthcare_lead_source = fields.Selection([
         ('facebook_ad', 'Facebook Advertisement'),
@@ -228,7 +233,20 @@ class HealthLead(models.Model):
         string='Province/City',
         help='Vietnamese province or city for this lead'
     )
-    
+
+    # Vietnamese Address Fields
+    named_area = fields.Char('Named Area', help='Khu vực đặt tên')
+    apartment_number = fields.Char('Apartment Number', help='Số căn hộ')
+    building_name = fields.Char('Building Name', help='Tên tòa nhà')
+    house_number = fields.Char('House Number', help='Số nhà')
+    sub_alley_number = fields.Char('Sub-Alley Number', help='Số ngách')
+    alley_number = fields.Char('Alley Number', help='Số ngõ')
+    ward_commune = fields.Char('Ward/Commune', help='Phường/Xã')
+    full_vietnamese_address = fields.Char(
+        'Full Vietnamese Address',
+        help='Complete Vietnamese formatted address'
+    )
+
     # Secondary caregiver (Caregiver 2 ID)
     secondary_caregiver_id = fields.Many2one(
         'res.partner',
@@ -459,13 +477,20 @@ class HealthLead(models.Model):
             return existing_patient
         
         # Create new patient
+        # Get Regular Patient category
+        regular_category = self.env.ref('health_base.patient_category_regular', raise_if_not_found=False)
+
         patient_vals = {
             'name': patient_name,
             'is_patient': True,
             'is_company': False,
             'customer_rank': 1,
+            'primary_facility_id': self.facility_id.id if self.facility_id else False,
+            'active': True,
+            'patient_status': 'active',
+            'patient_category_id': regular_category.id if regular_category else False,
         }
-        
+
         # Copy contact info from lead if contact is the client
         if self.contact_relationship_type == 'client':
             patient_vals.update({
@@ -476,6 +501,17 @@ class HealthLead(models.Model):
                 'city': self.city,
                 'zip': self.zip,
                 'country_id': self.country_id.id if self.country_id else False,
+                'state_id': self.state_id.id if self.state_id else False,
+                # Vietnamese address fields
+                'province_code': self.province_code.code if self.province_code else False,
+                'named_area': self.named_area,
+                'apartment_number': self.apartment_number,
+                'building_name': self.building_name,
+                'house_number': self.house_number,
+                'sub_alley_number': self.sub_alley_number,
+                'alley_number': self.alley_number,
+                'ward_commune': self.ward_commune,
+                # Note: vietnamese_address is computed automatically in res.partner
             })
         
         return self.env['res.partner'].create(patient_vals)
@@ -698,13 +734,27 @@ class HealthLead(models.Model):
             'booking_status': 'confirmed',
             'stage_id': self._get_won_stage().id,
         })
-        
-        # Return action to open the created FSO booking form
+
+        # Return to CRM Contacts action with rainbow effect
+        action = self.env['ir.actions.act_window']._for_xml_id('health_crm.action_healthcare_opportunities')
+        action['effect'] = {
+            'fadeout': 'slow',
+            'message': _('Congratulations! Client %s created.') % patient.name,
+            'type': 'rainbow_man',
+        }
+        return action
+
+    def action_booking_lost(self):
+        """Open wizard to capture booking lost reason"""
+        self.ensure_one()
+
         return {
+            'name': _('Booking Lost Reason'),
             'type': 'ir.actions.act_window',
-            'name': _('Booking'),
-            'res_model': 'health.fieldservice.order',
-            'res_id': fso.id,
+            'res_model': 'health.crm.booking.lost.wizard',
             'view_mode': 'form',
-            'target': 'current',
+            'target': 'new',
+            'context': {
+                'default_lead_id': self.id,
+            }
         }

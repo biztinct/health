@@ -63,6 +63,7 @@
         'views/crm_lead_views.xml',
         'views/res_partner_views.xml',
         'views/health_crm_menus.xml',
+        'views/booking_lost_wizard_views.xml',
 
         # Wizards
         'wizard/client_selection_wizard_views.xml',

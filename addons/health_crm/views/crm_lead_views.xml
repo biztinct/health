@@ -59,34 +59,53 @@
         <field name="arch" type="xml">
             <form string="CRM Contact">
                 <header>
-                    <button name="action_convert_to_booking" 
-                            string="Convert to Booking" 
-                            type="object" 
+                    <button name="action_convert_to_booking"
+                            string="Convert to Client"
+                            type="object"
                             class="btn-primary"
-                            invisible="health_contact_outcome == 'service_booked'"/>
-                    <button name="action_schedule_follow_up" 
-                            string="Schedule Follow-up" 
-                            type="object" 
+                            invisible="health_contact_outcome == 'service_booked' or contact_outcome == 'booking_lost'"/>
+                    <button name="action_schedule_follow_up"
+                            string="Schedule Follow-up"
+                            type="object"
                             class="btn-secondary"/>
-                    <field name="stage_id" widget="statusbar" options="{'clickable': '1'}"/>
+                    <button name="action_booking_lost"
+                            string="Booking Lost"
+                            type="object"
+                            class="btn-secondary"
+                            invisible="contact_outcome == 'booking_lost'"/>
+                    <field name="contact_outcome" invisible="1"/>
+                    <field name="stage_id" widget="statusbar" options="{'clickable': '1'}" domain="[('team_id', '=', False)]"/>
                 </header>
                 
                 <sheet string="CRM Contact">
-                    <!-- Contact Code positioned top right -->
-                    <div style="position: absolute; top: 10px; right: 20px; z-index: 1000;">
-                        <span class="o_form_label" style="font-size: 12px; color: #666; display: block;">Contact ID</span>
-                        <span style="font-weight: bold; font-size: 16px; color: #875A7B;">
+                    <!-- Diagonal Ribbon Banner for Booking Lost -->
+                    <div invisible="contact_outcome != 'booking_lost'"
+                         style="position: absolute; top: 25px; right: -35px; transform: rotate(45deg);
+                                background-color: #dc3545; color: white; padding: 5px 40px;
+                                font-weight: bold; font-size: 13px; z-index: 999;
+                                box-shadow: 0 3px 10px rgba(0,0,0,0.2); text-align: center;">
+                        BOOKING LOST
+                    </div>
+
+                    <!-- Contact Code Badge -->
+                    <div style="position: absolute; top: 10px; right: 150px; z-index: 1000;">
+                        <span class="badge rounded-pill" style="background-color: #875A7B; color: white; font-size: 13px; padding: 6px 14px; font-weight: 500;">
                             <field name="unique_contact_code" readonly="1" nolabel="1"/>
                         </span>
                     </div>
-                    
+
                     <!-- Title and Basic Info -->
                     <div class="oe_title">
                         <h1>
                             <field name="name" string="Contact Name" placeholder="Contact name..." required="1"/>
                         </h1>
+                        <!-- Booking Lost Reason Alert -->
+                        <div class="alert alert-warning" role="alert" invisible="contact_outcome != 'booking_lost'" style="margin-top: 10px;">
+                            <strong>Booking Lost:</strong>
+                            <field name="booking_lost_reason" readonly="1" nolabel="1"/>
+                        </div>
                     </div>
-                    
+
                     <!-- Relationship Selection -->
                     <div class="vu-card" style="margin-bottom: var(--vu-space-lg);">
                         <div class="vu-card__title">
@@ -132,17 +151,24 @@
                                     <div class="vu-card">
                                         <div class="vu-card__title">
                                             <span class="vu-section__icon" data-icon="map-pin"/>
-                                            <span>Address Information</span>
+                                            <span>Address Details</span>
                                         </div>
                                         <group col="2">
-                                            <field name="street" string="Street"/>
-                                            <field name="street2" string="Street 2"/>
-                                            <field name="city" string="City"/>
-                                            <field name="zip" string="ZIP"/>
-                                            <field name="state_id" string="State" options="{'no_create': True}"/>
+                                            <field name="province_code" string="Province Code"/>
+                                            <field name="house_number" string="House Number"/>
+                                            <field name="sub_alley_number" string="Sub-Alley Number"/>
+                                            <field name="alley_number" string="Alley Number"/>
+                                            <field name="ward_commune" string="Ward/Commune"/>
+                                            <field name="named_area" string="Named Area"/>
+                                            <field name="apartment_number" string="Apartment Number"/>
+                                            <field name="building_name" string="Building Name"/>
+                                            <field name="zip" string="Postal Code"/>
+                                            <field name="street" string="Street" placeholder="Street name / Main road"/>
+                                            <field name="city" string="City" placeholder="District / City"/>
+                                            <field name="state_id" string="Province" options="{'no_create': True}" placeholder="Select province"/>
                                             <field name="country_id" string="Country" options="{'no_create': True}"/>
-                                            <field name="province_code" string="Province or City" options="{'no_create': True}"/>
-                                            <field name="facility_id" string="Healthcare Facility" options="{'no_create': True}"/>
+                                            <field name="full_vietnamese_address" string="Full Vietnamese Address" colspan="2"/>
+                                            <field name="facility_id" string="Healthcare Facility" options="{'no_create': True}" colspan="2"/>
                                         </group>
                                     </div>
                                     
@@ -269,7 +295,7 @@
                         </page>
                         
                         <!-- Analytics Tab -->
-                        <page string="Analytics and Tracking" name="analytics">
+                        <page string="Analytics and Tracking" name="analytics" invisible="1">
                             <div class="vu-section">
                                 <div class="vu-section__title">
                                     <span class="vu-section__icon" data-icon="timeline"/>
@@ -318,6 +344,7 @@
         <field name="domain">[('type', '=', 'opportunity')]</field>
         <field name="context">{
             'default_type': 'opportunity',
+            'form_view_ref': 'health_crm.view_healthcare_crm_lead_quick_create',
         }</field>
         <field name="view_ids" eval="[(5, 0, 0),
             (0, 0, {'view_mode': 'kanban'}),
@@ -332,7 +359,7 @@
             <p class="o_view_nocontent_smiling_face">
                 Create your first healthcare contact!
             </p><p>
-                A healthcare contact is a potential patient, caregiver, or payer who has shown interest in your services. 
+                A healthcare contact is a potential patient, caregiver, or payer who has shown interest in your services.
                 Use this section to manage your healthcare relationships and track your interactions.
             </p>
         </field>
@@ -371,11 +398,16 @@
         <field name="model">crm.lead</field>
         <field name="inherit_id" ref="crm.crm_case_kanban_view_leads"/>
         <field name="arch" type="xml">
+            <!-- Set quick_create_view to use our custom form -->
+            <xpath expr="//kanban" position="attributes">
+                <attribute name="quick_create_view">health_crm.view_healthcare_crm_lead_quick_create</attribute>
+            </xpath>
+
             <!-- Change field label 'name' to 'Contact name' in kanban view -->
             <xpath expr="//field[@name='name']" position="attributes">
                 <attribute name="string">Contact name</attribute>
             </xpath>
-            
+
             <!-- Remove partner_id field from kanban view -->
             <xpath expr="//field[@name='partner_id' and @class='text-truncate']" position="replace"/>
         </field>
@@ -391,6 +423,25 @@
             <xpath expr="//field[@name='name']" position="attributes">
                 <attribute name="string">Contact name</attribute>
             </xpath>
+        </field>
+    </record>
+
+    <!-- Healthcare Quick Create Form - Customized for CRM Contacts -->
+    <record id="view_healthcare_crm_lead_quick_create" model="ir.ui.view">
+        <field name="name">crm.lead.form.quick.healthcare</field>
+        <field name="model">crm.lead</field>
+        <field name="mode">primary</field>
+        <field name="priority">1</field>
+        <field name="arch" type="xml">
+            <form string="Quick Create Contact">
+                <group>
+                    <field name="type" invisible="1"/>
+                    <field name="name" string="Contact Name" placeholder="e.g. John Doe"/>
+                    <field name="facility_id" string="Primary Facility" options="{'no_create': True}"/>
+                    <field name="email_from" string="Email" placeholder="e.g. &quot;email@address.com&quot;"/>
+                    <field name="phone" placeholder="e.g. &quot;0123456789&quot;"/>
+                </group>
+            </form>
         </field>
     </record>
 
