@@ -56,8 +56,23 @@ a {
     display: none !important;
 }
 
-.o_form_view .o_group:not(.o_inner_group),
-.o_form_view .kept-for-backward-compat {
+// Keep the Access Rights tab using the native table layout
+.o_form_view [data-name="access_rights"] .o_group,
+.o_form_view [data-name="access_rights"] .o_group.row,
+.o_form_view [data-name="access_rights"] .o_group.o_group_no_card,
+.o_form_view [data-name="access_rights"] .kept-for-backward-compat {
+    display: table !important;
+    width: 100% !important;
+    padding: 0 !important;
+    margin: 0 0 var(--vu-space-md) !important;
+    background: transparent !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+}
+
+.o_form_view .o_group:not(.o_inner_group):not(:has(.o_field_widget[name="groups_id"])),
+.o_form_view .kept-for-backward-compat:not(:has(.o_field_widget[name="groups_id"])) {
     display: block;
     width: 100%;
     padding: var(--vu-space-lg);
@@ -68,8 +83,8 @@ a {
     box-shadow: var(--vu-shadow-lg);
 }
 
-.o_form_view .o_group:not(.o_inner_group):has(>.o_group.row:not(.o_inner_group)),
-.o_form_view .o_group:not(.o_inner_group):has(>.o_inner_group) {
+.o_form_view .o_group:not(.o_inner_group):has(>.o_group.row:not(.o_inner_group)):not(:has(.o_field_widget[name="groups_id"])),
+.o_form_view .o_group:not(.o_inner_group):has(>.o_inner_group):not(:has(.o_field_widget[name="groups_id"])) {
     padding: 0;
     background: transparent;
     border: 0;
@@ -80,7 +95,7 @@ a {
     width: 100%;
 }
 
-.o_form_view .o_group.row:not(.o_inner_group) {
+.o_form_view .o_group.row:not(.o_inner_group):not(:has(.o_field_widget[name="groups_id"])) {
     display: flex;
     flex-wrap: wrap;
     gap: var(--vu-space-lg);
@@ -92,7 +107,7 @@ a {
     align-items: stretch !important;
 }
 
-.o_form_view .o_group.row:not(.o_inner_group) > .o_inner_group {
+.o_form_view .o_group.row:not(.o_inner_group):not(:has(.o_field_widget[name="groups_id"])) > .o_inner_group {
     flex: 1 1 420px;
     min-width: 320px;
     width: 100% !important;
@@ -209,7 +224,7 @@ a {
     box-shadow: none;
 }
 
-.vu-section:not(:has(.vu-card:has(.o_wrap_field:not(.o_invisible_modifier), .o_row:not(.o_invisible_modifier), .o_col:not(.o_invisible_modifier), field))) {
+.vu-section:not(:has(.vu-card:has(.o_wrap_field:not(.o_invisible_modifier), .o_row:not(.o_invisible_modifier), .o_col:not(.o_invisible_modifier), .o_field_widget:not(.o_invisible_modifier), .o_address_map_widget, field))) {
     display: none;
 }
 
@@ -219,11 +234,11 @@ a {
     gap: var(--vu-space-md);
 }
 
-.vu-card:not(:has(.o_wrap_field:not(.o_invisible_modifier), .o_row:not(.o_invisible_modifier), .o_col:not(.o_invisible_modifier), field)) {
+.vu-card:not(:has(.o_wrap_field:not(.o_invisible_modifier), .o_row:not(.o_invisible_modifier), .o_col:not(.o_invisible_modifier), .o_field_widget:not(.o_invisible_modifier), .o_address_map_widget, field)) {
     display: none;
 }
 
-.vu-section-grid:not(:has(.vu-card:has(.o_wrap_field:not(.o_invisible_modifier), .o_row:not(.o_invisible_modifier), .o_col:not(.o_invisible_modifier), field))) {
+.vu-section-grid:not(:has(.vu-card:has(.o_wrap_field:not(.o_invisible_modifier), .o_row:not(.o_invisible_modifier), .o_col:not(.o_invisible_modifier), .o_field_widget:not(.o_invisible_modifier), .o_address_map_widget, field))) {
     display: none;
 }
 
