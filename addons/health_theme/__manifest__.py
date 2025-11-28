@@ -52,9 +52,11 @@
     'website': 'https://vafhs.com',
     'depends': [
         'web',
+        'base',
     ],
     'data': [
         'views/webclient_templates.xml',
+        'views/res_users_views.xml',
     ],
     'assets': {
         'web._assets_primary_variables': [

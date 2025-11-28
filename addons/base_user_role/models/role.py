@@ -4,6 +4,7 @@ import datetime
 import logging
 
 from odoo import SUPERUSER_ID, _, api, fields, models
+from lxml import etree
 
 _logger = logging.getLogger(__name__)
 
@@ -128,6 +129,73 @@ class ResUsersRole(models.Model):
         action = self.env["ir.actions.actions"]._for_xml_id("base.ir_access_act")
         action["domain"] = [("id", "in", self.model_access_ids.ids)]
         return action
+
+    @api.model
+    def fields_view_get(self, view_id=None, view_type="form", toolbar=False, submenu=False):
+        """Render implied groups in the same grouped layout as user access rights."""
+        res = super().fields_view_get(view_id=view_id, view_type=view_type, toolbar=toolbar, submenu=submenu)
+
+        if view_type != "form" or "implied_ids" not in res.get("fields", {}):
+            return res
+
+        try:
+            doc = etree.XML(res["arch"])
+        except Exception as err:
+            _logger.warning("Failed to parse view arch for res.users.role: %s", err)
+            return res
+
+        target_nodes = doc.xpath("//field[@name='implied_ids']")
+        if not target_nodes:
+            return res
+
+        # Build grouped checkboxes by module category (similar feel to user access rights)
+        target = target_nodes[0]
+        parent = target.getparent()
+
+        wrapper = etree.Element("group", attrib={"col": "2", "class": "o_user_role_groups"})
+        categories = self.env["ir.module.category"].sudo().search([], order="sequence, name")
+        groups_model = self.env["res.groups"].sudo()
+        handled_group_ids = set()
+
+        def _add_section(cat_name, domain_expr):
+            section_groups = groups_model.search(domain_expr)
+            if not section_groups:
+                return
+            handled_group_ids.update(section_groups.ids)
+            section = etree.SubElement(wrapper, "group", attrib={"string": cat_name, "col": "1"})
+            etree.SubElement(
+                section,
+                "field",
+                attrib={
+                    "name": "implied_ids",
+                    "widget": "many2many_checkboxes",
+                    "domain": domain_expr,
+                    "options": "{'no_create': True, 'no_create_edit': True, 'no_open': True}",
+                },
+            )
+
+        for cat in categories:
+            domain_str = f"[('category_id','=',{cat.id})]"
+            _add_section(cat.name, [("category_id", "=", cat.id)])
+
+        uncategorized = groups_model.search([("category_id", "=", False), ("id", "not in", list(handled_group_ids))])
+        if uncategorized:
+            domain_str = f"[('id','in',{list(uncategorized.ids)})]"
+            section = etree.SubElement(wrapper, "group", attrib={"string": _("Other"), "col": "1"})
+            etree.SubElement(
+                section,
+                "field",
+                attrib={
+                    "name": "implied_ids",
+                    "widget": "many2many_checkboxes",
+                    "domain": domain_str,
+                    "options": "{'no_create': True, 'no_create_edit': True, 'no_open': True}",
+                },
+            )
+
+        parent.replace(target, wrapper)
+        res["arch"] = etree.tostring(doc, encoding="unicode")
+        return res
 
 
 class ResUsersRoleLine(models.Model):

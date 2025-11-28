@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <!-- Force Access Rights to render as grouped checkboxes, matching the user form layout -->
+    <record id="health_theme_view_users_form_access_rights" model="ir.ui.view">
+        <field name="name">res.users.form.health.theme.access.rights</field>
+        <field name="model">res.users</field>
+        <field name="inherit_id" ref="base.view_users_form"/>
+        <field name="arch" type="xml">
+            <!-- Insert our checkbox rendering into the Access Rights page -->
+            <xpath expr="//page[@name='access_rights']" position="inside">
+                <field name="groups_id"
+                       widget="many2many_checkboxes"
+                       context="{'display_groups_by_application': True}"
+                       options="{'no_create': True, 'no_create_edit': True, 'no_open': True}"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>
