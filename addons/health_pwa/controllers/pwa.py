@@ -131,21 +131,21 @@ class HealthPWAController(http.Controller):
                 </html>
             """)
     
-    @http.route('/health_pwa/manifest.json', type='http', auth='user')
+    @http.route('/health_pwa/manifest.json', type='http', auth='public')
     def pwa_manifest(self, **kwargs):
         """PWA Manifest for installation"""
-        company = request.env.company
         manifest = {
-            "name": f"{company.name} - Health Mobile",
-            "short_name": "Health Mobile",
-            "description": "Healthcare Mobile Application for Field Workers",
-            "start_url": "/health_pwa",
+            "name": "Viet Uc - Ứng dụng Y tế Di động",
+            "short_name": "Viet Uc",
+            "description": "Ứng dụng di động cho nhân viên y tế làm việc tại gia với khả năng offline",
+            "start_url": "/health_pwa?utm_source=pwa_installed&utm_medium=homescreen",
             "display": "standalone",
             "orientation": "portrait-primary",
             "theme_color": "#875A7B",
             "background_color": "#FFFFFF",
+            "color_scheme": "light",
             "categories": ["health", "medical", "productivity"],
-            "lang": "en-US",
+            "lang": "vi",
             "scope": "/health_pwa/",
             "icons": [
                 {
@@ -155,14 +155,14 @@ class HealthPWAController(http.Controller):
                     "purpose": "any maskable"
                 },
                 {
-                    "src": "/health_pwa/static/icons/icon-96.png", 
+                    "src": "/health_pwa/static/icons/icon-96.png",
                     "sizes": "96x96",
                     "type": "image/png",
                     "purpose": "any maskable"
                 },
                 {
                     "src": "/health_pwa/static/icons/icon-128.png",
-                    "sizes": "128x128", 
+                    "sizes": "128x128",
                     "type": "image/png",
                     "purpose": "any maskable"
                 },
@@ -207,22 +207,22 @@ class HealthPWAController(http.Controller):
                 {
                     "src": "/health_pwa/static/screenshots/tablet-1.png",
                     "sizes": "1024x768",
-                    "type": "image/png", 
+                    "type": "image/png",
                     "form_factor": "wide"
                 }
             ],
             "shortcuts": [
                 {
-                    "name": "Patients",
-                    "short_name": "Patients",
-                    "description": "View patient list",
+                    "name": "Bệnh nhân",
+                    "short_name": "Bệnh nhân",
+                    "description": "Xem danh sách bệnh nhân",
                     "url": "/health_pwa#/patients",
                     "icons": [{"src": "/health_pwa/static/icons/patients-96.png", "sizes": "96x96"}]
                 },
                 {
-                    "name": "Field Orders",
-                    "short_name": "FSO",
-                    "description": "Manage field service orders", 
+                    "name": "Đơn hàng",
+                    "short_name": "Đơn hàng",
+                    "description": "Quản lý đơn dịch vụ tại nhà",
                     "url": "/health_pwa#/orders",
                     "icons": [{"src": "/health_pwa/static/icons/orders-96.png", "sizes": "96x96"}]
                 }
@@ -260,16 +260,20 @@ class HealthPWAController(http.Controller):
     def install_guide(self, **kwargs):
         """Installation guide for different platforms"""
         user_agent = request.httprequest.environ.get('HTTP_USER_AGENT', '')
-        
+
         # Detect platform
         is_ios = 'iPhone' in user_agent or 'iPad' in user_agent
         is_android = 'Android' in user_agent
         is_desktop = not (is_ios or is_android)
-        
+
+        # Get user language preference
+        user_lang = request.env.user.lang or request.lang or 'en_US'
+
         return request.render('health_pwa.install_guide', {
             'is_ios': is_ios,
             'is_android': is_android,
             'is_desktop': is_desktop,
+            'user_lang': user_lang,
         })
     
     def _check_health_access(self):

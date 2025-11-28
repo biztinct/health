@@ -1,8 +1,8 @@
 {
-  "name": "Health Mobile - Progressive Web Application",
-  "short_name": "Health Mobile",
-  "description": "Healthcare Mobile Application for Field Workers with Offline Capabilities",
-  "start_url": "/health_pwa",
+  "name": "Viet Uc - Ứng dụng Y tế Di động",
+  "short_name": "Viet Uc",
+  "description": "Ứng dụng di động cho nhân viên y tế làm việc tại gia với khả năng offline",
+  "start_url": "/health_pwa?utm_source=pwa_installed&utm_medium=homescreen",
   "scope": "/health_pwa/",
   "display": "standalone",
   "orientation": "portrait-primary",
@@ -10,7 +10,7 @@
   "background_color": "#FFFFFF",
   "color_scheme": "light",
   "categories": ["health", "medical", "productivity"],
-  "lang": "en-US",
+  "lang": "vi",
   "icons": [
     {
       "src": "/health_pwa/static/icons/icon-72.png",
@@ -77,16 +77,16 @@
   ],
   "shortcuts": [
     {
-      "name": "Patients",
-      "short_name": "Patients",
-      "description": "View patient list",
+      "name": "Bệnh nhân",
+      "short_name": "Bệnh nhân",
+      "description": "Xem danh sách bệnh nhân",
       "url": "/health_pwa#/patients",
       "icons": [{"src": "/health_pwa/static/icons/patients-96.png", "sizes": "96x96"}]
     },
     {
-      "name": "Field Orders",
-      "short_name": "FSO",
-      "description": "Manage field service orders", 
+      "name": "Đơn hàng",
+      "short_name": "Đơn hàng",
+      "description": "Quản lý đơn dịch vụ tại nhà",
       "url": "/health_pwa#/orders",
       "icons": [{"src": "/health_pwa/static/icons/orders-96.png", "sizes": "96x96"}]
     }

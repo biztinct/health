@@ -1,19 +1,19 @@
 // Health PWA - Vue.js 3 Main Application
 
-// Lightweight translation helper: use Odoo _t if present, else fallback to a preload map from server.
-// Emits a console warning once if nothing is available.
-let __pwaWarnedMissingT = false;
+// Lightweight translation helper: use PWAUtils.i18n for reactive language switching
+// This allows translations to update when user changes language preference
 const _t = (s) => {
+  // Use PWAUtils.i18n for reactive translations based on window.healthPWAConfig.user_lang
+  if (window.PWAUtils && window.PWAUtils.i18n && typeof window.PWAUtils.i18n.t === 'function') {
+    return window.PWAUtils.i18n.t(s);
+  }
+
+  // Fallback to Odoo translations if available
   if (window.odoo && typeof window.odoo._t === 'function') {
     return window.odoo._t(s);
   }
-  if (window.healthPWA && window.healthPWA.l10n && window.healthPWA.l10n[s]) {
-    return window.healthPWA.l10n[s];
-  }
-  if (!__pwaWarnedMissingT) {
-    console.warn('[health_pwa] translation unavailable; using raw strings. Ensure translations JS loads or preload is present.');
-    __pwaWarnedMissingT = true;
-  }
+
+  // Final fallback: return the key as-is
   return s;
 };
 
@@ -38,7 +38,7 @@ window.healthPWA = {
     console.log('[health_pwa] translation debug', {
       hasOdoo: !!window.odoo,
       has_t: !!(window.odoo && window.odoo._t),
-      lang: window.odoo?.session_info?.user_context?.lang || window.healthPWAConfig?.lang,
+      lang: window.odoo?.session_info?.user_context?.lang || window.healthPWAConfig?.user_lang,
       sampleDay: _t('Day'),
       preloadEntries: window.healthPWA?.l10n ? Object.keys(window.healthPWA.l10n).length : 0,
       preloadHasDay: !!(window.healthPWA?.l10n && window.healthPWA.l10n['Day']),

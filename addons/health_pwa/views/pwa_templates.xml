@@ -3,6 +3,9 @@
 
     <template id="app_shell" name="Health PWA App Shell">
         <t t-call="web.layout">
+            <t t-set="head_website">
+                <title>Viet Uc</title>
+            </t>
             <t t-set="head">
                 <!-- PWA Meta Tags -->
                 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"/>
@@ -11,7 +14,7 @@
                 <meta name="mobile-web-app-capable" content="yes"/>
                 <meta name="apple-mobile-web-app-capable" content="yes"/>
                 <meta name="apple-mobile-web-app-status-bar-style" content="default"/>
-                <meta name="apple-mobile-web-app-title" content="Health Mobile"/>
+                <meta name="apple-mobile-web-app-title" content="Viet Uc"/>
                 
                 <!-- PWA Manifest -->
                 <link rel="manifest" href="/health_pwa/manifest.json"/>
@@ -51,38 +54,53 @@
                 <div id="pwa-loading" class="pwa-loading-screen">
                     <div class="loading-container">
                         <div class="loading-logo">
-                            <img src="/health_pwa/static/icons/icon-192.png" alt="Health Mobile" width="80" height="80"/>
+                            <img src="/health_pwa/static/icons/icon-192.png" alt="Viet Uc" width="80" height="80"/>
                         </div>
                         <div class="loading-text">
-                            <h3>Health Mobile</h3>
-                            <p>Loading healthcare data...</p>
+                            <h3>Viet Uc</h3>
+                            <p class="pwa-lang-content" data-lang="vi">Đang tải dữ liệu...</p>
+                            <p class="pwa-lang-content" data-lang="en" style="display: none;">Loading data...</p>
                         </div>
                         <div class="loading-spinner">
                             <div class="spinner"></div>
                         </div>
                     </div>
                 </div>
-                
+
                 <!-- Vue.js App Will Mount Here -->
                 <div id="vue-app" style="display: none;">
                     <!-- Vue.js application content -->
                 </div>
             </div>
-            
+
             <!-- PWA Install Banner -->
             <div id="pwa-install-banner" class="pwa-install-banner" style="display: none;">
                 <div class="banner-content">
                     <div class="banner-text">
-                        <strong>Install Health Mobile</strong>
-                        <span>Get the best mobile experience</span>
+                        <strong class="pwa-lang-content" data-lang="vi">Cài đặt Viet Uc</strong>
+                        <strong class="pwa-lang-content" data-lang="en" style="display: none;">Install Viet Uc</strong>
+                        <span class="pwa-lang-content" data-lang="vi">Trải nghiệm tốt nhất trên di động</span>
+                        <span class="pwa-lang-content" data-lang="en" style="display: none;">Best experience on mobile</span>
                     </div>
                     <div class="banner-actions">
-                        <button id="pwa-install-btn" class="btn btn-primary">Install</button>
-                        <button id="pwa-dismiss-btn" class="btn btn-secondary">Later</button>
+                        <button id="pwa-install-btn" class="btn btn-primary">
+                            <span class="pwa-lang-content" data-lang="vi">Cài đặt</span>
+                            <span class="pwa-lang-content" data-lang="en" style="display: none;">Install</span>
+                        </button>
+                        <button id="pwa-dismiss-btn" class="btn btn-secondary">
+                            <span class="pwa-lang-content" data-lang="vi">Để sau</span>
+                            <span class="pwa-lang-content" data-lang="en" style="display: none;">Later</span>
+                        </button>
                     </div>
                 </div>
             </div>
             
+            <!-- Language Toggle Button (Fixed Position) -->
+            <div id="pwa-lang-toggle" style="position: fixed; top: 10px; right: 10px; z-index: 9999; background: white; border-radius: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); overflow: hidden; display: flex;">
+                <button onclick="window.PWA_switchLanguage('vi')" id="pwa-lang-btn-vi" style="padding: 8px 16px; border: none; background: #875A7B; color: white; cursor: pointer; font-size: 14px; transition: all 0.3s;">VI</button>
+                <button onclick="window.PWA_switchLanguage('en')" id="pwa-lang-btn-en" style="padding: 8px 16px; border: none; background: transparent; color: #666; cursor: pointer; font-size: 14px; transition: all 0.3s;">EN</button>
+            </div>
+
             <!-- JavaScript Configuration -->
                 <script type="text/javascript">
                 window.healthPWAConfig = {
@@ -90,13 +108,73 @@
                     userName: '<t t-esc="user_name"/>',
                     companyName: '<t t-esc="company_name"/>',
                     dbName: '<t t-esc="db_name"/>',
-                    lang: '<t t-esc="user_lang"/>',
+                    user_lang: '<t t-esc="user_lang"/>',
                     apiBaseUrl: '/health_pwa/api',
                     syncUrl: '/health_pwa/sync',
                     websocketUrl: '/longpolling',
                     version: '1.0.0',
                     buildTime: '<t t-esc="datetime.datetime.now().isoformat()"/>',
                 };
+
+                // Language switching function for PWA app
+                window.PWA_switchLanguage = function(lang, skipReload) {
+                    console.log('=== PWA Language Switch Debug ===');
+                    console.log('Switching to language:', lang);
+                    console.log('Current healthPWAConfig.user_lang:', window.healthPWAConfig.user_lang);
+                    console.log('Current Odoo lang:', window.odoo?.session_info?.user_context?.lang);
+                    console.log('Skip reload:', skipReload);
+
+                    // Update active button state
+                    const viBtn = document.getElementById('pwa-lang-btn-vi');
+                    const enBtn = document.getElementById('pwa-lang-btn-en');
+
+                    if (viBtn &amp;&amp; enBtn) {
+                        if (lang === 'vi') {
+                            viBtn.style.background = '#875A7B';
+                            viBtn.style.color = 'white';
+                            enBtn.style.background = 'transparent';
+                            enBtn.style.color = '#666';
+                        } else {
+                            enBtn.style.background = '#875A7B';
+                            enBtn.style.color = 'white';
+                            viBtn.style.background = 'transparent';
+                            viBtn.style.color = '#666';
+                        }
+                    }
+
+                    // Show/hide language-specific content
+                    document.querySelectorAll('.pwa-lang-content').forEach(el => {
+                        if (el.getAttribute('data-lang') === lang) {
+                            el.style.display = '';
+                        } else {
+                            el.style.display = 'none';
+                        }
+                    });
+
+                    // Save preference to localStorage
+                    localStorage.setItem('pwa_preferred_language', lang);
+
+                    // Update healthPWAConfig for PWAUtils
+                    const newLangCode = lang === 'vi' ? 'vi_VN' : 'en_US';
+                    window.healthPWAConfig.user_lang = newLangCode;
+
+                    console.log('Updated healthPWAConfig.user_lang to:', newLangCode);
+                    console.log('Testing PWAUtils.i18n.t("Day"):', window.PWAUtils?.i18n?.t('Day'));
+                    console.log('Testing PWAUtils.i18n.t("Week"):', window.PWAUtils?.i18n?.t('Week'));
+                    console.log('Testing PWAUtils.i18n.t("Month"):', window.PWAUtils?.i18n?.t('Month'));
+
+                    // Reload page to apply language change to Vue app (unless skipReload is true for initial load)
+                    if (!skipReload) {
+                        if (confirm(lang === 'vi'
+                            ? 'Tải lại trang để áp dụng ngôn ngữ mới?'
+                            : 'Reload page to apply new language?')) {
+                            window.location.reload();
+                        }
+                    }
+
+                    console.log('=== End Language Switch Debug ===');
+                };
+
             </script>
             
             <!-- External Libraries -->
@@ -112,7 +190,42 @@
             <!-- Vue.js Application -->
             <script src="/health_pwa/static/src/js/app.js"></script>
             <script src="/health_pwa/static/src/js/router.js"></script>
-            
+
+            <!-- Initialize Language Preference -->
+            <script>
+                // Initialize language on page load (runs after PWAUtils is loaded)
+                (function initPWALanguage() {
+                    console.log('=== Initializing PWA Language on Page Load ===');
+
+                    const userLang = window.healthPWAConfig?.user_lang || 'vi_VN';
+                    const savedLang = localStorage.getItem('pwa_preferred_language');
+
+                    console.log('User profile language:', userLang);
+                    console.log('Saved localStorage preference:', savedLang);
+
+                    let initialLang = 'vi';
+
+                    // Priority: 1. Saved preference, 2. User profile preference, 3. Default
+                    if (savedLang) {
+                        initialLang = savedLang;
+                        console.log('Using saved preference:', savedLang);
+                    } else if (userLang &amp;&amp; userLang.startsWith('en')) {
+                        initialLang = 'en';
+                        console.log('Using user profile preference: en');
+                    } else {
+                        console.log('Using default: vi');
+                    }
+
+                    // Apply initial language without reload
+                    if (typeof window.PWA_switchLanguage === 'function') {
+                        window.PWA_switchLanguage(initialLang, true);
+                        console.log('=== Language Initialization Complete ===');
+                    } else {
+                        console.error('PWA_switchLanguage function not found!');
+                    }
+                })();
+            </script>
+
             <!-- Service Worker Registration -->
             <script>
                 if ('serviceWorker' in navigator) {
@@ -401,7 +514,7 @@ self.addEventListener('push', event => {
     };
     
     event.waitUntil(
-        self.registration.showNotification('Health Mobile', options)
+        self.registration.showNotification('Viet Uc', options)
     );
 });
 
@@ -435,6 +548,9 @@ console.log('Health PWA Service Worker loaded successfully');
     
     <template id="offline_page" name="PWA Offline Page">
         <t t-call="web.layout">
+            <t t-set="head_website">
+                <title>Viet Uc - Offline</title>
+            </t>
             <t t-set="head">
                 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
                 <style>
@@ -494,13 +610,13 @@ console.log('Health PWA Service Worker loaded successfully');
                         <path d="M1,21H23L12,2M12,6L19.53,19H4.47M11,10V14H13V10M11,16V18H13V16"/>
                     </svg>
                 </div>
-                <h1 class="offline-title">You're Offline</h1>
+                <h1 class="offline-title">Không có kết nối</h1>
                 <p class="offline-message">
-                    Health Mobile is not available right now. 
-                    Please check your internet connection and try again.
+                    Viet Uc hiện không khả dụng.
+                    Vui lòng kiểm tra kết nối internet và thử lại.
                 </p>
                 <button class="retry-btn" onclick="window.location.reload()">
-                    Try Again
+                    Thử lại
                 </button>
                 
                 <script>
@@ -517,9 +633,20 @@ console.log('Health PWA Service Worker loaded successfully');
     
     <template id="install_guide" name="PWA Installation Guide">
         <t t-call="web.layout">
+            <t t-set="head_website">
+                <title>Cài đặt Viet Uc</title>
+            </t>
             <t t-set="head">
                 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+                <meta name="apple-mobile-web-app-title" content="Viet Uc"/>
+
+                <!-- Do NOT link manifest here - this is just a guide page, not the app -->
+                <!-- Users should install the actual app at /health_pwa, not this guide -->
+                <link rel="apple-touch-icon" sizes="192x192" href="/health_pwa/static/icons/icon-192.png"/>
+
                 <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700" rel="stylesheet"/>
+                <!-- QR Code Generator Library -->
+                <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
                 <style>
                     body { 
                         font-family: 'Roboto', sans-serif;
@@ -606,39 +733,346 @@ console.log('Health PWA Service Worker loaded successfully');
                         display: inline-block;
                         text-align: center;
                     }
+                    /* Language Toggle */
+                    .lang-toggle {
+                        position: absolute;
+                        top: 1rem;
+                        right: 1rem;
+                        display: flex;
+                        background: white;
+                        border: 1px solid #ddd;
+                        border-radius: 20px;
+                        overflow: hidden;
+                    }
+                    .lang-btn {
+                        padding: 0.5rem 1rem;
+                        border: none;
+                        background: transparent;
+                        cursor: pointer;
+                        font-size: 0.9rem;
+                        color: #666;
+                        transition: all 0.3s ease;
+                    }
+                    .lang-btn.active {
+                        background: #875A7B;
+                        color: white;
+                    }
+                    /* QR Code Section */
+                    .qr-section {
+                        background: #f9f9f9;
+                        padding: 1.5rem;
+                        border-radius: 8px;
+                        margin: 2rem 0;
+                        text-align: center;
+                    }
+                    .qr-title {
+                        font-size: 1.1rem;
+                        color: #333;
+                        margin-bottom: 1rem;
+                        font-weight: 500;
+                    }
+                    #qrcode {
+                        display: inline-block;
+                        margin: 1rem auto;
+                        padding: 1rem;
+                        background: white;
+                        border-radius: 8px;
+                    }
+                    .qr-help-text {
+                        font-size: 0.9rem;
+                        color: #666;
+                        margin-top: 1rem;
+                    }
+                    /* One-Tap Install Button (Android) */
+                    .install-now-btn {
+                        background: #4CAF50;
+                        color: white;
+                        padding: 1rem 2rem;
+                        border: none;
+                        border-radius: 25px;
+                        font-size: 1.1rem;
+                        cursor: pointer;
+                        width: 100%;
+                        margin: 1rem 0;
+                        display: none;
+                        font-weight: 500;
+                    }
+                    .install-now-btn:hover {
+                        background: #45a049;
+                    }
+                    /* Video Section */
+                    .video-section {
+                        margin: 2rem 0;
+                        border-radius: 8px;
+                        overflow: hidden;
+                    }
+                    .video-title {
+                        font-size: 1.2rem;
+                        color: #333;
+                        margin-bottom: 1rem;
+                        font-weight: 500;
+                        text-align: center;
+                    }
+                    .video-container {
+                        position: relative;
+                        padding-bottom: 56.25%;
+                        height: 0;
+                        overflow: hidden;
+                        background: #000;
+                        border-radius: 8px;
+                    }
+                    .video-container iframe {
+                        position: absolute;
+                        top: 0;
+                        left: 0;
+                        width: 100%;
+                        height: 100%;
+                    }
+                    /* Language-specific content */
+                    .lang-content {
+                        display: none;
+                    }
+                    .lang-content.active {
+                        display: block;
+                    }
+                    /* Icon indicators */
+                    .step-icon {
+                        display: inline-flex;
+                        align-items: center;
+                        justify-content: center;
+                        min-width: 32px;
+                        height: 32px;
+                        background: #f0f0f0;
+                        border-radius: 6px;
+                        margin-left: 0.5rem;
+                        font-size: 1.3rem;
+                        vertical-align: middle;
+                        padding: 0 0.5rem;
+                    }
+                    .ios-share-icon {
+                        background: #007AFF;
+                        color: white;
+                    }
+                    .ios-add-icon {
+                        background: #34C759;
+                        color: white;
+                    }
+                    .android-menu-icon {
+                        background: #5F6368;
+                        color: white;
+                        font-size: 1.5rem;
+                    }
+                    .android-install-icon {
+                        background: #4CAF50;
+                        color: white;
+                    }
+                    .browser-install-icon {
+                        background: #4285F4;
+                        color: white;
+                    }
+                    .browser-app-icon {
+                        background: #875A7B;
+                        color: white;
+                    }
+
+                    /* IMPORTANT: Open App First Banner - Warning Styling */
+                    .open-app-first-banner {
+                        background: linear-gradient(135deg, #FFF3CD 0%, #FFE69C 100%);
+                        border: 3px solid #FF9800;
+                        border-radius: 12px;
+                        padding: 2rem;
+                        margin: 2rem 0 3rem 0;
+                        text-align: center;
+                        box-shadow: 0 4px 12px rgba(255, 152, 0, 0.3);
+                    }
+                    .open-app-first-banner h3 {
+                        color: #E65100;
+                        font-size: 1.5rem;
+                        font-weight: 700;
+                        margin: 0 0 1rem 0;
+                        text-transform: uppercase;
+                        letter-spacing: 0.5px;
+                    }
+                    .open-app-first-banner p {
+                        color: #663C00;
+                        font-size: 1.1rem;
+                        margin: 0.75rem 0;
+                        line-height: 1.6;
+                    }
+                    .open-app-first-banner strong {
+                        color: #D84315;
+                        font-weight: 600;
+                    }
+                    .open-app-first-banner ol {
+                        margin: 1rem auto;
+                        padding-left: 1.5rem;
+                        max-width: 500px;
+                    }
+                    .open-app-first-banner li {
+                        color: #663C00;
+                        font-size: 1rem;
+                        margin: 0.5rem 0;
+                        text-align: left;
+                        line-height: 1.5;
+                    }
+                    .open-app-btn-primary {
+                        display: inline-block;
+                        background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+                        color: white;
+                        padding: 1.25rem 3rem;
+                        border: none;
+                        border-radius: 30px;
+                        font-size: 1.3rem;
+                        font-weight: 600;
+                        cursor: pointer;
+                        text-decoration: none;
+                        margin-top: 1.5rem;
+                        box-shadow: 0 4px 12px rgba(76, 175, 80, 0.4);
+                        transition: all 0.3s ease;
+                        text-transform: uppercase;
+                        letter-spacing: 1px;
+                    }
+                    .open-app-btn-primary:hover {
+                        background: linear-gradient(135deg, #45a049 0%, #4CAF50 100%);
+                        box-shadow: 0 6px 16px rgba(76, 175, 80, 0.5);
+                        transform: translateY(-2px);
+                    }
+                    .open-app-btn-primary:active {
+                        transform: translateY(0);
+                        box-shadow: 0 2px 8px rgba(76, 175, 80, 0.3);
+                    }
+
+                    /* Mobile responsive */
+                    @media (max-width: 600px) {
+                        .install-container {
+                            padding: 1rem;
+                        }
+                        .install-title {
+                            font-size: 1.5rem;
+                        }
+                        .lang-toggle {
+                            position: relative;
+                            top: auto;
+                            right: auto;
+                            margin: 0 auto 1rem;
+                            width: fit-content;
+                        }
+                        .open-app-first-banner {
+                            padding: 1.5rem 1rem;
+                            margin: 1.5rem 0 2rem 0;
+                        }
+                        .open-app-first-banner h3 {
+                            font-size: 1.2rem;
+                        }
+                        .open-app-first-banner p {
+                            font-size: 1rem;
+                        }
+                        .open-app-first-banner li {
+                            font-size: 0.95rem;
+                        }
+                        .open-app-btn-primary {
+                            font-size: 1.1rem;
+                            padding: 1rem 2rem;
+                            width: 100%;
+                            box-sizing: border-box;
+                        }
+                    }
                 </style>
             </t>
             
             <div class="install-container">
+                <!-- Language Toggle -->
+                <div class="lang-toggle">
+                    <button class="lang-btn active" onclick="switchLanguage('vi')" id="btn-vi">Tiếng Việt</button>
+                    <button class="lang-btn" onclick="switchLanguage('en')" id="btn-en">English</button>
+                </div>
+
                 <div class="install-header">
                     <div class="install-icon">
-                        <img src="/health_pwa/static/icons/icon-192.png" alt="Health Mobile" width="100" height="100"/>
+                        <img src="/health_pwa/static/icons/icon-192.png" alt="Viet Uc" width="100" height="100"/>
                     </div>
-                    <h1 class="install-title">Health Mobile</h1>
-                    <p class="install-subtitle">Install our app for the best mobile experience</p>
+                    <h1 class="install-title">Viet Uc</h1>
+                    <p class="install-subtitle lang-content active" id="subtitle-vi">Hướng dẫn cài đặt ứng dụng</p>
+                    <p class="install-subtitle lang-content" id="subtitle-en">Installation Guide</p>
                 </div>
-                
+
+                <!-- IMPORTANT: Open App First Banner -->
+                <div class="open-app-first-banner">
+                    <div class="lang-content active" id="important-vi">
+                        <h3>⚠️ QUAN TRỌNG: Mở ứng dụng trước khi cài đặt!</h3>
+                        <p>Bạn đang xem <strong>hướng dẫn cài đặt</strong>. Để cài đặt ứng dụng thật sự:</p>
+                        <ol style="text-align: left; display: inline-block;">
+                            <li><strong>Bước 1:</strong> Nhấn nút "Mở Viet Uc" bên dưới</li>
+                            <li><strong>Bước 2:</strong> Khi ứng dụng mở, làm theo hướng dẫn bên dưới để cài đặt</li>
+                        </ol>
+                        <p><strong>Lưu ý:</strong> ĐỪNG thêm trang này vào màn hình chính - đây chỉ là hướng dẫn!</p>
+                    </div>
+                    <div class="lang-content" id="important-en">
+                        <h3>⚠️ IMPORTANT: Open the app before installing!</h3>
+                        <p>You're viewing the <strong>installation guide</strong>. To install the actual app:</p>
+                        <ol style="text-align: left; display: inline-block;">
+                            <li><strong>Step 1:</strong> Click "Open Viet Uc" button below</li>
+                            <li><strong>Step 2:</strong> Once the app opens, follow the instructions below to install</li>
+                        </ol>
+                        <p><strong>Note:</strong> DON'T add this page to home screen - it's just a guide!</p>
+                    </div>
+                    <a href="/health_pwa" class="open-app-btn-primary">
+                        <span class="lang-content active" id="open-primary-vi">🚀 Mở Viet Uc Ngay</span>
+                        <span class="lang-content" id="open-primary-en">🚀 Open Viet Uc Now</span>
+                    </a>
+                </div>
+
+                <!-- One-Tap Install Button (Android only) -->
+                <button class="install-now-btn" id="installBtn" style="display: none;">
+                    <span class="lang-content active" id="install-btn-vi">Cài đặt ngay</span>
+                    <span class="lang-content" id="install-btn-en">Install Now</span>
+                </button>
+
+                <!-- QR Code Section -->
+                <div class="qr-section">
+                    <h3 class="qr-title lang-content active" id="qr-title-vi">Chia sẻ với đồng nghiệp</h3>
+                    <h3 class="qr-title lang-content" id="qr-title-en">Share with colleagues</h3>
+                    <div id="qrcode"></div>
+                    <p class="qr-help-text lang-content active" id="qr-help-vi">Quét mã QR này để cài đặt ứng dụng</p>
+                    <p class="qr-help-text lang-content" id="qr-help-en">Scan this QR code to install the app</p>
+                </div>
+
+                <!-- Video Tutorial Section (Platform-specific) -->
+                <div class="video-section" id="video-section" style="display: none;">
+                    <h3 class="video-title lang-content active" id="video-title-vi">Hướng dẫn cài đặt</h3>
+                    <h3 class="video-title lang-content" id="video-title-en">Installation Tutorial</h3>
+                    <div class="video-container" id="video-container">
+                        <!-- Video embed will be inserted here based on platform -->
+                    </div>
+                </div>
+
                 <!-- iOS Installation Steps -->
                 <div t-if="is_ios" class="install-steps platform-specific" style="display: block;">
                     <div class="step">
                         <div class="step-number">1</div>
                         <div class="step-content">
-                            <h4>Tap the Share button</h4>
-                            <p>Look for the share icon at the bottom of your Safari browser</p>
+                            <h4 class="lang-content active" id="ios-step1-title-vi">Nhấn nút Chia sẻ <span class="step-icon ios-share-icon">⬆</span></h4>
+                            <h4 class="lang-content" id="ios-step1-title-en">Tap the Share button <span class="step-icon ios-share-icon">⬆</span></h4>
+                            <p class="lang-content active" id="ios-step1-desc-vi">Tìm biểu tượng chia sẻ (mũi tên hướng lên) ở dưới cùng của trình duyệt Safari</p>
+                            <p class="lang-content" id="ios-step1-desc-en">Look for the share icon (upward arrow) at the bottom of your Safari browser</p>
                         </div>
                     </div>
                     <div class="step">
                         <div class="step-number">2</div>
                         <div class="step-content">
-                            <h4>Select "Add to Home Screen"</h4>
-                            <p>Scroll down in the share menu and tap "Add to Home Screen"</p>
+                            <h4 class="lang-content active" id="ios-step2-title-vi">Chọn "Thêm vào Màn hình chính" <span class="step-icon ios-add-icon">➕</span></h4>
+                            <h4 class="lang-content" id="ios-step2-title-en">Select "Add to Home Screen" <span class="step-icon ios-add-icon">➕</span></h4>
+                            <p class="lang-content active" id="ios-step2-desc-vi">Cuộn xuống trong menu chia sẻ và nhấn "Thêm vào Màn hình chính"</p>
+                            <p class="lang-content" id="ios-step2-desc-en">Scroll down in the share menu and tap "Add to Home Screen"</p>
                         </div>
                     </div>
                     <div class="step">
                         <div class="step-number">3</div>
                         <div class="step-content">
-                            <h4>Confirm installation</h4>
-                            <p>Tap "Add" to install Health Mobile on your home screen</p>
+                            <h4 class="lang-content active" id="ios-step3-title-vi">Xác nhận cài đặt <span class="step-icon ios-add-icon">✓</span></h4>
+                            <h4 class="lang-content" id="ios-step3-title-en">Confirm installation <span class="step-icon ios-add-icon">✓</span></h4>
+                            <p class="lang-content active" id="ios-step3-desc-vi">Nhấn "Thêm" để cài đặt Viet Uc vào màn hình chính</p>
+                            <p class="lang-content" id="ios-step3-desc-en">Tap "Add" to install Viet Uc on your home screen</p>
                         </div>
                     </div>
                 </div>
@@ -648,22 +1082,28 @@ console.log('Health PWA Service Worker loaded successfully');
                     <div class="step">
                         <div class="step-number">1</div>
                         <div class="step-content">
-                            <h4>Tap the menu button</h4>
-                            <p>Look for the three dots in the top-right corner of your Chrome browser</p>
+                            <h4 class="lang-content active" id="android-step1-title-vi">Nhấn nút menu <span class="step-icon android-menu-icon">⋮</span></h4>
+                            <h4 class="lang-content" id="android-step1-title-en">Tap the menu button <span class="step-icon android-menu-icon">⋮</span></h4>
+                            <p class="lang-content active" id="android-step1-desc-vi">Tìm ba dấu chấm ở góc trên bên phải của trình duyệt Chrome</p>
+                            <p class="lang-content" id="android-step1-desc-en">Look for the three dots in the top-right corner of your Chrome browser</p>
                         </div>
                     </div>
                     <div class="step">
                         <div class="step-number">2</div>
                         <div class="step-content">
-                            <h4>Select "Add to Home screen"</h4>
-                            <p>Find and tap "Add to Home screen" or "Install" in the menu</p>
+                            <h4 class="lang-content active" id="android-step2-title-vi">Chọn "Thêm vào Màn hình chính" <span class="step-icon android-install-icon">⬇</span></h4>
+                            <h4 class="lang-content" id="android-step2-title-en">Select "Add to Home screen" <span class="step-icon android-install-icon">⬇</span></h4>
+                            <p class="lang-content active" id="android-step2-desc-vi">Tìm và nhấn "Thêm vào Màn hình chính" hoặc "Cài đặt" trong menu</p>
+                            <p class="lang-content" id="android-step2-desc-en">Find and tap "Add to Home screen" or "Install" in the menu</p>
                         </div>
                     </div>
                     <div class="step">
                         <div class="step-number">3</div>
                         <div class="step-content">
-                            <h4>Confirm installation</h4>
-                            <p>Tap "Install" to add Health Mobile to your home screen</p>
+                            <h4 class="lang-content active" id="android-step3-title-vi">Xác nhận cài đặt <span class="step-icon android-install-icon">✓</span></h4>
+                            <h4 class="lang-content" id="android-step3-title-en">Confirm installation <span class="step-icon android-install-icon">✓</span></h4>
+                            <p class="lang-content active" id="android-step3-desc-vi">Nhấn "Cài đặt" để thêm Viet Uc vào màn hình chính</p>
+                            <p class="lang-content" id="android-step3-desc-en">Tap "Install" to add Viet Uc to your home screen</p>
                         </div>
                     </div>
                 </div>
@@ -673,35 +1113,138 @@ console.log('Health PWA Service Worker loaded successfully');
                     <div class="step">
                         <div class="step-number">1</div>
                         <div class="step-content">
-                            <h4>Look for the install icon</h4>
-                            <p>You should see an install icon in your browser's address bar</p>
+                            <h4 class="lang-content active" id="desktop-step1-title-vi">Tìm biểu tượng cài đặt <span class="step-icon browser-install-icon">⊕</span></h4>
+                            <h4 class="lang-content" id="desktop-step1-title-en">Look for the install icon <span class="step-icon browser-install-icon">⊕</span></h4>
+                            <p class="lang-content active" id="desktop-step1-desc-vi">Bạn sẽ thấy biểu tượng cài đặt (dấu cộng hoặc mũi tên xuống) trên thanh địa chỉ của trình duyệt</p>
+                            <p class="lang-content" id="desktop-step1-desc-en">You should see an install icon (plus sign or download arrow) in your browser's address bar</p>
                         </div>
                     </div>
                     <div class="step">
                         <div class="step-number">2</div>
                         <div class="step-content">
-                            <h4>Click install</h4>
-                            <p>Click the install icon and confirm to install Health Mobile</p>
+                            <h4 class="lang-content active" id="desktop-step2-title-vi">Nhấn cài đặt <span class="step-icon browser-install-icon">⬇</span></h4>
+                            <h4 class="lang-content" id="desktop-step2-title-en">Click install <span class="step-icon browser-install-icon">⬇</span></h4>
+                            <p class="lang-content active" id="desktop-step2-desc-vi">Nhấn vào biểu tượng cài đặt và xác nhận để cài đặt Viet Uc</p>
+                            <p class="lang-content" id="desktop-step2-desc-en">Click the install icon and confirm to install Viet Uc</p>
                         </div>
                     </div>
                     <div class="step">
                         <div class="step-number">3</div>
                         <div class="step-content">
-                            <h4>Launch the app</h4>
-                            <p>Health Mobile will be available as a desktop application</p>
+                            <h4 class="lang-content active" id="desktop-step3-title-vi">Khởi chạy ứng dụng <span class="step-icon browser-app-icon">🚀</span></h4>
+                            <h4 class="lang-content" id="desktop-step3-title-en">Launch the app <span class="step-icon browser-app-icon">🚀</span></h4>
+                            <p class="lang-content active" id="desktop-step3-desc-vi">Viet Uc sẽ có sẵn như một ứng dụng máy tính độc lập</p>
+                            <p class="lang-content" id="desktop-step3-desc-en">Viet Uc will be available as a standalone desktop application</p>
                         </div>
                     </div>
                 </div>
-                
+
                 <a href="/health_pwa" class="open-app-btn">
-                    Open Health Mobile
+                    <span class="lang-content active" id="open-btn-vi">Mở Viet Uc</span>
+                    <span class="lang-content" id="open-btn-en">Open Viet Uc</span>
                 </a>
+
+                <!-- JavaScript for enhanced functionality -->
+                <script>
+                    // User language preference from profile
+                    const userLangPreference = '<t t-esc="user_lang"/>';
+
+                    // Determine initial language (vi or en)
+                    function getInitialLanguage() {
+                        // Priority: 1. User profile preference, 2. localStorage, 3. Default to 'vi'
+                        if (userLangPreference) {
+                            // Odoo lang codes: en_US, vi_VN, etc.
+                            if (userLangPreference.startsWith('en')) {
+                                return 'en';
+                            } else if (userLangPreference.startsWith('vi')) {
+                                return 'vi';
+                            }
+                        }
+                        return localStorage.getItem('preferredLanguage') || 'vi';
+                    }
+
+                    // Language switching
+                    function switchLanguage(lang) {
+                        // Update active language button
+                        document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
+                        document.getElementById('btn-' + lang).classList.add('active');
+
+                        // Show/hide language-specific content
+                        document.querySelectorAll('.lang-content').forEach(el => el.classList.remove('active'));
+                        document.querySelectorAll('.lang-content[id$="-' + lang + '"]').forEach(el => el.classList.add('active'));
+
+                        // Save preference
+                        localStorage.setItem('preferredLanguage', lang);
+                    }
+
+                    // Load preferred language on page load
+                    window.addEventListener('DOMContentLoaded', function() {
+                        const initialLang = getInitialLanguage();
+                        switchLanguage(initialLang);
+
+                        // Generate QR Code
+                        const currentUrl = window.location.href;
+                        if (typeof QRCode !== 'undefined') {
+                            new QRCode(document.getElementById('qrcode'), {
+                                text: currentUrl,
+                                width: 200,
+                                height: 200,
+                                colorDark: '#875A7B',
+                                colorLight: '#ffffff',
+                                correctLevel: QRCode.CorrectLevel.H
+                            });
+                        }
+
+                        // Handle beforeinstallprompt for Android
+                        let deferredPrompt;
+                        window.addEventListener('beforeinstallprompt', (e) => {
+                            e.preventDefault();
+                            deferredPrompt = e;
+                            // Show install button
+                            const installBtn = document.getElementById('installBtn');
+                            if (installBtn) {
+                                installBtn.style.display = 'block';
+                            }
+                        });
+
+                        // Install button click handler
+                        const installBtn = document.getElementById('installBtn');
+                        if (installBtn) {
+                            installBtn.addEventListener('click', async () => {
+                                if (deferredPrompt) {
+                                    deferredPrompt.prompt();
+                                    const { outcome } = await deferredPrompt.userChoice;
+                                    console.log(`User response to install prompt: ${outcome}`);
+                                    deferredPrompt = null;
+                                    installBtn.style.display = 'none';
+                                }
+                            });
+                        }
+
+                        // Platform detection for video embedding (placeholder for future videos)
+                        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) &amp;&amp; !window.MSStream;
+                        const isAndroid = /Android/.test(navigator.userAgent);
+
+                        // Video embedding can be added here when videos are ready
+                        // Example:
+                        // if (isIOS) {
+                        //     document.getElementById('video-container').innerHTML = '<iframe src="IOS_VIDEO_URL" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen="true"></iframe>';
+                        //     document.getElementById('video-section').style.display = 'block';
+                        // } else if (isAndroid) {
+                        //     document.getElementById('video-container').innerHTML = '<iframe src="ANDROID_VIDEO_URL" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen="true"></iframe>';
+                        //     document.getElementById('video-section').style.display = 'block';
+                        // }
+                    });
+                </script>
             </div>
         </t>
     </template>
     
     <template id="access_denied" name="PWA Access Denied">
         <t t-call="web.layout">
+            <t t-set="head_website">
+                <title>Viet Uc - Truy cập bị từ chối</title>
+            </t>
             <t t-set="head">
                 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
                 <style>
@@ -755,12 +1298,12 @@ console.log('Health PWA Service Worker loaded successfully');
                         <path d="M12,17A2,2 0 0,0 14,15C14,13.89 13.1,13 12,13A2,2 0 0,0 10,15A2,2 0 0,0 12,17M18,8A2,2 0 0,1 20,10V20A2,2 0 0,1 18,22H6A2,2 0 0,1 4,20V10C4,8.89 4.9,8 6,8H7V6A5,5 0 0,1 12,1A5,5 0 0,1 17,6V8H18M12,3A3,3 0 0,0 9,6V8H15V6A3,3 0 0,0 12,3Z"/>
                     </svg>
                 </div>
-                <h1 class="access-title">Access Denied</h1>
+                <h1 class="access-title">Từ chối truy cập</h1>
                 <p class="access-message">
-                    You don't have permission to access Health Mobile. 
-                    Please contact your administrator to get access to the health modules.
+                    Bạn không có quyền truy cập Viet Uc.
+                    Vui lòng liên hệ quản trị viên để được cấp quyền truy cập.
                 </p>
-                <a href="/web" class="back-btn">Back to Main System</a>
+                <a href="/web" class="back-btn">Quay lại hệ thống</a>
             </div>
         </t>
     </template>
