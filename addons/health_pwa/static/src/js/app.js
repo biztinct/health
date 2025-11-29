@@ -750,23 +750,30 @@ window.healthPWA = {
 
         // Navigate forward (next day/week/month based on view mode)
         const goToNext = () => {
-          if (isTransitioning.value) return;
+          console.log('goToNext called - viewMode:', viewMode.value, 'currentDate:', currentDate.value);
+          if (isTransitioning.value) {
+            console.log('Blocked by transition');
+            return;
+          }
           isTransitioning.value = true;
 
           if (viewMode.value === 'day') {
             const nextDate = new Date(currentDate.value);
             nextDate.setDate(nextDate.getDate() + 1);
             currentDate.value = nextDate;
+            console.log('Day view - moving to:', nextDate);
             loadBookingsForDate(nextDate);
           } else if (viewMode.value === 'week') {
             const nextDate = new Date(currentDate.value);
             nextDate.setDate(nextDate.getDate() + 7);
             currentDate.value = nextDate;
+            console.log('Week view - moving to:', nextDate);
             loadBookingsForWeek(nextDate);
           } else if (viewMode.value === 'month') {
             const nextDate = new Date(currentDate.value);
             nextDate.setMonth(nextDate.getMonth() + 1);
             currentDate.value = nextDate;
+            console.log('Month view - moving to:', nextDate);
             loadBookingsForMonth(nextDate);
           }
 
@@ -775,23 +782,30 @@ window.healthPWA = {
 
         // Navigate backward (previous day/week/month based on view mode)
         const goToPrevious = () => {
-          if (isTransitioning.value) return;
+          console.log('goToPrevious called - viewMode:', viewMode.value, 'currentDate:', currentDate.value);
+          if (isTransitioning.value) {
+            console.log('Blocked by transition');
+            return;
+          }
           isTransitioning.value = true;
 
           if (viewMode.value === 'day') {
             const prevDate = new Date(currentDate.value);
             prevDate.setDate(prevDate.getDate() - 1);
             currentDate.value = prevDate;
+            console.log('Day view - moving to:', prevDate);
             loadBookingsForDate(prevDate);
           } else if (viewMode.value === 'week') {
             const prevDate = new Date(currentDate.value);
             prevDate.setDate(prevDate.getDate() - 7);
             currentDate.value = prevDate;
+            console.log('Week view - moving to:', prevDate);
             loadBookingsForWeek(prevDate);
           } else if (viewMode.value === 'month') {
             const prevDate = new Date(currentDate.value);
             prevDate.setMonth(prevDate.getMonth() - 1);
             currentDate.value = prevDate;
+            console.log('Month view - moving to:', prevDate);
             loadBookingsForMonth(prevDate);
           }
 

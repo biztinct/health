@@ -192,6 +192,12 @@ class HealthPWAAPIController(http.Controller):
             return self._prepare_json_response(error='Access denied', status_code=403)
         
         try:
+            # Get current employee for staff name
+            current_user = request.env.user
+            employee = request.env['hr.employee'].search([
+                ('user_id', '=', current_user.id)
+            ], limit=1)
+
             # Parse query parameters
             limit = int(kwargs.get('limit', 50))
             offset = int(kwargs.get('offset', 0))
@@ -200,30 +206,34 @@ class HealthPWAAPIController(http.Controller):
             patient_id = kwargs.get('patient_id')
             date_from = kwargs.get('date_from')
             date_to = kwargs.get('date_to')
-            
+
             # Build domain
+            # Record rules will automatically filter by user assignments
             domain = []
-            
+
             if team_id:
                 domain.append(('team_id', '=', int(team_id)))
-                
+
             if stage:
                 domain.append(('stage_id.name', '=', stage))
-                
+
             if patient_id:
                 domain.append(('patient_id', '=', int(patient_id)))
-            
+
             if date_from:
                 domain.append(('scheduled_datetime', '>=', date_from))
-                
+
             if date_to:
                 domain.append(('scheduled_datetime', '<=', date_to))
-            
+
             # Get field service orders
             orders = request.env['health.fieldservice.order'].search(
                 domain, limit=limit, offset=offset, order='scheduled_datetime desc'
             )
             total_count = request.env['health.fieldservice.order'].search_count(domain)
+
+            # Get staff name for response
+            staff_name = employee.name if employee else current_user.name
             
             orders_data = []
             for order in orders:
@@ -259,7 +269,9 @@ class HealthPWAAPIController(http.Controller):
                 'total_count': total_count,
                 'limit': limit,
                 'offset': offset,
-                'has_more': (offset + limit) < total_count
+                'has_more': (offset + limit) < total_count,
+                'staff_name': staff_name,
+                'staff_id': employee.id if employee else None
             }
             
             return self._prepare_json_response(data=response_data)
@@ -1205,16 +1217,11 @@ class HealthPWAAPIController(http.Controller):
             # Get logged-in user
             current_user = request.env.user
 
-            # Get the employee record for the current user
+            # Get the employee record for the current user (optional)
+            # Record rules will handle filtering by assignments
             employee = request.env['hr.employee'].search([
                 ('user_id', '=', current_user.id)
             ], limit=1)
-
-            if not employee:
-                return self._prepare_json_response(
-                    error='No employee record found for current user',
-                    status_code=404
-                )
 
             # Parse optional date parameter, default to today
             date_param = kwargs.get('date')
@@ -1251,13 +1258,12 @@ class HealthPWAAPIController(http.Controller):
             today_start = utc_start.strftime('%Y-%m-%d %H:%M:%S')
             today_end = utc_end.strftime('%Y-%m-%d %H:%M:%S')
 
-            # Find FSOs scheduled for today where current employee is assigned
+            # Find FSOs scheduled for today
+            # Record rules will automatically filter by user assignments
             fsos = request.env['health.fieldservice.order'].search([
                 ('scheduled_datetime', '>=', today_start),
                 ('scheduled_datetime', '<=', today_end),
                 ('state', 'not in', ['cancelled']),
-                # Filter by assignments where current employee is assigned as nurse/doctor
-                ('assignment_ids.staff_id', '=', employee.id)
             ], order='scheduled_datetime asc')
 
             # Prepare booking data
@@ -1265,11 +1271,13 @@ class HealthPWAAPIController(http.Controller):
             for fso in fsos:
                 patient = fso.patient_id
 
-                # Find the assignment record for this staff member
-                assignment = fso.assignment_ids.filtered(
-                    lambda a: a.staff_id.id == employee.id
-                )
-                assignment = assignment[0] if assignment else None
+                # Find the assignment record for this staff member (if employee exists)
+                assignment = None
+                if employee:
+                    assignment = fso.assignment_ids.filtered(
+                        lambda a: a.staff_id.id == employee.id
+                    )
+                    assignment = assignment[0] if assignment else None
 
                 # Get service type display name
                 service_type_label = 'Service'
@@ -1306,8 +1314,8 @@ class HealthPWAAPIController(http.Controller):
             response_data = {
                 'bookings': bookings_data,
                 'total_count': len(bookings_data),
-                'staff_name': employee.name,
-                'staff_id': employee.id,
+                'staff_name': employee.name if employee else current_user.name,
+                'staff_id': employee.id if employee else None,
                 'date': target_date.isoformat(),
                 'requested_date': date_param or target_date.isoformat(),
             }
@@ -1707,12 +1715,11 @@ class HealthPWAAPIController(http.Controller):
             user_tz = pytz.timezone(request.env.user.tz or 'UTC')
             now = dt.now(user_tz)
 
-            # Find all future FSOs where current employee is assigned
-            # Search by assignments where staff_id matches current employee
+            # Find all future FSOs
+            # Record rules will automatically filter by user assignments
             fsos = request.env['health.fieldservice.order'].search([
                 ('scheduled_datetime', '>', now.isoformat()),
                 ('state', 'not in', ['cancelled', 'completed']),
-                ('assignment_ids.staff_id', '=', employee.id)
             ], order='scheduled_datetime asc')
 
             # Group bookings by date

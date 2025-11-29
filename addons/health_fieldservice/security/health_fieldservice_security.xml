@@ -57,4 +57,37 @@
         <field name="comment">Clinical protocols - can create and modify clinical protocol templates</field>
     </record>
 
+    <!-- =====================================================================
+         Record Rules - Field Service Order Access Control
+         ===================================================================== -->
+
+    <!-- Staff/User Rule: Only see FSOs where they are assigned -->
+    <record id="fieldservice_order_staff_rule" model="ir.rule">
+        <field name="name">Field Service Orders: Staff sees only assigned orders</field>
+        <field name="model_id" ref="model_health_fieldservice_order"/>
+        <field name="domain_force">[
+            '|', '|',
+            ('assignment_ids.staff_id.user_id', '=', user.id),
+            ('primary_doctor_id.user_id', '=', user.id),
+            ('primary_nurse_id.user_id', '=', user.id)
+        ]</field>
+        <field name="groups" eval="[(4, ref('group_fieldservice_user')), (4, ref('group_fieldservice_staff'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+    <!-- Manager/Dispatcher Rule: See all FSOs -->
+    <record id="fieldservice_order_manager_rule" model="ir.rule">
+        <field name="name">Field Service Orders: Managers see all orders</field>
+        <field name="model_id" ref="model_health_fieldservice_order"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('group_fieldservice_manager')), (4, ref('group_fieldservice_dispatcher'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="True"/>
+    </record>
+
 </odoo>
