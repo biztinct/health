@@ -263,7 +263,12 @@ class HrEmployee(models.Model):
     is_available_today = fields.Boolean('Available Today', compute='_compute_availability_today')
     
     # Display Settings
-    color = fields.Integer('Color Index', default=1, help='Color for calendar display')
+    color = fields.Integer('Color Index', default=lambda self: self._default_color(), help='Color for calendar display and badge colors')
+
+    def _default_color(self):
+        """Generate a random color index (0-11 for Odoo's predefined colors)"""
+        import random
+        return random.randint(0, 11)
     
     # ============================================================================
     # Scheduling Preferences

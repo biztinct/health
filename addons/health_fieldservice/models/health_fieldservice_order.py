@@ -416,20 +416,55 @@ class HealthFieldServiceOrderUnified(models.Model):
     def _compute_assigned_staff(self):
         """Compute assigned staff from assignment records"""
         for record in self:
-            staff_ids = record.assignment_ids.mapped('staff_id.id')
+            staff_ids = record.assignment_ids.filtered(lambda a: a.state != 'template').mapped('staff_id.id')
             record.assigned_staff_ids = [(6, 0, staff_ids)]
-    
+
+    def _inverse_assigned_staff(self):
+        """Create/update staff assignments when assigned_staff_ids is modified"""
+        for record in self:
+            current_staff_ids = set(record.assignment_ids.filtered(lambda a: a.state != 'template').mapped('staff_id.id'))
+            new_staff_ids = set(record.assigned_staff_ids.ids)
+
+            # Staff to add - create new assignments
+            staff_to_add = new_staff_ids - current_staff_ids
+            for staff_id in staff_to_add:
+                staff = self.env['hr.employee'].browse(staff_id)
+                # Determine role based on healthcare_role - default to 'lead' for all except doctors
+                if staff.healthcare_role == 'doctor':
+                    role = 'doctor'
+                else:
+                    role = 'lead'  # Default to lead staff for nurses and others
+
+                self.env['health.staff.assignment'].create({
+                    'fso_id': record.id,
+                    'staff_id': staff_id,
+                    'assignment_date': record.scheduled_datetime or fields.Datetime.now(),
+                    'assignment_role': role,
+                    'assignment_status': 'assigned',
+                    'state': 'draft',
+                    'assignment_type': record._get_assignment_type(),
+                    'priority': record.priority or '1',
+                })
+
+            # Staff to remove - delete assignments
+            staff_to_remove = current_staff_ids - new_staff_ids
+            if staff_to_remove:
+                assignments_to_remove = record.assignment_ids.filtered(
+                    lambda a: a.state != 'template' and a.staff_id.id in staff_to_remove
+                )
+                assignments_to_remove.unlink()
+
     @api.depends('assignment_ids.staff_id', 'assignment_ids.assignment_role')
     def _compute_lead_staff(self):
         """Compute lead staff from assignment records"""
         for record in self:
             # Filter for lead assignments - get the staff member from the first one
-            lead_assignment = record.assignment_ids.filtered(lambda a: a.assignment_role == 'lead')
+            lead_assignment = record.assignment_ids.filtered(
+                lambda a: a.state != 'template' and a.assignment_role == 'lead'
+            )
 
             # Extract the first lead staff member if it exists
             if lead_assignment:
-                # lead_assignment is a recordset, so [0] gets the first assignment record
-                # and .staff_id gets the Many2one field (single employee record or False)
                 first_assignment = lead_assignment[0]
                 if first_assignment and first_assignment.staff_id:
                     record.lead_staff_id = first_assignment.staff_id
@@ -438,19 +473,58 @@ class HealthFieldServiceOrderUnified(models.Model):
             else:
                 record.lead_staff_id = False
 
-    @api.depends('assignment_ids.staff_id', 'assignment_ids.staff_id.job_title', 'primary_doctor_id')
-    def _compute_assigned_doctor(self):
-        """Compute assigned doctor from staff assignments or primary_doctor_id"""
+    @api.depends('assignment_ids.staff_id', 'assignment_ids.assignment_role', 'assignment_ids.staff_id.job_title', 'primary_doctor_id')
+    def _compute_assigned_doctors(self):
+        """Compute assigned doctors from staff assignments or primary_doctor_id"""
         for record in self:
+            doctor_ids = []
+
             # First check if primary_doctor_id is set
             if record.primary_doctor_id:
-                record.assigned_doctor_id = record.primary_doctor_id
-            else:
-                # Look for doctor in assignments
-                doctor_assignment = record.assignment_ids.filtered(
-                    lambda a: a.staff_id and a.staff_id.job_title and 'doctor' in a.staff_id.job_title.lower()
+                doctor_ids.append(record.primary_doctor_id.id)
+
+            # Look for doctors in assignments - check assignment_role first, then job_title
+            doctor_assignments = record.assignment_ids.filtered(
+                lambda a: a.state != 'template' and a.staff_id and (
+                    a.assignment_role == 'doctor' or
+                    (a.staff_id.job_title and 'doctor' in a.staff_id.job_title.lower())
                 )
-                record.assigned_doctor_id = doctor_assignment[0].staff_id if doctor_assignment else False
+            )
+            doctor_ids.extend(doctor_assignments.mapped('staff_id.id'))
+
+            # Remove duplicates while preserving order
+            unique_doctor_ids = list(dict.fromkeys(doctor_ids))
+            record.assigned_doctor_ids = [(6, 0, unique_doctor_ids)]
+
+    def _inverse_assigned_doctors(self):
+        """Create/update doctor assignments when assigned_doctor_ids is modified"""
+        for record in self:
+            current_doctor_ids = set(record.assignment_ids.filtered(
+                lambda a: a.state != 'template' and a.assignment_role == 'doctor'
+            ).mapped('staff_id.id'))
+            new_doctor_ids = set(record.assigned_doctor_ids.ids)
+
+            # Doctors to add - create new assignments
+            doctors_to_add = new_doctor_ids - current_doctor_ids
+            for doctor_id in doctors_to_add:
+                self.env['health.staff.assignment'].create({
+                    'fso_id': record.id,
+                    'staff_id': doctor_id,
+                    'assignment_date': record.scheduled_datetime or fields.Datetime.now(),
+                    'assignment_role': 'doctor',
+                    'assignment_status': 'assigned',
+                    'state': 'draft',
+                    'assignment_type': record._get_assignment_type(),
+                    'priority': record.priority or '1',
+                })
+
+            # Doctors to remove - delete assignments
+            doctors_to_remove = current_doctor_ids - new_doctor_ids
+            if doctors_to_remove:
+                assignments_to_remove = record.assignment_ids.filtered(
+                    lambda a: a.state != 'template' and a.assignment_role == 'doctor' and a.staff_id.id in doctors_to_remove
+                )
+                assignments_to_remove.unlink()
 
     def _inverse_scheduled_date(self):
         for record in self:
@@ -531,32 +605,40 @@ class HealthFieldServiceOrderUnified(models.Model):
         'hr.employee',
         string='Assigned Staff',
         compute='_compute_assigned_staff',
+        inverse='_inverse_assigned_staff',
         store=False,
-        help='All staff members assigned to this service (computed from assignments)'
+        readonly=False,
+        domain=[('is_healthcare_staff', '=', True), ('employment_status', '=', 'active')],
+        help='All staff members assigned to this service (editable - creates/updates assignments)'
     )
-    
+
     # Primary staff members
     lead_staff_id = fields.Many2one(
         'hr.employee',
         string='Lead Staff',
         compute='_compute_lead_staff',
         store=False,
-        help='Primary staff member responsible for this service (computed from assignments)'
+        help='Primary staff member responsible for this service (computed from assignments with lead role)'
     )
-    
+
     primary_doctor_id = fields.Many2one(
         'hr.employee',
         string='Primary Doctor',
-        domain=[('is_healthcare_staff', '=', True), ('job_title', 'ilike', 'doctor')],
+        domain=[('is_healthcare_staff', '=', True), ('healthcare_role', '=', 'doctor'), ('employment_status', '=', 'active')],
         tracking=True
     )
 
-    assigned_doctor_id = fields.Many2one(
+    assigned_doctor_ids = fields.Many2many(
         'hr.employee',
-        string='Assigned Doctor',
-        compute='_compute_assigned_doctor',
+        'fso_assigned_doctor_rel',
+        'fso_id', 'doctor_id',
+        string='Assigned Doctors',
+        compute='_compute_assigned_doctors',
+        inverse='_inverse_assigned_doctors',
         store=False,
-        help='Doctor assigned from staff assignments (computed from assignments with doctor role)'
+        readonly=False,
+        domain=[('is_healthcare_staff', '=', True), ('healthcare_role', '=', 'doctor'), ('employment_status', '=', 'active')],
+        help='Doctors assigned from staff assignments (editable - creates/updates assignments with doctor role)'
     )
 
     primary_nurse_id = fields.Many2one(
@@ -2580,9 +2662,20 @@ class HealthFieldServiceOrderUnified(models.Model):
             _logger.info("   Template ID: %s", existing_template.id)
 
         # Open timeline view focused on appointment date with DAY view
-        # Calculate the appointment day for timeline focus
-        appointment_datetime = self.scheduled_datetime or fields.Datetime.now()
-        appointment_date = appointment_datetime.strftime('%Y-%m-%d')
+        # Convert UTC datetime to user timezone for proper timeline focus
+        import pytz
+        user_tz = pytz.timezone(self.env.user.tz or 'UTC')
+        appointment_datetime_utc = self.scheduled_datetime or fields.Datetime.now()
+
+        # Convert to user timezone
+        appointment_datetime_local = pytz.UTC.localize(appointment_datetime_utc).astimezone(user_tz)
+        appointment_date = appointment_datetime_local.strftime('%Y-%m-%d')
+
+        _logger.info("📅 TIMEZONE CONVERSION:")
+        _logger.info("   User Timezone: %s", self.env.user.tz or 'UTC')
+        _logger.info("   UTC DateTime: %s", appointment_datetime_utc)
+        _logger.info("   Local DateTime: %s", appointment_datetime_local)
+        _logger.info("   Timeline Focus Date: %s", appointment_date)
 
         # Get view references for explicit view specification
         timeline_view = self.env.ref('health_fieldservice.health_staff_assignment_timeline_view', raise_if_not_found=False)
@@ -2600,7 +2693,7 @@ class HealthFieldServiceOrderUnified(models.Model):
         # Prepare context with FSO auto-population and DAY view focus
         ctx = {
             'default_fso_id': self.id,  # Auto-populate FSO when creating new assignments
-            'default_assignment_date': appointment_datetime,  # Used by template default_get()
+            'default_assignment_date': appointment_datetime_utc,  # Used by template default_get()
             'default_staff_id': False,  # Leave staff unassigned for drag-drop
             'date': appointment_date,  # Timeline focus date (YYYY-MM-DD format)
             'initial_date': appointment_date,  # Timeline focus date (backup key)
@@ -2619,7 +2712,7 @@ class HealthFieldServiceOrderUnified(models.Model):
             'view_mode': 'timeline,list,form',
             'views': views if views else False,
             'target': 'current',
-            'domain': [('state', '!=', 'template')],  # Hide template assignments from view
+            'domain': [('state', '!=', 'template')],  # Show all assignments (all bookings) to see staff availability
             'context': ctx,
         }
     

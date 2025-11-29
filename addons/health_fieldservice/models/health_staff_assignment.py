@@ -75,7 +75,7 @@ class HealthStaffAssignment(models.Model):
         ('consultant', 'Consultant'),
         ('specialist', 'Specialist'),
         ('trainee', 'Trainee')
-    ], string='Assignment Role', default='support', required=True, tracking=True,
+    ], string='Assignment Role', default='lead', required=True, tracking=True,
        help='Role of this staff member in the service delivery')
 
     # Assignment metadata

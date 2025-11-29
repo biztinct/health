@@ -227,14 +227,11 @@
                                 </div>
                                 <group col="2">
                                     <field name="assigned_staff_ids" widget="many2many_tags"
-                                           readonly="1"
-                                           options="{'color_field': 'color', 'no_create': True}"/>
+                                           options="{'color_field': 'color', 'no_create': False}"/>
                                     <field name="lead_staff_id"
-                                           readonly="1"
-                                           options="{'no_create': True}"/>
-                                    <field name="assigned_doctor_id"
-                                           readonly="1"
-                                           options="{'no_create': True}"/>
+                                           options="{'no_create': False}"/>
+                                    <field name="assigned_doctor_ids" widget="many2many_tags"
+                                           options="{'color_field': 'color', 'no_create': False}"/>
                                 </group>
                             </div>
                         </div>
@@ -568,7 +565,7 @@
                 <field name="name"/>
                 <field name="patient_id"/>
                 <field name="scheduled_datetime"/>
-                <field name="assigned_staff_ids" widget="many2many_tags"/>
+                <field name="assigned_staff_ids" widget="many2many_tags" options="{'color_field': 'color'}"/>
                 <field name="state" decoration-success="state == 'completed'"
                        decoration-info="state == 'assigned'"
                        decoration-warning="state == 'in_progress'"
@@ -615,9 +612,9 @@
                                         </div>
                                     </div>
                                 </div>
-                                
+
                                 <div class="o_kanban_record_body">
-                                    <field name="assigned_staff_ids" widget="many2many_tags"/>
+                                    <field name="assigned_staff_ids" widget="many2many_tags" options="{'color_field': 'color'}"/>
                                     <br/>
                                     <i class="fa fa-clock-o" title="Scheduled time"/> <field name="scheduled_datetime"/>
                                 </div>

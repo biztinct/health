@@ -110,10 +110,15 @@
         <field name="name">FSO Healthcare Staff Access</field>
         <field name="model_id" ref="model_health_fieldservice_order"/>
         <field name="groups" eval="[(4, ref('group_healthcare_staff'))]"/>
-        <field name="domain_force">[('assigned_staff_ids', 'in', [user.employee_id])]</field>
+        <field name="domain_force">[
+            '|', '|',
+            ('assignment_ids.staff_id.user_id', '=', user.id),
+            ('primary_doctor_id.user_id', '=', user.id),
+            ('primary_nurse_id.user_id', '=', user.id)
+        ]</field>
         <field name="perm_read" eval="True"/>
         <field name="perm_write" eval="True"/>
-        <field name="perm_create" eval="False"/>
+        <field name="perm_create" eval="True"/>
         <field name="perm_unlink" eval="False"/>
     </record>
 
