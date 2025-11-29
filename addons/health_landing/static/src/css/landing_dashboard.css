@@ -901,7 +901,7 @@
 .health_landing_quick_card {
     background: var(--color-surface);
     border-radius: 12px;
-    padding: 16px;
+    padding: 8px 10px;
     display: flex;
     align-items: center;
     gap: 12px;

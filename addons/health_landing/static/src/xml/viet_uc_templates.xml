@@ -38,9 +38,48 @@
                     </div>
                 </div>
 
-                <!-- Main Module Cards (5 items) -->
+                <!-- Recently Accessed -->
+                <div class="health_landing_quick_access" t-if="state.recentlyAccessed.length > 0 and !state.searchQuery">
+                    <div class="health_landing_quick_access_title">
+                        <i class="fa fa-clock-o"/> Recently Accessed
+                    </div>
+                    <div class="health_landing_quick_access_grid">
+                        <t t-foreach="state.recentlyAccessed" t-as="recent" t-key="recent.id">
+                            <div class="health_landing_quick_card" t-on-click="() => this.launchAction(recent.id, recent.name, recent.icon)">
+                                <div class="health_landing_quick_card_icon">
+                                    <i t-att-class="'fa ' + recent.icon"/>
+                                </div>
+                                <div class="health_landing_quick_card_label" t-esc="recent.name"/>
+                                <i class="fa health_landing_quick_card_star"
+                                   t-att-class="isFavorite(recent.id) ? 'fa-star' : 'fa-star-o'"
+                                   t-on-click.stop="() => this.toggleFavorite(recent.id, recent.name, recent.icon)"/>
+                            </div>
+                        </t>
+                    </div>
+                </div>
+
+                <!-- Favorites -->
+                <div class="health_landing_quick_access" t-if="state.favorites.length > 0 and !state.searchQuery">
+                    <div class="health_landing_quick_access_title">
+                        <i class="fa fa-star"/> Favorites
+                    </div>
+                    <div class="health_landing_quick_access_grid">
+                        <t t-foreach="state.favorites" t-as="favorite" t-key="favorite.id">
+                            <div class="health_landing_quick_card" t-on-click="() => this.launchAction(favorite.id, favorite.name, favorite.icon)">
+                                <div class="health_landing_quick_card_icon">
+                                    <i t-att-class="'fa ' + favorite.icon"/>
+                                </div>
+                                <div class="health_landing_quick_card_label" t-esc="favorite.name"/>
+                                <i class="fa fa-star health_landing_quick_card_star"
+                                   t-on-click.stop="() => this.toggleFavorite(favorite.id, favorite.name, favorite.icon)"/>
+                            </div>
+                        </t>
+                    </div>
+                </div>
+
+                <!-- Main Module Cards -->
                 <div class="health_landing_card_grid">
-                    <t t-foreach="getVietUcModules()" t-as="module" t-key="module.id">
+                    <t t-foreach="getDisplayModules()" t-as="module" t-key="module.id">
                         <div class="health_landing_card"
                              tabindex="0"
                              t-att-class="module.class"
@@ -55,7 +94,7 @@
                 </div>
 
                 <!-- No Results Message -->
-                <div class="health_landing_empty" t-if="state.searchQuery and getVietUcModules().length === 0">
+                <div class="health_landing_empty" t-if="state.searchQuery and getDisplayModules().length === 0">
                     <div class="health_landing_empty_icon">
                         <i class="fa fa-search"/>
                     </div>

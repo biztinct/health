@@ -27,6 +27,8 @@ class VietUcDashboard extends Component {
             parentModule: null, // Track parent module for breadcrumb navigation
             searchQuery: "",
             breadcrumb: ["Viet Uc"],
+            recentlyAccessed: this.getRecentlyAccessed(),
+            favorites: this.getFavorites(),
         });
 
         // Initialize on mount
@@ -311,9 +313,12 @@ class VietUcDashboard extends Component {
      * Handle module click - route to appropriate view
      */
     async handleModuleClick(module) {
+        // Record the module click in recents (module-level entry)
+        this.trackRecentAccess(module.id, module.name, module.icon);
+
         if (module.type === "direct_action") {
-            // Client or Booking - open directly
-            await this.launchAction(module.action, module.name, module.icon);
+            // Client or Booking - open directly (skip double tracking in launchAction)
+            await this.launchAction(module.action, module.name, module.icon, { skipTrack: true });
         } else if (module.type === "submenu") {
             // CRM, Accounts, Config - show submenu dashboard
             this.showSubmenu(module);
@@ -327,6 +332,8 @@ class VietUcDashboard extends Component {
         this.state.currentView = "submenu";
         this.state.currentModule = module;
         this.state.breadcrumb = ["Viet Uc", module.name];
+        // Track module-level access
+        this.trackRecentAccess(module.id, module.name, module.icon);
     }
 
     /**
@@ -343,7 +350,7 @@ class VietUcDashboard extends Component {
      * Launch Odoo action
      * Stores parent module context before launching action
      */
-    async launchAction(actionXmlId, actionName, icon) {
+    async launchAction(actionXmlId, actionName, icon, options = {}) {
         try {
             // Store the current module as parent so breadcrumb can navigate back to it
             if (this.state.currentModule) {
@@ -354,6 +361,11 @@ class VietUcDashboard extends Component {
                     parentModuleId: this.state.currentModule.id,
                     actionName: actionName
                 };
+            }
+
+            // Track recents unless explicitly skipped (to avoid double entries)
+            if (!options.skipTrack) {
+                this.trackRecentAccess(actionXmlId, actionName, icon);
             }
 
             // Launch action with custom context
@@ -489,6 +501,74 @@ class VietUcDashboard extends Component {
         // Escape to close search
         if (event.key === 'Escape') {
             this.clearSearch();
+        }
+    }
+
+    /**
+     * Filtered modules based on search
+     */
+    getDisplayModules() {
+        const query = (this.state.searchQuery || "").toLowerCase();
+        if (!query) {
+            return this.vietUcModules;
+        }
+        return this.vietUcModules.filter((m) => {
+            const inModule =
+                m.name.toLowerCase().includes(query) ||
+                (m.description || "").toLowerCase().includes(query);
+            const inSubmenu = (m.submenus || []).some(
+                (s) =>
+                    s.name.toLowerCase().includes(query) ||
+                    (s.description || "").toLowerCase().includes(query)
+            );
+            return inModule || inSubmenu;
+        });
+    }
+
+    /**
+     * Track recently accessed items
+     */
+    trackRecentAccess(id, name, icon) {
+        const recent = this.getRecentlyAccessed();
+        const item = { id, name, icon, timestamp: Date.now() };
+        const filtered = recent.filter((r) => r.id !== id);
+        filtered.unshift(item);
+        const updated = filtered.slice(0, 5);
+        localStorage.setItem("viet_uc_recent", JSON.stringify(updated));
+        this.state.recentlyAccessed = updated;
+    }
+
+    getRecentlyAccessed() {
+        try {
+            const stored = localStorage.getItem("viet_uc_recent");
+            return stored ? JSON.parse(stored) : [];
+        } catch (e) {
+            return [];
+        }
+    }
+
+    toggleFavorite(id, name, icon) {
+        const favorites = this.getFavorites();
+        const index = favorites.findIndex((f) => f.id === id);
+        if (index >= 0) {
+            favorites.splice(index, 1);
+        } else {
+            favorites.push({ id, name, icon });
+        }
+        localStorage.setItem("viet_uc_favorites", JSON.stringify(favorites));
+        this.state.favorites = favorites;
+    }
+
+    isFavorite(id) {
+        return this.state.favorites.some((f) => f.id === id);
+    }
+
+    getFavorites() {
+        try {
+            const stored = localStorage.getItem("viet_uc_favorites");
+            return stored ? JSON.parse(stored) : [];
+        } catch (e) {
+            return [];
         }
     }
 }
