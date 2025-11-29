@@ -412,28 +412,39 @@ class HealthFieldServiceOrderUnified(models.Model):
             else:
                 record.order_line_count = 0
     
-    @api.depends('assignment_ids.staff_id')
+    @api.depends('assignment_ids.staff_id', 'assignment_ids.assignment_role', 'assignment_ids.staff_id.healthcare_role')
     def _compute_assigned_staff(self):
         """Compute assigned staff from assignment records"""
         for record in self:
-            staff_ids = record.assignment_ids.filtered(lambda a: a.state != 'template').mapped('staff_id.id')
+            staff_ids = record.assignment_ids.filtered(
+                lambda a: a.state != 'template'
+                and a.assignment_role != 'doctor'
+                and a.staff_id
+                and a.staff_id.healthcare_role != 'doctor'
+            ).mapped('staff_id.id')
             record.assigned_staff_ids = [(6, 0, staff_ids)]
 
     def _inverse_assigned_staff(self):
         """Create/update staff assignments when assigned_staff_ids is modified"""
         for record in self:
-            current_staff_ids = set(record.assignment_ids.filtered(lambda a: a.state != 'template').mapped('staff_id.id'))
+            current_staff_ids = set(record.assignment_ids.filtered(
+                lambda a: a.state != 'template' and a.assignment_role != 'doctor'
+            ).mapped('staff_id.id'))
             new_staff_ids = set(record.assigned_staff_ids.ids)
 
             # Staff to add - create new assignments
             staff_to_add = new_staff_ids - current_staff_ids
             for staff_id in staff_to_add:
                 staff = self.env['hr.employee'].browse(staff_id)
-                # Determine role based on healthcare_role - default to 'lead' for all except doctors
+                # Skip doctors here (handled separately via assigned_doctor_ids)
                 if staff.healthcare_role == 'doctor':
-                    role = 'doctor'
-                else:
-                    role = 'lead'  # Default to lead staff for nurses and others
+                    continue
+
+                # Enforce single lead: first non-doctor is lead, subsequent are support
+                existing_lead = record.assignment_ids.filtered(
+                    lambda a: a.state != 'template' and a.assignment_role == 'lead'
+                )
+                role = 'lead' if not existing_lead else 'support'
 
                 self.env['health.staff.assignment'].create({
                     'fso_id': record.id,
@@ -608,7 +619,11 @@ class HealthFieldServiceOrderUnified(models.Model):
         inverse='_inverse_assigned_staff',
         store=False,
         readonly=False,
-        domain=[('is_healthcare_staff', '=', True), ('employment_status', '=', 'active')],
+        domain=[
+            ('is_healthcare_staff', '=', True),
+            ('employment_status', '=', 'active'),
+            ('healthcare_role', '!=', 'doctor'),
+        ],
         help='All staff members assigned to this service (editable - creates/updates assignments)'
     )
 

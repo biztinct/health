@@ -65,7 +65,8 @@
         <field name="arch" type="xml">
             <!-- Add Back to Quotation button to header -->
             <xpath expr="//header" position="inside">
-                <button name="action_draft" invisible="state != 'cancel'" type="object" string="Back to Quotation" data-hotkey="w"/>
+                <button name="action_draft" invisible="state != 'cancel'" type="object"
+                        string="Back to Quotation" data-hotkey="w" class="btn btn-primary"/>
                 <field name="state" widget="statusbar" statusbar_visible="draft,sent,sale"/>
             </xpath>
             
