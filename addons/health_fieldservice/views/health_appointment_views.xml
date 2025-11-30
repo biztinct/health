@@ -19,28 +19,28 @@
                         type="object" 
                         string="Sales Approve" 
                         class="btn-primary"
-                        groups="health_staff_assignment.group_sales_user"
+                        groups="health_base.group_healthcare_sales"
                         invisible="assignment_state != 'sales_review'"/>
                 
                 <button name="action_ops_manager_review" 
                         type="object" 
                         string="Ops Approve" 
                         class="btn-success"
-                        groups="health_staff_assignment.group_ops_manager"
+                        groups="health_base.group_healthcare_operations_manager"
                         invisible="assignment_state != 'ops_manager_review'"/>
                 
                 <button name="action_head_nurse_assign_staff" 
                         type="object" 
                         string="Assign Staff" 
                         class="btn-info"
-                        groups="health_staff_assignment.group_head_nurse"
+                        groups="health_base.group_healthcare_head_nurse"
                         invisible="assignment_state != 'head_nurse_assign'"/>
                 
                 <button name="action_staff_confirm_assignment" 
                         type="object" 
                         string="Confirm Assignment" 
                         class="btn-warning"
-                        groups="health_staff_assignment.group_healthcare_staff"
+                        groups="health_base.group_healthcare_nurse"
                         invisible="assignment_state != 'staff_assigned'"/>
                 
                 <field name="assignment_state" widget="statusbar" 

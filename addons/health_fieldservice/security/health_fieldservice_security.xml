@@ -12,34 +12,13 @@
         <field name="sequence">25</field>
     </record>
 
-    <!-- Field Service User Group -->
-    <record id="group_fieldservice_user" model="res.groups">
-        <field name="name">Field Service User</field>
-        <field name="category_id" ref="module_category_health_fieldservice"/>
-        <field name="comment">Basic field service access - can view assigned FSOs and update status</field>
-    </record>
 
-    <!-- Field Service Staff Group -->
-    <record id="group_fieldservice_staff" model="res.groups">
-        <field name="name">Field Service Staff</field>
-        <field name="category_id" ref="module_category_health_fieldservice"/>
-        <field name="implied_ids" eval="[(4, ref('group_fieldservice_user'))]"/>
-        <field name="comment">Field staff - can update FSO status, communicate, and complete service steps</field>
-    </record>
-
-    <!-- Field Service Dispatcher Group -->
-    <record id="group_fieldservice_dispatcher" model="res.groups">
-        <field name="name">Field Service Dispatcher</field>
-        <field name="category_id" ref="module_category_health_fieldservice"/>
-        <field name="implied_ids" eval="[(4, ref('group_fieldservice_staff'))]"/>
-        <field name="comment">Dispatchers - can create/assign FSOs, manage teams, and monitor all field activities</field>
-    </record>
 
     <!-- Field Service Manager Group -->
     <record id="group_fieldservice_manager" model="res.groups">
         <field name="name">Field Service Manager</field>
         <field name="category_id" ref="module_category_health_fieldservice"/>
-        <field name="implied_ids" eval="[(4, ref('group_fieldservice_dispatcher'))]"/>
+        <field name="implied_ids" eval="[(4, ref('health_base.group_healthcare_operations_manager'))]"/>
         <field name="comment">Managers - full access to field service system, analytics, and configuration</field>
     </record>
 
@@ -71,7 +50,7 @@
             ('primary_doctor_id.user_id', '=', user.id),
             ('primary_nurse_id.user_id', '=', user.id)
         ]</field>
-        <field name="groups" eval="[(4, ref('group_fieldservice_user')), (4, ref('group_fieldservice_staff'))]"/>
+        <field name="groups" eval="[(4, ref('health_base.group_healthcare_nurse'))]"/>
         <field name="perm_read" eval="True"/>
         <field name="perm_write" eval="True"/>
         <field name="perm_create" eval="True"/>
@@ -83,7 +62,7 @@
         <field name="name">Field Service Orders: Managers see all orders</field>
         <field name="model_id" ref="model_health_fieldservice_order"/>
         <field name="domain_force">[(1, '=', 1)]</field>
-        <field name="groups" eval="[(4, ref('group_fieldservice_manager')), (4, ref('group_fieldservice_dispatcher'))]"/>
+        <field name="groups" eval="[(4, ref('group_fieldservice_manager')), (4, ref('health_base.group_healthcare_operations_manager'))]"/>
         <field name="perm_read" eval="True"/>
         <field name="perm_write" eval="True"/>
         <field name="perm_create" eval="True"/>

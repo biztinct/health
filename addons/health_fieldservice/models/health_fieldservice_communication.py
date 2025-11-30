@@ -258,7 +258,7 @@ class HealthFieldServiceCommunication(models.Model):
                 recipients = fso.staff_assignment_id.assigned_by
         elif self.recipient_role == 'dispatcher':
             # Get users with dispatcher role (implement based on your groups)
-            dispatcher_group = self.env.ref('health_fieldservice.group_fieldservice_dispatcher', 
+            dispatcher_group = self.env.ref('health_base.group_healthcare_operations_manager', 
                                           raise_if_not_found=False)
             if dispatcher_group:
                 recipients = dispatcher_group.users

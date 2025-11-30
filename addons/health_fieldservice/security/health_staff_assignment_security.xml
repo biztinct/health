@@ -13,43 +13,13 @@
          Staff Assignment User Groups
          ===================================================================== -->
 
-    <!-- Sales Team - Can approve appointments for operations review -->
-    <record id="group_sales_user" model="res.groups">
-        <field name="name">Healthcare Sales User</field>
-        <field name="category_id" ref="module_category_health_staff_assignment"/>
-        <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
-        <field name="comment">Can approve appointments for operations manager review</field>
-    </record>
 
-    <!-- Operations Manager - Can review and approve for head nurse assignment -->
-    <record id="group_ops_manager" model="res.groups">
-        <field name="name">Operations Manager</field>
-        <field name="category_id" ref="module_category_health_staff_assignment"/>
-        <field name="implied_ids" eval="[(4, ref('group_sales_user'))]"/>
-        <field name="comment">Can review appointments and approve for staff assignment</field>
-    </record>
-
-    <!-- Head Nurse - Can assign staff to appointments -->
-    <record id="group_head_nurse" model="res.groups">
-        <field name="name">Head Nurse</field>
-        <field name="category_id" ref="module_category_health_staff_assignment"/>
-        <field name="implied_ids" eval="[(4, ref('group_ops_manager'))]"/>
-        <field name="comment">Can assign healthcare staff to appointments</field>
-    </record>
-
-    <!-- Healthcare Staff - Can view and update their assignments -->
-    <record id="group_healthcare_staff" model="res.groups">
-        <field name="name">Healthcare Staff</field>
-        <field name="category_id" ref="module_category_health_staff_assignment"/>
-        <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
-        <field name="comment">Healthcare professionals who receive assignments</field>
-    </record>
 
     <!-- Assignment Manager - Full access to assignment system -->
     <record id="group_assignment_manager" model="res.groups">
         <field name="name">Assignment System Manager</field>
         <field name="category_id" ref="module_category_health_staff_assignment"/>
-        <field name="implied_ids" eval="[(4, ref('group_head_nurse'))]"/>
+        <field name="implied_ids" eval="[(4, ref('health_base.group_healthcare_head_nurse'))]"/>
         <field name="comment">Full access to staff assignment system and analytics</field>
     </record>
 
@@ -61,7 +31,7 @@
     <record id="rule_fso_sales_user" model="ir.rule">
         <field name="name">FSO Sales User Access</field>
         <field name="model_id" ref="model_health_fieldservice_order"/>
-        <field name="groups" eval="[(4, ref('group_sales_user'))]"/>
+        <field name="groups" eval="[(4, ref('health_base.group_healthcare_sales'))]"/>
         <field name="domain_force">[('state', 'in', ['draft', 'requested'])]</field>
         <field name="perm_read" eval="True"/>
         <field name="perm_write" eval="True"/>
@@ -73,7 +43,7 @@
     <record id="rule_fso_ops_manager" model="ir.rule">
         <field name="name">FSO Operations Manager Access</field>
         <field name="model_id" ref="model_health_fieldservice_order"/>
-        <field name="groups" eval="[(4, ref('group_ops_manager'))]"/>
+        <field name="groups" eval="[(4, ref('health_base.group_healthcare_operations_manager'))]"/>
         <field name="domain_force">[('state', 'in', ['requested', 'confirmed'])]</field>
         <field name="perm_read" eval="True"/>
         <field name="perm_write" eval="True"/>
@@ -85,7 +55,7 @@
     <record id="rule_fso_head_nurse" model="ir.rule">
         <field name="name">FSO Head Nurse Access</field>
         <field name="model_id" ref="model_health_fieldservice_order"/>
-        <field name="groups" eval="[(4, ref('group_head_nurse'))]"/>
+        <field name="groups" eval="[(4, ref('health_base.group_healthcare_head_nurse'))]"/>
         <field name="domain_force">[('state', 'in', ['confirmed', 'in_progress', 'completed'])]</field>
         <field name="perm_read" eval="True"/>
         <field name="perm_write" eval="True"/>
@@ -97,7 +67,7 @@
     <record id="rule_assignment_healthcare_staff" model="ir.rule">
         <field name="name">Staff Assignment Healthcare Staff Access</field>
         <field name="model_id" ref="model_health_staff_assignment"/>
-        <field name="groups" eval="[(4, ref('group_healthcare_staff'))]"/>
+        <field name="groups" eval="[(4, ref('health_base.group_healthcare_nurse'))]"/>
         <field name="domain_force">[('staff_id.user_id', '=', user.id)]</field>
         <field name="perm_read" eval="True"/>
         <field name="perm_write" eval="True"/>
@@ -109,7 +79,7 @@
     <record id="rule_fso_healthcare_staff" model="ir.rule">
         <field name="name">FSO Healthcare Staff Access</field>
         <field name="model_id" ref="model_health_fieldservice_order"/>
-        <field name="groups" eval="[(4, ref('group_healthcare_staff'))]"/>
+        <field name="groups" eval="[(4, ref('health_base.group_healthcare_nurse'))]"/>
         <field name="domain_force">[
             '|', '|',
             ('assignment_ids.staff_id.user_id', '=', user.id),
@@ -126,7 +96,7 @@
     <record id="rule_availability_healthcare_staff" model="ir.rule">
         <field name="name">Availability Matrix Healthcare Staff Access</field>
         <field name="model_id" ref="model_health_staff_availability_matrix"/>
-        <field name="groups" eval="[(4, ref('group_healthcare_staff'))]"/>
+        <field name="groups" eval="[(4, ref('health_base.group_healthcare_nurse'))]"/>
         <field name="domain_force">[('staff_id.user_id', '=', user.id)]</field>
         <field name="perm_read" eval="True"/>
         <field name="perm_write" eval="True"/>

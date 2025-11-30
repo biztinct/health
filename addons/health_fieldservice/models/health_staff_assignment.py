@@ -934,7 +934,7 @@ class HealthStaffAssignment(models.Model):
         
         # Notify operations team
         try:
-            ops_users = self.env.ref('health_fieldservice.group_ops_manager').users
+            ops_users = self.env.ref('health_base.group_healthcare_operations_manager').users
             for user in ops_users:
                 try:
                     self.message_post(
