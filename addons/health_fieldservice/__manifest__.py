@@ -62,6 +62,7 @@
     ],
     'data': [
         # Security
+        'security/cleanup_rules.xml',
         'security/health_fieldservice_security.xml',
         'security/health_staff_assignment_security.xml',
         'security/ir.model.access.csv',

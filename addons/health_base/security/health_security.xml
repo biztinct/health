@@ -124,7 +124,7 @@
     <record id="rule_healthcare_staff_partners" model="ir.rule">
         <field name="name">Healthcare Staff: Patient and Business Partners</field>
         <field name="model_id" ref="base.model_res_partner"/>
-        <field name="domain_force">['|', ('is_patient', '=', True), ('is_company', '=', True)]</field>
+        <field name="domain_force">[(1, '=', 1)]</field>
         <field name="groups" eval="[(4, ref('group_healthcare_nurse')), (4, ref('group_healthcare_doctor')), (4, ref('group_healthcare_receptionist')), (4, ref('group_healthcare_manager'))]"/>
         <field name="perm_read" eval="True"/>
         <field name="perm_write" eval="True"/>

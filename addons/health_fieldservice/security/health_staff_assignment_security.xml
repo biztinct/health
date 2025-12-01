@@ -33,17 +33,10 @@
         <field name="perm_unlink" eval="False"/>
     </record>
 
-    <!-- Operations Managers: Can see FSO bookings in ops review state -->
-    <record id="rule_fso_ops_manager" model="ir.rule">
-        <field name="name">FSO Operations Manager Access</field>
-        <field name="model_id" ref="model_health_fieldservice_order"/>
-        <field name="groups" eval="[(4, ref('health_base.group_healthcare_operations_manager'))]"/>
-        <field name="domain_force">[('state', 'in', ['requested', 'confirmed'])]</field>
-        <field name="perm_read" eval="True"/>
-        <field name="perm_write" eval="True"/>
-        <field name="perm_create" eval="False"/>
-        <field name="perm_unlink" eval="False"/>
-    </record>
+
+
+
+
 
     <!-- Head Nurses: Can see FSO bookings ready for assignment -->
     <record id="rule_fso_head_nurse" model="ir.rule">

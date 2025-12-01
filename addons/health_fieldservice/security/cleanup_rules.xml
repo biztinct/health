@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Explicitly delete obsolete or stale record rules to force recreation -->
+        <delete model="ir.rule" id="rule_fso_ops_manager"/>
+        <delete model="ir.rule" id="rule_fso_head_nurse"/>
+        <delete model="ir.rule" id="rule_fso_manager_all"/>
+        <delete model="ir.rule" id="fieldservice_order_manager_rule"/>
+        <delete model="ir.rule" id="rule_fso_system_admin"/>
+    </data>
+</odoo>
