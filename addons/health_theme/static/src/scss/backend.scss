@@ -762,3 +762,29 @@ a {
     &--warning { color: var(--vu-status-warning); }
     &--danger { color: var(--vu-status-danger); }
 }
+
+// Fix for User Roles form layout text wrapping
+.o_user_role_groups {
+    // Ensure the group takes full width
+    width: 100% !important;
+
+    // Target the inner groups (columns) to ensure they have enough width
+    .o_inner_group {
+        min-width: 450px !important; 
+        flex: 1 1 auto !important;
+    }
+
+    // Prevent premature wrapping on checkbox labels
+    .form-check {
+        width: 100%;
+        padding-right: var(--vu-space-md);
+        
+        .form-check-label {
+            white-space: nowrap !important; 
+            max-width: 100%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            vertical-align: middle;
+        }
+    }
+}

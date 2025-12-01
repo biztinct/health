@@ -131,11 +131,11 @@ class ResUsersRole(models.Model):
         return action
 
     @api.model
-    def fields_view_get(self, view_id=None, view_type="form", toolbar=False, submenu=False):
+    def get_view(self, view_id=None, view_type="form", **options):
         """Render implied groups in the same grouped layout as user access rights."""
-        res = super().fields_view_get(view_id=view_id, view_type=view_type, toolbar=toolbar, submenu=submenu)
+        res = super().get_view(view_id=view_id, view_type=view_type, **options)
 
-        if view_type != "form" or "implied_ids" not in res.get("fields", {}):
+        if view_type != "form":
             return res
 
         try:
@@ -158,7 +158,7 @@ class ResUsersRole(models.Model):
         handled_group_ids = set()
 
         def _add_section(cat_name, domain_expr):
-            section_groups = groups_model.search(domain_expr)
+            section_groups = groups_model.search(domain_expr, order="name")
             if not section_groups:
                 return
             handled_group_ids.update(section_groups.ids)
@@ -169,7 +169,7 @@ class ResUsersRole(models.Model):
                 attrib={
                     "name": "implied_ids",
                     "widget": "many2many_checkboxes",
-                    "domain": domain_expr,
+                    "domain": str(domain_expr),
                     "options": "{'no_create': True, 'no_create_edit': True, 'no_open': True}",
                 },
             )
@@ -178,7 +178,10 @@ class ResUsersRole(models.Model):
             domain_str = f"[('category_id','=',{cat.id})]"
             _add_section(cat.name, [("category_id", "=", cat.id)])
 
-        uncategorized = groups_model.search([("category_id", "=", False), ("id", "not in", list(handled_group_ids))])
+        uncategorized = groups_model.search(
+            [("category_id", "=", False), ("id", "not in", list(handled_group_ids))],
+            order="name"
+        )
         if uncategorized:
             domain_str = f"[('id','in',{list(uncategorized.ids)})]"
             section = etree.SubElement(wrapper, "group", attrib={"string": _("Other"), "col": "1"})
