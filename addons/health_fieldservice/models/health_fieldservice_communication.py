@@ -332,7 +332,7 @@ class HealthFieldServiceCommunication(models.Model):
         self.escalation_level += 1
         
         # Find escalation recipients (supervisors, managers)
-        escalation_group = self.env.ref('health_fieldservice.group_fieldservice_manager', 
+        escalation_group = self.env.ref('health_base.group_healthcare_operations_manager', 
                                       raise_if_not_found=False)
         if escalation_group:
             self.escalated_to_ids = [(6, 0, escalation_group.users.ids)]
