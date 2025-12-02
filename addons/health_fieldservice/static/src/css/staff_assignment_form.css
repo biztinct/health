@@ -1,34 +1,58 @@
 /* Staff Assignment Form - Custom Styles */
 
-/* Hide "Odoo" title in dialog mode for staff assignment form */
-.o_form_noheader .modal-header .modal-title {
-    display: none !important;
-}
+/* ============================================================================
+   HIDE "ODOO" TITLE IN MODAL DIALOG
+   ============================================================================ */
 
-/* Alternative: Hide entire modal header for cleaner look */
-.o_dialog .o_form_noheader ~ .modal-header {
+/* Hide modal title for all health.staff.assignment forms */
+.modal-content:has(.o_form_view[data-res-model="health.staff.assignment"]) .modal-title,
+.modal-content:has(form[data-res-model="health.staff.assignment"]) .modal-title,
+.modal-dialog:has(.o_form_view.o_form_noheader) .modal-title {
     display: none !important;
-}
-
-/* For staff assignment dialogs specifically */
-.o_act_window[data-res-model="health.staff.assignment"] .modal-title {
-    display: none !important;
-}
-
-/* Hide dialog title globally for this form */
-body .modal.o_technical_modal .modal-header .modal-title:contains("Odoo") {
     visibility: hidden !important;
+}
+
+/* Alternative selectors for Odoo 18 */
+div[name="health_staff_assignment"] .modal-title,
+.o_act_window .modal-title:empty {
+    display: none !important;
+}
+
+/* Aggressive hiding of all modal titles (will hide "Odoo" text) */
+.modal-content .modal-header .modal-title,
+.modal-dialog .modal-header .modal-title,
+.o_dialog .modal-header .modal-title,
+.modal .modal-header .modal-title {
+    font-size: 0 !important;
+    color: transparent !important;
+    visibility: hidden !important;
+    max-height: 0 !important;
+    overflow: hidden !important;
+}
+
+/* ============================================================================
+   HIDE START AND CANCEL BUTTONS IN DIALOG
+   ============================================================================ */
+
+/* Hide Start and Cancel buttons in staff assignment form */
+.o_form_view.o_form_noheader button[name="action_start_assignment"],
+.o_form_view.o_form_noheader button[name="action_cancel_assignment"],
+form[data-res-model="health.staff.assignment"] button[name="action_start_assignment"],
+form[data-res-model="health.staff.assignment"] button[name="action_cancel_assignment"] {
+    display: none !important;
+    visibility: hidden !important;
+}
+
+/* Hide form header buttons when form is in modal/dialog */
+.modal .o_form_view header button[name="action_start_assignment"],
+.modal .o_form_view header button[name="action_cancel_assignment"],
+.o_dialog header button[name="action_start_assignment"],
+.o_dialog header button[name="action_cancel_assignment"] {
+    display: none !important;
+    visibility: hidden !important;
+    width: 0 !important;
     height: 0 !important;
     padding: 0 !important;
     margin: 0 !important;
-}
-
-/* Better approach: Hide just the title text */
-.modal-dialog .modal-header .o_subtitle {
-    display: none !important;
-}
-
-/* Most targeted approach */
-.o_form_view.o_form_noheader + div .modal-title {
-    display: none !important;
+    overflow: hidden !important;
 }
