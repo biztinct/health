@@ -266,6 +266,12 @@
                             .then(function(registration) {
                                 console.log('SW registered: ', registration);
 
+                                // Mark PWA as installed if there's an active service worker
+                                if (navigator.serviceWorker.controller) {
+                                    localStorage.setItem('pwa-sw-installed', 'true');
+                                    console.log('Marked PWA as previously installed');
+                                }
+
                                 // Check for waiting service worker immediately (in case update happened before page load)
                                 if (registration.waiting) {
                                     console.log('Update already waiting, showing banner immediately');
@@ -296,27 +302,24 @@
                                     const newWorker = registration.installing;
                                     console.log('New service worker found, installing...');
 
+                                    // Check if PWA was previously installed
+                                    const isPWAInstalled = localStorage.getItem('pwa-sw-installed') === 'true';
+                                    console.log('PWA previously installed:', isPWAInstalled);
+
                                     newWorker.addEventListener('statechange', function() {
                                         console.log('New worker state:', newWorker.state);
                                         if (newWorker.state === 'installed') {
-                                            if (navigator.serviceWorker.controller) {
-                                                // New content available, show update banner
-                                                console.log('New content available, showing update banner');
+                                            // Show banner if this is an update (PWA was previously installed OR there's a controller)
+                                            if (isPWAInstalled || navigator.serviceWorker.controller) {
+                                                console.log('Update detected, showing update banner');
                                                 showUpdateBanner(registration);
                                             } else {
-                                                // First install, no banner needed
-                                                console.log('First install, no update banner');
+                                                console.log('First install, no banner');
                                             }
+                                            // Mark PWA as installed for next time
+                                            localStorage.setItem('pwa-sw-installed', 'true');
                                         }
                                     });
-
-                                    // Also show banner immediately if there's a controller (backup)
-                                    if (navigator.serviceWorker.controller) {
-                                        setTimeout(function() {
-                                            console.log('Showing update banner after timeout (backup)');
-                                            showUpdateBanner(registration);
-                                        }, 1000);
-                                    }
                                 });
                             })
                             .catch(function(registrationError) {
@@ -340,8 +343,17 @@
 
                 // Update and reload function
                 function updateAndReload(registration) {
+                    console.log('Auto-updating service worker after 30 seconds...');
                     if (registration &amp;&amp; registration.waiting) {
                         registration.waiting.postMessage({ type: 'SKIP_WAITING' });
+                        // Wait a bit for the message to be processed, then reload
+                        setTimeout(function() {
+                            console.log('Reloading page to activate new service worker');
+                            window.location.reload();
+                        }, 500);
+                    } else {
+                        console.log('No waiting service worker, reloading anyway');
+                        window.location.reload();
                     }
                 }
                 
@@ -390,13 +402,26 @@
                     const updateBtn = document.getElementById('pwa-update-btn');
                     if (updateBtn) {
                         updateBtn.addEventListener('click', function() {
+                            console.log('Update button clicked, triggering update...');
                             // Trigger update and reload
-                            if (navigator.serviceWorker &amp;&amp; navigator.serviceWorker.controller) {
+                            if (navigator.serviceWorker) {
                                 navigator.serviceWorker.getRegistration().then(function(registration) {
                                     if (registration &amp;&amp; registration.waiting) {
+                                        console.log('Sending SKIP_WAITING to service worker');
                                         registration.waiting.postMessage({ type: 'SKIP_WAITING' });
+                                        // Wait a bit for the message to be processed, then reload
+                                        setTimeout(function() {
+                                            console.log('Reloading page to activate new service worker');
+                                            window.location.reload();
+                                        }, 500);
+                                    } else {
+                                        console.log('No waiting service worker, reloading anyway');
+                                        window.location.reload();
                                     }
                                 });
+                            } else {
+                                console.log('Service worker not supported, reloading');
+                                window.location.reload();
                             }
                         });
                     }
@@ -407,12 +432,12 @@
     
     <template id="service_worker_js" name="Service Worker JavaScript">
         <![CDATA[
-// Health PWA Service Worker v1.0.5
+// Health PWA Service Worker v1.0.7
 // IMPORTANT: Increment version number when deploying updates!
 
-const CACHE_NAME = 'health-pwa-v1.0.5';
+const CACHE_NAME = 'health-pwa-v1.0.8';
 const OFFLINE_URL = '/health_pwa/offline';
-const API_CACHE_NAME = 'health-pwa-api-v1.0.5';
+const API_CACHE_NAME = 'health-pwa-api-v1.0.8';
 
 // Listen for SKIP_WAITING message to activate new service worker immediately
 self.addEventListener('message', (event) => {
