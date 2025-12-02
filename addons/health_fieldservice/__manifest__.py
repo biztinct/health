@@ -119,6 +119,7 @@
             'health_fieldservice/static/src/css/staff_workload_dashboard.css',
             'health_fieldservice/static/src/css/web_timeline_custom.css',
             'health_fieldservice/static/src/css/web_timeline_card.css',
+            'health_fieldservice/static/src/css/staff_assignment_form.css',
             # JavaScript Assets (Restored - was working before analytics uninstall)
             'health_fieldservice/static/src/js/assignment_dashboard.js',
             'health_fieldservice/static/src/js/assignment_kanban.js',

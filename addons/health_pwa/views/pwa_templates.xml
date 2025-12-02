@@ -94,6 +94,27 @@
                     </div>
                 </div>
             </div>
+
+            <!-- PWA Update Banner -->
+            <div id="pwa-update-banner" class="pwa-update-banner" style="display: none;">
+                <div class="banner-content">
+                    <div class="banner-icon">
+                        <i class="material-icons" style="font-size: 28px; color: #4CAF50;">system_update</i>
+                    </div>
+                    <div class="banner-text">
+                        <strong class="pwa-lang-content" data-lang="vi">Cập nhật mới có sẵn!</strong>
+                        <strong class="pwa-lang-content" data-lang="en" style="display: none;">New Update Available!</strong>
+                        <span class="pwa-lang-content" data-lang="vi">Tải lại để nhận phiên bản mới nhất</span>
+                        <span class="pwa-lang-content" data-lang="en" style="display: none;">Reload to get the latest version</span>
+                    </div>
+                    <div class="banner-actions">
+                        <button id="pwa-update-btn" class="btn btn-success">
+                            <span class="pwa-lang-content" data-lang="vi">Cập nhật ngay</span>
+                            <span class="pwa-lang-content" data-lang="en" style="display: none;">Update Now</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
             
             <!-- Language Toggle Button (Fixed Position) -->
             <div id="pwa-lang-toggle" style="position: fixed; top: 10px; right: 10px; z-index: 9999; background: white; border-radius: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); overflow: hidden; display: flex;">
@@ -226,31 +247,102 @@
                 })();
             </script>
 
-            <!-- Service Worker Registration -->
+            <!-- Service Worker Registration with Auto-Update -->
             <script>
                 if ('serviceWorker' in navigator) {
+                    let refreshing = false;
+
+                    // Detect when service worker updates and reload
+                    navigator.serviceWorker.addEventListener('controllerchange', function() {
+                        if (!refreshing) {
+                            refreshing = true;
+                            console.log('New service worker activated, reloading...');
+                            window.location.reload();
+                        }
+                    });
+
                     window.addEventListener('load', function() {
                         navigator.serviceWorker.register('/health_pwa/service-worker.js')
                             .then(function(registration) {
                                 console.log('SW registered: ', registration);
-                                
-                                // Check for updates
+
+                                // Check for waiting service worker immediately (in case update happened before page load)
+                                if (registration.waiting) {
+                                    console.log('Update already waiting, showing banner immediately');
+                                    showUpdateBanner(registration);
+                                }
+
+                                // Check for updates immediately on load
+                                registration.update().then(function() {
+                                    console.log('Initial update check completed');
+                                });
+
+                                // Check for updates every 30 seconds (more aggressive)
+                                setInterval(function() {
+                                    console.log('Checking for updates...');
+                                    registration.update();
+                                }, 30000);
+
+                                // Check for updates on page focus
+                                document.addEventListener('visibilitychange', function() {
+                                    if (!document.hidden) {
+                                        console.log('Page visible, checking for updates...');
+                                        registration.update();
+                                    }
+                                });
+
+                                // Handle updates
                                 registration.addEventListener('updatefound', function() {
                                     const newWorker = registration.installing;
+                                    console.log('New service worker found, installing...');
+
                                     newWorker.addEventListener('statechange', function() {
-                                        if (newWorker.state === 'installed' &amp;&amp; navigator.serviceWorker.controller) {
-                                            // New content available, notify user
-                                            if (window.healthPWA &amp;&amp; window.healthPWA.notifyUpdate) {
-                                                window.healthPWA.notifyUpdate();
+                                        console.log('New worker state:', newWorker.state);
+                                        if (newWorker.state === 'installed') {
+                                            if (navigator.serviceWorker.controller) {
+                                                // New content available, show update banner
+                                                console.log('New content available, showing update banner');
+                                                showUpdateBanner(registration);
+                                            } else {
+                                                // First install, no banner needed
+                                                console.log('First install, no update banner');
                                             }
                                         }
                                     });
+
+                                    // Also show banner immediately if there's a controller (backup)
+                                    if (navigator.serviceWorker.controller) {
+                                        setTimeout(function() {
+                                            console.log('Showing update banner after timeout (backup)');
+                                            showUpdateBanner(registration);
+                                        }, 1000);
+                                    }
                                 });
                             })
                             .catch(function(registrationError) {
                                 console.log('SW registration failed: ', registrationError);
                             });
                     });
+                }
+
+                // Show update banner function
+                function showUpdateBanner(registration) {
+                    const banner = document.getElementById('pwa-update-banner');
+                    if (banner) {
+                        banner.style.display = 'flex';
+
+                        // Auto-dismiss after 30 seconds and refresh
+                        setTimeout(function() {
+                            updateAndReload(registration);
+                        }, 30000);
+                    }
+                }
+
+                // Update and reload function
+                function updateAndReload(registration) {
+                    if (registration &amp;&amp; registration.waiting) {
+                        registration.waiting.postMessage({ type: 'SKIP_WAITING' });
+                    }
                 }
                 
                 // PWA Install Prompt
@@ -272,7 +364,7 @@
                     const installBtn = document.getElementById('pwa-install-btn');
                     const dismissBtn = document.getElementById('pwa-dismiss-btn');
                     const installBanner = document.getElementById('pwa-install-banner');
-                    
+
                     if (installBtn) {
                         installBtn.addEventListener('click', async function() {
                             if (deferredPrompt) {
@@ -286,11 +378,26 @@
                             installBanner.style.display = 'none';
                         });
                     }
-                    
+
                     if (dismissBtn) {
                         dismissBtn.addEventListener('click', function() {
                             localStorage.setItem('pwa-install-dismissed', 'true');
                             installBanner.style.display = 'none';
+                        });
+                    }
+
+                    // Update button handler
+                    const updateBtn = document.getElementById('pwa-update-btn');
+                    if (updateBtn) {
+                        updateBtn.addEventListener('click', function() {
+                            // Trigger update and reload
+                            if (navigator.serviceWorker &amp;&amp; navigator.serviceWorker.controller) {
+                                navigator.serviceWorker.getRegistration().then(function(registration) {
+                                    if (registration &amp;&amp; registration.waiting) {
+                                        registration.waiting.postMessage({ type: 'SKIP_WAITING' });
+                                    }
+                                });
+                            }
                         });
                     }
                 });
@@ -300,11 +407,19 @@
     
     <template id="service_worker_js" name="Service Worker JavaScript">
         <![CDATA[
-// Health PWA Service Worker v1.0.0
+// Health PWA Service Worker v1.0.5
+// IMPORTANT: Increment version number when deploying updates!
 
-const CACHE_NAME = 'health-pwa-v1.0.0';
+const CACHE_NAME = 'health-pwa-v1.0.5';
 const OFFLINE_URL = '/health_pwa/offline';
-const API_CACHE_NAME = 'health-pwa-api-v1.0.0';
+const API_CACHE_NAME = 'health-pwa-api-v1.0.5';
+
+// Listen for SKIP_WAITING message to activate new service worker immediately
+self.addEventListener('message', (event) => {
+    if (event.data && event.data.type === 'SKIP_WAITING') {
+        self.skipWaiting();
+    }
+});
 
 // Files to cache for offline functionality
 const STATIC_CACHE_URLS = [

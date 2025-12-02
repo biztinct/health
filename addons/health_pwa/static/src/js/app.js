@@ -17,6 +17,16 @@ const _t = (s) => {
   return s;
 };
 
+// Utility function to strip HTML tags from text
+const stripHtmlTags = (html) => {
+  if (!html) return '';
+  // Create a temporary div element to parse HTML
+  const temp = document.createElement('div');
+  temp.innerHTML = html;
+  // Return text content without HTML tags
+  return temp.textContent || temp.innerText || '';
+};
+
 // Global app state and utilities
 const __existingHealthPWA = window.healthPWA || {};
 window.healthPWA = {
@@ -1290,8 +1300,8 @@ window.healthPWA = {
 
             if (result.success && result.data) {
               selectedBookingDetail.value = result.data;
-              // Initialize clinical notes text from loaded booking
-              clinicalNotesText.value = result.data.clinical_notes || '';
+              // Initialize clinical notes text from loaded booking (strip HTML tags)
+              clinicalNotesText.value = stripHtmlTags(result.data.clinical_notes) || '';
               console.log('Loaded booking detail:', result.data);
             } else {
               detailError.value = result.error || 'Failed to load booking details';
@@ -1535,9 +1545,10 @@ window.healthPWA = {
           // Check server-saved state
           const hasServerNotes = selectedBookingDetail.value?.clinical_notes &&
                                   selectedBookingDetail.value.clinical_notes.trim().length > 0;
+          const hasServerImages = selectedBookingDetail.value?.has_clinical_images === true;
 
-          // Return true if either local unsaved OR server-saved clinical notes exist
-          return (hasLocalNotes || hasLocalImage) || hasServerNotes;
+          // Return true if either local unsaved OR server-saved clinical notes/images exist
+          return (hasLocalNotes || hasLocalImage) || hasServerNotes || hasServerImages;
         });
 
         // Start timer function
@@ -1890,13 +1901,13 @@ window.healthPWA = {
         const openClinicalNotesModal = () => {
           showClinicalNotesModal.value = true;
           if (currentUser.value.is_doctor) {
-            // Doctor mode: populate three separate fields
-            clinicalObservations.value = selectedBookingDetail.value?.clinical_notes || '';
-            diagnosis.value = selectedBookingDetail.value?.diagnosis || '';
-            treatmentPerformed.value = selectedBookingDetail.value?.treatment_performed || '';
+            // Doctor mode: populate three separate fields (strip HTML tags)
+            clinicalObservations.value = stripHtmlTags(selectedBookingDetail.value?.clinical_notes) || '';
+            diagnosis.value = stripHtmlTags(selectedBookingDetail.value?.diagnosis) || '';
+            treatmentPerformed.value = stripHtmlTags(selectedBookingDetail.value?.treatment_performed) || '';
           } else {
-            // Non-doctor mode: use single notes field
-            clinicalNotesText.value = selectedBookingDetail.value?.clinical_notes || '';
+            // Non-doctor mode: use single notes field (strip HTML tags)
+            clinicalNotesText.value = stripHtmlTags(selectedBookingDetail.value?.clinical_notes) || '';
           }
         };
 

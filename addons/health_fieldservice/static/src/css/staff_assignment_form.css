@@ -1,0 +1,34 @@
+/* Staff Assignment Form - Custom Styles */
+
+/* Hide "Odoo" title in dialog mode for staff assignment form */
+.o_form_noheader .modal-header .modal-title {
+    display: none !important;
+}
+
+/* Alternative: Hide entire modal header for cleaner look */
+.o_dialog .o_form_noheader ~ .modal-header {
+    display: none !important;
+}
+
+/* For staff assignment dialogs specifically */
+.o_act_window[data-res-model="health.staff.assignment"] .modal-title {
+    display: none !important;
+}
+
+/* Hide dialog title globally for this form */
+body .modal.o_technical_modal .modal-header .modal-title:contains("Odoo") {
+    visibility: hidden !important;
+    height: 0 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+/* Better approach: Hide just the title text */
+.modal-dialog .modal-header .o_subtitle {
+    display: none !important;
+}
+
+/* Most targeted approach */
+.o_form_view.o_form_noheader + div .modal-title {
+    display: none !important;
+}

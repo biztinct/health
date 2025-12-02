@@ -10,48 +10,53 @@
         <field name="name">health.staff.assignment.form</field>
         <field name="model">health.staff.assignment</field>
         <field name="arch" type="xml">
-            <form string="Staff Assignment" class="o_form_view">
+            <form string="Staff Assignment" class="o_form_view o_form_noheader">
                 <header>
-                    <button name="action_confirm_assignment" 
-                            type="object" 
-                            string="Confirm Assignment" 
-                            class="oe_highlight" 
+                    <!-- Hidden: Start and Cancel buttons removed as per user request -->
+                    <!-- Keeping only essential workflow buttons -->
+
+                    <button name="action_confirm_assignment"
+                            type="object"
+                            string="Confirm Assignment"
+                            class="oe_highlight"
                             invisible="state != 'assigned'"/>
-                    
-                    <button name="action_start_assignment" 
-                            type="object" 
-                            string="Start Assignment" 
-                            class="oe_highlight" 
-                            invisible="state != 'confirmed'"/>
-                    
-                    <button name="action_complete_assignment" 
-                            type="object" 
-                            string="Complete Assignment" 
-                            class="oe_highlight" 
+
+                    <!-- Start button hidden -->
+                    <button name="action_start_assignment"
+                            type="object"
+                            string="Start Assignment"
+                            class="oe_highlight"
+                            invisible="1"/>
+
+                    <button name="action_complete_assignment"
+                            type="object"
+                            string="Complete Assignment"
+                            class="oe_highlight"
                             invisible="state != 'in_progress'"/>
-                    
-                    <button name="action_cancel_assignment" 
-                            type="object" 
-                            string="Cancel" 
+
+                    <!-- Cancel button hidden -->
+                    <button name="action_cancel_assignment"
+                            type="object"
+                            string="Cancel"
                             confirm="Are you sure you want to cancel this assignment?"
-                            invisible="state in ('completed', 'cancelled')"/>
-                    
-                    <button name="action_apply_ai_optimization" 
-                            type="object" 
-                            string="🤖 Apply AI Optimization" 
-                            class="btn-secondary" 
+                            invisible="1"/>
+
+                    <button name="action_apply_ai_optimization"
+                            type="object"
+                            string="🤖 Apply AI Optimization"
+                            class="btn-secondary"
                             invisible="state not in ('draft', 'assigned')"
                             groups="health_base.group_healthcare_operations_manager"
                             help="Use AI to optimize this assignment with the best staff recommendations"/>
-                    
-                    <button name="action_get_ai_predictions" 
-                            type="object" 
-                            string="📊 Get AI Predictions" 
-                            class="btn-info" 
+
+                    <button name="action_get_ai_predictions"
+                            type="object"
+                            string="📊 Get AI Predictions"
+                            class="btn-info"
                             invisible="state in ('completed', 'cancelled')"
                             groups="health_base.group_healthcare_operations_manager"
                             help="Generate AI predictions for assignment complexity and duration"/>
-                    
+
                     <field name="state" widget="statusbar" statusbar_visible="draft,assigned,confirmed,in_progress,completed"/>
                 </header>
 

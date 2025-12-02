@@ -691,6 +691,83 @@ html, body {
   transition: all 0.2s ease;
 }
 
+/* PWA Update Banner */
+.pwa-update-banner {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+  color: white;
+  padding: var(--spacing-md);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 10000;
+  animation: slideDown 0.4s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    transform: translateY(-100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+.pwa-update-banner .banner-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-md);
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.pwa-update-banner .banner-icon {
+  flex-shrink: 0;
+}
+
+.pwa-update-banner .banner-text {
+  flex: 1;
+  color: white;
+}
+
+.pwa-update-banner .banner-text strong {
+  color: white;
+  font-size: 1.1rem;
+}
+
+.pwa-update-banner .banner-text span {
+  color: rgba(255, 255, 255, 0.95);
+}
+
+.pwa-update-banner .btn-success {
+  background: white;
+  color: #4CAF50;
+  font-weight: 600;
+  padding: var(--spacing-sm) var(--spacing-lg);
+  white-space: nowrap;
+}
+
+.pwa-update-banner .btn-success:hover {
+  background: rgba(255, 255, 255, 0.95);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Mobile responsiveness for update banner */
+@media (max-width: 768px) {
+  .pwa-update-banner .banner-content {
+    flex-direction: column;
+    text-align: center;
+    gap: var(--spacing-sm);
+  }
+
+  .pwa-update-banner .banner-icon {
+    margin-bottom: var(--spacing-xs);
+  }
+}
+
 .banner-actions .btn-primary {
   background: var(--primary-color);
   color: var(--text-on-primary);
@@ -3130,9 +3207,13 @@ p {
   grid-template-columns: 1fr 1fr;
   gap: var(--spacing-md);
   padding: var(--spacing-lg);
+  padding-bottom: calc(var(--spacing-lg) + 100px + env(safe-area-inset-bottom, 20px)); /* Extra bottom padding for mobile */
   border-top: 1px solid var(--border-color);
   background: var(--card-color);
   flex-shrink: 0;
+  position: sticky;
+  bottom: 0;
+  z-index: 100; /* Ensure footer stays on top */
 }
 
 .clinical-modal-footer .btn {
@@ -3183,7 +3264,7 @@ p {
     grid-template-columns: 1fr;
     gap: var(--spacing-sm);
     padding: var(--spacing-md);
-    padding-bottom: calc(var(--spacing-md) + 70px); /* Add bottom padding to account for bottom navigation */
+    padding-bottom: calc(var(--spacing-md) + 160px + env(safe-area-inset-bottom, 20px)); /* Add bottom padding to account for bottom navigation */
   }
 
   .modal-footer-content {

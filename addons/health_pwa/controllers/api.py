@@ -428,6 +428,15 @@ class HealthPWAAPIController(http.Controller):
                 'has_package': bool(order.package_id),
             }
 
+            # Get clinical note attachments/images
+            attachments = request.env['ir.attachment'].search([
+                ('res_model', '=', 'health.fieldservice.order'),
+                ('res_id', '=', order.id),
+                ('name', 'ilike', 'Clinical_Image')
+            ])
+            order_data['has_clinical_images'] = len(attachments) > 0
+            order_data['clinical_images_count'] = len(attachments)
+
             return self._prepare_json_response(data=order_data)
             
         except Exception as e:
