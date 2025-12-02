@@ -227,10 +227,36 @@ class HealthPWAAPIController(http.Controller):
                 domain.append(('scheduled_datetime', '<=', date_to))
 
             # Get field service orders
-            orders = request.env['health.fieldservice.order'].search(
+            all_orders = request.env['health.fieldservice.order'].search(
                 domain, limit=limit, offset=offset, order='scheduled_datetime desc'
             )
-            total_count = request.env['health.fieldservice.order'].search_count(domain)
+
+            # Filter out completed/cancelled bookings for future dates
+            from datetime import datetime as dt
+            from odoo import fields as odoo_fields
+            now_utc = odoo_fields.Datetime.now()  # Get current time in Odoo's UTC format
+
+            orders = all_orders.filtered(
+                lambda fso: (
+                    # Include all past/today bookings regardless of stage
+                    not fso.scheduled_datetime or fso.scheduled_datetime <= now_utc
+                ) or (
+                    # For future bookings, exclude completed/cancelled stages
+                    fso.scheduled_datetime > now_utc and (
+                        not fso.stage_id or (
+                            fso.stage_id.state not in ['cancelled', 'completed', 'completed_pending_invoice', 'closed']
+                            and fso.stage_id.name.lower() not in ['completed', 'cancelled', 'closed']
+                        )
+                    )
+                )
+            )
+
+            total_count = len(orders)
+
+            # Debug logging
+            excluded_count = len(all_orders) - len(orders)
+            if excluded_count > 0:
+                _logger.info(f'PWA FSO List: Excluded {excluded_count} completed future bookings')
 
             # Get staff name for response
             staff_name = employee.name if employee else current_user.name
@@ -1258,13 +1284,36 @@ class HealthPWAAPIController(http.Controller):
             today_start = utc_start.strftime('%Y-%m-%d %H:%M:%S')
             today_end = utc_end.strftime('%Y-%m-%d %H:%M:%S')
 
-            # Find FSOs scheduled for today
+            # Find FSOs scheduled for the target date
             # Record rules will automatically filter by user assignments
-            fsos = request.env['health.fieldservice.order'].search([
+            all_fsos = request.env['health.fieldservice.order'].search([
                 ('scheduled_datetime', '>=', today_start),
                 ('scheduled_datetime', '<=', today_end),
                 ('state', 'not in', ['cancelled']),
             ], order='scheduled_datetime asc')
+
+            # Filter out completed bookings for future dates
+            from odoo import fields as odoo_fields
+            now_utc = odoo_fields.Datetime.now()
+
+            # Check if target date is in the future
+            target_datetime_utc = utc_start
+            is_future_date = target_datetime_utc.replace(tzinfo=None) > now_utc
+
+            if is_future_date:
+                # For future dates, exclude completed/cancelled bookings
+                fsos = all_fsos.filtered(
+                    lambda fso: not fso.stage_id or (
+                        fso.stage_id.state not in ['cancelled', 'completed', 'completed_pending_invoice', 'closed']
+                        and fso.stage_id.name.lower() not in ['completed', 'cancelled', 'closed']
+                    )
+                )
+                excluded_count = len(all_fsos) - len(fsos)
+                if excluded_count > 0:
+                    _logger.info(f'Assignments {target_date}: Excluded {excluded_count} completed bookings')
+            else:
+                # For past/today, show all bookings including completed ones
+                fsos = all_fsos
 
             # Prepare booking data
             bookings_data = []
@@ -1717,10 +1766,23 @@ class HealthPWAAPIController(http.Controller):
 
             # Find all future FSOs
             # Record rules will automatically filter by user assignments
-            fsos = request.env['health.fieldservice.order'].search([
+            # First get all future FSOs, then filter out completed/cancelled ones
+            all_future_fsos = request.env['health.fieldservice.order'].search([
                 ('scheduled_datetime', '>', now.isoformat()),
-                ('state', 'not in', ['cancelled', 'completed']),
             ], order='scheduled_datetime asc')
+
+            # Filter out completed/cancelled FSOs based on stage
+            fsos = all_future_fsos.filtered(
+                lambda fso: not fso.stage_id or (
+                    fso.stage_id.state not in ['cancelled', 'completed', 'completed_pending_invoice', 'closed']
+                    and fso.stage_id.name.lower() not in ['completed', 'cancelled', 'closed']
+                )
+            )
+
+            # Debug logging
+            excluded_count = len(all_future_fsos) - len(fsos)
+            if excluded_count > 0:
+                _logger.info(f'Excluded {excluded_count} completed/cancelled future bookings from PWA view')
 
             # Group bookings by date
             bookings_by_date = {}
