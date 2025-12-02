@@ -53,7 +53,7 @@
 
 .mobile-nav {
   position: fixed;
-  bottom: 0;
+  bottom: 10px; /* Moved up slightly to prevent cutoff at screen bottom */
   left: 0;
   right: 0;
   background: var(--card-color);
@@ -1395,6 +1395,16 @@ p {
   background: #3b82f6;
   color: white;
   transform: scale(1.1);
+}
+
+/* Lead nurse name - brand orange, small muted */
+.booking-lead-nurse {
+  font-size: 0.75rem;
+  color: #FF6B35;
+  opacity: 0.8;
+  margin-top: var(--spacing-xs);
+  font-weight: 500;
+  line-height: 1.2;
 }
 
 /* Location section */

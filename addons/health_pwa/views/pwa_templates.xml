@@ -435,9 +435,9 @@
 // Health PWA Service Worker v1.0.7
 // IMPORTANT: Increment version number when deploying updates!
 
-const CACHE_NAME = 'health-pwa-v1.0.10';
+const CACHE_NAME = 'health-pwa-v1.0.12';
 const OFFLINE_URL = '/health_pwa/offline';
-const API_CACHE_NAME = 'health-pwa-api-v1.0.10';
+const API_CACHE_NAME = 'health-pwa-api-v1.0.12';
 
 // Listen for SKIP_WAITING message to activate new service worker immediately
 self.addEventListener('message', (event) => {

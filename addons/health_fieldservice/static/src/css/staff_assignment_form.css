@@ -56,3 +56,29 @@ form[data-res-model="health.staff.assignment"] button[name="action_cancel_assign
     margin: 0 !important;
     overflow: hidden !important;
 }
+
+/* ============================================================================
+   SPECIFIC TARGETING FOR TIMELINE MODAL FORM
+   ============================================================================ */
+
+/* Hide modal title when health_staff_assignment_modal class is present */
+.modal-dialog:has(.health_staff_assignment_modal) .modal-title,
+.modal-content:has(.health_staff_assignment_modal) .modal-title,
+.o_dialog:has(.health_staff_assignment_modal) .modal-title {
+    display: none !important;
+    visibility: hidden !important;
+}
+
+/* Hide Start and Cancel buttons specifically in timeline modal */
+.health_staff_assignment_modal header button[name="action_start_assignment"],
+.health_staff_assignment_modal header button[name="action_cancel_assignment"],
+.modal:has(.health_staff_assignment_modal) button[name="action_start_assignment"],
+.modal:has(.health_staff_assignment_modal) button[name="action_cancel_assignment"] {
+    display: none !important;
+    visibility: hidden !important;
+    width: 0 !important;
+    height: 0 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    overflow: hidden !important;
+}

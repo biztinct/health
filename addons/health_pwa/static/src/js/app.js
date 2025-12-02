@@ -142,7 +142,8 @@ window.healthPWA = {
           isOnline: window.healthPWA.isOnline,
           syncStatus: 'idle', // idle, syncing, completed, error
           notifications: [],
-          bottomNavVisible: true
+          bottomNavVisible: true,
+          viewKey: 0 // Key to force component refresh when navigating to same route
         });
         
         // Computed properties
@@ -151,11 +152,17 @@ window.healthPWA = {
         
         // Navigation methods
         const navigate = (route, params = {}) => {
+          // If navigating to the same route, increment viewKey to force component refresh
+          // This clears any open modals or pending states
+          if (state.currentRoute === route) {
+            state.viewKey++;
+          }
+
           state.currentRoute = route;
           // Update URL without page reload
           const url = params.id ? `#/${route}/${params.id}` : `#/${route}`;
           window.history.pushState({}, '', url);
-          
+
           // Hide loading screen
           if (state.isLoading) {
             state.isLoading = false;
@@ -333,6 +340,7 @@ window.healthPWA = {
             <main class="mobile-content">
               <!-- Today -->
               <today-view v-if="state.currentRoute === 'today'"
+                :key="state.viewKey"
                 :user="state.user"
                 :is-online="state.isOnline"
                 @navigate="navigate"
@@ -1857,6 +1865,48 @@ window.healthPWA = {
           }
         };
 
+        // Cancel/Refuse visit
+        const cancelVisit = async () => {
+          if (!selectedBookingId.value) {
+            console.error('No booking selected');
+            return;
+          }
+
+          const reason = prompt('Please provide a reason for cancelling/refusing this visit:');
+          if (!reason || reason.trim() === '') {
+            alert('Cancellation reason is required');
+            return;
+          }
+
+          try {
+            const response = await fetch(`/health_pwa/api/fso/${selectedBookingId.value}/cancel`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                reason: reason.trim()
+              })
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+              alert('Visit cancelled successfully');
+              // Close the modal and refresh the bookings list
+              selectedBookingId.value = null;
+              selectedBookingDetail.value = null;
+              // Reload bookings
+              await loadBookings();
+            } else {
+              alert('Error: ' + (result.error || 'Failed to cancel visit'));
+            }
+          } catch (err) {
+            console.error('Error cancelling visit:', err);
+            alert('Error cancelling visit: ' + err.message);
+          }
+        };
+
         // Start service
         const startService = async () => {
           if (selectedBookingId.value) {
@@ -2617,6 +2667,11 @@ window.healthPWA = {
                       </button>
                     </div>
                   </div>
+
+                  <!-- Lead nurse name -->
+                  <div v-if="booking.lead_staff_name" class="booking-lead-nurse">
+                    {{ booking.lead_staff_name }}
+                  </div>
               </div>
             </div>
           </div>
@@ -2660,6 +2715,11 @@ window.healthPWA = {
                           <i class="material-icons">map</i>
                         </button>
                       </div>
+                    </div>
+
+                    <!-- Lead nurse name -->
+                    <div v-if="booking.lead_staff_name" class="booking-lead-nurse">
+                      {{ booking.lead_staff_name }}
                     </div>
                   </div>
                 </div>
@@ -2706,6 +2766,11 @@ window.healthPWA = {
                           <i class="material-icons">map</i>
                         </button>
                       </div>
+                    </div>
+
+                    <!-- Lead nurse name -->
+                    <div v-if="booking.lead_staff_name" class="booking-lead-nurse">
+                      {{ booking.lead_staff_name }}
                     </div>
                   </div>
                 </div>
@@ -2795,7 +2860,7 @@ window.healthPWA = {
               <div class="modal-footer">
                 <!-- Before service start (hidden when completed) -->
                 <div v-if="serviceStartedForBooking !== selectedBookingId && selectedBookingDetail?.state !== 'in_progress' && selectedBookingDetail?.state !== 'completed'" class="modal-footer-content">
-                  <button class="btn btn-danger">{{ _t('Cancel/Refuse Visit') }}</button>
+                  <button @click="cancelVisit" class="btn btn-danger">{{ _t('Cancel/Refuse Visit') }}</button>
                   <button @click="startService" class="btn btn-success">{{ _t('Start Service') }}</button>
                 </div>
 
@@ -3660,6 +3725,11 @@ window.healthPWA = {
                             <i class="material-icons">map</i>
                           </button>
                         </div>
+                      </div>
+
+                      <!-- Lead nurse name -->
+                      <div v-if="booking.lead_staff_name" class="booking-lead-nurse">
+                        {{ booking.lead_staff_name }}
                       </div>
                     </div>
                   </div>

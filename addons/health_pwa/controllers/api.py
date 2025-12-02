@@ -286,6 +286,7 @@ class HealthPWAAPIController(http.Controller):
                     'status_display': order.state,
                     'location': order.service_address,
                     'priority': order.priority,
+                    'lead_staff_name': order.lead_staff_id.name if order.lead_staff_id else None,
                     'assignment_role': 'staff',
                     'notes': order.symptoms or order.patient_notes or '',
                 })
@@ -611,6 +612,65 @@ class HealthPWAAPIController(http.Controller):
             })
 
         except Exception as e:
+            return self._prepare_json_response(error=str(e), status_code=500)
+
+    @http.route('/health_pwa/api/fso/<int:order_id>/cancel', type='http', auth='user', methods=['POST'], csrf=False)
+    def api_fso_cancel_service(self, order_id, **kwargs):
+        """Cancel/Refuse visit for FSO from mobile app"""
+        if not self._check_api_access():
+            return self._prepare_json_response(error='Access denied', status_code=403)
+
+        try:
+            order = request.env['health.fieldservice.order'].browse(order_id)
+
+            if not order.exists():
+                return self._prepare_json_response(error='Order not found', status_code=404)
+
+            # Check if order can be cancelled
+            if order.state in ['completed', 'cancelled', 'closed']:
+                return self._prepare_json_response(error=f'Cannot cancel service in {order.state} state', status_code=400)
+
+            # Get cancellation reason from request body
+            import json as json_module
+            try:
+                data = json_module.loads(request.httprequest.data.decode('utf-8')) if request.httprequest.data else {}
+            except:
+                data = {}
+
+            reason = data.get('reason', 'No reason provided')
+
+            # Add cancellation note to clinical notes
+            cancellation_note = f"Visit Cancelled/Refused: {reason}"
+            if order.clinical_notes:
+                order.write({
+                    'clinical_notes': order.clinical_notes + '\n\n' + cancellation_note
+                })
+            else:
+                order.write({
+                    'clinical_notes': cancellation_note
+                })
+
+            # Set state to cancelled (if field exists) or update stage
+            try:
+                # Try to call cancel action if it exists
+                if hasattr(order, 'action_cancel'):
+                    order.action_cancel()
+                else:
+                    # Otherwise, just set state to cancelled
+                    order.write({'state': 'cancelled'})
+            except Exception as cancel_error:
+                # If cancel action fails, try to set state directly
+                _logger.warning(f'Failed to use action_cancel, setting state directly: {str(cancel_error)}')
+                order.write({'state': 'cancelled'})
+
+            return self._prepare_json_response(data={
+                'state': order.state,
+                'message': 'Visit cancelled successfully',
+                'cancellation_reason': reason
+            })
+
+        except Exception as e:
+            _logger.error(f'Error cancelling visit: {str(e)}')
             return self._prepare_json_response(error=str(e), status_code=500)
 
     @http.route('/health_pwa/api/fso/<int:order_id>/complete', type='http', auth='user', methods=['POST'], csrf=False)
@@ -1364,6 +1424,7 @@ class HealthPWAAPIController(http.Controller):
                     'location': fso.service_location or fso.service_address or '',
                     'priority': fso.priority,
                     'priority_display': dict(fso._fields['priority'].selection).get(fso.priority, '') if 'priority' in fso._fields and hasattr(fso._fields['priority'], 'selection') else '',
+                    'lead_staff_name': fso.lead_staff_id.name if fso.lead_staff_id else None,
                     'scheduled_duration': fso.scheduled_duration if fso.scheduled_duration else 60,
                     'assignment_role': assignment.assignment_role if assignment else 'support',
                     'notes': getattr(fso, 'patient_notes', '') or getattr(fso, 'symptoms', '') or '',
@@ -1443,11 +1504,15 @@ class HealthPWAAPIController(http.Controller):
 
             # Search for future FSOs (excluding the current one being completed)
             # This is more reliable than checking patient.next_visit_date field
+            from odoo import fields as odoo_fields
+            now_utc = odoo_fields.Datetime.now()
+
             next_fso = request.env['health.fieldservice.order'].search([
                 ('patient_id', '=', patient.id),
                 ('id', '!=', order.id),  # Exclude current order
                 ('state', 'in', ['draft', 'assigned', 'confirmed', 'in_progress']),
-                ('scheduled_datetime', '!=', False)
+                ('scheduled_datetime', '!=', False),
+                ('scheduled_datetime', '>', now_utc)  # Only future appointments
             ], order='scheduled_datetime ASC', limit=1)
 
             # Determine if next visit exists based on actual FSO search
@@ -1830,6 +1895,7 @@ class HealthPWAAPIController(http.Controller):
                         'state': fso.state,
                         'phone': fso.patient_id.mobile or fso.patient_id.phone if fso.patient_id else '',
                         'address': fso.service_address or '',
+                        'lead_staff_name': fso.lead_staff_id.name if fso.lead_staff_id else None,
                     })
 
             return self._prepare_json_response(data={'bookings_by_date': bookings_by_date})
