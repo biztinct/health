@@ -2657,7 +2657,12 @@ window.healthPWA = {
 
                   <!-- Service type with action buttons inline -->
                   <div class="booking-service-row">
-                    <p v-if="booking.service_type" class="booking-service-type">{{ booking.service_type }}</p>
+                    <p v-if="booking.service_type" class="booking-service-type">
+                      {{ booking.service_type }}
+                      <span v-if="booking.lead_staff_name" class="booking-lead-inline">
+                        ({{ booking.lead_staff_name }})
+                      </span>
+                    </p>
                     <div class="booking-action-icons">
                       <button @click.stop="callPatient(booking.patient_phone)" class="btn-icon-action btn-icon-call" title="Call patient">
                         <i class="material-icons">call</i>
@@ -2669,9 +2674,6 @@ window.healthPWA = {
                   </div>
 
                   <!-- Lead nurse name -->
-                  <div v-if="booking.lead_staff_name" class="booking-lead-nurse">
-                    {{ booking.lead_staff_name }}
-                  </div>
               </div>
             </div>
           </div>
@@ -2706,7 +2708,12 @@ window.healthPWA = {
 
                     <!-- Service type with action buttons inline -->
                     <div class="booking-service-row">
-                      <p v-if="booking.service_type" class="booking-service-type">{{ booking.service_type }}</p>
+                    <p v-if="booking.service_type" class="booking-service-type">
+                      {{ booking.service_type }}
+                      <span v-if="booking.lead_staff_name" class="booking-lead-inline">
+                        ({{ booking.lead_staff_name }})
+                      </span>
+                    </p>
                       <div class="booking-action-icons">
                         <button @click.stop="callPatient(booking.patient_phone)" class="btn-icon-action btn-icon-call" title="Call patient">
                           <i class="material-icons">call</i>
@@ -2718,12 +2725,9 @@ window.healthPWA = {
                     </div>
 
                     <!-- Lead nurse name -->
-                    <div v-if="booking.lead_staff_name" class="booking-lead-nurse">
-                      {{ booking.lead_staff_name }}
-                    </div>
-                  </div>
-                </div>
               </div>
+            </div>
+          </div>
             </div>
           </div>
 
@@ -2757,7 +2761,12 @@ window.healthPWA = {
 
                     <!-- Service type with action buttons inline -->
                     <div class="booking-service-row">
-                      <p v-if="booking.service_type" class="booking-service-type">{{ booking.service_type }}</p>
+                    <p v-if="booking.service_type" class="booking-service-type">
+                      {{ booking.service_type }}
+                      <span v-if="booking.lead_staff_name" class="booking-lead-inline">
+                        ({{ booking.lead_staff_name }})
+                      </span>
+                    </p>
                       <div class="booking-action-icons">
                         <button @click.stop="callPatient(booking.patient_phone)" class="btn-icon-action btn-icon-call" title="Call patient">
                           <i class="material-icons">call</i>
@@ -2769,12 +2778,9 @@ window.healthPWA = {
                     </div>
 
                     <!-- Lead nurse name -->
-                    <div v-if="booking.lead_staff_name" class="booking-lead-nurse">
-                      {{ booking.lead_staff_name }}
-                    </div>
-                  </div>
-                </div>
               </div>
+            </div>
+          </div>
             </div>
           </div>
         </div>
@@ -3716,7 +3722,12 @@ window.healthPWA = {
 
                       <!-- Service type with action buttons inline -->
                       <div class="booking-service-row">
-                        <p v-if="booking.service_type" class="booking-service-type">{{ booking.service_type }}</p>
+                    <p v-if="booking.service_type" class="booking-service-type">
+                      {{ booking.service_type }}
+                      <span v-if="booking.lead_staff_name" class="booking-lead-inline">
+                        ({{ booking.lead_staff_name }})
+                      </span>
+                    </p>
                         <div class="booking-action-icons">
                           <button @click.stop="callPatient(booking.phone)" class="btn-icon-action btn-icon-call" title="Call patient">
                             <i class="material-icons">call</i>

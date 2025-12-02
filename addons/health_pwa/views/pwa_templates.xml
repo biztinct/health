@@ -400,28 +400,56 @@
 
                     // Update button handler
                     const updateBtn = document.getElementById('pwa-update-btn');
+                    // Hard reload helper to bust caches (especially on mobile)
+                    const hardReload = () => {
+                        const url = window.location.href.split('#')[0].split('?')[0];
+                        window.location.href = `${url}?pwa_reload=${Date.now()}`;
+                    };
+                    let reloadScheduled = false;
+                    const scheduleReload = (delay = 800) => {
+                        if (reloadScheduled) return;
+                        reloadScheduled = true;
+                        setTimeout(() => {
+                            console.log('Forcing hard reload for PWA update');
+                            hardReload();
+                        }, delay);
+                    };
+                    // Ensure controllerchange triggers reload (fallback for mobile)
+                    if ('serviceWorker' in navigator) {
+                        navigator.serviceWorker.addEventListener('controllerchange', () => {
+                            console.log('controllerchange fired, reloading now');
+                            scheduleReload(100);
+                        });
+                    }
+
                     if (updateBtn) {
                         updateBtn.addEventListener('click', function() {
                             console.log('Update button clicked, triggering update...');
                             // Trigger update and reload
                             if (navigator.serviceWorker) {
                                 navigator.serviceWorker.getRegistration().then(function(registration) {
-                                    if (registration &amp;&amp; registration.waiting) {
-                                        console.log('Sending SKIP_WAITING to service worker');
-                                        registration.waiting.postMessage({ type: 'SKIP_WAITING' });
-                                        // Wait a bit for the message to be processed, then reload
-                                        setTimeout(function() {
-                                            console.log('Reloading page to activate new service worker');
-                                            window.location.reload();
-                                        }, 500);
-                                    } else {
-                                        console.log('No waiting service worker, reloading anyway');
-                                        window.location.reload();
+                                    if (!registration) {
+                                        console.log('No registration found, forcing hard reload');
+                                        scheduleReload(200);
+                                        return;
                                     }
+
+                                    // Attempt update to fetch latest SW
+                                    registration.update().finally(() => {
+                                        if (registration.waiting) {
+                                            console.log('Sending SKIP_WAITING to service worker');
+                                            registration.waiting.postMessage({ type: 'SKIP_WAITING' });
+                                            // If controllerchange does not fire, reload anyway
+                                            scheduleReload(800);
+                                        } else {
+                                            console.log('No waiting service worker after update(), forcing hard reload');
+                                            scheduleReload(200);
+                                        }
+                                    });
                                 });
                             } else {
                                 console.log('Service worker not supported, reloading');
-                                window.location.reload();
+                                scheduleReload(200);
                             }
                         });
                     }
@@ -435,9 +463,9 @@
 // Health PWA Service Worker v1.0.7
 // IMPORTANT: Increment version number when deploying updates!
 
-const CACHE_NAME = 'health-pwa-v1.0.12';
+const CACHE_NAME = 'health-pwa-v1.0.15';
 const OFFLINE_URL = '/health_pwa/offline';
-const API_CACHE_NAME = 'health-pwa-api-v1.0.12';
+const API_CACHE_NAME = 'health-pwa-api-v1.0.15';
 
 // Listen for SKIP_WAITING message to activate new service worker immediately
 self.addEventListener('message', (event) => {

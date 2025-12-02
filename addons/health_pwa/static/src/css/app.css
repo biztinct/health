@@ -1344,6 +1344,11 @@ p {
   flex: 1;
 }
 
+.booking-lead-inline {
+  color: #c45a00;
+  font-weight: 600;
+}
+
 /* Action icons container */
 .booking-action-icons {
   display: flex;
