@@ -14,3 +14,5 @@ access_ir_model_fields_dashboard_user,ir_model_fields dashboard_user,base.model_
 access_ir_model_dashboard_user,ir_model_dashboard_user,base.model_ir_model,synconics_bi_dashboard.group_dashboard_user,1,0,0,0
 access_query_result_display_user,query.result.display user,model_query_result_display,group_dashboard_query_user,1,0,0,0
 access_query_result_display_manager,query.result.display manager,model_query_result_display,group_dashboard_query_manager,1,1,1,1
+access_ir_actions_act_window_dashboard_user,ir.actions.act_window dashboard_user,base.model_ir_actions_act_window,base.group_user,1,0,0,0
+access_ir_actions_act_window_view_dashboard_user,ir.actions.act_window.view dashboard_user,base.model_ir_actions_act_window_view,base.group_user,1,0,0,0

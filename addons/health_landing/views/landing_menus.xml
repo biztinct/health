@@ -6,6 +6,7 @@
               name="Home"
               sequence="1"
               action="action_health_landing_dashboard"
+              active="False"
               web_icon="health_landing,static/description/icon.png"
               groups="health_base.group_healthcare_base,health_base.group_healthcare_receptionist,health_base.group_healthcare_nurse,health_base.group_healthcare_doctor,health_base.group_healthcare_manager,health_base.group_healthcare_admin,health_base.group_healthcare_owner"/>
 
