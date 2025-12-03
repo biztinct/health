@@ -49,6 +49,12 @@
     animation: fadeIn 200ms cubic-bezier(0, 0, 0.2, 1);
 }
 
+/* Force scrollability even when base theme hides scrollbars */
+.health_landing_dashboard.viet_uc_dashboard {
+    overflow-y: auto !important;
+    max-height: none;
+}
+
 @media (max-width: 768px) {
     .viet_uc_dashboard {
         padding: 8px 8px 12px;
@@ -60,14 +66,27 @@
     scrollbar-width: thin;
     overflow-y: auto !important;
 }
+.health_landing_dashboard.viet_uc_dashboard {
+    scrollbar-width: thin;
+}
 .viet_uc_dashboard::-webkit-scrollbar {
+    width: 8px;
+}
+.health_landing_dashboard.viet_uc_dashboard::-webkit-scrollbar {
     width: 8px;
 }
 .viet_uc_dashboard::-webkit-scrollbar-thumb {
     background: rgba(0, 0, 0, 0.15);
     border-radius: 8px;
 }
+.health_landing_dashboard.viet_uc_dashboard::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.15);
+    border-radius: 8px;
+}
 .viet_uc_dashboard::-webkit-scrollbar-track {
+    background: transparent;
+}
+.health_landing_dashboard.viet_uc_dashboard::-webkit-scrollbar-track {
     background: transparent;
 }
 

@@ -63,12 +63,6 @@ class VietUcDashboard extends Component {
                 type: "submenu",
                 submenus: [
                     {
-                        name: "Leads",
-                        icon: "fa-star-o",
-                        action: "crm.crm_lead_all_leads",
-                        description: "Manage potential customers"
-                    },
-                    {
                         name: "CRM Contacts",
                         icon: "fa-address-card",
                         action: "health_crm.action_healthcare_opportunities",
