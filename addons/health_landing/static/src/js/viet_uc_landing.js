@@ -60,15 +60,8 @@ class VietUcDashboard extends Component {
                 icon: "fa-handshake-o",
                 description: "Customer relationship management",
                 class: "module-crm",
-                type: "submenu",
-                submenus: [
-                    {
-                        name: "CRM Contacts",
-                        icon: "fa-address-card",
-                        action: "health_crm.action_healthcare_opportunities",
-                        description: "Track customer interactions"
-                    },
-                ],
+                type: "direct_action",
+                action: "health_crm.action_healthcare_opportunities",
             },
             {
                 id: "client",
