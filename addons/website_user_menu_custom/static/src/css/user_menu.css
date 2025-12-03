@@ -1,0 +1,36 @@
+/* Hide unwanted user menu items from website user dropdown */
+
+/* Hide Documentation */
+[data-menu="documentation"] {
+    display: none !important;
+}
+
+/* Hide Support */
+[data-menu="support"] {
+    display: none !important;
+}
+
+/* Hide Shortcuts */
+[data-menu="shortcuts"] {
+    display: none !important;
+}
+
+/* Hide Onboarding */
+[data-menu="web_tour.tour_enabled"] {
+    display: none !important;
+}
+
+/* Hide My Odoo.com account */
+[data-menu="account"] {
+    display: none !important;
+}
+
+/* Keep My Profile visible (defensive) */
+[data-menu="settings"] {
+    display: block !important;
+}
+
+/* Keep Log out visible (defensive) */
+[data-menu="logout"] {
+    display: block !important;
+}

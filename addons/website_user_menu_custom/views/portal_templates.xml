@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!--
+        User menu customization is handled via CSS in static/src/css/user_menu.css
+        This approach is more maintainable and works across Odoo updates
+    -->
+
+</odoo>

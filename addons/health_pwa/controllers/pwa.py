@@ -108,10 +108,14 @@ class HealthPWAController(http.Controller):
             for k, v in fallback_map.items():
                 l10n_map.setdefault(k, v)
 
+            # Get company phone number for call functionality
+            company_phone = request.env.company.phone or ''
+
             return request.render('health_pwa.app_shell', {
                 'user_id': request.env.user.id,
                 'user_name': request.env.user.name,
                 'company_name': request.env.company.name,
+                'company_phone': company_phone,
                 'db_name': request.db,
                 'user_lang': user_lang,
                 'health_pwa_l10n': l10n_map,

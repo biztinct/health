@@ -287,7 +287,28 @@ window.healthPWA = {
         
         // Global notification method
         window.healthPWA.showNotification = showNotification;
-        
+
+        // Handle call button click
+        const handleCallClick = () => {
+          const companyPhone = window.healthPWAConfig?.companyPhone;
+
+          if (!companyPhone || companyPhone.trim() === '') {
+            // No phone number configured - show error dialog
+            const lang = window.healthPWAConfig?.user_lang || 'vi_VN';
+            const isVietnamese = lang.startsWith('vi');
+
+            const message = isVietnamese
+              ? 'Số điện thoại công ty chưa được cấu hình. Vui lòng liên hệ quản trị viên để thiết lập số điện thoại.'
+              : 'Company phone number is not configured. Please contact your administrator to set up the phone number.';
+
+            alert(message);
+            return;
+          }
+
+          // Open phone dialer with company phone number
+          window.location.href = `tel:${companyPhone}`;
+        };
+
         return {
           state,
           isAuthenticated,
@@ -297,7 +318,8 @@ window.healthPWA = {
           showNotification,
           removeNotification,
           syncData,
-          loadUserData
+          loadUserData,
+          handleCallClick
         };
       },
       
@@ -420,9 +442,8 @@ window.healthPWA = {
                 <span class="mobile-nav-label">Patients</span>
               </a>
 
-              <a @click.prevent="navigate('call')"
-                 class="mobile-nav-item"
-                 :class="{ active: state.currentRoute === 'call' }">
+              <a @click.prevent="handleCallClick()"
+                 class="mobile-nav-item">
                 <div class="mobile-nav-icon">
                   <i class="material-icons">call</i>
                 </div>
@@ -464,7 +485,6 @@ window.healthPWA = {
             today: 'Today',
             patients: 'Patients',
             patient: 'Patient Details',
-            call: 'Call Clinic',
             profile: 'Profile'
           };
           return titles[this.state.currentRoute] || 'Health Mobile';
