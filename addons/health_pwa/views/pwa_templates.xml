@@ -28,7 +28,7 @@
                 <link href="https://cdn.jsdelivr.net/npm/quasar@2.14.0/dist/quasar.prod.css" rel="stylesheet" type="text/css"/>
                 
                 <!-- Custom PWA Styles (versioned for hard refresh) -->
-                <t t-set="pwa_asset_version">1.0.27</t>
+                <t t-set="pwa_asset_version">1.0.28</t>
                 <link href="/health_pwa/static/src/css/app.css?v=${pwa_asset_version}" rel="stylesheet" type="text/css"/>
                 <link href="/health_pwa/static/src/css/mobile.css?v=${pwa_asset_version}" rel="stylesheet" type="text/css"/>
                 <link href="/health_pwa/static/src/css/health.css?v=${pwa_asset_version}" rel="stylesheet" type="text/css"/>
@@ -274,7 +274,7 @@
             <script>
                 if ('serviceWorker' in navigator) {
                     let refreshing = false;
-                    const PWA_SW_VERSION = '1.0.27';
+                    const PWA_SW_VERSION = '1.0.28';
                     console.log('[PWA] registering service worker version', PWA_SW_VERSION);
 
                     // Detect when service worker updates and reload
@@ -487,10 +487,10 @@
     
     <template id="service_worker_js" name="Service Worker JavaScript">
         <![CDATA[
-// Health PWA Service Worker v1.0.27
+// Health PWA Service Worker v1.0.28
 // IMPORTANT: Increment version number when deploying updates!
 
-const CACHE_VERSION = '1.0.27';
+const CACHE_VERSION = '1.0.28';
 const CACHE_NAME = `health-pwa-v${CACHE_VERSION}`;
 const OFFLINE_URL = '/health_pwa/offline';
 const API_CACHE_NAME = `health-pwa-api-v${CACHE_VERSION}`;

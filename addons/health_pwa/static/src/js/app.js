@@ -425,21 +425,21 @@ window.healthPWA = {
             <!-- Mobile Bottom Navigation -->
             <nav v-if="state.bottomNavVisible" class="mobile-nav">
               <a @click.prevent="navigate('today')"
-                 class="mobile-nav-item"
+                class="mobile-nav-item"
                  :class="{ active: state.currentRoute === 'today' }">
                 <div class="mobile-nav-icon">
                   <i class="material-icons">calendar_today</i>
                 </div>
-                <span class="mobile-nav-label">Booking</span>
+                <span class="mobile-nav-label">{{ _t('Booking') }}</span>
               </a>
 
               <a @click.prevent="navigate('patients')"
-                 class="mobile-nav-item"
+                class="mobile-nav-item"
                  :class="{ active: state.currentRoute === 'patients' || state.currentRoute === 'patient' }">
                 <div class="mobile-nav-icon">
                   <i class="material-icons">people</i>
                 </div>
-                <span class="mobile-nav-label">Patients</span>
+                <span class="mobile-nav-label">{{ _t('Patients') }}</span>
               </a>
 
               <a @click.prevent="handleCallClick()"
@@ -447,7 +447,7 @@ window.healthPWA = {
                 <div class="mobile-nav-icon">
                   <i class="material-icons">call</i>
                 </div>
-                <span class="mobile-nav-label">Call</span>
+                <span class="mobile-nav-label">{{ _t('Call') }}</span>
               </a>
 
               <a @click.prevent="navigate('profile')"
@@ -456,7 +456,7 @@ window.healthPWA = {
                 <div class="mobile-nav-icon">
                   <i class="material-icons">account_circle</i>
                 </div>
-                <span class="mobile-nav-label">Profile</span>
+                <span class="mobile-nav-label">{{ _t('Profile') }}</span>
               </a>
             </nav>
           </div>
