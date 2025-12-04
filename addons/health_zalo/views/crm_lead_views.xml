@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Extend Healthcare CRM Opportunity Form - Add Zalo Fields -->
+    <record id="view_healthcare_opportunity_form_zalo" model="ir.ui.view">
+        <field name="name">crm.lead.form.healthcare.opportunity.zalo</field>
+        <field name="model">crm.lead</field>
+        <field name="inherit_id" ref="health_crm.view_healthcare_opportunity_form"/>
+        <field name="arch" type="xml">
+
+            <!-- Add Zalo User ID field with action icons after mobile -->
+            <xpath expr="//field[@name='mobile']" position="after">
+                <label for="zalo_user_id" string="Zalo User ID"/>
+                <div class="o_row">
+                    <field name="zalo_user_id" placeholder="Zalo User ID (optional)" class="o_field_widget"/>
+                    <button name="action_open_zalo_chat"
+                            type="object"
+                            icon="fa-comment"
+                            class="btn-link o_icon_button"
+                            title="Open Zalo Chat"
+                            invisible="not has_zalo"
+                            aria-label="Open Zalo Chat"/>
+                    <button name="action_call_zalo"
+                            type="object"
+                            icon="fa-phone"
+                            class="btn-link o_icon_button"
+                            title="Call via Zalo"
+                            invisible="not has_zalo"
+                            aria-label="Call via Zalo"/>
+                </div>
+            </xpath>
+
+            <!-- Add invisible helper fields after contact_datetime -->
+            <xpath expr="//field[@name='contact_datetime']" position="after">
+                <field name="has_zalo" invisible="1"/>
+            </xpath>
+
+        </field>
+    </record>
+
+</odoo>

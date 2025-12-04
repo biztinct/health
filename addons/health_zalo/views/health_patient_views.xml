@@ -1,22 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-    <!-- Extend Partner Form View - Add Zalo Fields -->
-    <record id="res_partner_view_form_zalo" model="ir.ui.view">
-        <field name="name">res.partner.form.zalo</field>
+    <!-- Extend Patient Form View - Add Zalo Fields -->
+    <record id="view_health_patient_form_zalo" model="ir.ui.view">
+        <field name="name">res.partner.patient.form.zalo</field>
         <field name="model">res.partner</field>
-        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="inherit_id" ref="health_base.view_health_patient_form"/>
         <field name="arch" type="xml">
 
             <!-- Add Zalo smart button -->
             <xpath expr="//div[@name='button_box']" position="inside">
-                <button name="action_view_zalo_conversations" type="object" class="oe_stat_button" icon="fa-comments" invisible="zalo_conversation_count == 0">
+                <button name="action_view_zalo_conversations"
+                        type="object"
+                        class="oe_stat_button"
+                        icon="fa-comments"
+                        invisible="zalo_conversation_count == 0">
                     <field name="zalo_conversation_count" widget="statinfo" string="Zalo Chats"/>
                 </button>
             </xpath>
 
-            <!-- Add Zalo User ID field with action icons after phone -->
-            <xpath expr="//field[@name='phone']" position="after">
+            <!-- Add Zalo User ID field with action icons after mobile phone -->
+            <xpath expr="//field[@name='mobile']" position="after">
                 <label for="zalo_user_id" string="Zalo User ID"/>
                 <div class="o_row">
                     <field name="zalo_user_id" placeholder="Zalo User ID (optional)" class="o_field_widget"/>
@@ -37,7 +41,7 @@
                 </div>
             </xpath>
 
-            <!-- Add invisible helper fields -->
+            <!-- Add invisible helper fields for computed values -->
             <xpath expr="//field[@name='email']" position="after">
                 <field name="has_zalo" invisible="1"/>
                 <field name="zalo_conversation_count" invisible="1"/>
@@ -45,11 +49,11 @@
                 <field name="zalo_last_message_date" invisible="1"/>
             </xpath>
 
-            <!-- Add Zalo tab -->
+            <!-- Add Zalo tab in notebook - Always visible so users can configure -->
             <xpath expr="//notebook" position="inside">
-                <page string="Zalo" name="zalo">
+                <page string="Zalo Integration" name="zalo">
                     <group>
-                        <group string="Zalo Integration">
+                        <group string="Zalo Connection">
                             <field name="has_zalo" invisible="1"/>
                             <field name="zalo_user_id"/>
                             <field name="zalo_conversation_id" readonly="1"/>

@@ -36,6 +36,7 @@ Technical Stack:
         'mail',
         'contacts',
         'health_base',
+        'health_crm',
         'bus',
     ],
     'data': [
@@ -51,6 +52,8 @@ Technical Stack:
         'views/zalo_conversation_views.xml',
         'views/zalo_message_views.xml',
         'views/res_partner_views.xml',
+        'views/health_patient_views.xml',
+        'views/crm_lead_views.xml',
         'views/zalo_menus.xml',
         'views/zalo_templates.xml',
 

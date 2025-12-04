@@ -83,18 +83,36 @@ class ResPartner(models.Model):
     def action_open_zalo_chat(self):
         """Open Zalo chat window for this contact"""
         self.ensure_one()
+        from odoo.exceptions import UserError
+
+        if not self.zalo_user_id:
+            raise UserError(_('This contact does not have a Zalo User ID configured.'))
+
+        # Check if Zalo is configured
+        zalo_config = self.env['zalo.config'].search([('state', '=', 'connected')], limit=1)
+        if not zalo_config:
+            raise UserError(_(
+                'Zalo Official Account is not configured.\n\n'
+                'Please configure Zalo integration first:\n'
+                '1. Go to Zalo > Configuration > Zalo Settings\n'
+                '2. Create a new configuration with your App ID, App Secret, and OA ID\n'
+                '3. Click "Connect to Zalo" to authorize\n'
+                '4. Enable webhook to receive messages'
+            ))
 
         if not self.zalo_conversation_id:
             # Create conversation if doesn't exist
-            if not self.zalo_user_id:
-                from odoo.exceptions import UserError
-                raise UserError(_('This contact does not have a Zalo User ID configured.'))
-
-            conversation = self.env['zalo.conversation'].find_or_create_conversation(
-                self.zalo_user_id,
-                {'display_name': self.name}
-            )
-            conversation.partner_id = self.id
+            try:
+                conversation = self.env['zalo.conversation'].find_or_create_conversation(
+                    self.zalo_user_id,
+                    {'display_name': self.name}
+                )
+                conversation.partner_id = self.id
+            except ValueError as e:
+                raise UserError(_(
+                    'Cannot create Zalo conversation: %s\n\n'
+                    'Please ensure Zalo Official Account is properly configured.'
+                ) % str(e))
         else:
             conversation = self.zalo_conversation_id
 
@@ -103,10 +121,19 @@ class ResPartner(models.Model):
     def action_call_zalo(self):
         """Initiate Zalo call (opens Zalo app)"""
         self.ensure_one()
+        from odoo.exceptions import UserError
 
         if not self.zalo_user_id:
-            from odoo.exceptions import UserError
             raise UserError(_('This contact does not have a Zalo User ID configured.'))
+
+        # Check if Zalo is configured
+        zalo_config = self.env['zalo.config'].search([('state', '=', 'connected')], limit=1)
+        if not zalo_config:
+            raise UserError(_(
+                'Zalo Official Account is not configured.\n\n'
+                'Please configure Zalo integration first by going to:\n'
+                'Zalo > Configuration > Zalo Settings'
+            ))
 
         # Zalo call URL scheme (opens Zalo app if installed)
         zalo_call_url = f"zalo://call?to={self.zalo_user_id}"
