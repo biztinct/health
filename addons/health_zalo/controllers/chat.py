@@ -197,3 +197,54 @@ class ZaloChatController(http.Controller):
         except Exception as e:
             _logger.error(f'Error marking as read: {e}', exc_info=True)
             return {'error': str(e)}
+
+    @http.route('/zalo/chat/conversations/active', type='json', auth='user', methods=['POST'])
+    def get_active_conversations(self, **kwargs):
+        """
+        Get active conversations for Chat Hub widget.
+
+        Args:
+            limit: Maximum number of conversations to return
+
+        Returns:
+            Dict with conversations list and total_unread count
+        """
+        try:
+            limit = kwargs.get('limit', 50)
+
+            result = request.env['zalo.conversation'].search_active_conversations(limit=limit)
+
+            return result
+
+        except Exception as e:
+            _logger.error(f'Error fetching active conversations: {e}', exc_info=True)
+            return {
+                'conversations': [],
+                'total_unread': 0,
+                'error': str(e)
+            }
+
+    @http.route('/zalo/chat/mark_all_read', type='json', auth='user', methods=['POST'])
+    def mark_all_read(self, **kwargs):
+        """
+        Mark all conversations as read.
+
+        Returns:
+            Success status
+        """
+        try:
+            # Get all active conversations with unread messages
+            conversations = request.env['zalo.conversation'].search([
+                ('state', '=', 'active'),
+                ('unread_count', '>', 0),
+            ])
+
+            # Mark each as read
+            for conversation in conversations:
+                conversation.action_mark_as_read()
+
+            return {'success': True}
+
+        except Exception as e:
+            _logger.error(f'Error marking all as read: {e}', exc_info=True)
+            return {'error': str(e)}

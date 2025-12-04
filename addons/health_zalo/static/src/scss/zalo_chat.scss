@@ -105,6 +105,37 @@ $message-max-width: 65%;
         }
     }
 
+    // Open Record Button
+    .zalo-chat-record-btn {
+        padding: 6px 12px;
+        border-radius: 4px;
+        border: none;
+        background: rgba(255, 255, 255, 0.2);
+        color: #fff;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        transition: all 0.2s;
+        flex-shrink: 0;
+        font-size: 13px;
+        font-weight: 500;
+        margin-right: 8px;
+
+        &:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-1px);
+        }
+
+        &:active {
+            transform: translateY(0);
+        }
+
+        i {
+            font-size: 12px;
+        }
+    }
+
     // Close Button
     .zalo-chat-close-btn {
         width: 36px;

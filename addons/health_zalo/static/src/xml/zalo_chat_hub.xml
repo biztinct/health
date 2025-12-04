@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="health_zalo.ZaloChatHub" owl="1">
+        <div class="zalo-chat-hub" t-att-class="state.isOpen ? 'expanded' : 'collapsed'">
+            <!-- Collapsed State: Floating Action Button -->
+            <t t-if="!state.isOpen">
+                <button class="zalo-chat-fab" t-on-click="togglePanel" title="Zalo Messages">
+                    <i class="fa fa-comment fa-lg"/>
+                    <span t-if="state.unreadCount &gt; 0" class="zalo-chat-badge" t-esc="state.unreadCount"/>
+                </button>
+            </t>
+
+            <!-- Expanded State: Conversation List Panel -->
+            <t t-else="">
+                <div class="zalo-chat-panel">
+                    <!-- Panel Header -->
+                    <div class="zalo-chat-panel-header">
+                        <div class="d-flex align-items-center justify-content-between">
+                            <h4 class="m-0">Zalo Messages</h4>
+                            <button class="btn btn-sm btn-link p-0" t-on-click="togglePanel" title="Close">
+                                <i class="fa fa-times fa-lg"/>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Panel Body -->
+                    <div class="zalo-chat-panel-body">
+                        <!-- Loading State -->
+                        <t t-if="state.loading">
+                            <div class="zalo-chat-loading">
+                                <i class="fa fa-spinner fa-spin fa-2x"/>
+                                <p class="mt-3">Loading conversations...</p>
+                            </div>
+                        </t>
+
+                        <!-- Empty State -->
+                        <t t-elif="state.conversations.length === 0">
+                            <div class="zalo-chat-empty">
+                                <i class="fa fa-comments-o fa-3x"/>
+                                <p class="mt-3">No conversations yet</p>
+                            </div>
+                        </t>
+
+                        <!-- Conversation List -->
+                        <t t-else="">
+                            <div class="zalo-conversation-list">
+                                <t t-foreach="state.conversations" t-as="conv" t-key="conv.id">
+                                    <div class="zalo-conversation-item">
+                                        <!-- Conversation Avatar and Info (Clickable Area) -->
+                                        <div class="zalo-conversation-content" t-on-click="() => this.openConversation(conv)">
+                                            <div class="conversation-avatar">
+                                                <img t-if="conv.zalo_user_avatar"
+                                                     t-att-src="conv.zalo_user_avatar"
+                                                     alt="Avatar"/>
+                                                <i t-else="" class="fa fa-user-circle fa-2x"/>
+                                            </div>
+                                            <div class="conversation-info flex-grow-1">
+                                                <div class="d-flex justify-content-between align-items-start">
+                                                    <div class="conversation-name" t-esc="conv.name"/>
+                                                    <span class="conversation-time text-muted small" t-esc="formatTime(conv.last_message_date)"/>
+                                                </div>
+                                                <div class="d-flex justify-content-between align-items-center">
+                                                    <div class="conversation-preview text-muted" t-esc="conv.last_message_preview || 'No messages'"/>
+                                                    <span t-if="conv.unread_count &gt; 0"
+                                                          class="zalo-chat-badge-small"
+                                                          t-esc="conv.unread_count"/>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Open Record Button (Separate Click Area) -->
+                                        <button class="btn-open-record"
+                                                t-on-click.stop="() => this.openRelatedRecord(conv)"
+                                                title="Open Related Record">
+                                            <i class="fa fa-external-link"/>
+                                        </button>
+                                    </div>
+                                </t>
+                            </div>
+                        </t>
+                    </div>
+
+                    <!-- Panel Footer (Optional - for future features) -->
+                    <div class="zalo-chat-panel-footer">
+                        <button class="btn btn-link btn-sm" t-on-click="requestNotificationPermission">
+                            <i class="fa fa-bell"/> Enable Notifications
+                        </button>
+                    </div>
+                </div>
+            </t>
+        </div>
+    </t>
+
+</templates>

@@ -40,6 +40,10 @@ class ZaloConversation(models.Model):
         string='Zalo User Avatar URL',
         help='Profile picture URL from Zalo',
     )
+    zalo_phone_number = fields.Char(
+        string='Zalo Phone Number',
+        help='Phone number associated with Zalo account (if available)',
+    )
 
     # Odoo Integration
     partner_id = fields.Many2one(
@@ -106,6 +110,11 @@ class ZaloConversation(models.Model):
         string='Last Message From Us',
         help='True if last message was sent by us',
     )
+    last_message_preview = fields.Char(
+        string='Message Preview',
+        compute='_compute_last_message_preview',
+        help='Formatted preview of last message for UI display',
+    )
 
     created_date = fields.Datetime(
         string='Conversation Started',
@@ -136,6 +145,19 @@ class ZaloConversation(models.Model):
         """Count total messages in conversation"""
         for conv in self:
             conv.message_count = len(conv.message_ids)
+
+    @api.depends('last_message_text', 'last_message_from_us')
+    def _compute_last_message_preview(self):
+        """Format last message for preview display"""
+        for conv in self:
+            if not conv.last_message_text:
+                conv.last_message_preview = ''
+            else:
+                prefix = 'You: ' if conv.last_message_from_us else ''
+                text = conv.last_message_text[:50]
+                if len(conv.last_message_text) > 50:
+                    text += '...'
+                conv.last_message_preview = prefix + text
 
     def action_open_chat(self):
         """Open chat widget for this conversation"""
@@ -248,3 +270,52 @@ class ZaloConversation(models.Model):
         """Increment unread message counter"""
         self.ensure_one()
         self.unread_count += 1
+
+    @api.model
+    def search_active_conversations(self, limit=50):
+        """
+        Search for active conversations for ChatHub.
+        Returns conversations with unread count and preview data.
+
+        Args:
+            limit: Maximum number of conversations to return
+
+        Returns:
+            dict with conversations list and total_unread count
+        """
+        config = self.env['zalo.config'].get_active_config()
+        if not config:
+            return {
+                'conversations': [],
+                'total_unread': 0,
+            }
+
+        # Search for active conversations, ordered by last message
+        conversations = self.search([
+            ('config_id', '=', config.id),
+            ('state', '=', 'active'),
+        ], limit=limit, order='last_message_date desc, id desc')
+
+        # Calculate total unread
+        total_unread = sum(conversations.mapped('unread_count'))
+
+        # Format conversation data for frontend
+        conv_data = []
+        for conv in conversations:
+            conv_data.append({
+                'id': conv.id,
+                'name': conv.name,
+                'zalo_user_id': conv.zalo_user_id,
+                'zalo_user_name': conv.zalo_user_name,
+                'zalo_user_avatar': conv.zalo_user_avatar,
+                'zalo_phone_number': conv.zalo_phone_number,
+                'last_message_date': conv.last_message_date.isoformat() if conv.last_message_date else None,
+                'last_message_preview': conv.last_message_preview,
+                'unread_count': conv.unread_count,
+                'partner_id': conv.partner_id.id if conv.partner_id else None,
+            })
+
+        return {
+            'conversations': conv_data,
+            'total_unread': total_unread,
+        }

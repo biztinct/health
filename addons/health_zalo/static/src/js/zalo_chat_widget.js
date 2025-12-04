@@ -236,6 +236,107 @@ export class ZaloChatWidget extends Component {
     }
 
     /**
+     * Open related record (Client/Patient or Lead)
+     */
+    async openRelatedRecord(ev) {
+        // Prevent event bubbling
+        if (ev) {
+            ev.stopPropagation();
+            ev.preventDefault();
+        }
+
+        if (!this.state.conversation) {
+            this.notification.add("No conversation loaded", { type: "warning" });
+            return;
+        }
+
+        const zaloUserId = this.state.conversation.zalo_user_id;
+
+        try {
+            // Priority 1: Search for Client/Patient
+            const partners = await this.orm.searchRead(
+                "res.partner",
+                [["zalo_user_id", "=", zaloUserId]],
+                ["id", "name"],
+                { limit: 1 }
+            );
+
+            if (partners.length > 0) {
+                // Close chat widget first
+                if (this.action && this.action.restore) {
+                    this.action.restore();
+                }
+
+                // Open partner record
+                return this.action.doAction({
+                    type: "ir.actions.act_window",
+                    res_model: "res.partner",
+                    res_id: partners[0].id,
+                    views: [[false, "form"]],
+                    target: "current",
+                });
+            }
+
+            // Priority 2: Search for CRM Lead
+            const leads = await this.orm.searchRead(
+                "crm.lead",
+                [["zalo_user_id", "=", zaloUserId]],
+                ["id", "name"],
+                { limit: 1 }
+            );
+
+            if (leads.length > 0) {
+                // Close chat widget first
+                if (this.action && this.action.restore) {
+                    this.action.restore();
+                }
+
+                // Open lead record
+                return this.action.doAction({
+                    type: "ir.actions.act_window",
+                    res_model: "crm.lead",
+                    res_id: leads[0].id,
+                    views: [[false, "form"]],
+                    target: "current",
+                });
+            }
+
+            // Priority 3: Create New Lead
+            this.showCreateLeadDialog();
+
+        } catch (error) {
+            console.error("Failed to open related record:", error);
+            this.notification.add("Failed to open related record", { type: "danger" });
+        }
+    }
+
+    /**
+     * Show dialog to create new lead from conversation
+     */
+    showCreateLeadDialog() {
+        const conversation = this.state.conversation;
+
+        // Close chat widget first
+        if (this.action && this.action.restore) {
+            this.action.restore();
+        }
+
+        // Open create lead form
+        this.action.doAction({
+            type: "ir.actions.act_window",
+            res_model: "crm.lead",
+            views: [[false, "form"]],
+            target: "new",
+            context: {
+                default_name: conversation.name || "Zalo Lead",
+                default_zalo_user_id: conversation.zalo_user_id,
+                default_mobile: conversation.zalo_phone_number || "",
+                default_contact_type: "zalo",
+            },
+        });
+    }
+
+    /**
      * Close dialog
      */
     closeDialog(ev) {

@@ -43,12 +43,12 @@
   }
   
   /* Mobile navigation - Light theme */
-  .mobile-nav {
+.mobile-nav {
     position: fixed;
     bottom: 0;
     left: 0;
     right: 0;
-    height: var(--bottom-nav-height);
+    height: calc(var(--bottom-nav-height) + 4px);
     background: white;
     border-top: 1px solid var(--border-color);
     display: flex;
@@ -139,7 +139,7 @@
   /* Main content with proper spacing */
   .mobile-content {
     padding-top: var(--header-height);
-    padding-bottom: var(--bottom-nav-height);
+    padding-bottom: calc(var(--bottom-nav-height) + 10px);
     min-height: 100vh;
     padding-left: var(--mobile-padding);
     padding-right: var(--mobile-padding);

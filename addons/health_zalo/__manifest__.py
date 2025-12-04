@@ -62,10 +62,19 @@ Technical Stack:
     ],
     'assets': {
         'web.assets_backend': [
+            # Chat Hub (persistent widget)
+            'health_zalo/static/src/js/zalo_chat_hub_service.js',
+            'health_zalo/static/src/js/zalo_chat_hub.js',
+            'health_zalo/static/src/xml/zalo_chat_hub.xml',
+            'health_zalo/static/src/scss/zalo_chat_hub.scss',
+
+            # Chat Widget (modal dialog)
             'health_zalo/static/src/js/zalo_chat_widget.js',
-            'health_zalo/static/src/js/zalo_bus_service.js',
             'health_zalo/static/src/xml/zalo_chat_widget.xml',
             'health_zalo/static/src/scss/zalo_chat.scss',
+
+            # Bus service
+            'health_zalo/static/src/js/zalo_bus_service.js',
         ],
     },
     'external_dependencies': {

@@ -1,0 +1,383 @@
+/**
+ * Zalo Chat Hub Styles
+ *
+ * Persistent floating chat widget with conversation list
+ */
+
+// Variables
+$zalo-blue: #0068FF;
+$zalo-light-blue: #E3F2FD;
+$badge-red: #FF4444;
+$panel-width: 360px;
+$panel-height: 600px;
+$fab-size: 56px;
+$shadow-color: rgba(0, 0, 0, 0.15);
+
+// Main Container
+.zalo-chat-hub {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 1000;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+
+    // Collapsed State: Floating Action Button
+    &.collapsed {
+        .zalo-chat-fab {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: $fab-size;
+            height: $fab-size;
+            border-radius: 50%;
+            background: $zalo-blue;
+            color: #fff;
+            border: none;
+            box-shadow: 0 4px 12px $shadow-color;
+            cursor: pointer;
+            transition: all 0.3s ease-in-out;
+            position: relative;
+
+            &:hover {
+                background: darken($zalo-blue, 10%);
+                box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+                transform: scale(1.05);
+            }
+
+            &:active {
+                transform: scale(0.95);
+            }
+
+            i {
+                font-size: 24px;
+            }
+
+            // Notification Badge
+            .zalo-chat-badge {
+                position: absolute;
+                top: -4px;
+                right: -4px;
+                min-width: 20px;
+                height: 20px;
+                padding: 0 6px;
+                border-radius: 10px;
+                background: $badge-red;
+                color: #fff;
+                font-size: 11px;
+                font-weight: 700;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                border: 2px solid #fff;
+                animation: badgePulse 1.5s ease-in-out infinite;
+            }
+        }
+    }
+
+    // Expanded State: Conversation Panel
+    &.expanded {
+        .zalo-chat-panel {
+            display: flex;
+            flex-direction: column;
+            width: $panel-width;
+            height: $panel-height;
+            max-height: 80vh;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+            animation: slideUp 0.3s ease-out;
+        }
+    }
+}
+
+// Panel Header
+.zalo-chat-panel-header {
+    padding: 16px 20px;
+    background: $zalo-blue;
+    color: #fff;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+
+    h4 {
+        font-size: 18px;
+        font-weight: 600;
+        margin: 0;
+    }
+
+    button {
+        color: #fff;
+        opacity: 0.9;
+        transition: opacity 0.2s;
+
+        &:hover {
+            opacity: 1;
+        }
+    }
+}
+
+// Panel Body
+.zalo-chat-panel-body {
+    flex: 1;
+    overflow-y: auto;
+    background: #F8F9FA;
+
+    // Custom scrollbar
+    &::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    &::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background: #D0D0D0;
+        border-radius: 3px;
+
+        &:hover {
+            background: #B0B0B0;
+        }
+    }
+}
+
+// Loading State
+.zalo-chat-loading,
+.zalo-chat-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    color: #666;
+    padding: 40px 20px;
+    text-align: center;
+
+    i {
+        color: #999;
+    }
+
+    p {
+        margin: 0;
+        font-size: 14px;
+        color: #666;
+    }
+}
+
+// Conversation List
+.zalo-conversation-list {
+    padding: 0;
+}
+
+// Conversation Item
+.zalo-conversation-item {
+    display: flex;
+    align-items: center;
+    padding: 12px 16px;
+    background: #fff;
+    border-bottom: 1px solid #E0E0E0;
+    transition: background 0.2s;
+    gap: 8px;
+
+    &:hover {
+        background: #F5F5F5;
+    }
+
+    // Conversation Content (clickable area)
+    .zalo-conversation-content {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex: 1;
+        cursor: pointer;
+    }
+
+    // Avatar
+    .conversation-avatar {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        overflow: hidden;
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: $zalo-light-blue;
+
+        img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        i {
+            color: $zalo-blue;
+            font-size: 28px;
+        }
+    }
+
+    // Conversation Info
+    .conversation-info {
+        flex: 1;
+        min-width: 0; // Allow text truncation
+
+        .conversation-name {
+            font-size: 15px;
+            font-weight: 600;
+            color: #000;
+            margin-bottom: 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .conversation-preview {
+            font-size: 13px;
+            color: #666;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .conversation-time {
+            font-size: 11px;
+            white-space: nowrap;
+        }
+    }
+
+    // Unread Badge (small)
+    .zalo-chat-badge-small {
+        min-width: 18px;
+        height: 18px;
+        padding: 0 6px;
+        border-radius: 9px;
+        background: $badge-red;
+        color: #fff;
+        font-size: 10px;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+
+    // Open Record Button
+    .btn-open-record {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        border: none;
+        background: $zalo-light-blue;
+        color: $zalo-blue;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s;
+        flex-shrink: 0;
+
+        &:hover {
+            background: $zalo-blue;
+            color: #fff;
+            transform: scale(1.1);
+        }
+
+        &:active {
+            transform: scale(0.95);
+        }
+
+        i {
+            font-size: 14px;
+        }
+    }
+}
+
+// Panel Footer
+.zalo-chat-panel-footer {
+    padding: 12px 16px;
+    background: #fff;
+    border-top: 1px solid #E0E0E0;
+    text-align: center;
+
+    button {
+        color: $zalo-blue;
+        font-size: 13px;
+
+        &:hover {
+            text-decoration: underline;
+        }
+
+        i {
+            margin-right: 4px;
+        }
+    }
+}
+
+// Animations
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes badgePulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.1);
+    }
+}
+
+// Responsive Design
+@media (max-width: 768px) {
+    .zalo-chat-hub {
+        bottom: 10px;
+        right: 10px;
+
+        &.expanded {
+            .zalo-chat-panel {
+                width: calc(100vw - 20px);
+                height: calc(100vh - 100px);
+                max-height: calc(100vh - 100px);
+            }
+        }
+    }
+}
+
+// Dark mode support (optional)
+@media (prefers-color-scheme: dark) {
+    .zalo-chat-panel {
+        background: #1E1E1E;
+    }
+
+    .zalo-chat-panel-body {
+        background: #2A2A2A;
+    }
+
+    .zalo-conversation-item {
+        background: #1E1E1E;
+        border-bottom-color: #333;
+
+        &:hover {
+            background: #252525;
+        }
+
+        .conversation-name {
+            color: #fff;
+        }
+
+        .conversation-preview {
+            color: #999;
+        }
+    }
+
+    .zalo-chat-panel-footer {
+        background: #1E1E1E;
+        border-top-color: #333;
+    }
+}
