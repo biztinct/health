@@ -420,7 +420,23 @@
 
     <template id="portal_create_ticket" name="Create Ticket">
         <t t-call="portal.portal_layout">
+            <!-- Load WYSIWYG assets so the description editor works on portal -->
+            <t t-call-assets="web_editor.assets_wysiwyg" t-js="true"/>
+
             <div class="container">
+                <style>
+                    /* Portal ticket form label styling */
+                    .portal-ticket-label {
+                        display: block;
+                        font-weight: 700;
+                        color: #4a5568;
+                        margin-bottom: 6px;
+                        padding: 0;
+                        border: none !important;
+                        box-shadow: none !important;
+                        background: transparent !important;
+                    }
+                </style>
                 <div class="row">
                     <div class="col-md-12">
                         <h1 class="text-center">Send a new ticket</h1>
@@ -440,10 +456,10 @@
                 />
                 <div class="form-group" t-if="teams">
                     <label
-                        class="col-md-3 col-sm-4 control-label"
+                        class="portal-ticket-label"
                         for="team"
                     >Team</label>
-                    <div class="col-md-7 col-sm-8">
+                    <div class="col-12">
                         <select
                             class="form-control"
                             id="team"
@@ -461,10 +477,10 @@
                 </div>
                 <div class="form-group">
                     <label
-                        class="col-md-3 col-sm-4 control-label"
+                        class="portal-ticket-label"
                         for="category"
                     >Category</label>
-                    <div class="col-md-7 col-sm-8">
+                    <div class="col-12">
                         <select
                             class="form-control"
                             id="category"
@@ -482,10 +498,10 @@
                 </div>
                 <div class="form-group">
                     <label
-                        class="col-md-3 col-sm-4 control-label"
+                        class="portal-ticket-label"
                         for="subject"
                     >Subject</label>
-                    <div class="col-md-7 col-sm-8">
+                    <div class="col-12">
                         <input
                             type="text"
                             class="form-control"
@@ -496,11 +512,11 @@
                 </div>
                 <div class="form-group">
                     <label
-                        class="col-md-3 col-sm-4 control-label"
+                        class="portal-ticket-label"
                         for="attachment"
                     >Add Attachments</label>
-                    <div class="col-md-7 col-sm-8">
-                        <div class="btn btn-default btn-file col-md-12">
+                    <div class="col-12">
+                        <div class="btn btn-default btn-file col-md-12 mb-2">
                             <input
                                 class="form-control o_website_form_input"
                                 name="attachment"
@@ -511,6 +527,15 @@
                             />
                         </div>
                         <div
+                            id="attachment_dropzone"
+                            class="p-3 border rounded bg-light"
+                            style="min-height: 120px;"
+                        >
+                            <div class="attachment-hint text-muted">
+                                Paste images here or drag &amp; drop. Click "Browse" above to pick files.
+                            </div>
+                        </div>
+                        <div
                             id="attachment_information"
                             style="display: none;"
                             class="text-danger"
@@ -519,16 +544,16 @@
                 </div>
                 <div class="form-group">
                     <label
-                        class="col-md-3 col-dm-4 control-label"
+                        class="portal-ticket-label"
                         for="description"
                     >Description</label>
-                    <div class="col-md-7 col-sm-8">
+                    <div class="col-12">
                         <textarea
                             class="form-control"
                             name="description"
                             style="min-height: 120px"
                             required="True"
-                        />
+                        ></textarea>
                     </div>
                 </div>
                 <div class="form-group">
@@ -537,6 +562,58 @@
                     </div>
                 </div>
             </form>
+            <script type="text/javascript">
+                document.addEventListener('DOMContentLoaded', function() {
+                    const input = document.getElementById('attachment');
+                    const dropzone = document.getElementById('attachment_dropzone');
+                    const hint = dropzone ? dropzone.querySelector('.attachment-hint') : null;
+                    if (!input || !dropzone) return;
+
+                    const handleFiles = (files) => {
+                        if (!files || !files.length) return;
+                        const dt = new DataTransfer();
+                        // keep any already selected files
+                        Array.from(input.files || []).forEach(f => dt.items.add(f));
+                        Array.from(files).forEach(f => dt.items.add(f));
+                        input.files = dt.files;
+                        if (hint) {
+                            hint.textContent = `${input.files.length} file(s) ready to upload`;
+                        }
+                    };
+
+                    dropzone.addEventListener('paste', (ev) => {
+                        if (!ev.clipboardData) return;
+                        const items = Array.from(ev.clipboardData.items || []);
+                        const files = [];
+                        items.forEach((item) => {
+                            if (item.kind === 'file') {
+                                const f = item.getAsFile();
+                                if (f) files.push(f);
+                            }
+                        });
+                        if (files.length) {
+                            ev.preventDefault();
+                            handleFiles(files);
+                        }
+                    });
+
+                    dropzone.addEventListener('dragover', (ev) => {
+                        ev.preventDefault();
+                        dropzone.classList.add('border-primary');
+                    });
+
+                    dropzone.addEventListener('dragleave', () => {
+                        dropzone.classList.remove('border-primary');
+                    });
+
+                    dropzone.addEventListener('drop', (ev) => {
+                        ev.preventDefault();
+                        dropzone.classList.remove('border-primary');
+                        const files = Array.from(ev.dataTransfer.files || []);
+                        handleFiles(files);
+                    });
+                });
+            </script>
         </t>
     </template>
 </odoo>

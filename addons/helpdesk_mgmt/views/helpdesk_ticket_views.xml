@@ -263,6 +263,12 @@
                         <page string="Description" name="description">
                             <field name="description" widget="html" />
                         </page>
+                        <page string="Attachments" name="attachments">
+                            <field name="attachment_ids"
+                                   widget="many2many_binary"
+                                   nolabel="1"
+                                   options="{'no_open': True}"/>
+                        </page>
                         <page string="Other Information" name="other_info">
                             <group>
                                 <field name="last_stage_update" readonly="1" />
