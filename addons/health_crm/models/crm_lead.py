@@ -433,32 +433,40 @@ class HealthLead(models.Model):
             # Contact is a representative - handle client and representative separately
             if not self.client_name:
                 return  # Validation will catch this
-            
-            # Check for existing clients with same name
-            existing_patients = self.env['res.partner'].search([
-                ('name', '=', self.client_name),
-                ('is_patient', '=', True)
-            ])
-            
-            if len(existing_patients) > 1:
-                # Multiple clients found - show wizard and exit (wizard will complete the process)
-                self._show_client_selection_wizard(existing_patients)
-                return
-            elif len(existing_patients) == 1:
-                # Single client found - use it
-                patient = existing_patients[0]
+
+            # Try to reuse the existing patient_id; if it was auto-created from the lead name,
+            # rename it to the intended client_name to avoid a second patient record.
+            patient = self.patient_id
+            if patient:
+                if self.client_name and patient.name != self.client_name:
+                    patient = patient.with_context(skip_name_constraint=True)
+                    patient.write({'name': self.client_name})
             else:
-                # No client found - create new patient
-                patient = self._get_or_create_patient(self.client_name)
-            
+                # Check for existing clients with same name
+                existing_patients = self.env['res.partner'].search([
+                    ('name', '=', self.client_name),
+                    ('is_patient', '=', True)
+                ])
+
+                if len(existing_patients) > 1:
+                    # Multiple clients found - show wizard and exit (wizard will complete the process)
+                    self._show_client_selection_wizard(existing_patients)
+                    return
+                elif len(existing_patients) == 1:
+                    # Single client found - use it
+                    patient = existing_patients[0]
+                else:
+                    # No client found - create new patient using the client_name (not lead name)
+                    patient = self._get_or_create_patient(self.client_name)
+
             self.patient_id = patient.id
-            
-            # Create representative record
-            representative = self._create_representative()
-            
-            # Create relationship
+
+            # Create/find representative record
+            representative = self._create_or_get_representative()
+
+            # Create relationship (avoid duplicates)
             self._create_health_relationship(patient, representative)
-            
+
             # Populate appropriate relationship field
             self._populate_relationship_field(representative)
 
@@ -516,8 +524,17 @@ class HealthLead(models.Model):
         
         return self.env['res.partner'].create(patient_vals)
 
-    def _create_representative(self):
-        """Create representative record from lead contact info"""
+    def _create_or_get_representative(self):
+        """Create or reuse representative record from lead contact info"""
+        rep_domain = [
+            ('name', '=', self.name),
+            ('is_representative', '=', True),
+            ('is_company', '=', False),
+        ]
+        existing_rep = self.env['res.partner'].search(rep_domain, limit=1)
+        if existing_rep:
+            return existing_rep
+
         rep_vals = {
             'name': self.name,  # Contact name is the representative
             'is_representative': True,
@@ -547,7 +564,15 @@ class HealthLead(models.Model):
             'friend': 'friend',
             'professional': 'professional',
         }
-        
+
+        # Avoid duplicate relations for the same pair/role
+        existing_relation = self.env['health.client.relation'].search([
+            ('client_id', '=', patient.id),
+            ('representative_id', '=', representative.id),
+        ], limit=1)
+        if existing_relation:
+            return existing_relation
+
         relation_vals = {
             'client_id': patient.id,
             'representative_id': representative.id,
@@ -556,7 +581,7 @@ class HealthLead(models.Model):
             'can_schedule_appointments': True,  # Default permission
             'can_receive_medical_info': self.contact_relationship_type in ['legal_guardian', 'healthcare_proxy', 'emergency_contact'],
         }
-        
+
         return self.env['health.client.relation'].create(relation_vals)
 
     def _populate_relationship_field(self, representative):
