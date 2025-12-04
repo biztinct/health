@@ -8,4 +8,14 @@
         </xpath>
     </template>
 
+    <!-- Rename login field label/placeholder from Email to User ID -->
+    <template id="login_userid_label" inherit_id="auth_signup.login">
+        <xpath expr="//label[@for='login']" position="replace">
+            <label for="login" class="form-label">User ID</label>
+        </xpath>
+        <xpath expr="//input[@name='login']" position="attributes">
+            <attribute name="placeholder">User ID</attribute>
+        </xpath>
+    </template>
+
 </odoo>
