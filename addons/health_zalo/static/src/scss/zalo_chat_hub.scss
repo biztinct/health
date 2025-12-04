@@ -102,6 +102,14 @@ $shadow-color: rgba(0, 0, 0, 0.15);
         font-size: 18px;
         font-weight: 600;
         margin: 0;
+        color: #fff;
+    }
+
+    .zalo-chat-company-logo {
+        height: 36px;
+        width: auto;
+        object-fit: contain;
+        border-radius: 4px;
     }
 
     button {
