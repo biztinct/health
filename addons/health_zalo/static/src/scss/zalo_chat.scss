@@ -70,7 +70,7 @@ $message-max-width: 65%;
     align-items: center;
     gap: 12px;
     padding: 16px 20px;
-    background: linear-gradient(135deg, $zalo-blue 0%, #0052CC 100%);
+    background: $zalo-blue;
     color: #fff;
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 
@@ -91,15 +91,17 @@ $message-max-width: 65%;
     .zalo-chat-header-info {
         flex: 1;
 
-        h4 {
+        .zalo-chat-title {
             margin: 0 0 4px 0;
-            font-size: 16px;
+            font-size: 20px;
             font-weight: 600;
+            color: #fff;
         }
 
-        span {
-            font-size: 12px;
-            opacity: 0.8;
+        .zalo-chat-subtitle {
+            font-size: 13px;
+            color: #fff;
+            font-weight: 700;
         }
     }
 

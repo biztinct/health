@@ -27,8 +27,8 @@
                             <i t-else="" class="fa fa-user-circle fa-2x"/>
                         </div>
                         <div class="zalo-chat-header-info">
-                            <h4 t-esc="state.conversation?.name || 'Zalo Chat'"/>
-                            <span class="text-muted">Zalo Conversation</span>
+                            <h4 class="zalo-chat-title" t-esc="state.conversation?.name || 'Zalo Chat'"/>
+                            <span class="zalo-chat-subtitle">Viet Uc</span>
                         </div>
                         <button class="zalo-chat-close-btn" t-on-click="closeDialog" title="Close">
                             <i class="fa fa-times"/>

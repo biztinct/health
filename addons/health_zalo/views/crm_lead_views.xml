@@ -59,19 +59,27 @@
                 <field name="zalo_user_id"/>
             </xpath>
 
-            <!-- Add Zalo icons next to lead name in kanban card -->
+            <!-- Replace name field to add Zalo icons -->
             <xpath expr="//field[@name='name']" position="replace">
-                <div class="d-flex align-items-center">
+                <div class="d-flex align-items-center" style="gap: 8px;">
                     <field class="fw-bold fs-5 flex-grow-1" name="name"/>
                     <t t-if="record.has_zalo.raw_value">
-                        <button name="action_open_zalo_chat" type="object" class="btn btn-link btn-sm p-0 ms-2" title="Zalo Chat">
-                            <i class="fa fa-comment text-primary"/>
-                        </button>
-                        <button name="action_call_zalo" type="object" class="btn btn-link btn-sm p-0" title="Zalo Call">
-                            <i class="fa fa-phone text-success"/>
-                        </button>
+                        <div class="d-flex align-items-center" style="gap: 4px;">
+                            <span class="text-primary small fw-bold">Zalo</span>
+                            <button name="action_open_zalo_chat" type="object" class="btn btn-link btn-sm p-0" title="Zalo Chat">
+                                <i class="fa fa-comment text-primary"/>
+                            </button>
+                            <button name="action_call_zalo" type="object" class="btn btn-link btn-sm p-0" title="Zalo Call" style="padding-right: 6px;">
+                                <i class="fa fa-phone text-success"/>
+                            </button>
+                        </div>
                     </t>
                 </div>
+            </xpath>
+
+            <!-- Hide checkbox in kanban -->
+            <xpath expr="//kanban" position="attributes">
+                <attribute name="records_draggable">0</attribute>
             </xpath>
         </field>
     </record>

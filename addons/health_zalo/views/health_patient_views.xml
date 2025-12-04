@@ -95,16 +95,29 @@
                 <field name="zalo_user_id"/>
             </xpath>
 
-            <!-- Add Zalo icons next to patient name in kanban card header -->
-            <xpath expr="//div[@class='o_patient_card_header']/strong" position="inside">
-                <t t-if="record.has_zalo.raw_value">
-                    <button name="action_open_zalo_chat" type="object" class="btn btn-link btn-sm p-0 ms-2" title="Zalo Chat">
-                        <i class="fa fa-comment text-primary"/>
-                    </button>
-                    <button name="action_call_zalo" type="object" class="btn btn-link btn-sm p-0" title="Zalo Call">
-                        <i class="fa fa-phone text-success"/>
-                    </button>
-                </t>
+            <!-- Replace patient card header to add Zalo icons -->
+            <xpath expr="//div[@class='o_patient_card_header']" position="replace">
+                <div class="o_patient_card_header">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <strong><field name="name"/></strong>
+                        <t t-if="record.has_zalo.raw_value">
+                            <div class="d-flex gap-1 align-items-center">
+                                <span class="text-primary small fw-bold">Zalo</span>
+                                <button name="action_open_zalo_chat" type="object" class="btn btn-link btn-sm p-0" title="Zalo Chat">
+                                    <i class="fa fa-comment text-primary"/>
+                                </button>
+                                <button name="action_call_zalo" type="object" class="btn btn-link btn-sm p-0" title="Zalo Call">
+                                    <i class="fa fa-phone text-success"/>
+                                </button>
+                            </div>
+                        </t>
+                    </div>
+                </div>
+            </xpath>
+
+            <!-- Hide checkbox/tick mark in kanban -->
+            <xpath expr="//kanban" position="attributes">
+                <attribute name="records_draggable">0</attribute>
             </xpath>
         </field>
     </record>
