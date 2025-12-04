@@ -30,9 +30,16 @@
                 </div>
             </xpath>
 
-            <!-- Add invisible helper fields after contact_datetime -->
+            <!-- Move Contact Type and Contact Reason to Contact Information section -->
             <xpath expr="//field[@name='contact_datetime']" position="after">
                 <field name="has_zalo" invisible="1"/>
+                <field name="contact_type" string="Contact Type"/>
+                <field name="contact_reason_id" string="Contact Reason" options="{'no_create': True}"/>
+            </xpath>
+
+            <!-- Hide the Contact Classification card to avoid duplication -->
+            <xpath expr="//div[div[@class='vu-card__title']/span[text()='Contact Classification']]" position="attributes">
+                <attribute name="invisible">1</attribute>
             </xpath>
 
         </field>

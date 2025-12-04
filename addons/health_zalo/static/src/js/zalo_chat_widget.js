@@ -3,6 +3,7 @@
 import { Component, useState, useRef, onMounted, onWillUnmount } from "@odoo/owl";
 import { registry } from "@web/core/registry";
 import { useService } from "@web/core/utils/hooks";
+import { rpc } from "@web/core/network/rpc";
 
 /**
  * Zalo Chat Widget Component
@@ -13,9 +14,9 @@ import { useService } from "@web/core/utils/hooks";
 export class ZaloChatWidget extends Component {
     setup() {
         this.orm = useService("orm");
-        this.rpc = useService("rpc");
         this.notification = useService("notification");
         this.bus = useService("bus_service");
+        this.action = useService("action");
 
         this.state = useState({
             conversationId: this.props.conversationId || null,
@@ -49,7 +50,7 @@ export class ZaloChatWidget extends Component {
         }
 
         try {
-            const result = await this.rpc("/zalo/chat/conversation/" + this.state.conversationId + "/messages", {
+            const result = await rpc("/zalo/chat/conversation/" + this.state.conversationId + "/messages", {
                 limit: 50,
                 offset: 0,
             });
@@ -124,7 +125,7 @@ export class ZaloChatWidget extends Component {
         this.state.sending = true;
 
         try {
-            const result = await this.rpc("/zalo/chat/send_message", {
+            const result = await rpc("/zalo/chat/send_message", {
                 conversation_id: this.state.conversationId,
                 text: text,
                 message_type: "text",
@@ -181,7 +182,7 @@ export class ZaloChatWidget extends Component {
      */
     async markAsRead() {
         try {
-            await this.rpc("/zalo/chat/mark_as_read", {
+            await rpc("/zalo/chat/mark_as_read", {
                 conversation_id: this.state.conversationId,
             });
         } catch (error) {
@@ -233,11 +234,24 @@ export class ZaloChatWidget extends Component {
 
         return currentDate !== prevDate;
     }
+
+    /**
+     * Close dialog
+     */
+    closeDialog() {
+        // Close the action using the action service
+        this.action.doAction({ type: 'ir.actions.act_window_close' });
+    }
 }
 
 ZaloChatWidget.template = "health_zalo.ZaloChatWidget";
 ZaloChatWidget.props = {
     conversationId: { type: Number, optional: true },
+    // Standard Odoo action props (optional)
+    action: { type: Object, optional: true },
+    actionId: { type: Number, optional: true },
+    updateActionState: { type: Function, optional: true },
+    className: { type: String, optional: true },
 };
 
 // Register as a client action

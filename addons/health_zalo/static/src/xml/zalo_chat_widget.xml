@@ -2,30 +2,38 @@
 <templates xml:space="preserve">
 
     <t t-name="health_zalo.ZaloChatWidget" owl="1">
-        <div class="zalo-chat-widget">
-            <!-- Loading State -->
-            <t t-if="state.loading">
-                <div class="zalo-chat-loading">
-                    <i class="fa fa-spinner fa-spin fa-2x"/>
-                    <p>Loading conversation...</p>
-                </div>
-            </t>
+        <!-- Modal Backdrop -->
+        <div class="zalo-chat-backdrop" t-on-click="closeDialog"/>
 
-            <!-- Chat Interface -->
-            <t t-else="">
-                <!-- Chat Header -->
-                <div class="zalo-chat-header">
-                    <div class="zalo-chat-header-avatar">
-                        <img t-if="state.conversation?.zalo_user_avatar"
-                             t-att-src="state.conversation.zalo_user_avatar"
-                             alt="Avatar"/>
-                        <i t-else="" class="fa fa-user-circle fa-2x"/>
+        <!-- Modal Dialog -->
+        <div class="zalo-chat-dialog">
+            <div class="zalo-chat-widget">
+                <!-- Loading State -->
+                <t t-if="state.loading">
+                    <div class="zalo-chat-loading">
+                        <i class="fa fa-spinner fa-spin fa-2x"/>
+                        <p>Loading conversation...</p>
                     </div>
-                    <div class="zalo-chat-header-info">
-                        <h4 t-esc="state.conversation?.name || 'Zalo Chat'"/>
-                        <span class="text-muted">Zalo Conversation</span>
+                </t>
+
+                <!-- Chat Interface -->
+                <t t-else="">
+                    <!-- Chat Header with Close Button -->
+                    <div class="zalo-chat-header">
+                        <div class="zalo-chat-header-avatar">
+                            <img t-if="state.conversation?.zalo_user_avatar"
+                                 t-att-src="state.conversation.zalo_user_avatar"
+                                 alt="Avatar"/>
+                            <i t-else="" class="fa fa-user-circle fa-2x"/>
+                        </div>
+                        <div class="zalo-chat-header-info">
+                            <h4 t-esc="state.conversation?.name || 'Zalo Chat'"/>
+                            <span class="text-muted">Zalo Conversation</span>
+                        </div>
+                        <button class="zalo-chat-close-btn" t-on-click="closeDialog" title="Close">
+                            <i class="fa fa-times"/>
+                        </button>
                     </div>
-                </div>
 
                 <!-- Messages Container -->
                 <div class="zalo-chat-messages">
@@ -91,25 +99,26 @@
                     <div t-ref="messagesEnd"/>
                 </div>
 
-                <!-- Message Input -->
-                <div class="zalo-chat-input">
-                    <textarea
-                        t-ref="messageInput"
-                        class="form-control zalo-chat-input-field"
-                        placeholder="Type a message..."
-                        t-model="state.inputText"
-                        t-on-keydown="onKeyDown"
-                        rows="1"
-                        t-att-disabled="state.sending"/>
-                    <button
-                        class="btn btn-primary zalo-chat-send-btn"
-                        t-on-click="sendMessage"
-                        t-att-disabled="state.sending or !state.inputText.trim()">
-                        <i t-if="!state.sending" class="fa fa-paper-plane"/>
-                        <i t-else="" class="fa fa-spinner fa-spin"/>
-                    </button>
-                </div>
-            </t>
+                    <!-- Message Input -->
+                    <div class="zalo-chat-input">
+                        <textarea
+                            t-ref="messageInput"
+                            class="form-control zalo-chat-input-field"
+                            placeholder="Type a message..."
+                            t-model="state.inputText"
+                            t-on-keydown="onKeyDown"
+                            rows="1"
+                            t-att-disabled="state.sending"/>
+                        <button
+                            class="btn btn-primary zalo-chat-send-btn"
+                            t-on-click="sendMessage"
+                            t-att-disabled="state.sending or !state.inputText.trim()">
+                            <i t-if="!state.sending" class="fa fa-paper-plane"/>
+                            <i t-else="" class="fa fa-spinner fa-spin"/>
+                        </button>
+                    </div>
+                </t>
+            </div>
         </div>
     </t>
 
