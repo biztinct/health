@@ -238,9 +238,34 @@ export class ZaloChatWidget extends Component {
     /**
      * Close dialog
      */
-    closeDialog() {
-        // Close the action using the action service
-        this.action.doAction({ type: 'ir.actions.act_window_close' });
+    closeDialog(ev) {
+        console.log('Close dialog clicked');
+
+        // Prevent event bubbling
+        if (ev) {
+            ev.stopPropagation();
+            ev.preventDefault();
+        }
+
+        try {
+            // For client actions, use restore() to go back to previous action
+            if (this.action && this.action.restore) {
+                this.action.restore();
+                console.log('Closed via action.restore()');
+                return;
+            }
+
+            // Fallback: try standard close
+            if (this.action) {
+                this.action.doAction({ type: 'ir.actions.act_window_close' });
+                console.log('Closed via action service');
+                return;
+            }
+
+            console.error('No close method available');
+        } catch (error) {
+            console.error('Error closing dialog:', error);
+        }
     }
 }
 

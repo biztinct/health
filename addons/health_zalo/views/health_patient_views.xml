@@ -19,7 +19,7 @@
                 </button>
             </xpath>
 
-            <!-- Add Zalo User ID field with action icons after mobile phone -->
+            <!-- Add Zalo User ID field with action buttons after mobile phone -->
             <xpath expr="//field[@name='mobile']" position="after">
                 <label for="zalo_user_id" string="Zalo User ID"/>
                 <div class="o_row">
@@ -27,17 +27,19 @@
                     <button name="action_open_zalo_chat"
                             type="object"
                             icon="fa-comment"
-                            class="btn-link o_icon_button"
+                            class="btn-link"
                             title="Open Zalo Chat"
-                            invisible="not has_zalo"
-                            aria-label="Open Zalo Chat"/>
+                            invisible="not has_zalo">
+                        Zalo Chat
+                    </button>
                     <button name="action_call_zalo"
                             type="object"
                             icon="fa-phone"
-                            class="btn-link o_icon_button"
+                            class="btn-link"
                             title="Call via Zalo"
-                            invisible="not has_zalo"
-                            aria-label="Call via Zalo"/>
+                            invisible="not has_zalo">
+                        Zalo Call
+                    </button>
                 </div>
             </xpath>
 
@@ -78,6 +80,32 @@
                 </page>
             </xpath>
 
+        </field>
+    </record>
+
+    <!-- Extend Patient Kanban View - Add Zalo icons -->
+    <record id="view_health_patient_kanban_zalo" model="ir.ui.view">
+        <field name="name">res.partner.patient.kanban.zalo</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="health_base.view_health_patient_kanban"/>
+        <field name="arch" type="xml">
+            <!-- Add Zalo fields -->
+            <xpath expr="//field[@name='name']" position="before">
+                <field name="has_zalo"/>
+                <field name="zalo_user_id"/>
+            </xpath>
+
+            <!-- Add Zalo icons next to patient name in kanban card header -->
+            <xpath expr="//div[@class='o_patient_card_header']/strong" position="inside">
+                <t t-if="record.has_zalo.raw_value">
+                    <button name="action_open_zalo_chat" type="object" class="btn btn-link btn-sm p-0 ms-2" title="Zalo Chat">
+                        <i class="fa fa-comment text-primary"/>
+                    </button>
+                    <button name="action_call_zalo" type="object" class="btn btn-link btn-sm p-0" title="Zalo Call">
+                        <i class="fa fa-phone text-success"/>
+                    </button>
+                </t>
+            </xpath>
         </field>
     </record>
 
