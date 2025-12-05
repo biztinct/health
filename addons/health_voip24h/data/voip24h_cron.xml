@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Sync call history every 15 minutes -->
+    <record id="cron_sync_call_history" model="ir.cron">
+        <field name="name">VoIP24h: Sync Call History</field>
+        <field name="model_id" ref="model_voip_config"/>
+        <field name="state">code</field>
+        <field name="code">model.cron_sync_call_history()</field>
+        <field name="interval_number">15</field>
+        <field name="interval_type">minutes</field>
+        <field name="active" eval="True"/>
+    </record>
+
+    <!-- Download pending recordings every 5 minutes -->
+    <record id="cron_download_recordings" model="ir.cron">
+        <field name="name">VoIP24h: Download Pending Recordings</field>
+        <field name="model_id" ref="model_voip_call_recording"/>
+        <field name="state">code</field>
+        <field name="code">model.cron_download_pending_recordings()</field>
+        <field name="interval_number">5</field>
+        <field name="interval_type">minutes</field>
+        <field name="active" eval="True"/>
+    </record>
+
+    <!-- Auto-create activities for missed calls every 10 minutes -->
+    <record id="cron_create_missed_call_activities" model="ir.cron">
+        <field name="name">VoIP24h: Create Missed Call Activities</field>
+        <field name="model_id" ref="model_voip_call_log"/>
+        <field name="state">code</field>
+        <field name="code">model.cron_create_missed_call_activities()</field>
+        <field name="interval_number">10</field>
+        <field name="interval_type">minutes</field>
+        <field name="active" eval="True"/>
+    </record>
+
+</odoo>

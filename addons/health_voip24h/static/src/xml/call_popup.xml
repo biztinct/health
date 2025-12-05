@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="health_voip24h.CallPopup">
+        <div
+            t-if="state.isVisible"
+            class="o_voip_call_popup position-fixed bottom-0 end-0 m-3 shadow-lg">
+
+            <div class="card border-primary">
+                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                    <h6 class="m-0">
+                        <i class="fa fa-phone-square"/> Incoming Call
+                    </h6>
+                    <button
+                        class="btn btn-sm btn-link text-white p-0"
+                        t-on-click="closePopup"
+                        title="Close">
+                        <i class="fa fa-times"/>
+                    </button>
+                </div>
+
+                <div class="card-body">
+                    <!-- Caller Information -->
+                    <div class="mb-3">
+                        <h5 class="text-primary mb-2" t-esc="callerDisplay"/>
+                        <p class="text-muted mb-0">
+                            <i class="fa fa-phone"/>
+                            <t t-esc="state.activeCall.caller_number"/>
+                        </p>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="d-grid gap-2">
+                        <!-- Open Partner -->
+                        <button
+                            t-if="state.activeCall.partner_id"
+                            class="btn btn-outline-primary btn-sm"
+                            t-on-click="openPartner">
+                            <i class="fa fa-user"/> View Contact
+                        </button>
+
+                        <!-- Open Lead -->
+                        <button
+                            t-if="state.activeCall.lead_id"
+                            class="btn btn-outline-primary btn-sm"
+                            t-on-click="openLead">
+                            <i class="fa fa-handshake-o"/> View Lead
+                        </button>
+
+                        <!-- Open Call Log -->
+                        <button
+                            class="btn btn-outline-secondary btn-sm"
+                            t-on-click="openCallLog">
+                            <i class="fa fa-list"/> View Call Log
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Ringing Animation -->
+                <div class="card-footer bg-light text-center">
+                    <div class="spinner-grow spinner-grow-sm text-primary" role="status">
+                        <span class="visually-hidden">Ringing...</span>
+                    </div>
+                    <span class="ms-2 text-muted">Ringing...</span>
+                </div>
+            </div>
+        </div>
+    </t>
+
+</templates>

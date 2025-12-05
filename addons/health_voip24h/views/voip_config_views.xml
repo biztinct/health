@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- VoIP Configuration Form View -->
+    <record id="view_voip_config_form" model="ir.ui.view">
+        <field name="name">voip.config.form</field>
+        <field name="model">voip.config</field>
+        <field name="arch" type="xml">
+            <form string="VoIP24h Configuration">
+                <header>
+                    <button name="action_test_connection" type="object" string="Test Connection" class="oe_highlight"/>
+                    <button name="action_sync_call_history" type="object" string="Sync Now"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,connected"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_sync_call_history" type="object" class="oe_stat_button" icon="fa-refresh">
+                            <div class="o_field_widget o_stat_info">
+                                <span class="o_stat_value"><field name="total_calls_synced"/></span>
+                                <span class="o_stat_text">Calls Synced</span>
+                            </div>
+                        </button>
+                    </div>
+
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                        <group>
+                            <field name="active"/>
+                        </group>
+                    </group>
+
+                    <notebook>
+                        <!-- API Configuration Tab -->
+                        <page string="API Configuration">
+                            <group>
+                                <group string="Credentials">
+                                    <field name="api_key" password="True"/>
+                                    <field name="api_secret" password="True"/>
+                                    <field name="account_id"/>
+                                </group>
+                                <group string="API Settings">
+                                    <field name="api_base_url"/>
+                                    <field name="domain"/>
+                                    <field name="access_token" readonly="1" password="True"/>
+                                    <field name="token_expires_at" readonly="1"/>
+                                </group>
+                            </group>
+                            <group invisible="not error_message">
+                                <field name="error_message" readonly="1" class="text-danger"/>
+                            </group>
+                        </page>
+
+                        <!-- Call Functionality Tab (NEW - Master Switch) -->
+                        <page string="Call Functionality">
+                            <div class="alert alert-info mb-3" role="alert">
+                                <h5><i class="fa fa-info-circle"/> Call Functionality Control</h5>
+                                <p>Toggle these settings to control whether users can make or receive calls through the system.
+                                   <strong>Data collection (call logs, recordings, analytics) continues regardless of these settings.</strong></p>
+                            </div>
+
+                            <group>
+                                <group string="Master Control">
+                                    <field name="enable_call_functionality"/>
+                                </group>
+                                <group/>
+                            </group>
+
+                            <group invisible="not enable_call_functionality">
+                                <group string="Outgoing Calls">
+                                    <field name="enable_outgoing_calls"/>
+                                    <div class="text-muted" invisible="not enable_outgoing_calls">
+                                        <p>Users can initiate calls via click-to-dial buttons on contact/lead forms.</p>
+                                    </div>
+                                    <div class="text-danger" invisible="enable_outgoing_calls">
+                                        <p>Click-to-dial buttons will be hidden from all forms.</p>
+                                    </div>
+                                </group>
+                                <group string="Incoming Calls">
+                                    <field name="enable_incoming_call_popups"/>
+                                    <div class="text-muted" invisible="not enable_incoming_call_popups">
+                                        <p>Real-time popups will display caller information when calls arrive.</p>
+                                    </div>
+                                    <div class="text-danger" invisible="enable_incoming_call_popups">
+                                        <p>Incoming call popups will not be shown to users.</p>
+                                    </div>
+                                </group>
+                            </group>
+
+                            <div class="alert alert-warning mt-3" role="alert" invisible="enable_call_functionality">
+                                <h5><i class="fa fa-warning"/> ⚠️ Call Functionality Disabled</h5>
+                                <p><strong>What's disabled:</strong></p>
+                                <ul class="mb-2">
+                                    <li>Users cannot initiate outgoing calls (click-to-dial)</li>
+                                    <li>Incoming call popups will not appear</li>
+                                    <li>Real-time call status updates disabled</li>
+                                </ul>
+                                <p><strong>What remains active:</strong></p>
+                                <ul class="mb-0">
+                                    <li>Call log synchronization (every 15 minutes)</li>
+                                    <li>Call recordings download and playback</li>
+                                    <li>Analytics dashboard and reports</li>
+                                    <li>Contact/lead matching</li>
+                                    <li>Activity creation for missed calls</li>
+                                </ul>
+                            </div>
+                        </page>
+
+                        <!-- Webhook Configuration Tab -->
+                        <page string="Webhooks">
+                            <group>
+                                <group>
+                                    <field name="webhook_enabled"/>
+                                    <field name="webhook_url" readonly="1"/>
+                                    <field name="webhook_secret" password="True"/>
+                                </group>
+                                <group>
+                                    <p class="text-muted">
+                                        Configure this URL in your VoIP24h admin panel to receive real-time call notifications.
+                                    </p>
+                                </group>
+                            </group>
+                        </page>
+
+                        <!-- Sync Settings Tab -->
+                        <page string="Sync Settings">
+                            <group>
+                                <group>
+                                    <field name="auto_sync_enabled"/>
+                                    <field name="sync_interval_minutes"/>
+                                    <field name="sync_history_days"/>
+                                </group>
+                                <group>
+                                    <field name="last_sync_date" readonly="1"/>
+                                    <field name="total_calls_synced" readonly="1"/>
+                                    <field name="total_recordings_synced" readonly="1"/>
+                                </group>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter reload_on_follower="True"/>
+            </form>
+        </field>
+    </record>
+
+    <!-- VoIP Configuration List View -->
+    <record id="view_voip_config_list" model="ir.ui.view">
+        <field name="name">voip.config.list</field>
+        <field name="model">voip.config</field>
+        <field name="arch" type="xml">
+            <list string="VoIP24h Configurations">
+                <field name="name"/>
+                <field name="account_id"/>
+                <field name="state"/>
+                <field name="enable_call_functionality" widget="boolean_toggle"/>
+                <field name="total_calls_synced"/>
+                <field name="last_sync_date"/>
+                <field name="company_id" groups="base.group_multi_company"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- VoIP Configuration Action -->
+    <record id="action_voip_config" model="ir.actions.act_window">
+        <field name="name">VoIP Configuration</field>
+        <field name="res_model">voip.config</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Configure VoIP24h Integration
+            </p>
+            <p>
+                Set up your VoIP24h API credentials and configure call functionality settings.
+            </p>
+        </field>
+    </record>
+
+</odoo>

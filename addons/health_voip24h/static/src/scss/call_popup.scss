@@ -1,0 +1,169 @@
+// Call Popup Styles
+// Styling for incoming call notification popup
+
+// ============================================================================
+// Call Popup Container
+// ============================================================================
+
+.o_voip_call_popup {
+    z-index: 9999;
+    width: 320px;
+    animation: slideInRight 0.3s ease-out;
+
+    @keyframes slideInRight {
+        from {
+            transform: translateX(100%);
+            opacity: 0;
+        }
+        to {
+            transform: translateX(0);
+            opacity: 1;
+        }
+    }
+
+    // Card styling
+    .card {
+        border-width: 2px;
+        border-radius: 0.75rem;
+        overflow: hidden;
+
+        .card-header {
+            padding: 0.75rem 1rem;
+            background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+
+            h6 {
+                font-weight: 600;
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+
+                i {
+                    animation: pulse 1.5s ease-in-out infinite;
+
+                    @keyframes pulse {
+                        0%, 100% {
+                            transform: scale(1);
+                        }
+                        50% {
+                            transform: scale(1.1);
+                        }
+                    }
+                }
+            }
+        }
+
+        .card-body {
+            padding: 1.25rem;
+
+            h5 {
+                font-weight: 600;
+                margin-bottom: 0.5rem;
+            }
+
+            .text-muted {
+                font-size: 0.875rem;
+
+                i {
+                    margin-right: 0.5rem;
+                    color: #6c757d;
+                }
+            }
+
+            .btn {
+                transition: all 0.2s ease-in-out;
+
+                &:hover {
+                    transform: translateX(2px);
+                }
+
+                i {
+                    margin-right: 0.5rem;
+                }
+            }
+        }
+
+        .card-footer {
+            padding: 0.75rem 1rem;
+            border-top: 1px solid #dee2e6;
+
+            .spinner-grow {
+                animation-duration: 1s;
+            }
+        }
+    }
+}
+
+// ============================================================================
+// Mobile Responsive
+// ============================================================================
+
+@media (max-width: 576px) {
+    .o_voip_call_popup {
+        width: calc(100% - 2rem);
+        margin: 1rem !important;
+    }
+}
+
+// ============================================================================
+// Dark Mode Support (if needed in future)
+// ============================================================================
+
+@media (prefers-color-scheme: dark) {
+    .o_voip_call_popup {
+        .card {
+            background-color: #2d3748;
+            color: #e2e8f0;
+
+            .card-header {
+                background: linear-gradient(135deg, #4a5568 0%, #2d3748 100%);
+            }
+
+            .card-body {
+                .text-muted {
+                    color: #a0aec0 !important;
+                }
+            }
+
+            .card-footer {
+                background-color: #1a202c;
+                border-top-color: #4a5568;
+            }
+        }
+    }
+}
+
+// ============================================================================
+// Accessibility
+// ============================================================================
+
+.o_voip_call_popup {
+    // Ensure popup is keyboard accessible
+    &:focus-within {
+        outline: 2px solid #007bff;
+        outline-offset: 2px;
+    }
+
+    // High contrast mode support
+    @media (prefers-contrast: high) {
+        .card {
+            border-width: 3px;
+        }
+
+        .btn {
+            border-width: 2px;
+        }
+    }
+
+    // Reduced motion support
+    @media (prefers-reduced-motion: reduce) {
+        animation: none;
+
+        .card-header h6 i {
+            animation: none;
+        }
+
+        .spinner-grow {
+            animation: none;
+        }
+    }
+}

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Extend Partner Form - Add VoIP Smart Buttons -->
+    <record id="view_partner_form_voip" model="ir.ui.view">
+        <field name="name">res.partner.form.voip</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+            <!-- Add smart button -->
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button name="action_view_call_logs"
+                        type="object"
+                        class="oe_stat_button"
+                        icon="fa-phone"
+                        invisible="voip_call_count == 0">
+                    <field name="voip_call_count" widget="statinfo" string="Calls"/>
+                </button>
+            </xpath>
+
+            <!-- Add VoIP fields in Contact tab -->
+            <xpath expr="//page[@name='internal_notes']" position="before">
+                <page string="VoIP" name="voip" invisible="voip_call_count == 0">
+                    <group>
+                        <group string="VoIP Settings">
+                            <field name="voip_preferred_number"/>
+                            <field name="voip_do_not_call"/>
+                        </group>
+                        <group string="Statistics">
+                            <field name="voip_last_call_date"/>
+                            <field name="voip_total_talk_time"/>
+                        </group>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

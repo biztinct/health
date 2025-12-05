@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="health_voip24h.ClickToDialWidget">
+        <div class="o_field_click_to_dial d-inline-flex align-items-center gap-2">
+            <!-- Phone number display -->
+            <span class="o_field_phone" t-esc="props.phoneNumber"/>
+
+            <!-- Dial button (only visible if phone number exists) -->
+            <button
+                t-if="isVisible"
+                class="btn btn-sm btn-primary o_voip_dial_btn"
+                t-on-click="onClickDial"
+                title="Click to dial">
+                <i class="fa fa-phone"/> Call
+            </button>
+        </div>
+    </t>
+
+</templates>

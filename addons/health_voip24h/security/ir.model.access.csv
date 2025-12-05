@@ -1,0 +1,9 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_voip_config_manager,voip.config.manager,model_voip_config,group_voip_manager,1,1,1,1
+access_voip_config_user,voip.config.user,model_voip_config,group_voip_user,1,0,0,0
+access_voip_call_log_manager,voip.call.log.manager,model_voip_call_log,group_voip_manager,1,1,1,1
+access_voip_call_log_user,voip.call.log.user,model_voip_call_log,group_voip_user,1,1,1,0
+access_voip_call_recording_manager,voip.call.recording.manager,model_voip_call_recording,group_voip_manager,1,1,1,1
+access_voip_call_recording_user,voip.call.recording.user,model_voip_call_recording,group_voip_user,1,0,0,0
+access_voip_extension_manager,voip.extension.manager,model_voip_extension,group_voip_manager,1,1,1,1
+access_voip_extension_user,voip.extension.user,model_voip_extension,group_voip_user,1,0,0,0

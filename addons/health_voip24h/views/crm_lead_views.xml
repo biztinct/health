@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Extend Lead Form - Add VoIP Smart Button -->
+    <record id="view_crm_lead_form_voip" model="ir.ui.view">
+        <field name="name">crm.lead.form.voip</field>
+        <field name="model">crm.lead</field>
+        <field name="inherit_id" ref="crm.crm_lead_view_form"/>
+        <field name="arch" type="xml">
+            <!-- Add smart button -->
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button name="action_view_call_logs"
+                        type="object"
+                        class="oe_stat_button"
+                        icon="fa-phone"
+                        invisible="voip_call_count == 0">
+                    <field name="voip_call_count" widget="statinfo" string="Calls"/>
+                </button>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

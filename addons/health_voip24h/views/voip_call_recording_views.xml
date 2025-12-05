@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Recording List View -->
+    <record id="view_voip_call_recording_list" model="ir.ui.view">
+        <field name="name">voip.call.recording.list</field>
+        <field name="model">voip.call.recording</field>
+        <field name="arch" type="xml">
+            <list string="Call Recordings">
+                <field name="name"/>
+                <field name="call_log_id"/>
+                <field name="duration_seconds"/>
+                <field name="state"/>
+                <field name="is_downloaded" widget="boolean_toggle"/>
+                <button name="action_play_recording" type="object" string="Play" icon="fa-play"/>
+                <button name="action_download_recording" type="object" string="Download" invisible="is_downloaded"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Recording Action -->
+    <record id="action_voip_call_recording" model="ir.actions.act_window">
+        <field name="name">Call Recordings</field>
+        <field name="res_model">voip.call.recording</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+</odoo>

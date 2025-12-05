@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Extension List View -->
+    <record id="view_voip_extension_list" model="ir.ui.view">
+        <field name="name">voip.extension.list</field>
+        <field name="model">voip.extension</field>
+        <field name="arch" type="xml">
+            <list string="VoIP Extensions">
+                <field name="name"/>
+                <field name="extension_number"/>
+                <field name="extension_type"/>
+                <field name="user_id"/>
+                <field name="total_calls"/>
+                <field name="missed_calls"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Extension Action -->
+    <record id="action_voip_extension" model="ir.actions.act_window">
+        <field name="name">Extensions</field>
+        <field name="res_model">voip.extension</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+</odoo>

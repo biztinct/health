@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Root Menu -->
+    <menuitem id="menu_voip24h_root"
+              name="VoIP24h"
+              sequence="100"/>
+
+    <!-- Call Logs Menu -->
+    <menuitem id="menu_voip24h_call_logs"
+              name="Call Logs"
+              parent="menu_voip24h_root"
+              sequence="10"/>
+
+    <menuitem id="menu_voip24h_call_logs_all"
+              name="All Calls"
+              parent="menu_voip24h_call_logs"
+              action="action_voip_call_log"
+              sequence="10"/>
+
+    <menuitem id="menu_voip24h_call_logs_missed"
+              name="Missed Calls"
+              parent="menu_voip24h_call_logs"
+              action="action_voip_call_log_missed"
+              sequence="20"/>
+
+    <!-- Recordings Menu -->
+    <menuitem id="menu_voip24h_recordings"
+              name="Recordings"
+              parent="menu_voip24h_root"
+              action="action_voip_call_recording"
+              sequence="20"/>
+
+    <!-- Extensions Menu -->
+    <menuitem id="menu_voip24h_extensions"
+              name="Extensions"
+              parent="menu_voip24h_root"
+              action="action_voip_extension"
+              sequence="30"/>
+
+    <!-- Configuration Menu -->
+    <menuitem id="menu_voip24h_config"
+              name="Configuration"
+              parent="menu_voip24h_root"
+              sequence="90"
+              groups="health_voip24h.group_voip_manager"/>
+
+    <menuitem id="menu_voip24h_config_settings"
+              name="VoIP Configuration"
+              parent="menu_voip24h_config"
+              action="action_voip_config"
+              sequence="10"/>
+
+</odoo>

@@ -1,0 +1,262 @@
+// VoIP Dashboard Styles
+// Styling for VoIP configuration, call logs, and analytics views
+
+// ============================================================================
+// Click-to-Dial Widget
+// ============================================================================
+
+.o_field_click_to_dial {
+    .o_voip_dial_btn {
+        padding: 0.25rem 0.5rem;
+        font-size: 0.875rem;
+        border-radius: 0.25rem;
+        transition: all 0.2s ease-in-out;
+
+        &:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+        }
+
+        i {
+            margin-right: 0.25rem;
+        }
+    }
+}
+
+// ============================================================================
+// VoIP Configuration Form
+// ============================================================================
+
+.o_voip_config_form {
+    .o_voip_status_badge {
+        padding: 0.5rem 1rem;
+        border-radius: 0.5rem;
+        font-weight: 600;
+
+        &.status-connected {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        &.status-disconnected {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        &.status-error {
+            background-color: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeeba;
+        }
+    }
+
+    .o_voip_test_connection_btn {
+        margin-top: 1rem;
+    }
+}
+
+// ============================================================================
+// Call Log List View
+// ============================================================================
+
+.o_voip_call_log_list {
+    .o_list_table {
+        .o_data_row {
+            &.call-type-missed {
+                background-color: #fff3cd;
+
+                &:hover {
+                    background-color: #ffe69c;
+                }
+            }
+
+            &.call-type-answered {
+                background-color: #d4edda;
+
+                &:hover {
+                    background-color: #c3e6cb;
+                }
+            }
+        }
+    }
+
+    .o_voip_call_direction {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25rem;
+
+        &.direction-incoming i {
+            color: #28a745;
+        }
+
+        &.direction-outgoing i {
+            color: #007bff;
+        }
+    }
+
+    .o_voip_duration_badge {
+        padding: 0.25rem 0.5rem;
+        border-radius: 0.25rem;
+        background-color: #f8f9fa;
+        font-family: monospace;
+        font-size: 0.875rem;
+    }
+}
+
+// ============================================================================
+// Call Log Form View
+// ============================================================================
+
+.o_voip_call_log_form {
+    .o_voip_call_header {
+        padding: 1rem;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border-radius: 0.5rem;
+        margin-bottom: 1.5rem;
+
+        h3 {
+            margin: 0;
+            font-weight: 600;
+        }
+
+        .o_voip_call_meta {
+            display: flex;
+            gap: 1.5rem;
+            margin-top: 0.5rem;
+            font-size: 0.875rem;
+            opacity: 0.9;
+        }
+    }
+
+    .o_voip_recording_player {
+        padding: 1rem;
+        background-color: #f8f9fa;
+        border-radius: 0.5rem;
+        border: 1px solid #dee2e6;
+
+        audio {
+            width: 100%;
+            margin-top: 0.5rem;
+        }
+
+        .o_voip_no_recording {
+            color: #6c757d;
+            font-style: italic;
+        }
+    }
+}
+
+// ============================================================================
+// VoIP Analytics Dashboard
+// ============================================================================
+
+.o_voip_analytics_dashboard {
+    .o_voip_kpi_card {
+        padding: 1.5rem;
+        background: white;
+        border-radius: 0.5rem;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+
+        &:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .o_voip_kpi_icon {
+            width: 3rem;
+            height: 3rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+
+            &.kpi-total {
+                background-color: #e7f3ff;
+                color: #0066cc;
+            }
+
+            &.kpi-answered {
+                background-color: #d4edda;
+                color: #28a745;
+            }
+
+            &.kpi-missed {
+                background-color: #fff3cd;
+                color: #ffc107;
+            }
+
+            &.kpi-duration {
+                background-color: #f8d7da;
+                color: #dc3545;
+            }
+        }
+
+        .o_voip_kpi_value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #333;
+        }
+
+        .o_voip_kpi_label {
+            font-size: 0.875rem;
+            color: #6c757d;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+    }
+}
+
+// ============================================================================
+// Extension Management
+// ============================================================================
+
+.o_voip_extension_list {
+    .o_extension_status_indicator {
+        display: inline-block;
+        width: 0.75rem;
+        height: 0.75rem;
+        border-radius: 50%;
+        margin-right: 0.5rem;
+
+        &.status-available {
+            background-color: #28a745;
+            box-shadow: 0 0 4px rgba(40, 167, 69, 0.5);
+        }
+
+        &.status-busy {
+            background-color: #dc3545;
+            box-shadow: 0 0 4px rgba(220, 53, 69, 0.5);
+        }
+
+        &.status-offline {
+            background-color: #6c757d;
+        }
+    }
+}
+
+// ============================================================================
+// Responsive Design
+// ============================================================================
+
+@media (max-width: 768px) {
+    .o_voip_call_log_form {
+        .o_voip_call_header {
+            .o_voip_call_meta {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+        }
+    }
+
+    .o_voip_analytics_dashboard {
+        .o_voip_kpi_card {
+            margin-bottom: 1rem;
+        }
+    }
+}
