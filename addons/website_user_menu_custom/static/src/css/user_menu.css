@@ -1,36 +1,18 @@
 /* Hide unwanted user menu items from website user dropdown */
-
-/* Hide Documentation */
-[data-menu="documentation"] {
+[data-menu]:not([data-menu="shortcuts"]):not([data-menu="tickets"]):not([data-menu="settings"]):not([data-menu="logout"]) {
     display: none !important;
 }
 
-/* Hide Support */
-[data-menu="support"] {
-    display: none !important;
-}
-
-/* Hide Shortcuts */
-[data-menu="shortcuts"] {
-    display: none !important;
-}
-
-/* Hide Onboarding */
-[data-menu="web_tour.tour_enabled"] {
-    display: none !important;
-}
-
-/* Hide My Odoo.com account */
-[data-menu="account"] {
-    display: none !important;
-}
-
-/* Keep My Profile visible (defensive) */
-[data-menu="settings"] {
+/* Keep visible items */
+[data-menu="shortcuts"],
+[data-menu="settings"],
+[data-menu="logout"],
+[data-menu="tickets"] {
     display: block !important;
 }
 
-/* Keep Log out visible (defensive) */
-[data-menu="logout"] {
-    display: block !important;
+/* Hide portal footer branding ("Powered by Odoo") */
+.o_portal .o_branding,
+.o_branding {
+    display: none !important;
 }

@@ -2,53 +2,44 @@
 
 import { onMounted } from "@odoo/owl";
 
+const ALLOWED_MENUS = ['shortcuts', 'tickets', 'settings', 'logout'];
+
 /**
- * Hide unwanted menu items from the user dropdown
- * This handles items that may not be caught by CSS selectors
+ * Ensure Tickets entry exists after Shortcuts.
  */
-function hideUnwantedMenuItems() {
-    // List of data-menu attribute values to hide
-    const unwantedDataMenus = [
-        'documentation',
-        'support',
-        'shortcuts',
-        'web_tour.tour_enabled', // Onboarding
-        'account' // My Odoo.com account
-    ];
+function ensureTicketsEntry() {
+    const dropdown = document.querySelector('.o_user_menu .dropdown-menu, .o_popover.o-dropdown--menu, .dropdown-menu.show');
+    if (!dropdown) return;
 
-    // Hide items by data-menu attribute (most reliable)
-    unwantedDataMenus.forEach(menuValue => {
-        const items = document.querySelectorAll(`[data-menu="${menuValue}"]`);
-        items.forEach(item => {
+    // Avoid duplicates
+    if (dropdown.querySelector('[data-menu="tickets"]')) return;
+
+    const shortcuts = dropdown.querySelector('[data-menu="shortcuts"]');
+    const refNode = shortcuts ? shortcuts.nextSibling : dropdown.firstChild;
+    const a = document.createElement('a');
+    a.className = 'dropdown-item';
+    a.setAttribute('href', '/my/tickets');
+    a.setAttribute('data-menu', 'tickets');
+    a.textContent = 'Tickets';
+    dropdown.insertBefore(a, refNode);
+}
+
+/**
+ * Hide unwanted menu items and keep only allowed entries.
+ */
+function filterUserMenu() {
+    ensureTicketsEntry();
+
+const items = document.querySelectorAll('.o_user_menu [data-menu], .dropdown-menu [data-menu], .o_popover.o-dropdown--menu [data-menu]');
+    items.forEach(item => {
+        const val = item.getAttribute('data-menu');
+        if (!ALLOWED_MENUS.includes(val)) {
             item.style.display = 'none';
-        });
-    });
-
-    // Fallback: Also hide by text content
-    const unwantedMenuTexts = [
-        'Documentation',
-        'Support',
-        'Shortcuts',
-        'Onboarding',
-        'My Odoo.com account'
-    ];
-
-    const dropdownItems = document.querySelectorAll('.o-dropdown-item, .dropdown-item');
-
-    dropdownItems.forEach(item => {
-        const itemText = item.textContent.trim();
-
-        // Check if this item matches any unwanted text
-        const shouldHide = unwantedMenuTexts.some(unwantedText =>
-            itemText.toLowerCase().includes(unwantedText.toLowerCase())
-        );
-
-        if (shouldHide) {
-            item.style.display = 'none';
+        } else {
+            item.style.display = '';
         }
     });
 
-    // Clean up consecutive dividers
     cleanupDividers();
 }
 
@@ -87,13 +78,18 @@ function cleanupDividers() {
  * Initialize the menu filter when DOM is ready
  */
 if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', hideUnwantedMenuItems);
+    document.addEventListener('DOMContentLoaded', filterUserMenu);
 } else {
-    hideUnwantedMenuItems();
+    filterUserMenu();
 }
 
 // Also run when user dropdown is shown (for dynamically loaded content)
-document.addEventListener('shown.bs.dropdown', hideUnwantedMenuItems);
+document.addEventListener('shown.bs.dropdown', filterUserMenu);
+document.addEventListener('mouseover', (ev) => {
+    if (ev.target && ev.target.closest && ev.target.closest('.o_user_menu')) {
+        filterUserMenu();
+    }
+});
 
 // MutationObserver to catch dynamically added menu items
 const observer = new MutationObserver((mutations) => {
@@ -103,7 +99,7 @@ const observer = new MutationObserver((mutations) => {
                 if (node.nodeType === 1) { // Element node
                     if (node.classList && (node.classList.contains('dropdown-menu') ||
                         node.querySelector && node.querySelector('.dropdown-menu'))) {
-                        setTimeout(hideUnwantedMenuItems, 100);
+                        setTimeout(filterUserMenu, 100);
                     }
                 }
             });

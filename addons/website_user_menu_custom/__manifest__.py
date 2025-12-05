@@ -22,11 +22,13 @@ Keeps only:
     'website': 'https://vafhs.com',
     'license': 'LGPL-3',
     'depends': ['website', 'portal'],
-    'data': [
-        'views/portal_templates.xml',
-    ],
+    'data': [],
     'assets': {
         'web.assets_frontend': [
+            'website_user_menu_custom/static/src/css/user_menu.css',
+            'website_user_menu_custom/static/src/js/user_menu_filter.js',
+        ],
+        'web.assets_backend': [
             'website_user_menu_custom/static/src/css/user_menu.css',
             'website_user_menu_custom/static/src/js/user_menu_filter.js',
         ],
