@@ -30,7 +30,7 @@ function ensureTicketsEntry() {
 function filterUserMenu() {
     ensureTicketsEntry();
 
-const items = document.querySelectorAll('.o_user_menu [data-menu], .dropdown-menu [data-menu], .o_popover.o-dropdown--menu [data-menu]');
+    const items = document.querySelectorAll('.o_user_menu [data-menu], .dropdown-menu [data-menu], .o_popover.o-dropdown--menu [data-menu]');
     items.forEach(item => {
         const val = item.getAttribute('data-menu');
         if (!ALLOWED_MENUS.includes(val)) {
@@ -41,6 +41,16 @@ const items = document.querySelectorAll('.o_user_menu [data-menu], .dropdown-men
     });
 
     cleanupDividers();
+
+    // Hide portal footer "Powered by Odoo" if present
+    document.querySelectorAll('.o_portal div.text-muted img[src*="/web/static/img/logo.png"]').forEach(img => {
+        const container = img.closest('div.text-muted');
+        if (container) {
+            container.style.display = 'none';
+        } else {
+            img.style.display = 'none';
+        }
+    });
 }
 
 /**

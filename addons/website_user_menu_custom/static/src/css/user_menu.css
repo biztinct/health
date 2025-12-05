@@ -16,3 +16,11 @@
 .o_branding {
     display: none !important;
 }
+
+/* Extra fallback: hide default portal footer logo block */
+.o_portal div.text-muted img[src*="/web/static/img/logo.png"] {
+    display: none !important;
+}
+.o_portal div.text-muted:has(img[src*="/web/static/img/logo.png"]) {
+    display: none !important;
+}
