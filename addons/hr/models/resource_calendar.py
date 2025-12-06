@@ -1,18 +1,24 @@
-# Part of Odoo. See LICENSE file for full copyright and licensing details.
 
-from odoo import models
-from odoo.tools import float_compare
+from odoo import fields, models
+from odoo.fields import Domain
 
 
 class ResourceCalendar(models.Model):
     _inherit = 'resource.calendar'
 
-    def _calculate_hours_per_week(self):
-        self.ensure_one()
-        sum_hours = sum(
-            (a.hour_to - a.hour_from) for a in self.attendance_ids.filtered(lambda a: a.day_period != 'lunch'))
-        return sum_hours / 2 if self.two_weeks_calendar else sum_hours
+    def transfer_leaves_to(self, other_calendar, resources=None, from_date=None):
+        """
+            Transfer some resource.calendar.leaves from 'self' to another calendar 'other_calendar'.
+            Transfered leaves linked to `resources` (or all if `resources` is None) and starting
+            after 'from_date' (or today if None).
+        """
+        from_date = from_date or fields.Datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
+        domain = [
+            ('calendar_id', 'in', self.ids),
+            ('date_from', '>=', from_date),
+        ]
+        domain = Domain.AND([domain, [('resource_id', 'in', resources.ids)]]) if resources else domain
 
-    def _calculate_is_fulltime(self):
-        self.ensure_one()
-        return not float_compare(self.full_time_required_hours, self._calculate_hours_per_week(), 3)
+        self.env['resource.calendar.leaves'].search(domain).write({
+            'calendar_id': other_calendar.id,
+        })

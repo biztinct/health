@@ -1,11 +1,12 @@
-# -*- coding: utf-8 -*-
-
-from odoo import api, Command, fields, models, _
+from odoo import api, fields, models, _, Command
 from odoo.exceptions import ValidationError
-from odoo.osv import expression
+from odoo.fields import Domain
 from odoo.tools import format_amount
+from odoo.tools.misc import split_every
 
-ACCOUNT_DOMAIN = "['&', ('deprecated', '=', False), ('account_type', 'not in', ('asset_receivable','liability_payable','asset_cash','liability_credit_card','off_balance'))]"
+
+ACCOUNT_DOMAIN = "[('account_type', 'not in', ('asset_receivable','liability_payable','asset_cash','liability_credit_card','off_balance'))]"
+
 
 class ProductCategory(models.Model):
     _inherit = "product.category"
@@ -28,6 +29,8 @@ class ProductCategory(models.Model):
 #----------------------------------------------------------
 # Products
 #----------------------------------------------------------
+
+
 class ProductTemplate(models.Model):
     _inherit = "product.template"
 
@@ -61,15 +64,16 @@ class ProductTemplate(models.Model):
 
     def _get_product_accounts(self):
         return {
-            'income': self.property_account_income_id or self.categ_id.property_account_income_categ_id,
-            'expense': self.property_account_expense_id or self.categ_id.property_account_expense_categ_id
+            'income': (
+                self.property_account_income_id
+                or self.categ_id.property_account_income_categ_id
+                or (self.company_id or self.env.company).income_account_id
+            ), 'expense': (
+                self.property_account_expense_id
+                or self.categ_id.property_account_expense_categ_id
+                or (self.company_id or self.env.company).expense_account_id
+            ),
         }
-
-    def _get_asset_accounts(self):
-        res = {}
-        res['stock_input'] = False
-        res['stock_output'] = False
-        return res
 
     def get_product_accounts(self, fiscal_pos=None):
         return {
@@ -92,7 +96,7 @@ class ProductTemplate(models.Model):
 
     def _construct_tax_string(self, price):
         currency = self.currency_id
-        res = self.taxes_id.filtered(lambda t: t.company_id == self.env.company).compute_all(
+        res = self.taxes_id._filter_taxes_by_company(self.env.company).compute_all(
             price, product=self, partner=self.env['res.partner']
         )
         joined = []
@@ -111,21 +115,19 @@ class ProductTemplate(models.Model):
     @api.constrains('uom_id')
     def _check_uom_not_in_invoice(self):
         self.env['product.template'].flush_model(['uom_id'])
-        self._cr.execute("""
+        self.env.cr.execute("""
             SELECT prod_template.id
               FROM account_move_line line
               JOIN product_product prod_variant ON line.product_id = prod_variant.id
               JOIN product_template prod_template ON prod_variant.product_tmpl_id = prod_template.id
               JOIN uom_uom template_uom ON prod_template.uom_id = template_uom.id
-              JOIN uom_category template_uom_cat ON template_uom.category_id = template_uom_cat.id
               JOIN uom_uom line_uom ON line.product_uom_id = line_uom.id
-              JOIN uom_category line_uom_cat ON line_uom.category_id = line_uom_cat.id
              WHERE prod_template.id IN %s
                AND line.parent_state = 'posted'
-               AND template_uom_cat.id != line_uom_cat.id
+               AND template_uom.id != line_uom.id
              LIMIT 1
         """, [tuple(self.ids)])
-        if self._cr.fetchall():
+        if self.env.cr.fetchall():
             raise ValidationError(_(
                 "This product is already being used in posted Journal Entries.\n"
                 "If you want to change its Unit of Measure, please archive this product and create a new one."
@@ -140,15 +142,23 @@ class ProductTemplate(models.Model):
 
     def _force_default_sale_tax(self, companies):
         default_customer_taxes = companies.filtered('account_sale_tax_id').account_sale_tax_id
-        for product_grouped_by_tax in self.grouped('taxes_id').values():
-            product_grouped_by_tax.taxes_id += default_customer_taxes
-        self.invalidate_recordset(['taxes_id'])
+        if not default_customer_taxes:
+            return
+        links = [Command.link(t.id) for t in default_customer_taxes]
+        for sub_ids in split_every(self.env.cr.IN_MAX, self.ids):
+            chunk = self.browse(sub_ids)
+            chunk.write({'taxes_id': links})
+            chunk.invalidate_recordset(['taxes_id'])
 
     def _force_default_purchase_tax(self, companies):
         default_supplier_taxes = companies.filtered('account_purchase_tax_id').account_purchase_tax_id
-        for product_grouped_by_tax in self.grouped('supplier_taxes_id').values():
-            product_grouped_by_tax.supplier_taxes_id += default_supplier_taxes
-        self.invalidate_recordset(['supplier_taxes_id'])
+        if not default_supplier_taxes:
+            return
+        links = [Command.link(t.id) for t in default_supplier_taxes]
+        for sub_ids in split_every(self.env.cr.IN_MAX, self.ids):
+            chunk = self.browse(sub_ids)
+            chunk.write({'supplier_taxes_id': links})
+            chunk.invalidate_recordset(['supplier_taxes_id'])
 
     def _force_default_tax(self, companies):
         self._force_default_sale_tax(companies)
@@ -160,7 +170,7 @@ class ProductTemplate(models.Model):
         # If no company was set for the product, the product will be available for all companies and therefore should
         # have the default taxes of the other companies as well. sudo() is used since we're going to need to fetch all
         # the other companies default taxes which the user may not have access to.
-        other_companies = self.env['res.company'].sudo().search([('id', 'not in', self.env.companies.ids)])
+        other_companies = self.env['res.company'].sudo().search(['!', ('id', 'child_of', self.env.companies.ids)])
         if other_companies and products:
             products_without_company = products.filtered(lambda p: not p.company_id).sudo()
             products_without_company._force_default_tax(other_companies)
@@ -272,40 +282,45 @@ class ProductProduct(models.Model):
     # EDI
     # -------------------------------------------------------------------------
 
-    def _retrieve_product(self, name=None, default_code=None, barcode=None, company=None, extra_domain=None):
+    def _retrieve_product(self, company=None, extra_domain=None, **product_vals):
         '''Search all products and find one that matches one of the parameters.
+
+        :param company:         The company of the product.
+        :param extra_domain:    Any extra domain to add to the search.
+        :param product_vals:    Values the product should match.
+        :returns:               A product or an empty recordset if not found.
+        '''
+        domains = self._get_product_domain_search_order(**product_vals)
+        company = company or self.env.company
+        for _priority, domain in domains:
+            for company_domain in (
+                [*self.env['res.partner']._check_company_domain(company), ('company_id', '!=', False)],
+                [('company_id', '=', False)],
+            ):
+                if product := self.env['product.product'].search(
+                    Domain.AND([domain, company_domain, extra_domain or Domain.TRUE]), limit=1,
+                ):
+                    return product
+        return self.env['product.product']
+
+    def _get_product_domain_search_order(self, **vals):
+        """Gives the order of search for a product given the parameters.
 
         :param name:            The name of the product.
         :param default_code:    The default_code of the product.
         :param barcode:         The barcode of the product.
-        :param company:         The company of the product.
-        :param extra_domain:    Any extra domain to add to the search.
-        :returns:               A product or an empty recordset if not found.
-        '''
-        if name and '\n' in name:
-            # cut Sales Description from the name
-            name = name.split('\n')[0]
-        domains = []
-        if barcode:
-            domains.append([('barcode', '=', barcode)])
-        if default_code:
-            domains.append([('default_code', '=', default_code)])
-        if name:
-            domains += [[('name', '=', name)], [('name', 'ilike', name)]]
-
-        company = company or self.env.company
-        for company_domain in (
-            [*self.env['res.partner']._check_company_domain(company), ('company_id', '!=', False)],
-            [('company_id', '=', False)],
-        ):
-            products = self.env['product.product'].search(
-                expression.AND([
-                    expression.OR(domains),
-                    company_domain,
-                    extra_domain or [],
-                ]),
-            )
-            for domain in domains:
-                if products_by_domain := products.filtered_domain(domain):
-                    return products_by_domain[0]
-        return self.env['product.product']
+        :returns:               An ordered list of product domains and their associated priority.
+        :rtype: list[tuple[int, Domain]]
+        """
+        sorted_domains = []
+        if barcode := vals.get('barcode'):
+            sorted_domains.append((5, Domain('barcode', '=', barcode)))
+        if default_code := vals.get('default_code'):
+            sorted_domains.append((10, Domain('default_code', '=', default_code)))
+        if name := vals.get('name'):
+            name = name.split('\n', 1)[0]  # Cut sales description from the name
+            sorted_domains.append((15, Domain('name', '=', name)))
+            # avoid matching unrelated products whose names merely contain that short string
+            if len(name) > 4:
+                sorted_domains.append((20, Domain('name', 'ilike', name)))
+        return sorted_domains

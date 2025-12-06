@@ -13,27 +13,8 @@ class TestAccountAnalyticAccount(AccountTestInvoicingCommon, AnalyticCommon):
         super().setUpClass()
         cls.company_data_2 = cls.setup_other_company()
 
-        cls.env.user.groups_id += cls.env.ref('analytic.group_analytic_accounting')
-
         # By default, tests are run with the current user set on the first company.
         cls.env.user.company_id = cls.company_data['company']
-
-        cls.default_plan = cls.env['account.analytic.plan'].create({'name': 'Default'})
-        cls.analytic_account_a = cls.env['account.analytic.account'].create({
-            'name': 'analytic_account_a',
-            'plan_id': cls.default_plan.id,
-            'company_id': False,
-        })
-        cls.analytic_account_b = cls.env['account.analytic.account'].create({
-            'name': 'analytic_account_b',
-            'plan_id': cls.default_plan.id,
-            'company_id': False,
-        })
-        cls.analytic_account_d = cls.env['account.analytic.account'].create({
-            'name': 'analytic_account_d',
-            'plan_id': cls.default_plan.id,
-            'company_id': False,
-        })
 
         cls.cross_plan = cls.env['account.analytic.plan'].create({'name': 'Cross'})
         cls.analytic_account_5 = cls.env['account.analytic.account'].create({
@@ -69,7 +50,7 @@ class TestAccountAnalyticAccount(AccountTestInvoicingCommon, AnalyticCommon):
         })
 
         # Set a different company on the analytic account.
-        with self.assertRaises(UserError), self.cr.savepoint():
+        with self.assertRaises(UserError):
             self.analytic_account_3.company_id = self.company_data_2['company']
 
         # Making the analytic account not company dependent is allowed.
@@ -125,6 +106,42 @@ class TestAccountAnalyticAccount(AccountTestInvoicingCommon, AnalyticCommon):
         out_invoice.button_draft()
         self.assertFalse(self.get_analytic_lines(out_invoice))
 
+    def test_analytic_lines_multicurrency(self):
+        '''Ensures analytic lines are created when the aml has a secondary currency set.'''
+        # set up second currency
+        self.env.ref('base.PYG').write({
+            'rounding': 1.0,
+            'active': True,
+            'rate_ids': [Command.create({
+                'company_rate': 100,
+                'name': '2017-01-01',
+            })]
+        })
+
+        out_invoice = self.env['account.move'].create([{
+            'move_type': 'out_invoice',
+            'partner_id': self.partner_a.id,
+            'date': '2017-08-01',
+            'invoice_date': '2017-08-01',
+            'invoice_line_ids': [Command.create({
+                'product_id': self.product_a.id,
+                'price_unit': 2.00,
+                'analytic_distribution': {
+                    self.analytic_account_1.id: 100,
+                },
+                'currency_id': self.env.ref('base.PYG').id,
+            })],
+            'currency_id': self.env.ref('base.PYG').id,
+        }])
+
+        out_invoice.action_post()
+
+        # Will not show up if the wrong currency is used to round the amount.
+        self.assertRecordValues(self.get_analytic_lines(out_invoice), [{
+            'amount': 0.02,
+            self.analytic_plan_1._column_name(): self.analytic_account_1.id,
+        }])
+
     def test_analytic_lines_rounding(self):
         """ Ensures analytic lines rounding errors are spread across all lines, in such a way that summing them gives the right amount.
         For example, when distributing 100% of the the price, the sum of analytic lines should be exactly equal to the price. """
@@ -143,10 +160,10 @@ class TestAccountAnalyticAccount(AccountTestInvoicingCommon, AnalyticCommon):
                 'product_id': self.product_a.id,
                 'price_unit': 182.25,
                 'analytic_distribution': {
-                    self.analytic_account_a.id: 94,
-                    self.analytic_account_b.id: 2,
-                    self.analytic_account_5.id: 2,
-                    self.analytic_account_d.id: 2,
+                    self.analytic_account_1.id: 94,
+                    self.analytic_account_2.id: 2,
+                    self.analytic_account_3.id: 2,
+                    self.analytic_account_4.id: 2,
                 },
             })]
         }])
@@ -156,23 +173,23 @@ class TestAccountAnalyticAccount(AccountTestInvoicingCommon, AnalyticCommon):
         self.assertRecordValues(self.get_analytic_lines(out_invoice), [
             {
                 'amount': 3.64,
-                self.default_plan._column_name(): self.analytic_account_b.id,
-                self.cross_plan._column_name(): None,
+                self.analytic_plan_1._column_name(): self.analytic_account_2.id,
+                self.analytic_plan_2._column_name(): None,
             },
             {
                 'amount': 3.65,
-                self.default_plan._column_name(): self.analytic_account_d.id,
-                self.cross_plan._column_name(): None,
+                self.analytic_plan_1._column_name(): None,
+                self.analytic_plan_2._column_name(): self.analytic_account_4.id,
             },
             {
                 'amount': 3.65,
-                self.default_plan._column_name(): None,
-                self.cross_plan._column_name(): self.analytic_account_5.id,
+                self.analytic_plan_1._column_name(): None,
+                self.analytic_plan_2._column_name(): self.analytic_account_3.id,
             },
             {
                 'amount': 171.31,
-                self.default_plan._column_name(): self.analytic_account_a.id,
-                self.cross_plan._column_name(): None,
+                self.analytic_plan_1._column_name(): self.analytic_account_1.id,
+                self.analytic_plan_2._column_name(): None,
             },
         ])
 
@@ -182,33 +199,33 @@ class TestAccountAnalyticAccount(AccountTestInvoicingCommon, AnalyticCommon):
         # 45.56 * 4 = 182.24
         # we add 0.01 to one of the line to counter the rounding errors.
         out_invoice.invoice_line_ids[0].analytic_distribution = {
-            self.analytic_account_a.id: 25,
-            self.analytic_account_b.id: 25,
-            self.analytic_account_5.id: 25,
-            self.analytic_account_d.id: 25,
+            self.analytic_account_1.id: 25,
+            self.analytic_account_2.id: 25,
+            self.analytic_account_3.id: 25,
+            self.analytic_account_4.id: 25,
         }
         out_invoice.action_post()
 
         self.assertRecordValues(self.get_analytic_lines(out_invoice), [
             {
                 'amount': 45.56,
-                self.default_plan._column_name(): self.analytic_account_d.id,
-                self.cross_plan._column_name(): None,
+                self.analytic_plan_1._column_name(): None,
+                self.analytic_plan_2._column_name(): self.analytic_account_4.id,
             },
             {
                 'amount': 45.56,
-                self.default_plan._column_name(): None,
-                self.cross_plan._column_name(): self.analytic_account_5.id,
+                self.analytic_plan_1._column_name(): None,
+                self.analytic_plan_2._column_name(): self.analytic_account_3.id,
             },
             {
                 'amount': 45.56,
-                self.default_plan._column_name(): self.analytic_account_b.id,
-                self.cross_plan._column_name(): None,
+                self.analytic_plan_1._column_name(): self.analytic_account_2.id,
+                self.analytic_plan_2._column_name(): None,
             },
             {
                 'amount': 45.57,
-                self.default_plan._column_name(): self.analytic_account_a.id,
-                self.cross_plan._column_name(): None,
+                self.analytic_plan_1._column_name(): self.analytic_account_1.id,
+                self.analytic_plan_2._column_name(): None,
             },
         ])
 
@@ -593,10 +610,11 @@ class TestAccountAnalyticAccount(AccountTestInvoicingCommon, AnalyticCommon):
         """
         Test that the line syncs, especially the tax line, keep the analytic distribution when saving the move
         """
-        account_with_tax = self.company_data['default_account_revenue'].copy({'tax_ids': [Command.set(self.company_data['default_tax_sale'].ids)]})
+        sale_tax = self.company_data['default_tax_sale']
+        account_with_tax = self.company_data['default_account_revenue'].copy({'tax_ids': [Command.set(sale_tax.ids)]})
         move = self.env['account.move'].create({
             'move_type': 'entry',
-            'line_ids': [Command.create({'account_id': account_with_tax.id, 'debit': 100})]
+            'line_ids': [Command.create({'account_id': account_with_tax.id, 'debit': 100, 'tax_ids': [Command.set(sale_tax.ids)]})]
         })
 
         move.line_ids.write({'analytic_distribution': {self.analytic_account_1.id: 100}})
@@ -764,3 +782,351 @@ class TestAccountAnalyticAccount(AccountTestInvoicingCommon, AnalyticCommon):
             f"{self.analytic_account_1.id}": 30,
             f"{self.analytic_account_2.id}": 60,
         })
+
+    def test_zero_balance_invoice_with_analytic_line(self):
+        """ Test that creating an analytic line on a 0-amount invoice does not crash and updates analytic_distribution safely. """
+        self.product_a.list_price = 0.0
+        invoice = self.create_invoice(self.partner_a, self.product_a)
+        invoice.action_post()
+        self.env['account.analytic.line'].create({
+            'name': 'Zero Balance Test',
+            'account_id': self.analytic_account_1.id,
+            'amount': 33.0,
+            'move_line_id': invoice.invoice_line_ids.id,
+        })
+        self.assertEqual(invoice.invoice_line_ids.analytic_distribution, {f"{self.analytic_account_1.id}": 100.0})
+
+    def test_analytic_dynamic_update(self):
+        plan1 = self.analytic_account_1.plan_id._column_name()
+        plan2 = self.analytic_account_3.plan_id._column_name()
+
+        invoice = self.env['account.move'].create({
+            'move_type': 'out_invoice',
+            'partner_id': self.partner_a.id,
+            'date': '2023-01-01',
+            'invoice_date': '2023-01-01',
+            'invoice_line_ids': [
+                Command.create({
+                    'product_id': self.product_a.id,
+                    'price_unit': 100.0,
+                    'analytic_distribution': {
+                        self.analytic_account_1.id: 40,
+                        self.analytic_account_2.id: 60,
+                    },
+                }),
+            ],
+        })
+        invoice_line = invoice.invoice_line_ids
+
+        for comment, init, update, expect in [(
+            "Add a distribution on a previously empty plan",
+            {
+                f"{self.analytic_account_1.id}": 40,
+                f"{self.analytic_account_2.id}": 60,
+            }, {
+                '__update__': [plan2],
+                f"{self.analytic_account_3.id}": 25,
+                f"{self.analytic_account_4.id}": 75,
+            }, {
+                f"{self.analytic_account_1.id},{self.analytic_account_3.id}": 10,
+                f"{self.analytic_account_2.id},{self.analytic_account_3.id}": 15,
+                f"{self.analytic_account_1.id},{self.analytic_account_4.id}": 30,
+                f"{self.analytic_account_2.id},{self.analytic_account_4.id}": 45,
+            },
+        ), (
+            "Add a distribution on a previously empty plan, both less than 100%",
+            {
+                f"{self.analytic_account_1.id}": 20,
+                f"{self.analytic_account_2.id}": 30,
+            }, {
+                '__update__': [plan2],
+                f"{self.analytic_account_3.id}": 10,
+                f"{self.analytic_account_4.id}": 40,
+            }, {
+                f"{self.analytic_account_1.id},{self.analytic_account_3.id}": 4,
+                f"{self.analytic_account_2.id},{self.analytic_account_3.id}": 6,
+                f"{self.analytic_account_1.id},{self.analytic_account_4.id}": 16,
+                f"{self.analytic_account_2.id},{self.analytic_account_4.id}": 24,
+            },
+        ), (
+            "Add a distribution on a previously empty plan, both more than 100%",
+            {
+                f"{self.analytic_account_1.id}": 200,
+                f"{self.analytic_account_2.id}": 300,
+            }, {
+                '__update__': [plan2],
+                f"{self.analytic_account_3.id}": 100,
+                f"{self.analytic_account_4.id}": 400,
+            }, {
+                f"{self.analytic_account_1.id},{self.analytic_account_3.id}": 40,
+                f"{self.analytic_account_2.id},{self.analytic_account_3.id}": 60,
+                f"{self.analytic_account_1.id},{self.analytic_account_4.id}": 160,
+                f"{self.analytic_account_2.id},{self.analytic_account_4.id}": 240,
+            },
+        ), (
+            "Update the percentage of one plan without changing the other",
+            {
+                f"{self.analytic_account_1.id},{self.analytic_account_3.id}": 10,
+                f"{self.analytic_account_2.id},{self.analytic_account_3.id}": 15,
+                f"{self.analytic_account_1.id},{self.analytic_account_4.id}": 30,
+                f"{self.analytic_account_2.id},{self.analytic_account_4.id}": 45,
+            }, {
+                '__update__': [plan1, plan2],
+                f"{self.analytic_account_1.id},{self.analytic_account_3.id}": 15,
+                f"{self.analytic_account_2.id},{self.analytic_account_3.id}": 10,
+                f"{self.analytic_account_1.id},{self.analytic_account_4.id}": 45,
+                f"{self.analytic_account_2.id},{self.analytic_account_4.id}": 30,
+            }, {
+                f"{self.analytic_account_1.id},{self.analytic_account_3.id}": 15,
+                f"{self.analytic_account_2.id},{self.analytic_account_3.id}": 10,
+                f"{self.analytic_account_1.id},{self.analytic_account_4.id}": 45,
+                f"{self.analytic_account_2.id},{self.analytic_account_4.id}": 30,
+            },
+        ), (
+            "Update the percentage on both plans at the same time",
+            {
+                f"{self.analytic_account_1.id},{self.analytic_account_3.id}": 10,
+                f"{self.analytic_account_2.id},{self.analytic_account_3.id}": 15,
+                f"{self.analytic_account_1.id},{self.analytic_account_4.id}": 30,
+                f"{self.analytic_account_2.id},{self.analytic_account_4.id}": 45,
+            }, {
+                '__update__': [plan1, plan2],
+                f"{self.analytic_account_1.id},{self.analytic_account_3.id}": 45,
+                f"{self.analytic_account_2.id},{self.analytic_account_3.id}": 30,
+                f"{self.analytic_account_1.id},{self.analytic_account_4.id}": 15,
+                f"{self.analytic_account_2.id},{self.analytic_account_4.id}": 10,
+            }, {
+                f"{self.analytic_account_1.id},{self.analytic_account_3.id}": 45,
+                f"{self.analytic_account_2.id},{self.analytic_account_3.id}": 30,
+                f"{self.analytic_account_1.id},{self.analytic_account_4.id}": 15,
+                f"{self.analytic_account_2.id},{self.analytic_account_4.id}": 10,
+            },
+        ), (
+            "Remove everything set on plan 1",
+            {
+                f"{self.analytic_account_1.id},{self.analytic_account_3.id}": 45,
+                f"{self.analytic_account_2.id},{self.analytic_account_3.id}": 30,
+                f"{self.analytic_account_1.id},{self.analytic_account_4.id}": 15,
+                f"{self.analytic_account_2.id},{self.analytic_account_4.id}": 10,
+            }, {
+                '__update__': [plan1],
+            }, {
+                f"{self.analytic_account_3.id}": 75,
+                f"{self.analytic_account_4.id}": 25,
+            },
+        ), (
+            "Nothing changes because there is nothing in __update__",
+            {
+                f"{self.analytic_account_1.id}": 40,
+                f"{self.analytic_account_2.id}": 60,
+            }, {
+                '__update__': [],
+            }, {
+                f"{self.analytic_account_1.id}": 40,
+                f"{self.analytic_account_2.id}": 60,
+            },
+        ), (
+            "remove everything because __update__ is not set",
+            {
+                f"{self.analytic_account_1.id}": 40,
+                f"{self.analytic_account_2.id}": 60,
+            }, {
+            }, False,
+        ), (
+            "Add a distribution on a previously empty plan, with more than 100%",
+            {
+                f"{self.analytic_account_1.id}": 40,
+                f"{self.analytic_account_2.id}": 60,
+            }, {
+                '__update__': [plan2],
+                f"{self.analytic_account_3.id}": 33,
+                f"{self.analytic_account_4.id}": 167,
+            }, {
+                f"{self.analytic_account_1.id},{self.analytic_account_3.id}": 6.6,
+                f"{self.analytic_account_1.id},{self.analytic_account_4.id}": 33.4,
+                f"{self.analytic_account_2.id},{self.analytic_account_3.id}": 9.9,
+                f"{self.analytic_account_2.id},{self.analytic_account_4.id}": 50.1,
+                f"{self.analytic_account_3.id}": 16.5,
+                f"{self.analytic_account_4.id}": 83.5,
+            },
+        ), (
+            "Add a distribution on a previously empty plan, with previous values more than 100%",
+            {
+                f"{self.analytic_account_3.id}": 33,
+                f"{self.analytic_account_4.id}": 167,
+            }, {
+                '__update__': [plan1],
+                f"{self.analytic_account_1.id}": 40,
+                f"{self.analytic_account_2.id}": 60,
+            }, {
+                f"{self.analytic_account_3.id},{self.analytic_account_1.id}": 6.6,
+                f"{self.analytic_account_4.id},{self.analytic_account_1.id}": 33.4,
+                f"{self.analytic_account_3.id},{self.analytic_account_2.id}": 9.9,
+                f"{self.analytic_account_4.id},{self.analytic_account_2.id}": 50.1,
+                f"{self.analytic_account_3.id}": 16.5,
+                f"{self.analytic_account_4.id}": 83.5,
+            },
+        ), (
+            "Add a distribution on a previously empty plan, with less than 100%",
+            {
+                f"{self.analytic_account_1.id}": 40,
+                f"{self.analytic_account_2.id}": 60,
+            }, {
+                '__update__': [plan2],
+                f"{self.analytic_account_3.id}": 20,
+                f"{self.analytic_account_4.id}": 30,
+            }, {
+                f"{self.analytic_account_1.id},{self.analytic_account_3.id}": 8,
+                f"{self.analytic_account_1.id},{self.analytic_account_4.id}": 12,
+                f"{self.analytic_account_2.id},{self.analytic_account_3.id}": 12,
+                f"{self.analytic_account_2.id},{self.analytic_account_4.id}": 18,
+                f"{self.analytic_account_1.id}": 20,
+                f"{self.analytic_account_2.id}": 30,
+            },
+        ), (
+            "Add a distribution on a previously empty plan, with previous values less than 100%",
+            {
+                f"{self.analytic_account_3.id}": 20,
+                f"{self.analytic_account_4.id}": 30,
+            }, {
+                '__update__': [plan1],
+                f"{self.analytic_account_1.id}": 40,
+                f"{self.analytic_account_2.id}": 60,
+            }, {
+                f"{self.analytic_account_3.id},{self.analytic_account_1.id}": 8,
+                f"{self.analytic_account_4.id},{self.analytic_account_1.id}": 12,
+                f"{self.analytic_account_3.id},{self.analytic_account_2.id}": 12,
+                f"{self.analytic_account_4.id},{self.analytic_account_2.id}": 18,
+                f"{self.analytic_account_1.id}": 20,
+                f"{self.analytic_account_2.id}": 30,
+            },
+        )]:
+            with self.subTest(comment=comment):
+                invoice_line.analytic_distribution = init
+                invoice_line.flush_recordset(['analytic_distribution'])
+                invoice_line.analytic_distribution = update
+                self.assertEqual(invoice_line.analytic_distribution, expect)
+
+    def test_move_with_analytic_lines(self):
+        """
+        Ensure that, if analytic lines are created when a move is in draft state (as happens when importing a move
+        with analytics), the analytic lines are unlinked. AMLs should still have the correct analytic distribution.
+        """
+        # Create a move with commands to create analytic lines
+        journal_entry = self.env['account.move'].create({
+            'move_type': 'entry',
+            'line_ids': [
+                Command.create({
+                    'name': 'debit',
+                    'account_id': self.company_data['default_account_revenue'].id,
+                    'debit': 2000.0,
+                    'credit': 0.0,
+                    'analytic_line_ids': [Command.create({
+                        'name': 'Analytic Line 1',
+                        'account_id': self.analytic_account_2.id,
+                        'amount': -2000,
+                        self.analytic_plan_1._column_name(): self.analytic_account_1.id,
+                        self.analytic_plan_2._column_name(): self.analytic_account_3.id,
+                    })],
+                }),
+                Command.create({
+                    'name': 'credit',
+                    'account_id': self.company_data['default_account_expense'].id,
+                    'debit': 0.0,
+                    'credit': 2000.0,
+                    'analytic_line_ids': [Command.create({
+                        'name': 'Analytic Line 2',
+                        'account_id': self.analytic_account_2.id,
+                        'amount': 2000.0,
+                        self.analytic_plan_1._column_name(): False,
+                        self.analytic_plan_2._column_name(): False,
+                    })],
+                }),
+            ],
+        })
+
+        # No analytic line should be created at this point
+        self.assertFalse(self.get_analytic_lines(journal_entry))
+
+        # Confirm that the analytic distribution was correctly set based on the analytic_line_ids values
+        self.assertRecordValues(journal_entry.line_ids, [
+            {'analytic_distribution': {
+                f"{self.analytic_account_2.id},{self.analytic_account_1.id},{self.analytic_account_3.id}": 100.0,
+            }},
+            {'analytic_distribution': {f"{self.analytic_account_2.id}": 100.0}},
+        ])
+
+        # Write to an existing draft move, with a command to create analytic lines
+        journal_entry.line_ids[0].write({
+            'analytic_line_ids': [Command.create({
+                'name': 'Analytic Line 1',
+                'account_id': False,
+                'amount': -2000,
+                self.analytic_plan_1._column_name(): self.analytic_account_1.id,
+                self.analytic_plan_2._column_name(): False,
+            })],
+        })
+
+        # Still no analytic line
+        self.assertFalse(self.get_analytic_lines(journal_entry))
+
+        # Confirm that the analytic distribution is correct
+        self.assertRecordValues(journal_entry.line_ids, [
+            {'analytic_distribution': {f"{self.analytic_account_1.id}": 100.0}},
+            {'analytic_distribution': {f"{self.analytic_account_2.id}": 100.0}},
+        ])
+
+        # After posting the move, the analytic line should be created as usual
+        journal_entry.action_post()
+        self.assertTrue(self.get_analytic_lines(journal_entry))
+
+    def test_analytic_lines_on_post(self):
+        """
+        In some cases (e.g. when there is a purchase lock, the journal has autocheck_on_post=False),
+        when the move state is changed to post, write is first triggered for dependencies while the move
+        state is still 'draft'. In these cases, the analytic lines created should not be deleted.
+        """
+        in_invoice = self.env['account.move'].create([{
+            'move_type': 'in_invoice',
+            'partner_id': self.partner_a.id,
+            'date': '2017-01-01',
+            'invoice_date': '2017-01-01',
+            'invoice_line_ids': [
+                Command.create({
+                    'product_id': self.product_a.id,
+                    'price_unit': 100.0,
+                    'analytic_distribution': {self.analytic_account_1.id: 100},
+                }),
+            ],
+        }])
+        in_invoice.company_id.purchase_lock_date = '2017-01-31'
+        in_invoice.action_post()
+        self.assertTrue(self.get_analytic_lines(in_invoice))
+
+    def test_multicurrency_different_rounding_analytic_line(self):
+        """If using a foreign currency, the rounding of the analytic_line amount should the one from the company currency"""
+        foreign_currency = self.env['res.currency'].create({
+            'name': "Great Currency",
+            'symbol': '🫀',
+            'rounding': 1,
+            'rate_ids': [
+                Command.create({'name': '2025-01-01', 'rate': 3}),
+            ],
+        })
+        invoice = self.env['account.move'].create({
+            'move_type': 'out_invoice',
+            'partner_id': self.partner_a.id,
+            'date': '2025-01-01',
+            'currency_id': foreign_currency.id,
+            'invoice_line_ids': [Command.create({
+                'product_id': self.product_a.id,
+                'price_unit': 10.0,
+                'quantity': 1,
+                'tax_ids': [],
+                'analytic_distribution': {
+                    self.analytic_account_1.id: 100,
+                },
+            })]
+        })
+        invoice.action_post()
+        self.assertEqual(self.get_analytic_lines(invoice).amount, 3.33)

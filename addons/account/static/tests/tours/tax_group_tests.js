@@ -1,8 +1,6 @@
-/** @odoo-module */
-
 import { accountTourSteps } from "@account/js/tours/account";
 import { registry } from "@web/core/registry";
-import { stepUtils } from "@web_tour/tour_service/tour_utils";
+import { stepUtils } from "@web_tour/tour_utils";
 
 registry.category("web_tour.tours").add('account_tax_group', {
     url: "/odoo",
@@ -36,6 +34,22 @@ registry.category("web_tour.tours").add('account_tax_group', {
         content: "Valid vendor",
         trigger: '.ui-menu-item a:contains("Account Tax Group Partner")',
         run: "click",
+    },
+    // Show product column
+    {
+        content: "Open line fields list",
+        trigger: ".o_optional_columns_dropdown_toggle",
+        run: "click"
+    },
+    {
+        content: "Show product column",
+        trigger: '.o-dropdown-item input[name="product_id"]',
+        run: "click"
+    },
+    {
+        content: "Close line fields list",
+        trigger: ".o_optional_columns_dropdown_toggle",
+        run: "click"
     },
     // Add First product
     {

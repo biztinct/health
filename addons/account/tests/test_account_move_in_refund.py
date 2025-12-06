@@ -447,7 +447,7 @@ class TestAccountMoveInRefundOnchanges(AccountTestInvoicingCommon):
 
     def test_in_refund_line_onchange_cash_rounding_1(self):
         # Required for `invoice_cash_rounding_id` to be visible in the view
-        self.env.user.groups_id += self.env.ref('account.group_cash_rounding')
+        self.env.user.group_ids += self.env.ref('account.group_cash_rounding')
         # Test 'add_invoice_line' rounding
         move_form = Form(self.invoice)
         # Add a cash rounding having 'add_invoice_line'.
@@ -605,6 +605,8 @@ class TestAccountMoveInRefundOnchanges(AccountTestInvoicingCommon):
         })
 
     def test_in_refund_line_onchange_currency_1(self):
+        self.other_currency.rounding = 0.001
+
         move_form = Form(self.invoice)
         move_form.currency_id = self.other_currency
         move_form.save()
@@ -712,7 +714,7 @@ class TestAccountMoveInRefundOnchanges(AccountTestInvoicingCommon):
                 **self.product_line_vals_2,
                 'currency_id': self.other_currency.id,
                 'amount_currency': -160.0,
-                'credit': 53.33,
+                'credit': 53.34,
             },
             {
                 **self.tax_line_vals_1,
@@ -730,7 +732,7 @@ class TestAccountMoveInRefundOnchanges(AccountTestInvoicingCommon):
                 **self.term_line_vals_1,
                 'currency_id': self.other_currency.id,
                 'amount_currency': 208.006,
-                'debit': 69.33,
+                'debit': 69.34,
                 'date_maturity': fields.Date.from_string('2016-01-01'),
             },
         ], {
@@ -787,8 +789,8 @@ class TestAccountMoveInRefundOnchanges(AccountTestInvoicingCommon):
             # `purchase` adds a view which makes `invoice_vendor_bill_id` invisible
             # for purchase users
             # https://github.com/odoo/odoo/blob/385884afd31f25d61e99d139ecd4c574d99a1863/addons/purchase/views/account_move_views.xml#L26
-            self.env.user.groups_id -= self.env.ref('purchase.group_purchase_manager')
-            self.env.user.groups_id -= self.env.ref('purchase.group_purchase_user')
+            self.env.user.group_ids -= self.env.ref('purchase.group_purchase_manager')
+            self.env.user.group_ids -= self.env.ref('purchase.group_purchase_user')
         # invisible="state != 'draft' or move_type != 'in_invoice'"
         # This is an in_refund invoice, `invoice_vendor_bill_id` is not supposed to be visible
         # and therefore not supposed to be changed.
@@ -1215,7 +1217,6 @@ class TestAccountMoveInRefundOnchanges(AccountTestInvoicingCommon):
         # check caba move
         partial_rec = invoice.mapped('line_ids.matched_credit_ids')
         caba_move = self.env['account.move'].search([('tax_cash_basis_rec_id', '=', partial_rec.id)])
-        # all amls with tax_tag should all have tax_tag_invert at True since the caba move comes from a vendor refund
         expected_values = [
             {
                 'tax_line_id': False,
@@ -1225,7 +1226,6 @@ class TestAccountMoveInRefundOnchanges(AccountTestInvoicingCommon):
                 'account_id': not_default_expense_account.id,
                 'debit': 800.0,
                 'credit': 0.0,
-                'tax_tag_invert': False,
             },
             {
                 'tax_line_id': False,
@@ -1235,7 +1235,6 @@ class TestAccountMoveInRefundOnchanges(AccountTestInvoicingCommon):
                 'account_id': not_default_expense_account.id,
                 'debit': 0.0,
                 'credit': 800.0,
-                'tax_tag_invert': True,
             },
             {
                 'tax_line_id': False,
@@ -1245,7 +1244,6 @@ class TestAccountMoveInRefundOnchanges(AccountTestInvoicingCommon):
                 'account_id': default_expense_account.id,
                 'debit': 0.0,
                 'credit': 300.0,
-                'tax_tag_invert': False,
             },
             {
                 'tax_line_id': False,
@@ -1255,7 +1253,6 @@ class TestAccountMoveInRefundOnchanges(AccountTestInvoicingCommon):
                 'account_id': default_expense_account.id,
                 'debit': 300.0,
                 'credit': 0.0,
-                'tax_tag_invert': True,
             },
             {
                 'tax_line_id': False,
@@ -1265,7 +1262,6 @@ class TestAccountMoveInRefundOnchanges(AccountTestInvoicingCommon):
                 'account_id': tax_waiting_account.id,
                 'debit': 50.0,
                 'credit': 0.0,
-                'tax_tag_invert': False,
             },
             {
                 'tax_line_id': tax.id,
@@ -1275,7 +1271,6 @@ class TestAccountMoveInRefundOnchanges(AccountTestInvoicingCommon):
                 'account_id': tax_final_account.id,
                 'debit': 0.0,
                 'credit': 50.0,
-                'tax_tag_invert': True,
             },
         ]
         self.assertRecordValues(caba_move.line_ids, expected_values)

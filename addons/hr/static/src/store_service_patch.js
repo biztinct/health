@@ -6,6 +6,7 @@ import { patch } from "@web/core/utils/patch";
 const storeServicePatch = {
     setup() {
         super.setup();
+        /** @type {{[key: number]: {id: number, user_id: number, hasCheckedUser: boolean}}} */
         this.employees = {};
     },
     async getChat(person) {
@@ -34,10 +35,9 @@ const storeServicePatch = {
                     user = this.users[employee.user_id];
                 }
                 user.partner_id = employeeData.user_partner_id[0];
-                this.Persona.insert({
-                    displayName: employeeData.user_partner_id[1],
+                this["res.partner"].insert({
+                    display_name: employeeData.user_partner_id[1],
                     id: employeeData.user_partner_id[0],
-                    type: "partner",
                 });
             }
         }

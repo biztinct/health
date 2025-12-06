@@ -1,35 +1,27 @@
-/* @odoo-module */
-
 import { patch } from "@web/core/utils/patch";
 import { AvatarCardPopover } from "@mail/discuss/web/avatar_card/avatar_card_popover";
+import { useService } from "@web/core/utils/hooks";
 
 export const patchAvatarCardPopover = {
     setup() {
         super.setup();
+        this.orm = useService("orm");
         this.userInfoTemplate = "hr.avatarCardUserInfos";
     },
-    get fieldNames() {
-        const fields = super.fieldNames;
-        return fields.concat([
-            "work_phone",
-            "work_email",
-            "work_location_name",
-            "work_location_type",
-            "job_title",
-            "department_id",
-            this.props.recordModel ? "employee_id" : "employee_ids",
-        ]);
-    },
     get email() {
-        return this.user.work_email || this.user.email;
+        return this.employeeId?.work_email || super.email;
     },
     get phone() {
-        return this.user.work_phone || this.user.phone;
+        return this.employeeId?.work_phone || super.phone;
+    },
+    get employeeId() {
+        return this.partner?.employee_id;
     },
     async getProfileAction() {
-        return this.user.employee_ids?.length > 0
-            ? this.orm.call("hr.employee", "get_formview_action", [this.user.employee_ids[0]])
-            : super.getProfileAction(...arguments);
+        if (!this.employeeId) {
+            return super.getProfileAction(...arguments);
+        }
+        return this.orm.call("hr.employee", "get_formview_action", [this.employeeId.id]);
     },
 };
 

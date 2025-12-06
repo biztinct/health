@@ -1,5 +1,3 @@
-/** @odoo-module **/
-
 import { _t } from "@web/core/l10n/translation";
 import { registry } from "@web/core/registry";
 import { usePopover } from "@web/core/popover/popover_hook";
@@ -80,7 +78,7 @@ export class AccountPaymentField extends Component {
 
 export const accountPaymentField = {
     component: AccountPaymentField,
-    supportedTypes: ["char"],
+    supportedTypes: ["binary"],
 };
 
 registry.category("fields").add("payment", accountPaymentField);

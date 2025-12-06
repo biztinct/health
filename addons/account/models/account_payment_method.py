@@ -1,21 +1,21 @@
-# -*- coding: utf-8 -*-
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 from odoo import api, fields, models
-from odoo.osv import expression
+from odoo.fields import Domain
 
 
 class AccountPaymentMethod(models.Model):
-    _name = "account.payment.method"
+    _name = 'account.payment.method'
     _description = "Payment Methods"
 
     name = fields.Char(required=True, translate=True)
     code = fields.Char(required=True)  # For internal identification
     payment_type = fields.Selection(selection=[('inbound', 'Inbound'), ('outbound', 'Outbound')], required=True)
 
-    _sql_constraints = [
-        ('name_code_unique', 'unique (code, payment_type)', 'The combination code/payment type already exists!'),
-    ]
+    _name_code_unique = models.Constraint(
+        'unique (code, payment_type)',
+        'The combination code/payment type already exists!',
+    )
 
     @api.model_create_multi
     def create(self, vals_list):
@@ -46,21 +46,20 @@ class AccountPaymentMethod(models.Model):
         :return: The domain specifying which journal can accommodate this payment method.
         """
         if not code:
-            return []
+            return Domain.TRUE
         information = self._get_payment_method_information().get(code)
         journal_types = information.get('type', ('bank', 'cash', 'credit'))
-        domains = [[('type', 'in', journal_types)]]
+        domain = Domain('type', 'in', journal_types)
 
         if with_currency and (currency_ids := information.get('currency_ids')):
-            domains += [expression.OR([
-                [('currency_id', '=', False), ('company_id.currency_id', 'in', currency_ids)],
-                [('currency_id', 'in', currency_ids)],
-            ])]
+            domain &= (
+                Domain('currency_id', '=', False) & Domain('company_id.currency_id', 'in', currency_ids)
+            ) | Domain('currency_id', 'in', currency_ids)
 
         if with_country and (country_id := information.get('country_id')):
-            domains += [[('company_id.account_fiscal_country_id', '=', country_id)]]
+            domain &= Domain('company_id.account_fiscal_country_id', '=', country_id)
 
-        return expression.AND(domains)
+        return domain
 
     @api.model
     def _get_payment_method_information(self):
@@ -94,7 +93,7 @@ class AccountPaymentMethod(models.Model):
 
 
 class AccountPaymentMethodLine(models.Model):
-    _name = "account.payment.method.line"
+    _name = 'account.payment.method.line'
     _description = "Payment Methods"
     _order = 'sequence, id'
 
@@ -112,12 +111,12 @@ class AccountPaymentMethodLine(models.Model):
         check_company=True,
         copy=False,
         ondelete='restrict',
-        domain="[('deprecated', '=', False), "
-                "'|', ('account_type', 'in', ('asset_current', 'liability_current')), ('id', '=', default_account_id)]"
+        domain="['|', ('account_type', 'in', ('asset_current', 'liability_current')), ('id', '=', default_account_id)]"
     )
     journal_id = fields.Many2one(
         comodel_name='account.journal',
         check_company=True,
+        index='btree_not_null',
     )
     default_account_id = fields.Many2one(
         related='journal_id.default_account_id'

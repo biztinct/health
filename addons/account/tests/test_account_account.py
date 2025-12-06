@@ -217,7 +217,7 @@ class TestAccountAccount(TestAccountMergeCommon):
         ''' Test the constraint on `account.company_ids`. '''
         # Test that at least one company is required on accounts.
         with self.assertRaises(UserError):
-            self.company_data['default_account_revenue'].company_ids = False
+            self.company_data['default_account_revenue'].sudo().company_ids = False
 
         # Test that unassigning a company from an account fails if there already are journal items
         # for that company and that account.
@@ -335,7 +335,7 @@ class TestAccountAccount(TestAccountMergeCommon):
         move.line_ids.filtered(lambda line: line.account_id == account).reconcile()
 
         # Try to set the account as a not-reconcile one.
-        with self.assertRaises(UserError), self.cr.savepoint():
+        with self.assertRaises(UserError):
             account.reconcile = False
 
     def test_remove_account_from_account_group(self):
@@ -593,7 +593,7 @@ class TestAccountAccount(TestAccountMergeCommon):
 
             - Creates: partner and a account move of that partner.
             - Checks if the most frequent account for the partner matches created account (with recent move).
-            - Sets the account as deprecated and checks that it no longer appears in the suggestions.
+            - Sets the account as archived and checks that it no longer appears in the suggestions.
 
             * since tested function takes into account last 2 years, we use freeze_time
         """
@@ -613,14 +613,14 @@ class TestAccountAccount(TestAccountMergeCommon):
         )
         self.assertEqual(account.id, results_1[0], "Account with most account_moves should be listed first")
 
-        account.deprecated = True
-        account.flush_recordset(['deprecated'])
+        account.active = False
+        account.flush_recordset(['active'])
         results_2 = self.env['account.account']._get_most_frequent_accounts_for_partner(
             company_id=self.env.company.id,
             partner_id=partner.id,
             move_type="out_invoice"
         )
-        self.assertFalse(account.id in results_2, "Deprecated account should NOT appear in account suggestions")
+        self.assertFalse(account.id in results_2, "Archived account should NOT appear in account suggestions")
 
     def test_placeholder_code(self):
         """ Test that the placeholder code is '{code_in_company} ({company})'
@@ -642,7 +642,7 @@ class TestAccountAccount(TestAccountMergeCommon):
             login='user_that_cannot_access_company_2',
             password='user_that_cannot_access_company_2',
             email='user_that_cannot_access_company_2@test.com',
-            groups_id=self.get_default_groups().ids,
+            group_ids=self.get_default_groups().ids,
             company_id=self.env.company.id,
         )
 
@@ -677,14 +677,14 @@ class TestAccountAccount(TestAccountMergeCommon):
             login='user_that_cannot_access_company_2',
             password='user_that_cannot_access_company_2',
             email='user_that_cannot_access_company_2@test.com',
-            groups_id=self.get_default_groups().ids,
+            group_ids=self.get_default_groups().ids,
             company_id=self.env.company.id,
         )
 
         searched_account = self.env['account.account'].with_user(user_that_cannot_access_company_2).sudo().search([('id', '=', account.id)])
         self.assertEqual(searched_account, account)
 
-    @freeze_time('2017-01-01')
+    @freeze_time('2018-01-01')
     def test_account_opening_balance(self):
         company = self.env.company
         account = self.company_data['default_account_revenue']
@@ -1040,3 +1040,36 @@ class TestAccountAccount(TestAccountMergeCommon):
         invoice.line_ids._compute_account_id()
 
         self.assertEqual(invoice.invoice_line_ids.account_id, self.company_data['default_account_revenue'])
+
+    def test_access_to_parent_accounts_from_branch(self):
+        """ Ensure that a user with access to a branch can access to the accounts of the parent company """
+        parent_company = self.env['res.company'].create([{
+            'name': "Parent Company",
+        }])
+        branch = self.env['res.company'].create([{
+            'name': "Branch Company",
+            'parent_id': parent_company.id,
+        }])
+        self.env['account.account'].create([{
+            'name': 'Parent Account',
+            'code': '444719',
+            'company_ids': [Command.link(parent_company.id)]
+        }])
+        # create a user with account rights and access to the branch company only
+        branch_user = self.env['res.users'].create({
+            'login': 'branch',
+            'name': 'XYZ',
+            'email': 'xyz@example.com',
+            'group_ids': [Command.link(self.env.ref('account.group_account_user').id)],
+            'company_ids': [Command.link(branch.id)],
+            'company_id': branch.id,
+        })
+
+        parent_accounts = self.env['account.account'].search([('company_ids', '=', parent_company.id)])
+        self.assertEqual(len(parent_accounts), 1, "There should be 1 account in the parent company")
+
+        branch_accounts = self.env['account.account'].search([('company_ids', '=', branch.id)])
+        self.assertEqual(len(branch_accounts), 0, "There should be no account in the branch company")
+        # get the accounts from the parent company with the branch user
+        accounts = self.env['account.account'].with_user(branch_user.id).search([('company_ids', 'parent_of', [branch.id])])
+        self.assertEqual(len(accounts), 1, "Branch user should have access to the accounts of the parent company")

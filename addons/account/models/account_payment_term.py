@@ -9,7 +9,7 @@ from dateutil.relativedelta import relativedelta
 
 
 class AccountPaymentTerm(models.Model):
-    _name = "account.payment.term"
+    _name = 'account.payment.term'
     _description = "Payment Terms"
     _order = "sequence, id"
     _check_company_domain = models.check_company_domain_parent_of
@@ -18,7 +18,7 @@ class AccountPaymentTerm(models.Model):
         return [Command.create({'value': 'percent', 'value_amount': 100.0, 'nb_days': 0})]
 
     def _default_example_date(self):
-        return self._context.get('example_date') or fields.Date.today()
+        return self.env.context.get('example_date') or fields.Date.today()
 
     name = fields.Char(string='Payment Terms', translate=True, required=True)
     active = fields.Boolean(default=True, help="If the active field is set to False, it will allow you to hide the payment terms without removing it.")
@@ -66,7 +66,16 @@ class AccountPaymentTerm(models.Model):
                 discount_amount_currency = (total_amount - untaxed_amount) * percentage
             else:
                 discount_amount_currency = total_amount * percentage
-            return self.currency_id.round(total_amount - discount_amount_currency)
+            amount_due = self.currency_id.round(total_amount - discount_amount_currency)
+            if self.env.context.get('active_model') == 'account.move' and (active_id := self.env.context.get('active_id')):
+                move = self.env['account.move'].browse(active_id)
+                cash_rounding = move.invoice_cash_rounding_id
+                currency = move.currency_id
+                if cash_rounding:
+                    cash_rounding_difference = cash_rounding.compute_difference(currency, amount_due)
+                    if not currency.is_zero(cash_rounding_difference):
+                        amount_due = self.currency_id.round(amount_due + cash_rounding_difference)
+            return amount_due
         return total_amount
 
     @api.depends('company_id')
@@ -173,8 +182,6 @@ class AccountPaymentTerm(models.Model):
             We assume that the input total in move currency (tax_amount_currency + untaxed_amount_currency) is already cash rounded.
             The cash rounding does not change the totals: Consider the sum of all the computed payment term amounts in move / company currency.
             It is the same as the input total in move / company currency.
-        :return (list<tuple<datetime.date,tuple<float,float>>>): the amount in the company's currency and
-            the document's currency, respectively for each required payment date
         """
         self.ensure_one()
         company_currency = company.currency_id
@@ -251,7 +258,7 @@ class AccountPaymentTerm(models.Model):
     @api.ondelete(at_uninstall=False)
     def _unlink_except_referenced_terms(self):
         if self.env['account.move'].search_count([('invoice_payment_term_id', 'in', self.ids)], limit=1):
-            raise UserError(_('You can not delete payment terms as other records still reference it. However, you can archive it.'))
+            raise UserError(_("Uh-oh! Those payment terms are quite popular and can't be deleted since there are still some records referencing them. How about archiving them instead?"))
 
     def _get_last_discount_date(self, date_ref):
         self.ensure_one()
@@ -272,7 +279,7 @@ class AccountPaymentTerm(models.Model):
 
 
 class AccountPaymentTermLine(models.Model):
-    _name = "account.payment.term.line"
+    _name = 'account.payment.term.line'
     _description = "Payment Terms Line"
     _order = "id"
 

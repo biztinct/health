@@ -3,6 +3,7 @@
 from odoo import api, fields, models, _
 from odoo.exceptions import ValidationError
 
+
 class AccountAnalyticLine(models.Model):
     _inherit = 'account.analytic.line'
     _description = 'Analytic Line'
@@ -16,7 +17,6 @@ class AccountAnalyticLine(models.Model):
         'account.account',
         string='Financial Account',
         ondelete='restrict',
-        domain="[('deprecated', '=', False)]",
         check_company=True,
         compute='_compute_general_account_id', store=True, readonly=False
     )
@@ -68,8 +68,8 @@ class AccountAnalyticLine(models.Model):
         prod_accounts = self.product_id.product_tmpl_id.with_company(self.company_id)._get_product_accounts()
         unit = self.product_uom_id
         account = prod_accounts['expense']
-        if not unit or self.product_id.uom_po_id.category_id.id != unit.category_id.id:
-            unit = self.product_id.uom_po_id
+        if not unit:
+            unit = self.product_id.uom_id
 
         # Compute based on pricetype
         amount_unit = self.product_id._price_compute('standard_price', uom=unit)[self.product_id.id]
@@ -88,8 +88,9 @@ class AccountAnalyticLine(models.Model):
             )
         return super().view_header_get(view_id, view_type)
 
-    def create(self, vals):
-        analytic_lines = super().create(vals)
+    @api.model_create_multi
+    def create(self, vals_list):
+        analytic_lines = super().create(vals_list)
         analytic_lines.move_line_id._update_analytic_distribution()
         return analytic_lines
 

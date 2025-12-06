@@ -23,7 +23,7 @@ def format_structured_reference_iso(number):
     The Creditor Reference is an international standard (ISO 11649).
     Example: `123456789` -> `RF18 1234 5678 9`
     """
-    check_digits = mod_97_10.calc_check_digits('{}RF'.format(number))
+    check_digits = mod_97_10.calc_check_digits(f"{number}RF")
     return 'RF{} {}'.format(
         check_digits,
         ' '.join(''.join(x) for x in zip_longest(*[iter(str(number))]*4, fillvalue=''))
@@ -68,6 +68,7 @@ def is_valid_structured_reference_no_se(reference):
     no_se_ref = re.fullmatch(r'\d+', ref)
     return no_se_ref and luhn.is_valid(ref)
 
+
 def is_valid_structured_reference_nl(reference):
     """ Generates a valid Dutch structured payment reference (betalingskenmerk)
         by ensuring it follows the correct format.
@@ -106,7 +107,6 @@ def is_valid_structured_reference_nl(reference):
         computed_check = 1
 
     return computed_check == int(check)
-
 
 def is_valid_structured_reference_si(reference):
     """ Validates a Slovenian structured reference using Model 01 (SI01).
@@ -164,7 +164,7 @@ def is_valid_structured_reference(reference):
         is_valid_structured_reference_be(reference) or
         is_valid_structured_reference_fi(reference) or
         is_valid_structured_reference_no_se(reference) or
-        is_valid_structured_reference_nl(reference) or
         is_valid_structured_reference_si(reference) or
+        is_valid_structured_reference_nl(reference) or
         is_valid_structured_reference_iso(reference)
-    )
+    ) if reference else False
