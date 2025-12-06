@@ -39,6 +39,7 @@ class ResPartner(models.Model):
     first_name = fields.Char('First Name', tracking=True)
     last_name = fields.Char('Last Name', tracking=True)
     middle_name = fields.Char('Middle Name')
+    mobile = fields.Char('Mobile', tracking=True)
     birth_date = fields.Date('Date of Birth', tracking=True)
     age = fields.Integer('Age', compute='_compute_age', store=True)
     age_display = fields.Char('Age Display', compute='_compute_age_display')

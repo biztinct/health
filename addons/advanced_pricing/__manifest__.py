@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Advanced Pricing Engine',
-    'version': '18.0.1.1.0',
+    'version': '19.0.1.1.0',
     'category': 'Sales/Sales',
-    'summary': 'Enterprise-grade pricing engine with visual rule builder and holiday pricing for Odoo 18 CE',
+    'summary': 'Enterprise-grade pricing engine with visual rule builder and holiday pricing for Odoo 19 CE',
     'description': """
-Advanced Pricing Engine for Odoo 18 CE
+Advanced Pricing Engine for Odoo 19 CE
 =======================================
 
 Features:

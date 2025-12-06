@@ -44,7 +44,7 @@ class HealthAuditLogView(models.Model):
                     mm.model,
                     COALESCE(im.name->>'en_US', mm.model) as model_name,
                     mm.res_id,
-                    mm.record_name,
+                    COALESCE(mm.subject, '') as record_name,
                     COALESCE(mf.field_description->>'en_US', mf.name) as field_name,
                     mtv.old_value_char as old_value,
                     mtv.new_value_char as new_value

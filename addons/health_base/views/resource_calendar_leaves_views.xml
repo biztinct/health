@@ -113,38 +113,9 @@
         <field name="model">resource.calendar.leaves</field>
         <field name="arch" type="xml">
             <search string="Public Holidays">
-                <field name="name" filter_domain="[('name', 'ilike', self)]"/>
+                <field name="name"/>
                 <field name="holiday_type"/>
                 <field name="province_id"/>
-
-                <!-- Quick Filters -->
-                <filter name="pricing_holidays" string="Pricing Holidays"
-                        domain="[('is_pricing_holiday', '=', True)]"/>
-                <filter name="tet_holidays" string="TET Holidays"
-                        domain="[('holiday_type', '=', 'tet')]"/>
-                <filter name="national_holidays" string="National Holidays"
-                        domain="[('holiday_type', '=', 'national')]"/>
-                <filter name="regional_holidays" string="Regional Holidays"
-                        domain="[('holiday_type', '=', 'regional')]"/>
-
-                <!-- Date Filters -->
-                <separator/>
-                <filter name="upcoming" string="Upcoming"
-                        domain="[('date_from', '&gt;=', context_today())]"/>
-                <filter name="current_year" string="This Year"
-                        domain="[('date_from', '&gt;=', (context_today().replace(month=1, day=1)).strftime('%Y-%m-%d')),
-                                 ('date_from', '&lt;=', (context_today().replace(month=12, day=31)).strftime('%Y-%m-%d'))]"/>
-
-                <!-- Group By -->
-                <separator/>
-                <group expand="0" string="Group By">
-                    <filter name="group_holiday_type" string="Holiday Type"
-                            context="{'group_by': 'holiday_type'}"/>
-                    <filter name="group_province" string="Province"
-                            context="{'group_by': 'province_id'}"/>
-                    <filter name="group_year" string="Year"
-                            context="{'group_by': 'date_from:year'}"/>
-                </group>
             </search>
         </field>
     </record>
@@ -168,13 +139,5 @@
             </p>
         </field>
     </record>
-
-    <!-- Menu Item under Configuration -->
-    <menuitem id="menu_healthcare_public_holidays"
-              name="Public Holidays"
-              parent="menu_healthcare_lookups"
-              action="action_healthcare_public_holidays"
-              sequence="90"
-              groups="group_healthcare_manager,group_healthcare_admin,group_healthcare_owner"/>
 
 </odoo>

@@ -39,42 +39,7 @@
                 <separator/>
                 <!-- Date filters -->
                 <filter name="filter_today" string="Today"
-                        domain="[('date', '&gt;=', datetime.datetime.combine(context_today(), datetime.time(0,0,0))),
-                                 ('date', '&lt;=', datetime.datetime.combine(context_today(), datetime.time(23,59,59)))]"/>
-                <filter name="filter_last_7_days" string="Last 7 Days"
-                        domain="[('date', '&gt;=', (context_today() - datetime.timedelta(days=7)).strftime('%Y-%m-%d 00:00:00'))]"/>
-                <filter name="filter_last_30_days" string="Last 30 Days"
-                        domain="[('date', '&gt;=', (context_today() - datetime.timedelta(days=30)).strftime('%Y-%m-%d 00:00:00'))]"/>
-                <filter name="filter_this_month" string="This Month"
-                        domain="[('date', '&gt;=', context_today().strftime('%Y-%m-01 00:00:00'))]"/>
-                <filter name="filter_last_month" string="Last Month"
-                        domain="[('date', '&gt;=', (context_today().replace(day=1) - datetime.timedelta(days=1)).strftime('%Y-%m-01 00:00:00')),
-                                 ('date', '&lt;', context_today().strftime('%Y-%m-01 00:00:00'))]"/>
-
-                <separator/>
-                <!-- Quick filters by model type -->
-                <filter name="pricing_changes" string="Pricing Changes"
-                        domain="[('model', 'in', ['advanced.pricing.engine', 'advanced.pricing.rule', 'product.pricelist'])]"/>
-                <filter name="invoice_changes" string="Invoice Changes"
-                        domain="[('model', '=', 'account.move')]"/>
-                <filter name="patient_changes" string='Client Data Changes'
-                        domain="[('model', '=', 'res.partner')]"/>
-                <filter name="fso_changes" string="Service Order Changes"
-                        domain="[('model', '=', 'health.fieldservice.order')]"/>
-                <filter name="holiday_changes" string="Holiday Changes"
-                        domain="[('model', '=', 'resource.calendar.leaves')]"/>
-
-                <separator/>
-                <!-- Group by options -->
-                <group expand="0" string="Group By">
-                    <filter name="group_model" string="Model" context="{'group_by': 'model_name'}"/>
-                    <filter name="group_user" string="User" context="{'group_by': 'user_id'}"/>
-                    <filter name="group_field" string="Field" context="{'group_by': 'field_name'}"/>
-                    <separator/>
-                    <filter name="group_date_day" string="Date (Day)" context="{'group_by': 'date:day'}"/>
-                    <filter name="group_date_week" string="Date (Week)" context="{'group_by': 'date:week'}"/>
-                    <filter name="group_date_month" string="Date (Month)" context="{'group_by': 'date:month'}"/>
-                </group>
+                        domain="[('date', '&gt;=', context_today())]"/>
             </search>
         </field>
     </record>

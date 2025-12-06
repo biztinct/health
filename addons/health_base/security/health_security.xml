@@ -12,35 +12,30 @@
     <!-- Base Healthcare Group -->
     <record id="group_healthcare_base" model="res.groups">
         <field name="name">Healthcare: Base Access</field>
-        <field name="category_id" ref="module_category_healthcare"/>
         <field name="comment">Basic healthcare access - can view own data</field>
     </record>
     
     <!-- Healthcare Staff Groups -->
     <record id="group_healthcare_receptionist" model="res.groups">
         <field name="name">Healthcare: Receptionist</field>
-        <field name="category_id" ref="module_category_healthcare"/>
         <field name="implied_ids" eval="[(4, ref('group_healthcare_base'))]"/>
         <field name="comment">Receptionist - patient intake, appointment scheduling</field>
     </record>
     
     <record id="group_healthcare_nurse" model="res.groups">
         <field name="name">Healthcare: Nurse</field>
-        <field name="category_id" ref="module_category_healthcare"/>
         <field name="implied_ids" eval="[(4, ref('group_healthcare_base'))]"/>
         <field name="comment">Nurse - patient care, basic clinical notes</field>
     </record>
     
     <record id="group_healthcare_head_nurse" model="res.groups">
         <field name="name">Healthcare: Head Nurse</field>
-        <field name="category_id" ref="module_category_healthcare"/>
         <field name="implied_ids" eval="[(4, ref('group_healthcare_nurse'))]"/>
         <field name="comment">Head Nurse - nurse supervision, advanced clinical access</field>
     </record>
     
     <record id="group_healthcare_doctor" model="res.groups">
         <field name="name">Healthcare: Doctor</field>
-        <field name="category_id" ref="module_category_healthcare"/>
         <field name="implied_ids" eval="[(4, ref('group_healthcare_base'))]"/>
         <field name="comment">Doctor - full clinical access, prescriptions, diagnoses</field>
     </record>
@@ -48,21 +43,18 @@
     <!-- Administrative Groups -->
     <record id="group_healthcare_sales" model="res.groups">
         <field name="name">Healthcare: Sales</field>
-        <field name="category_id" ref="module_category_healthcare"/>
         <field name="implied_ids" eval="[(4, ref('group_healthcare_base'))]"/>
         <field name="comment">Sales - lead management, initial patient contact</field>
     </record>
     
     <record id="group_healthcare_operations_manager" model="res.groups">
         <field name="name">Healthcare: Operations Manager</field>
-        <field name="category_id" ref="module_category_healthcare"/>
         <field name="implied_ids" eval="[(4, ref('group_healthcare_sales'))]"/>
         <field name="comment">Operations Manager - scheduling oversight, staff coordination</field>
     </record>
     
     <record id="group_healthcare_finance" model="res.groups">
         <field name="name">Healthcare: Finance</field>
-        <field name="category_id" ref="module_category_healthcare"/>
         <field name="implied_ids" eval="[(4, ref('group_healthcare_base'))]"/>
         <field name="comment">Finance - billing, invoicing, financial reports</field>
     </record>
@@ -70,21 +62,18 @@
     <!-- Management Groups -->
     <record id="group_healthcare_manager" model="res.groups">
         <field name="name">Healthcare: Manager</field>
-        <field name="category_id" ref="module_category_healthcare"/>
         <field name="implied_ids" eval="[(4, ref('group_healthcare_operations_manager')), (4, ref('group_healthcare_head_nurse')), (4, ref('group_healthcare_finance'))]"/>
         <field name="comment">Manager - facility management, full operational access</field>
     </record>
     
     <record id="group_healthcare_admin" model="res.groups">
         <field name="name">Healthcare: Administrator</field>
-        <field name="category_id" ref="module_category_healthcare"/>
         <field name="implied_ids" eval="[(4, ref('group_healthcare_manager'))]"/>
         <field name="comment">Administrator - system configuration, user management</field>
     </record>
     
     <record id="group_healthcare_owner" model="res.groups">
         <field name="name">Healthcare: Owner</field>
-        <field name="category_id" ref="module_category_healthcare"/>
         <field name="implied_ids" eval="[(4, ref('group_healthcare_admin')), (4, ref('base.group_system'))]"/>
         <field name="comment">Owner - full system access, business oversight</field>
     </record>
@@ -92,7 +81,6 @@
     <!-- Patient Portal Group -->
     <record id="group_healthcare_patient" model="res.groups">
         <field name="name">Healthcare: Patient Portal</field>
-        <field name="category_id" ref="module_category_healthcare"/>
         <field name="comment">Patient Portal - view own records, book appointments</field>
     </record>
 

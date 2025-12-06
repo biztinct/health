@@ -7,7 +7,7 @@ export class ServiceTimer extends Component {
     static template = "health_fieldservice.ServiceTimer";
     static supportedTypes = ["char"];
 
-    // Define all required props for Odoo 18 field widgets
+    // Define all required props for Odoo 19 field widgets
     static props = {
         record: Object,
         name: String,
@@ -113,7 +113,7 @@ export class ServiceTimer extends Component {
     }
 
     watchRecordChanges() {
-        // In Odoo 18, we can use the reactive record system
+        // In Odoo 19, we can use the reactive record system
         // The record is a Proxy that triggers updates when fields change
         const record = this.props.record;
 

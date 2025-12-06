@@ -395,6 +395,10 @@
                             </div>
                         </div>
                     </t>
+                    <!-- OWL kanban compatibility -->
+                    <t t-name="card">
+                        <t t-call="kanban-box"/>
+                    </t>
                 </templates>
             </kanban>
         </field>
@@ -407,35 +411,6 @@
         <field name="arch" type="xml">
             <search string="Healthcare Facilities">
                 <field name="name" string="Facility Name"/>
-                <field name="code" string="Facility Code"/>
-                <field name="city" string="City"/>
-                <field name="state_id" string="State"/>
-                <field name="facility_manager_id" string="Operations Manager"/>
-                <field name="head_nurse_id" string="Head Nurse"/>
-                <separator/>
-                <filter name="operational" string="Operational" domain="[('facility_status', '=', 'operational')]"/>
-                <filter name="maintenance" string="Under Maintenance" domain="[('facility_status', '=', 'maintenance')]"/>
-                <filter name="closed" string="Closed" domain="[('facility_status', 'in', ['closed_temporary', 'closed_permanent'])]"/>
-                <separator/>
-                <filter name="main_clinic" string="Main Clinics" domain="[('facility_type', '=', 'main_clinic')]"/>
-                <filter name="branch_clinic" string="Branch Clinics" domain="[('facility_type', '=', 'branch_clinic')]"/>
-                <filter name="home_care_center" string="Home Care Centers" domain="[('facility_type', '=', 'home_care_center')]"/>
-                <separator/>
-                <filter name="covers_home_visits" string="Home Visits Available" domain="[('covers_home_visits', '=', True)]"/>
-                <filter name="has_emergency" string="Emergency Services" domain="[('has_emergency_services', '=', True)]"/>
-                <filter name="has_laboratory" string="Laboratory Services" domain="[('has_laboratory', '=', True)]"/>
-                <filter name="has_imaging" string="Imaging Services" domain="[('has_imaging', '=', True)]"/>
-                <filter name="wheelchair_accessible" string="Wheelchair Accessible" domain="[('wheelchair_accessible', '=', True)]"/>
-                <separator/>
-                <filter name="license_expiring" string="License Expiring Soon" domain="[('license_expiry_date', '&lt;=', (context_today() + datetime.timedelta(days=30)).strftime('%Y-%m-%d'))]"/>
-                <separator/>
-                <group expand="0" string="Group By">
-                    <filter string="Facility Type" name="group_type" context="{'group_by': 'facility_type'}"/>
-                    <filter string="Status" name="group_status" context="{'group_by': 'facility_status'}"/>
-                    <filter string="State/Province" name="group_state" context="{'group_by': 'state_id'}"/>
-                    <filter string="Operations Manager" name="group_manager" context="{'group_by': 'facility_manager_id'}"/>
-                    <filter string="Home Visit Coverage" name="group_home_visits" context="{'group_by': 'covers_home_visits'}"/>
-                </group>
             </search>
         </field>
     </record>

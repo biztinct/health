@@ -1,5 +1,5 @@
 /**
- * VAFHS Healthcare - Visual Assignment Scheduler Grid JavaScript (Odoo 18)
+ * VAFHS Healthcare - Visual Assignment Scheduler Grid JavaScript (Odoo 19)
  * Google Calendar meets When2meet for Healthcare Staff Assignment
  * Advanced Drag-and-Drop Time Grid Interface using OWL Framework
  */
@@ -11,7 +11,7 @@ import { useService } from "@web/core/utils/hooks";
 import { _t } from "@web/core/l10n/translation";
 
 // ============================================================================
-// Visual Scheduler Grid Utilities (Odoo 18)
+// Visual Scheduler Grid Utilities (Odoo 19)
 // ============================================================================
 
 /**

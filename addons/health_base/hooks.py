@@ -8,20 +8,6 @@ def post_init_hook(env):
     by ensuring all healthcare fields are properly created in database.
     """
     
-    # Force update of res.partner model to ensure all fields are created
-    env['res.partner']._auto_init()
-    
-    # Verify critical healthcare fields exist
-    critical_fields = [
-        'is_patient', 'is_healthcare_staff', 'is_healthcare_facility', 
-        'is_emergency_contact', 'is_caregiver', 'is_payer', 'is_referrer'
-    ]
-    
-    partner_model = env['res.partner']
-    for field_name in critical_fields:
-        if field_name not in partner_model._fields:
-            raise ValueError(f"Critical healthcare field {field_name} not found in res.partner model")
-    
     # Ensure healthcare categories exist
     categories = [
         ('Patient', 1),
@@ -69,7 +55,7 @@ def post_init_hook(env):
                 mm.model,
                 COALESCE(im.name->>'en_US', mm.model) as model_name,
                 mm.res_id,
-                mm.record_name,
+                COALESCE(mm.subject, '') as record_name,
                 COALESCE(mf.field_description->>'en_US', mf.name) as field_name,
                 mtv.old_value_char as old_value,
                 mtv.new_value_char as new_value

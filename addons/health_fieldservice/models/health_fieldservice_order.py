@@ -2446,7 +2446,7 @@ class HealthFieldServiceOrderUnified(models.Model):
             'res_model': 'sale.order',
             'res_id': quote.id,
             'view_mode': 'form',
-            'views': [[view_id, 'form']],  # Required by Odoo 18 web framework for action preprocessing
+            'views': [[view_id, 'form']],  # Required by Odoo 19 web framework for action preprocessing
             'target': 'new',  # Opens in popup
             'context': {
                 'form_view_initial_mode': 'edit',

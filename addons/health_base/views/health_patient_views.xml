@@ -5,7 +5,7 @@
          VAFHS Patient Management Views - State-of-the-Art Healthcare Interface
          ========================================================================= -->
 
-    <!-- Enhanced Patient Form View - Proper Odoo 18 Layout -->
+    <!-- Enhanced Patient Form View - Proper Odoo 19 Layout -->
     <record id="view_health_patient_form" model="ir.ui.view">
         <field name="name">res.partner.patient.form</field>
         <field name="model">res.partner</field>
@@ -95,8 +95,8 @@
                                     <span>Contact Information</span>
                                 </div>
                                 <group col="2">
-                                    <field name="mobile" widget="phone" required="1"/>
-                                    <field name="phone" widget="phone"/>
+                                    <field name="phone" widget="phone" required="1"/>
+                                    <field name="mobile" widget="phone" invisible="1"/>
                                     <field name="email" widget="email"/>
                                     <field name="patient_category_id" required="1"/>
                                     <field name="primary_facility_id" required="1"/>
@@ -370,13 +370,8 @@
                                         <small class="text-muted d-block">Visual hierarchy of clients and stakeholders</small>
                                     </div>
                                 </div>
-                                <div class="vu-card">
-                                    <div class="vu-card__title">
-                                        <span class="vu-section__icon" data-icon="users-group"/>
-                                        <span>Relationship Map</span>
-                                    </div>
-                                    <field name="id" invisible="1"/>
-                                    <widget name="relationship_hierarchy"/>
+                                <div class="alert alert-info" role="alert">
+                                    Relationship map widget is not available in this Odoo version.
                                 </div>
                             </div>
                         </page>
@@ -451,7 +446,7 @@
                     </notebook>
                 </sheet>
 
-                <!-- Proper Odoo 18 Chatter Implementation -->
+                <!-- Proper Odoo 19 Chatter Implementation -->
                 <chatter reload_on_follower="True"/>
             </form>
         </field>
@@ -471,7 +466,7 @@
                 <field name="name"/>
                 <field name="age_display"/>
                 <field name="gender"/>
-                <field name="mobile" widget="phone"/>
+                <field name="phone" widget="phone"/>
                 <field name="patient_category_id"/>
                 <field name="patient_status"/>
                 <field name="source_type"/>
@@ -500,7 +495,7 @@
                 <field name="patient_code"/>
                 <field name="age_display"/>
                 <field name="gender"/>
-                <field name="mobile"/>
+                <field name="phone"/>
                 <field name="patient_status"/>
                 <field name="patient_category_id"/>
                 <field name="last_visit_date"/>
@@ -528,7 +523,7 @@
                                 <div class="o_patient_card_info">
                                     <div><strong>ID:</strong> <field name="patient_code"/></div>
                                     <div><strong>Age/Gender:</strong> <field name="age_display"/> • <field name="gender"/></div>
-                                    <div><strong>Mobile:</strong> <field name="mobile"/></div>
+                                    <div><strong>Phone:</strong> <field name="phone"/></div>
 
                                     <div t-if="record.next_visit_date.raw_value" class="mt-1">
                                         <small class="text-muted">Next Visit:</small><br/>
@@ -552,6 +547,11 @@
                     <t t-name="kanban-menu">
                         <a role="menuitem" type="object" name="action_create_patient" class="dropdown-item">New Client</a>
                     </t>
+
+                    <!-- OWL kanban compatibility -->
+                    <t t-name="card">
+                        <t t-call="kanban-box"/>
+                    </t>
                 </templates>
             </kanban>
         </field>
@@ -563,9 +563,9 @@
         <field name="model">res.partner</field>
         <field name="arch" type="xml">
             <search string="Client Search">
-                <field name="name" string="Client Name" filter_domain="[('|', ('name', 'ilike', self), ('vietnamese_name', 'ilike', self))]"/>
+                <field name="name" string="Client Name"/>
                 <field name="patient_code" string="Client ID"/>
-                <field name="mobile" string="Mobile"/>
+                <field name="phone" string="Phone"/>
                 <field name="national_id" string="National ID"/>
                 <field name="email"/>
 
@@ -588,23 +588,7 @@
                 <filter name="upcoming_visits" string="Upcoming Visits"
                         domain="[('next_visit_date', '&gt;=', context_today())]"/>
                 <filter name="recent_visits" string="Recent Visits"
-                        domain="[('last_visit_date', '&gt;=', (context_today() - datetime.timedelta(days=30)))]"/>
-
-                <separator/>
-
-                <!-- Source Filters -->
-                <filter name="facebook_patients" string="Facebook" domain="[('source_type', '=', 'facebook')]"/>
-                <filter name="zalo_patients" string="Zalo" domain="[('source_type', '=', 'zalo')]"/>
-                <filter name="website_patients" string="Website" domain="[('source_type', '=', 'website')]"/>
-                <filter name="referral_patients" string="Referrals" domain="[('source_type', '=', 'referral')]"/>
-
-                <group expand="0" string="Group By">
-                    <filter string="Status" name="group_status" context="{'group_by': 'patient_status'}"/>
-                    <filter string="Category" name="group_category" context="{'group_by': 'patient_category_id'}"/>
-                    <filter string="Source" name="group_source" context="{'group_by': 'source_type'}"/>
-                    <filter string="Facility" name="group_facility" context="{'group_by': 'primary_facility_id'}"/>
-                    <filter string="Registration Month" name="group_reg_month" context="{'group_by': 'registration_date:month'}"/>
-                </group>
+                        domain="[('last_visit_date', '&gt;=', context_today())]"/>
             </search>
         </field>
     </record>

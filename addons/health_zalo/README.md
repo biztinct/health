@@ -257,4 +257,4 @@ LGPL-3
 
 **Author**: I Am Dream Catcher Ltd
 **Maintainer**: I Am Dream Catcher Ltd
-**Version**: 18.0.1.0.0
+**Version**: 19.0.1.0.0

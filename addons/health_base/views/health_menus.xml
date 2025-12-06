@@ -113,6 +113,14 @@
               action="action_health_referral_source" sequence="50"
               groups="group_healthcare_receptionist,group_healthcare_manager,group_healthcare_admin,group_healthcare_owner"/>
 
+    <!-- Public Holidays -->
+    <menuitem id="menu_healthcare_public_holidays"
+              name="Public Holidays"
+              parent="menu_healthcare_lookups"
+              action="action_healthcare_public_holidays"
+              sequence="90"
+              groups="group_healthcare_manager,group_healthcare_admin,group_healthcare_owner"/>
+
     <!-- Insurance Providers -->
     <menuitem id="menu_healthcare_insurance_providers" name="Insurance Providers" 
               parent="menu_healthcare_lookups" 

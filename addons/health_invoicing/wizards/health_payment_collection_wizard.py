@@ -240,8 +240,8 @@ class HealthPaymentCollectionWizard(models.TransientModel):
         return journal
     
     def _allocate_payment_automatically(self, payment, transaction):
-        """Automatically allocate payment to invoices (oldest first) - Odoo 18 compatible"""
-        # In Odoo 18, payment reconciliation is handled differently
+        """Automatically allocate payment to invoices (oldest first) - Odoo 19 compatible"""
+        # In Odoo 19, payment reconciliation is handled differently
         # Use the payment's reconciled_invoice_ids or manual reconciliation
         
         if not payment.move_id:

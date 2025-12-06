@@ -1,8 +1,8 @@
 from . import res_partner
 from . import health_lookup
 from . import res_users
-from . import hr_employee_public
 from . import hr_employee  # Basic healthcare staff classification
+from . import hr_employee_public
 from . import health_facility
 from . import health_clinical_protocols
 from . import health_medication_safety

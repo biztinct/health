@@ -3,7 +3,7 @@
 <data>
 
     <!-- =====================================================================
-         Staff Assignment Form View - Clean Odoo 18 Layout
+         Staff Assignment Form View - Clean Odoo 19 Layout
          ===================================================================== -->
 
     <record id="view_health_staff_assignment_form" model="ir.ui.view">
@@ -302,7 +302,7 @@
                     </notebook>
                 </sheet>
 
-                <!-- Odoo 18 Standard Chatter -->
+                <!-- Odoo 19 Standard Chatter -->
                 <chatter reload_on_follower="True"/>
             </form>
         </field>

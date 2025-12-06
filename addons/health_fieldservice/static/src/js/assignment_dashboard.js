@@ -1,5 +1,5 @@
 /**
- * VAFHS Healthcare - Assignment Dashboard JavaScript (Odoo 18)
+ * VAFHS Healthcare - Assignment Dashboard JavaScript (Odoo 19)
  * Mobile-First Interactive Dashboard for Staff Assignment Management
  * Using simplified approach for compatibility
  */

@@ -3,19 +3,19 @@
   # Function to copy all health modules
   copy_all_health() {
       echo "Copying all health_* modules..."
-      scp -r /Users/adity/Documents/GitHub/health-1/addons/health_* Health18:/odoo/odoo-server/addons/
+      scp -r /Users/adity/Documents/GitHub/health19/addons/health_* VietUcUAT:/odoo/odoo-server/addons/
   }
 
   # Function to copy specific modules
   copy_specific() {
       echo "Copying specified modules: $@"
-      scp -r "/Users/adity/Documents/GitHub/health-1/addons/$@" Health18:/odoo/odoo-server/addons/
+      scp -r "/Users/adity/Documents/GitHub/health19/addons/$@" VietUcUAT:/odoo/odoo-server/addons/
   }
 
   # Function to list available health modules
   list_health_modules() {
       echo "Available health modules:"
-      ls -d /Users/adity/Documents/GitHub/health-1/addons/health_*/ 2>/dev/null | sed 's|/||g' | nl
+      ls -d /Users/adity/Documents/GitHub/health19/addons/health_*/ 2>/dev/null | sed 's|/||g' | nl
   }
 
   # Main logic

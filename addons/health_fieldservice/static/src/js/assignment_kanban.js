@@ -1,5 +1,5 @@
 /**
- * VAFHS Healthcare - Assignment Kanban JavaScript (Odoo 18)
+ * VAFHS Healthcare - Assignment Kanban JavaScript (Odoo 19)
  * Drag-and-Drop Kanban Board for Assignment Workflow Management
  * Using OWL Framework and Modern ES6 Modules
  */
@@ -10,7 +10,7 @@ import { registry } from "@web/core/registry";
 import { _t } from "@web/core/l10n/translation";
 
 // ============================================================================
-// Assignment Kanban Record Helpers (Odoo 18)
+// Assignment Kanban Record Helpers (Odoo 19)
 // ============================================================================
 
 /**

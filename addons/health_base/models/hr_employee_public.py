@@ -6,7 +6,8 @@ class HrEmployeePublic(models.Model):
 
     is_healthcare_staff = fields.Boolean(
         'Healthcare Staff',
-        readonly=True
+        compute='_compute_healthcare_flags',
+        readonly=True,
     )
 
     healthcare_role = fields.Selection([
@@ -17,4 +18,11 @@ class HrEmployeePublic(models.Model):
         ('technician', 'Technician'),
         ('support', 'Support Staff'),
         ('operations_manager', 'Operations Manager')
-    ], string='Healthcare Role', readonly=True)
+    ], string='Healthcare Role', compute='_compute_healthcare_flags', readonly=True)
+
+    def _compute_healthcare_flags(self):
+        employees = {emp.id: emp for emp in self.env['hr.employee'].sudo().browse(self.ids)}
+        for public_rec in self:
+            emp = employees.get(public_rec.id)
+            public_rec.is_healthcare_staff = bool(emp and emp.is_healthcare_staff)
+            public_rec.healthcare_role = emp.healthcare_role if emp else False

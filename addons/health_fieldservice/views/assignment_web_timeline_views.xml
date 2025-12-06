@@ -140,7 +140,7 @@
                     <notebook>
                     </notebook>
                 </sheet>
-                <!-- Odoo 18 Standard Chatter -->
+                <!-- Odoo 19 Standard Chatter -->
                 <chatter reload_on_follower="True"/>
             </form>
         </field>

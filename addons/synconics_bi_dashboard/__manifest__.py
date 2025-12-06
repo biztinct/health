@@ -6,7 +6,7 @@ Transform your data into compelling dashboard visualizations
 """,
     "description": """
         Build powerful dashboard charts that transform complex data into clear, actionable insights.
-        BI Dashboard v18.0,
+        BI Dashboard v19.0,
         Odoo Dashboard,
         Dashboard,
         Dashboards,
@@ -52,7 +52,7 @@ Transform your data into compelling dashboard visualizations
     "author": "Synconics Technologies Pvt. Ltd.",
     "website": "https://www.synconics.com",
     "category": "web",
-    "version": "1.1.0",
+    "version": "19.0.1.1.0",
     "depends": ["web", "mail"],
     "external_dependencies": {"python": ["imgkit"]},
     "assets": {

@@ -1,6 +1,6 @@
-# Việt Úc Clinic Official Theme (Odoo 18 CE)
+# Việt Úc Clinic Official Theme (Odoo 19 CE)
 
-Official Việt Úc Clinic branding implementation for Odoo 18 Community Edition, based on the comprehensive brand guidelines from Brandingcompressed.pdf.
+Official Việt Úc Clinic branding implementation for Odoo 19 Community Edition, based on the comprehensive brand guidelines from Brandingcompressed.pdf.
 
 ## Brand Essence
 
@@ -14,7 +14,7 @@ This theme embodies the Việt Úc Clinic brand identity with its signature Deep
 - ✅ **Professional Color System**: Deep Blue (#1565C0) + Accent Blue (#42A5F5) UI palette
 - ✅ **Brand Typography**: Montserrat headings + Segoe body text hierarchy
 - ✅ **WCAG AA Compliant**: All color combinations meet accessibility standards
-- ✅ **Odoo 18 Native**: Uses `web._assets_primary_variables` for proper SCSS variable override
+- ✅ **Odoo 19 Native**: Uses `web._assets_primary_variables` for proper SCSS variable override
 - ✅ **Zero Dependencies**: Only depends on core `web` module
 - ✅ **Lightweight**: Minimal CSS footprint, maximum performance
 
@@ -115,7 +115,7 @@ docker-compose restart odoo
 
 ## Technical Architecture
 
-This theme follows Odoo 18's best practices for SCSS theming:
+This theme follows Odoo 19's best practices for SCSS theming:
 
 ### SCSS Variable Override Pattern
 Uses `web._assets_primary_variables` to override Odoo's core variables **before** compilation:
@@ -206,14 +206,14 @@ Always use Secondary UI Colors (Deep Blue, Accent Blue) for:
 
 ## Version History
 
-### 18.0.2.0.0 (Current)
+### 19.0.2.0.0 (Current)
 - Implemented official Việt Úc Clinic branding from Brandingcompressed.pdf
 - Replaced teal palette with Deep Blue (#1565C0) + Accent Blue (#42A5F5)
 - Added Montserrat + Segoe typography system
 - Enhanced badge styling with gradients and shadows
 - Updated navbar to Deep Blue theme
 
-### 18.0.1.0.0 (Legacy)
+### 19.0.1.0.0 (Legacy)
 - Initial teal/blue-teal healthcare theme
 - Basic color palette implementation
 
@@ -226,7 +226,7 @@ LGPL-3
 **Author**: VAFHS Healthcare System - Vietnam-Australia Family Health Service
 **Website**: https://vafhs.com
 **Branding**: Based on official Việt Úc Clinic Brand Guidelines (Brandingcompressed.pdf)
-**Architecture**: Inspired by MuK Web Theme patterns for Odoo 18 CE
+**Architecture**: Inspired by MuK Web Theme patterns for Odoo 19 CE
 
 ---
 

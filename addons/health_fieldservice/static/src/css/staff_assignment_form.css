@@ -12,7 +12,7 @@
     visibility: hidden !important;
 }
 
-/* Alternative selectors for Odoo 18 */
+/* Alternative selectors for Odoo 19 */
 div[name="health_staff_assignment"] .modal-title,
 .o_act_window .modal-title:empty {
     display: none !important;

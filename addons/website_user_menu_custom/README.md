@@ -46,4 +46,4 @@ This dual approach ensures maximum compatibility across different Odoo configura
 
 ## Compatibility
 
-- Odoo 18.0
+- Odoo 19.0

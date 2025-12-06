@@ -12,11 +12,11 @@ It is designed to work seamlessly with Odoo Community & Enterprise versions.
 - 📊 Customizable dashboard widgets
 - ⚡ Real-time KPI updates
 - 🔧 Plug-and-play installation
-- 💜 Fully compatible with Odoo 18
+- 💜 Fully compatible with Odoo 19
 
 ## 🚀 Installation
 
-1. Download the ZIP file from https://apps.odoo.com/apps/modules/18.0/synconics_bi_dashboard.
+1. Download the ZIP file from https://apps.odoo.com/apps/modules/19.0/synconics_bi_dashboard.
 2. Extract it into your Odoo `addons` folder.
 3. Install required python packages mentioned in `requirements.txt` with the use of `pip`.
 4. Go to **Apps** in Odoo and click **Update Apps List**.
