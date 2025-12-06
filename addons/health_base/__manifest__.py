@@ -1,6 +1,6 @@
 {
     'name': 'Healthcare Base',
-    'version': '18.0.1.2.0',
+    'version': '19.0.1.2.0',
     'category': 'Healthcare',
     'summary': 'Foundation module for VAFHS Healthcare Management System with Clinical Intelligence',
     'description': """

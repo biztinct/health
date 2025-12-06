@@ -1,11 +1,11 @@
 {
     'name': 'Việt Úc Clinic Official Theme',
-    'summary': 'Official Việt Úc Clinic branding for Odoo 18 CE - Professional healthcare theme',
+    'summary': 'Official Việt Úc Clinic branding for Odoo 19 CE - Professional healthcare theme',
     'description': '''
         Official Việt Úc Clinic Theme
         =============================
 
-        This module implements the official Việt Úc Clinic brand guidelines for Odoo 18 CE,
+        This module implements the official Việt Úc Clinic brand guidelines for Odoo 19 CE,
         providing a professional, modern, and accessible healthcare interface.
 
         Brand Essence
@@ -45,7 +45,7 @@
         - Modern pill-shaped badges for healthcare workflows
         - Custom navbar and control panel styling
     ''',
-    'version': '18.0.2.0.0',
+    'version': '19.0.2.0.0',
     'category': 'Themes/Backend',
     'license': 'LGPL-3',
     'author': 'VAFHS Healthcare System - Vietnam-Australia Family Health Service',

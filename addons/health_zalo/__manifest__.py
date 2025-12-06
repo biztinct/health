@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Health Zalo Integration',
-    'version': '18.0.1.0.0',
+    'version': '19.0.1.0.0',
     'category': 'Healthcare/Communication',
     'summary': 'Zalo Official Account integration for patient messaging and notifications',
     'description': """
