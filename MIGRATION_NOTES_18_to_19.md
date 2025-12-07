@@ -12,5 +12,6 @@ Practical deltas observed while porting the health_* stack to Odoo 19:
 - **Menu/action load order**: Parent menus/actions must be loaded before menuitems referencing them. Adjust manifest order accordingly.
 - **Hooks**: Avoid calling `_auto_init()` or other registry internals in `post_init_hook`; keep hooks lightweight (data seeding, simple SQL) and align any audit-log SQL with new columns (e.g., `subject` instead of `record_name`).
 - **Search/group-by filters**: Some group_by or date filters that worked in 18 need trimming in 19; stick to basic group_by contexts and simple domains.
+- **Comodel sanity**: Odoo 19 fails registry setup if a `Many2one` points to a non-existent model. Remove/relocate such fields to the module that actually defines the target model (e.g., insurance-claim links belong in the invoicing layer, not in the base fieldservice module).
 
 Use this checklist when migrating other modules to reduce iteration.***
