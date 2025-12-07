@@ -119,56 +119,6 @@
         <field name="arch" type="xml">
             <search string="Healthcare Staff Search">
                 <field name="name"/>
-                <field name="healthcare_role"/>
-                <field name="work_email"/>
-                <field name="healthcare_skill_ids"/>
-                
-                <!-- Filters -->
-                <filter string="Active Staff" name="active_staff"
-                        domain="[('employment_status', '=', 'active')]"/>
-                <filter string="Available" name="available"
-                        domain="[('availability_status', '=', 'available')]"/>
-                <filter string="On Duty" name="on_duty"
-                        domain="[('availability_status', 'in', ['available', 'busy'])]"/>
-
-                <separator/>
-
-                <filter string="Full-Time Staff" name="full_time"
-                        domain="[('employment_type', '=', 'full_time')]"/>
-                <filter string="Part-Time Staff" name="part_time"
-                        domain="[('employment_type', '=', 'part_time')]"/>
-                <filter string="Casual/Contract" name="casual"
-                        domain="[('employment_type', '=', 'casual')]"/>
-
-                <separator/>
-
-                <filter string="Doctors" name="doctors"
-                        domain="[('healthcare_role', 'ilike', 'doctor')]"/>
-                <filter string="Nurses" name="nurses"
-                        domain="[('healthcare_role', 'ilike', 'nurse')]"/>
-                <filter string="Therapists" name="therapists"
-                        domain="[('healthcare_role', 'ilike', 'therapist')]"/>
-
-                <separator/>
-                
-                <filter string="High Performers" name="high_performers" 
-                        domain="[('assignment_success_rate', '>=', 90)]"/>
-                <filter string="Recently Joined" name="recent" 
-                        domain="[('create_date', '>=', (context_today() - datetime.timedelta(days=30)))]"/>
-                
-                <!-- Group By -->
-                <group expand="0" string="Group By">
-                    <filter string="Healthcare Role" name="group_by_role"
-                            context="{'group_by': 'healthcare_role'}"/>
-                    <filter string="Employment Status" name="group_by_status"
-                            context="{'group_by': 'employment_status'}"/>
-                    <filter string="Employment Type" name="group_by_employment_type"
-                            context="{'group_by': 'employment_type'}"/>
-                    <filter string="Availability" name="group_by_availability"
-                            context="{'group_by': 'availability_status'}"/>
-                    <filter string="Department" name="group_by_department"
-                            context="{'group_by': 'department_id'}"/>
-                </group>
             </search>
         </field>
     </record>

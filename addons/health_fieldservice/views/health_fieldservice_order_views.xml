@@ -112,9 +112,6 @@
                                 <li>
                                     <strong>Create a Quote:</strong> Add at least one service or product line item to the quote
                                 </li>
-                                <li>
-                                    <strong>Select a Service Package:</strong> Choose a prepaid service package for this booking
-                                </li>
                             </ul>
                             <p class="mb-0 mt-2 text-muted">
                                 <small>This ensures proper service delivery and billing documentation.</small>

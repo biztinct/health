@@ -51,15 +51,14 @@
                                         <field name="order_line">
                                             <list string="Healthcare Services" editable="bottom">
                                                 <field name="display_type" column_invisible="True"/>
-                                                <field name="product_uom_category_id" column_invisible="True"/>
                                                 <field name="product_updatable" column_invisible="True"/>
                                                 <field name="product_id" string="Product" readonly="not product_updatable" required="not display_type" 
-                                                       context="{'partner_id': parent.partner_id, 'quantity': product_uom_qty, 'pricelist': parent.pricelist_id, 'uom': product_uom, 'company_id': parent.company_id}" 
+                                                       context="{'partner_id': parent.partner_id, 'quantity': product_uom_qty, 'pricelist': parent.pricelist_id, 'uom': product_uom_id, 'company_id': parent.company_id}" 
                                                        domain="[('sale_ok', '=', True)]"/>
                                                 <field name="name" string="Description"/>
                                                 <field name="product_uom_qty" string="Qty" 
-                                                       context="{'partner_id': parent.partner_id, 'quantity': product_uom_qty, 'pricelist': parent.pricelist_id, 'uom': product_uom, 'company_id': parent.company_id}"/>
-                                                <field name="product_uom" string="UoM" groups="uom.group_uom" optional="show"/>
+                                                       context="{'partner_id': parent.partner_id, 'quantity': product_uom_qty, 'pricelist': parent.pricelist_id, 'uom': product_uom_id, 'company_id': parent.company_id}"/>
+                                                <field name="product_uom_id" string="UoM" groups="uom.group_uom" optional="show"/>
                                                 <field name="price_unit" string="Unit Price"/>
                                                 <field name="discount" string="Disc.%" groups="sale.group_discount_per_so_line" optional="show"/>
                                                 <field name="price_subtotal" string="Subtotal" widget="monetary"/>

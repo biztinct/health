@@ -219,19 +219,6 @@
         <field name="arch" type="xml">
             <search string="Equipment Search">
                 <field name="name"/>
-                <field name="equipment_type"/>
-                <field name="manufacturer"/>
-                <field name="serial_number"/>
-                
-                <filter string="Available" name="available" domain="[('status', '=', 'available')]"/>
-                <filter string="In Use" name="in_use" domain="[('status', '=', 'in_use')]"/>
-                <filter string="Maintenance Due" name="maintenance_due" domain="[('is_maintenance_due', '=', True)]"/>
-                
-                <group expand="0" string="Group By">
-                    <filter string="Equipment Type" name="group_by_type" context="{'group_by': 'equipment_type'}"/>
-                    <filter string="Status" name="group_by_status" context="{'group_by': 'status'}"/>
-                    <filter string="Team" name="group_by_team" context="{'group_by': 'assigned_team_id'}"/>
-                </group>
             </search>
         </field>
     </record>

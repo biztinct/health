@@ -333,29 +333,6 @@
         <field name="arch" type="xml">
             <search string="Staff Assignment Search">
                 <field name="name"/>
-                <field name="fso_id" filter_domain="[('fso_id.name', 'ilike', self)]"/>
-                <field name="staff_id"/>
-                <field name="assignment_role"/>
-                
-                <filter string="My Assignments" name="my_assignments" 
-                        domain="[('staff_id.user_id', '=', uid)]"/>
-                <filter string="High Priority" name="high_priority" 
-                        domain="[('priority', 'in', ['2', '3', '4'])]"/>
-                <filter string="Today" name="today" 
-                        domain="[('assignment_date', '>=', context_today()), ('assignment_date', '&lt;', (context_today() + datetime.timedelta(days=1)))]"/>
-                
-                <separator/>
-                
-                <filter string="Draft" name="draft" domain="[('state', '=', 'draft')]"/>
-                <filter string="Assigned" name="assigned" domain="[('state', '=', 'assigned')]"/>
-                <filter string="In Progress" name="in_progress" domain="[('state', '=', 'in_progress')]"/>
-                <filter string="Completed" name="completed" domain="[('state', '=', 'completed')]"/>
-                
-                <group expand="0" string="Group By">
-                    <filter string="State" name="group_by_state" context="{'group_by': 'state'}"/>
-                    <filter string="Priority" name="group_by_priority" context="{'group_by': 'priority'}"/>
-                    <filter string="Assignment Date" name="group_by_date" context="{'group_by': 'assignment_date:day'}"/>
-                </group>
             </search>
         </field>
     </record>

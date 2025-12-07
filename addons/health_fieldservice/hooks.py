@@ -34,8 +34,15 @@ def _sanitize_translation_column(cr, column):
         )
 
 
-def pre_init_hook(cr):
+def pre_init_hook(env):
     """Ensure existing translations do not contain raw ampersands."""
+    cr = env.cr
+    # Skip if translations table is not yet created (fresh DB)
+    cr.execute("""
+        SELECT to_regclass('public.ir_translation')
+    """)
+    if not cr.fetchone()[0]:
+        return
     _sanitize_translation_column(cr, 'value')
     _sanitize_translation_column(cr, 'src')
 

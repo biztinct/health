@@ -185,21 +185,6 @@
         <field name="arch" type="xml">
             <search string="Communication Search">
                 <field name="subject"/>
-                <field name="fieldservice_order_id"/>
-                <field name="sender_id"/>
-                
-                <filter string="Unread" name="unread" domain="[('is_read', '=', False)]"/>
-                <filter string="Urgent" name="urgent" domain="[('priority', 'in', ['urgent', 'emergency'])]"/>
-                <filter string="Requires Response" name="needs_response" domain="[('requires_response', '=', True), ('response_received', '=', False)]"/>
-                <filter string="Overdue" name="overdue" domain="[('is_overdue', '=', True)]"/>
-                <filter string="Today" name="today" domain="[('create_date', '>=', context_today())]"/>
-                
-                <group expand="0" string="Group By">
-                    <filter string="FSO" name="group_by_fso" context="{'group_by': 'fieldservice_order_id'}"/>
-                    <filter string="Message Type" name="group_by_type" context="{'group_by': 'message_type'}"/>
-                    <filter string="Priority" name="group_by_priority" context="{'group_by': 'priority'}"/>
-                    <filter string="Date" name="group_by_date" context="{'group_by': 'create_date:day'}"/>
-                </group>
             </search>
         </field>
     </record>

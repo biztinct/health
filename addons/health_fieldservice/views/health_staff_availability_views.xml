@@ -179,23 +179,6 @@
         <field name="arch" type="xml">
             <search string="Staff Availability Matrix Search">
                 <field name="staff_id"/>
-                <field name="status"/>
-                <field name="availability_date"/>
-                
-                <filter string="Available" name="available" domain="[('status', '=', 'available')]"/>
-                <filter string="Booked" name="booked" domain="[('status', '=', 'booked')]"/>
-                <filter string="Blocked" name="blocked" domain="[('status', '=', 'blocked')]"/>
-                <filter string="Today" name="today" 
-                        domain="[('availability_date', '=', context_today())]"/>
-                <filter string="This Week" name="this_week" 
-                        domain="[('availability_date', '>=', context_today())]"/>
-                <filter string="Has Conflicts" name="conflicts" domain="[('conflict_detected', '=', True)]"/>
-                
-                <group expand="0" string="Group By">
-                    <filter string="Staff" name="group_by_staff" context="{'group_by': 'staff_id'}"/>
-                    <filter string="Status" name="group_by_status" context="{'group_by': 'status'}"/>
-                    <filter string="Date" name="group_by_date" context="{'group_by': 'availability_date:day'}"/>
-                </group>
             </search>
         </field>
     </record>

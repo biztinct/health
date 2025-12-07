@@ -230,32 +230,7 @@
         <field name="model">health.ai.assignment.engine</field>
         <field name="arch" type="xml">
             <search string="Search AI Assignment Analysis">
-                <field name="analysis_name" string="Analysis Name" 
-                       filter_domain="[('analysis_name', 'ilike', self)]"/>
-                <field name="analysis_date" string="Analysis Date"/>
-                
-                <filter string="AI Model Trained" name="model_trained" 
-                        domain="[('model_trained', '=', True)]"/>
-                <filter string="Pending Training" name="pending_training" 
-                        domain="[('model_trained', '=', False)]"/>
-                <filter string="High Accuracy" name="high_accuracy" 
-                        domain="[('model_accuracy', '>=', 90)]"/>
-                <filter string="This Month" name="this_month" 
-                        domain="[('analysis_date', '>=', (context_today() - relativedelta(months=1)).strftime('%Y-%m-01')),
-                                 ('analysis_date', '&lt;', (context_today() + relativedelta(months=1)).strftime('%Y-%m-01'))]"/>
-                
-                <separator/>
-                <filter string="Active" name="active" domain="[('active', '=', True)]"/>
-                <filter string="Archived" name="inactive" domain="[('active', '=', False)]"/>
-                
-                <group expand="0" string="Group By">
-                    <filter string="Model Status" name="group_model_trained" 
-                            context="{'group_by': 'model_trained'}"/>
-                    <filter string="Analysis Month" name="group_month" 
-                            context="{'group_by': 'analysis_date:month'}"/>
-                    <filter string="Company" name="group_company" 
-                            context="{'group_by': 'company_id'}" groups="base.group_multi_company"/>
-                </group>
+                <field name="analysis_name" string="Analysis Name"/>
             </search>
         </field>
     </record>

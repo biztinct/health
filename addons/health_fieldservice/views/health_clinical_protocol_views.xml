@@ -156,17 +156,6 @@
         <field name="arch" type="xml">
             <search string="Protocol Search">
                 <field name="name"/>
-                <field name="service_type_ids"/>
-                
-                <filter string="Active" name="active" domain="[('active', '=', True)]"/>
-                <filter string="Basic Complexity" name="basic" domain="[('complexity_level', '=', 'basic')]"/>
-                <filter string="Intermediate Complexity" name="intermediate" domain="[('complexity_level', '=', 'intermediate')]"/>
-                <filter string="Advanced Complexity" name="advanced" domain="[('complexity_level', '=', 'advanced')]"/>
-                
-                <group expand="0" string="Group By">
-                    <filter string="Complexity Level" name="group_by_complexity" context="{'group_by': 'complexity_level'}"/>
-                    <filter string="Infection Control Level" name="group_by_infection" context="{'group_by': 'infection_control_level'}"/>
-                </group>
             </search>
         </field>
     </record>

@@ -920,14 +920,6 @@ class HealthFieldServiceOrderUnified(models.Model):
         help='Number of order lines in the healthcare quote'
     )
 
-    # Service Package (Alternative to Quote for prepaid services)
-    package_id = fields.Many2one(
-        'health.service.package',
-        string='Service Package',
-        tracking=True,
-        help='Prepaid service package selected for this booking'
-    )
-
     quote_state = fields.Selection(
         related='sale_order_id.state',
         string='Quote Status',
@@ -982,7 +974,6 @@ class HealthFieldServiceOrderUnified(models.Model):
     # Insurance Information
     has_insurance = fields.Boolean('Has Insurance', compute='_compute_has_insurance', store=True)
     insurance_provider = fields.Char('Insurance Provider', related='patient_id.insurance_provider')
-    insurance_claim_id = fields.Many2one('health.insurance.claim', string='Insurance Claim')
     
     # ============================================================================
     # SERVICE EXECUTION & CLINICAL NOTES
@@ -1670,101 +1661,11 @@ class HealthFieldServiceOrderUnified(models.Model):
             # No scheduled FSO found - clear the next_visit_date
             self.patient_id.write({'next_visit_date': False})
 
-    def _reserve_package_service(self):
-        """
-        Reserve 1 service from the package when booking is confirmed.
-        Decreases remaining_services by 1.
-        """
-        self.ensure_one()
-
-        if not self.package_id:
-            return False
-
-        # Decrease remaining services
-        quantity_to_reserve = self.package_consumption_quantity or 1
-        self.package_id.consumed_services += quantity_to_reserve
-
-        # Log reservation in package's chatter
-        try:
-            self.package_id.message_post(
-                body=_(
-                    '<p><strong>Service Reserved</strong></p>'
-                    '<ul>'
-                    '<li><strong>Booking:</strong> %s</li>'
-                    '<li><strong>Patient:</strong> %s</li>'
-                    '<li><strong>Services Reserved:</strong> %d</li>'
-                    '<li><strong>Services Remaining:</strong> %d</li>'
-                    '</ul>'
-                ) % (
-                    self.name,
-                    self.patient_id.name if self.patient_id else 'N/A',
-                    quantity_to_reserve,
-                    self.package_id.remaining_services
-                ),
-                subject=_('Service Reserved - %s') % self.name,
-                message_type='notification'
-            )
-        except Exception as e:
-            _logger.warning(f'Could not log package reservation for FSO {self.name}: {str(e)}')
-
-        return True
-
-    def _release_package_service(self):
-        """
-        Release reserved service back to the package when booking is cancelled.
-        Increases remaining_services by 1.
-        """
-        self.ensure_one()
-
-        if not self.package_id:
-            return False
-
-        # Increase available services
-        quantity_to_release = self.package_consumption_quantity or 1
-        self.package_id.consumed_services -= quantity_to_release
-
-        # Ensure consumed_services doesn't go below 0
-        if self.package_id.consumed_services < 0:
-            self.package_id.consumed_services = 0
-
-        # Update package state back to active if it was exhausted
-        if self.package_id.state == 'exhausted':
-            self.package_id.state = 'active'
-
-        # Log release in package's chatter
-        try:
-            self.package_id.message_post(
-                body=_(
-                    '<p><strong>Service Released (Booking Cancelled)</strong></p>'
-                    '<ul>'
-                    '<li><strong>Booking:</strong> %s</li>'
-                    '<li><strong>Patient:</strong> %s</li>'
-                    '<li><strong>Services Released:</strong> %d</li>'
-                    '<li><strong>Services Remaining:</strong> %d</li>'
-                    '</ul>'
-                ) % (
-                    self.name,
-                    self.patient_id.name if self.patient_id else 'N/A',
-                    quantity_to_release,
-                    self.package_id.remaining_services
-                ),
-                subject=_('Service Released - %s') % self.name,
-                message_type='notification'
-            )
-        except Exception as e:
-            _logger.warning(f'Could not log package release for FSO {self.name}: {str(e)}')
-
-        return True
-
     def _check_confirmation_requirements(self):
         """
         Check if booking meets requirements to be confirmed.
-        Requirements: MUST have EITHER:
-        1. A quote with at least one line item, OR
-        2. A service package selected (with sufficient remaining services)
-
-        Returns: (bool, str) - (is_valid, error_message)
-        """
+        Requirements: MUST have a quote with at least one line item.
+    """
         self.ensure_one()
 
         has_quote_with_items = (
@@ -1773,27 +1674,11 @@ class HealthFieldServiceOrderUnified(models.Model):
             len(self.sale_order_id.order_line) > 0
         )
 
-        has_package = self.package_id
-
-        if not has_quote_with_items and not has_package:
+        if not has_quote_with_items:
             error_msg = _(
-                'Booking cannot be confirmed. You must complete ONE of the following:\n'
-                '• Create a Quote with at least one service/product line item\n'
-                '• Select a prepaid Service Package'
+                'Booking cannot be confirmed. You must create a Quote with at least one service/product line item.'
             )
             return False, error_msg
-
-        # If package is selected, check that it has sufficient remaining services
-        if has_package:
-            required_quantity = self.package_consumption_quantity or 1
-            if self.package_id.remaining_services < required_quantity:
-                error_msg = _(
-                    'Cannot confirm booking: Package "%s" does not have sufficient remaining services.\n'
-                    'Required: %d service(s)\n'
-                    'Available: %d service(s)\n\n'
-                    'Please select a different package or create a quote instead.'
-                ) % (self.package_id.name, required_quantity, self.package_id.remaining_services)
-                return False, error_msg
 
         return True, None
 
@@ -1819,12 +1704,8 @@ class HealthFieldServiceOrderUnified(models.Model):
         try:
             self.write({'stage_id': confirmed_stage.id})
 
-            # Reserve service from package if booking uses prepaid package
-            if self.package_id:
-                self._reserve_package_service()
-
             # Post confirmation message
-            quote_or_package = self.sale_order_id.name if self.sale_order_id else self.package_id.name
+            quote_or_package = self.sale_order_id.name if self.sale_order_id else self.name
             try:
                 self.message_post(
                     body=_('✅ <strong>Booking Confirmed:</strong> Booking moved to %s stage. %s is ready for service delivery.') % (confirmed_stage.name, quote_or_package),
@@ -2111,12 +1992,11 @@ class HealthFieldServiceOrderUnified(models.Model):
                 '• Treatment Performed'
             ))
 
-        # Mandatory validation: Invoice/Quote must exist OR service package must be present (prepaid)
-        if not self.invoice_submitted and not self.package_id:
+        # Mandatory validation: Invoice/Quote must exist
+        if not self.invoice_submitted:
             raise UserError(_(
                 'Invoice or Quote is required before completing the service.\n\n'
-                'Alternatively, a service package must be assigned if payment is prepaid.\n'
-                'Please create a quote with service items or assign a service package.'
+                'Please create a quote with service items or assign an invoice.'
             ))
 
         # Check if staff can create invoice
@@ -2248,10 +2128,6 @@ class HealthFieldServiceOrderUnified(models.Model):
     def cancel_with_reason(self, cancellation_reason_id, cancellation_notes):
         """Cancel booking with structured cancellation data"""
         self.ensure_one()
-
-        # Release reserved service from package before cancelling
-        if self.package_id:
-            self._release_package_service()
 
         self.write({
             'state': 'cancelled',

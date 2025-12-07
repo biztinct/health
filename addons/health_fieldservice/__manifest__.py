@@ -6,9 +6,9 @@
     'description': """
         VAFHS Healthcare Field Service & Staff Assignment
         ===============================================
-        
+
         Unified healthcare field service management with AI-powered staff assignment:
-        
+
         Field Service Management:
         - Bookings (FSO) for home visit coordination
         - Automatic FSO generation from confirmed appointments
@@ -18,7 +18,7 @@
         - Draft invoice creation for Vietnamese tax compliance
         - Mobile-first interface for field workers
         - GPS tracking and route optimization
-        
+
         AI Staff Assignment:
         - Machine learning-powered staff optimization
         - Intelligent assignment based on skills, location, workload
@@ -27,20 +27,20 @@
         - Skills and competency management
         - Service area optimization
         - Staff performance analytics
-        
+
         Workflow:
         1. Patient booking creates unified FSO (Booking = FSO)
         2. FSO created with clinical protocol → AI staff assignment
         3. Staff assigned with equipment → Mobile dispatch notification
         4. Real-time tracking → Status updates via mobile app
         5. Service completion → Finalize invoice → MOH submission
-        
+
         Integration:
         - Unified FSO booking system (no separate appointments)
         - Consolidated field service and staff assignment system
         - Automatic invoice generation for Vietnamese compliance
         - Equipment management for portable medical devices
-        
+
         Vietnamese Healthcare Compliance:
         - Draft invoice creation upon FSO generation
         - Real-time tax authority submission
@@ -53,21 +53,19 @@
     'depends': [
         'base',
         'mail',
-        'account',  # For invoice generation
-        'sale',     # For quote/sales order integration
+        'account',
+        'sale',
         'hr',
         'contacts',
         'web',
-        'health_base',  # Our foundation healthcare module
+        'web_timeline',
+        'health_base',
     ],
     'data': [
-        # Security
         'security/cleanup_rules.xml',
         'security/health_fieldservice_security.xml',
         'security/health_staff_assignment_security.xml',
         'security/ir.model.access.csv',
-        
-        # Data
         'data/health_fieldservice_stages.xml',
         'data/health_clinical_protocols.xml',
         'data/ir_sequence.xml',
@@ -75,16 +73,10 @@
         'data/health_ai_assignment_cron.xml',
         'data/report_paperformat.xml',
         'data/moh_server_actions.xml',
-
-        # Reports
         'report/moh_reports.xml',
         'report/moh_report_template.xml',
-
-        # Wizards
         'views/health_staff_assignment_wizard_views.xml',
         'views/health_booking_cancel_wizard_views.xml',
-
-        # Views - Field Service
         'views/health_fieldservice_order_views.xml',
         'views/health_fieldservice_stage_views.xml',
         'views/health_fieldservice_team_views.xml',
@@ -93,8 +85,6 @@
         'views/health_fieldservice_communication_views.xml',
         'views/health_quote_views.xml',
         'views/health_fieldservice_menus.xml',
-        
-        # Views - Staff Assignment  
         'views/health_staff_assignment_views.xml',
         'views/health_ai_assignment_engine_views.xml',
         'views/health_staff_availability_views.xml',
@@ -110,7 +100,6 @@
     ],
     'assets': {
         'web.assets_backend': [
-            # CSS Assets
             'health_fieldservice/static/src/css/healthcare_quote.css',
             'health_fieldservice/static/src/css/service_timer.css',
             'health_fieldservice/static/src/css/assignment_dashboard.css',
@@ -120,7 +109,6 @@
             'health_fieldservice/static/src/css/web_timeline_custom.css',
             'health_fieldservice/static/src/css/web_timeline_card.css',
             'health_fieldservice/static/src/css/staff_assignment_form.css',
-            # JavaScript Assets (Restored - was working before analytics uninstall)
             'health_fieldservice/static/src/js/assignment_dashboard.js',
             'health_fieldservice/static/src/js/assignment_kanban.js',
             'health_fieldservice/static/src/js/assignment_timeline_view.js',
@@ -134,7 +122,6 @@
             'health_fieldservice/static/src/js/healthcare_quote_form.js',
             'health_fieldservice/static/src/js/service_timer.js',
             'health_fieldservice/static/src/js/fso_calendar_popover.js',
-            # XML Templates
             'health_fieldservice/static/src/xml/assignment_dashboard.xml',
             'health_fieldservice/static/src/xml/assignment_timeline_view.xml',
             'health_fieldservice/static/src/xml/staff_workload_dashboard.xml',
@@ -144,7 +131,7 @@
     },
     'installable': True,
     'auto_install': False,
-    'application': False,  # This extends health_base with unified FSO
+    'application': False,
     'sequence': 110,
     'pre_init_hook': 'pre_init_hook',
     'post_init_hook': 'post_init_hook',
