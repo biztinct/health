@@ -5,45 +5,45 @@
     <record id="stage_healthcare_contact" model="crm.stage">
         <field name="name">Initial Contact</field>
         <field name="sequence">1</field>
-        <field name="team_id" ref="healthcare_crm_team"/>
+        <field name="team_ids" eval="[(6, 0, [ref('healthcare_crm_team')])]"/>
     </record>
 
     <record id="stage_healthcare_qualification" model="crm.stage">
         <field name="name">Service Qualification</field>
         <field name="sequence">2</field>
-        <field name="team_id" ref="healthcare_crm_team"/>
+        <field name="team_ids" eval="[(6, 0, [ref('healthcare_crm_team')])]"/>
     </record>
 
     <record id="stage_healthcare_assessment" model="crm.stage">
         <field name="name">Health Assessment</field>
         <field name="sequence">3</field>
-        <field name="team_id" ref="healthcare_crm_team"/>
+        <field name="team_ids" eval="[(6, 0, [ref('healthcare_crm_team')])]"/>
     </record>
 
     <record id="stage_healthcare_proposal" model="crm.stage">
         <field name="name">Service Proposal</field>
         <field name="sequence">4</field>
-        <field name="team_id" ref="healthcare_crm_team"/>
+        <field name="team_ids" eval="[(6, 0, [ref('healthcare_crm_team')])]"/>
     </record>
 
     <record id="stage_healthcare_booking" model="crm.stage">
         <field name="name">Booking Confirmed</field>
         <field name="sequence">5</field>
-        <field name="team_id" ref="healthcare_crm_team"/>
+        <field name="team_ids" eval="[(6, 0, [ref('healthcare_crm_team')])]"/>
     </record>
 
     <record id="stage_healthcare_won" model="crm.stage">
         <field name="name">Client Acquired</field>
         <field name="sequence">6</field>
         <field name="is_won">True</field>
-        <field name="team_id" ref="healthcare_crm_team"/>
+        <field name="team_ids" eval="[(6, 0, [ref('healthcare_crm_team')])]"/>
     </record>
 
     <record id="stage_healthcare_lost" model="crm.stage">
         <field name="name">Opportunity Lost</field>
         <field name="sequence">7</field>
         <field name="fold">True</field>
-        <field name="team_id" ref="healthcare_crm_team"/>
+        <field name="team_ids" eval="[(6, 0, [ref('healthcare_crm_team')])]"/>
     </record>
 
 </odoo>

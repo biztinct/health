@@ -30,11 +30,6 @@
                 <attribute name="string">Contacts</attribute>
             </xpath>
             
-            <!-- Hide CUSTOMER section completely -->
-            <xpath expr="//group[@name='action']" position="attributes">
-                <attribute name="invisible">1</attribute>
-            </xpath>
-            
             <!-- Change button text -->
             <xpath expr="//button[@name='action_apply']" position="attributes">
                 <attribute name="string">Create Contact</attribute>
@@ -74,7 +69,7 @@
                             class="btn-secondary"
                             invisible="contact_outcome == 'booking_lost'"/>
                     <field name="contact_outcome" invisible="1"/>
-                    <field name="stage_id" widget="statusbar" options="{'clickable': '1'}" domain="[('team_id', '=', False)]"/>
+                    <field name="stage_id" widget="statusbar" options="{'clickable': '1'}" domain="[('team_ids', '=', False)]"/>
                 </header>
                 
                 <sheet string="CRM Contact">
@@ -143,7 +138,6 @@
                                         <group col="2">
                                             <field name="email_from" string="Email" widget="email"/>
                                             <field name="phone" widget="phone"/>
-                                            <field name="mobile" widget="phone"/>
                                             <field name="contact_datetime" string="Contact Date and Time"/>
                                         </group>
                                     </div>

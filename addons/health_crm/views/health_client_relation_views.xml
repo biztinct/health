@@ -1,367 +1,140 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-
-    <!-- Healthcare Client Relationship Form View -->
+  <data>
+    <!-- Form View -->
     <record id="view_health_client_relation_form" model="ir.ui.view">
-        <field name="name">health.client.relation.form</field>
-        <field name="model">health.client.relation</field>
-        <field name="arch" type="xml">
-            <form string="Healthcare Client Relationship">
-                <header>
-                    <button name="action_set_as_primary" 
-                            string="Set as Primary" 
-                            type="object" 
-                            class="btn-primary"
-                            invisible="is_primary"/>
-                    <field name="active" widget="boolean_toggle"/>
-                </header>
-                <sheet>
-                    <div class="oe_title">
-                        <h1>
-                            <field name="display_name" readonly="1"/>
-                        </h1>
-                    </div>
-                    <div class="vu-section">
-                        <div class="vu-section__title">
-                            <span class="vu-section__icon" data-icon="users-group"/>
-                            <div>
-                                <span>Relationship Overview</span>
-                                <small class="text-muted d-block">Client linkage and active period</small>
-                            </div>
-                        </div>
-                        <div class="vu-section-grid">
-                            <div class="vu-card">
-                                <div class="vu-card__title">
-                                    <span class="vu-section__icon" data-icon="users-group"/>
-                                    <span>Relationship Details</span>
-                                </div>
-                                <group col="2">
-                                    <field name="client_id" options="{'no_create': True}"/>
-                                    <field name="representative_id" options="{'no_create': True}"/>
-                                    <field name="role"/>
-                                    <field name="relationship_type"/>
-                                    <field name="is_primary"/>
-                                </group>
-                            </div>
-                            <div class="vu-card">
-                                <div class="vu-card__title">
-                                    <span class="vu-section__icon" data-icon="timeline"/>
-                                    <span>Date Range</span>
-                                </div>
-                                <group col="2">
-                                    <field name="start_date"/>
-                                    <field name="end_date"/>
-                                    <field name="priority_order"/>
-                                </group>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <notebook>
-                        <page string="Healthcare Permissions">
-                            <div class="vu-section">
-                                <div class="vu-section__title">
-                                    <span class="vu-section__icon" data-icon="heart-pulse"/>
-                                    <div>
-                                        <span>Permissions</span>
-                                        <small class="text-muted d-block">Medical authority and financial coverage</small>
-                                    </div>
-                                </div>
-                                <div class="vu-section-grid">
-                                    <div class="vu-card">
-                                        <div class="vu-card__title">
-                                            <span class="vu-section__icon" data-icon="stethoscope"/>
-                                            <span>Medical Permissions</span>
-                                        </div>
-                                        <group>
-                                            <field name="can_make_medical_decisions"/>
-                                            <field name="can_receive_medical_info"/>
-                                            <field name="can_schedule_appointments"/>
-                                        </group>
-                                    </div>
-                                    <div class="vu-card">
-                                        <div class="vu-card__title">
-                                            <span class="vu-section__icon" data-icon="credit-card"/>
-                                            <span>Financial Responsibility</span>
-                                        </div>
-                                        <group>
-                                            <field name="financial_responsibility" widget="percentage"/>
-                                        </group>
-                                    </div>
-                                </div>
-                            </div>
-                        </page>
-                        
-                        <page string="Legal Documentation">
-                            <div class="vu-section">
-                                <div class="vu-section__title">
-                                    <span class="vu-section__icon" data-icon="file-text"/>
-                                    <div>
-                                        <span>Legal Documentation</span>
-                                        <small class="text-muted d-block">Supporting paperwork for the relationship</small>
-                                    </div>
-                                </div>
-                                <div class="vu-section-grid">
-                                    <div class="vu-card">
-                                        <div class="vu-card__title">
-                                            <span class="vu-section__icon" data-icon="id-card"/>
-                                            <span>Vietnamese Legal Documents</span>
-                                        </div>
-                                        <group col="2">
-                                            <field name="legal_document_type"/>
-                                            <field name="legal_document_number"/>
-                                            <field name="issued_by"/>
-                                            <field name="issued_date"/>
-                                        </group>
-                                    </div>
-                                    <div class="vu-card">
-                                <div class="vu-card__title">
-                                    <span class="vu-section__icon" data-icon="file-text"/>
-                                    <span>Additional Information</span>
-                                </div>
-                                <group>
-                                    <field name="notes" nolabel="1"/>
-                                </group>
-                            </div>
-                        </div>
-                    </div>
-                </page>
-                    </notebook>
-                </sheet>
-                <chatter reload_on_follower="True"/>
-            </form>
-        </field>
+      <field name="name">health.client.relation.form</field>
+      <field name="model">health.client.relation</field>
+      <field name="arch" type="xml">
+        <form string="Healthcare Client Relationship">
+          <header>
+            <field name="active" widget="boolean_toggle"/>
+          </header>
+          <sheet>
+            <group>
+              <field name="client_id" options="{'no_create': True}"/>
+              <field name="representative_id" options="{'no_create': True}"/>
+              <field name="role"/>
+              <field name="relationship_type"/>
+              <field name="is_primary"/>
+            </group>
+            <group>
+              <field name="start_date"/>
+              <field name="end_date"/>
+              <field name="priority_order"/>
+            </group>
+            <group>
+              <field name="can_make_medical_decisions"/>
+              <field name="can_receive_medical_info"/>
+              <field name="can_schedule_appointments"/>
+              <field name="financial_responsibility" widget="percentage"/>
+            </group>
+            <group>
+              <field name="notes"/>
+            </group>
+          </sheet>
+        </form>
+      </field>
     </record>
 
-    <!-- Healthcare Client Relationship List View -->
+    <!-- Tree View -->
     <record id="view_health_client_relation_tree" model="ir.ui.view">
-        <field name="name">health.client.relation.tree</field>
-        <field name="model">health.client.relation</field>
-        <field name="arch" type="xml">
-            <list string="Healthcare Client Relationships">
-                <field name="client_id"/>
-                <field name="representative_id"/>
-                <field name="role"/>
-                <field name="relationship_type"/>
-                <field name="is_primary" widget="boolean_toggle"/>
-                <field name="start_date"/>
-                <field name="financial_responsibility" widget="percentage" optional="hide"/>
-                <field name="can_make_medical_decisions" widget="boolean_toggle" optional="hide"/>
-                <field name="active" widget="boolean_toggle"/>
-            </list>
-        </field>
+      <field name="name">health.client.relation.tree</field>
+      <field name="model">health.client.relation</field>
+      <field name="arch" type="xml">
+        <list string="Healthcare Client Relationships">
+          <field name="client_id"/>
+          <field name="representative_id"/>
+          <field name="role"/>
+          <field name="relationship_type"/>
+          <field name="is_primary" widget="boolean_toggle"/>
+          <field name="start_date"/>
+          <field name="financial_responsibility" widget="percentage" optional="hide"/>
+          <field name="can_make_medical_decisions" widget="boolean_toggle" optional="hide"/>
+          <field name="active" widget="boolean_toggle"/>
+        </list>
+      </field>
     </record>
 
-    <!-- Enhanced Healthcare Client Relationship Kanban View (Section 2.2) -->
+    <!-- Kanban (minimal, to keep action compatibility) -->
     <record id="view_health_client_relation_kanban" model="ir.ui.view">
-        <field name="name">health.client.relation.kanban</field>
-        <field name="model">health.client.relation</field>
-        <field name="arch" type="xml">
-            <kanban string="Healthcare Relationships Dashboard"
-                    class="o_kanban_small_column o_kanban_mobile"
-                    default_group_by="role"
-                    group_create="false">
-                <field name="client_id"/>
-                <field name="representative_id"/>
-                <field name="role"/>
-                <field name="relationship_type"/>
-                <field name="is_primary"/>
-                <field name="can_make_medical_decisions"/>
-                <field name="can_receive_medical_info"/>
-                <field name="can_schedule_appointments"/>
-                <field name="financial_responsibility"/>
-                <field name="priority_order"/>
-                <templates>
-                    <t t-name="kanban-box">
-                        <!-- Dynamic color coding by role -->
-                        <div t-attf-class="oe_kanban_card oe_kanban_global_click o_relationship_card {{
-                                record.role.raw_value == 'caregiver' ? 'border-success' :
-                                record.role.raw_value == 'payer' ? 'border-info' :
-                                record.role.raw_value == 'referrer' ? 'border-warning' :
-                                record.role.raw_value == 'emergency_contact' ? 'border-danger' :
-                                record.role.raw_value == 'legal_guardian' ? 'border-primary' : 'border-secondary'
-                            }}" style="border-left: 5px solid;">
-
-                            <div class="oe_kanban_content">
-                                <!-- Header: Primary Badge + Role Icon -->
-                                <div class="d-flex justify-content-between align-items-start mb-2">
-                                    <div class="o_kanban_tags">
-                                        <span t-if="record.is_primary.value" class="badge badge-pill badge-warning">
-                                            <i class="fa fa-star"/> PRIMARY
-                                        </span>
-                                        <span t-if="record.priority_order.value &lt; 10" class="badge badge-pill badge-secondary">
-                                            Priority #<t t-esc="record.priority_order.value"/>
-                                        </span>
-                                    </div>
-                                    <div class="text-end">
-                                        <!-- Role Icon with tooltip -->
-                                        <i t-attf-class="fa fa-3x {{
-                                                record.role.raw_value == 'caregiver' ? 'fa-heartbeat text-success' :
-                                                record.role.raw_value == 'payer' ? 'fa-credit-card text-info' :
-                                                record.role.raw_value == 'referrer' ? 'fa-handshake-o text-warning' :
-                                                record.role.raw_value == 'emergency_contact' ? 'fa-phone text-danger' :
-                                                record.role.raw_value == 'legal_guardian' ? 'fa-gavel text-primary' : 'fa-user'
-                                            }}" t-att-title="record.role.value"/>
-                                    </div>
-                                </div>
-
-                                <!-- Main Relationship Display (Hierarchical) -->
-                                <div class="o_kanban_record_body">
-                                    <div class="mb-2">
-                                        <div class="text-center p-2" style="background: #f8f9fa; border-radius: 8px;">
-                                            <strong style="font-size: 14px; color: #1565C0;">
-                                                <i class="fa fa-user"/> <field name="client_id"/>
-                                            </strong>
-                                        </div>
-
-                                        <div class="text-center my-2">
-                                            <i class="fa fa-arrows-v fa-2x" style="color: #42A5F5;"/>
-                                            <div style="font-size: 11px; color: #666;">
-                                                <field name="relationship_type"/>
-                                            </div>
-                                        </div>
-
-                                        <div class="text-center p-2" style="background: #e3f2fd; border-radius: 8px;">
-                                            <strong style="font-size: 14px; color: #0D356B;">
-                                                <i class="fa fa-user-circle"/> <field name="representative_id"/>
-                                            </strong>
-                                        </div>
-                                    </div>
-
-                                <!-- Permissions and Responsibilities -->
-                                    <div class="mt-2" style="font-size: 11px;">
-                                        <div t-if="record.can_make_medical_decisions.value" class="mb-1">
-                                            <i class="fa fa-check-circle text-success"/> Medical Decisions
-                                        </div>
-                                        <div t-if="record.can_receive_medical_info.value" class="mb-1">
-                                            <i class="fa fa-file-medical text-info"/> Medical Info Access
-                                        </div>
-                                        <div t-if="record.can_schedule_appointments.value" class="mb-1">
-                                            <i class="fa fa-calendar-check-o text-primary"/> Schedule Appointments
-                                        </div>
-                                        <div t-if="record.financial_responsibility.value &gt; 0" class="mb-1">
-                                            <i class="fa fa-money text-warning"/>
-                                            <strong><t t-esc="record.financial_responsibility.value"/>%</strong> Financial Responsibility
-                                        </div>
-                                    </div>
-
-                                    <!-- Role Display -->
-                                    <div class="mt-2 text-center">
-                                        <span class="badge badge-pill" t-attf-class="{{
-                                                record.role.raw_value == 'caregiver' ? 'badge-success' :
-                                                record.role.raw_value == 'payer' ? 'badge-info' :
-                                                record.role.raw_value == 'referrer' ? 'badge-warning' :
-                                                record.role.raw_value == 'emergency_contact' ? 'badge-danger' :
-                                                record.role.raw_value == 'legal_guardian' ? 'badge-primary' : 'badge-secondary'
-                                            }}">
-                                            <field name="role"/>
-                                        </span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </t>
-                </templates>
-            </kanban>
-        </field>
+      <field name="name">health.client.relation.kanban</field>
+      <field name="model">health.client.relation</field>
+      <field name="arch" type="xml">
+        <kanban class="o_kanban_small_column o_kanban_mobile" default_group_by="role">
+          <field name="client_id"/>
+          <field name="representative_id"/>
+          <field name="role"/>
+          <field name="relationship_type"/>
+          <field name="is_primary"/>
+          <templates>
+            <t t-name="kanban-box">
+              <div class="oe_kanban_card oe_kanban_global_click">
+                <div class="o_kanban_content">
+                  <strong><field name="client_id"/></strong>
+                  <div><field name="representative_id"/></div>
+                  <div><field name="role"/></div>
+                  <div><field name="relationship_type"/></div>
+                </div>
+              </div>
+            </t>
+          </templates>
+        </kanban>
+      </field>
     </record>
 
-    <!-- Graph View for Relationship Network (Option A - Section 2.2) -->
-    <record id="view_health_client_relation_graph" model="ir.ui.view">
-        <field name="name">health.client.relation.graph</field>
-        <field name="model">health.client.relation</field>
-        <field name="arch" type="xml">
-            <graph string="Relationship Network Analysis" type="bar">
-                <field name="client_id"/>
-                <field name="role" type="col"/>
-            </graph>
-        </field>
-    </record>
-
-    <!-- Pivot View for Relationship Analysis -->
+    <!-- Pivot View -->
     <record id="view_health_client_relation_pivot" model="ir.ui.view">
-        <field name="name">health.client.relation.pivot</field>
-        <field name="model">health.client.relation</field>
-        <field name="arch" type="xml">
-            <pivot string="Relationship Analysis Dashboard">
-                <field name="client_id" type="row"/>
-                <field name="role" type="col"/>
-                <field name="financial_responsibility" type="measure"/>
-            </pivot>
-        </field>
+      <field name="name">health.client.relation.pivot</field>
+      <field name="model">health.client.relation</field>
+      <field name="arch" type="xml">
+        <pivot string="Relationship Analysis">
+          <field name="client_id" type="row"/>
+          <field name="role" type="col"/>
+          <field name="financial_responsibility" type="measure"/>
+        </pivot>
+      </field>
     </record>
 
-    <!-- Calendar View for Relationship Timeline -->
+    <!-- Calendar View -->
     <record id="view_health_client_relation_calendar" model="ir.ui.view">
-        <field name="name">health.client.relation.calendar</field>
-        <field name="model">health.client.relation</field>
-        <field name="arch" type="xml">
-            <calendar string="Relationship Timeline"
-                      date_start="start_date"
-                      date_stop="end_date"
-                      color="role"
-                      mode="month">
-                <field name="client_id"/>
-                <field name="representative_id"/>
-                <field name="role"/>
-                <field name="relationship_type"/>
-            </calendar>
-        </field>
+      <field name="name">health.client.relation.calendar</field>
+      <field name="model">health.client.relation</field>
+      <field name="arch" type="xml">
+        <calendar string="Relationship Timeline" date_start="start_date" date_stop="end_date" color="role">
+          <field name="client_id"/>
+          <field name="representative_id"/>
+          <field name="role"/>
+        </calendar>
+      </field>
     </record>
 
-    <!-- Healthcare Client Relationship Search View -->
+    <!-- Search View -->
     <record id="view_health_client_relation_search" model="ir.ui.view">
-        <field name="name">health.client.relation.search</field>
-        <field name="model">health.client.relation</field>
-        <field name="arch" type="xml">
-            <search string="Search Healthcare Relationships">
-                <field name="client_id" string="Client/Patient"/>
-                <field name="representative_id" string="Representative"/>
-                <field name="role"/>
-                <field name="relationship_type"/>
-                
-                <filter string="Primary Only" name="primary_only" domain="[('is_primary', '=', True)]"/>
-                <filter string="Active" name="active" domain="[('active', '=', True)]"/>
-                <filter string="Inactive" name="inactive" domain="[('active', '=', False)]"/>
-                
-                <separator/>
-                <filter string="Caregivers" name="caregivers" domain="[('role', '=', 'caregiver')]"/>
-                <filter string="Payers" name="payers" domain="[('role', '=', 'payer')]"/>
-                <filter string="Referrers" name="referrers" domain="[('role', '=', 'referrer')]"/>
-                <filter string="Emergency Contacts" name="emergency_contacts" domain="[('role', '=', 'emergency_contact')]"/>
-                <filter string="Legal Guardians" name="legal_guardians" domain="[('role', '=', 'legal_guardian')]"/>
-                
-                <separator/>
-                <filter string="Can Make Medical Decisions" name="medical_decisions" 
-                        domain="[('can_make_medical_decisions', '=', True)]"/>
-                <filter string="Financial Responsibility" name="financial_responsibility" 
-                        domain="[('financial_responsibility', '&gt;', 0)]"/>
-                
-                <group expand="0" string="Group By">
-                    <filter string="Role" name="group_role" context="{'group_by': 'role'}"/>
-                    <filter string="Client" name="group_client" context="{'group_by': 'client_id'}"/>
-                    <filter string="Representative" name="group_representative" context="{'group_by': 'representative_id'}"/>
-                    <filter string="Relationship Type" name="group_relationship_type" context="{'group_by': 'relationship_type'}"/>
-                </group>
-            </search>
-        </field>
+      <field name="name">health.client.relation.search</field>
+      <field name="model">health.client.relation</field>
+      <field name="arch" type="xml">
+        <search string="Search Healthcare Relationships">
+          <field name="client_id" string="Client/Patient"/>
+        </search>
+      </field>
     </record>
 
-    <!-- Healthcare Client Relationship Action -->
+    <!-- Window Action -->
     <record id="action_health_client_relation" model="ir.actions.act_window">
-        <field name="name">Healthcare Relationships</field>
-        <field name="res_model">health.client.relation</field>
-        <field name="view_mode">kanban,list,form,graph,pivot,calendar</field>
-        <field name="context">{'search_default_active': 1}</field>
-        <field name="help" type="html">
-            <p class="o_view_nocontent_smiling_face">
-                Create healthcare relationships between clients and their representatives!
-            </p>
-            <p>
-                Healthcare relationships define connections between patients/clients and the people who support them.
-                This includes caregivers, payers, referrers, emergency contacts, and legal guardians.
-            </p>
-        </field>
+      <field name="name">Healthcare Relationships</field>
+      <field name="res_model">health.client.relation</field>
+      <field name="view_mode">list,form,kanban</field>
+      <field name="view_id" ref="view_health_client_relation_tree"/>
+      <field name="search_view_id" ref="view_health_client_relation_search"/>
+      <field name="help" type="html">
+        <p class="o_view_nocontent_smiling_face">
+          Create your first healthcare relationship!
+        </p>
+        <p>
+          Track links between patients/clients and their representatives, caregivers, payers, and other roles.
+        </p>
+      </field>
     </record>
-
+  </data>
 </odoo>

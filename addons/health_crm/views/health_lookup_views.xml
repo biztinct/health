@@ -56,21 +56,6 @@
         <field name="arch" type="xml">
             <search string="Search Contact Reasons">
                 <field name="name"/>
-                <field name="code"/>
-                <field name="category"/>
-                
-                <filter string="Active" name="active" domain="[('active', '=', True)]"/>
-                <filter string="Inactive" name="inactive" domain="[('active', '=', False)]"/>
-                
-                <separator/>
-                <filter string="Sales" name="sales" domain="[('category', '=', 'sales')]"/>
-                <filter string="Operations" name="om" domain="[('category', '=', 'om')]"/>
-                <filter string="Support" name="support" domain="[('category', '=', 'support')]"/>
-                <filter string="Emergency" name="emergency" domain="[('category', '=', 'emergency')]"/>
-                
-                <group expand="0" string="Group By">
-                    <filter string="Category" name="group_category" context="{'group_by': 'category'}"/>
-                </group>
             </search>
         </field>
     </record>
@@ -148,27 +133,6 @@
         <field name="arch" type="xml">
             <search string="Search Lead Reasons">
                 <field name="name"/>
-                <field name="code"/>
-                <field name="category"/>
-                <field name="lead_type"/>
-                
-                <filter string="Active" name="active" domain="[('active', '=', True)]"/>
-                <filter string="Inactive" name="inactive" domain="[('active', '=', False)]"/>
-                
-                <separator/>
-                <filter string="For Leads" name="for_leads" domain="[('lead_type', 'in', ['lead', 'both'])]"/>
-                <filter string="For Opportunities" name="for_opportunities" domain="[('lead_type', 'in', ['opportunity', 'both'])]"/>
-                
-                <separator/>
-                <filter string="Service Interest" name="service_interest" domain="[('category', '=', 'service_interest')]"/>
-                <filter string="Referral" name="referral" domain="[('category', '=', 'referral')]"/>
-                <filter string="Marketing" name="marketing" domain="[('category', '=', 'marketing')]"/>
-                <filter string="Website" name="website" domain="[('category', '=', 'website')]"/>
-                
-                <group expand="0" string="Group By">
-                    <filter string="Category" name="group_category" context="{'group_by': 'category'}"/>
-                    <filter string="Lead Type" name="group_lead_type" context="{'group_by': 'lead_type'}"/>
-                </group>
             </search>
         </field>
     </record>
@@ -234,30 +198,16 @@
         </field>
     </record>
 
-    <record id="view_health_province_search" model="ir.ui.view">
+        <record id="view_health_province_search" model="ir.ui.view">
         <field name="name">health.province.search</field>
         <field name="model">health.province</field>
         <field name="arch" type="xml">
             <search string="Search Provinces">
                 <field name="name"/>
-                <field name="name_vietnamese"/>
-                <field name="code"/>
-                <field name="region"/>
-                
-                <filter string="Active" name="active" domain="[('active', '=', True)]"/>
-                <filter string="Inactive" name="inactive" domain="[('active', '=', False)]"/>
-                
-                <separator/>
-                <filter string="Northern" name="north" domain="[('region', '=', 'north')]"/>
-                <filter string="Central" name="central" domain="[('region', '=', 'central')]"/>
-                <filter string="Southern" name="south" domain="[('region', '=', 'south')]"/>
-                
-                <group expand="0" string="Group By">
-                    <filter string="Region" name="group_region" context="{'group_by': 'region'}"/>
-                </group>
             </search>
         </field>
     </record>
+
 
     <record id="action_health_province" model="ir.actions.act_window">
         <field name="name">Provinces/Cities</field>

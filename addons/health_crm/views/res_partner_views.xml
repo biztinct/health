@@ -37,7 +37,7 @@
             </xpath>
 
             <!-- Add Vietnamese communication fields -->
-            <xpath expr="//field[@name='mobile']" position="after">
+            <xpath expr="//field[@name='phone']" position="after">
                 <field name="zalo_number" placeholder="Zalo number"/>
                 <field name="facebook_profile" placeholder="Facebook profile"/>
                 <field name="preferred_contact_method"/>

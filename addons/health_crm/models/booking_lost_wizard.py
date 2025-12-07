@@ -20,18 +20,21 @@ class BookingLostWizard(models.TransientModel):
         if not self.booking_lost_reason or not self.booking_lost_reason.strip():
             raise UserError(_('Please provide a reason for marking this booking as lost.'))
 
-        # Find a lost stage (fold=True) without team_id
+        # Find a lost stage (fold=True) without team restriction
         lost_stage = self.env['crm.stage'].search([
             ('fold', '=', True),
-            ('team_id', '=', False)
+            ('team_ids', '=', False)
         ], limit=1)
 
-        # If no folded stage without team_id, find "Opportunity Lost" stage
+        # If no folded stage without team restriction, find "Opportunity Lost" stage
         if not lost_stage:
-            lost_stage = self.env['crm.stage'].search([
+            domain = [
                 ('name', 'ilike', 'lost'),
-                '|', ('team_id', '=', False), ('team_id', '=', self.lead_id.team_id.id)
-            ], limit=1)
+                '|',
+                ('team_ids', '=', False),
+                ('team_ids', 'in', self.lead_id.team_id.id),
+            ]
+            lost_stage = self.env['crm.stage'].search(domain, limit=1)
 
         vals = {
             'contact_outcome': 'booking_lost',
