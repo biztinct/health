@@ -2,6 +2,5 @@
 <odoo>
     <record id="group_health_redinvoice_manager" model="res.groups">
         <field name="name">Red Invoice Manager</field>
-        <field name="category_id" ref="base.module_category_accounting_accounting"/>
     </record>
 </odoo>

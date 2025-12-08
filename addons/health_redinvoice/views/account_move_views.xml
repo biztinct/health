@@ -33,22 +33,17 @@
         <field name="model">account.move</field>
         <field name="inherit_id" ref="health_invoicing.view_healthcare_invoices_filter"/>
         <field name="arch" type="xml">
-            <!-- Add Red Invoice State filters after unpaid_invoices filter -->
-            <filter name="unpaid_invoices" position="after">
+            <!-- Inject simple red-invoice filters into the search view -->
+            <xpath expr="//search" position="inside">
                 <separator/>
-                <!-- Red Invoice State filters -->
                 <filter name="red_invoice_issued" string="Red Invoice Issued"
                         domain="[('red_invoice_state', '=', 'issued')]"/>
                 <filter name="red_invoice_pending" string="Red Invoice Pending"
                         domain="[('red_invoice_state', '=', 'pending')]"/>
                 <filter name="red_invoice_failed" string="Red Invoice Failed"
                         domain="[('red_invoice_state', '=', 'failed')]"/>
-            </filter>
-
-            <!-- Add Red Invoice State to Group By options -->
-            <filter name="group_by_invoice_date" position="before">
                 <filter string="Red Invoice State" domain="[]" context="{'group_by': 'red_invoice_state'}" name="group_by_red_invoice_state"/>
-            </filter>
+            </xpath>
         </field>
     </record>
 
