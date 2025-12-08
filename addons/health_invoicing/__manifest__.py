@@ -110,7 +110,6 @@
         'views/health_invoicing_menus.xml',
     ],
     'demo': [
-        'demo/health_invoicing_demo.xml',
     ],
     'installable': True,
     'auto_install': False,

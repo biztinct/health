@@ -4,9 +4,9 @@
     'name': "Payment - Account",
     'category': 'Accounting/Accounting',
     'summary': "Enable customers to pay invoices on the portal and post payments when transactions are processed.",
-    'version': '2.0',
+    'version': '19.0.1.0.0',
     'depends': ['account', 'payment'],
-    'auto_install': ['account'],
+    'auto_install': False,
     'data': [
         'data/ir_config_parameter.xml',
         'data/onboarding_data.xml',

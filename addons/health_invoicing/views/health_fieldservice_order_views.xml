@@ -81,6 +81,16 @@
                     </group>
                 </group>
                 
+                <!-- Optional Insurance Claim Link -->
+                <group string="Insurance Claim (optional)" name="insurance_claim_link"
+                       groups="health_invoicing.group_insurance_claims">
+                    <group>
+                        <field name="insurance_claim_id"
+                               options="{'no_create': False}"
+                               placeholder="Link to insurance claim invoice (if any)"/>
+                    </group>
+                </group>
+                
                 <!-- Package Status Alert -->
                 <div class="alert alert-info" role="alert" 
                      invisible="not package_id">

@@ -50,61 +50,7 @@
         <field name="priority">15</field>
         <field name="arch" type="xml">
             <search string="Search Healthcare Payments">
-                
-                <!-- Healthcare-specific filters -->
-                <filter name="outstanding_only" string="Outstanding Payments"
-                        domain="[('reconciled', '=', False), ('parent_state', '=', 'posted')]"/>
-                <filter name="overdue_patients" string="Overdue Clients"
-                        domain="[('date_maturity', '&lt;', context_today()), ('reconciled', '=', False), ('parent_state', '=', 'posted')]"/>
-                <filter name="due_this_week" string="Due This Week"
-                        domain="[('date_maturity', '&lt;=', (context_today() + relativedelta(weeks=1)).strftime('%Y-%m-%d')), ('reconciled', '=', False)]"/>
-                <filter name="due_this_month" string="Due This Month"
-                        domain="[('date_maturity', '&lt;=', (context_today() + relativedelta(months=1)).strftime('%Y-%m-%d')), ('reconciled', '=', False)]"/>
-                
-                <separator/>
-                
-                <!-- Payment status filters -->
-                <filter name="paid" string="Paid" domain="[('reconciled', '=', True)]"/>
-                <filter name="partial_paid" string="Partially Paid"
-                        domain="[('reconciled', '=', False), '|', ('matched_credit_ids', '!=', False), ('matched_debit_ids', '!=', False)]"/>
-                <filter name="unpaid" string="Unpaid" domain="[('reconciled', '=', False)]"/>
-                
-                <separator/>
-                
-                <!-- Amount ranges -->
-                <filter name="high_value" string="High Value (&gt; 1M VND)"
-                        domain="[('amount_residual', '&gt;', 1000000)]"/>
-                <filter name="medium_value" string="Medium Value (100K - 1M VND)"
-                        domain="[('amount_residual', '&gt;=', 100000), ('amount_residual', '&lt;=', 1000000)]"/>
-                <filter name="low_value" string="Low Value (&lt; 100K VND)"
-                        domain="[('amount_residual', '&lt;', 100000)]"/>
-                
-                <separator/>
-                
-                <separator/>
-                
-                <!-- Date filters -->
-                <filter string="Due Date" name="date_maturity" date="date_maturity"/>
-                <filter string="Invoice Date" name="invoice_date" date="invoice_date"/>
-                
-                <separator/>
-                
-                <!-- Search fields -->
-                <field name="partner_id" string='Client'/>
-                <field name="move_id" string="Invoice"/>
-                <field name="invoice_origin" string="Service"/>
-                <field name="amount_residual" string="Outstanding Amount"/>
-                <field name="date_maturity" string="Due Date"/>
-                
-                <!-- Group by options -->
-                <group expand="0" string="Group By">
-                    <filter string='Client' domain="[]" context="{'group_by': 'partner_id'}" name="group_by_patient"/>
-                    <filter string="Due Date" domain="[]" context="{'group_by': 'date_maturity'}" name="group_by_due_date"/>
-                    <filter string="Invoice Date" domain="[]" context="{'group_by': 'invoice_date'}" name="group_by_invoice_date"/>
-                    <filter string="Payment Terms" domain="[]" context="{'group_by': 'payment_term_id'}" name="group_by_payment_terms"/>
-                    <filter string="Payment Status" domain="[]" context="{'group_by': 'reconciled'}" name="group_by_status"/>
-                </group>
-                
+                <field name="partner_id"/>
             </search>
         </field>
     </record>
@@ -261,37 +207,7 @@
         <field name="priority">15</field>
         <field name="arch" type="xml">
             <search string="Search Healthcare Invoices">
-
-                <!-- Quick filters -->
-                <filter name="posted_invoices" string="Posted Invoices"
-                        domain="[('state', '=', 'posted')]"/>
-                <filter name="draft_invoices" string="Draft Invoices"
-                        domain="[('state', '=', 'draft')]"/>
-                <filter name="unpaid_invoices" string="Unpaid Invoices"
-                        domain="[('state', '=', 'posted'), ('payment_state', 'in', ('not_paid', 'partial'))]"/>
-
-                <separator/>
-
-                <!-- Date filters -->
-                <filter string="Invoice Date" name="invoice_date" date="invoice_date"/>
-                <filter string="Due Date" name="invoice_date_due" date="invoice_date_due"/>
-
-                <separator/>
-
-                <!-- Search fields -->
-                <field name="name" string="Invoice Number"/>
-                <field name="partner_id" string="Client"/>
-                <field name="invoice_origin" string="Source"/>
-                <field name="amount_total"/>
-
-                <!-- Group by options -->
-                <group expand="0" string="Group By">
-                    <filter string="Client" domain="[]" context="{'group_by': 'partner_id'}" name="group_by_client"/>
-                    <filter string="State" domain="[]" context="{'group_by': 'state'}" name="group_by_state"/>
-                    <filter string="Payment State" domain="[]" context="{'group_by': 'payment_state'}" name="group_by_payment_state"/>
-                    <filter string="Invoice Date" domain="[]" context="{'group_by': 'invoice_date'}" name="group_by_invoice_date"/>
-                </group>
-
+                <field name="partner_id"/>
             </search>
         </field>
     </record>

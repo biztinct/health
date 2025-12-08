@@ -7,6 +7,14 @@ from odoo.exceptions import UserError
 class HealthFieldserviceOrder(models.Model):
     _inherit = 'health.fieldservice.order'
     
+    # Optional Insurance Claim linkage (kept in invoicing to avoid base dependency)
+    insurance_claim_id = fields.Many2one(
+        'account.move',
+        string='Insurance Claim Invoice',
+        domain="[('move_type', '=', 'out_invoice'), ('partner_id', '=', patient_id), ('has_insurance_claim', '=', True)]",
+        help='Link to an invoice that carries insurance claim data for this service order.'
+    )
+    
     # Enhanced Invoice Integration
     invoice_id = fields.Many2one(
         'account.move',
@@ -220,6 +228,207 @@ class HealthFieldserviceOrder(models.Model):
             'view_mode': 'form',
             'target': 'current',
         }
+
+    # -------------------------------------------------------------------------
+    # Package helpers (moved from health_fieldservice)
+    # -------------------------------------------------------------------------
+    def _reserve_package_service(self):
+        """Reserve services from the package on booking confirmation."""
+        self.ensure_one()
+        if not self.package_id:
+            return False
+
+        quantity_to_reserve = self.package_consumption_quantity or 1
+        self.package_id.consumed_services += quantity_to_reserve
+
+        try:
+            self.package_id.message_post(
+                body=_(
+                    '<p><strong>Service Reserved</strong></p>'
+                    '<ul>'
+                    '<li><strong>Booking:</strong> %s</li>'
+                    '<li><strong>Patient:</strong> %s</li>'
+                    '<li><strong>Services Reserved:</strong> %d</li>'
+                    '<li><strong>Services Remaining:</strong> %d</li>'
+                    '</ul>'
+                ) % (
+                    self.name,
+                    self.patient_id.name if self.patient_id else 'N/A',
+                    quantity_to_reserve,
+                    self.package_id.remaining_services
+                ),
+                subject=_('Service Reserved - %s') % self.name,
+                message_type='notification'
+            )
+        except Exception as e:
+            _logger.warning('Could not log package reservation for FSO %s: %s', self.name, str(e))
+
+        return True
+
+    def _release_package_service(self):
+        """Release reserved services if booking is cancelled."""
+        self.ensure_one()
+        if not self.package_id:
+            return False
+
+        quantity_to_release = self.package_consumption_quantity or 1
+        self.package_id.consumed_services -= quantity_to_release
+        if self.package_id.consumed_services < 0:
+            self.package_id.consumed_services = 0
+
+        if self.package_id.state == 'exhausted':
+            self.package_id.state = 'active'
+
+        try:
+            self.package_id.message_post(
+                body=_(
+                    '<p><strong>Service Released (Booking Cancelled)</strong></p>'
+                    '<ul>'
+                    '<li><strong>Booking:</strong> %s</li>'
+                    '<li><strong>Patient:</strong> %s</li>'
+                    '<li><strong>Services Released:</strong> %d</li>'
+                    '<li><strong>Services Remaining:</strong> %d</li>'
+                    '</ul>'
+                ) % (
+                    self.name,
+                    self.patient_id.name if self.patient_id else 'N/A',
+                    quantity_to_release,
+                    self.package_id.remaining_services
+                ),
+                subject=_('Service Released - %s') % self.name,
+                message_type='notification'
+            )
+        except Exception as e:
+            _logger.warning('Could not log package release for FSO %s: %s', self.name, str(e))
+
+        return True
+
+    # -------------------------------------------------------------------------
+    # Overrides to re-enable package workflows
+    # -------------------------------------------------------------------------
+    def _check_confirmation_requirements(self):
+        """
+        Allow confirmation with either a quote (with lines) or a valid package.
+        """
+        self.ensure_one()
+        has_quote_with_items = (
+            self.sale_order_id and
+            self.sale_order_id.order_line and
+            len(self.sale_order_id.order_line) > 0
+        )
+
+        if has_quote_with_items:
+            return True, None
+
+        if self.package_id:
+            required_quantity = self.package_consumption_quantity or 1
+            if self.package_id.remaining_services < required_quantity:
+                error_msg = _(
+                    'Cannot confirm booking: Package "%s" does not have sufficient remaining services.\n'
+                    'Required: %d service(s)\n'
+                    'Available: %d service(s)\n\n'
+                    'Please select a different package or create a quote instead.'
+                ) % (self.package_id.name, required_quantity, self.package_id.remaining_services)
+                return False, error_msg
+            return True, None
+
+        error_msg = _(
+            'Booking cannot be confirmed. You must complete ONE of the following:\n'
+            '• Create a Quote with at least one service/product line item\n'
+            '• Select a prepaid Service Package'
+        )
+        return False, error_msg
+
+    def action_confirm_booking(self):
+        """Confirm booking, allowing package-based reservations."""
+        res = super().action_confirm_booking()
+        for order in self:
+            if order.package_id:
+                order._reserve_package_service()
+        return res
+
+    def cancel_with_reason(self, cancellation_reason_id, cancellation_notes):
+        """Release package services if booking is cancelled."""
+        for order in self:
+            if order.package_id:
+                order._release_package_service()
+        return super().cancel_with_reason(cancellation_reason_id, cancellation_notes)
+
+    def action_complete_service(self):
+        """Allow completion when payment is prepaid via package."""
+        self.ensure_one()
+
+        if not self.clinical_notes_submitted:
+            raise UserError(_(
+                'Clinical notes are required before completing the service.\n\n'
+                'Please fill in at least one of the following:\n'
+                '• Clinical Notes\n'
+                '• Treatment Performed'
+            ))
+
+        if not self.invoice_submitted and not self.package_id:
+            raise UserError(_(
+                'Invoice or Quote is required before completing the service.\n\n'
+                'Alternatively, a service package must be assigned if payment is prepaid.'
+            ))
+
+        if self._check_invoice_creation_permission():
+            completed_stage = self.env['health.fieldservice.stage'].search([
+                ('state', '=', 'completed'),
+                ('active', '=', True)
+            ], order='sequence', limit=1)
+
+            if not completed_stage:
+                _logger.warning('No Completed stage found')
+
+            self.write({
+                'stage_id': completed_stage.id if completed_stage else False,
+                'state': 'completed',
+                'actual_end_datetime': fields.Datetime.now(),
+            })
+
+            return {
+                'type': 'ir.actions.client',
+                'tag': 'display_notification',
+                'params': {
+                    'title': _('Service Completed'),
+                    'message': _('Service marked as completed. Create invoice and process payment when ready.'),
+                    'type': 'success',
+                    'sticky': False,
+                }
+            }
+        else:
+            completion_note = f'Completed by part-time staff ({self.lead_staff_id.name if self.lead_staff_id else "staff"}) - requires Operations invoicing'
+
+            completed_pending_stage = self.env['health.fieldservice.stage'].search([
+                ('state', '=', 'completed_pending_invoice'),
+                ('active', '=', True)
+            ], order='sequence', limit=1)
+
+            if not completed_pending_stage:
+                _logger.warning('No Completed-Pending Invoice stage found')
+                completed_pending_stage = self.env['health.fieldservice.stage'].search([
+                    ('state', '=', 'completed'),
+                    ('active', '=', True)
+                ], order='sequence', limit=1)
+
+            self.write({
+                'stage_id': completed_pending_stage.id if completed_pending_stage else False,
+                'state': 'completed_pending_invoice',
+                'actual_end_datetime': fields.Datetime.now(),
+                'completion_notes': completion_note,
+            })
+
+            return {
+                'type': 'ir.actions.client',
+                'tag': 'display_notification',
+                'params': {
+                    'title': _('Service Completed'),
+                    'message': _('Service completed successfully. Invoice has been created during quote verification.'),
+                    'type': 'success',
+                    'sticky': False,
+                }
+            }
     
     # Package Service Consumption Methods
     def action_consume_package_service(self):

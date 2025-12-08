@@ -11,14 +11,12 @@
     <!-- Healthcare Invoicing User Group -->
     <record id="group_health_invoicing_user" model="res.groups">
         <field name="name">Healthcare Invoicing User</field>
-        <field name="category_id" ref="module_category_healthcare_invoicing"/>
         <field name="comment">Healthcare invoicing users can create and manage healthcare billing and invoices</field>
     </record>
 
     <!-- Healthcare Invoicing Manager Group -->
     <record id="group_health_invoicing_manager" model="res.groups">
         <field name="name">Healthcare Invoicing Manager</field>
-        <field name="category_id" ref="module_category_healthcare_invoicing"/>
         <field name="implied_ids" eval="[(4, ref('group_health_invoicing_user'))]"/>
         <field name="comment">Healthcare invoicing managers have full access to billing, invoicing, and financial reporting</field>
     </record>
@@ -26,7 +24,6 @@
     <!-- Vietnamese Tax Compliance Group -->
     <record id="group_vietnamese_tax_compliance" model="res.groups">
         <field name="name">Vietnamese Tax Compliance</field>
-        <field name="category_id" ref="module_category_healthcare_invoicing"/>
         <field name="implied_ids" eval="[(4, ref('group_health_invoicing_user'))]"/>
         <field name="comment">Users who can submit invoices to Vietnamese Tax Authorities and manage compliance</field>
     </record>
@@ -34,7 +31,6 @@
     <!-- MISA Integration Group -->
     <record id="group_misa_integration" model="res.groups">
         <field name="name">MISA Integration Admin</field>
-        <field name="category_id" ref="module_category_healthcare_invoicing"/>
         <field name="implied_ids" eval="[(4, ref('group_health_invoicing_manager'))]"/>
         <field name="comment">MISA integration administrators can configure and manage MISA synchronization</field>
     </record>
@@ -42,7 +38,6 @@
     <!-- Insurance Claims Processing Group -->
     <record id="group_insurance_claims" model="res.groups">
         <field name="name">Insurance Claims Processor</field>
-        <field name="category_id" ref="module_category_healthcare_invoicing"/>
         <field name="implied_ids" eval="[(4, ref('group_health_invoicing_user'))]"/>
         <field name="comment">Users who can process insurance claims and manage insurance-related billing</field>
     </record>

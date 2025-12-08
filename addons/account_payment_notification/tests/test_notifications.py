@@ -20,10 +20,10 @@ class NotificationCase(AccountTestInvoicingCommon):
             context=dict(cls.env.context, allowed_company_ids=cls.company.ids),
         )
         # Partners with different communication methods
-        cls.partner_a.write({"email": "a@example.com", "mobile": "+1 111 111 111"})
-        cls.partner_b.write({"email": "b@example.com", "mobile": False})
+        cls.partner_a.write({"email": "a@example.com", "phone": "+1 111 111 111"})
+        cls.partner_b.write({"email": "b@example.com", "phone": False})
         cls.partner_c = cls.partner_a.copy(
-            {"email": False, "mobile": "+3 333 333 333", "name": "partner_c"}
+            {"email": False, "phone": "+3 333 333 333", "name": "partner_c"}
         )
         # Restricted accountant should be able to do the rest of stuff
 
@@ -197,7 +197,7 @@ class NotificationCase(AccountTestInvoicingCommon):
     def test_no_contact(self):
         """Partners without contact means make it fail."""
         self.partner_b.email = False
-        self.partner_c.mobile = False
+        self.partner_c.phone = False
         self.company.sudo().account_payment_notification_required = True
         self.set_mode("all")
         with self.assertRaises(

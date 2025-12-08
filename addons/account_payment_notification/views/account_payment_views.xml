@@ -71,12 +71,12 @@
                 />
                 <filter
                     name="has_mobile"
-                    string="Has mobile phone"
+                    string="Has phone"
                     domain="[('mobile', '!=', False)]"
                 />
                 <filter
                     name="has_no_mobile"
-                    string="Has no mobile phone"
+                    string="Has no phone"
                     domain="[('mobile', '=', False)]"
                 />
             </filter>

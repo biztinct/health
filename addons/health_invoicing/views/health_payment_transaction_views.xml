@@ -195,48 +195,7 @@
         <field name="model">health.payment.transaction</field>
         <field name="arch" type="xml">
             <search string="Payment Transactions">
-                <field name="name" filter_domain="[('name', 'ilike', self)]"/>
-                <field name="patient_id"/>
-                <field name="collected_by_id"/>
-                <field name="transaction_notes"/>
-                
-                <!-- Quick Filters -->
-                <filter name="cash_pending" string="Cash Pending Delivery" 
-                        domain="[('payment_method', '=', 'cash'), ('status', '=', 'pending_delivery')]"/>
-                <filter name="not_reconciled" string="Not Reconciled in AR" 
-                        domain="[('ar_reconciled', '=', False)]"/>
-                <filter name="prepaid" string="Prepaid Services" 
-                        domain="[('transaction_type', '=', 'prepaid')]"/>
-                <filter name="immediate" string="Pay Now Transactions" 
-                        domain="[('transaction_type', '=', 'immediate')]"/>
-                <filter name="deferred" string="Pay Later Collections" 
-                        domain="[('transaction_type', '=', 'deferred')]"/>
-                        
-                <!-- Date Filters -->
-                <separator/>
-                <filter name="today" string="Today"
-                        domain="[('transaction_date', '&gt;=', datetime.date.today().strftime('%Y-%m-%d'))]"/>
-                <filter name="this_week" string="This Week"
-                        domain="[('transaction_date', '&gt;=', (context_today() - relativedelta(weeks=1)).strftime('%Y-%m-%d'))]"/>
-                <filter name="this_month" string="This Month"
-                        domain="[('transaction_date', '&gt;=', (context_today() - relativedelta(months=1)).strftime('%Y-%m-01'))]"/>
-                        
-                <!-- Group By -->
-                <separator/>
-                <group expand="0" string="Group By">
-                    <filter name="group_patient" string='Client' 
-                            context="{'group_by': 'patient_id'}"/>
-                    <filter name="group_payment_method" string="Payment Method" 
-                            context="{'group_by': 'payment_method'}"/>
-                    <filter name="group_transaction_type" string="Transaction Type" 
-                            context="{'group_by': 'transaction_type'}"/>
-                    <filter name="group_status" string="Status" 
-                            context="{'group_by': 'status'}"/>
-                    <filter name="group_collected_by" string="Collected By" 
-                            context="{'group_by': 'collected_by_id'}"/>
-                    <filter name="group_date" string="Transaction Date" 
-                            context="{'group_by': 'transaction_date'}"/>
-                </group>
+                <field name="name"/>
             </search>
         </field>
     </record>
@@ -246,34 +205,7 @@
         <field name="name">Payment Transactions</field>
         <field name="res_model">health.payment.transaction</field>
         <field name="view_mode">list,form</field>
-        <field name="context">{'search_default_this_month': 1}</field>
-        <field name="help" type="html">
-            <p class="o_view_nocontent_smiling_face">
-                No payment transactions yet!
-            </p>
-            <p>
-                Payment transactions are automatically created when nurses collect payments
-                or when front desk processes prepaid packages and invoice collections.
-            </p>
-        </field>
+        <field name="view_ids" eval="[(5, 0, 0), (0, 0, {'view_mode': 'list', 'view_id': ref('view_health_payment_transaction_list')}), (0, 0, {'view_mode': 'form', 'view_id': ref('view_health_payment_transaction_form')})]"/>
+        <field name="search_view_id" ref="view_health_payment_transaction_search"/>
     </record>
-
-    <!-- Cash Management Dashboard Action -->
-    <record id="action_health_cash_management" model="ir.actions.act_window">
-        <field name="name">Cash Management Dashboard</field>
-        <field name="res_model">health.payment.transaction</field>
-        <field name="view_mode">list</field>
-        <field name="domain">[('payment_method', '=', 'cash')]</field>
-        <field name="context">{'search_default_cash_pending': 1}</field>
-        <field name="help" type="html">
-            <p class="o_view_nocontent_smiling_face">
-                No cash transactions found!
-            </p>
-            <p>
-                This dashboard tracks cash payments collected by nurses that need
-                to be delivered to the Operations Manager.
-            </p>
-        </field>
-    </record>
-
 </odoo>

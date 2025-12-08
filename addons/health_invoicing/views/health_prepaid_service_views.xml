@@ -116,45 +116,6 @@
         <field name="arch" type="xml">
             <search string="Service Consumptions">
                 <field name="name"/>
-                <field name="patient_id"/>
-                <field name="package_id"/>
-                <field name="fso_id"/>
-                <field name="delivered_by_id"/>
-                <field name="service_notes"/>
-                
-                <!-- Quick Filters -->
-                <filter name="consumed" string="Consumed"
-                        domain="[('status', '=', 'consumed')]"/>
-                <filter name="invoiced" string="Invoiced"
-                        domain="[('status', '=', 'invoiced')]"/>
-                <filter name="refunded" string="Refunded"
-                        domain="[('status', '=', 'refunded')]"/>
-                        
-                <!-- Date Filters -->
-                <separator/>
-                <filter name="today" string="Today"
-                        domain="[('service_date', '&gt;=', datetime.date.today().strftime('%Y-%m-%d'))]"/>
-                <filter name="this_week" string="This Week"
-                        domain="[('service_date', '&gt;=', (context_today() - relativedelta(weeks=1)).strftime('%Y-%m-%d'))]"/>
-                <filter name="this_month" string="This Month"
-                        domain="[('service_date', '&gt;=', (context_today() - relativedelta(months=1)).strftime('%Y-%m-01'))]"/>
-                        
-                <!-- Group By -->
-                <separator/>
-                <group expand="0" string="Group By">
-                    <filter name="group_patient" string='Client'
-                            context="{'group_by': 'patient_id'}"/>
-                    <filter name="group_package" string="Package"
-                            context="{'group_by': 'package_id'}"/>
-                    <filter name="group_delivered_by" string="Delivered By"
-                            context="{'group_by': 'delivered_by_id'}"/>
-                    <filter name="group_location" string="Service Location"
-                            context="{'group_by': 'service_location'}"/>
-                    <filter name="group_status" string="Status"
-                            context="{'group_by': 'status'}"/>
-                    <filter name="group_date" string="Service Date"
-                            context="{'group_by': 'service_date'}"/>
-                </group>
             </search>
         </field>
     </record>

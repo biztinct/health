@@ -211,40 +211,7 @@
         <field name="model">health.service.package</field>
         <field name="arch" type="xml">
             <search string="Service Packages">
-                <field name="name" filter_domain="[('name', 'ilike', self)]"/>
-                <field name="patient_id"/>
-                <field name="service_type"/>
-                <field name="package_notes"/>
-                
-                <!-- Quick Filters -->
-                <filter name="active" string="Active Packages" 
-                        domain="[('state', '=', 'active')]"/>
-                <filter name="running_low" string="Running Low (&lt; 5 services)" 
-                        domain="[('remaining_services', '&lt;', 5), ('remaining_services', '&gt;', 0)]"/>
-                <filter name="exhausted" string="Exhausted" 
-                        domain="[('state', '=', 'exhausted')]"/>
-                <filter name="expired" string="Expired" 
-                        domain="[('state', '=', 'expired')]"/>
-                        
-                <!-- Date Filters -->
-                <separator/>
-                <filter name="this_month" string="Purchased This Month"
-                        domain="[('purchase_date', '&gt;=', (context_today() - relativedelta(months=1)).strftime('%Y-%m-01'))]"/>
-                <filter name="expiring_soon" string="Expiring Soon"
-                        domain="[('expiration_date', '&lt;=', (context_today() + relativedelta(days=30)).strftime('%Y-%m-%d')), ('expiration_date', '!=', False)]"/>
-                        
-                <!-- Group By -->
-                <separator/>
-                <group expand="0" string="Group By">
-                    <filter name="group_patient" string='Client' 
-                            context="{'group_by': 'patient_id'}"/>
-                    <filter name="group_service_type" string="Service Type" 
-                            context="{'group_by': 'service_type'}"/>
-                    <filter name="group_state" string="Status" 
-                            context="{'group_by': 'state'}"/>
-                    <filter name="group_purchase_date" string="Purchase Date" 
-                            context="{'group_by': 'purchase_date'}"/>
-                </group>
+                <field name="name"/>
             </search>
         </field>
     </record>

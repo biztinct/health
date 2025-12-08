@@ -22,7 +22,7 @@
                 <field name="send_payment_reminders" string="Reminders Enabled" widget="boolean"/>
                 <field name="payment_notification_method" string="Reminder Method"/>
                 <field name="email" string="Email" optional="show"/>
-                <field name="mobile" string="Mobile" optional="show"/>
+                <field name="phone" string="Phone" optional="show"/>
                 
                 <!-- Quick Actions -->
                 <button type="object" name="action_send_payment_reminder"
@@ -104,7 +104,7 @@
                 <!-- Search fields -->
                 <field name="name" string='Client Name'/>
                 <field name="email" string="Email"/>
-                <field name="mobile" string="Mobile"/>
+                <field name="phone" string="Phone"/>
                 <field name="total_due" string="Outstanding Amount"/>
                 <field name="healthcare_payment_risk" string="Payment Risk"/>
                 <field name="healthcare_payment_score" string="Payment Score"/>

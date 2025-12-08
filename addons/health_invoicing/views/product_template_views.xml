@@ -85,33 +85,7 @@
     </record>
 
     <!-- Product Template Search View - Healthcare Package Filters -->
-    <record id="view_product_template_search_healthcare" model="ir.ui.view">
-        <field name="name">Healthcare Package Product Search</field>
-        <field name="model">product.template</field>
-        <field name="inherit_id" ref="product.product_template_search_view"/>
-        <field name="arch" type="xml">
-            
-            <!-- Add healthcare package filters at end of search -->
-            <xpath expr="//search" position="inside">
-                <separator/>
-                <filter name="healthcare_packages" string="Healthcare Packages" 
-                        domain="[('type', '=', 'healthcare_package')]"/>
-                <filter name="physiotherapy" string="Physiotherapy Packages" 
-                        domain="[('healthcare_package_type', '=', 'physiotherapy')]"/>
-                <filter name="home_visit" string="Home Visit Packages" 
-                        domain="[('healthcare_service_location', '=', 'home')]"/>
-                
-                <separator/>
-                <group expand="0" string="Healthcare Grouping">
-                    <filter name="group_healthcare_package_type" string="Package Type" 
-                            domain="[]" context="{'group_by': 'healthcare_package_type'}"/>
-                    <filter name="group_healthcare_location" string="Service Location" 
-                            domain="[]" context="{'group_by': 'healthcare_service_location'}"/>
-                </group>
-            </xpath>
-            
-        </field>
-    </record>
+    <!-- Removed custom search view for Odoo 19 compatibility -->
 
     <!-- Healthcare Package Products Action -->
     <record id="action_healthcare_package_products" model="ir.actions.act_window">

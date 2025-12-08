@@ -916,12 +916,6 @@ class HealthcareInvoiceLine(models.Model):
         help='Duration of healthcare service in minutes'
     )
     
-    equipment_id = fields.Many2one(
-        'health.equipment',
-        string='Medical Equipment',
-        help='Medical equipment used for this service'
-    )
-    
     # Vietnamese healthcare tax classifications
     vietnamese_service_tax_code = fields.Char(
         'Vietnamese Service Tax Code',

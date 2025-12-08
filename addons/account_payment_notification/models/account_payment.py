@@ -8,8 +8,8 @@ from odoo.exceptions import ValidationError
 class AccountPayment(models.Model):
     _inherit = "account.payment"
 
-    # Used by sms.composer to get default phone
-    mobile = fields.Char(related="partner_id.mobile")
+    # Used by sms.composer to get default phone; partner.mobile removed in v19
+    mobile = fields.Char(related="partner_id.phone", string="Phone", readonly=True)
 
     def mark_as_sent(self):
         """Auto-notify when marking as sent."""

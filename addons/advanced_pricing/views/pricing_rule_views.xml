@@ -171,7 +171,7 @@
                 <filter string="Approved" name="approved" domain="[('approval_status', '=', 'approved')]"/>
                 <filter string="Rejected" name="rejected" domain="[('approval_status', '=', 'rejected')]"/>
                 <separator/>
-                <group expand="0" string="Group By">
+                <group>
                     <filter string="Approval Status" name="group_approval_status" context="{'group_by': 'approval_status'}"/>
                     <filter string="Engine" name="group_engine" context="{'group_by': 'engine_id'}"/>
                     <filter string="Rule Type" name="group_type" context="{'group_by': 'rule_type'}"/>
