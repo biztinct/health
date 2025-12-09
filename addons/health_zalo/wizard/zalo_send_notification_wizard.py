@@ -36,19 +36,11 @@ class ZaloSendNotificationWizard(models.TransientModel):
 
     message_type = fields.Selection([
         ('text', 'Text Message'),
-        ('template', 'Template Notification (ZNS)'),
     ], string='Message Type', default='text', required=True)
 
     message_text = fields.Text(
         string='Message',
         help='Message to send to the contact via Zalo',
-    )
-
-    # Template fields (for future ZNS support)
-    template_id = fields.Many2one(
-        'zalo.template',
-        string='Template',
-        help='Zalo Notification Service template',
     )
 
     @api.onchange('partner_id')

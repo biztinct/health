@@ -54,19 +54,12 @@
                         <field name="has_zalo" invisible="1"/>
                     </group>
                     <group string="Message Type">
-                        <field name="message_type"/>
+                        <field name="message_type" readonly="1"/>
                     </group>
                 </group>
 
-                <group invisible="message_type != 'text'">
-                    <field name="message_text" widget="text" placeholder="Enter your message here..." required="message_type == 'text'"/>
-                </group>
-
-                <group invisible="message_type != 'template'">
-                    <field name="template_id"/>
-                    <div class="alert alert-info">
-                        <p>Template notifications (ZNS) coming soon!</p>
-                    </div>
+                <group>
+                    <field name="message_text" widget="text" placeholder="Enter your message here..." required="1"/>
                 </group>
 
                 <footer>

@@ -128,15 +128,6 @@
         <field name="arch" type="xml">
             <search string="Search Conversations">
                 <field name="name"/>
-                <field name="zalo_user_name"/>
-                <field name="partner_id"/>
-                <filter string="Active" name="active" domain="[('state', '=', 'active')]"/>
-                <filter string="Unread" name="unread" domain="[('unread_count', '&gt;', 0)]"/>
-                <filter string="Archived" name="archived" domain="[('state', '=', 'archived')]"/>
-                <group expand="0" string="Group By">
-                    <filter string="Status" name="group_state" context="{'group_by': 'state'}"/>
-                    <filter string="Contact" name="group_partner" context="{'group_by': 'partner_id'}"/>
-                </group>
             </search>
         </field>
     </record>

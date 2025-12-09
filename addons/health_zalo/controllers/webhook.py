@@ -17,7 +17,7 @@ class ZaloWebhookController(http.Controller):
     Receives incoming message notifications and OAuth callbacks from Zalo.
     """
 
-    @http.route('/zalo/webhook', type='json', auth='public', methods=['POST'], csrf=False)
+    @http.route('/zalo/webhook', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def webhook_handler(self, **kwargs):
         """
         Handle incoming webhook events from Zalo.

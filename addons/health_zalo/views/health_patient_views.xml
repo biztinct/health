@@ -19,8 +19,8 @@
                 </button>
             </xpath>
 
-            <!-- Add Zalo User ID field with action buttons after mobile phone -->
-            <xpath expr="//field[@name='mobile']" position="after">
+            <!-- Add Zalo User ID field with action buttons after phone -->
+            <xpath expr="//field[@name='phone']" position="after">
                 <label for="zalo_user_id" string="Zalo User ID"/>
                 <div class="o_row">
                     <field name="zalo_user_id" placeholder="Zalo User ID (optional)" class="o_field_widget"/>

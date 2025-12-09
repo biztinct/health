@@ -15,7 +15,7 @@ class ZaloChatController(http.Controller):
     Provides endpoints for chat widget to fetch/send messages.
     """
 
-    @http.route('/zalo/chat/conversations', type='json', auth='user', methods=['POST'])
+    @http.route('/zalo/chat/conversations', type='jsonrpc', auth='user', methods=['POST'])
     def get_conversations(self, **kwargs):
         """
         Get list of Zalo conversations for current user.
@@ -61,7 +61,7 @@ class ZaloChatController(http.Controller):
             _logger.error(f'Error fetching conversations: {e}', exc_info=True)
             return {'error': str(e)}
 
-    @http.route('/zalo/chat/conversation/<int:conversation_id>/messages', type='json', auth='user', methods=['POST'])
+    @http.route('/zalo/chat/conversation/<int:conversation_id>/messages', type='jsonrpc', auth='user', methods=['POST'])
     def get_messages(self, conversation_id, **kwargs):
         """
         Get messages for a conversation.
@@ -120,7 +120,7 @@ class ZaloChatController(http.Controller):
             _logger.error(f'Error fetching messages: {e}', exc_info=True)
             return {'error': str(e)}
 
-    @http.route('/zalo/chat/send_message', type='json', auth='user', methods=['POST'])
+    @http.route('/zalo/chat/send_message', type='jsonrpc', auth='user', methods=['POST'])
     def send_message(self, **kwargs):
         """
         Send message to Zalo user.
@@ -168,7 +168,7 @@ class ZaloChatController(http.Controller):
             _logger.error(f'Error sending message: {e}', exc_info=True)
             return {'error': str(e)}
 
-    @http.route('/zalo/chat/mark_as_read', type='json', auth='user', methods=['POST'])
+    @http.route('/zalo/chat/mark_as_read', type='jsonrpc', auth='user', methods=['POST'])
     def mark_as_read(self, **kwargs):
         """
         Mark conversation as read.
