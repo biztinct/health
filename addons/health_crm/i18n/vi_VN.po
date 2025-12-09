@@ -11,7 +11,7 @@ msgstr ""
 "Last-Translator: \n"
 "Ngôn ngữ-Đội: \n"
 "MIME-Version: 1.0\n"
-"Content-Loại: text/plain; charset=UTF-8\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: \n"
 "Plural-Biểu mẫus: \n"
 
@@ -20,19 +20,19 @@ msgstr ""
 msgid ""
 "\".<br/>\n"
 "                        Please select the correct client from the list below, or create a new client."
-msgstr "\".<br/>\n                        Please Chọn the correct Khách hàng Từ the list below, or Tạo mới a Khách hàng mới."
+msgstr "\".<br/>\n                        Vui lòng Chọn the đúng Khách hàng Từ the danh sách bên dưới, hoặc Tạo mới a Khách hàng mới."
 
 #. module: health_crm
 #. odoo-python
 #: code:addons/health_crm/wizard/relationship_add_wizard.py:0
 msgid "%s added as %s for %s"
-msgstr "%s added as %s for %s"
+msgstr "%s đã thêm như là %s cho %s"
 
 #. module: health_crm
 #. odoo-python
 #: code:addons/health_crm/models/health_client_relation.py:0
 msgid "%s is now the primary %s for %s"
-msgstr "%s is now the primary %s for %s"
+msgstr "%s hiện là chính %s cho %s"
 
 #. module: health_crm
 #: model_terms:ir.ui.view,arch_db:health_crm.view_health_client_relation_kanban
@@ -59,7 +59,7 @@ msgstr "<i class=\"fa fa-star\"/> PRIMARY"
 msgid ""
 "<option value=\"convert\">Convert to contact</option>\n"
 "                    <option value=\"merge\">Merge with existing contacts</option>"
-msgstr "<option value=\"convert\">Chuyển đổi Đến Liên hệ</option>\n                    <option value=\"merge\">Gộp with existing contacts</option>"
+msgstr "<option giá trị=\"chuyển đổi\">Chuyển đổi Đến Liên hệ</option>\n                    <option giá trị=\"gộp\">Gộp với hiện có liên hệ</option>"
 
 #. module: health_crm
 #: model_terms:ir.ui.view,arch_db:health_crm.view_healthcare_opportunity_form
@@ -85,27 +85,27 @@ msgstr "<span class=\"o_stat_text\">Mạng lưới Biểu đồ</span>"
 msgid ""
 "<strong>Multiple clients found!</strong><br/>\n"
 "                        We found multiple patients with the name \""
-msgstr "<strong>Multiple Khách hàng found!</strong><br/>\n                        We found multiple Bệnh nhân with the Tên \"
+msgstr "<strong>Nhiều Khách hàng được tìm thấy!</strong><br/>\n                        Chúng tôi được tìm thấy nhiều Bệnh nhân với Tên \"
 
 #. module: health_crm
 #: model_terms:ir.actions.act_window,help:health_crm.action_healthcare_opportunities
 msgid ""
 "A healthcare contact is a potential patient, caregiver, or payer who has shown interest in your services. \n"
 "                Use this section to manage your healthcare relationships and track your interactions."
-msgstr "A Y tế Liên hệ is a potential Bệnh nhân, Người chăm sóc, or Người thanh toán who has shown interest in your services. \n                Use this section Đến manage your Y tế relationships and track your interactions."
+msgstr "A Y tế Liên hệ là a tiềm năng Bệnh nhân, Người chăm sóc, hoặc Người thanh toán người đã thể hiện quan tâm đến dịch vụ của bạn. \n                Sử dụng phần này Đến quản lý Y tế mối quan hệ và theo dõi tương tác."
 
 #. module: health_crm
 #. odoo-python
 #: code:addons/health_crm/wizard/relationship_add_wizard.py:0
 #: model:ir.model.constraint,message:health_crm.constraint_health_client_relation_check_different_partners
 msgid "A person cannot be their own representative."
-msgstr "A person cannot be their own representative."
+msgstr "Một người không thể là người đại diện của chính họ."
 
 #. module: health_crm
 #. odoo-python
 #: code:addons/health_crm/wizard/relationship_add_wizard.py:0
 msgid "A relationship already exists between %s and %s for role %s."
-msgstr "A relationship already exists between %s and %s for role %s."
+msgstr "A mối quan hệ đã tồn tại giữa %s và %s cho vai trò %s."
 
 #. module: health_crm
 #: model:ir.model.fields,field_description:health_crm.field_health_client_relation__active
@@ -139,7 +139,7 @@ msgstr "Thêm Mối quan hệ"
 #. module: health_crm
 #: model:ir.model,name:health_crm.model_health_relationship_add_wizard
 msgid "Add Relationship Wizard"
-msgstr "Thêm Mối quan hệ Wizard"
+msgstr "Thêm Mối quan hệ Công cụ"
 
 #. module: health_crm
 #: model_terms:ir.ui.view,arch_db:health_crm.view_health_client_relation_form
@@ -149,7 +149,7 @@ msgstr "Thông tin bổ sung"
 #. module: health_crm
 #: model:ir.model.fields,help:health_crm.field_health_client_relation__notes
 msgid "Additional notes about this relationship"
-msgstr "Bổ sung Ghi chú about this relationship"
+msgstr "Bổ sung Ghi chú về điều này mối quan hệ"
 
 #. module: health_crm
 #: model_terms:ir.ui.view,arch_db:health_crm.view_healthcare_opportunity_form
@@ -160,7 +160,7 @@ msgstr "Thông tin địa chỉ"
 #: model:ir.model.fields.selection,name:health_crm.selection__crm_lead__contact_source__advertisement
 #: model:ir.model.fields.selection,name:health_crm.selection__crm_lead__vietnamese_channel__advertisement
 msgid "Advertisement"
-msgstr "Advertisement"
+msgstr "Quảng cáo"
 
 #. module: health_crm
 #: model:ir.model.fields,field_description:health_crm.field_res_partner__caregiver_ids
@@ -211,12 +211,12 @@ msgstr "Analytics & Theo dõi"
 #. module: health_crm
 #: model:ir.model.fields,field_description:health_crm.field_health_lead_reason__lead_type
 msgid "Applicable To"
-msgstr "Applicable Đến"
+msgstr "Áp dụng Đến"
 
 #. module: health_crm
 #: model:ir.model.fields,field_description:health_crm.field_crm_lead__appointment_count
 msgid "Appointment Count"
-msgstr "Cuộc hẹn Count"
+msgstr "Cuộc hẹn Số lượng"
 
 #. module: health_crm
 #: model:ir.model.fields,field_description:health_crm.field_crm_lead__appointment_ids
@@ -226,7 +226,7 @@ msgstr "Các cuộc hẹn"
 #. module: health_crm
 #: model:ir.model.fields,help:health_crm.field_crm_lead__appointment_ids
 msgid "Appointments generated from this lead"
-msgstr "Các cuộc hẹn generated Từ this lead"
+msgstr "Các cuộc hẹn geneđánh giád Từ này tiềm năng"
 
 #. module: health_crm
 #. odoo-javascript
@@ -237,17 +237,17 @@ msgstr "Mũi têns:"
 #. module: health_crm
 #: model_terms:ir.ui.view,arch_db:health_crm.view_healthcare_lead2opportunity_partner
 msgid "Assign this contact to"
-msgstr "Phân công this Liên hệ Đến"
+msgstr "Phân công này Liên hệ Đến"
 
 #. module: health_crm
 #: model:ir.model.fields,help:health_crm.field_crm_lead__facility_id
 msgid "Associated healthcare facility for this lead"
-msgstr "Associated Cơ sở y tế for this lead"
+msgstr "Liên kết Cơ sở y tế cho này tiềm năng"
 
 #. module: health_crm
 #: model:ir.model.fields,help:health_crm.field_health_client_relation__issued_by
 msgid "Authority that issued the legal document"
-msgstr "Cơ quan that issued the legal document"
+msgstr "Cơ quan đã cấp tài liệu pháp lý"
 
 #. module: health_crm
 #: model:ir.model.fields,help:health_crm.field_res_partner__is_client_representative
@@ -255,7 +255,7 @@ msgstr "Cơ quan that issued the legal document"
 msgid ""
 "Auto-computed: This person is a client representative (based on "
 "health.client.relation)"
-msgstr "Auto-computed: Này person is a Khách hàng representative (based on Y tế.Khách hàng.relation)"
+msgstr "Auto-computed: Này person là a Khách hàng người đại diện (based trên Y tế.Khách hàng.relation)"
 
 #. module: health_crm
 #: model:ir.model.fields,help:health_crm.field_res_partner__is_healthcare_provider
@@ -263,7 +263,7 @@ msgstr "Auto-computed: Này person is a Khách hàng representative (based on Y 
 msgid ""
 "Auto-computed: This person is a healthcare provider (based on "
 "health.client.relation)"
-msgstr "Auto-computed: Này person is a Y tế provider (based on Y tế.Khách hàng.relation)"
+msgstr "Auto-computed: Này person là a Y tế nhà cung cấp (based trên Y tế.Khách hàng.relation)"
 
 #. module: health_crm
 #: model:ir.model.fields,help:health_crm.field_res_partner__is_legal_guardian
@@ -271,7 +271,7 @@ msgstr "Auto-computed: Này person is a Y tế provider (based on Y tế.Khách 
 msgid ""
 "Auto-computed: This person is a legal guardian (based on "
 "health.client.relation)"
-msgstr "Auto-computed: Này person is a legal guardian (based on Y tế.Khách hàng.relation)"
+msgstr "Auto-computed: Này person là a pháp lý người giám hộ (based trên Y tế.Khách hàng.relation)"
 
 #. module: health_crm
 #: model:ir.model.fields,help:health_crm.field_res_partner__is_payer
@@ -279,8 +279,8 @@ msgstr "Auto-computed: Này person is a legal guardian (based on Y tế.Khách h
 msgid ""
 "Auto-computed: This person is responsible for payment (based on "
 "health.client.relation)"
-msgstr "Auto-computed: Này person is Người phụ trách for Thanh toán (based on Y tế.Khách hàng.relation)"
-"Auto-computed: Này person is Người phụ trách for Thanh toán (based on Y "
+msgstr "Auto-computed: Này person là Người phụ trách cho Thanh toán (based trên Y tế.Khách hàng.relation)"
+"Auto-computed: Này person là Người phụ trách cho Thanh toán (based trên Y "
 "tế.Khách hàng.relation)"
 
 #. module: health_crm
@@ -289,19 +289,19 @@ msgstr "Auto-computed: Này person is Người phụ trách for Thanh toán (bas
 msgid ""
 "Auto-computed: This person serves as emergency contact (based on "
 "health.client.relation)"
-msgstr "Auto-computed: Này person serves as Liên hệ khẩn cấp (based on Y tế.Khách hàng.relation)"
-"Auto-computed: Này person serves as Liên hệ khẩn cấp (based on Y tế.Khách "
+msgstr "Auto-computed: Này person đóng vai trò là Liên hệ khẩn cấp (based trên Y tế.Khách hàng.relation)"
+"Auto-computed: Này person đóng vai trò là Liên hệ khẩn cấp (based trên Y tế.Khách "
 "hàng.relation)"
 
 #. module: health_crm
 #: model:ir.model.fields,help:health_crm.field_crm_lead__contact_datetime
 msgid "Auto-record with override capability (from Excel)"
-msgstr "Auto-record with override capability (Từ Excel)"
+msgstr "Auto-bản ghi với khả năng ghi đè (Từ Excel)"
 
 #. module: health_crm
 #: model_terms:ir.ui.view,arch_db:health_crm.view_client_selection_wizard_form
 msgid "Available Clients"
-msgstr "Available Khách hàng"
+msgstr "Có sẵn Khách hàng"
 
 #. module: health_crm
 #: model:ir.model.fields.selection,name:health_crm.selection__health_client_relation__legal_document_type__birth_certificate
@@ -355,7 +355,7 @@ msgstr "Đặt lịch Trạng thái"
 #: model:ir.model.fields.selection,name:health_crm.selection__crm_lead__preferred_language__both
 #: model:ir.model.fields.selection,name:health_crm.selection__health_lead_reason__lead_type__both
 msgid "Both"
-msgstr "Both"
+msgstr "Cả hai"
 
 #. module: health_crm
 #: model:ir.model.fields,field_description:health_crm.field_res_partner__cccd_number
@@ -416,7 +416,7 @@ msgstr "Can Lịch trình Các cuộc hẹn"
 #. module: health_crm
 #: model:ir.model.fields,help:health_crm.field_health_client_relation__can_make_medical_decisions
 msgid "Can make medical decisions for the client"
-msgstr "Can make Y khoa decisions for the Khách hàng"
+msgstr "Can thực hiện Y khoa quyết địnhs cho the Khách hàng"
 
 #. module: health_crm
 #: model:ir.model.fields,help:health_crm.field_health_client_relation__can_receive_medical_info
@@ -426,7 +426,7 @@ msgstr "Can Nhận Thông tin y tế about the Khách hàng"
 #. module: health_crm
 #: model:ir.model.fields,help:health_crm.field_health_client_relation__can_schedule_appointments
 msgid "Can schedule appointments for the client"
-msgstr "Can Lịch trình Các cuộc hẹn for the Khách hàng"
+msgstr "Can Lịch trình Các cuộc hẹn cho the Khách hàng"
 
 #. module: health_crm
 #: model_terms:ir.ui.view,arch_db:health_crm.view_client_selection_wizard_form
@@ -463,12 +463,12 @@ msgstr "Danh mục"
 #. module: health_crm
 #: model:ir.model.fields,help:health_crm.field_health_contact_reason__category
 msgid "Category of contact reason for reporting purposes"
-msgstr "Danh mục of Liên hệ reason for Báo cáo purposes"
+msgstr "Danh mục of Liên hệ lý do cho Báo cáo purposes"
 
 #. module: health_crm
 #: model:ir.model.fields,help:health_crm.field_health_lead_reason__category
 msgid "Category of lead reason for reporting purposes"
-msgstr "Danh mục of lead reason for Báo cáo purposes"
+msgstr "Danh mục of tiềm năng lý do cho Báo cáo purposes"
 
 #. module: health_crm
 #: model_terms:ir.ui.view,arch_db:health_crm.view_health_province_search
@@ -484,7 +484,7 @@ msgstr "Miền Trung Vietnam"
 #. odoo-javascript
 #: code:addons/health_crm/static/src/xml/relationship_graph_widget.xml:0
 msgid "Check browser console for details"
-msgstr "Kiểm tra browser console for Chi tiết"
+msgstr "Kiểm tra trình duyệt bảng điều khiển cho Chi tiết"
 
 #. module: health_crm
 #: model:ir.model.fields.selection,name:health_crm.selection__health_client_relation__relationship_type__child
@@ -530,7 +530,7 @@ msgstr "Khách hàng Tên"
 msgid ""
 "Client Name is required when you are not the client yourself. Please provide"
 " the name of the actual client/patient."
-msgstr "Khách hàng Tên is Bắt buộc when you are not the Khách hàng yourself. Please provide the Tên of the actual Khách hàng/Bệnh nhân."
+msgstr "Khách hàng Tên là Bắt buộc khi nào you are not the Khách hàng của bạnself. Vui lòng provide the Tên of the actual Khách hàng/Bệnh nhân."
 
 #. module: health_crm
 #: model:ir.model.fields,field_description:health_crm.field_crm_lead__client_representative_id
@@ -544,7 +544,7 @@ msgstr "Khách hàng Người đại diện"
 #. module: health_crm
 #: model:ir.model,name:health_crm.model_health_client_selection_wizard
 msgid "Client Selection Wizard"
-msgstr "Khách hàng Lựa chọn Wizard"
+msgstr "Khách hàng Lựa chọn Công cụ"
 
 #. module: health_crm
 #: model:ir.model.fields,field_description:health_crm.field_health_client_relation__client_id
@@ -556,7 +556,7 @@ msgstr "Khách hàng/Bệnh nhân"
 #. module: health_crm
 #: model:ir.model.fields,help:health_crm.field_health_client_relation__client_id
 msgid "Client/client in this relationship"
-msgstr "Khách hàng/Khách hàng in this relationship"
+msgstr "Khách hàng/Khách hàng trong này mối quan hệ"
 
 #. module: health_crm
 #: model:ir.model.fields,field_description:health_crm.field_res_partner__caregiver_patient_count
@@ -581,7 +581,7 @@ msgstr "Khách hàng tôi giới thiệu"
 #: model:ir.model.fields,field_description:health_crm.field_res_users__representative_relationships
 #: model_terms:ir.ui.view,arch_db:health_crm.view_healthcare_partner_form
 msgid "Clients I Represent"
-msgstr "Khách hàng I Represent"
+msgstr "Khách hàng I Đại diện"
 
 #. module: health_crm
 #: model:ir.model.fields,field_description:health_crm.field_res_partner__emergency_contact_patient_count
@@ -614,7 +614,7 @@ msgstr "Lâm sàng Ưu tiên"
 #. module: health_crm
 #: model:ir.model.fields,help:health_crm.field_crm_lead__clinical_priority
 msgid "Clinical urgency classification"
-msgstr "Lâm sàng urgency classification"
+msgstr "Lâm sàng urgency phân loại"
 
 #. module: health_crm
 #: model_terms:ir.ui.view,arch_db:health_crm.view_healthcare_opportunity_form
@@ -635,7 +635,7 @@ msgstr "Hoàn thành Người đại diện Chi tiết"
 #. module: health_crm
 #: model:ir.model.fields,help:health_crm.field_health_client_relation__display_name
 msgid "Computed display name for this relationship"
-msgstr "Computed display Tên for this relationship"
+msgstr "Computed display Tên cho này mối quan hệ"
 
 #. module: health_crm
 #: model:ir.ui.menu,name:health_crm.menu_healthcare_crm_config
@@ -658,12 +658,12 @@ msgstr "Liên hệ"
 msgid ""
 "Contact %s already has a primary representative. Please uncheck the other "
 "primary representative first."
-msgstr "Liên hệ %s already has a primary representative. Please uncheck the Khác primary representative first."
+msgstr "Liên hệ %s already has a chính người đại diện. Vui lòng unkiểm tra the Khác chính người đại diện đầu tiên."
 
 #. module: health_crm
 #: model_terms:ir.ui.view,arch_db:health_crm.view_healthcare_opportunity_form
 msgid "Contact Classification"
-msgstr "Liên hệ Classification"
+msgstr "Liên hệ Phân loại"
 
 #. module: health_crm
 #: model:ir.model.fields,field_description:health_crm.field_crm_lead__contact_datetime
@@ -739,14 +739,14 @@ msgstr "Liên hệ Tên..."
 #. module: health_crm
 #: model:ir.model.fields,help:health_crm.field_health_client_relation__priority_order
 msgid "Contact priority order (1=highest priority)"
-msgstr "Liên hệ Ưu tiên order (1=highest Ưu tiên)"
+msgstr "Liên hệ Ưu tiên thứ tự (1=caoest Ưu tiên)"
 
 #. module: health_crm
 #: model_terms:ir.actions.act_window,help:health_crm.action_health_contact_reason
 msgid ""
 "Contact reasons help categorize why contacts are reaching out to your healthcare organization.\n"
 "                This is useful for Sales and Operations Management reporting."
-msgstr "Liên hệ reasons Trợ giúp categorize why contacts are reaching out Đến your Y tế organization.\n                Này is useful for Kinh doanh and Vận hành Quản lý Báo cáo."
+msgstr "Liên hệ lý dos Trợ giúp categorize tại sao liên hệ are rmỗiing out Đến của bạn Y tế organization.\n                Này là useful cho Kinh doanh và Vận hành Quản lý Báo cáo."
 
 #. module: health_crm
 #: model:ir.model.fields.selection,name:health_crm.selection__crm_lead__lead_status__contacted
@@ -761,7 +761,7 @@ msgstr "Liên hệs"
 #. module: health_crm
 #: model:ir.model,name:health_crm.model_crm_lead2opportunity_partner
 msgid "Convert Lead to Opportunity (not in mass)"
-msgstr "Chuyển đổi lead thành cơ hội (không phải hàng loạt) "
+msgstr "Chuyển đổi tiềm năng thành cơ hội (không phải hàng loạt) "
 
 #. module: health_crm
 #: model_terms:ir.ui.view,arch_db:health_crm.view_healthcare_opportunity_form
@@ -793,28 +793,28 @@ msgstr "Tạo mới Khách hàng mới"
 #. module: health_crm
 #: model_terms:ir.actions.act_window,help:health_crm.action_health_province
 msgid "Create Vietnamese provinces and cities!"
-msgstr "Tạo mới Vietnamese provinces and cities!"
+msgstr "Tạo mới Tiếng Việt tỉnh và thành phố!"
 
 #. module: health_crm
 #: model_terms:ir.actions.act_window,help:health_crm.action_health_contact_reason
 msgid "Create contact reasons for CRM leads!"
-msgstr "Tạo mới Liên hệ reasons for CRM leads!"
+msgstr "Tạo mới Liên hệ lý dos cho CRM tiềm năngs!"
 
 #. module: health_crm
 #: model_terms:ir.actions.act_window,help:health_crm.action_health_client_relation
 msgid ""
 "Create healthcare relationships between clients and their representatives!"
-msgstr "Tạo mới Y tế relationships between Khách hàng and their representatives!"
+msgstr "Tạo mới Y tế mối quan hệ giữa Khách hàng và của họ người đại diệns!"
 
 #. module: health_crm
 #: model_terms:ir.actions.act_window,help:health_crm.action_health_lead_reason
 msgid "Create lead reasons for CRM opportunities!"
-msgstr "Tạo mới lead reasons for CRM opportunities!"
+msgstr "Tạo mới tiềm năng lý dos cho CRM opportunities!"
 
 #. module: health_crm
 #: model_terms:ir.actions.act_window,help:health_crm.action_healthcare_opportunities
 msgid "Create your first healthcare contact!"
-msgstr "Tạo mới your first Y tế Liên hệ!"
+msgstr "Tạo mới của bạn đầu tiên Y tế Liên hệ!"
 
 #. module: health_crm
 #: model_terms:ir.ui.view,arch_db:health_crm.view_healthcare_opportunity_form
@@ -839,7 +839,7 @@ msgstr "Tạo bởi"
 #: model:ir.model.fields,field_description:health_crm.field_health_province__create_date
 #: model:ir.model.fields,field_description:health_crm.field_health_relationship_add_wizard__create_date
 msgid "Created on"
-msgstr "Đã tạo on"
+msgstr "Đã tạo trên"
 
 #. module: health_crm
 #: model:ir.model.fields.selection,name:health_crm.selection__health_contact_reason__category__support
@@ -849,7 +849,7 @@ msgstr "Customer Hỗ trợ"
 #. module: health_crm
 #: model:ir.ui.menu,name:health_crm.menu_healthcare_customers
 msgid "Customers"
-msgstr "Customers"
+msgstr "Khách hàng"
 
 #. module: health_crm
 #: model_terms:ir.ui.view,arch_db:health_crm.view_health_client_relation_form
@@ -859,7 +859,7 @@ msgstr "Ngày Phạm vi"
 #. module: health_crm
 #: model:ir.model.fields,help:health_crm.field_health_client_relation__issued_date
 msgid "Date the legal document was issued"
-msgstr "Ngày the legal document was issued"
+msgstr "Ngày the tài liệu pháp lý đã được cấp"
 
 #. module: health_crm
 #: model:ir.model.fields,field_description:health_crm.field_crm_lead__day_open
@@ -884,23 +884,23 @@ msgstr "Mô tả"
 #. module: health_crm
 #: model_terms:ir.ui.view,arch_db:health_crm.view_health_contact_reason_form
 msgid "Detailed description of when to use this contact reason..."
-msgstr "Detailed Mô tả of when Đến use this Liên hệ reason..."
+msgstr "Chi tiết Mô tả of khi nào Đến use này Liên hệ lý do..."
 
 #. module: health_crm
 #: model_terms:ir.ui.view,arch_db:health_crm.view_health_lead_reason_form
 msgid "Detailed description of when to use this lead reason..."
-msgstr "Detailed Mô tả of when Đến use this lead reason..."
+msgstr "Chi tiết Mô tả of khi nào Đến use này tiềm năng lý do..."
 
 #. module: health_crm
 #: model:ir.model.fields,help:health_crm.field_health_contact_reason__description
 #: model:ir.model.fields,help:health_crm.field_health_lead_reason__description
 msgid "Detailed description of when to use this reason"
-msgstr "Detailed Mô tả of when Đến use this reason"
+msgstr "Chi tiết Mô tả of khi nào Đến use này lý do"
 
 #. module: health_crm
 #: model:ir.model.fields,help:health_crm.field_crm_lead__reason_if_rejected
 msgid "Detailed reason if the lead was rejected or lost"
-msgstr "Detailed reason if the lead was rejected or lost"
+msgstr "Chi tiết lý do nếu the tiềm năng đã bị từ chối hoặc thất bại"
 
 #. module: health_crm
 #: model:ir.model.fields,field_description:health_crm.field_health_client_relation__display_name
@@ -924,7 +924,7 @@ msgstr "Khoảng cách Từ Phòng khám (km)"
 #: model:ir.model.fields,help:health_crm.field_res_partner__distance_from_clinic
 #: model:ir.model.fields,help:health_crm.field_res_users__distance_from_clinic
 msgid "Distance from nearest clinic"
-msgstr "Khoảng cách Từ nearest Phòng khám"
+msgstr "Khoảng cách Từ gần nhất Phòng khám"
 
 #. module: health_crm
 #: model:ir.model.fields.selection,name:health_crm.selection__crm_lead__healthcare_lead_source__referral_doctor
@@ -939,7 +939,7 @@ msgstr "Tài liệu Issue Ngày"
 #. module: health_crm
 #: model:ir.model.fields,help:health_crm.field_health_client_relation__legal_document_number
 msgid "Document number or reference"
-msgstr "Tài liệu Số or Tham chiếu"
+msgstr "Tài liệu Số hoặc Tham chiếu"
 
 #. module: health_crm
 #: model_terms:ir.ui.view,arch_db:health_crm.view_healthcare_opportunity_form
@@ -955,7 +955,7 @@ msgstr "Dân tộc"
 #. module: health_crm
 #: model:utm.campaign,title:health_crm.utm_campaign_elderly_care
 msgid "Elderly Care"
-msgstr "Elderly Care"
+msgstr "Chăm sóc người cao tuổi"
 
 #. module: health_crm
 #: model:ir.model.fields.selection,name:health_crm.selection__res_partner__preferred_contact_method__email
@@ -966,7 +966,7 @@ msgstr "Email"
 #. module: health_crm
 #: model:ir.model.fields.selection,name:health_crm.selection__crm_lead__contact_source__email_inquiry
 msgid "Email Inquiry"
-msgstr "Email Inquiry"
+msgstr "Email Yêu cầu"
 
 #. module: health_crm
 #: model:ir.model.fields.selection,name:health_crm.selection__crm_lead__clinical_priority__emergency
@@ -1019,12 +1019,12 @@ msgstr "Khẩn cấp Liên hệs"
 #. module: health_crm
 #: model:ir.model.fields.selection,name:health_crm.selection__health_lead_reason__category__emergency
 msgid "Emergency Need"
-msgstr "Khẩn cấp Need"
+msgstr "Khẩn cấp Nhu cầu"
 
 #. module: health_crm
 #: model:ir.model.fields,help:health_crm.field_crm_lead__emergency_contact_id
 msgid "Emergency contact for this lead"
-msgstr "Liên hệ khẩn cấp for this lead"
+msgstr "Liên hệ khẩn cấp cho này tiềm năng"
 
 #. module: health_crm
 #: model:ir.model.fields,field_description:health_crm.field_health_client_relation__end_date
@@ -1035,22 +1035,22 @@ msgstr "Ngày kết thúc"
 #. odoo-python
 #: code:addons/health_crm/models/health_client_relation.py:0
 msgid "End date cannot be before start date."
-msgstr "Ngày kết thúc cannot be before Ngày bắt đầu."
+msgstr "Ngày kết thúc cannot be trước Ngày bắt đầu."
 
 #. module: health_crm
 #: model:ir.model.fields.selection,name:health_crm.selection__crm_lead__preferred_language__english
 msgid "English"
-msgstr "English"
+msgstr "Tiếng Anh"
 
 #. module: health_crm
 #: model:ir.model.fields,help:health_crm.field_health_province__name
 msgid "English name of the province/city"
-msgstr "English Tên of the Tỉnh/Thành phố"
+msgstr "Tiếng Anh Tên of the Tỉnh/Thành phố"
 
 #. module: health_crm
 #: model_terms:ir.ui.view,arch_db:health_crm.view_healthcare_opportunity_form
 msgid "Enter client name..."
-msgstr "Enter Khách hàng Tên..."
+msgstr "Nhập Khách hàng Tên..."
 
 #. module: health_crm
 #. odoo-javascript
@@ -1072,24 +1072,24 @@ msgstr "Facebook"
 #. module: health_crm
 #: model:ir.model.fields.selection,name:health_crm.selection__crm_lead__healthcare_lead_source__facebook_ad
 msgid "Facebook Advertisement"
-msgstr "Facebook Advertisement"
+msgstr "Facebook Quảng cáo"
 
 #. module: health_crm
 #: model:ir.model.fields,field_description:health_crm.field_res_partner__facebook_profile
 #: model:ir.model.fields,field_description:health_crm.field_res_users__facebook_profile
 msgid "Facebook Profile"
-msgstr "Facebook Profile"
+msgstr "Facebook Protập tin"
 
 #. module: health_crm
 #: model_terms:ir.ui.view,arch_db:health_crm.view_healthcare_partner_form
 msgid "Facebook profile"
-msgstr "Facebook profile"
+msgstr "Facebook protập tin"
 
 #. module: health_crm
 #: model:ir.model.fields,help:health_crm.field_res_partner__facebook_profile
 #: model:ir.model.fields,help:health_crm.field_res_users__facebook_profile
 msgid "Facebook profile URL or username"
-msgstr "Facebook profile URL or username"
+msgstr "Facebook protập tin URL hoặc người dùngtên"
 
 #. module: health_crm
 #: model:ir.model.fields.selection,name:health_crm.selection__crm_lead__contact_relationship_type__family_member
@@ -1117,7 +1117,7 @@ msgstr "Financial Responsibility %"
 #. module: health_crm
 #: model:ir.model.constraint,message:health_crm.constraint_health_client_relation_check_financial_responsibility
 msgid "Financial responsibility must be between 0 and 100%."
-msgstr "Financial responsibility must be between 0 and 100%."
+msgstr "Financial responsibility must be giữa 0 và 100%."
 
 #. module: health_crm
 #: model:ir.model.fields.selection,name:health_crm.selection__crm_lead__service_interest__follow_up
@@ -1133,7 +1133,7 @@ msgstr "Theo dõi Liên hệ"
 #: model:ir.model.fields,field_description:health_crm.field_crm_lead__follow_up_count
 #: model_terms:ir.ui.view,arch_db:health_crm.view_healthcare_opportunity_form
 msgid "Follow-up Count"
-msgstr "Theo dõi Count"
+msgstr "Theo dõi Số lượng"
 
 #. module: health_crm
 #: model_terms:ir.ui.view,arch_db:health_crm.view_healthcare_opportunity_form
@@ -1181,7 +1181,7 @@ msgstr "Từ Excel: Đặt lịch Trạng thái [Compulsory]"
 #. module: health_crm
 #: model:ir.model.fields,help:health_crm.field_crm_lead__contact_outcome
 msgid "From Excel: Contact Outcome field"
-msgstr "Từ Excel: Liên hệ Kết quả field"
+msgstr "Từ Excel: Liên hệ Kết quả trường"
 
 #. module: health_crm
 #: model:ir.model.fields,help:health_crm.field_crm_lead__contact_source
@@ -1191,13 +1191,13 @@ msgstr "Từ Excel: Như thế nào the Liên hệ was initiated"
 #. module: health_crm
 #: model:ir.model.fields,help:health_crm.field_crm_lead__lead_status
 msgid "From Excel: Lead Status field"
-msgstr "Từ Excel: Tiềm năng Trạng thái field"
+msgstr "Từ Excel: Tiềm năng Trạng thái trường"
 
 #. module: health_crm
 #: model:ir.model.fields,help:health_crm.field_crm_lead__next_action_at
 msgid ""
 "From Excel: next_action_at [Compulsory] - When next action should be taken"
-msgstr "Từ Excel: next_action_at [Compulsory] - Khi nào Tiếp theo action should be taken"
+msgstr "Từ Excel: tiếp theo_hành động_at [Compulsory] - Khi nào Tiếp theo hành động should be taken"
 
 #. module: health_crm
 #: model:ir.model.fields.selection,name:health_crm.selection__crm_lead__health_contact_outcome__future_opportunity
@@ -1214,7 +1214,7 @@ msgstr "Tọa độ GPS"
 #: model:ir.model.fields,help:health_crm.field_res_partner__gps_coordinates
 #: model:ir.model.fields,help:health_crm.field_res_users__gps_coordinates
 msgid "GPS coordinates for home visits"
-msgstr "Tọa độ GPS for Khám tại nhà"
+msgstr "Tọa độ GPS cho Khám tại nhà"
 
 #. module: health_crm
 #: model:ir.model.fields,help:health_crm.field_res_partner__healthcare_notes
@@ -1226,24 +1226,24 @@ msgstr "Chung Y tế-Liên quan Ghi chú"
 #: model:ir.model.fields,help:health_crm.field_res_partner__service_area_ids
 #: model:ir.model.fields,help:health_crm.field_res_users__service_area_ids
 msgid "Geographic areas this contact is associated with"
-msgstr "Geographic areas this Liên hệ is associated with"
+msgstr "Geobiểu đồic diện tíchs này Liên hệ là liên kết với"
 
 #. module: health_crm
 #: model:ir.model.fields,help:health_crm.field_health_province__region
 msgid "Geographic region of Vietnam"
-msgstr "Geographic region of Vietnam"
+msgstr "Geobiểu đồic vùng of Vietnam"
 
 #. module: health_crm
 #: model:ir.model.fields.selection,name:health_crm.selection__health_client_relation__relationship_type__grandchild
 #: model:ir.model.fields.selection,name:health_crm.selection__health_relationship_add_wizard__relationship_type__grandchild
 msgid "Grandchild"
-msgstr "Grandchild"
+msgstr "Grandcon"
 
 #. module: health_crm
 #: model:ir.model.fields.selection,name:health_crm.selection__health_client_relation__relationship_type__grandparent
 #: model:ir.model.fields.selection,name:health_crm.selection__health_relationship_add_wizard__relationship_type__grandparent
 msgid "Grandparent"
-msgstr "Grandparent"
+msgstr "Grandcha mẹ"
 
 #. module: health_crm
 #: model_terms:ir.ui.view,arch_db:health_crm.view_health_client_relation_search
@@ -1293,12 +1293,12 @@ msgstr "Y tế CRM"
 #: model:res.groups,comment:health_crm.group_health_crm_manager
 msgid ""
 "Healthcare CRM managers can configure CRM settings and manage all leads"
-msgstr "Y tế CRM managers can configure CRM Cài đặt and manage Tất cả leads"
+msgstr "Y tế CRM quản lýs can configure CRM Cài đặt và manage Tất cả tiềm năngs"
 
 #. module: health_crm
 #: model:res.groups,comment:health_crm.group_health_crm_user
 msgid "Healthcare CRM users can view and manage leads and opportunities"
-msgstr "Y tế CRM users can Xem and manage leads and opportunities"
+msgstr "Y tế CRM người dùngs can Xem và manage tiềm năngs và opportunities"
 
 #. module: health_crm
 #: model_terms:ir.ui.view,arch_db:health_crm.view_health_client_relation_form
@@ -1416,12 +1416,12 @@ msgstr "Y tế Vai tròs"
 msgid ""
 "Healthcare relationships define connections between patients/clients and the people who support them.\n"
 "                This includes caregivers, payers, referrers, emergency contacts, and legal guardians."
-msgstr "Y tế relationships define connections between Bệnh nhân/Khách hàng and the people who support them.\n                Này includes caregivers, payers, referrers, Khẩn cấp contacts, and legal guardians."
+msgstr "Y tế mối quan hệ define connections giữa Bệnh nhân/Khách hàng và the people ai hỗ trợ them.\n                Này includes người chăm sócs, người thanh toáns, người giới thiệus, Khẩn cấp liên hệ, và pháp lý người giám hộs."
 
 #. module: health_crm
 #: model_terms:ir.ui.view,arch_db:health_crm.view_healthcare_partner_form
 msgid "Healthcare-related notes and observations..."
-msgstr "Y tế-Liên quan Ghi chú and observations..."
+msgstr "Y tế-Liên quan Ghi chú và observations..."
 
 #. module: health_crm
 #: model_terms:ir.ui.view,arch_db:health_crm.view_relationship_network_form
@@ -1441,7 +1441,7 @@ msgstr "Khám tại nhà Dịch vụs"
 #. module: health_crm
 #: model:crm.team,name:health_crm.home_visit_crm_team
 msgid "Home Visit Specialists"
-msgstr "Khám tại nhà Specialists"
+msgstr "Khám tại nhà Speciadanh sáchs"
 
 #. module: health_crm
 #: model:ir.model.fields,field_description:health_crm.field_crm_lead__contact_relationship_type
@@ -1463,7 +1463,7 @@ msgstr "ID"
 #. odoo-javascript
 #: code:addons/health_crm/static/src/xml/test_widget.xml:0
 msgid "If you see this, the widget system is working correctly."
-msgstr "If you see this, the widget system is working correctly."
+msgstr "Nếu you see này, the tiện ích hệ thống là working đúngly."
 
 #. module: health_crm
 #: model:ir.model.fields.selection,name:health_crm.selection__res_partner__preferred_contact_method__in_person
@@ -1486,7 +1486,7 @@ msgstr "Inbound Call"
 #. module: health_crm
 #: model:crm.stage,name:health_crm.stage_healthcare_contact
 msgid "Initial Contact"
-msgstr "Initial Liên hệ"
+msgstr "Ban đầu Liên hệ"
 
 #. module: health_crm
 #: model:ir.model.fields,field_description:health_crm.field_crm_lead__insurance_provider
@@ -1499,7 +1499,7 @@ msgstr "Nhà cung cấp bảo hiểm"
 msgid ""
 "Interactive force-directed graph • Drag nodes to reposition • Hover for "
 "details"
-msgstr "Interactive force-directed graph • Kéo nodes Đến reposition • Hover for Chi tiết"
+msgstr "Tương tác biểu đồ lực hướng • Kéo nút Đến đặt lại vị trí • Di chuột cho Chi tiết"
 
 #. module: health_crm
 #: model_terms:ir.ui.view,arch_db:health_crm.view_healthcare_opportunity_form
@@ -1509,7 +1509,7 @@ msgstr "Nội bộ Ghi chú"
 #. module: health_crm
 #: model_terms:ir.ui.view,arch_db:health_crm.view_healthcare_opportunity_form
 msgid "Internal notes about this healthcare contact..."
-msgstr "Nội bộ Ghi chú about this Y tế Liên hệ..."
+msgstr "Nội bộ Ghi chú về điều này Y tế Liên hệ..."
 
 #. module: health_crm
 #: model:ir.model.fields,field_description:health_crm.field_res_partner__is_caregiver
@@ -1521,7 +1521,7 @@ msgstr "Là người chăm sóc"
 #: model:ir.model.fields,field_description:health_crm.field_res_partner__is_client_representative
 #: model:ir.model.fields,field_description:health_crm.field_res_users__is_client_representative
 msgid "Is Client Representative"
-msgstr "Is Khách hàng Người đại diện"
+msgstr "Là Khách hàng Người đại diện"
 
 #. module: health_crm
 #: model:ir.model.fields,field_description:health_crm.field_res_partner__is_emergency_contact
@@ -1533,13 +1533,13 @@ msgstr "Là liên hệ khẩn cấp"
 #: model:ir.model.fields,field_description:health_crm.field_res_partner__is_healthcare_provider
 #: model:ir.model.fields,field_description:health_crm.field_res_users__is_healthcare_provider
 msgid "Is Healthcare Provider"
-msgstr "Is Y tế Provider"
+msgstr "Là Y tế Nhà cung cấp"
 
 #. module: health_crm
 #: model:ir.model.fields,field_description:health_crm.field_res_partner__is_legal_guardian
 #: model:ir.model.fields,field_description:health_crm.field_res_users__is_legal_guardian
 msgid "Is Legal Guardian"
-msgstr "Is Pháp lý Người giám hộ"
+msgstr "Là Pháp lý Người giám hộ"
 
 #. module: health_crm
 #: model:ir.model.fields,field_description:health_crm.field_res_partner__is_patient
@@ -1563,28 +1563,28 @@ msgstr "Là người giới thiệu"
 #: model:ir.model.fields,field_description:health_crm.field_res_partner__is_representative
 #: model:ir.model.fields,field_description:health_crm.field_res_users__is_representative
 msgid "Is Representative"
-msgstr "Is Người đại diện"
+msgstr "Là Người đại diện"
 
 #. module: health_crm
 #: model:ir.model.fields,help:health_crm.field_health_province__active
 msgid "Is this province currently active?"
-msgstr "Is this Tỉnh currently Đang hoạt động?"
+msgstr "Là này Tỉnh hiện tại Đang hoạt động?"
 
 #. module: health_crm
 #: model:ir.model.fields,help:health_crm.field_health_contact_reason__active
 #: model:ir.model.fields,help:health_crm.field_health_lead_reason__active
 msgid "Is this reason currently active?"
-msgstr "Is this reason currently Đang hoạt động?"
+msgstr "Là này lý do hiện tại Đang hoạt động?"
 
 #. module: health_crm
 #: model:ir.model.fields,help:health_crm.field_health_client_relation__active
 msgid "Is this relationship currently active?"
-msgstr "Is this relationship currently Đang hoạt động?"
+msgstr "Là này mối quan hệ hiện tại Đang hoạt động?"
 
 #. module: health_crm
 #: model:ir.model.fields,help:health_crm.field_health_client_relation__is_primary
 msgid "Is this the primary contact for this specific role?"
-msgstr "Is this the primary Liên hệ for this specific role?"
+msgstr "Là này the chính Liên hệ cho này cụ thể vai trò?"
 
 #. module: health_crm
 #: model:ir.model.fields,field_description:health_crm.field_health_client_relation__issued_by
@@ -1595,7 +1595,7 @@ msgstr "Cấp Bởi"
 #: model:ir.model.fields,field_description:health_crm.field_res_partner__kinship_title
 #: model:ir.model.fields,field_description:health_crm.field_res_users__kinship_title
 msgid "Kinship Title"
-msgstr "Kinship Tiêu đề"
+msgstr "Quan hệ họ hàng Tiêu đề"
 
 #. module: health_crm
 #: model:ir.model.fields,field_description:health_crm.field_health_client_relation__write_uid
@@ -1605,7 +1605,7 @@ msgstr "Kinship Tiêu đề"
 #: model:ir.model.fields,field_description:health_crm.field_health_province__write_uid
 #: model:ir.model.fields,field_description:health_crm.field_health_relationship_add_wizard__write_uid
 msgid "Last Updated by"
-msgstr "Last Cập nhậtd by"
+msgstr "Last Cập nhậtd bởi"
 
 #. module: health_crm
 #: model:ir.model.fields,field_description:health_crm.field_health_client_relation__write_date
@@ -1615,7 +1615,7 @@ msgstr "Last Cập nhậtd by"
 #: model:ir.model.fields,field_description:health_crm.field_health_province__write_date
 #: model:ir.model.fields,field_description:health_crm.field_health_relationship_add_wizard__write_date
 msgid "Last Updated on"
-msgstr "Last Cập nhậtd on"
+msgstr "Last Cập nhậtd trên"
 
 #. module: health_crm
 #: model:ir.model.fields,field_description:health_crm.field_health_client_selection_wizard__lead_id
@@ -1660,7 +1660,7 @@ msgstr "Tiềm năng Loại"
 msgid ""
 "Lead reasons help categorize the motivation or source behind leads and opportunities.\n"
 "                This is useful for tracking conversion sources and marketing effectiveness."
-msgstr "Tiềm năng reasons Trợ giúp categorize the motivation or Nguồn behind leads and opportunities.\n                Này is useful for Theo dõi conversion sources and marketing effectiveness."
+msgstr "Tiềm năng lý dos Trợ giúp categorize the động lực hoặc Nguồn đằng sau tiềm năngs và opportunities.\n                Này là useful cho Theo dõi chuyển đổi nguồns và tiếp thị hiệu quả."
 
 #. module: health_crm
 #: model:ir.model,name:health_crm.model_crm_lead
@@ -1709,13 +1709,13 @@ msgstr "Liên kếtedIn"
 #. odoo-javascript
 #: code:addons/health_crm/static/src/components/relationship_hierarchy/relationship_hierarchy.xml:0
 msgid "Loading relationship hierarchy..."
-msgstr "Loading relationship hierarchy..."
+msgstr "Đang tải mối quan hệ hệ thống phân cấp..."
 
 #. module: health_crm
 #. odoo-javascript
 #: code:addons/health_crm/static/src/xml/relationship_graph_widget.xml:0
 msgid "Loading relationship network..."
-msgstr "Loading relationship network..."
+msgstr "Đang tải mối quan hệ mạng lưới..."
 
 #. module: health_crm
 #: model:ir.model.fields.selection,name:health_crm.selection__crm_lead__lead_status__lost
@@ -1725,7 +1725,7 @@ msgstr "Thất bại"
 #. module: health_crm
 #: model:ir.model.fields,help:health_crm.field_health_relationship_add_wizard__is_primary
 msgid "Mark as the primary contact for this role"
-msgstr "Mark as the primary Liên hệ for this role"
+msgstr "Đánh dấu là the chính Liên hệ cho này vai trò"
 
 #. module: health_crm
 #: model_terms:ir.ui.view,arch_db:health_crm.view_health_lead_reason_search
@@ -1745,7 +1745,7 @@ msgstr "Marriage Giấy chứng nhận (Giấy đăng ký kết hôn)"
 #. module: health_crm
 #: model:ir.model.fields,field_description:health_crm.field_health_client_selection_wizard__patient_ids
 msgid "Matching Patients"
-msgstr "Matching Bệnh nhân"
+msgstr "Phù hợp Bệnh nhân"
 
 #. module: health_crm
 #: model_terms:ir.ui.view,arch_db:health_crm.view_health_client_relation_form
@@ -1761,7 +1761,7 @@ msgstr "Trung bình"
 #: model_terms:ir.ui.view,arch_db:health_crm.view_health_contact_reason_form
 #: model_terms:ir.ui.view,arch_db:health_crm.view_health_lead_reason_form
 msgid "Multilingual Support"
-msgstr "Multilingual Hỗ trợ"
+msgstr "Đa ngôn ngữ Hỗ trợ"
 
 #. module: health_crm
 #. odoo-python
@@ -1817,12 +1817,12 @@ msgstr "Của tôi Hỗ trợ Đội"
 #. module: health_crm
 #: model:ir.model.fields,help:health_crm.field_health_contact_reason__name
 msgid "Name of the contact reason"
-msgstr "Tên of the Liên hệ reason"
+msgstr "Tên of the Liên hệ lý do"
 
 #. module: health_crm
 #: model:ir.model.fields,help:health_crm.field_health_lead_reason__name
 msgid "Name of the lead reason"
-msgstr "Tên of the lead reason"
+msgstr "Tên of the tiềm năng lý do"
 
 #. module: health_crm
 #: model:ir.model.fields,help:health_crm.field_res_partner__preferred_name
@@ -1881,7 +1881,7 @@ msgstr "Không Đặt lịch"
 #. odoo-javascript
 #: code:addons/health_crm/static/src/components/relationship_hierarchy/relationship_hierarchy.xml:0
 msgid "No Relationships Found"
-msgstr "Không Mối quan hệs Found"
+msgstr "Không Mối quan hệs Được tìm thấy"
 
 #. module: health_crm
 #: model:ir.model.fields.selection,name:health_crm.selection__crm_lead__contact_outcome__no_response
@@ -1902,7 +1902,7 @@ msgstr "Miền Bắcern Vietnam"
 #. module: health_crm
 #: model:ir.model.fields.selection,name:health_crm.selection__crm_lead__health_contact_outcome__not_qualified
 msgid "Not Qualified"
-msgstr "Not Qualified"
+msgstr "Not Đạt yêu cầu"
 
 #. module: health_crm
 #: model:ir.model.fields,field_description:health_crm.field_health_client_relation__notes
@@ -1912,28 +1912,28 @@ msgstr "Ghi chú"
 #. module: health_crm
 #: model:ir.model.fields,help:health_crm.field_crm_lead__appointment_count
 msgid "Number of appointments generated from this lead"
-msgstr "Số of Các cuộc hẹn generated Từ this lead"
+msgstr "Số of Các cuộc hẹn geneđánh giád Từ này tiềm năng"
 
 #. module: health_crm
 #: model:ir.model.fields,help:health_crm.field_crm_lead__day_close
 msgid "Number of days from creation to close (if closed)"
-msgstr "Số of days Từ creation Đến Đóng (if closed)"
+msgstr "Số of days Từ creation Đến Đóng (nếu đóngd)"
 
 #. module: health_crm
 #: model:ir.model.fields,help:health_crm.field_crm_lead__day_open
 msgid "Number of days since the lead was created"
-msgstr "Số of days since the lead was Đã tạo"
+msgstr "Số of days since the tiềm năng was Đã tạo"
 
 #. module: health_crm
 #: model:ir.model.fields,help:health_crm.field_health_province__usage_count
 msgid "Number of leads using this province"
-msgstr "Số of leads using this Tỉnh"
+msgstr "Số of tiềm năngs using này Tỉnh"
 
 #. module: health_crm
 #: model:ir.model.fields,help:health_crm.field_health_contact_reason__usage_count
 #: model:ir.model.fields,help:health_crm.field_health_lead_reason__usage_count
 msgid "Number of times this reason has been used"
-msgstr "Số of times this reason has been used"
+msgstr "Số of giờs này lý do has been used"
 
 #. module: health_crm
 #. odoo-python
@@ -1941,7 +1941,7 @@ msgstr "Số of times this reason has been used"
 msgid ""
 "Only one primary %s is allowed per client. Please remove the primary "
 "designation from %s first."
-msgstr "Only one primary %s is allowed per Khách hàng. Please Gỡ bỏ the primary designation Từ %s first."
+msgstr "Only one chính %s là allowed per Khách hàng. Vui lòng Gỡ bỏ the chính designation Từ %s đầu tiên."
 
 #. module: health_crm
 #: model_terms:ir.ui.view,arch_db:health_crm.view_health_contact_reason_search
@@ -2049,13 +2049,13 @@ msgstr "Đang chờ Theo dõi"
 #: model:ir.model.fields,help:health_crm.field_res_partner__client_relationships
 #: model:ir.model.fields,help:health_crm.field_res_users__client_relationships
 msgid "People who represent or support me"
-msgstr "People who represent or support me"
+msgstr "People ai đại diện hoặc hỗ trợ me"
 
 #. module: health_crm
 #: model:ir.model.fields,help:health_crm.field_health_client_relation__financial_responsibility
 #: model:ir.model.fields,help:health_crm.field_health_relationship_add_wizard__financial_responsibility
 msgid "Percentage of financial responsibility (0-100%)"
-msgstr "Percentage of financial responsibility (0-100%)"
+msgstr "Phần trăm of financial responsibility (0-100%)"
 
 #. module: health_crm
 #: model_terms:ir.ui.view,arch_db:health_crm.view_relationship_add_wizard_form
@@ -2065,12 +2065,12 @@ msgstr "Quyềns"
 #. module: health_crm
 #: model:ir.model.fields,help:health_crm.field_crm_lead__client_representative_id
 msgid "Person representing the client"
-msgstr "Person representing the Khách hàng"
+msgstr "Person đại diệning the Khách hàng"
 
 #. module: health_crm
 #: model:ir.model.fields,help:health_crm.field_crm_lead__referrer_id
 msgid "Person who referred this lead"
-msgstr "Person who referred this lead"
+msgstr "Person ai referred này tiềm năng"
 
 #. module: health_crm
 #: model:ir.model.fields.selection,name:health_crm.selection__res_partner__preferred_contact_method__phone
@@ -2085,25 +2085,25 @@ msgstr "Cuộc gọi điện thoại"
 #. module: health_crm
 #: model:ir.model.fields.selection,name:health_crm.selection__crm_lead__healthcare_lead_source__phone_inquiry
 msgid "Phone Inquiry"
-msgstr "Điện thoại Inquiry"
+msgstr "Điện thoại Yêu cầu"
 
 #. module: health_crm
 #. odoo-python
 #: code:addons/health_crm/wizard/relationship_add_wizard.py:0
 msgid "Please select a representative."
-msgstr "Please Chọn a representative."
+msgstr "Vui lòng Chọn a người đại diện."
 
 #. module: health_crm
 #. odoo-python
 #: code:addons/health_crm/models/crm_lead.py:0
 msgid "Please specify the service interest before converting to appointment."
-msgstr "Please specify the service interest before converting Đến Cuộc hẹn."
+msgstr "Vui lòng chỉ định the dịch vụ quan tâm trước chuyển đổi Đến Cuộc hẹn."
 
 #. module: health_crm
 #. odoo-python
 #: code:addons/health_crm/models/crm_lead.py:0
 msgid "Please specify the service interest before converting to booking."
-msgstr "Please specify the service interest before converting Đến booking."
+msgstr "Vui lòng chỉ định the dịch vụ quan tâm trước chuyển đổi Đến đặt lịch."
 
 #. module: health_crm
 #: model:ir.model.fields.selection,name:health_crm.selection__health_client_relation__legal_document_type__power_of_attorney
@@ -2114,28 +2114,28 @@ msgstr "Power of Attorney (Giấy ủy quyền)"
 #: model:ir.model.fields,field_description:health_crm.field_res_partner__preferred_contact_method
 #: model:ir.model.fields,field_description:health_crm.field_res_users__preferred_contact_method
 msgid "Preferred Contact Method"
-msgstr "Preferred Liên hệ Method"
+msgstr "Ưa thích Liên hệ Phương thức"
 
 #. module: health_crm
 #: model:ir.model.fields,field_description:health_crm.field_crm_lead__preferred_language
 msgid "Preferred Language"
-msgstr "Preferred Ngôn ngữ"
+msgstr "Ưa thích Ngôn ngữ"
 
 #. module: health_crm
 #: model:ir.model.fields,field_description:health_crm.field_res_partner__preferred_name
 #: model:ir.model.fields,field_description:health_crm.field_res_users__preferred_name
 msgid "Preferred Name"
-msgstr "Preferred Tên"
+msgstr "Ưa thích Tên"
 
 #. module: health_crm
 #: model:ir.model.fields,field_description:health_crm.field_crm_lead__preferred_service_area
 msgid "Preferred Service Area"
-msgstr "Preferred Dịch vụ Diện tích"
+msgstr "Ưa thích Dịch vụ Diện tích"
 
 #. module: health_crm
 #: model_terms:ir.ui.view,arch_db:health_crm.view_healthcare_partner_form
 msgid "Preferred calling name"
-msgstr "Preferred calling Tên"
+msgstr "Ưa thích gọi Tên"
 
 #. module: health_crm
 #: model:ir.model.fields.selection,name:health_crm.selection__crm_lead__clinical_priority__preventive
@@ -2167,24 +2167,24 @@ msgstr "Người thanh toán chính"
 #. module: health_crm
 #: model:ir.model.fields,help:health_crm.field_crm_lead__primary_caregiver_id
 msgid "Primary caregiver for this lead"
-msgstr "Người chăm sóc chính for this lead"
+msgstr "Người chăm sóc chính cho này tiềm năng"
 
 #. module: health_crm
 #: model:ir.model.fields,field_description:health_crm.field_health_client_relation__is_primary
 #: model:ir.model.fields,field_description:health_crm.field_health_relationship_add_wizard__is_primary
 msgid "Primary for this Role"
-msgstr "Chính for this Vai trò"
+msgstr "Chính cho này Vai trò"
 
 #. module: health_crm
 #: model:ir.model.fields,help:health_crm.field_crm_lead__primary_payer_id
 msgid "Primary person/entity responsible for payments"
-msgstr "Chính person/entity Người phụ trách for payments"
+msgstr "Chính người/tổ chức Người phụ trách cho thanh toán"
 
 #. module: health_crm
 #. odoo-javascript
 #: code:addons/health_crm/static/src/xml/relationship_graph_widget.xml:0
 msgid "Primary relationships  •"
-msgstr "Chính relationships  •"
+msgstr "Chính mối quan hệ  •"
 
 #. module: health_crm
 #: model_terms:ir.ui.view,arch_db:health_crm.view_health_client_relation_kanban
@@ -2194,23 +2194,23 @@ msgstr "Ưu tiên #"
 #. module: health_crm
 #: model:ir.model.constraint,message:health_crm.constraint_health_client_relation_check_priority_positive
 msgid "Priority order must be a positive number."
-msgstr "Ưu tiên order must be a positive Số."
+msgstr "Ưu tiên thứ tự must be a positive Số."
 
 #. module: health_crm
 #: model:ir.model.fields.selection,name:health_crm.selection__crm_lead__contact_relationship_type__professional
 msgid "Professional Care Provider"
-msgstr "Professional Care Provider"
+msgstr "Chuyên nghiệp Care Nhà cung cấp"
 
 #. module: health_crm
 #: model:ir.model.fields.selection,name:health_crm.selection__health_client_relation__relationship_type__professional
 #: model:ir.model.fields.selection,name:health_crm.selection__health_relationship_add_wizard__relationship_type__professional
 msgid "Professional Service Provider"
-msgstr "Professional Dịch vụ Provider"
+msgstr "Chuyên nghiệp Dịch vụ Nhà cung cấp"
 
 #. module: health_crm
 #: model:ir.model.fields.selection,name:health_crm.selection__crm_lead__lead_status__proposal
 msgid "Proposal"
-msgstr "Proposal"
+msgstr "Đề xuất"
 
 #. module: health_crm
 #: model:ir.model.fields,field_description:health_crm.field_health_province__code
@@ -2225,7 +2225,7 @@ msgstr "Tỉnh Tên"
 #. module: health_crm
 #: model_terms:ir.ui.view,arch_db:health_crm.view_health_province_form
 msgid "Province Name (English)"
-msgstr "Tỉnh Tên (English)"
+msgstr "Tỉnh Tên (Tiếng Anh)"
 
 #. module: health_crm
 #: model:ir.model.constraint,message:health_crm.constraint_health_province_code_unique
@@ -2237,7 +2237,7 @@ msgstr "Mã tỉnh must be unique!"
 msgid ""
 "Province lookup table for Vietnamese locations used in CRM leads.\n"
 "                This helps track geographic distribution of leads and customers."
-msgstr "Tỉnh lookup table for Vietnamese locations used in CRM leads.\n                Này helps track geographic distribution of leads and customers."
+msgstr "Tỉnh bảng tra cứu cho Tiếng Việt địa điểm được sử dụng trong CRM tiềm năngs.\n                Này giúp theo dõi phân bố địa lý of tiềm năngs và khách hàng."
 
 #. module: health_crm
 #: model:ir.model.constraint,message:health_crm.constraint_health_province_name_unique
@@ -2259,7 +2259,7 @@ msgstr "Tỉnh/Thànhs/Cities"
 #. module: health_crm
 #: model:ir.model.fields.selection,name:health_crm.selection__crm_lead__lead_status__qualified
 msgid "Qualified"
-msgstr "Qualified"
+msgstr "Đạt yêu cầu"
 
 #. module: health_crm
 #: model:ir.model.fields,field_description:health_crm.field_health_contact_reason__code
@@ -2276,18 +2276,18 @@ msgstr "Lý do Tên"
 #. module: health_crm
 #: model:ir.model.fields,help:health_crm.field_crm_lead__contact_reason_id
 msgid "Reason for the initial contact (Sales/OM purposes)"
-msgstr "Lý do for the initial Liên hệ (Kinh doanh/OM purposes)"
+msgstr "Lý do cho the ban đầu Liên hệ (Kinh doanh/OM purposes)"
 
 #. module: health_crm
 #: model:ir.model.fields,help:health_crm.field_crm_lead__lead_reason_id
 msgid "Reason for this lead/opportunity (different from contact reason)"
-msgstr "Lý do for this lead/opportunity (different Từ Liên hệ reason)"
+msgstr "Lý do cho này tiềm năng/cơ hội (different Từ Liên hệ lý do)"
 
 #. module: health_crm
 #: model:ir.model.fields,field_description:health_crm.field_crm_lead__reason_if_rejected
 #: model_terms:ir.ui.view,arch_db:health_crm.view_healthcare_opportunity_form
 msgid "Reason if Rejected"
-msgstr "Lý do if Từ chốied"
+msgstr "Lý do nếu Từ chốied"
 
 #. module: health_crm
 #: model:ir.model.fields.selection,name:health_crm.selection__crm_lead__contact_source__referral
@@ -2343,7 +2343,7 @@ msgstr "Từ chốied"
 #. odoo-python
 #: code:addons/health_crm/wizard/relationship_add_wizard.py:0
 msgid "Relationship Added"
-msgstr "Mối quan hệ Added"
+msgstr "Mối quan hệ Đã thêm"
 
 #. module: health_crm
 #: model_terms:ir.ui.view,arch_db:health_crm.view_health_client_relation_pivot
@@ -2394,13 +2394,13 @@ msgstr "Mối quan hệ Loại"
 #. odoo-javascript
 #: code:addons/health_crm/static/src/xml/relationship_graph_widget.xml:0
 msgid "Relationship direction (Patient → Representative)"
-msgstr "Mối quan hệ direction (Bệnh nhân → Người đại diện)"
+msgstr "Mối quan hệ hướng (Bệnh nhân → Người đại diện)"
 
 #. module: health_crm
 #. odoo-javascript
 #: code:addons/health_crm/static/src/components/relationship_hierarchy/relationship_hierarchy.xml:0
 msgid "Remove relationship"
-msgstr "Gỡ bỏ relationship"
+msgstr "Gỡ bỏ mối quan hệ"
 
 #. module: health_crm
 #: model:ir.model.fields.selection,name:health_crm.selection__crm_lead__contact_type__repeat
@@ -2457,7 +2457,7 @@ msgstr "Kinh doanh"
 #. module: health_crm
 #: model:ir.model.fields.selection,name:health_crm.selection__health_contact_reason__category__sales
 msgid "Sales Inquiry"
-msgstr "Kinh doanh Inquiry"
+msgstr "Kinh doanh Yêu cầu"
 
 #. module: health_crm
 #: model:ir.ui.menu,name:health_crm.menu_healthcare_crm_teams
@@ -2494,7 +2494,7 @@ msgstr "Tìm kiếm Tỉnh/Thànhs"
 #. module: health_crm
 #: model_terms:ir.ui.view,arch_db:health_crm.view_relationship_add_wizard_form
 msgid "Search or create new partner..."
-msgstr "Tìm kiếm or Tạo mới Mới Đối tác..."
+msgstr "Tìm kiếm hoặc Tạo mới Mới Đối tác..."
 
 #. module: health_crm
 #: model:ir.model.fields,field_description:health_crm.field_crm_lead__secondary_caregiver_id
@@ -2505,7 +2505,7 @@ msgstr "Giâyary Người chăm sóc"
 #. module: health_crm
 #: model:ir.model.fields,help:health_crm.field_crm_lead__secondary_caregiver_id
 msgid "Secondary caregiver for this lead (Caregiver 2 ID)"
-msgstr "Giâyary Người chăm sóc for this lead (Người chăm sóc 2 ID)"
+msgstr "Giâyary Người chăm sóc cho này tiềm năng (Người chăm sóc 2 ID)"
 
 #. module: health_crm
 #. odoo-python
@@ -2519,7 +2519,7 @@ msgstr "Chọn Khách hàng"
 #. module: health_crm
 #: model_terms:ir.ui.view,arch_db:health_crm.view_client_selection_wizard_form
 msgid "Select Existing Client"
-msgstr "Chọn Existing Khách hàng"
+msgstr "Chọn Hiện có Khách hàng"
 
 #. module: health_crm
 #: model_terms:ir.ui.view,arch_db:health_crm.view_relationship_add_wizard_form
@@ -2534,7 +2534,7 @@ msgstr "Chọn Này Khách hàng"
 #. module: health_crm
 #: model:ir.model.fields,help:health_crm.field_health_relationship_add_wizard__representative_id
 msgid "Select existing partner or create new one"
-msgstr "Chọn existing Đối tác or Tạo mới Mới one"
+msgstr "Chọn hiện có Đối tác hoặc Tạo mới Mới one"
 
 #. module: health_crm
 #: model:ir.model.fields,field_description:health_crm.field_health_contact_reason__sequence
@@ -2546,18 +2546,18 @@ msgstr "Trình tự"
 #. module: health_crm
 #: model:ir.model.fields,help:health_crm.field_health_province__sequence
 msgid "Sequence for ordering provinces"
-msgstr "Trình tự for ordering provinces"
+msgstr "Trình tự cho thứ tựing tỉnh/thànhs"
 
 #. module: health_crm
 #: model:ir.model.fields,help:health_crm.field_health_contact_reason__sequence
 #: model:ir.model.fields,help:health_crm.field_health_lead_reason__sequence
 msgid "Sequence for ordering reasons"
-msgstr "Trình tự for ordering reasons"
+msgstr "Trình tự cho thứ tựing lý dos"
 
 #. module: health_crm
 #: model:ir.model.fields,help:health_crm.field_crm_lead__unique_contact_code
 msgid "Sequential contact number per city (from Excel requirement)"
-msgstr "Sequential Liên hệ Số per Thành phố (Từ Excel requirement)"
+msgstr "Tuần tự Liên hệ Số per Thành phố (Từ Excel requirement)"
 
 #. module: health_crm
 #: model_terms:ir.ui.view,arch_db:health_crm.view_healthcare_opportunity_form
@@ -2592,7 +2592,7 @@ msgstr "Dịch vụ Quan tâm"
 #. module: health_crm
 #: model:crm.stage,name:health_crm.stage_healthcare_proposal
 msgid "Service Proposal"
-msgstr "Dịch vụ Proposal"
+msgstr "Dịch vụ Đề xuất"
 
 #. module: health_crm
 #: model:crm.stage,name:health_crm.stage_healthcare_qualification
@@ -2607,22 +2607,22 @@ msgstr "Dịch vụ Requirements"
 #. module: health_crm
 #: model_terms:ir.ui.view,arch_db:health_crm.view_health_client_relation_form
 msgid "Set as Primary"
-msgstr "Set as Chính"
+msgstr "Set như là Chính"
 
 #. module: health_crm
 #: model:ir.model.fields,help:health_crm.field_health_contact_reason__code
 msgid "Short code for the contact reason"
-msgstr "Short Mã for the Liên hệ reason"
+msgstr "Short Mã cho the Liên hệ lý do"
 
 #. module: health_crm
 #: model:ir.model.fields,help:health_crm.field_health_lead_reason__code
 msgid "Short code for the lead reason"
-msgstr "Short Mã for the lead reason"
+msgstr "Short Mã cho the tiềm năng lý do"
 
 #. module: health_crm
 #: model:ir.model.fields,help:health_crm.field_health_province__code
 msgid "Short code for the province (e.g., HCM, HN, DN)"
-msgstr "Short Mã for the Tỉnh (e.g., HCM, HN, DN)"
+msgstr "Short Mã cho the Tỉnh (e.g., HCM, HN, DN)"
 
 #. module: health_crm
 #: model:ir.model.fields.selection,name:health_crm.selection__health_client_relation__relationship_type__sibling
@@ -2654,22 +2654,22 @@ msgstr "Nguồn Theo dõi"
 #. module: health_crm
 #: model_terms:ir.ui.view,arch_db:health_crm.view_health_province_search
 msgid "Southern"
-msgstr "Miền Namern"
+msgstr "Miền Tênrn"
 
 #. module: health_crm
 #: model:ir.model.fields.selection,name:health_crm.selection__health_province__region__south
 msgid "Southern Vietnam"
-msgstr "Miền Namern Vietnam"
+msgstr "Miền Tênrn Vietnam"
 
 #. module: health_crm
 #: model:ir.model.fields,help:health_crm.field_crm_lead__vietnamese_channel
 msgid "Specific Vietnamese contact channel"
-msgstr "Specific Vietnamese Liên hệ channel"
+msgstr "Cụ thể Tiếng Việt Liên hệ kênh"
 
 #. module: health_crm
 #: model:ir.model.fields,help:health_crm.field_crm_lead__service_requirements
 msgid "Specific healthcare service requirements and notes"
-msgstr "Specific Y tế service requirements and Ghi chú"
+msgstr "Cụ thể Y tế dịch vụ requirements và Ghi chú"
 
 #. module: health_crm
 #: model:ir.model.fields.selection,name:health_crm.selection__health_client_relation__relationship_type__spouse
@@ -2716,35 +2716,35 @@ msgstr "Test Tiện ích Works!"
 #. module: health_crm
 #: model:ir.model.fields,help:health_crm.field_health_client_relation__representative_id
 msgid "The person representing or supporting the client"
-msgstr "The person representing or supporting the Khách hàng"
+msgstr "The person đại diệning hoặc hỗ trợing the Khách hàng"
 
 #. module: health_crm
 #: model:ir.model.fields,help:health_crm.field_health_client_relation__relationship_type
 #: model:ir.model.fields,help:health_crm.field_health_relationship_add_wizard__relationship_type
 msgid "The personal or professional relationship type"
-msgstr "The personal or professional relationship Loại"
+msgstr "The cá nhân hoặc chuyên nghiệp mối quan hệ Loại"
 
 #. module: health_crm
 #: model:ir.model.fields,help:health_crm.field_health_client_relation__role
 msgid "The role this representative plays for the client"
-msgstr "The role this representative plays for the Khách hàng"
+msgstr "The vai trò này người đại diện plays cho the Khách hàng"
 
 #. module: health_crm
 #: model:ir.model.fields,help:health_crm.field_health_relationship_add_wizard__role
 msgid "The role this representative will play"
-msgstr "The role this representative will play"
+msgstr "The vai trò này người đại diện will play"
 
 #. module: health_crm
 #. odoo-javascript
 #: code:addons/health_crm/static/src/xml/relationship_graph_widget.xml:0
 msgid "Thick lines:"
-msgstr "Thick lines:"
+msgstr "Đường kẻ đậm:"
 
 #. module: health_crm
 #. odoo-javascript
 #: code:addons/health_crm/static/src/components/relationship_hierarchy/relationship_hierarchy.xml:0
 msgid "This partner doesn't have any relationship records yet."
-msgstr "Này Đối tác doesn't have any relationship records yet."
+msgstr "Này Đối tác doesn't have bất kỳ mối quan hệ bản ghis yet."
 
 #. module: health_crm
 #: model:ir.model.fields,field_description:health_crm.field_res_partner__total_caregivers
@@ -2787,17 +2787,17 @@ msgstr "Tổng cộng Mối quan hệs"
 #: model:ir.model.fields,help:health_crm.field_res_partner__relationship_total_count
 #: model:ir.model.fields,help:health_crm.field_res_users__relationship_total_count
 msgid "Total number of all relationships for this person"
-msgstr "Tổng cộng Số of Tất cả relationships for this person"
+msgstr "Tổng cộng Số of Tất cả mối quan hệ cho này person"
 
 #. module: health_crm
 #: model:ir.model.fields,help:health_crm.field_crm_lead__service_interest
 msgid "Type of healthcare service the lead is interested in"
-msgstr "Loại of Y tế service the lead is interested in"
+msgstr "Loại of Y tế dịch vụ the tiềm năng là quan tâmed trong"
 
 #. module: health_crm
 #: model:ir.model.fields,help:health_crm.field_health_client_relation__legal_document_type
 msgid "Type of legal document establishing this relationship"
-msgstr "Loại of legal document establishing this relationship"
+msgstr "Loại of tài liệu pháp lý establishing này mối quan hệ"
 
 #. module: health_crm
 #: model:ir.model.fields,field_description:health_crm.field_crm_lead__unique_contact_code
@@ -2814,45 +2814,45 @@ msgstr "Khẩn cấp"
 #: model:ir.model.fields,field_description:health_crm.field_health_lead_reason__usage_count
 #: model:ir.model.fields,field_description:health_crm.field_health_province__usage_count
 msgid "Usage Count"
-msgstr "Usage Count"
+msgstr "Sử dụng Số lượng"
 
 #. module: health_crm
 #: model:ir.model.fields.selection,name:health_crm.selection__crm_lead__preferred_language__vietnamese
 msgid "Vietnamese"
-msgstr "Vietnamese"
+msgstr "Tiếng Việt"
 
 #. module: health_crm
 #: model:ir.model.fields,field_description:health_crm.field_crm_lead__vietnamese_channel
 msgid "Vietnamese Channel"
-msgstr "Vietnamese Channel"
+msgstr "Tiếng Việt Kênh"
 
 #. module: health_crm
 #: model:ir.model.fields,help:health_crm.field_res_partner__cccd_number
 #: model:ir.model.fields,help:health_crm.field_res_users__cccd_number
 msgid "Vietnamese Citizen Identification Card Number (from Excel CMF)"
-msgstr "Vietnamese Citizen Identification Thẻ Số (Từ Excel CMF)"
+msgstr "Tiếng Việt Công dân Định danh Thẻ Số (Từ Excel CMF)"
 
 #. module: health_crm
 #: model:ir.model.fields,help:health_crm.field_res_partner__ethnicity
 #: model:ir.model.fields,help:health_crm.field_res_users__ethnicity
 msgid "Vietnamese Ethnicity (from Excel CMF)"
-msgstr "Vietnamese Dân tộc (Từ Excel CMF)"
+msgstr "Tiếng Việt Dân tộc (Từ Excel CMF)"
 
 #. module: health_crm
 #: model:crm.team,name:health_crm.healthcare_crm_team
 msgid "Vietnamese Healthcare Team"
-msgstr "Vietnamese Y tế Đội"
+msgstr "Tiếng Việt Y tế Đội"
 
 #. module: health_crm
 #: model:ir.model.fields,help:health_crm.field_res_partner__kinship_title
 #: model:ir.model.fields,help:health_crm.field_res_users__kinship_title
 msgid "Vietnamese Honorific Title (from Excel CMF)"
-msgstr "Vietnamese Honorific Tiêu đề (Từ Excel CMF)"
+msgstr "Tiếng Việt Honorific Tiêu đề (Từ Excel CMF)"
 
 #. module: health_crm
 #: model_terms:ir.ui.view,arch_db:health_crm.view_health_client_relation_form
 msgid "Vietnamese Legal Documents"
-msgstr "Vietnamese Pháp lý Tài liệus"
+msgstr "Tiếng Việt Pháp lý Tài liệus"
 
 #. module: health_crm
 #: model:ir.model.fields,field_description:health_crm.field_health_contact_reason__name_vietnamese
@@ -2864,17 +2864,17 @@ msgstr "Tên tiếng Việt"
 #. module: health_crm
 #: model_terms:ir.ui.view,arch_db:health_crm.view_health_province_form
 msgid "Vietnamese Province"
-msgstr "Vietnamese Tỉnh"
+msgstr "Tiếng Việt Tỉnh"
 
 #. module: health_crm
 #: model:ir.model,name:health_crm.model_health_province
 msgid "Vietnamese Province/City"
-msgstr "Vietnamese Tỉnh/Thành phố"
+msgstr "Tiếng Việt Tỉnh/Thành phố"
 
 #. module: health_crm
 #: model_terms:ir.ui.view,arch_db:health_crm.view_health_province_tree
 msgid "Vietnamese Provinces"
-msgstr "Vietnamese Tỉnh/Thànhs"
+msgstr "Tiếng Việt Tỉnh/Thànhs"
 
 #. module: health_crm
 #: model:ir.model.fields,help:health_crm.field_health_province__name_vietnamese
@@ -2884,24 +2884,24 @@ msgstr "Tên tiếng Việt of the Tỉnh/Thành phố"
 #. module: health_crm
 #: model:ir.model.fields,help:health_crm.field_crm_lead__province_code
 msgid "Vietnamese province or city for this lead"
-msgstr "Vietnamese Tỉnh or Thành phố for this lead"
+msgstr "Tiếng Việt Tỉnh hoặc Thành phố cho này tiềm năng"
 
 #. module: health_crm
 #: model:ir.model.fields,help:health_crm.field_health_contact_reason__name_vietnamese
 #: model:ir.model.fields,help:health_crm.field_health_lead_reason__name_vietnamese
 msgid "Vietnamese translation of the reason name"
-msgstr "Vietnamese translation of the reason Tên"
+msgstr "Tiếng Việt translation of the lý do Tên"
 
 #. module: health_crm
 #: model_terms:ir.ui.view,arch_db:health_crm.view_health_patient_form_relation_buttons
 msgid "View interactive relationship network graph"
-msgstr "Xem interactive relationship network graph"
+msgstr "Xem tương tác mối quan hệ mạng lưới biểu đồ"
 
 #. module: health_crm
 #: model:ir.model.fields,help:health_crm.field_res_partner__healthcare_role_tags
 #: model:ir.model.fields,help:health_crm.field_res_users__healthcare_role_tags
 msgid "Visual display of all healthcare roles this person has"
-msgstr "Visual display of Tất cả Y tế roles this person has"
+msgstr "Hiển thị trực quan of Tất cả Y tế vai tròs này person has"
 
 #. module: health_crm
 #: model:ir.model.fields.selection,name:health_crm.selection__crm_lead__contact_source__walk_in
@@ -2929,32 +2929,32 @@ msgstr "Trang web Biểu mẫu"
 #. module: health_crm
 #: model:ir.model.fields.selection,name:health_crm.selection__health_lead_reason__category__website
 msgid "Website Inquiry"
-msgstr "Trang web Inquiry"
+msgstr "Trang web Yêu cầu"
 
 #. module: health_crm
 #: model:ir.model.fields,help:health_crm.field_health_client_relation__end_date
 msgid "When this relationship ended (if applicable)"
-msgstr "Khi nào this relationship ended (if applicable)"
+msgstr "Khi nào này mối quan hệ ended (nếu áp dụng)"
 
 #. module: health_crm
 #: model:ir.model.fields,help:health_crm.field_health_client_relation__start_date
 msgid "When this relationship started"
-msgstr "Khi nào this relationship started"
+msgstr "Khi nào này mối quan hệ bắt đầued"
 
 #. module: health_crm
 #: model:ir.model.fields,help:health_crm.field_crm_lead__contact_type
 msgid "Whether this is a new or repeat contact"
-msgstr "Whether this is a Mới or repeat Liên hệ"
+msgstr "Whether này là a Mới hoặc lặp lại Liên hệ"
 
 #. module: health_crm
 #: model:ir.model.fields,help:health_crm.field_crm_lead__lead_followup_required
 msgid "Whether this lead requires follow-up action"
-msgstr "Whether this lead requires Theo dõi action"
+msgstr "Whether này tiềm năng requires Theo dõi hành động"
 
 #. module: health_crm
 #: model:ir.model.fields,help:health_crm.field_health_lead_reason__lead_type
 msgid "Whether this reason applies to leads, opportunities, or both"
-msgstr "Whether this reason applies Đến leads, opportunities, or both"
+msgstr "Whether này lý do applies Đến tiềm năngs, opportunities, hoặc cả hai"
 
 #. module: health_crm
 #: model:ir.model.fields.selection,name:health_crm.selection__crm_lead__lead_status__won
@@ -2964,7 +2964,7 @@ msgstr "Thành công"
 #. module: health_crm
 #: model:ir.model.fields.selection,name:health_crm.selection__crm_lead__vietnamese_channel__word_of_mouth
 msgid "Word of Mouth"
-msgstr "Word of Mouth"
+msgstr "Truyền miệng"
 
 #. module: health_crm
 #: model_terms:ir.ui.view,arch_db:health_crm.view_healthcare_opportunity_form
@@ -3030,12 +3030,12 @@ msgstr "Khách hàng"
 #: model:ir.model.fields,help:health_crm.field_res_users__caregiver_ids
 #: model:ir.model.fields,help:health_crm.field_res_users__payer_ids
 msgid "client (primary + additional)"
-msgstr "Khách hàng (primary + additional)"
+msgstr "Khách hàng (chính + bổ sung)"
 
 #. module: health_crm
 #: model:ir.model.fields,help:health_crm.field_crm_lead__client_name
 msgid "client (when you are not the client yourself)"
-msgstr "Khách hàng (when you are not the Khách hàng yourself)"
+msgstr "Khách hàng (khi nào you are not the Khách hàng của bạnself)"
 
 #. module: health_crm
 #: model:ir.model.fields,help:health_crm.field_health_relationship_add_wizard__can_receive_medical_info
@@ -3045,18 +3045,18 @@ msgstr "Khách hàng Thông tin y tế"
 #. module: health_crm
 #: model:ir.model.fields,help:health_crm.field_health_relationship_add_wizard__client_id
 msgid "client receiving this relationship"
-msgstr "Khách hàng receiving this relationship"
+msgstr "Khách hàng nhận này mối quan hệ"
 
 #. module: health_crm
 #: model:ir.model.fields,help:health_crm.field_crm_lead__patient_id
 msgid "client record if converted"
-msgstr "Khách hàng record if converted"
+msgstr "Khách hàng bản ghi nếu đã chuyển đổi"
 
 #. module: health_crm
 #: model:ir.model.fields,help:health_crm.field_res_partner__is_patient
 #: model:ir.model.fields,help:health_crm.field_res_users__is_patient
 msgid "client/client who receives healthcare services"
-msgstr "Khách hàng/Khách hàng who receives Y tế services"
+msgstr "Khách hàng/Khách hàng ai nhận Y tế dịch vụs"
 
 #. module: health_crm
 #: model:ir.model.fields,help:health_crm.field_res_partner__is_caregiver
@@ -3064,7 +3064,7 @@ msgstr "Khách hàng/Khách hàng who receives Y tế services"
 #: model:ir.model.fields,help:health_crm.field_res_users__is_caregiver
 #: model:ir.model.fields,help:health_crm.field_res_users__is_referrer
 msgid "clients (based on health.client.relation)"
-msgstr "Khách hàng (based on Y tế.Khách hàng.relation)"
+msgstr "Khách hàng (based trên Y tế.Khách hàng.relation)"
 
 #. module: health_crm
 #: model:ir.model.fields,help:health_crm.field_res_partner__caregiver_patient_count
@@ -3088,13 +3088,13 @@ msgstr "Khách hàng tôi giới thiệu"
 #: model:ir.model.fields,help:health_crm.field_res_partner__representative_relationships
 #: model:ir.model.fields,help:health_crm.field_res_users__representative_relationships
 msgid "clients I represent or support"
-msgstr "Khách hàng I represent or support"
+msgstr "Khách hàng I đại diện hoặc hỗ trợ"
 
 #. module: health_crm
 #: model:ir.model.fields,help:health_crm.field_res_partner__representative_relation_ids
 #: model:ir.model.fields,help:health_crm.field_res_users__representative_relation_ids
 msgid "clients for whom I am a representative"
-msgstr "Khách hàng for whom I am a representative"
+msgstr "Khách hàng cho người mà I am a người đại diện"
 
 #. module: health_crm
 #: model:ir.model.fields,help:health_crm.field_res_partner__is_representative
@@ -3111,10 +3111,10 @@ msgstr "Ông, Bà, Anh, Chị..."
 #. odoo-javascript
 #: code:addons/health_crm/static/src/xml/relationship_graph_widget.xml:0
 msgid "👤 Blue circles:"
-msgstr "👤 Blue circles:"
+msgstr "👤 Vòng tròn xanh:"
 
 #. module: health_crm
 #. odoo-javascript
 #: code:addons/health_crm/static/src/xml/relationship_graph_widget.xml:0
 msgid "👥 Light blue circles:"
-msgstr "👥 Light blue circles:"
+msgstr "👥 Vòng tròn xanh nhạt:"
