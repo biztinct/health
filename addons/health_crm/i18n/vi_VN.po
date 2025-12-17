@@ -4,15 +4,15 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Odoo Server 19.0\n"
+"Project-Id-Phiên bản: Odoo Server 19.0\n"
 "Báo cáo-Msgid-Bugs-Đến: \n"
 "POT-Creation-Ngày: 2025-10-29 05:47+0000\n"
 "PO-Revision-Ngày: 2025-10-29 05:47+0000\n"
 "Last-Translator: \n"
 "Ngôn ngữ-Đội: \n"
-"MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: \n"
+"MIME-Phiên bản: 1.0\n"
+"Nội dung-Loại: văn bản/plain; charset=UTF-8\n"
+"Nội dung-Transfer-Encoding: \n"
 "Plural-Biểu mẫus: \n"
 
 #. module: health_crm
@@ -59,7 +59,7 @@ msgstr "<i class=\"fa fa-star\"/> PRIMARY"
 msgid ""
 "<option value=\"convert\">Convert to contact</option>\n"
 "                    <option value=\"merge\">Merge with existing contacts</option>"
-msgstr "<option giá trị=\"chuyển đổi\">Chuyển đổi Đến Liên hệ</option>\n                    <option giá trị=\"gộp\">Gộp với hiện có liên hệ</option>"
+msgstr "<option value=\"convert\">Chuyển đổi sang liên hệ</option>\n                    <option value=\"merge\">Gộp với hiện có liên hệ</option>"
 
 #. module: health_crm
 #: model_terms:ir.ui.view,arch_db:health_crm.view_healthcare_opportunity_form
@@ -614,7 +614,7 @@ msgstr "Lâm sàng Ưu tiên"
 #. module: health_crm
 #: model:ir.model.fields,help:health_crm.field_crm_lead__clinical_priority
 msgid "Clinical urgency classification"
-msgstr "Lâm sàng urgency phân loại"
+msgstr "Lâm sàng khẩn cấp phân loại"
 
 #. module: health_crm
 #: model_terms:ir.ui.view,arch_db:health_crm.view_healthcare_opportunity_form
@@ -809,7 +809,7 @@ msgstr "Tạo mới Y tế mối quan hệ giữa Khách hàng và của họ ng
 #. module: health_crm
 #: model_terms:ir.actions.act_window,help:health_crm.action_health_lead_reason
 msgid "Create lead reasons for CRM opportunities!"
-msgstr "Tạo mới tiềm năng lý dos cho CRM opportunities!"
+msgstr "Tạo mới tiềm năng lý dos cho CRM opportđơn vịies!"
 
 #. module: health_crm
 #: model_terms:ir.actions.act_window,help:health_crm.action_healthcare_opportunities
@@ -844,7 +844,7 @@ msgstr "Đã tạo trên"
 #. module: health_crm
 #: model:ir.model.fields.selection,name:health_crm.selection__health_contact_reason__category__support
 msgid "Customer Support"
-msgstr "Customer Hỗ trợ"
+msgstr "Khách hàng Hỗ trợ"
 
 #. module: health_crm
 #: model:ir.ui.menu,name:health_crm.menu_healthcare_customers
@@ -1061,7 +1061,7 @@ msgstr "Lỗi:"
 #. module: health_crm
 #: model:ir.model.fields.selection,name:health_crm.selection__crm_lead__contact_source__event
 msgid "Event/Fair"
-msgstr "Event/Fair"
+msgstr "Sự kiện/Fair"
 
 #. module: health_crm
 #: model:ir.model.fields.selection,name:health_crm.selection__crm_lead__vietnamese_channel__facebook
@@ -1099,7 +1099,7 @@ msgstr "Family Member"
 #. module: health_crm
 #: model:ir.model.fields.selection,name:health_crm.selection__health_client_relation__legal_document_type__family_book
 msgid "Family Registration Book (Sổ hộ khẩu)"
-msgstr "Family Registration Book (Sổ hộ khẩu)"
+msgstr "Family Đăng ký Book (Sổ hộ khẩu)"
 
 #. module: health_crm
 #: model_terms:ir.ui.view,arch_db:health_crm.view_health_client_relation_form
@@ -1164,7 +1164,7 @@ msgstr "Cho Tiềm năngs"
 #. module: health_crm
 #: model_terms:ir.ui.view,arch_db:health_crm.view_health_lead_reason_search
 msgid "For Opportunities"
-msgstr "Cho Opportunities"
+msgstr "Cho Opportđơn vịies"
 
 #. module: health_crm
 #: model:ir.model.fields.selection,name:health_crm.selection__crm_lead__contact_relationship_type__friend
@@ -1266,12 +1266,12 @@ msgstr "Has Y tế Bảo hiểm"
 #. module: health_crm
 #: model:crm.stage,name:health_crm.stage_healthcare_assessment
 msgid "Health Assessment"
-msgstr "Y tế Assessment"
+msgstr "Y tế Đánh giá"
 
 #. module: health_crm
 #: model:ir.model.fields.selection,name:health_crm.selection__health_lead_reason__category__event
 msgid "Health Event/Fair"
-msgstr "Y tế Event/Fair"
+msgstr "Y tế Sự kiện/Fair"
 
 #. module: health_crm
 #: model:ir.model.fields.selection,name:health_crm.selection__crm_lead__healthcare_lead_source__health_fair
@@ -1298,7 +1298,7 @@ msgstr "Y tế CRM quản lýs can configure CRM Cài đặt và manage Tất c�
 #. module: health_crm
 #: model:res.groups,comment:health_crm.group_health_crm_user
 msgid "Healthcare CRM users can view and manage leads and opportunities"
-msgstr "Y tế CRM người dùngs can Xem và manage tiềm năngs và opportunities"
+msgstr "Y tế CRM người dùngs can Xem và manage tiềm năngs và opportđơn vịies"
 
 #. module: health_crm
 #: model_terms:ir.ui.view,arch_db:health_crm.view_health_client_relation_form
@@ -1329,7 +1329,7 @@ msgstr "Y tế Liên hệ Lý dos"
 #. module: health_crm
 #: model:ir.module.category,description:health_crm.module_category_health_crm
 msgid "Healthcare Customer Relationship Management"
-msgstr "Y tế Customer Mối quan hệ Quản lý"
+msgstr "Y tế Khách hàng Mối quan hệ Quản lý"
 
 #. module: health_crm
 #: model:ir.model.fields,field_description:health_crm.field_crm_lead__facility_id
@@ -1421,7 +1421,7 @@ msgstr "Y tế mối quan hệ define connections giữa Bệnh nhân/Khách hà
 #. module: health_crm
 #: model_terms:ir.ui.view,arch_db:health_crm.view_healthcare_partner_form
 msgid "Healthcare-related notes and observations..."
-msgstr "Y tế-Liên quan Ghi chú và observations..."
+msgstr "Y tế-Liên quan Ghi chú và quan sáts..."
 
 #. module: health_crm
 #: model_terms:ir.ui.view,arch_db:health_crm.view_relationship_network_form
@@ -1660,7 +1660,7 @@ msgstr "Tiềm năng Loại"
 msgid ""
 "Lead reasons help categorize the motivation or source behind leads and opportunities.\n"
 "                This is useful for tracking conversion sources and marketing effectiveness."
-msgstr "Tiềm năng lý dos Trợ giúp categorize the động lực hoặc Nguồn đằng sau tiềm năngs và opportunities.\n                Này là useful cho Theo dõi chuyển đổi nguồns và tiếp thị hiệu quả."
+msgstr "Tiềm năng lý dos Trợ giúp categorize the động lực hoặc Nguồn đằng sau tiềm năngs và opportđơn vịies.\n                Này là useful cho Theo dõi chuyển đổi nguồns và tiếp thị hiệu quả."
 
 #. module: health_crm
 #: model:ir.model,name:health_crm.model_crm_lead
@@ -2557,7 +2557,7 @@ msgstr "Trình tự cho thứ tựing lý dos"
 #. module: health_crm
 #: model:ir.model.fields,help:health_crm.field_crm_lead__unique_contact_code
 msgid "Sequential contact number per city (from Excel requirement)"
-msgstr "Tuần tự Liên hệ Số per Thành phố (Từ Excel requirement)"
+msgstr "Tuần tự Liên hệ Số per Thành phố (Từ Excel yêu cầu)"
 
 #. module: health_crm
 #: model_terms:ir.ui.view,arch_db:health_crm.view_healthcare_opportunity_form
@@ -2602,7 +2602,7 @@ msgstr "Dịch vụ Qualification"
 #. module: health_crm
 #: model:ir.model.fields,field_description:health_crm.field_crm_lead__service_requirements
 msgid "Service Requirements"
-msgstr "Dịch vụ Requirements"
+msgstr "Dịch vụ Yêu cầus"
 
 #. module: health_crm
 #: model_terms:ir.ui.view,arch_db:health_crm.view_health_client_relation_form
@@ -2669,7 +2669,7 @@ msgstr "Cụ thể Tiếng Việt Liên hệ kênh"
 #. module: health_crm
 #: model:ir.model.fields,help:health_crm.field_crm_lead__service_requirements
 msgid "Specific healthcare service requirements and notes"
-msgstr "Cụ thể Y tế dịch vụ requirements và Ghi chú"
+msgstr "Cụ thể Y tế dịch vụ yêu cầus và Ghi chú"
 
 #. module: health_crm
 #: model:ir.model.fields.selection,name:health_crm.selection__health_client_relation__relationship_type__spouse
@@ -2711,7 +2711,7 @@ msgstr "Hỗ trợ"
 #. odoo-javascript
 #: code:addons/health_crm/static/src/xml/test_widget.xml:0
 msgid "Test Widget Works!"
-msgstr "Test Tiện ích Works!"
+msgstr "Kiểm tra Tiện ích Works!"
 
 #. module: health_crm
 #: model:ir.model.fields,help:health_crm.field_health_client_relation__representative_id
@@ -2954,7 +2954,7 @@ msgstr "Whether này tiềm năng requires Theo dõi hành động"
 #. module: health_crm
 #: model:ir.model.fields,help:health_crm.field_health_lead_reason__lead_type
 msgid "Whether this reason applies to leads, opportunities, or both"
-msgstr "Whether này lý do applies Đến tiềm năngs, opportunities, hoặc cả hai"
+msgstr "Whether này lý do applies Đến tiềm năngs, opportđơn vịies, hoặc cả hai"
 
 #. module: health_crm
 #: model:ir.model.fields.selection,name:health_crm.selection__crm_lead__lead_status__won
