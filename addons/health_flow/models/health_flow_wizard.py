@@ -121,16 +121,18 @@ class HealthFlowWizard(models.TransientModel):
                 # Filter for initial contact stage
                 action['name'] = _('Initial Contact')
                 action['domain'] = [('type', '=', 'opportunity'), ('stage_id.sequence', '<=', 1)]
-                action['view_mode'] = 'list,form'
                 action.pop('view_ids', None)  # Remove view_ids so view_mode takes precedence
                 action.pop('views', None)  # Remove views as well
+                action['view_mode'] = 'list,form'
+                action['views'] = [(False, 'list'), (False, 'form')]
                 action['context'] = dict(original_context, **{'default_type': 'opportunity'})
             elif key == 'crm-activities':
                 # Show opportunities with their activities in activity view
                 action['name'] = _('Planned Activities')
-                action['view_mode'] = 'activity,list,form'
                 action.pop('view_ids', None)  # Remove view_ids so view_mode takes precedence
                 action.pop('views', None)  # Remove views as well
+                action['view_mode'] = 'activity,list,form'
+                action['views'] = [(False, 'activity'), (False, 'list'), (False, 'form')]
                 # Show all opportunities - user can see their activities
                 action['context'] = dict(original_context, **{
                     'default_type': 'opportunity',
@@ -146,25 +148,28 @@ class HealthFlowWizard(models.TransientModel):
                 # Filter for opportunities pending follow-up
                 action['name'] = _('Continue Follow-up')
                 action['domain'] = [('type', '=', 'opportunity'), ('contact_outcome', '=', 'pending_follow_up')]
-                action['view_mode'] = 'list,form'
                 action.pop('view_ids', None)  # Remove view_ids so view_mode takes precedence
                 action.pop('views', None)  # Remove views as well
+                action['view_mode'] = 'list,form'
+                action['views'] = [(False, 'list'), (False, 'form')]
                 action['context'] = dict(original_context, **{'default_type': 'opportunity'})
             elif key == 'crm-client-acquired':
                 # Filter for service booked opportunities
                 action['name'] = _('Client Acquired')
                 action['domain'] = [('type', '=', 'opportunity'), ('contact_outcome', '=', 'service_booked')]
-                action['view_mode'] = 'list,form'
                 action.pop('view_ids', None)  # Remove view_ids so view_mode takes precedence
                 action.pop('views', None)  # Remove views as well
+                action['view_mode'] = 'list,form'
+                action['views'] = [(False, 'list'), (False, 'form')]
                 action['context'] = dict(original_context, **{'default_type': 'opportunity'})
             elif key == 'crm-booking-lost':
                 # Filter for booking lost opportunities
                 action['name'] = _('Booking Lost')
                 action['domain'] = [('type', '=', 'opportunity'), ('contact_outcome', '=', 'booking_lost')]
-                action['view_mode'] = 'list,form'
                 action.pop('view_ids', None)  # Remove view_ids so view_mode takes precedence
                 action.pop('views', None)  # Remove views as well
+                action['view_mode'] = 'list,form'
+                action['views'] = [(False, 'list'), (False, 'form')]
                 action['context'] = dict(original_context, **{'default_type': 'opportunity'})
 
             return action
