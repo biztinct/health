@@ -17,6 +17,10 @@ class HealthFlowAction extends Component {
         this.orm = useService("orm");
         this.action = useService("action");
 
+        // State persistence key
+        this.STORAGE_KEY = 'health_flow_state';
+        this.isRestoring = false;
+
         this.state = useState({
             activePrimary: null, // Currently active primary circle
             panelOpen: false,
@@ -30,6 +34,7 @@ class HealthFlowAction extends Component {
             searchModalOpen: false,
             searchQuery: '',
             searchResults: [],
+            selectedLeadIds: [], // For multi-select in search results
         });
 
         // Panel data configuration
@@ -42,6 +47,9 @@ class HealthFlowAction extends Component {
                     { key: 'crm-initial', label: 'Initial Contact', icon: 'fa-phone', desc: 'Initial contact leads' },
                     { key: 'crm-activities', label: 'Planned Activities', icon: 'fa-tasks', desc: 'Planned activities' },
                     { key: 'crm-calendar', label: 'Calendar', icon: 'fa-calendar', desc: 'CRM calendar view' },
+                    { key: 'crm-continue-followup', label: 'Continue Follow-up', icon: 'fa-redo', desc: 'Leads pending follow-up' },
+                    { key: 'crm-client-acquired', label: 'Client Acquired', icon: 'fa-check-circle', desc: 'Converted clients' },
+                    { key: 'crm-booking-lost', label: 'Booking Lost', icon: 'fa-times-circle', desc: 'Lost opportunities' },
                 ],
             },
             booking: {
@@ -95,6 +103,9 @@ class HealthFlowAction extends Component {
             // Add escape key listener
             this.escapeListener = this.onEscape.bind(this);
             document.addEventListener('keydown', this.escapeListener);
+
+            // Restore state if returning via breadcrumb
+            this.restoreState();
         });
 
         onWillUnmount(() => {
@@ -122,6 +133,73 @@ class HealthFlowAction extends Component {
     }
 
     /**
+     * Save panel state to sessionStorage
+     */
+    saveState(primaryKey) {
+        try {
+            const payload = {
+                activePrimary: primaryKey || null,
+                panelOpen: this.state.panelOpen,
+                panelTitle: this.state.panelTitle,
+                panelItems: this.state.panelItems,
+            };
+            sessionStorage.setItem(this.STORAGE_KEY, JSON.stringify(payload));
+            console.log('[Health Flow] State saved', payload);
+        } catch (error) {
+            console.warn('[Health Flow] Failed to save state', error);
+        }
+    }
+
+    /**
+     * Load panel state from sessionStorage
+     */
+    loadState() {
+        try {
+            const stored = sessionStorage.getItem(this.STORAGE_KEY);
+            if (!stored) return null;
+            const state = JSON.parse(stored);
+            console.log('[Health Flow] State loaded', state);
+            return state;
+        } catch (error) {
+            console.warn('[Health Flow] Failed to load state', error);
+            return null;
+        }
+    }
+
+    /**
+     * Clear panel state from sessionStorage
+     */
+    clearState() {
+        try {
+            sessionStorage.removeItem(this.STORAGE_KEY);
+            console.log('[Health Flow] State cleared');
+        } catch (error) {
+            console.warn('[Health Flow] Failed to clear state', error);
+        }
+    }
+
+    /**
+     * Restore panel state after component mount
+     */
+    restoreState() {
+        const savedState = this.loadState();
+        if (!savedState || !savedState.activePrimary) {
+            return;
+        }
+
+        console.log('[Health Flow] Restoring state', savedState);
+        this.isRestoring = true;
+
+        // Restore panel state
+        this.state.activePrimary = savedState.activePrimary;
+        this.state.panelOpen = savedState.panelOpen;
+        this.state.panelTitle = savedState.panelTitle;
+        this.state.panelItems = savedState.panelItems;
+
+        this.isRestoring = false;
+    }
+
+    /**
      * Handle primary circle click
      */
     async onPrimaryClick(primaryKey) {
@@ -140,6 +218,11 @@ class HealthFlowAction extends Component {
             this.state.panelTitle = panelConfig.title;
             this.state.panelItems = panelConfig.items;
             this.state.panelOpen = true;
+
+            // Save state for breadcrumb restoration
+            if (!this.isRestoring) {
+                this.saveState(primaryKey);
+            }
         }
     }
 
@@ -163,6 +246,11 @@ class HealthFlowAction extends Component {
             return;
         }
 
+        // Save state before launching action (so breadcrumb return restores panel)
+        if (!this.isRestoring) {
+            this.saveState(this.state.activePrimary);
+        }
+
         await this.launchAction(item.key);
     }
 
@@ -173,6 +261,9 @@ class HealthFlowAction extends Component {
         this.state.panelOpen = false;
         this.state.activePrimary = null;
         this.state.panelItems = [];
+
+        // Clear saved state when manually closing panel
+        this.clearState();
     }
 
     /**
@@ -218,21 +309,73 @@ class HealthFlowAction extends Component {
     }
 
     /**
-     * Handle search result click
+     * Handle search result click - toggle selection on click
      */
-    async onSearchResultClick(bookingId) {
-        try {
-            const action = await this.orm.call(
-                'health.flow.wizard',
-                'get_booking_form_action',
-                [bookingId]
-            );
-            if (action && action.type) {
-                await this.action.doAction(action);
-                this.closeSearchModal();
+    onSearchResultClick(bookingId, event) {
+        if (event && event.target && event.target.type === 'checkbox') {
+            // Let checkbox handle itself
+            return;
+        }
+        // Toggle selection
+        const index = this.state.selectedLeadIds.indexOf(bookingId);
+        if (index > -1) {
+            this.state.selectedLeadIds.splice(index, 1);
+        } else {
+            this.state.selectedLeadIds.push(bookingId);
+        }
+    }
+
+    /**
+     * Handle checkbox change for lead selection
+     */
+    onLeadCheckboxChange(event, bookingId) {
+        event.stopPropagation();
+        if (event.target.checked) {
+            if (!this.state.selectedLeadIds.includes(bookingId)) {
+                this.state.selectedLeadIds.push(bookingId);
             }
+        } else {
+            const index = this.state.selectedLeadIds.indexOf(bookingId);
+            if (index > -1) {
+                this.state.selectedLeadIds.splice(index, 1);
+            }
+        }
+    }
+
+    /**
+     * Check if a lead is selected
+     */
+    isLeadSelected(bookingId) {
+        return this.state.selectedLeadIds.includes(bookingId);
+    }
+
+    /**
+     * Merge selected leads
+     */
+    async mergeCrmLeads() {
+        if (this.state.selectedLeadIds.length < 2) {
+            console.warn('[Health Flow] Please select at least 2 leads to merge');
+            return;
+        }
+
+        try {
+            // Open the standard Odoo CRM merge wizard with selected leads
+            const action = {
+                'type': 'ir.actions.act_window',
+                'name': 'Merge Opportunities',
+                'res_model': 'crm.merge.opportunity',
+                'view_mode': 'form',
+                'target': 'new',
+                'context': {
+                    'default_opportunity_ids': this.state.selectedLeadIds,
+                }
+            };
+
+            await this.action.doAction(action);
+            this.closeSearchModal();
+            this.state.selectedLeadIds = [];
         } catch (error) {
-            console.error('[Health Flow] Failed to open booking:', error);
+            console.error('[Health Flow] Failed to open merge wizard:', error);
         }
     }
 
@@ -240,8 +383,12 @@ class HealthFlowAction extends Component {
      * Handle escape key
      */
     onEscape(event) {
-        if (event.key === 'Escape' && this.state.panelOpen) {
-            this.closePanel();
+        if (event.key === 'Escape') {
+            if (this.state.searchModalOpen) {
+                this.closeSearchModal();
+            } else if (this.state.panelOpen) {
+                this.closePanel();
+            }
         }
     }
 

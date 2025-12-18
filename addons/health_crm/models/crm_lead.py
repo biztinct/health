@@ -135,12 +135,19 @@ class HealthLead(models.Model):
         store=True,
         help='Number of days since the lead was created'
     )
-    
+
     day_close = fields.Integer(
-        'Days to Close', 
+        'Days to Close',
         compute='_compute_days_close',
         store=True,
         help='Number of days from creation to close (if closed)'
+    )
+
+    # Duplicate/similar leads count for merge functionality
+    duplicate_lead_count = fields.Integer(
+        'Duplicate Leads',
+        compute='_compute_duplicate_lead_count',
+        help='Number of similar/duplicate leads found'
     )
 
     # CRITICAL: FROM EXCEL REQUIREMENTS - Lead Management Table
@@ -348,6 +355,32 @@ class HealthLead(models.Model):
             else:
                 record.day_close = 0
 
+    @api.depends('name', 'email_from', 'phone')
+    def _compute_duplicate_lead_count(self):
+        """Compute number of similar/duplicate leads based on name, email, or phone"""
+        for record in self:
+            if not record.id:
+                record.duplicate_lead_count = 0
+                continue
+
+            domain = [('id', '!=', record.id), ('type', '=', 'opportunity')]
+
+            # Build OR conditions for matching
+            or_domains = []
+            if record.email_from:
+                or_domains.append([('email_from', '=ilike', record.email_from)])
+            if record.phone:
+                or_domains.append([('phone', '=', record.phone)])
+            if record.name and len(record.name) > 3:
+                or_domains.append([('name', '=ilike', record.name)])
+
+            if or_domains:
+                # Combine all OR conditions
+                full_domain = domain + ['|'] * (len(or_domains) - 1) + [item for sublist in or_domains for item in sublist]
+                record.duplicate_lead_count = self.search_count(full_domain)
+            else:
+                record.duplicate_lead_count = 0
+
     @api.model_create_multi
     def create(self, vals_list):
         """Override create to set healthcare-specific defaults"""
@@ -503,7 +536,6 @@ class HealthLead(models.Model):
         if self.contact_relationship_type == 'client':
             patient_vals.update({
                 'phone': self.phone,
-                'mobile': self.mobile,
                 'email': self.email_from,
                 'street': self.street,
                 'city': self.city,
@@ -540,7 +572,6 @@ class HealthLead(models.Model):
             'is_representative': True,
             'is_company': False,
             'phone': self.phone,
-            'mobile': self.mobile,
             'email': self.email_from,
             'street': self.street,
             'city': self.city,
@@ -782,4 +813,41 @@ class HealthLead(models.Model):
             'context': {
                 'default_lead_id': self.id,
             }
+        }
+
+    def action_merge_similar_leads(self):
+        """Show similar/duplicate leads for merging"""
+        self.ensure_one()
+
+        # Build domain to find similar leads
+        domain = [('id', '!=', self.id), ('type', '=', 'opportunity')]
+        or_domains = []
+
+        if self.email_from:
+            or_domains.append([('email_from', '=ilike', self.email_from)])
+        if self.phone:
+            or_domains.append([('phone', '=', self.phone)])
+        if self.name and len(self.name) > 3:
+            or_domains.append([('name', '=ilike', self.name)])
+
+        if or_domains:
+            full_domain = domain + ['|'] * (len(or_domains) - 1) + [item for sublist in or_domains for item in sublist]
+        else:
+            full_domain = domain
+
+        return {
+            'name': _('Similar Leads - Select to Merge'),
+            'type': 'ir.actions.act_window',
+            'res_model': 'crm.lead',
+            'view_mode': 'list,form',
+            'domain': full_domain,
+            'context': {
+                'default_type': 'opportunity',
+                'search_default_type': 'opportunity',
+            },
+            'help': '''<p class="o_view_nocontent_smiling_face">
+                No similar leads found
+            </p><p>
+                Select multiple leads from the list and use the "Merge" action to combine them.
+            </p>'''
         }

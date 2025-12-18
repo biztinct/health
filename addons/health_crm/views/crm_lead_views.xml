@@ -89,6 +89,17 @@
                         </span>
                     </div>
 
+                    <!-- Smart Buttons -->
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_merge_similar_leads"
+                                type="object"
+                                class="oe_stat_button"
+                                icon="fa-clone"
+                                invisible="duplicate_lead_count == 0">
+                            <field name="duplicate_lead_count" widget="statinfo" string="Similar Leads"/>
+                        </button>
+                    </div>
+
                     <!-- Title and Basic Info -->
                     <div class="oe_title">
                         <h1>

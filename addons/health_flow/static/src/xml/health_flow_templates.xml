@@ -166,10 +166,23 @@
                                        t-on-input="onSearchInput"/>
                             </div>
                             <div class="health_flow_search_results" t-if="state.searchResults.length > 0">
+                                <!-- Merge Button (appears when 2+ leads selected) -->
+                                <div class="health_flow_merge_controls" t-if="state.selectedLeadIds.length >= 2">
+                                    <button class="health_flow_merge_button"
+                                            t-on-click="() => this.mergeCrmLeads()">
+                                        <i class="fa fa-clone"/> Merge <t t-esc="state.selectedLeadIds.length"/> Leads
+                                    </button>
+                                </div>
+
                                 <t t-foreach="state.searchResults" t-as="booking" t-key="booking.id">
                                     <div class="health_flow_search_result_card"
-                                         t-att-class="'status-' + booking.status"
-                                         t-on-click="() => this.onSearchResultClick(booking.id)">
+                                         t-att-class="'status-' + booking.status + (this.isLeadSelected(booking.id) ? ' selected' : '')"
+                                         t-on-click="(event) => this.onSearchResultClick(booking.id, event)">
+                                        <div class="health_flow_search_result_checkbox">
+                                            <input type="checkbox"
+                                                   t-att-checked="this.isLeadSelected(booking.id)"
+                                                   t-on-change="(event) => this.onLeadCheckboxChange(event, booking.id)"/>
+                                        </div>
                                         <div class="health_flow_search_result_header">
                                             <span class="health_flow_search_result_client" t-esc="booking.client_name"/>
                                             <span class="health_flow_search_result_status" t-esc="booking.status"/>

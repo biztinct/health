@@ -28,7 +28,7 @@ class HealthFlowWizard(models.TransientModel):
         Uses server-side xmlid resolution so the client can simply do-action.
         """
         # Handle special actions with custom domains/contexts
-        if key in ['crm-initial', 'crm-activities', 'crm-calendar']:
+        if key in ['crm-initial', 'crm-activities', 'crm-calendar', 'crm-continue-followup', 'crm-client-acquired', 'crm-booking-lost']:
             return self._get_crm_action(key)
         elif key in ['booking-draft', 'booking-assigned', 'booking-scheduled']:
             return self._get_booking_action(key)
@@ -112,21 +112,46 @@ class HealthFlowWizard(models.TransientModel):
             )
             action['target'] = 'current'
 
+            # Preserve original context and merge with new values
+            original_context = action.get('context', {})
+            if isinstance(original_context, str):
+                original_context = eval(original_context)
+
             if key == 'crm-initial':
                 # Filter for initial contact stage
                 action['name'] = _('Initial Contact')
                 action['domain'] = [('type', '=', 'opportunity'), ('stage_id.sequence', '<=', 1)]
-                action['context'] = {'default_type': 'opportunity'}
+                action['view_mode'] = 'list,form'
+                action['context'] = dict(original_context, **{'default_type': 'opportunity'})
             elif key == 'crm-activities':
                 # Filter for opportunities with planned activities
                 action['name'] = _('Planned Activities')
                 action['domain'] = [('type', '=', 'opportunity'), ('activity_ids', '!=', False)]
-                action['context'] = {'default_type': 'opportunity'}
+                action['view_mode'] = 'list,form'
+                action['context'] = dict(original_context, **{'default_type': 'opportunity'})
             elif key == 'crm-calendar':
                 # Open calendar view
                 action['name'] = _('CRM Calendar')
-                action['view_mode'] = 'calendar,tree,form'
-                action['context'] = {'default_type': 'opportunity'}
+                action['view_mode'] = 'calendar,list,form'
+                action['context'] = dict(original_context, **{'default_type': 'opportunity'})
+            elif key == 'crm-continue-followup':
+                # Filter for opportunities pending follow-up
+                action['name'] = _('Continue Follow-up')
+                action['domain'] = [('type', '=', 'opportunity'), ('contact_outcome', '=', 'pending_follow_up')]
+                action['view_mode'] = 'list,form'
+                action['context'] = dict(original_context, **{'default_type': 'opportunity'})
+            elif key == 'crm-client-acquired':
+                # Filter for service booked opportunities
+                action['name'] = _('Client Acquired')
+                action['domain'] = [('type', '=', 'opportunity'), ('contact_outcome', '=', 'service_booked')]
+                action['view_mode'] = 'list,form'
+                action['context'] = dict(original_context, **{'default_type': 'opportunity'})
+            elif key == 'crm-booking-lost':
+                # Filter for booking lost opportunities
+                action['name'] = _('Booking Lost')
+                action['domain'] = [('type', '=', 'opportunity'), ('contact_outcome', '=', 'booking_lost')]
+                action['view_mode'] = 'list,form'
+                action['context'] = dict(original_context, **{'default_type': 'opportunity'})
 
             return action
         except Exception as e:
@@ -152,25 +177,30 @@ class HealthFlowWizard(models.TransientModel):
             # Open calendar view first for Draft/Assigned/Scheduled
             action['view_mode'] = 'calendar,tree,form'
 
+            # Preserve original context and merge with new values
+            original_context = action.get('context', {})
+            if isinstance(original_context, str):
+                original_context = eval(original_context)
+
             if key == 'booking-draft':
                 action['name'] = _('Draft Bookings Calendar')
                 action['domain'] = [('stage_id.is_draft', '=', True)]
-                action['context'] = {
+                action['context'] = dict(original_context, **{
                     'default_stage_id': self.env.ref('health_fieldservice.health_fso_stage_draft', False).id if self.env.ref('health_fieldservice.health_fso_stage_draft', False) else False,
                     'search_default_filter_draft': 1,
-                }
+                })
             elif key == 'booking-assigned':
                 action['name'] = _('Assigned Bookings Calendar')
                 action['domain'] = [('stage_id.is_assigned', '=', True)]
-                action['context'] = {
+                action['context'] = dict(original_context, **{
                     'search_default_filter_assigned': 1,
-                }
+                })
             elif key == 'booking-scheduled':
                 action['name'] = _('Scheduled Bookings Calendar')
                 action['domain'] = [('stage_id.is_scheduled', '=', True)]
-                action['context'] = {
+                action['context'] = dict(original_context, **{
                     'search_default_filter_scheduled': 1,
-                }
+                })
 
             return action
         except Exception as e:
