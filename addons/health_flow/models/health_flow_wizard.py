@@ -143,22 +143,34 @@ class HealthFlowWizard(models.TransientModel):
 
     @api.model
     def _get_booking_action(self, key):
-        """Get Booking actions with specific filters"""
+        """Get Booking actions with calendar view and filters"""
         try:
             action = self.env['ir.actions.actions']._for_xml_id(
                 'health_fieldservice.action_health_fieldservice_order'
             )
             action['target'] = 'current'
+            # Open calendar view first for Draft/Assigned/Scheduled
+            action['view_mode'] = 'calendar,tree,form'
 
             if key == 'booking-draft':
-                action['name'] = _('Draft Bookings')
+                action['name'] = _('Draft Bookings Calendar')
                 action['domain'] = [('stage_id.is_draft', '=', True)]
+                action['context'] = {
+                    'default_stage_id': self.env.ref('health_fieldservice.health_fso_stage_draft', False).id if self.env.ref('health_fieldservice.health_fso_stage_draft', False) else False,
+                    'search_default_filter_draft': 1,
+                }
             elif key == 'booking-assigned':
-                action['name'] = _('Assigned Bookings')
+                action['name'] = _('Assigned Bookings Calendar')
                 action['domain'] = [('stage_id.is_assigned', '=', True)]
+                action['context'] = {
+                    'search_default_filter_assigned': 1,
+                }
             elif key == 'booking-scheduled':
-                action['name'] = _('Scheduled Bookings')
+                action['name'] = _('Scheduled Bookings Calendar')
                 action['domain'] = [('stage_id.is_scheduled', '=', True)]
+                action['context'] = {
+                    'search_default_filter_scheduled': 1,
+                }
 
             return action
         except Exception as e:
@@ -168,6 +180,81 @@ class HealthFlowWizard(models.TransientModel):
                 'params': {
                     'title': _('Booking Action Error'),
                     'message': _('Failed to load Booking action: %s', str(e)),
+                    'type': 'warning',
+                    'sticky': False,
+                }
+            }
+
+    @api.model
+    def get_booking_counts(self):
+        """Get counts for Draft, Assigned, Scheduled bookings"""
+        try:
+            FSO = self.env['health.fieldservice.order']
+            counts = {
+                'draft': FSO.search_count([('stage_id.is_draft', '=', True)]),
+                'assigned': FSO.search_count([('stage_id.is_assigned', '=', True)]),
+                'scheduled': FSO.search_count([('stage_id.is_scheduled', '=', True)]),
+            }
+            return counts
+        except Exception:
+            return {'draft': 0, 'assigned': 0, 'scheduled': 0}
+
+    @api.model
+    def search_bookings(self, query):
+        """Search bookings by client name, phone, or booking reference"""
+        try:
+            FSO = self.env['health.fieldservice.order']
+            domain = [
+                '|', '|', '|',
+                ('name', 'ilike', query),
+                ('patient_id.name', 'ilike', query),
+                ('patient_id.mobile', 'ilike', query),
+                ('patient_id.phone', 'ilike', query),
+            ]
+            bookings = FSO.search(domain, limit=20, order='appointment_date desc')
+
+            results = []
+            for booking in bookings:
+                # Determine status
+                status = 'draft'
+                if booking.stage_id.is_scheduled:
+                    status = 'scheduled'
+                elif booking.stage_id.is_assigned:
+                    status = 'assigned'
+                elif booking.stage_id.is_completed:
+                    status = 'completed'
+
+                results.append({
+                    'id': booking.id,
+                    'client_name': booking.patient_id.name or 'Unknown',
+                    'lead_nurse': booking.lead_staff_id.name if booking.lead_staff_id else 'Unassigned',
+                    'status': status,
+                    'appointment_date': booking.appointment_date.strftime('%Y-%m-%d %H:%M') if booking.appointment_date else 'Not Set',
+                })
+
+            return results
+        except Exception as e:
+            return []
+
+    @api.model
+    def get_booking_form_action(self, booking_id):
+        """Open booking form view"""
+        try:
+            return {
+                'type': 'ir.actions.act_window',
+                'name': _('Booking'),
+                'res_model': 'health.fieldservice.order',
+                'res_id': booking_id,
+                'view_mode': 'form',
+                'target': 'current',
+            }
+        except Exception as e:
+            return {
+                'type': 'ir.actions.client',
+                'tag': 'display_notification',
+                'params': {
+                    'title': _('Error'),
+                    'message': _('Failed to open booking'),
                     'type': 'warning',
                     'sticky': False,
                 }

@@ -5,10 +5,11 @@
 .health_flow_container {
     background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
     min-height: 100vh;
+    height: 100vh;
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 40px 20px;
+    padding: 20px;
     position: relative;
     overflow: hidden;
 }
@@ -31,22 +32,38 @@
 
 .health_flow_circular_workflow {
     position: relative;
-    width: 700px;
-    height: 700px;
+    width: min(700px, 80vh);
+    height: min(700px, 80vh);
     margin: 0 auto;
+    max-width: 90vw;
+    max-height: 85vh;
+}
+
+@media (max-height: 800px) {
+    .health_flow_circular_workflow {
+        width: min(600px, 75vh);
+        height: min(600px, 75vh);
+    }
+}
+
+@media (max-height: 700px) {
+    .health_flow_circular_workflow {
+        width: min(500px, 70vh);
+        height: min(500px, 70vh);
+    }
 }
 
 @media (max-width: 768px) {
     .health_flow_circular_workflow {
-        width: 500px;
-        height: 500px;
+        width: min(500px, 70vh);
+        height: min(500px, 70vh);
     }
 }
 
 @media (max-width: 480px) {
     .health_flow_circular_workflow {
-        width: 350px;
-        height: 350px;
+        width: min(350px, 65vh);
+        height: min(350px, 65vh);
     }
 }
 
@@ -387,14 +404,17 @@
 .health_flow_panel_card {
     border: 2px solid #e2e8f0;
     border-radius: 10px;
-    padding: 16px 12px;
+    padding: 14px 12px;
     display: flex;
     flex-direction: column;
     gap: 6px;
     background: #fff;
     cursor: pointer;
     transition: all 0.2s ease;
-    min-height: 100px;
+    min-height: 110px;
+    max-height: 140px;
+    overflow: hidden;
+    position: relative;
 }
 
 .health_flow_panel_card:hover {
@@ -409,23 +429,49 @@
 }
 
 .health_flow_card_icon {
-    font-size: 24px;
+    font-size: 22px;
     color: #2563eb;
     margin-bottom: 4px;
+    flex-shrink: 0;
 }
 
 .health_flow_card_title {
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 700;
     color: #111827;
     margin: 0;
+    line-height: 1.3;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
 }
 
 .health_flow_card_desc {
-    font-size: 12px;
+    font-size: 11px;
     color: #4b5563;
     margin: 0;
-    line-height: 1.4;
+    line-height: 1.3;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+}
+
+.health_flow_card_count {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: #2563eb;
+    color: white;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 12px;
+    min-width: 24px;
+    text-align: center;
 }
 
 /* ==========================================
@@ -452,6 +498,199 @@
         box-shadow: 0 25px 70px rgba(38, 74, 106, 0.4),
                    0 12px 24px rgba(0, 0, 0, 0.12);
     }
+}
+
+/* ==========================================
+   BOOKING SEARCH MODAL
+   ========================================== */
+
+.health_flow_search_modal_backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1050;
+    animation: health_flow_fadeIn 0.2s ease;
+}
+
+.health_flow_search_modal {
+    background: white;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 700px;
+    max-height: 80vh;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+}
+
+.health_flow_search_modal_header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 24px;
+    border-bottom: 2px solid #e2e8f0;
+}
+
+.health_flow_search_modal_header h3 {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 700;
+    color: #1f2937;
+}
+
+.health_flow_search_modal_close {
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f1f5f9;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.health_flow_search_modal_close:hover {
+    background: #e2e8f0;
+    transform: scale(1.1);
+}
+
+.health_flow_search_modal_body {
+    padding: 24px;
+    overflow-y: auto;
+    flex: 1;
+}
+
+.health_flow_search_form {
+    margin-bottom: 20px;
+}
+
+.health_flow_search_input {
+    width: 100%;
+    padding: 12px 16px;
+    border: 2px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 14px;
+    transition: all 0.2s ease;
+}
+
+.health_flow_search_input:focus {
+    outline: none;
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.health_flow_search_results {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.health_flow_search_result_card {
+    border: 2px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 16px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    background: white;
+}
+
+.health_flow_search_result_card:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
+}
+
+.health_flow_search_result_card.status-draft {
+    border-left: 4px solid #94a3b8;
+}
+
+.health_flow_search_result_card.status-assigned {
+    border-left: 4px solid #3b82f6;
+}
+
+.health_flow_search_result_card.status-scheduled {
+    border-left: 4px solid #10b981;
+}
+
+.health_flow_search_result_card.status-completed {
+    border-left: 4px solid #8b5cf6;
+}
+
+.health_flow_search_result_header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.health_flow_search_result_client {
+    font-size: 16px;
+    font-weight: 700;
+    color: #1f2937;
+}
+
+.health_flow_search_result_status {
+    font-size: 12px;
+    font-weight: 600;
+    padding: 4px 12px;
+    border-radius: 12px;
+    text-transform: uppercase;
+    background: #f1f5f9;
+    color: #475569;
+}
+
+.status-draft .health_flow_search_result_status {
+    background: #f1f5f9;
+    color: #475569;
+}
+
+.status-assigned .health_flow_search_result_status {
+    background: #dbeafe;
+    color: #1e40af;
+}
+
+.status-scheduled .health_flow_search_result_status {
+    background: #d1fae5;
+    color: #065f46;
+}
+
+.status-completed .health_flow_search_result_status {
+    background: #ede9fe;
+    color: #5b21b6;
+}
+
+.health_flow_search_result_details {
+    display: flex;
+    gap: 16px;
+    font-size: 13px;
+    color: #6b7280;
+}
+
+.health_flow_search_result_details i {
+    margin-right: 4px;
+    color: #9ca3af;
+}
+
+.health_flow_search_empty {
+    text-align: center;
+    padding: 40px 20px;
+    color: #9ca3af;
+}
+
+.health_flow_search_empty i {
+    color: #d1d5db;
+    margin-bottom: 16px;
+}
+
+.health_flow_search_empty p {
+    margin: 0;
+    font-size: 16px;
 }
 
 /* ==========================================

@@ -1,7 +1,7 @@
 /** @odoo-module **/
 
 import { registry } from "@web/core/registry";
-import { Component, useState, onMounted, onWillUnmount, useRef } from "@odoo/owl";
+import { Component, useState, onMounted, onWillStart, onWillUnmount, useRef } from "@odoo/owl";
 import { useService } from "@web/core/utils/hooks";
 
 /**
@@ -22,6 +22,14 @@ class HealthFlowAction extends Component {
             panelOpen: false,
             panelTitle: '',
             panelItems: [],
+            bookingCounts: {
+                draft: 0,
+                assigned: 0,
+                scheduled: 0,
+            },
+            searchModalOpen: false,
+            searchQuery: '',
+            searchResults: [],
         });
 
         // Panel data configuration
@@ -40,11 +48,12 @@ class HealthFlowAction extends Component {
                 title: 'Booking',
                 color: '#ed8936', // Orange
                 items: [
+                    { key: 'booking-search', label: 'Search', icon: 'fa-search', desc: 'Search bookings', isSearch: true },
                     { key: 'booking-calendar', label: 'Booking Calendar', icon: 'fa-calendar-check-o', desc: 'Visual booking calendar' },
                     { key: 'booking-staff', label: 'Staff Assignment', icon: 'fa-user-md', desc: 'Staff workload & assignment' },
-                    { key: 'booking-draft', label: 'Draft', icon: 'fa-file-o', desc: 'Draft bookings' },
-                    { key: 'booking-assigned', label: 'Assigned', icon: 'fa-check-circle', desc: 'Assigned bookings' },
-                    { key: 'booking-scheduled', label: 'Scheduled', icon: 'fa-clock-o', desc: 'Scheduled bookings' },
+                    { key: 'booking-draft', label: 'Draft', icon: 'fa-file-o', desc: 'Draft bookings', hasCount: true, countKey: 'draft' },
+                    { key: 'booking-assigned', label: 'Assigned', icon: 'fa-check-circle', desc: 'Assigned bookings', hasCount: true, countKey: 'assigned' },
+                    { key: 'booking-scheduled', label: 'Scheduled', icon: 'fa-clock-o', desc: 'Scheduled bookings', hasCount: true, countKey: 'scheduled' },
                 ],
             },
             invoicing: {
@@ -76,6 +85,11 @@ class HealthFlowAction extends Component {
             },
         };
 
+        onWillStart(async () => {
+            // Fetch booking counts
+            await this.fetchBookingCounts();
+        });
+
         onMounted(() => {
             console.log('[Health Flow] Component mounted');
             // Add escape key listener
@@ -89,6 +103,22 @@ class HealthFlowAction extends Component {
                 document.removeEventListener('keydown', this.escapeListener);
             }
         });
+    }
+
+    /**
+     * Fetch booking counts for Draft/Assigned/Scheduled
+     */
+    async fetchBookingCounts() {
+        try {
+            const counts = await this.orm.call(
+                'health.flow.wizard',
+                'get_booking_counts',
+                []
+            );
+            this.state.bookingCounts = counts;
+        } catch (error) {
+            console.error('[Health Flow] Failed to fetch booking counts:', error);
+        }
     }
 
     /**
@@ -126,6 +156,13 @@ class HealthFlowAction extends Component {
      */
     async onPanelTileClick(item) {
         console.log('[Health Flow] Panel tile clicked:', item.key);
+
+        // Handle search modal
+        if (item.isSearch) {
+            this.state.searchModalOpen = true;
+            return;
+        }
+
         await this.launchAction(item.key);
     }
 
@@ -136,6 +173,67 @@ class HealthFlowAction extends Component {
         this.state.panelOpen = false;
         this.state.activePrimary = null;
         this.state.panelItems = [];
+    }
+
+    /**
+     * Close search modal
+     */
+    closeSearchModal() {
+        this.state.searchModalOpen = false;
+    }
+
+    /**
+     * Get count for tile
+     */
+    getTileCount(item) {
+        if (item.hasCount && item.countKey) {
+            return this.state.bookingCounts[item.countKey] || 0;
+        }
+        return null;
+    }
+
+    /**
+     * Handle search input
+     */
+    async onSearchInput(event) {
+        const query = event.target.value;
+        this.state.searchQuery = query;
+
+        if (query.length < 2) {
+            this.state.searchResults = [];
+            return;
+        }
+
+        try {
+            const results = await this.orm.call(
+                'health.flow.wizard',
+                'search_bookings',
+                [query]
+            );
+            this.state.searchResults = results;
+        } catch (error) {
+            console.error('[Health Flow] Search failed:', error);
+            this.state.searchResults = [];
+        }
+    }
+
+    /**
+     * Handle search result click
+     */
+    async onSearchResultClick(bookingId) {
+        try {
+            const action = await this.orm.call(
+                'health.flow.wizard',
+                'get_booking_form_action',
+                [bookingId]
+            );
+            if (action && action.type) {
+                await this.action.doAction(action);
+                this.closeSearchModal();
+            }
+        } catch (error) {
+            console.error('[Health Flow] Failed to open booking:', error);
+        }
     }
 
     /**
