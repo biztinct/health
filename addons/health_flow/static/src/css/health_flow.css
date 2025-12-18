@@ -622,6 +622,43 @@
     border-left: 4px solid #8b5cf6;
 }
 
+/* CRM Contact Outcome Statuses */
+.health_flow_search_result_card.status-pending {
+    border-left: 4px solid #f59e0b;
+}
+
+.health_flow_search_result_card.status-pending_follow_up {
+    border-left: 4px solid #f59e0b;
+}
+
+.health_flow_search_result_card.status-service_booked {
+    border-left: 4px solid #10b981;
+}
+
+.health_flow_search_result_card.status-booking_lost {
+    border-left: 4px solid #ef4444;
+}
+
+.status-pending .health_flow_search_result_status {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.status-pending_follow_up .health_flow_search_result_status {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.status-service_booked .health_flow_search_result_status {
+    background: #d1fae5;
+    color: #065f46;
+}
+
+.status-booking_lost .health_flow_search_result_status {
+    background: #fee2e2;
+    color: #7f1d1d;
+}
+
 .health_flow_search_result_header {
     display: flex;
     justify-content: space-between;

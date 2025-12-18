@@ -124,11 +124,14 @@ class HealthFlowWizard(models.TransientModel):
                 action['view_mode'] = 'list,form'
                 action['context'] = dict(original_context, **{'default_type': 'opportunity'})
             elif key == 'crm-activities':
-                # Filter for opportunities with planned activities
+                # Show opportunities with activities - activity view first
                 action['name'] = _('Planned Activities')
-                action['domain'] = [('type', '=', 'opportunity'), ('activity_ids', '!=', False)]
                 action['view_mode'] = 'list,form'
-                action['context'] = dict(original_context, **{'default_type': 'opportunity'})
+                # Show all opportunities with scheduled activities
+                action['context'] = dict(original_context, **{
+                    'default_type': 'opportunity',
+                    'search_default_my_activities': 1,
+                })
             elif key == 'crm-calendar':
                 # Open calendar view
                 action['name'] = _('CRM Calendar')
@@ -260,6 +263,40 @@ class HealthFlowWizard(models.TransientModel):
                     'lead_nurse': booking.lead_staff_id.name if booking.lead_staff_id else 'Unassigned',
                     'status': status,
                     'appointment_date': booking.appointment_date.strftime('%Y-%m-%d %H:%M') if booking.appointment_date else 'Not Set',
+                })
+
+            return results
+        except Exception as e:
+            return []
+
+    @api.model
+    def search_crm_leads(self, query):
+        """Search CRM leads by name, phone, or email"""
+        try:
+            Lead = self.env['crm.lead']
+            domain = [
+                ('type', '=', 'opportunity'),
+                '|', '|', '|',
+                ('name', 'ilike', query),
+                ('phone', 'ilike', query),
+                ('mobile', 'ilike', query),
+                ('email_from', 'ilike', query),
+            ]
+            leads = Lead.search(domain, limit=20, order='create_date desc')
+
+            results = []
+            for lead in leads:
+                # Determine status from stage
+                stage_name = lead.stage_id.name if lead.stage_id else 'New'
+
+                results.append({
+                    'id': lead.id,
+                    'name': lead.name or 'Unknown',
+                    'contact_name': lead.contact_name or '',
+                    'phone': lead.phone or lead.mobile or 'N/A',
+                    'email': lead.email_from or 'N/A',
+                    'stage': stage_name,
+                    'contact_outcome': lead.contact_outcome or 'pending',
                 })
 
             return results

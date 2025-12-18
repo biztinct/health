@@ -152,7 +152,7 @@
                 <div class="health_flow_search_modal_backdrop" t-on-click="() => this.closeSearchModal()">
                     <div class="health_flow_search_modal" t-on-click.stop="">
                         <div class="health_flow_search_modal_header">
-                            <h3>Search Bookings</h3>
+                            <h3 t-esc="state.searchType === 'crm' ? 'Search CRM Leads' : 'Search Bookings'"/>
                             <div class="health_flow_search_modal_close" t-on-click="() => this.closeSearchModal()">
                                 <i class="fa fa-times"></i>
                             </div>
@@ -161,7 +161,7 @@
                             <div class="health_flow_search_form">
                                 <input type="text"
                                        class="health_flow_search_input"
-                                       placeholder="Search by client name, phone, or booking ID..."
+                                       t-att-placeholder="state.searchType === 'crm' ? 'Search by name, phone, or email...' : 'Search by client name, phone, or booking ID...'"
                                        t-model="state.searchQuery"
                                        t-on-input="onSearchInput"/>
                             </div>
@@ -174,29 +174,53 @@
                                     </button>
                                 </div>
 
-                                <t t-foreach="state.searchResults" t-as="booking" t-key="booking.id">
-                                    <div class="health_flow_search_result_card"
-                                         t-att-class="'status-' + booking.status + (this.isLeadSelected(booking.id) ? ' selected' : '')"
-                                         t-on-click="(event) => this.onSearchResultClick(booking.id, event)">
-                                        <div class="health_flow_search_result_checkbox">
-                                            <input type="checkbox"
-                                                   t-att-checked="this.isLeadSelected(booking.id)"
-                                                   t-on-change="(event) => this.onLeadCheckboxChange(event, booking.id)"/>
+                                <t t-foreach="state.searchResults" t-as="result" t-key="result.id">
+                                    <!-- Booking Result -->
+                                    <t t-if="state.searchType === 'booking'">
+                                        <div class="health_flow_search_result_card"
+                                             t-att-class="'status-' + result.status + (this.isLeadSelected(result.id) ? ' selected' : '')"
+                                             t-on-click="(event) => this.onSearchResultClick(result.id, event)">
+                                            <div class="health_flow_search_result_checkbox">
+                                                <input type="checkbox"
+                                                       t-att-checked="this.isLeadSelected(result.id)"
+                                                       t-on-change="(event) => this.onLeadCheckboxChange(event, result.id)"/>
+                                            </div>
+                                            <div class="health_flow_search_result_header">
+                                                <span class="health_flow_search_result_client" t-esc="result.client_name"/>
+                                                <span class="health_flow_search_result_status" t-esc="result.status"/>
+                                            </div>
+                                            <div class="health_flow_search_result_details">
+                                                <div><i class="fa fa-user-md"/> <t t-esc="result.lead_nurse"/></div>
+                                                <div><i class="fa fa-calendar"/> <t t-esc="result.appointment_date"/></div>
+                                            </div>
                                         </div>
-                                        <div class="health_flow_search_result_header">
-                                            <span class="health_flow_search_result_client" t-esc="booking.client_name"/>
-                                            <span class="health_flow_search_result_status" t-esc="booking.status"/>
+                                    </t>
+
+                                    <!-- CRM Lead Result -->
+                                    <t t-if="state.searchType === 'crm'">
+                                        <div class="health_flow_search_result_card"
+                                             t-att-class="'status-' + result.contact_outcome + (this.isLeadSelected(result.id) ? ' selected' : '')"
+                                             t-on-click="(event) => this.onSearchResultClick(result.id, event)">
+                                            <div class="health_flow_search_result_checkbox">
+                                                <input type="checkbox"
+                                                       t-att-checked="this.isLeadSelected(result.id)"
+                                                       t-on-change="(event) => this.onLeadCheckboxChange(event, result.id)"/>
+                                            </div>
+                                            <div class="health_flow_search_result_header">
+                                                <span class="health_flow_search_result_client" t-esc="result.name"/>
+                                                <span class="health_flow_search_result_status" t-esc="result.stage"/>
+                                            </div>
+                                            <div class="health_flow_search_result_details">
+                                                <div><i class="fa fa-phone"/> <t t-esc="result.phone"/></div>
+                                                <div><i class="fa fa-envelope"/> <t t-esc="result.email"/></div>
+                                            </div>
                                         </div>
-                                        <div class="health_flow_search_result_details">
-                                            <div><i class="fa fa-user-md"/> <t t-esc="booking.lead_nurse"/></div>
-                                            <div><i class="fa fa-calendar"/> <t t-esc="booking.appointment_date"/></div>
-                                        </div>
-                                    </div>
+                                    </t>
                                 </t>
                             </div>
                             <div class="health_flow_search_empty" t-if="state.searchQuery and state.searchResults.length === 0">
                                 <i class="fa fa-search fa-3x"/>
-                                <p>No bookings found</p>
+                                <p t-esc="state.searchType === 'crm' ? 'No leads found' : 'No bookings found'"/>
                             </div>
                         </div>
                     </div>

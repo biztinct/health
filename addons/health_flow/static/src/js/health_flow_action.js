@@ -32,6 +32,7 @@ class HealthFlowAction extends Component {
                 scheduled: 0,
             },
             searchModalOpen: false,
+            searchType: null, // 'booking' or 'crm'
             searchQuery: '',
             searchResults: [],
             selectedLeadIds: [], // For multi-select in search results
@@ -43,7 +44,7 @@ class HealthFlowAction extends Component {
                 title: 'CRM',
                 color: '#4299e1', // Blue
                 items: [
-                    { key: 'crm-search', label: 'Search', icon: 'fa-search', desc: 'Search opportunities' },
+                    { key: 'crm-search', label: 'Search', icon: 'fa-search', desc: 'Search opportunities', isSearch: true },
                     { key: 'crm-initial', label: 'Initial Contact', icon: 'fa-phone', desc: 'Initial contact leads' },
                     { key: 'crm-activities', label: 'Planned Activities', icon: 'fa-tasks', desc: 'Planned activities' },
                     { key: 'crm-calendar', label: 'Calendar', icon: 'fa-calendar', desc: 'CRM calendar view' },
@@ -243,6 +244,11 @@ class HealthFlowAction extends Component {
         // Handle search modal
         if (item.isSearch) {
             this.state.searchModalOpen = true;
+            // Determine search type based on which panel we're in
+            this.state.searchType = this.state.activePrimary === 'crm' ? 'crm' : 'booking';
+            this.state.searchQuery = '';
+            this.state.searchResults = [];
+            this.state.selectedLeadIds = [];
             return;
         }
 
@@ -284,7 +290,7 @@ class HealthFlowAction extends Component {
     }
 
     /**
-     * Handle search input
+     * Handle search input for both booking and CRM searches
      */
     async onSearchInput(event) {
         const query = event.target.value;
@@ -296,11 +302,20 @@ class HealthFlowAction extends Component {
         }
 
         try {
-            const results = await this.orm.call(
-                'health.flow.wizard',
-                'search_bookings',
-                [query]
-            );
+            let results;
+            if (this.state.searchType === 'crm') {
+                results = await this.orm.call(
+                    'health.flow.wizard',
+                    'search_crm_leads',
+                    [query]
+                );
+            } else {
+                results = await this.orm.call(
+                    'health.flow.wizard',
+                    'search_bookings',
+                    [query]
+                );
+            }
             this.state.searchResults = results;
         } catch (error) {
             console.error('[Health Flow] Search failed:', error);
