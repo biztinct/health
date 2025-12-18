@@ -122,38 +122,49 @@ class HealthFlowWizard(models.TransientModel):
                 action['name'] = _('Initial Contact')
                 action['domain'] = [('type', '=', 'opportunity'), ('stage_id.sequence', '<=', 1)]
                 action['view_mode'] = 'list,form'
+                action.pop('view_ids', None)  # Remove view_ids so view_mode takes precedence
+                action.pop('views', None)  # Remove views as well
                 action['context'] = dict(original_context, **{'default_type': 'opportunity'})
             elif key == 'crm-activities':
-                # Show opportunities with activities - activity view first
+                # Show opportunities with their activities in activity view
                 action['name'] = _('Planned Activities')
-                action['view_mode'] = 'list,form'
-                # Show all opportunities with scheduled activities
+                action['view_mode'] = 'activity,list,form'
+                action.pop('view_ids', None)  # Remove view_ids so view_mode takes precedence
+                action.pop('views', None)  # Remove views as well
+                # Show all opportunities - user can see their activities
                 action['context'] = dict(original_context, **{
                     'default_type': 'opportunity',
-                    'search_default_my_activities': 1,
                 })
             elif key == 'crm-calendar':
                 # Open calendar view
                 action['name'] = _('CRM Calendar')
                 action['view_mode'] = 'calendar,list,form'
+                action.pop('view_ids', None)  # Remove view_ids so view_mode takes precedence
+                action.pop('views', None)  # Remove views as well
                 action['context'] = dict(original_context, **{'default_type': 'opportunity'})
             elif key == 'crm-continue-followup':
                 # Filter for opportunities pending follow-up
                 action['name'] = _('Continue Follow-up')
                 action['domain'] = [('type', '=', 'opportunity'), ('contact_outcome', '=', 'pending_follow_up')]
                 action['view_mode'] = 'list,form'
+                action.pop('view_ids', None)  # Remove view_ids so view_mode takes precedence
+                action.pop('views', None)  # Remove views as well
                 action['context'] = dict(original_context, **{'default_type': 'opportunity'})
             elif key == 'crm-client-acquired':
                 # Filter for service booked opportunities
                 action['name'] = _('Client Acquired')
                 action['domain'] = [('type', '=', 'opportunity'), ('contact_outcome', '=', 'service_booked')]
                 action['view_mode'] = 'list,form'
+                action.pop('view_ids', None)  # Remove view_ids so view_mode takes precedence
+                action.pop('views', None)  # Remove views as well
                 action['context'] = dict(original_context, **{'default_type': 'opportunity'})
             elif key == 'crm-booking-lost':
                 # Filter for booking lost opportunities
                 action['name'] = _('Booking Lost')
                 action['domain'] = [('type', '=', 'opportunity'), ('contact_outcome', '=', 'booking_lost')]
                 action['view_mode'] = 'list,form'
+                action.pop('view_ids', None)  # Remove view_ids so view_mode takes precedence
+                action.pop('views', None)  # Remove views as well
                 action['context'] = dict(original_context, **{'default_type': 'opportunity'})
 
             return action
@@ -276,10 +287,9 @@ class HealthFlowWizard(models.TransientModel):
             Lead = self.env['crm.lead']
             domain = [
                 ('type', '=', 'opportunity'),
-                '|', '|', '|',
+                '|', '|',
                 ('name', 'ilike', query),
                 ('phone', 'ilike', query),
-                ('mobile', 'ilike', query),
                 ('email_from', 'ilike', query),
             ]
             leads = Lead.search(domain, limit=20, order='create_date desc')
@@ -293,7 +303,7 @@ class HealthFlowWizard(models.TransientModel):
                     'id': lead.id,
                     'name': lead.name or 'Unknown',
                     'contact_name': lead.contact_name or '',
-                    'phone': lead.phone or lead.mobile or 'N/A',
+                    'phone': lead.phone or 'N/A',
                     'email': lead.email_from or 'N/A',
                     'stage': stage_name,
                     'contact_outcome': lead.contact_outcome or 'pending',
