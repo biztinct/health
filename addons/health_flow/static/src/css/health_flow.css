@@ -1,0 +1,465 @@
+/* ==========================================
+   HEALTH FLOW DASHBOARD - GLOBAL STYLES
+   ========================================== */
+
+.health_flow_container {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+    position: relative;
+    overflow: hidden;
+}
+
+.health_flow_container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: radial-gradient(circle at 20% 50%, rgba(66, 153, 225, 0.05) 0%, transparent 50%),
+                    radial-gradient(circle at 80% 80%, rgba(159, 122, 234, 0.05) 0%, transparent 50%);
+    pointer-events: none;
+}
+
+/* ==========================================
+   CIRCULAR WORKFLOW LAYOUT
+   ========================================== */
+
+.health_flow_circular_workflow {
+    position: relative;
+    width: 700px;
+    height: 700px;
+    margin: 0 auto;
+}
+
+@media (max-width: 768px) {
+    .health_flow_circular_workflow {
+        width: 500px;
+        height: 500px;
+    }
+}
+
+@media (max-width: 480px) {
+    .health_flow_circular_workflow {
+        width: 350px;
+        height: 350px;
+    }
+}
+
+/* ==========================================
+   CENTER CLIENT BADGE
+   ========================================== */
+
+.health_flow_center_badge {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 180px;
+    height: 180px;
+    background: #264A6A;
+    border-radius: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 20px 60px rgba(38, 74, 106, 0.3),
+               0 8px 16px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+    z-index: 100;
+    animation: health_flow_pulse 3s ease-in-out infinite;
+    border: 4px solid #fff;
+}
+
+.health_flow_center_badge:hover {
+    transform: translate(-50%, -50%) scale(1.1);
+    box-shadow: 0 25px 70px rgba(38, 74, 106, 0.4),
+               0 10px 20px rgba(0, 0, 0, 0.15);
+}
+
+.health_flow_center_icon {
+    font-size: 52px;
+    color: #fff;
+    margin-bottom: 8px;
+}
+
+.health_flow_center_text {
+    font-size: 18px;
+    font-weight: 700;
+    color: #fff;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+@media (max-width: 768px) {
+    .health_flow_center_badge {
+        width: 130px;
+        height: 130px;
+    }
+    .health_flow_center_icon {
+        font-size: 38px;
+    }
+    .health_flow_center_text {
+        font-size: 14px;
+    }
+}
+
+/* ==========================================
+   PRIMARY BADGES (6 badges in circle)
+   ========================================== */
+
+.health_flow_primary_badge {
+    position: absolute;
+    width: 140px;
+    height: 140px;
+    background: #fff;
+    border-radius: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+    cursor: pointer;
+    transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+    z-index: 50;
+    border: 4px solid #f7fafc;
+}
+
+.health_flow_primary_badge:hover {
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+    z-index: 200 !important;
+    transform: scale(1.05);
+}
+
+.health_flow_primary_badge.active {
+    transform: scale(1.1);
+    z-index: 200 !important;
+}
+
+.health_flow_primary_icon {
+    font-size: 42px;
+    margin-bottom: 6px;
+    transition: transform 0.4s ease;
+}
+
+.health_flow_primary_badge:hover .health_flow_primary_icon {
+    transform: scale(1.1);
+}
+
+.health_flow_primary_text {
+    font-size: 13px;
+    font-weight: 700;
+    color: #2d3748;
+    text-align: center;
+    line-height: 1.2;
+}
+
+@media (max-width: 768px) {
+    .health_flow_primary_badge {
+        width: 100px;
+        height: 100px;
+    }
+    .health_flow_primary_icon {
+        font-size: 30px;
+    }
+    .health_flow_primary_text {
+        font-size: 11px;
+    }
+}
+
+/* Badge Colors */
+.badge-crm .health_flow_primary_icon { color: #4299e1; } /* Blue */
+.badge-booking .health_flow_primary_icon { color: #ed8936; } /* Orange */
+.badge-invoicing .health_flow_primary_icon { color: #48bb78; } /* Green */
+.badge-analytics .health_flow_primary_icon { color: #f56565; } /* Red */
+.badge-audit .health_flow_primary_icon { color: #38b2ac; } /* Teal */
+.badge-admin .health_flow_primary_icon { color: #9f7aea; } /* Purple */
+
+/* Badge Colored Borders */
+.badge-crm { border-color: #4299e1 !important; }
+.badge-booking { border-color: #ed8936 !important; }
+.badge-invoicing { border-color: #48bb78 !important; }
+.badge-analytics { border-color: #f56565 !important; }
+.badge-audit { border-color: #38b2ac !important; }
+.badge-admin { border-color: #9f7aea !important; }
+
+/* Badge Hover Shadows */
+.badge-crm:hover { box-shadow: 0 25px 70px rgba(66, 153, 225, 0.6); }
+.badge-booking:hover { box-shadow: 0 25px 70px rgba(237, 137, 54, 0.6); }
+.badge-invoicing:hover { box-shadow: 0 25px 70px rgba(72, 187, 120, 0.6); }
+.badge-analytics:hover { box-shadow: 0 25px 70px rgba(245, 101, 101, 0.6); }
+.badge-audit:hover { box-shadow: 0 25px 70px rgba(56, 178, 172, 0.6); }
+.badge-admin:hover { box-shadow: 0 25px 70px rgba(159, 122, 234, 0.6); }
+
+/* Badge Positioning (perfect circular symmetry - 60° apart) */
+
+/* CRM - Top (12 o'clock) */
+.badge-crm {
+    top: 0;
+    left: 50%;
+    margin-left: -70px; /* Half of badge width */
+    animation: health_flow_fadeIn 0.6s ease-out 0.2s both;
+}
+
+/* Booking - Top Right (2 o'clock) */
+.badge-booking {
+    top: 21.4%;
+    right: 7.9%;
+    animation: health_flow_fadeIn 0.6s ease-out 0.4s both;
+}
+
+/* Invoicing - Bottom Right (4 o'clock) */
+.badge-invoicing {
+    bottom: 21.4%;
+    right: 7.9%;
+    animation: health_flow_fadeIn 0.6s ease-out 0.6s both;
+}
+
+/* Analytics - Bottom (6 o'clock) */
+.badge-analytics {
+    bottom: 0;
+    left: 50%;
+    margin-left: -70px;
+    animation: health_flow_fadeIn 0.6s ease-out 0.8s both;
+}
+
+/* Audit - Bottom Left (8 o'clock) */
+.badge-audit {
+    bottom: 21.4%;
+    left: 7.9%;
+    animation: health_flow_fadeIn 0.6s ease-out 1s both;
+}
+
+/* Admin - Top Left (10 o'clock) */
+.badge-admin {
+    top: 21.4%;
+    left: 7.9%;
+    animation: health_flow_fadeIn 0.6s ease-out 1.2s both;
+}
+
+/* ==========================================
+   FLOW ARROWS (Clockwise Direction)
+   ========================================== */
+
+.health_flow_arrows {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.health_flow_arrows svg {
+    width: 100%;
+    height: 100%;
+}
+
+.health_flow_arrow {
+    fill: none;
+    stroke: #264A6A;
+    stroke-width: 2;
+    stroke-linecap: round;
+    opacity: 0.6;
+    transition: opacity 0.3s ease;
+}
+
+.health_flow_circular_workflow:hover .health_flow_arrow {
+    opacity: 0.8;
+}
+
+/* ==========================================
+   SLIDE-IN PANEL
+   ========================================== */
+
+.health_flow_panel {
+    position: fixed;
+    top: 50%;
+    right: 40px;
+    width: 420px;
+    max-height: 80vh;
+    transform: translate(calc(100% + 40px), -50%);
+    background: #ffffff;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.22);
+    z-index: 1040;
+    transition: transform 0.35s ease, opacity 0.3s ease;
+    opacity: 0;
+    display: flex;
+    flex-direction: column;
+    padding: 24px;
+    gap: 16px;
+    border: 2px solid #cbd5e1;
+    border-radius: 14px;
+    overflow-y: auto;
+}
+
+.health_flow_panel.open {
+    transform: translate(0, -50%);
+    opacity: 1;
+}
+
+@media (max-width: 1400px) {
+    .health_flow_panel {
+        right: 20px;
+        width: 360px;
+    }
+}
+
+@media (max-width: 1200px) {
+    .health_flow_panel {
+        right: 10px;
+        width: 320px;
+    }
+}
+
+@media (max-width: 768px) {
+    .health_flow_panel {
+        right: 0;
+        left: 0;
+        width: 100%;
+        max-width: 90%;
+        margin: 0 auto;
+        border-radius: 14px 14px 0 0;
+        bottom: 0;
+        top: auto;
+        transform: translateY(100%);
+        max-height: 70vh;
+    }
+    .health_flow_panel.open {
+        transform: translateY(0);
+    }
+}
+
+.health_flow_panel_header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding-bottom: 12px;
+    border-bottom: 2px solid #e2e8f0;
+}
+
+.health_flow_panel_title {
+    font-size: 20px;
+    font-weight: 700;
+    color: #1f2937;
+    margin: 0;
+}
+
+.health_flow_panel_close {
+    background: #f1f5f9;
+    border: none;
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: #475569;
+    transition: all 0.2s ease;
+}
+
+.health_flow_panel_close:hover {
+    background: #e2e8f0;
+    transform: scale(1.1);
+}
+
+.health_flow_panel_items {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    overflow-y: auto;
+}
+
+@media (max-width: 480px) {
+    .health_flow_panel_items {
+        grid-template-columns: 1fr;
+    }
+}
+
+.health_flow_panel_card {
+    border: 2px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 16px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    background: #fff;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    min-height: 100px;
+}
+
+.health_flow_panel_card:hover {
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.14);
+    border-color: #cbd5e1;
+    transform: translateY(-2px);
+}
+
+.health_flow_panel_card:active {
+    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.16);
+    transform: translateY(0);
+}
+
+.health_flow_card_icon {
+    font-size: 24px;
+    color: #2563eb;
+    margin-bottom: 4px;
+}
+
+.health_flow_card_title {
+    font-size: 14px;
+    font-weight: 700;
+    color: #111827;
+    margin: 0;
+}
+
+.health_flow_card_desc {
+    font-size: 12px;
+    color: #4b5563;
+    margin: 0;
+    line-height: 1.4;
+}
+
+/* ==========================================
+   ANIMATIONS
+   ========================================== */
+
+@keyframes health_flow_fadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.5);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes health_flow_pulse {
+    0%, 100% {
+        box-shadow: 0 20px 60px rgba(38, 74, 106, 0.3),
+                   0 8px 16px rgba(0, 0, 0, 0.1);
+    }
+    50% {
+        box-shadow: 0 25px 70px rgba(38, 74, 106, 0.4),
+                   0 12px 24px rgba(0, 0, 0, 0.12);
+    }
+}
+
+/* ==========================================
+   UTILITY CLASSES
+   ========================================== */
+
+.health_flow_circular_workflow * {
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+}

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Health Flow Client Action -->
+    <record id="action_health_flow_dashboard" model="ir.actions.client">
+        <field name="name">Health Flow</field>
+        <field name="tag">health_flow_dashboard</field>
+        <field name="target">fullscreen</field>
+    </record>
+
+    <!-- Root Menu -->
+    <menuitem
+        id="menu_health_flow_root"
+        name="Health Flow"
+        sequence="5"
+        web_icon="health_flow,static/description/icon.png"
+        action="action_health_flow_dashboard"
+    />
+
+</odoo>

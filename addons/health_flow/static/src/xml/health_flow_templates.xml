@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <!-- Health Flow Main Template -->
+    <t t-name="health_flow.HealthFlowTemplate">
+        <div class="health_flow_container">
+            <!-- Main Circular Workflow Layout -->
+            <div class="health_flow_circular_workflow">
+
+                <!-- Flow Arrows (Clockwise Direction) -->
+                <div class="health_flow_arrows">
+                    <svg viewBox="0 0 700 700" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <!-- Arrow marker for path ends -->
+                            <marker id="health-flow-arrowhead" markerWidth="6" markerHeight="5" refX="5" refY="2.5" orient="auto">
+                                <polygon points="0 0, 6 2.5, 0 5" fill="#264A6A"/>
+                            </marker>
+                        </defs>
+
+                        <!-- CRM (350,70) to Booking (570,220) -->
+                        <path class="health_flow_arrow"
+                              d="M 410,120 Q 490,145 510,175"
+                              marker-end="url(#health-flow-arrowhead)"/>
+
+                        <!-- Booking (570,220) to Invoicing (570,480) -->
+                        <path class="health_flow_arrow"
+                              d="M 570,285 Q 590,350 570,415"
+                              marker-end="url(#health-flow-arrowhead)"/>
+
+                        <!-- Invoicing (570,480) to Analytics (350,630) -->
+                        <path class="health_flow_arrow"
+                              d="M 510,525 Q 490,555 410,580"
+                              marker-end="url(#health-flow-arrowhead)"/>
+
+                        <!-- Analytics (350,630) to Audit (130,480) -->
+                        <path class="health_flow_arrow"
+                              d="M 290,580 Q 210,555 190,525"
+                              marker-end="url(#health-flow-arrowhead)"/>
+
+                        <!-- Audit (130,480) to Admin (130,220) -->
+                        <path class="health_flow_arrow"
+                              d="M 130,415 Q 110,350 130,285"
+                              marker-end="url(#health-flow-arrowhead)"/>
+
+                        <!-- Admin (130,220) to CRM (350,70) -->
+                        <path class="health_flow_arrow"
+                              d="M 190,175 Q 210,145 290,120"
+                              marker-end="url(#health-flow-arrowhead)"/>
+                    </svg>
+                </div>
+
+                <!-- CENTER: Client Badge -->
+                <div class="health_flow_center_badge"
+                     role="button"
+                     tabindex="0"
+                     t-on-click="() => this.onCenterClick()">
+                    <i class="fa fa-users health_flow_center_icon"></i>
+                    <span class="health_flow_center_text">Client</span>
+                </div>
+
+                <!-- PRIMARY LEVEL: 6 Badges in Circle -->
+
+                <!-- 1. CRM (Top - 12 o'clock) -->
+                <div role="button"
+                     tabindex="0"
+                     class="health_flow_primary_badge badge-crm"
+                     t-att-class="{'active': state.activePrimary === 'crm'}"
+                     t-on-click="() => this.onPrimaryClick('crm')">
+                    <i class="fa fa-handshake-o health_flow_primary_icon"></i>
+                    <span class="health_flow_primary_text">CRM</span>
+                </div>
+
+                <!-- 2. Booking (Top Right - 2 o'clock) -->
+                <div role="button"
+                     tabindex="0"
+                     class="health_flow_primary_badge badge-booking"
+                     t-att-class="{'active': state.activePrimary === 'booking'}"
+                     t-on-click="() => this.onPrimaryClick('booking')">
+                    <i class="fa fa-calendar-check-o health_flow_primary_icon"></i>
+                    <span class="health_flow_primary_text">Booking</span>
+                </div>
+
+                <!-- 3. Invoicing (Bottom Right - 4 o'clock) -->
+                <div role="button"
+                     tabindex="0"
+                     class="health_flow_primary_badge badge-invoicing"
+                     t-att-class="{'active': state.activePrimary === 'invoicing'}"
+                     t-on-click="() => this.onPrimaryClick('invoicing')">
+                    <i class="fa fa-money health_flow_primary_icon"></i>
+                    <span class="health_flow_primary_text">Invoicing</span>
+                </div>
+
+                <!-- 4. Analytics (Bottom - 6 o'clock) -->
+                <div role="button"
+                     tabindex="0"
+                     class="health_flow_primary_badge badge-analytics"
+                     t-on-click="() => this.onPrimaryClick('analytics')">
+                    <i class="fa fa-line-chart health_flow_primary_icon"></i>
+                    <span class="health_flow_primary_text">Analytics</span>
+                </div>
+
+                <!-- 5. Audit (Bottom Left - 8 o'clock) -->
+                <div role="button"
+                     tabindex="0"
+                     class="health_flow_primary_badge badge-audit"
+                     t-on-click="() => this.onPrimaryClick('audit')">
+                    <i class="fa fa-history health_flow_primary_icon"></i>
+                    <span class="health_flow_primary_text">Audit</span>
+                </div>
+
+                <!-- 6. Admin (Top Left - 10 o'clock) -->
+                <div role="button"
+                     tabindex="0"
+                     class="health_flow_primary_badge badge-admin"
+                     t-att-class="{'active': state.activePrimary === 'admin'}"
+                     t-on-click="() => this.onPrimaryClick('admin')">
+                    <i class="fa fa-cogs health_flow_primary_icon"></i>
+                    <span class="health_flow_primary_text">Admin</span>
+                </div>
+
+            </div>
+
+            <!-- Slide-in Panel -->
+            <div class="health_flow_panel"
+                 t-att-class="{'open': state.panelOpen}">
+                <div class="health_flow_panel_header">
+                    <h3 class="health_flow_panel_title" t-esc="state.panelTitle"/>
+                    <div class="health_flow_panel_close"
+                         role="button"
+                         tabindex="0"
+                         t-on-click="() => this.closePanel()">
+                        <i class="fa fa-times"></i>
+                    </div>
+                </div>
+                <div class="health_flow_panel_items">
+                    <t t-foreach="state.panelItems" t-as="item" t-key="item.key">
+                        <div class="health_flow_panel_card"
+                             t-on-click="() => this.onPanelTileClick(item)">
+                            <i t-att-class="'fa ' + item.icon + ' health_flow_card_icon'"></i>
+                            <p class="health_flow_card_title" t-esc="item.label"/>
+                            <p class="health_flow_card_desc" t-esc="item.desc"/>
+                        </div>
+                    </t>
+                </div>
+            </div>
+
+        </div>
+    </t>
+
+</templates>
