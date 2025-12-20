@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="0">
+
+    <record id="module_category_hr_development" model="ir.module.category">
+        <field name="name">Employee Development</field>
+        <field name="sequence">20</field>
+    </record>
+
+</odoo>

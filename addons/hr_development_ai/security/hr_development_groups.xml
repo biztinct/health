@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="0">
+
+    <record id="group_hr_development_user" model="res.groups">
+        <field name="name">HR Development / User</field>
+        <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+    </record>
+
+    <record id="group_hr_development_manager" model="res.groups">
+        <field name="name">HR Development / Manager</field>
+        <field name="implied_ids" eval="[(4, ref('group_hr_development_user'))]"/>
+    </record>
+
+    <record id="group_hr_development_admin" model="res.groups">
+        <field name="name">HR Development / Administrator</field>
+        <field name="implied_ids" eval="[(4, ref('group_hr_development_manager')), (4, ref('hr.group_hr_manager'))]"/>
+    </record>
+
+</odoo>

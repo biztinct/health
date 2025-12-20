@@ -37,6 +37,8 @@ Technical Features:
     'data': [
         'security/ir.model.access.csv',
         'views/health_flow_menus.xml',
+        'views/health_flow_crm_calendar_views.xml',
+        'views/health_flow_crm_merge_views.xml',
     ],
     'assets': {
         'web.assets_backend': [

@@ -1,0 +1,252 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Coaching Session Form View -->
+    <record id="view_hr_coaching_session_form" model="ir.ui.view">
+        <field name="name">hr.coaching.session.form</field>
+        <field name="model">hr.coaching.session</field>
+        <field name="arch" type="xml">
+            <form string="Coaching Session">
+                <header>
+                    <button name="action_start_session" string="Start Session" type="object" class="oe_highlight" invisible="state != 'scheduled'"/>
+                    <button name="action_complete_session" string="Complete Session" type="object" class="oe_highlight" invisible="state != 'in_progress'"/>
+                    <button name="action_generate_ai_summary" string="Generate AI Summary" type="object" invisible="state != 'completed'"/>
+                    <button name="action_cancel_session" string="Cancel" type="object" invisible="state in ['completed', 'cancelled']"/>
+                    <field name="state" widget="statusbar" statusbar_visible="scheduled,in_progress,completed"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" class="o_text_overflow" placeholder="Session Title..."/>
+                        </h1>
+                        <h3>
+                            <field name="employee_id" string="Coachee"/>
+                            <span invisible="session_type == 'ai'"> with </span>
+                            <field name="coach_id" invisible="session_type == 'ai'"/>
+                        </h3>
+                    </div>
+                    <group>
+                        <group string="Session Details">
+                            <field name="session_type"/>
+                            <field name="topic"/>
+                            <field name="session_date"/>
+                            <field name="duration"/>
+                        </group>
+                        <group string="Outcomes">
+                            <field name="outcome"/>
+                            <field name="employee_satisfaction"/>
+                            <field name="next_session_date"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Description" name="description">
+                            <field name="description" placeholder="What will be discussed in this session..."/>
+                        </page>
+                        <page string="Discussion Notes" name="notes">
+                            <field name="discussion_notes" placeholder="Notes from the coaching conversation..."/>
+                        </page>
+                        <page string="AI Coaching Chat" name="ai_chat" invisible="session_type not in ['ai', 'hybrid']">
+                            <field name="ai_transcript" widget="ai_coaching_chat" nolabel="1"/>
+                        </page>
+                        <page string="Action Items" name="actions">
+                            <field name="action_items" placeholder="Follow-up actions agreed upon..."/>
+                        </page>
+                        <page string="Skills Discussed" name="skills">
+                            <field name="skill_ids">
+                                <list>
+                                    <field name="name"/>
+                                    <field name="category_id"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter reload_on_follower="True"/>
+            </form>
+        </field>
+    </record>
+
+    <!-- Coaching Session List View -->
+    <record id="view_hr_coaching_session_list" model="ir.ui.view">
+        <field name="name">hr.coaching.session.list</field>
+        <field name="model">hr.coaching.session</field>
+        <field name="arch" type="xml">
+            <list string="Coaching Sessions" decoration-success="state == 'completed'" decoration-info="state == 'in_progress'">
+                <field name="session_date"/>
+                <field name="name"/>
+                <field name="employee_id"/>
+                <field name="coach_id" optional="show"/>
+                <field name="session_type"/>
+                <field name="topic"/>
+                <field name="duration" optional="hide"/>
+                <field name="outcome" optional="show"/>
+                <field name="state" widget="badge" decoration-success="state == 'completed'" decoration-info="state == 'in_progress'"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Coaching Session Calendar View -->
+    <record id="view_hr_coaching_session_calendar" model="ir.ui.view">
+        <field name="name">hr.coaching.session.calendar</field>
+        <field name="model">hr.coaching.session</field>
+        <field name="arch" type="xml">
+            <calendar string="Coaching Sessions" date_start="session_date" color="session_type" mode="month">
+                <field name="name"/>
+                <field name="employee_id"/>
+                <field name="coach_id"/>
+            </calendar>
+        </field>
+    </record>
+
+    <!-- Search view removed - relying on Odoo's automatic search view generation -->
+
+    <!-- Coaching Session Action -->
+    <record id="action_hr_coaching_session" model="ir.actions.act_window">
+        <field name="name">Coaching Sessions</field>
+        <field name="res_model">hr.coaching.session</field>
+        <field name="view_mode">list,calendar,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Schedule a Coaching Session
+            </p>
+            <p>
+                Create coaching sessions for employees with AI or human coaches to support their development.
+            </p>
+        </field>
+    </record>
+
+    <!-- Coaching Nudge Form View -->
+    <record id="view_hr_coaching_nudge_form" model="ir.ui.view">
+        <field name="name">hr.coaching.nudge.form</field>
+        <field name="model">hr.coaching.nudge</field>
+        <field name="arch" type="xml">
+            <form string="Coaching Nudge">
+                <header>
+                    <button name="action_mark_read" string="Mark as Read" type="object" invisible="state != 'sent'"/>
+                    <button name="action_mark_acted" string="Mark as Acted Upon" type="object" class="oe_highlight" invisible="state not in ['sent', 'read']"/>
+                    <button name="action_dismiss" string="Dismiss" type="object" invisible="state in ['acted', 'dismissed']"/>
+                    <field name="state" widget="statusbar" statusbar_visible="sent,read,acted"/>
+                </header>
+                <sheet>
+                    <div class="alert alert-info" role="alert">
+                        <strong>Priority: </strong>
+                        <field name="priority" widget="priority" nolabel="1"/>
+                        <span class="ms-2"><field name="situation"/></span>
+                    </div>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="title" class="o_text_overflow"/>
+                        </h1>
+                        <h3>
+                            For: <field name="employee_id"/>
+                        </h3>
+                    </div>
+                    <group>
+                        <group string="AI Details">
+                            <field name="ai_provider" readonly="1"/>
+                            <field name="ai_confidence" widget="progressbar" readonly="1"/>
+                        </group>
+                        <group string="Response Tracking">
+                            <field name="read_date" readonly="1"/>
+                            <field name="acted_date" readonly="1"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Coaching Message" name="message">
+                            <field name="message" readonly="1"/>
+                        </page>
+                        <page string="Suggested Actions" name="actions">
+                            <field name="action_items" readonly="1"/>
+                        </page>
+                        <page string="Related Items" name="related">
+                            <group>
+                                <field name="task_id"/>
+                                <field name="goal_id"/>
+                                <field name="skill_gap_id"/>
+                            </group>
+                        </page>
+                        <page string="Feedback" name="feedback">
+                            <field name="employee_feedback" placeholder="How helpful was this coaching nudge?"/>
+                        </page>
+                        <page string="Context Data" name="context">
+                            <field name="context_data" readonly="1"/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter reload_on_follower="True"/>
+            </form>
+        </field>
+    </record>
+
+    <!-- Coaching Nudge List View -->
+    <record id="view_hr_coaching_nudge_list" model="ir.ui.view">
+        <field name="name">hr.coaching.nudge.list</field>
+        <field name="model">hr.coaching.nudge</field>
+        <field name="arch" type="xml">
+            <list string="Coaching Nudges" decoration-danger="priority == 'critical'" decoration-warning="priority == 'high'" decoration-info="state == 'sent'">
+                <field name="create_date"/>
+                <field name="employee_id"/>
+                <field name="title"/>
+                <field name="situation"/>
+                <field name="priority" widget="priority"/>
+                <field name="state" widget="badge" decoration-success="state == 'acted'" decoration-info="state == 'read'"/>
+                <field name="ai_provider" optional="hide"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Coaching Nudge Kanban View -->
+    <record id="view_hr_coaching_nudge_kanban" model="ir.ui.view">
+        <field name="name">hr.coaching.nudge.kanban</field>
+        <field name="model">hr.coaching.nudge</field>
+        <field name="arch" type="xml">
+            <kanban class="o_kanban_mobile" default_group_by="priority">
+                <field name="employee_id"/>
+                <field name="title"/>
+                <field name="situation"/>
+                <field name="priority"/>
+                <field name="state"/>
+                <templates>
+                    <t t-name="card">
+                        <div class="oe_kanban_card oe_kanban_global_click">
+                            <div class="o_kanban_card_header">
+                                <div class="o_kanban_card_header_title">
+                                    <div class="o_primary"><field name="title"/></div>
+                                    <div class="o_secondary"><field name="employee_id"/></div>
+                                </div>
+                            </div>
+                            <div class="o_kanban_card_content">
+                                <div class="mb-2">
+                                    <span class="badge" t-att-class="record.situation.raw_value == 'skill_gap_detected' ? 'text-bg-warning' : record.situation.raw_value == 'recognition' ? 'text-bg-success' : 'text-bg-info'">
+                                        <field name="situation"/>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="o_kanban_card_footer">
+                                <field name="state" widget="label" decoration-success="state == 'acted'" decoration-info="state == 'read'"/>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- Search view removed - relying on Odoo's automatic search view generation -->
+
+    <!-- Coaching Nudge Action -->
+    <record id="action_hr_coaching_nudge" model="ir.actions.act_window">
+        <field name="name">Coaching Nudges</field>
+        <field name="res_model">hr.coaching.nudge</field>
+        <field name="view_mode">kanban,list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No coaching nudges yet
+            </p>
+            <p>
+                AI-generated coaching nudges will appear here based on employee performance and development needs.
+            </p>
+        </field>
+    </record>
+
+</odoo>

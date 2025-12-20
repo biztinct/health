@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from odoo import models, fields, api, _
+from odoo.exceptions import UserError
 
 
 class HealthFlowWizard(models.TransientModel):
@@ -28,7 +29,7 @@ class HealthFlowWizard(models.TransientModel):
         Uses server-side xmlid resolution so the client can simply do-action.
         """
         # Handle special actions with custom domains/contexts
-        if key in ['crm-initial', 'crm-activities', 'crm-calendar', 'crm-continue-followup', 'crm-client-acquired', 'crm-booking-lost']:
+        if key in ['crm-add-lead', 'crm-all', 'crm-initial', 'crm-activities', 'crm-calendar', 'crm-continue-followup', 'crm-client-acquired', 'crm-booking-lost']:
             return self._get_crm_action(key)
         elif key in ['booking-draft', 'booking-assigned', 'booking-scheduled']:
             return self._get_booking_action(key)
@@ -107,9 +108,9 @@ class HealthFlowWizard(models.TransientModel):
     def _get_crm_action(self, key):
         """Get CRM actions with specific filters"""
         try:
-            action = self.env['ir.actions.actions']._for_xml_id(
-                'health_crm.action_healthcare_opportunities'
-            )
+            # Use dedicated activities calendar action when requested, otherwise default CRM opportunities
+            action_xmlid = 'health_flow.action_health_flow_crm_activity_calendar' if key == 'crm-calendar' else 'health_crm.action_healthcare_opportunities'
+            action = self.env['ir.actions.actions']._for_xml_id(action_xmlid)
             action['target'] = 'current'
 
             # Preserve original context and merge with new values
@@ -117,14 +118,49 @@ class HealthFlowWizard(models.TransientModel):
             if isinstance(original_context, str):
                 original_context = eval(original_context)
 
-            if key == 'crm-initial':
+            if key == 'crm-add-lead':
+                quick_form = self.env.ref('health_crm.view_healthcare_crm_lead_quick_create', raise_if_not_found=False)
+                return {
+                    'type': 'ir.actions.act_window',
+                    'name': _('New Lead'),
+                    'res_model': 'crm.lead',
+                    'view_mode': 'form',
+                    'target': 'new',
+                    'views': [(quick_form.id, 'form')] if quick_form else [(False, 'form')],
+                    'context': dict(original_context, **{
+                        'default_type': 'opportunity',
+                    }),
+                }
+            elif key == 'crm-all':
+                action['name'] = _('All Leads')
+                action['domain'] = [('type', '=', 'opportunity')]
+                action.pop('view_ids', None)
+                action.pop('views', None)
+                action['view_mode'] = 'kanban,list,activity,calendar,pivot,graph'
+                action['views'] = [
+                    (False, 'kanban'),
+                    (False, 'list'),
+                    (False, 'activity'),
+                    (False, 'calendar'),
+                    (False, 'pivot'),
+                    (False, 'graph'),
+                ]
+                action['context'] = dict(original_context, **{'default_type': 'opportunity'})
+            elif key == 'crm-initial':
                 # Filter for initial contact stage
                 action['name'] = _('Initial Contact')
                 action['domain'] = [('type', '=', 'opportunity'), ('stage_id.sequence', '<=', 1)]
                 action.pop('view_ids', None)  # Remove view_ids so view_mode takes precedence
                 action.pop('views', None)  # Remove views as well
-                action['view_mode'] = 'list,form'
-                action['views'] = [(False, 'list'), (False, 'form')]
+                action['view_mode'] = 'list,kanban,activity,calendar,pivot,graph'
+                action['views'] = [
+                    (False, 'list'),
+                    (False, 'kanban'),
+                    (False, 'activity'),
+                    (False, 'calendar'),
+                    (False, 'pivot'),
+                    (False, 'graph'),
+                ]
                 action['context'] = dict(original_context, **{'default_type': 'opportunity'})
             elif key == 'crm-activities':
                 # Show opportunities with their activities in activity view
@@ -140,36 +176,74 @@ class HealthFlowWizard(models.TransientModel):
             elif key == 'crm-calendar':
                 # Open calendar view
                 action['name'] = _('CRM Calendar')
-                action['view_mode'] = 'calendar,list,form'
-                action.pop('view_ids', None)  # Remove view_ids so view_mode takes precedence
-                action.pop('views', None)  # Remove views as well
-                action['context'] = dict(original_context, **{'default_type': 'opportunity'})
+                action['context'] = dict(original_context, **{
+                    'default_res_model': 'crm.lead',
+                })
             elif key == 'crm-continue-followup':
                 # Filter for opportunities pending follow-up
                 action['name'] = _('Continue Follow-up')
-                action['domain'] = [('type', '=', 'opportunity'), ('contact_outcome', '=', 'pending_follow_up')]
+                action['domain'] = [
+                    ('type', '=', 'opportunity'),
+                    '|',
+                    ('contact_outcome', '=', 'pending_follow_up'),
+                    ('health_contact_outcome', '=', 'pending_follow_up')
+                ]
                 action.pop('view_ids', None)  # Remove view_ids so view_mode takes precedence
                 action.pop('views', None)  # Remove views as well
-                action['view_mode'] = 'list,form'
-                action['views'] = [(False, 'list'), (False, 'form')]
+                action['view_mode'] = 'list,kanban,activity,calendar,pivot,graph'
+                action['views'] = [
+                    (False, 'list'),
+                    (False, 'kanban'),
+                    (False, 'activity'),
+                    (False, 'calendar'),
+                    (False, 'pivot'),
+                    (False, 'graph'),
+                ]
+                action['help'] = _('No leads found for this filter.')
                 action['context'] = dict(original_context, **{'default_type': 'opportunity'})
             elif key == 'crm-client-acquired':
                 # Filter for service booked opportunities
                 action['name'] = _('Client Acquired')
-                action['domain'] = [('type', '=', 'opportunity'), ('contact_outcome', '=', 'service_booked')]
+                action['domain'] = [
+                    ('type', '=', 'opportunity'),
+                    '|',
+                    ('contact_outcome', '=', 'service_booked'),
+                    ('health_contact_outcome', '=', 'service_booked')
+                ]
                 action.pop('view_ids', None)  # Remove view_ids so view_mode takes precedence
                 action.pop('views', None)  # Remove views as well
-                action['view_mode'] = 'list,form'
-                action['views'] = [(False, 'list'), (False, 'form')]
+                action['view_mode'] = 'list,kanban,activity,calendar,pivot,graph'
+                action['views'] = [
+                    (False, 'list'),
+                    (False, 'kanban'),
+                    (False, 'activity'),
+                    (False, 'calendar'),
+                    (False, 'pivot'),
+                    (False, 'graph'),
+                ]
+                action['help'] = _('No leads found for this filter.')
                 action['context'] = dict(original_context, **{'default_type': 'opportunity'})
             elif key == 'crm-booking-lost':
                 # Filter for booking lost opportunities
                 action['name'] = _('Booking Lost')
-                action['domain'] = [('type', '=', 'opportunity'), ('contact_outcome', '=', 'booking_lost')]
+                action['domain'] = [
+                    ('type', '=', 'opportunity'),
+                    '|',
+                    ('contact_outcome', '=', 'booking_lost'),
+                    ('health_contact_outcome', '=', 'booking_lost')
+                ]
                 action.pop('view_ids', None)  # Remove view_ids so view_mode takes precedence
                 action.pop('views', None)  # Remove views as well
-                action['view_mode'] = 'list,form'
-                action['views'] = [(False, 'list'), (False, 'form')]
+                action['view_mode'] = 'list,kanban,activity,calendar,pivot,graph'
+                action['views'] = [
+                    (False, 'list'),
+                    (False, 'kanban'),
+                    (False, 'activity'),
+                    (False, 'calendar'),
+                    (False, 'pivot'),
+                    (False, 'graph'),
+                ]
+                action['help'] = _('No leads found for this filter.')
                 action['context'] = dict(original_context, **{'default_type': 'opportunity'})
 
             return action
@@ -358,3 +432,26 @@ class HealthFlowWizard(models.TransientModel):
         if 'name' in fields_list:
             res.setdefault('name', self._default_name())
         return res
+
+    @api.model
+    def create_crm_lead(self, values):
+        """Create a simple CRM lead/opportunity from the modal."""
+        name = (values or {}).get('name')
+        if not name:
+            raise UserError(_('Contact Name is required.'))
+
+        facility_id = values.get('facility_id')
+        facility_name = values.get('facility_name')
+        if not facility_id and facility_name:
+            facility = self.env['health.facility'].search([('name', 'ilike', facility_name)], limit=1)
+            facility_id = facility.id if facility else False
+
+        lead_vals = {
+            'name': name,
+            'type': 'opportunity',
+            'email_from': values.get('email'),
+            'phone': values.get('phone'),
+            'facility_id': facility_id or False,
+        }
+        lead = self.env['crm.lead'].create(lead_vals)
+        return {'id': lead.id}

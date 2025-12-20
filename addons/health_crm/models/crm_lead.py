@@ -405,12 +405,12 @@ class HealthLead(models.Model):
                 if vietnam:
                     vals['country_id'] = vietnam.id
         
-        # Create records and handle relationships
+        # Create records and conditionally handle relationships
         records = super().create(vals_list)
         
-        # Process relationship logic for each record
         for record in records:
-            record._process_contact_relationship()
+            if record._should_process_relationship():
+                record._process_contact_relationship()
         
         return records
     
@@ -418,10 +418,11 @@ class HealthLead(models.Model):
         """Override write to handle relationship changes"""
         result = super().write(vals)
         
-        # If relationship fields were changed, reprocess relationships
-        if any(field in vals for field in ['contact_relationship_type', 'client_name', 'name']):
+        # If relationship fields were changed, reprocess relationships only when conditions are met
+        if any(field in vals for field in ['contact_relationship_type', 'client_name', 'name', 'contact_outcome', 'health_contact_outcome', 'stage_id']):
             for record in self:
-                record._process_contact_relationship()
+                if record._should_process_relationship():
+                    record._process_contact_relationship()
         
         return result
     
@@ -502,6 +503,11 @@ class HealthLead(models.Model):
 
             # Populate appropriate relationship field
             self._populate_relationship_field(representative)
+
+    def _should_process_relationship(self):
+        """Only create clients when the lead is effectively won/client acquired."""
+        self.ensure_one()
+        return self.contact_outcome == 'service_booked' or self.health_contact_outcome == 'service_booked' or (self.stage_id and self.stage_id.is_won)
 
     def _get_or_create_patient(self, patient_name=None):
         """Create or get patient record"""

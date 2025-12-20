@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Remove problematic type column from merge wizard list -->
+    <record id="view_health_flow_merge_opportunity_form" model="ir.ui.view">
+        <field name="name">crm.merge.opportunity.form.health.flow</field>
+        <field name="model">crm.merge.opportunity</field>
+        <field name="inherit_id" ref="crm.merge_opportunity_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='opportunity_ids']/list/field[@name='type']" position="replace"/>
+        </field>
+    </record>
+</odoo>

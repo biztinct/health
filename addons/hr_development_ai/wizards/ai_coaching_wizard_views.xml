@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- AI Coaching Wizard Form View -->
+    <record id="view_ai_coaching_wizard_form" model="ir.ui.view">
+        <field name="name">ai.coaching.wizard.form</field>
+        <field name="model">ai.coaching.wizard</field>
+        <field name="arch" type="xml">
+            <form string="AI Coaching Chat">
+                <sheet>
+                    <div class="oe_title">
+                        <h1>AI Coaching Session</h1>
+                        <h3>
+                            For: <field name="employee_id" readonly="1"/>
+                        </h3>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="topic"/>
+                            <field name="ai_provider" readonly="1"/>
+                        </group>
+                    </group>
+                    <group string="Ask Your Question">
+                        <field name="user_message" nolabel="1" placeholder="What would you like coaching on? Describe your situation, challenge, or question..."/>
+                    </group>
+                    <group string="AI Response" invisible="not ai_response">
+                        <field name="ai_response" nolabel="1"/>
+                    </group>
+                    <group string="Conversation History" invisible="not conversation_history">
+                        <field name="conversation_history" nolabel="1" readonly="1"/>
+                    </group>
+                </sheet>
+                <footer>
+                    <button string="Get AI Coaching" type="object" name="action_get_ai_response" class="btn-primary"/>
+                    <button string="Save as Session" type="object" name="action_save_as_session" class="btn-secondary" invisible="not conversation_history"/>
+                    <button string="Close" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- AI Coaching Wizard Action -->
+    <record id="action_ai_coaching_wizard" model="ir.actions.act_window">
+        <field name="name">AI Coaching Chat</field>
+        <field name="res_model">ai.coaching.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+</odoo>

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Calendar view for CRM activities (mail.activity linked to crm.lead) -->
+    <record id="view_health_flow_mail_activity_calendar" model="ir.ui.view">
+        <field name="name">mail.activity.calendar.health.flow</field>
+        <field name="model">mail.activity</field>
+        <field name="arch" type="xml">
+            <calendar string="CRM Activities"
+                      date_start="date_deadline"
+                      color="activity_type_id"
+                      mode="month"
+                      quick_create="false">
+                <field name="res_name"/>
+                <field name="summary"/>
+                <field name="activity_type_id"/>
+                <field name="user_id"/>
+            </calendar>
+        </field>
+    </record>
+
+    <!-- Search view with Activity Type filter -->
+    <record id="view_health_flow_mail_activity_calendar_search" model="ir.ui.view">
+        <field name="name">mail.activity.search.health.flow.calendar</field>
+        <field name="model">mail.activity</field>
+        <field name="arch" type="xml">
+            <search string="CRM Activities">
+                <field name="activity_type_id"/>
+                <field name="user_id"/>
+                <field name="res_name"/>
+                <filter name="group_by_activity_type"
+                        string="Activity Type"
+                        context="{'group_by': 'activity_type_id'}"/>
+            </search>
+        </field>
+    </record>
+
+    <!-- Action to open CRM activities calendar -->
+    <record id="action_health_flow_crm_activity_calendar" model="ir.actions.act_window">
+        <field name="name">CRM Activities</field>
+        <field name="res_model">mail.activity</field>
+        <field name="view_mode">calendar,list,form</field>
+        <field name="domain">[('res_model', '=', 'crm.lead'), ('res_id', '!=', False)]</field>
+        <field name="context">{'default_res_model': 'crm.lead'}</field>
+        <field name="view_ids" eval="[(5, 0, 0)]"/>
+        <field name="views" eval="[
+            (ref('health_flow.view_health_flow_mail_activity_calendar'), 'calendar'),
+            (False, 'list'),
+            (False, 'form')
+        ]"/>
+        <field name="search_view_id" ref="health_flow.view_health_flow_mail_activity_calendar_search"/>
+    </record>
+
+</odoo>

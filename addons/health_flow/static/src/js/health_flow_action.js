@@ -45,10 +45,13 @@ class HealthFlowAction extends Component {
                 color: '#4299e1', // Blue
                 items: [
                     { key: 'crm-search', label: 'Search', icon: 'fa-search', desc: 'Search opportunities', isSearch: true },
-                    { key: 'crm-initial', label: 'Initial Contact', icon: 'fa-phone', desc: 'Initial contact leads' },
+                    { key: 'crm-add-lead', label: 'Add Lead', icon: 'fa-plus-circle', desc: 'Create a new lead' },
                     { key: 'crm-activities', label: 'Planned Activities', icon: 'fa-tasks', desc: 'Planned activities' },
                     { key: 'crm-calendar', label: 'Calendar', icon: 'fa-calendar', desc: 'CRM calendar view' },
-                    { key: 'crm-continue-followup', label: 'Continue Follow-up', icon: 'fa-redo', desc: 'Leads pending follow-up' },
+                    { key: 'crm-all', label: 'All Leads', icon: 'fa-address-card', desc: 'All leads (kanban first)' },
+                    { key: 'crm-initial', label: 'Initial Contact', icon: 'fa-phone', desc: 'Initial contact leads' },
+                    // Use a Font Awesome v4 compatible icon to ensure it renders
+                    { key: 'crm-continue-followup', label: 'Continue Follow-up', icon: 'fa-refresh', desc: 'Leads pending follow-up' },
                     { key: 'crm-client-acquired', label: 'Client Acquired', icon: 'fa-check-circle', desc: 'Converted clients' },
                     { key: 'crm-booking-lost', label: 'Booking Lost', icon: 'fa-times-circle', desc: 'Lost opportunities' },
                 ],
@@ -375,15 +378,17 @@ class HealthFlowAction extends Component {
 
         try {
             // Open the standard Odoo CRM merge wizard with selected leads
+            const firstId = this.state.selectedLeadIds[0];
             const action = {
-                'type': 'ir.actions.act_window',
-                'name': 'Merge Opportunities',
-                'res_model': 'crm.merge.opportunity',
-                'view_mode': 'form',
-                'target': 'new',
-                'context': {
-                    'default_opportunity_ids': this.state.selectedLeadIds,
-                }
+                type: 'ir.actions.act_window',
+                res_model: 'crm.merge.opportunity',
+                views: [[false, 'form']],
+                target: 'new',
+                context: {
+                    active_model: 'crm.lead',
+                    active_ids: this.state.selectedLeadIds,
+                    active_id: firstId,
+                },
             };
 
             await this.action.doAction(action);
