@@ -80,6 +80,9 @@ class HRKnowledgeNode(models.Model):
 
     tags = fields.Char(string='Tags', help='Comma-separated tags')
 
+    # Dummy field for knowledge graph widget attachment
+    graph_data = fields.Text(string='Graph Data', help='Internal field for graph visualization widget')
+
     active = fields.Boolean(default=True)
 
     @api.depends('edge_from_ids.target_id', 'edge_to_ids.source_id')

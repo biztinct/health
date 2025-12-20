@@ -329,17 +329,15 @@ class HealthFlowAction extends Component {
     /**
      * Handle search result click - toggle selection on click
      */
-    onSearchResultClick(bookingId, event) {
+    async onSearchResultClick(bookingId, event) {
         if (event && event.target && event.target.type === 'checkbox') {
             // Let checkbox handle itself
             return;
         }
-        // Toggle selection
-        const index = this.state.selectedLeadIds.indexOf(bookingId);
-        if (index > -1) {
-            this.state.selectedLeadIds.splice(index, 1);
+        if (this.state.searchType === 'crm') {
+            await this.openCrmLead(bookingId);
         } else {
-            this.state.selectedLeadIds.push(bookingId);
+            await this.openBooking(bookingId);
         }
     }
 
@@ -365,6 +363,30 @@ class HealthFlowAction extends Component {
      */
     isLeadSelected(bookingId) {
         return this.state.selectedLeadIds.includes(bookingId);
+    }
+
+    async openCrmLead(leadId) {
+        const action = await this.orm.call(
+            'health.flow.wizard',
+            'get_crm_lead_form_action',
+            [leadId]
+        );
+        if (action && action.type) {
+            await this.action.doAction(action);
+            this.closeSearchModal();
+        }
+    }
+
+    async openBooking(bookingId) {
+        const action = await this.orm.call(
+            'health.flow.wizard',
+            'get_booking_form_action',
+            [bookingId]
+        );
+        if (action && action.type) {
+            await this.action.doAction(action);
+            this.closeSearchModal();
+        }
     }
 
     /**

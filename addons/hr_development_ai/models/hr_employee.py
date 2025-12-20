@@ -25,6 +25,12 @@ class HREmployee(models.Model):
         store=True
     )
 
+    # Dummy field for skills matrix widget attachment
+    skills_matrix_data = fields.Text(
+        string='Skills Matrix Data',
+        help='Internal field for skills matrix visualization widget'
+    )
+
     # Development
     development_plan_ids = fields.One2many(
         'hr.development.plan',

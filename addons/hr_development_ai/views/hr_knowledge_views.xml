@@ -237,7 +237,7 @@
                     <div class="oe_title">
                         <h1>Knowledge Graph Visualization</h1>
                     </div>
-                    <widget name="knowledge_graph"/>
+                    <field name="graph_data" widget="knowledge_graph" nolabel="1"/>
                 </sheet>
             </form>
         </field>

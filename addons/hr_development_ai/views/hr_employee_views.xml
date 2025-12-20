@@ -9,8 +9,7 @@
         <field name="arch" type="xml">
             <xpath expr="//notebook" position="inside">
                 <page string="Skills Matrix" name="skills_matrix">
-                    <field name="id" invisible="1"/>
-                    <widget name="skills_matrix"/>
+                    <field name="skills_matrix_data" widget="skills_matrix" nolabel="1"/>
                 </page>
             </xpath>
         </field>

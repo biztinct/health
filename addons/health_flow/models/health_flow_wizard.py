@@ -117,6 +117,8 @@ class HealthFlowWizard(models.TransientModel):
             original_context = action.get('context', {})
             if isinstance(original_context, str):
                 original_context = eval(original_context)
+            form_view = self.env.ref('health_crm.view_healthcare_opportunity_form', raise_if_not_found=False)
+            form_view_id = form_view.id if form_view else False
 
             if key == 'crm-add-lead':
                 quick_form = self.env.ref('health_crm.view_healthcare_crm_lead_quick_create', raise_if_not_found=False)
@@ -136,7 +138,7 @@ class HealthFlowWizard(models.TransientModel):
                 action['domain'] = [('type', '=', 'opportunity')]
                 action.pop('view_ids', None)
                 action.pop('views', None)
-                action['view_mode'] = 'kanban,list,activity,calendar,pivot,graph'
+                action['view_mode'] = 'kanban,list,activity,calendar,pivot,graph,form'
                 action['views'] = [
                     (False, 'kanban'),
                     (False, 'list'),
@@ -144,6 +146,7 @@ class HealthFlowWizard(models.TransientModel):
                     (False, 'calendar'),
                     (False, 'pivot'),
                     (False, 'graph'),
+                    (form_view_id, 'form'),
                 ]
                 action['context'] = dict(original_context, **{'default_type': 'opportunity'})
             elif key == 'crm-initial':
@@ -152,7 +155,7 @@ class HealthFlowWizard(models.TransientModel):
                 action['domain'] = [('type', '=', 'opportunity'), ('stage_id.sequence', '<=', 1)]
                 action.pop('view_ids', None)  # Remove view_ids so view_mode takes precedence
                 action.pop('views', None)  # Remove views as well
-                action['view_mode'] = 'list,kanban,activity,calendar,pivot,graph'
+                action['view_mode'] = 'list,kanban,activity,calendar,pivot,graph,form'
                 action['views'] = [
                     (False, 'list'),
                     (False, 'kanban'),
@@ -160,6 +163,7 @@ class HealthFlowWizard(models.TransientModel):
                     (False, 'calendar'),
                     (False, 'pivot'),
                     (False, 'graph'),
+                    (form_view_id, 'form'),
                 ]
                 action['context'] = dict(original_context, **{'default_type': 'opportunity'})
             elif key == 'crm-activities':
@@ -184,13 +188,14 @@ class HealthFlowWizard(models.TransientModel):
                 action['name'] = _('Continue Follow-up')
                 action['domain'] = [
                     ('type', '=', 'opportunity'),
-                    '|',
+                    '|', '|',
                     ('contact_outcome', '=', 'pending_follow_up'),
-                    ('health_contact_outcome', '=', 'pending_follow_up')
+                    ('health_contact_outcome', '=', 'pending_follow_up'),
+                    ('stage_id.name', 'ilike', 'Continue Follow-up'),
                 ]
                 action.pop('view_ids', None)  # Remove view_ids so view_mode takes precedence
                 action.pop('views', None)  # Remove views as well
-                action['view_mode'] = 'list,kanban,activity,calendar,pivot,graph'
+                action['view_mode'] = 'list,kanban,activity,calendar,pivot,graph,form'
                 action['views'] = [
                     (False, 'list'),
                     (False, 'kanban'),
@@ -198,6 +203,7 @@ class HealthFlowWizard(models.TransientModel):
                     (False, 'calendar'),
                     (False, 'pivot'),
                     (False, 'graph'),
+                    (form_view_id, 'form'),
                 ]
                 action['help'] = _('No leads found for this filter.')
                 action['context'] = dict(original_context, **{'default_type': 'opportunity'})
@@ -206,13 +212,15 @@ class HealthFlowWizard(models.TransientModel):
                 action['name'] = _('Client Acquired')
                 action['domain'] = [
                     ('type', '=', 'opportunity'),
-                    '|',
+                    '|', '|', '|',
                     ('contact_outcome', '=', 'service_booked'),
-                    ('health_contact_outcome', '=', 'service_booked')
+                    ('health_contact_outcome', '=', 'service_booked'),
+                    ('stage_id.is_won', '=', True),
+                    ('stage_id.name', 'ilike', 'Client Acquired'),
                 ]
                 action.pop('view_ids', None)  # Remove view_ids so view_mode takes precedence
                 action.pop('views', None)  # Remove views as well
-                action['view_mode'] = 'list,kanban,activity,calendar,pivot,graph'
+                action['view_mode'] = 'list,kanban,activity,calendar,pivot,graph,form'
                 action['views'] = [
                     (False, 'list'),
                     (False, 'kanban'),
@@ -220,6 +228,7 @@ class HealthFlowWizard(models.TransientModel):
                     (False, 'calendar'),
                     (False, 'pivot'),
                     (False, 'graph'),
+                    (form_view_id, 'form'),
                 ]
                 action['help'] = _('No leads found for this filter.')
                 action['context'] = dict(original_context, **{'default_type': 'opportunity'})
@@ -228,13 +237,14 @@ class HealthFlowWizard(models.TransientModel):
                 action['name'] = _('Booking Lost')
                 action['domain'] = [
                     ('type', '=', 'opportunity'),
-                    '|',
+                    '|', '|',
                     ('contact_outcome', '=', 'booking_lost'),
-                    ('health_contact_outcome', '=', 'booking_lost')
+                    ('health_contact_outcome', '=', 'booking_lost'),
+                    ('stage_id.name', 'in', ['Booking Lost', 'Opportunity Lost']),
                 ]
                 action.pop('view_ids', None)  # Remove view_ids so view_mode takes precedence
                 action.pop('views', None)  # Remove views as well
-                action['view_mode'] = 'list,kanban,activity,calendar,pivot,graph'
+                action['view_mode'] = 'list,kanban,activity,calendar,pivot,graph,form'
                 action['views'] = [
                     (False, 'list'),
                     (False, 'kanban'),
@@ -242,6 +252,7 @@ class HealthFlowWizard(models.TransientModel):
                     (False, 'calendar'),
                     (False, 'pivot'),
                     (False, 'graph'),
+                    (form_view_id, 'form'),
                 ]
                 action['help'] = _('No leads found for this filter.')
                 action['context'] = dict(original_context, **{'default_type': 'opportunity'})
@@ -419,6 +430,34 @@ class HealthFlowWizard(models.TransientModel):
     # ==========================================
     # Defaults / Helpers
     # ==========================================
+
+    @api.model
+    def get_crm_lead_form_action(self, lead_id):
+        """Open CRM lead form view (healthcare opportunity form)."""
+        try:
+            view = self.env.ref('health_crm.view_healthcare_opportunity_form', raise_if_not_found=False)
+            action = {
+                'type': 'ir.actions.act_window',
+                'name': _('CRM Contact'),
+                'res_model': 'crm.lead',
+                'res_id': lead_id,
+                'view_mode': 'form',
+                'target': 'current',
+                'context': {'default_type': 'opportunity'},
+            }
+            action['views'] = [(view.id, 'form')] if view else [(False, 'form')]
+            return action
+        except Exception as e:
+            return {
+                'type': 'ir.actions.client',
+                'tag': 'display_notification',
+                'params': {
+                    'title': _('Error'),
+                    'message': _('Failed to open lead'),
+                    'type': 'warning',
+                    'sticky': False,
+                }
+            }
 
     @api.model
     def _default_name(self):

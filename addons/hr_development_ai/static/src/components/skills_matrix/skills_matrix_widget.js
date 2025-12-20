@@ -10,6 +10,7 @@ export class SkillsMatrixWidget extends Component {
     static props = {
         ...standardFieldProps,
     };
+    static supportedTypes = ["text"];
 
     setup() {
         this.orm = useService("orm");

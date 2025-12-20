@@ -3,10 +3,14 @@
 import { Component, useState, onWillStart, onMounted, onWillUnmount, useRef } from "@odoo/owl";
 import { registry } from "@web/core/registry";
 import { useService } from "@web/core/utils/hooks";
+import { standardFieldProps } from "@web/views/fields/standard_field_props";
 
 export class KnowledgeGraphWidget extends Component {
     static template = "hr_development_ai.KnowledgeGraphWidget";
-    static props = {};
+    static props = {
+        ...standardFieldProps,
+    };
+    static supportedTypes = ["text"];
 
     setup() {
         this.orm = useService("orm");
@@ -362,4 +366,4 @@ export class KnowledgeGraphWidget extends Component {
     }
 }
 
-registry.category("view_widgets").add("knowledge_graph", KnowledgeGraphWidget);
+registry.category("fields").add("knowledge_graph", KnowledgeGraphWidget);

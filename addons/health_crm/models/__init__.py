@@ -1,4 +1,5 @@
 from . import crm_lead
+from . import crm_stage
 from . import res_partner
 from . import res_partner_relation
 from . import health_client_relation

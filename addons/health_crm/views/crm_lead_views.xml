@@ -349,7 +349,7 @@
         <field name="domain">[('type', '=', 'opportunity')]</field>
         <field name="context">{
             'default_type': 'opportunity',
-            'form_view_ref': 'health_crm.view_healthcare_crm_lead_quick_create',
+            'form_view_ref': 'health_crm.view_healthcare_opportunity_form',
         }</field>
         <field name="view_ids" eval="[(5, 0, 0),
             (0, 0, {'view_mode': 'kanban'}),
