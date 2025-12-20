@@ -78,7 +78,6 @@
 
 body {
     font-family: var(--health-font-family);
-    font-size: var(--health-font-size-base);
     line-height: 1.6;
     color: var(--health-gray-700);
     background-color: var(--health-gray-50);

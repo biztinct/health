@@ -6,7 +6,7 @@ body {
     font-family: var(--vu-font-family-base);
     background: var(--vu-surface-app);
     color: var(--vu-text-primary);
-    font-size: var(--vu-font-size-md);
+    font-size: var(--vu-font-size-sm);
     line-height: var(--vu-line-height-normal);
 }
 
@@ -122,14 +122,6 @@ a {
     border: 1px solid var(--vu-border-soft);
     border-radius: var(--vu-radius-md);
     box-shadow: var(--vu-shadow-lg);
-}
-
-.o_form_view .o_group.row:not(.o_inner_group) > .o_inner_group:not(:has(.o_wrap_field:not(.o_invisible_modifier), .o_row:not(.o_invisible_modifier), .o_col:not(.o_invisible_modifier))) {
-    display: none;
-}
-
-.o_form_view .o_group.row:not(.o_inner_group):not(:has(.o_inner_group:has(.o_wrap_field:not(.o_invisible_modifier), .o_row:not(.o_invisible_modifier), .o_col:not(.o_invisible_modifier)))) {
-    display: none;
 }
 
 .oe_chatter,
