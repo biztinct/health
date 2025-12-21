@@ -1,13 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<odoo noupdate="1">
-
-    <!-- Ensure administrators inherit healthcare owner access via base group -->
+<odoo>
     <record id="base.group_system" model="res.groups">
-        <field name="implied_ids" eval="[(4, ref('group_healthcare_owner'))]"/>
+        <field name="implied_ids" eval="[(3, ref('health_base.group_healthcare_owner'))]"/>
     </record>
-    
-    <!-- Give base users healthcare base access for debugging -->
+
     <record id="base.group_user" model="res.groups">
-        <field name="implied_ids" eval="[(4, ref('group_healthcare_base'))]"/>
+        <field name="implied_ids" eval="[(3, ref('health_base.group_healthcare_base'))]"/>
     </record>
 </odoo>

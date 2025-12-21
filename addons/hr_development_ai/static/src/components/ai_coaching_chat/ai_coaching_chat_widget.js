@@ -1,16 +1,15 @@
 /** @odoo-module **/
 
 import { Component, useState, onWillStart, useRef, onMounted } from "@odoo/owl";
-import { registry } from "@web/core/registry";
 import { useService } from "@web/core/utils/hooks";
-import { standardFieldProps } from "@web/views/fields/standard_field_props";
 
 export class AiCoachingChatWidget extends Component {
     static template = "hr_development_ai.AiCoachingChatWidget";
     static props = {
-        ...standardFieldProps,
+        record: { type: Object, optional: true },
+        fieldName: { type: String, optional: true },
+        orm: { type: Object, optional: true },
     };
-    static supportedTypes = ["text"];
 
     setup() {
         this.orm = useService("orm");
@@ -22,7 +21,6 @@ export class AiCoachingChatWidget extends Component {
             inputMessage: "",
             isLoading: false,
             isExpanded: false,
-            recordId: null,
         });
 
         onWillStart(async () => {
@@ -35,31 +33,25 @@ export class AiCoachingChatWidget extends Component {
     }
 
     /**
-     * Get record from props (field widgets automatically receive record)
+     * Get the field value (transcript)
      */
-    get record() {
-        return this.props.record;
+    get value() {
+        const fieldName = this.props.fieldName || 'ai_transcript';
+        return this.props.record?.data?.[fieldName] || "";
     }
 
     /**
      * Get record ID
      */
     get recordId() {
-        const record = this.record;
-        if (!record) return null;
-        return record.resId || record.data?.id || null;
+        return this.props.record?.resId || this.props.record?.data?.id || null;
     }
 
     /**
      * Load chat history from ai_transcript field
      */
     async loadChatHistory() {
-        const record = this.record;
-        if (!record || !record.data) {
-            return;
-        }
-
-        const transcript = record.data.ai_transcript;
+        const transcript = this.value;
         if (!transcript) {
             return;
         }
@@ -144,22 +136,21 @@ export class AiCoachingChatWidget extends Component {
      * Save transcript back to record
      */
     async saveTranscript() {
-        const recordId = this.recordId;
-        if (!recordId) {
-            console.warn('Cannot save transcript: No record ID');
+        if (!this.props.record) {
+            console.warn('Cannot save transcript: No record');
             return;
         }
 
+        const fieldName = this.props.fieldName || 'ai_transcript';
         const transcript = JSON.stringify({
             messages: this.state.messages,
             updated_at: new Date().toISOString()
         });
 
-        await this.orm.write(
-            'hr.coaching.session',
-            [recordId],
-            { ai_transcript: transcript }
-        );
+        // Update the field value using the record's update method
+        await this.props.record.update({
+            [fieldName]: transcript
+        });
     }
 
     /**
@@ -186,9 +177,8 @@ export class AiCoachingChatWidget extends Component {
             );
 
             // Reload the record to show updated summary
-            const record = this.record;
-            if (record && record.load) {
-                await record.load();
+            if (this.props.record?.load) {
+                await this.props.record.load();
             }
         } catch (error) {
             console.error('Error generating summary:', error);
@@ -248,4 +238,4 @@ export class AiCoachingChatWidget extends Component {
     }
 }
 
-registry.category("fields").add("ai_coaching_chat", AiCoachingChatWidget);
+// Widget is registered through ai_coaching_form_widget.js

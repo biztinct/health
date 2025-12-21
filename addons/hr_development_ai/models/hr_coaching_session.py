@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 
-from odoo import models, fields, api
+import json
+from odoo import models, fields, api, _
+from odoo.exceptions import UserError
 
 
 class HRCoachingSession(models.Model):
@@ -146,20 +148,35 @@ class HRCoachingSession(models.Model):
             from ..ai_providers.provider_factory import get_ai_provider
             ai_provider = get_ai_provider(self.env)
 
-            # Build conversation context
-            context = {
-                'session_type': dict(self._fields['session_type'].selection).get(self.session_type),
-                'topic': dict(self._fields['topic'].selection).get(self.topic),
-                'employee': self.employee_id.name,
-                'coach': self.coach_id.name if self.coach_id else 'AI Coach',
-            }
+            # Build coaching prompt with context
+            session_type = dict(self._fields['session_type'].selection).get(self.session_type)
+            topic = dict(self._fields['topic'].selection).get(self.topic)
 
-            # Get AI response
-            response = ai_provider.get_coaching_response(message, context)
+            prompt = f"""You are an AI coaching assistant helping with a {session_type} coaching session.
+Session Topic: {topic}
+Employee: {self.employee_id.name}
+Coach: {self.coach_id.name if self.coach_id else 'AI Coach'}
+
+The employee asks: {message}
+
+Provide a supportive, professional coaching response that:
+- Addresses their question or concern
+- Offers constructive guidance
+- Encourages growth and development
+- Is specific and actionable
+
+Response:"""
+
+            # Get AI response using generate_text
+            response_text = ai_provider.generate_text(
+                prompt=prompt,
+                max_tokens=500,
+                temperature=0.7
+            )
 
             return {
-                'response': response.get('message', 'I apologize, I could not generate a response at this time.'),
-                'suggestions': response.get('suggestions', [])
+                'response': response_text if response_text else 'I apologize, I could not generate a response at this time.',
+                'suggestions': []
             }
 
         except ImportError:
@@ -243,3 +260,85 @@ class HRCoachingSession(models.Model):
                 'message': f'Failed to generate summary: {str(e)}',
                 'success': False
             }
+
+    def action_open_ai_chat(self):
+        """Open AI Chat dialog"""
+        self.ensure_one()
+
+        return {
+            'type': 'ir.actions.act_window',
+            'name': 'AI Coaching Chat',
+            'res_model': 'hr.coaching.session',
+            'res_id': self.id,
+            'view_mode': 'form',
+            'view_id': self.env.ref('hr_development_ai.view_coaching_session_ai_chat_dialog').id,
+            'target': 'new',
+            'context': {'dialog_size': 'large'}
+        }
+
+    def action_send_ai_message_from_dialog(self):
+        """Send message to AI from dialog and append response to transcript
+
+        This method is called from the dialog's "Send to AI" button.
+        It reads the current ai_transcript, sends it to AI, and appends the response.
+        """
+        self.ensure_one()
+
+        if not self.ai_transcript or not self.ai_transcript.strip():
+            raise UserError(_('Please type a message before sending to AI.'))
+
+        try:
+            # Parse existing transcript as JSON if possible
+            try:
+                transcript_data = json.loads(self.ai_transcript)
+                messages = transcript_data.get('messages', [])
+            except (json.JSONDecodeError, ValueError):
+                # If not JSON, treat as plain text - create first user message
+                messages = [{
+                    'role': 'user',
+                    'content': self.ai_transcript.strip(),
+                    'timestamp': fields.Datetime.now().isoformat()
+                }]
+
+            # Get the last message to send to AI
+            if messages:
+                last_message = messages[-1]['content']
+            else:
+                last_message = self.ai_transcript.strip()
+
+            # Send to AI
+            result = self.action_send_ai_message(last_message)
+
+            # Append AI response to messages
+            messages.append({
+                'role': 'assistant',
+                'content': result.get('response', 'No response received'),
+                'timestamp': fields.Datetime.now().isoformat()
+            })
+
+            # Save updated transcript as JSON
+            self.ai_transcript = json.dumps({
+                'messages': messages,
+                'updated_at': fields.Datetime.now().isoformat()
+            }, indent=2)
+
+            return {
+                'type': 'ir.actions.client',
+                'tag': 'display_notification',
+                'params': {
+                    'title': _('AI Response Received'),
+                    'message': _('The AI coach has responded to your message.'),
+                    'type': 'success',
+                    'sticky': False,
+                }
+            }
+
+        except Exception as e:
+            import logging
+            _logger = logging.getLogger(__name__)
+            _logger.error(f"AI message from dialog failed: {e}")
+
+            raise UserError(_(
+                'Failed to send message to AI coach. Please try again.\n\n'
+                'Error: %s'
+            ) % str(e))

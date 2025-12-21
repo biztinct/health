@@ -12,6 +12,8 @@
     <record id="group_voip_user" model="res.groups">
         <field name="name">VoIP: User</field>
         <field name="category_id" ref="module_category_voip24h"/>
+        <field name="privilege_id" ref="health_base.res_groups_privilege_healthcare"/>
+        <field name="implied_ids" eval="[(4, ref('health_base.group_healthcare_base'))]"/>
         <field name="comment">Basic access to view call logs and make calls</field>
     </record>
 
@@ -19,6 +21,7 @@
     <record id="group_voip_manager" model="res.groups">
         <field name="name">VoIP: Manager</field>
         <field name="category_id" ref="module_category_voip24h"/>
+        <field name="privilege_id" ref="health_base.res_groups_privilege_healthcare"/>
         <field name="implied_ids" eval="[(4, ref('group_voip_user'))]"/>
         <field name="comment">Full access to VoIP configuration and all call logs</field>
     </record>

@@ -46,7 +46,22 @@
                             <field name="discussion_notes" placeholder="Notes from the coaching conversation..."/>
                         </page>
                         <page string="AI Coaching Chat" name="ai_chat" invisible="session_type not in ['ai', 'hybrid']">
-                            <field name="ai_transcript" widget="ai_coaching_chat" nolabel="1"/>
+                            <group>
+                                <group>
+                                    <button name="action_open_ai_chat"
+                                            type="object"
+                                            string="Open AI Chat"
+                                            class="btn-primary"
+                                            icon="fa-comments"/>
+                                </group>
+                                <group>
+                                    <field name="ai_transcript"
+                                           widget="text"
+                                           readonly="1"
+                                           string="Chat Transcript"
+                                           placeholder="Chat conversation will be saved here..."/>
+                                </group>
+                            </group>
                         </page>
                         <page string="Action Items" name="actions">
                             <field name="action_items" placeholder="Follow-up actions agreed upon..."/>
@@ -246,6 +261,62 @@
             <p>
                 AI-generated coaching nudges will appear here based on employee performance and development needs.
             </p>
+        </field>
+    </record>
+
+    <!-- AI Chat Dialog Form View -->
+    <record id="view_coaching_session_ai_chat_dialog" model="ir.ui.view">
+        <field name="name">hr.coaching.session.ai.chat.dialog</field>
+        <field name="model">hr.coaching.session</field>
+        <field name="priority">1000</field>
+        <field name="mode">primary</field>
+        <field name="arch" type="xml">
+            <form string="AI Coaching Chat">
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <i class="fa fa-robot me-2" style="color: #7c7bad;"/>
+                            AI Coaching Chat
+                        </h1>
+                        <p class="text-muted">
+                            Session: <field name="name" readonly="1" nolabel="1" class="fw-bold"/>
+                        </p>
+                    </div>
+
+                    <div class="alert alert-info mb-3" role="alert">
+                        <i class="fa fa-info-circle me-2"/>
+                        <strong>How to use:</strong>
+                        <ul class="mb-0 mt-2">
+                            <li>Type your messages or questions in the chat area below</li>
+                            <li>Click <strong>Send to AI</strong> to get coaching responses</li>
+                            <li>Click <strong>Generate Summary</strong> to create a session summary from the conversation</li>
+                            <li>All messages are automatically saved to this coaching session</li>
+                        </ul>
+                    </div>
+
+                    <group>
+                        <field name="ai_transcript"
+                               widget="ace"
+                               options="{'mode': 'text'}"
+                               placeholder="Type your message here...&#10;&#10;Example:&#10;User: What are my key development areas?&#10;AI Coach: Based on your recent performance..."/>
+                    </group>
+                </sheet>
+                <footer>
+                    <button string="Send to AI"
+                            name="action_send_ai_message_from_dialog"
+                            type="object"
+                            class="btn-primary"
+                            icon="fa-paper-plane"/>
+                    <button string="Generate Summary"
+                            name="action_generate_ai_summary"
+                            type="object"
+                            class="btn-success"
+                            icon="fa-magic"/>
+                    <button string="Close"
+                            special="cancel"
+                            class="btn-secondary"/>
+                </footer>
+            </form>
         </field>
     </record>
 

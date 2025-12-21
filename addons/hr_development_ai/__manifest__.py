@@ -101,19 +101,21 @@ Inspired by world-class platforms: SAP SuccessFactors, Workday Skills Cloud, Bet
             'hr_development_ai/static/src/css/hr_development.css',
 
             # AI Coaching Chat Widget
-            'hr_development_ai/static/src/components/ai_coaching_chat/*.js',
-            'hr_development_ai/static/src/components/ai_coaching_chat/*.xml',
-            'hr_development_ai/static/src/components/ai_coaching_chat/*.css',
+            'hr_development_ai/static/src/components/ai_coaching_chat/ai_coaching_chat_widget.js',
+            'hr_development_ai/static/src/components/ai_coaching_chat/ai_coaching_chat_widget.xml',
+            'hr_development_ai/static/src/components/ai_coaching_chat/ai_coaching_chat_widget.css',
+            'hr_development_ai/static/src/components/ai_coaching_chat/ai_coaching_form_widget.js',
+            'hr_development_ai/static/src/components/ai_coaching_chat/ai_coaching_form_widget.xml',
 
             # Skills Matrix Widget
-            'hr_development_ai/static/src/components/skills_matrix/*.js',
-            'hr_development_ai/static/src/components/skills_matrix/*.xml',
-            'hr_development_ai/static/src/components/skills_matrix/*.css',
+            'hr_development_ai/static/src/components/skills_matrix/skills_matrix_widget.js',
+            'hr_development_ai/static/src/components/skills_matrix/skills_matrix_widget.xml',
+            'hr_development_ai/static/src/components/skills_matrix/skills_matrix_widget.css',
 
             # Knowledge Graph Widget
-            'hr_development_ai/static/src/components/knowledge_graph/*.js',
-            'hr_development_ai/static/src/components/knowledge_graph/*.xml',
-            'hr_development_ai/static/src/components/knowledge_graph/*.css',
+            'hr_development_ai/static/src/components/knowledge_graph/knowledge_graph_widget.js',
+            'hr_development_ai/static/src/components/knowledge_graph/knowledge_graph_widget.xml',
+            'hr_development_ai/static/src/components/knowledge_graph/knowledge_graph_widget.css',
         ],
     },
     'installable': True,
