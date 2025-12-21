@@ -498,8 +498,12 @@ class HealthFlowWizard(models.TransientModel):
 
     @api.model
     def get_crm_lead_form_action(self, lead_id):
-        """Open CRM lead form view (healthcare opportunity form)."""
+        """Open CRM lead hub view."""
         try:
+            lead = self.env['crm.lead'].browse(lead_id).exists()
+            if lead and hasattr(lead, 'action_open_lead_hub'):
+                return lead.action_open_lead_hub()
+
             view = self.env.ref('health_crm.view_healthcare_opportunity_form', raise_if_not_found=False)
             action = {
                 'type': 'ir.actions.act_window',

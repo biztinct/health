@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="health_landing.LeadHubActionTemplate">
+        <div class="patient_hub_action_container">
+            <LeadHubSpokeWidget
+                leadId="leadId"
+                leadName="leadName"
+                onBack="() => this.onBack()"
+            />
+        </div>
+    </t>
+
+</templates>

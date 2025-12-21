@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_healthcare_lead_kanban_hub" model="ir.ui.view">
+        <field name="name">crm.lead.kanban.hub</field>
+        <field name="model">crm.lead</field>
+        <field name="inherit_id" ref="health_crm.view_healthcare_lead_kanban"/>
+        <field name="arch" type="xml">
+            <xpath expr="//kanban" position="attributes">
+                <attribute name="action">action_open_lead_hub</attribute>
+                <attribute name="type">object</attribute>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_healthcare_lead_list_hub" model="ir.ui.view">
+        <field name="name">crm.lead.list.hub</field>
+        <field name="model">crm.lead</field>
+        <field name="inherit_id" ref="health_crm.view_healthcare_lead_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//list" position="attributes">
+                <attribute name="action">action_open_lead_hub</attribute>
+                <attribute name="type">object</attribute>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_healthcare_opportunity_list_hub" model="ir.ui.view">
+        <field name="name">crm.lead.list.opportunity.hub</field>
+        <field name="model">crm.lead</field>
+        <field name="inherit_id" ref="health_crm.view_healthcare_opportunity_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//list" position="attributes">
+                <attribute name="action">action_open_lead_hub</attribute>
+                <attribute name="type">object</attribute>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

@@ -367,4 +367,188 @@
         </field>
     </record>
 
+    <!-- Lead Client Info Modal View -->
+    <record id="view_lead_client_info_modal" model="ir.ui.view">
+        <field name="name">crm.lead.client.info.modal</field>
+        <field name="model">crm.lead</field>
+        <field name="arch" type="xml">
+            <form string="Lead Information">
+                <sheet>
+                    <h1>
+                        <field name="name" readonly="1" nolabel="1"/> - Client Info
+                    </h1>
+
+                    <group>
+                        <group string="Lead Details">
+                            <field name="contact_name"/>
+                            <field name="phone"/>
+                            <field name="email_from"/>
+                            <field name="stage_id"/>
+                            <field name="user_id"/>
+                            <field name="team_id"/>
+                        </group>
+
+                        <group string="Status &amp; Follow-up">
+                            <field name="contact_outcome"/>
+                            <field name="health_contact_outcome"/>
+                            <field name="service_interest"/>
+                            <field name="lead_followup_required"/>
+                            <field name="next_follow_up_date"/>
+                        </group>
+                    </group>
+
+                    <group>
+                        <group string="Facility &amp; Reason">
+                            <field name="facility_id"/>
+                            <field name="contact_reason_id"/>
+                            <field name="lead_reason_id"/>
+                        </group>
+                        <group string="Booking Status">
+                            <field name="booking_status"/>
+                            <field name="booking_lost_reason"/>
+                        </group>
+                    </group>
+                </sheet>
+                <footer>
+                    <button string="Save" class="btn-primary" special="save"/>
+                    <button string="Discard" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- Lead Relations Modal View -->
+    <record id="view_lead_relations_modal" model="ir.ui.view">
+        <field name="name">crm.lead.relations.modal</field>
+        <field name="model">crm.lead</field>
+        <field name="arch" type="xml">
+            <form string="Lead Relationships">
+                <sheet>
+                    <h1>
+                        <field name="name" readonly="1" nolabel="1"/> - Relationships
+                    </h1>
+
+                    <group>
+                        <group string="Care Team">
+                            <field name="primary_caregiver_id"/>
+                            <field name="secondary_caregiver_id"/>
+                            <field name="primary_payer_id"/>
+                        </group>
+                        <group string="Other Relations">
+                            <field name="referrer_id"/>
+                            <field name="emergency_contact_id"/>
+                            <field name="client_representative_id"/>
+                            <field name="contact_relationship_type"/>
+                        </group>
+                    </group>
+                </sheet>
+                <footer>
+                    <button string="Save" class="btn-primary" special="save"/>
+                    <button string="Discard" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- Lead Map Modal View -->
+    <record id="view_lead_map_modal" model="ir.ui.view">
+        <field name="name">crm.lead.map.modal</field>
+        <field name="model">crm.lead</field>
+        <field name="arch" type="xml">
+            <form string="Lead Location">
+                <sheet>
+                    <h1>
+                        <field name="name" readonly="1" nolabel="1"/> - Location
+                    </h1>
+
+                    <group>
+                        <group string="Vietnamese Address">
+                            <field name="province_code"/>
+                            <field name="house_number"/>
+                            <field name="sub_alley_number"/>
+                            <field name="alley_number"/>
+                            <field name="ward_commune"/>
+                            <field name="named_area"/>
+                            <field name="apartment_number"/>
+                            <field name="building_name"/>
+                            <field name="full_vietnamese_address"/>
+                        </group>
+                        <group string="Standard Address">
+                            <field name="street"/>
+                            <field name="street2"/>
+                            <field name="city"/>
+                            <field name="state_id"/>
+                            <field name="zip"/>
+                            <field name="country_id"/>
+                        </group>
+                    </group>
+                </sheet>
+                <footer>
+                    <button string="Save" class="btn-primary" special="save"/>
+                    <button string="Discard" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- Lead Source Modal View -->
+    <record id="view_lead_source_modal" model="ir.ui.view">
+        <field name="name">crm.lead.source.modal</field>
+        <field name="model">crm.lead</field>
+        <field name="arch" type="xml">
+            <form string="Lead Source">
+                <sheet>
+                    <h1>
+                        <field name="name" readonly="1" nolabel="1"/> - Source
+                    </h1>
+
+                    <group>
+                        <group string="Marketing Source">
+                            <field name="source_id"/>
+                            <field name="medium_id"/>
+                            <field name="campaign_id"/>
+                        </group>
+                        <group string="Health Source">
+                            <field name="contact_source"/>
+                            <field name="healthcare_lead_source"/>
+                            <field name="vietnamese_channel"/>
+                            <field name="contact_reason_id"/>
+                            <field name="lead_reason_id"/>
+                        </group>
+                    </group>
+                </sheet>
+                <footer>
+                    <button string="Save" class="btn-primary" special="save"/>
+                    <button string="Discard" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- Lead Internal Notes Modal View -->
+    <record id="view_lead_internal_notes_modal" model="ir.ui.view">
+        <field name="name">crm.lead.internal.notes.modal</field>
+        <field name="model">crm.lead</field>
+        <field name="arch" type="xml">
+            <form string="Internal Notes">
+                <sheet>
+                    <h1>
+                        <field name="name" readonly="1" nolabel="1"/> - Internal Notes
+                    </h1>
+
+                    <group>
+                        <field name="description" placeholder="Notes"/>
+                        <field name="service_requirements"/>
+                        <field name="follow_up_notes"/>
+                        <field name="reason_if_rejected"/>
+                    </group>
+                </sheet>
+                <footer>
+                    <button string="Save" class="btn-primary" special="save"/>
+                    <button string="Discard" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
 </odoo>
