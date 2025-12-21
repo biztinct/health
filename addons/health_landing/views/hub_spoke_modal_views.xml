@@ -51,7 +51,7 @@
             <form string="Client Information">
                 <sheet>
                     <h1>
-                        <field name="name" nolabel="1"/> - Client Info
+                        <field name="name" readonly="1" nolabel="1"/> - Client Info
                     </h1>
                     <h3>
                         <field name="patient_code_display"/>
@@ -108,7 +108,7 @@
             <form string='Client Relationships'>
                 <sheet>
                     <h1>
-                        <field name="name" nolabel="1"/> - Relationships
+                        <field name="name" readonly="1" nolabel="1"/> - Relationships
                     </h1>
 
                     <group>
@@ -137,7 +137,7 @@
             <form string='Client Location'>
                 <sheet>
                     <h1>
-                        <field name="name" nolabel="1"/> - Location
+                        <field name="name" readonly="1" nolabel="1"/> - Location
                     </h1>
 
                     <group>
@@ -178,7 +178,7 @@
             <form string="Service Packages">
                 <sheet>
                     <h1>
-                        <field name="name" nolabel="1"/> - Service Packages
+                        <field name="name" readonly="1" nolabel="1"/> - Service Packages
                     </h1>
 
                     <!-- Active Service Packages with Gauge Widgets -->
@@ -244,7 +244,7 @@
                 </header>
                 <sheet>
                     <h1>
-                        <field name="name" nolabel="1"/> - Bookings
+                        <field name="name" readonly="1" nolabel="1"/> - Bookings
                     </h1>
 
                     <!-- Upcoming Bookings -->
@@ -332,7 +332,7 @@
             <form string='Client Financials'>
                 <sheet>
                     <h1>
-                        <field name="name" nolabel="1"/> - Financials
+                        <field name="name" readonly="1" nolabel="1"/> - Financials
                     </h1>
 
                     <group>
