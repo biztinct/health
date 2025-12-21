@@ -519,15 +519,11 @@
                                 </span>
                             </div>
 
-                            <div class="o_patient_card_info">
-                                <div class="o_patient_code"><i class="fa fa-id-card-o"/> <field name="patient_code"/></div>
-                                <div><i class="fa fa-venus-mars"/> <field name="age_display"/> • <field name="gender"/></div>
-                                <div><i class="fa fa-phone"/> <field name="phone"/></div>
-
-                                <div t-if="record.next_visit_date.raw_value" class="o_patient_next_visit">
-                                    <i class="fa fa-calendar"/> <field name="next_visit_date"/>
+                                <div class="o_patient_card_info">
+                                    <div class="o_patient_code"><i class="fa fa-id-card-o"/> <field name="patient_code"/></div>
+                                    <div><i class="fa fa-venus-mars"/> <field name="age_display"/> • <field name="gender"/></div>
+                                    <div><i class="fa fa-phone"/> <field name="phone"/></div>
                                 </div>
-                            </div>
 
                             <div class="o_patient_card_footer">
                                 <button name="action_create_appointment" type="object" class="btn btn-primary btn-sm">

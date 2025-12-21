@@ -51,49 +51,50 @@
             <form string="Client Information">
                 <sheet>
                     <h1>
-                        <field name="name" readonly="1" nolabel="1"/> - Client Info
+                        <field name="name" nolabel="1"/> - Client Info
                     </h1>
                     <h3>
-                        <field name="patient_code_display" readonly="1"/>
+                        <field name="patient_code_display"/>
                     </h3>
 
                     <group>
                         <group string="Personal Details">
-                            <field name="first_name" readonly="1"/>
-                            <field name="last_name" readonly="1"/>
-                            <field name="middle_name" readonly="1"/>
-                            <field name="vietnamese_name" readonly="1"/>
-                            <field name="birth_date" readonly="1"/>
-                            <field name="age_display" readonly="1"/>
-                            <field name="gender" readonly="1"/>
-                            <field name="national_id" readonly="1"/>
+                            <field name="first_name"/>
+                            <field name="last_name"/>
+                            <field name="middle_name"/>
+                            <field name="vietnamese_name"/>
+                            <field name="birth_date"/>
+                            <field name="age_display"/>
+                            <field name="gender"/>
+                            <field name="national_id"/>
                         </group>
 
                         <group string="Contact Information">
-                            <field name="mobile" widget="phone" readonly="1"/>
-                            <field name="phone" widget="phone" readonly="1"/>
-                            <field name="email" widget="email" readonly="1"/>
-                            <field name="patient_status" readonly="1"/>
-                            <field name="patient_category_id" readonly="1"/>
-                            <field name="primary_facility_id" readonly="1"/>
+                            <field name="mobile" widget="phone"/>
+                            <field name="phone" widget="phone"/>
+                            <field name="email" widget="email"/>
+                            <field name="patient_status"/>
+                            <field name="patient_category_id"/>
+                            <field name="primary_facility_id"/>
                         </group>
                     </group>
 
                     <group>
                         <group string="Medical Information">
-                            <field name="blood_group" readonly="1"/>
-                            <field name="allergies" readonly="1"/>
+                            <field name="blood_group"/>
+                            <field name="allergies"/>
                         </group>
 
                         <group string="Emergency Contact">
-                            <field name="emergency_contact_name" readonly="1"/>
-                            <field name="emergency_contact_phone" widget="phone" readonly="1"/>
-                            <field name="emergency_contact_relation" readonly="1"/>
+                            <field name="emergency_contact_name"/>
+                            <field name="emergency_contact_phone" widget="phone"/>
+                            <field name="emergency_contact_relation"/>
                         </group>
                     </group>
                 </sheet>
                 <footer>
-                    <button string="Close" class="btn-secondary" special="cancel"/>
+                    <button string="Save" class="btn-primary" special="save"/>
+                    <button string="Discard" class="btn-secondary" special="cancel"/>
                 </footer>
             </form>
         </field>
@@ -107,13 +108,13 @@
             <form string='Client Relationships'>
                 <sheet>
                     <h1>
-                        <field name="name" readonly="1" nolabel="1"/> - Relationships
+                        <field name="name" nolabel="1"/> - Relationships
                     </h1>
 
                     <group>
                         <group string="Summary">
-                            <field name="primary_caregiver_id" readonly="1"/>
-                            <field name="primary_payer_id" readonly="1"/>
+                            <field name="primary_caregiver_id"/>
+                            <field name="primary_payer_id"/>
                         </group>
                     </group>
 
@@ -121,7 +122,8 @@
                     <widget name="relationship_hierarchy"/>
                 </sheet>
                 <footer>
-                    <button string="Close" class="btn-secondary" special="cancel"/>
+                    <button string="Save" class="btn-primary" special="save"/>
+                    <button string="Discard" class="btn-secondary" special="cancel"/>
                 </footer>
             </form>
         </field>
@@ -135,33 +137,34 @@
             <form string='Client Location'>
                 <sheet>
                     <h1>
-                        <field name="name" readonly="1" nolabel="1"/> - Location
+                        <field name="name" nolabel="1"/> - Location
                     </h1>
 
                     <group>
                         <group string="Vietnamese Address">
-                            <field name="province_code" readonly="1"/>
-                            <field name="house_number" readonly="1"/>
-                            <field name="sub_alley_number" readonly="1"/>
-                            <field name="alley_number" readonly="1"/>
-                            <field name="ward_commune" readonly="1"/>
-                            <field name="named_area" readonly="1"/>
-                            <field name="apartment_number" readonly="1"/>
-                            <field name="building_name" readonly="1"/>
-                            <field name="zip" string="Postal Code" readonly="1"/>
-                            <field name="vietnamese_address" readonly="1"/>
+                            <field name="province_code"/>
+                            <field name="house_number"/>
+                            <field name="sub_alley_number"/>
+                            <field name="alley_number"/>
+                            <field name="ward_commune"/>
+                            <field name="named_area"/>
+                            <field name="apartment_number"/>
+                            <field name="building_name"/>
+                            <field name="zip" string="Postal Code"/>
+                            <field name="vietnamese_address"/>
                         </group>
 
                         <group string="Location Map">
                             <!-- Interactive OpenStreetMap Display -->
                             <field name="geo_coordinates_display" widget="address_map" nolabel="1"/>
-                            <field name="partner_latitude" readonly="1"/>
-                            <field name="partner_longitude" readonly="1"/>
+                            <field name="partner_latitude"/>
+                            <field name="partner_longitude"/>
                         </group>
                     </group>
                 </sheet>
                 <footer>
-                    <button string="Close" class="btn-secondary" special="cancel"/>
+                    <button string="Save" class="btn-primary" special="save"/>
+                    <button string="Discard" class="btn-secondary" special="cancel"/>
                 </footer>
             </form>
         </field>
@@ -175,7 +178,7 @@
             <form string="Service Packages">
                 <sheet>
                     <h1>
-                        <field name="name" readonly="1" nolabel="1"/> - Service Packages
+                        <field name="name" nolabel="1"/> - Service Packages
                     </h1>
 
                     <!-- Active Service Packages with Gauge Widgets -->
@@ -223,7 +226,8 @@
                     </group>
                 </sheet>
                 <footer>
-                    <button string="Close" class="btn-secondary" special="cancel"/>
+                    <button string="Save" class="btn-primary" special="save"/>
+                    <button string="Discard" class="btn-secondary" special="cancel"/>
                 </footer>
             </form>
         </field>
@@ -240,7 +244,7 @@
                 </header>
                 <sheet>
                     <h1>
-                        <field name="name" readonly="1" nolabel="1"/> - Bookings
+                        <field name="name" nolabel="1"/> - Bookings
                     </h1>
 
                     <!-- Upcoming Bookings -->
@@ -313,7 +317,8 @@
                     </group>
                 </sheet>
                 <footer>
-                    <button string="Close" class="btn-secondary" special="cancel"/>
+                    <button string="Save" class="btn-primary" special="save"/>
+                    <button string="Discard" class="btn-secondary" special="cancel"/>
                 </footer>
             </form>
         </field>
@@ -327,14 +332,14 @@
             <form string='Client Financials'>
                 <sheet>
                     <h1>
-                        <field name="name" readonly="1" nolabel="1"/> - Financials
+                        <field name="name" nolabel="1"/> - Financials
                     </h1>
 
                     <group>
                         <group string="Financial Summary">
-                            <field name="total_invoiced" readonly="1" widget="monetary"/>
-                            <field name="total_paid" readonly="1" widget="monetary"/>
-                            <field name="total_due" readonly="1" widget="monetary"/>
+                            <field name="total_invoiced" widget="monetary"/>
+                            <field name="total_paid" widget="monetary"/>
+                            <field name="total_due" widget="monetary"/>
                             <field name="currency_id" invisible="1"/>
                         </group>
                     </group>
@@ -355,7 +360,8 @@
                     </group>
                 </sheet>
                 <footer>
-                    <button string="Close" class="btn-secondary" special="cancel"/>
+                    <button string="Save" class="btn-primary" special="save"/>
+                    <button string="Discard" class="btn-secondary" special="cancel"/>
                 </footer>
             </form>
         </field>

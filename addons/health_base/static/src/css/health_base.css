@@ -164,12 +164,13 @@ body {
 .o_patient_kanban .o_patient_card {
     background: white;
     border: 1px solid var(--health-gray-200);
-    border-radius: var(--health-radius-lg);
+    border-radius: var(--health-radius-md);
     box-shadow: var(--health-shadow-sm);
-    padding: var(--health-space-5);
+    padding: var(--health-space-3);
     display: flex;
     flex-direction: column;
-    gap: var(--health-space-3);
+    gap: var(--health-space-2);
+    line-height: 1.3;
     transition: var(--health-transition);
 }
 
@@ -180,28 +181,28 @@ body {
 
 .o_patient_kanban .o_patient_card_header {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: space-between;
-    gap: var(--health-space-3);
+    gap: var(--health-space-2);
 }
 
 .o_patient_kanban .o_patient_identity {
     display: flex;
-    align-items: center;
-    gap: var(--health-space-3);
+    align-items: flex-start;
+    gap: var(--health-space-2);
     min-width: 0;
 }
 
 .o_patient_kanban .o_patient_avatar {
-    width: 36px;
-    height: 36px;
+    width: 28px;
+    height: 28px;
     border-radius: 50%;
     background: var(--health-gray-100);
     color: var(--health-primary);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 16px;
+    font-size: 14px;
     flex-shrink: 0;
 }
 
@@ -214,7 +215,7 @@ body {
 
 .o_patient_kanban .o_patient_identity_text strong {
     color: var(--health-gray-900);
-    font-size: var(--health-font-size-base);
+    font-size: var(--health-font-size-sm);
 }
 
 .o_patient_kanban .o_patient_code {
@@ -228,8 +229,8 @@ body {
 .o_patient_kanban .o_patient_card_info {
     display: flex;
     flex-direction: column;
-    gap: var(--health-space-2);
-    font-size: var(--health-font-size-sm);
+    gap: 4px;
+    font-size: var(--health-font-size-xs);
     color: var(--health-gray-600);
 }
 
@@ -247,6 +248,17 @@ body {
     display: flex;
     gap: var(--health-space-2);
     flex-wrap: wrap;
+}
+
+.o_patient_kanban .o_patient_card_footer .btn {
+    padding: 4px 10px;
+    font-size: var(--health-font-size-xs);
+    line-height: 1.2;
+}
+
+.o_patient_kanban .o_patient_card .badge {
+    font-size: 10px;
+    padding: 2px 6px;
 }
 
 /* ============================================================================

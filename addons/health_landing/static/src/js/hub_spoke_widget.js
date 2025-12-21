@@ -193,6 +193,7 @@ export class HubSpokeWidget extends Component {
                     target: "new",
                     context: {
                         'form_view_ref': 'health_landing.view_patient_client_info_modal',
+                        'form_view_initial_mode': 'edit',
                     },
                 };
                 break;
@@ -208,6 +209,7 @@ export class HubSpokeWidget extends Component {
                     target: "new",
                     context: {
                         'form_view_ref': 'health_landing.view_patient_relations_modal',
+                        'form_view_initial_mode': 'edit',
                     },
                 };
                 break;
@@ -223,6 +225,7 @@ export class HubSpokeWidget extends Component {
                     target: "new",
                     context: {
                         'form_view_ref': 'health_landing.view_patient_map_modal',
+                        'form_view_initial_mode': 'edit',
                     },
                 };
                 break;
@@ -238,6 +241,7 @@ export class HubSpokeWidget extends Component {
                     target: "new",
                     context: {
                         'form_view_ref': 'health_landing.view_patient_packages_modal',
+                        'form_view_initial_mode': 'edit',
                     },
                 };
                 break;
@@ -253,6 +257,7 @@ export class HubSpokeWidget extends Component {
                     target: "new",
                     context: {
                         'form_view_ref': 'health_landing.view_patient_bookings_modal',
+                        'form_view_initial_mode': 'edit',
                     },
                 };
                 break;
@@ -268,6 +273,7 @@ export class HubSpokeWidget extends Component {
                     target: "new",
                     context: {
                         'form_view_ref': 'health_landing.view_patient_financials_modal',
+                        'form_view_initial_mode': 'edit',
                     },
                 };
                 break;
