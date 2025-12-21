@@ -2,7 +2,7 @@
 <templates xml:space="preserve">
 
     <t t-name="health_landing.LeadHubSpokeTemplate">
-        <div class="hub_spoke_container">
+        <div class="hub_spoke_container hub_spoke_container_lead">
             <div class="hub_spoke_header">
                 <button class="health_landing_back_btn" t-on-click="props.onBack">
                     <i class="fa fa-arrow-left"/> Back
@@ -24,7 +24,8 @@
                     <i class="fa fa-user-circle"/> <t t-esc="getLeadName()"/>
                 </h1>
                 <p class="hub_spoke_subtitle">
-                    Click on any section to view details
+                    <span class="hub_spoke_subtitle_tag hub_spoke_subtitle_tag--lead">Lead Details</span>
+                    <span class="hub_spoke_subtitle_text">Click on any section to view details</span>
                 </p>
             </div>
 

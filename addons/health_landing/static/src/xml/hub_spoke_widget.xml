@@ -3,7 +3,7 @@
 
     <!-- Hub-and-Spoke Patient Dashboard Template -->
     <t t-name="health_landing.HubSpokeTemplate">
-        <div class="hub_spoke_container">
+        <div class="hub_spoke_container hub_spoke_container_client">
 
             <!-- Header with breadcrumb and back button -->
             <div class="hub_spoke_header">
@@ -27,7 +27,8 @@
                     <i class="fa fa-user-circle"/> <t t-esc="props.patientName"/>
                 </h1>
                 <p class="hub_spoke_subtitle">
-                    Click on any section to view details
+                    <span class="hub_spoke_subtitle_tag hub_spoke_subtitle_tag--client">Client Details</span>
+                    <span class="hub_spoke_subtitle_text">Click on any section to view details</span>
                 </p>
             </div>
 
