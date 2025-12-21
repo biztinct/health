@@ -203,8 +203,8 @@
                                             <span>Emergency Contact</span>
                                         </div>
                                         <group col="2">
-                                            <field name="emergency_contact_name" required="1"/>
-                                            <field name="emergency_contact_phone" widget="phone" required="1"/>
+                                            <field name="emergency_contact_name"/>
+                                            <field name="emergency_contact_phone" widget="phone"/>
                                             <field name="emergency_contact_relation"/>
                                         </group>
                                     </div>

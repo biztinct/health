@@ -54,7 +54,7 @@
         <field name="arch" type="xml">
             <form string="CRM Contact">
                 <header>
-                    <button name="action_convert_to_booking"
+                    <button name="action_convert_to_client"
                             string="Convert to Client"
                             type="object"
                             class="btn-primary"
@@ -185,6 +185,7 @@
                                         <group col="2">
                                             <field name="contact_type" string="Contact Type"/>
                                             <field name="contact_reason_id" string="Contact Reason" options="{'no_create': True}"/>
+                                            <field name="service_interest" string="Service Interest"/>
                                             <field name="reason_if_rejected" string="Reason if Rejected" invisible="stage_id != 'lost'"/>
                                         </group>
                                     </div>
@@ -229,7 +230,6 @@
                                             <span>Service Information</span>
                                         </div>
                                         <group col="2">
-                                            <field name="service_interest" string="Service Interest"/>
                                             <field name="booking_status" string="Booking Status"/>
                                             <field name="lead_reason_id" string="Lead Reason" options="{'no_create': True}"/>
                                         </group>

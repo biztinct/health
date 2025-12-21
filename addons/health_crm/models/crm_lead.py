@@ -701,10 +701,14 @@ class HealthLead(models.Model):
 
     def _get_won_stage(self):
         """Get the 'won' stage for healthcare CRM"""
-        won_stage = self.env['crm.stage'].search([
-            ('is_won', '=', True),
-            '|', ('team_id', '=', False), ('team_id', '=', self.team_id.id)
-        ], limit=1)
+        stage_model = self.env['crm.stage']
+        domain = [('is_won', '=', True)]
+        if 'team_id' in stage_model._fields and self.team_id:
+            domain = [
+                ('is_won', '=', True),
+                '|', ('team_id', '=', False), ('team_id', '=', self.team_id.id),
+            ]
+        won_stage = stage_model.search(domain, limit=1)
         
         if not won_stage:
             won_stage = self.env['crm.stage'].search([('is_won', '=', True)], limit=1)
@@ -798,6 +802,33 @@ class HealthLead(models.Model):
         })
 
         # Return to CRM Contacts action with rainbow effect
+        action = self.env['ir.actions.act_window']._for_xml_id('health_crm.action_healthcare_opportunities')
+        action['effect'] = {
+            'fadeout': 'slow',
+            'message': _('Congratulations! Client %s created.') % patient.name,
+            'type': 'rainbow_man',
+        }
+        return action
+
+    def action_convert_to_client(self):
+        """Convert lead to client without creating a booking"""
+        self.ensure_one()
+
+        patient = self._get_or_create_patient()
+
+        vals = {
+            'patient_id': patient.id,
+            'booking_status': 'no_booking',
+            'stage_id': self._get_won_stage().id,
+        }
+
+        if not self.contact_outcome:
+            vals['contact_outcome'] = 'pending_follow_up'
+        if not self.health_contact_outcome:
+            vals['health_contact_outcome'] = 'pending_follow_up'
+
+        self.write(vals)
+
         action = self.env['ir.actions.act_window']._for_xml_id('health_crm.action_healthcare_opportunities')
         action['effect'] = {
             'fadeout': 'slow',

@@ -844,17 +844,22 @@ class ResPartner(models.Model):
             }
     
     @api.model
-    def name_search(self, name='', args=None, operator='ilike', limit=100):
+    def name_search(self, name='', domain=None, operator='ilike', limit=100):
         """Enhanced name search for patients including patient ID"""
-        if args is None:
-            args = []
-        
+        if domain is None:
+            domain = []
+
         # If searching in patient context, include patient_id in search
         if self.env.context.get('search_patients'):
-            args = args + ['|', ('name', operator, name), ('patient_code', operator, name)]
+            domain = domain + ['|', ('name', operator, name), ('patient_code', operator, name)]
             name = ''
-        
-        return super().name_search(name=name, args=args, operator=operator, limit=limit)
+
+        return super().name_search(
+            name=name,
+            domain=domain,
+            operator=operator,
+            limit=limit,
+        )
     
     def _get_name(self):
         """Override name display for patients to include patient code"""
