@@ -64,4 +64,6 @@ export class AiCoachingChatFormWidget extends Component {
 }
 
 // Register as a view widget (for form hooks)
-registry.category("view_widgets").add("ai_coaching_chat_form", AiCoachingChatFormWidget);
+registry.category("view_widgets").add("ai_coaching_chat_form", {
+    component: AiCoachingChatFormWidget,
+});

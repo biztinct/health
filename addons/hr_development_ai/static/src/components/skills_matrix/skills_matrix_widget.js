@@ -146,4 +146,6 @@ Gap: ${skill.target_level - skill.current_level > 0 ? '+' + (skill.target_level 
     }
 }
 
-registry.category("fields").add("skills_matrix", SkillsMatrixWidget);
+registry.category("fields").add("skills_matrix", {
+    component: SkillsMatrixWidget,
+});

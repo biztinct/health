@@ -69,7 +69,19 @@ class HRCoachingSession(models.Model):
 
     ai_transcript = fields.Text(
         string='AI Transcript',
-        help='Transcript of AI coaching conversation'
+        help='Transcript of AI coaching conversation (stored as JSON)'
+    )
+
+    # Helper fields for chat dialog
+    ai_chat_input = fields.Text(
+        string='Your Message',
+        help='Type your message to the AI coach here'
+    )
+
+    ai_chat_history = fields.Text(
+        string='Chat History',
+        compute='_compute_ai_chat_history',
+        help='Formatted chat conversation history'
     )
 
     action_items = fields.Html(
@@ -108,6 +120,56 @@ class HRCoachingSession(models.Model):
         ('completed', 'Completed'),
         ('cancelled', 'Cancelled')
     ], string='Status', default='scheduled', required=True, tracking=True)
+
+    @api.depends('ai_transcript')
+    def _compute_ai_chat_history(self):
+        """Format AI transcript JSON into readable chat history"""
+        for record in self:
+            if not record.ai_transcript:
+                record.ai_chat_history = "No messages yet. Start a conversation with your AI coach!"
+                continue
+
+            try:
+                # Parse JSON transcript
+                transcript_data = json.loads(record.ai_transcript)
+                messages = transcript_data.get('messages', [])
+
+                if not messages:
+                    record.ai_chat_history = "No messages yet. Start a conversation with your AI coach!"
+                    continue
+
+                # Format messages into readable text
+                formatted_lines = []
+                for msg in messages:
+                    role = msg.get('role', 'unknown')
+                    content = msg.get('content', '')
+                    timestamp = msg.get('timestamp', '')
+
+                    # Format timestamp if present
+                    time_str = ''
+                    if timestamp:
+                        try:
+                            from datetime import datetime
+                            dt = datetime.fromisoformat(timestamp.replace('Z', '+00:00'))
+                            time_str = f" [{dt.strftime('%H:%M')}]"
+                        except:
+                            pass
+
+                    # Format based on role
+                    if role == 'user':
+                        formatted_lines.append(f"You{time_str}: {content}")
+                    elif role == 'assistant':
+                        formatted_lines.append(f"AI Coach{time_str}: {content}")
+                    else:
+                        formatted_lines.append(f"{role.title()}{time_str}: {content}")
+
+                    formatted_lines.append("")  # Blank line between messages
+
+                record.ai_chat_history = "\n".join(formatted_lines)
+
+            except (json.JSONDecodeError, ValueError):
+                # If not valid JSON, show as plain text
+                record.ai_chat_history = record.ai_transcript or "No messages yet."
 
     def action_start_session(self):
         """Start coaching session"""
@@ -280,36 +342,38 @@ Response:"""
         """Send message to AI from dialog and append response to transcript
 
         This method is called from the dialog's "Send to AI" button.
-        It reads the current ai_transcript, sends it to AI, and appends the response.
+        It reads from ai_chat_input, sends to AI, and appends both messages to transcript.
         """
         self.ensure_one()
 
-        if not self.ai_transcript or not self.ai_transcript.strip():
-            raise UserError(_('Please type a message before sending to AI.'))
+        # Check if user has typed a message
+        if not self.ai_chat_input or not self.ai_chat_input.strip():
+            raise UserError(_('Please type a message in the input field before sending to AI.'))
+
+        user_message = self.ai_chat_input.strip()
 
         try:
-            # Parse existing transcript as JSON if possible
-            try:
-                transcript_data = json.loads(self.ai_transcript)
-                messages = transcript_data.get('messages', [])
-            except (json.JSONDecodeError, ValueError):
-                # If not JSON, treat as plain text - create first user message
-                messages = [{
-                    'role': 'user',
-                    'content': self.ai_transcript.strip(),
-                    'timestamp': fields.Datetime.now().isoformat()
-                }]
+            # Parse existing transcript as JSON
+            messages = []
+            if self.ai_transcript:
+                try:
+                    transcript_data = json.loads(self.ai_transcript)
+                    messages = transcript_data.get('messages', [])
+                except (json.JSONDecodeError, ValueError):
+                    # If existing data is not JSON, start fresh
+                    pass
 
-            # Get the last message to send to AI
-            if messages:
-                last_message = messages[-1]['content']
-            else:
-                last_message = self.ai_transcript.strip()
+            # Add user's message
+            messages.append({
+                'role': 'user',
+                'content': user_message,
+                'timestamp': fields.Datetime.now().isoformat()
+            })
 
             # Send to AI
-            result = self.action_send_ai_message(last_message)
+            result = self.action_send_ai_message(user_message)
 
-            # Append AI response to messages
+            # Add AI response
             messages.append({
                 'role': 'assistant',
                 'content': result.get('response', 'No response received'),
@@ -322,6 +386,10 @@ Response:"""
                 'updated_at': fields.Datetime.now().isoformat()
             }, indent=2)
 
+            # Clear the input field
+            self.ai_chat_input = ''
+
+            # Return action to reload the form and show notification
             return {
                 'type': 'ir.actions.client',
                 'tag': 'display_notification',

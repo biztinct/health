@@ -287,18 +287,32 @@
                         <i class="fa fa-info-circle me-2"/>
                         <strong>How to use:</strong>
                         <ul class="mb-0 mt-2">
-                            <li>Type your messages or questions in the chat area below</li>
-                            <li>Click <strong>Send to AI</strong> to get coaching responses</li>
-                            <li>Click <strong>Generate Summary</strong> to create a session summary from the conversation</li>
-                            <li>All messages are automatically saved to this coaching session</li>
+                            <li>Type your message in the <strong>Your Message</strong> field below</li>
+                            <li>Click <strong>Send to AI</strong> to get a coaching response</li>
+                            <li>View your conversation history in the <strong>Chat History</strong> area</li>
+                            <li>Click <strong>Generate Summary</strong> to create a session summary</li>
                         </ul>
                     </div>
 
                     <group>
-                        <field name="ai_transcript"
-                               widget="ace"
-                               options="{'mode': 'text'}"
-                               placeholder="Type your message here...&#10;&#10;Example:&#10;User: What are my key development areas?&#10;AI Coach: Based on your recent performance..."/>
+                        <group colspan="2">
+                            <field name="ai_chat_history"
+                                   widget="text"
+                                   readonly="1"
+                                   nolabel="1"
+                                   placeholder="No messages yet. Start a conversation with your AI coach!"
+                                   style="min-height: 300px; background-color: #f8f9fa; padding: 15px; border-radius: 5px; font-family: monospace; white-space: pre-wrap;"/>
+                        </group>
+                    </group>
+
+                    <group>
+                        <group colspan="2">
+                            <separator string="Type Your Message"/>
+                            <field name="ai_chat_input"
+                                   widget="text"
+                                   nolabel="1"
+                                   placeholder="Type your message here...&#10;&#10;Example: What skills should I focus on developing?"/>
+                        </group>
                     </group>
                 </sheet>
                 <footer>

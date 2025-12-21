@@ -366,4 +366,6 @@ export class KnowledgeGraphWidget extends Component {
     }
 }
 
-registry.category("fields").add("knowledge_graph", KnowledgeGraphWidget);
+registry.category("fields").add("knowledge_graph", {
+    component: KnowledgeGraphWidget,
+});
