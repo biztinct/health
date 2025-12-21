@@ -161,6 +161,94 @@ body {
     background: linear-gradient(135deg, #fff7ed 0%, #ffffff 100%);
 }
 
+.o_patient_kanban .o_patient_card {
+    background: white;
+    border: 1px solid var(--health-gray-200);
+    border-radius: var(--health-radius-lg);
+    box-shadow: var(--health-shadow-sm);
+    padding: var(--health-space-5);
+    display: flex;
+    flex-direction: column;
+    gap: var(--health-space-3);
+    transition: var(--health-transition);
+}
+
+.o_patient_kanban .o_patient_card:hover {
+    box-shadow: var(--health-shadow-md);
+    transform: translateY(-1px);
+}
+
+.o_patient_kanban .o_patient_card_header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--health-space-3);
+}
+
+.o_patient_kanban .o_patient_identity {
+    display: flex;
+    align-items: center;
+    gap: var(--health-space-3);
+    min-width: 0;
+}
+
+.o_patient_kanban .o_patient_avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--health-gray-100);
+    color: var(--health-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    flex-shrink: 0;
+}
+
+.o_patient_kanban .o_patient_identity_text {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+}
+
+.o_patient_kanban .o_patient_identity_text strong {
+    color: var(--health-gray-900);
+    font-size: var(--health-font-size-base);
+}
+
+.o_patient_kanban .o_patient_code {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: var(--health-font-size-xs);
+    color: var(--health-gray-500);
+}
+
+.o_patient_kanban .o_patient_card_info {
+    display: flex;
+    flex-direction: column;
+    gap: var(--health-space-2);
+    font-size: var(--health-font-size-sm);
+    color: var(--health-gray-600);
+}
+
+.o_patient_kanban .o_patient_card_info i {
+    color: var(--health-primary);
+    margin-right: 6px;
+}
+
+.o_patient_kanban .o_patient_next_visit {
+    font-size: var(--health-font-size-xs);
+    color: var(--health-gray-500);
+}
+
+.o_patient_kanban .o_patient_card_footer {
+    display: flex;
+    gap: var(--health-space-2);
+    flex-wrap: wrap;
+}
+
 /* ============================================================================
    Buttons & Interactive Elements
    ============================================================================ */

@@ -203,6 +203,7 @@
                                         <div class="health_flow_search_section_title">Clients</div>
                                         <t t-foreach="state.searchResults.clients" t-as="result" t-key="result.id">
                                             <div class="health_flow_search_result_card"
+                                                 t-att-class="'client-result'"
                                                  t-on-click="(event) => this.onSearchResultClick('client', result.id, event)">
                                                 <div class="health_flow_search_result_header">
                                                     <span class="health_flow_search_result_client" t-esc="result.name"/>

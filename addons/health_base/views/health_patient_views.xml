@@ -501,44 +501,41 @@
                 <field name="last_visit_date"/>
                 <field name="next_visit_date"/>
                 <field name="source_type"/>
-                <field name="image_128"/>
 
                 <templates>
                     <t t-name="kanban-box">
                         <div class="o_patient_card">
-                            <div class="o_kanban_image">
-                                <img t-attf-src="/web/image/res.partner/{{ record.id.raw_value }}/image_128" alt="Client"/>
-                            </div>
-
-                            <div class="o_patient_card_content">
-                                <div class="o_patient_card_header">
-                                    <strong><field name="name"/></strong>
-                                    <span class="float-right">
-                                        <span class="badge badge-pill" t-att-class="record.patient_status.raw_value === 'new' ? 'badge-warning' : (record.patient_status.raw_value === 'active' ? 'badge-success' : 'badge-secondary')">
-                                            <field name="patient_status"/>
-                                        </span>
-                                    </span>
-                                </div>
-
-                                <div class="o_patient_card_info">
-                                    <div><strong>ID:</strong> <field name="patient_code"/></div>
-                                    <div><strong>Age/Gender:</strong> <field name="age_display"/> • <field name="gender"/></div>
-                                    <div><strong>Phone:</strong> <field name="phone"/></div>
-
-                                    <div t-if="record.next_visit_date.raw_value" class="mt-1">
-                                        <small class="text-muted">Next Visit:</small><br/>
-                                        <field name="next_visit_date"/>
+                            <div class="o_patient_card_header">
+                                <div class="o_patient_identity">
+                                    <div class="o_patient_avatar">
+                                        <i class="fa fa-user"/>
+                                    </div>
+                                    <div class="o_patient_identity_text">
+                                        <strong><field name="name"/></strong>
                                     </div>
                                 </div>
+                                <span class="badge badge-pill" t-att-class="record.patient_status.raw_value === 'new' ? 'badge-warning' : (record.patient_status.raw_value === 'active' ? 'badge-success' : 'badge-secondary')">
+                                    <field name="patient_status"/>
+                                </span>
+                            </div>
 
-                                <div class="o_patient_card_footer">
-                                    <button name="action_create_appointment" type="object" class="btn btn-primary btn-sm">
-                                        <i class="fa fa-calendar-plus-o"/> Schedule
-                                    </button>
-                                    <button name="action_view_appointments" type="object" class="btn btn-outline-secondary btn-sm">
-                                        <i class="fa fa-history"/> History
-                                    </button>
+                            <div class="o_patient_card_info">
+                                <div class="o_patient_code"><i class="fa fa-id-card-o"/> <field name="patient_code"/></div>
+                                <div><i class="fa fa-venus-mars"/> <field name="age_display"/> • <field name="gender"/></div>
+                                <div><i class="fa fa-phone"/> <field name="phone"/></div>
+
+                                <div t-if="record.next_visit_date.raw_value" class="o_patient_next_visit">
+                                    <i class="fa fa-calendar"/> <field name="next_visit_date"/>
                                 </div>
+                            </div>
+
+                            <div class="o_patient_card_footer">
+                                <button name="action_create_appointment" type="object" class="btn btn-primary btn-sm">
+                                    <i class="fa fa-calendar-plus-o"/> Schedule
+                                </button>
+                                <button name="action_view_appointments" type="object" class="btn btn-outline-secondary btn-sm">
+                                    <i class="fa fa-history"/> History
+                                </button>
                             </div>
                         </div>
                     </t>

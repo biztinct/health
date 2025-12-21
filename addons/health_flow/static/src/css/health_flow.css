@@ -593,11 +593,11 @@
 }
 
 .health_flow_search_section_title {
-    font-size: 12px;
-    font-weight: 600;
-    letter-spacing: 0.04em;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
     text-transform: uppercase;
-    color: #8a94a6;
+    color: #4b5563;
     margin-top: 6px;
 }
 
@@ -629,6 +629,11 @@
 
 .health_flow_search_result_card.status-completed {
     border-left: 4px solid #8b5cf6;
+}
+
+/* CRM Client Results */
+.health_flow_search_result_card.client-result {
+    border-left: 4px solid #22c55e;
 }
 
 /* CRM Contact Outcome Statuses */

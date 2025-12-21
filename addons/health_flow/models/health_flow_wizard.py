@@ -457,8 +457,17 @@ class HealthFlowWizard(models.TransientModel):
 
     @api.model
     def get_client_form_action(self, client_id):
-        """Open client form view"""
+        """Open client hub view"""
         try:
+            partner = self.env['res.partner'].browse(client_id).exists()
+            if not partner:
+                raise UserError(_('Client not found.'))
+
+            if hasattr(partner, 'action_open_hub_spoke'):
+                action = partner.action_open_hub_spoke()
+                action.setdefault('target', 'current')
+                return action
+
             view = self.env.ref('health_base.view_health_patient_form', raise_if_not_found=False)
             action = {
                 'type': 'ir.actions.act_window',
