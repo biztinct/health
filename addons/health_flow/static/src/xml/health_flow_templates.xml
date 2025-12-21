@@ -152,7 +152,7 @@
                 <div class="health_flow_search_modal_backdrop" t-on-click="() => this.closeSearchModal()">
                     <div class="health_flow_search_modal" t-on-click.stop="">
                         <div class="health_flow_search_modal_header">
-                            <h3 t-esc="state.searchType === 'crm' ? 'Search CRM Leads' : 'Search Bookings'"/>
+                            <h3 t-esc="state.searchType === 'crm' ? 'Search CRM' : 'Search Bookings'"/>
                             <div class="health_flow_search_modal_close" t-on-click="() => this.closeSearchModal()">
                                 <i class="fa fa-times"></i>
                             </div>
@@ -165,21 +165,21 @@
                                        t-model="state.searchQuery"
                                        t-on-input="onSearchInput"/>
                             </div>
-                            <div class="health_flow_search_results" t-if="state.searchResults.length > 0">
+                            <div class="health_flow_search_results" t-if="this.getSearchResultCount() > 0">
                                 <!-- Merge Button (appears when 2+ leads selected) -->
-                                <div class="health_flow_merge_controls" t-if="state.selectedLeadIds.length >= 2">
+                                <div class="health_flow_merge_controls" t-if="state.searchType === 'crm' and state.selectedLeadIds.length >= 2">
                                     <button class="health_flow_merge_button"
                                             t-on-click="() => this.mergeCrmLeads()">
                                         <i class="fa fa-clone"/> Merge <t t-esc="state.selectedLeadIds.length"/> Leads
                                     </button>
                                 </div>
 
-                                <t t-foreach="state.searchResults" t-as="result" t-key="result.id">
-                                    <!-- Booking Result -->
-                                    <t t-if="state.searchType === 'booking'">
+                                <!-- Booking Result -->
+                                <t t-if="state.searchType === 'booking'">
+                                    <t t-foreach="state.searchResults.bookings" t-as="result" t-key="result.id">
                                         <div class="health_flow_search_result_card"
                                              t-att-class="'status-' + result.status + (this.isLeadSelected(result.id) ? ' selected' : '')"
-                                             t-on-click="(event) => this.onSearchResultClick(result.id, event)">
+                                             t-on-click="(event) => this.onSearchResultClick('booking', result.id, event)">
                                             <div class="health_flow_search_result_checkbox">
                                                 <input type="checkbox"
                                                        t-att-checked="this.isLeadSelected(result.id)"
@@ -195,32 +195,54 @@
                                             </div>
                                         </div>
                                     </t>
+                                </t>
 
-                                    <!-- CRM Lead Result -->
-                                    <t t-if="state.searchType === 'crm'">
-                                        <div class="health_flow_search_result_card"
-                                             t-att-class="'status-' + result.contact_outcome + (this.isLeadSelected(result.id) ? ' selected' : '')"
-                                             t-on-click="(event) => this.onSearchResultClick(result.id, event)">
-                                            <div class="health_flow_search_result_checkbox">
-                                                <input type="checkbox"
-                                                       t-att-checked="this.isLeadSelected(result.id)"
-                                                       t-on-change="(event) => this.onLeadCheckboxChange(event, result.id)"/>
+                                <!-- CRM Results -->
+                                <t t-if="state.searchType === 'crm'">
+                                    <t t-if="state.searchResults.clients.length">
+                                        <div class="health_flow_search_section_title">Clients</div>
+                                        <t t-foreach="state.searchResults.clients" t-as="result" t-key="result.id">
+                                            <div class="health_flow_search_result_card"
+                                                 t-on-click="(event) => this.onSearchResultClick('client', result.id, event)">
+                                                <div class="health_flow_search_result_header">
+                                                    <span class="health_flow_search_result_client" t-esc="result.name"/>
+                                                    <span class="health_flow_search_result_status" t-esc="result.patient_code"/>
+                                                </div>
+                                                <div class="health_flow_search_result_details">
+                                                    <div><i class="fa fa-phone"/> <t t-esc="result.phone"/></div>
+                                                    <div><i class="fa fa-envelope"/> <t t-esc="result.email"/></div>
+                                                </div>
                                             </div>
-                                            <div class="health_flow_search_result_header">
-                                                <span class="health_flow_search_result_client" t-esc="result.name"/>
-                                                <span class="health_flow_search_result_status" t-esc="result.stage"/>
+                                        </t>
+                                    </t>
+
+                                    <t t-if="state.searchResults.leads.length">
+                                        <div class="health_flow_search_section_title">Leads</div>
+                                        <t t-foreach="state.searchResults.leads" t-as="result" t-key="result.id">
+                                            <div class="health_flow_search_result_card"
+                                                 t-att-class="'status-' + result.contact_outcome + (this.isLeadSelected(result.id) ? ' selected' : '')"
+                                                 t-on-click="(event) => this.onSearchResultClick('lead', result.id, event)">
+                                                <div class="health_flow_search_result_checkbox">
+                                                    <input type="checkbox"
+                                                           t-att-checked="this.isLeadSelected(result.id)"
+                                                           t-on-change="(event) => this.onLeadCheckboxChange(event, result.id)"/>
+                                                </div>
+                                                <div class="health_flow_search_result_header">
+                                                    <span class="health_flow_search_result_client" t-esc="result.name"/>
+                                                    <span class="health_flow_search_result_status" t-esc="result.stage"/>
+                                                </div>
+                                                <div class="health_flow_search_result_details">
+                                                    <div><i class="fa fa-phone"/> <t t-esc="result.phone"/></div>
+                                                    <div><i class="fa fa-envelope"/> <t t-esc="result.email"/></div>
+                                                </div>
                                             </div>
-                                            <div class="health_flow_search_result_details">
-                                                <div><i class="fa fa-phone"/> <t t-esc="result.phone"/></div>
-                                                <div><i class="fa fa-envelope"/> <t t-esc="result.email"/></div>
-                                            </div>
-                                        </div>
+                                        </t>
                                     </t>
                                 </t>
                             </div>
-                            <div class="health_flow_search_empty" t-if="state.searchQuery and state.searchResults.length === 0">
+                            <div class="health_flow_search_empty" t-if="state.searchQuery and this.getSearchResultCount() === 0">
                                 <i class="fa fa-search fa-3x"/>
-                                <p t-esc="state.searchType === 'crm' ? 'No leads found' : 'No bookings found'"/>
+                                <p t-esc="state.searchType === 'crm' ? 'No CRM results found' : 'No bookings found'"/>
                             </div>
                         </div>
                     </div>

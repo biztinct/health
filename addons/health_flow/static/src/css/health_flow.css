@@ -592,6 +592,15 @@
     gap: 12px;
 }
 
+.health_flow_search_section_title {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: #8a94a6;
+    margin-top: 6px;
+}
+
 .health_flow_search_result_card {
     border: 2px solid #e2e8f0;
     border-radius: 8px;

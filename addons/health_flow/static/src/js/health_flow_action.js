@@ -34,7 +34,11 @@ class HealthFlowAction extends Component {
             searchModalOpen: false,
             searchType: null, // 'booking' or 'crm'
             searchQuery: '',
-            searchResults: [],
+            searchResults: {
+                bookings: [],
+                clients: [],
+                leads: [],
+            },
             selectedLeadIds: [], // For multi-select in search results
         });
 
@@ -250,7 +254,11 @@ class HealthFlowAction extends Component {
             // Determine search type based on which panel we're in
             this.state.searchType = this.state.activePrimary === 'crm' ? 'crm' : 'booking';
             this.state.searchQuery = '';
-            this.state.searchResults = [];
+            this.state.searchResults = {
+                bookings: [],
+                clients: [],
+                leads: [],
+            };
             this.state.selectedLeadIds = [];
             return;
         }
@@ -300,7 +308,12 @@ class HealthFlowAction extends Component {
         this.state.searchQuery = query;
 
         if (query.length < 2) {
-            this.state.searchResults = [];
+            this.state.searchResults = {
+                bookings: [],
+                clients: [],
+                leads: [],
+            };
+            this.state.selectedLeadIds = [];
             return;
         }
 
@@ -312,6 +325,13 @@ class HealthFlowAction extends Component {
                     'search_crm_leads',
                     [query]
                 );
+                this.state.searchResults = {
+                    bookings: [],
+                    clients: results.clients || [],
+                    leads: results.leads || [],
+                };
+                this.state.selectedLeadIds = [];
+                return;
             } else {
                 results = await this.orm.call(
                     'health.flow.wizard',
@@ -319,26 +339,38 @@ class HealthFlowAction extends Component {
                     [query]
                 );
             }
-            this.state.searchResults = results;
+            this.state.searchResults = {
+                bookings: results,
+                clients: [],
+                leads: [],
+            };
         } catch (error) {
             console.error('[Health Flow] Search failed:', error);
-            this.state.searchResults = [];
+            this.state.searchResults = {
+                bookings: [],
+                clients: [],
+                leads: [],
+            };
         }
     }
 
     /**
      * Handle search result click - toggle selection on click
      */
-    async onSearchResultClick(bookingId, event) {
+    async onSearchResultClick(resultType, recordId, event) {
         if (event && event.target && event.target.type === 'checkbox') {
             // Let checkbox handle itself
             return;
         }
-        if (this.state.searchType === 'crm') {
-            await this.openCrmLead(bookingId);
-        } else {
-            await this.openBooking(bookingId);
+        if (resultType === 'client') {
+            await this.openClient(recordId);
+            return;
         }
+        if (resultType === 'lead') {
+            await this.openCrmLead(recordId);
+            return;
+        }
+        await this.openBooking(recordId);
     }
 
     /**
@@ -377,6 +409,18 @@ class HealthFlowAction extends Component {
         }
     }
 
+    async openClient(clientId) {
+        const action = await this.orm.call(
+            'health.flow.wizard',
+            'get_client_form_action',
+            [clientId]
+        );
+        if (action && action.type) {
+            await this.action.doAction(action);
+            this.closeSearchModal();
+        }
+    }
+
     async openBooking(bookingId) {
         const action = await this.orm.call(
             'health.flow.wizard',
@@ -387,6 +431,16 @@ class HealthFlowAction extends Component {
             await this.action.doAction(action);
             this.closeSearchModal();
         }
+    }
+
+    getSearchResultCount() {
+        if (this.state.searchType === 'crm') {
+            return this.state.searchResults.clients.length + this.state.searchResults.leads.length;
+        }
+        if (this.state.searchType === 'booking') {
+            return this.state.searchResults.bookings.length;
+        }
+        return 0;
     }
 
     /**

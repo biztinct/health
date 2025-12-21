@@ -372,24 +372,46 @@ class HealthFlowWizard(models.TransientModel):
 
     @api.model
     def search_crm_leads(self, query):
-        """Search CRM leads by name, phone, or email"""
+        """Search CRM clients and leads by name, phone, or email"""
         try:
+            Partner = self.env['res.partner']
             Lead = self.env['crm.lead']
-            domain = [
+
+            client_domain = [
+                ('is_patient', '=', True),
+                '|', '|', '|', '|',
+                ('name', 'ilike', query),
+                ('phone', 'ilike', query),
+                ('mobile', 'ilike', query),
+                ('email', 'ilike', query),
+                ('patient_code', 'ilike', query),
+            ]
+            clients = Partner.search(client_domain, limit=20, order='name')
+
+            lead_domain = [
                 ('type', '=', 'opportunity'),
+                ('stage_id.name', '!=', 'Client Acquired'),
                 '|', '|',
                 ('name', 'ilike', query),
                 ('phone', 'ilike', query),
                 ('email_from', 'ilike', query),
             ]
-            leads = Lead.search(domain, limit=20, order='create_date desc')
+            leads = Lead.search(lead_domain, limit=20, order='create_date desc')
 
-            results = []
+            client_results = []
+            for client in clients:
+                client_results.append({
+                    'id': client.id,
+                    'name': client.name or 'Unknown',
+                    'phone': client.phone or client.mobile or 'N/A',
+                    'email': client.email or 'N/A',
+                    'patient_code': client.patient_code or 'Client',
+                })
+
+            lead_results = []
             for lead in leads:
-                # Determine status from stage
                 stage_name = lead.stage_id.name if lead.stage_id else 'New'
-
-                results.append({
+                lead_results.append({
                     'id': lead.id,
                     'name': lead.name or 'Unknown',
                     'contact_name': lead.contact_name or '',
@@ -399,9 +421,15 @@ class HealthFlowWizard(models.TransientModel):
                     'contact_outcome': lead.contact_outcome or 'pending',
                 })
 
-            return results
+            return {
+                'clients': client_results,
+                'leads': lead_results,
+            }
         except Exception as e:
-            return []
+            return {
+                'clients': [],
+                'leads': [],
+            }
 
     @api.model
     def get_booking_form_action(self, booking_id):
@@ -422,6 +450,34 @@ class HealthFlowWizard(models.TransientModel):
                 'params': {
                     'title': _('Error'),
                     'message': _('Failed to open booking'),
+                    'type': 'warning',
+                    'sticky': False,
+                }
+            }
+
+    @api.model
+    def get_client_form_action(self, client_id):
+        """Open client form view"""
+        try:
+            view = self.env.ref('health_base.view_health_patient_form', raise_if_not_found=False)
+            action = {
+                'type': 'ir.actions.act_window',
+                'name': _('Client'),
+                'res_model': 'res.partner',
+                'res_id': client_id,
+                'view_mode': 'form',
+                'target': 'current',
+                'context': {'default_is_patient': True},
+            }
+            action['views'] = [(view.id, 'form')] if view else [(False, 'form')]
+            return action
+        except Exception as e:
+            return {
+                'type': 'ir.actions.client',
+                'tag': 'display_notification',
+                'params': {
+                    'title': _('Error'),
+                    'message': _('Failed to open client'),
                     'type': 'warning',
                     'sticky': False,
                 }
