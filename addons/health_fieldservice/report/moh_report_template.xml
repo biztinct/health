@@ -3,9 +3,10 @@
 
     <!-- MOH Report Template -->
     <template id="report_moh_document">
-        <t t-call="web.external_layout">
+        <t t-call="web.html_container">
             <t t-foreach="docs" t-as="o">
-                <div class="page">
+                <t t-call="web.external_layout">
+                    <div class="page">
                     <!-- Report Header -->
                     <div class="text-center mb-4">
                         <h3 style="margin-bottom: 5px;">
@@ -173,15 +174,17 @@
                         <p>Generated: <span t-esc="context_timestamp(datetime.datetime.now()).strftime('%d/%m/%Y %H:%M')"/></p>
                         <p>Vietnam-Australia Family Health Service Company Limited (VAFHS)</p>
                     </div>
-                </div>
+                    </div>
+                </t>
             </t>
         </t>
     </template>
 
     <!-- MOH Report Template for Multiple Bookings -->
     <template id="report_moh_document_multi">
-        <t t-call="web.external_layout">
-            <div class="page">
+        <t t-call="web.html_container">
+            <t t-call="web.external_layout">
+                <div class="page">
                 <!-- Report Header -->
                 <div class="text-center mb-4">
                     <h3 style="margin-bottom: 5px;">
@@ -299,7 +302,8 @@
                     <p>Vietnam-Australia Family Health Service Company Limited (VAFHS)</p>
                     <p>Total Records / Tổng số bản ghi: <strong><span t-esc="len(docs)"/></strong></p>
                 </div>
-            </div>
+                </div>
+            </t>
         </t>
     </template>
 
