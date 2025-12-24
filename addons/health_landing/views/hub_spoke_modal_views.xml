@@ -153,13 +153,11 @@
                             <field name="zip" string="Postal Code"/>
                             <field name="vietnamese_address"/>
                         </group>
+                    </group>
 
-                        <group string="Location Map">
-                            <!-- Interactive OpenStreetMap Display -->
-                            <field name="geo_coordinates_display" widget="address_map" nolabel="1"/>
-                            <field name="partner_latitude"/>
-                            <field name="partner_longitude"/>
-                        </group>
+                    <group colspan="2" col="1">
+                        <!-- Interactive OpenStreetMap Display -->
+                        <field name="geo_coordinates_display" widget="address_map" nolabel="1"/>
                     </group>
                 </sheet>
                 <footer>
