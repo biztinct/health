@@ -190,13 +190,15 @@
                             </tr>
                             <tr>
                                 <td style="padding: 8px 0; font-weight: bold; color: #374151;">Date and Time:</td>
-                                <td style="padding: 8px 0; color: #6b7280;">{{ object.appointment_id.appointment_date.strftime('%A, %B %d, %Y at %I:%M %p') }}</td>
+                                <td style="padding: 8px 0; color: #6b7280;">
+                                    {{ object.appointment_id.scheduled_datetime and object.appointment_id.scheduled_datetime.strftime('%A, %B %d, %Y at %I:%M %p') or '' }}
+                                </td>
                             </tr>
                             <tr>
                                 <td style="padding: 8px 0; font-weight: bold; color: #374151;">Assigned Staff:</td>
                                 <td style="padding: 8px 0; color: #6b7280;">{{ ', '.join(object.assigned_staff_ids.mapped('name')) }}</td>
                             </tr>
-                            <tr t-if="object.appointment_id.appointment_type_id.location_type == 'home'">
+                            <tr t-if="object.appointment_id.service_type == 'home_visit'">
                                 <td style="padding: 8px 0; font-weight: bold; color: #374151;">Visit Address:</td>
                                 <td style="padding: 8px 0; color: #6b7280;">{{ object.appointment_id.visit_address }}</td>
                             </tr>
