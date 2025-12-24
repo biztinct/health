@@ -61,6 +61,7 @@ class HealthFlowWizard(models.TransientModel):
             'admin-pricing-rules': ('advanced_pricing.action_pricing_rules_with_visual', _('Pricing Rules')),
             'admin-quick-edit-rules': ('advanced_pricing.action_pricing_rules_quick_edit', _('Quick Edit Rules')),
             'admin-portable-equipment': ('health_fieldservice.action_health_portable_equipment', _('Portable Equipment')),
+            'admin-healthcare-staff': ('health_fieldservice.action_healthcare_staff', _('Healthcare Staff')),
             'admin-facilities': ('health_base.action_health_facility', _('Healthcare Facilities')),
             'admin-patient-categories': ('health_base.action_health_patient_category', _('Patient Categories')),
             'admin-service-types': ('health_base.action_health_service_type', _('Service Types')),

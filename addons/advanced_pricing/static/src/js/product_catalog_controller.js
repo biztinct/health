@@ -12,8 +12,9 @@ export class HealthcareProductCatalogController extends ProductCatalogKanbanCont
                                  context.quote_order_id;
         
         if (isHealthcareQuote) {
+            const actionService = this.action || this.env.services.action;
             // For healthcare/FSO quotes, open in modal popup
-            await this.action.doAction({
+            await actionService.doAction({
                 type: "ir.actions.act_window",
                 name: _t("Healthcare Quote"),
                 res_model: "sale.order",

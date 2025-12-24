@@ -25,11 +25,13 @@ patch(ProductCatalogKanbanController.prototype, {
                                  context.quote_order_id;
         
         if (isHealthcareQuote) {
+            const actionService = this.action || this.env.services.action;
+            const ormService = this.orm || this.env.services.orm;
             // Get the correct healthcare quote view ID
-            const viewResult = await this.orm.call("sale.order", "get_healthcare_quote_view_id", [this.orderId]);
+            const viewResult = await ormService.call("sale.order", "get_healthcare_quote_view_id", [this.orderId]);
             
             // For healthcare/FSO quotes, open in modal popup with correct view
-            await this.action.doAction({
+            await actionService.doAction({
                 type: "ir.actions.act_window",
                 name: "Healthcare Quote",
                 res_model: "sale.order",

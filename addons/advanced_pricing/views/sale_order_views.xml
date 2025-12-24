@@ -78,7 +78,7 @@
                                 string="📋 Add from Catalog"
                                 type="object"
                                 class="btn btn-primary me-2"
-                                context="{'order_id': id}"
+                                context="{'order_id': id, 'child_field': 'order_line'}"
                                 help="Add products from catalog"/>
                         <button name="action_recalculate_advanced_prices" 
                                 string="💰 Recalc Pricing" 

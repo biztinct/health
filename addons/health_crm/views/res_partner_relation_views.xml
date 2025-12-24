@@ -9,28 +9,6 @@
         <field name="arch" type="xml">
             <!-- Add relationship smart buttons after existing buttons -->
             <xpath expr="//div[@name='button_box']" position="inside">
-                <!-- D3.js Network Graph Button (Section 2.2 Option B) -->
-                <button name="action_view_relationship_network" type="object" class="oe_stat_button" icon="fa-project-diagram"
-                        invisible="relationship_total_count == 0"
-                        help="View interactive relationship network graph">
-                    <div class="o_field_widget o_stat_info">
-                        <span class="o_stat_text">Network Graph</span>
-                    </div>
-                </button>
-
-                <!-- PATIENT SIDE: My Representatives (Section 2.2) -->
-                <button name="action_view_all_relationships" type="object" class="oe_stat_button" icon="fa-users"
-                        invisible="relationship_total_count == 0">
-                    <field name="relationship_total_count" string="All Relationships" widget="statinfo"/>
-                </button>
-                <button name="action_view_my_caregivers" type="object" class="oe_stat_button" icon="fa-heartbeat"
-                        invisible="not is_patient or total_caregivers == 0">
-                    <field name="total_caregivers" string="Caregivers" widget="statinfo"/>
-                </button>
-                <button name="action_view_my_payers" type="object" class="oe_stat_button" icon="fa-money"
-                        invisible="not is_patient or total_payers == 0">
-                    <field name="total_payers" string="Payers" widget="statinfo"/>
-                </button>
                 <button name="action_view_my_referrers" type="object" class="oe_stat_button" icon="fa-handshake-o"
                         invisible="not is_patient or total_referrers == 0">
                     <field name="total_referrers" string="Referrers" widget="statinfo"/>

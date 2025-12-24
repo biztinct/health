@@ -125,11 +125,13 @@
                             <!-- Visual Progress Bar -->
                             <div class="o_field_widget">
                                 <span class="o_form_label">Service Progress:</span>
-                                <div class="progress" style="height: 20px; margin-top: 5px;">
+                                <div class="progress" style="height: 20px; margin-top: 5px; position: relative;">
                                     <div class="progress-bar bg-success" role="progressbar"
-                                         style="width: calc(100% * consumed_services / total_services); display: flex; align-items: center; justify-content: center; padding: 0 6px; overflow: visible;"
+                                         style="width: calc(100% * consumed_services / total_services);"
                                          aria-valuenow="consumed_services" aria-valuemin="0" aria-valuemax="total_services">
-                                        <span style="white-space: nowrap; font-size: 12px;">
+                                    </div>
+                                    <div style="position: absolute; inset: 0; text-align: center; line-height: 20px; font-size: 12px; color: #0f172a;">
+                                        <span style="display: inline-block; white-space: nowrap;">
                                             <field name="consumed_services"/> / <field name="total_services"/> used
                                         </span>
                                     </div>
