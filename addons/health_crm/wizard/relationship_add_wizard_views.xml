@@ -12,24 +12,15 @@
                         <group>
                             <field name="client_name" readonly="1"/>
                             <field name="role_label" readonly="1"/>
-                        </group>
-                        <group>
                             <field name="client_id" invisible="1"/>
                             <field name="role" invisible="1"/>
                         </group>
                     </group>
 
                     <group string="Select Representative">
-                        <field name="representative_id" options="{'no_create_edit': False}" placeholder="Search or create new partner..."/>
+                        <field name="representative_id" string="Name" options="{'no_create_edit': False}" placeholder="Search or create new partner..."/>
                         <field name="relationship_type"/>
                         <field name="is_primary"/>
-                    </group>
-
-                    <group string="Permissions" col="2">
-                        <field name="can_make_medical_decisions"/>
-                        <field name="can_receive_medical_info"/>
-                        <field name="can_schedule_appointments"/>
-                        <field name="financial_responsibility" invisible="role != 'payer'"/>
                     </group>
                 </sheet>
                 <footer>
