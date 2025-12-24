@@ -79,7 +79,10 @@ export class RelationshipHierarchyWidget extends Component {
             res_id: partnerId,
             views: [[false, 'form']],
             view_mode: 'form',
-            target: 'current',
+            target: 'new',
+            context: {
+                form_view_ref: 'health_crm.view_healthcare_relationship_contact_form',
+            },
         };
         this.action.doAction(action);
     }

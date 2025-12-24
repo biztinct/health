@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_healthcare_relationship_contact_form" model="ir.ui.view">
+        <field name="name">res.partner.relationship.form.healthcare</field>
+        <field name="model">res.partner</field>
+        <field name="priority">50</field>
+        <field name="arch" type="xml">
+            <form string="Contact">
+                <sheet>
+                    <div class="oe_title">
+                        <h1 class="d-flex">
+                            <field name="name" class="o_text_overflow" placeholder="Name"/>
+                        </h1>
+                    </div>
+
+                    <group>
+                        <group string="Contact">
+                            <field name="phone" widget="phone"/>
+                            <field name="zalo_number"/>
+                            <field name="email" widget="email"/>
+                        </group>
+                    </group>
+
+                    <group string="Healthcare Roles">
+                        <group col="1">
+                            <field name="healthcare_role_tags" nolabel="1"/>
+                        </group>
+                    </group>
+
+                    <group string="Address Details">
+                        <group col="2">
+                            <field name="province_code"/>
+                            <field name="house_number"/>
+                            <field name="sub_alley_number"/>
+                            <field name="alley_number"/>
+                            <field name="ward_commune"/>
+                            <field name="named_area"/>
+                            <field name="apartment_number"/>
+                            <field name="building_name"/>
+                            <field name="zip" string="Postal Code"/>
+
+                            <field name="street" placeholder="Street name / Main road"/>
+                            <field name="city" placeholder="District / City"/>
+                            <field name="state_id" string="Province" options="{'no_create': True}"/>
+                            <field name="country_id" string="Country" options="{'no_create': True}"/>
+
+                            <field name="vietnamese_address" readonly="1" string="Full Vietnamese Address" widget="text"/>
+
+                            <field name="address_search" invisible="1"/>
+                            <field name="partner_latitude" invisible="1"/>
+                            <field name="partner_longitude" invisible="1"/>
+                            <field name="date_localization" invisible="1"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+</odoo>
