@@ -111,13 +111,6 @@
                         <field name="name" readonly="1" nolabel="1"/> - Relationships
                     </h1>
 
-                    <group>
-                        <group string="Summary">
-                            <field name="primary_caregiver_id"/>
-                            <field name="primary_payer_id"/>
-                        </group>
-                    </group>
-
                     <!-- Relationship Hierarchy Widget -->
                     <widget name="relationship_hierarchy"/>
                 </sheet>
@@ -174,6 +167,9 @@
         <field name="model">res.partner</field>
         <field name="arch" type="xml">
             <form string="Service Packages">
+                <header>
+                    <button name="action_create_prepaid_package" type="object" string="Select Package" class="btn-primary"/>
+                </header>
                 <sheet>
                     <h1>
                         <field name="name" readonly="1" nolabel="1"/> - Service Packages

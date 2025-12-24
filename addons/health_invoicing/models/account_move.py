@@ -233,20 +233,23 @@ class HealthcareInvoice(models.Model):
     @api.model
     def create(self, vals):
         """Override create to handle healthcare invoice automation"""
-        # Auto-set healthcare service type from FSO
-        if vals.get('fieldservice_order_id'):
-            fso = self.env['health.fieldservice.order'].browse(vals['fieldservice_order_id'])
-            if fso and not vals.get('healthcare_service_type'):
-                vals['healthcare_service_type'] = fso.service_category or 'home_visit'
+        vals_list = vals if isinstance(vals, list) else [vals]
 
-        # Note: patient_id field is not defined on account.move
-        # Patient info is accessible via fieldservice_order_id.patient_id if needed
+        for vals_item in vals_list:
+            # Auto-set healthcare service type from FSO
+            if vals_item.get('fieldservice_order_id'):
+                fso = self.env['health.fieldservice.order'].browse(vals_item['fieldservice_order_id'])
+                if fso and not vals_item.get('healthcare_service_type'):
+                    vals_item['healthcare_service_type'] = fso.service_category or 'home_visit'
 
-        # Set Vietnamese tax code if not provided
-        if not vals.get('vietnamese_tax_code'):
-            vals['vietnamese_tax_code'] = self._generate_vietnamese_tax_code()
+            # Note: patient_id field is not defined on account.move
+            # Patient info is accessible via fieldservice_order_id.patient_id if needed
 
-        invoice = super().create(vals)
+            # Set Vietnamese tax code if not provided
+            if not vals_item.get('vietnamese_tax_code'):
+                vals_item['vietnamese_tax_code'] = self._generate_vietnamese_tax_code()
+
+        invoice = super().create(vals_list)
 
         # Schedule tax submission after creation is complete (not during create)
         # This will be handled by the invoice posting process instead

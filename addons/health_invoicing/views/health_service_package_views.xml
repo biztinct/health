@@ -126,10 +126,12 @@
                             <div class="o_field_widget">
                                 <span class="o_form_label">Service Progress:</span>
                                 <div class="progress" style="height: 20px; margin-top: 5px;">
-                                    <div class="progress-bar bg-success" role="progressbar" 
-                                         style="width: calc(100% * consumed_services / total_services);"
+                                    <div class="progress-bar bg-success" role="progressbar"
+                                         style="width: calc(100% * consumed_services / total_services); display: flex; align-items: center; justify-content: center; padding: 0 6px; overflow: visible;"
                                          aria-valuenow="consumed_services" aria-valuemin="0" aria-valuemax="total_services">
-                                        <field name="consumed_services"/> / <field name="total_services"/> used
+                                        <span style="white-space: nowrap; font-size: 12px;">
+                                            <field name="consumed_services"/> / <field name="total_services"/> used
+                                        </span>
                                     </div>
                                 </div>
                             </div>
