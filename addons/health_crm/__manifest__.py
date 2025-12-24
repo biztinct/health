@@ -61,6 +61,7 @@
         'views/res_partner_relation_views.xml',  # Section 2.2 relationship dashboard
         'views/health_lookup_views.xml',    # Contact and lead reason views
         'views/crm_lead_views.xml',
+        'views/health_patient_relationship_widget.xml',
         'views/res_partner_views.xml',
         'views/health_crm_menus.xml',
         'views/booking_lost_wizard_views.xml',

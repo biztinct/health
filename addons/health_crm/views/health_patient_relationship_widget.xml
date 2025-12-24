@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_health_patient_relationship_hierarchy" model="ir.ui.view">
+        <field name="name">res.partner.patient.relationship.hierarchy</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="health_base.view_health_patient_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//page[@name='healthcare_relationships']//div[contains(@class, 'alert')]" position="replace">
+                    <widget name="relationship_hierarchy"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>
