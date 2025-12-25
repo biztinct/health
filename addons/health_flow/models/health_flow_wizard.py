@@ -31,7 +31,7 @@ class HealthFlowWizard(models.TransientModel):
         # Handle special actions with custom domains/contexts
         if key in ['crm-add-lead', 'crm-all', 'crm-initial', 'crm-activities', 'crm-calendar', 'crm-continue-followup', 'crm-client-acquired', 'crm-booking-lost']:
             return self._get_crm_action(key)
-        elif key in ['booking-draft', 'booking-assigned', 'booking-scheduled']:
+        elif key in ['booking-draft', 'booking-assigned', 'booking-scheduled', 'booking-in-progress', 'booking-completed']:
             return self._get_booking_action(key)
 
         # Map keys to action xmlid
@@ -47,8 +47,9 @@ class HealthFlowWizard(models.TransientModel):
             'crm-search': ('health_crm.action_healthcare_opportunities', _('CRM Search')),
 
             # Booking Panel
-            'booking-calendar': ('health_fieldservice.action_assignment_scheduler_grid', _('Booking Calendar')),
-            'booking-staff': ('health_fieldservice.action_staff_workload_dashboard', _('Staff Assignment')),
+            'booking-calendar': ('health_fieldservice.action_health_fieldservice_order', _('Booking Calendar')),
+            'booking-staff': ('health_fieldservice.action_staff_workload_dashboard', _('Staff Workload')),
+            'booking-staff-assignment': ('health_fieldservice.action_assignment_web_timeline_view', _('Staff Assignment Timeline')),
 
             # Invoicing Panel
             'invoicing-ar': ('health_invoicing.action_healthcare_ar_dashboard', _('AR Dashboard')),
@@ -280,7 +281,7 @@ class HealthFlowWizard(models.TransientModel):
             )
             action['target'] = 'current'
             # Open calendar view first for Draft/Assigned/Scheduled
-            action['view_mode'] = 'calendar,tree,form'
+            action['view_mode'] = 'calendar,list,form'
 
             # Preserve original context and merge with new values
             original_context = action.get('context', {})
@@ -289,22 +290,33 @@ class HealthFlowWizard(models.TransientModel):
 
             if key == 'booking-draft':
                 action['name'] = _('Draft Bookings Calendar')
-                action['domain'] = [('stage_id.is_draft', '=', True)]
+                action['domain'] = [('state', '=', 'draft')]
                 action['context'] = dict(original_context, **{
-                    'default_stage_id': self.env.ref('health_fieldservice.health_fso_stage_draft', False).id if self.env.ref('health_fieldservice.health_fso_stage_draft', False) else False,
                     'search_default_filter_draft': 1,
                 })
             elif key == 'booking-assigned':
                 action['name'] = _('Assigned Bookings Calendar')
-                action['domain'] = [('stage_id.is_assigned', '=', True)]
+                action['domain'] = [('state', '=', 'assigned')]
                 action['context'] = dict(original_context, **{
                     'search_default_filter_assigned': 1,
                 })
             elif key == 'booking-scheduled':
                 action['name'] = _('Scheduled Bookings Calendar')
-                action['domain'] = [('stage_id.is_scheduled', '=', True)]
+                action['domain'] = [('state', '=', 'confirmed')]
                 action['context'] = dict(original_context, **{
                     'search_default_filter_scheduled': 1,
+                })
+            elif key == 'booking-in-progress':
+                action['name'] = _('In Progress Bookings Calendar')
+                action['domain'] = [('stage_id.name', '=', 'In Progress')]
+                action['context'] = dict(original_context, **{
+                    'search_default_filter_in_progress': 1,
+                })
+            elif key == 'booking-completed':
+                action['name'] = _('Completed Bookings Calendar')
+                action['domain'] = [('stage_id.name', '=', 'Completed')]
+                action['context'] = dict(original_context, **{
+                    'search_default_filter_completed': 1,
                 })
 
             return action
@@ -322,17 +334,19 @@ class HealthFlowWizard(models.TransientModel):
 
     @api.model
     def get_booking_counts(self):
-        """Get counts for Draft, Assigned, Scheduled bookings"""
+        """Get counts for Draft, Assigned, Scheduled, In Progress, Completed bookings"""
         try:
             FSO = self.env['health.fieldservice.order']
             counts = {
-                'draft': FSO.search_count([('stage_id.is_draft', '=', True)]),
-                'assigned': FSO.search_count([('stage_id.is_assigned', '=', True)]),
-                'scheduled': FSO.search_count([('stage_id.is_scheduled', '=', True)]),
+                'draft': FSO.search_count([('state', '=', 'draft')]),
+                'assigned': FSO.search_count([('state', '=', 'assigned')]),
+                'scheduled': FSO.search_count([('state', '=', 'confirmed')]),
+                'in_progress': FSO.search_count([('stage_id.name', '=', 'In Progress')]),
+                'completed': FSO.search_count([('stage_id.name', '=', 'Completed')]),
             }
             return counts
         except Exception:
-            return {'draft': 0, 'assigned': 0, 'scheduled': 0}
+            return {'draft': 0, 'assigned': 0, 'scheduled': 0, 'in_progress': 0, 'completed': 0}
 
     @api.model
     def search_bookings(self, query):
@@ -346,17 +360,22 @@ class HealthFlowWizard(models.TransientModel):
                 ('patient_id.mobile', 'ilike', query),
                 ('patient_id.phone', 'ilike', query),
             ]
-            bookings = FSO.search(domain, limit=20, order='appointment_date desc')
+            if query.isdigit():
+                domain = ['|', ('id', '=', int(query))] + domain
+
+            bookings = FSO.search(domain, limit=20, order='scheduled_datetime desc')
 
             results = []
             for booking in bookings:
                 # Determine status
                 status = 'draft'
-                if booking.stage_id.is_scheduled:
+                if booking.state == 'confirmed':
                     status = 'scheduled'
-                elif booking.stage_id.is_assigned:
+                elif booking.state == 'assigned':
                     status = 'assigned'
-                elif booking.stage_id.is_completed:
+                elif booking.state == 'in_progress':
+                    status = 'in_progress'
+                elif booking.state == 'completed':
                     status = 'completed'
 
                 results.append({
@@ -364,7 +383,7 @@ class HealthFlowWizard(models.TransientModel):
                     'client_name': booking.patient_id.name or 'Unknown',
                     'lead_nurse': booking.lead_staff_id.name if booking.lead_staff_id else 'Unassigned',
                     'status': status,
-                    'appointment_date': booking.appointment_date.strftime('%Y-%m-%d %H:%M') if booking.appointment_date else 'Not Set',
+                    'appointment_date': booking.scheduled_datetime.strftime('%Y-%m-%d %H:%M') if booking.scheduled_datetime else 'Not Set',
                 })
 
             return results

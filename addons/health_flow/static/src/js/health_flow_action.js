@@ -30,6 +30,8 @@ class HealthFlowAction extends Component {
                 draft: 0,
                 assigned: 0,
                 scheduled: 0,
+                in_progress: 0,
+                completed: 0,
             },
             searchModalOpen: false,
             searchType: null, // 'booking' or 'crm'
@@ -66,10 +68,13 @@ class HealthFlowAction extends Component {
                 items: [
                     { key: 'booking-search', label: 'Search', icon: 'fa-search', desc: 'Search bookings', isSearch: true },
                     { key: 'booking-calendar', label: 'Booking Calendar', icon: 'fa-calendar-check-o', desc: 'Visual booking calendar' },
-                    { key: 'booking-staff', label: 'Staff Assignment', icon: 'fa-user-md', desc: 'Staff workload & assignment' },
+                    { key: 'booking-staff', label: 'Staff Workload', icon: 'fa-user-md', desc: 'Staff workload overview' },
+                    { key: 'booking-staff-assignment', label: 'Staff Assignment', icon: 'fa-users', desc: 'Assignment timeline view' },
                     { key: 'booking-draft', label: 'Draft', icon: 'fa-file-o', desc: 'Draft bookings', hasCount: true, countKey: 'draft' },
                     { key: 'booking-assigned', label: 'Assigned', icon: 'fa-check-circle', desc: 'Assigned bookings', hasCount: true, countKey: 'assigned' },
                     { key: 'booking-scheduled', label: 'Scheduled', icon: 'fa-clock-o', desc: 'Scheduled bookings', hasCount: true, countKey: 'scheduled' },
+                    { key: 'booking-in-progress', label: 'In Progress', icon: 'fa-play-circle', desc: 'In progress bookings', hasCount: true, countKey: 'in_progress' },
+                    { key: 'booking-completed', label: 'Completed', icon: 'fa-check', desc: 'Completed bookings', hasCount: true, countKey: 'completed' },
                 ],
             },
             invoicing: {
