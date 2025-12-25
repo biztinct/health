@@ -11,6 +11,7 @@
                       date_stop="estimated_end_datetime"
                       color="lead_staff_id"
                       mode="month"
+                      scales="month"
                       quick_create="0"
                       event_open_popup="1"
                       hide_time="true">

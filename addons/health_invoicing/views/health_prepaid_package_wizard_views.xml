@@ -15,7 +15,7 @@
                     
                     <group>
                         <group string="Package Configuration">
-                            <field name="patient_id" options="{'no_create': True}"/>
+                            <field name="patient_id" options="{'no_create': True}" readonly="1"/>
                             <field name="package_product_id" 
                                    options="{'no_create': True, 'no_edit': True}" 
                                    help="Select a pre-configured healthcare package"/>
