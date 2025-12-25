@@ -22,7 +22,7 @@
         <field name="report_name">health_fieldservice.report_moh_document_multi</field>
         <field name="report_file">health_fieldservice.report_moh_document_multi</field>
         <field name="paperformat_id" ref="paperformat_moh_report"/>
-        <field name="print_report_name">'MOH_Compliance_Report_%s' % (datetime.datetime.now().strftime('%Y%m%d_%H%M%S'))</field>
+        <field name="print_report_name">'MOH_Compliance_Report_%s' % (time.strftime('%Y%m%d_%H%M%S'))</field>
         <field name="binding_model_id" ref="model_health_fieldservice_order"/>
         <field name="binding_type">report</field>
         <field name="multi" eval="True"/>
