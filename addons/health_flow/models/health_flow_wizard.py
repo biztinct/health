@@ -453,9 +453,19 @@ class HealthFlowWizard(models.TransientModel):
 
     @api.model
     def get_booking_form_action(self, booking_id):
-        """Open booking form view"""
+        """Open booking hub/spoke dashboard"""
         try:
-            return {
+            booking = self.env['health.fieldservice.order'].browse(booking_id).exists()
+            if not booking:
+                raise UserError(_('Booking not found.'))
+
+            if hasattr(booking, 'action_open_fso_dashboard'):
+                action = booking.action_open_fso_dashboard()
+                action.setdefault('target', 'current')
+                return action
+
+            view = self.env.ref('health_fieldservice.view_health_fieldservice_order_form', raise_if_not_found=False)
+            action = {
                 'type': 'ir.actions.act_window',
                 'name': _('Booking'),
                 'res_model': 'health.fieldservice.order',
@@ -463,6 +473,8 @@ class HealthFlowWizard(models.TransientModel):
                 'view_mode': 'form',
                 'target': 'current',
             }
+            action['views'] = [(view.id, 'form')] if view else [(False, 'form')]
+            return action
         except Exception as e:
             return {
                 'type': 'ir.actions.client',
