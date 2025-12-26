@@ -15,7 +15,7 @@
                       event_open_popup="true"
                       create="true"
                       quick_create="false"
-                      mode="day"
+                      mode="month"
                       stack="true"
                       domain="[('state', '!=', 'template')]"
                       context="{'default_fso_id': context.get('default_fso_id'), 'default_assignment_date': context.get('default_assignment_date'), 'date': context.get('date'), 'initial_date': context.get('initial_date')}">
