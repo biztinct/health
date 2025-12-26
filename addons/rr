@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if [ $# -ne 1 ]; then
+  echo "Usage: ./rr <module_name>"
+  exit 1
+fi
+
+MODULE="$1"
+
+SSH_HOST="ubuntu@VietUcUAT"
+REMOTE_ADDONS_DIR="/odoo/odoo-server/addons"
+ODOO_BIN="/odoo/odoo-server/odoo-bin"
+
+SRC_DIR="$(pwd)/${MODULE}"
+DEST_DIR="${REMOTE_ADDONS_DIR}/${MODULE}"
+
+if [ ! -d "$SRC_DIR" ]; then
+  echo "Module not found: $SRC_DIR"
+  exit 1
+fi
+
+echo "Syncing ${MODULE} to ${SSH_HOST}:${DEST_DIR} ..."
+rsync -rl --no-times --no-perms --no-owner --no-group "${SRC_DIR}/" "${SSH_HOST}:${DEST_DIR}/"
+
+echo "Upgrading ${MODULE}..."
+ssh "${SSH_HOST}" "sudo -u odoo python3 ${ODOO_BIN} -u ${MODULE}"
