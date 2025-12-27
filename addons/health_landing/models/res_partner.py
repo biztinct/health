@@ -50,6 +50,7 @@ class ResPartner(models.Model):
         """Open hub-and-spoke dashboard for this patient"""
         self.ensure_one()
 
+        menu_id = self.env.context.get('health_flow_menu_id')
         return {
             'type': 'ir.actions.client',
             'tag': 'health_landing_patient_hub',
@@ -57,6 +58,7 @@ class ResPartner(models.Model):
             'params': {
                 'patient_id': self.id,
                 'patient_name': self.name,
+                **({'menu_id': menu_id, 'health_flow_origin': True} if menu_id else {}),
             },
         }
 

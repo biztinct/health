@@ -8,6 +8,10 @@
                 patientId="patientId"
                 patientName="patientName"
                 onBack="() => this.onBack()"
+                onBreadcrumbRoot="() => this.onBreadcrumbRoot()"
+                breadcrumbRootLabel="breadcrumbRootLabel"
+                breadcrumbMiddleLabel="breadcrumbMiddleLabel"
+                breadcrumbClientLabel="breadcrumbClientLabel"
                 onSpokeClick="(spoke, patientId) => this.onSpokeClick(spoke, patientId)"
             />
 

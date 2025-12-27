@@ -156,6 +156,10 @@
                     patientId="state.selectedPatientId"
                     patientName="state.selectedPatientName"
                     onBack="() => this.showMain()"
+                    onBreadcrumbRoot="() => this.showMain()"
+                    breadcrumbRootLabel="'Home'"
+                    breadcrumbMiddleLabel="'Patient Management'"
+                    breadcrumbClientLabel="'Client'"
                     onSpokeClick="(spoke, patientId) => this.onSpokeClick(spoke, patientId)"
                 />
 

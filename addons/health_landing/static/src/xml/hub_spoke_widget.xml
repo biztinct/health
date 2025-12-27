@@ -12,13 +12,15 @@
                 </button>
 
                 <div class="health_landing_breadcrumb">
-                    <a href="#" class="health_landing_breadcrumb_item" t-on-click="props.onBack">
-                        <i class="fa fa-home"/> Home
+                    <a href="#" class="health_landing_breadcrumb_item" t-on-click="onBreadcrumbRoot">
+                        <i class="fa fa-home"/> <t t-esc="props.breadcrumbRootLabel"/>
                     </a>
+                    <t t-if="props.breadcrumbMiddleLabel">
+                        <span class="health_landing_breadcrumb_separator">/</span>
+                        <a href="#" class="health_landing_breadcrumb_item" t-on-click="props.onBack" t-esc="props.breadcrumbMiddleLabel"/>
+                    </t>
                     <span class="health_landing_breadcrumb_separator">/</span>
-                    <a href="#" class="health_landing_breadcrumb_item" t-on-click="props.onBack">Patient Management</a>
-                    <span class="health_landing_breadcrumb_separator">/</span>
-                    <a href="#" class="health_landing_breadcrumb_item" t-on-click="props.onBack">Client</a>
+                    <a href="#" class="health_landing_breadcrumb_item" t-on-click="props.onBack" t-esc="props.breadcrumbClientLabel"/>
                     <span class="health_landing_breadcrumb_separator">/</span>
                     <span class="health_landing_breadcrumb_item" t-esc="props.patientName"/>
                 </div>

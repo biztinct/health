@@ -33,12 +33,11 @@ class HealthFlowWizard(models.TransientModel):
             return self._get_crm_action(key)
         elif key in ['booking-draft', 'booking-assigned', 'booking-scheduled', 'booking-in-progress', 'booking-completed']:
             return self._get_booking_action(key)
+        elif key == 'client':
+            return self._get_client_action()
 
         # Map keys to action xmlid
         mapping = {
-            # Center Circle
-            'client': ('health_base.action_health_patient', _('Patient Registry')),
-
             # Primary Circles - Direct Actions
             'analytics': ('synconics_bi_dashboard.action_bi_dashboard', _('BI Dashboard')),
             'audit': ('health_base.action_health_audit_log', _('Audit Log')),
@@ -273,6 +272,56 @@ class HealthFlowWizard(models.TransientModel):
             }
 
     @api.model
+    def _get_client_action(self):
+        """Open client registry without menu-bound breadcrumbs"""
+        try:
+            base_action = self.env['ir.actions.actions']._for_xml_id(
+                'health_base.action_health_patient'
+            )
+            original_context = base_action.get('context', {})
+            if isinstance(original_context, str):
+                original_context = eval(original_context)
+
+            list_view = self.env.ref('health_base.view_health_patient_tree', raise_if_not_found=False)
+            kanban_view = self.env.ref('health_base.view_health_patient_kanban', raise_if_not_found=False)
+            form_view = self.env.ref('health_base.view_health_patient_form', raise_if_not_found=False)
+            search_view = self.env.ref('health_base.view_health_patient_search', raise_if_not_found=False)
+
+            action = {
+                'type': 'ir.actions.act_window',
+                'name': _('Client'),
+                'res_model': 'res.partner',
+                'view_mode': 'list,kanban,form',
+                'views': [
+                    (list_view.id, 'list') if list_view else (False, 'list'),
+                    (kanban_view.id, 'kanban') if kanban_view else (False, 'kanban'),
+                    (form_view.id, 'form') if form_view else (False, 'form'),
+                ],
+                'search_view_id': search_view.id if search_view else False,
+                'domain': [('is_patient', '=', True)],
+                'context': dict(original_context),
+                'target': 'current',
+            }
+            menu = self.env.ref('health_flow.menu_health_flow_root', raise_if_not_found=False)
+            if menu:
+                action['context']['health_flow_menu_id'] = menu.id
+                action['context']['health_flow_origin'] = True
+            if base_action.get('help'):
+                action['help'] = base_action['help']
+            return action
+        except Exception as e:
+            return {
+                'type': 'ir.actions.client',
+                'tag': 'display_notification',
+                'params': {
+                    'title': _('Client Action Error'),
+                    'message': _('Failed to load client registry: %s', str(e)),
+                    'type': 'warning',
+                    'sticky': False,
+                }
+            }
+
+    @api.model
     def _get_booking_action(self, key):
         """Get Booking actions with calendar view and filters"""
         try:
@@ -497,6 +546,11 @@ class HealthFlowWizard(models.TransientModel):
 
             if hasattr(partner, 'action_open_hub_spoke'):
                 action = partner.action_open_hub_spoke()
+                menu = self.env.ref('health_flow.menu_health_flow_root', raise_if_not_found=False)
+                if menu:
+                    action.setdefault('params', {})
+                    action['params']['menu_id'] = menu.id
+                    action['params']['health_flow_origin'] = True
                 action.setdefault('target', 'current')
                 return action
 

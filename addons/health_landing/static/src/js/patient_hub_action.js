@@ -2,6 +2,7 @@
 
 import { registry } from "@web/core/registry";
 import { Component, useState, onWillStart, onMounted } from "@odoo/owl";
+import { useService } from "@web/core/utils/hooks";
 import { HubSpokeWidget } from "./hub_spoke_widget";
 import { PatientSpokeModal } from "./patient_spoke_modal";
 
@@ -17,6 +18,7 @@ class PatientHubAction extends Component {
     static components = { HubSpokeWidget, PatientSpokeModal };
 
     setup() {
+        this.orm = useService("orm");
         this.state = useState({
             selectedSpoke: null,
         });
@@ -24,6 +26,11 @@ class PatientHubAction extends Component {
         // Get patient info from action params
         this.patientId = this.props.action.params?.patient_id;
         this.patientName = this.props.action.params?.patient_name;
+        this.menuId = this.props.action.params?.menu_id;
+        this.isHealthFlow = Boolean(this.props.action.params?.health_flow_origin);
+        this.breadcrumbRootLabel = this.isHealthFlow ? "Health Flow" : "Home";
+        this.breadcrumbMiddleLabel = this.isHealthFlow ? null : "Patient Management";
+        this.breadcrumbClientLabel = "Client";
 
         onWillStart(async () => {
             // If patient ID is missing or undefined, try to restore from localStorage
@@ -40,6 +47,9 @@ class PatientHubAction extends Component {
         });
 
         onMounted(() => {
+            if (this.menuId) {
+                this.env.services.menu.setCurrentMenu(Number(this.menuId));
+            }
             // Store patient ID in browser history state and localStorage for back button handling
             if (this.patientId) {
                 const historyState = {
@@ -95,9 +105,36 @@ class PatientHubAction extends Component {
     /**
      * Back to patient kanban
      */
-    onBack() {
+    async onBack() {
+        if (this.isHealthFlow) {
+            await this.returnToHealthFlowClients();
+            return;
+        }
         // Go back to the patient registry kanban view
-        this.env.services.action.doAction("health_base.action_health_patient");
+        await this.env.services.action.doAction("health_base.action_health_patient");
+    }
+
+    async returnToHealthFlowClients() {
+        try {
+            const action = await this.orm.call(
+                "health.flow.wizard",
+                "get_action",
+                ["client"]
+            );
+            if (action && action.type) {
+                await this.env.services.action.doAction(action);
+            }
+        } catch (error) {
+            console.error("Failed to return to Health Flow client list:", error);
+        }
+    }
+
+    onBreadcrumbRoot() {
+        if (this.isHealthFlow) {
+            this.env.services.action.doAction("health_flow.action_health_flow_dashboard");
+            return;
+        }
+        this.onBack();
     }
 }
 

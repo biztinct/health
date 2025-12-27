@@ -24,6 +24,10 @@ export class HubSpokeWidget extends Component {
         patientName: String,
         onBack: Function,
         onSpokeClick: Function,
+        breadcrumbRootLabel: String,
+        breadcrumbMiddleLabel: { type: String, optional: true },
+        breadcrumbClientLabel: String,
+        onBreadcrumbRoot: { type: Function, optional: true },
     };
 
     setup() {
@@ -172,6 +176,14 @@ export class HubSpokeWidget extends Component {
 
     onSpokeMouseLeave() {
         this.state.hoveredSpoke = null;
+    }
+
+    onBreadcrumbRoot() {
+        if (this.props.onBreadcrumbRoot) {
+            this.props.onBreadcrumbRoot();
+        } else if (this.props.onBack) {
+            this.props.onBack();
+        }
     }
 
     /**
