@@ -19,6 +19,7 @@ class PatientHubAction extends Component {
 
     setup() {
         this.orm = useService("orm");
+        this.actionService = useService("action");
         this.state = useState({
             selectedSpoke: null,
         });
@@ -49,6 +50,10 @@ class PatientHubAction extends Component {
         onMounted(() => {
             if (this.menuId) {
                 this.env.services.menu.setCurrentMenu(Number(this.menuId));
+            }
+            const controller = this.actionService.currentController;
+            if (controller?.config?.setDisplayName) {
+                controller.config.setDisplayName(this.patientName || "Client");
             }
             // Store patient ID in browser history state and localStorage for back button handling
             if (this.patientId) {

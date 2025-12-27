@@ -54,6 +54,10 @@ class FSOHubSpokeAction extends Component {
             if (this.menuId) {
                 this.menuService.setCurrentMenu(Number(this.menuId));
             }
+            const controller = this.actionService.currentController;
+            if (controller?.config?.setDisplayName) {
+                controller.config.setDisplayName(this.state.fsoName || "Booking");
+            }
             // Store FSO ID in browser history state and localStorage for back button handling
             const historyState = {
                 fsoId: this.state.fsoId,

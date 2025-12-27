@@ -22,6 +22,17 @@ class HealthFlowWizard(models.TransientModel):
     # Action Resolution Methods
     # ==========================================
 
+    def _ensure_action_name(self, action, fallback_name=None):
+        """Ensure action has a non-empty name for breadcrumbs."""
+        if not action:
+            return action
+        name = action.get('name')
+        if not name:
+            name = fallback_name or action.get('display_name') or action.get('res_model') or _('Action')
+            action['name'] = name
+        action.setdefault('display_name', action['name'])
+        return action
+
     @api.model
     def get_action(self, key):
         """
@@ -101,7 +112,7 @@ class HealthFlowWizard(models.TransientModel):
         # Open full-screen so breadcrumbs and full controls show
         action['target'] = 'current'
         action.setdefault('context', {})
-        action.setdefault('name', action_name)
+        self._ensure_action_name(action, action_name)
 
         return action
 
@@ -258,7 +269,7 @@ class HealthFlowWizard(models.TransientModel):
                 action['help'] = _('No leads found for this filter.')
                 action['context'] = dict(original_context, **{'default_type': 'opportunity'})
 
-            return action
+            return self._ensure_action_name(action, action.get('name') or _('CRM'))
         except Exception as e:
             return {
                 'type': 'ir.actions.client',
@@ -308,7 +319,7 @@ class HealthFlowWizard(models.TransientModel):
                 action['context']['health_flow_origin'] = True
             if base_action.get('help'):
                 action['help'] = base_action['help']
-            return action
+            return self._ensure_action_name(action, _('Client'))
         except Exception as e:
             return {
                 'type': 'ir.actions.client',
@@ -368,7 +379,7 @@ class HealthFlowWizard(models.TransientModel):
                     'search_default_filter_completed': 1,
                 })
 
-            return action
+            return self._ensure_action_name(action, _('Bookings'))
         except Exception as e:
             return {
                 'type': 'ir.actions.client',
@@ -516,7 +527,7 @@ class HealthFlowWizard(models.TransientModel):
                     action['params']['menu_id'] = menu.id
                     action['params']['health_flow_origin'] = True
                 action.setdefault('target', 'current')
-                return action
+                return self._ensure_action_name(action, _('Booking Dashboard'))
 
             view = self.env.ref('health_fieldservice.view_health_fieldservice_order_form', raise_if_not_found=False)
             action = {
@@ -528,7 +539,7 @@ class HealthFlowWizard(models.TransientModel):
                 'target': 'current',
             }
             action['views'] = [(view.id, 'form')] if view else [(False, 'form')]
-            return action
+            return self._ensure_action_name(action, _('Booking'))
         except Exception as e:
             return {
                 'type': 'ir.actions.client',
@@ -557,7 +568,7 @@ class HealthFlowWizard(models.TransientModel):
                     action['params']['menu_id'] = menu.id
                     action['params']['health_flow_origin'] = True
                 action.setdefault('target', 'current')
-                return action
+                return self._ensure_action_name(action, _('Client Dashboard'))
 
             view = self.env.ref('health_base.view_health_patient_form', raise_if_not_found=False)
             action = {
@@ -570,7 +581,7 @@ class HealthFlowWizard(models.TransientModel):
                 'context': {'default_is_patient': True},
             }
             action['views'] = [(view.id, 'form')] if view else [(False, 'form')]
-            return action
+            return self._ensure_action_name(action, _('Client'))
         except Exception as e:
             return {
                 'type': 'ir.actions.client',
@@ -593,7 +604,8 @@ class HealthFlowWizard(models.TransientModel):
         try:
             lead = self.env['crm.lead'].browse(lead_id).exists()
             if lead and hasattr(lead, 'action_open_lead_hub'):
-                return lead.action_open_lead_hub()
+                action = lead.action_open_lead_hub()
+                return self._ensure_action_name(action, _('Lead Dashboard'))
 
             view = self.env.ref('health_crm.view_healthcare_opportunity_form', raise_if_not_found=False)
             action = {
@@ -606,7 +618,7 @@ class HealthFlowWizard(models.TransientModel):
                 'context': {'default_type': 'opportunity'},
             }
             action['views'] = [(view.id, 'form')] if view else [(False, 'form')]
-            return action
+            return self._ensure_action_name(action, _('CRM Contact'))
         except Exception as e:
             return {
                 'type': 'ir.actions.client',
