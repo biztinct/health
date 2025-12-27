@@ -68,6 +68,7 @@ class HealthFlowAction extends Component {
                 items: [
                     { key: 'booking-search', label: 'Search', icon: 'fa-search', desc: 'Search bookings', isSearch: true },
                     { key: 'booking-calendar', label: 'Booking Calendar', icon: 'fa-calendar-check-o', desc: 'Visual booking calendar' },
+                    { key: 'booking-all', label: 'All Bookings', icon: 'fa-list', desc: 'All bookings (grouped by month)' },
                     { key: 'booking-staff', label: 'Staff Workload', icon: 'fa-user-md', desc: 'Staff workload overview' },
                     { key: 'booking-staff-assignment', label: 'Staff Assignment', icon: 'fa-users', desc: 'Assignment timeline view' },
                     { key: 'booking-draft', label: 'Draft', icon: 'fa-file-o', desc: 'Draft bookings', hasCount: true, countKey: 'draft' },

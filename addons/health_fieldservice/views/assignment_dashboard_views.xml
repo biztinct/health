@@ -129,7 +129,8 @@
             <calendar string="FSO Assignment Calendar" 
                       date_start="scheduled_datetime" 
                       color="state"
-                      mode="week">
+                      mode="week"
+                      scales="day,week,month,year">
                 
                 <field name="name"/>
                 <field name="patient_id"/>

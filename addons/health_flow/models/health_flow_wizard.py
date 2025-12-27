@@ -42,7 +42,7 @@ class HealthFlowWizard(models.TransientModel):
         # Handle special actions with custom domains/contexts
         if key in ['crm-add-lead', 'crm-all', 'crm-initial', 'crm-activities', 'crm-calendar', 'crm-continue-followup', 'crm-client-acquired', 'crm-booking-lost']:
             return self._get_crm_action(key)
-        elif key in ['booking-draft', 'booking-assigned', 'booking-scheduled', 'booking-in-progress', 'booking-completed']:
+        elif key in ['booking-calendar', 'booking-all', 'booking-draft', 'booking-assigned', 'booking-scheduled', 'booking-in-progress', 'booking-completed']:
             return self._get_booking_action(key)
         elif key == 'client':
             return self._get_client_action()
@@ -57,7 +57,6 @@ class HealthFlowWizard(models.TransientModel):
             'crm-search': ('health_crm.action_healthcare_opportunities', _('CRM Search')),
 
             # Booking Panel
-            'booking-calendar': ('health_fieldservice.action_health_fieldservice_order', _('Booking Calendar')),
             'booking-staff': ('health_fieldservice.action_staff_workload_dashboard', _('Staff Workload')),
             'booking-staff-assignment': ('health_fieldservice.action_assignment_web_timeline_view', _('Staff Assignment Timeline')),
 
@@ -340,7 +339,7 @@ class HealthFlowWizard(models.TransientModel):
                 'health_fieldservice.action_health_fieldservice_order'
             )
             action['target'] = 'current'
-            # Open calendar view first for Draft/Assigned/Scheduled
+            # Open calendar view first for status filters
             action['view_mode'] = 'calendar,list,form'
 
             # Preserve original context and merge with new values
@@ -348,33 +347,61 @@ class HealthFlowWizard(models.TransientModel):
             if isinstance(original_context, str):
                 original_context = eval(original_context)
 
+            calendar_view = self.env.ref('health_fieldservice.view_health_fieldservice_order_calendar', raise_if_not_found=False)
+            list_view = self.env.ref('health_fieldservice.view_health_fieldservice_order_list', raise_if_not_found=False)
+            form_view = self.env.ref('health_fieldservice.view_health_fieldservice_order_form', raise_if_not_found=False)
+            calendar_views = [
+                (calendar_view.id, 'calendar') if calendar_view else (False, 'calendar'),
+                (list_view.id, 'list') if list_view else (False, 'list'),
+                (form_view.id, 'form') if form_view else (False, 'form'),
+            ]
+
+            if key == 'booking-all':
+                action['name'] = _('All Bookings')
+                action['view_mode'] = 'list,form'
+                action['views'] = [
+                    (list_view.id, 'list') if list_view else (False, 'list'),
+                    (form_view.id, 'form') if form_view else (False, 'form'),
+                ]
+                action['context'] = dict(original_context, **{
+                    'group_by': 'scheduled_datetime:month',
+                })
+            elif key == 'booking-calendar':
+                action['name'] = _('Booking Calendar')
+                action['views'] = calendar_views
+                action['context'] = dict(original_context)
             if key == 'booking-draft':
                 action['name'] = _('Draft Bookings Calendar')
                 action['domain'] = [('state', '=', 'draft')]
+                action['views'] = calendar_views
                 action['context'] = dict(original_context, **{
                     'search_default_filter_draft': 1,
                 })
             elif key == 'booking-assigned':
                 action['name'] = _('Assigned Bookings Calendar')
                 action['domain'] = [('state', '=', 'assigned')]
+                action['views'] = calendar_views
                 action['context'] = dict(original_context, **{
                     'search_default_filter_assigned': 1,
                 })
             elif key == 'booking-scheduled':
                 action['name'] = _('Scheduled Bookings Calendar')
                 action['domain'] = [('state', '=', 'confirmed')]
+                action['views'] = calendar_views
                 action['context'] = dict(original_context, **{
                     'search_default_filter_scheduled': 1,
                 })
             elif key == 'booking-in-progress':
                 action['name'] = _('In Progress Bookings Calendar')
                 action['domain'] = [('stage_id.name', '=', 'In Progress')]
+                action['views'] = calendar_views
                 action['context'] = dict(original_context, **{
                     'search_default_filter_in_progress': 1,
                 })
             elif key == 'booking-completed':
                 action['name'] = _('Completed Bookings Calendar')
                 action['domain'] = [('stage_id.name', '=', 'Completed')]
+                action['views'] = calendar_views
                 action['context'] = dict(original_context, **{
                     'search_default_filter_completed': 1,
                 })
