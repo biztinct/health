@@ -22,6 +22,9 @@ export class FSOHubSpokeWidget extends Component {
         fsoId: Number,
         fsoName: String,
         onBack: Function,
+        breadcrumbRootLabel: String,
+        breadcrumbBookingLabel: String,
+        onBreadcrumbRoot: { type: Function, optional: true },
     };
 
     setup() {
@@ -532,6 +535,14 @@ export class FSOHubSpokeWidget extends Component {
 
     onNodeMouseLeave() {
         this.state.hoveredSpoke = null;
+    }
+
+    onBreadcrumbRoot() {
+        if (this.props.onBreadcrumbRoot) {
+            this.props.onBreadcrumbRoot();
+        } else if (this.props.onBack) {
+            this.props.onBack();
+        }
     }
 
     /**

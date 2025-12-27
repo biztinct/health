@@ -8,6 +8,9 @@
                 fsoId="state.fsoId"
                 fsoName="state.fsoName"
                 onBack="() => this.onBack()"
+                onBreadcrumbRoot="() => this.onBreadcrumbRoot()"
+                breadcrumbRootLabel="breadcrumbRootLabel"
+                breadcrumbBookingLabel="breadcrumbBookingLabel"
             />
         </div>
     </t>

@@ -510,6 +510,11 @@ class HealthFlowWizard(models.TransientModel):
 
             if hasattr(booking, 'action_open_fso_dashboard'):
                 action = booking.action_open_fso_dashboard()
+                menu = self.env.ref('health_flow.menu_health_flow_root', raise_if_not_found=False)
+                if menu:
+                    action.setdefault('params', {})
+                    action['params']['menu_id'] = menu.id
+                    action['params']['health_flow_origin'] = True
                 action.setdefault('target', 'current')
                 return action
 

@@ -11,6 +11,16 @@
                     <i class="fa fa-arrow-left"/> Back
                 </button>
 
+                <div class="health_landing_breadcrumb">
+                    <a href="#" class="health_landing_breadcrumb_item" t-on-click="onBreadcrumbRoot">
+                        <i class="fa fa-home"/> <t t-esc="props.breadcrumbRootLabel"/>
+                    </a>
+                    <span class="health_landing_breadcrumb_separator">/</span>
+                    <a href="#" class="health_landing_breadcrumb_item" t-on-click="props.onBack" t-esc="props.breadcrumbBookingLabel"/>
+                    <span class="health_landing_breadcrumb_separator">/</span>
+                    <span class="health_landing_breadcrumb_item" t-esc="props.fsoName"/>
+                </div>
+
                 <!-- FSO ID and Status Bar on Same Line -->
                 <div class="fso_header_main" t-if="!state.loading &amp;&amp; state.fsoData">
                     <h1 class="fso_spoke_title">

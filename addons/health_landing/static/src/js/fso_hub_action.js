@@ -17,6 +17,7 @@ class FSOHubSpokeAction extends Component {
 
     setup() {
         this.actionService = useService("action");
+        this.menuService = useService("menu");
         this.state = useState({
             fsoId: null,
             fsoName: null,
@@ -25,6 +26,10 @@ class FSOHubSpokeAction extends Component {
         onWillStart(async () => {
             // Get FSO ID and name from action params
             const params = this.props.action.params || {};
+            this.menuId = params.menu_id;
+            this.isHealthFlow = Boolean(params.health_flow_origin);
+            this.breadcrumbRootLabel = this.isHealthFlow ? "Health Flow" : "Home";
+            this.breadcrumbBookingLabel = "Booking";
 
             // If FSO ID is missing or undefined, try to restore from localStorage
             if (!params.fso_id || params.fso_id === 'undefined') {
@@ -46,6 +51,9 @@ class FSOHubSpokeAction extends Component {
         });
 
         onMounted(() => {
+            if (this.menuId) {
+                this.menuService.setCurrentMenu(Number(this.menuId));
+            }
             // Store FSO ID in browser history state and localStorage for back button handling
             const historyState = {
                 fsoId: this.state.fsoId,
@@ -76,6 +84,14 @@ class FSOHubSpokeAction extends Component {
             view_mode: "form",
             target: "current",
         });
+    }
+
+    onBreadcrumbRoot() {
+        if (this.isHealthFlow) {
+            this.actionService.doAction("health_flow.action_health_flow_dashboard");
+            return;
+        }
+        this.onBack();
     }
 }
 
