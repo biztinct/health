@@ -239,6 +239,7 @@
         <field name="arch" type="xml">
             <form string='Client Bookings'>
                 <header>
+                    <button name="action_create_fso_modal" type="object" string="Create Booking" class="btn-primary"/>
                     <button name="action_view_bookings_calendar" type="object" string="Calendar View" class="btn-primary"/>
                 </header>
                 <sheet>

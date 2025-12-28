@@ -83,3 +83,14 @@ class ResPartner(models.Model):
             'target': 'new',
             'search_view_id': self.env.ref('health_landing.view_fso_bookings_calendar_search').id,
         }
+
+    def action_create_fso_modal(self):
+        """Open booking creation form in a modal window"""
+        action = self.action_create_fso()
+        action['target'] = 'new'
+        try:
+            view = self.env.ref('health_fieldservice.view_health_fieldservice_order_form')
+            action['views'] = [(view.id, 'form')]
+        except ValueError:
+            pass
+        return action
