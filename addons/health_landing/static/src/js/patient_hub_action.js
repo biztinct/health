@@ -30,7 +30,7 @@ class PatientHubAction extends Component {
         this.menuId = this.props.action.params?.menu_id;
         this.isHealthFlow = Boolean(this.props.action.params?.health_flow_origin);
         this.breadcrumbRootLabel = this.isHealthFlow ? "Health Flow" : "Home";
-        this.breadcrumbMiddleLabel = this.isHealthFlow ? null : "Patient Management";
+        this.breadcrumbMiddleLabel = this.isHealthFlow ? "" : "Patient Management";
         this.breadcrumbClientLabel = "Client";
 
         onWillStart(async () => {
