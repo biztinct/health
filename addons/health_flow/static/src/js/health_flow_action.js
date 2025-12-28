@@ -33,6 +33,15 @@ class HealthFlowAction extends Component {
                 in_progress: 0,
                 completed: 0,
             },
+            crmCounts: {
+                planned_activities: 0,
+                calendar: 0,
+                all: 0,
+                initial: 0,
+                continue_followup: 0,
+                client_acquired: 0,
+                booking_lost: 0,
+            },
             searchModalOpen: false,
             searchType: null, // 'booking' or 'crm'
             searchQuery: '',
@@ -52,14 +61,14 @@ class HealthFlowAction extends Component {
                 items: [
                     { key: 'crm-search', label: 'Search', icon: 'fa-search', desc: 'Search opportunities', isSearch: true },
                     { key: 'crm-add-lead', label: 'Add Lead', icon: 'fa-plus-circle', desc: 'Create a new lead' },
-                    { key: 'crm-activities', label: 'Planned Activities', icon: 'fa-tasks', desc: 'Planned activities' },
-                    { key: 'crm-calendar', label: 'Calendar', icon: 'fa-calendar', desc: 'CRM calendar view' },
-                    { key: 'crm-all', label: 'All Leads', icon: 'fa-address-card', desc: 'All leads (kanban first)' },
-                    { key: 'crm-initial', label: 'Initial Contact', icon: 'fa-phone', desc: 'Initial contact leads' },
+                    { key: 'crm-activities', label: 'Planned Activities', icon: 'fa-tasks', desc: 'Planned activities', hasCount: true, countKey: 'planned_activities', countSource: 'crm' },
+                    { key: 'crm-calendar', label: 'Calendar', icon: 'fa-calendar', desc: 'CRM calendar view', hasCount: true, countKey: 'calendar', countSource: 'crm' },
+                    { key: 'crm-all', label: 'All Leads', icon: 'fa-address-card', desc: 'All leads (kanban first)', hasCount: true, countKey: 'all', countSource: 'crm' },
+                    { key: 'crm-initial', label: 'Initial Contact', icon: 'fa-phone', desc: 'Initial contact leads', hasCount: true, countKey: 'initial', countSource: 'crm' },
                     // Use a Font Awesome v4 compatible icon to ensure it renders
-                    { key: 'crm-continue-followup', label: 'Continue Follow-up', icon: 'fa-refresh', desc: 'Leads pending follow-up' },
-                    { key: 'crm-client-acquired', label: 'Client Acquired', icon: 'fa-check-circle', desc: 'Converted clients' },
-                    { key: 'crm-booking-lost', label: 'Booking Lost', icon: 'fa-times-circle', desc: 'Lost opportunities' },
+                    { key: 'crm-continue-followup', label: 'Continue Follow-up', icon: 'fa-refresh', desc: 'Leads pending follow-up', hasCount: true, countKey: 'continue_followup', countSource: 'crm' },
+                    { key: 'crm-client-acquired', label: 'Client Acquired', icon: 'fa-check-circle', desc: 'Converted clients', hasCount: true, countKey: 'client_acquired', countSource: 'crm' },
+                    { key: 'crm-booking-lost', label: 'Booking Lost', icon: 'fa-times-circle', desc: 'Lost opportunities', hasCount: true, countKey: 'booking_lost', countSource: 'crm' },
                 ],
             },
             booking: {
@@ -111,6 +120,7 @@ class HealthFlowAction extends Component {
         onWillStart(async () => {
             // Fetch booking counts
             await this.fetchBookingCounts();
+            await this.fetchCrmCounts();
         });
 
         onMounted(() => {
@@ -144,6 +154,22 @@ class HealthFlowAction extends Component {
             this.state.bookingCounts = counts;
         } catch (error) {
             console.error('[Health Flow] Failed to fetch booking counts:', error);
+        }
+    }
+
+    /**
+     * Fetch CRM counts for CRM tiles
+     */
+    async fetchCrmCounts() {
+        try {
+            const counts = await this.orm.call(
+                'health.flow.wizard',
+                'get_crm_counts',
+                []
+            );
+            this.state.crmCounts = counts;
+        } catch (error) {
+            console.error('[Health Flow] Failed to fetch CRM counts:', error);
         }
     }
 
@@ -302,6 +328,9 @@ class HealthFlowAction extends Component {
      */
     getTileCount(item) {
         if (item.hasCount && item.countKey) {
+            if (item.countSource === 'crm') {
+                return this.state.crmCounts[item.countKey] || 0;
+            }
             return this.state.bookingCounts[item.countKey] || 0;
         }
         return null;

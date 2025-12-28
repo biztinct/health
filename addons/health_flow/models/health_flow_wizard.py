@@ -454,6 +454,49 @@ class HealthFlowWizard(models.TransientModel):
             return {'draft': 0, 'assigned': 0, 'scheduled': 0, 'in_progress': 0, 'completed': 0}
 
     @api.model
+    def get_crm_counts(self):
+        """Get counts for CRM tiles."""
+        try:
+            Lead = self.env['crm.lead']
+            base_domain = [('type', '=', 'opportunity')]
+            counts = {
+                'all': Lead.search_count(base_domain),
+                'initial': Lead.search_count(base_domain + [('stage_id.sequence', '<=', 1)]),
+                'continue_followup': Lead.search_count(base_domain + [
+                    '|', '|',
+                    ('contact_outcome', '=', 'pending_follow_up'),
+                    ('health_contact_outcome', '=', 'pending_follow_up'),
+                    ('stage_id.name', 'ilike', 'Continue Follow-up'),
+                ]),
+                'client_acquired': Lead.search_count(base_domain + [
+                    '|', '|', '|',
+                    ('contact_outcome', '=', 'service_booked'),
+                    ('health_contact_outcome', '=', 'service_booked'),
+                    ('stage_id.is_won', '=', True),
+                    ('stage_id.name', 'ilike', 'Client Acquired'),
+                ]),
+                'booking_lost': Lead.search_count(base_domain + [
+                    '|', '|',
+                    ('contact_outcome', '=', 'booking_lost'),
+                    ('health_contact_outcome', '=', 'booking_lost'),
+                    ('stage_id.name', 'in', ['Booking Lost', 'Opportunity Lost']),
+                ]),
+                'planned_activities': Lead.search_count(base_domain + [('activity_ids', '!=', False)]),
+            }
+            counts['calendar'] = counts['planned_activities']
+            return counts
+        except Exception:
+            return {
+                'all': 0,
+                'initial': 0,
+                'continue_followup': 0,
+                'client_acquired': 0,
+                'booking_lost': 0,
+                'planned_activities': 0,
+                'calendar': 0,
+            }
+
+    @api.model
     def search_bookings(self, query):
         """Search bookings by client name, phone, or booking reference"""
         try:
