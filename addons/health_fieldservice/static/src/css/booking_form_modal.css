@@ -8,4 +8,26 @@
     display: flex !important;
     flex-wrap: wrap;
     gap: 6px;
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    background: var(--o-view-background-color, #fff);
+    padding-top: 4px;
+}
+
+.o_dialog .o_form_view[data-res-model="health.fieldservice.order"] .o_form_sheet_bg,
+.modal .o_form_view[data-res-model="health.fieldservice.order"] .o_form_sheet_bg,
+.o_dialog .o_form_view[data-res-model="health.fieldservice.order"] .o_form_sheet,
+.modal .o_form_view[data-res-model="health.fieldservice.order"] .o_form_sheet {
+    overflow: visible !important;
+}
+
+/* Keep the control panel visible inside booking dialogs */
+.o_dialog .o_action_manager:has(.o_form_view[data-res-model="health.fieldservice.order"]) .o_control_panel {
+    margin-top: 0 !important;
+    padding-top: 8px;
+    background: var(--o-view-background-color, #fff);
+    position: sticky;
+    top: 0;
+    z-index: 3;
 }

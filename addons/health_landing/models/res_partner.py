@@ -88,6 +88,7 @@ class ResPartner(models.Model):
         """Open booking creation form in a modal window"""
         action = self.action_create_fso()
         action['target'] = 'new'
+        action['context'] = dict(action.get('context', {}), show_modal_quote_button=True)
         try:
             view = self.env.ref('health_fieldservice.view_health_fieldservice_order_form')
             action['views'] = [(view.id, 'form')]

@@ -18,6 +18,16 @@
                             invisible="state in ('draft', 'completed', 'completed_pending_invoice', 'cancelled', 'closed')"
                             help="Assign staff to this booking"/>
 
+                    <button name="action_create_and_open_quote" type="object"
+                            string="🧾 Create Quote" class="btn-secondary"
+                            invisible="sale_order_id or not context.get('show_modal_quote_button')"
+                            help="Create a quote for this booking"/>
+
+                    <button name="action_view_quote" type="object"
+                            string="🧾 Quote" class="btn-secondary"
+                            invisible="not sale_order_id or not context.get('show_modal_quote_button')"
+                            help="Open the quote for this booking"/>
+
                     <button name="action_start_service" type="object"
                             string="▶️ Start Service" class="oe_highlight"
                             invisible="state not in ('confirmed', 'assigned') or not assignment_ids"
