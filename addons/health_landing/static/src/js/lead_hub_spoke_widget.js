@@ -236,6 +236,21 @@ export class LeadHubSpokeWidget extends Component {
         });
     }
 
+    async onConvertToClient() {
+        try {
+            const action = await this.orm.call(
+                "crm.lead",
+                "action_convert_to_client",
+                [this.props.leadId]
+            );
+            if (action && action.type) {
+                await this.actionService.doAction(action);
+            }
+        } catch (error) {
+            console.error("Failed to convert lead to client:", error);
+        }
+    }
+
     getSpokeClasses(spoke) {
         const classes = ["hub_spoke_node"];
         if (this.state.hoveredSpoke === spoke.id) {
@@ -252,4 +267,3 @@ export class LeadHubSpokeWidget extends Component {
         return classes.join(" ");
     }
 }
-

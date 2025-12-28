@@ -24,7 +24,11 @@
                     <i class="fa fa-user-circle"/> <t t-esc="getLeadName()"/>
                 </h1>
                 <p class="hub_spoke_subtitle">
-                    <span class="hub_spoke_subtitle_tag hub_spoke_subtitle_tag--lead">Lead Details</span>
+                    <button type="button"
+                            class="hub_spoke_subtitle_tag hub_spoke_subtitle_tag--lead"
+                            t-on-click="onConvertToClient">
+                        Convert to Client
+                    </button>
                 </p>
             </div>
 
