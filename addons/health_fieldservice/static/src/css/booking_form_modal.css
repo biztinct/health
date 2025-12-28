@@ -1,0 +1,11 @@
+/* Ensure smart buttons are visible in booking form dialogs */
+.o_dialog .o_form_view[data-res-model="health.fieldservice.order"] .o_form_button_box,
+.o_dialog .o_form_view[data-res-model="health.fieldservice.order"] .oe_button_box,
+.modal .o_form_view[data-res-model="health.fieldservice.order"] .o_form_button_box,
+.modal .o_form_view[data-res-model="health.fieldservice.order"] .oe_button_box,
+.o_form_view.o_form_editable[data-res-model="health.fieldservice.order"] .o_form_button_box,
+.o_form_view.o_form_editable[data-res-model="health.fieldservice.order"] .oe_button_box {
+    display: flex !important;
+    flex-wrap: wrap;
+    gap: 6px;
+}

@@ -72,8 +72,6 @@
                         <field name="package_consumption_quantity" 
                                invisible="1"
                                help="Number of services to consume from selected package"/>
-                    </group>
-                    <group>
                         <field name="currency_id" invisible="1"/>
                         <field name="is_package_service" readonly="1" invisible="1"/>
                         <field name="package_service_value" readonly="1" widget="monetary"
