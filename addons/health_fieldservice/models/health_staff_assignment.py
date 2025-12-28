@@ -46,6 +46,11 @@ class HealthStaffAssignment(models.Model):
         readonly=True
     )
 
+    active = fields.Boolean(
+        default=True,
+        help='If unchecked, the assignment is archived.'
+    )
+
     
     name = fields.Char('Assignment Reference', required=True, copy=False, readonly=True,
                       default=lambda self: _('New Assignment'))

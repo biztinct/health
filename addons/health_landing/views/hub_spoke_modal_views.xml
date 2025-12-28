@@ -169,7 +169,11 @@
         <field name="arch" type="xml">
             <form string="Service Packages">
                 <header>
-                    <button name="action_create_prepaid_package" type="object" string="Select Package" class="btn-primary"/>
+                    <button name="action_create_prepaid_package"
+                            type="object"
+                            string="Select Package"
+                            class="btn-primary"
+                            context="{'return_to_packages_modal': True}"/>
                 </header>
                 <sheet>
                     <h1>

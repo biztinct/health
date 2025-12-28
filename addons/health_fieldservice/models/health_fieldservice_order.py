@@ -47,6 +47,11 @@ class HealthFieldServiceOrderUnified(models.Model):
         store=True,
         help='Computed display name for views'
     )
+
+    active = fields.Boolean(
+        default=True,
+        help='If unchecked, the booking is archived.'
+    )
     
     @api.depends('name', 'patient_id')
     def _compute_display_name(self):
@@ -1363,6 +1368,11 @@ class HealthFieldServiceOrderUnified(models.Model):
                 vals['state'] = new_stage.state
         
         result = super().write(vals)
+
+        if 'active' in vals:
+            assignments = self.with_context(active_test=False).mapped('assignment_ids')
+            if assignments:
+                assignments.write({'active': vals['active']})
 
         # Handle state transitions
         if 'state' in vals:
