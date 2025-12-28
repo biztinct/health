@@ -33,6 +33,21 @@ class HealthFlowWizard(models.TransientModel):
         action.setdefault('display_name', action['name'])
         return action
 
+    def _apply_flow_context(self, action):
+        """Attach Health Flow menu context so breadcrumbs show the app name."""
+        if not action:
+            return action
+        context = action.get('context', {})
+        if isinstance(context, str):
+            context = eval(context)
+        menu = self.env.ref('health_flow.menu_health_flow_root', raise_if_not_found=False)
+        if menu:
+            context.setdefault('menu_id', menu.id)
+            context.setdefault('health_flow_origin', True)
+            action.setdefault('menu_id', menu.id)
+        action['context'] = context
+        return action
+
     @api.model
     def get_action(self, key):
         """
@@ -111,9 +126,8 @@ class HealthFlowWizard(models.TransientModel):
         # Open full-screen so breadcrumbs and full controls show
         action['target'] = 'current'
         action.setdefault('context', {})
-        self._ensure_action_name(action, action_name)
-
-        return action
+        action = self._ensure_action_name(action, action_name)
+        return self._apply_flow_context(action)
 
     @api.model
     def _get_crm_action(self, key):
@@ -133,7 +147,7 @@ class HealthFlowWizard(models.TransientModel):
 
             if key == 'crm-add-lead':
                 quick_form = self.env.ref('health_crm.view_healthcare_crm_lead_quick_create', raise_if_not_found=False)
-                return {
+                action = {
                     'type': 'ir.actions.act_window',
                     'name': _('New Lead'),
                     'res_model': 'crm.lead',
@@ -144,6 +158,7 @@ class HealthFlowWizard(models.TransientModel):
                         'default_type': 'opportunity',
                     }),
                 }
+                return self._apply_flow_context(self._ensure_action_name(action, _('New Lead')))
             elif key == 'crm-all':
                 action['name'] = _('All Leads')
                 action['domain'] = [('type', '=', 'opportunity')]
@@ -268,7 +283,8 @@ class HealthFlowWizard(models.TransientModel):
                 action['help'] = _('No leads found for this filter.')
                 action['context'] = dict(original_context, **{'default_type': 'opportunity'})
 
-            return self._ensure_action_name(action, action.get('name') or _('CRM'))
+            action = self._ensure_action_name(action, action.get('name') or _('CRM'))
+            return self._apply_flow_context(action)
         except Exception as e:
             return {
                 'type': 'ir.actions.client',
@@ -318,7 +334,8 @@ class HealthFlowWizard(models.TransientModel):
                 action['context']['health_flow_origin'] = True
             if base_action.get('help'):
                 action['help'] = base_action['help']
-            return self._ensure_action_name(action, _('Client'))
+            action = self._ensure_action_name(action, _('Client'))
+            return self._apply_flow_context(action)
         except Exception as e:
             return {
                 'type': 'ir.actions.client',
@@ -406,7 +423,8 @@ class HealthFlowWizard(models.TransientModel):
                     'search_default_filter_completed': 1,
                 })
 
-            return self._ensure_action_name(action, _('Bookings'))
+            action = self._ensure_action_name(action, _('Bookings'))
+            return self._apply_flow_context(action)
         except Exception as e:
             return {
                 'type': 'ir.actions.client',
