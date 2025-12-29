@@ -15,7 +15,7 @@
                   create="false" delete="false" default_order="date_maturity">
                   
                 <!-- Healthcare-specific columns first -->
-                <field name="partner_id" string='Client" readonly="1'/>
+                <field name="partner_id" string="Client" readonly="1"/>
                 <field name="move_id" string="Invoice" readonly="1"/>
                 <field name="invoice_date" readonly="1"/>
                 <field name="date_maturity" string="Due Date"/>
@@ -40,6 +40,18 @@
                 <field name="account_id" invisible="1"/>
                 
             </list>
+        </field>
+    </record>
+
+    <!-- Ensure Client column label renders correctly in AR list -->
+    <record id="view_healthcare_ar_payments_tree_client_label" model="ir.ui.view">
+        <field name="name">Healthcare AR Payments Client Label</field>
+        <field name="model">account.move.line</field>
+        <field name="inherit_id" ref="view_healthcare_ar_payments_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='partner_id']" position="attributes">
+                <attribute name="string">Client</attribute>
+            </xpath>
         </field>
     </record>
 

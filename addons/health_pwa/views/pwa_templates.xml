@@ -1212,7 +1212,7 @@ console.log('Health PWA Service Worker loaded successfully');
                         </ol>
                         <p><strong>Note:</strong> DON'T add this page to home screen - it's just a guide!</p>
                     </div>
-                    <a href="/health_pwa" class="open-app-btn-primary">
+                    <a href="/health_pwa" class="open-app-btn-primary" target="_blank" rel="noopener noreferrer">
                         <span class="lang-content active" id="open-primary-vi">🚀 Mở Viet Uc Ngay</span>
                         <span class="lang-content" id="open-primary-en">🚀 Open Viet Uc Now</span>
                     </a>
@@ -1335,7 +1335,7 @@ console.log('Health PWA Service Worker loaded successfully');
                     </div>
                 </div>
 
-                <a href="/health_pwa" class="open-app-btn">
+                <a href="/health_pwa" class="open-app-btn" target="_blank" rel="noopener noreferrer">
                     <span class="lang-content active" id="open-btn-vi">Mở Viet Uc</span>
                     <span class="lang-content" id="open-btn-en">Open Viet Uc</span>
                 </a>

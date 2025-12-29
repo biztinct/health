@@ -44,7 +44,19 @@ class HealthFlowWizard(models.TransientModel):
         if menu:
             context.setdefault('menu_id', menu.id)
             context.setdefault('health_flow_origin', True)
+            params = context.get('params', {})
+            if not isinstance(params, dict):
+                params = {}
+            params.setdefault('menu_id', menu.id)
+            params.setdefault('health_flow_origin', True)
+            context['params'] = params
             action.setdefault('menu_id', menu.id)
+            action_params = action.get('params', {})
+            if not isinstance(action_params, dict):
+                action_params = {}
+            action_params.setdefault('menu_id', menu.id)
+            action_params.setdefault('health_flow_origin', True)
+            action['params'] = action_params
         action['context'] = context
         return action
 
