@@ -12,7 +12,7 @@
     <menuitem
         id="menu_health_flow_root"
         name="Flow Dashboard"
-        sequence="5"
+        sequence="1"
         web_icon="health_flow,static/description/icon.png"
         action="action_health_flow_dashboard"
     />

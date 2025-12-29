@@ -7,7 +7,6 @@ from odoo.osv import expression
 class Users(models.Model):
     _inherit = "res.users"
 
-    @api.depends("groups_id")
     def _compute_model_access(self):
         """
         Calculate model access base on user
@@ -28,7 +27,7 @@ class Users(models.Model):
         string="Access Controls",
         compute="_compute_model_access",
         copy=True,
-        store=True,
+        store=False,
     )
 
     @api.model_create_multi

@@ -9,3 +9,4 @@ from . import health_medication_safety
 from . import health_risk_assessment
 from . import resource_calendar_leaves  # Public holiday pricing integration
 from . import health_audit_log  # Consolidated audit log view
+from . import res_config_settings
