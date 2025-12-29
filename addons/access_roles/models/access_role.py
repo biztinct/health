@@ -269,7 +269,7 @@ class AccessRole(models.Model):
         for role in self:
             if role.user_ids:
                 role.user_ids.write({
-                    'groups_ids': [Command.set(role.groups_ids.ids)]
+                    'group_ids': [Command.set(role.groups_ids.ids)]
                 })
 
     def _determine_fields_to_fetch(self, field_names, ignore_when_in_cache=False):
