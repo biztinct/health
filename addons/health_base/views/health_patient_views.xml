@@ -51,7 +51,7 @@
                                     <field name="age_display" nolabel="1"/>
                                 </span>
                                 <span class="badge patient-badge badge-deceased text-danger" invisible="not deceased">
-                                    <i class="fa fa-times-circle" title="Deceased"/>
+                                    <i class="fa fa-user-times" title="Deceased"/>
                                 </span>
                             </div>
                         </h1>
