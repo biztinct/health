@@ -51,6 +51,12 @@ class HealthFlowAction extends Component {
                 leads: [],
             },
             selectedLeadIds: [], // For multi-select in search results
+            // User info for top bar display
+            userName: '',
+            userFacility: '',
+            // Booking notifications
+            bookingNotifications: [],
+            bookingNotificationsOpen: false,
         });
 
         // Panel data configuration
@@ -118,9 +124,13 @@ class HealthFlowAction extends Component {
         };
 
         onWillStart(async () => {
+            // Fetch user info
+            await this.fetchUserInfo();
             // Fetch booking counts
             await this.fetchBookingCounts();
             await this.fetchCrmCounts();
+            // Fetch booking notifications
+            await this.fetchBookingNotifications();
         });
 
         onMounted(() => {
@@ -171,6 +181,104 @@ class HealthFlowAction extends Component {
         } catch (error) {
             console.error('[Health Flow] Failed to fetch CRM counts:', error);
         }
+    }
+
+    /**
+     * Fetch current user info (name and facility)
+     */
+    async fetchUserInfo() {
+        try {
+            const userInfo = await this.orm.call(
+                'health.flow.wizard',
+                'get_user_info',
+                []
+            );
+            this.state.userName = userInfo.userName || '';
+            this.state.userFacility = userInfo.userFacility || '';
+        } catch (error) {
+            console.error('[Health Flow] Failed to fetch user info:', error);
+        }
+    }
+
+    /**
+     * Fetch booking notifications (new, upcoming, cancelled, rescheduled)
+     */
+    async fetchBookingNotifications() {
+        try {
+            const notifications = await this.orm.call(
+                'health.flow.wizard',
+                'get_booking_notifications',
+                []
+            );
+            this.state.bookingNotifications = notifications || [];
+        } catch (error) {
+            console.error('[Health Flow] Failed to fetch booking notifications:', error);
+        }
+    }
+
+    /**
+     * Toggle booking notifications dropdown
+     */
+    toggleBookingNotifications() {
+        this.state.bookingNotificationsOpen = !this.state.bookingNotificationsOpen;
+    }
+
+    /**
+     * Open booking from notification and remove from list
+     */
+    async openNotificationBooking(notification) {
+        try {
+            // Remove from local list (notification.id is the booking id)
+            const idx = this.state.bookingNotifications.findIndex(n => n.id === notification.id);
+            if (idx > -1) {
+                this.state.bookingNotifications.splice(idx, 1);
+            }
+            // Open the booking (notification.id is the booking id)
+            await this.openBooking(notification.id);
+            this.state.bookingNotificationsOpen = false;
+        } catch (error) {
+            console.error('[Health Flow] Failed to open notification booking:', error);
+        }
+    }
+
+    /**
+     * Navigate to Home Page
+     */
+    async goHome() {
+        // Close any open panels/modals
+        this.closePanel();
+        this.closeSearchModal();
+        this.state.bookingNotificationsOpen = false;
+        // Refresh state
+        await this.fetchBookingCounts();
+        await this.fetchCrmCounts();
+        await this.fetchBookingNotifications();
+    }
+
+    /**
+     * Get notification icon based on type
+     */
+    getNotificationIcon(type) {
+        const icons = {
+            new: 'fa-plus-circle',
+            upcoming: 'fa-calendar',
+            cancelled: 'fa-times-circle',
+            rescheduled: 'fa-refresh',
+        };
+        return icons[type] || 'fa-bell';
+    }
+
+    /**
+     * Get notification color class based on type
+     */
+    getNotificationClass(type) {
+        const classes = {
+            new: 'notification-new',
+            upcoming: 'notification-upcoming',
+            cancelled: 'notification-cancelled',
+            rescheduled: 'notification-rescheduled',
+        };
+        return classes[type] || '';
     }
 
     /**

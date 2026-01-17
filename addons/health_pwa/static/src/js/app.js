@@ -1568,7 +1568,9 @@ window.healthPWA = {
         const isClinicalNotesComplete = computed(() => {
           // Check local unsaved state
           const hasLocalNotes = clinicalNotesText.value && clinicalNotesText.value.trim().length > 0;
-          const hasLocalImage = photoPreviewUrl.value !== null && photoPreviewUrl.value !== undefined && photoPreviewUrl.value !== '';
+          const hasDoctorNotes = [clinicalObservations.value, diagnosis.value, treatmentPerformed.value]
+            .some((val) => val && val.trim().length > 0);
+          const hasLocalImage = Boolean(capturedPhoto.value) || Boolean(photoPreviewUrl.value);
 
           // Check server-saved state
           const hasServerNotes = selectedBookingDetail.value?.clinical_notes &&
@@ -1576,7 +1578,7 @@ window.healthPWA = {
           const hasServerImages = selectedBookingDetail.value?.has_clinical_images === true;
 
           // Return true if either local unsaved OR server-saved clinical notes/images exist
-          return (hasLocalNotes || hasLocalImage) || hasServerNotes || hasServerImages;
+          return hasLocalNotes || hasDoctorNotes || hasLocalImage || hasServerNotes || hasServerImages;
         });
 
         // Start timer function

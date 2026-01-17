@@ -1,0 +1,113 @@
+Screen/Functionality,Requirement,Completion Status
+General Notes,Flow Dashboard page name should change to Home Page,TBD
+General Notes,Show user name and designated place of work (province) at the top of the screen to filter what they see,TBD
+General Notes,"Collect province as soon as possible, preferably in the initial contact form",TBD
+General Notes,Language option must translate all items; provide a copy of the language table,TBD
+General Notes,Every screen shows the current page name and has a working back-to-home control,TBD
+General Notes,"Wherever the client name appears, show the Client ID",TBD
+General Notes,All tables are sized to show column and/or row headings,TBD
+General Notes,Show sub-menu items as a horizontal strip at the top of the screen,TBD
+General Notes,"Add urgent OM Actions notification at top for new bookings, cancellations, rescheduling; clicking an item opens the booking and removes it from the notification list",TBD
+General Notes,Province is a separate field related to the facility for screening users and selecting facilities,TBD
+General Notes,"Address field can be used for facilities and individuals; use a popup to show compound address fields, save individual fields, and only display via popup when first entered or edited",TBD
+Main Client Menu - Client information,Add province (to filter users),TBD
+Main Client Menu - Client information,Add a title field for the name,TBD
+Main Client Menu - Client information,Add deceased flag: default false; can be set to true automatically or manually,TBD
+Main Client Menu - Client information,Add health insurance card number,TBD
+Main Client Menu - Client information,Add occupation,TBD
+Main Client Menu - Client information,Add ethnicity,TBD
+Main Client Menu - Client information,Deceased flag display: blank with no label if false; international symbol if true,TBD
+Main Client Menu - Client information,Store date/time and reporter details in file but do not show on form,TBD
+Main Client Menu - Client information,Add contact person to contact details (self or name of person); phone number is the contact person's phone,TBD
+Main Client Menu - Client information,Medical information is not required here,TBD
+Relationships,"Add a related person without reference to a client (e.g., 3rd party payers, new referrers who have not referred yet, other individuals)",TBD
+Relationships - Add Caregiver,Address,TBD
+Relationships - Add Caregiver,Telephone number,TBD
+Relationships - Add Payer,Address,TBD
+Relationships - Add Payer,Telephone number,TBD
+Relationships - Add Payer,Tax Number,TBD
+Relationships - Add Payer,Legal Name for Invoice,TBD
+Relationships - Add Payer,Payer ID,TBD
+Relationships - Add Payer,Bank Name,TBD
+Relationships - Add Payer,Account Number,TBD
+Relationships - Add Referrer,Address,TBD
+Relationships - Add Referrer,Telephone number,TBD
+Relationships - Add Referrer,Tax Number,TBD
+Relationships - Add Referrer,Legal Name for Invoice,TBD
+Relationships - Add Referrer,Referrer ID,TBD
+Relationships - Add Referrer,Contract Number,TBD
+Relationships - Add Referrer,Referral Commission,TBD
+Relationships - Add Referrer,Bank Name,TBD
+Relationships - Add Referrer,Account Number,TBD
+Relationships - Add Referrer,Tax Number,TBD
+Relationships - Add Emergency Contact,Telephone number,TBD
+Relationships - Add Emergency Contact,Alternative telephone number,TBD
+Relationships - Add Emergency Contact,Availability notes,TBD
+Relationships - Add Legal Guardians,Telephone number,TBD
+Relationships - Add Legal Guardians,Alternative telephone number,TBD
+Relationships - Add Legal Guardians,Availability notes,TBD
+Relationships - Add Client Representatives,Telephone number,TBD
+Relationships - Add Client Representatives,Alternative telephone number,TBD
+Relationships - Add Client Representatives,Availability notes,TBD
+Map,Rename Vietnamese Address to Home Address,TBD
+Map,Change order of address components (see below),TBD
+Map,Add GPS coordinates,TBD
+Map,Add one-way road distance from facility,TBD
+Bookings,Follow the booking process as described in the word document,TBD
+Bookings,Ask OMs what nurses need in booking notes,TBD
+Client details menus,Provide an option to assign an unassigned booking,TBD
+Dashboard - Financials,"Show total number of bookings by location type and total; total paid, total unpaid, and total all bookings",TBD
+Dashboard - Financials,Show amount due by days aged for each invoice,TBD
+Packages,Select only; generate package in finance menu,TBD
+Main CRM Menu,Rename Main CRM Menu to Sales & CRM,TBD
+CRM Sub-menus - Contacts,"On selection, open popup to enter initial contact data: name, contact ID, new/repeat flag, province, phone/email, and mode of contact (phone, chatbox, email, province)",TBD
+CRM Sub-menus - Contacts,Provide selection box to choose existing clients/contacts,TBD
+CRM Sub-menus - Contacts,System checks existing contact using name and phone/email,TBD
+CRM Sub-menus - Contacts,System auto-checks source and adds ID if relevant,TBD
+CRM Sub-menus - Contacts,"If existing, auto-enter contact ID; if not, assign new contact ID and flag new/repeat",TBD
+CRM Sub-menus - Contacts,Provide option buttons: next or home page,TBD
+CRM Sub-menus - Contacts,"If back to home is selected, record entry as false/junk contact",TBD
+CRM Sub-menus - Contacts,"If next is selected, close popup and open expanded Contact Details form",TBD
+CRM Sub-menus - Follow-up activities,"When selected from Home Page, open new window with menu items on top and search box for client/alternative client",TBD
+CRM Sub-menus - Follow-up activities,"When selected from Contact Details form, retain current contact details as current client",TBD
+CRM Sub-menus - Follow-up activities,Log as Lead (in calendar),TBD
+CRM Sub-menus - Follow-up activities,Log planned activity (in calendar),TBD
+CRM Sub-menus - Follow-up activities,Show all current leads sorted by planned follow-up date; selection opens lead follow-up form,TBD
+CRM Sub-menus - Follow-up activities,"If follow-up results in booking, show new booking form",TBD
+CRM Sub-menus - Follow-up activities,"If follow-up results in no booking, show booking lost form",TBD
+CRM Sub-menus - Follow-up activities,Show all current planned activities sorted by planned follow-up date; selection opens activity follow-up form,TBD
+CRM Sub-menus - Follow-up activities,Show calendar of current leads and activities; selection opens lead or activity follow-up form,TBD
+CRM Sub-menus - Follow-up activities,Recent client follow-up: show recent clients with selected service; selection shows client and last visit(s); log in lead calendar to follow up now or later; outcome is new booking or rejection,TBD
+CRM Sub-menus - Follow-up activities,Visit satisfaction follow-up: show recent clients without follow-up phone calls (placeholder for now),TBD
+Contact Details form,Show this part of the form only if the contact is not terminated at the initial contact stage,TBD
+Contact Details form,"Display initial contact details: name, ID, phone/email, mode of contact (phone/zalo/facebook/website/email), new/repeat, province; add address field and tag field to add type of related person option",TBD
+Contact Details form,Collect reason for contact,TBD
+Contact Details form,Collect contacting on behalf of (self/another person),TBD
+Contact Details form,Collect name of other person (select from client list or enter new client name),TBD
+Contact Details form,Horizontal menu on top,TBD
+Contact Details form,Home page option: selecting it records the call as junk call and returns to home page,TBD
+Contact Details form,Booking option: open new window with booking menus; also available from Bookings and Assignments main menu,TBD
+Booking menu - Client Details,Complete or view client details for a new contact; autofill if contacting person is the client or a repeat client; include controls to add services or go back to booking page,TBD
+Booking menu - Service Requirements,Collect services and sub-categories; add operations details or back-to-booking controls,TBD
+Booking menu - Service Requirements,"Add commission fields: Commission Due To, % commission, commission payment duration",TBD
+Booking menu - Booking Details,Create initial booking: date/time on calendar; include assign booking and back-to-booking controls,TBD
+Booking menu - Assign Booking,Not compulsory; Sales can assign nurse; include finished button to return to booking page,TBD
+Booking menu - Assign Booking,Add service fee field in VND for OM-negotiated casual provider fee; finished returns to prior screen,TBD
+Booking menu - Cancellation,Show cancellation form,TBD
+Booking menu - Cancellation,Capture date/time stamp,TBD
+Booking menu - Cancellation,Capture reason for cancellation,TBD
+Booking menu - Cancellation,Capture who cancelled (client side),TBD
+Booking menu - Cancellation,Capture who reported cancellation (name/position),TBD
+Booking menu - Cancellation,"If not a new client first visit, capture who last visited this client",TBD
+Booking menu - Reschedule,Show booking calendar,TBD
+Booking menu - Telemedicine,Refer to Duty Doctor with details; notify doctor and make details available,TBD
+Booking menu - Consultation,"Transfer for consultation to Duty Doctor, Head Nurse, or OM",TBD
+Booking menu - Escalate Contact,Transfer contact for further processing to Head Nurse or OM (not the same as consultation),TBD
+Booking menu - Actions,Send message option,TBD
+Booking menu - Actions,Log as Lead,TBD
+Booking menu - Actions,Log Activity,TBD
+Booking menu - Actions,Log Note,TBD
+Booking menu - Actions,"On closing Booking menu, post new booking/reschedule/cancellation to New Bookings log and notify OM",TBD
+Contact status,"Contact status field values: Active, Booking, Lead, Lost Booking, Spam Call",TBD
+Contact status,"If junk call, tag caller name/phone number as Spam Caller (change if new call results in booking, lead, or lost booking)",TBD
+Bookings Menu,Rename to Bookings and Assignments; display content as above,TBD

@@ -21,7 +21,14 @@ class ResUsers(models.Model):
         ('technician', 'Technician'),
         ('support', 'Support Staff')
     ], string='Healthcare Role')
-    
+
+    # Designated work location/facility
+    facility_id = fields.Many2one(
+        'health.facility',
+        string='Designated Facility',
+        help='The healthcare facility where this user primarily works'
+    )
+
     def get_employee_record(self):
         """Get linked employee record if exists"""
         if hasattr(self, 'employee_id') and self.employee_id:

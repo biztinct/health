@@ -4,8 +4,86 @@
     <!-- Health Flow Main Template -->
     <t t-name="health_flow.HealthFlowTemplate">
         <div class="health_flow_container">
+
+            <!-- Top Header Bar with User Info, Home Button, and Notifications -->
+            <div class="health_flow_top_bar">
+                <!-- Home Button -->
+                <div class="health_flow_home_btn" role="button" tabindex="0" t-on-click="() => this.goHome()">
+                    <i class="fa fa-home"></i>
+                </div>
+
+                <!-- User Info (Center) -->
+                <div class="health_flow_user_info">
+                    <span class="health_flow_user_name" t-esc="state.userName"/>
+                    <t t-if="state.userFacility">
+                        <span class="health_flow_user_separator">|</span>
+                        <span class="health_flow_user_facility" t-esc="state.userFacility"/>
+                    </t>
+                </div>
+
+                <!-- Booking Notifications -->
+                <div class="health_flow_notifications">
+                    <div class="health_flow_notification_btn" role="button" tabindex="0" t-on-click="() => this.toggleBookingNotifications()">
+                        <i class="fa fa-calendar-plus-o"></i>
+                        <t t-if="state.bookingNotifications.length > 0">
+                            <span class="health_flow_notification_badge" t-esc="state.bookingNotifications.length"/>
+                        </t>
+                    </div>
+
+                    <!-- Notifications Dropdown -->
+                    <div class="health_flow_notifications_dropdown" t-att-class="{'open': state.bookingNotificationsOpen}">
+                        <div class="health_flow_notifications_header">
+                            <span>Booking Notifications</span>
+                            <div class="health_flow_notifications_close" t-on-click="() => this.toggleBookingNotifications()">
+                                <i class="fa fa-times"></i>
+                            </div>
+                        </div>
+                        <div class="health_flow_notifications_list">
+                            <t t-if="state.bookingNotifications.length === 0">
+                                <div class="health_flow_notifications_empty">
+                                    <i class="fa fa-check-circle"></i>
+                                    <span>No new notifications</span>
+                                </div>
+                            </t>
+                            <t t-foreach="state.bookingNotifications" t-as="notification" t-key="notification.id">
+                                <div class="health_flow_notification_item"
+                                     t-att-class="this.getNotificationClass(notification.type)"
+                                     t-on-click="() => this.openNotificationBooking(notification)">
+                                    <i t-att-class="'fa ' + this.getNotificationIcon(notification.type)"></i>
+                                    <div class="health_flow_notification_content">
+                                        <span class="health_flow_notification_title" t-esc="notification.title"/>
+                                        <span class="health_flow_notification_subtitle" t-esc="notification.subtitle"/>
+                                    </div>
+                                </div>
+                            </t>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Horizontal Panel Strip (shows when a primary node is clicked) -->
+            <div class="health_flow_horizontal_panel" t-att-class="{'open': state.panelOpen}">
+                <div class="health_flow_horizontal_panel_header">
+                    <h4 class="health_flow_horizontal_panel_title" t-esc="state.panelTitle"/>
+                    <div class="health_flow_horizontal_panel_close" role="button" tabindex="0" t-on-click="() => this.closePanel()">
+                        <i class="fa fa-times"></i>
+                    </div>
+                </div>
+                <div class="health_flow_horizontal_panel_items">
+                    <t t-foreach="state.panelItems" t-as="item" t-key="item.key">
+                        <div class="health_flow_horizontal_tile" t-on-click="() => this.onPanelTileClick(item)">
+                            <i t-att-class="'fa ' + item.icon + ' health_flow_tile_icon'"></i>
+                            <span class="health_flow_tile_label" t-esc="item.label"/>
+                            <t t-if="this.getTileCount(item) !== null">
+                                <span class="health_flow_tile_count" t-esc="this.getTileCount(item)"/>
+                            </t>
+                        </div>
+                    </t>
+                </div>
+            </div>
+
             <!-- Main Circular Workflow Layout -->
-            <div class="health_flow_circular_workflow">
+            <div class="health_flow_circular_workflow" t-att-class="{'panel-open': state.panelOpen}">
 
                 <!-- Flow Arrows (Clockwise Direction) -->
                 <div class="health_flow_arrows">
@@ -118,33 +196,6 @@
                     <span class="health_flow_primary_text">Admin</span>
                 </div>
 
-            </div>
-
-            <!-- Slide-in Panel -->
-            <div class="health_flow_panel"
-                 t-att-class="{'open': state.panelOpen}">
-                <div class="health_flow_panel_header">
-                    <h3 class="health_flow_panel_title" t-esc="state.panelTitle"/>
-                    <div class="health_flow_panel_close"
-                         role="button"
-                         tabindex="0"
-                         t-on-click="() => this.closePanel()">
-                        <i class="fa fa-times"></i>
-                    </div>
-                </div>
-                <div class="health_flow_panel_items">
-                    <t t-foreach="state.panelItems" t-as="item" t-key="item.key">
-                        <div class="health_flow_panel_card"
-                             t-on-click="() => this.onPanelTileClick(item)">
-                            <i t-att-class="'fa ' + item.icon + ' health_flow_card_icon'"></i>
-                            <p class="health_flow_card_title" t-esc="item.label"/>
-                            <p class="health_flow_card_desc" t-esc="item.desc"/>
-                            <t t-if="this.getTileCount(item) !== null">
-                                <span class="health_flow_card_count" t-esc="this.getTileCount(item)"/>
-                            </t>
-                        </div>
-                    </t>
-                </div>
             </div>
 
             <!-- Booking Search Modal -->

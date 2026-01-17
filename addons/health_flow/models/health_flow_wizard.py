@@ -766,3 +766,125 @@ class HealthFlowWizard(models.TransientModel):
         }
         lead = self.env['crm.lead'].create(lead_vals)
         return {'id': lead.id}
+
+    # ==========================================
+    # User Info & Notifications
+    # ==========================================
+
+    @api.model
+    def get_user_info(self):
+        """Get current user's name and facility for top bar display."""
+        user = self.env.user
+        facility_name = ''
+        if hasattr(user, 'facility_id') and user.facility_id:
+            facility_name = user.facility_id.name or ''
+        return {
+            'userName': user.name or '',
+            'userFacility': facility_name,
+        }
+
+    @api.model
+    def get_booking_notifications(self):
+        """
+        Get booking notifications for the current user.
+        Returns new bookings, upcoming bookings, cancelled bookings, and rescheduled bookings.
+        """
+        from datetime import datetime, timedelta
+        notifications = []
+
+        try:
+            FSO = self.env['health.fieldservice.order']
+            today = fields.Datetime.now()
+            tomorrow = today + timedelta(days=1)
+            yesterday = today - timedelta(days=1)
+
+            # New bookings created in the last 24 hours
+            new_bookings = FSO.search([
+                ('create_date', '>=', yesterday),
+                ('state', '=', 'draft'),
+            ], limit=5, order='create_date desc')
+
+            for booking in new_bookings:
+                notifications.append({
+                    'id': booking.id,
+                    'type': 'new',
+                    'title': _('New Booking'),
+                    'subtitle': booking.patient_id.name or booking.name or _('Unknown'),
+                })
+
+            # Upcoming bookings in the next 24 hours
+            upcoming_bookings = FSO.search([
+                ('scheduled_datetime', '>=', today),
+                ('scheduled_datetime', '<=', tomorrow),
+                ('state', 'in', ['confirmed', 'assigned']),
+            ], limit=5, order='scheduled_datetime asc')
+
+            for booking in upcoming_bookings:
+                time_str = booking.scheduled_datetime.strftime('%H:%M') if booking.scheduled_datetime else ''
+                notifications.append({
+                    'id': booking.id,
+                    'type': 'upcoming',
+                    'title': _('Upcoming: %s', time_str),
+                    'subtitle': booking.patient_id.name or booking.name or _('Unknown'),
+                })
+
+            # Cancelled bookings in the last 24 hours
+            cancelled_bookings = FSO.search([
+                ('write_date', '>=', yesterday),
+                ('state', '=', 'cancelled'),
+            ], limit=5, order='write_date desc')
+
+            for booking in cancelled_bookings:
+                notifications.append({
+                    'id': booking.id,
+                    'type': 'cancelled',
+                    'title': _('Cancelled'),
+                    'subtitle': booking.patient_id.name or booking.name or _('Unknown'),
+                })
+
+            # Rescheduled bookings (modified in last 24 hours with future date)
+            # We'll filter in Python to check write_date != create_date
+            rescheduled_bookings = FSO.search([
+                ('write_date', '>=', yesterday),
+                ('scheduled_datetime', '>=', today),
+                ('state', 'in', ['draft', 'confirmed', 'assigned']),
+            ], limit=10, order='write_date desc')
+
+            rescheduled_count = 0
+            for booking in rescheduled_bookings:
+                if rescheduled_count >= 5:
+                    break
+                # Only include if it was actually modified after creation (rescheduled)
+                if booking.write_date and booking.create_date:
+                    time_diff = abs((booking.write_date - booking.create_date).total_seconds())
+                    if time_diff > 60:  # More than 1 minute difference
+                        date_str = booking.scheduled_datetime.strftime('%m/%d %H:%M') if booking.scheduled_datetime else ''
+                        notifications.append({
+                            'id': booking.id,
+                            'type': 'rescheduled',
+                            'title': _('Rescheduled: %s', date_str),
+                            'subtitle': booking.patient_id.name or booking.name or _('Unknown'),
+                        })
+                        rescheduled_count += 1
+
+        except Exception as e:
+            # Return empty list if there's an error (e.g., model not installed)
+            pass
+
+        return notifications
+
+    @api.model
+    def get_home_action(self):
+        """Return action to navigate to Health Flow home page."""
+        try:
+            action = self.env['ir.actions.actions']._for_xml_id(
+                'health_flow.action_health_flow_dashboard'
+            )
+            action['target'] = 'current'
+            return action
+        except Exception:
+            return {
+                'type': 'ir.actions.client',
+                'tag': 'health_flow_dashboard',
+                'target': 'current',
+            }
