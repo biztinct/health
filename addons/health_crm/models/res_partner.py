@@ -54,6 +54,15 @@ class HealthContact(models.Model):
         help='Facebook profile URL or username'
     )
 
+    invoice_legal_name = fields.Char('Legal Name for Invoice')
+    bank_number = fields.Char('Bank Number')
+    account_number = fields.Char('Account Number')
+    payer_code = fields.Char('Payer ID')
+    referrer_code = fields.Char('Referrer ID')
+    contract_number = fields.Char('Contract Number')
+    referral_commission = fields.Float('Referral Commission')
+    availability_notes = fields.Text('Availability Notes')
+
     # Note: healthcare_lead_source moved to crm.lead model
 
     # Healthcare role flags for relationship management
@@ -595,5 +604,4 @@ class HealthContact(models.Model):
                 'relationship_side': side,
             }
         }
-
 

@@ -35,6 +35,23 @@ class RelationshipAddWizard(models.TransientModel):
         required=True,
         help='Select existing partner or create new one'
     )
+    phone = fields.Char(string='Phone')
+    mobile = fields.Char(string='Alternative Telephone')
+    zalo_number = fields.Char(string='Zalo Number')
+    vat = fields.Char(string='Tax Number')
+    invoice_legal_name = fields.Char(string='Legal Name for Invoice')
+    bank_number = fields.Char(string='Bank Number')
+    account_number = fields.Char(string='Account Number')
+    payer_code = fields.Char(string='Payer ID')
+    referrer_code = fields.Char(string='Referrer ID')
+    contract_number = fields.Char(string='Contract Number')
+    referral_commission = fields.Float(string='Referral Commission')
+    availability_notes = fields.Text(string='Availability Notes')
+    representative_vietnamese_address = fields.Text(
+        string='Full Vietnamese Address',
+        related='representative_id.vietnamese_address',
+        readonly=True,
+    )
 
     # Relationship details
     relationship_type = fields.Selection([
@@ -106,6 +123,78 @@ class RelationshipAddWizard(models.TransientModel):
             else:
                 record.role_label = ''
 
+    @api.onchange('representative_id')
+    def _onchange_representative_id(self):
+        if not self.representative_id:
+            self.phone = False
+            self.mobile = False
+            self.zalo_number = False
+            self.vat = False
+            self.invoice_legal_name = False
+            self.bank_number = False
+            self.account_number = False
+            self.payer_code = False
+            self.referrer_code = False
+            self.contract_number = False
+            self.referral_commission = 0.0
+            self.availability_notes = False
+            return
+
+        partner = self.representative_id
+        self.phone = partner.phone
+        self.mobile = partner.mobile
+        self.zalo_number = partner.zalo_number
+        self.vat = partner.vat
+        self.invoice_legal_name = partner.invoice_legal_name
+        self.bank_number = partner.bank_number
+        self.account_number = partner.account_number
+        self.payer_code = partner.payer_code
+        self.referrer_code = partner.referrer_code
+        self.contract_number = partner.contract_number
+        self.referral_commission = partner.referral_commission
+        self.availability_notes = partner.availability_notes
+
+    @api.onchange('role', 'representative_id')
+    def _onchange_role_generate_codes(self):
+        self._ensure_representative_codes()
+
+    def _ensure_representative_codes(self):
+        if not self.representative_id or not self.role:
+            return
+
+        if self.role in ['caregiver', 'payer', 'referrer'] and not self.representative_id.payer_code:
+            self.representative_id.payer_code = self._next_sequence(
+                code='health_crm.payer_code',
+                name='Payer ID',
+                prefix='PAY-',
+            )
+
+        if self.role == 'referrer' and not self.representative_id.referrer_code:
+            self.representative_id.referrer_code = self._next_sequence(
+                code='health_crm.referrer_code',
+                name='Referrer ID',
+                prefix='REF-',
+            )
+
+        self.payer_code = self.representative_id.payer_code
+        self.referrer_code = self.representative_id.referrer_code
+
+    def _next_sequence(self, code, name, prefix):
+        sequence = self.env['ir.sequence'].sudo().search([
+            ('code', '=', code)
+        ], limit=1)
+        if not sequence:
+            sequence = self.env['ir.sequence'].sudo().create({
+                'name': name,
+                'code': code,
+                'implementation': 'standard',
+                'prefix': prefix,
+                'padding': 5,
+                'number_increment': 1,
+                'number_next': 1,
+            })
+        return sequence.next_by_id()
+
     @api.model
     def default_get(self, fields_list):
         """Set defaults from context"""
@@ -147,6 +236,41 @@ class RelationshipAddWizard(models.TransientModel):
         elif self.role == 'payer':
             self.financial_responsibility = 100.0
 
+    def action_edit_representative_address(self):
+        self.ensure_one()
+        if not self.representative_id:
+            raise ValidationError(_('Please select a representative first.'))
+        return self.representative_id.action_edit_vietnamese_address()
+
+    def _get_representative_update_vals(self):
+        if self.role in ['caregiver', 'payer', 'referrer']:
+            vals = {
+                'phone': self.phone,
+                'zalo_number': self.zalo_number,
+                'vat': self.vat,
+                'invoice_legal_name': self.invoice_legal_name,
+                'bank_number': self.bank_number,
+                'account_number': self.account_number,
+                'payer_code': self.payer_code,
+            }
+            if self.role == 'referrer':
+                vals.update({
+                    'referrer_code': self.referrer_code,
+                    'contract_number': self.contract_number,
+                    'referral_commission': self.referral_commission,
+                })
+            return vals
+
+        if self.role in ['emergency_contact', 'legal_guardian', 'client_representative']:
+            return {
+                'phone': self.phone,
+                'zalo_number': self.zalo_number,
+                'mobile': self.mobile,
+                'availability_notes': self.availability_notes,
+            }
+
+        return {}
+
     def action_create_relationship(self):
         """Create the relationship record"""
         self.ensure_one()
@@ -173,6 +297,11 @@ class RelationshipAddWizard(models.TransientModel):
         # Ensure representative has is_representative flag
         if not self.representative_id.is_representative:
             self.representative_id.write({'is_representative': True})
+
+        self._ensure_representative_codes()
+        update_vals = self._get_representative_update_vals()
+        if update_vals:
+            self.representative_id.write(update_vals)
 
         # Create the relationship
         relation_vals = {

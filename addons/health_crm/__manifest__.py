@@ -78,6 +78,10 @@
             # Test widget (for debugging)
             'health_crm/static/src/js/test_widget.js',
             'health_crm/static/src/xml/test_widget.xml',
+            # Relationship add wizard assets
+            'health_crm/static/src/js/relationship_address_widget.js',
+            'health_crm/static/src/xml/relationship_address_widget.xml',
+            'health_crm/static/src/scss/relationship_wizard.scss',
             # Relationship graph widget (D3.js network visualization)
             'health_crm/static/src/js/relationship_graph_widget.js',
             'health_crm/static/src/xml/relationship_graph_widget.xml',

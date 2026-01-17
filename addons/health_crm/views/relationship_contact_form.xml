@@ -22,6 +22,35 @@
                         </group>
                     </group>
 
+                    <group string="Representative Details"
+                           invisible="not is_caregiver and not is_payer and not is_referrer">
+                        <group>
+                            <field name="phone" widget="phone"/>
+                            <field name="zalo_number"/>
+                            <field name="vat" string="Tax Number"/>
+                            <field name="invoice_legal_name"/>
+                        </group>
+                        <group>
+                            <field name="bank_number"/>
+                            <field name="account_number"/>
+                            <field name="payer_code"/>
+                            <field name="referrer_code" invisible="not is_referrer"/>
+                        </group>
+                    </group>
+
+                    <group string="Referrer Details" invisible="not is_referrer">
+                        <field name="contract_number"/>
+                        <field name="referral_commission" widget="percentage"/>
+                    </group>
+
+                    <group string="Other Contact Details"
+                           invisible="not is_emergency_contact and not is_legal_guardian and not is_client_representative">
+                        <field name="phone" widget="phone"/>
+                        <field name="zalo_number"/>
+                        <field name="mobile" string="Alternative Telephone"/>
+                        <field name="availability_notes" widget="text"/>
+                    </group>
+
                     <group string="Healthcare Roles">
                         <group col="1">
                             <field name="healthcare_role_tags" nolabel="1"/>

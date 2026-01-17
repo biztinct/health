@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <t t-name="health_crm.RelationshipAddressWidget">
+        <div class="o_relationship_address_widget">
+            <div class="o_relationship_address_text">
+                <t t-esc="address"/>
+            </div>
+            <button type="button"
+                    class="btn btn-link p-0 fa fa-pencil text-muted o_relationship_address_edit"
+                    title="Edit address"
+                    t-on-click="onEditAddress"
+                    t-att-disabled="!hasRepresentative"/>
+        </div>
+    </t>
+</odoo>

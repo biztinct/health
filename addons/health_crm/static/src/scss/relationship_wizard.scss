@@ -1,0 +1,21 @@
+.o_relationship_add_wizard {
+    .o_relationship_wizard_group {
+        padding-left: 16px;
+        padding-right: 16px;
+    }
+
+    .o_relationship_address_widget {
+        display: inline-flex;
+        align-items: flex-start;
+        gap: 8px;
+    }
+
+    .o_relationship_address_text {
+        max-width: 520px;
+        white-space: normal;
+    }
+
+    .o_relationship_address_edit {
+        margin-top: 2px;
+    }
+}

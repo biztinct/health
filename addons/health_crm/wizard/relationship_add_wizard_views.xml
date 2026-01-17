@@ -6,21 +6,64 @@
         <field name="name">relationship.add.wizard.form</field>
         <field name="model">health.relationship.add.wizard</field>
         <field name="arch" type="xml">
-            <form string="Add Relationship">
+            <form string="Add Relationship" class="o_relationship_add_wizard">
                 <sheet>
-                    <group>
+                    <group col="2">
                         <group>
                             <field name="client_name" readonly="1"/>
                             <field name="role_label" readonly="1"/>
                             <field name="client_id" invisible="1"/>
                             <field name="role" invisible="1"/>
                         </group>
+                        <group>
+                            <field name="payer_code" readonly="1"
+                                   invisible="role not in ['caregiver', 'payer', 'referrer']"/>
+                            <field name="referrer_code" readonly="1"
+                                   invisible="role != 'referrer'"/>
+                        </group>
                     </group>
 
-                    <group string="Select Representative">
+                    <group string="Select Representative" class="o_relationship_wizard_group">
                         <field name="representative_id" string="Name" options="{'no_create_edit': False}" placeholder="Search or create new partner..."/>
                         <field name="relationship_type"/>
                         <field name="is_primary"/>
+                    </group>
+
+                    <group string="Representative Address"
+                           class="o_relationship_wizard_group"
+                           invisible="role not in ['caregiver', 'payer', 'referrer']">
+                        <label for="representative_vietnamese_address" string="Full Vietnamese Address"/>
+                        <field name="representative_vietnamese_address"
+                               widget="relationship_address"
+                               nolabel="1"
+                               readonly="1"/>
+                    </group>
+
+                    <group string="Representative Details"
+                           invisible="role not in ['caregiver', 'payer', 'referrer']">
+                        <group>
+                            <field name="phone"/>
+                            <field name="zalo_number"/>
+                            <field name="vat" string="Tax Number"/>
+                            <field name="invoice_legal_name"/>
+                        </group>
+                        <group>
+                            <field name="bank_number"/>
+                            <field name="account_number"/>
+                        </group>
+                    </group>
+
+                    <group string="Referrer Details" invisible="role != 'referrer'">
+                        <field name="contract_number"/>
+                        <field name="referral_commission" widget="percentage"/>
+                    </group>
+
+                    <group string="Other Contact Details"
+                           invisible="role not in ['emergency_contact', 'legal_guardian', 'client_representative']">
+                        <field name="phone"/>
+                        <field name="zalo_number"/>
+                        <field name="mobile" string="Alternative Telephone"/>
+                        <field name="availability_notes" widget="text"/>
                     </group>
                 </sheet>
                 <footer>
