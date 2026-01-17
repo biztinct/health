@@ -69,12 +69,9 @@
                             <field name="age_display"/>
                             <field name="deceased"/>
                             <field name="gender"/>
-                            <field name="national_id"/>
-                            <field name="profession" string="Occupation"/>
-                            <field name="ethnicity"/>
                         </group>
 
-                        <group string="Contact Information">
+                        <group string="Other Information">
                             <field name="mobile" widget="phone"/>
                             <field name="phone" widget="phone"/>
                             <field name="email" widget="email"/>
@@ -82,6 +79,9 @@
                             <field name="patient_category_id"/>
                             <field name="primary_facility_id"/>
                             <field name="state_id" string="Province"/>
+                            <field name="national_id"/>
+                            <field name="profession" string="Occupation"/>
+                            <field name="ethnicity"/>
                         </group>
                     </group>
 

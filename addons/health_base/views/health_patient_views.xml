@@ -88,19 +88,15 @@
                                     <field name="middle_name"/>
                                     <field name="vietnamese_name" placeholder="Tên tiếng Việt"/>
                                     <field name="birth_date"/>
-                                    <field name="age" readonly="1"/>
                                     <field name="deceased"/>
                                     <field name="gender"/>
-                                    <field name="national_id"/>
-                                    <field name="profession" string="Occupation"/>
-                                    <field name="ethnicity"/>
                                 </group>
                             </div>
 
                             <div class="vu-card">
                                 <div class="vu-card__title">
                                     <span class="vu-section__icon" data-icon="users-group"/>
-                                    <span>Contact Information</span>
+                                    <span>Other Information</span>
                                 </div>
                                 <group col="2">
                                     <field name="phone" widget="phone" required="1"/>
@@ -109,6 +105,9 @@
                                     <field name="patient_category_id"/>
                                     <field name="primary_facility_id" required="1"/>
                                     <field name="source_type"/>
+                                    <field name="national_id"/>
+                                    <field name="profession" string="Occupation"/>
+                                    <field name="ethnicity"/>
                                 </group>
                             </div>
                         </div>
