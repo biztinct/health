@@ -36,6 +36,7 @@ class ResPartner(models.Model):
     patient_code_display = fields.Char('Patient ID Display', compute='_compute_patient_code_display')
 
     # Personal Details (Patient-specific)
+    title = fields.Char('Title')
     first_name = fields.Char('First Name', tracking=True)
     last_name = fields.Char('Last Name', tracking=True)
     middle_name = fields.Char('Middle Name')
@@ -139,6 +140,7 @@ class ResPartner(models.Model):
         ('inactive', 'Inactive'),
         ('deceased', 'Deceased')
     ], string='Client Status', default='new', tracking=True)
+    deceased = fields.Boolean('Deceased', tracking=True)
     
     registration_date = fields.Datetime('Registration Date', default=fields.Datetime.now, readonly=True)
     last_visit_date = fields.Datetime('Last Visit', readonly=True)

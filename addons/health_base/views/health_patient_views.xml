@@ -50,6 +50,9 @@
                                 <span class="badge patient-badge badge-age">
                                     <field name="age_display" nolabel="1"/>
                                 </span>
+                                <span class="badge patient-badge badge-deceased text-danger" invisible="not deceased">
+                                    <i class="fa fa-times-circle" title="Deceased"/>
+                                </span>
                             </div>
                         </h1>
                     </div>
@@ -79,14 +82,18 @@
                                     <span>Personal Information</span>
                                 </div>
                                 <group col="2">
+                                    <field name="title"/>
                                     <field name="first_name"/>
                                     <field name="last_name"/>
                                     <field name="middle_name"/>
                                     <field name="vietnamese_name" placeholder="Tên tiếng Việt"/>
                                     <field name="birth_date"/>
                                     <field name="age" readonly="1"/>
+                                    <field name="deceased"/>
                                     <field name="gender"/>
                                     <field name="national_id"/>
+                                    <field name="profession" string="Occupation"/>
+                                    <field name="ethnicity"/>
                                 </group>
                             </div>
 
@@ -148,78 +155,6 @@
                                         </div>
                                         <field name="geo_coordinates_display" widget="address_map" nolabel="1"/>
                                     </div>
-                                </div>
-                            </div>
-                        </page>
-
-                        <!-- Medical Information -->
-                        <page string="Medical Information" name="medical_info">
-                            <div class="vu-section">
-                                <div class="vu-section__title">
-                                    <span class="vu-section__icon" data-icon="heart-pulse"/>
-                                    <div>
-                                        <span>Medical Information</span>
-                                        <small class="text-muted d-block">Vitals, compliance and primary contacts</small>
-                                    </div>
-                                </div>
-                                <div class="vu-section-grid">
-                                    <div class="vu-card">
-                                        <div class="vu-card__title">
-                                            <span class="vu-section__icon" data-icon="stethoscope"/>
-                                            <span>Vital Information</span>
-                                        </div>
-                                        <group col="2">
-                                            <field name="blood_group" required="1"/>
-                                            <label for="allergies"/>
-                                            <field name="allergies" placeholder="List all known allergies (medications, foods, environmental)"/>
-                                        </group>
-                                        <small class="text-muted">⚠️ Critical for client safety - please be thorough</small>
-                                    </div>
-
-                                    <div class="vu-card">
-                                        <div class="vu-card__title">
-                                            <span class="vu-section__icon" data-icon="id-card"/>
-                                            <span>MOH Compliance</span>
-                                        </div>
-                                        <group col="2">
-                                            <field name="profession" placeholder="Client's occupation (e.g., Teacher, Engineer)"/>
-                                            <field name="ethnicity"/>
-                                        </group>
-                                    </div>
-
-                                    <div class="vu-card">
-                                        <div class="vu-card__title">
-                                            <span class="vu-section__icon" data-icon="life-ring"/>
-                                            <span>Emergency Contact</span>
-                                        </div>
-                                        <group col="2">
-                                            <field name="emergency_contact_name"/>
-                                            <field name="emergency_contact_phone" widget="phone"/>
-                                            <field name="emergency_contact_relation"/>
-                                        </group>
-                                    </div>
-
-                                    <div class="vu-card">
-                                        <div class="vu-card__title">
-                                            <span class="vu-section__icon" data-icon="users-group"/>
-                                            <span>Primary Contacts</span>
-                                        </div>
-                                        <group col="2">
-                                            <field name="primary_caregiver_id" options="{'no_create': True}"/>
-                                            <field name="primary_payer_id" options="{'no_create': True}"/>
-                                            <field name="primary_referrer_id" options="{'no_create': True}"/>
-                                        </group>
-                                    </div>
-                                </div>
-
-                                <div class="vu-card">
-                                    <div class="vu-card__title">
-                                        <span class="vu-section__icon" data-icon="file-text"/>
-                                        <span>Medical History</span>
-                                    </div>
-                                    <group>
-                                        <field name="medical_history" placeholder="Brief summary of relevant medical history, chronic conditions, previous surgeries, etc." nolabel="1"/>
-                                    </group>
                                 </div>
                             </div>
                         </page>
@@ -551,6 +486,7 @@
                 <field name="phone" string="Phone"/>
                 <field name="national_id" string="National ID"/>
                 <field name="email"/>
+                <field name="state_id" string="Province"/>
 
                 <separator/>
 
