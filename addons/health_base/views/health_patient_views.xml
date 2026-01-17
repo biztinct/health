@@ -9,7 +9,7 @@
     <record id="view_health_patient_form" model="ir.ui.view">
         <field name="name">res.partner.patient.form</field>
         <field name="model">res.partner</field>
-        <field name="priority">90</field>
+        <field name="priority">0</field>
         <field name="arch" type="xml">
             <form string="Client Record" class="o_form_patient_record">
                 <header>
@@ -125,25 +125,14 @@
                                             <span>Address Details</span>
                                         </div>
                                         <group col="2">
-                                            <!-- Vietnamese Address Fields Only -->
-                                            <field name="province_code"/>
-                                            <field name="house_number"/>
-                                            <field name="sub_alley_number"/>
-                                            <field name="alley_number"/>
-                                            <field name="ward_commune"/>
-                                            <field name="named_area"/>
-                                            <field name="apartment_number"/>
-                                            <field name="building_name"/>
-                                            <field name="zip" string="Postal Code"/>
-
-                                            <!-- Standard Address Fields -->
-                                            <field name="street" placeholder="Street name / Main road"/>
-                                            <field name="city" placeholder="District / City" required="1"/>
-                                            <field name="state_id" string="Province" placeholder="Select province" options="{'no_create': True}" required="1"/>
-                                            <field name="country_id" string="Country" options="{'no_create': True}"/>
-
-                                            <!-- Auto-computed Vietnamese Address -->
-                                            <field name="vietnamese_address" readonly="1" string="Full Vietnamese Address" widget="text"/>
+                                            <label for="vietnamese_address" string="Full Vietnamese Address"/>
+                                            <div class="o_row align-items-start">
+                                                <field name="vietnamese_address" nolabel="1" readonly="1" widget="text" class="flex-grow-1"/>
+                                                <button name="action_edit_vietnamese_address"
+                                                        type="object"
+                                                        class="btn btn-link p-0 fa fa-pencil text-muted"
+                                                        title="Edit address"/>
+                                            </div>
 
                                             <!-- Hidden fields for geocoding -->
                                             <field name="address_search" invisible="1"/>
@@ -638,6 +627,36 @@
         <field name="view_mode">form</field>
         <field name="view_id" ref="view_health_patient_form"/>
         <field name="act_window_id" ref="action_health_patient"/>
+    </record>
+
+    <record id="view_health_patient_address_form" model="ir.ui.view">
+        <field name="name">res.partner.address.modal</field>
+        <field name="model">res.partner</field>
+        <field name="arch" type="xml">
+            <form string="Edit Address">
+                <sheet>
+                    <group col="2">
+                        <field name="province_code"/>
+                        <field name="house_number"/>
+                        <field name="sub_alley_number"/>
+                        <field name="alley_number"/>
+                        <field name="ward_commune"/>
+                        <field name="named_area"/>
+                        <field name="apartment_number"/>
+                        <field name="building_name"/>
+                        <field name="zip" string="Postal Code"/>
+                        <field name="street" placeholder="Street name / Main road"/>
+                        <field name="city" placeholder="District / City" required="1"/>
+                        <field name="state_id" string="Province" placeholder="Select province" options="{'no_create': True}" required="1"/>
+                        <field name="country_id" string="Country" options="{'no_create': True}"/>
+                    </group>
+                </sheet>
+                <footer>
+                    <button string="Save" class="btn-primary" special="save"/>
+                    <button string="Discard" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
     </record>
 
     <!-- Patient Category Management -->

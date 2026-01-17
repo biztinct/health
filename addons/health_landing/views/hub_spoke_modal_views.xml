@@ -136,16 +136,14 @@
 
                     <group>
                         <group string="Vietnamese Address">
-                            <field name="province_code"/>
-                            <field name="house_number"/>
-                            <field name="sub_alley_number"/>
-                            <field name="alley_number"/>
-                            <field name="ward_commune"/>
-                            <field name="named_area"/>
-                            <field name="apartment_number"/>
-                            <field name="building_name"/>
-                            <field name="zip" string="Postal Code"/>
-                            <field name="vietnamese_address"/>
+                            <label for="vietnamese_address"/>
+                            <div class="o_row align-items-start">
+                                <field name="vietnamese_address" nolabel="1" readonly="1" widget="text" class="flex-grow-1"/>
+                                <button name="action_edit_vietnamese_address"
+                                        type="object"
+                                        class="btn btn-link p-0 fa fa-pencil text-muted"
+                                        title="Edit address"/>
+                            </div>
                         </group>
                     </group>
 

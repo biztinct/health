@@ -842,6 +842,25 @@ class ResPartner(models.Model):
                 'view_mode': 'form',
                 'target': 'current'
             }
+
+    def action_edit_vietnamese_address(self):
+        """Open modal to edit Vietnamese address fields."""
+        self.ensure_one()
+        view = self.env.ref('health_base.view_health_patient_address_form', raise_if_not_found=False)
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _('Edit Address'),
+            'res_model': 'res.partner',
+            'view_mode': 'form',
+            'views': [(view.id, 'form')] if view else [(False, 'form')],
+            'res_id': self.id,
+            'target': 'new',
+            'context': dict(
+                self.env.context,
+                form_view_ref='health_base.view_health_patient_address_form',
+                form_view_initial_mode='edit',
+            ),
+        }
     
     @api.model
     def name_search(self, name='', domain=None, operator='ilike', limit=100):
