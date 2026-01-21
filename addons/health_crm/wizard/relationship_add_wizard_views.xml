@@ -35,11 +35,13 @@
                         <label for="representative_vietnamese_address" string="Full Vietnamese Address"/>
                         <field name="representative_vietnamese_address"
                                widget="relationship_address"
+                               class="o_relationship_address_field"
                                nolabel="1"
                                readonly="1"/>
                     </group>
 
                     <group string="Representative Details"
+                           class="o_relationship_wizard_group"
                            invisible="role not in ['caregiver', 'payer', 'referrer']">
                         <group>
                             <field name="phone"/>
@@ -53,12 +55,15 @@
                         </group>
                     </group>
 
-                    <group string="Referrer Details" invisible="role != 'referrer'">
+                    <group string="Referrer Details"
+                           class="o_relationship_wizard_group"
+                           invisible="role != 'referrer'">
                         <field name="contract_number"/>
                         <field name="referral_commission" widget="percentage"/>
                     </group>
 
                     <group string="Other Contact Details"
+                           class="o_relationship_wizard_group"
                            invisible="role not in ['emergency_contact', 'legal_guardian', 'client_representative']">
                         <field name="phone"/>
                         <field name="zalo_number"/>

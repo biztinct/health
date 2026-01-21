@@ -4,18 +4,27 @@
         padding-right: 16px;
     }
 
+    .o_field_widget.o_relationship_address_field {
+        pointer-events: auto;
+    }
+
     .o_relationship_address_widget {
         display: inline-flex;
-        align-items: flex-start;
-        gap: 8px;
+        align-items: center;
+        gap: 4px;
+        max-width: 100%;
     }
 
     .o_relationship_address_text {
-        max-width: 520px;
+        flex: 0 1 auto;
+        max-width: 360px;
+        min-width: 0;
         white-space: normal;
     }
 
     .o_relationship_address_edit {
-        margin-top: 2px;
+        margin-top: 1px;
+        pointer-events: auto;
+        cursor: pointer;
     }
 }

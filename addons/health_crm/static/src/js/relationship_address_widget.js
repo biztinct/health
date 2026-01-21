@@ -20,15 +20,31 @@ export class RelationshipAddressWidget extends Component {
     }
 
     get hasRepresentative() {
+        return Boolean(this.representativeId);
+    }
+
+    get representativeId() {
         const representative = this.props.record.data.representative_id;
-        return representative && representative[0];
+        if (!representative) {
+            return null;
+        }
+        if (typeof representative === "number") {
+            return representative;
+        }
+        if (Array.isArray(representative)) {
+            return representative[0];
+        }
+        if (typeof representative === "object" && representative.id) {
+            return representative.id;
+        }
+        return null;
     }
 
     async onEditAddress() {
-        if (!this.hasRepresentative) {
+        const representativeId = this.representativeId;
+        if (!representativeId) {
             return;
         }
-        const representativeId = this.props.record.data.representative_id[0];
         await this.action.doAction(
             {
                 type: "ir.actions.act_window",
@@ -36,6 +52,7 @@ export class RelationshipAddressWidget extends Component {
                 res_model: "res.partner",
                 res_id: representativeId,
                 view_mode: "form",
+                views: [[false, "form"]],
                 target: "new",
                 context: {
                     form_view_ref: "health_base.view_health_patient_address_form",
