@@ -363,11 +363,28 @@ export class AddressMapWidget extends Component {
     async fetchFacilityAndShowRoute() {
         const patientLat = parseFloat(this.props.record.data.partner_latitude);
         const patientLon = parseFloat(this.props.record.data.partner_longitude);
-        const facilityId = this.props.record.data.primary_facility_id;
+        const facilityIdRaw = this.props.record.data.primary_facility_id;
+
+        // Extract facility ID - could be [id, name] array or just id
+        let facilityId = null;
+        if (facilityIdRaw) {
+            facilityId = Array.isArray(facilityIdRaw) ? facilityIdRaw[0] : facilityIdRaw;
+        }
+
+        console.log("Map Widget Debug:", {
+            patientLat,
+            patientLon,
+            facilityIdRaw,
+            facilityId,
+            hasValidPatientCoords: this.hasValidCoords(patientLat, patientLon),
+        });
 
         if (!this.hasValidCoords(patientLat, patientLon) || !facilityId) {
             this.state.drivingDistance = null;
             this.state.drivingDuration = null;
+            if (!facilityId && this.hasValidCoords(patientLat, patientLon)) {
+                this.state.routeError = 'No primary facility assigned';
+            }
             this.clearRoute();
             return;
         }
@@ -376,10 +393,11 @@ export class AddressMapWidget extends Component {
         this.state.routeError = null;
 
         try {
-            const facilityData = await rpc("/web/dataset/call_kw", {
+            // Use correct RPC format - read expects array of IDs
+            const facilityData = await rpc(`/web/dataset/call_kw/health.facility/read`, {
                 model: "health.facility",
                 method: "read",
-                args: [typeof facilityId === 'object' ? facilityId[0] : facilityId, ["name", "latitude", "longitude"]],
+                args: [[facilityId], ["name", "latitude", "longitude"]],
                 kwargs: {},
             });
 

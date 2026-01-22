@@ -48,7 +48,7 @@ class RelationshipAddWizard(models.TransientModel):
     referral_commission = fields.Float(string='Referral Commission')
     availability_notes = fields.Text(string='Availability Notes')
     representative_vietnamese_address = fields.Text(
-        string='Full Vietnamese Address',
+        string='Home Address',
         related='representative_id.vietnamese_address',
         readonly=True,
     )

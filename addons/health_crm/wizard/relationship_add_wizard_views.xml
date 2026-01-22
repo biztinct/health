@@ -32,7 +32,7 @@
                     <group string="Representative Address"
                            class="o_relationship_wizard_group"
                            invisible="role not in ['caregiver', 'payer', 'referrer']">
-                        <label for="representative_vietnamese_address" string="Full Vietnamese Address"/>
+                        <label for="representative_vietnamese_address" string="Home Address"/>
                         <field name="representative_vietnamese_address"
                                widget="relationship_address"
                                class="o_relationship_address_field"

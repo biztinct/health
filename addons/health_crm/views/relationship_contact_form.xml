@@ -74,7 +74,7 @@
                             <field name="state_id" string="Province" options="{'no_create': True}"/>
                             <field name="country_id" string="Country" options="{'no_create': True}"/>
 
-                            <field name="vietnamese_address" readonly="1" string="Full Vietnamese Address" widget="text"/>
+                            <field name="vietnamese_address" readonly="1" string="Home Address" widget="text"/>
 
                             <field name="address_search" invisible="1"/>
                             <field name="partner_latitude" invisible="1"/>

@@ -172,7 +172,7 @@
                                             <field name="city" string="City" placeholder="District / City"/>
                                             <field name="state_id" string="Province" options="{'no_create': True}" placeholder="Select province"/>
                                             <field name="country_id" string="Country" options="{'no_create': True}"/>
-                                            <field name="full_vietnamese_address" string="Full Vietnamese Address" colspan="2"/>
+                                            <field name="full_vietnamese_address" string="Home Address" colspan="2"/>
                                             <field name="facility_id" string="Healthcare Facility" options="{'no_create': True}" colspan="2"/>
                                         </group>
                                     </div>

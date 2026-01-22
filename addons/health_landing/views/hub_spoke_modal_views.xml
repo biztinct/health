@@ -135,7 +135,7 @@
                     </h1>
 
                     <group>
-                        <group string="Vietnamese Address">
+                        <group string="Home Address">
                             <label for="vietnamese_address"/>
                             <div class="o_row align-items-start">
                                 <field name="vietnamese_address" nolabel="1" readonly="1" widget="text" class="flex-grow-1"/>
@@ -460,7 +460,7 @@
                     </h1>
 
                     <group>
-                        <group string="Vietnamese Address">
+                        <group string="Home Address">
                             <field name="province_code"/>
                             <field name="house_number"/>
                             <field name="sub_alley_number"/>

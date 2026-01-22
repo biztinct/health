@@ -240,7 +240,7 @@ class Partner(models.Model):
             raise UserError(_('Prepaid packages can only be created for patients.'))
         
         return {
-            'name': _('Create Prepaid Service Package'),
+            'name': _('Select Package'),
             'type': 'ir.actions.act_window',
             'res_model': 'health.prepaid.package.wizard',
             'view_mode': 'form',

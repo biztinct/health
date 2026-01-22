@@ -365,8 +365,8 @@ msgstr "CCCD Số"
 
 #. module: health_crm
 #: model:ir.ui.menu,name:health_crm.menu_healthcare_crm_root
-msgid "CRM"
-msgstr "CRM"
+msgid "Sales & CRM"
+msgstr "Bán hàng & CRM"
 
 #. module: health_crm
 #: model_terms:ir.ui.view,arch_db:health_crm.view_healthcare_opportunity_form

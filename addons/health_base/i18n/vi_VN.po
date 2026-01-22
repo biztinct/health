@@ -4351,8 +4351,8 @@ msgstr "Vietnam MOH"
 #: model:ir.model.fields,field_description:health_base.field_res_partner__vietnamese_address
 #: model:ir.model.fields,field_description:health_base.field_res_users__vietnamese_address
 #: model_terms:ir.ui.view,arch_db:health_base.view_health_patient_form
-msgid "Vietnamese Address"
-msgstr "Địa chỉ Việt Nam"
+msgid "Home Address"
+msgstr "Địa chỉ nhà"
 
 #. module: health_base
 #: model:ir.model.fields,field_description:health_base.field_health_medication__vietnamese_contraindications

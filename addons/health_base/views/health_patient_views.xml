@@ -121,7 +121,7 @@
                                     <span class="vu-section__icon" data-icon="map-pin"/>
                                     <div>
                                         <span>Address Information</span>
-                                        <small class="text-muted d-block">Full Vietnamese address plus geo location</small>
+                                        <small class="text-muted d-block">Home address plus geo location</small>
                                     </div>
                                 </div>
                                 <div class="vu-section-grid">
@@ -131,7 +131,7 @@
                                             <span>Address Details</span>
                                         </div>
                                         <group col="2">
-                                            <label for="vietnamese_address" string="Full Vietnamese Address"/>
+                                            <label for="vietnamese_address" string="Home Address"/>
                                             <div class="o_row align-items-start">
                                                 <field name="vietnamese_address" nolabel="1" readonly="1" widget="text" class="flex-grow-1"/>
                                                 <button name="action_edit_vietnamese_address"

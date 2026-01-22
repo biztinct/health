@@ -1023,8 +1023,8 @@ msgstr "Tạo mới Gói"
 #. odoo-python
 #: code:addons/health_invoicing/models/res_partner.py:0
 #: model_terms:ir.ui.view,arch_db:health_invoicing.view_health_prepaid_package_wizard_form
-msgid "Create Prepaid Service Package"
-msgstr "Tạo mới Pređã thanh toán Dịch vụ Gói"
+msgid "Select Package"
+msgstr "Chọn gói"
 
 #. module: health_invoicing
 #: model_terms:ir.ui.view,arch_db:health_invoicing.view_health_payment_transaction_form

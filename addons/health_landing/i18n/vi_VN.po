@@ -1748,8 +1748,8 @@ msgstr "Vietnam-Australia Family Y tế Dịch vụ - Chọn a mô-đun Đến c
 
 #. module: health_landing
 #: model_terms:ir.ui.view,arch_db:health_landing.view_patient_map_modal
-msgid "Vietnamese Address"
-msgstr "Địa chỉ Việt Nam"
+msgid "Home Address"
+msgstr "Địa chỉ nhà"
 
 #. module: health_landing
 #. odoo-javascript

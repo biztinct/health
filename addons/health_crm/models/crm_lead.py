@@ -250,8 +250,8 @@ class HealthLead(models.Model):
     alley_number = fields.Char('Alley Number', help='Số ngõ')
     ward_commune = fields.Char('Ward/Commune', help='Phường/Xã')
     full_vietnamese_address = fields.Char(
-        'Full Vietnamese Address',
-        help='Complete Vietnamese formatted address'
+        'Home Address',
+        help='Complete home address'
     )
 
     # Secondary caregiver (Caregiver 2 ID)

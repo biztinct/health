@@ -210,12 +210,12 @@ class ResPartner(models.Model):
     alley_number = fields.Char('Alley Number', help='Số ngõ')
     ward_commune = fields.Char('Ward/Commune', help='Phường/Xã')
 
-    # Computed concatenated Vietnamese address
+    # Computed concatenated home address
     vietnamese_address = fields.Text(
-        'Vietnamese Address',
+        'Home Address',
         compute='_compute_vietnamese_address',
         store=True,
-        help='Automatically formatted Vietnamese address'
+        help='Automatically formatted home address'
     )
 
     # Address Autocomplete & Geolocation fields
