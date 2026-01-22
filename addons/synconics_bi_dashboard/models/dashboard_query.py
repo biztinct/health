@@ -108,7 +108,7 @@ class DashboardQuery(models.Model):
 
         # Check if user's groups are allowed
         if self.allowed_group_ids:
-            user_groups = self.env.user.groups_id
+            user_groups = self.env.user.group_ids
             if not any(group in self.allowed_group_ids for group in user_groups):
                 raise UserError(_('Your user group does not have permission to execute this query'))
 

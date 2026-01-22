@@ -77,7 +77,7 @@ class HealthFlowWizard(models.TransientModel):
         # Map keys to action xmlid
         mapping = {
             # Primary Circles - Direct Actions
-            'analytics': ('synconics_bi_dashboard.action_bi_dashboard', _('BI Dashboard')),
+            'analytics': ('synconics_bi_dashboard.dashboard_dashboard_action', _('BI Dashboard')),
             'audit': ('health_base.action_health_audit_log', _('Audit Log')),
 
             # CRM Panel

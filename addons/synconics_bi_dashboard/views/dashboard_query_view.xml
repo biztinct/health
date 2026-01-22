@@ -117,23 +117,7 @@
         <field name="model">dashboard.query</field>
         <field name="arch" type="xml">
             <search string="Search Queries">
-                <field name="name" string="Query Name"/>
-                <field name="query_type"/>
-                <field name="user_id"/>
-                <field name="allowed_user_ids"/>
-                <filter string="My Queries" name="my_queries" domain="[('user_id', '=', uid)]"/>
-                <filter string="Visual Builder" name="visual" domain="[('query_type', '=', 'visual')]"/>
-                <filter string="SQL Editor" name="sql" domain="[('query_type', '=', 'sql')]"/>
-                <separator/>
-                <filter string="Active" name="active" domain="[('active', '=', True)]"/>
-                <filter string="Archived" name="inactive" domain="[('active', '=', False)]"/>
-                <separator/>
-                <filter string="Recently Executed" name="recent" domain="[('last_execution', '!=', False)]"/>
-                <group expand="0" string="Group By">
-                    <filter string="Query Type" name="group_by_type" context="{'group_by': 'query_type'}"/>
-                    <filter string="Created By" name="group_by_user" context="{'group_by': 'user_id'}"/>
-                    <filter string="Company" name="group_by_company" context="{'group_by': 'company_id'}" groups="base.group_multi_company"/>
-                </group>
+                <field name="name"/>
             </search>
         </field>
     </record>

@@ -649,7 +649,7 @@ class Dashboard(models.Model):
         existing_ids = {g["chartId"] for g in grid_stack}
 
         user = self.env.user
-        user_groups = user.groups_id.ids
+        user_groups = user.group_ids.ids
         for chart in self.chart_ids:
             if (
                 (chart.model_id and not user.has_read_access(chart.model_id))

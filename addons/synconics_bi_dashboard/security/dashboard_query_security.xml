@@ -8,15 +8,13 @@
     </record>
 
     <record id="group_dashboard_query_user" model="res.groups">
-        <field name="name">Query Builder User</field>
-        <field name="category_id" ref="module_category_bi_dashboard_query"/>
+        <field name="name">Dashboard Query Builder User</field>
         <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
         <field name="comment">Can execute pre-defined queries</field>
     </record>
 
     <record id="group_dashboard_query_manager" model="res.groups">
-        <field name="name">Query Builder Manager</field>
-        <field name="category_id" ref="module_category_bi_dashboard_query"/>
+        <field name="name">Dashboard Query Builder Manager</field>
         <field name="implied_ids" eval="[(4, ref('group_dashboard_query_user'))]"/>
         <field name="comment">Can create and manage custom queries</field>
     </record>
