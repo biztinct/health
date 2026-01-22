@@ -31,7 +31,7 @@
                 </div>
 
                 <!-- Driving Route Info Row -->
-                <div t-if="state.facilityName"
+                <div t-if="state.facilityName || state.routeError"
                      class="pt-2"
                      style="border-top: 1px solid #dee2e6;">
 
