@@ -1,6 +1,10 @@
 from odoo import models, fields, api, _
 from odoo.exceptions import ValidationError
 import re
+import logging
+import requests
+
+_logger = logging.getLogger(__name__)
 
 
 class Facility(models.Model):
@@ -42,9 +46,13 @@ class Facility(models.Model):
     city = fields.Char('City', required=True)
     state_id = fields.Many2one('res.country.state', string='State/Province')
     zip = fields.Char('ZIP Code')
-    country_id = fields.Many2one('res.country', string='Country', 
+    country_id = fields.Many2one('res.country', string='Country',
                                 default=lambda self: self.env.ref('base.vn'))
-    
+
+    # Geolocation
+    latitude = fields.Float('Latitude', digits=(10, 7))
+    longitude = fields.Float('Longitude', digits=(10, 7))
+
     # Operating Hours
     operating_hours = fields.Text('Operating Hours', 
                                  default='Monday-Friday: 8:00-17:00\nSaturday: 8:00-12:00')
@@ -186,6 +194,11 @@ class Facility(models.Model):
                 }
                 partner = self.env['res.partner'].create(partner_vals)
                 facility.partner_id = partner.id
+
+            # Auto-geocode new facility if address is provided
+            if facility.street and facility.city and not (facility.latitude and facility.longitude):
+                facility._geocode_facility_address()
+
         return facilities
     
     def action_view_patients(self):
@@ -259,3 +272,111 @@ class Facility(models.Model):
         ('positive_rooms', 'check(consultation_rooms > 0)', 'Must have at least one consultation room!'),
         ('positive_radius', 'check(home_visit_radius_km >= 0)', 'Home visit radius cannot be negative!')
     ]
+
+    def write(self, vals):
+        """Override write to auto-geocode when address changes"""
+        result = super().write(vals)
+
+        # Check if address fields changed (but not lat/lon to avoid recursion)
+        address_fields = {'street', 'street2', 'city', 'state_id', 'zip', 'country_id'}
+        coord_fields = {'latitude', 'longitude'}
+
+        # Only auto-geocode if address changed but not coordinates (to avoid recursion)
+        if (address_fields & set(vals.keys())) and not (coord_fields & set(vals.keys())):
+            # Auto-geocode for facilities with address changes
+            for facility in self:
+                if facility.street and facility.city:
+                    facility._geocode_facility_address()
+
+        return result
+
+    def action_geocode_address(self):
+        """Manual button action to geocode facility address"""
+        for facility in self:
+            facility._geocode_facility_address()
+
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'display_notification',
+            'params': {
+                'title': _('Geocoding Complete'),
+                'message': _('Facility address has been geocoded.'),
+                'type': 'success',
+                'sticky': False,
+            }
+        }
+
+    def _geocode_facility_address(self):
+        """Geocode facility address using Photon API"""
+        self.ensure_one()
+
+        # Build address string
+        address_parts = []
+        if self.street:
+            address_parts.append(self.street)
+        if self.street2:
+            address_parts.append(self.street2)
+        if self.city:
+            address_parts.append(self.city)
+        if self.state_id:
+            address_parts.append(self.state_id.name)
+        if self.country_id:
+            address_parts.append(self.country_id.name)
+
+        if not address_parts:
+            _logger.warning(f"No address to geocode for facility {self.name}")
+            return False
+
+        address_string = ', '.join(address_parts)
+        _logger.info(f"Geocoding facility address: {address_string}")
+
+        try:
+            # Use Photon API (same as patient geocoding)
+            url = 'https://photon.komoot.io/api/'
+            params = {
+                'q': address_string,
+                'limit': 1,
+                'lang': 'en',
+            }
+
+            # Add Vietnam center bias for better results
+            if self.country_id and self.country_id.code == 'VN':
+                params['lat'] = 16.0
+                params['lon'] = 106.0
+
+            # Add proper headers to avoid 403 errors
+            headers = {
+                'User-Agent': 'VAFHS-Healthcare-System/1.0 (Odoo; contact@vafhs.com)',
+                'Accept': 'application/json',
+            }
+
+            response = requests.get(url, params=params, headers=headers, timeout=10)
+            response.raise_for_status()
+            data = response.json()
+
+            if data.get('features') and len(data['features']) > 0:
+                feature = data['features'][0]
+                coords = feature.get('geometry', {}).get('coordinates', [])
+
+                if len(coords) >= 2:
+                    longitude = coords[0]
+                    latitude = coords[1]
+
+                    # Update facility coordinates
+                    self.write({
+                        'latitude': latitude,
+                        'longitude': longitude,
+                    })
+
+                    _logger.info(f"Geocoded facility {self.name}: lat={latitude}, lon={longitude}")
+                    return True
+
+            _logger.warning(f"No geocoding results for facility {self.name}")
+            return False
+
+        except requests.RequestException as e:
+            _logger.error(f"Geocoding request failed for facility {self.name}: {e}")
+            return False
+        except Exception as e:
+            _logger.error(f"Geocoding error for facility {self.name}: {e}")
+            return False

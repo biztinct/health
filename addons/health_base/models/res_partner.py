@@ -983,7 +983,11 @@ class ResPartner(models.Model):
                         params['lon'] = center['lon']
 
                 _logger.info(f"Geocoding address via Photon API: {address}")
-                response = requests.get(url, params=params, timeout=10)
+                headers = {
+                    'User-Agent': 'VAFHS-Healthcare-System/1.0 (Odoo; contact@vafhs.com)',
+                    'Accept': 'application/json',
+                }
+                response = requests.get(url, params=params, headers=headers, timeout=10)
 
                 if response.status_code == 200:
                     data = response.json()
@@ -1110,7 +1114,11 @@ class ResPartner(models.Model):
                 params['lon'] = 106.0
 
             _logger.info(f"Geocoding address synchronously: {address}")
-            response = requests.get(url, params=params, timeout=5)
+            headers = {
+                'User-Agent': 'VAFHS-Healthcare-System/1.0 (Odoo; contact@vafhs.com)',
+                'Accept': 'application/json',
+            }
+            response = requests.get(url, params=params, headers=headers, timeout=5)
 
             if response.status_code == 200:
                 data = response.json()
@@ -1203,7 +1211,11 @@ class ResPartner(models.Model):
                 params['lon'] = 106.0
 
             _logger.info(f"Auto-geocoding address for partner {self.id}: {address}")
-            response = requests.get(url, params=params, timeout=5)
+            headers = {
+                'User-Agent': 'VAFHS-Healthcare-System/1.0 (Odoo; contact@vafhs.com)',
+                'Accept': 'application/json',
+            }
+            response = requests.get(url, params=params, headers=headers, timeout=5)
 
             if response.status_code == 200:
                 data = response.json()
@@ -1277,7 +1289,11 @@ class ResPartner(models.Model):
                 params['lon'] = center['lon']
 
             _logger.info(f"Photon API request - URL: {url}, Params: {params}")
-            response = requests.get(url, params=params, timeout=5)
+            headers = {
+                'User-Agent': 'VAFHS-Healthcare-System/1.0 (Odoo; contact@vafhs.com)',
+                'Accept': 'application/json',
+            }
+            response = requests.get(url, params=params, headers=headers, timeout=5)
             _logger.info(f"Photon API response - Status: {response.status_code}, URL: {response.url}")
 
             if response.status_code == 200:

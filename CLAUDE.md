@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Repository Overview
 
-This repository contains a comprehensive **Patient Interaction and Clinic Management System** built on Odoo 18 Community Edition for **Vietnam-Australia Family Health Service Company Limited (VAFHS)**. The system integrates clinical workflows, patient management, accounting, and mobile applications with multilingual support (Vietnamese & English) and regulatory compliance features.
+This repository contains a comprehensive **Patient Interaction and Clinic Management System** built on Odoo 19 Community Edition for **Vietnam-Australia Family Health Service Company Limited (VAFHS)**. The system integrates clinical workflows, patient management, accounting, and mobile applications with multilingual support (Vietnamese & English) and regulatory compliance features.
 
 ## Contract Deliverables & Business Requirements
 
@@ -82,10 +82,10 @@ This prevents field conflicts, reduces code duplication, and maintains consisten
 ## Scalability Considerations
 - The application will scale later as it will be installed in other countries as well. So keep that in design (e.g., currency, internationalization)
 
-## Odoo 18 Development Notes & Critical Learnings
+## Odoo 19 Development Notes & Critical Learnings
 
 ### XML File Structure Requirements
-**CRITICAL**: Odoo 18 has very strict XML schema validation requirements. Use these exact patterns:
+**CRITICAL**: Odoo 19 has very strict XML schema validation requirements. Use these exact patterns:
 
 #### For Data Files (demo data, sequences, etc.):
 ```xml
@@ -166,7 +166,7 @@ This prevents field conflicts, reduces code duplication, and maintains consisten
 ### Common Mistakes to Avoid
 - ❌ Using `<data>` wrapper tags in regular XML files
 - ❌ Missing `name` field in `ir.module.category` records
-- ❌ **CRITICAL: Using `tree` instead of `list` for view types in Odoo 18** - ALWAYS use `list` for list views and `'list'` in view_mode fields
+- ❌ **CRITICAL: Using `tree` instead of `list` for view types in Odoo 19** - ALWAYS use `list` for list views and `'list'` in view_mode fields
 - ❌ **CRITICAL: Using `'tree'` in ir.actions.act_window view_ids** - ALWAYS use `{'view_mode': 'list'}` not `{'view_mode': 'tree'}`
 - ❌ Incorrect indentation or formatting
 - ❌ Adding all XML files at once without incremental testing
@@ -216,7 +216,31 @@ When creating views that reference model fields, ensure all fields exist in the 
 - **Computed fields**: Include proper `@api.depends()` and compute methods
 - **Action methods**: Must be defined in the model for button calls in views
 - **Related fields**: Don't include selection/domain attributes (inherited from source field)
-- **Create methods**: Use `@api.model_create_multi` for batch operations in Odoo 18
+- **Create methods**: Use `@api.model_create_multi` for batch operations in Odoo 19
+
+### Odoo 19 Security Group Changes (CRITICAL)
+**In Odoo 19, `res.groups` and `res.users` have significant changes:**
+- ❌ `res.groups.category_id` field removed - Groups are no longer categorized under `ir.module.category`
+- ❌ `res.groups.users` field removed - Cannot directly assign users to groups in XML
+- ❌ `res.users.groups_id` renamed to `group_ids` - Use `user.group_ids` not `user.groups_id` in domain rules
+- ❌ `user.model_access` removed - Cannot access model permissions directly from user object in domains
+
+```xml
+<!-- ❌ WRONG - Odoo 18 and earlier -->
+<record id="group_example_manager" model="res.groups">
+    <field name="name">Manager</field>
+    <field name="category_id" ref="module_category_example"/>
+    <field name="users" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
+</record>
+
+<!-- ✅ CORRECT - Odoo 19 -->
+<record id="group_example_manager" model="res.groups">
+    <field name="name">Manager</field>
+    <field name="implied_ids" eval="[(4, ref('group_example_user'))]"/>
+</record>
+```
+
+**Note**: You can still create `ir.module.category` records for organizing your module in the Apps menu, but don't link them to `res.groups`. User assignments should be done through the UI or via `res.users` records.
 
 ### Successful Module Structure
 The health_calendar module now follows this working pattern:
@@ -229,7 +253,8 @@ The health_calendar module now follows this working pattern:
 ## Memory Notes
 - Note to take care that the model is not defined again as duplicate
 - **CRITICAL: NO FIELDSERVICE MODULE INHERITANCE** - Do NOT inherit from any fieldservice modules (fsm.order, fsm.team, etc.) as fieldservice modules are NOT installed. Only use for inspiration, never inheritance.
-- Follow odoo 18 standards and remember that attrs and states attributes are no longer used
+- Follow Odoo 19 standards and remember that attrs and states attributes are no longer used
+- **CRITICAL: In Odoo 19, `res.groups` no longer has `category_id` or `users` fields** - Remove all `category_id` and `users` references from group definitions
 
 ## Debugging Guidelines
 

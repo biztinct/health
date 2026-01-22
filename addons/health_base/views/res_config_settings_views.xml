@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="res_config_settings_view_form_health" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.inherit.health</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="base.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//form" position="inside">
+                <app data-string="Healthcare" string="Healthcare" name="health_base" groups="base.group_system">
+                    <block title="Map Settings" name="health_map_settings">
+                        <setting id="health_map_provider_setting" string="Map Provider" help="Choose the map service for displaying patient and facility locations">
+                            <field name="health_map_provider" widget="radio"/>
+                        </setting>
+                        <setting id="health_google_api_setting" string="Google Maps API Key" help="Required for Google Maps and driving distance calculations">
+                            <field name="health_google_maps_api_key" placeholder="Enter your Google Maps API key..."/>
+                            <div class="text-muted mt-2">
+                                <small>
+                                    Get your API key from the
+                                    <a href="https://console.cloud.google.com/apis/credentials" target="_blank">Google Cloud Console</a>.
+                                    Enable Maps JavaScript API and Distance Matrix API.
+                                </small>
+                            </div>
+                        </setting>
+                    </block>
+                </app>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>
