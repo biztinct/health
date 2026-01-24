@@ -292,16 +292,25 @@ class Facility(models.Model):
 
     def action_geocode_address(self):
         """Manual button action to geocode facility address"""
-        for facility in self:
-            facility._geocode_facility_address()
+        self.ensure_one()
+        geocoded = self._geocode_facility_address()
+
+        if geocoded and self.latitude and self.longitude:
+            title = _('Geocoding Successful')
+            message = _('Address geocoded: %.6f, %.6f') % (self.latitude, self.longitude)
+            notif_type = 'success'
+        else:
+            title = _('Geocoding Failed')
+            message = _('No coordinates found for this address. Please check the address details.')
+            notif_type = 'warning'
 
         return {
             'type': 'ir.actions.client',
             'tag': 'display_notification',
             'params': {
-                'title': _('Geocoding Complete'),
-                'message': _('Facility address has been geocoded.'),
-                'type': 'success',
+                'title': title,
+                'message': message,
+                'type': notif_type,
                 'sticky': False,
             }
         }

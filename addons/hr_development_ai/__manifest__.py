@@ -84,13 +84,11 @@ Inspired by world-class platforms: SAP SuccessFactors, Workday Skills Cloud, Bet
         'wizards/ai_coaching_wizard_views.xml',
         'wizards/mentorship_matching_wizard_views.xml',
 
+        # Dashboard
+        'views/hr_development_dashboard_views.xml',
+
         # Menus (must be loaded AFTER all views that define actions)
         'views/hr_development_menus.xml',
-
-        # TODO: Add in Phase 3
-        # 'views/hr_development_dashboard.xml',
-        # 'views/hr_manager_dashboard.xml',
-        # 'reports/hr_development_reports.xml',
     ],
     'demo': [
         'data/demo_data.xml',
@@ -99,6 +97,11 @@ Inspired by world-class platforms: SAP SuccessFactors, Workday Skills Cloud, Bet
         'web.assets_backend': [
             # Global CSS
             'hr_development_ai/static/src/css/hr_development.css',
+
+            # Dashboard
+            'hr_development_ai/static/src/components/dashboard/hr_development_dashboard.js',
+            'hr_development_ai/static/src/components/dashboard/hr_development_dashboard.xml',
+            'hr_development_ai/static/src/components/dashboard/hr_development_dashboard.css',
 
             # AI Coaching Chat Widget
             'hr_development_ai/static/src/components/ai_coaching_chat/ai_coaching_chat_widget.js',

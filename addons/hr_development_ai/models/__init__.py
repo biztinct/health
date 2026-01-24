@@ -22,3 +22,4 @@ from . import hr_employee
 from . import slide_channel
 from . import project_task
 from . import skills_inference_engine
+from . import hr_development_dashboard

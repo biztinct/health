@@ -368,7 +368,13 @@ export class AddressMapWidget extends Component {
         // Extract facility ID - could be [id, name] array or just id
         let facilityId = null;
         if (facilityIdRaw) {
-            facilityId = Array.isArray(facilityIdRaw) ? facilityIdRaw[0] : facilityIdRaw;
+            if (Array.isArray(facilityIdRaw)) {
+                facilityId = facilityIdRaw[0];
+            } else if (typeof facilityIdRaw === "object") {
+                facilityId = facilityIdRaw.id || facilityIdRaw.resId || null;
+            } else {
+                facilityId = facilityIdRaw;
+            }
         }
 
         console.log("Map Widget Debug:", {

@@ -1589,6 +1589,12 @@ msgstr "Geocoding Thành côngful"
 
 #. module: health_base
 #. odoo-python
+#: code:addons/health_base/models/health_facility.py:0
+msgid "Geocoding Failed"
+msgstr "Geocoding Thất bại"
+
+#. module: health_base
+#. odoo-python
 #: code:addons/health_base/models/res_partner.py:0
 msgid "Geocoding failed: %s"
 msgstr "Geocoding Thất bại: %s"

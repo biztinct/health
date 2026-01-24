@@ -45,7 +45,7 @@
                     <div t-elif="state.routeError" class="text-warning">
                         <i class="fa fa-exclamation-triangle me-1"/>
                         <t t-esc="state.routeError"/>
-                        <span t-if="state.facilityLat === 0 || !state.facilityLat" class="ms-2">
+                        <span t-if="state.routeError === 'Facility has no coordinates'" class="ms-2">
                             (Please geocode the facility first)
                         </span>
                     </div>
