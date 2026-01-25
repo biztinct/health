@@ -145,7 +145,7 @@
                      t-att-class="{'active': state.activePrimary === 'crm'}"
                      t-on-click="() => this.onPrimaryClick('crm')">
                     <i class="fa fa-handshake-o health_flow_primary_icon"></i>
-                    <span class="health_flow_primary_text">CRM</span>
+                    <span class="health_flow_primary_text">Sales &amp; CRM</span>
                 </div>
 
                 <!-- 2. Booking (Top Right - 2 o'clock) -->

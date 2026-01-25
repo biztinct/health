@@ -62,7 +62,7 @@ class HealthFlowAction extends Component {
         // Panel data configuration
         this.panelData = {
             crm: {
-                title: 'CRM',
+                title: 'Sales & CRM',
                 color: '#4299e1', // Blue
                 items: [
                     { key: 'crm-search', label: 'Search', icon: 'fa-search', desc: 'Search opportunities', isSearch: true },
