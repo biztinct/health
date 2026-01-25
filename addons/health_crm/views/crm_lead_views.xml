@@ -52,27 +52,112 @@
         <field name="name">crm.lead.form.healthcare.opportunity</field>
         <field name="model">crm.lead</field>
         <field name="arch" type="xml">
-            <form string="CRM Contact">
+            <form string="Contact Details">
                 <header>
-                    <button name="action_convert_to_client"
-                            string="Convert to Client"
-                            type="object"
-                            class="btn-primary"
-                            invisible="health_contact_outcome == 'service_booked' or contact_outcome == 'booking_lost'"/>
-                    <button name="action_schedule_follow_up"
-                            string="Schedule Follow-up"
-                            type="object"
-                            class="btn-secondary"/>
-                    <button name="action_booking_lost"
-                            string="Booking Lost"
+                    <!-- CONTACT-FIRST ACTION MENU BAR -->
+                    
+                    <!-- Home - Returns to dashboard (marks as junk if no action taken) -->
+                    <button name="action_mark_spam_and_home"
+                            string="Home"
                             type="object"
                             class="btn-secondary"
-                            invisible="contact_outcome == 'booking_lost'"/>
+                            icon="fa-home"
+                            title="Return to Home (Mark as Junk if no action)"
+                            confirm="Return to Home? If you haven't logged a Lead or Booking, this contact will be marked as junk."/>
+                    
+                    <!-- Booking - Opens booking creation flow -->
+                    <button name="action_convert_to_booking"
+                            string="Booking"
+                            type="object"
+                            class="btn-primary"
+                            icon="fa-calendar-plus-o"
+                            title="Create a new booking for this contact"
+                            invisible="contact_status == 'booking'"/>
+                    
+                    <!-- Cancellation - Opens cancellation form -->
+                    <button name="action_open_cancellation"
+                            string="Cancellation"
+                            type="object"
+                            class="btn-secondary"
+                            icon="fa-times-circle"
+                            title="Record a cancellation"
+                            invisible="contact_status != 'booking'"/>
+                    
+                    <!-- Reschedule - Opens booking calendar for reschedule -->
+                    <button name="action_reschedule_booking"
+                            string="Reschedule"
+                            type="object"
+                            class="btn-secondary"
+                            icon="fa-calendar"
+                            title="Reschedule the booking"
+                            invisible="contact_status != 'booking'"/>
+                    
+                    <!-- Telemedicine - Refer to Duty Doctor -->
+                    <button name="action_refer_telemedicine"
+                            string="Telemedicine"
+                            type="object"
+                            class="btn-secondary"
+                            icon="fa-video-camera"
+                            title="Refer to Duty Doctor for telemedicine"/>
+                    
+                    <!-- Consultation dropdown handled via escalation -->
+                    <button name="action_escalate_consultation"
+                            string="Consultation"
+                            type="object"
+                            class="btn-secondary"
+                            icon="fa-comments"
+                            title="Transfer for consultation"/>
+                    
+                    <!-- Escalate Contact -->
+                    <button name="action_escalate_contact"
+                            string="Escalate"
+                            type="object"
+                            class="btn-secondary"
+                            icon="fa-level-up"
+                            title="Escalate to Head Nurse or OM"/>
+                    
+                    <!-- Send Message -->
+                    <button name="action_send_message"
+                            string="Send Message"
+                            type="object"
+                            class="btn-secondary"
+                            icon="fa-envelope"
+                            title="Send message to contact"/>
+                    
+                    <!-- Log as Lead -->
+                    <button name="action_log_as_lead"
+                            string="Log Lead"
+                            type="object"
+                            class="btn-secondary"
+                            icon="fa-user-plus"
+                            title="Log this contact as a Lead for follow-up"
+                            invisible="contact_status == 'lead'"/>
+                    
+                    <!-- Log Activity -->
+                    <button name="action_schedule_follow_up"
+                            string="Log Activity"
+                            type="object"
+                            class="btn-secondary"
+                            icon="fa-clock-o"
+                            title="Schedule a follow-up activity"/>
+                    
+                    <!-- Log Note -->
+                    <button name="action_log_note"
+                            string="Log Note"
+                            type="object"
+                            class="btn-secondary"
+                            icon="fa-sticky-note"
+                            title="Add an internal note"/>
+                    
+                    <!-- Hidden fields for visibility conditions -->
                     <field name="contact_outcome" invisible="1"/>
+                    <field name="contact_status" invisible="1"/>
+                    
+                    <!-- Stage statusbar -->
                     <field name="stage_id" widget="statusbar" options="{'clickable': '1'}" domain="[('team_ids', '=', False)]"/>
                 </header>
                 
-                <sheet string="CRM Contact">
+                <sheet string="Contact Details">
                     <!-- Diagonal Ribbon Banner for Booking Lost -->
                     <div invisible="contact_outcome != 'booking_lost'"
                          style="position: absolute; top: 25px; right: -35px; transform: rotate(45deg);
@@ -82,9 +167,16 @@
                         BOOKING LOST
                     </div>
 
-                    <!-- Contact Code Badge -->
-                    <div style="position: absolute; top: 10px; right: 150px; z-index: 1000;">
-                        <span class="badge rounded-pill" style="background-color: #875A7B; color: white; font-size: 13px; padding: 6px 14px; font-weight: 500;">
+                    <!-- Contact Status + Code Badges -->
+                    <div style="position: absolute; top: 10px; right: 100px; z-index: 1000; display: flex; gap: 10px; align-items: center;">
+                        <!-- Contact Status Badge -->
+                        <field name="contact_status" readonly="1" widget="badge"
+                               decoration-info="contact_status == 'active'"
+                               decoration-success="contact_status == 'booking'"
+                               decoration-warning="contact_status == 'lead'"
+                               decoration-danger="contact_status in ('lost_booking', 'spam')"/>
+                        <!-- Contact ID Badge -->
+                        <span class="badge rounded-pill" style="background-color: #875A7B; color: white; font-size: 12px; padding: 6px 14px; font-weight: 500;">
                             <field name="unique_contact_code" readonly="1" nolabel="1"/>
                         </span>
                     </div>
@@ -128,6 +220,31 @@
                         </group>
                     </div>
                     
+                    <!-- Contact Reason and On-Behalf Section -->
+                    <div class="vu-card" style="margin-bottom: var(--vu-space-lg);">
+                        <div class="vu-card__title">
+                            <span class="vu-section__icon" data-icon="clipboard-list"/>
+                            <span>Contact Details</span>
+                        </div>
+                        <group col="2">
+                            <field name="reason_for_contact_id" string="Reason for Contact"
+                                   placeholder="Select reason..." options="{'no_create': true}"/>
+                            <field name="contacting_on_behalf" string="Contacting On Behalf Of" widget="radio"
+                                   options="{'horizontal': true}"/>
+                        </group>
+                        <group col="2" invisible="contacting_on_behalf != 'other'">
+                            <field name="other_person_id" string="Select Existing Client"
+                                   placeholder="Search client..." options="{'no_create': false}"/>
+                            <field name="other_person_name" string="Or Enter New Name"
+                                   placeholder="Name of person if not in system..."/>
+                        </group>
+                        <group col="2">
+                            <field name="street_address" string="Address" placeholder="Contact address..."/>
+                            <field name="contact_tag_ids" string="Contact Tags" widget="many2many_tags"
+                                   options="{'color_field': 'color'}"/>
+                        </group>
+                    </div>
+                    
                     <!-- Main Content Tabs -->
                     <notebook>
                         <!-- Contact Details Tab -->
@@ -150,6 +267,7 @@
                                             <field name="email_from" string="Email" widget="email"/>
                                             <field name="phone" widget="phone"/>
                                             <field name="contact_datetime" string="Contact Date and Time"/>
+                                            <field name="mode_of_contact" string="Mode of Contact"/>
                                         </group>
                                     </div>
                                     

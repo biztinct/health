@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Multi-Step Booking Wizard Form View -->
+    <record id="view_booking_wizard_form" model="ir.ui.view">
+        <field name="name">health.booking.wizard.form</field>
+        <field name="model">health.booking.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Create Booking">
+                <sheet>
+                    <!-- Step Progress Indicator - Static version -->
+                    <div style="margin-bottom: 20px; padding: 15px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 8px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; color: white;">
+                            <!-- Step 1 Indicator -->
+                            <div style="text-align: center; flex: 1;">
+                                <span style="background: white; color: #667eea; padding: 8px 16px; border-radius: 20px; font-weight: bold;" invisible="current_step != '1_client'">
+                                    1. Client Details
+                                </span>
+                                <span style="background: rgba(255,255,255,0.3); color: white; padding: 8px 16px; border-radius: 20px;" invisible="current_step == '1_client'">
+                                    1. Client
+                                </span>
+                            </div>
+                            <div style="width: 50px; height: 2px; background: rgba(255,255,255,0.3);"/>
+                            <!-- Step 2 Indicator -->
+                            <div style="text-align: center; flex: 1;">
+                                <span style="background: white; color: #667eea; padding: 8px 16px; border-radius: 20px; font-weight: bold;" invisible="current_step != '2_services'">
+                                    2. Services
+                                </span>
+                                <span style="background: rgba(255,255,255,0.3); color: white; padding: 8px 16px; border-radius: 20px;" invisible="current_step == '2_services'">
+                                    2. Services
+                                </span>
+                            </div>
+                            <div style="width: 50px; height: 2px; background: rgba(255,255,255,0.3);"/>
+                            <!-- Step 3 Indicator -->
+                            <div style="text-align: center; flex: 1;">
+                                <span style="background: white; color: #667eea; padding: 8px 16px; border-radius: 20px; font-weight: bold;" invisible="current_step != '3_booking'">
+                                    3. Booking
+                                </span>
+                                <span style="background: rgba(255,255,255,0.3); color: white; padding: 8px 16px; border-radius: 20px;" invisible="current_step == '3_booking'">
+                                    3. Booking
+                                </span>
+                            </div>
+                            <div style="width: 50px; height: 2px; background: rgba(255,255,255,0.3);"/>
+                            <!-- Step 4 Indicator -->
+                            <div style="text-align: center; flex: 1;">
+                                <span style="background: white; color: #667eea; padding: 8px 16px; border-radius: 20px; font-weight: bold;" invisible="current_step != '4_assign'">
+                                    4. Assign
+                                </span>
+                                <span style="background: rgba(255,255,255,0.3); color: white; padding: 8px 16px; border-radius: 20px;" invisible="current_step == '4_assign'">
+                                    4. Assign
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Hidden fields -->
+                    <field name="current_step" invisible="1"/>
+                    <field name="lead_id" invisible="1"/>
+                    <field name="currency_id" invisible="1"/>
+
+                    <!-- STEP 1: Client Details -->
+                    <div invisible="current_step != '1_client'">
+                        <h2 style="margin-bottom: 20px;">
+                            <span class="fa fa-user" style="margin-right: 10px; color: #667eea;"/>
+                            Client Details
+                        </h2>
+                        
+                        <group>
+                            <field name="is_new_client" string="This is a New Client"/>
+                        </group>
+                        
+                        <!-- Existing Client Selection -->
+                        <group invisible="is_new_client">
+                            <group>
+                                <field name="client_id" string="Select Client" 
+                                       placeholder="Search existing clients..."
+                                       options="{'no_create': false}"/>
+                            </group>
+                        </group>
+                        
+                        <!-- New Client Fields -->
+                        <group invisible="not is_new_client">
+                            <group string="New Client Information">
+                                <field name="client_name" string="Full Name" required="is_new_client"/>
+                                <field name="client_phone" string="Phone" widget="phone"/>
+                                <field name="client_email" string="Email" widget="email"/>
+                            </group>
+                            <group>
+                                <field name="client_dob" string="Date of Birth"/>
+                                <field name="client_gender" string="Gender"/>
+                                <field name="client_address" string="Address"/>
+                            </group>
+                        </group>
+                    </div>
+
+                    <!-- STEP 2: Service Requirements -->
+                    <div invisible="current_step != '2_services'">
+                        <h2 style="margin-bottom: 20px;">
+                            <span class="fa fa-stethoscope" style="margin-right: 10px; color: #667eea;"/>
+                            Service Requirements
+                        </h2>
+                        
+                        <group>
+                            <group string="Service Selection">
+                                <field name="service_category" string="Category"/>
+                                <field name="service_type" string="Service Type" required="1"/>
+                                <field name="service_subcategory" string="Sub-Category"/>
+                            </group>
+                            <group string="Service Notes">
+                                <field name="service_notes" nolabel="1" placeholder="Additional service requirements..."/>
+                            </group>
+                        </group>
+                        
+                        <separator string="Commission Details"/>
+                        
+                        <group>
+                            <group>
+                                <field name="commission_due_to" string="Commission Due To"/>
+                                <field name="commission_percentage" string="Commission %"/>
+                                <field name="commission_duration" string="Duration"/>
+                            </group>
+                            <group>
+                                <field name="service_fee_vnd" string="Service Fee (VND)"/>
+                            </group>
+                        </group>
+                    </div>
+
+                    <!-- STEP 3: Booking Details -->
+                    <div invisible="current_step != '3_booking'">
+                        <h2 style="margin-bottom: 20px;">
+                            <span class="fa fa-calendar" style="margin-right: 10px; color: #667eea;"/>
+                            Booking Details
+                        </h2>
+                        
+                        <group>
+                            <group string="Date &amp; Time">
+                                <field name="booking_date" string="Date"/>
+                                <field name="booking_time" string="Time" widget="float_time"/>
+                                <field name="booking_duration" string="Duration (Hours)"/>
+                            </group>
+                            <group string="Location">
+                                <field name="booking_location" string="Location" 
+                                       placeholder="Service location or address..."/>
+                            </group>
+                        </group>
+                        
+                        <group>
+                            <field name="booking_notes" string="Additional Notes" nolabel="1"
+                                   placeholder="Any special instructions or notes..."/>
+                        </group>
+                    </div>
+
+                    <!-- STEP 4: Assign Booking -->
+                    <div invisible="current_step != '4_assign'">
+                        <h2 style="margin-bottom: 20px;">
+                            <span class="fa fa-user-md" style="margin-right: 10px; color: #667eea;"/>
+                            Assign Booking (Optional)
+                        </h2>
+                        
+                        <div class="alert alert-info" role="alert">
+                            <span class="fa fa-info-circle" style="margin-right: 10px;"/>
+                            Staff assignment is optional. You can assign later if needed.
+                        </div>
+                        
+                        <group>
+                            <group>
+                                <field name="assigned_nurse_id" string="Assign To"/>
+                            </group>
+                            <group>
+                                <field name="assignment_notes" string="Instructions" 
+                                       placeholder="Special instructions for assigned staff..."/>
+                            </group>
+                        </group>
+                        
+                        <!-- Booking Summary -->
+                        <separator string="Booking Summary"/>
+                        <group>
+                            <group>
+                                <field name="client_display_name" string="Client" readonly="1"/>
+                                <field name="service_type" string="Service" readonly="1"/>
+                            </group>
+                            <group>
+                                <field name="booking_date" string="Date" readonly="1"/>
+                                <field name="booking_time" string="Time" widget="float_time" readonly="1"/>
+                            </group>
+                        </group>
+                    </div>
+
+                </sheet>
+
+                <!-- Footer with Navigation Buttons -->
+                <footer>
+                    <!-- Back to Contact (always visible) -->
+                    <button name="action_back_to_contact" type="object" 
+                            string="Back to Contact" class="btn-secondary"
+                            icon="fa-arrow-left"/>
+                    
+                    <!-- Previous Step (not on step 1) -->
+                    <button name="action_prev_step" type="object"
+                            string="Previous" class="btn-secondary"
+                            icon="fa-chevron-left"
+                            invisible="current_step == '1_client'"/>
+                    
+                    <!-- Next Step (not on final step) -->
+                    <button name="action_next_step" type="object"
+                            string="Next" class="btn-primary"
+                            icon="fa-chevron-right"
+                            invisible="current_step == '4_assign'"/>
+                    
+                    <!-- Create Booking (on booking step) -->
+                    <button name="action_create_booking" type="object"
+                            string="Create Booking" class="btn-primary"
+                            icon="fa-check"
+                            invisible="current_step != '3_booking'"/>
+                    
+                    <!-- Finish (on assign step) -->
+                    <button name="action_finish" type="object"
+                            string="Finish &amp; Create Booking" class="btn-success"
+                            icon="fa-check-circle"
+                            invisible="current_step != '4_assign'"/>
+                    
+                    <!-- Cancel -->
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action to open Booking Wizard -->
+    <record id="action_booking_wizard" model="ir.actions.act_window">
+        <field name="name">Create Booking</field>
+        <field name="res_model">health.booking.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+        <field name="view_id" ref="view_booking_wizard_form"/>
+    </record>
+
+</odoo>

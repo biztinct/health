@@ -55,6 +55,15 @@
         'data/health_lead_reasons.xml',     # Load lead reasons data
         'data/health_provinces.xml',        # Load province data
         
+        # Wizards - MUST load before menus (menus reference wizard actions)
+        'wizard/client_selection_wizard_views.xml',
+        'wizard/relationship_add_wizard_views.xml',
+        'wizard/initial_contact_wizard_views.xml',
+        'wizard/escalation_wizard_views.xml',
+        'wizard/booking_cancellation_wizard_views.xml',
+        'wizard/followup_wizard_views.xml',
+        'wizard/booking_wizard_views.xml',
+        
         # Views - CRM Extensions
         'views/health_client_relation_views.xml',
         'views/relationship_network_view.xml',  # Section 2.2 Option B - D3.js network graph
@@ -64,12 +73,10 @@
         'views/relationship_contact_form.xml',
         'views/health_patient_relationship_widget.xml',
         'views/res_partner_views.xml',
-        'views/health_crm_menus.xml',
         'views/booking_lost_wizard_views.xml',
-
-        # Wizards
-        'wizard/client_selection_wizard_views.xml',
-        'wizard/relationship_add_wizard_views.xml',
+        
+        # Menus - MUST load after wizard views
+        'views/health_crm_menus.xml',
     ],
     'assets': {
         'web.assets_backend': [

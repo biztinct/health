@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Follow-up Activities Wizard Form View -->
+    <record id="view_followup_wizard_form" model="ir.ui.view">
+        <field name="name">health.followup.wizard.form</field>
+        <field name="model">health.followup.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Follow-up Activities">
+                <sheet>
+                    <!-- Header -->
+                    <div class="oe_title" style="margin-bottom: 20px;">
+                        <h1>
+                            <span class="fa fa-calendar-check-o" style="color: #4299e1; margin-right: 10px;"/>
+                            Follow-up Activities
+                        </h1>
+                    </div>
+
+                    <!-- Search Box -->
+                    <div class="alert alert-light" role="alert" style="margin-bottom: 20px; padding: 15px;">
+                        <div class="row">
+                            <div class="col-6">
+                                <field name="client_id" placeholder="Search Client..." 
+                                       options="{'no_create': true, 'no_open': true}"
+                                       style="width: 100%;"/>
+                            </div>
+                            <div class="col-6">
+                                <field name="lead_id" placeholder="Search Contact/Lead..."
+                                       options="{'no_create': true, 'no_open': true}"
+                                       style="width: 100%;"/>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Hidden context field -->
+                    <field name="context_lead_id" invisible="1"/>
+
+                    <!-- Menu Items as Button Grid -->
+                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; padding: 10px;">
+                        
+                        <!-- a. Log as Lead -->
+                        <button name="action_log_lead_calendar"
+                                type="object"
+                                class="btn btn-outline-primary"
+                                style="padding: 20px; text-align: left; border-radius: 8px;">
+                            <span class="fa fa-user-plus fa-2x" style="display: block; margin-bottom: 8px;"/>
+                            <strong>Log as Lead</strong>
+                            <p class="text-muted mb-0" style="font-size: 12px;">Create new lead in calendar</p>
+                        </button>
+                        
+                        <!-- b. Log Planned Activity -->
+                        <button name="action_log_activity_calendar"
+                                type="object"
+                                class="btn btn-outline-primary"
+                                style="padding: 20px; text-align: left; border-radius: 8px;">
+                            <span class="fa fa-clock-o fa-2x" style="display: block; margin-bottom: 8px;"/>
+                            <strong>Log Planned Activity</strong>
+                            <p class="text-muted mb-0" style="font-size: 12px;">Schedule follow-up activity</p>
+                        </button>
+                        
+                        <!-- c. Show All Leads -->
+                        <button name="action_show_all_leads"
+                                type="object"
+                                class="btn btn-outline-success"
+                                style="padding: 20px; text-align: left; border-radius: 8px;">
+                            <span class="fa fa-list fa-2x" style="display: block; margin-bottom: 8px;"/>
+                            <strong>Show All Leads</strong>
+                            <p class="text-muted mb-0" style="font-size: 12px;">View leads sorted by follow-up date</p>
+                        </button>
+                        
+                        <!-- d. Show All Activities -->
+                        <button name="action_show_all_activities"
+                                type="object"
+                                class="btn btn-outline-success"
+                                style="padding: 20px; text-align: left; border-radius: 8px;">
+                            <span class="fa fa-tasks fa-2x" style="display: block; margin-bottom: 8px;"/>
+                            <strong>Show All Activities</strong>
+                            <p class="text-muted mb-0" style="font-size: 12px;">View planned activities</p>
+                        </button>
+                        
+                        <!-- e. Show Calendar -->
+                        <button name="action_show_calendar"
+                                type="object"
+                                class="btn btn-outline-info"
+                                style="padding: 20px; text-align: left; border-radius: 8px;">
+                            <span class="fa fa-calendar fa-2x" style="display: block; margin-bottom: 8px;"/>
+                            <strong>Calendar View</strong>
+                            <p class="text-muted mb-0" style="font-size: 12px;">All leads &amp; activities in calendar</p>
+                        </button>
+                        
+                        <!-- f. Recent Client Follow-up -->
+                        <button name="action_recent_client_followup"
+                                type="object"
+                                class="btn btn-outline-warning"
+                                style="padding: 20px; text-align: left; border-radius: 8px;">
+                            <span class="fa fa-history fa-2x" style="display: block; margin-bottom: 8px;"/>
+                            <strong>Recent Client Follow-up</strong>
+                            <p class="text-muted mb-0" style="font-size: 12px;">Clients with recent services</p>
+                        </button>
+                        
+                        <!-- g. Visit Satisfaction (Placeholder) -->
+                        <button name="action_visit_satisfaction_followup"
+                                type="object"
+                                class="btn btn-outline-secondary"
+                                style="padding: 20px; text-align: left; border-radius: 8px; opacity: 0.7;">
+                            <span class="fa fa-smile-o fa-2x" style="display: block; margin-bottom: 8px;"/>
+                            <strong>Visit Satisfaction</strong>
+                            <p class="text-muted mb-0" style="font-size: 12px; color: #888;">Coming Soon</p>
+                        </button>
+                        
+                    </div>
+
+                </sheet>
+
+                <!-- Footer -->
+                <footer>
+                    <button string="Close" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action to open Follow-up Activities Wizard -->
+    <record id="action_followup_wizard" model="ir.actions.act_window">
+        <field name="name">Follow-up Activities</field>
+        <field name="res_model">health.followup.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+        <field name="view_id" ref="view_followup_wizard_form"/>
+    </record>
+
+</odoo>

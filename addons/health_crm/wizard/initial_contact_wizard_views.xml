@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Initial Contact Wizard Form View -->
+    <record id="view_initial_contact_wizard_form" model="ir.ui.view">
+        <field name="name">health.initial.contact.wizard.form</field>
+        <field name="model">health.initial.contact.wizard</field>
+        <field name="arch" type="xml">
+            <form string="New Contact">
+                <sheet>
+                    <!-- Header with title and close button styling -->
+                    <div class="oe_title" style="margin-bottom: 20px;">
+                        <h1>
+                            <span class="fa fa-phone-square" style="color: #4299e1; margin-right: 10px;"/>
+                            New Contact
+                        </h1>
+                    </div>
+
+                    <!-- Duplicate Warning Alert -->
+                    <div class="alert alert-warning" role="alert" invisible="not duplicate_found" style="margin-bottom: 20px;">
+                        <div class="d-flex align-items-center">
+                            <span class="fa fa-exclamation-triangle fa-2x me-3" style="color: #f39c12;"/>
+                            <div>
+                                <strong>Existing Contact Found!</strong>
+                                <p class="mb-0"><field name="duplicate_message" nolabel="1" readonly="1"/></p>
+                                <button name="action_use_existing" type="object" 
+                                        class="btn btn-sm btn-outline-primary mt-2"
+                                        string="Use Existing Contact"/>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- SPAM Caller Warning Alert -->
+                    <div class="alert alert-danger" role="alert" invisible="not is_spam_caller" style="margin-bottom: 20px;">
+                        <div class="d-flex align-items-center">
+                            <span class="fa fa-ban fa-2x me-3" style="color: #dc3545;"/>
+                            <div>
+                                <strong>⚠️ SPAM CALLER DETECTED!</strong>
+                                <p class="mb-0"><field name="spam_warning" nolabel="1" readonly="1"/></p>
+                                <p class="text-muted mb-0 mt-1">
+                                    You may still proceed if this is a legitimate call.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Hidden fields for computation -->
+                    <field name="duplicate_found" invisible="1"/>
+                    <field name="existing_contact_id" invisible="1"/>
+                    <field name="existing_partner_id" invisible="1"/>
+                    <field name="is_spam_caller" invisible="1"/>
+
+                    <!-- Contact DateTime and Auto fields -->
+                    <group>
+                        <group>
+                            <field name="contact_datetime" string="Contact Date"/>
+                        </group>
+                        <group>
+                            <field name="contact_id" string="Contact ID" placeholder="Auto-generated"/>
+                            <field name="contact_type" string="Type" widget="badge" 
+                                   decoration-success="contact_type == 'new'"
+                                   decoration-info="contact_type == 'repeat'"/>
+                        </group>
+                    </group>
+
+                    <separator string="Contact Information"/>
+
+                    <!-- Main Contact Fields -->
+                    <group>
+                        <group>
+                            <field name="name" string="Name" placeholder="Contact name..." 
+                                   class="oe_inline" style="font-size: 16px;"/>
+                            <field name="province_id" string="Province" 
+                                   options="{'no_create': True}"
+                                   placeholder="Select province..."/>
+                        </group>
+                        <group>
+                            <field name="phone" string="Phone" widget="phone" 
+                                   placeholder="e.g. 0909 123 456"/>
+                            <field name="email" string="Email" widget="email"
+                                   placeholder="e.g. email@example.com"/>
+                        </group>
+                    </group>
+
+                    <separator string="Mode of Contact"/>
+
+                    <!-- Mode of Contact as Radio Buttons -->
+                    <group>
+                        <field name="mode_of_contact" widget="radio" 
+                               options="{'horizontal': true}"
+                               nolabel="1"/>
+                    </group>
+
+                </sheet>
+
+                <!-- Footer with Action Buttons -->
+                <footer>
+                    <button name="action_home_mark_spam" type="object" 
+                            string="← HOME (Mark as Junk)" 
+                            class="btn-secondary"
+                            confirm="This will mark the contact as junk/spam and return to the dashboard. Continue?"/>
+                    <button name="action_next" type="object" 
+                            string="NEXT →" 
+                            class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action to open Initial Contact Wizard -->
+    <record id="action_initial_contact_wizard" model="ir.actions.act_window">
+        <field name="name">New Contact</field>
+        <field name="res_model">health.initial.contact.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+        <field name="view_id" ref="view_initial_contact_wizard_form"/>
+        <field name="context">{}</field>
+    </record>
+
+</odoo>

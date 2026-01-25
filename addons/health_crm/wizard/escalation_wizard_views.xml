@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Escalation Wizard Form View -->
+    <record id="view_escalation_wizard_form" model="ir.ui.view">
+        <field name="name">health.escalation.wizard.form</field>
+        <field name="model">health.escalation.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Escalate Contact">
+                <sheet>
+                    <!-- Header -->
+                    <div class="oe_title" style="margin-bottom: 20px;">
+                        <h1>
+                            <span class="fa fa-level-up" style="color: #e53e3e; margin-right: 10px;"/>
+                            <span invisible="escalation_type != 'consultation'">Request Consultation</span>
+                            <span invisible="escalation_type != 'transfer'">Escalate Contact</span>
+                        </h1>
+                    </div>
+
+                    <!-- Contact Summary (Readonly) -->
+                    <div class="alert alert-info" role="alert" style="margin-bottom: 20px;">
+                        <div class="d-flex align-items-center">
+                            <span class="fa fa-user fa-2x me-3"/>
+                            <div>
+                                <strong>Contact: <field name="contact_name" nolabel="1" readonly="1"/></strong>
+                                <p class="mb-0">
+                                    Phone: <field name="contact_phone" nolabel="1" readonly="1" widget="phone"/>
+                                    | Status: <field name="contact_status" nolabel="1" readonly="1" widget="badge"/>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Hidden fields -->
+                    <field name="lead_id" invisible="1"/>
+                    <field name="escalation_type" invisible="1"/>
+
+                    <!-- Escalation Details -->
+                    <group>
+                        <group string="Escalation Details">
+                            <field name="escalate_to" string="Escalate To" widget="radio" 
+                                   options="{'horizontal': false}"/>
+                            <field name="escalate_to_user_id" string="Specific Person (Optional)"
+                                   options="{'no_create': True}"/>
+                            <field name="urgency" widget="radio" options="{'horizontal': true}"/>
+                        </group>
+                    </group>
+
+                    <separator string="Reason"/>
+                    
+                    <group>
+                        <field name="reason" string="Reason for Escalation" 
+                               placeholder="Explain why this contact needs to be escalated..."
+                               nolabel="1" colspan="2"/>
+                    </group>
+
+                    <separator string="Additional Information"/>
+
+                    <group>
+                        <field name="additional_notes" string="Additional Notes"
+                               placeholder="Any additional context or instructions..."
+                               nolabel="1" colspan="2"/>
+                    </group>
+
+                </sheet>
+
+                <!-- Footer with Action Buttons -->
+                <footer>
+                    <button name="action_confirm_escalation" type="object" 
+                            string="Confirm Escalation" 
+                            class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action to open Escalation Wizard -->
+    <record id="action_escalation_wizard" model="ir.actions.act_window">
+        <field name="name">Escalate Contact</field>
+        <field name="res_model">health.escalation.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+        <field name="view_id" ref="view_escalation_wizard_form"/>
+    </record>
+
+</odoo>

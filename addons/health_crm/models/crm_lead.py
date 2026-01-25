@@ -177,6 +177,116 @@ class HealthLead(models.Model):
         ('no_response', 'No Response'),
         ('booking_lost', 'Booking Lost')
     ], string='Contact Outcome', help='From Excel: Contact Outcome field')
+
+    # =========================================================================
+    # CONTACT-FIRST CRM FIELDS (New Contact Flow Requirements)
+    # =========================================================================
+    
+    # Contact Status - tracks the lifecycle of a contact in the sales pipeline
+    contact_status = fields.Selection([
+        ('active', 'Active'),           # In progress, awaiting action
+        ('booking', 'Booking'),         # Converted to booking
+        ('lead', 'Lead'),               # Converted to lead for follow-up
+        ('lost_booking', 'Lost Booking'), # Follow-up resulted in no booking
+        ('spam', 'Spam Call'),          # Junk/false contact
+    ], string='Contact Status', default='active',
+       help='Status of this contact in the sales pipeline', tracking=True)
+    
+    # On behalf tracking - who is the contact calling for
+    contacting_on_behalf = fields.Selection([
+        ('self', 'Self'),
+        ('other', 'Another Person'),
+    ], string='Contacting On Behalf Of', default='self',
+       help='Whether the caller is contacting for themselves or someone else')
+    
+    # Mode of contact - how did the contact reach us
+    mode_of_contact = fields.Selection([
+        ('phone', 'Phone Call'),
+        ('zalo', 'Zalo'),
+        ('facebook', 'Facebook'),
+        ('email', 'Email'),
+        ('website', 'Website'),
+        ('chatbox', 'Chatbox'),
+        ('walk_in', 'Walk-in'),
+    ], string='Mode of Contact', default='phone',
+       help='How the contact reached out to us')
+    
+    # Escalation tracking fields
+    escalated_to = fields.Selection([
+        ('head_nurse', 'Head Nurse'),
+        ('om', 'Operations Manager'),
+        ('duty_doctor', 'Duty Doctor'),
+    ], string='Escalated To',
+       help='Person/role this contact was escalated to')
+    
+    escalation_datetime = fields.Datetime(
+        'Escalation Date/Time',
+        help='When the contact was escalated'
+    )
+    
+    escalation_notes = fields.Text(
+        'Escalation Notes',
+        help='Notes about why the contact was escalated'
+    )
+    
+    # Telemedicine/Consultation referral
+    referred_to_duty_doctor = fields.Boolean(
+        'Referred to Duty Doctor',
+        default=False,
+        help='Contact was referred for telemedicine consultation'
+    )
+    
+    referral_datetime = fields.Datetime(
+        'Referral Date/Time',
+        help='When the telemedicine referral was made'
+    )
+    
+    referral_notes = fields.Text(
+        'Referral Notes',
+        help='Details provided for the telemedicine referral'
+    )
+    
+    # Tags for contact categorization
+    contact_tag_ids = fields.Many2many(
+        'crm.tag',
+        'crm_lead_contact_tag_rel',
+        'lead_id', 'tag_id',
+        string='Contact Tags',
+        help='Tags to categorize this contact'
+    )
+    
+    # Reason for Contact - link to lookup table
+    reason_for_contact_id = fields.Many2one(
+        'health.contact.reason',
+        string='Reason for Contact',
+        help='Primary reason why this person contacted us'
+    )
+    
+    # On behalf of another person - link to partner or enter new name
+    other_person_id = fields.Many2one(
+        'res.partner',
+        string='On Behalf Of Client',
+        help='If contacting on behalf of another, select the client here',
+        domain="[('is_patient', '=', True)]"
+    )
+    
+    other_person_name = fields.Char(
+        'Other Person Name',
+        help='If the person is not in the system, enter their name here'
+    )
+    
+    # Address field for contact
+    street_address = fields.Text(
+        'Address',
+        help='Contact address'
+    )
+    
+    # Spam caller tracking - mark phone as spam
+    is_spam_caller = fields.Boolean(
+        'Spam Caller',
+        default=False,
+        help='This phone number is marked as spam'
+    )
     
     booking_status = fields.Selection([
         ('no_booking', 'No Booking'),
@@ -747,68 +857,32 @@ class HealthLead(models.Model):
     )
 
     def action_convert_to_booking(self):
-        """Convert lead to field service order/booking"""
+        """
+        BOOKING button - Opens multi-step booking wizard.
+        Step 1: Client Details
+        Step 2: Service Requirements
+        Step 3: Booking Details
+        Step 4: Assign Booking (optional)
+        """
         self.ensure_one()
         
-        if not self.service_interest:
-            raise UserError(_('Please specify the service interest before converting to booking.'))
-        
-        # Create or get patient record
-        patient = self._get_or_create_patient()
-        
-        # Map clinical priority to FSO priority (text -> numeric string)
-        priority_mapping = {
-            'routine': '0',      # Low
-            'preventive': '1',   # Normal  
-            'urgent': '2',       # High
-            'emergency': '4',    # Emergency
-        }
-        fso_priority = priority_mapping.get(self.clinical_priority, '1')  # Default to Normal
-        
-        # Create field service order (booking)
-        fso_vals = {
-            'patient_id': patient.id,
-            'name': patient.name,
-            'patient_notes': self.service_requirements or self.description or f"Service booking for {self.service_interest}",
-            'priority': fso_priority,
-            'crm_lead_id': self.id,
-        }
-        
-        # Map service interest to FSO service type selection
-        if self.service_interest:
-            service_type_mapping = {
-                'home_visit': 'home_visit',
-                'clinic_visit': 'clinic_visit', 
-                'consultation': 'consultation',
-                'emergency': 'emergency',
-                'follow_up': 'follow_up',
-                'preventive': 'preventive',
-                'rehabilitation': 'rehabilitation',
-                'telemedicine': 'telemedicine',
-                'vaccination': 'vaccination',
-                'diagnostic': 'diagnostic',
+        # Open the booking wizard with context from this lead
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _('Create Booking'),
+            'res_model': 'health.booking.wizard',
+            'view_mode': 'form',
+            'target': 'new',
+            'context': {
+                'default_lead_id': self.id,
+                'default_client_name': self.name,
+                'default_client_phone': self.phone,
+                'default_client_email': self.email_from,
+                'default_client_address': self.street_address,
+                'default_client_id': self.partner_id.id if self.partner_id else False,
+                'default_is_new_client': not bool(self.partner_id),
             }
-            fso_vals['service_type'] = service_type_mapping.get(self.service_interest, 'consultation')
-        
-        fso = self.env['health.fieldservice.order'].create(fso_vals)
-        
-        # Update lead
-        self.write({
-            'patient_id': patient.id,
-            'health_contact_outcome': 'service_booked',
-            'contact_outcome': 'service_booked',
-            'booking_status': 'confirmed',
-            'stage_id': self._get_won_stage().id,
-        })
-
-        # Return to CRM Contacts action with rainbow effect
-        action = self.env['ir.actions.act_window']._for_xml_id('health_crm.action_healthcare_opportunities')
-        action['effect'] = {
-            'fadeout': 'slow',
-            'message': _('Congratulations! Client %s created.') % patient.name,
-            'type': 'rainbow_man',
         }
-        return action
 
     def action_convert_to_client(self):
         """Convert lead to client without creating a booking"""
@@ -887,4 +961,222 @@ class HealthLead(models.Model):
             </p><p>
                 Select multiple leads from the list and use the "Merge" action to combine them.
             </p>'''
+        }
+
+    # =========================================================================
+    # CONTACT-FIRST FLOW ACTION METHODS
+    # =========================================================================
+
+    def action_mark_spam_and_home(self):
+        """
+        HOME button - Mark contact as spam/junk and return to dashboard.
+        Called when user clicks Home without logging a Lead or Booking.
+        Also marks the phone number as spam for future detection.
+        """
+        self.ensure_one()
+        
+        # Only mark as spam if no lead or booking was logged
+        if self.contact_status == 'active':
+            self.write({
+                'contact_status': 'spam',
+                'contact_outcome': 'rejected',
+                'is_spam_caller': True,  # Tag this caller as spam
+            })
+            
+            # Also mark other leads with same phone as potential spam
+            if self.phone:
+                other_leads = self.search([
+                    ('phone', '=', self.phone),
+                    ('id', '!=', self.id),
+                    ('is_spam_caller', '=', False),
+                ])
+                if other_leads:
+                    other_leads.write({'is_spam_caller': True})
+        
+        # Return to Health Flow dashboard
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'health_flow_dashboard',
+        }
+
+    def action_log_as_lead(self):
+        """
+        LOG LEAD button - Mark this contact as a Lead for follow-up.
+        Updates contact_status and opens activity scheduling.
+        """
+        self.ensure_one()
+        
+        self.write({
+            'contact_status': 'lead',
+            'contact_outcome': 'pending_follow_up',
+            'health_contact_outcome': 'pending_follow_up',
+        })
+        
+        # Open activity scheduling
+        return self.action_schedule_follow_up()
+
+    def action_log_note(self):
+        """
+        LOG NOTE button - Add an internal note via chatter.
+        Opens the message composer for internal notes.
+        """
+        self.ensure_one()
+        
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _('Log Note'),
+            'res_model': 'mail.compose.message',
+            'view_mode': 'form',
+            'target': 'new',
+            'context': {
+                'default_res_id': self.id,
+                'default_model': 'crm.lead',
+                'default_composition_mode': 'comment',
+                'default_is_internal': True,
+            }
+        }
+
+    def action_refer_telemedicine(self):
+        """
+        TELEMEDICINE button - Refer contact to Duty Doctor for telemedicine consultation.
+        Records the referral and notifies the duty doctor.
+        """
+        self.ensure_one()
+        
+        self.write({
+            'referred_to_duty_doctor': True,
+            'referral_datetime': fields.Datetime.now(),
+        })
+        
+        # Create a note about the referral
+        self.message_post(
+            body=_('Contact referred for Telemedicine consultation to Duty Doctor.'),
+            message_type='notification',
+            subtype_xmlid='mail.mt_note',
+        )
+        
+        # Open a form to add referral notes
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _('Telemedicine Referral Notes'),
+            'res_model': 'crm.lead',
+            'res_id': self.id,
+            'view_mode': 'form',
+            'target': 'current',
+            'context': {
+                'focus_field': 'referral_notes',
+            }
+        }
+
+    def action_escalate_consultation(self):
+        """
+        CONSULTATION button - Transfer contact for consultation.
+        Options: Duty Doctor, Head Nurse, or Operations Manager.
+        """
+        self.ensure_one()
+        
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _('Transfer for Consultation'),
+            'res_model': 'health.escalation.wizard',
+            'view_mode': 'form',
+            'target': 'new',
+            'context': {
+                'default_lead_id': self.id,
+                'default_escalation_type': 'consultation',
+            }
+        }
+
+    def action_escalate_contact(self):
+        """
+        ESCALATE button - Escalate contact to Head Nurse or OM for further processing.
+        Different from consultation - this transfers the entire contact.
+        """
+        self.ensure_one()
+        
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _('Escalate Contact'),
+            'res_model': 'health.escalation.wizard',
+            'view_mode': 'form',
+            'target': 'new',
+            'context': {
+                'default_lead_id': self.id,
+                'default_escalation_type': 'transfer',
+            }
+        }
+
+    def action_open_cancellation(self):
+        """
+        CANCELLATION button - Open cancellation form.
+        Only available when contact_status is 'booking'.
+        """
+        self.ensure_one()
+        
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _('Record Cancellation'),
+            'res_model': 'health.booking.cancellation.wizard',
+            'view_mode': 'form',
+            'target': 'new',
+            'context': {
+                'default_lead_id': self.id,
+            }
+        }
+
+    def action_reschedule_booking(self):
+        """
+        RESCHEDULE button - Open booking calendar for rescheduling.
+        Only available when contact_status is 'booking'.
+        """
+        self.ensure_one()
+        
+        # Find related booking
+        booking = self.env['health.fieldservice.order'].search([
+            ('crm_lead_id', '=', self.id)
+        ], limit=1)
+        
+        if booking:
+            return {
+                'type': 'ir.actions.act_window',
+                'name': _('Reschedule Booking'),
+                'res_model': 'health.fieldservice.order',
+                'res_id': booking.id,
+                'view_mode': 'form',
+                'target': 'current',
+                'context': {
+                    'reschedule_mode': True,
+                }
+            }
+        else:
+            return {
+                'type': 'ir.actions.client',
+                'tag': 'display_notification',
+                'params': {
+                    'title': _('No Booking Found'),
+                    'message': _('No booking found for this contact.'),
+                    'type': 'warning',
+                    'sticky': False,
+                }
+            }
+
+    def action_send_message(self):
+        """
+        SEND MESSAGE button - Open message composer.
+        Allows sending email/SMS to the contact.
+        """
+        self.ensure_one()
+        
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _('Send Message'),
+            'res_model': 'mail.compose.message',
+            'view_mode': 'form',
+            'target': 'new',
+            'context': {
+                'default_res_ids': [self.id],  # Odoo 19 uses res_ids (list) instead of res_id
+                'default_model': 'crm.lead',
+                'default_composition_mode': 'comment',
+                'default_partner_ids': [(4, self.partner_id.id)] if self.partner_id else [],
+            }
         }

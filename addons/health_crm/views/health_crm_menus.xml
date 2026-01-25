@@ -9,26 +9,28 @@
         sequence="5"
         groups="group_health_crm_user"/>
 
-    <!-- Leads (formerly CRM Contacts) -->
+    <!-- CONTACT-FIRST FLOW MENUS -->
+    
+    <!-- Contacts - Opens Initial Contact Wizard -->
     <menuitem 
-        id="menu_healthcare_leads"
-        name="Leads"
+        id="menu_healthcare_contacts"
+        name="Contacts"
         parent="menu_healthcare_crm_root"
-        action="crm.crm_lead_all_leads"
+        action="action_initial_contact_wizard"
         sequence="10"/>
 
-    <!-- CRM Contacts (formerly CRM Leads) -->
+    <!-- Follow-up Activities - Opens Follow-up Wizard -->
     <menuitem 
-        id="menu_healthcare_pipeline"
-        name="CRM Contacts"
+        id="menu_healthcare_followup"
+        name="Follow-up Activities"
         parent="menu_healthcare_crm_root"
-        action="action_healthcare_opportunities"
+        action="action_followup_wizard"
         sequence="20"/>
 
-    <!-- Customers/Contacts -->
+    <!-- Customers/Clients -->
     <menuitem 
         id="menu_healthcare_customers"
-        name="Customers"
+        name="Clients"
         parent="menu_healthcare_crm_root"
         action="base.action_partner_form"
         sequence="30"/>

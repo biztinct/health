@@ -13,6 +13,19 @@ import { useService } from "@web/core/utils/hooks";
 class HealthFlowAction extends Component {
     static template = "health_flow.HealthFlowTemplate";
 
+    // Breadcrumb display name for Odoo 19
+    static displayName = "Home Page";
+
+    // Props definition for Odoo 19 action service
+    static props = {
+        "*": true,
+    };
+
+    // Getter for breadcrumb title
+    get title() {
+        return "Home Page";
+    }
+
     setup() {
         this.orm = useService("orm");
         this.action = useService("action");
@@ -65,20 +78,13 @@ class HealthFlowAction extends Component {
                 title: 'Sales & CRM',
                 color: '#4299e1', // Blue
                 items: [
-                    { key: 'crm-search', label: 'Search', icon: 'fa-search', desc: 'Search opportunities', isSearch: true },
-                    { key: 'crm-add-lead', label: 'Add Lead', icon: 'fa-plus-circle', desc: 'Create a new lead' },
-                    { key: 'crm-activities', label: 'Planned Activities', icon: 'fa-tasks', desc: 'Planned activities', hasCount: true, countKey: 'planned_activities', countSource: 'crm' },
-                    { key: 'crm-calendar', label: 'Calendar', icon: 'fa-calendar', desc: 'CRM calendar view', hasCount: true, countKey: 'calendar', countSource: 'crm' },
-                    { key: 'crm-all', label: 'All Leads', icon: 'fa-address-card', desc: 'All leads (kanban first)', hasCount: true, countKey: 'all', countSource: 'crm' },
-                    { key: 'crm-initial', label: 'Initial Contact', icon: 'fa-phone', desc: 'Initial contact leads', hasCount: true, countKey: 'initial', countSource: 'crm' },
-                    // Use a Font Awesome v4 compatible icon to ensure it renders
-                    { key: 'crm-continue-followup', label: 'Continue Follow-up', icon: 'fa-refresh', desc: 'Leads pending follow-up', hasCount: true, countKey: 'continue_followup', countSource: 'crm' },
-                    { key: 'crm-client-acquired', label: 'Client Acquired', icon: 'fa-check-circle', desc: 'Converted clients', hasCount: true, countKey: 'client_acquired', countSource: 'crm' },
-                    { key: 'crm-booking-lost', label: 'Booking Lost', icon: 'fa-times-circle', desc: 'Lost opportunities', hasCount: true, countKey: 'booking_lost', countSource: 'crm' },
+                    // Contact-First Flow: Only TWO main options
+                    { key: 'crm-contacts', label: 'Contacts', icon: 'fa-phone', desc: 'Log new contact / View contacts', hasCount: true, countKey: 'all', countSource: 'crm' },
+                    { key: 'crm-followup', label: 'Follow-up Activities', icon: 'fa-calendar-check-o', desc: 'Manage leads and activities', hasCount: true, countKey: 'planned_activities', countSource: 'crm' },
                 ],
             },
             booking: {
-                title: 'Booking',
+                title: 'Bookings and Assignments',
                 color: '#ed8936', // Orange
                 items: [
                     { key: 'booking-search', label: 'Search', icon: 'fa-search', desc: 'Search bookings', isSearch: true },

@@ -66,7 +66,15 @@ class HealthFlowWizard(models.TransientModel):
         Return a full action dict for a panel tile or primary circle.
         Uses server-side xmlid resolution so the client can simply do-action.
         """
-        # Handle special actions with custom domains/contexts
+        # Handle Contact-First Flow actions
+        if key == 'crm-contacts':
+            # Open Initial Contact Wizard popup
+            return self._get_initial_contact_action()
+        elif key == 'crm-followup':
+            # Open Follow-up Activities view
+            return self._get_followup_activities_action()
+        
+        # Handle legacy CRM actions (keep for backwards compatibility)
         if key in ['crm-add-lead', 'crm-all', 'crm-initial', 'crm-activities', 'crm-calendar', 'crm-continue-followup', 'crm-client-acquired', 'crm-booking-lost']:
             return self._get_crm_action(key)
         elif key in ['booking-calendar', 'booking-all', 'booking-draft', 'booking-assigned', 'booking-scheduled', 'booking-in-progress', 'booking-completed']:
@@ -140,6 +148,100 @@ class HealthFlowWizard(models.TransientModel):
         action.setdefault('context', {})
         action = self._ensure_action_name(action, action_name)
         return self._apply_flow_context(action)
+
+    # =========================================================================
+    # CONTACT-FIRST FLOW ACTIONS
+    # =========================================================================
+
+    @api.model
+    def _get_initial_contact_action(self):
+        """
+        Open the Initial Contact Wizard popup.
+        This is the entry point for the Contact-First CRM flow.
+        """
+        try:
+            action = self.env['ir.actions.actions']._for_xml_id(
+                'health_crm.action_initial_contact_wizard'
+            )
+            action['target'] = 'new'  # Open as popup
+            return self._ensure_action_name(action, _('New Contact'))
+        except Exception as e:
+            return {
+                'type': 'ir.actions.client',
+                'tag': 'display_notification',
+                'params': {
+                    'title': _('Contact Wizard Error'),
+                    'message': _('Failed to open contact wizard: %s', str(e)),
+                    'type': 'warning',
+                    'sticky': False,
+                }
+            }
+
+    @api.model
+    def _get_followup_activities_action(self):
+        """
+        Open the Follow-up Activities wizard.
+        This wizard provides menu options for managing leads and activities.
+        """
+        try:
+            action = self.env['ir.actions.actions']._for_xml_id(
+                'health_crm.action_followup_wizard'
+            )
+            action['target'] = 'new'
+            return action
+        except Exception as e:
+            # Fallback to activity view if wizard not found
+            try:
+                action = self.env['ir.actions.actions']._for_xml_id(
+                    'health_crm.action_healthcare_opportunities'
+                )
+                action['target'] = 'current'
+                
+                # Get form view reference
+                form_view = self.env.ref('health_crm.view_healthcare_opportunity_form', raise_if_not_found=False)
+                form_view_id = form_view.id if form_view else False
+                
+                # Filter for leads with pending follow-up or activities
+                action['name'] = _('Follow-up Activities')
+                action['domain'] = [
+                    ('type', '=', 'opportunity'),
+                    '|',
+                    ('contact_status', '=', 'lead'),
+                    ('activity_ids', '!=', False),
+                ]
+                
+                # Use activity view as the primary view
+                action.pop('view_ids', None)
+                action.pop('views', None)
+                action['view_mode'] = 'activity,list,kanban,calendar,form'
+                action['views'] = [
+                    (False, 'activity'),
+                    (False, 'list'),
+                    (False, 'kanban'),
+                    (False, 'calendar'),
+                    (form_view_id, 'form'),
+                ]
+                
+                action['context'] = {
+                    'default_type': 'opportunity',
+                    'default_contact_status': 'lead',
+                    'search_default_my_activities': 1,
+                }
+                
+                action = self._ensure_action_name(action, _('Follow-up Activities'))
+                return self._apply_flow_context(action)
+            except Exception as e2:
+                return {
+                    'type': 'ir.actions.client',
+                    'tag': 'display_notification',
+                    'params': {
+                        'title': _('Follow-up Activities Error'),
+                        'message': _('Failed to load follow-up activities: %s', str(e2)),
+                        'type': 'warning',
+                        'sticky': False,
+                    }
+                }
+
 
     @api.model
     def _get_crm_action(self, key):

@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Booking Cancellation Wizard Form View -->
+    <record id="view_booking_cancellation_wizard_form" model="ir.ui.view">
+        <field name="name">health.booking.cancellation.wizard.form</field>
+        <field name="model">health.booking.cancellation.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Record Cancellation">
+                <sheet>
+                    <!-- Header -->
+                    <div class="oe_title" style="margin-bottom: 20px;">
+                        <h1>
+                            <span class="fa fa-times-circle" style="color: #e53e3e; margin-right: 10px;"/>
+                            Record Booking Cancellation
+                        </h1>
+                    </div>
+
+                    <!-- Contact/Booking Summary -->
+                    <div class="alert alert-warning" role="alert" style="margin-bottom: 20px;">
+                        <div class="d-flex align-items-center">
+                            <span class="fa fa-calendar-times-o fa-2x me-3"/>
+                            <div>
+                                <strong>Cancelling booking for: <field name="contact_name" nolabel="1" readonly="1"/></strong>
+                                <p class="mb-0">
+                                    Phone: <field name="contact_phone" nolabel="1" readonly="1" widget="phone"/>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Hidden fields -->
+                    <field name="lead_id" invisible="1"/>
+                    <field name="booking_id" invisible="1"/>
+                    <field name="is_repeat_client" invisible="1"/>
+
+                    <!-- Cancellation Timestamp -->
+                    <group>
+                        <group>
+                            <field name="cancellation_datetime" string="Recorded At"/>
+                        </group>
+                    </group>
+
+                    <separator string="Who Cancelled?"/>
+
+                    <!-- Who Cancelled -->
+                    <group>
+                        <group>
+                            <field name="cancelled_by_client" string="Name (on client side)"
+                                   placeholder="e.g., Mrs. Nguyen, Son of patient..."/>
+                            <field name="cancelled_by_relationship" string="Their Relationship to Client"/>
+                        </group>
+                        <group>
+                            <field name="reported_by_name" string="Reported By (us)"
+                                   placeholder="Name of staff who took the call..."/>
+                            <field name="reported_by_position" string="Position/Role"
+                                   placeholder="e.g., Receptionist, OM..."/>
+                        </group>
+                    </group>
+
+                    <!-- For Repeat Clients -->
+                    <group invisible="not is_repeat_client">
+                        <field name="last_visiting_staff_id" string="Last Staff Who Visited This Client"
+                               options="{'no_create': True}"/>
+                    </group>
+
+                    <separator string="Cancellation Reason"/>
+
+                    <!-- Reason -->
+                    <group>
+                        <field name="cancellation_reason_id" string="Reason Category"
+                               options="{'no_create': True}"/>
+                        <field name="cancellation_reason_text" string="Detailed Reason"
+                               placeholder="Please describe why the booking is being cancelled..."
+                               nolabel="1" colspan="2"/>
+                    </group>
+
+                    <separator string="Reschedule?"/>
+
+                    <!-- Reschedule Option -->
+                    <group>
+                        <field name="wants_reschedule" string="Client wants to reschedule?"/>
+                        <field name="reschedule_notes" string="Reschedule Preferences"
+                               placeholder="Preferred dates/times for rescheduling..."
+                               invisible="not wants_reschedule"/>
+                    </group>
+
+                </sheet>
+
+                <!-- Footer with Action Buttons -->
+                <footer>
+                    <button name="action_confirm_cancellation" type="object" 
+                            string="Confirm Cancellation" 
+                            class="btn-danger"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action to open Booking Cancellation Wizard -->
+    <record id="action_booking_cancellation_wizard" model="ir.actions.act_window">
+        <field name="name">Record Cancellation</field>
+        <field name="res_model">health.booking.cancellation.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+        <field name="view_id" ref="view_booking_cancellation_wizard_form"/>
+    </record>
+
+</odoo>

@@ -41,27 +41,28 @@ class Users(models.Model):
         return records
 
     @api.model
-    def name_search(self, name="", args=None, operator="ilike", limit=100):
+    def name_search(self, name="", domain=None, operator="ilike", limit=100):
         """
         Search user base on the dashboard access
+        Compatible with Odoo 19 which uses 'domain' instead of 'args'
         """
-        args = list(args or [])
+        domain = list(domain or [])
         context = dict(self.env.context)
         if context.get("user_group_ids") and context.get("access_by") == "access_group":
             group_ids = self.env["res.groups"].browse(context["user_group_ids"])
-            domain = [
+            filter_domain = [
                 ("id", "!=", self.env.user.id),
                 ("id", "in", group_ids.mapped("users").ids),
                 ("share", "=", False),
             ]
             if context.get("shared_user_ids"):
-                domain = [("id", "in", context["shared_user_ids"])]
-            args = expression.AND([domain, args])
+                filter_domain = [("id", "in", context["shared_user_ids"])]
+            domain = expression.AND([filter_domain, domain])
         if context.get("access_by") == "user" and context.get("user_ids"):
-            domain = [("id", "!=", self.env.user.id), ("share", "=", False)]
-            args = expression.AND([domain, args])
+            filter_domain = [("id", "!=", self.env.user.id), ("share", "=", False)]
+            domain = expression.AND([filter_domain, domain])
         return super(Users, self).name_search(
-            name=name, args=args, operator=operator, limit=limit
+            name=name, domain=domain, operator=operator, limit=limit
         )
 
     def has_read_access(self, model_id):

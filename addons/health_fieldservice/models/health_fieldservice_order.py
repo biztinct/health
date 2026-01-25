@@ -848,6 +848,85 @@ class HealthFieldServiceOrderUnified(models.Model):
         'Cancellation Notes',
         help='Additional notes about the cancellation'
     )
+    
+    # Enhanced cancellation fields for Contact-First flow
+    cancelled_by_client = fields.Char(
+        'Cancelled By (Client Side)',
+        help='Name of person on client side who cancelled'
+    )
+    
+    cancellation_reported_by = fields.Char(
+        'Reported By',
+        help='Name of person who reported the cancellation'
+    )
+    
+    cancellation_reporter_position = fields.Char(
+        'Reporter Position',
+        help='Position/role of person who reported cancellation'
+    )
+    
+    last_visiting_staff_id = fields.Many2one(
+        'hr.employee',
+        string='Last Person Who Visited',
+        help='For repeat clients - last staff member who visited this client'
+    )
+
+    # =========================================================================
+    # COMMISSION & SERVICE FEE FIELDS (Contact-First Flow Requirements)
+    # =========================================================================
+    
+    # Service fee for casual/part-time healthcare providers
+    service_fee_vnd = fields.Float(
+        'Service Fee (VND)',
+        help='Negotiated fee for casual healthcare provider (amount OM negotiated to pay)',
+        tracking=True
+    )
+    
+    # Commission tracking fields
+    commission_due_to = fields.Many2one(
+        'res.partner',
+        string='Commission Due To',
+        help='Person or entity who receives commission for this booking'
+    )
+    
+    commission_percentage = fields.Float(
+        'Commission %',
+        help='Percentage of booking value as commission'
+    )
+    
+    commission_duration = fields.Char(
+        'Commission Duration',
+        help='Duration for which commission is payable (e.g., "First 3 months")'
+    )
+    
+    commission_amount = fields.Monetary(
+        'Commission Amount',
+        compute='_compute_commission_amount',
+        store=True,
+        help='Calculated commission amount based on percentage'
+    )
+    
+    @api.depends('total_price', 'commission_percentage')
+    def _compute_commission_amount(self):
+        """Calculate commission amount from percentage of total price"""
+        for record in self:
+            if record.total_price and record.commission_percentage:
+                record.commission_amount = record.total_price * (record.commission_percentage / 100)
+            else:
+                record.commission_amount = 0.0
+    
+    # Invoice authorization tracking (Nurses/Doctors cannot raise invoice)
+    invoice_authorized = fields.Boolean(
+        'Invoice Authorized',
+        default=True,
+        help='Whether the booking creator is authorized to raise invoices'
+    )
+    
+    invoice_notification_sent = fields.Boolean(
+        'OM Invoice Notification Sent',
+        default=False,
+        help='Whether notification was sent to OM for invoice creation'
+    )
 
     # Completion fields for part-time workflow
     completion_notes = fields.Text(
@@ -1349,6 +1428,8 @@ class HealthFieldServiceOrderUnified(models.Model):
             order._show_quote_creation_notification()
             # Update patient's next visit date
             order._update_patient_next_visit_date()
+            # Check invoice authorization (Nurses/Doctors cannot raise invoices)
+            order._check_invoice_authorization()
 
         return orders
     
@@ -1930,6 +2011,121 @@ class HealthFieldServiceOrderUnified(models.Model):
             # If no lead staff, allow invoice creation (default behavior)
             return True
         return self.lead_staff_id.can_create_invoices
+
+    def _check_invoice_authorization(self):
+        """
+        Check if the booking creator (current user) is authorized to raise invoices.
+        
+        Business Rule: Nurses and Doctors cannot raise invoices.
+        When they create a booking, the Operations Manager should be notified
+        that invoice creation is required.
+        
+        This is called automatically on booking creation.
+        """
+        self.ensure_one()
+        user = self.env.user
+        
+        # Check if user is in healthcare staff group (Nurses/Doctors)
+        # These users cannot create invoices
+        is_healthcare_staff = user.has_group('health_fieldservice.group_healthcare_staff')
+        is_nurse = user.has_group('health_fieldservice.group_healthcare_nurse') if hasattr(self.env, 'group_healthcare_nurse') else False
+        is_doctor = user.has_group('health_fieldservice.group_healthcare_doctor') if hasattr(self.env, 'group_healthcare_doctor') else False
+        
+        # Also check employee job title if groups don't exist
+        if not (is_nurse or is_doctor):
+            if user.employee_id:
+                job_title = (user.employee_id.job_title or '').lower()
+                is_nurse = 'nurse' in job_title
+                is_doctor = 'doctor' in job_title or 'bác sĩ' in job_title
+        
+        # If user is Nurse or Doctor, they cannot raise invoices
+        if is_nurse or is_doctor or is_healthcare_staff:
+            # Mark booking as not authorized for invoice by creator
+            self.write({
+                'invoice_authorized': False,
+            })
+            
+            # Notify Operations Manager
+            self._notify_om_invoice_required()
+            
+            _logger.info(
+                'FSO %s: Created by healthcare staff (%s), OM notified for invoice creation',
+                self.name, user.name
+            )
+        else:
+            # Regular staff can create invoices
+            self.write({
+                'invoice_authorized': True,
+            })
+
+    def _notify_om_invoice_required(self):
+        """
+        Send notification to Operations Manager that a booking was created
+        by a Nurse/Doctor and requires OM to create the invoice.
+        """
+        self.ensure_one()
+        
+        # Get operations manager group
+        ops_group = self.env.ref('health_base.group_healthcare_operations_manager', raise_if_not_found=False)
+        if not ops_group:
+            _logger.warning('Operations Manager group not found for invoice notification')
+            return
+        
+        # Get all operations managers
+        ops_managers = ops_group.users
+        
+        if not ops_managers:
+            _logger.warning('No Operations Managers found for invoice notification')
+            return
+        
+        # Create activity for each operations manager
+        activity_type = self.env.ref('mail.mail_activity_data_todo', raise_if_not_found=False)
+        if not activity_type:
+            _logger.warning('Todo activity type not found')
+            return
+        
+        for manager in ops_managers:
+            self.activity_schedule(
+                activity_type_id=activity_type.id,
+                summary=_('Invoice Required: %s') % self.name,
+                note=_("""
+                    <p><strong>Booking Created by Healthcare Staff - Invoice Required</strong></p>
+                    <ul>
+                        <li><strong>Booking:</strong> %(name)s</li>
+                        <li><strong>Patient:</strong> %(patient)s</li>
+                        <li><strong>Service:</strong> %(service)s</li>
+                        <li><strong>Created By:</strong> %(user)s (%(job)s)</li>
+                        <li><strong>Created:</strong> %(date)s</li>
+                    </ul>
+                    <p><em>This booking was created by a Nurse/Doctor who is not authorized to raise invoices. 
+                    Please ensure the quote and invoice are created for this booking.</em></p>
+                """) % {
+                    'name': self.name,
+                    'patient': self.patient_id.name if self.patient_id else 'Not assigned',
+                    'service': self._get_service_type_label(),
+                    'user': self.env.user.name,
+                    'job': self.env.user.employee_id.job_title if self.env.user.employee_id else 'Healthcare Staff',
+                    'date': fields.Datetime.now().strftime('%Y-%m-%d %H:%M'),
+                },
+                user_id=manager.id,
+                date_deadline=fields.Date.today(),
+            )
+        
+        # Mark notification as sent
+        self.write({
+            'invoice_notification_sent': True,
+        })
+        
+        # Post note in chatter
+        self.message_post(
+            body=_(
+                '<p><strong>Invoice Authorization Notice</strong></p>'
+                '<p>This booking was created by %(user)s (Healthcare Staff). '
+                'Operations team has been notified to handle invoice creation.</p>'
+            ) % {'user': self.env.user.name},
+            message_type='notification',
+            subtype_xmlid='mail.mt_note',
+        )
 
     def _notify_operations_for_invoicing(self):
         """Notify operations manager that part-time staff completed service and needs invoicing"""
