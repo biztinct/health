@@ -231,35 +231,57 @@ export class HRDevelopmentDashboard extends Component {
     }
 
     // Action handlers
+    _getEmployeeId() {
+        return this.state.employee && this.state.employee.id ? this.state.employee.id : null;
+    }
+
+    _ensureEmployee() {
+        const employeeId = this._getEmployeeId();
+        if (!employeeId) {
+            this.notification.add("Employee record not found for your user.", { type: "warning" });
+            return null;
+        }
+        return employeeId;
+    }
+
     openSkills() {
+        const employeeId = this._ensureEmployee();
+        if (!employeeId) return;
         this.actionService.doAction({
             type: "ir.actions.act_window",
             name: "My Skills",
             res_model: "hr.employee.skill",
             view_mode: "list,form",
-            domain: [["employee_id.user_id", "=", this.userId]],
+            views: [[false, "list"], [false, "form"]],
+            domain: [["employee_id", "=", employeeId]],
             context: {}
         });
     }
 
     openLearning() {
+        const employeeId = this._ensureEmployee();
+        if (!employeeId) return;
         this.actionService.doAction({
             type: "ir.actions.act_window",
             name: "My Learning",
             res_model: "hr.learning.enrollment",
             view_mode: "list,form",
-            domain: [["employee_id.user_id", "=", this.userId]],
+            views: [[false, "list"], [false, "form"]],
+            domain: [["employee_id", "=", employeeId]],
             context: {}
         });
     }
 
     openCertifications() {
+        const employeeId = this._ensureEmployee();
+        if (!employeeId) return;
         this.actionService.doAction({
             type: "ir.actions.act_window",
             name: "My Certifications",
             res_model: "hr.certification",
             view_mode: "list,form",
-            domain: [["employee_id.user_id", "=", this.userId]],
+            views: [[false, "list"], [false, "form"]],
+            domain: [["employee_id", "=", employeeId]],
             context: {}
         });
     }
@@ -270,44 +292,54 @@ export class HRDevelopmentDashboard extends Component {
             name: "AI Coaching",
             res_model: "ai.coaching.wizard",
             view_mode: "form",
+            views: [[false, "form"]],
             target: "new",
             context: {}
         });
     }
 
     openMentorship() {
+        const employeeId = this._ensureEmployee();
+        if (!employeeId) return;
         this.actionService.doAction({
             type: "ir.actions.act_window",
             name: "My Mentorships",
             res_model: "hr.mentorship",
             view_mode: "list,form",
+            views: [[false, "list"], [false, "form"]],
             domain: [
                 "|",
-                ["mentor_id.user_id", "=", this.userId],
-                ["mentee_id.user_id", "=", this.userId]
+                ["mentor_id", "=", employeeId],
+                ["mentee_id", "=", employeeId]
             ],
             context: {}
         });
     }
 
     openDevelopmentPlans() {
+        const employeeId = this._ensureEmployee();
+        if (!employeeId) return;
         this.actionService.doAction({
             type: "ir.actions.act_window",
             name: "My Development Plans",
             res_model: "hr.development.plan",
             view_mode: "list,form",
-            domain: [["employee_id.user_id", "=", this.userId]],
+            views: [[false, "list"], [false, "form"]],
+            domain: [["employee_id", "=", employeeId]],
             context: {}
         });
     }
 
     openSkillGaps() {
+        const employeeId = this._ensureEmployee();
+        if (!employeeId) return;
         this.actionService.doAction({
             type: "ir.actions.act_window",
             name: "Skill Gaps",
             res_model: "hr.skill.gap",
             view_mode: "list,form",
-            domain: [["employee_id.user_id", "=", this.userId]],
+            views: [[false, "list"], [false, "form"]],
+            domain: [["employee_id", "=", employeeId]],
             context: {}
         });
     }
@@ -318,6 +350,7 @@ export class HRDevelopmentDashboard extends Component {
             name: "Career Paths",
             res_model: "hr.career.path",
             view_mode: "list,form",
+            views: [[false, "list"], [false, "form"]],
             context: {}
         });
     }
@@ -328,6 +361,7 @@ export class HRDevelopmentDashboard extends Component {
             name: "Learning Paths",
             res_model: "hr.learning.path",
             view_mode: "list,form",
+            views: [[false, "list"], [false, "form"]],
             context: {}
         });
     }
@@ -343,6 +377,7 @@ export class HRDevelopmentDashboard extends Component {
             res_model: "hr.employee",
             res_id: memberId,
             view_mode: "form",
+            views: [[false, "form"]],
             context: {}
         });
     }

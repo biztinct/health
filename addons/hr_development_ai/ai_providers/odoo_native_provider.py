@@ -392,7 +392,8 @@ class OdooNativeAIProvider(BaseAIProvider):
 
     def _generate_coaching_template(self, prompt):
         """Generate contextual coaching response based on the prompt"""
-        prompt_lower = prompt.lower()
+        question = self._extract_question_from_prompt(prompt) or prompt
+        prompt_lower = question.lower()
 
         # Skill development questions
         if any(kw in prompt_lower for kw in ['skill', 'learn', 'develop', 'improve', 'training']):
@@ -583,7 +584,11 @@ Would you like recommendations for specific courses or certifications?"""
 
         # Default contextual response
         else:
-            return f"""Thank you for your question about "{prompt[:100]}..."
+            summary = question.strip().replace('\n', ' ')
+            if len(summary) > 140:
+                summary = summary[:137].rstrip() + "..."
+
+            return f"""Thank you for your question about "{summary}".
 
 Here are some coaching insights to consider:
 
@@ -603,6 +608,16 @@ I'm here to provide more specific guidance. Could you share more details about:
 - What specific outcome you're hoping for?
 - What approaches you've already tried?
 - What resources you have available?"""
+
+    def _extract_question_from_prompt(self, prompt):
+        """Extract the user question from a structured coaching prompt"""
+        match = re.search(r'the employee asks:\\s*(.+)', prompt, flags=re.IGNORECASE | re.DOTALL)
+        if not match:
+            return None
+
+        question = match.group(1).strip()
+        question = re.split(r'\\n\\s*(provide|response):', question, maxsplit=1, flags=re.IGNORECASE)[0].strip()
+        return question or None
 
     def _generate_skills_template(self, prompt):
         """Generate skills list based on context"""

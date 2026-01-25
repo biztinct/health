@@ -20,19 +20,14 @@
                             <field name="ai_provider" readonly="1"/>
                         </group>
                     </group>
-                    <group string="Ask Your Question">
-                        <field name="user_message" nolabel="1" placeholder="What would you like coaching on? Describe your situation, challenge, or question..."/>
-                    </group>
-                    <group string="AI Response" invisible="not ai_response">
-                        <field name="ai_response" nolabel="1"/>
-                    </group>
-                    <group string="Conversation History" invisible="not conversation_history">
-                        <field name="conversation_history" nolabel="1" readonly="1"/>
+                    <group col="1">
+                        <field name="ai_transcript" invisible="1"/>
+                        <field name="user_message" invisible="1"/>
+                        <widget name="ai_coaching_chat_form"/>
                     </group>
                 </sheet>
                 <footer>
-                    <button string="Get AI Coaching" type="object" name="action_get_ai_response" class="btn-primary"/>
-                    <button string="Save as Session" type="object" name="action_save_as_session" class="btn-secondary" invisible="not conversation_history"/>
+                    <button string="Save as Session" type="object" name="action_save_as_session" class="btn-secondary" invisible="not ai_transcript"/>
                     <button string="Close" class="btn-secondary" special="cancel"/>
                 </footer>
             </form>

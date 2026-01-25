@@ -14,6 +14,7 @@
                 </div>
                 <div class="chat-actions">
                     <button
+                        t-if="supportsSummary"
                         class="btn btn-sm btn-secondary"
                         t-on-click="generateSummary"
                         t-att-disabled="state.isLoading"

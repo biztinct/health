@@ -48,6 +48,17 @@ export class AiCoachingChatWidget extends Component {
     }
 
     /**
+     * Get model name
+     */
+    get modelName() {
+        return this.props.record?.resModel || 'hr.coaching.session';
+    }
+
+    get supportsSummary() {
+        return this.modelName === 'hr.coaching.session';
+    }
+
+    /**
      * Load chat history from ai_transcript field
      */
     async loadChatHistory() {
@@ -80,10 +91,28 @@ export class AiCoachingChatWidget extends Component {
             return;
         }
 
-        const recordId = this.recordId;
+        let recordId = this.recordId;
         if (!recordId) {
-            this.notification.add('Cannot send message: No record ID available', { type: 'danger' });
-            return;
+            if (!this.props.record) {
+                this.notification.add('Cannot send message: No record available', { type: 'danger' });
+                return;
+            }
+
+            try {
+                await this.props.record.update({
+                    user_message: this.state.inputMessage.trim(),
+                });
+                const saved = await this.props.record.save({ reload: false });
+                if (!saved) {
+                    this.notification.add('Cannot send message: Please fill required fields first', { type: 'warning' });
+                    return;
+                }
+                recordId = this.recordId;
+            } catch (error) {
+                console.error('Failed to save record before sending message:', error);
+                this.notification.add('Cannot send message: Please fill required fields first', { type: 'warning' });
+                return;
+            }
         }
 
         const userMessage = {
@@ -101,7 +130,7 @@ export class AiCoachingChatWidget extends Component {
 
         try {
             const result = await this.orm.call(
-                'hr.coaching.session',
+                this.modelName,
                 'action_send_ai_message',
                 [recordId],
                 {
@@ -147,16 +176,24 @@ export class AiCoachingChatWidget extends Component {
             updated_at: new Date().toISOString()
         });
 
-        // Update the field value using the record's update method
+        // Update the field value and persist
         await this.props.record.update({
             [fieldName]: transcript
         });
+        if (this.props.record.save) {
+            await this.props.record.save({ reload: false });
+        }
     }
 
     /**
      * Generate AI summary
      */
     async generateSummary() {
+        if (!this.supportsSummary) {
+            this.notification.add('Summary is not available for this session.', { type: 'warning' });
+            return;
+        }
+
         const recordId = this.recordId;
         if (!recordId) {
             this.notification.add('Cannot generate summary: No record ID', { type: 'danger' });
@@ -166,7 +203,7 @@ export class AiCoachingChatWidget extends Component {
         this.state.isLoading = true;
         try {
             const result = await this.orm.call(
-                'hr.coaching.session',
+                this.modelName,
                 'action_generate_ai_summary',
                 [recordId]
             );

@@ -119,9 +119,9 @@ class HRDevelopmentDashboard(models.Model):
         today = fields.Date.today()
         thirty_days = today + timedelta(days=30)
 
-        active = certs.filtered(lambda c: c.state == 'valid')
+        active = certs.filtered(lambda c: c.active and not c.is_expired)
         expiring = certs.filtered(
-            lambda c: c.state == 'valid' and c.expiry_date and c.expiry_date <= thirty_days
+            lambda c: c.active and not c.is_expired and c.expiry_date and c.expiry_date <= thirty_days
         )
 
         return {
@@ -284,14 +284,14 @@ class HRDevelopmentDashboard(models.Model):
 
         gaps = self.env['hr.skill.gap'].search([
             ('employee_id', '=', employee.id),
-            ('state', '=', 'open')
+            ('gap_score', '>', 0)
         ], limit=10)
 
         return [
             {
                 'skill': g.skill_id.name,
-                'current_level': g.current_level_id.name if g.current_level_id else 'None',
-                'required_level': g.required_level_id.name if g.required_level_id else '',
+                'current_level': f"{round(g.current_score or 0)} / 100",
+                'required_level': f"{round(g.required_score or 0)} / 100",
                 'priority': g.priority,
                 'gap_score': g.gap_score
             } for g in gaps
@@ -362,7 +362,8 @@ class HRDevelopmentDashboard(models.Model):
         # Team certifications
         team_certs = self.env['hr.certification'].search([
             ('employee_id', 'in', team_ids),
-            ('state', '=', 'valid')
+            ('active', '=', True),
+            ('is_expired', '=', False),
         ])
 
         return {
@@ -394,7 +395,10 @@ class HRDevelopmentDashboard(models.Model):
         total_enrollments = self.env['hr.learning.enrollment'].search_count([])
 
         # Active certifications
-        active_certs = self.env['hr.certification'].search_count([('state', '=', 'valid')])
+        active_certs = self.env['hr.certification'].search_count([
+            ('active', '=', True),
+            ('is_expired', '=', False),
+        ])
 
         # Active mentorships
         active_mentorships = self.env['hr.mentorship'].search_count([('state', '=', 'active')])

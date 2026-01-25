@@ -24,7 +24,7 @@ class AIProviderConfig(models.Model):
         ('llama', 'Llama (Open Source via Ollama)'),
         ('mistral', 'Mistral (Open Source)'),
         ('openai', 'OpenAI ChatGPT'),
-        ('odoo_native', 'Odoo 19 Native AI')
+        ('odoo_native', 'Native AI')
     ], string='AI Provider', required=True, default='odoo_native',
         help="Select the AI provider to use for talent intelligence, coaching, and recommendations")
 
