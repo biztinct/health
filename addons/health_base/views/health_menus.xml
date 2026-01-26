@@ -89,6 +89,12 @@
               action="action_health_patient_category" sequence="10"
               groups="group_healthcare_receptionist,group_healthcare_manager,group_healthcare_admin,group_healthcare_owner"/>
 
+    <!-- Catchment Provinces -->
+    <menuitem id="menu_healthcare_catchment_provinces" name="Catchment Provinces"
+              parent="menu_healthcare_lookups"
+              action="action_health_catchment_province" sequence="5"
+              groups="group_healthcare_manager,group_healthcare_admin,group_healthcare_owner"/>
+
     <!-- Service Types -->
     <menuitem id="menu_healthcare_service_types" name="Service Types" 
               parent="menu_healthcare_lookups" 

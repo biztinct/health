@@ -22,11 +22,11 @@ class ResUsers(models.Model):
         ('support', 'Support Staff')
     ], string='Healthcare Role')
 
-    # Designated work location/facility
-    facility_id = fields.Many2one(
-        'health.facility',
-        string='Designated Facility',
-        help='The healthcare facility where this user primarily works'
+    # Designated catchment province/area
+    catchment_province_id = fields.Many2one(
+        'health.catchment.province',
+        string='Catchment Province',
+        help='The catchment province/area where this user primarily works'
     )
 
     def get_employee_record(self):

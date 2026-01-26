@@ -43,12 +43,12 @@ class HealthInitialContactWizard(models.TransientModel):
     ], string='Contact Type', default='new', readonly=True,
        help='Automatically determined based on existing contact check')
     
-    # Province (renamed from Primary Facility)
-    province_id = fields.Many2one(
-        'health.province',
-        string='Province',
+    # Catchment Province (renamed from Province)
+    catchment_province_id = fields.Many2one(
+        'health.catchment.province',
+        string='Catchment Province',
         required=True,
-        help='Vietnamese province or city for this contact'
+        help='Catchment province/area for this contact'
     )
     
     phone = fields.Char(
@@ -217,13 +217,11 @@ class HealthInitialContactWizard(models.TransientModel):
     
     @api.model
     def default_get(self, fields_list):
-        """Set default province from user's facility if available"""
+        """Set default catchment province from user's assignment if available"""
         defaults = super().default_get(fields_list)
         user = self.env.user
-        if hasattr(user, 'facility_id') and user.facility_id:
-            # Try to get province from user's facility
-            if hasattr(user.facility_id, 'province_id') and user.facility_id.province_id:
-                defaults['province_id'] = user.facility_id.province_id.id
+        if hasattr(user, 'catchment_province_id') and user.catchment_province_id:
+            defaults['catchment_province_id'] = user.catchment_province_id.id
         return defaults
     
     # =========================================================================
@@ -255,7 +253,7 @@ class HealthInitialContactWizard(models.TransientModel):
                 'name': self.name,
                 'phone': self.phone,
                 'email_from': self.email,
-                'province_code': self.province_id.id,
+                'catchment_province_id': self.catchment_province_id.id,
                 'mode_of_contact': self.mode_of_contact,
                 'contact_datetime': self.contact_datetime,
                 'contact_type': 'new',
@@ -298,7 +296,7 @@ class HealthInitialContactWizard(models.TransientModel):
                 'name': self.name,
                 'phone': self.phone,
                 'email_from': self.email,
-                'province_code': self.province_id.id if self.province_id else False,
+                'catchment_province_id': self.catchment_province_id.id if self.catchment_province_id else False,
                 'mode_of_contact': self.mode_of_contact,
                 'contact_datetime': self.contact_datetime,
                 'contact_type': self.contact_type,
@@ -344,7 +342,7 @@ class HealthInitialContactWizard(models.TransientModel):
                 'partner_id': self.existing_partner_id.id,
                 'phone': self.phone or self.existing_partner_id.phone,
                 'email_from': self.email or self.existing_partner_id.email,
-                'province_code': self.province_id.id if self.province_id else False,
+                'catchment_province_id': self.catchment_province_id.id if self.catchment_province_id else False,
                 'mode_of_contact': self.mode_of_contact,
                 'contact_datetime': self.contact_datetime,
                 'contact_type': 'repeat',

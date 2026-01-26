@@ -70,9 +70,9 @@
                         <group>
                             <field name="name" string="Name" placeholder="Contact name..." 
                                    class="oe_inline" style="font-size: 16px;"/>
-                            <field name="province_id" string="Province" 
+                            <field name="catchment_province_id" string="Catchment Province" 
                                    options="{'no_create': True}"
-                                   placeholder="Select province..."/>
+                                   placeholder="Select catchment province..."/>
                         </group>
                         <group>
                             <field name="phone" string="Phone" widget="phone" 

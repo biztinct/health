@@ -77,7 +77,8 @@
                             <field name="email" widget="email"/>
                             <field name="patient_status"/>
                             <field name="patient_category_id"/>
-                            <field name="primary_facility_id"/>
+                            <field name="catchment_province_id"/>
+                            <field name="primary_facility_id" domain="[('catchment_province_id', '=', catchment_province_id)]"/>
                             <field name="state_id" string="Province"/>
                             <field name="national_id"/>
                             <field name="profession" string="Occupation"/>

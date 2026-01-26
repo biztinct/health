@@ -108,6 +108,7 @@ class HealthFlowWizard(models.TransientModel):
             'admin-portable-equipment': ('health_fieldservice.action_health_portable_equipment', _('Portable Equipment')),
             'admin-healthcare-staff': ('health_fieldservice.action_healthcare_staff', _('Healthcare Staff')),
             'admin-facilities': ('health_base.action_health_facility', _('Healthcare Facilities')),
+            'admin-catchment-provinces': ('health_base.action_health_catchment_province', _('Catchment Provinces')),
             'admin-patient-categories': ('health_base.action_health_patient_category', _('Patient Categories')),
             'admin-service-types': ('health_base.action_health_service_type', _('Service Types')),
             'admin-symptoms': ('health_base.action_health_symptom', _('Symptoms')),
@@ -875,14 +876,14 @@ class HealthFlowWizard(models.TransientModel):
 
     @api.model
     def get_user_info(self):
-        """Get current user's name and facility for top bar display."""
+        """Get current user's name and catchment province for top bar display."""
         user = self.env.user
-        facility_name = ''
-        if hasattr(user, 'facility_id') and user.facility_id:
-            facility_name = user.facility_id.name or ''
+        catchment_name = ''
+        if hasattr(user, 'catchment_province_id') and user.catchment_province_id:
+            catchment_name = user.catchment_province_id.name or ''
         return {
             'userName': user.name or '',
-            'userFacility': facility_name,
+            'userFacility': catchment_name,  # Keep key name for backward compatibility
         }
 
     @api.model

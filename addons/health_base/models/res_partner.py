@@ -181,6 +181,13 @@ class ResPartner(models.Model):
     source_details = fields.Char('Source Details')
     referral_source = fields.Char('Referral Source')
     
+    # Catchment Province Assignment
+    catchment_province_id = fields.Many2one(
+        'health.catchment.province',
+        string='Catchment Province',
+        help='The catchment province/area this client belongs to'
+    )
+    
     # Facility Assignment
     primary_facility_id = fields.Many2one('health.facility', string='Primary Facility')
     
@@ -264,25 +271,25 @@ class ResPartner(models.Model):
         help='clients I referred'
     )
     
-    def _generate_patient_code(self, facility=None):
+    def _generate_patient_code(self, catchment_province=None):
         """
         Generate unique patient code in format: PP 00000YYYY
         Where:
-        - PP = 2-digit province code from facility
+        - PP = province code from catchment province
         - 00000 = sequential number (resets yearly, with leading zeros)
         - YYYY = current year
         """
         from datetime import datetime
 
-        # Get facility (from parameter or primary facility)
-        if not facility and self.primary_facility_id:
-            facility = self.primary_facility_id
+        # Get catchment province (from parameter or assigned catchment province)
+        if not catchment_province and self.catchment_province_id:
+            catchment_province = self.catchment_province_id
 
-        # Get province code from facility
-        if facility:
-            province_code = facility.province_code if facility.province_code else '99'
+        # Get province code from catchment province
+        if catchment_province and catchment_province.code:
+            province_code = catchment_province.code[:2] if len(catchment_province.code) >= 2 else catchment_province.code
         else:
-            # If no facility, use default province code '99'
+            # If no catchment province or code, use default province code '99'
             province_code = '99'
 
         # Get current year
@@ -691,12 +698,12 @@ class ResPartner(models.Model):
             if partner.mobile and not re.match(r'^\+?[\d\s\-\(\)]{7,15}$', partner.mobile):
                 raise ValidationError(_('Please enter a valid mobile number.'))
 
-    @api.constrains('is_patient', 'primary_facility_id')
-    def _check_patient_facility(self):
-        """Ensure patients have a primary facility assigned"""
+    @api.constrains('is_patient', 'catchment_province_id')
+    def _check_patient_catchment_province(self):
+        """Ensure patients have a catchment province assigned"""
         for partner in self:
-            if partner.is_patient and not partner.primary_facility_id:
-                raise ValidationError(_('Primary Facility is required for patients. Please select a facility to generate a valid Patient ID.'))
+            if partner.is_patient and not partner.catchment_province_id:
+                raise ValidationError(_('Catchment Province is required for patients. Please select a catchment province to generate a valid Patient ID.'))
 
     @api.model_create_multi
     def create(self, vals_list):

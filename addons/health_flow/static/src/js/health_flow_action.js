@@ -119,6 +119,7 @@ class HealthFlowAction extends Component {
                     { key: 'admin-portable-equipment', label: 'Portable Equipment', icon: 'fa-briefcase', desc: 'Track equipment' },
                     { key: 'admin-healthcare-staff', label: 'Healthcare Staff', icon: 'fa-user-md', desc: 'Staff directory' },
                     { key: 'admin-facilities', label: 'Healthcare Facilities', icon: 'fa-building', desc: 'Facilities management' },
+                    { key: 'admin-catchment-provinces', label: 'Catchment Provinces', icon: 'fa-globe', desc: 'Catchment provinces' },
                     { key: 'admin-patient-categories', label: 'Patient Categories', icon: 'fa-bookmark', desc: 'Patient categories' },
                     { key: 'admin-service-types', label: 'Service Types', icon: 'fa-list-ul', desc: 'Define services' },
                     { key: 'admin-symptoms', label: 'Symptoms', icon: 'fa-heartbeat', desc: 'Configure symptoms' },

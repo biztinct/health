@@ -103,7 +103,8 @@
                                     <field name="mobile" widget="phone" invisible="1"/>
                                     <field name="email" widget="email"/>
                                     <field name="patient_category_id"/>
-                                    <field name="primary_facility_id" required="1"/>
+                                    <field name="catchment_province_id" required="1"/>
+                                    <field name="primary_facility_id" domain="[('catchment_province_id', '=', catchment_province_id)]"/>
                                     <field name="source_type"/>
                                     <field name="national_id"/>
                                     <field name="profession" string="Occupation"/>

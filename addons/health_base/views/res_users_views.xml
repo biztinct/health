@@ -8,13 +8,13 @@
         <field name="inherit_id" ref="base.view_users_form"/>
         <field name="priority">20</field>
         <field name="arch" type="xml">
-            <!-- Add facility_id after the title section -->
+            <!-- Add catchment_province_id after the title section -->
             <xpath expr="//div[hasclass('oe_title')]" position="after">
                 <group>
                     <group string="Healthcare Settings">
                         <field name="is_healthcare_staff"/>
                         <field name="healthcare_role" invisible="not is_healthcare_staff"/>
-                        <field name="facility_id" options="{'no_create': True}"/>
+                        <field name="catchment_province_id" options="{'no_create': True}"/>
                     </group>
                 </group>
             </xpath>

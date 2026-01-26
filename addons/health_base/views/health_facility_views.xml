@@ -9,7 +9,7 @@
             <list string="Healthcare Facilities" decoration-warning="facility_status=='maintenance'" decoration-danger="facility_status in ['closed_temporary', 'closed_permanent']">
                 <field name="name"/>
                 <field name="code"/>
-                <field name="province_code"/>
+                <field name="catchment_province_id"/>
                 <field name="facility_type"/>
                 <field name="city"/>
                 <field name="state_id"/>
@@ -88,7 +88,7 @@
                                         </div>
                                         <group col="2">
                                             <field name="facility_type"/>
-                                            <field name="province_code" placeholder="Province code (2 digits)..."/>
+                                            <field name="catchment_province_id" options="{'no_create': True}"/>
                                             <field name="phone" widget="phone"/>
                                             <field name="email" widget="email"/>
                                             <field name="website" widget="url"/>
@@ -413,7 +413,9 @@
         <field name="model">health.facility</field>
         <field name="arch" type="xml">
             <search string="Healthcare Facilities">
-                <field name="name" string="Facility Name"/>
+                <field name="name"/>
+                <field name="catchment_province_id"/>
+                <filter name="operational" string="Operational" domain="[('facility_status', '=', 'operational')]"/>
             </search>
         </field>
     </record>

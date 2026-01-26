@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- =========================================================================
+         Catchment Province Views - Admin Configuration
+         ========================================================================= -->
+
+    <!-- Catchment Province Form View -->
+    <record id="view_health_catchment_province_form" model="ir.ui.view">
+        <field name="name">health.catchment.province.form</field>
+        <field name="model">health.catchment.province</field>
+        <field name="arch" type="xml">
+            <form string="Catchment Province">
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="%(health_base.action_health_facility)d" type="action"
+                                class="oe_stat_button" icon="fa-hospital-o"
+                                context="{'search_default_catchment_province_id': id}">
+                            <field name="facility_count" string="Facilities" widget="statinfo"/>
+                        </button>
+                    </div>
+                    
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="Catchment Province Name" required="1"/>
+                        </h1>
+                    </div>
+
+                    <group>
+                        <group string="Basic Information">
+                            <field name="code" placeholder="e.g., HCM, HN, DN"/>
+                            <field name="sequence"/>
+                            <field name="active"/>
+                        </group>
+                        <group string="Statistics">
+                            <field name="user_count" readonly="1"/>
+                            <field name="client_count" readonly="1"/>
+                        </group>
+                    </group>
+
+                    <group string="Description">
+                        <field name="description" nolabel="1" placeholder="Description of this catchment province/area..."/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Catchment Province List View -->
+    <record id="view_health_catchment_province_tree" model="ir.ui.view">
+        <field name="name">health.catchment.province.list</field>
+        <field name="model">health.catchment.province</field>
+        <field name="arch" type="xml">
+            <list string="Catchment Provinces" editable="bottom">
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="code"/>
+                <field name="description"/>
+                <field name="facility_count"/>
+                <field name="user_count"/>
+                <field name="client_count"/>
+                <field name="active"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Catchment Province Search View -->
+    <record id="view_health_catchment_province_search" model="ir.ui.view">
+        <field name="name">health.catchment.province.search</field>
+        <field name="model">health.catchment.province</field>
+        <field name="arch" type="xml">
+            <search string="Catchment Province Search">
+                <field name="name" filter_domain="[('name', 'ilike', self)]"/>
+                <field name="code" filter_domain="[('code', 'ilike', self)]"/>
+                <filter name="filter_active" string="Active" domain="[('active', '=', True)]"/>
+                <filter name="filter_inactive" string="Inactive" domain="[('active', '=', False)]"/>
+            </search>
+        </field>
+    </record>
+
+    <!-- Catchment Province Action -->
+    <record id="action_health_catchment_province" model="ir.actions.act_window">
+        <field name="name">Catchment Provinces</field>
+        <field name="res_model">health.catchment.province</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_health_catchment_province_search"/>
+        <field name="context">{'search_default_filter_active': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first Catchment Province
+            </p>
+            <p>
+                Catchment provinces define geographic service areas for healthcare operations.
+                Each catchment province can have multiple facilities assigned to it.
+            </p>
+        </field>
+    </record>
+
+</odoo>

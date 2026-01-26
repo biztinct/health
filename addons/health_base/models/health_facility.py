@@ -17,11 +17,18 @@ class Facility(models.Model):
     name = fields.Char('Facility Name', required=True, tracking=True)
     code = fields.Char('Facility Code', required=True, size=10, tracking=True)
     province_code = fields.Char(
-        'Province Code',
-        required=True,
+        'Province Code (Legacy)',
+        required=False,
         size=2,
         tracking=True,
-        help='client ID generation (e.g., 01=Hanoi, 02=HCM)'
+        help='Legacy field - Province code is now managed at Catchment Province level. This field is kept for backwards compatibility.'
+    )
+
+    # Catchment Province relationship
+    catchment_province_id = fields.Many2one(
+        'health.catchment.province',
+        string='Catchment Province',
+        help='The catchment province/area this facility belongs to'
     )
 
     # Facility type
@@ -267,7 +274,6 @@ class Facility(models.Model):
 
     _sql_constraints = [
         ('code_unique', 'unique(code)', 'Facility code must be unique!'),
-        ('province_code_unique', 'unique(province_code)', 'Province code must be unique!'),
         ('positive_beds', 'check(total_beds >= 0)', 'Total beds cannot be negative!'),
         ('positive_rooms', 'check(consultation_rooms > 0)', 'Must have at least one consultation room!'),
         ('positive_radius', 'check(home_visit_radius_km >= 0)', 'Home visit radius cannot be negative!')

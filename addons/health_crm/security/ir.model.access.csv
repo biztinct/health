@@ -11,6 +11,8 @@ access_health_lead_reason_public,health.lead.reason public,model_health_lead_rea
 access_health_province_user,health.province user,model_health_province,group_health_crm_user,1,1,1,0
 access_health_province_manager,health.province manager,model_health_province,group_health_crm_manager,1,1,1,1
 access_health_province_public,health.province public,model_health_province,,1,0,0,0
+access_health_catchment_province_crm_user,health.catchment.province crm user,health_base.model_health_catchment_province,group_health_crm_user,1,0,0,0
+access_health_catchment_province_crm_manager,health.catchment.province crm manager,health_base.model_health_catchment_province,group_health_crm_manager,1,1,1,1
 access_client_selection_wizard_user,health.client.selection.wizard user,model_health_client_selection_wizard,group_health_crm_user,1,1,1,1
 access_client_selection_wizard_manager,health.client.selection.wizard manager,model_health_client_selection_wizard,group_health_crm_manager,1,1,1,1
 access_relationship_add_wizard_user,health.relationship.add.wizard user,model_health_relationship_add_wizard,group_health_crm_user,1,1,1,1

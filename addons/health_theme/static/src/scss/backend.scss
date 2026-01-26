@@ -167,12 +167,43 @@ a {
     letter-spacing: .05em;
     color: var(--vu-text-secondary);
     padding-bottom: var(--vu-space-xs);
+    padding-left: var(--vu-space-lg);
+    padding-right: var(--vu-space-lg);
     margin: var(--vu-space-md) 0;
 }
 
 .o_form_view .o_horizontal_separator::after,
 .o_form_view .o_horizontal_separator::before {
     display: none !important;
+}
+
+// Fix padding for standalone elements outside of groups (separators, radio buttons, etc.)
+// These elements appear directly on the form sheet without a containing <group> tag
+.o_form_sheet > .o_field_widget,
+.o_form_sheet > .o_wrap_field,
+.o_form_sheet > div:not(.o_group):not(.vu-section):not(.vu-card):not(.oe_title):not(.o_notebook):not(.alert):not(.vu-section-grid) > .o_field_widget,
+.o_dialog .modal-body > .o_field_widget,
+.o_dialog .modal-body > .o_wrap_field {
+    padding-left: var(--vu-space-lg);
+    padding-right: var(--vu-space-lg);
+    margin-bottom: var(--vu-space-md);
+}
+
+// Radio widget horizontal layout with proper padding
+.o_form_view .o_field_widget.o_field_radio,
+.o_dialog .o_field_widget.o_field_radio {
+    padding-left: var(--vu-space-lg);
+    padding-right: var(--vu-space-lg);
+    
+    .o_radio_item {
+        margin-right: var(--vu-space-md);
+    }
+}
+
+// Ensure groups that follow separators have consistent left padding
+.o_form_sheet > .o_group:not(:first-child) {
+    padding-left: var(--vu-space-md);
+    padding-right: var(--vu-space-md);
 }
 
 .o_form_view .o_notebook {

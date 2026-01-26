@@ -350,6 +350,13 @@ class HealthLead(models.Model):
         string='Province/City',
         help='Vietnamese province or city for this lead'
     )
+    
+    # Catchment Province for service area assignment
+    catchment_province_id = fields.Many2one(
+        'health.catchment.province',
+        string='Catchment Province',
+        help='Catchment province/area for this lead'
+    )
 
     # Vietnamese Address Fields
     named_area = fields.Char('Named Area', help='Khu vực đặt tên')
@@ -537,29 +544,62 @@ class HealthLead(models.Model):
         return result
     
     def _generate_unique_contact_code(self, vals):
-        """Generate unique contact code based on city"""
-        # Get city from vals or use default
-        city = vals.get('city', 'HCM')  # Default to Ho Chi Minh City
+        """
+        Generate unique contact code using the same format as client IDs.
+        Format: PP 00000YYYY where:
+        - PP = province code from catchment province (first 2 chars)
+        - 00000 = sequential number (5 digits with leading zeros)
+        - YYYY = current year
         
-        # Get the last contact code for this city
-        last_lead = self.search([
-            ('city', '=', city),
-            ('unique_contact_code', '!=', False)
-        ], order='unique_contact_code desc', limit=1)
+        This shares the same sequence as patient codes so that when a lead
+        converts to a client, the same code is used.
+        """
+        from datetime import datetime
         
-        if last_lead and last_lead.unique_contact_code:
-            # Extract number from last code (format: CITY-NNNN)
-            try:
-                last_number = int(last_lead.unique_contact_code.split('-')[-1])
-                new_number = last_number + 1
-            except (ValueError, IndexError):
-                new_number = 1
+        # Get catchment province from vals or use default
+        catchment_province_id = vals.get('catchment_province_id')
+        catchment_province = None
+        
+        if catchment_province_id:
+            catchment_province = self.env['health.catchment.province'].browse(catchment_province_id)
+        
+        # Get province code from catchment province
+        if catchment_province and catchment_province.code:
+            province_code = catchment_province.code[:2] if len(catchment_province.code) >= 2 else catchment_province.code
         else:
-            new_number = 1
+            # Default to '99' if no catchment province specified
+            province_code = '99'
         
-        # Generate code in format: CITY-NNNN
-        city_code = city[:3].upper() if city else 'HCM'
-        return f"{city_code}-{new_number:04d}"
+        # Get current year
+        current_year = datetime.now().year
+        
+        # Use the SAME sequence code as patient IDs (shared between leads and patients)
+        sequence_code = f'patient.{province_code}.{current_year}'
+        
+        # Check if sequence exists, if not create it
+        sequence = self.env['ir.sequence'].sudo().search([
+            ('code', '=', sequence_code)
+        ], limit=1)
+        
+        if not sequence:
+            # Create new sequence for this province/year combination
+            sequence = self.env['ir.sequence'].sudo().create({
+                'name': f'Client/Lead ID - Province {province_code} - {current_year}',
+                'code': sequence_code,
+                'implementation': 'standard',
+                'prefix': '',
+                'padding': 5,  # 5 digits with leading zeros
+                'number_increment': 1,
+                'number_next': 1,
+            })
+        
+        # Get next sequence number
+        seq_number = sequence.next_by_id()
+        
+        # Format: PP 00000YYYY (note the space)
+        contact_code = f'{province_code} {seq_number}{current_year}'
+        
+        return contact_code
 
     def _process_contact_relationship(self):
         """Process contact relationship and create patient/representative records - ONLY for opportunities"""
@@ -620,11 +660,20 @@ class HealthLead(models.Model):
         return self.contact_outcome == 'service_booked' or self.health_contact_outcome == 'service_booked' or (self.stage_id and self.stage_id.is_won)
 
     def _get_or_create_patient(self, patient_name=None):
-        """Create or get patient record"""
+        """Create or get patient record. Transfers unique_contact_code as patient_code."""
         if not patient_name:
             patient_name = self.name
             
-        # Check if patient already exists
+        # Check if patient already exists by unique_contact_code first (if available)
+        if self.unique_contact_code:
+            existing_patient = self.env['res.partner'].search([
+                ('patient_code', '=', self.unique_contact_code),
+                ('is_patient', '=', True)
+            ], limit=1)
+            if existing_patient:
+                return existing_patient
+        
+        # Check if patient already exists by name
         existing_patient = self.env['res.partner'].search([
             ('name', '=', patient_name),
             ('is_patient', '=', True)
@@ -642,10 +691,13 @@ class HealthLead(models.Model):
             'is_patient': True,
             'is_company': False,
             'customer_rank': 1,
+            'catchment_province_id': self.catchment_province_id.id if self.catchment_province_id else False,
             'primary_facility_id': self.facility_id.id if self.facility_id else False,
             'active': True,
             'patient_status': 'active',
             'patient_category_id': regular_category.id if regular_category else False,
+            # Transfer the lead's unique_contact_code as the patient's patient_code
+            'patient_code': self.unique_contact_code if self.unique_contact_code else False,
         }
 
         # Copy contact info from lead if contact is the client

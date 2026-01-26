@@ -6,6 +6,7 @@
         <field name="name">VAFHS Main Clinic</field>
         <field name="code">MAIN001</field>
         <field name="province_code">02</field>
+        <field name="catchment_province_id" ref="catchment_province_hcm"/>
         <field name="facility_type">main_clinic</field>
         <field name="street">123 Nguyen Hue Street</field>
         <field name="city">Ho Chi Minh City</field>
@@ -41,6 +42,7 @@ Sunday: Emergency only</field>
         <field name="name">VAFHS District 2 Branch</field>
         <field name="code">BR002</field>
         <field name="province_code">02</field>
+        <field name="catchment_province_id" ref="catchment_province_hcm"/>
         <field name="facility_type">branch_clinic</field>
         <field name="street">456 Tran Hung Dao Street</field>
         <field name="city">Ho Chi Minh City</field>
@@ -72,6 +74,7 @@ Sunday: Emergency only</field>
         <field name="name">VAFHS Home Care Center</field>
         <field name="code">HOME001</field>
         <field name="province_code">02</field>
+        <field name="catchment_province_id" ref="catchment_province_hcm"/>
         <field name="facility_type">home_care_center</field>
         <field name="street">789 Le Van Sy Street</field>
         <field name="city">Ho Chi Minh City</field>
@@ -103,6 +106,7 @@ Sunday: Emergency only</field>
         <field name="name">Hanoi Facility</field>
         <field name="code">HAN001</field>
         <field name="province_code">01</field>
+        <field name="catchment_province_id" ref="catchment_province_hanoi"/>
         <field name="facility_type">branch_clinic</field>
         <field name="street">Hanoi street</field>
         <field name="city">Hanoi</field>
@@ -153,6 +157,7 @@ Sunday: Emergency only</field>
         <field name="patient_status">active</field>
         <field name="source_type">facebook</field>
         <field name="source_details">Facebook Ad Campaign - Healthcare Services</field>
+        <field name="catchment_province_id" ref="catchment_province_hcm"/>
         <field name="primary_facility_id" ref="demo_facility_main_clinic"/>
         <field name="emergency_contact_name">Tran Thi B</field>
         <field name="emergency_contact_phone">+84 91 234 5678</field>
@@ -188,6 +193,7 @@ Sunday: Emergency only</field>
         <field name="source_type">referral</field>
         <field name="source_details">Referred by Dr. Tran at Cho Ray Hospital</field>
         <field name="referral_source">Dr. Tran - Cho Ray Hospital</field>
+        <field name="catchment_province_id" ref="catchment_province_hcm"/>
         <field name="primary_facility_id" ref="demo_facility_main_clinic"/>
         <field name="emergency_contact_name">Pham Van D</field>
         <field name="emergency_contact_phone">+84 91 876 5432</field>
@@ -222,6 +228,7 @@ Sunday: Emergency only</field>
         <field name="patient_status">active</field>
         <field name="source_type">website</field>
         <field name="source_details">VAFHS website contact form</field>
+        <field name="catchment_province_id" ref="catchment_province_hcm"/>
         <field name="primary_facility_id" ref="demo_facility_home_care"/>
         <field name="emergency_contact_name">Hoang Thi F</field>
         <field name="emergency_contact_phone">+84 91 555 8888</field>
@@ -256,6 +263,7 @@ Sunday: Emergency only</field>
         <field name="patient_status">active</field>
         <field name="source_type">zalo</field>
         <field name="source_details">Zalo Official Account inquiry</field>
+        <field name="catchment_province_id" ref="catchment_province_hcm"/>
         <field name="primary_facility_id" ref="demo_facility_branch_d2"/>
         <field name="emergency_contact_name">Le Van H</field>
         <field name="emergency_contact_phone">+84 91 111 3333</field>
@@ -280,7 +288,7 @@ Sunday: Emergency only</field>
         <field name="email">doctor@vafhs.com</field>
         <field name="is_healthcare_staff">True</field>
         <field name="staff_type">doctor</field>
-        <field name="primary_facility_id" ref="demo_facility_main_clinic"/>
+        <field name="catchment_province_id" ref="catchment_province_hcm"/>
         <field name="professional_license_number">MD-2024-001</field>
         <field name="license_expiry_date">2025-12-31</field>
         <field name="can_do_home_visits">True</field>
@@ -298,7 +306,7 @@ Sunday: Emergency only</field>
         <field name="email">headnurse@vafhs.com</field>
         <field name="is_healthcare_staff">True</field>
         <field name="staff_type">head_nurse</field>
-        <field name="primary_facility_id" ref="demo_facility_main_clinic"/>
+        <field name="catchment_province_id" ref="catchment_province_hcm"/>
         <field name="professional_license_number">RN-2024-001</field>
         <field name="license_expiry_date">2025-12-31</field>
         <field name="can_do_home_visits">True</field>
@@ -315,7 +323,7 @@ Sunday: Emergency only</field>
         <field name="email">manager@vafhs.com</field>
         <field name="is_healthcare_staff">True</field>
         <field name="staff_type">manager</field>
-        <field name="primary_facility_id" ref="demo_facility_main_clinic"/>
+        <field name="catchment_province_id" ref="catchment_province_hcm"/>
         <field name="groups_id" eval="[(6, 0, [ref('health_base.group_healthcare_manager')])]"/>
     </record>
 

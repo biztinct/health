@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        
+        <!-- =========================================================================
+             Catchment Province Demo Data - Default Service Areas
+             ========================================================================= -->
+
+        <!-- Ho Chi Minh City Catchment Province -->
+        <record id="catchment_province_hcm" model="health.catchment.province">
+            <field name="name">Ho Chi Minh City</field>
+            <field name="code">HCM</field>
+            <field name="description">Ho Chi Minh City metropolitan area including all districts</field>
+            <field name="sequence">1</field>
+            <field name="active">True</field>
+        </record>
+
+        <!-- Hanoi Catchment Province -->
+        <record id="catchment_province_hanoi" model="health.catchment.province">
+            <field name="name">Hanoi</field>
+            <field name="code">HN</field>
+            <field name="description">Hanoi capital city and surrounding districts</field>
+            <field name="sequence">2</field>
+            <field name="active">True</field>
+        </record>
+
+        <!-- Da Nang Catchment Province -->
+        <record id="catchment_province_danang" model="health.catchment.province">
+            <field name="name">Da Nang</field>
+            <field name="code">DN</field>
+            <field name="description">Da Nang city - Central Vietnam hub</field>
+            <field name="sequence">3</field>
+            <field name="active">True</field>
+        </record>
+
+        <!-- Binh Duong Catchment Province -->
+        <record id="catchment_province_binh_duong" model="health.catchment.province">
+            <field name="name">Binh Duong</field>
+            <field name="code">BD</field>
+            <field name="description">Binh Duong province - Industrial zone north of Ho Chi Minh City</field>
+            <field name="sequence">4</field>
+            <field name="active">True</field>
+        </record>
+
+        <!-- Dong Nai Catchment Province -->
+        <record id="catchment_province_dong_nai" model="health.catchment.province">
+            <field name="name">Dong Nai</field>
+            <field name="code">DG</field>
+            <field name="description">Dong Nai province - Eastern neighbor of Ho Chi Minh City</field>
+            <field name="sequence">5</field>
+            <field name="active">True</field>
+        </record>
+
+    </data>
+</odoo>
