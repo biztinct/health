@@ -38,8 +38,22 @@
                     <!-- Escalation Details -->
                     <group>
                         <group string="Escalation Details">
-                            <field name="escalate_to" string="Escalate To" widget="radio" 
-                                   options="{'horizontal': false}"/>
+                            <!-- Dynamic label: "Consultation from" for consultation, "Escalate To" for transfer -->
+                            <field name="escalate_to" 
+                                   string="Consultation from"
+                                   widget="radio" 
+                                   options="{'horizontal': false}"
+                                   invisible="escalation_type != 'consultation'"/>
+                            <field name="escalate_to" 
+                                   string="Escalate To"
+                                   widget="radio" 
+                                   options="{'horizontal': false}"
+                                   invisible="escalation_type != 'transfer'"/>
+                            
+                            <!-- Show selected person name -->
+                            <field name="selected_person_name" string="Person" readonly="1"
+                                   invisible="not selected_person_name"/>
+                            
                             <field name="escalate_to_user_id" string="Specific Person (Optional)"
                                    options="{'no_create': True}"/>
                             <field name="urgency" widget="radio" options="{'horizontal': true}"/>
@@ -67,8 +81,13 @@
                 <!-- Footer with Action Buttons -->
                 <footer>
                     <button name="action_confirm_escalation" type="object" 
+                            string="Send Consultation Request" 
+                            class="btn-primary"
+                            invisible="escalation_type != 'consultation'"/>
+                    <button name="action_confirm_escalation" type="object" 
                             string="Confirm Escalation" 
-                            class="btn-primary"/>
+                            class="btn-primary"
+                            invisible="escalation_type != 'transfer'"/>
                     <button string="Cancel" class="btn-secondary" special="cancel"/>
                 </footer>
             </form>

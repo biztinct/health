@@ -16,6 +16,8 @@ class HealthEscalationWizard(models.TransientModel):
     Used for both:
     - Consultation button: Transfer for consultation
     - Escalate button: Full contact transfer
+    
+    When confirmed, sends Zalo message and email to the selected person.
     """
     _name = 'health.escalation.wizard'
     _description = 'Contact Escalation/Consultation Wizard'
@@ -50,6 +52,21 @@ class HealthEscalationWizard(models.TransientModel):
         'res.users',
         string='Specific Person',
         help='Optionally select a specific person to handle this'
+    )
+    
+    # Display the auto-selected person
+    selected_person_name = fields.Char(
+        'Selected Person',
+        compute='_compute_selected_person',
+        store=False,
+        help='The person who will receive this escalation'
+    )
+    
+    selected_person_id = fields.Many2one(
+        'res.users',
+        string='Selected Person Record',
+        compute='_compute_selected_person',
+        store=False
     )
     
     urgency = fields.Selection([
@@ -88,9 +105,101 @@ class HealthEscalationWizard(models.TransientModel):
         readonly=True
     )
     
-    # Note: Domain filtering for escalate_to_user_id removed to avoid
-    # conflicts with synconics_bi_dashboard module's name_search override.
-    # Users can select any active user.
+    # =========================================================================
+    # COMPUTED FIELDS
+    # =========================================================================
+    
+    @api.depends('escalate_to', 'escalate_to_user_id', 'lead_id')
+    def _compute_selected_person(self):
+        """Compute the selected person based on escalate_to role and catchment province"""
+        for wizard in self:
+            if wizard.escalate_to_user_id:
+                wizard.selected_person_id = wizard.escalate_to_user_id
+                wizard.selected_person_name = wizard.escalate_to_user_id.name
+            else:
+                person = wizard._get_person_for_role()
+                wizard.selected_person_id = person
+                wizard.selected_person_name = person.name if person else ''
+    
+    # =========================================================================
+    # HELPER METHODS
+    # =========================================================================
+    
+    def _get_person_for_role(self):
+        """
+        Find a person for the selected role from the same catchment province as the lead.
+        Returns the first matching user.
+        """
+        self.ensure_one()
+        
+        if not self.escalate_to:
+            return False
+        
+        User = self.env['res.users']
+        Employee = self.env['hr.employee']
+        
+        # Get the lead's catchment province
+        catchment_province = self.lead_id.catchment_province_id if self.lead_id else False
+        
+        # Map escalate_to selection to healthcare_role
+        role_mapping = {
+            'duty_doctor': 'duty_doctor',
+            'head_nurse': 'head_nurse',
+            'om': 'operations_manager',
+        }
+        healthcare_role = role_mapping.get(self.escalate_to)
+        
+        if not healthcare_role:
+            return False
+        
+        # First try to find by user's catchment_province_id and healthcare_role
+        user_domain = [
+            ('active', '=', True),
+            ('healthcare_role', '=', healthcare_role),
+        ]
+        
+        if catchment_province:
+            # Try with catchment province filter first
+            user_domain.append(('catchment_province_id', '=', catchment_province.id))
+            user = User.search(user_domain, limit=1)
+            if user:
+                return user
+            
+            # If not found, try without catchment province filter
+            user_domain = [
+                ('active', '=', True),
+                ('healthcare_role', '=', healthcare_role),
+            ]
+        
+        user = User.search(user_domain, limit=1)
+        if user:
+            return user
+        
+        # Try finding via employee record
+        employee_domain = [
+            ('active', '=', True),
+            ('is_healthcare_staff', '=', True),
+            ('healthcare_role', '=', healthcare_role),
+            ('user_id', '!=', False),
+        ]
+        
+        employee = Employee.search(employee_domain, limit=1)
+        if employee and employee.user_id:
+            return employee.user_id
+        
+        # Fallback to first admin user (using sudo to access internal users)
+        # Find any user that has admin access
+        try:
+            admin_group = self.env.ref('base.group_system', raise_if_not_found=False)
+            if admin_group:
+                admin_users = admin_group.users
+                if admin_users:
+                    return admin_users[0]
+        except Exception:
+            pass
+        
+        # Final fallback - return first active internal user
+        return User.search([('active', '=', True), ('share', '=', False)], limit=1)
     
     # =========================================================================
     # WIZARD ACTIONS
@@ -99,11 +208,18 @@ class HealthEscalationWizard(models.TransientModel):
     def action_confirm_escalation(self):
         """
         Confirm and process the escalation/consultation transfer.
+        Sends Zalo message and email to the selected person.
         """
         self.ensure_one()
         
         if not self.reason:
             raise ValidationError(_('Please provide a reason for escalation.'))
+        
+        # Get the person to notify
+        assigned_user = self.escalate_to_user_id or self._get_person_for_role()
+        
+        if not assigned_user:
+            raise ValidationError(_('Could not find a person to handle this escalation. Please select a specific person.'))
         
         # Update the lead with escalation information
         self.lead_id.write({
@@ -115,22 +231,16 @@ class HealthEscalationWizard(models.TransientModel):
         # Create activity for the assigned person
         activity_type = self.env.ref('mail.mail_activity_data_todo', raise_if_not_found=False)
         if activity_type:
-            # Determine user to assign
-            if self.escalate_to_user_id:
-                assigned_user = self.escalate_to_user_id
-            else:
-                # Find default user based on role
-                assigned_user = self._get_default_user_for_role()
-            
-            if assigned_user:
-                # Create activity
-                self.lead_id.activity_schedule(
-                    activity_type_id=activity_type.id,
-                    summary=self._get_activity_summary(),
-                    note=self._format_escalation_notes(),
-                    user_id=assigned_user.id,
-                    date_deadline=fields.Date.today(),
-                )
+            self.lead_id.activity_schedule(
+                activity_type_id=activity_type.id,
+                summary=self._get_activity_summary(),
+                note=self._format_escalation_notes(),
+                user_id=assigned_user.id,
+                date_deadline=fields.Date.today(),
+            )
+        
+        # Send notifications (Zalo + Email)
+        self._send_notifications(assigned_user)
         
         # Post message to chatter
         escalate_to_label = dict(self._fields['escalate_to'].selection).get(self.escalate_to, self.escalate_to)
@@ -139,12 +249,13 @@ class HealthEscalationWizard(models.TransientModel):
         message_body = _(
             '<strong>Contact Escalated</strong><br/>'
             '<b>Type:</b> %(type)s<br/>'
-            '<b>Escalated To:</b> %(to)s<br/>'
+            '<b>Escalated To:</b> %(to)s (%(person)s)<br/>'
             '<b>Urgency:</b> %(urgency)s<br/>'
             '<b>Reason:</b> %(reason)s'
         ) % {
             'type': 'Consultation Request' if self.escalation_type == 'consultation' else 'Full Transfer',
             'to': escalate_to_label,
+            'person': assigned_user.name,
             'urgency': urgency_label,
             'reason': self.reason,
         }
@@ -159,12 +270,14 @@ class HealthEscalationWizard(models.TransientModel):
         )
         
         # Return notification and reload form
+        notification_message = _('Consultation request sent to %s.') if self.escalation_type == 'consultation' else _('Contact has been escalated to %s.')
+        
         return {
             'type': 'ir.actions.client',
             'tag': 'display_notification',
             'params': {
-                'title': _('Escalation Submitted'),
-                'message': _('Contact has been escalated to %s.') % escalate_to_label,
+                'title': _('Request Sent') if self.escalation_type == 'consultation' else _('Escalation Submitted'),
+                'message': notification_message % assigned_user.name,
                 'type': 'success',
                 'sticky': False,
                 'next': {
@@ -172,6 +285,72 @@ class HealthEscalationWizard(models.TransientModel):
                 }
             }
         }
+    
+    def _send_notifications(self, user):
+        """Send Zalo message and email to the assigned user"""
+        self.ensure_one()
+        
+        # Prepare notification content
+        escalate_to_label = dict(self._fields['escalate_to'].selection).get(self.escalate_to, self.escalate_to)
+        urgency_label = dict(self._fields['urgency'].selection).get(self.urgency, self.urgency)
+        
+        subject = _('%(type)s: %(contact)s') % {
+            'type': 'Consultation Request' if self.escalation_type == 'consultation' else 'Escalation',
+            'contact': self.contact_name,
+        }
+        
+        message_body = _(
+            '%(type)s from %(from_user)s\n\n'
+            'Contact: %(contact)s\n'
+            'Phone: %(phone)s\n'
+            'Urgency: %(urgency)s\n'
+            'Reason: %(reason)s\n'
+        ) % {
+            'type': 'Consultation Request' if self.escalation_type == 'consultation' else 'Escalation',
+            'from_user': self.env.user.name,
+            'contact': self.contact_name,
+            'phone': self.contact_phone or 'N/A',
+            'urgency': urgency_label,
+            'reason': self.reason,
+        }
+        
+        if self.additional_notes:
+            message_body += _('\nAdditional Notes: %s') % self.additional_notes
+        
+        # Send Email
+        try:
+            if user.email:
+                mail_values = {
+                    'subject': subject,
+                    'body_html': message_body.replace('\n', '<br/>'),
+                    'email_to': user.email,
+                    'email_from': self.env.user.email or self.env.company.email,
+                    'auto_delete': True,
+                }
+                mail = self.env['mail.mail'].sudo().create(mail_values)
+                mail.send()
+        except Exception as e:
+            # Log but don't fail
+            import logging
+            _logger = logging.getLogger(__name__)
+            _logger.warning('Failed to send email notification: %s', str(e))
+        
+        # Send Zalo message (if Zalo integration is available)
+        try:
+            # Check if zalo integration exists
+            if hasattr(self.env, 'zalo.message') or 'zalo.message' in self.env:
+                ZaloMessage = self.env['zalo.message']
+                if user.partner_id and user.partner_id.phone:
+                    ZaloMessage.sudo().create({
+                        'phone': user.partner_id.phone,
+                        'message': message_body,
+                        'auto_send': True,
+                    })
+        except Exception as e:
+            # Zalo integration not available or failed - log but don't fail
+            import logging
+            _logger = logging.getLogger(__name__)
+            _logger.info('Zalo message not sent (integration may not be available): %s', str(e))
     
     def _format_escalation_notes(self):
         """Format escalation notes for storage"""
@@ -189,48 +368,6 @@ class HealthEscalationWizard(models.TransientModel):
             return _('Consultation Request: %s') % self.lead_id.name
         else:
             return _('Escalated Contact: %s') % self.lead_id.name
-    
-    def _get_default_user_for_role(self):
-        """
-        Find a default user for the selected role.
-        Falls back to admin if no specific user found.
-        """
-        User = self.env['res.users']
-        
-        if self.escalate_to == 'duty_doctor':
-            # Try to find a user with doctor in their groups or job title
-            doctor = User.search([
-                ('active', '=', True),
-                '|',
-                ('groups_id.name', 'ilike', 'doctor'),
-                ('employee_id.job_title', 'ilike', 'doctor'),
-            ], limit=1)
-            if doctor:
-                return doctor
-        
-        elif self.escalate_to == 'head_nurse':
-            nurse = User.search([
-                ('active', '=', True),
-                '|',
-                ('groups_id.name', 'ilike', 'head nurse'),
-                ('employee_id.job_title', 'ilike', 'head nurse'),
-            ], limit=1)
-            if nurse:
-                return nurse
-        
-        elif self.escalate_to == 'om':
-            # Try to find operations manager
-            om = User.search([
-                ('active', '=', True),
-                '|',
-                ('groups_id.name', 'ilike', 'operations'),
-                ('employee_id.job_title', 'ilike', 'operations'),
-            ], limit=1)
-            if om:
-                return om
-        
-        # Fallback to first admin user
-        return User.search([('groups_id', 'in', [self.env.ref('base.group_system').id])], limit=1)
     
     def action_cancel(self):
         """Cancel the escalation wizard"""

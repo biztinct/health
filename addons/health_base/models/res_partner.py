@@ -133,6 +133,13 @@ class ResPartner(models.Model):
         ('government', 'Government')
     ], string='Primary Payment Method', default='cash')
     
+    # Commission tracking
+    commission_due_to = fields.Selection([
+        ('one_time', 'One Time'),
+        ('30_days', '30 Days'),
+    ], string='Commission Duration',
+       help='Commission duration applied to this client from booking')
+    
     # Patient Status & Tracking
     patient_status = fields.Selection([
         ('new', 'New Client'),

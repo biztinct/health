@@ -15,11 +15,14 @@ class ResUsers(models.Model):
     # Quick access to employee healthcare role
     healthcare_role = fields.Selection([
         ('doctor', 'Doctor'),
+        ('duty_doctor', 'Duty Doctor'),
         ('nurse', 'Nurse'),
+        ('head_nurse', 'Head Nurse'),
         ('specialist', 'Specialist'),
         ('therapist', 'Therapist'),
         ('technician', 'Technician'),
-        ('support', 'Support Staff')
+        ('support', 'Support Staff'),
+        ('operations_manager', 'Operations Manager')
     ], string='Healthcare Role')
 
     # Designated catchment province/area

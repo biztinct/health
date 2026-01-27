@@ -92,13 +92,7 @@
                             title="Reschedule the booking"
                             invisible="contact_status != 'booking'"/>
                     
-                    <!-- Telemedicine - Refer to Duty Doctor -->
-                    <button name="action_refer_telemedicine"
-                            string="Telemedicine"
-                            type="object"
-                            class="btn-secondary"
-                            icon="fa-video-camera"
-                            title="Refer to Duty Doctor for telemedicine"/>
+                    <!-- Telemedicine button removed - service type selected in booking wizard -->
                     
                     <!-- Consultation dropdown handled via escalation -->
                     <button name="action_escalate_consultation"
@@ -169,14 +163,16 @@
 
                     <!-- Contact Status + Code Badges -->
                     <div style="position: absolute; top: 10px; right: 100px; z-index: 1000; display: flex; gap: 10px; align-items: center;">
-                        <!-- Contact Status Badge -->
-                        <field name="contact_status" readonly="1" widget="badge"
-                               decoration-info="contact_status == 'active'"
-                               decoration-success="contact_status == 'booking'"
-                               decoration-warning="contact_status == 'lead'"
-                               decoration-danger="contact_status in ('lost_booking', 'spam')"/>
-                        <!-- Contact ID Badge -->
-                        <span class="badge rounded-pill" style="background-color: #875A7B; color: white; font-size: 12px; padding: 6px 14px; font-weight: 500;">
+                        <!-- Contact Status Badge - styled wrapper for consistent look -->
+                        <div style="font-size: 14px;">
+                            <field name="contact_status" readonly="1" widget="badge"
+                                   decoration-info="contact_status == 'active'"
+                                   decoration-success="contact_status == 'booking'"
+                                   decoration-warning="contact_status == 'lead'"
+                                   decoration-danger="contact_status in ('lost_booking', 'spam')"/>
+                        </div>
+                        <!-- Contact ID Badge - Orange color, consistent sizing -->
+                        <span class="badge rounded-pill" style="background-color: #FB8C00; color: white; font-size: 14px; padding: 8px 18px; font-weight: 600; letter-spacing: 0.5px;">
                             <field name="unique_contact_code" readonly="1" nolabel="1"/>
                         </span>
                     </div>

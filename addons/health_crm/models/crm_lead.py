@@ -1058,14 +1058,28 @@ class HealthLead(models.Model):
         """
         self.ensure_one()
         
+        # Write the status change
         self.write({
             'contact_status': 'lead',
             'contact_outcome': 'pending_follow_up',
             'health_contact_outcome': 'pending_follow_up',
         })
         
-        # Open activity scheduling
-        return self.action_schedule_follow_up()
+        # Force commit the transaction to persist the status change immediately
+        # This prevents rollback when user closes the activity popup
+        self.env.cr.commit()
+        
+        # Return action to reload the current form and optionally schedule follow-up
+        return {
+            'type': 'ir.actions.act_window',
+            'res_model': 'crm.lead',
+            'res_id': self.id,
+            'view_mode': 'form',
+            'target': 'current',
+            'context': {
+                'form_view_initial_mode': 'edit',
+            },
+        }
 
     def action_log_note(self):
         """

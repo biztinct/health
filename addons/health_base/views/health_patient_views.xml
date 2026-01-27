@@ -109,6 +109,7 @@
                                     <field name="national_id"/>
                                     <field name="profession" string="Occupation"/>
                                     <field name="ethnicity"/>
+                                    <field name="commission_due_to" string="Commission Duration"/>
                                 </group>
                             </div>
                         </div>

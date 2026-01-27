@@ -5,15 +5,16 @@
     <record id="view_booking_wizard_form" model="ir.ui.view">
         <field name="name">health.booking.wizard.form</field>
         <field name="model">health.booking.wizard</field>
+        <field name="priority">1</field>
         <field name="arch" type="xml">
             <form string="Create Booking">
                 <sheet>
-                    <!-- Step Progress Indicator - Static version -->
-                    <div style="margin-bottom: 20px; padding: 15px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 8px;">
+                    <!-- Step Progress Indicator - Green leaf design -->
+                    <div style="margin-bottom: 20px; padding: 15px; background: linear-gradient(135deg, #2E6B33 0%, #43A047 100%); border-radius: 8px;">
                         <div style="display: flex; justify-content: space-between; align-items: center; color: white;">
                             <!-- Step 1 Indicator -->
                             <div style="text-align: center; flex: 1;">
-                                <span style="background: white; color: #667eea; padding: 8px 16px; border-radius: 20px; font-weight: bold;" invisible="current_step != '1_client'">
+                                <span style="background: white; color: #2E6B33; padding: 8px 16px; border-radius: 20px; font-weight: bold;" invisible="current_step != '1_client'">
                                     1. Client Details
                                 </span>
                                 <span style="background: rgba(255,255,255,0.3); color: white; padding: 8px 16px; border-radius: 20px;" invisible="current_step == '1_client'">
@@ -23,7 +24,7 @@
                             <div style="width: 50px; height: 2px; background: rgba(255,255,255,0.3);"/>
                             <!-- Step 2 Indicator -->
                             <div style="text-align: center; flex: 1;">
-                                <span style="background: white; color: #667eea; padding: 8px 16px; border-radius: 20px; font-weight: bold;" invisible="current_step != '2_services'">
+                                <span style="background: white; color: #2E6B33; padding: 8px 16px; border-radius: 20px; font-weight: bold;" invisible="current_step != '2_services'">
                                     2. Services
                                 </span>
                                 <span style="background: rgba(255,255,255,0.3); color: white; padding: 8px 16px; border-radius: 20px;" invisible="current_step == '2_services'">
@@ -33,7 +34,7 @@
                             <div style="width: 50px; height: 2px; background: rgba(255,255,255,0.3);"/>
                             <!-- Step 3 Indicator -->
                             <div style="text-align: center; flex: 1;">
-                                <span style="background: white; color: #667eea; padding: 8px 16px; border-radius: 20px; font-weight: bold;" invisible="current_step != '3_booking'">
+                                <span style="background: white; color: #2E6B33; padding: 8px 16px; border-radius: 20px; font-weight: bold;" invisible="current_step != '3_booking'">
                                     3. Booking
                                 </span>
                                 <span style="background: rgba(255,255,255,0.3); color: white; padding: 8px 16px; border-radius: 20px;" invisible="current_step == '3_booking'">
@@ -43,7 +44,7 @@
                             <div style="width: 50px; height: 2px; background: rgba(255,255,255,0.3);"/>
                             <!-- Step 4 Indicator -->
                             <div style="text-align: center; flex: 1;">
-                                <span style="background: white; color: #667eea; padding: 8px 16px; border-radius: 20px; font-weight: bold;" invisible="current_step != '4_assign'">
+                                <span style="background: white; color: #2E6B33; padding: 8px 16px; border-radius: 20px; font-weight: bold;" invisible="current_step != '4_assign'">
                                     4. Assign
                                 </span>
                                 <span style="background: rgba(255,255,255,0.3); color: white; padding: 8px 16px; border-radius: 20px;" invisible="current_step == '4_assign'">
@@ -57,11 +58,12 @@
                     <field name="current_step" invisible="1"/>
                     <field name="lead_id" invisible="1"/>
                     <field name="currency_id" invisible="1"/>
+                    <field name="address_edit_mode" invisible="1"/>
 
                     <!-- STEP 1: Client Details -->
                     <div invisible="current_step != '1_client'">
                         <h2 style="margin-bottom: 20px;">
-                            <span class="fa fa-user" style="margin-right: 10px; color: #667eea;"/>
+                            <span class="fa fa-user" style="margin-right: 10px; color: #43A047;"/>
                             Client Details
                         </h2>
                         
@@ -88,7 +90,19 @@
                             <group>
                                 <field name="client_dob" string="Date of Birth"/>
                                 <field name="client_gender" string="Gender"/>
-                                <field name="client_address" string="Address"/>
+                                <!-- Consolidated Address with Edit Button -->
+                                <div class="d-flex align-items-center">
+                                    <label for="consolidated_address" string="Address"/>
+                                    <div class="d-flex align-items-center" style="flex: 1;">
+                                        <field name="consolidated_address" string="Address" readonly="1" 
+                                               class="flex-grow-1" nolabel="1"
+                                               placeholder="Click edit to add address"/>
+                                        <button name="action_edit_address" type="object" 
+                                                class="btn btn-link p-0 ms-2" 
+                                                title="Edit Address"
+                                                icon="fa-pencil"/>
+                                    </div>
+                                </div>
                             </group>
                         </group>
                     </div>
@@ -96,7 +110,7 @@
                     <!-- STEP 2: Service Requirements -->
                     <div invisible="current_step != '2_services'">
                         <h2 style="margin-bottom: 20px;">
-                            <span class="fa fa-stethoscope" style="margin-right: 10px; color: #667eea;"/>
+                            <span class="fa fa-stethoscope" style="margin-right: 10px; color: #43A047;"/>
                             Service Requirements
                         </h2>
                         
@@ -128,7 +142,7 @@
                     <!-- STEP 3: Booking Details -->
                     <div invisible="current_step != '3_booking'">
                         <h2 style="margin-bottom: 20px;">
-                            <span class="fa fa-calendar" style="margin-right: 10px; color: #667eea;"/>
+                            <span class="fa fa-calendar" style="margin-right: 10px; color: #43A047;"/>
                             Booking Details
                         </h2>
                         
@@ -153,7 +167,7 @@
                     <!-- STEP 4: Assign Booking -->
                     <div invisible="current_step != '4_assign'">
                         <h2 style="margin-bottom: 20px;">
-                            <span class="fa fa-user-md" style="margin-right: 10px; color: #667eea;"/>
+                            <span class="fa fa-user-md" style="margin-right: 10px; color: #43A047;"/>
                             Assign Booking (Optional)
                         </h2>
                         
@@ -226,6 +240,40 @@
         </field>
     </record>
 
+    <!-- Address Edit Popup Wizard - High priority number means low priority (only used when explicitly called) -->
+    <record id="view_booking_address_edit_form" model="ir.ui.view">
+        <field name="name">health.booking.wizard.address.edit</field>
+        <field name="model">health.booking.wizard</field>
+        <field name="priority">999</field>
+        <field name="arch" type="xml">
+            <form string="Edit Address">
+                <sheet>
+                    <h2 style="margin-bottom: 20px;">
+                        <span class="fa fa-map-marker" style="margin-right: 10px; color: #43A047;"/>
+                        Address Details
+                    </h2>
+                    
+                    <group col="2">
+                        <field name="address_house_number" string="House Number"/>
+                        <field name="address_street" string="Street"/>
+                        <field name="address_alley" string="Alley/Lane"/>
+                        <field name="address_sub_alley" string="Sub-Alley"/>
+                        <field name="address_ward" string="Ward/Commune"/>
+                        <field name="address_district" string="District"/>
+                        <field name="address_city" string="City/Province"/>
+                        <field name="address_building" string="Building Name"/>
+                        <field name="address_apartment" string="Apartment/Unit"/>
+                    </group>
+                </sheet>
+                <footer>
+                    <button name="action_save_address" type="object" 
+                            string="Save Address" class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
     <!-- Action to open Booking Wizard -->
     <record id="action_booking_wizard" model="ir.actions.act_window">
         <field name="name">Create Booking</field>
@@ -233,6 +281,15 @@
         <field name="view_mode">form</field>
         <field name="target">new</field>
         <field name="view_id" ref="view_booking_wizard_form"/>
+    </record>
+
+    <!-- Action to open Address Edit popup -->
+    <record id="action_booking_address_edit" model="ir.actions.act_window">
+        <field name="name">Edit Address</field>
+        <field name="res_model">health.booking.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+        <field name="view_id" ref="view_booking_address_edit_form"/>
     </record>
 
 </odoo>

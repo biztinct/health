@@ -12,7 +12,9 @@ class HrEmployeePublic(models.Model):
 
     healthcare_role = fields.Selection([
         ('doctor', 'Doctor'),
+        ('duty_doctor', 'Duty Doctor'),
         ('nurse', 'Nurse'),
+        ('head_nurse', 'Head Nurse'),
         ('specialist', 'Specialist'),
         ('therapist', 'Therapist'),
         ('technician', 'Technician'),
