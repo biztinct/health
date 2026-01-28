@@ -319,13 +319,19 @@ class HealthInitialContactWizard(models.TransientModel):
         self.ensure_one()
         
         if self.existing_contact_id:
-            # Update existing lead and open it
-            self.existing_contact_id.write({
+            # Update existing lead but preserve important statuses
+            # Don't reset contact_status if it's already set to something meaningful
+            update_vals = {
                 'contact_datetime': self.contact_datetime,
                 'mode_of_contact': self.mode_of_contact,
                 'contact_type': 'repeat',
-                'contact_status': 'active',
-            })
+            }
+            # Only set contact_status to 'active' if it's currently empty or spam
+            # Preserve 'lead', 'booking', 'lost_booking' statuses
+            if not self.existing_contact_id.contact_status or self.existing_contact_id.contact_status == 'spam':
+                update_vals['contact_status'] = 'active'
+            
+            self.existing_contact_id.write(update_vals)
             return {
                 'type': 'ir.actions.act_window',
                 'name': _('Contact Details'),

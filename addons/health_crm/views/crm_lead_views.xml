@@ -163,16 +163,32 @@
 
                     <!-- Contact Status + Code Badges -->
                     <div style="position: absolute; top: 10px; right: 100px; z-index: 1000; display: flex; gap: 10px; align-items: center;">
-                        <!-- Contact Status Badge - styled wrapper for consistent look -->
-                        <div style="font-size: 14px;">
-                            <field name="contact_status" readonly="1" widget="badge"
-                                   decoration-info="contact_status == 'active'"
-                                   decoration-success="contact_status == 'booking'"
-                                   decoration-warning="contact_status == 'lead'"
-                                   decoration-danger="contact_status in ('lost_booking', 'spam')"/>
-                        </div>
-                        <!-- Contact ID Badge - Orange color, consistent sizing -->
-                        <span class="badge rounded-pill" style="background-color: #FB8C00; color: white; font-size: 14px; padding: 8px 18px; font-weight: 600; letter-spacing: 0.5px;">
+                        <!-- Contact Status Badge - Custom styled for consistency -->
+                        <!-- Active Status - Blue -->
+                        <span class="badge rounded-pill" style="background-color: #17a2b8; color: white; font-size: 14px; padding: 8px 18px; font-weight: 600; letter-spacing: 0.5px;" invisible="contact_status != 'active'">
+                            Active
+                        </span>
+                        <!-- Booking Status - Green -->
+                        <span class="badge rounded-pill" style="background-color: #28a745; color: white; font-size: 14px; padding: 8px 18px; font-weight: 600; letter-spacing: 0.5px;" invisible="contact_status != 'booking'">
+                            Booking
+                        </span>
+                        <!-- Lead Status - Orange/Warning -->
+                        <span class="badge rounded-pill" style="background-color: #ffc107; color: #212529; font-size: 14px; padding: 8px 18px; font-weight: 600; letter-spacing: 0.5px;" invisible="contact_status != 'lead'">
+                            Lead
+                        </span>
+                        <!-- Lost Booking Status - Red -->
+                        <span class="badge rounded-pill" style="background-color: #dc3545; color: white; font-size: 14px; padding: 8px 18px; font-weight: 600; letter-spacing: 0.5px;" invisible="contact_status != 'lost_booking'">
+                            Lost Booking
+                        </span>
+                        <!-- Spam Status - Red -->
+                        <span class="badge rounded-pill" style="background-color: #dc3545; color: white; font-size: 14px; padding: 8px 18px; font-weight: 600; letter-spacing: 0.5px;" invisible="contact_status != 'spam'">
+                            Spam Call
+                        </span>
+                        <!-- Hidden field for status -->
+                        <field name="contact_status" invisible="1"/>
+                        
+                        <!-- Contact ID Badge - Light orange background, black bold text -->
+                        <span class="badge rounded-pill" style="background-color: #FFE0B2; color: #000000; font-size: 14px; padding: 8px 18px; font-weight: 700; letter-spacing: 0.5px;">
                             <field name="unique_contact_code" readonly="1" nolabel="1"/>
                         </span>
                     </div>
@@ -287,7 +303,7 @@
                                             <field name="state_id" string="Province" options="{'no_create': True}" placeholder="Select province"/>
                                             <field name="country_id" string="Country" options="{'no_create': True}"/>
                                             <field name="full_vietnamese_address" string="Home Address" colspan="2"/>
-                                            <field name="facility_id" string="Healthcare Facility" options="{'no_create': True}" colspan="2"/>
+                                            <field name="catchment_province_id" string="Catchment Province" options="{'no_create': True}" colspan="2"/>
                                         </group>
                                     </div>
                                     
@@ -556,7 +572,7 @@
                 <group>
                     <field name="type" invisible="1"/>
                     <field name="name" string="Contact Name" placeholder="e.g. John Doe"/>
-                    <field name="facility_id" string="Primary Facility" options="{'no_create': True}"/>
+                    <field name="catchment_province_id" string="Catchment Province" options="{'no_create': True}"/>
                     <field name="email_from" string="Email" placeholder="e.g. &quot;email@address.com&quot;"/>
                     <field name="phone" placeholder="e.g. &quot;0123456789&quot;"/>
                 </group>

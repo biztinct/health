@@ -1058,27 +1058,71 @@ class HealthLead(models.Model):
         """
         self.ensure_one()
         
+        import logging
+        _logger = logging.getLogger(__name__)
+        
+        # DEBUG: Log before state
+        _logger.info("="*60)
+        _logger.info("ACTION_LOG_AS_LEAD - DEBUG START")
+        _logger.info("="*60)
+        _logger.info(f"Record ID: {self.id}")
+        _logger.info(f"Record Name: {self.name}")
+        _logger.info(f"BEFORE - contact_status: {self.contact_status}")
+        _logger.info(f"BEFORE - contact_outcome: {self.contact_outcome}")
+        _logger.info(f"BEFORE - health_contact_outcome: {self.health_contact_outcome}")
+        
         # Write the status change
-        self.write({
+        write_vals = {
             'contact_status': 'lead',
             'contact_outcome': 'pending_follow_up',
             'health_contact_outcome': 'pending_follow_up',
-        })
+        }
+        _logger.info(f"Writing values: {write_vals}")
+        
+        result = self.write(write_vals)
+        _logger.info(f"Write result: {result}")
+        
+        # Invalidate cache to ensure fresh read
+        self.invalidate_recordset(['contact_status', 'contact_outcome', 'health_contact_outcome'])
+        
+        # DEBUG: Log after state (from memory)
+        _logger.info(f"AFTER WRITE (memory) - contact_status: {self.contact_status}")
+        _logger.info(f"AFTER WRITE (memory) - contact_outcome: {self.contact_outcome}")
         
         # Force commit the transaction to persist the status change immediately
         # This prevents rollback when user closes the activity popup
+        _logger.info("Calling env.cr.commit() to persist changes...")
         self.env.cr.commit()
+        _logger.info("Commit completed")
         
-        # Return action to reload the current form and optionally schedule follow-up
+        # DEBUG: Verify from database directly
+        self.env.cr.execute(
+            "SELECT contact_status, contact_outcome FROM crm_lead WHERE id = %s",
+            (self.id,)
+        )
+        db_result = self.env.cr.fetchone()
+        _logger.info(f"AFTER COMMIT (from DB) - contact_status: {db_result[0] if db_result else 'NOT FOUND'}")
+        _logger.info(f"AFTER COMMIT (from DB) - contact_outcome: {db_result[1] if db_result else 'NOT FOUND'}")
+        _logger.info("="*60)
+        _logger.info("ACTION_LOG_AS_LEAD - DEBUG END")
+        _logger.info("="*60)
+        
+        # Return client action to show notification and soft reload
+        # Using 'ir.actions.client' with 'tag': 'soft_reload' refreshes the view
+        # without losing the committed database changes
         return {
-            'type': 'ir.actions.act_window',
-            'res_model': 'crm.lead',
-            'res_id': self.id,
-            'view_mode': 'form',
-            'target': 'current',
-            'context': {
-                'form_view_initial_mode': 'edit',
-            },
+            'type': 'ir.actions.client',
+            'tag': 'display_notification',
+            'params': {
+                'title': _('Success'),
+                'message': _('Contact marked as Lead. Status updated to Lead.'),
+                'type': 'success',
+                'sticky': False,
+                'next': {
+                    'type': 'ir.actions.client',
+                    'tag': 'soft_reload',
+                },
+            }
         }
 
     def action_log_note(self):
