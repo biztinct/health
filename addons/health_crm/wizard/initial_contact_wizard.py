@@ -123,6 +123,164 @@ class HealthInitialContactWizard(models.TransientModel):
         store=False
     )
     
+    @api.model
+    def search_contacts_by_name(self, search_term):
+        """
+        Search for contacts, leads, and clients by name.
+        Returns grouped results for display in popup.
+        
+        IMPORTANT: Each person should appear ONLY ONCE:
+        - If they are a Client (res.partner with is_patient), show as Client only
+        - If they are a Lead (crm.lead with contact_status='lead'), show as Lead only
+        - If they are a Contact (crm.lead with contact_status='active'), show as Contact only
+        
+        We avoid showing the same person multiple times by:
+        1. First finding all clients (res.partner)
+        2. Then finding leads/contacts that:
+           - Do NOT have a linked client (patient_id)
+           - AND do NOT have a unique_contact_code that matches any client's patient_code
+        """
+        if not search_term or len(search_term) < 2:
+            return {'contacts': [], 'leads': [], 'clients': []}
+        
+        # Step 1: Search Clients (res.partner with is_patient=True)
+        # These are the highest priority - converted contacts
+        partners = self.env['res.partner'].search([
+            ('is_patient', '=', True),
+            '|', '|',
+            ('name', 'ilike', search_term),
+            ('phone', 'ilike', search_term),
+            ('email', 'ilike', search_term),
+        ], limit=15)
+        
+        clients_list = [{
+            'id': p.id,
+            'name': p.name,
+            'phone': p.phone or '',
+            'email': p.email or '',
+            'code': p.patient_code or '',
+        } for p in partners]
+        
+        # Collect client patient_codes to exclude matching leads/contacts
+        client_patient_codes = [p.patient_code for p in partners if p.patient_code]
+        client_partner_ids = partners.ids
+        
+        # Step 2: Search CRM Leads
+        lead_domain = [
+            '|', '|',
+            ('name', 'ilike', search_term),
+            ('phone', 'ilike', search_term),
+            ('email_from', 'ilike', search_term),
+        ]
+        
+        leads = self.env['crm.lead'].search(lead_domain, limit=30)
+        
+        # Filter leads to exclude those that are already represented as clients
+        contacts_list = []
+        leads_list = []
+        for lead in leads:
+            # Skip if this lead has a linked patient (client)
+            if lead.patient_id and lead.patient_id.id in client_partner_ids:
+                continue
+            
+            # Skip if the unique_contact_code matches a client's patient_code
+            if lead.unique_contact_code and lead.unique_contact_code in client_patient_codes:
+                continue
+            
+            record = {
+                'id': lead.id,
+                'name': lead.name,
+                'phone': lead.phone or '',
+                'email': lead.email_from or '',
+                'code': lead.unique_contact_code or '',
+                'status': lead.contact_status,
+            }
+            if lead.contact_status == 'lead':
+                leads_list.append(record)
+            elif lead.contact_status in ['active', False, '']:
+                # Only add to contacts if status is active or not set
+                contacts_list.append(record)
+            # Skip other statuses like 'booking', 'lost_booking' - those are handled differently
+        
+        return {
+            'contacts': contacts_list[:10],  # Limit to 10
+            'leads': leads_list[:10],  # Limit to 10
+            'clients': clients_list,
+        }
+    
+    def action_search_by_name(self):
+        """
+        Action to search for existing contacts by name.
+        Opens a selection dialog with grouped results.
+        """
+        self.ensure_one()
+        if not self.name or len(self.name) < 2:
+            return {
+                'type': 'ir.actions.client',
+                'tag': 'display_notification',
+                'params': {
+                    'title': _('Search'),
+                    'message': _('Please enter at least 2 characters to search'),
+                    'type': 'warning',
+                    'sticky': False,
+                }
+            }
+        
+        results = self.search_contacts_by_name(self.name)
+        
+        # Build the line data for creating the wizard
+        line_vals = []
+        
+        # Add clients
+        for client in results.get('clients', []):
+            line_vals.append((0, 0, {
+                'record_type': 'client',
+                'record_id': client['id'],
+                'name': client['name'],
+                'phone': client.get('phone', ''),
+                'email': client.get('email', ''),
+                'code': client.get('code', ''),
+            }))
+        
+        # Add leads
+        for lead in results.get('leads', []):
+            line_vals.append((0, 0, {
+                'record_type': 'lead',
+                'record_id': lead['id'],
+                'name': lead['name'],
+                'phone': lead.get('phone', ''),
+                'email': lead.get('email', ''),
+                'code': lead.get('code', ''),
+            }))
+        
+        # Add contacts
+        for contact in results.get('contacts', []):
+            line_vals.append((0, 0, {
+                'record_type': 'contact',
+                'record_id': contact['id'],
+                'name': contact['name'],
+                'phone': contact.get('phone', ''),
+                'email': contact.get('email', ''),
+                'code': contact.get('code', ''),
+            }))
+        
+        # Create the search wizard with lines explicitly saved to database
+        search_wizard = self.env['health.contact.search.wizard'].create({
+            'search_term': self.name,
+            'source_wizard_id': self.id,
+            'line_ids': line_vals,
+        })
+        
+        # Return action to open the created wizard
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _('Select Contact'),
+            'res_model': 'health.contact.search.wizard',
+            'res_id': search_wizard.id,
+            'view_mode': 'form',
+            'target': 'new',
+        }
+    
     @api.depends('phone')
     def _compute_spam_check(self):
         """Check if phone number is known spam"""

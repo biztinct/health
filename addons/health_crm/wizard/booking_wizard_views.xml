@@ -121,8 +121,10 @@
                                 <field name="service_subcategory" string="Sub-Category"/>
                             </group>
                             <group string="Service Notes">
-                                <field name="service_notes" nolabel="1" placeholder="Additional service requirements..."/>
                             </group>
+                        </group>
+                        <group>
+                            <field name="service_notes" string="Service Notes" nolabel="1" placeholder="Additional service requirements..." colspan="2"/>
                         </group>
                         
                         <separator string="Commission Details"/>

@@ -400,7 +400,7 @@ class HealthBookingWizard(models.TransientModel):
         booking_vals = {
             'patient_id': client.id,
             'service_type': self.service_type or 'consultation',
-            'scheduled_start_datetime': self._get_scheduled_datetime(),
+            'scheduled_datetime': self._get_scheduled_datetime(),
             'duration': self.booking_duration,
             'location': self.booking_location,
             'description': self.booking_notes,
@@ -419,12 +419,14 @@ class HealthBookingWizard(models.TransientModel):
         FSO = self.env['health.fieldservice.order']
         booking = FSO.create(booking_vals)
         
-        # Link client to lead
+        # Link client to lead and update status
         if self.lead_id and client:
             self.lead_id.write({
                 'patient_id': client.id,
                 'contact_status': 'booking',
                 'booking_status': 'pending',
+                'health_contact_outcome': 'service_booked',
+                'contact_outcome': 'service_booked',
             })
             # Post to chatter
             self.lead_id.message_post(

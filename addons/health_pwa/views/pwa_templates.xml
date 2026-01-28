@@ -28,7 +28,7 @@
                 <link href="https://cdn.jsdelivr.net/npm/quasar@2.14.0/dist/quasar.prod.css" rel="stylesheet" type="text/css"/>
                 
                 <!-- Custom PWA Styles (versioned for hard refresh) -->
-                <t t-set="pwa_asset_version">1.0.30</t>
+                <t t-set="pwa_asset_version">1.0.31</t>
                 <link href="/health_pwa/static/src/css/app.css?v=${pwa_asset_version}" rel="stylesheet" type="text/css"/>
                 <link href="/health_pwa/static/src/css/mobile.css?v=${pwa_asset_version}" rel="stylesheet" type="text/css"/>
                 <link href="/health_pwa/static/src/css/health.css?v=${pwa_asset_version}" rel="stylesheet" type="text/css"/>
@@ -274,7 +274,7 @@
             <script>
                 if ('serviceWorker' in navigator) {
                     let refreshing = false;
-                    const PWA_SW_VERSION = '1.0.30';
+                    const PWA_SW_VERSION = '1.0.31';
                     console.log('[PWA] registering service worker version', PWA_SW_VERSION);
 
                     // Detect when service worker updates and reload
@@ -357,6 +357,18 @@
 
                 // Show update banner function
                 function showUpdateBanner(registration) {
+                    // Don't show banner if we just triggered an update (within last 10 seconds)
+                    const lastUpdateTime = localStorage.getItem('pwa-update-triggered');
+                    if (lastUpdateTime) {
+                        const elapsed = Date.now() - parseInt(lastUpdateTime, 10);
+                        if (elapsed &lt; 10000) {  // 10 seconds grace period
+                            console.log('[PWA] Skipping update banner - update was triggered', elapsed, 'ms ago');
+                            localStorage.removeItem('pwa-update-triggered');
+                            return;
+                        }
+                        localStorage.removeItem('pwa-update-triggered');
+                    }
+
                     const banner = document.getElementById('pwa-update-banner');
                     if (banner) {
                         banner.style.display = 'flex';
@@ -452,6 +464,16 @@
                     if (updateBtn) {
                         updateBtn.addEventListener('click', function() {
                             console.log('Update button clicked, triggering update...');
+                            
+                            // Save timestamp to prevent banner from showing immediately after reload
+                            localStorage.setItem('pwa-update-triggered', Date.now().toString());
+                            
+                            // Hide the banner immediately
+                            const banner = document.getElementById('pwa-update-banner');
+                            if (banner) {
+                                banner.style.display = 'none';
+                            }
+                            
                             // Trigger update and reload
                             if (navigator.serviceWorker) {
                                 navigator.serviceWorker.getRegistration().then(function(registration) {
@@ -487,10 +509,10 @@
     
     <template id="service_worker_js" name="Service Worker JavaScript">
         <![CDATA[
-// Health PWA Service Worker v1.0.30
+// Health PWA Service Worker v1.0.31
 // IMPORTANT: Increment version number when deploying updates!
 
-const CACHE_VERSION = '1.0.30';
+const CACHE_VERSION = '1.0.31';
 const CACHE_NAME = `health-pwa-v${CACHE_VERSION}`;
 const OFFLINE_URL = '/health_pwa/offline';
 const API_CACHE_NAME = `health-pwa-api-v${CACHE_VERSION}`;

@@ -68,8 +68,15 @@
                     <!-- Main Contact Fields -->
                     <group>
                         <group>
-                            <field name="name" string="Name" placeholder="Contact name..." 
-                                   class="oe_inline" style="font-size: 16px;"/>
+                            <label for="name" string="Name"/>
+                            <div class="o_row">
+                                <field name="name" nolabel="1" placeholder="Contact name..." 
+                                       class="oe_inline" style="font-size: 16px; flex: 1;"/>
+                                <button name="action_search_by_name" type="object" 
+                                        class="btn btn-outline-primary btn-sm"
+                                        string="🔍 Search" 
+                                        title="Search for existing contacts, leads, or clients"/>
+                            </div>
                             <field name="catchment_province_id" string="Catchment Province" 
                                    options="{'no_create': True}"
                                    placeholder="Select catchment province..."/>

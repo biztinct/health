@@ -47,6 +47,7 @@
 
                     <button name="action_cancel_booking" type="object"
                             string="❌ Cancel Booking"
+                            style="background-color: #F07C05; color: white; border-color: #F07C05;"
                             invisible="state in ('draft', 'completed', 'completed_pending_invoice', 'cancelled')"/>
                     
                     <button name="action_confirm_booking" type="object"

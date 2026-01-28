@@ -165,7 +165,7 @@ class HealthFollowUpWizard(models.TransientModel):
             'type': 'ir.actions.act_window',
             'name': _('All Planned Activities'),
             'res_model': 'mail.activity',
-            'view_mode': 'list,form',
+            'view_mode': 'activity,list,form',
             'domain': domain,
             'target': 'current',
         }

@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <!-- Contact Search Dialog Template -->
+    <t t-name="health_crm.ContactSearchDialog">
+        <Dialog title="'Select Existing Contact'" size="'md'">
+            <div class="contact-search-dialog">
+                <p class="text-muted mb-3">
+                    Searching for: <strong t-esc="props.searchTerm"/>
+                </p>
+
+                <t t-if="hasResults">
+                    <!-- Clients Section -->
+                    <t t-if="props.results.clients and props.results.clients.length">
+                        <div class="search-group mb-3">
+                            <h5 class="search-group-header" style="font-weight: 700; color: #2E7D32; border-bottom: 2px solid #2E7D32; padding-bottom: 8px; margin-bottom: 12px;">
+                                <i class="fa fa-user-circle me-2"/>Clients
+                            </h5>
+                            <div class="list-group">
+                                <t t-foreach="props.results.clients" t-as="client" t-key="client.id">
+                                    <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
+                                       t-on-click.prevent="() => selectContact('client', client)"
+                                       style="cursor: pointer;">
+                                        <div>
+                                            <strong t-esc="client.name"/>
+                                            <small class="text-muted d-block" t-if="client.phone">
+                                                <i class="fa fa-phone me-1"/> <t t-esc="client.phone"/>
+                                            </small>
+                                        </div>
+                                        <span class="badge bg-success" t-if="client.patient_code" t-esc="client.patient_code"/>
+                                    </a>
+                                </t>
+                            </div>
+                        </div>
+                    </t>
+
+                    <!-- Leads Section -->
+                    <t t-if="props.results.leads and props.results.leads.length">
+                        <div class="search-group mb-3">
+                            <h5 class="search-group-header" style="font-weight: 700; color: #F57C00; border-bottom: 2px solid #F57C00; padding-bottom: 8px; margin-bottom: 12px;">
+                                <i class="fa fa-star me-2"/>Leads
+                            </h5>
+                            <div class="list-group">
+                                <t t-foreach="props.results.leads" t-as="lead" t-key="lead.id">
+                                    <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
+                                       t-on-click.prevent="() => selectContact('lead', lead)"
+                                       style="cursor: pointer;">
+                                        <div>
+                                            <strong t-esc="lead.name"/>
+                                            <small class="text-muted d-block" t-if="lead.phone">
+                                                <i class="fa fa-phone me-1"/> <t t-esc="lead.phone"/>
+                                            </small>
+                                        </div>
+                                        <span class="badge bg-warning text-dark" t-if="lead.unique_contact_code" t-esc="lead.unique_contact_code"/>
+                                    </a>
+                                </t>
+                            </div>
+                        </div>
+                    </t>
+
+                    <!-- Contacts Section -->
+                    <t t-if="props.results.contacts and props.results.contacts.length">
+                        <div class="search-group mb-3">
+                            <h5 class="search-group-header" style="font-weight: 700; color: #1976D2; border-bottom: 2px solid #1976D2; padding-bottom: 8px; margin-bottom: 12px;">
+                                <i class="fa fa-address-book me-2"/>Contacts
+                            </h5>
+                            <div class="list-group">
+                                <t t-foreach="props.results.contacts" t-as="contact" t-key="contact.id">
+                                    <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
+                                       t-on-click.prevent="() => selectContact('contact', contact)"
+                                       style="cursor: pointer;">
+                                        <div>
+                                            <strong t-esc="contact.name"/>
+                                            <small class="text-muted d-block" t-if="contact.phone">
+                                                <i class="fa fa-phone me-1"/> <t t-esc="contact.phone"/>
+                                            </small>
+                                        </div>
+                                        <span class="badge bg-info" t-if="contact.unique_contact_code" t-esc="contact.unique_contact_code"/>
+                                    </a>
+                                </t>
+                            </div>
+                        </div>
+                    </t>
+                </t>
+
+                <t t-else="">
+                    <div class="alert alert-info">
+                        <i class="fa fa-info-circle me-2"/>
+                        No matching contacts, leads, or clients found for "<t t-esc="props.searchTerm"/>".
+                        <br/>
+                        <small class="text-muted">You can continue creating a new contact.</small>
+                    </div>
+                </t>
+            </div>
+            <t t-set-slot="footer">
+                <button class="btn btn-secondary" t-on-click="props.close">Continue as New Contact</button>
+            </t>
+        </Dialog>
+    </t>
+
+    <!-- Contact Name Field Template -->
+    <t t-name="health_crm.ContactNameField">
+        <div class="contact-name-field position-relative">
+            <input type="text"
+                   t-ref="input"
+                   class="o_input"
+                   t-att-value="state.value"
+                   t-att-placeholder="props.placeholder || 'Contact name...'"
+                   t-att-readonly="props.readonly"
+                   t-on-input="onInput"/>
+            <small class="text-muted d-block mt-1" t-if="!props.readonly">
+                <i class="fa fa-info-circle me-1"/>Press Tab to search existing contacts
+            </small>
+            <t t-if="state.loading">
+                <span class="position-absolute" style="right: 10px; top: 8px;">
+                    <i class="fa fa-spinner fa-spin"/>
+                </span>
+            </t>
+        </div>
+    </t>
+
+</templates>

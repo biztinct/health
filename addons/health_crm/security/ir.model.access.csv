@@ -29,3 +29,7 @@ access_followup_wizard_user,health.followup.wizard user,model_health_followup_wi
 access_followup_wizard_manager,health.followup.wizard manager,model_health_followup_wizard,group_health_crm_manager,1,1,1,1
 access_booking_wizard_user,health.booking.wizard user,model_health_booking_wizard,group_health_crm_user,1,1,1,1
 access_booking_wizard_manager,health.booking.wizard manager,model_health_booking_wizard,group_health_crm_manager,1,1,1,1
+access_contact_search_wizard_user,health.contact.search.wizard user,model_health_contact_search_wizard,group_health_crm_user,1,1,1,1
+access_contact_search_wizard_manager,health.contact.search.wizard manager,model_health_contact_search_wizard,group_health_crm_manager,1,1,1,1
+access_contact_search_line_user,health.contact.search.line user,model_health_contact_search_line,group_health_crm_user,1,1,1,1
+access_contact_search_line_manager,health.contact.search.line manager,model_health_contact_search_line,group_health_crm_manager,1,1,1,1

@@ -543,6 +543,31 @@ class HealthLead(models.Model):
         
         return result
     
+    @api.onchange('health_contact_outcome')
+    def _onchange_health_contact_outcome(self):
+        """
+        Sync contact_status when health_contact_outcome changes from the dropdown.
+        This ensures the status badge reflects the selected outcome.
+        """
+        if not self.health_contact_outcome:
+            return
+        
+        # Map health_contact_outcome values to contact_status
+        outcome_to_status = {
+            'service_booked': 'booking',      # Client Acquired → Booking status
+            'pending_follow_up': 'lead',      # Continue Follow-up → Lead status
+            'rejected': 'lost_booking',       # Rejected → Lost Booking status
+            'no_response': 'lead',            # No Response → Keep as Lead
+            'not_qualified': 'lost_booking',  # Not Qualified → Lost Booking status
+            'future_opportunity': 'lead',     # Future Opportunity → Keep as Lead
+        }
+        
+        new_status = outcome_to_status.get(self.health_contact_outcome)
+        if new_status and self.contact_status != new_status:
+            self.contact_status = new_status
+            # Also sync contact_outcome for consistency
+            self.contact_outcome = self.health_contact_outcome
+    
     def _generate_unique_contact_code(self, vals):
         """
         Generate unique contact code using the same format as client IDs.

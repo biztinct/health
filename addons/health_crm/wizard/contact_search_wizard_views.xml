@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Contact Search Wizard Form View -->
+    <record id="view_contact_search_wizard_form" model="ir.ui.view">
+        <field name="name">health.contact.search.wizard.form</field>
+        <field name="model">health.contact.search.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Select Contact">
+                <sheet>
+                    <div class="oe_title" style="margin-bottom: 20px;">
+                        <h2>
+                            <span class="fa fa-search" style="color: #4299e1; margin-right: 10px;"/>
+                            Search Results
+                        </h2>
+                        <p class="text-muted">
+                            Searching for: <strong><field name="search_term" nolabel="1" readonly="1"/></strong>
+                        </p>
+                    </div>
+
+                    <field name="source_wizard_id" invisible="1"/>
+
+                    <!-- Clients Section - Green Header (Highest Priority) -->
+                    <div class="search-section" style="margin-bottom: 20px;">
+                        <h4 style="font-weight: 700; color: #2E7D32; border-bottom: 2px solid #2E7D32; padding-bottom: 8px; margin-bottom: 12px;">
+                            <span class="fa fa-user-circle" style="margin-right: 8px;"/>
+                            Clients
+                            <small class="text-muted" style="font-size: 12px; font-weight: normal;"> - Existing patients who can book services</small>
+                        </h4>
+                        <field name="line_ids" nolabel="1" context="{'default_record_type': 'client'}">
+                            <list create="false" delete="false" editable="bottom" 
+                                  decoration-success="record_type == 'client'"
+                                  invisible="record_type != 'client'">
+                                <field name="record_type" column_invisible="1"/>
+                                <field name="record_id" column_invisible="1"/>
+                                <field name="name" string="Name"/>
+                                <field name="phone" string="Phone"/>
+                                <field name="email" string="Email"/>
+                                <field name="code" string="Client ID"/>
+                                <button name="action_select" type="object" 
+                                        string="Select" class="btn-success btn-sm"
+                                        icon="fa-arrow-right"/>
+                            </list>
+                        </field>
+                    </div>
+
+                    <!-- Leads Section - Orange Header -->
+                    <div class="search-section" style="margin-bottom: 20px;">
+                        <h4 style="font-weight: 700; color: #F57C00; border-bottom: 2px solid #F57C00; padding-bottom: 8px; margin-bottom: 12px;">
+                            <span class="fa fa-star" style="margin-right: 8px;"/>
+                            Leads
+                            <small class="text-muted" style="font-size: 12px; font-weight: normal;"> - Contacts pending follow-up</small>
+                        </h4>
+                        <field name="line_ids" nolabel="1" context="{'default_record_type': 'lead'}">
+                            <list create="false" delete="false" editable="bottom"
+                                  decoration-warning="record_type == 'lead'"
+                                  invisible="record_type != 'lead'">
+                                <field name="record_type" column_invisible="1"/>
+                                <field name="record_id" column_invisible="1"/>
+                                <field name="name" string="Name"/>
+                                <field name="phone" string="Phone"/>
+                                <field name="email" string="Email"/>
+                                <field name="code" string="Lead ID"/>
+                                <button name="action_select" type="object" 
+                                        string="Select" class="btn-warning btn-sm"
+                                        icon="fa-arrow-right"/>
+                            </list>
+                        </field>
+                    </div>
+
+                    <!-- Contacts Section - Blue Header -->
+                    <div class="search-section" style="margin-bottom: 20px;">
+                        <h4 style="font-weight: 700; color: #1976D2; border-bottom: 2px solid #1976D2; padding-bottom: 8px; margin-bottom: 12px;">
+                            <span class="fa fa-address-book" style="margin-right: 8px;"/>
+                            Contacts
+                            <small class="text-muted" style="font-size: 12px; font-weight: normal;"> - Initial contacts not yet qualified</small>
+                        </h4>
+                        <field name="line_ids" nolabel="1" context="{'default_record_type': 'contact'}">
+                            <list create="false" delete="false" editable="bottom"
+                                  decoration-info="record_type == 'contact'"
+                                  invisible="record_type != 'contact'">
+                                <field name="record_type" column_invisible="1"/>
+                                <field name="record_id" column_invisible="1"/>
+                                <field name="name" string="Name"/>
+                                <field name="phone" string="Phone"/>
+                                <field name="email" string="Email"/>
+                                <field name="code" string="Contact ID"/>
+                                <button name="action_select" type="object" 
+                                        string="Select" class="btn-info btn-sm"
+                                        icon="fa-arrow-right"/>
+                            </list>
+                        </field>
+                    </div>
+
+                    <!-- No Results Message -->
+                    <div class="alert alert-info" role="alert" invisible="line_ids">
+                        <span class="fa fa-info-circle" style="margin-right: 8px;"/>
+                        No matching contacts, leads, or clients found.
+                        <br/>
+                        <small class="text-muted">You can continue creating a new contact.</small>
+                    </div>
+
+                </sheet>
+                <footer>
+                    <button name="action_continue_new" type="object" 
+                            string="Continue as New Contact" class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+</odoo>
