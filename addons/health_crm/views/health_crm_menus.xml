@@ -27,13 +27,21 @@
         action="action_followup_wizard"
         sequence="20"/>
 
-    <!-- Customers/Clients -->
+    <!-- All Contacts - ListView grouped by contact status -->
     <menuitem 
-        id="menu_healthcare_customers"
-        name="Clients"
+        id="menu_healthcare_all_contacts"
+        name="All Contacts"
         parent="menu_healthcare_crm_root"
-        action="base.action_partner_form"
-        sequence="30"/>
+        action="action_all_contacts_grouped"
+        sequence="25"/>
+
+    <!-- All Clients - ListView of clients sorted by creation date -->
+    <menuitem 
+        id="menu_healthcare_all_clients"
+        name="All Clients"
+        parent="menu_healthcare_crm_root"
+        action="action_all_clients_list"
+        sequence="27"/>
 
     <!-- Healthcare Relationships -->
     <menuitem 

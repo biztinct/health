@@ -46,6 +46,18 @@
         <field name="view_id" ref="view_healthcare_lead2opportunity_partner"/>
     </record>
 
+    <!-- Search View Extension for Contact Status Grouping -->
+    <record id="view_healthcare_lead_search" model="ir.ui.view">
+        <field name="name">crm.lead.search.healthcare</field>
+        <field name="model">crm.lead</field>
+        <field name="inherit_id" ref="crm.view_crm_case_opportunities_filter"/>
+        <field name="arch" type="xml">
+            <xpath expr="//group" position="inside">
+                <filter string="Contact Status" name="groupby_contact_status" context="{'group_by': 'contact_status'}"/>
+            </xpath>
+        </field>
+    </record>
+
 
     <!-- NEW: Dedicated Healthcare Opportunity Form View (No Inheritance) -->
     <record id="view_healthcare_opportunity_form" model="ir.ui.view">
@@ -496,6 +508,35 @@
             </p><p>
                 A healthcare contact is a potential patient, caregiver, or payer who has shown interest in your services.
                 Use this section to manage your healthcare relationships and track your interactions.
+            </p>
+        </field>
+    </record>
+
+    <!-- All Contacts Action - List view grouped by contact_status -->
+    <record id="action_all_contacts_grouped" model="ir.actions.act_window">
+        <field name="name">All Contacts</field>
+        <field name="res_model">crm.lead</field>
+        <field name="view_mode">list,form,kanban,calendar,pivot,graph,activity</field>
+        <field name="domain">[('type', '=', 'opportunity')]</field>
+        <field name="context">{
+            'default_type': 'opportunity',
+            'search_default_groupby_contact_status': 1,
+            'form_view_ref': 'health_crm.view_healthcare_opportunity_form',
+        }</field>
+        <field name="view_ids" eval="[(5, 0, 0),
+            (0, 0, {'view_mode': 'list'}),
+            (0, 0, {'view_mode': 'form', 'view_id': ref('view_healthcare_opportunity_form')}),
+            (0, 0, {'view_mode': 'kanban'}),
+            (0, 0, {'view_mode': 'calendar'}),
+            (0, 0, {'view_mode': 'pivot'}),
+            (0, 0, {'view_mode': 'graph'}),
+            (0, 0, {'view_mode': 'activity'}),
+        ]"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No contacts found!
+            </p><p>
+                Use this view to see all contacts grouped by their status.
             </p>
         </field>
     </record>

@@ -81,6 +81,8 @@ class HealthFlowAction extends Component {
                     // Contact-First Flow: Only TWO main options
                     { key: 'crm-contacts', label: 'Contacts', icon: 'fa-phone', desc: 'Log new contact / View contacts', hasCount: true, countKey: 'all', countSource: 'crm' },
                     { key: 'crm-followup', label: 'Follow-up Activities', icon: 'fa-calendar-check-o', desc: 'Manage leads and activities', hasCount: true, countKey: 'planned_activities', countSource: 'crm' },
+                    { key: 'crm-all-contacts', label: 'All Contacts', icon: 'fa-address-book', desc: 'View all contacts by status' },
+                    { key: 'crm-all-clients', label: 'All Clients', icon: 'fa-user', desc: 'View all clients' },
                 ],
             },
             booking: {

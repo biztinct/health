@@ -73,6 +73,12 @@ class HealthFlowWizard(models.TransientModel):
         elif key == 'crm-followup':
             # Open Follow-up Activities view
             return self._get_followup_activities_action()
+        elif key == 'crm-all-contacts':
+            # Open All Contacts list grouped by status
+            return self._get_all_contacts_grouped_action()
+        elif key == 'crm-all-clients':
+            # Open All Clients list
+            return self._get_all_clients_action()
         
         # Handle legacy CRM actions (keep for backwards compatibility)
         if key in ['crm-add-lead', 'crm-all', 'crm-initial', 'crm-activities', 'crm-calendar', 'crm-continue-followup', 'crm-client-acquired', 'crm-booking-lost']:
@@ -243,6 +249,54 @@ class HealthFlowWizard(models.TransientModel):
                     }
                 }
 
+
+    @api.model
+    def _get_all_contacts_grouped_action(self):
+        """
+        Open All Contacts list view grouped by contact status.
+        """
+        try:
+            action = self.env['ir.actions.actions']._for_xml_id(
+                'health_crm.action_all_contacts_grouped'
+            )
+            action['target'] = 'current'
+            return action
+        except Exception as e:
+            # Fallback if action not found
+            return {
+                'type': 'ir.actions.client',
+                'tag': 'display_notification',
+                'params': {
+                    'title': _('All Contacts Error'),
+                    'message': _('Failed to load all contacts: %s', str(e)),
+                    'type': 'warning',
+                    'sticky': False,
+                }
+            }
+
+    @api.model
+    def _get_all_clients_action(self):
+        """
+        Open All Clients list view sorted by creation date descending.
+        """
+        try:
+            action = self.env['ir.actions.actions']._for_xml_id(
+                'health_crm.action_all_clients_list'
+            )
+            action['target'] = 'current'
+            return action
+        except Exception as e:
+            # Fallback if action not found
+            return {
+                'type': 'ir.actions.client',
+                'tag': 'display_notification',
+                'params': {
+                    'title': _('All Clients Error'),
+                    'message': _('Failed to load all clients: %s', str(e)),
+                    'type': 'warning',
+                    'sticky': False,
+                }
+            }
 
     @api.model
     def _get_crm_action(self, key):
