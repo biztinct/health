@@ -19,18 +19,17 @@
                     </div>
 
                     <field name="source_wizard_id" invisible="1"/>
+                    <field name="line_ids" invisible="1"/>
 
                     <!-- Clients Section - Green Header (Highest Priority) -->
-                    <div class="search-section" style="margin-bottom: 20px;">
+                    <div class="search-section" style="margin-bottom: 20px;" invisible="not client_line_ids">
                         <h4 style="font-weight: 700; color: #2E7D32; border-bottom: 2px solid #2E7D32; padding-bottom: 8px; margin-bottom: 12px;">
                             <span class="fa fa-user-circle" style="margin-right: 8px;"/>
                             Clients
                             <small class="text-muted" style="font-size: 12px; font-weight: normal;"> - Existing patients who can book services</small>
                         </h4>
-                        <field name="line_ids" nolabel="1" context="{'default_record_type': 'client'}">
-                            <list create="false" delete="false" editable="bottom" 
-                                  decoration-success="record_type == 'client'"
-                                  invisible="record_type != 'client'">
+                        <field name="client_line_ids" nolabel="1">
+                            <list create="false" delete="false" editable="bottom" decoration-success="1">
                                 <field name="record_type" column_invisible="1"/>
                                 <field name="record_id" column_invisible="1"/>
                                 <field name="name" string="Name"/>
@@ -45,16 +44,14 @@
                     </div>
 
                     <!-- Leads Section - Orange Header -->
-                    <div class="search-section" style="margin-bottom: 20px;">
+                    <div class="search-section" style="margin-bottom: 20px;" invisible="not lead_line_ids">
                         <h4 style="font-weight: 700; color: #F57C00; border-bottom: 2px solid #F57C00; padding-bottom: 8px; margin-bottom: 12px;">
                             <span class="fa fa-star" style="margin-right: 8px;"/>
                             Leads
                             <small class="text-muted" style="font-size: 12px; font-weight: normal;"> - Contacts pending follow-up</small>
                         </h4>
-                        <field name="line_ids" nolabel="1" context="{'default_record_type': 'lead'}">
-                            <list create="false" delete="false" editable="bottom"
-                                  decoration-warning="record_type == 'lead'"
-                                  invisible="record_type != 'lead'">
+                        <field name="lead_line_ids" nolabel="1">
+                            <list create="false" delete="false" editable="bottom" decoration-warning="1">
                                 <field name="record_type" column_invisible="1"/>
                                 <field name="record_id" column_invisible="1"/>
                                 <field name="name" string="Name"/>
@@ -69,16 +66,14 @@
                     </div>
 
                     <!-- Contacts Section - Blue Header -->
-                    <div class="search-section" style="margin-bottom: 20px;">
+                    <div class="search-section" style="margin-bottom: 20px;" invisible="not contact_line_ids">
                         <h4 style="font-weight: 700; color: #1976D2; border-bottom: 2px solid #1976D2; padding-bottom: 8px; margin-bottom: 12px;">
                             <span class="fa fa-address-book" style="margin-right: 8px;"/>
                             Contacts
                             <small class="text-muted" style="font-size: 12px; font-weight: normal;"> - Initial contacts not yet qualified</small>
                         </h4>
-                        <field name="line_ids" nolabel="1" context="{'default_record_type': 'contact'}">
-                            <list create="false" delete="false" editable="bottom"
-                                  decoration-info="record_type == 'contact'"
-                                  invisible="record_type != 'contact'">
+                        <field name="contact_line_ids" nolabel="1">
+                            <list create="false" delete="false" editable="bottom" decoration-info="1">
                                 <field name="record_type" column_invisible="1"/>
                                 <field name="record_id" column_invisible="1"/>
                                 <field name="name" string="Name"/>
@@ -104,7 +99,8 @@
                 <footer>
                     <button name="action_continue_new" type="object" 
                             string="Continue as New Contact" class="btn-primary"/>
-                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                    <button name="action_cancel" type="object" 
+                            string="Cancel" class="btn-secondary"/>
                 </footer>
             </form>
         </field>

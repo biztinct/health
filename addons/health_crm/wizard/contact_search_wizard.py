@@ -155,6 +155,30 @@ class HealthContactSearchWizard(models.TransientModel):
                     'form_view_initial_mode': 'edit',
                 },
             }
+    
+    def action_cancel(self):
+        """
+        Cancel and return to the source wizard.
+        """
+        self.ensure_one()
+        
+        if self.source_wizard_id:
+            # Return to the source wizard
+            return {
+                'type': 'ir.actions.act_window',
+                'name': _('New Contact'),
+                'res_model': 'health.initial.contact.wizard',
+                'res_id': self.source_wizard_id.id,
+                'view_mode': 'form',
+                'views': [(self.env.ref('health_crm.view_initial_contact_wizard_form').id, 'form')],
+                'target': 'new',
+                'context': {
+                    'form_view_initial_mode': 'edit',
+                },
+            }
+        else:
+            # Just close if no source wizard
+            return {'type': 'ir.actions.act_window_close'}
 
 
 class HealthContactSearchLine(models.TransientModel):

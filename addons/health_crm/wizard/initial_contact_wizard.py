@@ -123,6 +123,13 @@ class HealthInitialContactWizard(models.TransientModel):
         store=False
     )
     
+    def _normalize_phone(self, phone):
+        """Normalize phone number by removing non-digit characters for comparison."""
+        if not phone:
+            return ''
+        import re
+        return re.sub(r'[^\d]', '', phone)
+    
     @api.model
     def search_contacts_by_name(self, search_term):
         """
@@ -136,6 +143,8 @@ class HealthInitialContactWizard(models.TransientModel):
         
         We avoid showing the same person multiple times by:
         1. First finding all clients (res.partner)
+        
+        DEBUG: Adding logging to trace search results
         2. Then finding leads/contacts that:
            - Do NOT have a linked client (patient_id)
            - AND do NOT have a unique_contact_code that matches any client's patient_code
@@ -175,6 +184,15 @@ class HealthInitialContactWizard(models.TransientModel):
         
         leads = self.env['crm.lead'].search(lead_domain, limit=30)
         
+        # Build sets of client identifiers for exclusion matching
+        # A lead should be excluded from results if it matches any client by:
+        # - patient_id link
+        # - unique_contact_code matching patient_code
+        # - name + email/phone matching (for cases where they're the same person)
+        client_names_lower = {p.name.lower().strip() for p in partners if p.name}
+        client_emails_lower = {p.email.lower().strip() for p in partners if p.email}
+        client_phones = {self._normalize_phone(p.phone) for p in partners if p.phone}
+        
         # Filter leads to exclude those that are already represented as clients
         contacts_list = []
         leads_list = []
@@ -186,6 +204,17 @@ class HealthInitialContactWizard(models.TransientModel):
             # Skip if the unique_contact_code matches a client's patient_code
             if lead.unique_contact_code and lead.unique_contact_code in client_patient_codes:
                 continue
+            
+            # Skip if the lead matches a client by name AND (email or phone)
+            lead_name = (lead.name or '').lower().strip()
+            lead_email = (lead.email_from or '').lower().strip()
+            lead_phone = self._normalize_phone(lead.phone)
+            
+            if lead_name and lead_name in client_names_lower:
+                # Name matches a client - check if email or phone also matches
+                if (lead_email and lead_email in client_emails_lower) or \
+                   (lead_phone and lead_phone in client_phones):
+                    continue  # This lead is likely the same person as a client
             
             record = {
                 'id': lead.id,

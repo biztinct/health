@@ -184,7 +184,7 @@ class HealthLead(models.Model):
     
     # Contact Status - tracks the lifecycle of a contact in the sales pipeline
     contact_status = fields.Selection([
-        ('active', 'Active'),           # In progress, awaiting action
+        ('active', 'Initial Contact'),   # Initial contact, not yet qualified
         ('booking', 'Booking'),         # Converted to booking
         ('lead', 'Lead'),               # Converted to lead for follow-up
         ('lost_booking', 'Lost Booking'), # Follow-up resulted in no booking
