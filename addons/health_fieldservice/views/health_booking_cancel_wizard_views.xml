@@ -56,16 +56,12 @@
                                            help="Name of staff who received the cancellation request"/>
                                     <field name="reporter_position" placeholder="e.g., Receptionist, OM..."
                                            help="Position or role of the staff"/>
+                                    <field name="last_staff_id" readonly="1"
+                                           help="Staff who last visited this client"/>
                                 </group>
                             </div>
                         </div>
                     </div>
-
-                    <!-- Last Staff Field -->
-                    <group>
-                        <field name="last_staff_id" readonly="1"
-                               help="Staff who last visited this client"/>
-                    </group>
 
                     <div class="vu-section">
                         <div class="vu-section__title">

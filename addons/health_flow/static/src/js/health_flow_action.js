@@ -237,13 +237,14 @@ class HealthFlowAction extends Component {
      */
     async openNotificationBooking(notification) {
         try {
-            // Remove from local list (notification.id is the booking id)
+            // Remove from local list
             const idx = this.state.bookingNotifications.findIndex(n => n.id === notification.id);
             if (idx > -1) {
                 this.state.bookingNotifications.splice(idx, 1);
             }
-            // Open the booking (notification.id is the booking id)
-            await this.openBooking(notification.id);
+            // Open the booking (use booking_id, fallback to id for backwards compatibility)
+            const bookingId = notification.booking_id || notification.id;
+            await this.openBooking(bookingId);
             this.state.bookingNotificationsOpen = false;
         } catch (error) {
             console.error('[Health Flow] Failed to open notification booking:', error);

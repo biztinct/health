@@ -948,6 +948,7 @@ class HealthFlowWizard(models.TransientModel):
         """
         from datetime import datetime, timedelta
         notifications = []
+        seen_booking_ids = set()  # Track which bookings we've already added
 
         try:
             FSO = self.env['health.fieldservice.order']
@@ -962,12 +963,15 @@ class HealthFlowWizard(models.TransientModel):
             ], limit=5, order='create_date desc')
 
             for booking in new_bookings:
-                notifications.append({
-                    'id': booking.id,
-                    'type': 'new',
-                    'title': _('New Booking'),
-                    'subtitle': booking.patient_id.name or booking.name or _('Unknown'),
-                })
+                if booking.id not in seen_booking_ids:
+                    notifications.append({
+                        'id': f"new_{booking.id}",  # Unique composite key
+                        'booking_id': booking.id,
+                        'type': 'new',
+                        'title': _('New Booking'),
+                        'subtitle': booking.patient_id.name or booking.name or _('Unknown'),
+                    })
+                    seen_booking_ids.add(booking.id)
 
             # Upcoming bookings in the next 24 hours
             upcoming_bookings = FSO.search([
@@ -977,13 +981,16 @@ class HealthFlowWizard(models.TransientModel):
             ], limit=5, order='scheduled_datetime asc')
 
             for booking in upcoming_bookings:
-                time_str = booking.scheduled_datetime.strftime('%H:%M') if booking.scheduled_datetime else ''
-                notifications.append({
-                    'id': booking.id,
-                    'type': 'upcoming',
-                    'title': _('Upcoming: %s', time_str),
-                    'subtitle': booking.patient_id.name or booking.name or _('Unknown'),
-                })
+                if booking.id not in seen_booking_ids:
+                    time_str = booking.scheduled_datetime.strftime('%H:%M') if booking.scheduled_datetime else ''
+                    notifications.append({
+                        'id': f"upcoming_{booking.id}",  # Unique composite key
+                        'booking_id': booking.id,
+                        'type': 'upcoming',
+                        'title': _('Upcoming: %s', time_str),
+                        'subtitle': booking.patient_id.name or booking.name or _('Unknown'),
+                    })
+                    seen_booking_ids.add(booking.id)
 
             # Cancelled bookings in the last 24 hours
             cancelled_bookings = FSO.search([
@@ -992,12 +999,15 @@ class HealthFlowWizard(models.TransientModel):
             ], limit=5, order='write_date desc')
 
             for booking in cancelled_bookings:
-                notifications.append({
-                    'id': booking.id,
-                    'type': 'cancelled',
-                    'title': _('Cancelled'),
-                    'subtitle': booking.patient_id.name or booking.name or _('Unknown'),
-                })
+                if booking.id not in seen_booking_ids:
+                    notifications.append({
+                        'id': f"cancelled_{booking.id}",  # Unique composite key
+                        'booking_id': booking.id,
+                        'type': 'cancelled',
+                        'title': _('Cancelled'),
+                        'subtitle': booking.patient_id.name or booking.name or _('Unknown'),
+                    })
+                    seen_booking_ids.add(booking.id)
 
             # Rescheduled bookings (modified in last 24 hours with future date)
             # We'll filter in Python to check write_date != create_date
@@ -1011,17 +1021,21 @@ class HealthFlowWizard(models.TransientModel):
             for booking in rescheduled_bookings:
                 if rescheduled_count >= 5:
                     break
+                if booking.id in seen_booking_ids:
+                    continue  # Skip if already in notifications
                 # Only include if it was actually modified after creation (rescheduled)
                 if booking.write_date and booking.create_date:
                     time_diff = abs((booking.write_date - booking.create_date).total_seconds())
                     if time_diff > 60:  # More than 1 minute difference
                         date_str = booking.scheduled_datetime.strftime('%m/%d %H:%M') if booking.scheduled_datetime else ''
                         notifications.append({
-                            'id': booking.id,
+                            'id': f"rescheduled_{booking.id}",  # Unique composite key
+                            'booking_id': booking.id,
                             'type': 'rescheduled',
                             'title': _('Rescheduled: %s', date_str),
                             'subtitle': booking.patient_id.name or booking.name or _('Unknown'),
                         })
+                        seen_booking_ids.add(booking.id)
                         rescheduled_count += 1
 
         except Exception as e:
