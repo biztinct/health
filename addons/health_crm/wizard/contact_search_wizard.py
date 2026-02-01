@@ -110,15 +110,15 @@ class HealthContactSearchWizard(models.TransientModel):
                 'target': 'current',
             }
         else:
-            # Open lead/contact form (crm.lead)
+            # Open lead/contact hub-spoke dashboard
+            lead = self.env['crm.lead'].browse(record_id)
             return {
-                'type': 'ir.actions.act_window',
-                'name': _('Contact Details'),
-                'res_model': 'crm.lead',
-                'res_id': record_id,
-                'view_mode': 'form',
-                'views': [(self.env.ref('health_crm.view_healthcare_opportunity_form').id, 'form')],
-                'target': 'current',
+                'type': 'ir.actions.client',
+                'tag': 'health_landing_lead_hub',
+                'params': {
+                    'lead_id': lead.id,
+                    'lead_name': lead.name,
+                },
             }
     
     def action_continue_new(self):

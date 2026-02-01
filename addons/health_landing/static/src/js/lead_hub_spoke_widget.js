@@ -245,9 +245,13 @@ export class LeadHubSpokeWidget extends Component {
             );
             if (action && action.type) {
                 await this.actionService.doAction(action);
+            } else {
+                // Fallback: navigate back to CRM list
+                await this.actionService.doAction("health_crm.action_healthcare_opportunities");
             }
         } catch (error) {
             console.error("Failed to execute Home action:", error);
+            await this.actionService.doAction("health_crm.action_healthcare_opportunities");
         }
     }
 

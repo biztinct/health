@@ -397,11 +397,6 @@
                     </group>
 
                     <group>
-                        <group string="Facility &amp; Reason">
-                            <field name="facility_id"/>
-                            <field name="contact_reason_id"/>
-                            <field name="lead_reason_id"/>
-                        </group>
                         <group string="Booking Status">
                             <field name="booking_status"/>
                             <field name="booking_lost_reason"/>

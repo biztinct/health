@@ -911,6 +911,7 @@ class HealthLead(models.Model):
             'name': _('Schedule Follow-up'),
             'res_model': 'mail.activity',
             'view_mode': 'form',
+            'views': [[False, 'form']],
             'target': 'new',
             'context': {
                 'default_res_id': self.id,  # mail.activity still uses singular res_id
@@ -949,6 +950,7 @@ class HealthLead(models.Model):
             'name': _('Create Booking'),
             'res_model': 'health.booking.wizard',
             'view_mode': 'form',
+            'views': [[False, 'form']],
             'target': 'new',
             'context': {
                 'default_lead_id': self.id,
@@ -1129,6 +1131,7 @@ class HealthLead(models.Model):
             'name': _('Log Note'),
             'res_model': 'mail.compose.message',
             'view_mode': 'form',
+            'views': [[False, 'form']],
             'target': 'new',
             'context': {
                 'default_res_ids': [self.id],  # Odoo 19 uses res_ids (list)
@@ -1251,6 +1254,7 @@ class HealthLead(models.Model):
             'name': _('Transfer for Consultation'),
             'res_model': 'health.escalation.wizard',
             'view_mode': 'form',
+            'views': [[False, 'form']],
             'target': 'new',
             'context': {
                 'default_lead_id': self.id,
@@ -1270,6 +1274,7 @@ class HealthLead(models.Model):
             'name': _('Escalate Contact'),
             'res_model': 'health.escalation.wizard',
             'view_mode': 'form',
+            'views': [[False, 'form']],
             'target': 'new',
             'context': {
                 'default_lead_id': self.id,
@@ -1343,6 +1348,7 @@ class HealthLead(models.Model):
             'name': _('Send Message'),
             'res_model': 'mail.compose.message',
             'view_mode': 'form',
+            'views': [[False, 'form']],
             'target': 'new',
             'context': {
                 'default_res_ids': [self.id],  # Odoo 19 uses res_ids (list) instead of res_id

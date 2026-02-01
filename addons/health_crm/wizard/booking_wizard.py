@@ -165,6 +165,27 @@ class HealthBookingWizard(models.TransientModel):
         help='Specific sub-category if applicable'
     )
     
+    service_location = fields.Selection([
+        ('home', 'Patient Home'),
+        ('clinic', 'Clinic'),
+        ('hospital', 'Hospital'),
+        ('nursing_home', 'Nursing Home'),
+        ('office', 'Office'),
+        ('online', 'Online/Telemedicine'),
+        ('other', 'Other Location'),
+    ], string='Service Location', default='home',
+       help='Where the service will be provided')
+    
+    @api.onchange('service_type')
+    def _onchange_service_type(self):
+        """Set service_location based on service_type (matching FSO logic)"""
+        if self.service_type == 'telemedicine':
+            self.service_location = 'online'
+        elif self.service_type in ['home_visit', 'follow_up']:
+            self.service_location = 'home'
+        elif self.service_type == 'clinic_visit':
+            self.service_location = 'clinic'
+    
     service_notes = fields.Text(
         'Service Notes',
         help='Additional notes about service requirements'
@@ -222,10 +243,8 @@ class HealthBookingWizard(models.TransientModel):
         help='Expected duration of service'
     )
     
-    booking_location = fields.Text(
-        'Location',
-        help='Where the service will be provided'
-    )
+    # Note: service_location is now defined in Step 2 (Service Requirements section)
+    # as a Selection field matching FSO's service_location
     
     booking_notes = fields.Text(
         'Booking Notes',
@@ -401,9 +420,9 @@ class HealthBookingWizard(models.TransientModel):
             'patient_id': client.id,
             'service_type': self.service_type or 'consultation',
             'scheduled_datetime': self._get_scheduled_datetime(),
-            'duration': self.booking_duration,
-            'location': self.booking_location,
-            'description': self.booking_notes,
+            'scheduled_duration': self.booking_duration,
+            'service_location': self.service_location,
+            'intake_notes': self.booking_notes,
             # Commission fields
             'commission_due_to': self.commission_due_to.id if self.commission_due_to else False,
             'commission_percentage': self.commission_percentage,
@@ -413,7 +432,7 @@ class HealthBookingWizard(models.TransientModel):
         
         # Assign staff if provided
         if self.assigned_nurse_id:
-            booking_vals['assigned_nurse_id'] = self.assigned_nurse_id.id
+            booking_vals['primary_nurse_id'] = self.assigned_nurse_id.id
         
         # Create booking
         FSO = self.env['health.fieldservice.order']

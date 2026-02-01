@@ -119,6 +119,7 @@
                                 <field name="service_category" string="Category"/>
                                 <field name="service_type" string="Service Type" required="1"/>
                                 <field name="service_subcategory" string="Sub-Category"/>
+                                <field name="service_location" string="Service Location"/>
                             </group>
                             <group string="Service Notes">
                             </group>
@@ -154,9 +155,8 @@
                                 <field name="booking_time" string="Time" widget="float_time"/>
                                 <field name="booking_duration" string="Duration (Hours)"/>
                             </group>
-                            <group string="Location">
-                                <field name="booking_location" string="Location" 
-                                       placeholder="Service location or address..."/>
+                            <group string="Notes">
+                                <!-- Service Location is now in Step 2 -->
                             </group>
                         </group>
                         

@@ -455,17 +455,13 @@ class HealthInitialContactWizard(models.TransientModel):
             
             lead = self.env['crm.lead'].create(lead_vals)
         
-        # Return action to open the Contact Details form
+        # Return action to open the Lead Hub-Spoke Dashboard
         return {
-            'type': 'ir.actions.act_window',
-            'name': _('Contact Details'),
-            'res_model': 'crm.lead',
-            'res_id': lead.id,
-            'view_mode': 'form',
-            'view_id': self.env.ref('health_crm.view_healthcare_opportunity_form').id,
-            'target': 'current',
-            'context': {
-                'form_view_initial_mode': 'edit',
+            'type': 'ir.actions.client',
+            'tag': 'health_landing_lead_hub',
+            'params': {
+                'lead_id': lead.id,
+                'lead_name': lead.name,
             },
         }
     
