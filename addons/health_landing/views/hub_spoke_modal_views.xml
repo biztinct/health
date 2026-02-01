@@ -389,7 +389,7 @@
 
                         <group string="Status &amp; Follow-up">
                             <field name="contact_outcome"/>
-                            <field name="health_contact_outcome"/>
+                            <field name="health_contact_outcome" invisible="1"/>
                             <field name="service_interest"/>
                             <field name="lead_followup_required"/>
                             <field name="next_follow_up_date"/>
@@ -428,16 +428,23 @@
                     </h1>
 
                     <group>
-                        <group string="Care Team">
-                            <field name="primary_caregiver_id"/>
-                            <field name="secondary_caregiver_id"/>
-                            <field name="primary_payer_id"/>
+                        <group string="Catchment &amp; Reason">
+                            <field name="catchment_province_id" string="Catchment Province" options="{'no_create': True}"/>
+                            <field name="contact_reason_id" string="Contact Reason" options="{'no_create': True}"/>
+                            <field name="lead_reason_id" string="Lead Reason" options="{'no_create': True}"/>
                         </group>
-                        <group string="Other Relations">
-                            <field name="referrer_id"/>
-                            <field name="emergency_contact_id"/>
-                            <field name="client_representative_id"/>
-                            <field name="contact_relationship_type"/>
+                        <group string="Relationship Context">
+                            <field name="contact_relationship_type" string="I am the:" widget="radio"
+                                   options="{'horizontal': true}"/>
+                            <label for="client_name" string="Client Name" invisible="contact_relationship_type == 'client'"/>
+                            <div class="o_row" invisible="contact_relationship_type == 'client'">
+                                <field name="client_name" nolabel="1" placeholder="Enter client name..."
+                                       required="contact_relationship_type != 'client'"/>
+                                <button name="action_search_client_by_name" type="object" 
+                                        class="btn btn-outline-primary btn-sm"
+                                        string="🔍 Search" 
+                                        title="Search for existing clients"/>
+                            </div>
                         </group>
                     </group>
                 </sheet>

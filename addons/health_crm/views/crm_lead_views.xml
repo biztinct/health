@@ -183,7 +183,7 @@
                     <field name="contact_status" invisible="1"/>
                     
                     <!-- Stage statusbar -->
-                    <field name="stage_id" widget="statusbar" options="{'clickable': '1'}" domain="[('team_ids', '=', False)]"/>
+                    <field name="stage_id" widget="statusbar" options="{'clickable': '1'}" domain="[('team_ids', '=', False)]" invisible="1"/>
                 </header>
                 
                 <sheet string="Contact Details">

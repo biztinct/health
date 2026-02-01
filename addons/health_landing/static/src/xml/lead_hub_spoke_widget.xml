@@ -23,13 +23,29 @@
                 <h1 class="hub_spoke_title">
                     <i class="fa fa-user-circle"/> <t t-esc="getLeadName()"/>
                 </h1>
-                <p class="hub_spoke_subtitle">
-                    <button type="button"
-                            class="hub_spoke_subtitle_tag hub_spoke_subtitle_tag--lead"
-                            t-on-click="onConvertToClient">
-                        Convert to Client
+                <div class="hub_spoke_action_buttons">
+                    <button type="button" class="hub_spoke_btn hub_spoke_btn--home" t-on-click="onHomeClick" title="Return to Home">
+                        <i class="fa fa-home"/> Home
                     </button>
-                </p>
+                    <button type="button" class="hub_spoke_btn hub_spoke_btn--booking" t-on-click="onBookingClick" title="Create booking">
+                        <i class="fa fa-calendar-plus-o"/> Booking
+                    </button>
+                    <button type="button" class="hub_spoke_btn hub_spoke_btn--consultation" t-on-click="onConsultationClick" title="Transfer for consultation">
+                        <i class="fa fa-comments"/> Consultation
+                    </button>
+                    <button type="button" class="hub_spoke_btn hub_spoke_btn--escalate" t-on-click="onEscalateClick" title="Escalate contact">
+                        <i class="fa fa-level-up"/> Escalate
+                    </button>
+                    <button type="button" class="hub_spoke_btn hub_spoke_btn--message" t-on-click="onSendMessageClick" title="Send message">
+                        <i class="fa fa-envelope"/> Send Message
+                    </button>
+                    <button type="button" class="hub_spoke_btn hub_spoke_btn--activity" t-on-click="onLogActivityClick" title="Schedule activity">
+                        <i class="fa fa-clock-o"/> Log Activity
+                    </button>
+                    <button type="button" class="hub_spoke_btn hub_spoke_btn--note" t-on-click="onLogNoteClick" title="Add internal note">
+                        <i class="fa fa-sticky-note"/> Log Note
+                    </button>
+                </div>
             </div>
 
             <div class="health_landing_loading" t-if="state.loading">

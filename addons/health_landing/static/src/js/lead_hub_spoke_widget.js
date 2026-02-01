@@ -236,18 +236,108 @@ export class LeadHubSpokeWidget extends Component {
         });
     }
 
-    async onConvertToClient() {
+    async onHomeClick() {
         try {
             const action = await this.orm.call(
                 "crm.lead",
-                "action_convert_to_client",
+                "action_mark_spam_and_home",
                 [this.props.leadId]
             );
             if (action && action.type) {
                 await this.actionService.doAction(action);
             }
         } catch (error) {
-            console.error("Failed to convert lead to client:", error);
+            console.error("Failed to execute Home action:", error);
+        }
+    }
+
+    async onBookingClick() {
+        try {
+            const action = await this.orm.call(
+                "crm.lead",
+                "action_convert_to_booking",
+                [this.props.leadId]
+            );
+            if (action && action.type) {
+                await this.actionService.doAction(action);
+            }
+        } catch (error) {
+            console.error("Failed to open booking:", error);
+        }
+    }
+
+    async onConsultationClick() {
+        try {
+            const action = await this.orm.call(
+                "crm.lead",
+                "action_escalate_consultation",
+                [this.props.leadId]
+            );
+            if (action && action.type) {
+                await this.actionService.doAction(action);
+            }
+        } catch (error) {
+            console.error("Failed to open consultation:", error);
+        }
+    }
+
+    async onEscalateClick() {
+        try {
+            const action = await this.orm.call(
+                "crm.lead",
+                "action_escalate_contact",
+                [this.props.leadId]
+            );
+            if (action && action.type) {
+                await this.actionService.doAction(action);
+            }
+        } catch (error) {
+            console.error("Failed to escalate:", error);
+        }
+    }
+
+    async onSendMessageClick() {
+        try {
+            const action = await this.orm.call(
+                "crm.lead",
+                "action_send_message",
+                [this.props.leadId]
+            );
+            if (action && action.type) {
+                await this.actionService.doAction(action);
+            }
+        } catch (error) {
+            console.error("Failed to send message:", error);
+        }
+    }
+
+    async onLogActivityClick() {
+        try {
+            const action = await this.orm.call(
+                "crm.lead",
+                "action_schedule_follow_up",
+                [this.props.leadId]
+            );
+            if (action && action.type) {
+                await this.actionService.doAction(action);
+            }
+        } catch (error) {
+            console.error("Failed to log activity:", error);
+        }
+    }
+
+    async onLogNoteClick() {
+        try {
+            const action = await this.orm.call(
+                "crm.lead",
+                "action_log_note",
+                [this.props.leadId]
+            );
+            if (action && action.type) {
+                await this.actionService.doAction(action);
+            }
+        } catch (error) {
+            console.error("Failed to log note:", error);
         }
     }
 

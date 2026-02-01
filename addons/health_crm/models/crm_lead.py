@@ -913,7 +913,7 @@ class HealthLead(models.Model):
             'view_mode': 'form',
             'target': 'new',
             'context': {
-                'default_res_id': self.id,
+                'default_res_id': self.id,  # mail.activity still uses singular res_id
                 'default_res_model': 'crm.lead',
                 'default_summary': f'Follow-up on healthcare lead: {self.name}',
                 'default_note': self.follow_up_notes,
@@ -1131,7 +1131,7 @@ class HealthLead(models.Model):
             'view_mode': 'form',
             'target': 'new',
             'context': {
-                'default_res_id': self.id,
+                'default_res_ids': [self.id],  # Odoo 19 uses res_ids (list)
                 'default_model': 'crm.lead',
                 'default_composition_mode': 'comment',
                 'default_is_internal': True,
