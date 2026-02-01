@@ -192,6 +192,20 @@ class HealthLead(models.Model):
     ], string='Contact Status', default='active',
        help='Status of this contact in the sales pipeline', tracking=True)
     
+    # Spam caller flag - computed from contact_status for visual tagging
+    is_spam_caller = fields.Boolean(
+        string='Is Spam Caller',
+        compute='_compute_is_spam_caller',
+        store=True,
+        help='Indicates if this contact has been marked as spam. Used for visual tagging.'
+    )
+    
+    @api.depends('contact_status')
+    def _compute_is_spam_caller(self):
+        """Compute spam caller status based on contact_status"""
+        for record in self:
+            record.is_spam_caller = record.contact_status == 'spam'
+    
     # On behalf tracking - who is the contact calling for
     contacting_on_behalf = fields.Selection([
         ('self', 'Self'),

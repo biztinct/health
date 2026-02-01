@@ -52,6 +52,56 @@ class HealthBookingCancelWizard(models.TransientModel):
         compute='_compute_show_invoice_warning'
     )
 
+    # WHO CANCELLED fields
+    canceller_name = fields.Char(
+        string='Name (on client side)',
+        help='Name of the person who requested the cancellation (e.g., Mrs. Nguyen, Son of patient)'
+    )
+
+    canceller_relationship = fields.Selection([
+        ('patient_client', 'Patient/Client'),
+        ('spouse', 'Spouse'),
+        ('child', 'Child'),
+        ('parent', 'Parent'),
+        ('sibling', 'Sibling'),
+        ('caregiver', 'Caregiver'),
+        ('other', 'Other'),
+    ], string='Their Relationship to Client', default='patient_client',
+       help='Relationship of the canceller to the client')
+
+    reported_by = fields.Char(
+        string='Reported By (us)',
+        help='Name of staff who received the cancellation request'
+    )
+
+    reporter_position = fields.Char(
+        string='Position/Role',
+        help='Position or role of the staff who took the call (e.g., Receptionist, OM)'
+    )
+
+    last_staff_id = fields.Many2one(
+        'res.partner',
+        string='Last Staff Who Visited This Client',
+        compute='_compute_last_staff',
+        help='The staff member who last visited this client'
+    )
+
+    @api.depends('booking_id.patient_id')
+    def _compute_last_staff(self):
+        """Compute the last staff who visited this client"""
+        for wizard in self:
+            last_staff = False
+            if wizard.booking_id and wizard.booking_id.patient_id:
+                # Find the last completed FSO for this patient
+                last_fso = self.env['health.fieldservice.order'].search([
+                    ('patient_id', '=', wizard.booking_id.patient_id.id),
+                    ('state', '=', 'completed'),
+                    ('id', '!=', wizard.booking_id.id),
+                ], order='scheduled_datetime desc', limit=1)
+                if last_fso and last_fso.primary_nurse_id:
+                    last_staff = last_fso.primary_nurse_id
+            wizard.last_staff_id = last_staff
+
     @api.depends('booking_id.invoice_id')
     def _compute_show_invoice_warning(self):
         """Check if booking has an associated invoice"""

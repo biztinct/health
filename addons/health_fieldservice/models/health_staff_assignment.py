@@ -910,7 +910,7 @@ class HealthStaffAssignment(models.Model):
     def optimize_route(self):
         """Optimize route using Google Maps API"""
         for record in self:
-            if record.appointment_id.appointment_type_id.location_type != 'home':
+            if record.fso_id.service_type != 'home_visit':
                 continue  # Only for home visits
             
             route_optimizer = self.env['health.route.optimizer']
@@ -2430,7 +2430,7 @@ class HealthStaffAssignmentEngine(models.Model):
             self.priority = fso.priority
         
         # Update assignment type for home visits
-        if fso.appointment_id.location_type == 'home':
+        if fso.service_type == 'home_visit':
             self.assignment_type = 'home_visit'
     
     def action_confirm_equipment_checklist(self):

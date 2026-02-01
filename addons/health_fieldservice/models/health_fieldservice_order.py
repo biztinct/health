@@ -375,7 +375,12 @@ class HealthFieldServiceOrderUnified(models.Model):
         """Compute the number of staff assignments for this FSO"""
         for record in self:
             record.assignment_count = len(record.assignment_ids)
-    
+
+    @api.depends('assigned_staff_ids', 'assigned_doctor_ids')
+    def _compute_has_staff_assigned(self):
+        """Compute if staff or doctors have been assigned"""
+        for record in self:
+            record.has_staff_assigned = bool(record.assigned_staff_ids or record.assigned_doctor_ids)
     @api.depends('invoice_id')
     def _compute_invoice_count(self):
         """Compute the number of invoices related to this FSO"""
@@ -683,6 +688,13 @@ class HealthFieldServiceOrderUnified(models.Model):
         'Assignment Count',
         compute='_compute_assignment_count',
         help='Number of staff assignments for this Booking'
+    )
+
+    has_staff_assigned = fields.Boolean(
+        'Has Staff Assigned',
+        compute='_compute_has_staff_assigned',
+        store=True,
+        help='Whether staff or doctors have been assigned to this booking'
     )
 
     # Invoice-related computed fields
@@ -2342,6 +2354,11 @@ class HealthFieldServiceOrderUnified(models.Model):
             'cancellation_date': fields.Datetime.now(),
             'cancellation_notes': cancellation_notes,
         })
+
+        # Cancel all related staff assignments
+        if self.assignment_ids:
+            for assignment in self.assignment_ids.filtered(lambda a: a.state not in ('cancelled', 'completed')):
+                assignment.write({'state': 'cancelled'})
 
         # Archive draft invoice if exists
         if self.invoice_id and self.invoice_id.state == 'draft':

@@ -100,7 +100,7 @@ export class LeadHubSpokeWidget extends Component {
                 "crm.lead",
                 "read",
                 [this.props.leadId],
-                { fields: ["name"] }
+                { fields: ["name", "is_spam_caller", "contact_status"] }
             );
             this.state.leadData = data[0] || {};
         } catch (error) {
@@ -112,6 +112,10 @@ export class LeadHubSpokeWidget extends Component {
 
     getLeadName() {
         return this.props.leadName || this.state.leadData?.name || "Lead";
+    }
+
+    isSpamCaller() {
+        return this.state.leadData?.is_spam_caller || false;
     }
 
     getSpokePosition(angle) {

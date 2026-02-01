@@ -241,8 +241,15 @@
 
                     <!-- Title and Basic Info -->
                     <div class="oe_title">
-                        <h1>
+                        <h1 style="display: flex; align-items: center; gap: 15px;">
                             <field name="name" string="Contact Name" placeholder="Contact name..." required="1"/>
+                            <!-- Spam Caller Warning Badge -->
+                            <field name="is_spam_caller" invisible="1"/>
+                            <span class="badge rounded-pill" 
+                                  style="background-color: #dc3545; color: white; font-size: 12px; padding: 6px 14px; font-weight: 600; animation: pulse 1.5s infinite;" 
+                                  invisible="not is_spam_caller">
+                                ⚠️ Spam Caller
+                            </span>
                         </h1>
                         <!-- Booking Lost Reason Alert -->
                         <div class="alert alert-warning" role="alert" invisible="contact_outcome != 'booking_lost'" style="margin-top: 10px;">
@@ -558,6 +565,10 @@
             <xpath expr="//field[@name='name']" position="attributes">
                 <attribute name="string">Contact name</attribute>
             </xpath>
+            <!-- Hide expected_revenue column - not relevant for healthcare -->
+            <xpath expr="//field[@name='expected_revenue']" position="attributes">
+                <attribute name="column_invisible">1</attribute>
+            </xpath>
         </field>
     </record>
 
@@ -577,6 +588,58 @@
                     <field name="phone" placeholder="e.g. &quot;0123456789&quot;"/>
                 </group>
             </form>
+        </field>
+    </record>
+
+    <!-- ============================================================================
+         HIDE GENERATE LEADS BUTTON (from crm_iap_mine module)
+         ============================================================================ -->
+    
+    <!-- Hide Generate Leads button from opportunities tree view -->
+    <record id="view_hide_generate_leads_tree_oppor" model="ir.ui.view">
+        <field name="name">crm.lead.tree.oppor.hide.generate.leads</field>
+        <field name="model">crm.lead</field>
+        <field name="inherit_id" ref="crm_iap_mine.crm_lead_view_tree_opportunity"/>
+        <field name="arch" type="xml">
+            <xpath expr="//button[@name='action_generate_leads']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+        </field>
+    </record>
+    
+    <!-- Hide Generate Leads button from leads tree view -->
+    <record id="view_hide_generate_leads_tree_leads" model="ir.ui.view">
+        <field name="name">crm.lead.tree.leads.hide.generate.leads</field>
+        <field name="model">crm.lead</field>
+        <field name="inherit_id" ref="crm_iap_mine.crm_lead_view_tree_lead"/>
+        <field name="arch" type="xml">
+            <xpath expr="//button[@name='action_generate_leads']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+        </field>
+    </record>
+    
+    <!-- Hide Generate Leads button from kanban view -->
+    <record id="view_hide_generate_leads_kanban" model="ir.ui.view">
+        <field name="name">crm.lead.kanban.hide.generate.leads</field>
+        <field name="model">crm.lead</field>
+        <field name="inherit_id" ref="crm_iap_mine.view_crm_lead_kanban"/>
+        <field name="arch" type="xml">
+            <xpath expr="//button[@name='action_generate_leads']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+        </field>
+    </record>
+    
+    <!-- Hide Generate Leads button from leads kanban view -->
+    <record id="view_hide_generate_leads_kanban_leads" model="ir.ui.view">
+        <field name="name">crm.lead.kanban.leads.hide.generate.leads</field>
+        <field name="model">crm.lead</field>
+        <field name="inherit_id" ref="crm_iap_mine.crm_case_kanban_view_leads"/>
+        <field name="arch" type="xml">
+            <xpath expr="//button[@name='action_generate_leads']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
         </field>
     </record>
 

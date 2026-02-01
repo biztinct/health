@@ -37,6 +37,7 @@
         'base',
         'mail',
         'crm',  # Standard Odoo CRM - we inherit from this
+        'crm_iap_mine',  # Lead mining module - needed to hide Generate Leads button
         'utm',  # UTM campaign tracking
         'sales_team',  # CRM Teams functionality - required for menu actions
         'health_base',  # CRITICAL: Must load first - defines res.partner extensions (is_caregiver, etc.)

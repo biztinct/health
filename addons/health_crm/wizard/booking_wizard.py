@@ -460,13 +460,15 @@ class HealthBookingWizard(models.TransientModel):
         # Notify OM about new booking
         self._notify_om_new_booking(booking)
         
-        # Return to booking form
+        # Return to booking form with proper name for breadcrumb
+        booking_display_name = booking.display_name or booking.name or _('Booking')
         return {
             'type': 'ir.actions.act_window',
-            'name': _('Booking'),
+            'name': booking_display_name,
             'res_model': 'health.fieldservice.order',
             'res_id': booking.id,
             'view_mode': 'form',
+            'views': [[False, 'form']],
             'target': 'current',
         }
     

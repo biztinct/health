@@ -33,6 +33,40 @@
                         </div>
                     </div>
 
+                    <!-- WHO CANCELLED Section -->
+                    <div class="vu-section">
+                        <div class="vu-section__title">
+                            <span class="vu-section__icon" data-icon="users-group"/>
+                            <div>
+                                <span>WHO CANCELLED?</span>
+                            </div>
+                        </div>
+                        <div class="vu-section-grid">
+                            <div class="vu-card">
+                                <group col="2">
+                                    <field name="canceller_name" placeholder="e.g., Mrs. Nguyen, Son of patient..."
+                                           help="Name of person who requested the cancellation"/>
+                                    <field name="canceller_relationship" 
+                                           help="Relationship to the client"/>
+                                </group>
+                            </div>
+                            <div class="vu-card">
+                                <group col="2">
+                                    <field name="reported_by" placeholder="Name of staff who took the call..."
+                                           help="Name of staff who received the cancellation request"/>
+                                    <field name="reporter_position" placeholder="e.g., Receptionist, OM..."
+                                           help="Position or role of the staff"/>
+                                </group>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Last Staff Field -->
+                    <group>
+                        <field name="last_staff_id" readonly="1"
+                               help="Staff who last visited this client"/>
+                    </group>
+
                     <div class="vu-section">
                         <div class="vu-section__title">
                             <span class="vu-section__icon" data-icon="alert-triangle"/>

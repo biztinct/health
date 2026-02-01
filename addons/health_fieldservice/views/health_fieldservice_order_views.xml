@@ -48,7 +48,7 @@
                     <button name="action_cancel_booking" type="object"
                             string="❌ Cancel Booking"
                             style="background-color: #F07C05; color: white; border-color: #F07C05;"
-                            invisible="state in ('draft', 'completed', 'completed_pending_invoice', 'cancelled')"/>
+                            invisible="state in ('completed', 'completed_pending_invoice', 'cancelled')"/>
                     
                     <button name="action_confirm_booking" type="object"
                             string="✅ Confirm Booking" class="oe_highlight"
@@ -222,7 +222,8 @@
                                     <field name="patient_id" readonly="1"
                                            context="{'form_view_ref': 'health_base.view_health_patient_form'}"/>
                                     <field name="service_type"/>
-                                    <field name="scheduled_datetime"/>
+                                    <field name="has_staff_assigned" invisible="1"/>
+                                    <field name="scheduled_datetime" readonly="has_staff_assigned"/>
                                     <field name="scheduled_duration" widget="integer"/>
                                     <field name="team_id"/>
                                 </group>

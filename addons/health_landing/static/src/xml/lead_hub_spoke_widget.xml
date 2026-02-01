@@ -22,6 +22,13 @@
 
                 <h1 class="hub_spoke_title">
                     <i class="fa fa-user-circle"/> <t t-esc="getLeadName()"/>
+                    <!-- Spam Caller Warning Badge -->
+                    <t t-if="isSpamCaller()">
+                        <span class="badge rounded-pill" 
+                              style="background-color: #dc3545; color: white; font-size: 14px; padding: 6px 16px; font-weight: 600; margin-left: 15px; animation: pulse 1.5s infinite; vertical-align: middle;">
+                            ⚠️ Spam Caller
+                        </span>
+                    </t>
                 </h1>
                 <div class="hub_spoke_action_buttons">
                     <button type="button" class="hub_spoke_btn hub_spoke_btn--home" t-on-click="onHomeClick" title="Return to Home">
