@@ -59,6 +59,29 @@
     </record>
 
 
+    <!-- Activity View - Hide expected_revenue ($ value) from display and add Back button -->
+    <record id="view_healthcare_lead_activity" model="ir.ui.view">
+        <field name="name">crm.lead.activity.healthcare</field>
+        <field name="model">crm.lead</field>
+        <field name="inherit_id" ref="crm.crm_lead_view_activity"/>
+        <field name="arch" type="xml">
+            <!-- Hide expected_revenue from the activity view -->
+            <xpath expr="//field[@name='expected_revenue']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Action: Open Follow-up Wizard -->
+    <record id="action_open_followup_wizard" model="ir.actions.act_window">
+        <field name="name">Follow-up Activities</field>
+        <field name="res_model">health.followup.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+        <field name="context">{'form_view_initial_mode': 'edit'}</field>
+    </record>
+
+
     <!-- NEW: Dedicated Healthcare Opportunity Form View (No Inheritance) -->
     <record id="view_healthcare_opportunity_form" model="ir.ui.view">
         <field name="name">crm.lead.form.healthcare.opportunity</field>
@@ -237,37 +260,19 @@
                         <group col="2">
                             <field name="contact_relationship_type" string="I am the:" widget="radio"
                                    options="{'horizontal': true}" style="font-size: 14px; font-weight: normal;"/>
-                            <field name="client_name" string="Client Name" placeholder="Enter client name..."
-                                   style="font-size: 14px; font-weight: normal;"
-                                   invisible="contact_relationship_type == 'client'"
-                                   required="contact_relationship_type != 'client'"/>
+                            <label for="client_name" string="Client Name" invisible="contact_relationship_type == 'client'"/>
+                            <div class="o_row" invisible="contact_relationship_type == 'client'">
+                                <field name="client_name" nolabel="1" placeholder="Enter client name..."
+                                       style="font-size: 14px; font-weight: normal; flex: 1;"
+                                       required="contact_relationship_type != 'client'"/>
+                                <button name="action_search_client_by_name" type="object" 
+                                        class="btn btn-outline-primary btn-sm"
+                                        string="🔍 Search" 
+                                        title="Search for existing clients"/>
+                            </div>
                         </group>
                     </div>
                     
-                    <!-- Contact Reason and On-Behalf Section -->
-                    <div class="vu-card" style="margin-bottom: var(--vu-space-lg);">
-                        <div class="vu-card__title">
-                            <span class="vu-section__icon" data-icon="clipboard-list"/>
-                            <span>Contact Details</span>
-                        </div>
-                        <group col="2">
-                            <field name="reason_for_contact_id" string="Reason for Contact"
-                                   placeholder="Select reason..." options="{'no_create': true}"/>
-                            <field name="contacting_on_behalf" string="Contacting On Behalf Of" widget="radio"
-                                   options="{'horizontal': true}"/>
-                        </group>
-                        <group col="2" invisible="contacting_on_behalf != 'other'">
-                            <field name="other_person_id" string="Select Existing Client"
-                                   placeholder="Search client..." options="{'no_create': false}"/>
-                            <field name="other_person_name" string="Or Enter New Name"
-                                   placeholder="Name of person if not in system..."/>
-                        </group>
-                        <group col="2">
-                            <field name="street_address" string="Address" placeholder="Contact address..."/>
-                            <field name="contact_tag_ids" string="Contact Tags" widget="many2many_tags"
-                                   options="{'color_field': 'color'}"/>
-                        </group>
-                    </div>
                     
                     <!-- Main Content Tabs -->
                     <notebook>
@@ -292,6 +297,8 @@
                                             <field name="phone" widget="phone"/>
                                             <field name="contact_datetime" string="Contact Date and Time"/>
                                             <field name="mode_of_contact" string="Mode of Contact"/>
+                                            <field name="referrer_id" string="Referrer" options="{'no_create': True}"/>
+                                            <field name="emergency_contact_id" string="Emergency Contact" options="{'no_create': True}"/>
                                         </group>
                                     </div>
                                     
@@ -387,54 +394,6 @@
                                             <field name="next_follow_up_date" string="Next Follow-up Date"/>
                                             <field name="lead_followup_required" string="Follow-up Required"/>
                                             <field name="follow_up_notes" string="Follow-up Notes" colspan="2"/>
-                                        </group>
-                                    </div>
-                                </div>
-                            </div>
-                        </page>
-                        
-                        <!-- Relationships Tab -->
-                        <page string="Healthcare Relationships" name="relationships">
-                            <div class="vu-section">
-                                <div class="vu-section__title">
-                                    <span class="vu-section__icon" data-icon="users-group"/>
-                                    <div>
-                                        <span>Healthcare Relationships</span>
-                                        <small class="text-muted d-block">Client and care team linkages</small>
-                                    </div>
-                                </div>
-                                <div class="vu-section-grid">
-                                    <div class="vu-card">
-                                        <div class="vu-card__title">
-                                            <span class="vu-section__icon" data-icon="id-card"/>
-                                            <span>Client Information</span>
-                                        </div>
-                                        <group>
-                                            <field name="patient_id" string="Client" options="{'no_create': True}" colspan="2"/>
-                                        </group>
-                                    </div>
-                                    
-                                    <div class="vu-card">
-                                        <div class="vu-card__title">
-                                            <span class="vu-section__icon" data-icon="users-group"/>
-                                            <span>Care Team</span>
-                                        </div>
-                                        <group col="2">
-                                            <field name="primary_caregiver_id" string="Primary Caregiver" options="{'no_create': True}"/>
-                                            <field name="secondary_caregiver_id" string="Secondary Caregiver" options="{'no_create': True}"/>
-                                            <field name="primary_payer_id" string="Payer" options="{'no_create': True}"/>
-                                            <field name="client_representative_id" string="Client Representative" options="{'no_create': True}"/>
-                                        </group>
-                                    </div>
-                                    
-                                    <div class="vu-card">
-                                        <div class="vu-card__title">
-                                            <span class="vu-section__icon" data-icon="life-ring"/>
-                                            <span>Referral and Emergency</span>
-                                        </div>
-                                        <group col="2">
-                                            <field name="referrer_id" string="Referrer" options="{'no_create': True}"/>
-                                            <field name="emergency_contact_id" string="Emergency Contact" options="{'no_create': True}"/>
                                         </group>
                                     </div>
                                 </div>

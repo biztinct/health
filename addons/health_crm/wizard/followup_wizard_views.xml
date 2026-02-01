@@ -19,12 +19,7 @@
                     <!-- Search Box -->
                     <div class="alert alert-light" role="alert" style="margin-bottom: 20px; padding: 15px;">
                         <div class="row">
-                            <div class="col-6">
-                                <field name="client_id" placeholder="Search Client..." 
-                                       options="{'no_create': true, 'no_open': true}"
-                                       style="width: 100%;"/>
-                            </div>
-                            <div class="col-6">
+                            <div class="col-12">
                                 <field name="lead_id" placeholder="Search Contact/Lead..."
                                        options="{'no_create': true, 'no_open': true}"
                                        style="width: 100%;"/>

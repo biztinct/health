@@ -103,22 +103,35 @@ class HealthFollowUpWizard(models.TransientModel):
             res_id = self.lead_id.id
         elif self.context_lead_id:
             res_id = self.context_lead_id.id
-        elif self.client_id:
-            res_model = 'res.partner'
-            res_id = self.client_id.id
         
         if res_id:
-            record = self.env[res_model].browse(res_id)
-            return record.activity_schedule()
+            # Open the mail.activity.schedule wizard instead of calling activity_schedule()
+            # This gives us more control over the return behavior
+            return {
+                'type': 'ir.actions.act_window',
+                'name': _('Schedule Activity'),
+                'res_model': 'mail.activity.schedule',
+                'view_mode': 'form',
+                'target': 'new',
+                'context': {
+                    'default_res_model': res_model,
+                    'default_res_ids': [res_id],
+                    'dialog_size': 'medium',
+                },
+            }
         
-        # If no specific record, open activity list
+        # If no specific record, show warning
         return {
-            'type': 'ir.actions.act_window',
-            'name': _('Schedule Activity'),
-            'res_model': 'mail.activity',
-            'view_mode': 'form',
-            'target': 'new',
+            'type': 'ir.actions.client',
+            'tag': 'display_notification',
+            'params': {
+                'title': _('No Contact Selected'),
+                'message': _('Please select a Contact/Lead first to schedule an activity.'),
+                'type': 'warning',
+                'sticky': False,
+            }
         }
+
     
     def action_show_all_leads(self):
         """
@@ -148,27 +161,25 @@ class HealthFollowUpWizard(models.TransientModel):
     def action_show_all_activities(self):
         """
         Menu d: Show all current planned activities (sorted by date)
-        Selection shows activity follow-up form.
+        Opens the crm.lead activity view showing leads with their activities.
         """
         self.ensure_one()
         
-        domain = [('res_model', '=', 'crm.lead')]
+        # Domain for leads with activities
+        domain = [('activity_ids', '!=', False)]
         
-        # Filter by client if selected
-        if self.client_id:
-            lead_ids = self.env['crm.lead'].search([
-                ('partner_id', '=', self.client_id.id)
-            ]).ids
-            domain.append(('res_id', 'in', lead_ids))
+        # Filter by specific lead if selected
+        if self.lead_id:
+            domain = [('id', '=', self.lead_id.id)]
         
         return {
             'type': 'ir.actions.act_window',
             'name': _('All Planned Activities'),
-            'res_model': 'mail.activity',
-            'view_mode': 'list,calendar,form',
+            'res_model': 'crm.lead',
+            'view_mode': 'activity,list,form',
             'domain': domain,
             'target': 'current',
-            'context': {'search_default_upcoming': 1},
+            'context': {'search_default_activities': 1},
         }
     
     def action_show_calendar(self):

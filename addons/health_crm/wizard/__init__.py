@@ -2,6 +2,7 @@ from . import client_selection_wizard
 from . import relationship_add_wizard
 from . import initial_contact_wizard
 from . import contact_search_wizard
+from . import client_search_wizard
 from . import escalation_wizard
 from . import booking_cancellation_wizard
 from . import followup_wizard

@@ -33,3 +33,7 @@ access_contact_search_wizard_user,health.contact.search.wizard user,model_health
 access_contact_search_wizard_manager,health.contact.search.wizard manager,model_health_contact_search_wizard,group_health_crm_manager,1,1,1,1
 access_contact_search_line_user,health.contact.search.line user,model_health_contact_search_line,group_health_crm_user,1,1,1,1
 access_contact_search_line_manager,health.contact.search.line manager,model_health_contact_search_line,group_health_crm_manager,1,1,1,1
+access_client_search_wizard_user,health.client.search.wizard user,model_health_client_search_wizard,group_health_crm_user,1,1,1,1
+access_client_search_wizard_manager,health.client.search.wizard manager,model_health_client_search_wizard,group_health_crm_manager,1,1,1,1
+access_client_search_line_user,health.client.search.line user,model_health_client_search_line,group_health_crm_user,1,1,1,1
+access_client_search_line_manager,health.client.search.line manager,model_health_client_search_line,group_health_crm_manager,1,1,1,1

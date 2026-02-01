@@ -1138,6 +1138,75 @@ class HealthLead(models.Model):
             }
         }
 
+    def action_search_client_by_name(self):
+        """
+        Search for existing clients by the client_name field.
+        Opens a popup with matching clients to select from.
+        """
+        self.ensure_one()
+        
+        search_term = self.client_name
+        if not search_term or len(search_term) < 2:
+            return {
+                'type': 'ir.actions.client',
+                'tag': 'display_notification',
+                'params': {
+                    'title': _('Search'),
+                    'message': _('Please enter at least 2 characters in Client Name to search.'),
+                    'type': 'warning',
+                    'sticky': False,
+                }
+            }
+        
+        # Search for clients (res.partner with is_patient=True)
+        partners = self.env['res.partner'].search([
+            ('is_patient', '=', True),
+            '|', '|',
+            ('name', 'ilike', search_term),
+            ('phone', 'ilike', search_term),
+            ('email', 'ilike', search_term),
+        ], limit=15)
+        
+        if not partners:
+            return {
+                'type': 'ir.actions.client',
+                'tag': 'display_notification',
+                'params': {
+                    'title': _('No Clients Found'),
+                    'message': _('No existing clients match "%s". You can continue with this name.') % search_term,
+                    'type': 'info',
+                    'sticky': False,
+                }
+            }
+        
+        # Create search wizard with results
+        wizard = self.env['health.client.search.wizard'].create({
+            'search_term': search_term,
+            'source_lead_id': self.id,
+        })
+        
+        # Add client lines
+        for p in partners:
+            self.env['health.client.search.line'].create({
+                'wizard_id': wizard.id,
+                'partner_id': p.id,
+                'name': p.name,
+                'phone': p.phone or '',
+                'email': p.email or '',
+                'code': p.patient_code or '',
+            })
+        
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _('Select Client'),
+            'res_model': 'health.client.search.wizard',
+            'res_id': wizard.id,
+            'view_mode': 'form',
+            'target': 'new',
+            'context': {'form_view_initial_mode': 'edit'},
+        }
+
+
     def action_refer_telemedicine(self):
         """
         TELEMEDICINE button - Refer contact to Duty Doctor for telemedicine consultation.
@@ -1281,4 +1350,18 @@ class HealthLead(models.Model):
                 'default_composition_mode': 'comment',
                 'default_partner_ids': [(4, self.partner_id.id)] if self.partner_id else [],
             }
+        }
+
+    def action_open_followup_wizard(self):
+        """
+        Open the Follow-up Activities wizard.
+        Used for navigation back from activity view.
+        """
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _('Follow-up Activities'),
+            'res_model': 'health.followup.wizard',
+            'view_mode': 'form',
+            'target': 'new',
+            'context': {'form_view_initial_mode': 'edit'},
         }

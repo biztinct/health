@@ -60,6 +60,7 @@
         'wizard/relationship_add_wizard_views.xml',
         'wizard/initial_contact_wizard_views.xml',
         'wizard/contact_search_wizard_views.xml',
+        'wizard/client_search_wizard_views.xml',
         'wizard/escalation_wizard_views.xml',
         'wizard/booking_cancellation_wizard_views.xml',
         'wizard/followup_wizard_views.xml',
