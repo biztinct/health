@@ -105,6 +105,7 @@
         opacity: 0;
         transform: translateY(10px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
@@ -132,9 +133,21 @@
 }
 
 @keyframes heartbeat {
-    0%, 100% { transform: scale(1); }
-    10%, 30% { transform: scale(1.1); }
-    20%, 40% { transform: scale(1); }
+
+    0%,
+    100% {
+        transform: scale(1);
+    }
+
+    10%,
+    30% {
+        transform: scale(1.1);
+    }
+
+    20%,
+    40% {
+        transform: scale(1);
+    }
 }
 
 .health_landing_dashboard_subtitle {
@@ -247,7 +260,7 @@
     background: rgba(255, 255, 255, 0.6);
     transform: translate(-50%, -50%);
     transition: width var(--timing-slow) var(--easing-standard),
-                height var(--timing-slow) var(--easing-standard);
+        height var(--timing-slow) var(--easing-standard);
     pointer-events: none;
 }
 
@@ -282,6 +295,7 @@
         transform: translateY(30px) scale(0.95);
         filter: blur(4px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0) scale(1);
@@ -294,9 +308,11 @@
     0% {
         filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1)) brightness(1);
     }
+
     50% {
         filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.15)) brightness(1.1);
     }
+
     100% {
         filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1)) brightness(1);
     }
@@ -308,69 +324,95 @@
 }
 
 /* Stagger delays for each card */
-.health_landing_card:nth-child(1) { animation-delay: 0ms; }
-.health_landing_card:nth-child(2) { animation-delay: 50ms; }
-.health_landing_card:nth-child(3) { animation-delay: 100ms; }
-.health_landing_card:nth-child(4) { animation-delay: 150ms; }
-.health_landing_card:nth-child(5) { animation-delay: 200ms; }
-.health_landing_card:nth-child(6) { animation-delay: 250ms; }
-.health_landing_card:nth-child(7) { animation-delay: 300ms; }
-.health_landing_card:nth-child(8) { animation-delay: 350ms; }
-.health_landing_card:nth-child(9) { animation-delay: 400ms; }
+.health_landing_card:nth-child(1) {
+    animation-delay: 0ms;
+}
+
+.health_landing_card:nth-child(2) {
+    animation-delay: 50ms;
+}
+
+.health_landing_card:nth-child(3) {
+    animation-delay: 100ms;
+}
+
+.health_landing_card:nth-child(4) {
+    animation-delay: 150ms;
+}
+
+.health_landing_card:nth-child(5) {
+    animation-delay: 200ms;
+}
+
+.health_landing_card:nth-child(6) {
+    animation-delay: 250ms;
+}
+
+.health_landing_card:nth-child(7) {
+    animation-delay: 300ms;
+}
+
+.health_landing_card:nth-child(8) {
+    animation-delay: 350ms;
+}
+
+.health_landing_card:nth-child(9) {
+    animation-delay: 400ms;
+}
 
 /* Module-Specific Card Colors with Glassmorphism Overlays */
 .health_landing_card.module-patient {
     border-color: var(--color-patient-primary);
     background: linear-gradient(135deg, rgba(255, 255, 255, 0.85) 0%, rgba(255, 255, 255, 0.75) 100%),
-                linear-gradient(135deg, rgba(223, 243, 252, 0.4) 0%, rgba(223, 243, 252, 0.2) 100%);
+        linear-gradient(135deg, rgba(223, 243, 252, 0.4) 0%, rgba(223, 243, 252, 0.2) 100%);
 }
 
 .health_landing_card.module-scheduling {
     border-color: var(--color-scheduling-primary);
     background: linear-gradient(135deg, rgba(255, 255, 255, 0.85) 0%, rgba(255, 255, 255, 0.75) 100%),
-                linear-gradient(135deg, rgba(168, 234, 239, 0.4) 0%, rgba(168, 234, 239, 0.2) 100%);
+        linear-gradient(135deg, rgba(168, 234, 239, 0.4) 0%, rgba(168, 234, 239, 0.2) 100%);
 }
 
 .health_landing_card.module-crm {
     border-color: var(--color-crm-primary);
     background: linear-gradient(135deg, rgba(255, 255, 255, 0.85) 0%, rgba(255, 255, 255, 0.75) 100%),
-                linear-gradient(135deg, rgba(209, 238, 232, 0.4) 0%, rgba(209, 238, 232, 0.2) 100%);
+        linear-gradient(135deg, rgba(209, 238, 232, 0.4) 0%, rgba(209, 238, 232, 0.2) 100%);
 }
 
 .health_landing_card.module-fieldservice {
     border-color: var(--color-fieldservice-primary);
     background: linear-gradient(135deg, rgba(255, 255, 255, 0.85) 0%, rgba(255, 255, 255, 0.75) 100%),
-                linear-gradient(135deg, rgba(253, 214, 175, 0.4) 0%, rgba(253, 214, 175, 0.2) 100%);
+        linear-gradient(135deg, rgba(253, 214, 175, 0.4) 0%, rgba(253, 214, 175, 0.2) 100%);
 }
 
 .health_landing_card.module-packages {
     border-color: var(--color-packages-primary);
     background: linear-gradient(135deg, rgba(255, 255, 255, 0.85) 0%, rgba(255, 255, 255, 0.75) 100%),
-                linear-gradient(135deg, rgba(224, 213, 245, 0.4) 0%, rgba(224, 213, 245, 0.2) 100%);
+        linear-gradient(135deg, rgba(224, 213, 245, 0.4) 0%, rgba(224, 213, 245, 0.2) 100%);
 }
 
 .health_landing_card.module-pricing {
     border-color: var(--color-pricing-primary);
     background: linear-gradient(135deg, rgba(255, 255, 255, 0.85) 0%, rgba(255, 255, 255, 0.75) 100%),
-                linear-gradient(135deg, rgba(255, 219, 160, 0.4) 0%, rgba(255, 219, 160, 0.2) 100%);
+        linear-gradient(135deg, rgba(255, 219, 160, 0.4) 0%, rgba(255, 219, 160, 0.2) 100%);
 }
 
 .health_landing_card.module-billing {
     border-color: var(--color-billing-primary);
     background: linear-gradient(135deg, rgba(255, 255, 255, 0.85) 0%, rgba(255, 255, 255, 0.75) 100%),
-                linear-gradient(135deg, rgba(212, 239, 212, 0.4) 0%, rgba(212, 239, 212, 0.2) 100%);
+        linear-gradient(135deg, rgba(212, 239, 212, 0.4) 0%, rgba(212, 239, 212, 0.2) 100%);
 }
 
 .health_landing_card.module-facilities {
     border-color: var(--color-facilities-primary);
     background: linear-gradient(135deg, rgba(255, 255, 255, 0.85) 0%, rgba(255, 255, 255, 0.75) 100%),
-                linear-gradient(135deg, rgba(245, 213, 211, 0.4) 0%, rgba(245, 213, 211, 0.2) 100%);
+        linear-gradient(135deg, rgba(245, 213, 211, 0.4) 0%, rgba(245, 213, 211, 0.2) 100%);
 }
 
 .health_landing_card.module-config {
     border-color: var(--color-config-primary);
     background: linear-gradient(135deg, rgba(255, 255, 255, 0.85) 0%, rgba(255, 255, 255, 0.75) 100%),
-                linear-gradient(135deg, rgba(228, 235, 237, 0.4) 0%, rgba(228, 235, 237, 0.2) 100%);
+        linear-gradient(135deg, rgba(228, 235, 237, 0.4) 0%, rgba(228, 235, 237, 0.2) 100%);
 }
 
 /* Card Icon - Enhanced Animation with Shimmer */
@@ -387,15 +429,41 @@
     /* Shimmer animation runs here */
 }
 
-.module-patient .health_landing_card_icon { color: var(--color-patient-primary); }
-.module-scheduling .health_landing_card_icon { color: var(--color-scheduling-primary); }
-.module-crm .health_landing_card_icon { color: var(--color-crm-primary); }
-.module-fieldservice .health_landing_card_icon { color: var(--color-fieldservice-primary); }
-.module-packages .health_landing_card_icon { color: var(--color-packages-primary); }
-.module-pricing .health_landing_card_icon { color: var(--color-pricing-primary); }
-.module-billing .health_landing_card_icon { color: var(--color-billing-primary); }
-.module-facilities .health_landing_card_icon { color: var(--color-facilities-primary); }
-.module-config .health_landing_card_icon { color: var(--color-config-primary); }
+.module-patient .health_landing_card_icon {
+    color: var(--color-patient-primary);
+}
+
+.module-scheduling .health_landing_card_icon {
+    color: var(--color-scheduling-primary);
+}
+
+.module-crm .health_landing_card_icon {
+    color: var(--color-crm-primary);
+}
+
+.module-fieldservice .health_landing_card_icon {
+    color: var(--color-fieldservice-primary);
+}
+
+.module-packages .health_landing_card_icon {
+    color: var(--color-packages-primary);
+}
+
+.module-pricing .health_landing_card_icon {
+    color: var(--color-pricing-primary);
+}
+
+.module-billing .health_landing_card_icon {
+    color: var(--color-billing-primary);
+}
+
+.module-facilities .health_landing_card_icon {
+    color: var(--color-facilities-primary);
+}
+
+.module-config .health_landing_card_icon {
+    color: var(--color-config-primary);
+}
 
 /* Card Label - Compact Typography */
 .health_landing_card_label {
@@ -477,6 +545,7 @@
 }
 
 @media (max-width: 480px) {
+
     .health_landing_card_grid,
     .health_landing_submenu_grid {
         grid-template-columns: 1fr;
@@ -500,8 +569,13 @@
 }
 
 @keyframes spin {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
 }
 
 /* Empty State */
@@ -524,12 +598,14 @@
 /* Hide default scrollbar but keep scrolling functionality */
 .health_landing_modal_body,
 .health_landing_dashboard {
-    scrollbar-width: none;  /* Firefox */
+    scrollbar-width: none;
+    /* Firefox */
 }
 
 .health_landing_modal_body::-webkit-scrollbar,
 .health_landing_dashboard::-webkit-scrollbar {
-    width: 0;               /* Chrome, Safari */
+    width: 0;
+    /* Chrome, Safari */
 }
 
 /* Scroll hint indicator - shows when content is scrollable */
@@ -546,9 +622,12 @@
 
 /* Subtle scroll hint animation when scrollable */
 @keyframes scrollHint {
-    0%, 100% {
+
+    0%,
+    100% {
         opacity: 0.3;
     }
+
     50% {
         opacity: 0.6;
     }
@@ -580,6 +659,7 @@
     from {
         opacity: 0;
     }
+
     to {
         opacity: 1;
     }
@@ -604,6 +684,7 @@
         opacity: 0;
         transform: scale(0.9) translateY(20px);
     }
+
     to {
         opacity: 1;
         transform: scale(1) translateY(0);
@@ -793,15 +874,41 @@
 }
 
 /* Module-Specific Modal Icon Colors */
-.health_landing_modal.module-patient .health_landing_modal_icon { color: var(--color-patient-primary); }
-.health_landing_modal.module-scheduling .health_landing_modal_icon { color: var(--color-scheduling-primary); }
-.health_landing_modal.module-crm .health_landing_modal_icon { color: var(--color-crm-primary); }
-.health_landing_modal.module-fieldservice .health_landing_modal_icon { color: var(--color-fieldservice-primary); }
-.health_landing_modal.module-packages .health_landing_modal_icon { color: var(--color-packages-primary); }
-.health_landing_modal.module-pricing .health_landing_modal_icon { color: var(--color-pricing-primary); }
-.health_landing_modal.module-billing .health_landing_modal_icon { color: var(--color-billing-primary); }
-.health_landing_modal.module-facilities .health_landing_modal_icon { color: var(--color-facilities-primary); }
-.health_landing_modal.module-config .health_landing_modal_icon { color: var(--color-config-primary); }
+.health_landing_modal.module-patient .health_landing_modal_icon {
+    color: var(--color-patient-primary);
+}
+
+.health_landing_modal.module-scheduling .health_landing_modal_icon {
+    color: var(--color-scheduling-primary);
+}
+
+.health_landing_modal.module-crm .health_landing_modal_icon {
+    color: var(--color-crm-primary);
+}
+
+.health_landing_modal.module-fieldservice .health_landing_modal_icon {
+    color: var(--color-fieldservice-primary);
+}
+
+.health_landing_modal.module-packages .health_landing_modal_icon {
+    color: var(--color-packages-primary);
+}
+
+.health_landing_modal.module-pricing .health_landing_modal_icon {
+    color: var(--color-pricing-primary);
+}
+
+.health_landing_modal.module-billing .health_landing_modal_icon {
+    color: var(--color-billing-primary);
+}
+
+.health_landing_modal.module-facilities .health_landing_modal_icon {
+    color: var(--color-facilities-primary);
+}
+
+.health_landing_modal.module-config .health_landing_modal_icon {
+    color: var(--color-config-primary);
+}
 
 /* ============================================================================
    SEARCH BAR
@@ -977,4 +1084,88 @@
         width: 100%;
         justify-content: center;
     }
+}
+
+/* ============================================================================
+   EXPANDED BREADCRUMBS - Show all navigation items without dropdown
+   ============================================================================ */
+
+/* Force all breadcrumb items to be visible */
+.o_control_panel .breadcrumb {
+    flex-wrap: wrap !important;
+    overflow: visible !important;
+}
+
+/* Remove the dropdown toggle (three dots) */
+.o_control_panel .breadcrumb .dropdown-toggle,
+.o_control_panel .breadcrumb .o_back_button+.dropdown,
+.o_control_panel .breadcrumb>.dropdown:first-child {
+    display: none !important;
+}
+
+/* Show all breadcrumb items that are normally hidden */
+.o_control_panel .breadcrumb .dropdown-menu {
+    display: contents !important;
+    position: static !important;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+/* Style the breadcrumb items from the dropdown menu */
+.o_control_panel .breadcrumb .dropdown-menu .dropdown-item,
+.o_control_panel .breadcrumb .dropdown-menu .breadcrumb-item {
+    display: inline-flex !important;
+    align-items: center;
+    padding: 0 !important;
+    background: transparent !important;
+    color: inherit !important;
+}
+
+/* Ensure all breadcrumb items are inline */
+.o_control_panel .breadcrumb-item {
+    display: inline-flex !important;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+/* Add separator between expanded items */
+.o_control_panel .breadcrumb .dropdown-menu .dropdown-item::after,
+.o_control_panel .breadcrumb .dropdown-menu .breadcrumb-item::after {
+    content: "/" !important;
+    padding: 0 8px;
+    color: #BDC3C7;
+}
+
+/* Alternative approach: expand the collapsed breadcrumbs dropdown */
+.o_control_panel .breadcrumb>li {
+    display: inline-flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+
+/* Override max-width restrictions on breadcrumb container */
+.o_control_panel .o_breadcrumb {
+    max-width: none !important;
+    overflow: visible !important;
+}
+
+/* Ensure breadcrumb links are styled correctly */
+.o_control_panel .breadcrumb-item a {
+    color: #1565C0;
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.o_control_panel .breadcrumb-item a:hover {
+    color: #0D47A1;
+    text-decoration: underline;
+}
+
+/* Active breadcrumb item styling */
+.o_control_panel .breadcrumb-item.active {
+    color: #2C3E50;
+    font-weight: 500;
 }
