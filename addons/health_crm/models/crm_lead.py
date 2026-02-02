@@ -699,12 +699,13 @@ class HealthLead(models.Model):
         return self.contact_outcome == 'service_booked' or self.health_contact_outcome == 'service_booked' or (self.stage_id and self.stage_id.is_won)
 
     def _get_or_create_patient(self, patient_name=None):
-        """Create or get patient record. Transfers unique_contact_code as patient_code."""
+        """Create or get patient record. Transfers unique_contact_code as patient_code only when contact IS the client."""
         if not patient_name:
             patient_name = self.name
             
         # Check if patient already exists by unique_contact_code first (if available)
-        if self.unique_contact_code:
+        # Only do this lookup when the lead contact IS the client (not a representative)
+        if self.unique_contact_code and self.contact_relationship_type == 'client':
             existing_patient = self.env['res.partner'].search([
                 ('patient_code', '=', self.unique_contact_code),
                 ('is_patient', '=', True)
@@ -725,6 +726,11 @@ class HealthLead(models.Model):
         # Get Regular Patient category
         regular_category = self.env.ref('health_base.patient_category_regular', raise_if_not_found=False)
 
+        # Determine whether to transfer lead's code or generate new one
+        # Only transfer code when the lead contact IS the client (same person)
+        # If contact is a representative (caregiver, family, etc.), patient should get its own code
+        should_transfer_code = self.contact_relationship_type == 'client'
+        
         patient_vals = {
             'name': patient_name,
             'is_patient': True,
@@ -735,9 +741,12 @@ class HealthLead(models.Model):
             'active': True,
             'patient_status': 'active',
             'patient_category_id': regular_category.id if regular_category else False,
-            # Transfer the lead's unique_contact_code as the patient's patient_code
-            'patient_code': self.unique_contact_code if self.unique_contact_code else False,
         }
+        
+        # Only transfer the lead's unique_contact_code when contact IS the client
+        # When contact is a representative, let the patient generate its own code
+        if should_transfer_code and self.unique_contact_code:
+            patient_vals['patient_code'] = self.unique_contact_code
 
         # Copy contact info from lead if contact is the client
         if self.contact_relationship_type == 'client':
