@@ -374,7 +374,7 @@
             <form string="Lead Information">
                 <sheet>
                     <h1>
-                        <field name="name" readonly="1" nolabel="1"/> - Client Info
+                        <field name="name" readonly="1" nolabel="1"/> - Lead Info
                     </h1>
 
                     <group>
@@ -389,9 +389,19 @@
                         <group string="Status &amp; Follow-up">
                             <field name="contact_outcome"/>
                             <field name="health_contact_outcome" invisible="1"/>
+                            <!-- Show Client Dashboard button when client exists -->
+                            <label for="partner_id" string="Client" invisible="not partner_id"/>
+                            <div class="o_row" invisible="not partner_id">
+                                <button name="action_open_client_dashboard" type="object"
+                                        string="🏥 View Client Dashboard"
+                                        class="btn-primary btn-sm"
+                                        title="Open Client Dashboard"
+                                        icon="fa-user-circle"/>
+                            </div>
                             <field name="service_interest"/>
                             <field name="lead_followup_required"/>
                             <field name="next_follow_up_date"/>
+                            <field name="partner_id" invisible="1"/>
                         </group>
                     </group>
 

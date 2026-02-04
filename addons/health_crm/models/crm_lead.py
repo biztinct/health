@@ -1567,3 +1567,37 @@ class HealthLead(models.Model):
                 'lead_name': self.name,
             },
         }
+
+    def action_open_client_dashboard(self):
+        """
+        Open the Client Dashboard (Patient Hub) for the client associated with this lead.
+        If the lead has a partner_id (client was created from this lead), open that client's dashboard.
+        """
+        self.ensure_one()
+        
+        # Find the client/partner to display
+        client = self.partner_id
+        
+        if not client:
+            # No client found - show notification
+            return {
+                'type': 'ir.actions.client',
+                'tag': 'display_notification',
+                'params': {
+                    'title': 'No Client Associated',
+                    'message': 'This lead does not have an associated client yet.',
+                    'type': 'warning',
+                    'sticky': False,
+                }
+            }
+        
+        # Open the Client Dashboard (Patient Hub) for this client
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'health_landing_patient_hub',
+            'name': f'Client Dashboard: {client.name}',
+            'params': {
+                'patient_id': client.id,
+                'patient_name': client.name,
+            },
+        }
