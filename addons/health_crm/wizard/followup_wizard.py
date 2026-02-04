@@ -34,10 +34,18 @@ class HealthFollowUpWizard(models.TransientModel):
         help='Search and select a client to view their follow-ups'
     )
     
-    lead_id = fields.Many2one(
+    contact_id = fields.Many2one(
         'crm.lead',
         string='Search Contact',
-        help='Search and select a contact/lead to view their follow-ups'
+        domain="[('contact_status', '=', 'contact')]",
+        help='Search and select a contact to view their follow-ups'
+    )
+    
+    lead_filter_id = fields.Many2one(
+        'crm.lead',
+        string='Search Lead',
+        domain="[('contact_status', '=', 'lead')]",
+        help='Search and select a lead to view their follow-ups'
     )
     
     # If opened from a contact form, retain context
@@ -53,19 +61,67 @@ class HealthFollowUpWizard(models.TransientModel):
     
     @api.onchange('client_id')
     def _onchange_client_id(self):
-        """When client is selected, clear lead filter to avoid ambiguity"""
+        """When client is selected, clear other filters to avoid ambiguity"""
         if self.client_id:
-            self.lead_id = False
+            self.contact_id = False
+            self.lead_filter_id = False
     
-    @api.onchange('lead_id')
-    def _onchange_lead_id(self):
-        """When lead is selected, clear client filter to avoid ambiguity"""
-        if self.lead_id:
+    @api.onchange('contact_id')
+    def _onchange_contact_id(self):
+        """When contact is selected, clear other filters to avoid ambiguity"""
+        if self.contact_id:
             self.client_id = False
+            self.lead_filter_id = False
+    
+    @api.onchange('lead_filter_id')
+    def _onchange_lead_filter_id(self):
+        """When lead is selected, clear other filters to avoid ambiguity"""
+        if self.lead_filter_id:
+            self.client_id = False
+            self.contact_id = False
     
     # =========================================================================
     # MENU ACTIONS
     # =========================================================================
+    
+    def _get_or_create_lead_for_client(self):
+        """
+        Find existing lead for client, or create a follow-up lead.
+        This allows activities to be scheduled on leads (not directly on clients)
+        while maintaining a seamless user experience.
+        
+        Search priority:
+        1. Leads where partner_id matches client
+        2. Leads where patient_id matches client  
+        3. Leads where client_name matches client's name
+        """
+        if not self.client_id:
+            return False
+        
+        Lead = self.env['crm.lead']
+        
+        # Search for leads linked to this client via multiple fields
+        # Use OR conditions to find leads by partner_id, patient_id, or client_name
+        lead = Lead.search([
+            '|', '|',
+            ('partner_id', '=', self.client_id.id),
+            ('patient_id', '=', self.client_id.id),
+            ('client_name', '=ilike', self.client_id.name),
+        ], limit=1, order='create_date desc')
+        
+        if not lead:
+            # No existing lead found - create new follow-up lead
+            lead = Lead.create({
+                'name': f"Follow-up: {self.client_id.name}",
+                'partner_id': self.client_id.id,
+                'patient_id': self.client_id.id,
+                'contact_status': 'lead',
+                'type': 'opportunity',
+                'phone': self.client_id.phone,
+                'email_from': self.client_id.email,
+            })
+        
+        return lead
     
     def action_log_lead_calendar(self):
         """
@@ -108,26 +164,39 @@ class HealthFollowUpWizard(models.TransientModel):
         """
         Menu b: Log planned activity (in calendar)
         Opens the activity scheduling wizard.
-        After scheduling (or discarding), returns to this wizard.
+        
+        For clients: finds or creates an associated lead to attach the activity.
+        For contacts/leads: uses the selected record directly.
         """
         self.ensure_one()
         
         # Determine which record to schedule activity on
         res_id = False
         res_model = 'crm.lead'
+        lead_name = None
         
-        if self.lead_id:
-            res_id = self.lead_id.id
+        # Priority: Contact > Lead > Client (via associated lead) > Context lead
+        if self.contact_id:
+            res_id = self.contact_id.id
+            lead_name = self.contact_id.name
+        elif self.lead_filter_id:
+            res_id = self.lead_filter_id.id
+            lead_name = self.lead_filter_id.name
+        elif self.client_id:
+            # Client selected - find or create associated lead
+            lead = self._get_or_create_lead_for_client()
+            if lead:
+                res_id = lead.id
+                lead_name = lead.name
         elif self.context_lead_id:
             res_id = self.context_lead_id.id
+            lead_name = self.context_lead_id.name
         
         if res_id:
             # Open the mail.activity.schedule wizard
-            # Use active_model and active_ids for proper wizard context
-            # The activity wizard will open as a popup
             return {
                 'type': 'ir.actions.act_window',
-                'name': _('Schedule Activity'),
+                'name': _('Schedule Activity on: %s') % lead_name if lead_name else _('Schedule Activity'),
                 'res_model': 'mail.activity.schedule',
                 'view_mode': 'form',
                 'target': 'new',
@@ -138,7 +207,6 @@ class HealthFollowUpWizard(models.TransientModel):
                     'default_res_model': res_model,
                     'default_res_ids': [res_id],
                     'dialog_size': 'medium',
-                    # Store wizard ID to return to after activity scheduling
                     'followup_wizard_id': self.id,
                 },
             }
@@ -148,8 +216,8 @@ class HealthFollowUpWizard(models.TransientModel):
             'type': 'ir.actions.client',
             'tag': 'display_notification',
             'params': {
-                'title': _('No Contact Selected'),
-                'message': _('Please select a Contact/Lead first to schedule an activity.'),
+                'title': _('No Record Selected'),
+                'message': _('Please select a Client, Contact, or Lead first to schedule an activity.'),
                 'type': 'warning',
                 'sticky': False,
             }
@@ -191,9 +259,11 @@ class HealthFollowUpWizard(models.TransientModel):
         # Domain for leads with activities
         domain = [('activity_ids', '!=', False)]
         
-        # Filter by specific lead if selected
-        if self.lead_id:
-            domain = [('id', '=', self.lead_id.id)]
+        # Filter by specific contact or lead if selected
+        if self.contact_id:
+            domain = [('id', '=', self.contact_id.id)]
+        elif self.lead_filter_id:
+            domain = [('id', '=', self.lead_filter_id.id)]
         
         return {
             'type': 'ir.actions.act_window',
@@ -219,9 +289,11 @@ class HealthFollowUpWizard(models.TransientModel):
         if self.client_id:
             domain.append(('partner_id', '=', self.client_id.id))
         
-        # Filter by specific lead if selected
-        if self.lead_id:
-            domain = [('id', '=', self.lead_id.id)]
+        # Filter by specific contact or lead if selected
+        if self.contact_id:
+            domain = [('id', '=', self.contact_id.id)]
+        elif self.lead_filter_id:
+            domain = [('id', '=', self.lead_filter_id.id)]
         
         # Get the custom calendar view
         calendar_view = self.env.ref('health_crm.view_crm_lead_followup_calendar', raise_if_not_found=False)

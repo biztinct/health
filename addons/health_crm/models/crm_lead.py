@@ -1124,6 +1124,14 @@ class HealthLead(models.Model):
         """
         self.ensure_one()
         
+        # Determine correct client name based on relationship type
+        # If caller is caregiver/other and client_name is set, use that
+        # Otherwise use the lead name (caller is the client)
+        if self.contact_relationship_type != 'client' and self.client_name:
+            client_name = self.client_name
+        else:
+            client_name = self.name
+        
         # Open the booking wizard with context from this lead
         return {
             'type': 'ir.actions.act_window',
@@ -1134,7 +1142,7 @@ class HealthLead(models.Model):
             'target': 'new',
             'context': {
                 'default_lead_id': self.id,
-                'default_client_name': self.name,
+                'default_client_name': client_name,
                 'default_client_phone': self.phone,
                 'default_client_email': self.email_from,
                 'default_client_address': self.street_address,

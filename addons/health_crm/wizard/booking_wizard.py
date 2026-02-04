@@ -442,6 +442,7 @@ class HealthBookingWizard(models.TransientModel):
         if self.lead_id and client:
             self.lead_id.write({
                 'patient_id': client.id,
+                'partner_id': client.id,  # Also set partner_id for View Client Dashboard button
                 'contact_status': 'booking',
                 'booking_status': 'pending',
                 'health_contact_outcome': 'service_booked',

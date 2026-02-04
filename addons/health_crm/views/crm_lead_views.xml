@@ -549,6 +549,10 @@
             <xpath expr="//field[@name='name']" position="attributes">
                 <attribute name="string">Contact name</attribute>
             </xpath>
+            <!-- Replace contact_name with client_name to show actual client -->
+            <xpath expr="//field[@name='contact_name']" position="replace">
+                <field name="client_name" string="Client Name"/>
+            </xpath>
         </field>
     </record>
 

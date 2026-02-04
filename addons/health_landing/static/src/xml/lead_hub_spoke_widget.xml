@@ -20,33 +20,33 @@
                     <span class="health_landing_breadcrumb_item" t-esc="getLeadName()"/>
                 </div>
 
-                <h1 class="hub_spoke_title">
-                    <i class="fa fa-user-circle"/> <t t-esc="getLeadName()"/>
+                <h1 class="hub_spoke_title" style="display: flex; flex-wrap: wrap; align-items: center; gap: 10px;">
+                    <span><i class="fa fa-user-circle"/> <t t-esc="getLeadName()"/></span>
                     <!-- Spam Caller Warning Badge -->
                     <t t-if="isSpamCaller()">
                         <span class="badge rounded-pill" 
-                              style="background-color: #dc3545; color: white; font-size: 14px; padding: 6px 16px; font-weight: 600; margin-left: 15px; animation: pulse 1.5s infinite; vertical-align: middle;">
+                              style="background-color: #dc3545; color: white; font-size: 13px; padding: 5px 14px; font-weight: 600; animation: pulse 1.5s infinite;">
                             ⚠️ Spam Caller
                         </span>
                     </t>
                     <!-- Contact Outcome Badge -->
                     <t t-if="getContactOutcome()">
                         <span class="badge rounded-pill" 
-                              t-att-style="getOutcomeBadgeStyle() + ' font-size: 12px; padding: 5px 12px; font-weight: 500; margin-left: 10px; vertical-align: middle;'">
+                              t-att-style="getOutcomeBadgeStyle() + ' font-size: 13px; padding: 5px 14px; font-weight: 600;'">
                             <i class="fa fa-tag" style="margin-right: 4px;"/> <t t-esc="getContactOutcome()"/>
                         </span>
                     </t>
                     <!-- Follow-up Required Badge -->
                     <t t-if="needsFollowup()">
                         <span class="badge rounded-pill" 
-                              style="background-color: #e83e8c; color: white; font-size: 12px; padding: 5px 12px; font-weight: 500; margin-left: 10px; vertical-align: middle;">
+                              style="background-color: #e83e8c; color: white; font-size: 13px; padding: 5px 14px; font-weight: 600;">
                             <i class="fa fa-flag" style="margin-right: 4px;"/> Follow-up Required
                         </span>
                     </t>
                     <!-- Next Follow-up Date Badge -->
                     <t t-if="hasNextFollowup()">
                         <span class="badge rounded-pill" 
-                              style="background-color: #6610f2; color: white; font-size: 12px; padding: 5px 12px; font-weight: 500; margin-left: 10px; vertical-align: middle;">
+                              style="background-color: #6610f2; color: white; font-size: 13px; padding: 5px 14px; font-weight: 600;">
                             <i class="fa fa-calendar" style="margin-right: 4px;"/> <t t-esc="getNextFollowupDate()"/>
                         </span>
                     </t>

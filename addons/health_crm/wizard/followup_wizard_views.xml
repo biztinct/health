@@ -19,14 +19,19 @@
                     <!-- Search Box -->
                     <div class="alert alert-light" role="alert" style="margin-bottom: 20px; padding: 15px;">
                         <div class="row">
-                            <div class="col-6">
+                            <div class="col-4">
                                 <field name="client_id" placeholder="Search Client..."
                                        options="{'no_create': true, 'no_open': true}"
                                        domain="[('is_patient', '=', True)]"
                                        style="width: 100%;"/>
                             </div>
-                            <div class="col-6">
-                                <field name="lead_id" placeholder="Search Contact/Lead..."
+                            <div class="col-4">
+                                <field name="contact_id" placeholder="Search Contact..."
+                                       options="{'no_create': true, 'no_open': true}"
+                                       style="width: 100%;"/>
+                            </div>
+                            <div class="col-4">
+                                <field name="lead_filter_id" placeholder="Search Lead..."
                                        options="{'no_create': true, 'no_open': true}"
                                        style="width: 100%;"/>
                             </div>
@@ -36,15 +41,23 @@
                     <!-- Hidden context field -->
                     <field name="context_lead_id" invisible="1"/>
 
+                    <!-- Info banner when client is selected -->
+                    <div class="alert alert-info" role="alert" 
+                         style="margin-bottom: 15px; padding: 10px;"
+                         invisible="not client_id">
+                        <i class="fa fa-info-circle" style="margin-right: 8px;"/>
+                        <span>Activities will be scheduled on the client's associated lead. If no lead exists, one will be created automatically.</span>
+                    </div>
+
                     <!-- Menu Items as Button Grid -->
                     <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; padding: 10px;">
                         
-                        <!-- a. Log as Lead - Hidden when client selected (client already exists) -->
+                        <!-- a. Log as Lead - Hidden when client or lead selected (already have records) -->
                         <button name="action_log_lead_calendar"
                                 type="object"
                                 class="btn btn-outline-primary"
                                 style="padding: 20px; text-align: left; border-radius: 8px;"
-                                invisible="client_id">
+                                invisible="client_id or lead_filter_id">
                             <span class="fa fa-user-plus fa-2x" style="display: block; margin-bottom: 8px;"/>
                             <strong>Log as Lead</strong>
                             <p class="text-muted mb-0" style="font-size: 12px;">Create new lead in calendar</p>
