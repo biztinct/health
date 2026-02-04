@@ -673,17 +673,26 @@
         <field name="arch" type="xml">
             <calendar string="Follow-up Calendar"
                       date_start="calendar_date"
+                      date_stop="calendar_date_end"
+                      all_day="calendar_all_day"
                       color="contact_status"
                       mode="month"
-                      quick_create="0"
-                      event_open_popup="1"
-                      hide_time="1">
-                <!-- Display: Client Name - Activity Type -->
+                      quick_create="false"
+                      event_open_popup="true"
+                      event_limit="5">
+                <!-- Display name (shown as calendar entry title) -->
                 <field name="calendar_display_name"/>
-                <field name="contact_status"/>
-                <field name="name"/>
-                <field name="phone"/>
-                <field name="user_id" widget="many2one_avatar_user"/>
+                
+                <!-- Sidebar filter: Contact Status with checkboxes -->
+                <field name="contact_status" filters="1"/>
+                
+                <!-- Sidebar filter: Salesperson with checkboxes -->
+                <field name="user_id" string="Salesperson" filters="1" 
+                       widget="many2one_avatar_user" avatar_field="avatar_128"/>
+                
+                <!-- Popup fields -->
+                <field name="phone" options="{'icon': 'fa fa-phone'}"/>
+                <field name="name" string="Contact Name" options="{'icon': 'fa fa-user'}"/>
             </calendar>
         </field>
     </record>
@@ -696,11 +705,12 @@
         <field name="arch" type="xml">
             <search string="Search Follow-ups">
                 <!-- Search Fields -->
-                <field name="name" string="Client/Lead Name"/>
+                <field name="name" string="Contact Name" filter_domain="[('name', 'ilike', self)]"/>
                 <field name="phone"/>
                 <field name="user_id" string="Salesperson"/>
+                <field name="contact_status"/>
                 
-                <!-- Filter by Contact Status -->
+                <!-- Status filters -->
                 <filter string="Initial Contact" name="filter_active" 
                         domain="[('contact_status', '=', 'active')]"/>
                 <filter string="Lead" name="filter_lead" 
@@ -712,7 +722,7 @@
                 
                 <separator/>
                 
-                <!-- Filter by Activity Status -->
+                <!-- Activity filters -->
                 <filter string="Has Activities" name="filter_has_activities" 
                         domain="[('activity_ids', '!=', False)]"/>
                 <filter string="Overdue" name="filter_overdue" 
@@ -729,14 +739,6 @@
                         context="{'group_by': 'contact_status'}"/>
                 <filter string="Salesperson" name="group_user" 
                         context="{'group_by': 'user_id'}"/>
-                
-                <!-- Search Panel for Sidebar Filters -->
-                <searchpanel>
-                    <field name="contact_status" string="Contact Status" 
-                           select="multi" icon="fa-user" enable_counters="1"/>
-                    <field name="user_id" string="Salesperson" 
-                           select="multi" icon="fa-users" enable_counters="1"/>
-                </searchpanel>
             </search>
         </field>
     </record>

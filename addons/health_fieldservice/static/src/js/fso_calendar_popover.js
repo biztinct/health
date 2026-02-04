@@ -3,7 +3,7 @@ import { patch } from "@web/core/utils/patch";
 
 /**
  * Patch the CalendarCommonPopover to add Dashboard button and action
- * for Booking calendar popups
+ * for Booking calendar popups and CRM calendar popups
  */
 patch(CalendarCommonPopover, {
     subTemplates: {
@@ -16,7 +16,7 @@ patch(CalendarCommonPopover, {
 patch(CalendarCommonPopover.prototype, {
     /**
      * Handle Dashboard button click
-     * Opens the client dashboard (patient form view)
+     * Opens the appropriate dashboard based on the model
      */
     async onDashboardAction(e) {
         e.preventDefault();
@@ -27,16 +27,38 @@ patch(CalendarCommonPopover.prototype, {
             const orm = this.env.services.orm;
             const action = this.env.services.action;
 
-            // Call the action_open_fso_dashboard method on the backend using ORM service
-            // This method is defined in health.fieldservice.order model
-            const actionResult = await orm.call(
-                'health.fieldservice.order',
-                'action_open_fso_dashboard',
-                [record.id]
-            );
+            // Determine which model we're working with
+            const modelName = this.props.model?.resModel || record?.resModel || '';
+            let actionResult = null;
+
+            if (modelName === 'health.fieldservice.order') {
+                // FSO Calendar - call action_open_fso_dashboard
+                actionResult = await orm.call(
+                    'health.fieldservice.order',
+                    'action_open_fso_dashboard',
+                    [record.id]
+                );
+            } else if (modelName === 'crm.lead') {
+                // CRM Calendar - call action_open_lead_hub
+                actionResult = await orm.call(
+                    'crm.lead',
+                    'action_open_lead_hub',
+                    [record.id]
+                );
+            } else {
+                // Unknown model - try to open a generic form view
+                console.warn('[Calendar] Unknown model for dashboard:', modelName);
+                actionResult = {
+                    type: 'ir.actions.act_window',
+                    res_model: modelName,
+                    res_id: record.id,
+                    views: [[false, 'form']],
+                    target: 'current',
+                };
+            }
 
             if (actionResult) {
-                // Execute the returned action (which opens the client dashboard)
+                // Execute the returned action
                 action.doAction(actionResult);
                 // Close the calendar popup
                 this.props.close();

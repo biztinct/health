@@ -241,6 +241,21 @@ class HealthLead(models.Model):
         help='Type of calendar entry - Activity or Lead'
     )
     
+    calendar_date_end = fields.Datetime(
+        'Calendar End Date',
+        compute='_compute_calendar_fields',
+        store=True,
+        help='End date for calendar display - 1 hour after start for duration-based display'
+    )
+    
+    calendar_all_day = fields.Boolean(
+        'All Day Event',
+        compute='_compute_calendar_fields',
+        store=True,
+        default=True,
+        help='Flag to indicate if this is an all-day event'
+    )
+    
     @api.depends('name', 'activity_ids', 'activity_ids.activity_type_id', 'activity_ids.date_deadline', 'contact_status', 'next_action_at', 'create_date')
     def _compute_calendar_fields(self):
         """
@@ -337,6 +352,16 @@ class HealthLead(models.Model):
                     record.calendar_color = 7  # Magenta - New/Active
                 else:
                     record.calendar_color = 0  # Default
+            
+            # Compute end date for all-day event display (enables background colors)
+            # Set as all-day events for better visual display
+            record.calendar_all_day = True
+            if calendar_date:
+                # For all-day events, end date should be the same day
+                # This creates an all-day block with background color
+                record.calendar_date_end = calendar_date
+            else:
+                record.calendar_date_end = False
     
     # On behalf tracking - who is the contact calling for
     contacting_on_behalf = fields.Selection([
