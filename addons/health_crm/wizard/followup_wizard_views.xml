@@ -39,11 +39,12 @@
                     <!-- Menu Items as Button Grid -->
                     <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; padding: 10px;">
                         
-                        <!-- a. Log as Lead -->
+                        <!-- a. Log as Lead - Hidden when client selected (client already exists) -->
                         <button name="action_log_lead_calendar"
                                 type="object"
                                 class="btn btn-outline-primary"
-                                style="padding: 20px; text-align: left; border-radius: 8px;">
+                                style="padding: 20px; text-align: left; border-radius: 8px;"
+                                invisible="client_id">
                             <span class="fa fa-user-plus fa-2x" style="display: block; margin-bottom: 8px;"/>
                             <strong>Log as Lead</strong>
                             <p class="text-muted mb-0" style="font-size: 12px;">Create new lead in calendar</p>

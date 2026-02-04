@@ -59,6 +59,24 @@
     </record>
 
 
+    <!-- Add Dashboard Button to Base CRM Lead Form (for calendar popup) -->
+    <record id="view_crm_lead_form_dashboard_button" model="ir.ui.view">
+        <field name="name">crm.lead.form.dashboard.button</field>
+        <field name="model">crm.lead</field>
+        <field name="inherit_id" ref="crm.crm_lead_view_form"/>
+        <field name="priority">100</field>
+        <field name="arch" type="xml">
+            <xpath expr="//header" position="inside">
+                <button name="action_open_lead_hub" 
+                        string="Dashboard" 
+                        type="object" 
+                        class="btn-primary"
+                        icon="fa-dashboard"
+                        title="Open Lead Hub-Spoke Dashboard"/>
+            </xpath>
+        </field>
+    </record>
+
     <!-- Activity View - Hide expected_revenue ($ value) from display and add Back button -->
     <record id="view_healthcare_lead_activity" model="ir.ui.view">
         <field name="name">crm.lead.activity.healthcare</field>
@@ -640,6 +658,120 @@
             <xpath expr="//button[@name='action_generate_leads']" position="attributes">
                 <attribute name="invisible">1</attribute>
             </xpath>
+        </field>
+    </record>
+
+    <!-- ================================================================= -->
+    <!-- FOLLOW-UP CALENDAR VIEW                                          -->
+    <!-- ================================================================= -->
+    
+    <!-- Custom Calendar View for Follow-up Activities -->
+    <record id="view_crm_lead_followup_calendar" model="ir.ui.view">
+        <field name="name">crm.lead.followup.calendar</field>
+        <field name="model">crm.lead</field>
+        <field name="priority">50</field>
+        <field name="arch" type="xml">
+            <calendar string="Follow-up Calendar"
+                      date_start="calendar_date"
+                      color="contact_status"
+                      mode="month"
+                      quick_create="0"
+                      event_open_popup="1"
+                      hide_time="1">
+                <!-- Display: Client Name - Activity Type -->
+                <field name="calendar_display_name"/>
+                <field name="contact_status"/>
+                <field name="name"/>
+                <field name="phone"/>
+                <field name="user_id" widget="many2one_avatar_user"/>
+            </calendar>
+        </field>
+    </record>
+    
+    <!-- Search View for Follow-up Calendar -->
+    <record id="view_crm_lead_followup_calendar_search" model="ir.ui.view">
+        <field name="name">crm.lead.followup.calendar.search</field>
+        <field name="model">crm.lead</field>
+        <field name="priority">50</field>
+        <field name="arch" type="xml">
+            <search string="Search Follow-ups">
+                <!-- Search Fields -->
+                <field name="name" string="Client/Lead Name"/>
+                <field name="phone"/>
+                <field name="user_id" string="Salesperson"/>
+                
+                <!-- Filter by Contact Status -->
+                <filter string="Initial Contact" name="filter_active" 
+                        domain="[('contact_status', '=', 'active')]"/>
+                <filter string="Lead" name="filter_lead" 
+                        domain="[('contact_status', '=', 'lead')]"/>
+                <filter string="Booking" name="filter_booking" 
+                        domain="[('contact_status', '=', 'booking')]"/>
+                <filter string="Lost Booking" name="filter_lost" 
+                        domain="[('contact_status', '=', 'lost_booking')]"/>
+                
+                <separator/>
+                
+                <!-- Filter by Activity Status -->
+                <filter string="Has Activities" name="filter_has_activities" 
+                        domain="[('activity_ids', '!=', False)]"/>
+                <filter string="Overdue" name="filter_overdue" 
+                        domain="[('activity_date_deadline', '&lt;', context_today().strftime('%Y-%m-%d'))]"/>
+                <filter string="Today" name="filter_today" 
+                        domain="[('activity_date_deadline', '=', context_today().strftime('%Y-%m-%d'))]"/>
+                <filter string="Future" name="filter_future" 
+                        domain="[('activity_date_deadline', '&gt;', context_today().strftime('%Y-%m-%d'))]"/>
+                
+                <separator/>
+                
+                <!-- Group By -->
+                <filter string="Contact Status" name="group_contact_status" 
+                        context="{'group_by': 'contact_status'}"/>
+                <filter string="Salesperson" name="group_user" 
+                        context="{'group_by': 'user_id'}"/>
+                
+                <!-- Search Panel for Sidebar Filters -->
+                <searchpanel>
+                    <field name="contact_status" string="Contact Status" 
+                           select="multi" icon="fa-user" enable_counters="1"/>
+                    <field name="user_id" string="Salesperson" 
+                           select="multi" icon="fa-users" enable_counters="1"/>
+                </searchpanel>
+            </search>
+        </field>
+    </record>
+    
+    <!-- Action for Follow-up Calendar from Wizard -->
+    <record id="action_followup_calendar" model="ir.actions.act_window">
+        <field name="name">Follow-up Calendar</field>
+        <field name="res_model">crm.lead</field>
+        <field name="view_mode">calendar,list,form</field>
+        <field name="domain">[('calendar_date', '!=', False)]</field>
+        <field name="context">{}</field>
+        <field name="search_view_id" ref="view_crm_lead_followup_calendar_search"/>
+        <field name="view_ids" eval="[
+            (5, 0, 0),
+            (0, 0, {'view_mode': 'calendar', 'view_id': ref('view_crm_lead_followup_calendar')}),
+            (0, 0, {'view_mode': 'list'}),
+            (0, 0, {'view_mode': 'form'}),
+        ]"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No follow-up activities scheduled
+            </p>
+            <p>
+                Leads and contacts with scheduled activities will appear here.
+                <br/>
+                <strong>Color Legend:</strong>
+                <ul>
+                    <li><span style="color: #dc3545;">●</span> Red = Overdue activities</li>
+                    <li><span style="color: #fd7e14;">●</span> Orange = Due today</li>
+                    <li><span style="color: #ffc107;">●</span> Yellow = Lead needs attention</li>
+                    <li><span style="color: #17a2b8;">●</span> Blue = Future activities</li>
+                    <li><span style="color: #28a745;">●</span> Green = Booking</li>
+                    <li><span style="color: #e83e8c;">●</span> Pink = New/Active</li>
+                </ul>
+            </p>
         </field>
     </record>
 

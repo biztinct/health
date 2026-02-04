@@ -100,7 +100,17 @@ export class LeadHubSpokeWidget extends Component {
                 "crm.lead",
                 "read",
                 [this.props.leadId],
-                { fields: ["name", "is_spam_caller", "contact_status"] }
+                {
+                    fields: [
+                        "name",
+                        "is_spam_caller",
+                        "contact_status",
+                        "contact_outcome",
+                        "health_contact_outcome",
+                        "lead_followup_required",
+                        "next_action_at"
+                    ]
+                }
             );
             this.state.leadData = data[0] || {};
         } catch (error) {
@@ -116,6 +126,88 @@ export class LeadHubSpokeWidget extends Component {
 
     isSpamCaller() {
         return this.state.leadData?.is_spam_caller || false;
+    }
+
+    getContactOutcome() {
+        // Get the display name for contact outcome
+        const outcome = this.state.leadData?.health_contact_outcome || this.state.leadData?.contact_outcome;
+        const outcomeLabels = {
+            'pending_callback': 'Pending Callback',
+            'pending_follow_up': 'Pending Follow-up',
+            'service_booked': 'Service Booked',
+            'interested': 'Interested',
+            'not_interested': 'Not Interested',
+            'rejected': 'Rejected',
+            'no_followup_required': 'No Follow-up Required'
+        };
+        return outcomeLabels[outcome] || outcome || '';
+    }
+
+    getOutcomeBadgeStyle() {
+        // Return CSS style based on outcome
+        const outcome = this.state.leadData?.health_contact_outcome || this.state.leadData?.contact_outcome;
+        const styles = {
+            'pending_callback': 'background-color: #ffc107; color: #000;',       // Yellow
+            'pending_follow_up': 'background-color: #17a2b8; color: white;',     // Cyan
+            'service_booked': 'background-color: #28a745; color: white;',        // Green
+            'interested': 'background-color: #007bff; color: white;',            // Blue
+            'not_interested': 'background-color: #6c757d; color: white;',        // Gray
+            'rejected': 'background-color: #dc3545; color: white;',              // Red
+            'no_followup_required': 'background-color: #6c757d; color: white;'   // Gray
+        };
+        return styles[outcome] || 'background-color: #6c757d; color: white;';
+    }
+
+    needsFollowup() {
+        return this.state.leadData?.lead_followup_required || false;
+    }
+
+    getNextFollowupDate() {
+        const nextAction = this.state.leadData?.next_action_at;
+        if (!nextAction) return '';
+
+        // Format the datetime to a readable date
+        const date = new Date(nextAction);
+        const options = { month: 'short', day: 'numeric' };
+        return date.toLocaleDateString('en-US', options);
+    }
+
+    hasNextFollowup() {
+        return !!this.state.leadData?.next_action_at;
+    }
+
+    // Breadcrumb Navigation Handlers
+    async onHomeClick(ev) {
+        ev.preventDefault();
+        // Navigate to the main Odoo home/apps menu
+        await this.actionService.doAction('menu');
+    }
+
+    async onCrmClick(ev) {
+        ev.preventDefault();
+        // Navigate to CRM Pipeline (Kanban view is default for CRM)
+        await this.actionService.doAction({
+            type: 'ir.actions.act_window',
+            name: 'CRM',
+            res_model: 'crm.lead',
+            view_mode: 'kanban,list,form',
+            views: [[false, 'kanban'], [false, 'list'], [false, 'form']],
+            target: 'main',
+        });
+    }
+
+    async onLeadListClick(ev) {
+        ev.preventDefault();
+        // Navigate to Leads list view
+        await this.actionService.doAction({
+            type: 'ir.actions.act_window',
+            name: 'Leads',
+            res_model: 'crm.lead',
+            view_mode: 'list,form',
+            views: [[false, 'list'], [false, 'form']],
+            target: 'main',
+            domain: [['type', '=', 'lead']],
+        });
     }
 
     getSpokePosition(angle) {

@@ -48,6 +48,22 @@ class HealthFollowUpWizard(models.TransientModel):
     )
     
     # =========================================================================
+    # FILTER ONCHANGE - MUTUALLY EXCLUSIVE FILTERS
+    # =========================================================================
+    
+    @api.onchange('client_id')
+    def _onchange_client_id(self):
+        """When client is selected, clear lead filter to avoid ambiguity"""
+        if self.client_id:
+            self.lead_id = False
+    
+    @api.onchange('lead_id')
+    def _onchange_lead_id(self):
+        """When lead is selected, clear client filter to avoid ambiguity"""
+        if self.lead_id:
+            self.client_id = False
+    
+    # =========================================================================
     # MENU ACTIONS
     # =========================================================================
     
@@ -92,6 +108,7 @@ class HealthFollowUpWizard(models.TransientModel):
         """
         Menu b: Log planned activity (in calendar)
         Opens the activity scheduling wizard.
+        After scheduling (or discarding), returns to this wizard.
         """
         self.ensure_one()
         
@@ -105,8 +122,9 @@ class HealthFollowUpWizard(models.TransientModel):
             res_id = self.context_lead_id.id
         
         if res_id:
-            # Open the mail.activity.schedule wizard instead of calling activity_schedule()
-            # This gives us more control over the return behavior
+            # Open the mail.activity.schedule wizard
+            # Use active_model and active_ids for proper wizard context
+            # The activity wizard will open as a popup
             return {
                 'type': 'ir.actions.act_window',
                 'name': _('Schedule Activity'),
@@ -114,9 +132,14 @@ class HealthFollowUpWizard(models.TransientModel):
                 'view_mode': 'form',
                 'target': 'new',
                 'context': {
+                    'active_model': res_model,
+                    'active_id': res_id,
+                    'active_ids': [res_id],
                     'default_res_model': res_model,
                     'default_res_ids': [res_id],
                     'dialog_size': 'medium',
+                    # Store wizard ID to return to after activity scheduling
+                    'followup_wizard_id': self.id,
                 },
             }
         
@@ -185,13 +208,23 @@ class HealthFollowUpWizard(models.TransientModel):
     def action_show_calendar(self):
         """
         Menu e: Show Calendar (displays all current leads and activities)
+        Uses the custom calendar view with color-coding based on activity status.
         """
         self.ensure_one()
         
-        domain = [('contact_status', 'in', ['lead', 'active'])]
+        # Base domain: show leads with calendar_date set (either next_action_at or activity date)
+        domain = [('calendar_date', '!=', False)]
         
+        # Filter by client if selected
         if self.client_id:
             domain.append(('partner_id', '=', self.client_id.id))
+        
+        # Filter by specific lead if selected
+        if self.lead_id:
+            domain = [('id', '=', self.lead_id.id)]
+        
+        # Get the custom calendar view
+        calendar_view = self.env.ref('health_crm.view_crm_lead_followup_calendar', raise_if_not_found=False)
         
         return {
             'type': 'ir.actions.act_window',
@@ -199,10 +232,12 @@ class HealthFollowUpWizard(models.TransientModel):
             'res_model': 'crm.lead',
             'view_mode': 'calendar,list,form',
             'domain': domain,
-            'context': {
-                'search_default_activities_overdue': 1,
-                'search_default_activities_today': 1,
-            },
+            'view_id': calendar_view.id if calendar_view else False,
+            'views': [
+                (calendar_view.id if calendar_view else False, 'calendar'),
+                (False, 'list'),
+                (False, 'form'),
+            ],
             'target': 'current',
         }
     

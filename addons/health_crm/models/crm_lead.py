@@ -206,6 +206,138 @@ class HealthLead(models.Model):
         for record in self:
             record.is_spam_caller = record.contact_status == 'spam'
     
+    # =========================================================================
+    # CALENDAR VIEW FIELDS
+    # =========================================================================
+    
+    calendar_color = fields.Integer(
+        'Calendar Color',
+        compute='_compute_calendar_fields',
+        store=True,
+        help='Color for calendar entry based on activity status'
+    )
+    
+    calendar_display_name = fields.Char(
+        'Calendar Display',
+        compute='_compute_calendar_fields',
+        store=True,
+        help='Display name for calendar entry showing lead name and activity type'
+    )
+    
+    calendar_date = fields.Datetime(
+        'Calendar Date',
+        compute='_compute_calendar_fields',
+        store=True,
+        help='Date for calendar display - uses earliest activity date, next_action_at, or create_date'
+    )
+    
+    calendar_entry_type = fields.Selection([
+        ('activity', 'Activity'),
+        ('lead', 'Lead'),
+    ],
+        string='Calendar Entry Type',
+        compute='_compute_calendar_fields',
+        store=True,
+        help='Type of calendar entry - Activity or Lead'
+    )
+    
+    @api.depends('name', 'activity_ids', 'activity_ids.activity_type_id', 'activity_ids.date_deadline', 'contact_status', 'next_action_at', 'create_date')
+    def _compute_calendar_fields(self):
+        """
+        Compute calendar color, display name, entry type, and date based on activity status.
+        
+        Color Legend (Odoo calendar color indices):
+        1 = Red (Overdue activities)
+        2 = Orange (Activities due today)
+        3 = Yellow (Lead without activities - needs attention)
+        4 = Light Blue (Lead with future activities scheduled)
+        5 = Green (Booking status)
+        7 = Magenta (New leads/Active status)
+        9 = Purple (Lost booking)
+        
+        Entry Types:
+        - 'activity': Has scheduled activities (shown by activity date)
+        - 'lead': No activities (shown by next_action_at or create_date)
+        """
+        today = fields.Date.today()
+        
+        for record in self:
+            # Determine calendar display name and date
+            activity_type = ''
+            activity_icon = ''
+            calendar_date = record.next_action_at  # Default to next_action_at
+            entry_type = 'lead'  # Default to lead
+            
+            if record.activity_ids:
+                entry_type = 'activity'
+                # Get the nearest activity (sorted by date)
+                sorted_activities = record.activity_ids.filtered(lambda a: a.date_deadline).sorted('date_deadline')
+                if sorted_activities:
+                    nearest_activity = sorted_activities[0]
+                    if nearest_activity.activity_type_id:
+                        activity_name = nearest_activity.activity_type_id.name
+                        # Add icon based on activity type
+                        activity_icons = {
+                            'Call': '📞',
+                            'Email': '📧',
+                            'Meeting': '🤝',
+                            'To-Do': '✅',
+                            'Upload Document': '📄',
+                        }
+                        activity_icon = activity_icons.get(activity_name, '📋')
+                        activity_type = f"{activity_icon} {activity_name}"
+                    
+                    # Convert activity date to datetime for calendar
+                    if nearest_activity.date_deadline:
+                        try:
+                            activity_datetime = fields.Datetime.from_string(f"{nearest_activity.date_deadline} 09:00:00")
+                            if activity_datetime:
+                                if not calendar_date or activity_datetime < calendar_date:
+                                    calendar_date = activity_datetime
+                        except:
+                            pass
+            
+            # Fallback to create_date if no other date is set (ensures ALL leads appear)
+            if not calendar_date and record.create_date:
+                calendar_date = record.create_date
+            
+            # Format: "Client name - Activity" (e.g., "Dec3 - 📞 Call") or "Client name [Lead]"
+            client_name = record.name or 'Unnamed'
+            if activity_type:
+                record.calendar_display_name = f"{client_name} - {activity_type}"
+            elif entry_type == 'lead':
+                record.calendar_display_name = f"👤 {client_name}"
+            else:
+                record.calendar_display_name = client_name
+                
+            record.calendar_date = calendar_date
+            record.calendar_entry_type = entry_type
+            
+            # Determine calendar color based on activity status
+            if record.activity_ids:
+                # Check for overdue activities
+                overdue = any(act.date_deadline and act.date_deadline < today for act in record.activity_ids)
+                due_today = any(act.date_deadline and act.date_deadline == today for act in record.activity_ids)
+                
+                if overdue:
+                    record.calendar_color = 1  # Red - Overdue
+                elif due_today:
+                    record.calendar_color = 2  # Orange - Due today
+                else:
+                    record.calendar_color = 4  # Light Blue - Future activities
+            else:
+                # No activities - color by contact status
+                if record.contact_status == 'booking':
+                    record.calendar_color = 5  # Green - Booking
+                elif record.contact_status == 'lead':
+                    record.calendar_color = 3  # Yellow - Lead needs attention
+                elif record.contact_status == 'lost_booking':
+                    record.calendar_color = 9  # Purple - Lost
+                elif record.contact_status == 'active':
+                    record.calendar_color = 7  # Magenta - New/Active
+                else:
+                    record.calendar_color = 0  # Default
+    
     # On behalf tracking - who is the contact calling for
     contacting_on_behalf = fields.Selection([
         ('self', 'Self'),
@@ -1393,4 +1525,20 @@ class HealthLead(models.Model):
             'view_mode': 'form',
             'target': 'new',
             'context': {'form_view_initial_mode': 'edit'},
+        }
+
+    def action_open_lead_hub(self):
+        """
+        Open hub-and-spoke dashboard for this lead.
+        Used by Dashboard button in calendar popup.
+        """
+        self.ensure_one()
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'health_landing_lead_hub',
+            'name': f'Lead Hub: {self.name}',
+            'params': {
+                'lead_id': self.id,
+                'lead_name': self.name,
+            },
         }
