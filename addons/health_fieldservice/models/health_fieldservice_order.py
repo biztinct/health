@@ -222,6 +222,15 @@ class HealthFieldServiceOrderUnified(models.Model):
     patient_phone = fields.Char('Patient Phone', related='patient_id.mobile', readonly=True)
     patient_email = fields.Char('Patient Email', related='patient_id.email', readonly=True)
     patient_age = fields.Char('Patient Age', related='patient_id.age_display', readonly=True)
+    
+    # Catchment Province for staff filtering
+    patient_catchment_province_id = fields.Many2one(
+        'health.catchment.province',
+        string='Client Catchment Province',
+        related='patient_id.catchment_province_id',
+        store=True,
+        help='Catchment province of the client - used to filter staff with matching healthcare facility'
+    )
 
     # Booking Creator Tracking (PWA Mobile Booking System)
     created_by_employee_id = fields.Many2one(
@@ -2331,6 +2340,37 @@ class HealthFieldServiceOrderUnified(models.Model):
             }
         }
     
+    def action_open_reschedule_calendar(self):
+        """
+        Open calendar view to reschedule this booking.
+        Shows the booking in calendar to easily drag and reschedule.
+        """
+        self.ensure_one()
+        
+        # Get the FSO calendar view
+        calendar_view = self.env.ref(
+            'health_fieldservice.view_health_fieldservice_order_calendar',
+            raise_if_not_found=False
+        )
+        
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _('Reschedule Booking'),
+            'res_model': 'health.fieldservice.order',
+            'view_mode': 'calendar,list,form',
+            'domain': [('id', '=', self.id)],
+            'views': [
+                (calendar_view.id if calendar_view else False, 'calendar'),
+                (False, 'list'),
+                (False, 'form'),
+            ],
+            'target': 'current',
+            'context': {
+                'default_patient_id': self.patient_id.id,
+                'initial_date': self.scheduled_datetime or fields.Datetime.now(),
+            },
+        }
+
     def action_cancel_booking(self):
         """Cancel the booking - opens wizard for structured cancellation"""
         self.ensure_one()

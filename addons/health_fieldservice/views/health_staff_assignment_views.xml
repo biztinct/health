@@ -100,10 +100,11 @@
                                     <span>Staff Assignment</span>
                                 </div>
                                 <group col="2">
+                                    <field name="client_catchment_province_id" invisible="1"/>
                                     <field name="staff_id"
                                            options="{'no_create': True, 'no_edit': True}"
-                                           domain="[('is_healthcare_staff', '=', True), ('employment_status', '=', 'active')]"
-                                           placeholder="Unassigned - Drag to assign in timeline view"/>
+                                           domain="[('is_healthcare_staff', '=', True), ('employment_status', '=', 'active'), '|', ('staff_catchment_province_id', '=', False), ('staff_catchment_province_id', '=', client_catchment_province_id)]"
+                                           placeholder="Select staff from matching catchment area"/>
                                     <field name="assignment_role"/>
                                     <field name="staff_confirmed_date" readonly="1" invisible="not staff_confirmed_date"/>
                                 </group>
@@ -196,105 +197,6 @@
                                             <field name="buffer_before"/>
                                             <field name="buffer_after"/>
                                         </group>
-                                    </div>
-                                </div>
-                            </div>
-                        </page>
-
-                        <page string="🤖 AI Insights" name="ai_insights" groups="health_base.group_healthcare_operations_manager">
-                            <div class="vu-section">
-                                <div class="vu-section__title">
-                                    <span class="vu-section__icon" data-icon="timeline"/>
-                                    <div>
-                                        <span>AI Insights</span>
-                                        <small class="text-muted d-block">Optimization signals, recommendations and quick actions</small>
-                                    </div>
-                                </div>
-                                <div class="alert alert-info" role="alert" invisible="ml_optimization_applied">
-                                    <i class="fa fa-lightbulb-o" title="AI tip"/> <strong>AI Optimization Available!</strong><br/>
-                                    Click "Apply AI Optimization" above to get the best staff recommendations powered by machine learning.
-                                </div>
-                                
-                                <div class="alert alert-success" role="alert" invisible="not ml_optimization_applied">
-                                    <i class="fa fa-check-circle" title="AI optimized"/> <strong>AI Optimized Assignment</strong><br/>
-                                    This assignment has been optimized using AI/ML algorithms for best results.
-                                </div>
-                                
-                                <div class="vu-section-grid">
-                                    <div class="vu-card">
-                                        <div class="vu-card__title">
-                                            <span class="vu-section__icon" data-icon="activity"/>
-                                            <span>AI Assignment Intelligence</span>
-                                        </div>
-                                        <group>
-                                            <field name="ai_assignment_score" widget="progressbar" 
-                                                   help="Overall AI assessment of assignment quality (0-100%)"/>
-                                            <field name="assignment_confidence" widget="progressbar"
-                                                   help="AI confidence in assignment success (0-100%)"/>
-                                            <field name="predicted_success_probability" widget="progressbar"
-                                                   help="ML predicted probability of successful completion"/>
-                                            <field name="predicted_complexity" widget="badge"
-                                                   help="AI assessment of assignment complexity level"/>
-                                            <field name="predicted_duration" widget="float_time"
-                                                   help="AI predicted duration for this assignment"/>
-                                        </group>
-                                    </div>
-                                    
-                                    <div class="vu-card">
-                                        <div class="vu-card__title">
-                                            <span class="vu-section__icon" data-icon="timeline"/>
-                                            <span>ML Optimization Status</span>
-                                        </div>
-                                        <group>
-                                            <field name="ml_optimization_applied" widget="boolean_toggle"
-                                                   help="Whether ML optimization has been applied"/>
-                                            <field name="optimization_timestamp" readonly="1"
-                                                   help="When AI optimization was last applied"/>
-                                            <field name="required_skills_json" widget="ace" options="{'mode': 'json'}" readonly="1"
-                                                   invisible="not required_skills_json"/>
-                                            <field name="staff_skills_match" widget="ace" options="{'mode': 'json'}" readonly="1"
-                                                   invisible="not staff_skills_match"/>
-                                        </group>
-                                    </div>
-                                </div>
-                                
-                                <div class="vu-section-grid">
-                                    <div class="vu-card">
-                                        <div class="vu-card__title">
-                                            <span class="vu-section__icon" data-icon="users-group"/>
-                                            <span>Optimal Staff Suggestions</span>
-                                        </div>
-                                        <group>
-                                            <field name="optimal_staff_suggestions" widget="ace" options="{'mode': 'json'}" 
-                                                   placeholder="💭 AI-generated staff suggestions will appear here after optimization. Click 'Apply AI Optimization' to get recommendations."/>
-                                        </group>
-                                    </div>
-                                    <div class="vu-card">
-                                        <div class="vu-card__title">
-                                            <span class="vu-section__icon" data-icon="file-text"/>
-                                            <span>Optimization Insights</span>
-                                        </div>
-                                        <group>
-                                            <field name="optimization_suggestions" widget="ace" options="{'mode': 'json'}" 
-                                                   placeholder="💡 Optimization recommendations and insights will appear here after AI analysis."/>
-                                        </group>
-                                    </div>
-                                </div>
-                                
-                                <div class="vu-card">
-                                    <div class="vu-card__title">
-                                        <span class="vu-section__icon" data-icon="timeline"/>
-                                        <span>Quick Actions</span>
-                                    </div>
-                                    <div class="d-flex gap-3 flex-wrap">
-                                        <button name="action_apply_ai_optimization" type="object" 
-                                                string="🤖 Apply AI Optimization" class="btn btn-primary"
-                                                invisible="state not in ('draft', 'assigned')"
-                                                help="Apply AI optimization to get the best staff recommendations"/>
-                                        <button name="action_get_ai_predictions" type="object" 
-                                                string="📊 Update AI Predictions" class="btn btn-secondary"
-                                                invisible="state in ('completed', 'cancelled')"
-                                                help="Generate fresh AI predictions for this assignment"/>
                                     </div>
                                 </div>
                             </div>

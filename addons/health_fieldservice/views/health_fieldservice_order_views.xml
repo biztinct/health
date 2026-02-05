@@ -56,7 +56,10 @@
                             groups="health_base.group_healthcare_operations_manager"
                             help="Confirm booking and move to next stage (quote is optional)"/>
 
-                    <field name="stage_id" widget="statusbar" options="{'clickable': '1', 'fold_field': 'fold'}"/>
+                    <button name="action_open_reschedule_calendar" type="object"
+                            string="📅 Reschedule" class="btn-secondary"
+                            invisible="state in ('completed', 'completed_pending_invoice', 'cancelled', 'closed')"
+                            help="Open calendar view to reschedule this booking"/>
                 </header>
                 
                 <!-- Quote Information Banner (Optional) -->
@@ -180,27 +183,29 @@
                                 groups="health_base.group_healthcare_operations_manager"/>
                     </div>
                     
-                    <!-- Service Timer Widget - Top Right Position -->
+                    <!-- Stage Status Bar - Full Width above title -->
+                    <div class="mb-2" style="width: 100%;">
+                        <field name="stage_id" widget="statusbar" options="{'clickable': '1', 'fold_field': 'fold'}"/>
+                    </div>
+                    
+                    <!-- Title and Timer Row -->
                     <field name="service_timer_active" invisible="1"/>
                     <field name="actual_start_datetime" invisible="1"/>
                     <field name="actual_end_datetime" invisible="1"/>
                     <field name="assignment_ids" invisible="1"/>
-                    <div class="timer-top-right-container">
-                        <field name="actual_duration_display" widget="service_timer" nolabel="1"
-                               invisible="not id"/>
-                    </div>
-
-                    <div class="oe_title">
-                        <h1>
-                            <field name="display_name" readonly="1"/>
-                        </h1>
-                        <div class="o_row">
-                            <field name="priority" widget="priority"/>
-                            <field name="state" widget="badge"
-                                   decoration-success="state == 'completed'"
-                                   decoration-info="state == 'assigned'"
-                                   decoration-warning="state == 'in_progress'"
-                                   decoration-danger="state == 'cancelled'"/>
+                    
+                    <div class="d-flex justify-content-between align-items-start" style="width: 100%;">
+                        <div class="oe_title">
+                            <h1>
+                                <field name="display_name" readonly="1"/>
+                            </h1>
+                            <div class="o_row">
+                                <field name="priority" widget="priority"/>
+                            </div>
+                        </div>
+                        <div class="timer-top-right-container">
+                            <field name="actual_duration_display" widget="service_timer" nolabel="1"
+                                   invisible="not id"/>
                         </div>
                     </div>
                     

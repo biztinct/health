@@ -73,6 +73,15 @@ class HealthStaffAssignment(models.Model):
         help='Individual staff member for this assignment (can be unassigned in draft state)'
     )
     
+    # Related field for client's catchment province (used for staff filtering)
+    client_catchment_province_id = fields.Many2one(
+        'health.catchment.province',
+        string='Client Catchment Province',
+        related='fso_id.patient_id.catchment_province_id',
+        store=True,
+        help='Catchment province of the client - used to filter staff with matching healthcare facility'
+    )
+    
     assignment_role = fields.Selection([
         ('lead', 'Lead Staff'),
         ('support', 'Support Staff'),

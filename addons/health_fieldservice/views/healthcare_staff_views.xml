@@ -51,6 +51,8 @@
                             <field name="can_create_invoices" readonly="1"
                                    invisible="not is_healthcare_staff"/>
                             <field name="license_number"/>
+                            <field name="healthcare_facility_id" options="{'no_create': True}"
+                                   help="Staff's healthcare facility - determines catchment province for booking assignments"/>
                             <field name="certification_expiry"/>
                         </group>
 

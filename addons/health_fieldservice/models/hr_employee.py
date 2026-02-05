@@ -62,6 +62,22 @@ class HrEmployee(models.Model):
     )
     primary_facility_id = fields.Many2one('health.facility', string='Primary Facility')
     
+    # Healthcare Facility for Staff Assignment (used for catchment province filtering)
+    healthcare_facility_id = fields.Many2one(
+        'health.facility',
+        string='Healthcare Facility',
+        help='Healthcare facility this staff belongs to. Used to filter staff by catchment province matching client area.'
+    )
+    
+    # Related field to get catchment province from healthcare facility
+    staff_catchment_province_id = fields.Many2one(
+        'health.catchment.province',
+        string='Staff Catchment Province',
+        related='healthcare_facility_id.catchment_province_id',
+        store=True,
+        help='Catchment province derived from the healthcare facility'
+    )
+    
     # Service Capabilities
     service_type_ids = fields.Many2many(
         'health.service.type',
