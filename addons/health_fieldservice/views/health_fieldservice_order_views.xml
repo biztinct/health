@@ -9,52 +9,62 @@
             <form string="Booking">
                 <header>
                     <button name="action_ai_assign_staff" type="object" 
-                            string="🚀 AI Assign Staff" class="oe_highlight"
+                            string="AI Assign Staff" class="oe_highlight"
+                            icon="fa-magic"
                             invisible="True"
                             help="Automatically assign staff using AI matching"/>
                     
                     <button name="action_manual_assign_staff" type="object"
-                            string="👥 Staff Assignment" class="btn-primary"
+                            string="Staff Assignment" class="btn-primary"
+                            icon="fa-users"
                             invisible="state in ('draft', 'completed', 'completed_pending_invoice', 'cancelled', 'closed')"
                             help="Assign staff to this booking"/>
 
                     <button name="action_cancel_booking" type="object"
-                            string="❌ Cancel Booking" class="btn-danger"
+                            string="Cancel Booking" class="btn-danger"
+                            icon="fa-times-circle"
                             invisible="state in ('completed', 'completed_pending_invoice', 'cancelled')"/>
                     
                     <button name="action_confirm_booking" type="object"
-                            string="✅ Confirm Booking" class="btn-success"
+                            string="Confirm Booking" class="btn-success"
+                            icon="fa-check-circle"
                             invisible="state != 'draft'"
                             groups="health_base.group_healthcare_operations_manager"
                             help="Confirm booking and move to next stage (quote is optional)"/>
 
                     <button name="action_open_reschedule_calendar" type="object"
-                            string="📅 Reschedule" class="btn-secondary"
+                            string="Reschedule" class="btn-secondary"
+                            icon="fa-calendar"
                             invisible="state in ('completed', 'completed_pending_invoice', 'cancelled', 'closed')"
                             help="Open calendar view to reschedule this booking"/>
 
                     <button name="action_create_and_open_quote" type="object"
-                            string="🧾 Create Quote" class="btn-info"
+                            string="Create Quote" class="btn-info"
+                            icon="fa-file-text-o"
                             invisible="sale_order_id or not context.get('show_modal_quote_button')"
                             help="Create a quote for this booking"/>
 
                     <button name="action_view_quote" type="object"
-                            string="🧾 Quote" class="btn-info"
+                            string="Quote" class="btn-info"
+                            icon="fa-file-text-o"
                             invisible="not sale_order_id or not context.get('show_modal_quote_button')"
                             help="Open the quote for this booking"/>
 
                     <button name="action_start_service" type="object"
-                            string="▶️ Start Service" class="oe_highlight"
+                            string="Start Service" class="oe_highlight"
+                            icon="fa-play-circle"
                             invisible="state not in ('confirmed', 'assigned') or not assignment_ids"
                             help="Start the service - only available when staff is assigned"/>
 
                     <button name="action_create_final_invoice" type="object"
-                            string="💰 Create Invoice" class="btn-warning"
+                            string="Create Invoice" class="btn-warning"
+                            icon="fa-money"
                             invisible="state not in ['completed', 'completed_pending_invoice'] or invoice_id"
                             help="Create final invoice and initiate payment workflow (Pay Now/Pay Later)"/>
 
                     <button name="action_close_fso" type="object"
-                            string="📁 Close Booking" class="btn-secondary"
+                            string="Close Booking" class="btn-secondary"
+                            icon="fa-folder"
                             invisible="state not in ['completed', 'completed_pending_invoice']"
                             help="Close the booking"/>
                 </header>

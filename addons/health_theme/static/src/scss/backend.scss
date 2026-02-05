@@ -949,9 +949,126 @@ a {
     }
 }
 
-// Remove inline styles from FSO buttons to let theme take over
-.o_form_view header button[style] {
-    // Override inline styles with !important where needed
-    border-radius: 50px !important;
-    font-weight: 700 !important;
+// =============================================================================
+// COLORED ICONS FOR FORM HEADER BUTTONS
+// =============================================================================
+// Each button type gets a distinct, colorful icon to improve visual recognition
+
+.o_form_view .o_form_statusbar>.o_statusbar_buttons,
+.o_form_view header .o_statusbar_buttons {
+
+    button {
+
+        // Default icon styling - contrasting color
+        .fa,
+        i.fa {
+            font-size: 14px;
+            transition: transform 0.2s ease, color 0.2s ease;
+        }
+
+        &:hover .fa,
+        &:hover i.fa {
+            transform: scale(1.1);
+        }
+    }
+
+    // Home button - gray icon
+    button[name*="home"] .fa,
+    button[name*="spam"] .fa {
+        color: #6c757d;
+    }
+
+    // Booking/Calendar buttons - blue icon
+    button[name*="booking"] .fa,
+    button.btn-primary .fa {
+        color: #fff;
+    }
+
+    button.btn-primary:not(:hover) .fa {
+        color: #fff;
+    }
+
+    // Cancel/Danger buttons - red icon
+    button.btn-danger .fa,
+    button[name*="cancel"] .fa {
+        color: #dc3545;
+    }
+
+    button.btn-danger:hover .fa {
+        color: #fff;
+    }
+
+    // Success/Confirm buttons - green icon
+    button.btn-success .fa {
+        color: #198754;
+    }
+
+    button.btn-success:hover .fa {
+        color: #fff;
+    }
+
+    // Calendar/Reschedule - orange icon
+    button[name*="reschedule"] .fa,
+    button[name*="calendar"] .fa {
+        color: #fd7e14;
+    }
+
+    // Consultation - purple icon
+    button[name*="consultation"] .fa,
+    button[name*="escalate_consultation"] .fa {
+        color: #6f42c1;
+    }
+
+    // Escalate - red-orange icon
+    button[name*="escalate"] .fa:not([class*="consultation"]) {
+        color: #e74c3c;
+    }
+
+    // Message - teal icon
+    button[name*="message"] .fa {
+        color: #20c997;
+    }
+
+    // Log Lead/User - blue icon  
+    button[name*="log_lead"] .fa,
+    button[name*="log_as_lead"] .fa {
+        color: #0d6efd;
+    }
+
+    // Log Activity/Clock - orange icon
+    button[name*="activity"] .fa,
+    button[name*="schedule"] .fa {
+        color: #fd7e14;
+    }
+
+    // Log Note - amber icon
+    button[name*="note"] .fa {
+        color: #ffc107;
+    }
+
+    // Quote/Invoice - purple icon
+    button[name*="quote"] .fa,
+    button.btn-info .fa {
+        color: #6f42c1;
+    }
+
+    // Warning buttons - dark text
+    button.btn-warning .fa {
+        color: #664d03;
+    }
+
+    // Start Service - green
+    button[name*="start"] .fa {
+        color: #fff;
+    }
+
+    // Staff Assignment - white on blue
+    button[name*="assign"] .fa {
+        color: #fff;
+    }
+
+    // Secondary buttons - keep gray icons
+    button.btn-secondary .fa {
+        color: #6c757d;
+    }
 }
