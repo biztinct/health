@@ -270,9 +270,10 @@
                             <field name="name" string="Contact Name" placeholder="Contact name..." required="1"/>
                             <!-- Spam Caller Warning Badge -->
                             <field name="is_spam_caller" invisible="1"/>
+                            <field name="contact_status" invisible="1"/>
                             <span class="badge rounded-pill" 
                                   style="background-color: #dc3545; color: white; font-size: 12px; padding: 6px 14px; font-weight: 600; animation: pulse 1.5s infinite;" 
-                                  invisible="not is_spam_caller">
+                                  invisible="not is_spam_caller or contact_status == 'booking'">
                                 ⚠️ Spam Caller
                             </span>
                         </h1>
@@ -411,7 +412,6 @@
                                             <span>Service Information</span>
                                         </div>
                                         <group col="2">
-                                            <field name="booking_status" string="Booking Status"/>
                                             <field name="lead_reason_id" string="Lead Reason" options="{'no_create': True}"/>
                                         </group>
                                     </div>

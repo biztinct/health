@@ -13,9 +13,7 @@
                         <i class="fa fa-home"/> Home
                     </a>
                     <span class="health_landing_breadcrumb_separator">/</span>
-                    <a href="#" class="health_landing_breadcrumb_item" t-on-click="onCrmClick">CRM</a>
-                    <span class="health_landing_breadcrumb_separator">/</span>
-                    <a href="#" class="health_landing_breadcrumb_item" t-on-click="onLeadListClick">Lead</a>
+                    <a href="#" class="health_landing_breadcrumb_item" t-on-click="onContactsClick">Contacts</a>
                     <span class="health_landing_breadcrumb_separator">/</span>
                     <span class="health_landing_breadcrumb_item" t-esc="getLeadName()"/>
                 </div>
@@ -52,8 +50,8 @@
                     </t>
                 </h1>
                 <div class="hub_spoke_action_buttons">
-                    <button type="button" class="hub_spoke_btn hub_spoke_btn--home" t-on-click="onHomeClick" title="Return to Home">
-                        <i class="fa fa-home"/> Home
+                    <button type="button" class="hub_spoke_btn hub_spoke_btn--spam" t-on-click="onMarkSpamClick" title="Mark as Spam">
+                        <i class="fa fa-ban"/> Mark Spam
                     </button>
                     <button type="button" class="hub_spoke_btn hub_spoke_btn--booking" t-on-click="onBookingClick" title="Create booking">
                         <i class="fa fa-calendar-plus-o"/> Booking

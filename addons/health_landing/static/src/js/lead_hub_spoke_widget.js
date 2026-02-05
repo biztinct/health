@@ -25,6 +25,7 @@ export class LeadHubSpokeWidget extends Component {
     setup() {
         this.orm = useService("orm");
         this.actionService = useService("action");
+        this.notification = useService("notification");
         this.svgRef = useRef("hubSpokeSvg");
 
         this.state = useState({
@@ -125,7 +126,24 @@ export class LeadHubSpokeWidget extends Component {
     }
 
     isSpamCaller() {
+        // Don't show spam badge if contact_status is 'booking' (Service Booked takes priority)
+        const contactStatus = this.state.leadData?.contact_status;
+        if (contactStatus === 'booking') {
+            return false;
+        }
         return this.state.leadData?.is_spam_caller || false;
+    }
+
+    getContactStatus() {
+        const status = this.state.leadData?.contact_status;
+        const statusLabels = {
+            'active': 'Initial Contact',
+            'booking': 'Booking',
+            'lead': 'Lead',
+            'lost_booking': 'Lost Booking',
+            'spam': 'Spam Call'
+        };
+        return statusLabels[status] || status || '';
     }
 
     getContactOutcome() {
@@ -183,17 +201,10 @@ export class LeadHubSpokeWidget extends Component {
         await this.actionService.doAction('menu');
     }
 
-    async onCrmClick(ev) {
+    async onContactsClick(ev) {
         ev.preventDefault();
-        // Navigate to CRM Pipeline (Kanban view is default for CRM)
-        await this.actionService.doAction({
-            type: 'ir.actions.act_window',
-            name: 'CRM',
-            res_model: 'crm.lead',
-            view_mode: 'kanban,list,form',
-            views: [[false, 'kanban'], [false, 'list'], [false, 'form']],
-            target: 'main',
-        });
+        // Navigate to All Contacts view
+        await this.actionService.doAction('health_crm.action_all_contacts_grouped');
     }
 
     async onLeadListClick(ev) {
@@ -332,22 +343,30 @@ export class LeadHubSpokeWidget extends Component {
         });
     }
 
-    async onHomeClick() {
+    async onMarkSpamClick() {
         try {
-            const action = await this.orm.call(
+            await this.orm.call(
                 "crm.lead",
                 "action_mark_spam_and_home",
                 [this.props.leadId]
             );
-            if (action && action.type) {
-                await this.actionService.doAction(action);
-            } else {
-                // Fallback: navigate back to CRM list
-                await this.actionService.doAction("health_crm.action_healthcare_opportunities");
-            }
+            // Show notification
+            this.notification.add(
+                "This contact has been marked as spam",
+                {
+                    type: "warning",
+                    title: "Spam Marked",
+                    sticky: false,
+                }
+            );
+            // Reload lead data to update badges
+            await this.loadLeadData();
         } catch (error) {
-            console.error("Failed to execute Home action:", error);
-            await this.actionService.doAction("health_crm.action_healthcare_opportunities");
+            console.error("Failed to mark as spam:", error);
+            this.notification.add(
+                "Failed to mark as spam",
+                { type: "danger" }
+            );
         }
     }
 

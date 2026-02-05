@@ -69,103 +69,129 @@
     font-weight: 400;
 }
 
-/* Action Buttons Bar */
+/* Action Buttons Bar - Modern Pill Style */
 .hub_spoke_action_buttons {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 8px;
+    gap: 10px;
     flex-wrap: wrap;
-    margin-top: 16px;
+    margin-top: 20px;
 }
 
 .hub_spoke_btn {
     display: inline-flex;
     align-items: center;
-    gap: 6px;
-    padding: 8px 14px;
+    gap: 8px;
+    padding: 10px 20px;
     font-size: 13px;
-    font-weight: 600;
-    border: 2px solid transparent;
-    border-radius: 8px;
+    font-weight: 700;
+    border: none;
+    border-radius: 50px;
     cursor: pointer;
-    transition: all 0.2s ease;
-    background: var(--color-surface, #fff);
-    color: var(--color-text-primary, #333);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+    color: #495057;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.06);
+    position: relative;
+    overflow: hidden;
+}
+
+.hub_spoke_btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+    transition: left 0.5s ease;
+}
+
+.hub_spoke_btn:hover::before {
+    left: 100%;
 }
 
 .hub_spoke_btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.hub_spoke_btn:active {
+    transform: translateY(-1px);
 }
 
 .hub_spoke_btn i {
-    font-size: 14px;
+    font-size: 15px;
+    transition: transform 0.3s ease;
 }
 
-/* Button variants with icons */
-.hub_spoke_btn--home {
-    border-color: #6c757d;
-    color: #6c757d;
+.hub_spoke_btn:hover i {
+    transform: scale(1.15);
 }
-.hub_spoke_btn--home:hover {
-    background: #6c757d;
+
+/* Modern colored variants with gradients */
+.hub_spoke_btn--spam {
+    background: linear-gradient(135deg, #dc3545 0%, #a71d2a 100%);
     color: #fff;
+}
+
+.hub_spoke_btn--spam:hover {
+    background: linear-gradient(135deg, #c82333 0%, #8b1722 100%);
 }
 
 .hub_spoke_btn--booking {
-    border-color: #0d6efd;
-    color: #0d6efd;
-}
-.hub_spoke_btn--booking:hover {
-    background: #0d6efd;
+    background: linear-gradient(135deg, #0d6efd 0%, #0856c9 100%);
     color: #fff;
+}
+
+.hub_spoke_btn--booking:hover {
+    background: linear-gradient(135deg, #0b5ed7 0%, #0645a1 100%);
 }
 
 .hub_spoke_btn--consultation {
-    border-color: #6f42c1;
-    color: #6f42c1;
-}
-.hub_spoke_btn--consultation:hover {
-    background: #6f42c1;
+    background: linear-gradient(135deg, #6f42c1 0%, #5a32a3 100%);
     color: #fff;
+}
+
+.hub_spoke_btn--consultation:hover {
+    background: linear-gradient(135deg, #5e35a8 0%, #4a2889 100%);
 }
 
 .hub_spoke_btn--escalate {
-    border-color: #dc3545;
-    color: #dc3545;
-}
-.hub_spoke_btn--escalate:hover {
-    background: #dc3545;
+    background: linear-gradient(135deg, #dc3545 0%, #b52a38 100%);
     color: #fff;
+}
+
+.hub_spoke_btn--escalate:hover {
+    background: linear-gradient(135deg, #c82333 0%, #9d222e 100%);
 }
 
 .hub_spoke_btn--message {
-    border-color: #198754;
-    color: #198754;
-}
-.hub_spoke_btn--message:hover {
-    background: #198754;
+    background: linear-gradient(135deg, #198754 0%, #146c43 100%);
     color: #fff;
+}
+
+.hub_spoke_btn--message:hover {
+    background: linear-gradient(135deg, #157347 0%, #115836 100%);
 }
 
 .hub_spoke_btn--activity {
-    border-color: #fd7e14;
-    color: #fd7e14;
-}
-.hub_spoke_btn--activity:hover {
-    background: #fd7e14;
+    background: linear-gradient(135deg, #fd7e14 0%, #d96b0c 100%);
     color: #fff;
 }
 
-.hub_spoke_btn--note {
-    border-color: #17a2b8;
-    color: #17a2b8;
+.hub_spoke_btn--activity:hover {
+    background: linear-gradient(135deg, #e96b02 0%, #c45c0a 100%);
 }
-.hub_spoke_btn--note:hover {
-    background: #17a2b8;
+
+.hub_spoke_btn--note {
+    background: linear-gradient(135deg, #17a2b8 0%, #128293 100%);
     color: #fff;
+}
+
+.hub_spoke_btn--note:hover {
+    background: linear-gradient(135deg, #138496 0%, #0e6675 100%);
 }
 
 /* SVG Container */
@@ -196,7 +222,8 @@
 
 .hub_spoke_center_circle {
     transition: all var(--timing-normal) var(--easing-standard);
-    fill: #E3F2FD !important; /* Light blue instead of dark */
+    fill: #E3F2FD !important;
+    /* Light blue instead of dark */
 }
 
 .hub_spoke_center_icon {
@@ -285,6 +312,7 @@
         opacity: 0;
         transform: scale(0.3);
     }
+
     to {
         opacity: 1;
         transform: scale(1);
@@ -319,6 +347,7 @@
     from {
         opacity: 0;
     }
+
     to {
         opacity: 1;
     }
@@ -333,6 +362,7 @@
         stroke-dashoffset: 200;
         opacity: 0;
     }
+
     to {
         stroke-dashoffset: 0;
         opacity: 0.4;
@@ -405,6 +435,7 @@
 }
 
 @media (max-width: 480px) {
+
     /* Stack view on very small screens */
     .hub_spoke_svg_container {
         display: none;
@@ -465,9 +496,12 @@
 
 /* Pulse animation for active spoke */
 @keyframes pulse {
-    0%, 100% {
+
+    0%,
+    100% {
         opacity: 1;
     }
+
     50% {
         opacity: 0.6;
     }
