@@ -107,3 +107,33 @@
 .o_text_orange {
     color: orange;
 }
+
+/* Healthcare Booking Calendar - Enhanced visibility */
+.o_calendar_renderer .fc-event {
+    border-width: 2px !important;
+    border-style: solid !important;
+    font-weight: bold !important;
+    
+    .fc-event-main {
+        font-weight: bold !important;
+    }
+    
+    .fc-event-title {
+        font-weight: 700 !important;
+    }
+}
+
+/* Month view events - thicker borders */
+.o_calendar_renderer .fc-daygrid-event {
+    border-width: 2px !important;
+    border-style: solid !important;
+    font-weight: bold !important;
+}
+
+/* Week/Day view events */
+.o_calendar_renderer .fc-timegrid-event {
+    border-width: 2px !important;
+    border-style: solid !important;
+    font-weight: bold !important;
+}
+
