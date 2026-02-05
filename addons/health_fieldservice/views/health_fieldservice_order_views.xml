@@ -14,56 +14,47 @@
                             help="Automatically assign staff using AI matching"/>
                     
                     <button name="action_manual_assign_staff" type="object"
-                            string="👥 Staff Assignment"
-                            style="background-color: #0d6efd; color: white; border: 2px solid #0d6efd; border-radius: 20px; padding: 6px 16px;"
+                            string="👥 Staff Assignment" class="btn-primary"
                             invisible="state in ('draft', 'completed', 'completed_pending_invoice', 'cancelled', 'closed')"
                             help="Assign staff to this booking"/>
 
                     <button name="action_cancel_booking" type="object"
-                            string="❌ Cancel Booking"
-                            style="background-color: transparent; color: #dc3545; border: 2px solid #dc3545; border-radius: 20px; padding: 6px 16px;"
+                            string="❌ Cancel Booking" class="btn-danger"
                             invisible="state in ('completed', 'completed_pending_invoice', 'cancelled')"/>
                     
                     <button name="action_confirm_booking" type="object"
-                            string="✅ Confirm Booking"
-                            style="background-color: #198754; color: white; border: 2px solid #198754; border-radius: 20px; padding: 6px 16px;"
+                            string="✅ Confirm Booking" class="btn-success"
                             invisible="state != 'draft'"
                             groups="health_base.group_healthcare_operations_manager"
                             help="Confirm booking and move to next stage (quote is optional)"/>
 
                     <button name="action_open_reschedule_calendar" type="object"
-                            string="📅 Reschedule"
-                            style="background-color: transparent; color: #6c757d; border: 2px solid #6c757d; border-radius: 20px; padding: 6px 16px;"
+                            string="📅 Reschedule" class="btn-secondary"
                             invisible="state in ('completed', 'completed_pending_invoice', 'cancelled', 'closed')"
                             help="Open calendar view to reschedule this booking"/>
 
                     <button name="action_create_and_open_quote" type="object"
-                            string="🧾 Create Quote"
-                            style="background-color: transparent; color: #6f42c1; border: 2px solid #6f42c1; border-radius: 20px; padding: 6px 16px;"
+                            string="🧾 Create Quote" class="btn-info"
                             invisible="sale_order_id or not context.get('show_modal_quote_button')"
                             help="Create a quote for this booking"/>
 
                     <button name="action_view_quote" type="object"
-                            string="🧾 Quote"
-                            style="background-color: transparent; color: #6f42c1; border: 2px solid #6f42c1; border-radius: 20px; padding: 6px 16px;"
+                            string="🧾 Quote" class="btn-info"
                             invisible="not sale_order_id or not context.get('show_modal_quote_button')"
                             help="Open the quote for this booking"/>
 
                     <button name="action_start_service" type="object"
-                            string="▶️ Start Service"
-                            style="background-color: #28a745; color: white; border: 2px solid #28a745; border-radius: 20px; padding: 6px 16px;"
+                            string="▶️ Start Service" class="oe_highlight"
                             invisible="state not in ('confirmed', 'assigned') or not assignment_ids"
                             help="Start the service - only available when staff is assigned"/>
 
                     <button name="action_create_final_invoice" type="object"
-                            string="💰 Create Invoice"
-                            style="background-color: #ffc107; color: #212529; border: 2px solid #ffc107; border-radius: 20px; padding: 6px 16px;"
+                            string="💰 Create Invoice" class="btn-warning"
                             invisible="state not in ['completed', 'completed_pending_invoice'] or invoice_id"
                             help="Create final invoice and initiate payment workflow (Pay Now/Pay Later)"/>
 
                     <button name="action_close_fso" type="object"
-                            string="📁 Close Booking"
-                            style="background-color: transparent; color: #6c757d; border: 2px solid #6c757d; border-radius: 20px; padding: 6px 16px;"
+                            string="📁 Close Booking" class="btn-secondary"
                             invisible="state not in ['completed', 'completed_pending_invoice']"
                             help="Close the booking"/>
                 </header>

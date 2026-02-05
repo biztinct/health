@@ -91,7 +91,7 @@ a {
     box-shadow: none;
 }
 
-.o_form_view .o_group:not(.o_inner_group) > table {
+.o_form_view .o_group:not(.o_inner_group)>table {
     width: 100%;
 }
 
@@ -107,7 +107,7 @@ a {
     align-items: stretch !important;
 }
 
-.o_form_view .o_group.row:not(.o_inner_group):not(:has(.o_field_widget[name="groups_id"])) > .o_inner_group {
+.o_form_view .o_group.row:not(.o_inner_group):not(:has(.o_field_widget[name="groups_id"]))>.o_inner_group {
     flex: 1 1 420px;
     min-width: 320px;
     width: 100% !important;
@@ -179,11 +179,11 @@ a {
 
 // Fix padding for standalone elements outside of groups (separators, radio buttons, etc.)
 // These elements appear directly on the form sheet without a containing <group> tag
-.o_form_sheet > .o_field_widget,
-.o_form_sheet > .o_wrap_field,
-.o_form_sheet > div:not(.o_group):not(.vu-section):not(.vu-card):not(.oe_title):not(.o_notebook):not(.alert):not(.vu-section-grid) > .o_field_widget,
-.o_dialog .modal-body > .o_field_widget,
-.o_dialog .modal-body > .o_wrap_field {
+.o_form_sheet>.o_field_widget,
+.o_form_sheet>.o_wrap_field,
+.o_form_sheet>div:not(.o_group):not(.vu-section):not(.vu-card):not(.oe_title):not(.o_notebook):not(.alert):not(.vu-section-grid)>.o_field_widget,
+.o_dialog .modal-body>.o_field_widget,
+.o_dialog .modal-body>.o_wrap_field {
     padding-left: var(--vu-space-lg);
     padding-right: var(--vu-space-lg);
     margin-bottom: var(--vu-space-md);
@@ -194,14 +194,14 @@ a {
 .o_dialog .o_field_widget.o_field_radio {
     padding-left: var(--vu-space-lg);
     padding-right: var(--vu-space-lg);
-    
+
     .o_radio_item {
         margin-right: var(--vu-space-md);
     }
 }
 
 // Ensure groups that follow separators have consistent left padding
-.o_form_sheet > .o_group:not(:first-child) {
+.o_form_sheet>.o_group:not(:first-child) {
     padding-left: var(--vu-space-md);
     padding-right: var(--vu-space-md);
 }
@@ -563,7 +563,8 @@ a {
 }
 
 // Buttons to feel modern
-.btn-primary, .o_form_button_save {
+.btn-primary,
+.o_form_button_save {
     background: var(--vu-brand-primary);
     border: 1px solid var(--vu-brand-primary-dark);
     border-radius: var(--vu-radius-sm);
@@ -579,7 +580,8 @@ a {
     }
 }
 
-.btn-secondary, .o_form_button_cancel {
+.btn-secondary,
+.o_form_button_cancel {
     background: var(--vu-surface-muted);
     border: 1px solid var(--vu-border-soft);
     border-radius: var(--vu-radius-sm);
@@ -629,7 +631,8 @@ a {
         max-width: 200px !important;
         font-size: 16px !important;
 
-        input, span {
+        input,
+        span {
             background: transparent !important;
             border: none !important;
             color: #0D356B !important; // Deep Blue Darkest text
@@ -677,7 +680,8 @@ a {
         max-width: 200px !important;
         font-size: 16px !important;
 
-        input, span {
+        input,
+        span {
             background: transparent !important;
             border: none !important;
             color: #1F5E97 !important; // Accent Blue Darkest text
@@ -701,13 +705,13 @@ a {
     border-bottom: 1px solid var(--vu-border-soft);
     margin-bottom: var(--vu-space-md);
 
-    > ul {
+    >ul {
         display: flex;
         gap: var(--vu-space-md);
         border: none;
         padding-bottom: var(--vu-space-xs);
 
-        > li > a {
+        >li>a {
             font-weight: 600;
             letter-spacing: .04em;
             color: var(--vu-text-secondary);
@@ -729,7 +733,7 @@ a {
             }
         }
 
-        > li.ui-tabs-active > a {
+        >li.ui-tabs-active>a {
             color: var(--vu-brand-primary);
 
             &::after {
@@ -780,10 +784,21 @@ a {
     justify-content: center;
     color: var(--vu-brand-primary);
 
-    &--success { color: var(--vu-status-success); }
-    &--info { color: var(--vu-status-info); }
-    &--warning { color: var(--vu-status-warning); }
-    &--danger { color: var(--vu-status-danger); }
+    &--success {
+        color: var(--vu-status-success);
+    }
+
+    &--info {
+        color: var(--vu-status-info);
+    }
+
+    &--warning {
+        color: var(--vu-status-warning);
+    }
+
+    &--danger {
+        color: var(--vu-status-danger);
+    }
 }
 
 // Fix for User Roles form layout text wrapping
@@ -793,7 +808,7 @@ a {
 
     // Target the inner groups (columns) to ensure they have enough width
     .o_inner_group {
-        min-width: 450px !important; 
+        min-width: 450px !important;
         flex: 1 1 auto !important;
     }
 
@@ -801,13 +816,142 @@ a {
     .form-check {
         width: 100%;
         padding-right: var(--vu-space-md);
-        
+
         .form-check-label {
-            white-space: nowrap !important; 
+            white-space: nowrap !important;
             max-width: 100%;
             overflow: hidden;
             text-overflow: ellipsis;
             vertical-align: middle;
         }
     }
+}
+
+// =============================================================================
+// MODERN FORM HEADER BUTTONS - Universal Styling
+// =============================================================================
+// Applies to all form header buttons across health_crm, health_fieldservice, etc.
+// Design: Pill-shaped with light backgrounds, dark/colored borders, bold text
+
+.o_form_view .o_form_statusbar>.o_statusbar_buttons,
+.o_form_view header .o_statusbar_buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 8px 0;
+
+    // Base button style - light background with dark border
+    button {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 8px 18px;
+        font-size: 13px;
+        font-weight: 700;
+        border-radius: 50px;
+        cursor: pointer;
+        transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        background: rgba(255, 255, 255, 0.95);
+        color: #495057;
+        border: 2px solid #dee2e6;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+        position: relative;
+        overflow: hidden;
+
+        &::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.5), transparent);
+            transition: left 0.4s ease;
+        }
+
+        &:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+
+            &::before {
+                left: 100%;
+            }
+        }
+
+        &:active {
+            transform: translateY(0);
+        }
+    }
+
+    // Primary action buttons (oe_highlight, btn-primary) - Blue filled
+    button.oe_highlight,
+    button.btn-primary {
+        background: linear-gradient(135deg, #0d6efd 0%, #0856c9 100%);
+        color: #fff;
+        border-color: #0856c9;
+
+        &:hover {
+            background: linear-gradient(135deg, #0b5ed7 0%, #0645a1 100%);
+            border-color: #0645a1;
+        }
+    }
+
+    // Success buttons - Green tinted
+    button.btn-success {
+        background: linear-gradient(135deg, #d1f5e0 0%, #b8edc7 100%);
+        color: #146c43;
+        border-color: #198754;
+
+        &:hover {
+            background: linear-gradient(135deg, #198754 0%, #146c43 100%);
+            color: #fff;
+        }
+    }
+
+    // Warning/Caution buttons - Orange/Amber tinted
+    button.btn-warning {
+        background: linear-gradient(135deg, #fff3cd 0%, #ffe69c 100%);
+        color: #856404;
+        border-color: #ffc107;
+
+        &:hover {
+            background: linear-gradient(135deg, #ffc107 0%, #e0a800 100%);
+            color: #212529;
+        }
+    }
+
+    // Danger/Cancel buttons - Red outlined
+    button.btn-danger,
+    button[name*="cancel"],
+    button[name*="reject"] {
+        background: rgba(248, 215, 218, 0.6);
+        color: #dc3545;
+        border-color: #dc3545;
+
+        &:hover {
+            background: linear-gradient(135deg, #dc3545 0%, #b52a38 100%);
+            color: #fff;
+        }
+    }
+
+    // Secondary/Info buttons - Light gray outlined
+    button.btn-secondary,
+    button.btn-info {
+        background: rgba(248, 249, 250, 0.9);
+        color: #6c757d;
+        border-color: #adb5bd;
+
+        &:hover {
+            background: #e9ecef;
+            color: #495057;
+            border-color: #6c757d;
+        }
+    }
+}
+
+// Remove inline styles from FSO buttons to let theme take over
+.o_form_view header button[style] {
+    // Override inline styles with !important where needed
+    border-radius: 50px !important;
+    font-weight: 700 !important;
 }
