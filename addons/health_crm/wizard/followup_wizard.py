@@ -127,16 +127,37 @@ class HealthFollowUpWizard(models.TransientModel):
         """
         Menu a: Log as Lead (in calendar)
         Opens a new lead form with calendar scheduling.
+        Requires a Contact to be selected first.
         """
         self.ensure_one()
+        
+        # Check if a contact has been selected
+        if not self.contact_id and not self.context_lead_id:
+            return {
+                'type': 'ir.actions.client',
+                'tag': 'display_notification',
+                'params': {
+                    'title': _('No Contact Selected'),
+                    'message': _('Please select a Contact first to log as a lead.'),
+                    'type': 'warning',
+                    'sticky': False,
+                }
+            }
         
         context = {
             'default_type': 'opportunity',
             'default_contact_status': 'lead',
         }
         
-        # Pre-fill from selected client
-        if self.client_id:
+        # Pre-fill from selected contact
+        if self.contact_id:
+            context.update({
+                'default_partner_id': self.contact_id.partner_id.id if self.contact_id.partner_id else False,
+                'default_name': self.contact_id.name,
+                'default_phone': self.contact_id.phone,
+                'default_email_from': self.contact_id.email_from,
+            })
+        elif self.client_id:
             context.update({
                 'default_partner_id': self.client_id.id,
                 'default_name': self.client_id.name,
@@ -245,6 +266,7 @@ class HealthFollowUpWizard(models.TransientModel):
             'domain': domain,
             'context': {
                 'search_default_my_activities': 1,
+                'default_order': 'activity_date_deadline asc',
             },
             'target': 'current',
         }
@@ -316,30 +338,40 @@ class HealthFollowUpWizard(models.TransientModel):
     def action_recent_client_followup(self):
         """
         Menu f: Recent Client Follow-up
-        Shows recent clients with selected service.
+        Shows leads with contact_status='booking' for follow-up.
+        These are leads that have converted to bookings.
         """
         self.ensure_one()
         
-        # Find recent bookings that need follow-up
-        # (completed in last 30 days without follow-up activity)
-        thirty_days_ago = fields.Date.subtract(fields.Date.today(), days=30)
-        
+        # Find leads that have been converted to bookings
         domain = [
-            ('state', '=', 'completed'),
-            ('actual_end_datetime', '>=', thirty_days_ago),
+            ('contact_status', '=', 'booking'),
         ]
         
+        # If client selected, filter by partner
         if self.client_id:
+            domain.append('|')
+            domain.append(('partner_id', '=', self.client_id.id))
             domain.append(('patient_id', '=', self.client_id.id))
+        
+        # Get the custom list view with activity button
+        list_view = self.env.ref(
+            'health_crm.view_crm_lead_recent_followup_tree',
+            raise_if_not_found=False
+        )
         
         return {
             'type': 'ir.actions.act_window',
-            'name': _('Recent Clients for Follow-up'),
-            'res_model': 'health.fieldservice.order',
+            'name': _('Recent Client Follow-up'),
+            'res_model': 'crm.lead',
             'view_mode': 'list,form',
             'domain': domain,
+            'views': [
+                (list_view.id if list_view else False, 'list'),
+                (False, 'form'),
+            ],
             'context': {
-                'search_default_needs_followup': 1,
+                'search_default_booking': 1,
             },
             'target': 'current',
         }

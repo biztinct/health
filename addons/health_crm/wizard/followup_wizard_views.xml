@@ -83,13 +83,13 @@
                             <p class="text-muted mb-0" style="font-size: 12px;">View leads sorted by follow-up date</p>
                         </button>
                         
-                        <!-- d. Show All Activities -->
+                        <!-- d. Activity View -->
                         <button name="action_show_all_activities"
                                 type="object"
                                 class="btn btn-outline-success"
                                 style="padding: 20px; text-align: left; border-radius: 8px;">
                             <span class="fa fa-tasks fa-2x" style="display: block; margin-bottom: 8px;"/>
-                            <strong>Show All Activities</strong>
+                            <strong>Activity View</strong>
                             <p class="text-muted mb-0" style="font-size: 12px;">View planned activities</p>
                         </button>
                         

@@ -122,6 +122,20 @@ class HealthLead(models.Model):
     follow_up_notes = fields.Text('Follow-up Notes')
     follow_up_count = fields.Integer('Follow-up Count', default=0)
     
+    # Booking tracking
+    last_booking_date = fields.Date(
+        'Last Booking Date',
+        compute='_compute_last_booking_date',
+        store=True,
+        help='Date of last completed booking for this lead\'s client'
+    )
+    booking_within_30_days = fields.Boolean(
+        'Recent Booking',
+        compute='_compute_last_booking_date',
+        store=True,
+        help='True if last booking was within 30 days'
+    )
+    
     # Rejection and outcome tracking
     reason_if_rejected = fields.Text(
         'Reason if Rejected', 
@@ -218,7 +232,7 @@ class HealthLead(models.Model):
     )
     
     calendar_display_name = fields.Char(
-        'Calendar Display',
+        'Activity',
         compute='_compute_calendar_fields',
         store=True,
         help='Display name for calendar entry showing lead name and activity type'
@@ -256,6 +270,36 @@ class HealthLead(models.Model):
         help='Flag to indicate if this is an all-day event'
     )
     
+    @api.depends('partner_id', 'patient_id')
+    def _compute_last_booking_date(self):
+        """
+        Compute the last booking date from FSO orders linked to this lead's client.
+        Also sets a flag if the booking was within 30 days.
+        """
+        FSO = self.env['health.fieldservice.order']
+        today = fields.Date.today()
+        thirty_days_ago = fields.Date.subtract(today, days=30)
+        
+        for record in self:
+            last_booking = None
+            within_30_days = False
+            
+            # Find most recent completed booking for this client
+            client_id = record.patient_id.id or record.partner_id.id
+            if client_id:
+                booking = FSO.search([
+                    ('patient_id', '=', client_id),
+                    ('state', '=', 'completed'),
+                    ('actual_end_datetime', '!=', False),
+                ], order='actual_end_datetime desc', limit=1)
+                
+                if booking and booking.actual_end_datetime:
+                    last_booking = booking.actual_end_datetime.date()
+                    within_30_days = last_booking >= thirty_days_ago
+            
+            record.last_booking_date = last_booking
+            record.booking_within_30_days = within_30_days
+
     @api.depends('name', 'activity_ids', 'activity_ids.activity_type_id', 'activity_ids.date_deadline', 'contact_status', 'next_action_at', 'create_date')
     def _compute_calendar_fields(self):
         """
@@ -1607,5 +1651,135 @@ class HealthLead(models.Model):
             'params': {
                 'patient_id': client.id,
                 'patient_name': client.name,
+            },
+        }
+
+    def action_execute_activity(self):
+        """
+        Execute action based on the lead's current activity type.
+        Used by Activity button in calendar popup.
+        
+        Actions:
+        - Call: Opens Zalo call (tel: link with phone number)
+        - Email: Opens email compose wizard
+        - To-Do: Opens To-Do activity list
+        - Meeting: Opens calendar view
+        """
+        self.ensure_one()
+        
+        # Get the next activity
+        if not self.activity_ids:
+            return {
+                'type': 'ir.actions.client',
+                'tag': 'display_notification',
+                'params': {
+                    'title': _('No Activity'),
+                    'message': _('This lead has no scheduled activities.'),
+                    'type': 'info',
+                    'sticky': False,
+                }
+            }
+        
+        # Get the nearest activity
+        nearest_activity = self.activity_ids.sorted('date_deadline')[0]
+        activity_type = nearest_activity.activity_type_id.name if nearest_activity.activity_type_id else ''
+        
+        if activity_type == 'Call':
+            # Open Zalo call via phone number
+            phone = self.phone or self.mobile
+            if phone:
+                # Return action that opens tel: link (Zalo will handle)
+                return {
+                    'type': 'ir.actions.act_url',
+                    'url': f'tel:{phone}',
+                    'target': 'new',
+                }
+            else:
+                return {
+                    'type': 'ir.actions.client',
+                    'tag': 'display_notification',
+                    'params': {
+                        'title': _('No Phone Number'),
+                        'message': _('This lead has no phone number configured.'),
+                        'type': 'warning',
+                        'sticky': False,
+                    }
+                }
+        
+        elif activity_type == 'Email':
+            # Open email compose wizard
+            return {
+                'type': 'ir.actions.act_window',
+                'name': _('Compose Email'),
+                'res_model': 'mail.compose.message',
+                'view_mode': 'form',
+                'target': 'new',
+                'context': {
+                    'default_model': 'crm.lead',
+                    'default_res_ids': [self.id],
+                    'default_composition_mode': 'comment',
+                    'default_partner_ids': [self.partner_id.id] if self.partner_id else [],
+                    'default_email_to': self.email_from,
+                },
+            }
+        
+        elif activity_type == 'To-Do':
+            # Open To-Do activity view (activity kanban)
+            return {
+                'type': 'ir.actions.act_window',
+                'name': _('To-Do Activities'),
+                'res_model': 'crm.lead',
+                'view_mode': 'activity,list,form',
+                'domain': [('id', '=', self.id)],
+                'target': 'current',
+            }
+        
+        elif activity_type == 'Meeting':
+            # Open calendar view
+            calendar_view = self.env.ref(
+                'health_crm.view_crm_lead_followup_calendar',
+                raise_if_not_found=False
+            )
+            return {
+                'type': 'ir.actions.act_window',
+                'name': _('Meeting Calendar'),
+                'res_model': 'crm.lead',
+                'view_mode': 'calendar,list,form',
+                'domain': [('calendar_date', '!=', False)],
+                'view_id': calendar_view.id if calendar_view else False,
+                'target': 'current',
+            }
+        
+        else:
+            # Default: open lead form
+            return {
+                'type': 'ir.actions.act_window',
+                'name': _('Lead'),
+                'res_model': 'crm.lead',
+                'view_mode': 'form',
+                'res_id': self.id,
+                'target': 'current',
+            }
+
+    def action_schedule_activity_wizard(self):
+        """
+        Open the activity scheduling wizard for this lead.
+        Used by the Activity button in the Recent Client Follow-up list.
+        """
+        self.ensure_one()
+        
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _('Schedule Activity for: %s') % self.name,
+            'res_model': 'mail.activity.schedule',
+            'view_mode': 'form',
+            'target': 'new',
+            'context': {
+                'active_model': 'crm.lead',
+                'active_id': self.id,
+                'active_ids': [self.id],
+                'default_res_model': 'crm.lead',
+                'default_res_ids': [self.id],
+                'dialog_size': 'medium',
             },
         }

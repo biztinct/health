@@ -59,7 +59,7 @@
     </record>
 
 
-    <!-- Add Dashboard Button to Base CRM Lead Form (for calendar popup) -->
+    <!-- Add Dashboard and Activity Buttons to Base CRM Lead Form (for calendar popup) -->
     <record id="view_crm_lead_form_dashboard_button" model="ir.ui.view">
         <field name="name">crm.lead.form.dashboard.button</field>
         <field name="model">crm.lead</field>
@@ -73,6 +73,13 @@
                         class="btn-primary"
                         icon="fa-dashboard"
                         title="Open Lead Hub-Spoke Dashboard"/>
+                <button name="action_execute_activity" 
+                        string="Activity" 
+                        type="object" 
+                        class="btn-secondary"
+                        icon="fa-tasks"
+                        title="Execute Activity Action (Call/Email/To-Do/Meeting)"
+                        invisible="not activity_ids"/>
             </xpath>
         </field>
     </record>
@@ -583,9 +590,14 @@
         <field name="model">crm.lead</field>
         <field name="inherit_id" ref="crm.crm_case_tree_view_oppor"/>
         <field name="arch" type="xml">
-            <!-- Change field label 'name' to 'Contact name' in opportunity list view -->
+            <!-- Change field label 'name' to 'Client name' in opportunity list view -->
             <xpath expr="//field[@name='name']" position="attributes">
-                <attribute name="string">Contact name</attribute>
+                <attribute name="string">Client name</attribute>
+            </xpath>
+            <!-- Replace stage_id with contact_status -->
+            <xpath expr="//field[@name='stage_id']" position="replace">
+                <field name="contact_status"/>
+                <field name="activity_date_deadline" string="Activity Date" widget="remaining_days"/>
             </xpath>
             <!-- Hide expected_revenue column - not relevant for healthcare -->
             <xpath expr="//field[@name='expected_revenue']" position="attributes">
@@ -666,6 +678,35 @@
     </record>
 
     <!-- ================================================================= -->
+    <!-- RECENT CLIENT FOLLOW-UP LIST VIEW                                 -->
+    <!-- ================================================================= -->
+    
+    <!-- Custom List View for Recent Client Follow-up (leads with booking) -->
+    <record id="view_crm_lead_recent_followup_tree" model="ir.ui.view">
+        <field name="name">crm.lead.recent.followup.tree</field>
+        <field name="model">crm.lead</field>
+        <field name="priority">20</field>
+        <field name="arch" type="xml">
+            <list string="Recent Client Follow-up" decoration-success="booking_within_30_days">
+                <field name="name" string="Client Name"/>
+                <field name="phone" widget="phone"/>
+                <field name="email_from" string="Email"/>
+                <field name="last_booking_date" string="Last Booking"/>
+                <field name="booking_within_30_days" column_invisible="1"/>
+                <field name="activity_date_deadline" string="Next Activity" widget="remaining_days"/>
+                <field name="user_id" string="Salesperson" widget="many2one_avatar_user"/>
+                <field name="contact_status" column_invisible="1"/>
+                <!-- Activity button to log follow-up -->
+                <button name="action_schedule_activity_wizard" 
+                        type="object" 
+                        icon="fa-clock-o" 
+                        title="Log Activity"
+                        class="btn-link"/>
+            </list>
+        </field>
+    </record>
+    
+    <!-- ================================================================= -->
     <!-- FOLLOW-UP CALENDAR VIEW                                          -->
     <!-- ================================================================= -->
     
@@ -685,7 +726,7 @@
                       event_open_popup="true"
                       event_limit="5">
                 <!-- Display name (shown as calendar entry title) -->
-                <field name="calendar_display_name"/>
+                <field name="calendar_display_name" string="Activity"/>
                 
                 <!-- Sidebar filter: Contact Status with checkboxes -->
                 <field name="contact_status" filters="1"/>
@@ -694,9 +735,11 @@
                 <field name="user_id" string="Salesperson" filters="1" 
                        widget="many2one_avatar_user" avatar_field="avatar_128"/>
                 
-                <!-- Popup fields -->
-                <field name="phone" options="{'icon': 'fa fa-phone'}"/>
-                <field name="name" string="Contact Name" options="{'icon': 'fa fa-user'}"/>
+                <!-- Phone for Zalo calling (shown in popover) -->
+                <field name="phone" widget="phone"/>
+                
+                <!-- Activity type for action buttons - stored on most recent activity -->
+                <field name="activity_type_id" invisible="1"/>
             </calendar>
         </field>
     </record>
