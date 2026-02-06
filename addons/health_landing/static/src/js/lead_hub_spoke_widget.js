@@ -197,8 +197,8 @@ export class LeadHubSpokeWidget extends Component {
     // Breadcrumb Navigation Handlers
     async onHomeClick(ev) {
         ev.preventDefault();
-        // Navigate to the main Odoo home/apps menu
-        await this.actionService.doAction('menu');
+        // Navigate to the Health Flow Dashboard home page
+        await this.actionService.doAction('health_flow.action_health_flow_dashboard');
     }
 
     async onContactsClick(ev) {
@@ -330,6 +330,8 @@ export class LeadHubSpokeWidget extends Component {
     }
 
     async onHubClick() {
+        // Open form view directly WITHOUT triggering the redirect back to hub-spoke
+        // The skip_hub_redirect context flag tells our JS controller to skip the redirect
         await this.actionService.doAction({
             type: "ir.actions.act_window",
             res_model: "crm.lead",
@@ -339,6 +341,7 @@ export class LeadHubSpokeWidget extends Component {
             target: "current",
             context: {
                 form_view_ref: "health_crm.view_healthcare_opportunity_form",
+                skip_hub_redirect: true,  // Don't redirect back to hub-spoke
             },
         });
     }

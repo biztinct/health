@@ -100,6 +100,8 @@
             'health_crm/static/src/components/relationship_hierarchy/relationship_hierarchy.js',
             'health_crm/static/src/components/relationship_hierarchy/relationship_hierarchy.xml',
             'health_crm/static/src/components/relationship_hierarchy/relationship_hierarchy.scss',
+            # Healthcare lead form redirect - redirects to hub-spoke dashboard
+            'health_crm/static/src/js/healthcare_lead_form_redirect.js',
         ],
     },
     # 'demo': [

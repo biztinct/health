@@ -108,22 +108,25 @@
 
 
     <!-- NEW: Dedicated Healthcare Opportunity Form View (No Inheritance) -->
+    <!-- This is the default form view - redirects to hub-spoke dashboard for existing records -->
     <record id="view_healthcare_opportunity_form" model="ir.ui.view">
         <field name="name">crm.lead.form.healthcare.opportunity</field>
         <field name="model">crm.lead</field>
+        <field name="priority">1</field>
+        <field name="mode">primary</field>
         <field name="arch" type="xml">
-            <form string="Contact Details">
+            <form string="Contact Details" js_class="healthcare_lead_form_redirect">
                 <header>
                     <!-- CONTACT-FIRST ACTION MENU BAR -->
                     
-                    <!-- Home - Returns to dashboard (marks as junk if no action taken) -->
+                    <!-- Mark Spam - Marks as junk and returns to dashboard -->
                     <button name="action_mark_spam_and_home"
-                            string="Home"
+                            string="Mark Spam"
                             type="object"
                             class="btn-secondary"
-                            icon="fa-home"
-                            title="Return to Home (Mark as Junk if no action)"
-                            confirm="Return to Home? If you haven't logged a Lead or Booking, this contact will be marked as junk."/>
+                            icon="fa-ban"
+                            title="Mark this contact as spam and return to dashboard"
+                            confirm="Mark this contact as spam? This action cannot be undone."/>
                     
                     <!-- Booking - Opens booking creation flow -->
                     <button name="action_convert_to_booking"
@@ -606,12 +609,12 @@
         </field>
     </record>
 
-    <!-- Healthcare Quick Create Form - Customized for CRM Contacts -->
+    <!-- Healthcare Quick Create Form - ONLY for quick create in kanban, NOT for opening records -->
     <record id="view_healthcare_crm_lead_quick_create" model="ir.ui.view">
         <field name="name">crm.lead.form.quick.healthcare</field>
         <field name="model">crm.lead</field>
-        <field name="mode">primary</field>
-        <field name="priority">1</field>
+        <!-- No mode="primary" - this prevents it from being used as default form -->
+        <field name="priority">999</field>
         <field name="arch" type="xml">
             <form string="Quick Create Contact">
                 <group>

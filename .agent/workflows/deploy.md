@@ -2,6 +2,8 @@
 description: Deploy modules to VietUc UAT server and restart Odoo
 ---
 
+// turbo-all
+
 # Deploy to VietUc UAT
 
 Use this workflow whenever you modify any `health_*` modules and need to deploy changes to the UAT server.
