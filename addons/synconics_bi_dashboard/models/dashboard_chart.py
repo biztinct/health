@@ -597,17 +597,17 @@ class DashboardChart(models.Model):
     hide_false_value = fields.Boolean(string="Hide False", default=True)
 
     @api.model
-    def name_search(self, name="", args=None, operator="ilike", limit=100):
+    def name_search(self, name="", domain=None, operator="ilike", limit=100):
         """
         Override method to filter chars for dashboard email
         """
-        args = list(args or [])
+        domain = list(domain or [])
         context = dict(self.env.context)
         if context.get("is_automated"):
-            domain = [("chart_type", "in", ["kpi", "tile", "list", "to_do"])]
-            args = expression.AND([domain, args])
+            filter_domain = [("chart_type", "in", ["kpi", "tile", "list", "to_do"])]
+            domain = expression.AND([filter_domain, domain])
         return super(DashboardChart, self).name_search(
-            name=name, args=args, operator=operator, limit=limit
+            name=name, domain=domain, operator=operator, limit=limit
         )
 
     @api.model

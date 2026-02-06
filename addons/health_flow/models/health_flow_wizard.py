@@ -87,11 +87,13 @@ class HealthFlowWizard(models.TransientModel):
             return self._get_booking_action(key)
         elif key == 'client':
             return self._get_client_action()
+        elif key == 'analytics':
+            # Open My Dashboard directly using the dashboard_amcharts client action
+            return self._get_my_dashboard_action()
 
         # Map keys to action xmlid
         mapping = {
-            # Primary Circles - Direct Actions
-            'analytics': ('synconics_bi_dashboard.dashboard_dashboard_action', _('BI Dashboard')),
+            # Primary Circles - Direct Actions (analytics handled above)
             'audit': ('health_base.action_health_audit_log', _('Audit Log')),
 
             # CRM Panel
@@ -512,6 +514,60 @@ class HealthFlowWizard(models.TransientModel):
                 'params': {
                     'title': _('Client Action Error'),
                     'message': _('Failed to load client registry: %s', str(e)),
+                    'type': 'warning',
+                    'sticky': False,
+                }
+            }
+
+    @api.model
+    def _get_my_dashboard_action(self):
+        """Open My Dashboard directly using the dashboard_amcharts client action."""
+        try:
+            # Get the My Dashboard record
+            dashboard = self.env.ref(
+                'synconics_bi_dashboard.my_dashboard_default',
+                raise_if_not_found=False
+            )
+            if not dashboard:
+                # Fallback: try to find any dashboard named "My Dashboard"
+                dashboard = self.env['dashboard.dashboard'].search(
+                    [('name', 'ilike', 'My Dashboard')],
+                    limit=1
+                )
+            
+            if not dashboard:
+                return {
+                    'type': 'ir.actions.client',
+                    'tag': 'display_notification',
+                    'params': {
+                        'title': _('Dashboard Not Found'),
+                        'message': _('My Dashboard has not been configured yet.'),
+                        'type': 'warning',
+                        'sticky': False,
+                    }
+                }
+            
+            # Return client action to open the dashboard
+            action = {
+                'type': 'ir.actions.client',
+                'tag': 'dashboard_amcharts',
+                'name': dashboard.name,
+                'display_name': dashboard.name,
+                'params': {
+                    'record': dashboard.id,
+                    'menu_name': dashboard.name,
+                    'dashboard_name': dashboard.name,
+                },
+                'target': 'current',
+            }
+            return self._apply_flow_context(action)
+        except Exception as e:
+            return {
+                'type': 'ir.actions.client',
+                'tag': 'display_notification',
+                'params': {
+                    'title': _('Dashboard Error'),
+                    'message': _('Failed to load My Dashboard: %s', str(e)),
                     'type': 'warning',
                     'sticky': False,
                 }

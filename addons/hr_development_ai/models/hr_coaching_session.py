@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import json
+from datetime import timedelta
 from odoo import models, fields, api, _
 from odoo.exceptions import UserError
 
@@ -120,6 +121,45 @@ class HRCoachingSession(models.Model):
         ('completed', 'Completed'),
         ('cancelled', 'Cancelled')
     ], string='Status', default='scheduled', required=True, tracking=True)
+
+    # ===================
+    # BFSI-Specific Fields
+    # ===================
+    kpi_context = fields.Text(
+        string='KPI Context',
+        help='JSON snapshot of performance data at time of session'
+    )
+
+    coaching_strategy_id = fields.Many2one(
+        'bfsi.coaching.strategy',
+        string='Coaching Strategy',
+        help='AI-generated strategy used for this session'
+    )
+
+    action_plan_id = fields.Many2one(
+        'bfsi.action.plan',
+        string='Action Plan',
+        help='Action plan created from this session'
+    )
+
+    coached_by_type = fields.Selection([
+        ('ai_direct', 'AI Direct (Self-Service)'),
+        ('ai_assisted', 'AI-Assisted Manager Coaching'),
+        ('human', 'Human Only')
+    ], string='Coaching Method', default='ai_direct')
+
+    is_bfsi_session = fields.Boolean(
+        string='Is BFSI Session',
+        default=False,
+        help='Whether this is a BFSI performance coaching session'
+    )
+
+    branch_id = fields.Many2one(
+        'bfsi.branch',
+        string='Branch',
+        related='employee_id.branch_id',
+        store=True
+    )
 
     @api.depends('ai_transcript')
     def _compute_ai_chat_history(self):
@@ -410,3 +450,205 @@ Response:"""
                 'Failed to send message to AI coach. Please try again.\n\n'
                 'Error: %s'
             ) % str(e))
+
+    # ===================
+    # BFSI Methods
+    # ===================
+    def action_capture_kpi_context(self):
+        """Capture current KPI context for the session"""
+        self.ensure_one()
+
+        context = self.employee_id.get_performance_context_for_ai()
+        self.kpi_context = json.dumps(context, indent=2, default=str)
+        self.is_bfsi_session = True
+
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'display_notification',
+            'params': {
+                'title': _('KPI Context Captured'),
+                'message': _('Performance context has been captured for this session.'),
+                'type': 'success',
+            }
+        }
+
+    def action_create_action_plan(self):
+        """Create an action plan from this coaching session"""
+        self.ensure_one()
+
+        if self.action_plan_id:
+            return {
+                'type': 'ir.actions.act_window',
+                'name': _('Action Plan'),
+                'res_model': 'bfsi.action.plan',
+                'res_id': self.action_plan_id.id,
+                'view_mode': 'form',
+            }
+
+        # Create new action plan
+        plan = self.env['bfsi.action.plan'].create({
+            'coaching_session_id': self.id,
+            'employee_id': self.employee_id.id,
+            'manager_id': self.coach_id.id if self.coach_id else False,
+            'target_date': fields.Date.today() + timedelta(days=14),  # 2 weeks default
+        })
+
+        self.action_plan_id = plan.id
+
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _('Action Plan'),
+            'res_model': 'bfsi.action.plan',
+            'res_id': plan.id,
+            'view_mode': 'form',
+        }
+
+    def action_generate_action_items_ai(self):
+        """Use AI to generate action items from the coaching conversation"""
+        self.ensure_one()
+
+        if not self.action_plan_id:
+            self.action_create_action_plan()
+
+        try:
+            from ..ai_providers.provider_factory import get_ai_provider
+            ai_provider = get_ai_provider(self.env)
+
+            # Get conversation transcript
+            transcript = ''
+            if self.ai_transcript:
+                try:
+                    transcript_data = json.loads(self.ai_transcript)
+                    messages = transcript_data.get('messages', [])
+                    transcript = '\n'.join([
+                        f"{msg['role'].upper()}: {msg['content']}"
+                        for msg in messages
+                    ])
+                except:
+                    transcript = self.ai_transcript
+
+            if not transcript:
+                raise UserError(_('No coaching conversation found. Please have a conversation first.'))
+
+            # Get KPI context
+            kpi_context = self.kpi_context or '{}'
+
+            prompt = f"""Based on the following coaching conversation and performance context, generate specific action items.
+
+COACHING CONVERSATION:
+{transcript}
+
+PERFORMANCE CONTEXT:
+{kpi_context}
+
+Generate 3-5 specific, measurable action items in JSON format:
+{{
+    "action_items": [
+        {{
+            "name": "Action item title",
+            "description": "Detailed description",
+            "kpi_category": "input|behavior|output|outcome",
+            "specific_kpi": "dials|connects|script_adherence|etc",
+            "success_criteria": "How to measure success",
+            "priority": "high|medium|low"
+        }}
+    ]
+}}
+
+Focus on:
+1. SPECIFIC behaviors the banker can control
+2. Measurable outcomes within 2 weeks
+3. Addressing the root causes of performance gaps
+"""
+
+            response = ai_provider.generate_text(prompt, max_tokens=800, temperature=0.5)
+
+            # Parse response
+            try:
+                data = json.loads(response)
+            except:
+                import re
+                json_match = re.search(r'\{.*\}', response, re.DOTALL)
+                if json_match:
+                    data = json.loads(json_match.group())
+                else:
+                    raise UserError(_('Could not parse AI response.'))
+
+            # Create action items
+            items_created = 0
+            for idx, item in enumerate(data.get('action_items', []), 1):
+                self.env['bfsi.action.plan.item'].create({
+                    'action_plan_id': self.action_plan_id.id,
+                    'sequence': idx * 10,
+                    'name': item.get('name', 'Action Item'),
+                    'description': item.get('description', ''),
+                    'kpi_category': item.get('kpi_category'),
+                    'specific_kpi': item.get('specific_kpi'),
+                    'success_criteria': item.get('success_criteria', ''),
+                    'priority': item.get('priority', 'medium'),
+                })
+                items_created += 1
+
+            return {
+                'type': 'ir.actions.client',
+                'tag': 'display_notification',
+                'params': {
+                    'title': _('Action Items Generated'),
+                    'message': _('%d action items have been created.') % items_created,
+                    'type': 'success',
+                }
+            }
+
+        except Exception as e:
+            raise UserError(_('Failed to generate action items: %s') % str(e))
+
+    def _get_bfsi_coaching_prompt(self, message):
+        """Build enhanced coaching prompt with BFSI context"""
+        self.ensure_one()
+
+        session_type = dict(self._fields['session_type'].selection).get(self.session_type)
+        topic = dict(self._fields['topic'].selection).get(self.topic)
+
+        # Get performance context
+        kpi_context = ''
+        if self.kpi_context:
+            kpi_context = f"\nPERFORMANCE CONTEXT:\n{self.kpi_context}"
+        elif self.is_bfsi_session:
+            context = self.employee_id.get_performance_context_for_ai()
+            kpi_context = f"\nPERFORMANCE CONTEXT:\n{json.dumps(context, indent=2, default=str)}"
+
+        # Get strategy if available
+        strategy_context = ''
+        if self.coaching_strategy_id:
+            strategy_context = f"""
+COACHING STRATEGY:
+{self.coaching_strategy_id.ai_strategy or ''}
+
+COACHING THEMES:
+{self.coaching_strategy_id.coaching_themes or '[]'}
+"""
+
+        prompt = f"""You are an expert AI sales performance coach for a bank.
+
+SESSION DETAILS:
+- Type: {session_type}
+- Topic: {topic}
+- Banker: {self.employee_id.name}
+- Coach: {self.coach_id.name if self.coach_id else 'AI Coach'}
+{kpi_context}
+{strategy_context}
+
+The banker asks: {message}
+
+Provide a supportive, professional coaching response that:
+1. References their actual performance numbers when relevant
+2. Focuses on specific behaviors they can improve
+3. Offers 1-2 actionable next steps
+4. Is encouraging but honest about areas for improvement
+5. Asks a follow-up question to deepen the coaching conversation
+
+Keep response under 200 words unless they ask for detailed guidance.
+
+Response:"""
+
+        return prompt

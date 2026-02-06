@@ -1,0 +1,415 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo noupdate="0">
+
+    <!-- ================================================================= -->
+    <!-- HEALTHCARE BI DASHBOARD - COMPREHENSIVE CHARTS & TILES           -->
+    <!-- A holistic view of operations, clients, leads, and bookings      -->
+    <!-- ================================================================= -->
+
+    <!-- ================================================================= -->
+    <!-- ROW 1: KEY METRICS TILES (Top Row)                               -->
+    <!-- ================================================================= -->
+
+    <!-- Tile 1: Total Bookings -->
+    <record id="tile_total_bookings" model="dashboard.chart">
+        <field name="name">Total Bookings</field>
+        <field name="dashboard_id" ref="synconics_bi_dashboard.my_dashboard_default"/>
+        <field name="chart_type">tile</field>
+        <field name="active" eval="True"/>
+        <field name="data_source">model</field>
+        <field name="model_id" search="[('model', '=', 'health.fieldservice.order')]"/>
+        <field name="data_type">count</field>
+        <field name="domain">[]</field>
+        <field name="limit_record">0</field>
+        <field name="background_color">#3498db</field>
+        <field name="font_color">#ffffff</field>
+        <field name="tile_layout_type">layout1</field>
+        <field name="icon_option">default</field>
+        <field name="default_icon">&lt;span class="fa fa-calendar-check-o fa-2x"&gt;&lt;/span&gt;</field>
+        <field name="font_size">42</field>
+        <field name="font_weight">700</field>
+    </record>
+
+    <!-- Tile 2: Active Bookings (In Progress) -->
+    <record id="tile_active_bookings" model="dashboard.chart">
+        <field name="name">Active Bookings</field>
+        <field name="dashboard_id" ref="synconics_bi_dashboard.my_dashboard_default"/>
+        <field name="chart_type">tile</field>
+        <field name="active" eval="True"/>
+        <field name="data_source">model</field>
+        <field name="model_id" search="[('model', '=', 'health.fieldservice.order')]"/>
+        <field name="data_type">count</field>
+        <field name="domain">[('state', 'in', ['assigned', 'in_progress'])]</field>
+        <field name="limit_record">0</field>
+        <field name="background_color">#e67e22</field>
+        <field name="font_color">#ffffff</field>
+        <field name="tile_layout_type">layout2</field>
+        <field name="icon_option">default</field>
+        <field name="default_icon">&lt;span class="fa fa-spinner fa-2x"&gt;&lt;/span&gt;</field>
+        <field name="font_size">42</field>
+        <field name="font_weight">700</field>
+    </record>
+
+    <!-- Tile 3: Completed Bookings -->
+    <record id="tile_completed_bookings" model="dashboard.chart">
+        <field name="name">Completed</field>
+        <field name="dashboard_id" ref="synconics_bi_dashboard.my_dashboard_default"/>
+        <field name="chart_type">tile</field>
+        <field name="active" eval="True"/>
+        <field name="data_source">model</field>
+        <field name="model_id" search="[('model', '=', 'health.fieldservice.order')]"/>
+        <field name="data_type">count</field>
+        <field name="domain">[('state', '=', 'completed')]</field>
+        <field name="limit_record">0</field>
+        <field name="background_color">#27ae60</field>
+        <field name="font_color">#ffffff</field>
+        <field name="tile_layout_type">layout3</field>
+        <field name="icon_option">default</field>
+        <field name="default_icon">&lt;span class="fa fa-check-circle fa-2x"&gt;&lt;/span&gt;</field>
+        <field name="font_size">42</field>
+        <field name="font_weight">700</field>
+    </record>
+
+    <!-- Tile 4: Total Clients -->
+    <record id="tile_total_clients" model="dashboard.chart">
+        <field name="name">Total Clients</field>
+        <field name="dashboard_id" ref="synconics_bi_dashboard.my_dashboard_default"/>
+        <field name="chart_type">tile</field>
+        <field name="active" eval="True"/>
+        <field name="data_source">model</field>
+        <field name="model_id" search="[('model', '=', 'res.partner')]"/>
+        <field name="data_type">count</field>
+        <field name="domain">[('is_patient', '=', True)]</field>
+        <field name="limit_record">0</field>
+        <field name="background_color">#9b59b6</field>
+        <field name="font_color">#ffffff</field>
+        <field name="tile_layout_type">layout1</field>
+        <field name="icon_option">default</field>
+        <field name="default_icon">&lt;span class="fa fa-users fa-2x"&gt;&lt;/span&gt;</field>
+        <field name="font_size">42</field>
+        <field name="font_weight">700</field>
+    </record>
+
+    <!-- Tile 5: Total Leads -->
+    <record id="tile_total_leads" model="dashboard.chart">
+        <field name="name">Total Leads</field>
+        <field name="dashboard_id" ref="synconics_bi_dashboard.my_dashboard_default"/>
+        <field name="chart_type">tile</field>
+        <field name="active" eval="True"/>
+        <field name="data_source">model</field>
+        <field name="model_id" search="[('model', '=', 'crm.lead')]"/>
+        <field name="data_type">count</field>
+        <field name="domain">[]</field>
+        <field name="limit_record">0</field>
+        <field name="background_color">#1abc9c</field>
+        <field name="font_color">#ffffff</field>
+        <field name="tile_layout_type">layout2</field>
+        <field name="icon_option">default</field>
+        <field name="default_icon">&lt;span class="fa fa-bullseye fa-2x"&gt;&lt;/span&gt;</field>
+        <field name="font_size">42</field>
+        <field name="font_weight">700</field>
+    </record>
+
+    <!-- Tile 6: Pending Bookings (Draft/Confirmed) -->
+    <record id="tile_pending_bookings" model="dashboard.chart">
+        <field name="name">Pending</field>
+        <field name="dashboard_id" ref="synconics_bi_dashboard.my_dashboard_default"/>
+        <field name="chart_type">tile</field>
+        <field name="active" eval="True"/>
+        <field name="data_source">model</field>
+        <field name="model_id" search="[('model', '=', 'health.fieldservice.order')]"/>
+        <field name="data_type">count</field>
+        <field name="domain">[('state', 'in', ['draft', 'confirmed'])]</field>
+        <field name="limit_record">0</field>
+        <field name="background_color">#f39c12</field>
+        <field name="font_color">#ffffff</field>
+        <field name="tile_layout_type">layout4</field>
+        <field name="icon_option">default</field>
+        <field name="default_icon">&lt;span class="fa fa-clock-o fa-2x"&gt;&lt;/span&gt;</field>
+        <field name="font_size">42</field>
+        <field name="font_weight">700</field>
+    </record>
+
+    <!-- ================================================================= -->
+    <!-- ROW 2: BOOKING DISTRIBUTION CHARTS                               -->
+    <!-- ================================================================= -->
+
+    <!-- Bar Chart: Bookings by State -->
+    <record id="chart_bookings_by_state_bar" model="dashboard.chart">
+        <field name="name">Bookings by State</field>
+        <field name="dashboard_id" ref="synconics_bi_dashboard.my_dashboard_default"/>
+        <field name="chart_type">bar_chart</field>
+        <field name="active" eval="True"/>
+        <field name="data_source">model</field>
+        <field name="model_id" search="[('model', '=', 'health.fieldservice.order')]"/>
+        <field name="group_by_id" search="[('model_id.model', '=', 'health.fieldservice.order'), ('name', '=', 'state')]"/>
+        <field name="data_type">count</field>
+        <field name="domain">[]</field>
+        <field name="limit_record">0</field>
+        <field name="sort_order">desc</field>
+        <field name="background_color">#ffffff</field>
+        <field name="theme">material</field>
+        <field name="hide_false_value" eval="True"/>
+    </record>
+
+    <!-- Column Chart: Bookings by Service Type -->
+    <record id="chart_bookings_by_service" model="dashboard.chart">
+        <field name="name">Bookings by Service</field>
+        <field name="dashboard_id" ref="synconics_bi_dashboard.my_dashboard_default"/>
+        <field name="chart_type">column_chart</field>
+        <field name="active" eval="True"/>
+        <field name="data_source">model</field>
+        <field name="model_id" search="[('model', '=', 'health.fieldservice.order')]"/>
+        <field name="group_by_id" search="[('model_id.model', '=', 'health.fieldservice.order'), ('name', '=', 'service_id')]"/>
+        <field name="data_type">count</field>
+        <field name="domain">[]</field>
+        <field name="limit_record">10</field>
+        <field name="sort_order">desc</field>
+        <field name="background_color">#ffffff</field>
+        <field name="theme">spirited</field>
+        <field name="hide_false_value" eval="True"/>
+    </record>
+
+    <!-- Pie Chart: Leads by Contact Status -->
+    <record id="chart_leads_by_status" model="dashboard.chart">
+        <field name="name">Leads by Status</field>
+        <field name="dashboard_id" ref="synconics_bi_dashboard.my_dashboard_default"/>
+        <field name="chart_type">pie_chart</field>
+        <field name="active" eval="True"/>
+        <field name="data_source">model</field>
+        <field name="model_id" search="[('model', '=', 'crm.lead')]"/>
+        <field name="group_by_id" search="[('model_id.model', '=', 'crm.lead'), ('name', '=', 'contact_status')]"/>
+        <field name="data_type">count</field>
+        <field name="domain">[]</field>
+        <field name="limit_record">0</field>
+        <field name="background_color">#ffffff</field>
+        <field name="theme">kelly</field>
+        <field name="hide_false_value" eval="True"/>
+    </record>
+
+    <!-- ================================================================= -->
+    <!-- ROW 3: TREND CHARTS                                              -->
+    <!-- ================================================================= -->
+
+    <!-- Line Chart: Bookings Over Time (by Create Date) -->
+    <record id="chart_bookings_timeline" model="dashboard.chart">
+        <field name="name">Bookings Over Time</field>
+        <field name="dashboard_id" ref="synconics_bi_dashboard.my_dashboard_default"/>
+        <field name="chart_type">line_chart</field>
+        <field name="active" eval="True"/>
+        <field name="data_source">model</field>
+        <field name="model_id" search="[('model', '=', 'health.fieldservice.order')]"/>
+        <field name="group_by_id" search="[('model_id.model', '=', 'health.fieldservice.order'), ('name', '=', 'create_date')]"/>
+        <field name="time_range">month</field>
+        <field name="data_type">count</field>
+        <field name="domain">[]</field>
+        <field name="limit_record">0</field>
+        <field name="date_filter_option">this_year</field>
+        <field name="date_filter_field_id" search="[('model_id.model', '=', 'health.fieldservice.order'), ('name', '=', 'create_date')]"/>
+        <field name="background_color">#ffffff</field>
+        <field name="theme">moonrise</field>
+        <field name="hide_false_value" eval="True"/>
+    </record>
+
+    <!-- Area Chart: Leads Created Over Time -->
+    <record id="chart_leads_timeline" model="dashboard.chart">
+        <field name="name">Leads Over Time</field>
+        <field name="dashboard_id" ref="synconics_bi_dashboard.my_dashboard_default"/>
+        <field name="chart_type">area_chart</field>
+        <field name="active" eval="True"/>
+        <field name="data_source">model</field>
+        <field name="model_id" search="[('model', '=', 'crm.lead')]"/>
+        <field name="group_by_id" search="[('model_id.model', '=', 'crm.lead'), ('name', '=', 'create_date')]"/>
+        <field name="time_range">month</field>
+        <field name="data_type">count</field>
+        <field name="domain">[]</field>
+        <field name="limit_record">0</field>
+        <field name="date_filter_option">this_year</field>
+        <field name="date_filter_field_id" search="[('model_id.model', '=', 'crm.lead'), ('name', '=', 'create_date')]"/>
+        <field name="background_color">#ffffff</field>
+        <field name="theme">frozen</field>
+        <field name="hide_false_value" eval="True"/>
+    </record>
+
+    <!-- ================================================================= -->
+    <!-- ROW 4: DISTRIBUTION & ANALYSIS                                   -->
+    <!-- ================================================================= -->
+
+    <!-- Funnel Chart: Booking Pipeline -->
+    <record id="chart_booking_funnel" model="dashboard.chart">
+        <field name="name">Booking Pipeline</field>
+        <field name="dashboard_id" ref="synconics_bi_dashboard.my_dashboard_default"/>
+        <field name="chart_type">funnel_chart</field>
+        <field name="active" eval="True"/>
+        <field name="data_source">model</field>
+        <field name="model_id" search="[('model', '=', 'health.fieldservice.order')]"/>
+        <field name="group_by_id" search="[('model_id.model', '=', 'health.fieldservice.order'), ('name', '=', 'state')]"/>
+        <field name="data_type">count</field>
+        <field name="domain">[]</field>
+        <field name="limit_record">0</field>
+        <field name="background_color">#ffffff</field>
+        <field name="theme">animated</field>
+        <field name="hide_false_value" eval="True"/>
+    </record>
+
+    <!-- Radar Chart: Leads by Stage -->
+    <record id="chart_leads_radar" model="dashboard.chart">
+        <field name="name">Leads by Stage</field>
+        <field name="dashboard_id" ref="synconics_bi_dashboard.my_dashboard_default"/>
+        <field name="chart_type">radar_chart</field>
+        <field name="active" eval="True"/>
+        <field name="data_source">model</field>
+        <field name="model_id" search="[('model', '=', 'crm.lead')]"/>
+        <field name="group_by_id" search="[('model_id.model', '=', 'crm.lead'), ('name', '=', 'stage_id')]"/>
+        <field name="data_type">count</field>
+        <field name="domain">[]</field>
+        <field name="limit_record">10</field>
+        <field name="background_color">#ffffff</field>
+        <field name="theme">spirited</field>
+        <field name="hide_false_value" eval="True"/>
+    </record>
+
+    <!-- Doughnut Chart: Clients by Active Status -->
+    <record id="chart_clients_active" model="dashboard.chart">
+        <field name="name">Client Distribution</field>
+        <field name="dashboard_id" ref="synconics_bi_dashboard.my_dashboard_default"/>
+        <field name="chart_type">doughnut_chart</field>
+        <field name="active" eval="True"/>
+        <field name="data_source">model</field>
+        <field name="model_id" search="[('model', '=', 'res.partner')]"/>
+        <field name="group_by_id" search="[('model_id.model', '=', 'res.partner'), ('name', '=', 'active')]"/>
+        <field name="data_type">count</field>
+        <field name="domain">[('is_patient', '=', True)]</field>
+        <field name="limit_record">0</field>
+        <field name="background_color">#ffffff</field>
+        <field name="theme">material</field>
+        <field name="hide_false_value" eval="True"/>
+    </record>
+
+    <!-- ================================================================= -->
+    <!-- ROW 5: ADDITIONAL KPIs                                           -->
+    <!-- ================================================================= -->
+
+    <!-- KPI: Today's Bookings -->
+    <record id="kpi_today_bookings" model="dashboard.chart">
+        <field name="name">Today's Bookings</field>
+        <field name="dashboard_id" ref="synconics_bi_dashboard.my_dashboard_default"/>
+        <field name="chart_type">kpi</field>
+        <field name="active" eval="True"/>
+        <field name="data_source">model</field>
+        <field name="model_id" search="[('model', '=', 'health.fieldservice.order')]"/>
+        <field name="data_type">count</field>
+        <field name="domain">[]</field>
+        <field name="limit_record">0</field>
+        <field name="date_filter_option">today</field>
+        <field name="date_filter_field_id" search="[('model_id.model', '=', 'health.fieldservice.order'), ('name', '=', 'scheduled_date')]"/>
+        <field name="background_color">#2c3e50</field>
+        <field name="font_color">#ffffff</field>
+        <field name="layout_type">layout2</field>
+        <field name="icon_option">default</field>
+        <field name="default_icon">&lt;span class="fa fa-calendar fa-2x"&gt;&lt;/span&gt;</field>
+        <field name="previous_period_comparision" eval="True"/>
+        <field name="previous_period_type">percentage</field>
+        <field name="previous_period_duration">1</field>
+    </record>
+
+    <!-- KPI: This Week's Bookings -->
+    <record id="kpi_week_bookings" model="dashboard.chart">
+        <field name="name">This Week</field>
+        <field name="dashboard_id" ref="synconics_bi_dashboard.my_dashboard_default"/>
+        <field name="chart_type">kpi</field>
+        <field name="active" eval="True"/>
+        <field name="data_source">model</field>
+        <field name="model_id" search="[('model', '=', 'health.fieldservice.order')]"/>
+        <field name="data_type">count</field>
+        <field name="domain">[]</field>
+        <field name="limit_record">0</field>
+        <field name="date_filter_option">this_week</field>
+        <field name="date_filter_field_id" search="[('model_id.model', '=', 'health.fieldservice.order'), ('name', '=', 'scheduled_date')]"/>
+        <field name="background_color">#16a085</field>
+        <field name="font_color">#ffffff</field>
+        <field name="layout_type">layout3</field>
+        <field name="icon_option">default</field>
+        <field name="default_icon">&lt;span class="fa fa-calendar-o fa-2x"&gt;&lt;/span&gt;</field>
+        <field name="previous_period_comparision" eval="True"/>
+        <field name="previous_period_type">percentage</field>
+        <field name="previous_period_duration">1</field>
+    </record>
+
+    <!-- KPI: This Month's Bookings -->
+    <record id="kpi_month_bookings" model="dashboard.chart">
+        <field name="name">This Month</field>
+        <field name="dashboard_id" ref="synconics_bi_dashboard.my_dashboard_default"/>
+        <field name="chart_type">kpi</field>
+        <field name="active" eval="True"/>
+        <field name="data_source">model</field>
+        <field name="model_id" search="[('model', '=', 'health.fieldservice.order')]"/>
+        <field name="data_type">count</field>
+        <field name="domain">[]</field>
+        <field name="limit_record">0</field>
+        <field name="date_filter_option">this_month</field>
+        <field name="date_filter_field_id" search="[('model_id.model', '=', 'health.fieldservice.order'), ('name', '=', 'scheduled_date')]"/>
+        <field name="background_color">#8e44ad</field>
+        <field name="font_color">#ffffff</field>
+        <field name="layout_type">layout4</field>
+        <field name="icon_option">default</field>
+        <field name="default_icon">&lt;span class="fa fa-bar-chart fa-2x"&gt;&lt;/span&gt;</field>
+        <field name="previous_period_comparision" eval="True"/>
+        <field name="previous_period_type">percentage</field>
+        <field name="previous_period_duration">1</field>
+    </record>
+
+    <!-- Stacked Column Chart: Bookings by Service & State -->
+    <record id="chart_bookings_stacked" model="dashboard.chart">
+        <field name="name">Bookings: Service vs State</field>
+        <field name="dashboard_id" ref="synconics_bi_dashboard.my_dashboard_default"/>
+        <field name="chart_type">stackedcolumn_chart</field>
+        <field name="active" eval="True"/>
+        <field name="data_source">model</field>
+        <field name="model_id" search="[('model', '=', 'health.fieldservice.order')]"/>
+        <field name="group_by_id" search="[('model_id.model', '=', 'health.fieldservice.order'), ('name', '=', 'service_id')]"/>
+        <field name="sub_group_by_id" search="[('model_id.model', '=', 'health.fieldservice.order'), ('name', '=', 'state')]"/>
+        <field name="data_type">count</field>
+        <field name="domain">[]</field>
+        <field name="limit_record">10</field>
+        <field name="sort_order">desc</field>
+        <field name="background_color">#ffffff</field>
+        <field name="theme">kelly</field>
+        <field name="hide_false_value" eval="True"/>
+    </record>
+
+    <!-- Radial Chart: Booking Completion Rate -->
+    <record id="chart_completion_radial" model="dashboard.chart">
+        <field name="name">Completion Rate</field>
+        <field name="dashboard_id" ref="synconics_bi_dashboard.my_dashboard_default"/>
+        <field name="chart_type">radial_chart</field>
+        <field name="active" eval="True"/>
+        <field name="data_source">model</field>
+        <field name="model_id" search="[('model', '=', 'health.fieldservice.order')]"/>
+        <field name="group_by_id" search="[('model_id.model', '=', 'health.fieldservice.order'), ('name', '=', 'state')]"/>
+        <field name="data_type">count</field>
+        <field name="domain">[]</field>
+        <field name="limit_record">0</field>
+        <field name="background_color">#ffffff</field>
+        <field name="theme">animated</field>
+        <field name="hide_false_value" eval="True"/>
+    </record>
+
+    <!-- Treemap Chart: Leads Distribution -->
+    <record id="chart_leads_treemap" model="dashboard.chart">
+        <field name="name">Leads Treemap</field>
+        <field name="dashboard_id" ref="synconics_bi_dashboard.my_dashboard_default"/>
+        <field name="chart_type">treemap_chart</field>
+        <field name="active" eval="True"/>
+        <field name="data_source">model</field>
+        <field name="model_id" search="[('model', '=', 'crm.lead')]"/>
+        <field name="group_by_id" search="[('model_id.model', '=', 'crm.lead'), ('name', '=', 'stage_id')]"/>
+        <field name="data_type">count</field>
+        <field name="domain">[]</field>
+        <field name="limit_record">10</field>
+        <field name="background_color">#ffffff</field>
+        <field name="theme">spirited</field>
+        <field name="hide_false_value" eval="True"/>
+    </record>
+
+</odoo>

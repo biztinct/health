@@ -1,10 +1,109 @@
 # -*- coding: utf-8 -*-
 
-from odoo import models, fields, api
+from odoo import models, fields, api, _
+from datetime import timedelta
 
 
 class HREmployee(models.Model):
     _inherit = 'hr.employee'
+
+    # ===================
+    # BFSI-Specific Fields
+    # ===================
+    branch_id = fields.Many2one(
+        'bfsi.branch',
+        string='Branch',
+        ondelete='set null',
+        index=True,
+        help='Bank branch this employee belongs to'
+    )
+
+    banker_type = fields.Selection([
+        ('rm', 'Relationship Manager'),
+        ('branch_manager', 'Branch Manager'),
+        ('regional_manager', 'Regional Manager'),
+        ('telesales', 'Telesales Agent'),
+        ('field_sales', 'Field Sales Officer'),
+        ('loan_officer', 'Loan Officer'),
+        ('insurance_advisor', 'Insurance Advisor'),
+        ('wealth_manager', 'Wealth Manager'),
+        ('banker', 'Banker (General)')
+    ], string='Banker Type', index=True)
+
+    # Performance KPIs
+    kpi_ids = fields.One2many(
+        'bfsi.performance.kpi',
+        'employee_id',
+        string='Performance KPIs'
+    )
+
+    current_month_rank = fields.Integer(
+        string='Current Month Rank',
+        compute='_compute_performance_rank',
+        store=True
+    )
+
+    previous_month_rank = fields.Integer(
+        string='Previous Month Rank',
+        compute='_compute_performance_rank',
+        store=True
+    )
+
+    rank_movement = fields.Integer(
+        string='Rank Movement',
+        compute='_compute_rank_movement',
+        store=True,
+        help='Positive = improved, Negative = dropped'
+    )
+
+    latest_overall_score = fields.Float(
+        string='Latest Performance Score',
+        compute='_compute_latest_performance',
+        store=True,
+        digits=(5, 2)
+    )
+
+    coaching_priority = fields.Selection([
+        ('low', 'Low'),
+        ('medium', 'Medium'),
+        ('high', 'High'),
+        ('critical', 'Critical')
+    ], string='Coaching Priority', compute='_compute_latest_performance', store=True)
+
+    # BFSI Coaching metrics
+    coaching_sessions_received = fields.Integer(
+        string='Sessions Received (MTD)',
+        compute='_compute_bfsi_coaching_stats'
+    )
+
+    action_plan_ids = fields.One2many(
+        'bfsi.action.plan',
+        'employee_id',
+        string='Action Plans'
+    )
+
+    active_action_plan_count = fields.Integer(
+        string='Active Action Plans',
+        compute='_compute_action_plan_stats'
+    )
+
+    action_plan_completion_rate = fields.Float(
+        string='Action Plan Completion Rate',
+        compute='_compute_action_plan_stats',
+        digits=(5, 2)
+    )
+
+    # AI Coaching access
+    ai_coaching_enabled = fields.Boolean(
+        string='AI Coaching Enabled',
+        default=True,
+        help='Whether this employee has access to 24/7 AI coaching'
+    )
+
+    last_ai_coaching_date = fields.Datetime(
+        string='Last AI Coaching',
+        compute='_compute_last_ai_coaching'
+    )
 
     # Skills
     skill_ids = fields.One2many(
@@ -294,3 +393,199 @@ class HREmployee(models.Model):
             'categories': sorted(list(categories_set)),
             'skills': skills_data
         }
+
+    # ===================
+    # BFSI Compute Methods
+    # ===================
+    @api.depends('kpi_ids', 'kpi_ids.branch_rank', 'kpi_ids.period_date')
+    def _compute_performance_rank(self):
+        """Compute current and previous month rankings"""
+        today = fields.Date.today()
+        current_month_start = today.replace(day=1)
+        previous_month_start = (current_month_start - timedelta(days=1)).replace(day=1)
+
+        for employee in self:
+            # Current month rank - get latest KPI
+            current_kpi = self.env['bfsi.performance.kpi'].search([
+                ('employee_id', '=', employee.id),
+                ('period_date', '>=', current_month_start)
+            ], order='period_date desc', limit=1)
+
+            employee.current_month_rank = current_kpi.branch_rank if current_kpi else 0
+
+            # Previous month rank
+            prev_kpi = self.env['bfsi.performance.kpi'].search([
+                ('employee_id', '=', employee.id),
+                ('period_date', '>=', previous_month_start),
+                ('period_date', '<', current_month_start)
+            ], order='period_date desc', limit=1)
+
+            employee.previous_month_rank = prev_kpi.branch_rank if prev_kpi else 0
+
+    @api.depends('current_month_rank', 'previous_month_rank')
+    def _compute_rank_movement(self):
+        """Compute rank movement (positive = improved)"""
+        for employee in self:
+            if employee.previous_month_rank and employee.current_month_rank:
+                # Lower rank number is better, so improvement is prev - current
+                employee.rank_movement = employee.previous_month_rank - employee.current_month_rank
+            else:
+                employee.rank_movement = 0
+
+    @api.depends('kpi_ids', 'kpi_ids.overall_score', 'kpi_ids.coaching_priority')
+    def _compute_latest_performance(self):
+        """Get latest performance score and coaching priority"""
+        for employee in self:
+            latest_kpi = self.env['bfsi.performance.kpi'].search([
+                ('employee_id', '=', employee.id)
+            ], order='period_date desc', limit=1)
+
+            if latest_kpi:
+                employee.latest_overall_score = latest_kpi.overall_score
+                employee.coaching_priority = latest_kpi.coaching_priority
+            else:
+                employee.latest_overall_score = 0
+                employee.coaching_priority = 'low'
+
+    def _compute_bfsi_coaching_stats(self):
+        """Compute BFSI-specific coaching statistics"""
+        today = fields.Date.today()
+        month_start = today.replace(day=1)
+
+        for employee in self:
+            sessions = self.env['hr.coaching.session'].search([
+                ('employee_id', '=', employee.id),
+                ('session_date', '>=', month_start),
+                ('state', 'in', ['in_progress', 'completed'])
+            ])
+            employee.coaching_sessions_received = len(sessions)
+
+    def _compute_action_plan_stats(self):
+        """Compute action plan statistics"""
+        for employee in self:
+            active_plans = employee.action_plan_ids.filtered(
+                lambda p: p.state in ['committed', 'in_progress']
+            )
+            employee.active_action_plan_count = len(active_plans)
+
+            completed = len(employee.action_plan_ids.filtered(lambda p: p.state == 'completed'))
+            total = len(employee.action_plan_ids.filtered(
+                lambda p: p.state in ['committed', 'in_progress', 'completed']
+            ))
+            employee.action_plan_completion_rate = (completed / total * 100) if total > 0 else 0
+
+    def _compute_last_ai_coaching(self):
+        """Get last AI coaching session date"""
+        for employee in self:
+            last_session = self.env['hr.coaching.session'].search([
+                ('employee_id', '=', employee.id),
+                ('session_type', 'in', ['ai', 'hybrid'])
+            ], order='session_date desc', limit=1)
+
+            employee.last_ai_coaching_date = last_session.session_date if last_session else False
+
+    # ===================
+    # BFSI Actions
+    # ===================
+    def action_view_performance(self):
+        """View performance KPIs"""
+        self.ensure_one()
+        return {
+            'name': _('Performance KPIs - %s') % self.name,
+            'type': 'ir.actions.act_window',
+            'res_model': 'bfsi.performance.kpi',
+            'view_mode': 'list,form',
+            'domain': [('employee_id', '=', self.id)],
+            'context': {'default_employee_id': self.id}
+        }
+
+    def action_view_action_plans(self):
+        """View action plans"""
+        self.ensure_one()
+        return {
+            'name': _('Action Plans - %s') % self.name,
+            'type': 'ir.actions.act_window',
+            'res_model': 'bfsi.action.plan',
+            'view_mode': 'list,form',
+            'domain': [('employee_id', '=', self.id)],
+            'context': {'default_employee_id': self.id}
+        }
+
+    def action_start_ai_coaching(self):
+        """Start a new AI coaching session"""
+        self.ensure_one()
+
+        # Create new coaching session
+        session = self.env['hr.coaching.session'].create({
+            'name': _('AI Coaching - %s') % self.name,
+            'employee_id': self.id,
+            'session_type': 'ai',
+            'topic': 'performance',
+        })
+
+        return {
+            'name': _('AI Coaching Session'),
+            'type': 'ir.actions.act_window',
+            'res_model': 'hr.coaching.session',
+            'res_id': session.id,
+            'view_mode': 'form',
+        }
+
+    def action_generate_coaching_strategy(self):
+        """Generate AI coaching strategy for this banker"""
+        self.ensure_one()
+
+        # Create new strategy
+        strategy = self.env['bfsi.coaching.strategy'].create({
+            'banker_id': self.id,
+            'manager_id': self.branch_id.manager_id.id if self.branch_id else False,
+        })
+
+        # Generate the strategy
+        strategy.action_generate_strategy()
+
+        return {
+            'name': _('Coaching Strategy'),
+            'type': 'ir.actions.act_window',
+            'res_model': 'bfsi.coaching.strategy',
+            'res_id': strategy.id,
+            'view_mode': 'form',
+        }
+
+    def get_performance_context_for_ai(self):
+        """Get comprehensive performance context for AI coaching"""
+        self.ensure_one()
+
+        # Get latest KPI
+        latest_kpi = self.env['bfsi.performance.kpi'].search([
+            ('employee_id', '=', self.id)
+        ], order='period_date desc', limit=1)
+
+        # Get target
+        target = self.env['bfsi.kpi.target'].get_target_for_employee(self.id)
+
+        # Get active action plans
+        active_plans = self.action_plan_ids.filtered(
+            lambda p: p.state in ['committed', 'in_progress']
+        )
+
+        context = {
+            'employee_name': self.name,
+            'role': self.job_id.name if self.job_id else self.banker_type or 'Banker',
+            'branch': self.branch_id.name if self.branch_id else 'N/A',
+            'current_rank': self.current_month_rank,
+            'rank_movement': self.rank_movement,
+            'latest_score': self.latest_overall_score,
+            'coaching_priority': self.coaching_priority,
+        }
+
+        if latest_kpi:
+            context['kpi_summary'] = latest_kpi.get_kpi_summary_for_ai()
+
+        if target:
+            context['target_summary'] = target.get_target_summary_for_ai()
+
+        if active_plans:
+            context['active_plans'] = [p.get_plan_summary_for_ai() for p in active_plans[:2]]
+
+        return context

@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- BFSI Performance Coaching Root Menu -->
+    <menuitem
+        id="menu_bfsi_root"
+        name="AI Performance Coaching"
+        web_icon="hr_development_ai,static/description/icon.png"
+        sequence="45"/>
+
+    <!-- Dashboard Menu -->
+    <menuitem
+        id="menu_bfsi_dashboard"
+        name="Dashboard"
+        parent="menu_bfsi_root"
+        sequence="1"/>
+
+    <menuitem
+        id="menu_bfsi_manager_dashboard"
+        name="Manager Dashboard"
+        parent="menu_bfsi_dashboard"
+        action="action_bfsi_branch"
+        sequence="1"
+        groups="hr_development_ai.group_bfsi_branch_manager"/>
+
+    <menuitem
+        id="menu_bfsi_my_performance"
+        name="My Performance"
+        parent="menu_bfsi_dashboard"
+        action="action_bfsi_performance_kpi"
+        sequence="2"/>
+
+    <!-- Performance Menu -->
+    <menuitem
+        id="menu_bfsi_performance"
+        name="Performance"
+        parent="menu_bfsi_root"
+        sequence="10"/>
+
+    <menuitem
+        id="menu_bfsi_performance_kpi"
+        name="Performance KPIs"
+        parent="menu_bfsi_performance"
+        action="action_bfsi_performance_kpi"
+        sequence="1"/>
+
+    <menuitem
+        id="menu_bfsi_kpi_targets"
+        name="KPI Targets"
+        parent="menu_bfsi_performance"
+        action="action_bfsi_kpi_target"
+        sequence="2"
+        groups="hr_development_ai.group_bfsi_branch_manager"/>
+
+    <!-- Coaching Menu -->
+    <menuitem
+        id="menu_bfsi_coaching"
+        name="Coaching"
+        parent="menu_bfsi_root"
+        sequence="20"/>
+
+    <menuitem
+        id="menu_bfsi_coaching_strategies"
+        name="Coaching Strategies"
+        parent="menu_bfsi_coaching"
+        action="action_bfsi_coaching_strategy"
+        sequence="1"
+        groups="hr_development_ai.group_bfsi_branch_manager"/>
+
+    <menuitem
+        id="menu_bfsi_action_plans"
+        name="Action Plans"
+        parent="menu_bfsi_coaching"
+        action="action_bfsi_action_plan"
+        sequence="2"/>
+
+    <menuitem
+        id="menu_bfsi_my_action_plans"
+        name="My Action Plans"
+        parent="menu_bfsi_coaching"
+        action="action_bfsi_action_plan_my"
+        sequence="3"/>
+
+    <!-- Organization Menu -->
+    <menuitem
+        id="menu_bfsi_organization"
+        name="Organization"
+        parent="menu_bfsi_root"
+        sequence="30"
+        groups="hr_development_ai.group_bfsi_branch_manager"/>
+
+    <menuitem
+        id="menu_bfsi_branches"
+        name="Branches"
+        parent="menu_bfsi_organization"
+        action="action_bfsi_branch"
+        sequence="1"/>
+
+    <menuitem
+        id="menu_bfsi_regions"
+        name="Regions"
+        parent="menu_bfsi_organization"
+        action="action_bfsi_region"
+        sequence="2"
+        groups="hr_development_ai.group_bfsi_regional_manager"/>
+
+    <!-- Configuration Menu -->
+    <menuitem
+        id="menu_bfsi_configuration"
+        name="Configuration"
+        parent="menu_bfsi_root"
+        sequence="100"
+        groups="hr_development_ai.group_hr_development_admin"/>
+
+    <menuitem
+        id="menu_bfsi_kpi_target_config"
+        name="KPI Target Templates"
+        parent="menu_bfsi_configuration"
+        action="action_bfsi_kpi_target"
+        sequence="1"/>
+
+</odoo>

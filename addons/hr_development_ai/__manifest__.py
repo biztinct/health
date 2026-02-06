@@ -87,8 +87,15 @@ Inspired by world-class platforms: SAP SuccessFactors, Workday Skills Cloud, Bet
         # Dashboard
         'views/hr_development_dashboard_views.xml',
 
+        # BFSI Performance Coaching Views
+        'views/bfsi_branch_views.xml',
+        'views/bfsi_kpi_views.xml',
+        'views/bfsi_action_plan_views.xml',
+        'views/bfsi_coaching_strategy_views.xml',
+
         # Menus (must be loaded AFTER all views that define actions)
         'views/hr_development_menus.xml',
+        'views/bfsi_menus.xml',
     ],
     'demo': [
         'data/demo_data.xml',

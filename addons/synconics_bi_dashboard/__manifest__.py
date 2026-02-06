@@ -102,6 +102,7 @@ Transform your data into compelling dashboard visualizations
         "wizard/mail_compose_message_views.xml",
         "views/dashboard_view.xml",
         "data/dashboard_data.xml",
+        "data/healthcare_charts.xml",
         "views/dashboard_chart_view.xml",
         "views/dashboard_query_view.xml",
         "views/query_result_display_view.xml",

@@ -23,3 +23,10 @@ from . import slide_channel
 from . import project_task
 from . import skills_inference_engine
 from . import hr_development_dashboard
+
+# BFSI Performance Coaching Models
+from . import bfsi_branch  # Contains BFSIRegion and BFSIBranch
+from . import bfsi_kpi_target
+from . import bfsi_performance_kpi
+from . import bfsi_action_plan  # Contains BFSIActionPlan and BFSIActionPlanItem
+from . import bfsi_coaching_strategy  # Contains BFSICoachingStrategy and BFSICoachingRoleplayWizard
