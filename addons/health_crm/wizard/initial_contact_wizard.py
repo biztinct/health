@@ -169,18 +169,22 @@ class HealthInitialContactWizard(models.TransientModel):
         ]
         matching_leads = self.env['crm.lead'].search(lead_domain, limit=30)
         
-        # Track all lead IDs we'll show (both matching and associated)
-        all_lead_ids = set(matching_leads.ids)
+        # Track leads by category
+        directly_matching_lead_ids = set(matching_leads.ids)
+        associated_lead_ids = set()
         
         # ==================================================
         # Step 3: Find associated leads for matching clients
-        # These leads should appear in Leads section
+        # These leads should appear in Leads section REGARDLESS of status
         # ==================================================
         if matching_partners:
-            associated_leads = self.env['crm.lead'].search([
+            assoc_leads = self.env['crm.lead'].search([
                 ('patient_id', 'in', matching_partners.ids),
             ], limit=30)
-            all_lead_ids.update(associated_leads.ids)
+            associated_lead_ids.update(assoc_leads.ids)
+        
+        # Combine all lead IDs
+        all_lead_ids = directly_matching_lead_ids | associated_lead_ids
         
         # ===================================================
         # Step 4: Find associated clients for matching leads
@@ -197,7 +201,7 @@ class HealthInitialContactWizard(models.TransientModel):
         clients_list = []
         for p in all_partners:
             # Find associated leads for this client
-            associated_leads = self.env['crm.lead'].search([
+            assoc_leads_for_client = self.env['crm.lead'].search([
                 ('patient_id', '=', p.id)
             ], limit=5)
             
@@ -207,8 +211,8 @@ class HealthInitialContactWizard(models.TransientModel):
                 'phone': p.phone or '',
                 'email': p.email or '',
                 'code': p.patient_code or '',
-                'associated_lead_count': len(associated_leads),
-                'associated_leads': [{'id': l.id, 'name': l.name, 'code': l.unique_contact_code or ''} for l in associated_leads],
+                'associated_lead_count': len(assoc_leads_for_client),
+                'associated_leads': [{'id': l.id, 'name': l.name, 'code': l.unique_contact_code or ''} for l in assoc_leads_for_client],
             })
         
         # ==========================================
@@ -238,12 +242,15 @@ class HealthInitialContactWizard(models.TransientModel):
                 'associated_client': associated_client,
             }
             
-            if lead.contact_status == 'lead':
+            # Leads associated with matching clients always go to Leads section
+            if lead.id in associated_lead_ids:
+                leads_list.append(record)
+            # Directly matching leads filter by status
+            elif lead.contact_status == 'lead':
                 leads_list.append(record)
             elif lead.contact_status in ['active', False, '']:
-                # Only add to contacts if status is active or not set
                 contacts_list.append(record)
-            # Skip other statuses like 'booking', 'lost_booking' - those are handled differently
+            # Skip other statuses like 'booking', 'lost_booking' for directly matching leads
         
         return {
             'contacts': contacts_list[:10],  # Limit to 10
