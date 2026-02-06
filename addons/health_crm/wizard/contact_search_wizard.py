@@ -206,6 +206,9 @@ class HealthContactSearchLine(models.TransientModel):
     email = fields.Char('Email')
     code = fields.Char('Code')
     
+    # Associated info - shows linked client (for leads) or linked leads (for clients)
+    associated_info = fields.Char('Associated', help='Shows linked client for leads, or linked leads for clients')
+    
     def action_select(self):
         """Select this record and open the appropriate form"""
         self.ensure_one()

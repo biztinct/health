@@ -36,6 +36,8 @@
                                 <field name="phone" string="Phone"/>
                                 <field name="email" string="Email"/>
                                 <field name="code" string="Client ID"/>
+                                <field name="associated_info" string="Associated Leads" 
+                                       widget="char" optional="show"/>
                                 <button name="action_select" type="object" 
                                         string="Select" class="btn-success btn-sm"
                                         icon="fa-arrow-right"/>
@@ -58,6 +60,8 @@
                                 <field name="phone" string="Phone"/>
                                 <field name="email" string="Email"/>
                                 <field name="code" string="Lead ID"/>
+                                <field name="associated_info" string="Associated Client" 
+                                       widget="char" optional="show"/>
                                 <button name="action_select" type="object" 
                                         string="Select" class="btn-warning btn-sm"
                                         icon="fa-arrow-right"/>
@@ -80,6 +84,8 @@
                                 <field name="phone" string="Phone"/>
                                 <field name="email" string="Email"/>
                                 <field name="code" string="Contact ID"/>
+                                <field name="associated_info" string="Associated Client" 
+                                       widget="char" optional="show"/>
                                 <button name="action_select" type="object" 
                                         string="Select" class="btn-info btn-sm"
                                         icon="fa-arrow-right"/>

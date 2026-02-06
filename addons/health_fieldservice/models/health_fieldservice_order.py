@@ -2340,6 +2340,22 @@ class HealthFieldServiceOrderUnified(models.Model):
             }
         }
     
+    def action_open_lead_dashboard(self):
+        """Open the Lead Hub-Spoke Dashboard for the linked lead."""
+        self.ensure_one()
+        
+        if not self.crm_lead_id:
+            raise UserError(_('No lead is linked to this booking.'))
+        
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'health_landing_lead_hub',
+            'params': {
+                'lead_id': self.crm_lead_id.id,
+                'lead_name': self.crm_lead_id.name,
+            },
+        }
+    
     def action_open_reschedule_calendar(self):
         """
         Open calendar view to reschedule this booking.

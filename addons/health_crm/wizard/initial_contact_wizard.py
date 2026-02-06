@@ -136,25 +136,18 @@ class HealthInitialContactWizard(models.TransientModel):
         Search for contacts, leads, and clients by name.
         Returns grouped results for display in popup.
         
-        IMPORTANT: Each person should appear ONLY ONCE:
-        - If they are a Client (res.partner with is_patient), show as Client only
-        - If they are a Lead (crm.lead with contact_status='lead'), show as Lead only
-        - If they are a Contact (crm.lead with contact_status='active'), show as Contact only
-        
-        We avoid showing the same person multiple times by:
-        1. First finding all clients (res.partner)
-        
-        DEBUG: Adding logging to trace search results
-        2. Then finding leads/contacts that:
-           - Do NOT have a linked client (patient_id)
-           - AND do NOT have a unique_contact_code that matches any client's patient_code
+        BIDIRECTIONAL ASSOCIATION LOGIC:
+        - If a client matches: show in Clients section + show ALL associated leads in Leads section
+        - If a lead matches: show in Leads section + show associated client in Clients section
+        - This ensures users see the full relationship regardless of which end matches
         """
         if not search_term or len(search_term) < 2:
             return {'contacts': [], 'leads': [], 'clients': []}
         
-        # Step 1: Search Clients (res.partner with is_patient=True)
-        # These are the highest priority - converted contacts
-        partners = self.env['res.partner'].search([
+        # ==========================================
+        # Step 1: Search Clients that match directly
+        # ==========================================
+        matching_partners = self.env['res.partner'].search([
             ('is_patient', '=', True),
             '|', '|',
             ('name', 'ilike', search_term),
@@ -162,59 +155,78 @@ class HealthInitialContactWizard(models.TransientModel):
             ('email', 'ilike', search_term),
         ], limit=15)
         
-        clients_list = [{
-            'id': p.id,
-            'name': p.name,
-            'phone': p.phone or '',
-            'email': p.email or '',
-            'code': p.patient_code or '',
-        } for p in partners]
+        # Track all client IDs we'll show (both matching and associated)
+        all_client_ids = set(matching_partners.ids)
         
-        # Collect client patient_codes to exclude matching leads/contacts
-        client_patient_codes = [p.patient_code for p in partners if p.patient_code]
-        client_partner_ids = partners.ids
-        
-        # Step 2: Search CRM Leads
+        # =========================================
+        # Step 2: Search Leads that match directly
+        # =========================================
         lead_domain = [
             '|', '|',
             ('name', 'ilike', search_term),
             ('phone', 'ilike', search_term),
             ('email_from', 'ilike', search_term),
         ]
+        matching_leads = self.env['crm.lead'].search(lead_domain, limit=30)
         
-        leads = self.env['crm.lead'].search(lead_domain, limit=30)
+        # Track all lead IDs we'll show (both matching and associated)
+        all_lead_ids = set(matching_leads.ids)
         
-        # Build sets of client identifiers for exclusion matching
-        # A lead should be excluded from results if it matches any client by:
-        # - patient_id link
-        # - unique_contact_code matching patient_code
-        # - name + email/phone matching (for cases where they're the same person)
-        client_names_lower = {p.name.lower().strip() for p in partners if p.name}
-        client_emails_lower = {p.email.lower().strip() for p in partners if p.email}
-        client_phones = {self._normalize_phone(p.phone) for p in partners if p.phone}
+        # ==================================================
+        # Step 3: Find associated leads for matching clients
+        # These leads should appear in Leads section
+        # ==================================================
+        if matching_partners:
+            associated_leads = self.env['crm.lead'].search([
+                ('patient_id', 'in', matching_partners.ids),
+            ], limit=30)
+            all_lead_ids.update(associated_leads.ids)
         
-        # Filter leads to exclude those that are already represented as clients
+        # ===================================================
+        # Step 4: Find associated clients for matching leads
+        # These clients should appear in Clients section
+        # ===================================================
+        for lead in matching_leads:
+            if lead.patient_id and lead.patient_id.id not in all_client_ids:
+                all_client_ids.add(lead.patient_id.id)
+        
+        # =========================================
+        # Step 5: Build final Clients list
+        # =========================================
+        all_partners = self.env['res.partner'].browse(list(all_client_ids))
+        clients_list = []
+        for p in all_partners:
+            # Find associated leads for this client
+            associated_leads = self.env['crm.lead'].search([
+                ('patient_id', '=', p.id)
+            ], limit=5)
+            
+            clients_list.append({
+                'id': p.id,
+                'name': p.name,
+                'phone': p.phone or '',
+                'email': p.email or '',
+                'code': p.patient_code or '',
+                'associated_lead_count': len(associated_leads),
+                'associated_leads': [{'id': l.id, 'name': l.name, 'code': l.unique_contact_code or ''} for l in associated_leads],
+            })
+        
+        # ==========================================
+        # Step 6: Build final Leads/Contacts lists
+        # ==========================================
+        all_leads = self.env['crm.lead'].browse(list(all_lead_ids))
         contacts_list = []
         leads_list = []
-        for lead in leads:
-            # Skip if this lead has a linked patient (client)
-            if lead.patient_id and lead.patient_id.id in client_partner_ids:
-                continue
-            
-            # Skip if the unique_contact_code matches a client's patient_code
-            if lead.unique_contact_code and lead.unique_contact_code in client_patient_codes:
-                continue
-            
-            # Skip if the lead matches a client by name AND (email or phone)
-            lead_name = (lead.name or '').lower().strip()
-            lead_email = (lead.email_from or '').lower().strip()
-            lead_phone = self._normalize_phone(lead.phone)
-            
-            if lead_name and lead_name in client_names_lower:
-                # Name matches a client - check if email or phone also matches
-                if (lead_email and lead_email in client_emails_lower) or \
-                   (lead_phone and lead_phone in client_phones):
-                    continue  # This lead is likely the same person as a client
+        
+        for lead in all_leads:
+            # Find associated client for this lead
+            associated_client = None
+            if lead.patient_id:
+                associated_client = {
+                    'id': lead.patient_id.id,
+                    'name': lead.patient_id.name,
+                    'code': lead.patient_id.patient_code or '',
+                }
             
             record = {
                 'id': lead.id,
@@ -223,7 +235,9 @@ class HealthInitialContactWizard(models.TransientModel):
                 'email': lead.email_from or '',
                 'code': lead.unique_contact_code or '',
                 'status': lead.contact_status,
+                'associated_client': associated_client,
             }
+            
             if lead.contact_status == 'lead':
                 leads_list.append(record)
             elif lead.contact_status in ['active', False, '']:
@@ -260,8 +274,17 @@ class HealthInitialContactWizard(models.TransientModel):
         # Build the line data for creating the wizard
         line_vals = []
         
-        # Add clients
+        # Add clients with associated leads info
         for client in results.get('clients', []):
+            associated_leads = client.get('associated_leads', [])
+            associated_info = ''
+            if associated_leads:
+                lead_names = [l['name'] for l in associated_leads[:3]]
+                if len(associated_leads) > 3:
+                    associated_info = f"Leads: {', '.join(lead_names)} (+{len(associated_leads) - 3} more)"
+                else:
+                    associated_info = f"Leads: {', '.join(lead_names)}"
+            
             line_vals.append((0, 0, {
                 'record_type': 'client',
                 'record_id': client['id'],
@@ -269,10 +292,16 @@ class HealthInitialContactWizard(models.TransientModel):
                 'phone': client.get('phone', ''),
                 'email': client.get('email', ''),
                 'code': client.get('code', ''),
+                'associated_info': associated_info,
             }))
         
-        # Add leads
+        # Add leads with associated client info
         for lead in results.get('leads', []):
+            associated_client = lead.get('associated_client')
+            associated_info = ''
+            if associated_client:
+                associated_info = f"Client: {associated_client['name']}"
+            
             line_vals.append((0, 0, {
                 'record_type': 'lead',
                 'record_id': lead['id'],
@@ -280,10 +309,16 @@ class HealthInitialContactWizard(models.TransientModel):
                 'phone': lead.get('phone', ''),
                 'email': lead.get('email', ''),
                 'code': lead.get('code', ''),
+                'associated_info': associated_info,
             }))
         
-        # Add contacts
+        # Add contacts with associated client info
         for contact in results.get('contacts', []):
+            associated_client = contact.get('associated_client')
+            associated_info = ''
+            if associated_client:
+                associated_info = f"Client: {associated_client['name']}"
+            
             line_vals.append((0, 0, {
                 'record_type': 'contact',
                 'record_id': contact['id'],
@@ -291,6 +326,7 @@ class HealthInitialContactWizard(models.TransientModel):
                 'phone': contact.get('phone', ''),
                 'email': contact.get('email', ''),
                 'code': contact.get('code', ''),
+                'associated_info': associated_info,
             }))
         
         # Create the search wizard with lines explicitly saved to database

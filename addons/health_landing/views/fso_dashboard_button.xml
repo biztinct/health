@@ -19,8 +19,9 @@
             <!-- Add Dashboard button to header for calendar event popups - appears next to Edit/Delete buttons -->
             <xpath expr="//button[@name='action_confirm_booking']" position="before">
                 <button name="action_open_fso_dashboard" type="object"
-                        string="📊 Dashboard"
+                        string="Dashboard"
                         class="btn btn-info"
+                        icon="fa-bar-chart"
                         help='View client and service details'/>
             </xpath>
         </field>

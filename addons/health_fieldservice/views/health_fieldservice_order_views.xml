@@ -25,6 +25,12 @@
                             icon="fa-times-circle"
                             invisible="state in ('completed', 'completed_pending_invoice', 'cancelled')"/>
                     
+                    <button name="action_open_lead_dashboard" type="object"
+                            string="Dashboard" class="btn-secondary"
+                            icon="fa-bar-chart"
+                            invisible="not crm_lead_id"
+                            help="Open the lead dashboard for this booking"/>
+                    
                     <button name="action_confirm_booking" type="object"
                             string="Confirm Booking" class="btn-success"
                             icon="fa-check-circle"
