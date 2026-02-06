@@ -19,7 +19,7 @@
         id="menu_bfsi_manager_dashboard"
         name="Manager Dashboard"
         parent="menu_bfsi_dashboard"
-        action="action_bfsi_branch"
+        action="action_bfsi_manager_dashboard"
         sequence="1"
         groups="hr_development_ai.group_bfsi_branch_manager"/>
 

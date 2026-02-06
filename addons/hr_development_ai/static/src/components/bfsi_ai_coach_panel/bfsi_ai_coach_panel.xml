@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <!-- BFSI AI Coach Panel - Persistent Sidebar Component -->
+    <t t-name="hr_development_ai.BfsiAiCoachPanel">
+        <div t-ref="panel"
+             t-attf-class="bfsi-ai-coach-panel {{ state.isOpen ? 'open' : 'closed' }} {{ state.isMinimized ? 'minimized' : '' }} {{ state.isMobile ? 'mobile' : 'desktop' }}">
+
+            <!-- Floating Toggle Button (Mobile) -->
+            <button t-if="state.isMobile and state.isMinimized"
+                    class="bfsi-ai-coach-fab"
+                    t-on-click="togglePanel">
+                <i class="fa fa-comment-o"></i>
+                <span class="bfsi-ai-coach-fab-badge" t-if="state.messages.length > 0">
+                    <t t-esc="state.messages.length"/>
+                </span>
+            </button>
+
+            <!-- Main Panel Container -->
+            <div class="bfsi-ai-coach-container" t-if="!state.isMinimized or !state.isMobile">
+
+                <!-- Panel Header -->
+                <div class="bfsi-ai-coach-header">
+                    <div class="bfsi-ai-coach-header-left">
+                        <div class="bfsi-ai-coach-avatar">
+                            <i class="fa fa-robot"></i>
+                        </div>
+                        <div class="bfsi-ai-coach-title">
+                            <h4>AI Performance Coach</h4>
+                            <span class="bfsi-ai-coach-status">
+                                <span class="status-dot online"></span>
+                                Online
+                            </span>
+                        </div>
+                    </div>
+                    <div class="bfsi-ai-coach-header-actions">
+                        <button class="btn btn-sm btn-link" t-on-click="clearChat" title="Clear Chat">
+                            <i class="fa fa-trash-o"></i>
+                        </button>
+                        <button class="btn btn-sm btn-link" t-on-click="toggleMinimize" title="Minimize">
+                            <i t-attf-class="fa {{ state.isMinimized ? 'fa-chevron-up' : 'fa-chevron-down' }}"></i>
+                        </button>
+                        <button t-if="state.isMobile" class="btn btn-sm btn-link" t-on-click="togglePanel" title="Close">
+                            <i class="fa fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- KPI Context Card (if data available) -->
+                <div class="bfsi-ai-coach-context" t-if="state.kpiData and !state.isMinimized">
+                    <div class="bfsi-context-card">
+                        <div class="context-card-header">
+                            <span class="context-card-title">Your Performance</span>
+                            <button class="btn btn-sm btn-link" t-on-click="openDashboard">
+                                <i class="fa fa-external-link"></i>
+                            </button>
+                        </div>
+                        <div class="context-card-body">
+                            <div class="context-metric main-score">
+                                <div class="metric-value">
+                                    <span t-attf-class="badge {{ getPerformanceBadgeClass(state.kpiData.overall_score) }}">
+                                        <t t-esc="Math.round(state.kpiData.overall_score)"/>%
+                                    </span>
+                                </div>
+                                <div class="metric-label">Overall Score</div>
+                            </div>
+                            <div class="context-metrics-row">
+                                <div class="context-metric">
+                                    <div class="metric-value">
+                                        #<t t-esc="state.kpiData.branch_rank or '-'"/>
+                                    </div>
+                                    <div class="metric-label">
+                                        Rank
+                                        <i t-if="state.kpiData.rank_movement"
+                                           t-attf-class="fa {{ getRankMovementIcon(state.kpiData.rank_movement) }} ms-1"></i>
+                                    </div>
+                                </div>
+                                <div class="context-metric">
+                                    <div class="metric-value">
+                                        <t t-esc="state.kpiData.conversions or 0"/>
+                                    </div>
+                                    <div class="metric-label">Conversions</div>
+                                </div>
+                                <div class="context-metric">
+                                    <div class="metric-value">
+                                        <t t-esc="state.kpiData.meetings_scheduled or 0"/>
+                                    </div>
+                                    <div class="metric-label">Meetings</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Active Action Plans -->
+                    <div class="bfsi-context-card" t-if="state.actionPlans.length > 0">
+                        <div class="context-card-header">
+                            <span class="context-card-title">Action Plans</span>
+                            <button class="btn btn-sm btn-link" t-on-click="openActionPlans">
+                                <i class="fa fa-external-link"></i>
+                            </button>
+                        </div>
+                        <div class="context-card-body">
+                            <t t-foreach="state.actionPlans" t-as="plan" t-key="plan.id">
+                                <div class="action-plan-mini">
+                                    <div class="plan-name text-truncate" t-esc="plan.name"/>
+                                    <div class="plan-progress">
+                                        <div class="progress" style="height: 4px;">
+                                            <div class="progress-bar"
+                                                 role="progressbar"
+                                                 t-attf-style="width: {{ plan.progress_percentage }}%;"
+                                                 t-att-aria-valuenow="plan.progress_percentage"
+                                                 aria-valuemin="0"
+                                                 aria-valuemax="100">
+                                            </div>
+                                        </div>
+                                        <span class="plan-progress-text">
+                                            <t t-esc="Math.round(plan.progress_percentage)"/>%
+                                        </span>
+                                    </div>
+                                </div>
+                            </t>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Chat Messages Area -->
+                <div class="bfsi-ai-coach-messages" t-if="!state.isMinimized">
+                    <t t-foreach="state.messages" t-as="message" t-key="message_index">
+                        <div t-attf-class="bfsi-chat-message {{ message.role }} {{ message.isError ? 'error' : '' }} {{ message.isGreeting ? 'greeting' : '' }}">
+                            <div class="message-avatar">
+                                <i t-if="message.role === 'assistant'" class="fa fa-robot"></i>
+                                <i t-else="" class="fa fa-user"></i>
+                            </div>
+                            <div class="message-content">
+                                <div class="message-bubble">
+                                    <t t-esc="message.content"/>
+                                </div>
+                                <div class="message-time">
+                                    <t t-esc="formatTime(message.timestamp)"/>
+                                </div>
+
+                                <!-- Suggested Actions (if any) -->
+                                <div class="message-actions" t-if="message.actions and message.actions.length > 0">
+                                    <t t-foreach="message.actions" t-as="action" t-key="action_index">
+                                        <button class="btn btn-sm btn-outline-primary"
+                                                t-on-click="() => onQuickAction(action.type)">
+                                            <t t-esc="action.label"/>
+                                        </button>
+                                    </t>
+                                </div>
+
+                                <!-- Learning Content Link (if any) -->
+                                <div class="message-learning" t-if="message.learning_content">
+                                    <a href="#" class="learning-link">
+                                        <i class="fa fa-book me-1"></i>
+                                        <t t-esc="message.learning_content.title"/>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+
+                    <!-- Typing Indicator -->
+                    <div class="bfsi-chat-message assistant typing" t-if="state.isTyping">
+                        <div class="message-avatar">
+                            <i class="fa fa-robot"></i>
+                        </div>
+                        <div class="message-content">
+                            <div class="message-bubble typing-indicator">
+                                <span></span>
+                                <span></span>
+                                <span></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div t-ref="chatEnd"></div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="bfsi-ai-coach-quick-actions" t-if="state.showQuickActions and state.messages.length &lt;= 1 and !state.isMinimized">
+                    <div class="quick-actions-label">Quick Actions</div>
+
+                    <!-- Banker Quick Actions -->
+                    <div class="quick-actions-grid" t-if="!isManager">
+                        <button class="quick-action-btn" t-on-click="() => onQuickAction('check_kpis')">
+                            <i class="fa fa-line-chart"></i>
+                            <span>Check KPIs</span>
+                        </button>
+                        <button class="quick-action-btn" t-on-click="() => onQuickAction('action_plan')">
+                            <i class="fa fa-tasks"></i>
+                            <span>Action Plan</span>
+                        </button>
+                        <button class="quick-action-btn" t-on-click="() => onQuickAction('get_coaching')">
+                            <i class="fa fa-graduation-cap"></i>
+                            <span>Get Coaching</span>
+                        </button>
+                        <button class="quick-action-btn" t-on-click="() => onQuickAction('difficult_scenario')">
+                            <i class="fa fa-question-circle"></i>
+                            <span>Help Me Handle</span>
+                        </button>
+                    </div>
+
+                    <!-- Manager Quick Actions -->
+                    <div class="quick-actions-grid" t-if="isManager">
+                        <button class="quick-action-btn" t-on-click="() => onManagerQuickAction('team_overview')">
+                            <i class="fa fa-users"></i>
+                            <span>Team Overview</span>
+                        </button>
+                        <button class="quick-action-btn" t-on-click="() => onManagerQuickAction('needs_coaching')">
+                            <i class="fa fa-exclamation-triangle"></i>
+                            <span>Needs Coaching</span>
+                        </button>
+                        <button class="quick-action-btn" t-on-click="() => onManagerQuickAction('generate_strategy')">
+                            <i class="fa fa-magic"></i>
+                            <span>AI Strategy</span>
+                        </button>
+                        <button class="quick-action-btn" t-on-click="() => onManagerQuickAction('practice_roleplay')">
+                            <i class="fa fa-comments"></i>
+                            <span>Practice</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Chat Input Area -->
+                <div class="bfsi-ai-coach-input" t-if="!state.isMinimized">
+                    <div class="input-wrapper">
+                        <textarea
+                            class="form-control"
+                            placeholder="Type your message..."
+                            t-model="state.inputMessage"
+                            t-on-keydown="onKeydown"
+                            rows="1"
+                            t-att-disabled="state.isLoading"/>
+                        <button
+                            class="btn btn-primary send-btn"
+                            t-on-click="sendMessage"
+                            t-att-disabled="state.isLoading or !state.inputMessage.trim()">
+                            <i t-if="state.isLoading" class="fa fa-spinner fa-spin"></i>
+                            <i t-else="" class="fa fa-paper-plane"></i>
+                        </button>
+                    </div>
+                    <div class="input-hint">
+                        Press Enter to send, Shift+Enter for new line
+                    </div>
+                </div>
+            </div>
+        </div>
+    </t>
+
+</templates>

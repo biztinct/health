@@ -589,3 +589,159 @@ class HREmployee(models.Model):
             context['active_plans'] = [p.get_plan_summary_for_ai() for p in active_plans[:2]]
 
         return context
+
+    def action_ai_coach_chat(self, message, context=None):
+        """Handle AI coach chat message from persistent panel
+
+        Args:
+            message: User's chat message
+            context: Additional context (kpi_data, action_plans, session_type, etc.)
+
+        Returns:
+            dict: {response, suggested_actions, learning_content}
+        """
+        self.ensure_one()
+
+        # Get employee performance context
+        perf_context = self.get_performance_context_for_ai()
+
+        # Merge with provided context
+        full_context = {**perf_context, **(context or {})}
+
+        # Determine chat intent
+        session_type = context.get('session_type', 'general') if context else 'general'
+        is_manager = context.get('is_manager', False) if context else False
+
+        # Build AI prompt based on context and intent
+        system_prompt = self._build_ai_coach_system_prompt(full_context, session_type, is_manager)
+        user_prompt = self._build_ai_coach_user_prompt(message, full_context, session_type)
+
+        # Get AI provider
+        provider = self.env['hr.ai.provider.config'].get_active_provider()
+
+        if not provider:
+            return {
+                'response': 'AI coaching is temporarily unavailable. Please try again later or contact your manager.',
+                'suggested_actions': [],
+                'learning_content': None
+            }
+
+        try:
+            # Call AI provider
+            ai_response = provider.generate_contextual_coaching(
+                context=full_context,
+                message=message,
+                session_type=session_type,
+                is_manager=is_manager
+            )
+
+            return {
+                'response': ai_response.get('response', 'I apologize, but I could not generate a response.'),
+                'suggested_actions': ai_response.get('suggested_actions', []),
+                'learning_content': ai_response.get('learning_content', None),
+                'follow_up_questions': ai_response.get('follow_up_questions', [])
+            }
+
+        except Exception as e:
+            # Log error and return fallback response
+            import logging
+            _logger = logging.getLogger(__name__)
+            _logger.error("AI Coach chat error: %s", str(e))
+
+            return {
+                'response': self._get_fallback_coaching_response(message, full_context, session_type),
+                'suggested_actions': self._get_fallback_actions(session_type),
+                'learning_content': None
+            }
+
+    def _build_ai_coach_system_prompt(self, context, session_type, is_manager):
+        """Build system prompt for AI coach based on context"""
+        base_prompt = """You are an AI Performance Coach for banking professionals. Your role is to:
+1. Provide personalized coaching based on the banker's KPIs and performance data
+2. Be encouraging but honest about areas needing improvement
+3. Give specific, actionable advice based on banking industry best practices
+4. Help with sales techniques, customer handling, and objection management
+5. Support action plan tracking and progress monitoring
+
+"""
+
+        if is_manager:
+            base_prompt += """You are assisting a Branch Manager. Focus on:
+- Team performance analysis and coaching strategies
+- How to effectively coach individual bankers
+- Identifying patterns in team performance
+- Preparing for coaching conversations
+
+"""
+
+        if session_type == 'kpi_review':
+            base_prompt += """Focus on explaining the KPI metrics and what they mean, highlighting strengths and areas for improvement.
+"""
+        elif session_type == 'action_plan':
+            base_prompt += """Focus on reviewing action plan progress, celebrating wins, and problem-solving blockers.
+"""
+        elif session_type == 'coaching':
+            base_prompt += """Focus on providing specific coaching advice and skill-building recommendations.
+"""
+
+        return base_prompt
+
+    def _build_ai_coach_user_prompt(self, message, context, session_type):
+        """Build user prompt with context"""
+        prompt = f"""User: {context.get('employee_name', 'Banker')}
+Role: {context.get('role', 'Banking Professional')}
+Branch: {context.get('branch', 'N/A')}
+Current Performance Score: {context.get('latest_score', 'N/A')}%
+Rank: #{context.get('current_rank', 'N/A')} (Movement: {context.get('rank_movement', 0)})
+Coaching Priority: {context.get('coaching_priority', 'N/A')}
+
+"""
+        if 'kpi_summary' in context:
+            prompt += f"Recent KPI Summary:\n{context['kpi_summary']}\n\n"
+
+        if 'active_plans' in context and context['active_plans']:
+            prompt += "Active Action Plans:\n"
+            for plan in context['active_plans']:
+                prompt += f"- {plan}\n"
+            prompt += "\n"
+
+        prompt += f"User Message: {message}"
+
+        return prompt
+
+    def _get_fallback_coaching_response(self, message, context, session_type):
+        """Generate a helpful fallback response when AI is unavailable"""
+        score = context.get('latest_score', 0)
+        name = context.get('employee_name', 'there')
+
+        if session_type == 'kpi_review':
+            if score >= 80:
+                return f"Hi {name}! Your performance score of {score}% is excellent. Keep focusing on maintaining your strong results while continuing to develop your skills."
+            elif score >= 60:
+                return f"Hi {name}! Your performance score of {score}% shows good progress. Focus on your top improvement areas and consider reviewing your action plan for specific guidance."
+            else:
+                return f"Hi {name}! I see your performance score is {score}%. Let's work together on a focused improvement plan. Start by reviewing your daily activities and identifying quick wins."
+
+        elif session_type == 'action_plan':
+            return f"Hi {name}! To review your action plan progress, please check your Action Plans section in the dashboard. Remember to update your progress regularly and reach out to your manager if you're facing any blockers."
+
+        else:
+            return f"Hi {name}! I'm here to help with your performance coaching. While I'm having some technical difficulties, you can review your KPIs in the dashboard, check your action plans, or schedule time with your manager for personalized guidance."
+
+    def _get_fallback_actions(self, session_type):
+        """Get fallback suggested actions"""
+        if session_type == 'kpi_review':
+            return [
+                {'type': 'check_kpis', 'label': 'View Full KPI Dashboard'},
+                {'type': 'action_plan', 'label': 'Review Action Plan'}
+            ]
+        elif session_type == 'action_plan':
+            return [
+                {'type': 'log_activity', 'label': 'Log Progress'},
+                {'type': 'get_coaching', 'label': 'Get Coaching Tips'}
+            ]
+        else:
+            return [
+                {'type': 'check_kpis', 'label': 'Check My KPIs'},
+                {'type': 'action_plan', 'label': 'View Action Plan'}
+            ]

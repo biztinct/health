@@ -1,0 +1,811 @@
+/**
+ * BFSI AI Coach Panel - Mobile-First Responsive Styles
+ *
+ * Design Principles:
+ * - Mobile-first approach (base styles for mobile)
+ * - Bottom sheet on mobile, right sidebar on desktop
+ * - Glassmorphism effects for modern look
+ * - Smooth animations and transitions
+ */
+
+// Variables
+$panel-width-desktop: 380px;
+$panel-bg: #ffffff;
+$panel-shadow: 0 -4px 20px rgba(0, 0, 0, 0.15);
+$primary-color: #714B67;
+$primary-light: #8a6580;
+$success-color: #28a745;
+$warning-color: #ffc107;
+$danger-color: #dc3545;
+$text-primary: #212529;
+$text-secondary: #6c757d;
+$border-radius: 16px;
+$transition-speed: 0.3s;
+
+// Breakpoints
+$mobile-max: 767px;
+$tablet-min: 768px;
+$desktop-min: 1024px;
+
+// ============================================
+// MOBILE-FIRST BASE STYLES (< 768px)
+// ============================================
+
+.bfsi-ai-coach-panel {
+    position: fixed;
+    z-index: 1050;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+
+    // Mobile: Bottom sheet
+    &.mobile {
+        bottom: 0;
+        left: 0;
+        right: 0;
+        max-height: 85vh;
+        background: $panel-bg;
+        border-radius: $border-radius $border-radius 0 0;
+        box-shadow: $panel-shadow;
+        transform: translateY(0);
+        transition: transform $transition-speed ease-out;
+
+        &.minimized {
+            transform: translateY(100%);
+        }
+    }
+}
+
+// Floating Action Button (Mobile)
+.bfsi-ai-coach-fab {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, $primary-color, $primary-light);
+    border: none;
+    color: white;
+    font-size: 24px;
+    box-shadow: 0 4px 15px rgba($primary-color, 0.4);
+    cursor: pointer;
+    z-index: 1051;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+    &:hover {
+        transform: scale(1.05);
+        box-shadow: 0 6px 20px rgba($primary-color, 0.5);
+    }
+
+    &:active {
+        transform: scale(0.95);
+    }
+
+    .bfsi-ai-coach-fab-badge {
+        position: absolute;
+        top: -5px;
+        right: -5px;
+        background: $danger-color;
+        color: white;
+        font-size: 12px;
+        min-width: 20px;
+        height: 20px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0 6px;
+    }
+}
+
+// Main Container
+.bfsi-ai-coach-container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    max-height: 85vh;
+    overflow: hidden;
+}
+
+// ============================================
+// HEADER
+// ============================================
+
+.bfsi-ai-coach-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 20px;
+    background: linear-gradient(135deg, $primary-color, $primary-light);
+    color: white;
+    flex-shrink: 0;
+
+    // Mobile: Add drag handle appearance
+    @media (max-width: $mobile-max) {
+        &::before {
+            content: '';
+            position: absolute;
+            top: 8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 40px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 2px;
+        }
+        padding-top: 24px;
+    }
+}
+
+.bfsi-ai-coach-header-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.bfsi-ai-coach-avatar {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+
+    .fa-robot {
+        animation: pulse 2s infinite;
+    }
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+}
+
+.bfsi-ai-coach-title {
+    h4 {
+        margin: 0;
+        font-size: 16px;
+        font-weight: 600;
+    }
+
+    .bfsi-ai-coach-status {
+        font-size: 12px;
+        opacity: 0.9;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .status-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        display: inline-block;
+
+        &.online {
+            background: #4ade80;
+            box-shadow: 0 0 8px rgba(74, 222, 128, 0.6);
+        }
+    }
+}
+
+.bfsi-ai-coach-header-actions {
+    display: flex;
+    gap: 4px;
+
+    .btn-link {
+        color: white;
+        opacity: 0.8;
+        padding: 8px;
+        font-size: 16px;
+
+        &:hover {
+            opacity: 1;
+        }
+    }
+}
+
+// ============================================
+// CONTEXT CARDS (KPI Display)
+// ============================================
+
+.bfsi-ai-coach-context {
+    padding: 12px 16px;
+    background: #f8f9fa;
+    border-bottom: 1px solid #e9ecef;
+    flex-shrink: 0;
+    overflow-x: auto;
+    display: flex;
+    gap: 12px;
+
+    // Horizontal scroll on mobile
+    @media (max-width: $mobile-max) {
+        padding: 12px;
+        scroll-snap-type: x mandatory;
+        -webkit-overflow-scrolling: touch;
+
+        &::-webkit-scrollbar {
+            display: none;
+        }
+    }
+}
+
+.bfsi-context-card {
+    background: white;
+    border-radius: 12px;
+    padding: 12px;
+    min-width: 200px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    flex-shrink: 0;
+    scroll-snap-align: start;
+
+    @media (max-width: $mobile-max) {
+        min-width: 180px;
+    }
+}
+
+.context-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.context-card-title {
+    font-size: 12px;
+    font-weight: 600;
+    color: $text-secondary;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.context-card-body {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.context-metric {
+    text-align: center;
+
+    &.main-score {
+        margin-bottom: 8px;
+
+        .metric-value {
+            font-size: 24px;
+
+            .badge {
+                font-size: 18px;
+                padding: 8px 12px;
+            }
+        }
+    }
+}
+
+.context-metrics-row {
+    display: flex;
+    justify-content: space-around;
+    gap: 8px;
+}
+
+.metric-value {
+    font-size: 16px;
+    font-weight: 700;
+    color: $text-primary;
+}
+
+.metric-label {
+    font-size: 11px;
+    color: $text-secondary;
+    margin-top: 2px;
+}
+
+// Action Plan Mini Display
+.action-plan-mini {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    padding: 6px 0;
+    border-bottom: 1px solid #f0f0f0;
+
+    &:last-child {
+        border-bottom: none;
+    }
+}
+
+.plan-name {
+    font-size: 13px;
+    color: $text-primary;
+    flex: 1;
+}
+
+.plan-progress {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 80px;
+
+    .progress {
+        flex: 1;
+        background: #e9ecef;
+        border-radius: 2px;
+    }
+
+    .progress-bar {
+        background: $primary-color;
+    }
+}
+
+.plan-progress-text {
+    font-size: 11px;
+    color: $text-secondary;
+    min-width: 30px;
+    text-align: right;
+}
+
+// ============================================
+// CHAT MESSAGES
+// ============================================
+
+.bfsi-ai-coach-messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    background: #fafafa;
+
+    // Smooth scrolling
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+}
+
+.bfsi-chat-message {
+    display: flex;
+    gap: 10px;
+    max-width: 90%;
+
+    &.user {
+        align-self: flex-end;
+        flex-direction: row-reverse;
+
+        .message-bubble {
+            background: $primary-color;
+            color: white;
+            border-radius: 18px 18px 4px 18px;
+        }
+
+        .message-time {
+            text-align: right;
+        }
+    }
+
+    &.assistant {
+        align-self: flex-start;
+
+        .message-bubble {
+            background: white;
+            color: $text-primary;
+            border-radius: 18px 18px 18px 4px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        }
+
+        &.greeting .message-bubble {
+            background: linear-gradient(135deg, #f0f4ff, #fff);
+            border: 1px solid #e0e7ff;
+        }
+
+        &.error .message-bubble {
+            background: #fff5f5;
+            border: 1px solid #fed7d7;
+            color: $danger-color;
+        }
+    }
+}
+
+.message-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: #e9ecef;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-size: 14px;
+    color: $text-secondary;
+
+    .assistant & {
+        background: linear-gradient(135deg, $primary-color, $primary-light);
+        color: white;
+    }
+}
+
+.message-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.message-bubble {
+    padding: 12px 16px;
+    line-height: 1.5;
+    font-size: 14px;
+    word-wrap: break-word;
+    white-space: pre-wrap;
+}
+
+.message-time {
+    font-size: 11px;
+    color: $text-secondary;
+    margin-top: 4px;
+    padding: 0 4px;
+}
+
+.message-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 8px;
+
+    .btn {
+        font-size: 12px;
+        padding: 4px 12px;
+        border-radius: 20px;
+    }
+}
+
+.message-learning {
+    margin-top: 8px;
+
+    .learning-link {
+        font-size: 13px;
+        color: $primary-color;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+
+        &:hover {
+            text-decoration: underline;
+        }
+    }
+}
+
+// Typing Indicator
+.typing-indicator {
+    display: flex;
+    gap: 4px;
+    padding: 12px 16px !important;
+
+    span {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: $text-secondary;
+        animation: typingBounce 1.4s infinite;
+
+        &:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        &:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+    }
+}
+
+@keyframes typingBounce {
+    0%, 60%, 100% {
+        transform: translateY(0);
+        opacity: 0.4;
+    }
+    30% {
+        transform: translateY(-4px);
+        opacity: 1;
+    }
+}
+
+// ============================================
+// QUICK ACTIONS
+// ============================================
+
+.bfsi-ai-coach-quick-actions {
+    padding: 12px 16px;
+    background: white;
+    border-top: 1px solid #e9ecef;
+    flex-shrink: 0;
+}
+
+.quick-actions-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: $text-secondary;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 10px;
+}
+
+.quick-actions-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+
+    @media (min-width: $tablet-min) {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+.quick-action-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 12px 8px;
+    background: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 12px;
+    color: $text-primary;
+
+    i {
+        font-size: 18px;
+        color: $primary-color;
+    }
+
+    span {
+        text-align: center;
+        line-height: 1.2;
+    }
+
+    &:hover {
+        background: white;
+        border-color: $primary-color;
+        box-shadow: 0 2px 8px rgba($primary-color, 0.15);
+    }
+
+    &:active {
+        transform: scale(0.98);
+    }
+}
+
+// ============================================
+// INPUT AREA
+// ============================================
+
+.bfsi-ai-coach-input {
+    padding: 12px 16px;
+    background: white;
+    border-top: 1px solid #e9ecef;
+    flex-shrink: 0;
+
+    // Safe area for mobile devices
+    @media (max-width: $mobile-max) {
+        padding-bottom: max(12px, env(safe-area-inset-bottom));
+    }
+}
+
+.input-wrapper {
+    display: flex;
+    gap: 8px;
+    align-items: flex-end;
+}
+
+.input-wrapper textarea {
+    flex: 1;
+    resize: none;
+    border-radius: 20px;
+    padding: 10px 16px;
+    font-size: 14px;
+    border: 1px solid #e9ecef;
+    background: #f8f9fa;
+    min-height: 44px;
+    max-height: 120px;
+    transition: border-color 0.2s ease, background 0.2s ease;
+
+    &:focus {
+        outline: none;
+        border-color: $primary-color;
+        background: white;
+    }
+
+    &::placeholder {
+        color: $text-secondary;
+    }
+}
+
+.send-btn {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    background: $primary-color;
+    border: none;
+
+    &:hover:not(:disabled) {
+        background: $primary-light;
+    }
+
+    &:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+
+    i {
+        font-size: 16px;
+    }
+}
+
+.input-hint {
+    font-size: 11px;
+    color: $text-secondary;
+    text-align: center;
+    margin-top: 6px;
+
+    @media (max-width: $mobile-max) {
+        display: none;
+    }
+}
+
+// ============================================
+// DESKTOP STYLES (>= 1024px)
+// ============================================
+
+@media (min-width: $desktop-min) {
+    .bfsi-ai-coach-panel {
+        &.desktop {
+            top: 0;
+            right: 0;
+            bottom: 0;
+            width: $panel-width-desktop;
+            max-height: none;
+            border-radius: 0;
+            box-shadow: -4px 0 20px rgba(0, 0, 0, 0.1);
+            transform: translateX(0);
+            transition: transform $transition-speed ease-out, width $transition-speed ease-out;
+
+            &.closed {
+                transform: translateX(100%);
+            }
+        }
+    }
+
+    .bfsi-ai-coach-container {
+        max-height: 100vh;
+    }
+
+    .bfsi-ai-coach-header {
+        &::before {
+            display: none;
+        }
+        padding-top: 16px;
+    }
+
+    .bfsi-ai-coach-context {
+        flex-direction: column;
+        overflow-x: visible;
+    }
+
+    .bfsi-context-card {
+        min-width: auto;
+        width: 100%;
+    }
+
+    .bfsi-ai-coach-fab {
+        display: none;
+    }
+}
+
+// ============================================
+// TABLET STYLES (768px - 1023px)
+// ============================================
+
+@media (min-width: $tablet-min) and (max-width: #{$desktop-min - 1}) {
+    .bfsi-ai-coach-panel {
+        &.mobile {
+            max-height: 70vh;
+        }
+    }
+
+    .bfsi-ai-coach-fab {
+        bottom: 24px;
+        right: 24px;
+    }
+}
+
+// ============================================
+// DARK MODE SUPPORT
+// ============================================
+
+.o_dark_mode .bfsi-ai-coach-panel {
+    .bfsi-ai-coach-container {
+        background: #1a1a2e;
+    }
+
+    .bfsi-ai-coach-messages {
+        background: #16213e;
+    }
+
+    .bfsi-chat-message.assistant .message-bubble {
+        background: #1a1a2e;
+        color: #e0e0e0;
+    }
+
+    .bfsi-context-card {
+        background: #1a1a2e;
+        color: #e0e0e0;
+    }
+
+    .bfsi-ai-coach-quick-actions,
+    .bfsi-ai-coach-input {
+        background: #1a1a2e;
+        border-color: #2a2a4e;
+    }
+
+    .quick-action-btn {
+        background: #16213e;
+        border-color: #2a2a4e;
+        color: #e0e0e0;
+    }
+
+    .input-wrapper textarea {
+        background: #16213e;
+        border-color: #2a2a4e;
+        color: #e0e0e0;
+    }
+}
+
+// ============================================
+// ANIMATIONS
+// ============================================
+
+@keyframes slideUp {
+    from {
+        transform: translateY(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slideInRight {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+.bfsi-ai-coach-panel.mobile:not(.minimized) {
+    animation: slideUp 0.3s ease-out;
+}
+
+.bfsi-ai-coach-panel.desktop.open {
+    animation: slideInRight 0.3s ease-out;
+}
+
+.bfsi-chat-message {
+    animation: fadeIn 0.3s ease-out;
+}

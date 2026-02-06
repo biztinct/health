@@ -229,4 +229,11 @@
         </field>
     </record>
 
+    <!-- Manager Dashboard Client Action -->
+    <record id="action_bfsi_manager_dashboard" model="ir.actions.client">
+        <field name="name">Manager Dashboard</field>
+        <field name="tag">bfsi_manager_dashboard</field>
+        <field name="target">main</field>
+    </record>
+
 </odoo>

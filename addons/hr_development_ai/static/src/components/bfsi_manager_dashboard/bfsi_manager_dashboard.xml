@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <!-- BFSI Manager Dashboard Template -->
+    <t t-name="hr_development_ai.BfsiManagerDashboard">
+        <div class="bfsi-manager-dashboard">
+            <!-- Loading State -->
+            <div t-if="state.isLoading" class="bfsi-dashboard-loading">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                <p>Loading team data...</p>
+            </div>
+
+            <!-- Error State -->
+            <div t-elif="state.error" class="bfsi-dashboard-error alert alert-danger">
+                <i class="fa fa-exclamation-triangle me-2"></i>
+                <t t-esc="state.error"/>
+            </div>
+
+            <!-- Main Dashboard -->
+            <div t-else="" class="bfsi-dashboard-content">
+                <!-- Header -->
+                <div class="bfsi-dashboard-header">
+                    <div class="header-left">
+                        <h1 class="dashboard-title">
+                            <i class="fa fa-users me-2"></i>
+                            Team Performance Dashboard
+                        </h1>
+                        <div class="dashboard-subtitle">
+                            <span t-esc="state.branchName"/> • <t t-esc="state.teamMembers.length"/> Team Members
+                        </div>
+                    </div>
+                    <div class="header-right">
+                        <button class="btn btn-outline-secondary" t-on-click="refresh">
+                            <i class="fa fa-refresh"></i>
+                            Refresh
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Summary Cards -->
+                <div class="bfsi-summary-cards">
+                    <div class="summary-card needs-coaching" t-on-click="() => filterByPriority('high')">
+                        <div class="card-icon">
+                            <i class="fa fa-exclamation-circle"></i>
+                        </div>
+                        <div class="card-content">
+                            <div class="card-value">
+                                <t t-esc="state.needsCoachingCount"/>
+                            </div>
+                            <div class="card-label">Needs Coaching</div>
+                        </div>
+                    </div>
+
+                    <div class="summary-card avg-score">
+                        <div class="card-icon">
+                            <i class="fa fa-line-chart"></i>
+                        </div>
+                        <div class="card-content">
+                            <div class="card-value">
+                                <t t-esc="Math.round(state.avgTeamScore)"/>%
+                            </div>
+                            <div class="card-label">Avg Team Score</div>
+                        </div>
+                    </div>
+
+                    <div class="summary-card sessions" t-on-click="viewAllSessions">
+                        <div class="card-icon">
+                            <i class="fa fa-comments"></i>
+                        </div>
+                        <div class="card-content">
+                            <div class="card-value">
+                                <t t-esc="state.totalSessions"/>
+                            </div>
+                            <div class="card-label">Sessions (MTD)</div>
+                        </div>
+                    </div>
+
+                    <div class="summary-card action-plans">
+                        <div class="card-icon">
+                            <i class="fa fa-tasks"></i>
+                        </div>
+                        <div class="card-content">
+                            <div class="card-value">
+                                <t t-esc="Math.round(state.actionPlanCompletion)"/>%
+                            </div>
+                            <div class="card-label">Plan Completion</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Filters -->
+                <div class="bfsi-quick-filters">
+                    <div class="filter-group">
+                        <span class="filter-label">Filter:</span>
+                        <button t-attf-class="filter-btn {{ state.filterPriority === 'all' ? 'active' : '' }}"
+                                t-on-click="() => filterByPriority('all')">
+                            All
+                        </button>
+                        <button t-attf-class="filter-btn critical {{ state.filterPriority === 'critical' ? 'active' : '' }}"
+                                t-on-click="() => filterByPriority('critical')">
+                            Critical
+                        </button>
+                        <button t-attf-class="filter-btn high {{ state.filterPriority === 'high' ? 'active' : '' }}"
+                                t-on-click="() => filterByPriority('high')">
+                            High Priority
+                        </button>
+                        <button t-attf-class="filter-btn medium {{ state.filterPriority === 'medium' ? 'active' : '' }}"
+                                t-on-click="() => filterByPriority('medium')">
+                            Medium
+                        </button>
+                    </div>
+
+                    <div class="sort-group">
+                        <span class="filter-label">Sort:</span>
+                        <button t-attf-class="sort-btn {{ state.sortBy === 'rank' ? 'active' : '' }}"
+                                t-on-click="() => sortBy('rank')">
+                            Rank
+                            <i t-if="state.sortBy === 'rank'" t-attf-class="fa {{ state.sortOrder === 'asc' ? 'fa-sort-asc' : 'fa-sort-desc' }}"></i>
+                        </button>
+                        <button t-attf-class="sort-btn {{ state.sortBy === 'score' ? 'active' : '' }}"
+                                t-on-click="() => sortBy('score')">
+                            Score
+                            <i t-if="state.sortBy === 'score'" t-attf-class="fa {{ state.sortOrder === 'asc' ? 'fa-sort-asc' : 'fa-sort-desc' }}"></i>
+                        </button>
+                        <button t-attf-class="sort-btn {{ state.sortBy === 'priority' ? 'active' : '' }}"
+                                t-on-click="() => sortBy('priority')">
+                            Priority
+                            <i t-if="state.sortBy === 'priority'" t-attf-class="fa {{ state.sortOrder === 'asc' ? 'fa-sort-asc' : 'fa-sort-desc' }}"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Team Ranking Table -->
+                <div class="bfsi-team-table-container">
+                    <table class="bfsi-team-table">
+                        <thead>
+                            <tr>
+                                <th class="col-rank">Rank</th>
+                                <th class="col-name">Banker</th>
+                                <th class="col-score">Score</th>
+                                <th class="col-movement">Movement</th>
+                                <th class="col-priority">Priority</th>
+                                <th class="col-sessions">Sessions</th>
+                                <th class="col-actions">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <t t-foreach="filteredTeam" t-as="banker" t-key="banker.id">
+                                <tr t-attf-class="banker-row {{ banker.coaching_priority === 'critical' ? 'critical' : '' }} {{ banker.coaching_priority === 'high' ? 'high-priority' : '' }}">
+                                    <td class="col-rank">
+                                        <span class="rank-badge">
+                                            #<t t-esc="banker.current_month_rank || '-'"/>
+                                        </span>
+                                    </td>
+                                    <td class="col-name">
+                                        <div class="banker-info">
+                                            <div class="banker-avatar">
+                                                <t t-esc="banker.name.charAt(0).toUpperCase()"/>
+                                            </div>
+                                            <div class="banker-details">
+                                                <div class="banker-name">
+                                                    <t t-esc="banker.name"/>
+                                                </div>
+                                                <div class="banker-role">
+                                                    <t t-esc="banker.job_id ? banker.job_id[1] : (banker.banker_type || 'Banker')"/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="col-score">
+                                        <span t-attf-class="score-badge {{ getScoreBadgeClass(banker.latest_overall_score) }}">
+                                            <t t-esc="Math.round(banker.latest_overall_score || 0)"/>%
+                                        </span>
+                                    </td>
+                                    <td class="col-movement">
+                                        <t t-set="movement" t-value="getRankMovement(banker.rank_movement)"/>
+                                        <span t-attf-class="movement-indicator {{ movement.class }}">
+                                            <i t-attf-class="fa {{ movement.icon }}"></i>
+                                            <t t-esc="movement.text"/>
+                                        </span>
+                                    </td>
+                                    <td class="col-priority">
+                                        <span t-attf-class="priority-badge {{ getPriorityBadgeClass(banker.coaching_priority) }}">
+                                            <t t-esc="banker.coaching_priority || 'low'"/>
+                                        </span>
+                                    </td>
+                                    <td class="col-sessions">
+                                        <span class="sessions-count">
+                                            <t t-esc="banker.coaching_sessions_received || 0"/>
+                                        </span>
+                                    </td>
+                                    <td class="col-actions">
+                                        <div class="action-buttons">
+                                            <button class="btn btn-sm btn-primary"
+                                                    t-on-click="() => generateStrategy(banker.id)"
+                                                    title="Generate AI Strategy">
+                                                <i class="fa fa-magic"></i>
+                                            </button>
+                                            <button class="btn btn-sm btn-success"
+                                                    t-on-click="() => startCoachingSession(banker.id)"
+                                                    title="Start Coaching">
+                                                <i class="fa fa-play"></i>
+                                            </button>
+                                            <button class="btn btn-sm btn-outline-secondary"
+                                                    t-on-click="() => viewBankerKpis(banker.id)"
+                                                    title="View KPIs">
+                                                <i class="fa fa-line-chart"></i>
+                                            </button>
+                                            <button class="btn btn-sm btn-outline-secondary"
+                                                    t-on-click="() => viewBankerActionPlans(banker.id)"
+                                                    title="View Action Plans">
+                                                <i class="fa fa-tasks"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </t>
+
+                            <!-- Empty State -->
+                            <tr t-if="filteredTeam.length === 0">
+                                <td colspan="7" class="empty-state">
+                                    <i class="fa fa-users"></i>
+                                    <p>No team members found matching the current filter.</p>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Quick Actions Footer -->
+                <div class="bfsi-dashboard-footer">
+                    <button class="btn btn-outline-primary" t-on-click="viewAllStrategies">
+                        <i class="fa fa-lightbulb-o me-2"></i>
+                        View All Strategies
+                    </button>
+                    <button class="btn btn-outline-primary" t-on-click="viewAllSessions">
+                        <i class="fa fa-comments me-2"></i>
+                        View All Sessions
+                    </button>
+                </div>
+            </div>
+        </div>
+    </t>
+
+</templates>

@@ -126,6 +126,16 @@ Inspired by world-class platforms: SAP SuccessFactors, Workday Skills Cloud, Bet
             'hr_development_ai/static/src/components/knowledge_graph/knowledge_graph_widget.js',
             'hr_development_ai/static/src/components/knowledge_graph/knowledge_graph_widget.xml',
             'hr_development_ai/static/src/components/knowledge_graph/knowledge_graph_widget.css',
+
+            # BFSI AI Coach Panel (Persistent Sidebar)
+            'hr_development_ai/static/src/components/bfsi_ai_coach_panel/bfsi_ai_coach_panel.js',
+            'hr_development_ai/static/src/components/bfsi_ai_coach_panel/bfsi_ai_coach_panel.xml',
+            'hr_development_ai/static/src/components/bfsi_ai_coach_panel/bfsi_ai_coach_panel.scss',
+
+            # BFSI Manager Dashboard
+            'hr_development_ai/static/src/components/bfsi_manager_dashboard/bfsi_manager_dashboard.js',
+            'hr_development_ai/static/src/components/bfsi_manager_dashboard/bfsi_manager_dashboard.xml',
+            'hr_development_ai/static/src/components/bfsi_manager_dashboard/bfsi_manager_dashboard.scss',
         ],
     },
     'installable': True,
