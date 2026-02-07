@@ -57,20 +57,17 @@ export class AddressMapWidget extends Component {
             this.lastLon = parseFloat(this.props.record.data.partner_longitude) || null;
             this.fetchFacilityAndShowRoute();
 
-            // Poll for coordinate changes
-            this.coordinatePoller = setInterval(() => {
-                const currentLat = parseFloat(this.props.record.data.partner_latitude);
-                const currentLon = parseFloat(this.props.record.data.partner_longitude);
+            // Poll for coordinate changes - fetch fresh data from database
+            // This ensures we detect changes made by modals (like address edit)
+            this.coordinatePoller = setInterval(async () => {
+                await this.checkForCoordinateChanges();
+            }, 2000);  // Check every 2 seconds
+        });
 
-                if (currentLat !== this.lastLat || currentLon !== this.lastLon) {
-                    if (!isNaN(currentLat) && !isNaN(currentLon)) {
-                        this.lastLat = currentLat;
-                        this.lastLon = currentLon;
-                        this.updatePatientMarker(currentLat, currentLon);
-                        this.fetchFacilityAndShowRoute();
-                    }
-                }
-            }, 500);
+        // Initial check on mount
+        onMounted(async () => {
+            // Wait a moment for any concurrent save operations
+            setTimeout(() => this.checkForCoordinateChanges(), 1000);
         });
 
         onWillUpdateProps((nextProps) => {
@@ -114,6 +111,55 @@ export class AddressMapWidget extends Component {
         } catch (error) {
             console.warn("Could not fetch map settings:", error);
             this.state.mapProvider = 'openstreetmap';
+        }
+    }
+
+    async checkForCoordinateChanges() {
+        /**
+         * Fetch fresh coordinates from the database to detect changes
+         * made by modals (like address edit which triggers auto-geocoding).
+         */
+        if (!this.props.record || !this.props.record.resId) return;
+
+        try {
+            const partnerId = this.props.record.resId;
+            const result = await rpc(`/web/dataset/call_kw/res.partner/read`, {
+                model: "res.partner",
+                method: "read",
+                args: [[partnerId], ["partner_latitude", "partner_longitude"]],
+                kwargs: {},
+            });
+
+            if (result && result.length > 0) {
+                const freshLat = parseFloat(result[0].partner_latitude) || null;
+                const freshLon = parseFloat(result[0].partner_longitude) || null;
+
+                // Check if coordinates have changed
+                if ((freshLat !== this.lastLat || freshLon !== this.lastLon) &&
+                    this.hasValidCoords(freshLat, freshLon)) {
+                    console.log("MapWidget: Detected coordinate change from DB", {
+                        old: { lat: this.lastLat, lon: this.lastLon },
+                        new: { lat: freshLat, lon: freshLon }
+                    });
+
+                    this.lastLat = freshLat;
+                    this.lastLon = freshLon;
+                    this.updatePatientMarker(freshLat, freshLon);
+                    this.fetchFacilityAndShowRoute();
+
+                    // Center map on new location
+                    if (this.map) {
+                        if (this.state.mapProvider === 'google' && window.google) {
+                            this.map.setCenter({ lat: freshLat, lng: freshLon });
+                            this.map.setZoom(14);
+                        } else if (window.L) {
+                            this.map.setView([freshLat, freshLon], 14);
+                        }
+                    }
+                }
+            }
+        } catch (error) {
+            console.warn("MapWidget: Failed to check for coordinate changes:", error);
         }
     }
 
@@ -460,6 +506,7 @@ export class AddressMapWidget extends Component {
             const leg = result.routes[0].legs[0];
             this.state.drivingDistance = (leg.distance.value / 1000).toFixed(1);
             this.state.drivingDuration = leg.duration.text;
+            this.state.routeError = null;  // Clear any previous error
 
             // Fit map to show the route
             const bounds = new google.maps.LatLngBounds();
@@ -468,8 +515,16 @@ export class AddressMapWidget extends Component {
             this.map.fitBounds(bounds, { padding: 50 });
 
         } catch (error) {
-            console.warn("Google Directions failed:", error);
-            this.state.routeError = 'Could not calculate route';
+            console.warn("Google Directions failed:", error.message);
+            // Provide more meaningful error messages based on status
+            const errorMessages = {
+                'ZERO_RESULTS': 'No driving route found between locations',
+                'NOT_FOUND': 'Location coordinates not found',
+                'REQUEST_DENIED': 'Directions API access denied - check API key',
+                'OVER_QUERY_LIMIT': 'Directions API quota exceeded',
+                'UNKNOWN_ERROR': 'Server error - try again later',
+            };
+            this.state.routeError = errorMessages[error.message] || 'Could not calculate route';
             // Fallback: show straight line
             this.showStraightLine(fromLat, fromLon, toLat, toLon);
         }
@@ -600,8 +655,8 @@ export class AddressMapWidget extends Component {
         const dLat = this.toRadians(lat2 - lat1);
         const dLon = this.toRadians(lon2 - lon1);
         const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-                  Math.cos(this.toRadians(lat1)) * Math.cos(this.toRadians(lat2)) *
-                  Math.sin(dLon / 2) * Math.sin(dLon / 2);
+            Math.cos(this.toRadians(lat1)) * Math.cos(this.toRadians(lat2)) *
+            Math.sin(dLon / 2) * Math.sin(dLon / 2);
         const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
         return R * c;
     }

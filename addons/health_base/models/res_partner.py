@@ -860,7 +860,7 @@ class ResPartner(models.Model):
             }
 
     def action_edit_vietnamese_address(self):
-        """Open modal to edit Vietnamese address fields."""
+        """Open modal to edit Vietnamese address fields with auto-geocode on save."""
         self.ensure_one()
         view = self.env.ref('health_base.view_health_patient_address_form', raise_if_not_found=False)
         return {
@@ -876,6 +876,8 @@ class ResPartner(models.Model):
                 form_view_ref='health_base.view_health_patient_address_form',
                 form_view_initial_mode='edit',
             ),
+            # This flag tells Odoo to reload the parent form after the modal closes
+            'flags': {'mode': 'edit'},
         }
     
     @api.model

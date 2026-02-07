@@ -579,7 +579,7 @@
         <field name="arch" type="xml">
             <form string="Edit Address">
                 <sheet>
-                    <group col="2">
+                    <group string="Address Details" col="2">
                         <field name="province_code"/>
                         <field name="house_number"/>
                         <field name="sub_alley_number"/>
