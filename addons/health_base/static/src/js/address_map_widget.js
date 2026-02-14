@@ -515,19 +515,73 @@ export class AddressMapWidget extends Component {
             this.map.fitBounds(bounds, { padding: 50 });
 
         } catch (error) {
-            console.warn("Google Directions failed:", error.message);
-            // Provide more meaningful error messages based on status
-            const errorMessages = {
-                'ZERO_RESULTS': 'No driving route found between locations',
-                'NOT_FOUND': 'Location coordinates not found',
-                'REQUEST_DENIED': 'Directions API access denied - check API key',
-                'OVER_QUERY_LIMIT': 'Directions API quota exceeded',
-                'UNKNOWN_ERROR': 'Server error - try again later',
-            };
-            this.state.routeError = errorMessages[error.message] || 'Could not calculate route';
-            // Fallback: show straight line
-            this.showStraightLine(fromLat, fromLon, toLat, toLon);
+            console.warn("Google Directions failed:", error.message, "- trying OSRM fallback");
+            // Try OSRM as fallback for routing (free, no API key needed)
+            await this.showOSRMDrivingRouteOnGoogleMap(fromLat, fromLon, toLat, toLon, error.message);
         }
+    }
+
+    async showOSRMDrivingRouteOnGoogleMap(fromLat, fromLon, toLat, toLon, originalError) {
+        /**
+         * Fallback routing using OSRM when Google Directions fails.
+         * Draws the route on Google Maps using the OSRM response.
+         */
+        try {
+            const url = `https://router.project-osrm.org/route/v1/driving/${fromLon},${fromLat};${toLon},${toLat}?overview=full&geometries=geojson`;
+            const response = await fetch(url);
+            const data = await response.json();
+
+            if (data.code === 'Ok' && data.routes && data.routes.length > 0) {
+                const route = data.routes[0];
+
+                // Clear previous route line
+                if (this.routeLine) {
+                    this.routeLine.setMap(null);
+                }
+
+                // Convert OSRM coordinates to Google Maps path
+                const path = route.geometry.coordinates.map(coord => ({
+                    lat: coord[1],
+                    lng: coord[0]
+                }));
+
+                // Draw polyline on Google Map
+                this.routeLine = new google.maps.Polyline({
+                    path: path,
+                    strokeColor: '#4285F4',
+                    strokeWeight: 5,
+                    strokeOpacity: 0.8,
+                    map: this.map,
+                });
+
+                // Set distance and duration from OSRM
+                this.state.drivingDistance = (route.distance / 1000).toFixed(1);
+                this.state.drivingDuration = this.formatDuration(route.duration);
+                this.state.routeError = null;  // Clear error since OSRM worked
+
+                // Fit bounds to show the route
+                const bounds = new google.maps.LatLngBounds();
+                bounds.extend({ lat: fromLat, lng: fromLon });
+                bounds.extend({ lat: toLat, lng: toLon });
+                this.map.fitBounds(bounds, { padding: 50 });
+
+                console.log("OSRM fallback routing successful");
+                return;
+            }
+        } catch (osrmError) {
+            console.warn("OSRM fallback also failed:", osrmError);
+        }
+
+        // Both Google and OSRM failed - show error and straight line
+        const errorMessages = {
+            'ZERO_RESULTS': 'No driving route found between locations',
+            'NOT_FOUND': 'Location coordinates not found',
+            'REQUEST_DENIED': 'Directions API access denied - check API key',
+            'OVER_QUERY_LIMIT': 'Directions API quota exceeded',
+            'UNKNOWN_ERROR': 'Server error - try again later',
+        };
+        this.state.routeError = errorMessages[originalError] || 'Could not calculate route';
+        this.showStraightLine(fromLat, fromLon, toLat, toLon);
     }
 
     async showOSRMDrivingRoute(fromLat, fromLon, toLat, toLon) {

@@ -26,7 +26,7 @@ export class BfsiAiCoachPanel extends Component {
         this.orm = useService("orm");
         this.notification = useService("notification");
         this.action = useService("action");
-        this.user = useService("user");
+        this.user = this.env.services.user;
         this.chatEndRef = useRef("chatEnd");
         this.panelRef = useRef("panel");
 
@@ -101,15 +101,15 @@ export class BfsiAiCoachPanel extends Component {
                 'hr.employee',
                 [['user_id', '=', userId]],
                 ['id', 'name', 'branch_id', 'banker_type', 'job_id', 'department_id',
-                 'current_month_rank', 'rank_movement', 'latest_overall_score',
-                 'coaching_priority', 'ai_coaching_enabled'],
+                    'current_month_rank', 'rank_movement', 'latest_overall_score',
+                    'coaching_priority', 'ai_coaching_enabled'],
                 { limit: 1 }
             );
 
             if (employees.length > 0) {
                 this.state.employeeData = employees[0];
                 this.isManager = employees[0].banker_type === 'branch_manager' ||
-                                 employees[0].banker_type === 'regional_manager';
+                    employees[0].banker_type === 'regional_manager';
             }
         } catch (error) {
             console.error('Error loading user context:', error);
@@ -130,10 +130,10 @@ export class BfsiAiCoachPanel extends Component {
                 'bfsi.performance.kpi',
                 [['employee_id', '=', employeeId]],
                 ['date', 'overall_score', 'deviation_score', 'coaching_priority',
-                 'dials_per_hour', 'meetings_scheduled', 'calls_made',
-                 'script_adherence', 'objection_handling_score', 'need_analysis_quality',
-                 'conversions', 'products_sold', 'appointments_set',
-                 'revenue', 'aum', 'branch_rank', 'rank_movement'],
+                    'dials_per_hour', 'meetings_scheduled', 'calls_made',
+                    'script_adherence', 'objection_handling_score', 'need_analysis_quality',
+                    'conversions', 'products_sold', 'appointments_set',
+                    'revenue', 'aum', 'branch_rank', 'rank_movement'],
                 { limit: 1, order: 'date desc' }
             );
 

@@ -99,6 +99,7 @@ Inspired by world-class platforms: SAP SuccessFactors, Workday Skills Cloud, Bet
     ],
     'demo': [
         'data/demo_data.xml',
+        'data/bfsi_demo_data.xml',
     ],
     'assets': {
         'web.assets_backend': [

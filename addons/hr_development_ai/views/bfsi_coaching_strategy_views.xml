@@ -139,7 +139,7 @@
                 <filter name="generated" string="Generated" domain="[('state', '=', 'generated')]"/>
                 <filter name="in_use" string="In Use" domain="[('state', '=', 'in_use')]"/>
                 <filter name="completed" string="Completed" domain="[('state', '=', 'completed')]"/>
-                <group expand="0" string="Group By">
+                <group>
                     <filter name="group_by_banker" string="Banker" context="{'group_by': 'banker_id'}"/>
                     <filter name="group_by_manager" string="Manager" context="{'group_by': 'manager_id'}"/>
                     <filter name="group_by_branch" string="Branch" context="{'group_by': 'branch_id'}"/>

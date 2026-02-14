@@ -132,6 +132,7 @@ $desktop-min: 1024px;
             background: rgba(255, 255, 255, 0.5);
             border-radius: 2px;
         }
+
         padding-top: 24px;
     }
 }
@@ -158,8 +159,15 @@ $desktop-min: 1024px;
 }
 
 @keyframes pulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.7; }
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.7;
+    }
 }
 
 .bfsi-ai-coach-title {
@@ -497,10 +505,14 @@ $desktop-min: 1024px;
 }
 
 @keyframes typingBounce {
-    0%, 60%, 100% {
+
+    0%,
+    60%,
+    100% {
         transform: translateY(0);
         opacity: 0.4;
     }
+
     30% {
         transform: translateY(-4px);
         opacity: 1;
@@ -585,7 +597,7 @@ $desktop-min: 1024px;
 
     // Safe area for mobile devices
     @media (max-width: $mobile-max) {
-        padding-bottom: max(12px, env(safe-area-inset-bottom));
+        padding-bottom: #{"max(12px, env(safe-area-inset-bottom))"};
     }
 }
 
@@ -686,6 +698,7 @@ $desktop-min: 1024px;
         &::before {
             display: none;
         }
+
         padding-top: 16px;
     }
 
@@ -772,6 +785,7 @@ $desktop-min: 1024px;
         transform: translateY(100%);
         opacity: 0;
     }
+
     to {
         transform: translateY(0);
         opacity: 1;
@@ -783,6 +797,7 @@ $desktop-min: 1024px;
         transform: translateX(100%);
         opacity: 0;
     }
+
     to {
         transform: translateX(0);
         opacity: 1;
@@ -793,6 +808,7 @@ $desktop-min: 1024px;
     from {
         opacity: 0;
     }
+
     to {
         opacity: 1;
     }

@@ -143,7 +143,7 @@
                                 <div class="message-actions" t-if="message.actions and message.actions.length > 0">
                                     <t t-foreach="message.actions" t-as="action" t-key="action_index">
                                         <button class="btn btn-sm btn-outline-primary"
-                                                t-on-click="() => onQuickAction(action.type)">
+                                                t-on-click="() => this.onQuickAction(action.type)">
                                             <t t-esc="action.label"/>
                                         </button>
                                     </t>
@@ -183,19 +183,19 @@
 
                     <!-- Banker Quick Actions -->
                     <div class="quick-actions-grid" t-if="!isManager">
-                        <button class="quick-action-btn" t-on-click="() => onQuickAction('check_kpis')">
+                        <button class="quick-action-btn" t-on-click="() => this.onQuickAction('check_kpis')">
                             <i class="fa fa-line-chart"></i>
                             <span>Check KPIs</span>
                         </button>
-                        <button class="quick-action-btn" t-on-click="() => onQuickAction('action_plan')">
+                        <button class="quick-action-btn" t-on-click="() => this.onQuickAction('action_plan')">
                             <i class="fa fa-tasks"></i>
                             <span>Action Plan</span>
                         </button>
-                        <button class="quick-action-btn" t-on-click="() => onQuickAction('get_coaching')">
+                        <button class="quick-action-btn" t-on-click="() => this.onQuickAction('get_coaching')">
                             <i class="fa fa-graduation-cap"></i>
                             <span>Get Coaching</span>
                         </button>
-                        <button class="quick-action-btn" t-on-click="() => onQuickAction('difficult_scenario')">
+                        <button class="quick-action-btn" t-on-click="() => this.onQuickAction('difficult_scenario')">
                             <i class="fa fa-question-circle"></i>
                             <span>Help Me Handle</span>
                         </button>
@@ -203,19 +203,19 @@
 
                     <!-- Manager Quick Actions -->
                     <div class="quick-actions-grid" t-if="isManager">
-                        <button class="quick-action-btn" t-on-click="() => onManagerQuickAction('team_overview')">
+                        <button class="quick-action-btn" t-on-click="() => this.onManagerQuickAction('team_overview')">
                             <i class="fa fa-users"></i>
                             <span>Team Overview</span>
                         </button>
-                        <button class="quick-action-btn" t-on-click="() => onManagerQuickAction('needs_coaching')">
+                        <button class="quick-action-btn" t-on-click="() => this.onManagerQuickAction('needs_coaching')">
                             <i class="fa fa-exclamation-triangle"></i>
                             <span>Needs Coaching</span>
                         </button>
-                        <button class="quick-action-btn" t-on-click="() => onManagerQuickAction('generate_strategy')">
+                        <button class="quick-action-btn" t-on-click="() => this.onManagerQuickAction('generate_strategy')">
                             <i class="fa fa-magic"></i>
                             <span>AI Strategy</span>
                         </button>
-                        <button class="quick-action-btn" t-on-click="() => onManagerQuickAction('practice_roleplay')">
+                        <button class="quick-action-btn" t-on-click="() => this.onManagerQuickAction('practice_roleplay')">
                             <i class="fa fa-comments"></i>
                             <span>Practice</span>
                         </button>

@@ -32,23 +32,16 @@
                 <field name="state"/>
                 <progressbar field="state" colors='{"draft": "muted", "committed": "info", "in_progress": "warning", "completed": "success", "overdue": "danger", "cancelled": "muted"}'/>
                 <templates>
-                    <t t-name="kanban-box">
-                        <div t-attf-class="oe_kanban_card oe_kanban_global_click #{record.is_overdue.raw_value ? 'border-danger' : ''}">
-                            <div class="oe_kanban_content">
-                                <div class="o_kanban_record_title">
-                                    <field name="employee_id" widget="many2one_avatar_employee"/>
-                                </div>
-                                <div class="o_kanban_record_body">
-                                    <div class="mt-2">
-                                        <span>Progress: </span>
-                                        <field name="progress_percentage" widget="progressbar"/>
-                                    </div>
-                                    <div class="mt-2 text-muted">
-                                        Target: <field name="target_date"/>
-                                    </div>
-                                </div>
-                            </div>
+                    <t t-name="card">
+                        <field name="employee_id" widget="many2one_avatar_employee"/>
+                        <field name="name" class="fw-bold"/>
+                        <div class="mt-2">
+                            <span>Progress: </span>
+                            <field name="progress_percentage" widget="progressbar"/>
                         </div>
+                        <footer>
+                            <span class="text-muted">Target: <field name="target_date"/></span>
+                        </footer>
                     </t>
                 </templates>
             </kanban>
@@ -190,7 +183,7 @@
                 <filter name="active" string="Active" domain="[('state', 'in', ['committed', 'in_progress'])]"/>
                 <filter name="overdue" string="Overdue" domain="[('is_overdue', '=', True)]"/>
                 <filter name="completed" string="Completed" domain="[('state', '=', 'completed')]"/>
-                <group expand="0" string="Group By">
+                <group>
                     <filter name="group_by_employee" string="Banker" context="{'group_by': 'employee_id'}"/>
                     <filter name="group_by_manager" string="Manager" context="{'group_by': 'manager_id'}"/>
                     <filter name="group_by_branch" string="Branch" context="{'group_by': 'branch_id'}"/>

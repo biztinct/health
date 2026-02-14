@@ -1,9 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo noupdate="0">
 
+    <!-- Module Category for Access Rights section header -->
     <record id="module_category_hr_development" model="ir.module.category">
         <field name="name">Employee Development</field>
+        <field name="description">AI-driven employee development and performance coaching</field>
+        <field name="sequence">22</field>
+    </record>
+
+    <!-- HR Development Privilege (appears as a row in Access Rights tab) -->
+    <record id="res_groups_privilege_hr_development" model="res.groups.privilege">
+        <field name="name">Employee Development</field>
+        <field name="sequence">10</field>
+        <field name="category_id" ref="module_category_hr_development"/>
+    </record>
+
+    <!-- BFSI Performance Coaching Privilege (separate row in Access Rights tab) -->
+    <record id="res_groups_privilege_bfsi_coaching" model="res.groups.privilege">
+        <field name="name">AI Performance Coaching</field>
         <field name="sequence">20</field>
+        <field name="category_id" ref="module_category_hr_development"/>
     </record>
 
 </odoo>

@@ -148,6 +148,12 @@
                         </group>
                     </group>
 
+                    <!-- Hidden fields needed by address_map widget for route calculation -->
+                    <field name="primary_facility_id" invisible="1"/>
+                    <field name="partner_latitude" invisible="1"/>
+                    <field name="partner_longitude" invisible="1"/>
+                    <field name="date_localization" invisible="1"/>
+
                     <group colspan="2" col="1">
                         <!-- Interactive OpenStreetMap Display -->
                         <field name="geo_coordinates_display" widget="address_map" nolabel="1"/>

@@ -96,6 +96,7 @@ class BFSIBranch(models.Model):
     total_revenue = fields.Monetary(
         string='Total Revenue (MTD)',
         compute='_compute_branch_metrics',
+        store=True,
         currency_field='currency_id'
     )
 
@@ -246,15 +247,16 @@ class BFSIBranch(models.Model):
         }
 
     def action_start_coaching(self):
-        """Open wizard to select banker for coaching"""
+        """Open a new coaching session for a banker in this branch"""
         self.ensure_one()
         return {
             'type': 'ir.actions.act_window',
             'name': _('Start Coaching Session'),
-            'res_model': 'bfsi.coaching.start.wizard',
+            'res_model': 'hr.coaching.session',
             'view_mode': 'form',
             'target': 'new',
             'context': {
                 'default_branch_id': self.id,
+                'default_coach_id': self.env.user.employee_id.id if self.env.user.employee_id else False,
             },
         }

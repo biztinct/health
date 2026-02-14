@@ -146,7 +146,7 @@
                 <filter name="critical" string="Critical Priority" domain="[('coaching_priority', '=', 'critical')]"/>
                 <filter name="high" string="High Priority" domain="[('coaching_priority', '=', 'high')]"/>
                 <filter name="needs_coaching" string="Needs Coaching" domain="[('coaching_priority', 'in', ['high', 'critical'])]"/>
-                <group expand="0" string="Group By">
+                <group>
                     <filter name="group_by_employee" string="Employee" context="{'group_by': 'employee_id'}"/>
                     <filter name="group_by_branch" string="Branch" context="{'group_by': 'branch_id'}"/>
                     <filter name="group_by_date" string="Date" context="{'group_by': 'period_date:month'}"/>
@@ -283,7 +283,7 @@
                 <filter name="active" string="Active" domain="[('is_active', '=', True)]"/>
                 <filter name="daily" string="Daily" domain="[('period_type', '=', 'daily')]"/>
                 <filter name="monthly" string="Monthly" domain="[('period_type', '=', 'monthly')]"/>
-                <group expand="0" string="Group By">
+                <group>
                     <filter name="group_by_job" string="Job Position" context="{'group_by': 'job_id'}"/>
                     <filter name="group_by_branch" string="Branch" context="{'group_by': 'branch_id'}"/>
                     <filter name="group_by_period" string="Period Type" context="{'group_by': 'period_type'}"/>

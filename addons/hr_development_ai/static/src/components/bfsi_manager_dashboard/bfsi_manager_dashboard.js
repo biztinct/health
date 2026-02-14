@@ -22,7 +22,7 @@ export class BfsiManagerDashboard extends Component {
         this.orm = useService("orm");
         this.action = useService("action");
         this.notification = useService("notification");
-        this.user = useService("user");
+        this.user = this.env.services.user;
 
         this.state = useState({
             // Dashboard state
@@ -109,9 +109,9 @@ export class BfsiManagerDashboard extends Component {
                     ['id', '!=', this.state.managerId]
                 ],
                 ['id', 'name', 'job_id', 'banker_type', 'current_month_rank',
-                 'previous_month_rank', 'rank_movement', 'latest_overall_score',
-                 'coaching_priority', 'coaching_sessions_received', 'active_action_plan_count',
-                 'action_plan_completion_rate'],
+                    'previous_month_rank', 'rank_movement', 'latest_overall_score',
+                    'coaching_priority', 'coaching_sessions_received', 'active_action_plan_count',
+                    'action_plan_completion_rate'],
                 { order: 'current_month_rank asc' }
             );
 
@@ -121,7 +121,7 @@ export class BfsiManagerDashboard extends Component {
                     'bfsi.performance.kpi',
                     [['employee_id', '=', banker.id]],
                     ['overall_score', 'deviation_score', 'conversions', 'revenue',
-                     'coaching_priority', 'date'],
+                        'coaching_priority', 'date'],
                     { limit: 1, order: 'date desc' }
                 );
 

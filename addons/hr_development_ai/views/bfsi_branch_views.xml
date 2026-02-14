@@ -59,7 +59,7 @@
         <field name="name">bfsi.branch.list</field>
         <field name="model">bfsi.branch</field>
         <field name="arch" type="xml">
-            <list string="Branches" decoration-warning="bankers_needing_coaching > 3" decoration-danger="bankers_needing_coaching > 5">
+            <list string="Branches">
                 <field name="sequence" widget="handle"/>
                 <field name="code"/>
                 <field name="name"/>
@@ -84,27 +84,21 @@
                 <field name="bankers_needing_coaching"/>
                 <field name="avg_performance_score"/>
                 <templates>
-                    <t t-name="kanban-box">
-                        <div class="oe_kanban_card oe_kanban_global_click">
-                            <div class="oe_kanban_content">
-                                <div class="o_kanban_record_title">
-                                    <strong><field name="name"/></strong>
-                                </div>
-                                <div class="o_kanban_record_body">
-                                    <field name="manager_id" widget="many2one_avatar_employee"/>
-                                    <div class="mt-2">
-                                        <span class="badge bg-primary me-1"><field name="banker_count"/> Bankers</span>
-                                        <span t-if="record.bankers_needing_coaching.raw_value > 0" class="badge bg-warning">
-                                            <field name="bankers_needing_coaching"/> Need Coaching
-                                        </span>
-                                    </div>
-                                    <div class="mt-2">
-                                        <span>Performance: </span>
-                                        <field name="avg_performance_score" widget="progressbar"/>
-                                    </div>
-                                </div>
-                            </div>
+                    <t t-name="card">
+                        <field name="name" class="fw-bold fs-5"/>
+                        <field name="manager_id" widget="many2one_avatar_employee"/>
+                        <div class="mt-2">
+                            <span class="badge text-bg-primary me-1"><field name="banker_count"/> Bankers</span>
+                            <span t-if="record.bankers_needing_coaching.raw_value" class="badge text-bg-warning">
+                                <field name="bankers_needing_coaching"/> Need Coaching
+                            </span>
                         </div>
+                        <footer>
+                            <div class="d-flex align-items-center w-100">
+                                <span class="text-muted me-1">Performance:</span>
+                                <field name="avg_performance_score" widget="progressbar"/>
+                            </div>
+                        </footer>
                     </t>
                 </templates>
             </kanban>
@@ -190,15 +184,6 @@
             <search string="Search Branches">
                 <field name="name"/>
                 <field name="code"/>
-                <field name="manager_id"/>
-                <field name="region_id"/>
-                <filter name="needs_coaching" string="Needs Coaching" domain="[('bankers_needing_coaching', '>', 0)]"/>
-                <separator/>
-                <filter name="active" string="Active" domain="[('active', '=', True)]"/>
-                <group expand="0" string="Group By">
-                    <filter name="group_by_region" string="Region" context="{'group_by': 'region_id'}"/>
-                    <filter name="group_by_manager" string="Manager" context="{'group_by': 'manager_id'}"/>
-                </group>
             </search>
         </field>
     </record>
