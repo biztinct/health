@@ -3,6 +3,7 @@
 import { Component, useState, onWillStart, useRef, onMounted, onWillUnmount } from "@odoo/owl";
 import { useService } from "@web/core/utils/hooks";
 import { registry } from "@web/core/registry";
+import { user } from "@web/core/user";
 
 /**
  * BFSI AI Coach Panel - Persistent sidebar component for AI coaching
@@ -26,11 +27,13 @@ export class BfsiAiCoachPanel extends Component {
         this.orm = useService("orm");
         this.notification = useService("notification");
         this.action = useService("action");
-        this.user = this.env.services.user;
         this.chatEndRef = useRef("chatEnd");
         this.panelRef = useRef("panel");
 
         this.state = useState({
+            // Access control
+            hasAccess: false,
+
             // Panel state
             isOpen: true,
             isMinimized: false,
@@ -60,6 +63,16 @@ export class BfsiAiCoachPanel extends Component {
         this.isManager = this.props.isManager || false;
 
         onWillStart(async () => {
+            // Check if user belongs to BFSI coaching groups
+            try {
+                const hasGroup = await user.hasGroup('hr_development_ai.group_bfsi_banker');
+                this.state.hasAccess = hasGroup;
+            } catch {
+                this.state.hasAccess = false;
+            }
+            if (!this.state.hasAccess) {
+                return; // Skip loading data if no access
+            }
             await this.loadUserContext();
             await this.loadKpiData();
             await this.loadInitialGreeting();
@@ -94,7 +107,7 @@ export class BfsiAiCoachPanel extends Component {
      */
     async loadUserContext() {
         try {
-            const userId = this.user.userId;
+            const userId = user.userId;
 
             // Get employee for current user
             const employees = await this.orm.searchRead(
@@ -459,16 +472,8 @@ export class BfsiAiCoachPanel extends Component {
 }
 
 // Register as a systray item for persistent access
+// Note: Access control is handled inside the component's onWillStart
+// because systray isDisplayed is called synchronously and cannot be async.
 registry.category("systray").add("bfsi_ai_coach", {
     Component: BfsiAiCoachPanel,
-    isDisplayed: async (env) => {
-        // Check if BFSI module is active and user has access
-        try {
-            const groups = await env.services.orm.call('res.users', 'has_group',
-                [env.services.user.userId, 'hr_development_ai.group_bfsi_banker']);
-            return groups;
-        } catch {
-            return false;
-        }
-    }
 }, { sequence: 100 });

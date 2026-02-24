@@ -687,6 +687,15 @@ $desktop-min: 1024px;
             &.closed {
                 transform: translateX(100%);
             }
+
+            &.minimized {
+                top: auto;
+                bottom: 0;
+                height: auto;
+                width: $panel-width-desktop;
+                border-radius: $border-radius $border-radius 0 0;
+                box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.15);
+            }
         }
     }
 

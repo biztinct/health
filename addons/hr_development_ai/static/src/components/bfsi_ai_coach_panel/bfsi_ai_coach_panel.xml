@@ -3,7 +3,9 @@
 
     <!-- BFSI AI Coach Panel - Persistent Sidebar Component -->
     <t t-name="hr_development_ai.BfsiAiCoachPanel">
-        <div t-ref="panel"
+        <!-- Only render for users with BFSI coaching access -->
+        <div t-if="state.hasAccess"
+             t-ref="panel"
              t-attf-class="bfsi-ai-coach-panel {{ state.isOpen ? 'open' : 'closed' }} {{ state.isMinimized ? 'minimized' : '' }} {{ state.isMobile ? 'mobile' : 'desktop' }}">
 
             <!-- Floating Toggle Button (Mobile) -->
@@ -17,7 +19,7 @@
             </button>
 
             <!-- Main Panel Container -->
-            <div class="bfsi-ai-coach-container" t-if="!state.isMinimized or !state.isMobile">
+            <div class="bfsi-ai-coach-container">
 
                 <!-- Panel Header -->
                 <div class="bfsi-ai-coach-header">

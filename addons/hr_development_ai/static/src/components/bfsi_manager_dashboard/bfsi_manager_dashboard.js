@@ -3,6 +3,7 @@
 import { Component, useState, onWillStart, onMounted } from "@odoo/owl";
 import { useService } from "@web/core/utils/hooks";
 import { registry } from "@web/core/registry";
+import { user } from "@web/core/user";
 
 /**
  * BFSI Manager Dashboard - Team Performance Overview
@@ -22,7 +23,6 @@ export class BfsiManagerDashboard extends Component {
         this.orm = useService("orm");
         this.action = useService("action");
         this.notification = useService("notification");
-        this.user = this.env.services.user;
 
         this.state = useState({
             // Dashboard state
@@ -68,7 +68,7 @@ export class BfsiManagerDashboard extends Component {
      */
     async loadManagerContext() {
         try {
-            const userId = this.user.userId;
+            const userId = user.userId;
 
             // Get manager's employee record
             const employees = await this.orm.searchRead(
