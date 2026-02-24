@@ -4,17 +4,17 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Odoo Server 19.0\n"
-"Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-10-29 05:48+0000\n"
-"PO-Revision-Date: 2025-10-29 05:48+0000\n"
+"Project-Id-Phiên bản: Odoo Server 19.0\n"
+"Báo cáo-Msgid-Bugs-Để: \n"
+"POT-Creation-Ngày: 2025-10-29 05:48+0000\n"
+"PO-Revision-Ngày: 2025-10-29 05:48+0000\n"
 "Last-Translator: \n"
-"Language-Team: \n"
-"Language: vi_VN\n"
-"MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: \n"
-"Plural-Forms: nplurals=1; plural=0;\n"
+"Ngôn ngữ-Đội: \n"
+"Ngôn ngữ: vi_VN\n"
+"MIME-Phiên bản: 1.0\n"
+"Nội dung-Loại: văn bản/plain; charset=UTF-8\n"
+"Nội dung-Transfer-Encoding: \n"
+"Plural-Biểu mẫus: nplurals=1; plural=0;\n"
 
 #. module: health_pwa
 #: model_terms:ir.ui.view,arch_db:health_pwa.service_worker_js

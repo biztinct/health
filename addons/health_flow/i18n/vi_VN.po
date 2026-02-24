@@ -1,0 +1,567 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* health_flow
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-02-25 06:15+0000\n"
+"PO-Revision-Date: 2026-02-25 06:15+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: vi_VN\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#. module: health_flow
+#: code:addons/health_flow/models/health_flow_wizard.py:31
+msgid "Action"
+msgstr "Hành động"
+
+#. module: health_flow
+#: code:addons/health_flow/models/health_flow_wizard.py:97
+msgid "Audit Log"
+msgstr "Nhật ký kiểm tra"
+
+#. module: health_flow
+#: code:addons/health_flow/models/health_flow_wizard.py:100
+msgid "CRM Search"
+msgstr "Tìm kiếm CRM"
+
+#. module: health_flow
+#: code:addons/health_flow/models/health_flow_wizard.py:103
+msgid "Staff Workload"
+msgstr "Khối lượng công việc nhân viên"
+
+#. module: health_flow
+#: code:addons/health_flow/models/health_flow_wizard.py:104
+msgid "Staff Assignment Timeline"
+msgstr "Dòng thời gian phân công nhân viên"
+
+#. module: health_flow
+#: code:addons/health_flow/models/health_flow_wizard.py:107
+msgid "AR Dashboard"
+msgstr "Bảng công nợ"
+
+#. module: health_flow
+#: code:addons/health_flow/models/health_flow_wizard.py:108
+msgid "Payment Transactions"
+msgstr "Giao dịch thanh toán"
+
+#. module: health_flow
+#: code:addons/health_flow/models/health_flow_wizard.py:109
+msgid "Invoices"
+msgstr "Hóa đơn"
+
+#. module: health_flow
+#: code:addons/health_flow/models/health_flow_wizard.py:112
+msgid "Pricing Engines"
+msgstr "Công cụ định giá"
+
+#. module: health_flow
+#: code:addons/health_flow/models/health_flow_wizard.py:113
+msgid "Package Products"
+msgstr "Sản phẩm gói"
+
+#. module: health_flow
+#: code:addons/health_flow/models/health_flow_wizard.py:114
+msgid "Pricing Rules"
+msgstr "Quy tắc giá"
+
+#. module: health_flow
+#: code:addons/health_flow/models/health_flow_wizard.py:115
+msgid "Quick Edit Rules"
+msgstr "Quy tắc chỉnh sửa nhanh"
+
+#. module: health_flow
+#: code:addons/health_flow/models/health_flow_wizard.py:116
+msgid "Portable Equipment"
+msgstr "Thiết bị di động"
+
+#. module: health_flow
+#: code:addons/health_flow/models/health_flow_wizard.py:117
+msgid "Healthcare Staff"
+msgstr "Nhân viên y tế"
+
+#. module: health_flow
+#: code:addons/health_flow/models/health_flow_wizard.py:118
+msgid "Healthcare Facilities"
+msgstr "Cơ sở y tế"
+
+#. module: health_flow
+#: code:addons/health_flow/models/health_flow_wizard.py:119
+msgid "Catchment Provinces"
+msgstr "Tỉnh phục vụ"
+
+#. module: health_flow
+#: code:addons/health_flow/models/health_flow_wizard.py:120
+msgid "Patient Categories"
+msgstr "Danh mục bệnh nhân"
+
+#. module: health_flow
+#: code:addons/health_flow/models/health_flow_wizard.py:121
+msgid "Service Types"
+msgstr "Loại dịch vụ"
+
+#. module: health_flow
+#: code:addons/health_flow/models/health_flow_wizard.py:122
+msgid "Symptoms"
+msgstr "Triệu chứng"
+
+#. module: health_flow
+#: code:addons/health_flow/models/health_flow_wizard.py:123
+msgid "Referral Sources"
+msgstr "Nguồn giới thiệu"
+
+#. module: health_flow
+#: code:addons/health_flow/models/health_flow_wizard.py:124
+msgid "Insurance Providers"
+msgstr "Nhà cung cấp bảo hiểm"
+
+#. module: health_flow
+#: code:addons/health_flow/models/health_flow_wizard.py:125
+msgid "Urgency Levels"
+msgstr "Mức độ khẩn cấp"
+
+#. module: health_flow
+#: code:addons/health_flow/models/health_flow_wizard.py:134
+msgid "Action Not Found"
+msgstr "Không tìm thấy hành động"
+
+#. module: health_flow
+#: code:addons/health_flow/models/health_flow_wizard.py:148
+msgid "Action Error"
+msgstr "Lỗi hành động"
+
+#. module: health_flow
+#: code:addons/health_flow/models/health_flow_wizard.py:176
+msgid "New Contact"
+msgstr "Liên hệ mới"
+
+#. module: health_flow
+#: code:addons/health_flow/models/health_flow_wizard.py:182
+msgid "Contact Wizard Error"
+msgstr "Lỗi trình tạo liên hệ"
+
+#. module: health_flow
+#: code:addons/health_flow/models/health_flow_wizard.py:214
+msgid "Follow-up Activities"
+msgstr "Hoạt động theo dõi"
+
+#. module: health_flow
+#: code:addons/health_flow/models/health_flow_wizard.py:247
+msgid "Follow-up Activities Error"
+msgstr "Lỗi hoạt động theo dõi"
+
+#. module: health_flow
+#: code:addons/health_flow/models/health_flow_wizard.py:272
+msgid "All Contacts Error"
+msgstr "Lỗi tất cả liên hệ"
+
+#. module: health_flow
+#: code:addons/health_flow/models/health_flow_wizard.py:296
+msgid "All Clients Error"
+msgstr "Lỗi tất cả khách hàng"
+
+#. module: health_flow
+#: code:addons/health_flow/models/health_flow_wizard.py:323
+msgid "New Lead"
+msgstr "Cơ hội mới"
+
+#. module: health_flow
+#: code:addons/health_flow/models/health_flow_wizard.py:334
+msgid "All Leads"
+msgstr "Tất cả cơ hội"
+
+#. module: health_flow
+#: code:addons/health_flow/models/health_flow_wizard.py:351
+msgid "Initial Contact"
+msgstr "Liên hệ ban đầu"
+
+#. module: health_flow
+#: code:addons/health_flow/models/health_flow_wizard.py:368
+msgid "Planned Activities"
+msgstr "Hoạt động đã lên kế hoạch"
+
+#. module: health_flow
+#: code:addons/health_flow/models/health_flow_wizard.py:379
+msgid "CRM Calendar"
+msgstr "Lịch CRM"
+
+#. module: health_flow
+#: code:addons/health_flow/models/health_flow_wizard.py:385
+msgid "Continue Follow-up"
+msgstr "Tiếp tục theo dõi"
+
+#. module: health_flow
+#: code:addons/health_flow/models/health_flow_wizard.py:405
+msgid "No leads found for this filter."
+msgstr "Không tìm thấy cơ hội cho bộ lọc này."
+
+#. module: health_flow
+#: code:addons/health_flow/models/health_flow_wizard.py:409
+msgid "Client Acquired"
+msgstr "Khách hàng đã tiếp nhận"
+
+#. module: health_flow
+#: code:addons/health_flow/models/health_flow_wizard.py:434
+msgid "Booking Lost"
+msgstr "Đặt lịch bị mất"
+
+#. module: health_flow
+#: code:addons/health_flow/models/health_flow_wizard.py:457
+msgid "CRM"
+msgstr "CRM"
+
+#. module: health_flow
+#: code:addons/health_flow/models/health_flow_wizard.py:464
+msgid "CRM Action Error"
+msgstr "Lỗi hành động CRM"
+
+#. module: health_flow
+#: code:addons/health_flow/models/health_flow_wizard.py:489
+msgid "Client"
+msgstr "Khách hàng"
+
+#. module: health_flow
+#: code:addons/health_flow/models/health_flow_wizard.py:515
+msgid "Client Action Error"
+msgstr "Lỗi hành động khách hàng"
+
+#. module: health_flow
+#: code:addons/health_flow/models/health_flow_wizard.py:543
+msgid "Dashboard Not Found"
+msgstr "Không tìm thấy bảng điều khiển"
+
+#. module: health_flow
+#: code:addons/health_flow/models/health_flow_wizard.py:544
+msgid "My Dashboard has not been configured yet."
+msgstr "Bảng điều khiển của tôi chưa được cấu hình."
+
+#. module: health_flow
+#: code:addons/health_flow/models/health_flow_wizard.py:569
+msgid "Dashboard Error"
+msgstr "Lỗi bảng điều khiển"
+
+#. module: health_flow
+#: code:addons/health_flow/models/health_flow_wizard.py:602
+msgid "All Bookings"
+msgstr "Tất cả đặt lịch"
+
+#. module: health_flow
+#: code:addons/health_flow/models/health_flow_wizard.py:612
+msgid "Booking Calendar"
+msgstr "Lịch đặt hẹn"
+
+#. module: health_flow
+#: code:addons/health_flow/models/health_flow_wizard.py:616
+msgid "Draft Bookings Calendar"
+msgstr "Lịch đặt hẹn nháp"
+
+#. module: health_flow
+#: code:addons/health_flow/models/health_flow_wizard.py:623
+msgid "Assigned Bookings Calendar"
+msgstr "Lịch đặt hẹn đã phân công"
+
+#. module: health_flow
+#: code:addons/health_flow/models/health_flow_wizard.py:630
+msgid "Scheduled Bookings Calendar"
+msgstr "Lịch đặt hẹn đã lên lịch"
+
+#. module: health_flow
+#: code:addons/health_flow/models/health_flow_wizard.py:637
+msgid "In Progress Bookings Calendar"
+msgstr "Lịch đặt hẹn đang thực hiện"
+
+#. module: health_flow
+#: code:addons/health_flow/models/health_flow_wizard.py:644
+msgid "Completed Bookings Calendar"
+msgstr "Lịch đặt hẹn đã hoàn thành"
+
+#. module: health_flow
+#: code:addons/health_flow/models/health_flow_wizard.py:651
+msgid "Bookings"
+msgstr "Đặt lịch"
+
+#. module: health_flow
+#: code:addons/health_flow/models/health_flow_wizard.py:658
+msgid "Booking Action Error"
+msgstr "Lỗi hành động đặt lịch"
+
+#. module: health_flow
+#: code:addons/health_flow/models/health_flow_wizard.py:833
+msgid "Booking not found."
+msgstr "Không tìm thấy đặt lịch."
+
+#. module: health_flow
+#: code:addons/health_flow/models/health_flow_wizard.py:843
+msgid "Booking Dashboard"
+msgstr "Bảng đặt lịch"
+
+#. module: health_flow
+#: code:addons/health_flow/models/health_flow_wizard.py:848
+msgid "Booking"
+msgstr "Đặt lịch"
+
+#. module: health_flow
+#: code:addons/health_flow/models/health_flow_wizard.py:861
+msgid "Error"
+msgstr "Lỗi"
+
+#. module: health_flow
+#: code:addons/health_flow/models/health_flow_wizard.py:862
+msgid "Failed to open booking"
+msgstr "Không thể mở đặt lịch"
+
+#. module: health_flow
+#: code:addons/health_flow/models/health_flow_wizard.py:874
+msgid "Client not found."
+msgstr "Không tìm thấy khách hàng."
+
+#. module: health_flow
+#: code:addons/health_flow/models/health_flow_wizard.py:884
+msgid "Client Dashboard"
+msgstr "Bảng khách hàng"
+
+#. module: health_flow
+#: code:addons/health_flow/models/health_flow_wizard.py:904
+msgid "Failed to open client"
+msgstr "Không thể mở khách hàng"
+
+#. module: health_flow
+#: code:addons/health_flow/models/health_flow_wizard.py:921
+msgid "Lead Dashboard"
+msgstr "Bảng cơ hội"
+
+#. module: health_flow
+#: code:addons/health_flow/models/health_flow_wizard.py:926
+msgid "CRM Contact"
+msgstr "Liên hệ CRM"
+
+#. module: health_flow
+#: code:addons/health_flow/models/health_flow_wizard.py:941
+msgid "Failed to open lead"
+msgstr "Không thể mở cơ hội"
+
+#. module: health_flow
+#: code:addons/health_flow/models/health_flow_wizard.py:950
+msgid "Health Flow Dashboard"
+msgstr "Bảng điều khiển luồng y tế"
+
+#. module: health_flow
+#: code:addons/health_flow/models/health_flow_wizard.py:965
+msgid "Contact Name is required."
+msgstr "Tên liên hệ là bắt buộc."
+
+#. module: health_flow
+#: code:addons/health_flow/models/health_flow_wizard.py:1027
+msgid "New Booking"
+msgstr "Đặt lịch mới"
+
+#. module: health_flow
+#: code:addons/health_flow/models/health_flow_wizard.py:1028
+msgid "Unknown"
+msgstr "Không xác định"
+
+#. module: health_flow
+#: code:addons/health_flow/models/health_flow_wizard.py:1063
+msgid "Cancelled"
+msgstr "Đã hủy"
+
+#. module: health_flow
+#: model:ir.ui.menu
+msgid "Home Page"
+msgstr "Trang chủ"
+
+#. module: health_flow
+#: model_terms:ir.ui.view,arch_db:health_flow.view
+msgid "CRM Activities"
+msgstr "Hoạt động CRM"
+
+#. module: health_flow
+#: model_terms:ir.ui.view,arch_db:health_flow.view
+msgid "Activity Type"
+msgstr "Loại hoạt động"
+
+#. module: javascript
+msgid "Sales & CRM"
+msgstr "Bán hàng & CRM"
+
+#. module: javascript
+msgid "Contacts"
+msgstr "Liên hệ"
+
+#. module: javascript
+msgid "Log new contact / View contacts"
+msgstr "Ghi liên hệ mới / Xem liên hệ"
+
+#. module: javascript
+msgid "Manage leads and activities"
+msgstr "Quản lý liên hệ và hoạt động"
+
+#. module: javascript
+msgid "All Contacts"
+msgstr "Tất cả liên hệ"
+
+#. module: javascript
+msgid "View all contacts by status"
+msgstr "Xem tất cả liên hệ theo trạng thái"
+
+#. module: javascript
+msgid "All Clients"
+msgstr "Tất cả khách hàng"
+
+#. module: javascript
+msgid "View all clients"
+msgstr "Xem tất cả khách hàng"
+
+#. module: javascript
+msgid "Bookings and Assignments"
+msgstr "Lịch hẹn và phân công"
+
+#. module: javascript
+msgid "Search"
+msgstr "Tìm kiếm"
+
+#. module: javascript
+msgid "Search bookings"
+msgstr "Tìm kiếm lịch hẹn"
+
+#. module: javascript
+msgid "Visual booking calendar"
+msgstr "Lịch hẹn trực quan"
+
+#. module: javascript
+msgid "All bookings (grouped by month)"
+msgstr "Tất cả lịch hẹn (nhóm theo tháng)"
+
+#. module: javascript
+msgid "Staff workload overview"
+msgstr "Tổng quan khối lượng công việc nhân viên"
+
+#. module: javascript
+msgid "Staff Assignment"
+msgstr "Phân công nhân viên"
+
+#. module: javascript
+msgid "Assignment timeline view"
+msgstr "Giao diện dòng thời gian phân công"
+
+#. module: javascript
+msgid "Draft"
+msgstr "Nháp"
+
+#. module: javascript
+msgid "Draft bookings"
+msgstr "Lịch hẹn nháp"
+
+#. module: javascript
+msgid "Assigned"
+msgstr "Đã phân công"
+
+#. module: javascript
+msgid "Assigned bookings"
+msgstr "Lịch hẹn đã phân công"
+
+#. module: javascript
+msgid "Scheduled"
+msgstr "Đã lên lịch"
+
+#. module: javascript
+msgid "Scheduled bookings"
+msgstr "Lịch hẹn đã lên lịch"
+
+#. module: javascript
+msgid "In Progress"
+msgstr "Đang thực hiện"
+
+#. module: javascript
+msgid "In progress bookings"
+msgstr "Lịch hẹn đang thực hiện"
+
+#. module: javascript
+msgid "Completed"
+msgstr "Hoàn thành"
+
+#. module: javascript
+msgid "Completed bookings"
+msgstr "Lịch hẹn hoàn thành"
+
+#. module: javascript
+msgid "Invoicing"
+msgstr "Hóa đơn"
+
+#. module: javascript
+msgid "Accounts receivable overview"
+msgstr "Tổng quan công nợ phải thu"
+
+#. module: javascript
+msgid "Payment history"
+msgstr "Lịch sử thanh toán"
+
+#. module: javascript
+msgid "All invoices"
+msgstr "Tất cả hóa đơn"
+
+#. module: javascript
+msgid "Admin"
+msgstr "Quản trị"
+
+#. module: javascript
+msgid "Configure pricing engines"
+msgstr "Cấu hình công cụ định giá"
+
+#. module: javascript
+msgid "Service packages"
+msgstr "Gói dịch vụ"
+
+#. module: javascript
+msgid "Define pricing rules"
+msgstr "Xác định quy tắc định giá"
+
+#. module: javascript
+msgid "Quick edit pricing"
+msgstr "Chỉnh sửa nhanh giá"
+
+#. module: javascript
+msgid "Track equipment"
+msgstr "Theo dõi thiết bị"
+
+#. module: javascript
+msgid "Staff directory"
+msgstr "Danh bạ nhân viên"
+
+#. module: javascript
+msgid "Facilities management"
+msgstr "Quản lý cơ sở"
+
+#. module: javascript
+msgid "Catchment provinces"
+msgstr "Tỉnh thành phân vùng"
+
+#. module: javascript
+msgid "Patient categories"
+msgstr "Phân loại bệnh nhân"
+
+#. module: javascript
+msgid "Define services"
+msgstr "Xác định dịch vụ"
+
+#. module: javascript
+msgid "Configure symptoms"
+msgstr "Cấu hình triệu chứng"
+
+#. module: javascript
+msgid "Referral sources"
+msgstr "Nguồn giới thiệu"
+
+#. module: javascript
+msgid "Insurance providers"
+msgstr "Nhà cung cấp bảo hiểm"
+
+#. module: javascript
+msgid "Urgency levels"
+msgstr "Mức độ khẩn cấp"

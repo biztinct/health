@@ -15,10 +15,19 @@ class IrHttp(models.AbstractModel):
             IrHttp, self
         )._get_translations_for_webclient(*args, **kwargs)
 
-        for _module_key, module_vals in translations_per_module.items():
+        # Odoo 19 returns ReadonlyDict objects, so we need mutable copies
+        mutable_translations = {}
+        for module_key, module_vals in translations_per_module.items():
+            mutable_vals = dict(module_vals)
             messages = module_vals.get("messages", [])
+            mutable_messages = []
             for message in messages:
-                message["id"] = debrand(self.env, message.get("id", ""))
-                message["string"] = debrand(self.env, message.get("string", ""))
+                mutable_msg = dict(message)
+                mutable_msg["id"] = debrand(self.env, mutable_msg.get("id", ""))
+                mutable_msg["string"] = debrand(self.env, mutable_msg.get("string", ""))
+                mutable_messages.append(mutable_msg)
+            mutable_vals["messages"] = mutable_messages
+            mutable_translations[module_key] = mutable_vals
 
-        return translations_per_module, lang_params
+        return mutable_translations, lang_params
+

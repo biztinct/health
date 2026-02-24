@@ -3,6 +3,7 @@
 import { registry } from "@web/core/registry";
 import { Component, useState, onMounted, useRef } from "@odoo/owl";
 import { useService } from "@web/core/utils/hooks";
+import { _t } from "@web/core/l10n/translation";
 import { HubSpokeWidget } from "./hub_spoke_widget";
 import { PatientSpokeModal } from "./patient_spoke_modal";
 
@@ -50,298 +51,298 @@ class HealthLandingDashboard extends Component {
         this.modules = [
             {
                 id: "patient",
-                name: "Patient Management",
+                name: _t("Patient Management"),
                 icon: "fa-users",
-                description: "Manage patient records and information",
+                description: _t("Manage patient records and information"),
                 class: "module-patient",
                 submenus: [
                     {
-                        name: "Client",
+                        name: _t("Client"),
                         icon: "fa-user-circle",
-                        action: "hub_spoke",  // Special action to trigger hub-and-spoke
-                        description: "View patient hub-and-spoke dashboard"
+                        action: "hub_spoke",
+                        description: _t("View patient hub-and-spoke dashboard")
                     },
                 ],
             },
             {
                 id: "scheduling",
-                name: "Scheduling & Staff",
+                name: _t("Scheduling & Staff"),
                 icon: "fa-calendar-check-o",
-                description: "Staff scheduling and workload management",
+                description: _t("Staff scheduling and workload management"),
                 class: "module-scheduling",
                 submenus: [
                     {
-                        name: "Assignment Dashboard",
+                        name: _t("Assignment Dashboard"),
                         icon: "fa-dashboard",
                         action: "health_fieldservice.action_fso_assignment_dashboard",
-                        description: "View staff assignments"
+                        description: _t("View staff assignments")
                     },
                     {
-                        name: "Visual Scheduler",
+                        name: _t("Visual Scheduler"),
                         icon: "fa-calendar",
                         action: "health_fieldservice.action_assignment_scheduler_grid",
-                        description: "Visual scheduling interface"
+                        description: _t("Visual scheduling interface")
                     },
                     {
-                        name: "Timeline View",
+                        name: _t("Timeline View"),
                         icon: "fa-clock-o",
                         action: "health_fieldservice.action_assignment_web_timeline_view",
-                        description: "Timeline of assignments"
+                        description: _t("Timeline of assignments")
                     },
                     {
-                        name: "Staff Availability",
+                        name: _t("Staff Availability"),
                         icon: "fa-user-circle",
                         action: "health_fieldservice.action_health_staff_availability",
-                        description: "Manage staff availability"
+                        description: _t("Manage staff availability")
                     },
                     {
-                        name: "Staff Workload",
+                        name: _t("Staff Workload"),
                         icon: "fa-bar-chart",
                         action: "health_fieldservice.action_staff_workload_dashboard",
-                        description: "Monitor staff workload"
+                        description: _t("Monitor staff workload")
                     },
                     {
-                        name: "Healthcare Skills",
+                        name: _t("Healthcare Skills"),
                         icon: "fa-graduation-cap",
                         action: "health_fieldservice.action_healthcare_skills",
-                        description: "Manage staff skills"
+                        description: _t("Manage staff skills")
                     },
                     {
-                        name: "Service Areas",
+                        name: _t("Service Areas"),
                         icon: "fa-map",
                         action: "health_fieldservice.action_service_areas",
-                        description: "Configure service areas"
+                        description: _t("Configure service areas")
                     },
                     {
-                        name: "Healthcare Staff",
+                        name: _t("Healthcare Staff"),
                         icon: "fa-user-md",
                         action: "health_fieldservice.action_healthcare_staff",
-                        description: "Manage healthcare staff"
+                        description: _t("Manage healthcare staff")
                     },
                 ],
             },
             {
                 id: "crm",
-                name: "CRM",
+                name: _t("CRM"),
                 icon: "fa-handshake-o",
-                description: "Customer relationship management",
+                description: _t("Customer relationship management"),
                 class: "module-crm",
                 submenus: [
                     {
-                        name: "Leads",
+                        name: _t("Leads"),
                         icon: "fa-star-o",
                         action: "crm.crm_lead_all_leads",
-                        description: "Manage potential customers"
+                        description: _t("Manage potential customers")
                     },
                     {
-                        name: "CRM Contacts",
+                        name: _t("CRM Contacts"),
                         icon: "fa-address-card",
                         action: "health_crm.action_healthcare_opportunities",
-                        description: "Track customer interactions"
+                        description: _t("Track customer interactions")
                     },
                     {
-                        name: "Customers",
+                        name: _t("Customers"),
                         icon: "fa-user-circle",
                         action: "base.action_partner_form",
-                        description: "View all customers"
+                        description: _t("View all customers")
                     },
                     {
-                        name: "Healthcare Relationships",
+                        name: _t("Healthcare Relationships"),
                         icon: "fa-users",
                         action: "health_crm.action_health_client_relation",
-                        description: "Manage patient relationships"
+                        description: _t("Manage patient relationships")
                     },
                 ],
             },
             {
                 id: "fieldservice",
-                name: "Field Service",
+                name: _t("Field Service"),
                 icon: "fa-ambulance",
-                description: "Mobile healthcare service management",
+                description: _t("Mobile healthcare service management"),
                 class: "module-fieldservice",
                 submenus: [
                     {
-                        name: "Field Service Orders",
+                        name: _t("Field Service Orders"),
                         icon: "fa-clipboard",
                         action: "health_fieldservice.action_health_fieldservice_order",
-                        description: "Manage service orders"
+                        description: _t("Manage service orders")
                     },
                     {
-                        name: "Communications",
+                        name: _t("Communications"),
                         icon: "fa-comments",
                         action: "health_fieldservice.action_health_fieldservice_communication",
-                        description: "Real-time team communications"
+                        description: _t("Real-time team communications")
                     },
                     {
-                        name: "Portable Equipment",
+                        name: _t("Portable Equipment"),
                         icon: "fa-briefcase",
                         action: "health_fieldservice.action_health_portable_equipment",
-                        description: "Track medical equipment"
+                        description: _t("Track medical equipment")
                     },
                     {
-                        name: "Clinical Protocols",
+                        name: _t("Clinical Protocols"),
                         icon: "fa-file-text-o",
                         action: "health_fieldservice.action_health_clinical_protocol",
-                        description: "Clinical guidelines"
+                        description: _t("Clinical guidelines")
                     },
                     {
-                        name: "Field Service Teams",
+                        name: _t("Field Service Teams"),
                         icon: "fa-users",
                         action: "health_fieldservice.action_health_fieldservice_team",
-                        description: "Manage service teams"
+                        description: _t("Manage service teams")
                     },
                 ],
             },
             {
                 id: "packages",
-                name: "Service Packages",
+                name: _t("Service Packages"),
                 icon: "fa-gift",
-                description: "Manage service packages and products",
+                description: _t("Manage service packages and products"),
                 class: "module-packages",
                 submenus: [
                     {
-                        name: "Package Products",
+                        name: _t("Package Products"),
                         icon: "fa-cube",
                         action: "health_invoicing.action_healthcare_package_products",
-                        description: "Configure package products"
+                        description: _t("Configure package products")
                     },
                     {
-                        name: "Patient Packages",
+                        name: _t("Patient Packages"),
                         icon: "fa-gift",
                         action: "health_invoicing.action_health_service_package",
-                        description: "View patient subscriptions"
+                        description: _t("View patient subscriptions")
                     },
                 ],
             },
             {
                 id: "pricing",
-                name: "Advanced Pricelist",
+                name: _t("Advanced Pricelist"),
                 icon: "fa-tags",
-                description: "Dynamic pricing rules and engines",
+                description: _t("Dynamic pricing rules and engines"),
                 class: "module-pricing",
                 submenus: [
                     {
-                        name: "Pricing Engines",
+                        name: _t("Pricing Engines"),
                         icon: "fa-cog",
                         action: "advanced_pricing.action_advanced_pricing_engines",
-                        description: "Configure pricing engines"
+                        description: _t("Configure pricing engines")
                     },
                     {
-                        name: "Pricing Rules",
+                        name: _t("Pricing Rules"),
                         icon: "fa-list-ul",
                         action: "advanced_pricing.action_pricing_rules_with_visual",
-                        description: "Manage pricing rules"
+                        description: _t("Manage pricing rules")
                     },
                     {
-                        name: "Quick Edit Rules",
+                        name: _t("Quick Edit Rules"),
                         icon: "fa-edit",
                         action: "advanced_pricing.action_pricing_rules_quick_edit",
-                        description: "Inline edit pricing rules"
+                        description: _t("Inline edit pricing rules")
                     },
                 ],
             },
             {
                 id: "billing",
-                name: "Billing & Invoicing",
+                name: _t("Billing & Invoicing"),
                 icon: "fa-money",
-                description: "Financial management and billing",
+                description: _t("Financial management and billing"),
                 class: "module-billing",
                 submenus: [
                     {
-                        name: "Service Billing",
+                        name: _t("Service Billing"),
                         icon: "fa-file-text",
                         action: "health_invoicing.action_health_service_billing",
-                        description: "Create and manage invoices"
+                        description: _t("Create and manage invoices")
                     },
                     {
-                        name: "AR Dashboard",
+                        name: _t("AR Dashboard"),
                         icon: "fa-dashboard",
                         action: "health_invoicing.action_healthcare_ar_dashboard",
-                        description: "Accounts receivable overview"
+                        description: _t("Accounts receivable overview")
                     },
                     {
-                        name: "Overdue Patients",
+                        name: _t("Overdue Patients"),
                         icon: "fa-exclamation-triangle",
                         action: "health_invoicing.action_healthcare_overdue_patients",
-                        description: "Track outstanding payments"
+                        description: _t("Track outstanding payments")
                     },
                     {
-                        name: "Payment Transactions",
+                        name: _t("Payment Transactions"),
                         icon: "fa-credit-card",
                         action: "health_invoicing.action_health_payment_transaction",
-                        description: "View payment history"
+                        description: _t("View payment history")
                     },
                     {
-                        name: "Process Payments",
+                        name: _t("Process Payments"),
                         icon: "fa-cogs",
                         action: "health_invoicing.action_health_payment_workflow_wizard",
-                        description: "Payment workflow"
+                        description: _t("Payment workflow")
                     },
                 ],
             },
             {
                 id: "facilities",
-                name: "Facilities",
+                name: _t("Facilities"),
                 icon: "fa-hospital-o",
-                description: "Healthcare facility management",
+                description: _t("Healthcare facility management"),
                 class: "module-facilities",
                 submenus: [
                     {
-                        name: "Healthcare Facilities",
+                        name: _t("Healthcare Facilities"),
                         icon: "fa-building",
                         action: "health_base.action_health_facility",
-                        description: "Manage facility locations"
+                        description: _t("Manage facility locations")
                     },
                 ],
             },
             {
                 id: "config",
-                name: "Configuration",
+                name: _t("Configuration"),
                 icon: "fa-cogs",
-                description: "System configuration and settings",
+                description: _t("System configuration and settings"),
                 class: "module-config",
                 submenus: [
                     {
-                        name: "Patient Categories",
+                        name: _t("Patient Categories"),
                         icon: "fa-tags",
                         action: "health_base.action_health_patient_category",
-                        description: "Configure patient types"
+                        description: _t("Configure patient types")
                     },
                     {
-                        name: "Service Types",
+                        name: _t("Service Types"),
                         icon: "fa-list",
                         action: "health_base.action_health_service_type",
-                        description: "Define service types"
+                        description: _t("Define service types")
                     },
                     {
-                        name: "Medical Specialties",
+                        name: _t("Medical Specialties"),
                         icon: "fa-stethoscope",
                         action: "health_base.action_health_medical_specialty",
-                        description: "Manage specialties"
+                        description: _t("Manage specialties")
                     },
                     {
-                        name: "Symptoms",
+                        name: _t("Symptoms"),
                         icon: "fa-heartbeat",
                         action: "health_base.action_health_symptom",
-                        description: "Symptom catalog"
+                        description: _t("Symptom catalog")
                     },
                     {
-                        name: "Referral Sources",
+                        name: _t("Referral Sources"),
                         icon: "fa-share-alt",
                         action: "health_base.action_health_referral_source",
-                        description: "Track referral sources"
+                        description: _t("Track referral sources")
                     },
                     {
-                        name: "Insurance Providers",
+                        name: _t("Insurance Providers"),
                         icon: "fa-shield",
                         action: "health_base.action_health_insurance_provider",
-                        description: "Insurance companies"
+                        description: _t("Insurance companies")
                     },
                     {
-                        name: "Urgency Levels",
+                        name: _t("Urgency Levels"),
                         icon: "fa-exclamation-circle",
                         action: "health_base.action_health_urgency_level",
-                        description: "Priority levels"
+                        description: _t("Priority levels")
                     },
                 ],
             },

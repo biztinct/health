@@ -1094,7 +1094,7 @@ msgstr "Facebook protập tin URL hoặc người dùngtên"
 #. module: health_crm
 #: model:ir.model.fields.selection,name:health_crm.selection__crm_lead__contact_relationship_type__family_member
 msgid "Family Member"
-msgstr "Thành viên gia đình"
+msgstr "Family Member"
 
 #. module: health_crm
 #: model:ir.model.fields.selection,name:health_crm.selection__health_client_relation__legal_document_type__family_book
@@ -1106,13 +1106,13 @@ msgstr "Family Đăng ký Book (Sổ hộ khẩu)"
 #: model_terms:ir.ui.view,arch_db:health_crm.view_health_client_relation_kanban
 #: model_terms:ir.ui.view,arch_db:health_crm.view_health_client_relation_search
 msgid "Financial Responsibility"
-msgstr "Trách nhiệm tài chính"
+msgstr "Financial Responsibility"
 
 #. module: health_crm
 #: model:ir.model.fields,field_description:health_crm.field_health_client_relation__financial_responsibility
 #: model:ir.model.fields,field_description:health_crm.field_health_relationship_add_wizard__financial_responsibility
 msgid "Financial Responsibility %"
-msgstr "Trách nhiệm tài chính %"
+msgstr "Financial Responsibility %"
 
 #. module: health_crm
 #: model:ir.model.constraint,message:health_crm.constraint_health_client_relation_check_financial_responsibility
@@ -1171,7 +1171,7 @@ msgstr "Cho Opportđơn vịies"
 #: model:ir.model.fields.selection,name:health_crm.selection__health_client_relation__relationship_type__friend
 #: model:ir.model.fields.selection,name:health_crm.selection__health_relationship_add_wizard__relationship_type__friend
 msgid "Friend"
-msgstr "Bạn bè"
+msgstr "Friend"
 
 #. module: health_crm
 #: model:ir.model.fields,help:health_crm.field_crm_lead__booking_status
@@ -1447,7 +1447,7 @@ msgstr "Khám tại nhà Speciadanh sáchs"
 #: model:ir.model.fields,field_description:health_crm.field_crm_lead__contact_relationship_type
 #: model_terms:ir.ui.view,arch_db:health_crm.view_healthcare_opportunity_form
 msgid "I am the:"
-msgstr "Tôi là:"
+msgstr "I am the:"
 
 #. module: health_crm
 #: model:ir.model.fields,field_description:health_crm.field_health_client_relation__id
@@ -1481,7 +1481,7 @@ msgstr "Không hoạt động"
 #. module: health_crm
 #: model:ir.model.fields.selection,name:health_crm.selection__crm_lead__contact_source__inbound_call
 msgid "Inbound Call"
-msgstr "Cuộc gọi đến"
+msgstr "Inbound Call"
 
 #. module: health_crm
 #: model:crm.stage,name:health_crm.stage_healthcare_contact
@@ -1838,13 +1838,13 @@ msgstr "Căn cước công dân Thẻ (CCCD/CMND)"
 #. module: health_crm
 #: model:ir.model.fields.selection,name:health_crm.selection__crm_lead__lead_status__negotiation
 msgid "Negotiation"
-msgstr "Đàm phán"
+msgstr "Negotiation"
 
 #. module: health_crm
 #: model:ir.model.fields.selection,name:health_crm.selection__health_client_relation__relationship_type__neighbor
 #: model:ir.model.fields.selection,name:health_crm.selection__health_relationship_add_wizard__relationship_type__neighbor
 msgid "Neighbor"
-msgstr "Hàng xóm"
+msgstr "Neighbor"
 
 #. module: health_crm
 #: model_terms:ir.ui.view,arch_db:health_crm.view_relationship_network_form
@@ -1980,7 +1980,7 @@ msgstr "Khác Relative"
 #. module: health_crm
 #: model:ir.model.fields.selection,name:health_crm.selection__crm_lead__contact_source__outbound_call
 msgid "Outbound Call"
-msgstr "Cuộc gọi đi"
+msgstr "Outbound Call"
 
 #. module: health_crm
 #: model:ir.model.fields,help:health_crm.field_crm_lead__health_contact_outcome
@@ -2634,7 +2634,7 @@ msgstr "Anh/Chị/Em"
 #: model:ir.model.fields.selection,name:health_crm.selection__crm_lead__contact_source__social_media
 #: model:ir.model.fields.selection,name:health_crm.selection__health_lead_reason__category__social_media
 msgid "Social Media"
-msgstr "Mạng xã hội"
+msgstr "Social Media"
 
 #. module: health_crm
 #: model_terms:ir.ui.view,arch_db:health_crm.view_healthcare_opportunity_form

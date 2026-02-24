@@ -39,27 +39,27 @@ msgstr "'MOH_Báo cáo_%s' % (object.tên)"
 #. module: health_fieldservice
 #: model:ir.model.fields.selection,name:health_fieldservice.selection__health_fieldservice_order__service_rating__1
 msgid "1 - Poor"
-msgstr "1 - Kém"
+msgstr "1 - Poor"
 
 #. module: health_fieldservice
 #: model:ir.model.fields.selection,name:health_fieldservice.selection__health_fieldservice_order__service_rating__2
 msgid "2 - Fair"
-msgstr "2 - Trung bình"
+msgstr "2 - Fair"
 
 #. module: health_fieldservice
 #: model:ir.model.fields.selection,name:health_fieldservice.selection__health_fieldservice_order__service_rating__3
 msgid "3 - Good"
-msgstr "3 - Tốt"
+msgstr "3 - Good"
 
 #. module: health_fieldservice
 #: model:ir.model.fields.selection,name:health_fieldservice.selection__health_fieldservice_order__service_rating__4
 msgid "4 - Very Good"
-msgstr "4 - Rất tốt"
+msgstr "4 - Very Good"
 
 #. module: health_fieldservice
 #: model:ir.model.fields.selection,name:health_fieldservice.selection__health_fieldservice_order__service_rating__5
 msgid "5 - Excellent"
-msgstr "5 - Xuất sắc"
+msgstr "5 - Excellent"
 
 #. module: health_fieldservice
 #: model:mail.template,body_html:health_fieldservice.email_template_status_update
@@ -493,7 +493,7 @@ msgstr "AI Optimization Lỗi"
 #. module: health_fieldservice
 #: model:ir.model.fields,field_description:health_fieldservice.field_health_staff_assignment_engine__predicted_completion_time
 msgid "AI Predicted Completion"
-msgstr "AI dự đoán hoàn thành"
+msgstr "AI Predicted Completion"
 
 #. module: health_fieldservice
 #: model:ir.model.fields,field_description:health_fieldservice.field_health_staff_assignment_engine__predicted_travel_time
@@ -534,7 +534,7 @@ msgstr "AI Nhân viên Suggestions:\n\n"
 #. module: health_fieldservice
 #: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_ai_assignment_engine_kanban
 msgid "AI Trained"
-msgstr "AI đã huấn luyện"
+msgstr "AI Trained"
 
 #. module: health_fieldservice
 #: model:ir.model.fields,help:health_fieldservice.field_health_staff_assignment__predicted_complexity
@@ -814,12 +814,12 @@ msgstr "Advance Đặt lịch Days"
 #. module: health_fieldservice
 #: model:ir.model.fields.selection,name:health_fieldservice.selection__health_clinical_protocol__complexity_level__advanced
 msgid "Advanced"
-msgstr "Nâng cao"
+msgstr "Advanced"
 
 #. module: health_fieldservice
 #: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_clinical_protocol_search
 msgid "Advanced Complexity"
-msgstr "Độ phức tạp nâng cao"
+msgstr "Advanced Complexity"
 
 #. module: health_fieldservice
 #: model:ir.model.fields,field_description:health_fieldservice.field_health_fieldservice_order__after_hours_charge
@@ -840,7 +840,7 @@ msgstr "Tuổi<br/>Tuổi"
 #. module: health_fieldservice
 #: model:ir.model.fields.selection,name:health_fieldservice.selection__health_clinical_protocol__infection_control_level__airborne
 msgid "Airborne Precautions"
-msgstr "Phòng ngừa lây nhiễm qua đường không khí"
+msgstr "Airborne Precautions"
 
 #. module: health_fieldservice
 #: model:ir.model.fields.selection,name:health_fieldservice.selection__hr_employee__available_weekdays__all
@@ -987,7 +987,7 @@ msgstr "Khu vực Tên"
 #: model:ir.model.fields.selection,name:health_fieldservice.selection__health_staff_assignment__assignment_status__arrived
 #: model:ir.model.fields.selection,name:health_fieldservice.selection__health_staff_assignment__real_time_status__arrived
 msgid "Arrived"
-msgstr "Đã đến"
+msgstr "Arrived"
 
 #. module: health_fieldservice
 #: model:ir.model.fields,field_description:health_fieldservice.field_health_staff_assignment_wizard__doctor_id
@@ -1324,7 +1324,7 @@ msgstr "Automatically geneđánh giád trường dịch vụ thứ tự cho Khá
 #. module: health_fieldservice
 #: model_terms:ir.ui.view,arch_db:health_fieldservice.view_healthcare_staff_search
 msgid "Availability"
-msgstr "Khả năng phục vụ"
+msgstr "Availability"
 
 #. module: health_fieldservice
 #: model:ir.model.fields,field_description:health_fieldservice.field_health_staff_assignment__availability_score
@@ -1421,12 +1421,12 @@ msgstr "Base giá cho việc dịch vụ"
 #. module: health_fieldservice
 #: model:ir.model.fields.selection,name:health_fieldservice.selection__health_clinical_protocol__complexity_level__basic
 msgid "Basic"
-msgstr "Cơ bản"
+msgstr "Basic"
 
 #. module: health_fieldservice
 #: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_clinical_protocol_search
 msgid "Basic Complexity"
-msgstr "Độ phức tạp cơ bản"
+msgstr "Basic Complexity"
 
 #. module: health_fieldservice
 #: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_fieldservice_stage_form
@@ -1441,7 +1441,7 @@ msgstr "Basic trường dịch vụ truy cập - có thể Xem phân cônged FSO
 #. module: health_fieldservice
 #: model:ir.model.fields.selection,name:health_fieldservice.selection__health_portable_equipment__power_source__both
 msgid "Battery + Mains"
-msgstr "Pin + Điện lưới"
+msgstr "Battery + Mains"
 
 #. module: health_fieldservice
 #: model:ir.model.fields,field_description:health_fieldservice.field_health_portable_equipment__battery_life_hours
@@ -1451,12 +1451,12 @@ msgstr "Battery Life (giờs)"
 #. module: health_fieldservice
 #: model:ir.model.fields.selection,name:health_fieldservice.selection__health_portable_equipment__power_source__battery
 msgid "Battery Powered"
-msgstr "Chạy pin"
+msgstr "Battery Powered"
 
 #. module: health_fieldservice
 #: model:ir.model.fields.selection,name:health_fieldservice.selection__hr_employee__vehicle_type__bicycle
 msgid "Bicycle"
-msgstr "Xe đạp"
+msgstr "Bicycle"
 
 #. module: health_fieldservice
 #: model:ir.model.fields.selection,name:health_fieldservice.selection__health_staff_availability_matrix__status__blocked
@@ -1623,12 +1623,12 @@ msgstr "Đặt lịchs are automatically Đã tạo khi nào Khám tại nhà C�
 #. module: health_fieldservice
 #: model:ir.model.fields.selection,name:health_fieldservice.selection__health_staff_availability_matrix__status__break
 msgid "Break/Lunch"
-msgstr "Nghỉ giải lao/Ăn trưa"
+msgstr "Break/Lunch"
 
 #. module: health_fieldservice
 #: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_staff_availability_form
 msgid "Buffer & Travel"
-msgstr "Dự phòng & Di chuyển"
+msgstr "Buffer & Travel"
 
 #. module: health_fieldservice
 #: model:ir.model.fields,field_description:health_fieldservice.field_health_staff_assignment__buffer_after
@@ -1656,7 +1656,7 @@ msgstr "Buffer Giờs"
 #: model:ir.model.fields.selection,name:health_fieldservice.selection__hr_employee__assignment_status__busy
 #: model:ir.model.fields.selection,name:health_fieldservice.selection__hr_employee__availability_status__busy
 msgid "Busy"
-msgstr "Bận"
+msgstr "Busy"
 
 #. module: health_fieldservice
 #. odoo-javascript
@@ -1690,7 +1690,7 @@ msgstr "CRM tiềm năng đó geneđánh giád này đặt lịch"
 #: model:ir.model.fields.selection,name:health_fieldservice.selection__health_equipment_service_history__service_type__calibration
 #: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_portable_equipment_form
 msgid "Calibration"
-msgstr "Hiệu chuẩn"
+msgstr "Calibration"
 
 #. module: health_fieldservice
 #: model:ir.model.fields,field_description:health_fieldservice.field_health_portable_equipment__calibration_due_date
@@ -1860,7 +1860,7 @@ msgstr "Sức chứa"
 #. module: health_fieldservice
 #: model:ir.model.fields.selection,name:health_fieldservice.selection__hr_employee__vehicle_type__car
 msgid "Car"
-msgstr "Ô tô"
+msgstr "Car"
 
 #. module: health_fieldservice
 #: model:ir.model.fields.selection,name:health_fieldservice.selection__hr_employee__employment_type__casual
@@ -2126,7 +2126,7 @@ msgstr "Communication Tìm kiếm"
 #: model:ir.ui.menu,name:health_fieldservice.menu_fieldservice_communications
 #: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_fieldservice_order_form
 msgid "Communications"
-msgstr "Liên lạc"
+msgstr "Communications"
 
 #. module: health_fieldservice
 #: model:ir.model.fields,field_description:health_fieldservice.field_health_ai_assignment_engine__company_id
@@ -2299,17 +2299,17 @@ msgstr "Conflict Chi tiết"
 #. module: health_fieldservice
 #: model:ir.model.fields,field_description:health_fieldservice.field_health_staff_availability_matrix__conflict_detected
 msgid "Conflict Detected"
-msgstr "Phát hiện xung đột"
+msgstr "Conflict Detected"
 
 #. module: health_fieldservice
 #: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_staff_availability_form
 msgid "Conflicts"
-msgstr "Xung đột"
+msgstr "Conflicts"
 
 #. module: health_fieldservice
 #: model:ir.model.fields.selection,name:health_fieldservice.selection__health_staff_assignment__assignment_role__consultant
 msgid "Consultant"
-msgstr "Tư vấn viên"
+msgstr "Consultant"
 
 #. module: health_fieldservice
 #: model:ir.model.fields.selection,name:health_fieldservice.selection__health_fieldservice_order__service_type__consultation
@@ -2456,12 +2456,12 @@ msgstr "Đã tạo trên"
 #. module: health_fieldservice
 #: model:ir.model.fields.selection,name:health_fieldservice.selection__health_fieldservice_order__urgency_level__critical
 msgid "Critical"
-msgstr "Khẩn cấp"
+msgstr "Critical"
 
 #. module: health_fieldservice
 #: model:ir.model.fields.selection,name:health_fieldservice.selection__health_staff_assignment__predicted_complexity__critical
 msgid "Critical Complexity"
-msgstr "Độ phức tạp khẩn cấp"
+msgstr "Critical Complexity"
 
 #. module: health_fieldservice
 #: model:ir.model.fields,field_description:health_fieldservice.field_health_equipment_service_history__currency_id
@@ -2596,7 +2596,7 @@ msgstr "Mặc định Giai đoạn"
 #. module: health_fieldservice
 #: model:ir.model.fields.selection,name:health_fieldservice.selection__health_staff_assignment__state__deferred
 msgid "Deferred"
-msgstr "Hoãn lại"
+msgstr "Deferred"
 
 #. module: health_fieldservice
 #: model_terms:ir.actions.act_window,help:health_fieldservice.action_healthcare_skills
@@ -2666,7 +2666,7 @@ msgstr "Chẩn đoán<br/>Chuẩn đoán"
 #. module: health_fieldservice
 #: model:ir.model.fields.selection,name:health_fieldservice.selection__health_fieldservice_order__service_category__diagnostic
 msgid "Diagnostic"
-msgstr "Chẩn đoán"
+msgstr "Diagnostic"
 
 #. module: health_fieldservice
 #: model:ir.model.fields.selection,name:health_fieldservice.selection__health_portable_equipment__equipment_type__diagnostic
@@ -2681,17 +2681,17 @@ msgstr "Diagnostic Dịch vụs"
 #. module: health_fieldservice
 #: model:ir.model.fields,field_description:health_fieldservice.field_health_portable_equipment__dimensions
 msgid "Dimensions"
-msgstr "Kích thước"
+msgstr "Dimensions"
 
 #. module: health_fieldservice
 #: model_terms:ir.ui.view,arch_db:health_fieldservice.view_healthcare_quote_form_custom
 msgid "Disc.%"
-msgstr "CK %"
+msgstr "Disc.%"
 
 #. module: health_fieldservice
 #: model:ir.model.fields.selection,name:health_fieldservice.selection__health_fieldservice_communication__recipient_role__dispatcher
 msgid "Dispatcher"
-msgstr "Điều phối viên"
+msgstr "Dispatcher"
 
 #. module: health_fieldservice
 #: model:res.groups,comment:health_fieldservice.group_fieldservice_dispatcher
@@ -2850,7 +2850,7 @@ msgstr "Email"
 #. module: health_fieldservice
 #: model:ir.model.fields.selection,name:health_fieldservice.selection__hr_employee__notification_method__email
 msgid "Email Only"
-msgstr "Chỉ qua Email"
+msgstr "Email Only"
 
 #. module: health_fieldservice
 #: model:ir.model.fields.selection,name:health_fieldservice.selection__hr_employee__notification_method__both
@@ -2945,7 +2945,7 @@ msgstr "Employment Loại"
 #: model:ir.model.fields.selection,name:health_fieldservice.selection__health_staff_assignment__assignment_status__en_route
 #: model:ir.model.fields.selection,name:health_fieldservice.selection__health_staff_assignment__real_time_status__en_route
 msgid "En Route"
-msgstr "Đang trên đường"
+msgstr "En Route"
 
 #. module: health_fieldservice
 #: model:ir.model.fields,field_description:health_fieldservice.field_health_appointment__end_datetime
@@ -2967,7 +2967,7 @@ msgstr "Kết thúc Giờ must là after bắt đầu Giờ."
 #. module: health_fieldservice
 #: model:ir.model.fields.selection,name:health_fieldservice.selection__health_clinical_protocol__infection_control_level__enhanced
 msgid "Enhanced Precautions"
-msgstr "Phòng ngừa tăng cường"
+msgstr "Enhanced Precautions"
 
 #. module: health_fieldservice
 #: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_fieldservice_order_form
@@ -3089,7 +3089,7 @@ msgstr "Escalated Đến"
 #. module: health_fieldservice
 #: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_fieldservice_communication_form
 msgid "Escalation"
-msgstr "Leo thang"
+msgstr "Escalation"
 
 #. module: health_fieldservice
 #: model:ir.model.fields,field_description:health_fieldservice.field_health_fieldservice_communication__escalation_level
@@ -3160,7 +3160,7 @@ msgstr "Dự kiến Arrival Giờ"
 #. module: health_fieldservice
 #: model:ir.model.fields.selection,name:health_fieldservice.selection__hr_employee__skill_level__expert
 msgid "Expert"
-msgstr "Chuyên gia"
+msgstr "Expert"
 
 #. module: health_fieldservice
 #: model:ir.model.fields,field_description:health_fieldservice.field_health_clinical_protocol__expiry_date
@@ -3170,7 +3170,7 @@ msgstr "Expiry Ngày"
 #. module: health_fieldservice
 #: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_fieldservice_communication_search
 msgid "FSO"
-msgstr "Lệnh DVHT"
+msgstr "FSO"
 
 #. module: health_fieldservice
 #: model_terms:ir.ui.view,arch_db:health_fieldservice.view_fso_assignment_calendar
@@ -3314,17 +3314,17 @@ msgstr "Trường nhân viên Đã xác nhận Tất cả thiết bị là có s
 #. module: health_fieldservice
 #: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_portable_equipment_form
 msgid "Financial"
-msgstr "Tài chính"
+msgstr "Financial"
 
 #. module: health_fieldservice
 #: model:ir.model.fields,field_description:health_fieldservice.field_health_equipment_service_history__findings
 msgid "Findings/Issues"
-msgstr "Phát hiện/Vấn đề"
+msgstr "Findings/Issues"
 
 #. module: health_fieldservice
 #: model:ir.model.fields.selection,name:health_fieldservice.selection__hr_employee__preferred_shift__flexible
 msgid "Flexible"
-msgstr "Linh hoạt"
+msgstr "Flexible"
 
 #. module: health_fieldservice
 #: model:ir.model.fields,field_description:health_fieldservice.field_health_fieldservice_stage__fold
@@ -4020,12 +4020,12 @@ msgstr "Intelligent Nhân viên Phân công Bản ghi"
 #: model:ir.model.fields.selection,name:health_fieldservice.selection__health_clinical_protocol__complexity_level__intermediate
 #: model:ir.model.fields.selection,name:health_fieldservice.selection__hr_employee__skill_level__intermediate
 msgid "Intermediate"
-msgstr "Trung cấp"
+msgstr "Intermediate"
 
 #. module: health_fieldservice
 #: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_clinical_protocol_search
 msgid "Intermediate Complexity"
-msgstr "Độ phức tạp trung cấp"
+msgstr "Intermediate Complexity"
 
 #. module: health_fieldservice
 #. odoo-python
@@ -4157,7 +4157,7 @@ msgstr "JSON mẫu defining step-bởi-step Hành động cho trường nhân vi
 #. module: health_fieldservice
 #: model:ir.model.fields.selection,name:health_fieldservice.selection__hr_employee__skill_level__junior
 msgid "Junior"
-msgstr "Sơ cấp"
+msgstr "Junior"
 
 #. module: health_fieldservice
 #: model:ir.model.fields,field_description:health_fieldservice.field_hr_employee__language_ids
@@ -4367,7 +4367,7 @@ msgstr "MISA Đồng bộed"
 #. module: health_fieldservice
 #: model:ir.model.fields,field_description:health_fieldservice.field_health_staff_assignment__ml_optimization_applied
 msgid "ML Optimization Applied"
-msgstr "Đã áp dụng tối ưu ML"
+msgstr "ML Optimization Applied"
 
 #. module: health_fieldservice
 #: model:ir.model.fields,help:health_fieldservice.field_health_staff_assignment__predicted_success_probability
@@ -4422,12 +4422,12 @@ msgstr "MOH Submission Bắt buộc"
 #. module: health_fieldservice
 #: model:ir.model.fields.selection,name:health_fieldservice.selection__health_portable_equipment__power_source__mains
 msgid "Mains Power"
-msgstr "Điện lưới"
+msgstr "Mains Power"
 
 #. module: health_fieldservice
 #: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_portable_equipment_form
 msgid "Maintenance"
-msgstr "Bảo trì"
+msgstr "Maintenance"
 
 #. module: health_fieldservice
 #: model:ir.model.fields,field_description:health_fieldservice.field_health_portable_equipment__is_maintenance_due
@@ -4481,7 +4481,7 @@ msgstr "Manually phân công hoặc modify nhân viên phân côngs"
 #. module: health_fieldservice
 #: model:ir.model.fields,field_description:health_fieldservice.field_health_portable_equipment__manufacturer
 msgid "Manufacturer"
-msgstr "Nhà sản xuất"
+msgstr "Manufacturer"
 
 #. module: health_fieldservice
 #: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_portable_equipment_form
@@ -4680,7 +4680,7 @@ msgstr "Morning Ca làm việc"
 #. module: health_fieldservice
 #: model:ir.model.fields.selection,name:health_fieldservice.selection__hr_employee__vehicle_type__motorbike
 msgid "Motorbike"
-msgstr "Xe máy"
+msgstr "Motorbike"
 
 #. module: health_fieldservice
 #. odoo-javascript
@@ -4724,7 +4724,7 @@ msgstr "Tên<br/>Họ và tên"
 #. module: health_fieldservice
 #: model:ir.model.fields.selection,name:health_fieldservice.selection__health_fieldservice_communication__message_type__navigation_help
 msgid "Navigation Assistance"
-msgstr "Hỗ trợ dẫn đường"
+msgstr "Navigation Assistance"
 
 #. module: health_fieldservice
 #. odoo-python
@@ -5286,7 +5286,7 @@ msgstr "Gợi ý nhân viên tối ưu (JSON)"
 #. module: health_fieldservice
 #: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_staff_assignment_form
 msgid "Optimization Insights"
-msgstr "Phân tích tối ưu hóa"
+msgstr "Optimization Insights"
 
 #. module: health_fieldservice
 #: model:ir.model.fields,field_description:health_fieldservice.field_health_staff_assignment__optimization_suggestions
@@ -5526,7 +5526,7 @@ msgstr "Số điện thoại nhận thông báo phân công"
 #. module: health_fieldservice
 #: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_portable_equipment_form
 msgid "Physical"
-msgstr "Vật lý"
+msgstr "Physical"
 
 #. module: health_fieldservice
 #: model:ir.model.fields,field_description:health_fieldservice.field_health_staff_assignment__planned_end_time
@@ -5590,7 +5590,7 @@ msgstr "Đường dẫn truy cập cổng thông tin"
 #. module: health_fieldservice
 #: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_portable_equipment_form
 msgid "Power"
-msgstr "Nguồn điện"
+msgstr "Power"
 
 #. module: health_fieldservice
 #: model:ir.model.fields,field_description:health_fieldservice.field_health_portable_equipment__power_source
@@ -5940,7 +5940,7 @@ msgstr "Người nhận"
 #. module: health_fieldservice
 #: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_fieldservice_communication_form
 msgid "Recipients & Response"
-msgstr "Người nhận & Phản hồi"
+msgstr "Recipients & Response"
 
 #. module: health_fieldservice
 #: model:ir.model.fields,field_description:health_fieldservice.field_health_staff_assignment__departure_time
@@ -6625,7 +6625,7 @@ msgstr "Tên kỹ năng"
 #. module: health_fieldservice
 #: model_terms:ir.ui.view,arch_db:health_fieldservice.view_healthcare_staff_form
 msgid "Skills & Competencies"
-msgstr "Kỹ năng & Năng lực"
+msgstr "Skills & Competencies"
 
 #. module: health_fieldservice
 #: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_ai_assignment_engine_form
@@ -7250,7 +7250,7 @@ msgstr "Thiết bị trị liệu"
 #. module: health_fieldservice
 #: model_terms:ir.ui.view,arch_db:health_fieldservice.view_healthcare_staff_search
 msgid "Therapists"
-msgstr "Kỹ thuật viên trị liệu"
+msgstr "Therapists"
 
 #. module: health_fieldservice
 #: model:ir.model.fields.selection,name:health_fieldservice.selection__health_fieldservice_order__service_category__therapy
@@ -7587,7 +7587,7 @@ msgstr "Đơn giá"
 #. module: health_fieldservice
 #: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_fieldservice_communication_search
 msgid "Unread"
-msgstr "Chưa đọc"
+msgstr "Unread"
 
 #. module: health_fieldservice
 #: model_terms:ir.ui.view,arch_db:health_fieldservice.view_healthcare_quote_form_custom
@@ -8033,7 +8033,7 @@ msgstr "{\"steps\": [{\"step\": 1, \"hành động\": \"Mô tả\", \"Bắt bu�
 #. module: health_fieldservice
 #: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_fieldservice_communication_form
 msgid "↩️ Reply"
-msgstr "↩️ Trả lời"
+msgstr "↩️ Reply"
 
 #. module: health_fieldservice
 #: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_fieldservice_order_form
@@ -8069,7 +8069,7 @@ msgstr "✅ Xác nhận Đặt lịch"
 #. module: health_fieldservice
 #: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_fieldservice_communication_form
 msgid "✓ Mark Read"
-msgstr "✓ Đánh dấu đã đọc"
+msgstr "✓ Mark Read"
 
 #. module: health_fieldservice
 #: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_fieldservice_order_form
@@ -8079,7 +8079,7 @@ msgstr "❌ Hủy Đặt lịch"
 #. module: health_fieldservice
 #: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_fieldservice_communication_form
 msgid "⬆️ Escalate"
-msgstr "⬆️ Leo thang"
+msgstr "⬆️ Escalate"
 
 #. module: health_fieldservice
 #: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_staff_assignment_form
@@ -8198,13 +8198,13 @@ msgstr "🚀 AI Phân công Nhân viên"
 #. module: health_fieldservice
 #: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_staff_assignment_form
 msgid "🤖 AI Insights"
-msgstr "🤖 Phân tích AI"
+msgstr "🤖 AI Insights"
 
 #. module: health_fieldservice
 #. odoo-python
 #: code:addons/health_fieldservice/models/health_staff_assignment.py:0
 msgid "🤖 AI Optimization Applied"
-msgstr "🤖 Đã áp dụng tối ưu AI"
+msgstr "🤖 AI Optimization Applied"
 
 #. module: health_fieldservice
 #. odoo-python

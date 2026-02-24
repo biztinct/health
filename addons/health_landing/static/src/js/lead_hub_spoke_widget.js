@@ -2,6 +2,7 @@
 
 import { Component, useState, onMounted, useRef } from "@odoo/owl";
 import { useService } from "@web/core/utils/hooks";
+import { _t } from "@web/core/l10n/translation";
 
 /**
  * Hub-and-Spoke Lead Dashboard Widget
@@ -37,43 +38,43 @@ export class LeadHubSpokeWidget extends Component {
         this.spokes = [
             {
                 id: "client_info",
-                label: "Client Info",
+                label: _t("Client Info"),
                 icon: "fa-user",
                 color: "#1565C0",
                 lightColor: "#ffffff",
-                description: "Lead details and contact",
+                description: _t("Lead details and contact"),
             },
             {
                 id: "relations",
-                label: "Relations",
+                label: _t("Relations"),
                 icon: "fa-users",
                 color: "#00796B",
                 lightColor: "#ffffff",
-                description: "Caregivers, payers, contacts",
+                description: _t("Caregivers, payers, contacts"),
             },
             {
                 id: "source",
-                label: "Source",
+                label: _t("Source"),
                 icon: "fa-bullseye",
                 color: "#D46E00",
                 lightColor: "#ffffff",
-                description: "Lead acquisition source",
+                description: _t("Lead acquisition source"),
             },
             {
                 id: "internal_notes",
-                label: "Internal Notes",
+                label: _t("Internal Notes"),
                 icon: "fa-sticky-note",
                 color: "#6B4BA8",
                 lightColor: "#ffffff",
-                description: "Notes and requirements",
+                description: _t("Notes and requirements"),
             },
             {
                 id: "map",
-                label: "Map",
+                label: _t("Map"),
                 icon: "fa-map-marker",
                 color: "#0097A7",
                 lightColor: "#ffffff",
-                description: "Address and location",
+                description: _t("Address and location"),
             },
         ];
 
@@ -137,11 +138,11 @@ export class LeadHubSpokeWidget extends Component {
     getContactStatus() {
         const status = this.state.leadData?.contact_status;
         const statusLabels = {
-            'active': 'Initial Contact',
-            'booking': 'Booking',
-            'lead': 'Lead',
-            'lost_booking': 'Lost Booking',
-            'spam': 'Spam Call'
+            'active': _t('Initial Contact'),
+            'booking': _t('Booking'),
+            'lead': _t('Lead'),
+            'lost_booking': _t('Lost Booking'),
+            'spam': _t('Spam Call')
         };
         return statusLabels[status] || status || '';
     }
@@ -150,13 +151,13 @@ export class LeadHubSpokeWidget extends Component {
         // Get the display name for contact outcome
         const outcome = this.state.leadData?.health_contact_outcome || this.state.leadData?.contact_outcome;
         const outcomeLabels = {
-            'pending_callback': 'Pending Callback',
-            'pending_follow_up': 'Pending Follow-up',
-            'service_booked': 'Service Booked',
-            'interested': 'Interested',
-            'not_interested': 'Not Interested',
-            'rejected': 'Rejected',
-            'no_followup_required': 'No Follow-up Required'
+            'pending_callback': _t('Pending Callback'),
+            'pending_follow_up': _t('Pending Follow-up'),
+            'service_booked': _t('Service Booked'),
+            'interested': _t('Interested'),
+            'not_interested': _t('Not Interested'),
+            'rejected': _t('Rejected'),
+            'no_followup_required': _t('No Follow-up Required')
         };
         return outcomeLabels[outcome] || outcome || '';
     }
@@ -212,7 +213,7 @@ export class LeadHubSpokeWidget extends Component {
         // Navigate to Leads list view
         await this.actionService.doAction({
             type: 'ir.actions.act_window',
-            name: 'Leads',
+            name: _t('Leads'),
             res_model: 'crm.lead',
             view_mode: 'list,form',
             views: [[false, 'list'], [false, 'form']],
@@ -255,7 +256,7 @@ export class LeadHubSpokeWidget extends Component {
             case "client_info":
                 action = {
                     type: "ir.actions.act_window",
-                    name: "Lead Information",
+                    name: _t("Lead Information"),
                     res_model: "crm.lead",
                     res_id: this.props.leadId,
                     views: [[false, "form"]],
@@ -269,7 +270,7 @@ export class LeadHubSpokeWidget extends Component {
             case "relations":
                 action = {
                     type: "ir.actions.act_window",
-                    name: "Lead Relationships",
+                    name: _t("Lead Relationships"),
                     res_model: "crm.lead",
                     res_id: this.props.leadId,
                     views: [[false, "form"]],
@@ -283,7 +284,7 @@ export class LeadHubSpokeWidget extends Component {
             case "map":
                 action = {
                     type: "ir.actions.act_window",
-                    name: "Lead Location",
+                    name: _t("Lead Location"),
                     res_model: "crm.lead",
                     res_id: this.props.leadId,
                     views: [[false, "form"]],
@@ -297,7 +298,7 @@ export class LeadHubSpokeWidget extends Component {
             case "source":
                 action = {
                     type: "ir.actions.act_window",
-                    name: "Lead Source",
+                    name: _t("Lead Source"),
                     res_model: "crm.lead",
                     res_id: this.props.leadId,
                     views: [[false, "form"]],
@@ -311,7 +312,7 @@ export class LeadHubSpokeWidget extends Component {
             case "internal_notes":
                 action = {
                     type: "ir.actions.act_window",
-                    name: "Internal Notes",
+                    name: _t("Internal Notes"),
                     res_model: "crm.lead",
                     res_id: this.props.leadId,
                     views: [[false, "form"]],
@@ -355,10 +356,10 @@ export class LeadHubSpokeWidget extends Component {
             );
             // Show notification
             this.notification.add(
-                "This contact has been marked as spam",
+                _t("This contact has been marked as spam"),
                 {
                     type: "warning",
-                    title: "Spam Marked",
+                    title: _t("Spam Marked"),
                     sticky: false,
                 }
             );
@@ -367,7 +368,7 @@ export class LeadHubSpokeWidget extends Component {
         } catch (error) {
             console.error("Failed to mark as spam:", error);
             this.notification.add(
-                "Failed to mark as spam",
+                _t("Failed to mark as spam"),
                 { type: "danger" }
             );
         }

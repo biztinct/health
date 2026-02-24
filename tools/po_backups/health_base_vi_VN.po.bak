@@ -283,22 +283,22 @@ msgstr "Alley Số"
 #. module: health_base
 #: model:ir.model.fields,field_description:health_base.field_health_fall_risk__ambulatory_aid
 msgid "Ambulatory Aid"
-msgstr "Dụng cụ hỗ trợ di chuyển"
+msgstr "Ambulatory Aid"
 
 #. module: health_base
 #: model:ir.model.fields.selection,name:health_base.selection__health_medication__therapeutic_category__analgesic
 msgid "Analgesic"
-msgstr "Thuốc giảm đau"
+msgstr "Analgesic"
 
 #. module: health_base
 #: model:ir.model.fields.selection,name:health_base.selection__health_medication__therapeutic_category__antibiotic
 msgid "Antibiotic"
-msgstr "Kháng sinh"
+msgstr "Antibiotic"
 
 #. module: health_base
 #: model:ir.model.fields.selection,name:health_base.selection__health_medication__therapeutic_category__antihypertensive
 msgid "Antihypertensive"
-msgstr "Thuốc hạ huyết áp"
+msgstr "Antihypertensive"
 
 #. module: health_base
 #: model:ir.model.fields,field_description:health_base.field_res_partner__apartment_number
@@ -384,7 +384,7 @@ msgstr "Automation Cài đặt"
 #. module: health_base
 #: model_terms:ir.ui.view,arch_db:health_base.view_health_service_type_form
 msgid "Availability"
-msgstr "Khả năng phục vụ"
+msgstr "Availability"
 
 #. module: health_base
 #: model:ir.model.fields,field_description:health_base.field_health_facility__available_beds
@@ -434,7 +434,7 @@ msgstr "Giá cơ bản: 100,000 VND → Ngày lễ Giá:"
 #. module: health_base
 #: model:ir.model.fields,field_description:health_base.field_health_vietnamese_district__base_travel_fee
 msgid "Base Travel Fee (VND)"
-msgstr "Phí đi lại cơ bản (VND)"
+msgstr "Base Travel Fee (VND)"
 
 #. module: health_base
 #: model:ir.model.constraint,message:health_base.constraint_health_service_type_positive_price
@@ -532,7 +532,7 @@ msgstr "Hủy bỏ lý do must be unique!"
 #. module: health_base
 #: model_terms:ir.ui.view,arch_db:health_base.view_health_facility_form
 msgid "Capabilities"
-msgstr "Năng lực"
+msgstr "Capabilities"
 
 #. module: health_base
 #: model_terms:ir.ui.view,arch_db:health_base.view_health_facility_form
@@ -626,7 +626,7 @@ msgstr "Kiểm tra nếu này nhân viên provides Y tế dịch vụs"
 #. module: health_base
 #: model:health.symptom,name:health_base.symptom_chest_pain
 msgid "Chest Pain"
-msgstr "Đau ngực"
+msgstr "Chest Pain"
 
 #. module: health_base
 #: model:health.patient.category,description:health_base.patient_category_pediatric
@@ -829,7 +829,7 @@ msgstr "Mã"
 #. module: health_base
 #: model:ir.model.fields,field_description:health_base.field_health_readmission_risk__cognitive_impairment
 msgid "Cognitive Impairment"
-msgstr "Suy giảm nhận thức"
+msgstr "Cognitive Impairment"
 
 #. module: health_base
 #: model:ir.model.fields,field_description:health_base.field_health_patient_category__color
@@ -842,7 +842,7 @@ msgstr "Mã màu"
 #. module: health_base
 #: model:ir.model.fields,field_description:health_base.field_health_medication__side_effects
 msgid "Common Side Effects"
-msgstr "Tác dụng phụ thường gặp"
+msgstr "Common Side Effects"
 
 #. module: health_base
 #: model:ir.ui.menu,name:health_base.menu_healthcare_lookups
@@ -924,7 +924,7 @@ msgstr "Chi phí per Tiềm năng (VND)"
 #. module: health_base
 #: model:health.symptom,name:health_base.symptom_cough
 msgid "Cough"
-msgstr "Ho"
+msgstr "Cough"
 
 #. module: health_base
 #: model:ir.model.fields,field_description:health_base.field_health_facility__country_id
@@ -1039,7 +1039,7 @@ msgstr "Đã tạo trên"
 #. module: health_base
 #: model:ir.model.fields.selection,name:health_base.selection__health_fall_risk__ambulatory_aid__crutches
 msgid "Crutches/Cane/Walker (15 points)"
-msgstr "Nạng/Gậy/Khung tập đi (15 điểm)"
+msgstr "Crutches/Cane/Walker (15 points)"
 
 #. module: health_base
 #: model:ir.model.fields,field_description:health_base.field_health_facility__currency_id
@@ -1162,7 +1162,7 @@ msgstr "Difficulty breathing hoặc breathít hơnness"
 #. module: health_base
 #: model:ir.model.fields.selection,name:health_base.selection__health_symptom__category__digestive
 msgid "Digestive"
-msgstr "Tiêu hóa"
+msgstr "Digestive"
 
 #. module: health_base
 #: model:ir.model.fields,field_description:health_base.field_health_audit_log_view__display_name
@@ -1348,12 +1348,12 @@ msgstr "Evidence Mức độ"
 #. module: health_base
 #: model:ir.model.fields.selection,name:health_base.selection__health_readmission_risk__medication_compliance__excellent
 msgid "Excellent"
-msgstr "Xuất sắc"
+msgstr "Excellent"
 
 #. module: health_base
 #: model:health.booking.cancellation.reason,description:health_base.cancel_reason_emergency_weather
 msgid "Extreme weather making travel unsafe"
-msgstr "Thời tiết cực đoan gây nguy hiểm khi di chuyển"
+msgstr "Extreme weather making travel unsafe"
 
 #. module: health_base
 #: model:ir.model.fields.selection,name:health_base.selection__health_referral_source__source_type__facebook
@@ -1435,7 +1435,7 @@ msgstr "Tên cơ sở..."
 #. module: health_base
 #: model:ir.model.fields.selection,name:health_base.selection__health_readmission_risk__medication_compliance__fair
 msgid "Fair"
-msgstr "Trung bình"
+msgstr "Fair"
 
 #. module: health_base
 #: model:ir.model,name:health_base.model_health_fall_risk
@@ -1450,7 +1450,7 @@ msgstr "Nữ"
 #. module: health_base
 #: model:health.symptom,name:health_base.symptom_fever
 msgid "Fever"
-msgstr "Sốt"
+msgstr "Fever"
 
 #. module: health_base
 #: model_terms:ir.ui.view,arch_db:health_base.view_health_audit_log_search
@@ -1475,7 +1475,7 @@ msgstr "Financial & Bảo hiểm"
 #. module: health_base
 #: model:ir.model.fields,field_description:health_base.field_health_readmission_risk__financial_constraints
 msgid "Financial Constraints"
-msgstr "Hạn chế tài chính"
+msgstr "Financial Constraints"
 
 #. module: health_base
 #: model_terms:ir.ui.view,arch_db:health_base.view_health_facility_form
@@ -1485,7 +1485,7 @@ msgstr "Financial Cài đặt"
 #. module: health_base
 #: model:health.booking.cancellation.reason,name:health_base.cancel_reason_patient_financial
 msgid "Financial constraints"
-msgstr "Hạn chế tài chính"
+msgstr "Financial constraints"
 
 #. module: health_base
 #: model:ir.model.fields,field_description:health_base.field_res_partner__first_name
@@ -1521,12 +1521,12 @@ msgstr "Tần suất"
 #. module: health_base
 #: model:ir.model.fields.selection,name:health_base.selection__health_referral_source__source_type__friend
 msgid "Friend/Family"
-msgstr "Bạn bè/Gia đình"
+msgstr "Friend/Family"
 
 #. module: health_base
 #: model:ir.model.fields.selection,name:health_base.selection__health_fall_risk__ambulatory_aid__furniture
 msgid "Furniture (30 points)"
-msgstr "Bám đồ đạc (30 điểm)"
+msgstr "Furniture (30 points)"
 
 #. module: health_base
 #: model:ir.model.fields,field_description:health_base.field_res_partner__geo_coordinates_display
@@ -1543,7 +1543,7 @@ msgstr "GPS:"
 #. module: health_base
 #: model:ir.model.fields,field_description:health_base.field_health_fall_risk__gait_transfer
 msgid "Gait/Transfer"
-msgstr "Dáng đi/Di chuyển"
+msgstr "Gait/Transfer"
 
 #. module: health_base
 #: model:ir.model.fields,field_description:health_base.field_health_readmission_risk__gender
@@ -1626,7 +1626,7 @@ msgstr "Ngày xác định vị trí"
 #. module: health_base
 #: model:health.medical.specialty,name:health_base.specialty_geriatrics
 msgid "Geriatrics"
-msgstr "Lão khoa"
+msgstr "Geriatrics"
 
 #. module: health_base
 #: model:ir.model.fields.selection,name:health_base.selection__res_partner__ethnicity__gia_rai
@@ -1636,7 +1636,7 @@ msgstr "Gia Rai"
 #. module: health_base
 #: model:ir.model.fields.selection,name:health_base.selection__health_readmission_risk__medication_compliance__good
 msgid "Good"
-msgstr "Tốt"
+msgstr "Good"
 
 #. module: health_base
 #: model:ir.model.fields.selection,name:health_base.selection__health_referral_source__source_type__google
@@ -1695,7 +1695,7 @@ msgstr "Head pain hoặc discomfort"
 #. module: health_base
 #: model:health.symptom,name:health_base.symptom_headache
 msgid "Headache"
-msgstr "Đau đầu"
+msgstr "Headache"
 
 #. module: health_base
 #: model:ir.model.fields,field_description:health_base.field_health_facility__health_license_number
@@ -2037,7 +2037,7 @@ msgstr "Chẩn đoán hình ảnh Dịch vụs"
 #. module: health_base
 #: model:ir.model.fields.selection,name:health_base.selection__health_fall_risk__gait_transfer__impaired
 msgid "Impaired (20 points)"
-msgstr "Suy giảm (20 điểm)"
+msgstr "Impaired (20 points)"
 
 #. module: health_base
 #: model:ir.model.fields.selection,name:health_base.selection__res_partner__patient_status__inactive
@@ -2233,12 +2233,12 @@ msgstr "Phòng xét nghiệm Dịch vụs"
 #. module: health_base
 #: model_terms:ir.ui.view,arch_db:health_base.view_health_audit_log_search
 msgid "Last 30 Days"
-msgstr "30 ngày qua"
+msgstr "Last 30 Days"
 
 #. module: health_base
 #: model_terms:ir.ui.view,arch_db:health_base.view_health_audit_log_search
 msgid "Last 7 Days"
-msgstr "7 ngày qua"
+msgstr "Last 7 Days"
 
 #. module: health_base
 #: model:ir.model.fields,field_description:health_base.field_health_facility__last_inspection_date
@@ -2367,7 +2367,7 @@ msgstr "Ngày hết hạn giấy phép Ngày cannot be trong the past."
 #. module: health_base
 #: model_terms:ir.ui.view,arch_db:health_base.view_health_facility_form
 msgid "Licensing"
-msgstr "Giấy phép hành nghề"
+msgstr "Licensing"
 
 #. module: health_base
 #: model_terms:ir.ui.view,arch_db:health_base.view_health_facility_form
@@ -2393,7 +2393,7 @@ msgstr "Danh sách Tất cả Dị ứng đã biết (thuốcs, foods, environme
 #. module: health_base
 #: model:ir.model.fields,field_description:health_base.field_health_readmission_risk__lives_alone
 msgid "Lives Alone"
-msgstr "Sống một mình"
+msgstr "Lives Alone"
 
 #. module: health_base
 #: model:ir.model.fields.selection,name:health_base.selection__health_clinical_protocol__protocol_type__local
@@ -2408,7 +2408,7 @@ msgstr "Vị trí Thông tin"
 #. module: health_base
 #: model_terms:ir.ui.view,arch_db:health_base.view_health_service_type_form
 msgid "Logistics"
-msgstr "Hậu cần"
+msgstr "Logistics"
 
 #. module: health_base
 #: model:ir.model.fields,field_description:health_base.field_res_partner__partner_longitude
@@ -2455,7 +2455,7 @@ msgstr "Main Phòng kháms"
 #. module: health_base
 #: model:ir.model.fields.selection,name:health_base.selection__health_medication_interaction__severity__major
 msgid "Major"
-msgstr "Nghiêm trọng"
+msgstr "Major"
 
 #. module: health_base
 #: model:ir.model.fields.selection,name:health_base.selection__res_partner__gender__male
@@ -2629,7 +2629,7 @@ msgstr "Tên đệm"
 #. module: health_base
 #: model:ir.model.fields.selection,name:health_base.selection__health_medication_interaction__severity__minor
 msgid "Minor"
-msgstr "Nhẹ"
+msgstr "Minor"
 
 #. module: health_base
 #: model_terms:ir.ui.view,arch_db:health_base.view_health_patient_search
@@ -2644,7 +2644,7 @@ msgstr "Di động Đơn vị"
 #. module: health_base
 #: model:ir.model.fields,field_description:health_base.field_health_readmission_risk__mobility_issues
 msgid "Mobility Issues"
-msgstr "Vấn đề vận động"
+msgstr "Mobility Issues"
 
 #. module: health_base
 #: model:ir.model.fields,field_description:health_base.field_health_audit_log_view__model
@@ -2665,7 +2665,7 @@ msgstr "Modetỷ lệ"
 #. module: health_base
 #: model:ir.model.fields.selection,name:health_base.selection__health_protocol_intervention__intervention_type__monitoring
 msgid "Monitoring"
-msgstr "Theo dõi"
+msgstr "Monitoring"
 
 #. module: health_base
 #: model:ir.model.fields.selection,name:health_base.selection__health_protocol_intervention__frequency__monthly
@@ -2695,7 +2695,7 @@ msgstr "Multiplier cho dịch vụ pricing"
 #. module: health_base
 #: model:ir.model.fields.selection,name:health_base.selection__health_symptom__category__musculoskeletal
 msgid "Musculoskeletal"
-msgstr "Cơ xương khớp"
+msgstr "Musculoskeletal"
 
 #. module: health_base
 #: model:ir.model.constraint,message:health_base.constraint_health_facility_positive_rooms
@@ -2748,7 +2748,7 @@ msgstr "Căn cước công dân (CCCD/CMND)"
 #. module: health_base
 #: model:health.booking.cancellation.reason,name:health_base.cancel_reason_emergency_disaster
 msgid "Natural disaster"
-msgstr "Thiên tai"
+msgstr "Natural disaster"
 
 #. module: health_base
 #: model:health.booking.cancellation.reason,description:health_base.cancel_reason_emergency_disaster
@@ -2758,7 +2758,7 @@ msgstr "Natural disaster affecting dịch vụ giao hàng"
 #. module: health_base
 #: model:ir.model.fields.selection,name:health_base.selection__health_symptom__category__neurological
 msgid "Neurological"
-msgstr "Thần kinh"
+msgstr "Neurological"
 
 #. module: health_base
 #: model_terms:ir.ui.view,arch_db:health_base.view_health_patient_search
@@ -2893,7 +2893,7 @@ msgstr "Số of Tin nhắn với giao hàng Lỗi"
 #. module: health_base
 #: model:ir.model.fields.selection,name:health_base.selection__health_protocol_question__question_type__numeric
 msgid "Numeric"
-msgstr "Số"
+msgstr "Numeric"
 
 #. module: health_base
 #: model:ir.model.fields.selection,name:health_base.selection__hr_employee__healthcare_role__nurse
@@ -2909,13 +2909,13 @@ msgstr "Y tá - Bệnh nhân care, basic Lâm sàng Ghi chú"
 #. module: health_base
 #: model:health.medical.specialty,name:health_base.specialty_nursing
 msgid "Nursing"
-msgstr "Điều dưỡng"
+msgstr "Nursing"
 
 #. module: health_base
 #: model:health.service.type,name:health_base.service_type_nursing_care
 #: model:ir.model.fields.selection,name:health_base.selection__health_service_type__category__nursing_care
 msgid "Nursing Care"
-msgstr "Chăm sóc điều dưỡng"
+msgstr "Nursing Care"
 
 #. module: health_base
 #: model:ir.model.fields.selection,name:health_base.selection__res_partner__ethnicity__nung
@@ -2925,7 +2925,7 @@ msgstr "Nùng"
 #. module: health_base
 #: model:ir.model.fields.selection,name:health_base.selection__resource_calendar_leaves__holiday_type__observance
 msgid "Observance"
-msgstr "Tuân thủ"
+msgstr "Observance"
 
 #. module: health_base
 #: model:ir.model.fields,field_description:health_base.field_health_audit_log_view__old_value
@@ -2935,7 +2935,7 @@ msgstr "Old Giá trị"
 #. module: health_base
 #: model:ir.model.fields.selection,name:health_base.selection__health_protocol_intervention__frequency__once
 msgid "Once"
-msgstr "Một lần"
+msgstr "Once"
 
 #. module: health_base
 #: model:health.service.type,description:health_base.service_type_telemedicine
@@ -3005,7 +3005,7 @@ msgstr "Đã thanh toán Tiếp thị Nguồn"
 #. module: health_base
 #: model:ir.model.fields.selection,name:health_base.selection__health_symptom__category__pain
 msgid "Pain & Discomfort"
-msgstr "Đau và khó chịu"
+msgstr "Pain & Discomfort"
 
 #. module: health_base
 #: model:health.symptom,description:health_base.symptom_chest_pain
@@ -3015,7 +3015,7 @@ msgstr "Pain hoặc discomfort trong chest diện tích"
 #. module: health_base
 #: model:health.booking.cancellation.reason,name:health_base.cancel_reason_emergency_pandemic
 msgid "Pandemic/Epidemic restrictions"
-msgstr "Hạn chế do đại dịch/dịch bệnh"
+msgstr "Pandemic/Epidemic restrictions"
 
 #. module: health_base
 #: model:ir.model.fields,field_description:health_base.field_health_facility__parking_spaces
@@ -3134,7 +3134,7 @@ msgstr "Permanently Đóngd"
 #. module: health_base
 #: model:health.symptom,description:health_base.symptom_cough
 msgid "Persistent coughing"
-msgstr "Ho kéo dài"
+msgstr "Persistent coughing"
 
 #. module: health_base
 #: model_terms:ir.ui.view,arch_db:health_base.view_health_patient_form
@@ -3210,7 +3210,7 @@ msgstr "Vui lòng fill trong tại ít nhất the Đường hoặc Thành phố 
 #. module: health_base
 #: model:ir.model.fields.selection,name:health_base.selection__health_readmission_risk__medication_compliance__poor
 msgid "Poor"
-msgstr "Kém"
+msgstr "Poor"
 
 #. module: health_base
 #: model_terms:ir.ui.view,arch_db:health_base.view_health_patient_form
@@ -3253,7 +3253,7 @@ msgstr "Giá ×"
 #. module: health_base
 #: model_terms:ir.ui.view,arch_db:health_base.view_health_audit_log_search
 msgid "Pricing Changes"
-msgstr "Thay đổi giá"
+msgstr "Pricing Changes"
 
 #. module: health_base
 #: model_terms:ir.ui.view,arch_db:health_base.view_healthcare_public_holiday_form
@@ -3263,7 +3263,7 @@ msgstr "Pricing Cấu hình"
 #. module: health_base
 #: model_terms:ir.ui.view,arch_db:health_base.view_healthcare_public_holiday_form
 msgid "Pricing Examples"
-msgstr "Ví dụ giá"
+msgstr "Pricing Examples"
 
 #. module: health_base
 #: model_terms:ir.ui.view,arch_db:health_base.view_healthcare_public_holiday_form
@@ -3516,7 +3516,7 @@ msgstr "Lễ tân - Bệnh nhân intake, Cuộc hẹn scheduling"
 #. module: health_base
 #: model:ir.model.fields.selection,name:health_base.selection__health_clinical_protocol__compliance_level__recommended
 msgid "Recommended"
-msgstr "Được khuyến nghị"
+msgstr "Recommended"
 
 #. module: health_base
 #: model:ir.model.fields,field_description:health_base.field_health_readmission_risk__recommended_interventions
@@ -3624,7 +3624,7 @@ msgstr "Requires Y tá"
 #. module: health_base
 #: model:ir.model.fields,field_description:health_base.field_health_service_type__requires_travel
 msgid "Requires Travel"
-msgstr "Cần di chuyển"
+msgstr "Requires Travel"
 
 #. module: health_base
 #: model:ir.model,name:health_base.model_resource_calendar_leaves
@@ -3634,7 +3634,7 @@ msgstr "Chi tiết ngày nghỉ của tài nguyên"
 #. module: health_base
 #: model:ir.model.fields.selection,name:health_base.selection__health_symptom__category__respiratory
 msgid "Respiratory"
-msgstr "Hô hấp"
+msgstr "Respiratory"
 
 #. module: health_base
 #: model:ir.model.fields.selection,name:health_base.selection__health_medication__therapeutic_category__respiratory
@@ -3680,7 +3680,7 @@ msgstr "Bán hàng - tiềm năng quản lý, ban đầu Bệnh nhân Liên hệ
 #. module: health_base
 #: model:ir.model.fields.selection,name:health_base.selection__health_protocol_question__question_type__scale
 msgid "Scale (1-10)"
-msgstr "Thang điểm (1-10)"
+msgstr "Scale (1-10)"
 
 #. module: health_base
 #: model_terms:ir.ui.view,arch_db:health_base.view_health_patient_tree
@@ -3690,12 +3690,12 @@ msgstr "Lịch trình Cuộc hẹn mới"
 #. module: health_base
 #: model:health.booking.cancellation.reason,name:health_base.cancel_reason_patient_schedule
 msgid "Scheduling conflict"
-msgstr "Xung đột lịch trình"
+msgstr "Scheduling conflict"
 
 #. module: health_base
 #: model_terms:ir.ui.view,arch_db:health_base.view_healthcare_public_holiday_form
 msgid "Scope"
-msgstr "Phạm vi"
+msgstr "Scope"
 
 #. module: health_base
 #: model:ir.model.fields,field_description:health_base.field_health_protocol_question__score_no
@@ -3827,7 +3827,7 @@ msgstr "Dịch vụs Offered"
 #. module: health_base
 #: model:health.booking.cancellation.reason,name:health_base.cancel_reason_emergency_weather
 msgid "Severe weather conditions"
-msgstr "Điều kiện thời tiết khắc nghiệt"
+msgstr "Severe weather conditions"
 
 #. module: health_base
 #: model:ir.model.fields,field_description:health_base.field_health_medication_interaction__severity
@@ -3842,12 +3842,12 @@ msgstr "Mức độ nghiêm trọng Mức độs"
 #. module: health_base
 #: model:health.symptom,name:health_base.symptom_shortness_breath
 msgid "Shortness of Breath"
-msgstr "Khó thở"
+msgstr "Shortness of Breath"
 
 #. module: health_base
 #: model:ir.model.fields.selection,name:health_base.selection__health_symptom__category__skin
 msgid "Skin & Dermatological"
-msgstr "Da liễu"
+msgstr "Skin & Dermatological"
 
 #. module: health_base
 #: model:ir.model.fields,field_description:health_base.field_health_medication_interaction__source
@@ -4139,7 +4139,7 @@ msgstr "Therapeutic Danh mục"
 #: model:ir.model.fields.selection,name:health_base.selection__hr_employee__healthcare_role__therapist
 #: model:ir.model.fields.selection,name:health_base.selection__res_users__healthcare_role__therapist
 msgid "Therapist"
-msgstr "Kỹ thuật viên trị liệu"
+msgstr "Therapist"
 
 #. module: health_base
 #: model_terms:ir.ui.view,arch_db:health_base.view_health_audit_log_search
@@ -4284,7 +4284,7 @@ msgstr "Không xác định"
 #. module: health_base
 #: model_terms:ir.ui.view,arch_db:health_base.view_healthcare_public_holiday_search
 msgid "Upcoming"
-msgstr "Sắp tới"
+msgstr "Upcoming"
 
 #. module: health_base
 #: model_terms:ir.ui.view,arch_db:health_base.view_health_patient_search
@@ -4470,7 +4470,7 @@ msgstr "Phường/Xã"
 #. module: health_base
 #: model:ir.model.fields.selection,name:health_base.selection__health_fall_risk__gait_transfer__weak
 msgid "Weak (10 points)"
-msgstr "Yếu (10 điểm)"
+msgstr "Weak (10 points)"
 
 #. module: health_base
 #: model:ir.model.fields,field_description:health_base.field_health_facility__website

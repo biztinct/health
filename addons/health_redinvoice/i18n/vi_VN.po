@@ -1,0 +1,187 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* health_redinvoice
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-02-25 06:15+0000\n"
+"PO-Revision-Date: 2026-02-25 06:15+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: vi_VN\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#. module: health_redinvoice
+#: code:addons/health_redinvoice/models/account_move.py:92
+msgid "No Red Invoice PDF is available for this document."
+msgstr "Không có PDF hóa đơn đỏ cho hồ sơ này."
+
+#. module: health_redinvoice
+#: code:addons/health_redinvoice/models/account_move.py:98
+msgid "The stored Red Invoice attachment (%s) is not a PDF file."
+msgstr "Tệp đính kèm hóa đơn đỏ đã lưu (%s) không phải tệp PDF."
+
+#. module: health_redinvoice
+#: code:addons/health_redinvoice/models/account_move.py:102
+msgid "Red Invoice PDF"
+msgstr "PDF hóa đơn đỏ"
+
+#. module: health_redinvoice
+#: code:addons/health_redinvoice/models/account_move.py:133
+msgid "Missing Red Invoice configuration on company."
+msgstr "Thiếu cấu hình hóa đơn đỏ trên công ty."
+
+#. module: health_redinvoice
+#: code:addons/health_redinvoice/models/account_move.py:299
+msgid "No Red Invoice was issued for this document."
+msgstr "Chưa phát hành hóa đơn đỏ cho hồ sơ này."
+
+#. module: health_redinvoice
+#: code:addons/health_redinvoice/models/account_move.py:306
+msgid "Cancellation requested from Odoo"
+msgstr "Yêu cầu hủy từ Odoo"
+
+#. module: health_redinvoice
+#: code:addons/health_redinvoice/models/account_move.py:308
+msgid "Cancelled from Odoo"
+msgstr "Đã hủy từ Odoo"
+
+#. module: health_redinvoice
+#: code:addons/health_redinvoice/models/account_move.py:320
+msgid "Cancellation failed: %s"
+msgstr "Hủy thất bại: %s"
+
+#. module: health_redinvoice
+#: code:addons/health_redinvoice/models/account_move.py:381
+msgid "Red Invoice template code/series not configured."
+msgstr "Chưa cấu hình mã mẫu/sê-ri hóa đơn đỏ."
+
+#. module: health_redinvoice
+#: code:addons/health_redinvoice/models/account_move.py:399
+msgid "No invoice lines available to send to SInvoice. Please add at least one product/service line."
+msgstr "Không có dòng hóa đơn để gửi SInvoice. Vui lòng thêm ít nhất một dòng sản phẩm/dịch vụ."
+
+#. module: health_redinvoice
+#: model_terms:ir.ui.view,arch_db:health_redinvoice.view
+msgid "Red Invoice Status"
+msgstr "Trạng thái hóa đơn đỏ"
+
+#. module: health_redinvoice
+#: model_terms:ir.ui.view,arch_db:health_redinvoice.view
+msgid "Red Invoice"
+msgstr "Hóa đơn đỏ"
+
+#. module: health_redinvoice
+#: model_terms:ir.ui.view,arch_db:health_redinvoice.view
+msgid "Red Invoice Issued"
+msgstr "Đã phát hành hóa đơn đỏ"
+
+#. module: health_redinvoice
+#: model_terms:ir.ui.view,arch_db:health_redinvoice.view
+msgid "Red Invoice Pending"
+msgstr "Hóa đơn đỏ đang chờ"
+
+#. module: health_redinvoice
+#: model_terms:ir.ui.view,arch_db:health_redinvoice.view
+msgid "Red Invoice Failed"
+msgstr "Hóa đơn đỏ thất bại"
+
+#. module: health_redinvoice
+#: model_terms:ir.ui.view,arch_db:health_redinvoice.view
+msgid "Red Invoice State"
+msgstr "Trạng thái hóa đơn đỏ"
+
+#. module: health_redinvoice
+#: model_terms:ir.ui.view,arch_db:health_redinvoice.view
+msgid "Generate Red Invoice"
+msgstr "Tạo hóa đơn đỏ"
+
+#. module: health_redinvoice
+#: model_terms:ir.ui.view,arch_db:health_redinvoice.view
+msgid "Download Red Invoice"
+msgstr "Tải hóa đơn đỏ"
+
+#. module: health_redinvoice
+#: model_terms:ir.ui.view,arch_db:health_redinvoice.view
+msgid "Download PDF"
+msgstr "Tải PDF"
+
+#. module: health_redinvoice
+#: model_terms:ir.ui.view,arch_db:health_redinvoice.view
+msgid "Cancel Red Invoice"
+msgstr "Hủy hóa đơn đỏ"
+
+#. module: health_redinvoice
+#: model_terms:ir.ui.view,arch_db:health_redinvoice.view
+msgid "Status"
+msgstr "Trạng thái"
+
+#. module: health_redinvoice
+#: model_terms:ir.ui.view,arch_db:health_redinvoice.view
+msgid "Identifiers"
+msgstr "Định danh"
+
+#. module: health_redinvoice
+#: model_terms:ir.ui.view,arch_db:health_redinvoice.view
+msgid "Payment"
+msgstr "Thanh toán"
+
+#. module: health_redinvoice
+#: model_terms:ir.ui.view,arch_db:health_redinvoice.view
+msgid "Files"
+msgstr "Tệp tin"
+
+#. module: health_redinvoice
+#: model_terms:ir.ui.view,arch_db:health_redinvoice.view
+msgid "Red Invoice Log"
+msgstr "Nhật ký hóa đơn đỏ"
+
+#. module: health_redinvoice
+#: model_terms:ir.ui.view,arch_db:health_redinvoice.view
+msgid "Credentials &amp; Defaults"
+msgstr "Thông tin xác thực & Mặc định"
+
+#. module: health_redinvoice
+#: model_terms:ir.ui.view,arch_db:health_redinvoice.view
+msgid "Seller Payment / QR78"
+msgstr "Thanh toán người bán / QR78"
+
+#. module: health_redinvoice
+#: model_terms:ir.ui.view,arch_db:health_redinvoice.view
+msgid "Automation"
+msgstr "Tự động hóa"
+
+#. module: health_redinvoice
+#: model_terms:ir.ui.view,arch_db:health_redinvoice.view
+msgid "Close"
+msgstr "Đóng"
+
+#. module: health_redinvoice
+#: model_terms:ir.ui.view,arch_db:health_redinvoice.view
+msgid "Red Invoice Request"
+msgstr "Yêu cầu hóa đơn đỏ"
+
+#. module: health_redinvoice
+#: model_terms:ir.ui.view,arch_db:health_redinvoice.view
+msgid "Payload"
+msgstr "Dữ liệu gửi"
+
+#. module: health_redinvoice
+#: model_terms:ir.ui.view,arch_db:health_redinvoice.view
+msgid "Response"
+msgstr "Phản hồi"
+
+#. module: health_redinvoice
+#: model:ir.ui.menu
+msgid "Red Invoices"
+msgstr "Hóa đơn đỏ"
+
+#. module: health_redinvoice
+#: model:ir.ui.menu
+msgid "API Requests"
+msgstr "Yêu cầu API"

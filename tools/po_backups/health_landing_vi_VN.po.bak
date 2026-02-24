@@ -34,7 +34,7 @@ msgstr "- Khách hàng Thông tin"
 #. module: health_landing
 #: model_terms:ir.ui.view,arch_db:health_landing.view_patient_financials_modal
 msgid "- Financials"
-msgstr "- Tài chính"
+msgstr "- Financials"
 
 #. module: health_landing
 #: model_terms:ir.ui.view,arch_db:health_landing.view_patient_map_modal
@@ -97,7 +97,7 @@ msgstr "<strong>Tiền mặt Collected bởi Vận hành Người quản lý</st
 #. odoo-javascript
 #: code:addons/health_landing/static/src/xml/fso_hub_spoke_widget.xml:0
 msgid "ASSIGNED"
-msgstr "ĐÃ PHÂN CÔNG"
+msgstr "ASSIGNED"
 
 #. module: health_landing
 #. odoo-javascript
@@ -217,7 +217,7 @@ msgstr "Liên kết Y tế quote/bán hàng thứ tự cho này dịch vụ"
 #. odoo-javascript
 #: code:addons/health_landing/static/src/xml/fso_hub_spoke_widget.xml:0
 msgid "BOOKED"
-msgstr "ĐÃ ĐẶT"
+msgstr "BOOKED"
 
 #. module: health_landing
 #. odoo-javascript
@@ -247,7 +247,7 @@ msgstr "Quay lại Đến Viet Uc Bảng điều khiển"
 #. module: health_landing
 #: model:ir.model.fields.selection,name:health_landing.selection__health_fieldservice_order__payment_method__bank_transfer
 msgid "Bank Transfer"
-msgstr "Chuyển khoản ngân hàng"
+msgstr "Bank Transfer"
 
 #. module: health_landing
 #: model:ir.model.fields,help:health_landing.field_health_fso_payment_received_wizard__payment_reference
@@ -335,7 +335,7 @@ msgstr "Đặt lịchs Lịch"
 #. odoo-javascript
 #: code:addons/health_landing/static/src/xml/fso_hub_spoke_widget.xml:0
 msgid "COMPLETED"
-msgstr "ĐÃ HOÀN THÀNH"
+msgstr "COMPLETED"
 
 #. module: health_landing
 #: model_terms:ir.ui.view,arch_db:health_landing.view_patient_bookings_modal
@@ -790,7 +790,7 @@ msgstr "Lỗi:"
 #. odoo-javascript
 #: code:addons/health_landing/static/src/xml/patient_spoke_modal.xml:0
 msgid "Expires:"
-msgstr "Hết hạn:"
+msgstr "Expires:"
 
 #. module: health_landing
 #. odoo-javascript
@@ -847,7 +847,7 @@ msgstr "FSO Bắt đầu Dịch vụ Công cụ"
 #. odoo-javascript
 #: code:addons/health_landing/static/src/xml/landing_templates.xml:0
 msgid "Favorites"
-msgstr "Yêu thích"
+msgstr "Favorites"
 
 #. module: health_landing
 #: model_terms:ir.ui.view,arch_db:health_landing.view_patient_financials_modal
@@ -893,7 +893,7 @@ msgstr "Has Hóa đơn"
 #. module: health_landing
 #: model:ir.model.fields,field_description:health_landing.field_health_fso_invoice_wizard__has_quote
 msgid "Has Quote"
-msgstr "Có báo giá"
+msgstr "Has Quote"
 
 #. module: health_landing
 #: model:ir.actions.client,name:health_landing.action_health_landing_dashboard
@@ -952,7 +952,7 @@ msgstr "ID"
 #. odoo-javascript
 #: code:addons/health_landing/static/src/xml/fso_hub_spoke_widget.xml:0
 msgid "IN PROGRESS"
-msgstr "ĐANG THỰC HIỆN"
+msgstr "IN PROGRESS"
 
 #. module: health_landing
 #: model:ir.model.fields,field_description:health_landing.field_health_fso_invoice_wizard__invoice_id
@@ -1161,7 +1161,7 @@ msgstr "Chưa gán"
 #. odoo-python
 #: code:addons/health_landing/wizards/health_fso_payment_received_wizard.py:0
 msgid "Not specified"
-msgstr "Chưa xác định"
+msgstr "Not specified"
 
 #. module: health_landing
 #: model_terms:ir.ui.view,arch_db:health_landing.view_health_fso_cash_collection_wizard_form
@@ -1188,7 +1188,7 @@ msgstr "Quá hạn Hóa đơns"
 #. odoo-javascript
 #: code:addons/health_landing/static/src/xml/patient_spoke_modal.xml:0
 msgid "PRIMARY"
-msgstr "CHÍNH"
+msgstr "PRIMARY"
 
 #. module: health_landing
 #: model:ir.model.fields,field_description:health_landing.field_health_fso_service_packages_wizard__package_notes
@@ -1339,7 +1339,7 @@ msgstr "Mã bưu điện"
 #. module: health_landing
 #: model_terms:ir.ui.view,arch_db:health_landing.view_health_fso_invoice_wizard_form
 msgid "Pricing"
-msgstr "Định giá"
+msgstr "Pricing"
 
 #. module: health_landing
 #: model:ir.model.fields,field_description:health_landing.field_health_fso_staff_assignment_wizard__primary_staff_id
@@ -1487,7 +1487,7 @@ msgstr "Dịch vụ bắt đầued tại %s. Bệnh nhân pređã gửi: %s, Thi
 #. odoo-javascript
 #: code:addons/health_landing/static/src/xml/patient_spoke_modal.xml:0
 msgid "Sessions:"
-msgstr "Buổi:"
+msgstr "Sessions:"
 
 #. module: health_landing
 #: model:ir.model.fields,field_description:health_landing.field_health_fieldservice_order__show_assigned_indicator
@@ -1614,7 +1614,7 @@ msgstr "Triệu chứng/Chief Complaint"
 #. odoo-javascript
 #: code:addons/health_landing/static/src/xml/fso_hub_spoke_widget.xml:0
 msgid "Tip:"
-msgstr "Mẹo:"
+msgstr "Tip:"
 
 #. module: health_landing
 #: model:ir.model.fields,field_description:health_landing.field_health_fso_cash_collection_wizard__total_price
@@ -1839,7 +1839,7 @@ msgstr "trên"
 #. module: health_landing
 #: model_terms:ir.ui.view,arch_db:health_landing.view_patient_packages_modal
 msgid "remaining"
-msgstr "còn lại"
+msgstr "remaining"
 
 #. module: health_landing
 #: model_terms:ir.ui.view,arch_db:health_landing.view_patient_packages_modal
@@ -1858,463 +1858,3 @@ msgstr "năms /"
 #: model_terms:ir.ui.view,arch_db:health_landing.view_health_fieldservice_order_form_dashboard_button
 msgid "📊 Dashboard"
 msgstr "📊 Bảng điều khiển"
-
-#. module: javascript
-msgid "Manage patient records and information"
-msgstr "Quản lý hồ sơ và thông tin bệnh nhân"
-
-#. module: javascript
-msgid "View patient hub-and-spoke dashboard"
-msgstr "Xem bảng điều khiển hub-and-spoke bệnh nhân"
-
-#. module: javascript
-msgid "Scheduling & Staff"
-msgstr "Lịch trình & Nhân viên"
-
-#. module: javascript
-msgid "Staff scheduling and workload management"
-msgstr "Quản lý lịch trình và khối lượng công việc nhân viên"
-
-#. module: javascript
-msgid "Assignment Dashboard"
-msgstr "Bảng điều khiển phân công"
-
-#. module: javascript
-msgid "View staff assignments"
-msgstr "Xem phân công nhân viên"
-
-#. module: javascript
-msgid "Visual Scheduler"
-msgstr "Bộ lập lịch trực quan"
-
-#. module: javascript
-msgid "Visual scheduling interface"
-msgstr "Giao diện lập lịch trực quan"
-
-#. module: javascript
-msgid "Timeline View"
-msgstr "Xem dòng thời gian"
-
-#. module: javascript
-msgid "Timeline of assignments"
-msgstr "Dòng thời gian phân công"
-
-#. module: javascript
-msgid "Staff Availability"
-msgstr "Khả dụng nhân viên"
-
-#. module: javascript
-msgid "Manage staff availability"
-msgstr "Quản lý khả dụng nhân viên"
-
-#. module: javascript
-msgid "Staff Workload"
-msgstr "Khối lượng công việc nhân viên"
-
-#. module: javascript
-msgid "Monitor staff workload"
-msgstr "Giám sát khối lượng công việc nhân viên"
-
-#. module: javascript
-msgid "Healthcare Skills"
-msgstr "Kỹ năng y tế"
-
-#. module: javascript
-msgid "Manage staff skills"
-msgstr "Quản lý kỹ năng nhân viên"
-
-#. module: javascript
-msgid "Service Areas"
-msgstr "Khu vực dịch vụ"
-
-#. module: javascript
-msgid "Configure service areas"
-msgstr "Cấu hình khu vực dịch vụ"
-
-#. module: javascript
-msgid "Healthcare Staff"
-msgstr "Nhân viên y tế"
-
-#. module: javascript
-msgid "Manage healthcare staff"
-msgstr "Quản lý nhân viên y tế"
-
-#. module: javascript
-msgid "CRM"
-msgstr "CRM"
-
-#. module: javascript
-msgid "Customer relationship management"
-msgstr "Quản lý quan hệ khách hàng"
-
-#. module: javascript
-msgid "Leads"
-msgstr "Liên hệ"
-
-#. module: javascript
-msgid "Manage potential customers"
-msgstr "Quản lý khách hàng tiềm năng"
-
-#. module: javascript
-msgid "CRM Contacts"
-msgstr "Liên hệ CRM"
-
-#. module: javascript
-msgid "Track customer interactions"
-msgstr "Theo dõi tương tác khách hàng"
-
-#. module: javascript
-msgid "Customers"
-msgstr "Khách hàng"
-
-#. module: javascript
-msgid "View all customers"
-msgstr "Xem tất cả khách hàng"
-
-#. module: javascript
-msgid "Healthcare Relationships"
-msgstr "Mối quan hệ y tế"
-
-#. module: javascript
-msgid "Manage patient relationships"
-msgstr "Quản lý mối quan hệ bệnh nhân"
-
-#. module: javascript
-msgid "Field Service"
-msgstr "Dịch vụ tại hiện trường"
-
-#. module: javascript
-msgid "Mobile healthcare service management"
-msgstr "Quản lý dịch vụ y tế di động"
-
-#. module: javascript
-msgid "Field Service Orders"
-msgstr "Đơn dịch vụ tại hiện trường"
-
-#. module: javascript
-msgid "Manage service orders"
-msgstr "Quản lý đơn dịch vụ"
-
-#. module: javascript
-msgid "Communications"
-msgstr "Truyền thông"
-
-#. module: javascript
-msgid "Real-time team communications"
-msgstr "Truyền thông nhóm thời gian thực"
-
-#. module: javascript
-msgid "Portable Equipment"
-msgstr "Thiết bị di động"
-
-#. module: javascript
-msgid "Track medical equipment"
-msgstr "Theo dõi thiết bị y tế"
-
-#. module: javascript
-msgid "Clinical Protocols"
-msgstr "Quy trình lâm sàng"
-
-#. module: javascript
-msgid "Clinical guidelines"
-msgstr "Hướng dẫn lâm sàng"
-
-#. module: javascript
-msgid "Field Service Teams"
-msgstr "Đội ngũ dịch vụ tại hiện trường"
-
-#. module: javascript
-msgid "Manage service teams"
-msgstr "Quản lý đội ngũ dịch vụ"
-
-#. module: javascript
-msgid "Manage service packages and products"
-msgstr "Quản lý gói dịch vụ và sản phẩm"
-
-#. module: javascript
-msgid "Package Products"
-msgstr "Sản phẩm gói"
-
-#. module: javascript
-msgid "Configure package products"
-msgstr "Cấu hình sản phẩm gói"
-
-#. module: javascript
-msgid "Patient Packages"
-msgstr "Gói bệnh nhân"
-
-#. module: javascript
-msgid "View patient subscriptions"
-msgstr "Xem đăng ký bệnh nhân"
-
-#. module: javascript
-msgid "Advanced Pricelist"
-msgstr "Bảng giá nâng cao"
-
-#. module: javascript
-msgid "Dynamic pricing rules and engines"
-msgstr "Quy tắc và công cụ định giá linh hoạt"
-
-#. module: javascript
-msgid "Pricing Engines"
-msgstr "Công cụ định giá"
-
-#. module: javascript
-msgid "Configure pricing engines"
-msgstr "Cấu hình công cụ định giá"
-
-#. module: javascript
-msgid "Pricing Rules"
-msgstr "Quy tắc định giá"
-
-#. module: javascript
-msgid "Manage pricing rules"
-msgstr "Quản lý quy tắc định giá"
-
-#. module: javascript
-msgid "Quick Edit Rules"
-msgstr "Chỉnh sửa nhanh quy tắc"
-
-#. module: javascript
-msgid "Inline edit pricing rules"
-msgstr "Chỉnh sửa nhanh quy tắc định giá"
-
-#. module: javascript
-msgid "Billing & Invoicing"
-msgstr "Thanh toán & Hóa đơn"
-
-#. module: javascript
-msgid "Financial management and billing"
-msgstr "Quản lý tài chính và thanh toán"
-
-#. module: javascript
-msgid "Service Billing"
-msgstr "Thanh toán dịch vụ"
-
-#. module: javascript
-msgid "Create and manage invoices"
-msgstr "Tạo và quản lý hóa đơn"
-
-#. module: javascript
-msgid "AR Dashboard"
-msgstr "Bảng điều khiển công nợ"
-
-#. module: javascript
-msgid "Accounts receivable overview"
-msgstr "Tổng quan công nợ phải thu"
-
-#. module: javascript
-msgid "Overdue Patients"
-msgstr "Bệnh nhân quá hạn"
-
-#. module: javascript
-msgid "Track outstanding payments"
-msgstr "Theo dõi thanh toán quá hạn"
-
-#. module: javascript
-msgid "Payment Transactions"
-msgstr "Giao dịch thanh toán"
-
-#. module: javascript
-msgid "View payment history"
-msgstr "Xem lịch sử thanh toán"
-
-#. module: javascript
-msgid "Process Payments"
-msgstr "Xử lý thanh toán"
-
-#. module: javascript
-msgid "Payment workflow"
-msgstr "Quy trình thanh toán"
-
-#. module: javascript
-msgid "Facilities"
-msgstr "Cơ sở"
-
-#. module: javascript
-msgid "Healthcare facility management"
-msgstr "Quản lý cơ sở y tế"
-
-#. module: javascript
-msgid "Healthcare Facilities"
-msgstr "Cơ sở y tế"
-
-#. module: javascript
-msgid "Manage facility locations"
-msgstr "Quản lý vị trí cơ sở"
-
-#. module: javascript
-msgid "Configuration"
-msgstr "Cấu hình"
-
-#. module: javascript
-msgid "System configuration and settings"
-msgstr "Cấu hình và cài đặt hệ thống"
-
-#. module: javascript
-msgid "Patient Categories"
-msgstr "Phân loại bệnh nhân"
-
-#. module: javascript
-msgid "Configure patient types"
-msgstr "Cấu hình loại bệnh nhân"
-
-#. module: javascript
-msgid "Service Types"
-msgstr "Loại dịch vụ"
-
-#. module: javascript
-msgid "Define service types"
-msgstr "Xác định loại dịch vụ"
-
-#. module: javascript
-msgid "Medical Specialties"
-msgstr "Chuyên khoa y tế"
-
-#. module: javascript
-msgid "Manage specialties"
-msgstr "Quản lý chuyên khoa"
-
-#. module: javascript
-msgid "Symptoms"
-msgstr "Triệu chứng"
-
-#. module: javascript
-msgid "Symptom catalog"
-msgstr "Danh mục triệu chứng"
-
-#. module: javascript
-msgid "Referral Sources"
-msgstr "Nguồn giới thiệu"
-
-#. module: javascript
-msgid "Track referral sources"
-msgstr "Theo dõi nguồn giới thiệu"
-
-#. module: javascript
-msgid "Insurance Providers"
-msgstr "Nhà cung cấp bảo hiểm"
-
-#. module: javascript
-msgid "Insurance companies"
-msgstr "Công ty bảo hiểm"
-
-#. module: javascript
-msgid "Urgency Levels"
-msgstr "Mức độ khẩn cấp"
-
-#. module: javascript
-msgid "Priority levels"
-msgstr "Mức độ ưu tiên"
-
-#. module: javascript
-msgid "Client Info"
-msgstr "Thông tin khách hàng"
-
-#. module: javascript
-msgid "Lead details and contact"
-msgstr "Chi tiết liên hệ và thông tin"
-
-#. module: javascript
-msgid "Relations"
-msgstr "Quan hệ"
-
-#. module: javascript
-msgid "Caregivers, payers, contacts"
-msgstr "Người chăm sóc, người thanh toán, liên hệ"
-
-#. module: javascript
-msgid "Source"
-msgstr "Nguồn"
-
-#. module: javascript
-msgid "Lead acquisition source"
-msgstr "Nguồn tiếp nhận liên hệ"
-
-#. module: javascript
-msgid "Internal Notes"
-msgstr "Ghi chú nội bộ"
-
-#. module: javascript
-msgid "Notes and requirements"
-msgstr "Ghi chú và yêu cầu"
-
-#. module: javascript
-msgid "Map"
-msgstr "Bản đồ"
-
-#. module: javascript
-msgid "Address and location"
-msgstr "Địa chỉ và vị trí"
-
-#. module: javascript
-msgid "Initial Contact"
-msgstr "Liên hệ ban đầu"
-
-#. module: javascript
-msgid "Lead"
-msgstr "Liên hệ"
-
-#. module: javascript
-msgid "Lost Booking"
-msgstr "Lịch hẹn đã mất"
-
-#. module: javascript
-msgid "Spam Call"
-msgstr "Cuộc gọi rác"
-
-#. module: javascript
-msgid "Pending Callback"
-msgstr "Chờ gọi lại"
-
-#. module: javascript
-msgid "Pending Follow-up"
-msgstr "Chờ theo dõi"
-
-#. module: javascript
-msgid "Service Booked"
-msgstr "Đã đặt dịch vụ"
-
-#. module: javascript
-msgid "Interested"
-msgstr "Quan tâm"
-
-#. module: javascript
-msgid "Not Interested"
-msgstr "Không quan tâm"
-
-#. module: javascript
-msgid "Rejected"
-msgstr "Từ chối"
-
-#. module: javascript
-msgid "No Follow-up Required"
-msgstr "Không cần theo dõi"
-
-#. module: javascript
-msgid "Lead Information"
-msgstr "Thông tin liên hệ"
-
-#. module: javascript
-msgid "Lead Relationships"
-msgstr "Mối quan hệ liên hệ"
-
-#. module: javascript
-msgid "Lead Location"
-msgstr "Vị trí liên hệ"
-
-#. module: javascript
-msgid "Lead Source"
-msgstr "Nguồn liên hệ"
-
-#. module: javascript
-msgid "This contact has been marked as spam"
-msgstr "Liên hệ này đã được đánh dấu là rác"
-
-#. module: javascript
-msgid "Spam Marked"
-msgstr "Đã đánh dấu rác"
-
-#. module: javascript
-msgid "Failed to mark as spam"
-msgstr "Không thể đánh dấu là rác"

@@ -5,15 +5,15 @@
         <div class="hub_spoke_container hub_spoke_container_lead">
             <div class="hub_spoke_header">
                 <button class="health_landing_back_btn" t-on-click="props.onBack">
-                    <i class="fa fa-arrow-left"/> Back
+                    <i class="fa fa-arrow-left"/> Quay lại
                 </button>
 
                 <div class="health_landing_breadcrumb">
                     <a href="#" class="health_landing_breadcrumb_item" t-on-click="onHomeClick">
-                        <i class="fa fa-home"/> Home
+                        <i class="fa fa-home"/> Trang chủ
                     </a>
                     <span class="health_landing_breadcrumb_separator">/</span>
-                    <a href="#" class="health_landing_breadcrumb_item" t-on-click="onContactsClick">Contacts</a>
+                    <a href="#" class="health_landing_breadcrumb_item" t-on-click="onContactsClick">Liên hệ</a>
                     <span class="health_landing_breadcrumb_separator">/</span>
                     <span class="health_landing_breadcrumb_item" t-esc="getLeadName()"/>
                 </div>
@@ -24,7 +24,7 @@
                     <t t-if="isSpamCaller()">
                         <span class="badge rounded-pill" 
                               style="background-color: #dc3545; color: white; font-size: 13px; padding: 5px 14px; font-weight: 600; animation: pulse 1.5s infinite;">
-                            ⚠️ Spam Caller
+                            ⚠️ Cuộc gọi rác
                         </span>
                     </t>
                     <!-- Contact Outcome Badge -->
@@ -38,7 +38,7 @@
                     <t t-if="needsFollowup()">
                         <span class="badge rounded-pill" 
                               style="background-color: #e83e8c; color: white; font-size: 13px; padding: 5px 14px; font-weight: 600;">
-                            <i class="fa fa-flag" style="margin-right: 4px;"/> Follow-up Required
+                            <i class="fa fa-flag" style="margin-right: 4px;"/> Cần theo dõi
                         </span>
                     </t>
                     <!-- Next Follow-up Date Badge -->
@@ -50,33 +50,33 @@
                     </t>
                 </h1>
                 <div class="hub_spoke_action_buttons">
-                    <button type="button" class="hub_spoke_btn hub_spoke_btn--spam" t-on-click="onMarkSpamClick" title="Mark as Spam">
-                        <i class="fa fa-ban"/> Mark Spam
+                    <button type="button" class="hub_spoke_btn hub_spoke_btn--spam" t-on-click="onMarkSpamClick" title="Đánh dấu là rác">
+                        <i class="fa fa-ban"/> Đánh dấu rác
                     </button>
-                    <button type="button" class="hub_spoke_btn hub_spoke_btn--booking" t-on-click="onBookingClick" title="Create booking">
-                        <i class="fa fa-calendar-plus-o"/> Booking
+                    <button type="button" class="hub_spoke_btn hub_spoke_btn--booking" t-on-click="onBookingClick" title="Tạo lịch hẹn">
+                        <i class="fa fa-calendar-plus-o"/> Lịch hẹn
                     </button>
-                    <button type="button" class="hub_spoke_btn hub_spoke_btn--consultation" t-on-click="onConsultationClick" title="Transfer for consultation">
-                        <i class="fa fa-comments"/> Consultation
+                    <button type="button" class="hub_spoke_btn hub_spoke_btn--consultation" t-on-click="onConsultationClick" title="Chuyển tư vấn">
+                        <i class="fa fa-comments"/> Tư vấn
                     </button>
-                    <button type="button" class="hub_spoke_btn hub_spoke_btn--escalate" t-on-click="onEscalateClick" title="Escalate contact">
-                        <i class="fa fa-level-up"/> Escalate
+                    <button type="button" class="hub_spoke_btn hub_spoke_btn--escalate" t-on-click="onEscalateClick" title="Nâng cấp liên hệ">
+                        <i class="fa fa-level-up"/> Nâng cấp
                     </button>
-                    <button type="button" class="hub_spoke_btn hub_spoke_btn--message" t-on-click="onSendMessageClick" title="Send message">
-                        <i class="fa fa-envelope"/> Send Message
+                    <button type="button" class="hub_spoke_btn hub_spoke_btn--message" t-on-click="onSendMessageClick" title="Gửi tin nhắn">
+                        <i class="fa fa-envelope"/> Gửi tin nhắn
                     </button>
-                    <button type="button" class="hub_spoke_btn hub_spoke_btn--activity" t-on-click="onLogActivityClick" title="Schedule activity">
-                        <i class="fa fa-clock-o"/> Log Activity
+                    <button type="button" class="hub_spoke_btn hub_spoke_btn--activity" t-on-click="onLogActivityClick" title="Lên lịch hoạt động">
+                        <i class="fa fa-clock-o"/> Ghi hoạt động
                     </button>
-                    <button type="button" class="hub_spoke_btn hub_spoke_btn--note" t-on-click="onLogNoteClick" title="Add internal note">
-                        <i class="fa fa-sticky-note"/> Log Note
+                    <button type="button" class="hub_spoke_btn hub_spoke_btn--note" t-on-click="onLogNoteClick" title="Thêm ghi chú nội bộ">
+                        <i class="fa fa-sticky-note"/> Ghi chú
                     </button>
                 </div>
             </div>
 
             <div class="health_landing_loading" t-if="state.loading">
                 <i class="fa fa-spinner health_landing_loading_spinner"/>
-                <p>Loading lead data...</p>
+                <p>Đang tải dữ liệu liên hệ...</p>
             </div>
 
             <div class="hub_spoke_svg_container" t-if="!state.loading">
@@ -194,7 +194,7 @@
 
                 <div class="hub_spoke_legend">
                     <p>
-                        <i class="fa fa-hand-pointer-o"/> Click on any section to view details
+                        <i class="fa fa-hand-pointer-o"/> Nhấp vào bất kỳ phần nào để xem chi tiết
                     </p>
                 </div>
             </div>

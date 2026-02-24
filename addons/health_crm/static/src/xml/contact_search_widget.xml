@@ -3,10 +3,10 @@
 
     <!-- Contact Search Dialog Template -->
     <t t-name="health_crm.ContactSearchDialog">
-        <Dialog title="'Select Existing Contact'" size="'md'">
+        <Dialog title="'Chọn liên hệ hiện có'" size="'md'">
             <div class="contact-search-dialog">
                 <p class="text-muted mb-3">
-                    Searching for: <strong t-esc="props.searchTerm"/>
+                    Đang tìm kiếm: <strong t-esc="props.searchTerm"/>
                 </p>
 
                 <t t-if="hasResults">
@@ -14,7 +14,7 @@
                     <t t-if="props.results.clients and props.results.clients.length">
                         <div class="search-group mb-3">
                             <h5 class="search-group-header" style="font-weight: 700; color: #2E7D32; border-bottom: 2px solid #2E7D32; padding-bottom: 8px; margin-bottom: 12px;">
-                                <i class="fa fa-user-circle me-2"/>Clients
+                                <i class="fa fa-user-circle me-2"/>Khách hàng
                             </h5>
                             <div class="list-group">
                                 <t t-foreach="props.results.clients" t-as="client" t-key="client.id">
@@ -38,7 +38,7 @@
                     <t t-if="props.results.leads and props.results.leads.length">
                         <div class="search-group mb-3">
                             <h5 class="search-group-header" style="font-weight: 700; color: #F57C00; border-bottom: 2px solid #F57C00; padding-bottom: 8px; margin-bottom: 12px;">
-                                <i class="fa fa-star me-2"/>Leads
+                                <i class="fa fa-star me-2"/>Liên hệ
                             </h5>
                             <div class="list-group">
                                 <t t-foreach="props.results.leads" t-as="lead" t-key="lead.id">
@@ -62,7 +62,7 @@
                     <t t-if="props.results.contacts and props.results.contacts.length">
                         <div class="search-group mb-3">
                             <h5 class="search-group-header" style="font-weight: 700; color: #1976D2; border-bottom: 2px solid #1976D2; padding-bottom: 8px; margin-bottom: 12px;">
-                                <i class="fa fa-address-book me-2"/>Contacts
+                                <i class="fa fa-address-book me-2"/>Danh bạ
                             </h5>
                             <div class="list-group">
                                 <t t-foreach="props.results.contacts" t-as="contact" t-key="contact.id">
@@ -88,12 +88,12 @@
                         <i class="fa fa-info-circle me-2"/>
                         No matching contacts, leads, or clients found for "<t t-esc="props.searchTerm"/>".
                         <br/>
-                        <small class="text-muted">You can continue creating a new contact.</small>
+                        <small class="text-muted">Bạn có thể tiếp tục tạo liên hệ mới.</small>
                     </div>
                 </t>
             </div>
             <t t-set-slot="footer">
-                <button class="btn btn-secondary" t-on-click="props.close">Continue as New Contact</button>
+                <button class="btn btn-secondary" t-on-click="props.close">Tiếp tục tạo liên hệ mới</button>
             </t>
         </Dialog>
     </t>
@@ -105,11 +105,11 @@
                    t-ref="input"
                    class="o_input"
                    t-att-value="state.value"
-                   t-att-placeholder="props.placeholder || 'Contact name...'"
+                   t-att-placeholder="props.placeholder || 'Tên liên hệ...'"
                    t-att-readonly="props.readonly"
                    t-on-input="onInput"/>
             <small class="text-muted d-block mt-1" t-if="!props.readonly">
-                <i class="fa fa-info-circle me-1"/>Press Tab to search existing contacts
+                <i class="fa fa-info-circle me-1"/>Nhấn Tab để tìm liên hệ hiện có
             </small>
             <t t-if="state.loading">
                 <span class="position-absolute" style="right: 10px; top: 8px;">

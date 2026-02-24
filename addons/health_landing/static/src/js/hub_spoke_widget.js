@@ -2,6 +2,7 @@
 
 import { Component, useState, onMounted, useRef } from "@odoo/owl";
 import { useService } from "@web/core/utils/hooks";
+import { _t } from "@web/core/l10n/translation";
 
 /**
  * Hub-and-Spoke Patient Dashboard Widget
@@ -45,57 +46,57 @@ export class HubSpokeWidget extends Component {
         this.spokes = [
             {
                 id: "client_info",
-                label: "Client Info",
+                label: _t("Client Info"),
                 icon: "fa-user",
                 color: "#1565C0",
                 lightColor: "#E4F4FD",
                 angle: 0,
-                description: "Personal details and contact"
+                description: _t("Personal details and contact")
             },
             {
                 id: "relations",
-                label: "Relations",
+                label: _t("Relations"),
                 icon: "fa-users",
                 color: "#00796B",
                 lightColor: "#D9F2F0",
                 angle: 60,
-                description: "Caregivers, payers, contacts"
+                description: _t("Caregivers, payers, contacts")
             },
             {
                 id: "map",
-                label: "Map",
+                label: _t("Map"),
                 icon: "fa-map-marker",
                 color: "#0097A7",
                 lightColor: "#B2EBF2",
                 angle: 120,
-                description: "Address and location"
+                description: _t("Address and location")
             },
             {
                 id: "packages",
-                label: "Packages",
+                label: _t("Packages"),
                 icon: "fa-gift",
                 color: "#6B4BA8",
                 lightColor: "#E8E0F5",
                 angle: 180,
-                description: "Active service packages"
+                description: _t("Active service packages")
             },
             {
                 id: "bookings",
-                label: "Bookings",
+                label: _t("Bookings"),
                 icon: "fa-calendar",
                 color: "#D46E00",
                 lightColor: "#FEE8C9",
                 angle: 240,
-                description: "Appointments and visits"
+                description: _t("Appointments and visits")
             },
             {
                 id: "financials",
-                label: "Financials",
+                label: _t("Financials"),
                 icon: "fa-money",
                 color: "#43A047",
                 lightColor: "#DBF0DB",
                 angle: 300,
-                description: "Invoices and payments"
+                description: _t("Invoices and payments")
             },
         ];
 
@@ -198,7 +199,7 @@ export class HubSpokeWidget extends Component {
                 // Open Client Info modal with summary
                 action = {
                     type: "ir.actions.act_window",
-                    name: "Client Information",
+                    name: _t("Client Information"),
                     res_model: "res.partner",
                     res_id: this.props.patientId,
                     views: [[false, "form"]],
@@ -214,7 +215,7 @@ export class HubSpokeWidget extends Component {
                 // Open Relations modal with hierarchy widget
                 action = {
                     type: "ir.actions.act_window",
-                    name: "Patient Relationships",
+                    name: _t("Patient Relationships"),
                     res_model: "res.partner",
                     res_id: this.props.patientId,
                     views: [[false, "form"]],
@@ -230,7 +231,7 @@ export class HubSpokeWidget extends Component {
                 // Open Map modal with address and map widget
                 action = {
                     type: "ir.actions.act_window",
-                    name: "Patient Location",
+                    name: _t("Patient Location"),
                     res_model: "res.partner",
                     res_id: this.props.patientId,
                     views: [[false, "form"]],
@@ -246,7 +247,7 @@ export class HubSpokeWidget extends Component {
                 // Open Packages modal with summary
                 action = {
                     type: "ir.actions.act_window",
-                    name: "Service Packages",
+                    name: _t("Service Packages"),
                     res_model: "res.partner",
                     res_id: this.props.patientId,
                     views: [[false, "form"]],
@@ -262,7 +263,7 @@ export class HubSpokeWidget extends Component {
                 // Open Bookings modal with appointments
                 action = {
                     type: "ir.actions.act_window",
-                    name: "Patient Bookings",
+                    name: _t("Patient Bookings"),
                     res_model: "res.partner",
                     res_id: this.props.patientId,
                     views: [[false, "form"]],
@@ -278,7 +279,7 @@ export class HubSpokeWidget extends Component {
                 // Open Financials modal with invoice summary
                 action = {
                     type: "ir.actions.act_window",
-                    name: "Patient Financials",
+                    name: _t("Patient Financials"),
                     res_model: "res.partner",
                     res_id: this.props.patientId,
                     views: [[false, "form"]],

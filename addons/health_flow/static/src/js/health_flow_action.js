@@ -3,6 +3,7 @@
 import { registry } from "@web/core/registry";
 import { Component, useState, onMounted, onWillStart, onWillUnmount, useRef } from "@odoo/owl";
 import { useService } from "@web/core/utils/hooks";
+import { _t } from "@web/core/l10n/translation";
 
 /**
  * Health Flow Client Action
@@ -14,7 +15,7 @@ class HealthFlowAction extends Component {
     static template = "health_flow.HealthFlowTemplate";
 
     // Breadcrumb display name for Odoo 19
-    static displayName = "Home Page";
+    static displayName = _t("Home Page");
 
     // Props definition for Odoo 19 action service
     static props = {
@@ -23,7 +24,7 @@ class HealthFlowAction extends Component {
 
     // Getter for breadcrumb title
     get title() {
-        return "Home Page";
+        return _t("Home Page");
     }
 
     setup() {
@@ -75,59 +76,59 @@ class HealthFlowAction extends Component {
         // Panel data configuration
         this.panelData = {
             crm: {
-                title: 'Sales & CRM',
+                title: _t('Sales & CRM'),
                 color: '#4299e1', // Blue
                 items: [
                     // Contact-First Flow: Only TWO main options
-                    { key: 'crm-contacts', label: 'Contacts', icon: 'fa-phone', desc: 'Log new contact / View contacts', hasCount: true, countKey: 'all', countSource: 'crm' },
-                    { key: 'crm-followup', label: 'Follow-up Activities', icon: 'fa-calendar-check-o', desc: 'Manage leads and activities', hasCount: true, countKey: 'planned_activities', countSource: 'crm' },
-                    { key: 'crm-all-contacts', label: 'All Contacts', icon: 'fa-address-book', desc: 'View all contacts by status' },
-                    { key: 'crm-all-clients', label: 'All Clients', icon: 'fa-user', desc: 'View all clients' },
+                    { key: 'crm-contacts', label: _t('Contacts'), icon: 'fa-phone', desc: _t('Log new contact / View contacts'), hasCount: true, countKey: 'all', countSource: 'crm' },
+                    { key: 'crm-followup', label: _t('Follow-up Activities'), icon: 'fa-calendar-check-o', desc: _t('Manage leads and activities'), hasCount: true, countKey: 'planned_activities', countSource: 'crm' },
+                    { key: 'crm-all-contacts', label: _t('All Contacts'), icon: 'fa-address-book', desc: _t('View all contacts by status') },
+                    { key: 'crm-all-clients', label: _t('All Clients'), icon: 'fa-user', desc: _t('View all clients') },
                 ],
             },
             booking: {
-                title: 'Bookings and Assignments',
+                title: _t('Bookings and Assignments'),
                 color: '#ed8936', // Orange
                 items: [
-                    { key: 'booking-search', label: 'Search', icon: 'fa-search', desc: 'Search bookings', isSearch: true },
-                    { key: 'booking-calendar', label: 'Booking Calendar', icon: 'fa-calendar-check-o', desc: 'Visual booking calendar' },
-                    { key: 'booking-all', label: 'All Bookings', icon: 'fa-list', desc: 'All bookings (grouped by month)' },
-                    { key: 'booking-staff', label: 'Staff Workload', icon: 'fa-user-md', desc: 'Staff workload overview' },
-                    { key: 'booking-staff-assignment', label: 'Staff Assignment', icon: 'fa-users', desc: 'Assignment timeline view' },
-                    { key: 'booking-draft', label: 'Draft', icon: 'fa-file-o', desc: 'Draft bookings', hasCount: true, countKey: 'draft' },
-                    { key: 'booking-assigned', label: 'Assigned', icon: 'fa-check-circle', desc: 'Assigned bookings', hasCount: true, countKey: 'assigned' },
-                    { key: 'booking-scheduled', label: 'Scheduled', icon: 'fa-clock-o', desc: 'Scheduled bookings', hasCount: true, countKey: 'scheduled' },
-                    { key: 'booking-in-progress', label: 'In Progress', icon: 'fa-play-circle', desc: 'In progress bookings', hasCount: true, countKey: 'in_progress' },
-                    { key: 'booking-completed', label: 'Completed', icon: 'fa-check', desc: 'Completed bookings', hasCount: true, countKey: 'completed' },
+                    { key: 'booking-search', label: _t('Search'), icon: 'fa-search', desc: _t('Search bookings'), isSearch: true },
+                    { key: 'booking-calendar', label: _t('Booking Calendar'), icon: 'fa-calendar-check-o', desc: _t('Visual booking calendar') },
+                    { key: 'booking-all', label: _t('All Bookings'), icon: 'fa-list', desc: _t('All bookings (grouped by month)') },
+                    { key: 'booking-staff', label: _t('Staff Workload'), icon: 'fa-user-md', desc: _t('Staff workload overview') },
+                    { key: 'booking-staff-assignment', label: _t('Staff Assignment'), icon: 'fa-users', desc: _t('Assignment timeline view') },
+                    { key: 'booking-draft', label: _t('Draft'), icon: 'fa-file-o', desc: _t('Draft bookings'), hasCount: true, countKey: 'draft' },
+                    { key: 'booking-assigned', label: _t('Assigned'), icon: 'fa-check-circle', desc: _t('Assigned bookings'), hasCount: true, countKey: 'assigned' },
+                    { key: 'booking-scheduled', label: _t('Scheduled'), icon: 'fa-clock-o', desc: _t('Scheduled bookings'), hasCount: true, countKey: 'scheduled' },
+                    { key: 'booking-in-progress', label: _t('In Progress'), icon: 'fa-play-circle', desc: _t('In progress bookings'), hasCount: true, countKey: 'in_progress' },
+                    { key: 'booking-completed', label: _t('Completed'), icon: 'fa-check', desc: _t('Completed bookings'), hasCount: true, countKey: 'completed' },
                 ],
             },
             invoicing: {
-                title: 'Invoicing',
+                title: _t('Invoicing'),
                 color: '#48bb78', // Green
                 items: [
-                    { key: 'invoicing-ar', label: 'AR Dashboard', icon: 'fa-dashboard', desc: 'Accounts receivable overview' },
-                    { key: 'invoicing-payments', label: 'Payment Transactions', icon: 'fa-credit-card', desc: 'Payment history' },
-                    { key: 'invoicing-invoices', label: 'Invoices', icon: 'fa-file-text-o', desc: 'All invoices' },
+                    { key: 'invoicing-ar', label: _t('AR Dashboard'), icon: 'fa-dashboard', desc: _t('Accounts receivable overview') },
+                    { key: 'invoicing-payments', label: _t('Payment Transactions'), icon: 'fa-credit-card', desc: _t('Payment history') },
+                    { key: 'invoicing-invoices', label: _t('Invoices'), icon: 'fa-file-text-o', desc: _t('All invoices') },
                 ],
             },
             admin: {
-                title: 'Admin',
+                title: _t('Admin'),
                 color: '#9f7aea', // Purple
                 items: [
-                    { key: 'admin-pricing-engines', label: 'Pricing Engines', icon: 'fa-cogs', desc: 'Configure pricing engines' },
-                    { key: 'admin-package-products', label: 'Package Products', icon: 'fa-cube', desc: 'Service packages' },
-                    { key: 'admin-pricing-rules', label: 'Pricing Rules', icon: 'fa-list-ul', desc: 'Define pricing rules' },
-                    { key: 'admin-quick-edit-rules', label: 'Quick Edit Rules', icon: 'fa-edit', desc: 'Quick edit pricing' },
-                    { key: 'admin-portable-equipment', label: 'Portable Equipment', icon: 'fa-briefcase', desc: 'Track equipment' },
-                    { key: 'admin-healthcare-staff', label: 'Healthcare Staff', icon: 'fa-user-md', desc: 'Staff directory' },
-                    { key: 'admin-facilities', label: 'Healthcare Facilities', icon: 'fa-building', desc: 'Facilities management' },
-                    { key: 'admin-catchment-provinces', label: 'Catchment Provinces', icon: 'fa-globe', desc: 'Catchment provinces' },
-                    { key: 'admin-patient-categories', label: 'Patient Categories', icon: 'fa-bookmark', desc: 'Patient categories' },
-                    { key: 'admin-service-types', label: 'Service Types', icon: 'fa-list-ul', desc: 'Define services' },
-                    { key: 'admin-symptoms', label: 'Symptoms', icon: 'fa-heartbeat', desc: 'Configure symptoms' },
-                    { key: 'admin-referral-sources', label: 'Referral Sources', icon: 'fa-share-alt', desc: 'Referral sources' },
-                    { key: 'admin-insurance', label: 'Insurance Providers', icon: 'fa-shield', desc: 'Insurance providers' },
-                    { key: 'admin-urgency-levels', label: 'Urgency Levels', icon: 'fa-exclamation-circle', desc: 'Urgency levels' },
+                    { key: 'admin-pricing-engines', label: _t('Pricing Engines'), icon: 'fa-cogs', desc: _t('Configure pricing engines') },
+                    { key: 'admin-package-products', label: _t('Package Products'), icon: 'fa-cube', desc: _t('Service packages') },
+                    { key: 'admin-pricing-rules', label: _t('Pricing Rules'), icon: 'fa-list-ul', desc: _t('Define pricing rules') },
+                    { key: 'admin-quick-edit-rules', label: _t('Quick Edit Rules'), icon: 'fa-edit', desc: _t('Quick edit pricing') },
+                    { key: 'admin-portable-equipment', label: _t('Portable Equipment'), icon: 'fa-briefcase', desc: _t('Track equipment') },
+                    { key: 'admin-healthcare-staff', label: _t('Healthcare Staff'), icon: 'fa-user-md', desc: _t('Staff directory') },
+                    { key: 'admin-facilities', label: _t('Healthcare Facilities'), icon: 'fa-building', desc: _t('Facilities management') },
+                    { key: 'admin-catchment-provinces', label: _t('Catchment Provinces'), icon: 'fa-globe', desc: _t('Catchment provinces') },
+                    { key: 'admin-patient-categories', label: _t('Patient Categories'), icon: 'fa-bookmark', desc: _t('Patient categories') },
+                    { key: 'admin-service-types', label: _t('Service Types'), icon: 'fa-list-ul', desc: _t('Define services') },
+                    { key: 'admin-symptoms', label: _t('Symptoms'), icon: 'fa-heartbeat', desc: _t('Configure symptoms') },
+                    { key: 'admin-referral-sources', label: _t('Referral Sources'), icon: 'fa-share-alt', desc: _t('Referral sources') },
+                    { key: 'admin-insurance', label: _t('Insurance Providers'), icon: 'fa-shield', desc: _t('Insurance providers') },
+                    { key: 'admin-urgency-levels', label: _t('Urgency Levels'), icon: 'fa-exclamation-circle', desc: _t('Urgency levels') },
                 ],
             },
         };

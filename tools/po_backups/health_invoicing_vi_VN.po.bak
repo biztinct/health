@@ -165,7 +165,7 @@ msgstr "AR Thanh toán Bản ghi"
 #. module: health_invoicing
 #: model:ir.model.fields,field_description:health_invoicing.field_health_payment_transaction__ar_reconciled
 msgid "AR Reconciled"
-msgstr "Đã đối soát công nợ"
+msgstr "AR Reconciled"
 
 #. module: health_invoicing
 #: model:ir.model.fields,field_description:health_invoicing.field_health_payment_transaction__ar_reconciliation_date
@@ -385,7 +385,7 @@ msgstr "Tất cả bills are genuine và trong chấp nhậnable Tình trạng"
 #. module: health_invoicing
 #: model:ir.model.fields,field_description:health_invoicing.field_health_payment_collection_wizard__allocate_automatically
 msgid "Allocate Automatically"
-msgstr "Phân bổ tự động"
+msgstr "Allocate Automatically"
 
 #. module: health_invoicing
 #: model:ir.model.fields,field_description:health_invoicing.field_health_nurse_payment_wizard__amount_adjustment
@@ -512,7 +512,7 @@ msgstr "Automatically reconcile này Thanh toán trong Acsố lượngs Receivab
 #: model:ir.model.fields.selection,name:health_invoicing.selection__health_payment_workflow_wizard__payment_method__bank_transfer
 #: model:ir.model.fields.selection,name:health_invoicing.selection__health_prepaid_package_wizard__payment_method__bank_transfer
 msgid "Bank Transfer"
-msgstr "Chuyển khoản ngân hàng"
+msgstr "Bank Transfer"
 
 #. module: health_invoicing
 #: model:ir.model.fields.selection,name:health_invoicing.selection__health_payment_workflow_wizard__payment_method__bank_card
@@ -920,12 +920,12 @@ msgstr "Xác nhận Tiền mặt Giao hàng Đến OM"
 #. module: health_invoicing
 #: model:ir.model.fields.selection,name:health_invoicing.selection__misa_integration__connection_status__connected
 msgid "Connected"
-msgstr "Đã kết nối"
+msgstr "Connected"
 
 #. module: health_invoicing
 #: model:ir.model.fields.selection,name:health_invoicing.selection__misa_integration__connection_status__connecting
 msgid "Connecting"
-msgstr "Đang kết nối"
+msgstr "Connecting"
 
 #. module: health_invoicing
 #: model:ir.model.fields.selection,name:health_invoicing.selection__misa_integration__connection_status__error
@@ -953,7 +953,7 @@ msgstr "Consume dịch vụs Từ pređã thanh toán gói"
 #. module: health_invoicing
 #: model_terms:ir.ui.view,arch_db:health_invoicing.view_health_prepaid_service_search
 msgid "Consumed"
-msgstr "Đã sử dụng"
+msgstr "Consumed"
 
 #. module: health_invoicing
 #. odoo-python
@@ -980,7 +980,7 @@ msgstr "Consumption Tham chiếu"
 #. module: health_invoicing
 #: model_terms:ir.ui.view,arch_db:health_invoicing.view_health_service_package_form
 msgid "Consumptions"
-msgstr "Mức tiêu thụ"
+msgstr "Consumptions"
 
 #. module: health_invoicing
 #: model:ir.model,name:health_invoicing.model_res_partner
@@ -1285,7 +1285,7 @@ msgstr "Direct Bệnh nhân Thanh toán"
 #. module: health_invoicing
 #: model:ir.model.fields.selection,name:health_invoicing.selection__misa_integration__connection_status__disconnected
 msgid "Disconnected"
-msgstr "Ngắt kết nối"
+msgstr "Disconnected"
 
 #. module: health_invoicing
 #: model:ir.model.fields,field_description:health_invoicing.field_account_move_line__discount_reason
@@ -1445,7 +1445,7 @@ msgstr "Estimated Giờs"
 #. module: health_invoicing
 #: model_terms:ir.ui.view,arch_db:health_invoicing.view_health_service_package_search
 msgid "Exhausted"
-msgstr "Đã hết"
+msgstr "Exhausted"
 
 #. module: health_invoicing
 #: model:ir.model.fields,field_description:health_invoicing.field_health_prepaid_package_wizard__expiration_date
@@ -1457,7 +1457,7 @@ msgstr "Expiration Ngày"
 #: model:ir.model.fields.selection,name:health_invoicing.selection__health_service_package__state__expired
 #: model_terms:ir.ui.view,arch_db:health_invoicing.view_health_service_package_search
 msgid "Expired"
-msgstr "Hết hạn"
+msgstr "Expired"
 
 #. module: health_invoicing
 #: model_terms:ir.ui.view,arch_db:health_invoicing.view_health_service_package_search
@@ -2290,7 +2290,7 @@ msgstr "Thấp Giá trị (< 100K VND)"
 #. module: health_invoicing
 #: model:ir.model.fields,field_description:health_invoicing.field_misa_integration__misa_api_key
 msgid "MISA API Key"
-msgstr "Khóa API MISA"
+msgstr "MISA API Key"
 
 #. module: health_invoicing
 #: model:ir.model,name:health_invoicing.model_misa_integration
@@ -2305,13 +2305,13 @@ msgstr "MISA Database Tên"
 #. module: health_invoicing
 #: model:ir.model.fields,field_description:health_invoicing.field_misa_sync_log__misa_id
 msgid "MISA ID"
-msgstr "Mã MISA"
+msgstr "MISA ID"
 
 #. module: health_invoicing
 #: model:ir.model.fields,field_description:health_invoicing.field_misa_sync_log__integration_id
 #: model_terms:ir.ui.view,arch_db:health_invoicing.view_healthcare_invoice_form
 msgid "MISA Integration"
-msgstr "Tích hợp MISA"
+msgstr "MISA Integration"
 
 #. module: health_invoicing
 #: model:res.groups,name:health_invoicing.group_misa_integration
@@ -2332,7 +2332,7 @@ msgstr "MISA Mật khẩu"
 #. module: health_invoicing
 #: model:ir.model.fields,field_description:health_invoicing.field_misa_integration__misa_server_url
 msgid "MISA Server URL"
-msgstr "URL máy chủ MISA"
+msgstr "MISA Server URL"
 
 #. module: health_invoicing
 #: model:ir.model.fields,field_description:health_invoicing.field_account_bank_statement_line__misa_sync_date
@@ -2462,7 +2462,7 @@ msgstr "Mandatory lý do khi nào dissố lượng là applied Đến này line"
 #. module: health_invoicing
 #: model:ir.model.fields.selection,name:health_invoicing.selection__misa_integration__sync_frequency__manual
 msgid "Manual"
-msgstr "Thủ công"
+msgstr "Manual"
 
 #. module: health_invoicing
 #: model:ir.model.fields,help:health_invoicing.field_health_service_package__package_notes
@@ -2982,7 +2982,7 @@ msgstr "Official Tiếng Việt Y tế dịch vụ Mã"
 #. module: health_invoicing
 #: model:ir.model.fields,field_description:health_invoicing.field_health_payment_workflow_wizard__offline_submission
 msgid "Offline Submission"
-msgstr "Gửi ngoại tuyến"
+msgstr "Offline Submission"
 
 #. module: health_invoicing
 #: model:ir.model.fields.selection,name:health_invoicing.selection__health_payment_workflow_wizard__payment_method__online_payment
@@ -3105,7 +3105,7 @@ msgstr "Khác Dịch vụ"
 #. module: health_invoicing
 #: model_terms:ir.ui.view,arch_db:health_invoicing.view_health_payment_collection_wizard_form
 msgid "Outstanding"
-msgstr "Còn nợ"
+msgstr "Outstanding"
 
 #. module: health_invoicing
 #: model:ir.model.fields,field_description:health_invoicing.field_health_fieldservice_order__outstanding_amount
@@ -3866,7 +3866,7 @@ msgstr "Giá per dịch vụ Từ đã chọn gói sản phẩm"
 #. module: health_invoicing
 #: model_terms:ir.ui.view,arch_db:health_invoicing.view_health_prepaid_package_wizard_form
 msgid "Pricing"
-msgstr "Định giá"
+msgstr "Pricing"
 
 #. module: health_invoicing
 #: model:ir.model.fields.selection,name:health_invoicing.selection__account_payment__healthcare_payment_type__insurance_primary
@@ -3956,7 +3956,7 @@ msgstr "Chuyên nghiệp Nhân viên Giờ"
 #. module: health_invoicing
 #: model_terms:ir.ui.view,arch_db:health_invoicing.view_health_payment_transaction_form
 msgid "Proof Docs"
-msgstr "Chứng từ"
+msgstr "Proof Docs"
 
 #. module: health_invoicing
 #: model:ir.model.fields,field_description:health_invoicing.field_health_payment_transaction__proof_count
@@ -4071,7 +4071,7 @@ msgstr "Tham chiếu Số Từ thuế cơ quan submission"
 #. module: health_invoicing
 #: model:ir.model.fields.selection,name:health_invoicing.selection__health_payment_transaction__transaction_type__refund
 msgid "Refund"
-msgstr "Hoàn tiền"
+msgstr "Refund"
 
 #. module: health_invoicing
 #. odoo-python
@@ -4097,7 +4097,7 @@ msgstr "Refund Unused Dịch vụs"
 #: model:ir.model.fields.selection,name:health_invoicing.selection__health_service_package__state__refunded
 #: model_terms:ir.ui.view,arch_db:health_invoicing.view_health_prepaid_service_search
 msgid "Refunded"
-msgstr "Đã hoàn tiền"
+msgstr "Refunded"
 
 #. module: health_invoicing
 #. odoo-python
@@ -4587,7 +4587,7 @@ msgstr "Submission will be Hoàn tất offline hạn Đến connectivity issues"
 #: model:ir.model.fields.selection,name:health_invoicing.selection__account_move__moh_submission_status__submitted
 #: model:ir.model.fields.selection,name:health_invoicing.selection__account_move__tax_authority_submission_status__submitted
 msgid "Submitted"
-msgstr "Đã gửi"
+msgstr "Submitted"
 
 #. module: health_invoicing
 #: model:ir.model.fields.selection,name:health_invoicing.selection__misa_sync_log__sync_status__success
@@ -5005,7 +5005,7 @@ msgstr "Travel Khoảng cách (km)"
 #. module: health_invoicing
 #: model:ir.model.fields,field_description:health_invoicing.field_health_service_billing__travel_expense_amount
 msgid "Travel Expenses"
-msgstr "Chi phí đi lại"
+msgstr "Travel Expenses"
 
 #. module: health_invoicing
 #: model:ir.model.fields,help:health_invoicing.field_account_bank_statement_line__travel_distance_km
@@ -5148,7 +5148,7 @@ msgstr "Người dùngs ai can Gửi hóa đơns Đến Tiếng Việt Thuế Au
 #: model:ir.model.fields.selection,name:health_invoicing.selection__health_service_package__service_type__vaccination
 #: model:ir.model.fields.selection,name:health_invoicing.selection__product_template__healthcare_package_type__vaccination
 msgid "Vaccination"
-msgstr "Tiêm chủng"
+msgstr "Vaccination"
 
 #. module: health_invoicing
 #: model:ir.model.fields,help:health_invoicing.field_product_product__healthcare_package_duration
@@ -5360,7 +5360,7 @@ msgstr "Khách hàng)"
 #. module: health_invoicing
 #: model_terms:ir.ui.view,arch_db:health_invoicing.view_partner_patient_form_invoicing
 msgid "remaining"
-msgstr "còn lại"
+msgstr "remaining"
 
 #. module: health_invoicing
 #: model_terms:ir.ui.view,arch_db:health_invoicing.view_health_service_package_form
@@ -5377,7 +5377,7 @@ msgstr "dịch vụs used\n                                            <br/>"
 #. module: health_invoicing
 #: model_terms:ir.ui.view,arch_db:health_invoicing.view_health_service_package_form
 msgid "used"
-msgstr "đã dùng"
+msgstr "used"
 
 #. module: health_invoicing
 #: model_terms:ir.ui.view,arch_db:health_invoicing.view_health_nurse_payment_wizard_form

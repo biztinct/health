@@ -2,6 +2,7 @@
 
 import { Component, useState, onMounted, useRef } from "@odoo/owl";
 import { useService } from "@web/core/utils/hooks";
+import { _t } from "@web/core/l10n/translation";
 
 /**
  * Hub-and-Spoke FSO Dashboard Widget
@@ -406,7 +407,7 @@ export class FSOHubSpokeWidget extends Component {
         const dy = endPoint.y - startPoint.y;
         const absAngle = Math.abs(angle);
         const isVertical = (absAngle > Math.PI / 3 && absAngle < 2 * Math.PI / 3) ||
-                          (absAngle > 4 * Math.PI / 3 && absAngle < 5 * Math.PI / 3);
+            (absAngle > 4 * Math.PI / 3 && absAngle < 5 * Math.PI / 3);
 
         // Use straight line for vertical connections
         if (isVertical || Math.abs(dx) < 50) {
@@ -555,8 +556,8 @@ export class FSOHubSpokeWidget extends Component {
         // Prevent Pay Now action if payment is already done
         if ((nodeId === "pay_now" || nodeId === "pay_later") && this.state.fsoData.payment_status === 'paid') {
             this.notificationService.add(
-                'Payment has already been received for this booking. No further payment actions are needed.',
-                { type: 'warning', title: 'Payment Completed' }
+                _t('Payment has already been received for this booking. No further payment actions are needed.'),
+                { type: 'warning', title: _t('Payment Completed') }
             );
             return;
         }
@@ -564,8 +565,8 @@ export class FSOHubSpokeWidget extends Component {
         // Prevent Pay Now if invoice doesn't exist
         if ((nodeId === "pay_now" || nodeId === "pay_later") && !this.state.fsoData.invoice_id) {
             this.notificationService.add(
-                'Please create an invoice before processing payment.',
-                { type: 'warning', title: 'Invoice Required' }
+                _t('Please create an invoice before processing payment.'),
+                { type: 'warning', title: _t('Invoice Required') }
             );
             return;
         }
@@ -580,7 +581,7 @@ export class FSOHubSpokeWidget extends Component {
                 // Open service packages wizard
                 action = {
                     type: "ir.actions.act_window",
-                    name: "Service Packages",
+                    name: _t("Service Packages"),
                     res_model: "health.fso.service.packages.wizard",
                     views: [[false, "form"]],
                     target: "new",
@@ -624,7 +625,7 @@ export class FSOHubSpokeWidget extends Component {
                 // Open confirm booking wizard
                 action = {
                     type: "ir.actions.act_window",
-                    name: "Confirm Booking",
+                    name: _t("Confirm Booking"),
                     res_model: "health.fso.confirm.booking.wizard",
                     views: [[false, "form"]],
                     target: "new",
@@ -638,7 +639,7 @@ export class FSOHubSpokeWidget extends Component {
                 // Open equipment wizard
                 action = {
                     type: "ir.actions.act_window",
-                    name: "Equipment Requirements",
+                    name: _t("Equipment Requirements"),
                     res_model: "health.fso.equipment.wizard",
                     views: [[false, "form"]],
                     target: "new",
@@ -669,7 +670,7 @@ export class FSOHubSpokeWidget extends Component {
                 // Open start service wizard
                 action = {
                     type: "ir.actions.act_window",
-                    name: "Start Service",
+                    name: _t("Start Service"),
                     res_model: "health.fso.start.service.wizard",
                     views: [[false, "form"]],
                     target: "new",
@@ -683,7 +684,7 @@ export class FSOHubSpokeWidget extends Component {
                 // Open clinical notes wizard
                 action = {
                     type: "ir.actions.act_window",
-                    name: "Clinical Notes",
+                    name: _t("Clinical Notes"),
                     res_model: "health.fso.clinical.notes.wizard",
                     views: [[false, "form"]],
                     target: "new",
@@ -730,7 +731,7 @@ export class FSOHubSpokeWidget extends Component {
                 // Open payment collection wizard (from health_invoicing module)
                 action = {
                     type: "ir.actions.act_window",
-                    name: "Payment Collection",
+                    name: _t("Payment Collection"),
                     res_model: "health.nurse.payment.wizard",
                     views: [[false, "form"]],
                     target: "new",
@@ -745,7 +746,7 @@ export class FSOHubSpokeWidget extends Component {
                 // Open cash collection wizard
                 action = {
                     type: "ir.actions.act_window",
-                    name: "Collect Cash from Nurse",
+                    name: _t("Collect Cash from Nurse"),
                     res_model: "health.fso.cash.collection.wizard",
                     views: [[false, "form"]],
                     target: "new",
@@ -759,7 +760,7 @@ export class FSOHubSpokeWidget extends Component {
                 // Open payment received wizard
                 action = {
                     type: "ir.actions.act_window",
-                    name: "Payment Received",
+                    name: _t("Payment Received"),
                     res_model: "health.fso.payment.received.wizard",
                     views: [[false, "form"]],
                     target: "new",
