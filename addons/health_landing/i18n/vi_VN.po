@@ -2318,3 +2318,107 @@ msgstr "Đã đánh dấu rác"
 #. module: javascript
 msgid "Failed to mark as spam"
 msgstr "Không thể đánh dấu là rác"
+
+#. module: javascript
+msgid "View service packages"
+msgstr "Xem gói dịch vụ"
+
+#. module: javascript
+msgid "Quote"
+msgstr "Báo giá"
+
+#. module: javascript
+msgid "Healthcare quote"
+msgstr "Báo giá y tế"
+
+#. module: javascript
+msgid "Confirm the booking"
+msgstr "Xác nhận lịch hẹn"
+
+#. module: javascript
+msgid "Equipment"
+msgstr "Thiết bị"
+
+#. module: javascript
+msgid "Required equipment"
+msgstr "Thiết bị yêu cầu"
+
+#. module: javascript
+msgid "Main booking hub"
+msgstr "Trung tâm lịch hẹn chính"
+
+#. module: javascript
+msgid "Assign staff to booking"
+msgstr "Phân công nhân viên cho lịch hẹn"
+
+#. module: javascript
+msgid "Start the service"
+msgstr "Bắt đầu dịch vụ"
+
+#. module: javascript
+msgid "Fill clinical notes"
+msgstr "Điền ghi chú lâm sàng"
+
+#. module: javascript
+msgid "Create invoice"
+msgstr "Tạo hóa đơn"
+
+#. module: javascript
+msgid "Pay Now"
+msgstr "Thanh toán ngay"
+
+#. module: javascript
+msgid "Immediate payment"
+msgstr "Thanh toán ngay"
+
+#. module: javascript
+msgid "Defer payment"
+msgstr "Thanh toán sau"
+
+#. module: javascript
+msgid "Collect Cash"
+msgstr "Thu tiền mặt"
+
+#. module: javascript
+msgid "OM collect cash"
+msgstr "Quản lý thu tiền mặt"
+
+#. module: javascript
+msgid "Payment received"
+msgstr "Đã nhận thanh toán"
+
+#. module: javascript
+msgid "Payment has already been received for this booking. No further payment actions are needed."
+msgstr "Đã nhận thanh toán cho lịch hẹn này. Không cần thực hiện thêm hành động thanh toán nào."
+
+#. module: javascript
+msgid "Payment Completed"
+msgstr "Thanh toán hoàn tất"
+
+#. module: javascript
+msgid "Please create an invoice before processing payment."
+msgstr "Vui lòng tạo hóa đơn trước khi xử lý thanh toán."
+
+#. module: javascript
+msgid "Invoice Required"
+msgstr "Yêu cầu hóa đơn"
+
+#. module: javascript
+msgid "Payment Collection"
+msgstr "Thu tiền thanh toán"
+
+#. module: javascript
+msgid "Patient Bookings"
+msgstr "Lịch hẹn bệnh nhân"
+
+#. module: javascript
+msgid "Patient Financials"
+msgstr "Tài chính bệnh nhân"
+
+#. module: javascript
+msgid "Patient Relationships"
+msgstr "Mối quan hệ bệnh nhân"
+
+#. module: javascript
+msgid "Patient Location"
+msgstr "Vị trí bệnh nhân"

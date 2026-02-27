@@ -22,4 +22,16 @@
         <field name="category_id" ref="module_category_hr_development"/>
     </record>
 
+    <!-- BFSI users need to read partner/contact records (employees, managers) -->
+    <record id="bfsi_partner_access_rule" model="ir.rule">
+        <field name="name">BFSI: Read all partners</field>
+        <field name="model_id" ref="base.model_res_partner"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('group_bfsi_banker'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
 </odoo>

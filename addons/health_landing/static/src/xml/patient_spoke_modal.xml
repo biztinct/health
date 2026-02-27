@@ -22,14 +22,14 @@
                 <div class="health_landing_modal_body" t-if="state.loading">
                     <div class="text-center py-5">
                         <i class="fa fa-spinner fa-spin fa-3x text-primary"/>
-                        <p class="mt-3">Loading data...</p>
+                        <p class="mt-3">Đang tải dữ liệu...</p>
                     </div>
                 </div>
 
                 <!-- Error State -->
                 <div class="health_landing_modal_body" t-if="state.error">
                     <div class="alert alert-danger">
-                        <i class="fa fa-exclamation-triangle"/> Error: <t t-esc="state.error"/>
+                        <i class="fa fa-exclamation-triangle"/> Lỗi: <t t-esc="state.error"/>
                     </div>
                 </div>
 
@@ -38,15 +38,15 @@
                     <div class="health_landing_modal_body">
                         <div class="row">
                             <div class="col-md-6 mb-3">
-                                <label class="text-muted small">Patient ID</label>
+                                <label class="text-muted small">Mã bệnh nhân</label>
                                 <div class="fw-bold" t-esc="state.data.patient_code"/>
                             </div>
                             <div class="col-md-6 mb-3">
-                                <label class="text-muted small">Age / Gender</label>
+                                <label class="text-muted small">Tuổi / Giới tính</label>
                                 <div class="fw-bold"><t t-esc="state.data.age"/> years / <t t-esc="state.data.gender"/></div>
                             </div>
                             <div class="col-md-6 mb-3">
-                                <label class="text-muted small">Phone</label>
+                                <label class="text-muted small">Điện thoại</label>
                                 <div class="fw-bold" t-esc="state.data.phone or state.data.mobile or 'N/A'"/>
                             </div>
                             <div class="col-md-6 mb-3">
@@ -54,7 +54,7 @@
                                 <div class="fw-bold" t-esc="state.data.email or 'N/A'"/>
                             </div>
                             <div class="col-12 mb-3">
-                                <label class="text-muted small">Address</label>
+                                <label class="text-muted small">Địa chỉ</label>
                                 <div class="fw-bold">
                                     <t t-esc="state.data.street"/><t t-if="state.data.street2">, <t t-esc="state.data.street2"/></t><br/>
                                     <t t-esc="state.data.city"/>, <t t-esc="state.data.state_id ? state.data.state_id[1] : ''"/>
@@ -68,7 +68,7 @@
                 <t t-if="!state.loading and !state.error and props.spoke.id === 'relations'">
                     <div class="health_landing_modal_body">
                         <div class="mb-4" t-if="state.data.caregivers.length > 0">
-                            <h6 class="text-danger"><i class="fa fa-users"/> Caregivers (<t t-esc="state.data.caregivers.length"/>)</h6>
+                            <h6 class="text-danger"><i class="fa fa-users"/> Người chăm sóc (<t t-esc="state.data.caregivers.length"/>)</h6>
                             <t t-foreach="state.data.caregivers.slice(0, 3)" t-as="rel" t-key="rel.id">
                                 <div class="d-flex align-items-center mb-2 p-2 bg-light rounded">
                                     <i class="fa fa-user-circle fa-2x text-danger me-3"/>
@@ -84,7 +84,7 @@
                         </div>
 
                         <div class="mb-4" t-if="state.data.payers.length > 0">
-                            <h6 class="text-warning"><i class="fa fa-money"/> Payers (<t t-esc="state.data.payers.length"/>)</h6>
+                            <h6 class="text-warning"><i class="fa fa-money"/> Người thanh toán (<t t-esc="state.data.payers.length"/>)</h6>
                             <t t-foreach="state.data.payers.slice(0, 3)" t-as="rel" t-key="rel.id">
                                 <div class="d-flex align-items-center mb-2 p-2 bg-light rounded">
                                     <i class="fa fa-user-circle fa-2x text-warning me-3"/>
@@ -100,7 +100,7 @@
                         </div>
 
                         <div class="mb-4" t-if="state.data.emergency.length > 0">
-                            <h6 class="text-primary"><i class="fa fa-phone"/> Emergency Contacts (<t t-esc="state.data.emergency.length"/>)</h6>
+                            <h6 class="text-primary"><i class="fa fa-phone"/> Liên hệ khẩn cấp (<t t-esc="state.data.emergency.length"/>)</h6>
                             <t t-foreach="state.data.emergency.slice(0, 3)" t-as="rel" t-key="rel.id">
                                 <div class="d-flex align-items-center mb-2 p-2 bg-light rounded">
                                     <i class="fa fa-user-circle fa-2x text-primary me-3"/>
@@ -113,7 +113,7 @@
                         </div>
 
                         <p t-if="state.data.total === 0" class="text-center text-muted py-4">
-                            No relationships found
+                            Không tìm thấy mối quan hệ nào
                         </p>
                     </div>
                 </t>
@@ -122,14 +122,14 @@
                 <t t-if="!state.loading and !state.error and props.spoke.id === 'map'">
                     <div class="health_landing_modal_body">
                         <div class="mb-3">
-                            <h6><i class="fa fa-map-marker"/> Address</h6>
+                            <h6><i class="fa fa-map-marker"/> Địa chỉ</h6>
                             <p class="mb-2">
                                 <t t-esc="state.data.street"/><t t-if="state.data.street2">, <t t-esc="state.data.street2"/></t><br/>
                                 <t t-esc="state.data.city"/>, <t t-esc="state.data.state_id ? state.data.state_id[1] : ''"/> <t t-esc="state.data.zip"/>
                             </p>
                         </div>
                         <div t-if="state.data.partner_latitude and state.data.partner_longitude">
-                            <h6><i class="fa fa-location-arrow"/> GPS Coordinates</h6>
+                            <h6><i class="fa fa-location-arrow"/> Tọa độ GPS</h6>
                             <p class="text-muted">
                                 <t t-esc="state.data.partner_latitude"/>, <t t-esc="state.data.partner_longitude"/>
                             </p>
@@ -149,17 +149,17 @@
                                     </div>
                                     <div class="row small text-muted">
                                         <div class="col-6">
-                                            <i class="fa fa-calendar"/> Expires: <t t-esc="formatDate(pkg.expiry_date)"/>
+                                            <i class="fa fa-calendar"/> Hết hạn: <t t-esc="formatDate(pkg.expiry_date)"/>
                                         </div>
                                         <div class="col-6">
-                                            <i class="fa fa-check-circle"/> Sessions: <t t-esc="pkg.remaining_sessions"/> / <t t-esc="pkg.total_sessions"/>
+                                            <i class="fa fa-check-circle"/> Các buổi: <t t-esc="pkg.remaining_sessions"/> / <t t-esc="pkg.total_sessions"/>
                                         </div>
                                     </div>
                                 </div>
                             </t>
                         </t>
                         <p t-else="" class="text-center text-muted py-4">
-                            No active packages
+                            Không có gói dịch vụ nào đang hoạt động
                         </p>
                     </div>
                 </t>
@@ -168,7 +168,7 @@
                 <t t-if="!state.loading and !state.error and props.spoke.id === 'bookings'">
                     <div class="health_landing_modal_body">
                         <div class="mb-4" t-if="state.data.upcoming.length > 0">
-                            <h6 class="text-success"><i class="fa fa-calendar-plus-o"/> Upcoming Bookings</h6>
+                            <h6 class="text-success"><i class="fa fa-calendar-plus-o"/> Lịch hẹn sắp tới</h6>
                             <t t-foreach="state.data.upcoming" t-as="booking" t-key="booking.id">
                                 <div class="mb-2 p-3 bg-light rounded cursor-pointer" t-on-click="() => this.onItemClick(booking, 'booking')">
                                     <div class="d-flex justify-content-between align-items-start">
@@ -185,7 +185,7 @@
                         </div>
 
                         <div class="mb-4" t-if="state.data.recent.length > 0">
-                            <h6 class="text-secondary"><i class="fa fa-history"/> Recent Bookings (Last 7 days)</h6>
+                            <h6 class="text-secondary"><i class="fa fa-history"/> Các lịch hẹn gần đây (Trong 7 ngày qua)</h6>
                             <t t-foreach="state.data.recent" t-as="booking" t-key="booking.id">
                                 <div class="mb-2 p-3 bg-light rounded cursor-pointer" t-on-click="() => this.onItemClick(booking, 'booking')">
                                     <div class="d-flex justify-content-between align-items-start">
@@ -202,7 +202,7 @@
                         </div>
 
                         <p t-if="state.data.upcoming.length === 0 and state.data.recent.length === 0" class="text-center text-muted py-4">
-                            No bookings found
+                            Không tìm thấy lịch hẹn
                         </p>
                     </div>
                 </t>
@@ -214,26 +214,26 @@
                             <div class="col-6">
                                 <div class="p-3 bg-warning bg-opacity-10 rounded text-center">
                                     <div class="h4 mb-0 text-warning" t-esc="formatCurrency(state.data.total_pending)"/>
-                                    <small class="text-muted">Total Pending</small>
+                                    <small class="text-muted">Tổng số tiền đang chờ xử lý</small>
                                 </div>
                             </div>
                             <div class="col-6">
                                 <div class="p-3 bg-danger bg-opacity-10 rounded text-center">
                                     <div class="h4 mb-0 text-danger" t-esc="state.data.overdue_count"/>
-                                    <small class="text-muted">Overdue Invoices</small>
+                                    <small class="text-muted">Số hóa đơn quá hạn</small>
                                 </div>
                             </div>
                         </div>
 
                         <div class="mb-4" t-if="state.data.pending_invoices.length > 0">
-                            <h6><i class="fa fa-file-text-o"/> Pending Invoices</h6>
+                            <h6><i class="fa fa-file-text-o"/> Các hóa đơn đang chờ xử lý</h6>
                             <t t-foreach="state.data.pending_invoices.slice(0, 5)" t-as="inv" t-key="inv.id">
                                 <div class="mb-2 p-3 bg-light rounded">
                                     <div class="d-flex justify-content-between align-items-start">
                                         <div>
                                             <div class="fw-bold" t-esc="inv.name"/>
                                             <small class="text-muted">
-                                                Due: <t t-esc="formatDate(inv.invoice_date_due)"/>
+                                                Đến hạn: <t t-esc="formatDate(inv.invoice_date_due)"/>
                                             </small>
                                         </div>
                                         <div class="text-end">
@@ -246,12 +246,12 @@
                         </div>
 
                         <div t-if="state.data.last_payment" class="alert alert-success">
-                            <i class="fa fa-check-circle"/> Last Payment: <t t-esc="formatCurrency(state.data.last_payment.amount)"/>
+                            <i class="fa fa-check-circle"/> Lần thanh toán cuối: <t t-esc="formatCurrency(state.data.last_payment.amount)"/>
                             on <t t-esc="formatDate(state.data.last_payment.date)"/>
                         </div>
 
                         <p t-if="state.data.pending_invoices.length === 0 and !state.data.last_payment" class="text-center text-muted py-4">
-                            No financial data available
+                            Chưa có dữ liệu tài chính nào
                         </p>
                     </div>
                 </t>
@@ -259,10 +259,10 @@
                 <!-- Modal Footer -->
                 <div class="health_landing_modal_footer" t-if="!state.loading and !state.error">
                     <button class="health_landing_modal_btn health_landing_modal_btn_secondary" t-on-click="props.onClose">
-                        Close
+                        Đóng
                     </button>
                     <button class="health_landing_modal_btn health_landing_modal_btn_primary" t-on-click="onEditClick">
-                        <i class="fa fa-edit"/> Edit Full Details
+                        <i class="fa fa-edit"/> Chỉnh sửa toàn bộ chi tiết
                     </button>
                 </div>
             </div>

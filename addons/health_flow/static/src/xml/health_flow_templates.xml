@@ -33,7 +33,7 @@
                     <!-- Notifications Dropdown -->
                     <div class="health_flow_notifications_dropdown" t-att-class="{'open': state.bookingNotificationsOpen}">
                         <div class="health_flow_notifications_header">
-                            <span>Thông báo lịch hẹn</span>
+                            <span>Booking Notifications</span>
                             <div class="health_flow_notifications_close" t-on-click="() => this.toggleBookingNotifications()">
                                 <i class="fa fa-times"></i>
                             </div>
@@ -42,7 +42,7 @@
                             <t t-if="state.bookingNotifications.length === 0">
                                 <div class="health_flow_notifications_empty">
                                     <i class="fa fa-check-circle"></i>
-                                    <span>Không có thông báo mới</span>
+                                    <span>No new notifications</span>
                                 </div>
                             </t>
                             <t t-foreach="state.bookingNotifications" t-as="notification" t-key="notification.id">
@@ -133,7 +133,7 @@
                      tabindex="0"
                      t-on-click="() => this.onCenterClick()">
                     <i class="fa fa-users health_flow_center_icon"></i>
-                    <span class="health_flow_center_text">Khách hàng</span>
+                    <span class="health_flow_center_text">Clients</span>
                 </div>
 
                 <!-- PRIMARY LEVEL: 6 Badges in Circle -->
@@ -145,7 +145,7 @@
                      t-att-class="{'active': state.activePrimary === 'crm'}"
                      t-on-click="() => this.onPrimaryClick('crm')">
                     <i class="fa fa-handshake-o health_flow_primary_icon"></i>
-                    <span class="health_flow_primary_text">Bán hàng &amp; CRM</span>
+                    <span class="health_flow_primary_text">Sales &amp; CRM</span>
                 </div>
 
                 <!-- 2. Booking (Top Right - 2 o'clock) -->
@@ -155,7 +155,7 @@
                      t-att-class="{'active': state.activePrimary === 'booking'}"
                      t-on-click="() => this.onPrimaryClick('booking')">
                     <i class="fa fa-calendar-check-o health_flow_primary_icon"></i>
-                    <span class="health_flow_primary_text">Lịch hẹn</span>
+                    <span class="health_flow_primary_text">Bookings</span>
                 </div>
 
                 <!-- 3. Invoicing (Bottom Right - 4 o'clock) -->
@@ -165,7 +165,7 @@
                      t-att-class="{'active': state.activePrimary === 'invoicing'}"
                      t-on-click="() => this.onPrimaryClick('invoicing')">
                     <i class="fa fa-money health_flow_primary_icon"></i>
-                    <span class="health_flow_primary_text">Hóa đơn</span>
+                    <span class="health_flow_primary_text">Invoicing</span>
                 </div>
 
                 <!-- 4. Analytics (Bottom - 6 o'clock) -->
@@ -174,7 +174,7 @@
                      class="health_flow_primary_badge badge-analytics"
                      t-on-click="() => this.onPrimaryClick('analytics')">
                     <i class="fa fa-line-chart health_flow_primary_icon"></i>
-                    <span class="health_flow_primary_text">Phân tích</span>
+                    <span class="health_flow_primary_text">Analytics</span>
                 </div>
 
                 <!-- 5. Audit (Bottom Left - 8 o'clock) -->
@@ -183,7 +183,7 @@
                      class="health_flow_primary_badge badge-audit"
                      t-on-click="() => this.onPrimaryClick('audit')">
                     <i class="fa fa-history health_flow_primary_icon"></i>
-                    <span class="health_flow_primary_text">Kiểm tra</span>
+                    <span class="health_flow_primary_text">Audit</span>
                 </div>
 
                 <!-- 6. Admin (Top Left - 10 o'clock) -->
@@ -193,7 +193,7 @@
                      t-att-class="{'active': state.activePrimary === 'admin'}"
                      t-on-click="() => this.onPrimaryClick('admin')">
                     <i class="fa fa-cogs health_flow_primary_icon"></i>
-                    <span class="health_flow_primary_text">Quản trị</span>
+                    <span class="health_flow_primary_text">Admin</span>
                 </div>
 
             </div>
@@ -203,7 +203,7 @@
                 <div class="health_flow_search_modal_backdrop" t-on-click="() => this.closeSearchModal()">
                     <div class="health_flow_search_modal" t-on-click.stop="">
                         <div class="health_flow_search_modal_header">
-                            <h3 t-esc="state.searchType === 'crm' ? 'Tìm kiếm CRM' : 'Tìm kiếm lịch hẹn'"/>
+                            <h3 t-esc="state.searchType === 'crm' ? 'CRM Search' : 'Booking Search'"/>
                             <div class="health_flow_search_modal_close" t-on-click="() => this.closeSearchModal()">
                                 <i class="fa fa-times"></i>
                             </div>
@@ -212,7 +212,7 @@
                             <div class="health_flow_search_form">
                                 <input type="text"
                                        class="health_flow_search_input"
-                                       t-att-placeholder="state.searchType === 'crm' ? 'Tìm theo tên, số điện thoại, hoặc email...' : 'Tìm theo tên khách hàng, số điện thoại, hoặc mã lịch hẹn...'"
+                                       t-att-placeholder="state.searchType === 'crm' ? 'Search by name, phone, or email...' : 'Search by client name, phone, or booking code...'"
                                        t-model="state.searchQuery"
                                        t-on-input="onSearchInput"/>
                             </div>
@@ -221,7 +221,7 @@
                                 <div class="health_flow_merge_controls" t-if="state.searchType === 'crm' and state.selectedLeadIds.length >= 2">
                                     <button class="health_flow_merge_button"
                                             t-on-click="() => this.mergeCrmLeads()">
-                                        <i class="fa fa-clone"/> Gộp <t t-esc="state.selectedLeadIds.length"/> liên hệ
+                                        <i class="fa fa-clone"/> Merge <t t-esc="state.selectedLeadIds.length"/> contacts
                                     </button>
                                 </div>
 
@@ -251,7 +251,7 @@
                                 <!-- CRM Results -->
                                 <t t-if="state.searchType === 'crm'">
                                     <t t-if="state.searchResults.clients.length">
-                                        <div class="health_flow_search_section_title">Khách hàng</div>
+                                        <div class="health_flow_search_section_title">Clients</div>
                                         <t t-foreach="state.searchResults.clients" t-as="result" t-key="result.id">
                                             <div class="health_flow_search_result_card"
                                                  t-att-class="'client-result'"
@@ -269,7 +269,7 @@
                                     </t>
 
                                     <t t-if="state.searchResults.leads.length">
-                                        <div class="health_flow_search_section_title">Liên hệ</div>
+                                        <div class="health_flow_search_section_title">Contacts</div>
                                         <t t-foreach="state.searchResults.leads" t-as="result" t-key="result.id">
                                             <div class="health_flow_search_result_card"
                                                  t-att-class="'status-' + result.contact_outcome + (this.isLeadSelected(result.id) ? ' selected' : '')"
@@ -294,7 +294,7 @@
                             </div>
                             <div class="health_flow_search_empty" t-if="state.searchQuery and this.getSearchResultCount() === 0">
                                 <i class="fa fa-search fa-3x"/>
-                                <p t-esc="state.searchType === 'crm' ? 'Không tìm thấy kết quả CRM' : 'Không tìm thấy lịch hẹn'"/>
+                                <p t-esc="state.searchType === 'crm' ? 'No CRM results found' : 'No bookings found'"/>
                             </div>
                         </div>
                     </div>

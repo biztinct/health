@@ -52,7 +52,7 @@ export class FSOHubSpokeWidget extends Component {
             // Top row nodes - Uniform sizing (160x60 standard)
             {
                 id: "service_packages",
-                label: "Service Packages",
+                label: _t("Service Packages"),
                 icon: "fa-gift",
                 color: "#0ea5e9",  // Modern sky blue
                 lightColor: "#e0f2fe",
@@ -62,11 +62,11 @@ export class FSOHubSpokeWidget extends Component {
                 y: 40,
                 width: 160,
                 height: 60,
-                description: "View service packages"
+                description: _t("View service packages")
             },
             {
                 id: "quote",
-                label: "Quote",
+                label: _t("Quote"),
                 icon: "fa-file-text-o",
                 color: "#0284c7",  // Modern primary blue
                 lightColor: "#e0f2fe",
@@ -77,11 +77,11 @@ export class FSOHubSpokeWidget extends Component {
                 width: 160,
                 height: 60,
                 actionField: "sale_order_id",
-                description: "Healthcare quote"
+                description: _t("Healthcare quote")
             },
             {
                 id: "confirm_booking",
-                label: "Confirm Booking",
+                label: _t("Confirm Booking"),
                 icon: "fa-check-circle",
                 color: "#10b981",  // Modern emerald green
                 lightColor: "#d1fae5",
@@ -92,13 +92,13 @@ export class FSOHubSpokeWidget extends Component {
                 width: 200,
                 height: 60,
                 actionField: "show_booked_indicator",
-                description: "Confirm the booking"
+                description: _t("Confirm the booking")
             },
 
             // Middle row - Uniform sizing
             {
                 id: "equipment",
-                label: "Equipment",
+                label: _t("Equipment"),
                 icon: "fa-briefcase",
                 color: "#64748b",  // Modern slate gray
                 lightColor: "#f1f5f9",
@@ -108,11 +108,11 @@ export class FSOHubSpokeWidget extends Component {
                 y: 170,
                 width: 160,
                 height: 60,
-                description: "Required equipment"
+                description: _t("Required equipment")
             },
             {
                 id: "booking_hub",
-                label: "Booking",
+                label: _t("Booking"),
                 icon: "fa-calendar",
                 color: "#0284c7",  // Modern primary blue
                 lightColor: "#e0f2fe",
@@ -122,11 +122,11 @@ export class FSOHubSpokeWidget extends Component {
                 y: 160,
                 width: 160,
                 height: 80,
-                description: "Main booking hub"
+                description: _t("Main booking hub")
             },
             {
                 id: "staff_assignment",
-                label: "Staff Assignment",
+                label: _t("Staff Assignment"),
                 icon: "fa-user-md",
                 color: "#0ea5e9",  // Modern sky blue
                 lightColor: "#e0f2fe",
@@ -137,13 +137,13 @@ export class FSOHubSpokeWidget extends Component {
                 width: 160,
                 height: 60,
                 actionField: "show_assigned_indicator",
-                description: "Assign staff to booking"
+                description: _t("Assign staff to booking")
             },
 
             // Start Service - Oval centered below Booking
             {
                 id: "start_service",
-                label: "Start Service",
+                label: _t("Start Service"),
                 icon: "fa-play-circle",
                 color: "#f97316",  // Modern orange
                 lightColor: "#ffedd5",
@@ -154,13 +154,13 @@ export class FSOHubSpokeWidget extends Component {
                 width: 200,
                 height: 60,
                 actionField: "show_in_progress_indicator",
-                description: "Start the service"
+                description: _t("Start the service")
             },
 
             // Bottom row - Moved up to fit screen (160x60)
             {
                 id: "clinical_notes",
-                label: "Clinical Notes",
+                label: _t("Clinical Notes"),
                 icon: "fa-stethoscope",
                 color: "#3b82f6",  // Modern blue
                 lightColor: "#dbeafe",
@@ -171,11 +171,11 @@ export class FSOHubSpokeWidget extends Component {
                 width: 160,
                 height: 60,
                 actionField: "show_clinical_notes_arrow",
-                description: "Fill clinical notes"
+                description: _t("Fill clinical notes")
             },
             {
                 id: "invoice",
-                label: "Invoice",
+                label: _t("Invoice"),
                 icon: "fa-file-text-o",
                 color: "#10b981",  // Modern emerald
                 lightColor: "#d1fae5",
@@ -186,11 +186,11 @@ export class FSOHubSpokeWidget extends Component {
                 width: 160,
                 height: 60,
                 actionField: "show_invoice_arrow",
-                description: "Create invoice"
+                description: _t("Create invoice")
             },
             {
                 id: "pay_now",
-                label: "Pay Now",
+                label: _t("Pay Now"),
                 icon: "fa-money",
                 color: "#22c55e",  // Modern green
                 lightColor: "#dcfce7",
@@ -201,11 +201,11 @@ export class FSOHubSpokeWidget extends Component {
                 width: 160,
                 height: 60,
                 actionField: "show_pay_now_arrow",
-                description: "Immediate payment"
+                description: _t("Immediate payment")
             },
             {
                 id: "pay_later",
-                label: "Pay Later",
+                label: _t("Pay Later"),
                 icon: "fa-clock-o",
                 color: "#f59e0b",  // Modern amber
                 lightColor: "#fef3c7",
@@ -216,13 +216,13 @@ export class FSOHubSpokeWidget extends Component {
                 width: 160,
                 height: 60,
                 actionField: "show_pay_later_arrow",
-                description: "Defer payment"
+                description: _t("Defer payment")
             },
 
             // Sub-nodes - Moved up to fit screen (160x60)
             {
                 id: "collect_cash",
-                label: "Collect Cash",
+                label: _t("Collect Cash"),
                 icon: "fa-dollar",
                 color: "#f97316",  // Modern orange
                 lightColor: "#ffedd5",
@@ -234,11 +234,11 @@ export class FSOHubSpokeWidget extends Component {
                 height: 60,
                 parent: "pay_now",
                 actionField: "show_collect_cash_arrow",
-                description: "OM collect cash"
+                description: _t("OM collect cash")
             },
             {
                 id: "payment_received",
-                label: "Payment Received",
+                label: _t("Payment Received"),
                 icon: "fa-check-circle",
                 color: "#10b981",  // Modern emerald
                 lightColor: "#d1fae5",
@@ -250,7 +250,7 @@ export class FSOHubSpokeWidget extends Component {
                 height: 60,
                 parent: "pay_later",
                 actionField: "show_payment_received_arrow",
-                description: "Payment received"
+                description: _t("Payment received")
             },
         ];
 

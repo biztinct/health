@@ -13,7 +13,7 @@ import { session } from "@web/session";
  */
 export class HRDevelopmentDashboard extends Component {
     static template = "hr_development_ai.DevelopmentDashboard";
-    static props = {};
+    static props = ["*"];
 
     setup() {
         this.actionService = useService("action");

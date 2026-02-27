@@ -5,21 +5,78 @@ import { useService } from "@web/core/utils/hooks";
 import { registry } from "@web/core/registry";
 import { user } from "@web/core/user";
 
+/* ── Chart.js state ── */
+let chartJSLoaded = false;
+let chartInstances = {};
+
+/* Load Inter font once (CSS itself is loaded via web.assets_backend in manifest) */
+if (!document.getElementById('bfsi-font-inter')) {
+    const fontLink = document.createElement('link');
+    fontLink.rel = 'stylesheet';
+    fontLink.id = 'bfsi-font-inter';
+    fontLink.href = 'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap';
+    document.head.appendChild(fontLink);
+}
+
+const CHART_COLORS = {
+    primary: '#7C3AED',
+    primaryLight: 'rgba(124, 58, 237, 0.15)',
+    indigo: '#4F46E5',
+    success: '#10B981',
+    successLight: 'rgba(16, 185, 129, 0.15)',
+    warning: '#F59E0B',
+    warningLight: 'rgba(245, 158, 11, 0.15)',
+    danger: '#EF4444',
+    dangerLight: 'rgba(239, 68, 68, 0.15)',
+    info: '#3B82F6',
+    infoLight: 'rgba(59, 130, 246, 0.15)',
+    palette: [
+        '#7C3AED', '#3B82F6', '#10B981', '#F59E0B', '#EF4444',
+        '#6366F1', '#8B5CF6', '#14B8A6', '#F97316', '#EC4899',
+    ],
+};
+
+const loadChartJS = async () => {
+    if (chartJSLoaded) return true;
+    try {
+        const script = document.createElement('script');
+        script.src = 'https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js';
+        document.head.appendChild(script);
+        await new Promise((ok, fail) => {
+            script.onload = ok;
+            script.onerror = fail;
+        });
+        chartJSLoaded = true;
+        return true;
+    } catch (e) {
+        console.error('BfsiDash: failed to load Chart.js', e);
+        return false;
+    }
+};
+
+const destroyChart = (key) => {
+    if (chartInstances[key]) {
+        try { chartInstances[key].destroy(); } catch (_) { }
+        delete chartInstances[key];
+    }
+};
+
 /**
- * BFSI Manager Dashboard - Team Performance Overview
+ * BFSI Manager Dashboard — Premium UI
  *
  * Features:
- * - Team ranking with movement indicators
- * - "Needs Coaching" badge count
- * - One-click coaching initiation
- * - Performance trends visualization
- * - Quick strategy generation
+ * - Premium gradient header with KPI summary strip
+ * - Card-based team grid with SVG score rings
+ * - Click-to-open banker detail modal with tabs
+ * - Chart.js charts (distribution, ranking, radar, trend)
+ * - Quick filters and sort controls
  */
 export class BfsiManagerDashboard extends Component {
     static template = "hr_development_ai.BfsiManagerDashboard";
-    static props = {};
+    static props = ["*"];
 
     setup() {
+
         this.orm = useService("orm");
         this.action = useService("action");
         this.notification = useService("notification");
@@ -49,8 +106,10 @@ export class BfsiManagerDashboard extends Component {
             sortOrder: 'asc',
             filterPriority: 'all',
 
-            // View state
-            selectedBanker: null,
+            // Banker Detail Modal
+            showBankerModal: false,
+            bankerDetail: null,
+            modalTab: 'performance',
         });
 
         onWillStart(async () => {
@@ -58,19 +117,37 @@ export class BfsiManagerDashboard extends Component {
             await this.loadTeamData();
         });
 
-        onMounted(() => {
+        onMounted(async () => {
             this.state.isLoading = false;
+            // Render dashboard charts after data is loaded
+            await this.renderDashboardCharts();
         });
     }
 
-    /**
-     * Load manager context
-     */
+    /* ━━━ SCORE RING HELPERS ━━━ */
+
+    getScoreRingDasharray() {
+        const circumference = 2 * Math.PI * 16; // r=16
+        return `${circumference} ${circumference}`;
+    }
+
+    getScoreRingOffset(score) {
+        const circumference = 2 * Math.PI * 16;
+        const pct = Math.min(100, Math.max(0, score || 0)) / 100;
+        return circumference - (pct * circumference);
+    }
+
+    getScoreRingClass(score) {
+        if (score >= 75) return 'bfsi-score-high';
+        if (score >= 50) return 'bfsi-score-medium';
+        return 'bfsi-score-low';
+    }
+
+    /* ━━━ DATA LOADING ━━━ */
+
     async loadManagerContext() {
         try {
             const userId = user.userId;
-
-            // Get manager's employee record
             const employees = await this.orm.searchRead(
                 'hr.employee',
                 [['user_id', '=', userId]],
@@ -90,9 +167,6 @@ export class BfsiManagerDashboard extends Component {
         }
     }
 
-    /**
-     * Load team data with performance metrics
-     */
     async loadTeamData() {
         if (!this.state.branchId) {
             this.state.error = 'No branch assigned';
@@ -100,7 +174,6 @@ export class BfsiManagerDashboard extends Component {
         }
 
         try {
-            // Get all bankers in the branch
             const bankers = await this.orm.searchRead(
                 'hr.employee',
                 [
@@ -114,21 +187,6 @@ export class BfsiManagerDashboard extends Component {
                     'action_plan_completion_rate'],
                 { order: 'current_month_rank asc' }
             );
-
-            // Enhance with latest KPI details
-            for (const banker of bankers) {
-                const kpis = await this.orm.searchRead(
-                    'bfsi.performance.kpi',
-                    [['employee_id', '=', banker.id]],
-                    ['overall_score', 'deviation_score', 'conversions', 'revenue',
-                        'coaching_priority', 'date'],
-                    { limit: 1, order: 'date desc' }
-                );
-
-                if (kpis.length > 0) {
-                    banker.latestKpi = kpis[0];
-                }
-            }
 
             this.state.teamMembers = bankers;
 
@@ -160,21 +218,344 @@ export class BfsiManagerDashboard extends Component {
         }
     }
 
-    /**
-     * Get sorted and filtered team members
-     */
+    /* ━━━ DASHBOARD CHARTS ━━━ */
+
+    async renderDashboardCharts() {
+        if (!this.state.teamMembers.length) return;
+        if (!await loadChartJS()) return;
+
+        // Wait for DOM
+        await new Promise(r => setTimeout(r, 300));
+
+        this.renderDistributionChart();
+        this.renderRankingChart();
+    }
+
+    renderDistributionChart() {
+        const ctx = document.getElementById('bfsiChartDistribution');
+        if (!ctx) return;
+
+        const members = this.state.teamMembers;
+        const buckets = { 'Excellent (90+)': 0, 'Good (75-89)': 0, 'Average (50-74)': 0, 'Needs Improvement (<50)': 0 };
+
+        members.forEach(m => {
+            const s = m.latest_overall_score || 0;
+            if (s >= 90) buckets['Excellent (90+)']++;
+            else if (s >= 75) buckets['Good (75-89)']++;
+            else if (s >= 50) buckets['Average (50-74)']++;
+            else buckets['Needs Improvement (<50)']++;
+        });
+
+        destroyChart('distribution');
+        chartInstances.distribution = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: Object.keys(buckets),
+                datasets: [{
+                    data: Object.values(buckets),
+                    backgroundColor: [CHART_COLORS.success, CHART_COLORS.info, CHART_COLORS.warning, CHART_COLORS.danger],
+                    borderWidth: 0,
+                    hoverOffset: 8,
+                }],
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                cutout: '60%',
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: { padding: 12, usePointStyle: true, pointStyle: 'circle', font: { size: 11, family: 'Inter' } },
+                    },
+                },
+            },
+        });
+    }
+
+    renderRankingChart() {
+        const ctx = document.getElementById('bfsiChartRanking');
+        if (!ctx) return;
+
+        const members = this.state.teamMembers.slice(0, 10); // Top 10
+        const labels = members.map(m => m.name.split(' ').slice(-1)[0]); // Last name
+        const scores = members.map(m => m.latest_overall_score || 0);
+
+        const colors = scores.map(s => {
+            if (s >= 75) return CHART_COLORS.success;
+            if (s >= 50) return CHART_COLORS.warning;
+            return CHART_COLORS.danger;
+        });
+
+        const bgColors = scores.map(s => {
+            if (s >= 75) return CHART_COLORS.successLight;
+            if (s >= 50) return CHART_COLORS.warningLight;
+            return CHART_COLORS.dangerLight;
+        });
+
+        destroyChart('ranking');
+        chartInstances.ranking = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels,
+                datasets: [{
+                    label: 'Score',
+                    data: scores,
+                    backgroundColor: bgColors,
+                    borderColor: colors,
+                    borderWidth: 2,
+                    borderRadius: 8,
+                }],
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 100,
+                        grid: { color: 'rgba(0,0,0,0.04)' },
+                        ticks: { font: { size: 10, family: 'Inter' } },
+                    },
+                    x: {
+                        grid: { display: false },
+                        ticks: { font: { size: 10, family: 'Inter' } },
+                    },
+                },
+            },
+        });
+    }
+
+    /* ━━━ BANKER DETAIL MODAL ━━━ */
+
+    async openBankerDetail(bankerId) {
+        this.state.showBankerModal = true;
+        this.state.bankerDetail = null;
+        this.state.modalTab = 'performance';
+
+        try {
+            // Get full banker data
+            const [banker] = await this.orm.searchRead(
+                'hr.employee',
+                [['id', '=', bankerId]],
+                ['id', 'name', 'job_id', 'banker_type', 'current_month_rank',
+                    'rank_movement', 'latest_overall_score', 'coaching_priority',
+                    'coaching_sessions_received', 'active_action_plan_count'],
+                { limit: 1 }
+            );
+
+            if (!banker) {
+                this.state.showBankerModal = false;
+                return;
+            }
+
+            // Get KPI history
+            const kpis = await this.orm.searchRead(
+                'bfsi.performance.kpi',
+                [['employee_id', '=', bankerId]],
+                ['overall_score', 'revenue', 'conversions', 'period_date',
+                    'deviation_score', 'coaching_priority'],
+                { order: 'period_date desc', limit: 6 }
+            );
+
+            // Get coaching sessions
+            let sessions = [];
+            try {
+                sessions = await this.orm.searchRead(
+                    'hr.coaching.session',
+                    [['employee_id', '=', bankerId]],
+                    ['session_date', 'session_type', 'notes'],
+                    { order: 'session_date desc', limit: 5 }
+                );
+            } catch (_) { }
+
+            // Get action plans
+            let plans = [];
+            try {
+                plans = await this.orm.searchRead(
+                    'bfsi.action.plan',
+                    [['employee_id', '=', bankerId]],
+                    ['name', 'state', 'completion_rate'],
+                    { order: 'create_date desc', limit: 5 }
+                );
+            } catch (_) { }
+
+            // Build detail object
+            const stateLabels = {
+                'draft': 'Draft', 'committed': 'Committed',
+                'in_progress': 'In Progress', 'completed': 'Completed',
+                'cancelled': 'Cancelled',
+            };
+
+            this.state.bankerDetail = {
+                id: banker.id,
+                name: banker.name,
+                role: banker.job_id ? banker.job_id[1] : (banker.banker_type || 'Banker'),
+                rank: banker.current_month_rank,
+                movement: banker.rank_movement,
+                score: banker.latest_overall_score || 0,
+                priority: banker.coaching_priority,
+                sessions_count: banker.coaching_sessions_received || 0,
+                plans_count: banker.active_action_plan_count || 0,
+
+                kpi_history: kpis.map(k => ({
+                    id: k.id,
+                    period: k.period_date || '-',
+                    score: k.overall_score || 0,
+                    revenue: k.revenue || 0,
+                    conversions: k.conversions || 0,
+                })),
+
+                sessions: sessions.map(s => ({
+                    id: s.id,
+                    date: s.session_date || '-',
+                    type: s.session_type || 'General',
+                    notes: s.notes || '',
+                })),
+
+                plans: plans.map(p => ({
+                    id: p.id,
+                    name: p.name || 'Unnamed Plan',
+                    state: p.state || 'draft',
+                    state_label: stateLabels[p.state] || p.state || 'Draft',
+                    completion: p.completion_rate || 0,
+                })),
+            };
+
+            // Render modal charts after data is available
+            await new Promise(r => setTimeout(r, 300));
+            await this.renderModalCharts();
+
+        } catch (error) {
+            console.error('Error loading banker detail:', error);
+            this.notification.add('Failed to load banker details', { type: 'danger' });
+            this.state.showBankerModal = false;
+        }
+    }
+
+    closeBankerModal() {
+        this.state.showBankerModal = false;
+        this.state.bankerDetail = null;
+        destroyChart('modalRadar');
+        destroyChart('modalTrend');
+    }
+
+    /* ━━━ MODAL CHARTS ━━━ */
+
+    async renderModalCharts() {
+        if (!this.state.bankerDetail) return;
+        if (!await loadChartJS()) return;
+
+        await new Promise(r => setTimeout(r, 200));
+
+        this.renderModalRadarChart();
+        this.renderModalTrendChart();
+    }
+
+    renderModalRadarChart() {
+        const ctx = document.getElementById('bfsiModalRadar');
+        if (!ctx) return;
+
+        const detail = this.state.bankerDetail;
+        const kpiData = detail.kpi_history[0]; // Latest KPI
+
+        // Use available KPI data for categories
+        const categories = ['Score', 'Revenue', 'Conversions'];
+        const values = kpiData ? [
+            Math.min(100, kpiData.score || 0),
+            Math.min(100, kpiData.revenue || 0),
+            Math.min(100, kpiData.conversions || 0),
+        ] : [detail.score, 0, 0];
+
+        destroyChart('modalRadar');
+        chartInstances.modalRadar = new Chart(ctx, {
+            type: 'radar',
+            data: {
+                labels: categories,
+                datasets: [{
+                    label: detail.name,
+                    data: values,
+                    borderColor: CHART_COLORS.primary,
+                    backgroundColor: CHART_COLORS.primaryLight,
+                    borderWidth: 2,
+                    pointBackgroundColor: CHART_COLORS.primary,
+                    pointRadius: 4,
+                }],
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    r: {
+                        beginAtZero: true,
+                        max: 100,
+                        ticks: { stepSize: 25, font: { size: 9, family: 'Inter' } },
+                        grid: { color: 'rgba(0,0,0,0.06)' },
+                        angleLines: { color: 'rgba(0,0,0,0.06)' },
+                        pointLabels: { font: { size: 10, family: 'Inter', weight: '600' } },
+                    },
+                },
+                plugins: { legend: { display: false } },
+            },
+        });
+    }
+
+    renderModalTrendChart() {
+        const ctx = document.getElementById('bfsiModalTrend');
+        if (!ctx) return;
+
+        const history = [...(this.state.bankerDetail.kpi_history || [])].reverse();
+        const labels = history.map(k => k.period);
+        const scores = history.map(k => k.score);
+
+        destroyChart('modalTrend');
+        chartInstances.modalTrend = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels,
+                datasets: [{
+                    label: 'Score',
+                    data: scores,
+                    borderColor: CHART_COLORS.primary,
+                    backgroundColor: CHART_COLORS.primaryLight,
+                    fill: true,
+                    tension: 0.4,
+                    pointRadius: 5,
+                    pointBackgroundColor: CHART_COLORS.primary,
+                    pointHoverRadius: 8,
+                }],
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 100,
+                        grid: { color: 'rgba(0,0,0,0.04)' },
+                        ticks: { font: { size: 10, family: 'Inter' } },
+                    },
+                    x: {
+                        grid: { display: false },
+                        ticks: { font: { size: 9, family: 'Inter' } },
+                    },
+                },
+            },
+        });
+    }
+
+    /* ━━━ FILTER / SORT ━━━ */
+
     get filteredTeam() {
         let team = [...this.state.teamMembers];
 
-        // Filter by priority
         if (this.state.filterPriority !== 'all') {
             team = team.filter(b => b.coaching_priority === this.state.filterPriority);
         }
 
-        // Sort
         team.sort((a, b) => {
             let valA, valB;
-
             switch (this.state.sortBy) {
                 case 'rank':
                     valA = a.current_month_rank || 999;
@@ -189,27 +570,18 @@ export class BfsiManagerDashboard extends Component {
                     valA = priorityOrder[a.coaching_priority] || 5;
                     valB = priorityOrder[b.coaching_priority] || 5;
                     break;
-                case 'movement':
-                    valA = a.rank_movement || 0;
-                    valB = b.rank_movement || 0;
-                    break;
                 default:
                     valA = a.current_month_rank || 999;
                     valB = b.current_month_rank || 999;
             }
-
-            if (this.state.sortOrder === 'desc') {
-                return valB - valA;
-            }
-            return valA - valB;
+            return this.state.sortOrder === 'desc' ? valB - valA : valA - valB;
         });
 
         return team;
     }
 
-    /**
-     * Get performance badge class
-     */
+    /* ━━━ HELPERS ━━━ */
+
     getScoreBadgeClass(score) {
         if (score >= 90) return 'badge-success';
         if (score >= 75) return 'badge-primary';
@@ -217,9 +589,6 @@ export class BfsiManagerDashboard extends Component {
         return 'badge-danger';
     }
 
-    /**
-     * Get priority badge class
-     */
     getPriorityBadgeClass(priority) {
         switch (priority) {
             case 'critical': return 'badge-danger';
@@ -230,21 +599,15 @@ export class BfsiManagerDashboard extends Component {
         }
     }
 
-    /**
-     * Get rank movement display
-     */
     getRankMovement(movement) {
         if (movement > 0) {
-            return { icon: 'fa-arrow-up', class: 'text-success', text: `+${movement}` };
+            return { icon: 'fa-arrow-up', class: 'up', text: `+${movement}` };
         } else if (movement < 0) {
-            return { icon: 'fa-arrow-down', class: 'text-danger', text: movement.toString() };
+            return { icon: 'fa-arrow-down', class: 'down', text: movement.toString() };
         }
-        return { icon: 'fa-minus', class: 'text-muted', text: '-' };
+        return { icon: 'fa-minus', class: 'flat', text: '-' };
     }
 
-    /**
-     * Sort handlers
-     */
     sortBy(field) {
         if (this.state.sortBy === field) {
             this.state.sortOrder = this.state.sortOrder === 'asc' ? 'desc' : 'asc';
@@ -254,23 +617,12 @@ export class BfsiManagerDashboard extends Component {
         }
     }
 
-    /**
-     * Filter by priority
-     */
     filterByPriority(priority) {
         this.state.filterPriority = priority;
     }
 
-    /**
-     * Select banker for coaching
-     */
-    selectBanker(banker) {
-        this.state.selectedBanker = banker;
-    }
+    /* ━━━ ACTIONS ━━━ */
 
-    /**
-     * Start coaching session
-     */
     async startCoachingSession(bankerId) {
         try {
             const result = await this.orm.call(
@@ -278,7 +630,6 @@ export class BfsiManagerDashboard extends Component {
                 'action_start_ai_coaching',
                 [bankerId]
             );
-
             this.action.doAction(result);
         } catch (error) {
             console.error('Error starting coaching session:', error);
@@ -286,9 +637,6 @@ export class BfsiManagerDashboard extends Component {
         }
     }
 
-    /**
-     * Generate coaching strategy
-     */
     async generateStrategy(bankerId) {
         try {
             const result = await this.orm.call(
@@ -296,7 +644,6 @@ export class BfsiManagerDashboard extends Component {
                 'action_generate_coaching_strategy',
                 [bankerId]
             );
-
             this.action.doAction(result);
         } catch (error) {
             console.error('Error generating strategy:', error);
@@ -304,64 +651,51 @@ export class BfsiManagerDashboard extends Component {
         }
     }
 
-    /**
-     * View banker's KPIs
-     */
     viewBankerKpis(bankerId) {
         this.action.doAction({
             type: 'ir.actions.act_window',
             name: 'Performance KPIs',
             res_model: 'bfsi.performance.kpi',
-            view_mode: 'list,form',
+            views: [[false, 'list'], [false, 'form']],
             domain: [['employee_id', '=', bankerId]],
         });
     }
 
-    /**
-     * View banker's action plans
-     */
     viewBankerActionPlans(bankerId) {
         this.action.doAction({
             type: 'ir.actions.act_window',
             name: 'Action Plans',
             res_model: 'bfsi.action.plan',
-            view_mode: 'kanban,list,form',
+            views: [[false, 'list'], [false, 'form']],
             domain: [['employee_id', '=', bankerId]],
         });
     }
 
-    /**
-     * Refresh dashboard data
-     */
     async refresh() {
         this.state.isLoading = true;
+        Object.keys(chartInstances).forEach(destroyChart);
         await this.loadTeamData();
         this.state.isLoading = false;
+        await this.renderDashboardCharts();
         this.notification.add('Dashboard refreshed', { type: 'success' });
     }
 
-    /**
-     * View all strategies
-     */
     viewAllStrategies() {
         this.action.doAction({
             type: 'ir.actions.act_window',
             name: 'Coaching Strategies',
             res_model: 'bfsi.coaching.strategy',
-            view_mode: 'list,form',
+            views: [[false, 'list'], [false, 'form']],
             domain: [['branch_id', '=', this.state.branchId]],
         });
     }
 
-    /**
-     * View all coaching sessions
-     */
     viewAllSessions() {
         this.action.doAction({
             type: 'ir.actions.act_window',
             name: 'Coaching Sessions',
             res_model: 'hr.coaching.session',
-            view_mode: 'list,form',
+            views: [[false, 'list'], [false, 'form']],
             domain: [['branch_id', '=', this.state.branchId]],
         });
     }

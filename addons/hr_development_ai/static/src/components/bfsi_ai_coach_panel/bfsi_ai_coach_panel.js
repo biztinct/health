@@ -142,12 +142,12 @@ export class BfsiAiCoachPanel extends Component {
             const kpis = await this.orm.searchRead(
                 'bfsi.performance.kpi',
                 [['employee_id', '=', employeeId]],
-                ['date', 'overall_score', 'deviation_score', 'coaching_priority',
+                ['period_date', 'overall_score', 'deviation_score', 'coaching_priority',
                     'dials_per_hour', 'meetings_scheduled', 'calls_made',
                     'script_adherence', 'objection_handling_score', 'need_analysis_quality',
                     'conversions', 'products_sold', 'appointments_set',
                     'revenue', 'aum', 'branch_rank', 'rank_movement'],
-                { limit: 1, order: 'date desc' }
+                { limit: 1, order: 'period_date desc' }
             );
 
             if (kpis.length > 0) {
@@ -158,7 +158,7 @@ export class BfsiAiCoachPanel extends Component {
             const actionPlans = await this.orm.searchRead(
                 'bfsi.action.plan',
                 [['employee_id', '=', employeeId], ['state', 'in', ['committed', 'in_progress']]],
-                ['name', 'state', 'progress_percentage', 'deadline'],
+                ['name', 'state', 'progress_percentage', 'target_date'],
                 { limit: 3 }
             );
             this.state.actionPlans = actionPlans;

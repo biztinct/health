@@ -1,685 +1,1435 @@
-/**
- * BFSI Manager Dashboard Styles
- * Mobile-first responsive design for team performance management
- */
+/* ============================================================
+   AI Performance Coaching — Premium BFSI Dashboard Styles
+   Inspired by Betterworks + pb_hr_workforce patterns
+   ============================================================ */
 
-// Variables
-$primary-color: #714B67;
-$success-color: #28a745;
-$warning-color: #ffc107;
-$danger-color: #dc3545;
-$info-color: #17a2b8;
-$text-primary: #212529;
-$text-secondary: #6c757d;
-$border-color: #e9ecef;
-$card-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+/* ── Font loaded via JS: Inter ── */
 
-// Breakpoints
-$mobile-max: 767px;
-$tablet-min: 768px;
-$desktop-min: 1024px;
-
-// ============================================
-// BASE STYLES (Mobile-first)
-// ============================================
-
+/* ── CSS Variables ── */
 .bfsi-manager-dashboard {
-    padding: 16px;
-    background: #f8f9fa;
-    min-height: 100vh;
-
-    @media (min-width: $tablet-min) {
-        padding: 24px;
-    }
-
-    @media (min-width: $desktop-min) {
-        padding: 32px;
-    }
+    --bfsi-primary: #7C3AED;
+    --bfsi-primary-light: #A78BFA;
+    --bfsi-primary-dark: #5B21B6;
+    --bfsi-indigo: #4F46E5;
+    --bfsi-indigo-dark: #312E81;
+    --bfsi-header-start: #1e1b4b;
+    --bfsi-header-end: #312e81;
+    --bfsi-success: #10B981;
+    --bfsi-success-light: #D1FAE5;
+    --bfsi-warning: #F59E0B;
+    --bfsi-warning-light: #FEF3C7;
+    --bfsi-danger: #EF4444;
+    --bfsi-danger-light: #FEE2E2;
+    --bfsi-info: #3B82F6;
+    --bfsi-info-light: #DBEAFE;
+    --bfsi-bg: linear-gradient(135deg, #f0f4ff 0%, #fafbff 50%, #f5f0ff 100%);
+    --bfsi-card-bg: #ffffff;
+    --bfsi-card-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+    --bfsi-card-hover-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+    --bfsi-card-radius: 16px;
+    --bfsi-text-primary: #1e1b4b;
+    --bfsi-text-secondary: #6B7280;
+    --bfsi-text-muted: #9CA3AF;
+    --bfsi-border: rgba(0, 0, 0, 0.06);
+    --bfsi-font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 }
 
-// Loading State
+/* ── Dashboard Container ── */
+.bfsi-manager-dashboard {
+    font-family: var(--bfsi-font);
+    min-height: 100vh;
+    background: var(--bfsi-bg);
+    padding: 0;
+}
+
+.bfsi-manager-dashboard .o_action_manager,
+.bfsi-manager-dashboard .o_content {
+    background: transparent !important;
+}
+
+/* ── Loading State ── */
 .bfsi-dashboard-loading {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    min-height: 400px;
+    min-height: 60vh;
     gap: 16px;
-
-    p {
-        color: $text-secondary;
-        font-size: 14px;
-    }
+    color: var(--bfsi-text-secondary);
 }
 
-// Error State
-.bfsi-dashboard-error {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 32px;
-    text-align: center;
+.bfsi-dashboard-loading .spinner-border {
+    width: 3rem;
+    height: 3rem;
+    border-width: 3px;
+    color: var(--bfsi-primary) !important;
 }
 
-// ============================================
-// HEADER
-// ============================================
-
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   GRADIENT HEADER
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
 .bfsi-dashboard-header {
+    background: linear-gradient(135deg, var(--bfsi-header-start) 0%, var(--bfsi-header-end) 60%, #4338ca 100%);
+    color: #fff;
+    padding: 24px 32px;
+    border-radius: 0 0 20px 20px;
+    margin: 0 0 24px 0;
     display: flex;
-    flex-direction: column;
-    gap: 16px;
-    margin-bottom: 24px;
-
-    @media (min-width: $tablet-min) {
-        flex-direction: row;
-        justify-content: space-between;
-        align-items: center;
-    }
-}
-
-.dashboard-title {
-    font-size: 24px;
-    font-weight: 700;
-    color: $text-primary;
-    margin: 0;
-    display: flex;
+    justify-content: space-between;
     align-items: center;
-
-    i {
-        color: $primary-color;
-    }
-
-    @media (min-width: $tablet-min) {
-        font-size: 28px;
-    }
+    flex-wrap: wrap;
+    gap: 16px;
+    box-shadow: 0 4px 24px rgba(30, 27, 75, 0.35);
+    position: relative;
+    overflow: hidden;
 }
 
-.dashboard-subtitle {
-    font-size: 14px;
-    color: $text-secondary;
-    margin-top: 4px;
+.bfsi-dashboard-header::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -10%;
+    width: 300px;
+    height: 300px;
+    background: radial-gradient(circle, rgba(167, 139, 250, 0.15), transparent);
+    border-radius: 50%;
+    pointer-events: none;
 }
 
-// ============================================
-// SUMMARY CARDS
-// ============================================
+.bfsi-dashboard-header::after {
+    content: '';
+    position: absolute;
+    bottom: -40%;
+    left: 20%;
+    width: 200px;
+    height: 200px;
+    background: radial-gradient(circle, rgba(99, 102, 241, 0.1), transparent);
+    border-radius: 50%;
+    pointer-events: none;
+}
 
+.bfsi-header-left {
+    position: relative;
+    z-index: 1;
+}
+
+.bfsi-dash-title {
+    color: #fff !important;
+    font-size: 1.6rem;
+    font-weight: 800;
+    margin: 0 0 4px 0;
+    letter-spacing: -0.3px;
+}
+
+.bfsi-dash-title i {
+    margin-right: 10px;
+    opacity: 0.85;
+    color: var(--bfsi-primary-light);
+}
+
+.bfsi-dash-subtitle {
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.75);
+    font-weight: 500;
+}
+
+.bfsi-header-right {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.bfsi-header-right .btn {
+    background: rgba(255, 255, 255, 0.15) !important;
+    border: 1px solid rgba(255, 255, 255, 0.25) !important;
+    color: #fff !important;
+    padding: 8px 18px;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 0.82rem;
+    transition: all 0.15s;
+    backdrop-filter: blur(4px);
+}
+
+.bfsi-header-right .btn:hover {
+    background: rgba(255, 255, 255, 0.25) !important;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   KPI SUMMARY CARDS
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
 .bfsi-summary-cards {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 12px;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    padding: 0 28px;
     margin-bottom: 24px;
-
-    @media (min-width: $tablet-min) {
-        grid-template-columns: repeat(4, 1fr);
-        gap: 16px;
-    }
 }
 
-.summary-card {
-    background: white;
-    border-radius: 12px;
-    padding: 16px;
+.bfsi-summary-card {
+    background: var(--bfsi-card-bg);
+    border-radius: var(--bfsi-card-radius);
+    padding: 20px;
     display: flex;
-    align-items: center;
-    gap: 12px;
-    box-shadow: $card-shadow;
+    align-items: flex-start;
+    gap: 14px;
+    box-shadow: var(--bfsi-card-shadow);
+    border: 1px solid var(--bfsi-border);
     cursor: pointer;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-
-    &:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
-    }
-
-    @media (min-width: $tablet-min) {
-        padding: 20px;
-        gap: 16px;
-    }
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
 }
 
-.card-icon {
+.bfsi-summary-card::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    opacity: 0.05;
+    transform: translate(15px, -15px);
+}
+
+.bfsi-summary-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--bfsi-card-hover-shadow);
+}
+
+.bfsi-card-icon {
     width: 48px;
     height: 48px;
     border-radius: 12px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 20px;
+    font-size: 1.3rem;
     flex-shrink: 0;
-
-    .needs-coaching & {
-        background: rgba($danger-color, 0.1);
-        color: $danger-color;
-    }
-
-    .avg-score & {
-        background: rgba($info-color, 0.1);
-        color: $info-color;
-    }
-
-    .sessions & {
-        background: rgba($success-color, 0.1);
-        color: $success-color;
-    }
-
-    .action-plans & {
-        background: rgba($primary-color, 0.1);
-        color: $primary-color;
-    }
 }
 
-.card-value {
-    font-size: 24px;
-    font-weight: 700;
-    color: $text-primary;
+.bfsi-summary-card.bfsi-needs-coaching .bfsi-card-icon {
+    background: var(--bfsi-danger-light);
+    color: var(--bfsi-danger);
+}
+
+.bfsi-summary-card.bfsi-needs-coaching::after {
+    background: var(--bfsi-danger);
+}
+
+.bfsi-summary-card.bfsi-avg-score .bfsi-card-icon {
+    background: var(--bfsi-info-light);
+    color: var(--bfsi-info);
+}
+
+.bfsi-summary-card.bfsi-avg-score::after {
+    background: var(--bfsi-info);
+}
+
+.bfsi-summary-card.sessions .bfsi-card-icon {
+    background: #E0E7FF;
+    color: var(--bfsi-indigo);
+}
+
+.bfsi-summary-card.sessions::after {
+    background: var(--bfsi-indigo);
+}
+
+.bfsi-summary-card.action-plans .bfsi-card-icon {
+    background: var(--bfsi-success-light);
+    color: var(--bfsi-success);
+}
+
+.bfsi-summary-card.action-plans::after {
+    background: var(--bfsi-success);
+}
+
+.bfsi-card-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.bfsi-card-value {
+    font-size: 1.8rem;
+    font-weight: 800;
     line-height: 1;
-
-    @media (min-width: $tablet-min) {
-        font-size: 28px;
-    }
+    color: var(--bfsi-text-primary);
 }
 
-.card-label {
-    font-size: 12px;
-    color: $text-secondary;
+.bfsi-card-label {
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: var(--bfsi-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
     margin-top: 4px;
 }
 
-// ============================================
-// FILTERS
-// ============================================
-
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   QUICK FILTERS
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
 .bfsi-quick-filters {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
+    padding: 0 28px;
     margin-bottom: 20px;
-    padding: 12px 16px;
-    background: white;
-    border-radius: 12px;
-    box-shadow: $card-shadow;
-
-    @media (min-width: $tablet-min) {
-        flex-direction: row;
-        justify-content: space-between;
-        align-items: center;
-    }
-}
-
-.filter-group,
-.sort-group {
     display: flex;
     align-items: center;
     gap: 8px;
     flex-wrap: wrap;
 }
 
-.filter-label {
-    font-size: 13px;
-    font-weight: 600;
-    color: $text-secondary;
+.bfsi-filter-label {
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: var(--bfsi-text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
-.filter-btn,
-.sort-btn {
-    padding: 6px 12px;
-    font-size: 13px;
-    border: 1px solid $border-color;
+.bfsi-filter-btn {
+    padding: 6px 16px;
+    border: 2px solid #E5E7EB;
     border-radius: 20px;
-    background: white;
-    color: $text-secondary;
+    background: transparent;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--bfsi-text-secondary);
     cursor: pointer;
-    transition: all 0.2s ease;
-
-    &:hover {
-        border-color: $primary-color;
-        color: $primary-color;
-    }
-
-    &.active {
-        background: $primary-color;
-        border-color: $primary-color;
-        color: white;
-    }
-
-    &.critical.active {
-        background: $danger-color;
-        border-color: $danger-color;
-    }
-
-    &.high.active {
-        background: $warning-color;
-        border-color: $warning-color;
-        color: $text-primary;
-    }
-
-    &.medium.active {
-        background: $info-color;
-        border-color: $info-color;
-    }
+    transition: all 0.15s;
 }
 
-// ============================================
-// TEAM TABLE
-// ============================================
-
-.bfsi-team-table-container {
-    background: white;
-    border-radius: 12px;
-    box-shadow: $card-shadow;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
+.bfsi-filter-btn:hover {
+    border-color: var(--bfsi-primary-light);
+    color: var(--bfsi-primary);
+    background: rgba(124, 58, 237, 0.04);
 }
 
-.bfsi-team-table {
+.bfsi-filter-btn.active {
+    border-color: var(--bfsi-primary);
+    background: var(--bfsi-primary);
+    color: #fff;
+    box-shadow: 0 2px 8px rgba(124, 58, 237, 0.3);
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   CHARTS SECTION
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+.bfsi-charts-section {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+    gap: 16px;
+    padding: 0 28px;
+    margin-bottom: 24px;
+}
+
+.bfsi-chart-card {
+    background: var(--bfsi-card-bg);
+    border-radius: var(--bfsi-card-radius);
+    padding: 20px;
+    box-shadow: var(--bfsi-card-shadow);
+    border: 1px solid var(--bfsi-border);
+}
+
+.bfsi-chart-title {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--bfsi-text-primary);
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #f0f0f5;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.bfsi-chart-title i {
+    color: var(--bfsi-primary);
+}
+
+.bfsi-chart-wrapper {
+    position: relative;
     width: 100%;
-    border-collapse: collapse;
-    min-width: 700px; // Horizontal scroll on small screens
-
-    thead {
-        background: #f8f9fa;
-        position: sticky;
-        top: 0;
-        z-index: 1;
-
-        th {
-            padding: 14px 16px;
-            text-align: left;
-            font-size: 12px;
-            font-weight: 600;
-            color: $text-secondary;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            border-bottom: 2px solid $border-color;
-        }
-    }
-
-    tbody {
-        tr {
-            border-bottom: 1px solid $border-color;
-            transition: background 0.2s ease;
-
-            &:hover {
-                background: #f8f9fa;
-            }
-
-            &:last-child {
-                border-bottom: none;
-            }
-
-            &.critical {
-                background: rgba($danger-color, 0.03);
-                border-left: 4px solid $danger-color;
-            }
-
-            &.high-priority {
-                background: rgba($warning-color, 0.03);
-                border-left: 4px solid $warning-color;
-            }
-        }
-
-        td {
-            padding: 14px 16px;
-            vertical-align: middle;
-        }
-    }
+    height: 240px;
+    max-height: 240px;
 }
 
-// Column specific styles
-.col-rank {
-    width: 60px;
+.bfsi-chart-wrapper canvas {
+    max-height: 240px !important;
 }
 
-.rank-badge {
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   TEAM SECTION HEADER
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+.bfsi-section-header {
+    padding: 0 28px;
+    margin-bottom: 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.bfsi-section-title {
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: var(--bfsi-text-primary);
+    letter-spacing: -0.3px;
+}
+
+.bfsi-section-title i {
+    color: var(--bfsi-primary);
+    margin-right: 8px;
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   TEAM MEMBER CARDS
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+.bfsi-team-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 16px;
+    padding: 0 28px 28px;
+}
+
+.bfsi-team-card {
+    background: var(--bfsi-card-bg);
+    border-radius: var(--bfsi-card-radius);
+    padding: 20px;
+    box-shadow: var(--bfsi-card-shadow);
+    border: 1px solid var(--bfsi-border);
+    border-left: 4px solid transparent;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.bfsi-team-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    opacity: 0.04;
+    transform: translate(20px, -20px);
+}
+
+.bfsi-team-card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--bfsi-card-hover-shadow);
+}
+
+/* Priority color coding */
+.bfsi-team-card.bfsi-prio-critical {
+    border-left-color: var(--bfsi-danger);
+}
+
+.bfsi-team-card.bfsi-prio-critical::before {
+    background: var(--bfsi-danger);
+}
+
+.bfsi-team-card.bfsi-prio-high {
+    border-left-color: var(--bfsi-warning);
+}
+
+.bfsi-team-card.bfsi-prio-high::before {
+    background: var(--bfsi-warning);
+}
+
+.bfsi-team-card.bfsi-prio-medium {
+    border-left-color: var(--bfsi-info);
+}
+
+.bfsi-team-card.bfsi-prio-medium::before {
+    background: var(--bfsi-info);
+}
+
+.bfsi-team-card.bfsi-prio-low {
+    border-left-color: var(--bfsi-success);
+}
+
+.bfsi-team-card.bfsi-prio-low::before {
+    background: var(--bfsi-success);
+}
+
+/* Card top row: avatar + info + score ring */
+.bfsi-card-top {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    margin-bottom: 14px;
+}
+
+.bfsi-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #fff;
+    flex-shrink: 0;
+    background: linear-gradient(135deg, var(--bfsi-primary), var(--bfsi-indigo));
+    box-shadow: 0 4px 12px rgba(124, 58, 237, 0.25);
+}
+
+.bfsi-card-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.bfsi-card-name {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--bfsi-text-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.bfsi-card-role {
+    font-size: 0.72rem;
+    color: var(--bfsi-text-muted);
+    font-weight: 500;
+}
+
+/* SVG Score Ring */
+.bfsi-score-ring {
+    width: 56px;
+    height: 56px;
+    flex-shrink: 0;
+    position: relative;
+}
+
+.bfsi-score-ring svg {
+    width: 56px;
+    height: 56px;
+    transform: rotate(-90deg);
+}
+
+.bfsi-score-ring .bfsi-ring-bg {
+    fill: none;
+    stroke: #E5E7EB;
+    stroke-width: 4;
+}
+
+.bfsi-score-ring .bfsi-ring-fill {
+    fill: none;
+    stroke-width: 4;
+    stroke-linecap: round;
+    transition: stroke-dashoffset 1s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.bfsi-score-ring .bfsi-ring-fill.bfsi-score-high {
+    stroke: var(--bfsi-success);
+}
+
+.bfsi-score-ring .bfsi-ring-fill.bfsi-score-medium {
+    stroke: var(--bfsi-warning);
+}
+
+.bfsi-score-ring .bfsi-ring-fill.bfsi-score-low {
+    stroke: var(--bfsi-danger);
+}
+
+.bfsi-score-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 0.72rem;
+    font-weight: 800;
+    color: var(--bfsi-text-primary);
+}
+
+/* Card metrics row */
+.bfsi-card-metrics {
+    display: flex;
+    gap: 0;
+    border: 1px solid #f0f0f5;
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 14px;
+}
+
+.bfsi-card-metric {
+    flex: 1;
+    text-align: center;
+    padding: 8px 4px;
+    border-right: 1px solid #f0f0f5;
+}
+
+.bfsi-card-metric:last-child {
+    border-right: none;
+}
+
+.bfsi-metric-value {
+    font-size: 0.85rem;
+    font-weight: 800;
+    color: var(--bfsi-text-primary);
+}
+
+.bfsi-metric-label {
+    font-size: 0.58rem;
+    color: var(--bfsi-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    font-weight: 600;
+}
+
+/* Rank badge */
+.bfsi-rank-badge {
     display: inline-flex;
     align-items: center;
-    justify-content: center;
-    min-width: 32px;
-    height: 32px;
-    border-radius: 8px;
-    background: #f0f0f0;
-    font-weight: 700;
-    font-size: 14px;
-}
-
-.col-name {
-    min-width: 200px;
-}
-
-.banker-info {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-}
-
-.banker-avatar {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, $primary-color, lighten($primary-color, 15%));
-    color: white;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 600;
-    font-size: 16px;
-    flex-shrink: 0;
-}
-
-.banker-name {
-    font-weight: 600;
-    font-size: 14px;
-    color: $text-primary;
-}
-
-.banker-role {
-    font-size: 12px;
-    color: $text-secondary;
-}
-
-.col-score {
-    width: 80px;
-}
-
-.score-badge {
-    display: inline-block;
-    padding: 4px 10px;
+    gap: 3px;
+    padding: 2px 8px;
     border-radius: 20px;
-    font-size: 13px;
-    font-weight: 600;
-
-    &.badge-success {
-        background: rgba($success-color, 0.15);
-        color: darken($success-color, 10%);
-    }
-
-    &.badge-primary {
-        background: rgba($info-color, 0.15);
-        color: darken($info-color, 10%);
-    }
-
-    &.badge-warning {
-        background: rgba($warning-color, 0.2);
-        color: darken($warning-color, 20%);
-    }
-
-    &.badge-danger {
-        background: rgba($danger-color, 0.15);
-        color: darken($danger-color, 10%);
-    }
+    font-size: 0.68rem;
+    font-weight: 700;
+    background: #FEF3C7;
+    color: #92400E;
 }
 
-.col-movement {
-    width: 90px;
+.bfsi-rank-badge.bfsi-rank-top {
+    background: linear-gradient(135deg, #FDE68A, #FCD34D);
+    color: #78350F;
+    box-shadow: 0 2px 6px rgba(252, 211, 77, 0.3);
 }
 
-.movement-indicator {
+/* Trend arrow */
+.bfsi-trend {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    font-size: 0.72rem;
+    font-weight: 700;
+}
+
+.bfsi-trend.up {
+    color: var(--bfsi-success);
+}
+
+.bfsi-trend.down {
+    color: var(--bfsi-danger);
+}
+
+.bfsi-trend.flat {
+    color: var(--bfsi-text-muted);
+}
+
+/* Priority badge */
+.bfsi-priority-badge {
     display: inline-flex;
     align-items: center;
     gap: 4px;
-    font-size: 13px;
-    font-weight: 600;
-
-    i {
-        font-size: 11px;
-    }
-}
-
-.col-priority {
-    width: 100px;
-}
-
-.priority-badge {
-    display: inline-block;
-    padding: 4px 10px;
+    padding: 3px 10px;
     border-radius: 20px;
-    font-size: 12px;
-    font-weight: 600;
-    text-transform: capitalize;
-
-    &.badge-danger {
-        background: rgba($danger-color, 0.15);
-        color: $danger-color;
-    }
-
-    &.badge-warning {
-        background: rgba($warning-color, 0.2);
-        color: darken($warning-color, 15%);
-    }
-
-    &.badge-info {
-        background: rgba($info-color, 0.15);
-        color: $info-color;
-    }
-
-    &.badge-success {
-        background: rgba($success-color, 0.15);
-        color: $success-color;
-    }
-
-    &.badge-secondary {
-        background: rgba(#6c757d, 0.15);
-        color: #6c757d;
-    }
+    font-size: 0.65rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
-.col-sessions {
-    width: 80px;
-    text-align: center;
+.bfsi-priority-badge.critical {
+    background: var(--bfsi-danger-light);
+    color: var(--bfsi-danger);
 }
 
-.sessions-count {
-    font-size: 14px;
-    font-weight: 600;
-    color: $text-primary;
+.bfsi-priority-badge.high {
+    background: var(--bfsi-warning-light);
+    color: #B45309;
 }
 
-.col-actions {
-    width: 180px;
+.bfsi-priority-badge.medium {
+    background: var(--bfsi-info-light);
+    color: #1D4ED8;
 }
 
-.action-buttons {
+.bfsi-priority-badge.low {
+    background: var(--bfsi-success-light);
+    color: #047857;
+}
+
+/* Card action buttons */
+.bfsi-card-actions {
     display: flex;
     gap: 6px;
     flex-wrap: wrap;
+}
 
-    .btn {
-        width: 32px;
-        height: 32px;
-        padding: 0;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border-radius: 8px;
-        font-size: 12px;
+.bfsi-action-btn {
+    padding: 6px 12px;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
 
-        &:hover {
-            transform: scale(1.05);
-        }
+.bfsi-action-btn.coach {
+    background: rgba(124, 58, 237, 0.08);
+    color: var(--bfsi-primary);
+}
+
+.bfsi-action-btn.coach:hover {
+    background: var(--bfsi-primary);
+    color: #fff;
+    box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3);
+    transform: translateY(-1px);
+}
+
+.bfsi-action-btn.strategy {
+    background: rgba(59, 130, 246, 0.08);
+    color: var(--bfsi-info);
+}
+
+.bfsi-action-btn.strategy:hover {
+    background: var(--bfsi-info);
+    color: #fff;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+    transform: translateY(-1px);
+}
+
+.bfsi-action-btn.kpis {
+    background: rgba(16, 185, 129, 0.08);
+    color: var(--bfsi-success);
+}
+
+.bfsi-action-btn.kpis:hover {
+    background: var(--bfsi-success);
+    color: #fff;
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+    transform: translateY(-1px);
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   BANKER DETAIL MODAL
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+
+/* Overlay with frosted glass */
+.bfsi-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 10, 40, 0.6);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    z-index: 1050;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: bfsi-fade-in 0.2s ease;
+}
+
+@keyframes bfsi-fade-in {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
     }
 }
 
-// Empty State
-.empty-state {
-    text-align: center;
-    padding: 48px 24px;
-    color: $text-secondary;
+/* Modal card */
+.bfsi-modal {
+    background: var(--bfsi-card-bg);
+    border-radius: 20px;
+    width: 720px;
+    max-width: 95vw;
+    max-height: 88vh;
+    overflow-y: auto;
+    padding: 0;
+    box-shadow:
+        0 25px 80px rgba(0, 0, 0, 0.25),
+        0 0 0 1px rgba(124, 58, 237, 0.08);
+    animation: bfsi-slide-up 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
 
-    i {
-        font-size: 48px;
-        margin-bottom: 16px;
+@keyframes bfsi-slide-up {
+    from {
+        opacity: 0;
+        transform: translateY(40px) scale(0.97);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* Styled scrollbar for modal */
+.bfsi-modal::-webkit-scrollbar {
+    width: 6px;
+}
+
+.bfsi-modal::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.bfsi-modal::-webkit-scrollbar-thumb {
+    background: #d1d5db;
+    border-radius: 3px;
+}
+
+.bfsi-modal::-webkit-scrollbar-thumb:hover {
+    background: var(--bfsi-primary-light);
+}
+
+/* Modal header */
+.bfsi-modal-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 28px 28px 20px;
+    border-bottom: 1px solid #f0f0f5;
+    position: relative;
+}
+
+.bfsi-modal-avatar {
+    width: 64px;
+    height: 64px;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #fff;
+    flex-shrink: 0;
+    background: linear-gradient(135deg, var(--bfsi-primary), var(--bfsi-indigo));
+    box-shadow: 0 4px 16px rgba(124, 58, 237, 0.3);
+}
+
+.bfsi-modal-info {
+    flex: 1;
+}
+
+.bfsi-modal-name {
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: var(--bfsi-text-primary);
+    margin: 0 0 4px;
+}
+
+.bfsi-modal-role {
+    font-size: 0.82rem;
+    color: var(--bfsi-text-secondary);
+    font-weight: 500;
+}
+
+.bfsi-modal-close {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    width: 36px;
+    height: 36px;
+    border: none;
+    background: #f1f5f9;
+    border-radius: 10px;
+    color: #6b7280;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.12s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.bfsi-modal-close:hover {
+    background: #fee2e2;
+    color: #dc2626;
+}
+
+/* Modal score ring (larger) */
+.bfsi-modal-score-ring {
+    width: 80px;
+    height: 80px;
+    flex-shrink: 0;
+    position: relative;
+}
+
+.bfsi-modal-score-ring svg {
+    width: 80px;
+    height: 80px;
+    transform: rotate(-90deg);
+}
+
+.bfsi-modal-score-ring .bfsi-ring-bg {
+    fill: none;
+    stroke: #E5E7EB;
+    stroke-width: 4;
+}
+
+.bfsi-modal-score-ring .bfsi-ring-fill {
+    fill: none;
+    stroke-width: 4;
+    stroke-linecap: round;
+    transition: stroke-dashoffset 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.bfsi-modal-score-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 0.95rem;
+    font-weight: 800;
+    color: var(--bfsi-text-primary);
+    text-align: center;
+    line-height: 1.1;
+}
+
+.bfsi-modal-score-label {
+    font-size: 0.55rem;
+    color: var(--bfsi-text-muted);
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+/* Modal tabs */
+.bfsi-modal-tabs {
+    display: flex;
+    gap: 0;
+    padding: 0 28px;
+    border-bottom: 2px solid #f0f0f5;
+    background: #fafbff;
+}
+
+.bfsi-modal-tab {
+    padding: 12px 20px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--bfsi-text-secondary);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -2px;
+    transition: all 0.15s;
+    background: none;
+    border-top: none;
+    border-left: none;
+    border-right: none;
+}
+
+.bfsi-modal-tab:hover {
+    color: var(--bfsi-primary);
+}
+
+.bfsi-modal-tab.active {
+    color: var(--bfsi-primary);
+    border-bottom-color: var(--bfsi-primary);
+    font-weight: 700;
+}
+
+/* Modal body */
+.bfsi-modal-body {
+    padding: 24px 28px;
+}
+
+/* Modal quick stats */
+.bfsi-modal-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.bfsi-modal-stat {
+    text-align: center;
+    padding: 12px;
+    border: 1px solid #f0f0f5;
+    border-radius: 12px;
+    background: #fafbff;
+}
+
+.bfsi-modal-stat-value {
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: var(--bfsi-text-primary);
+}
+
+.bfsi-modal-stat-label {
+    font-size: 0.65rem;
+    color: var(--bfsi-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    font-weight: 600;
+}
+
+/* Modal chart area */
+.bfsi-modal-charts {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 20px;
+}
+
+.bfsi-modal-chart {
+    border: 1px solid #f0f0f5;
+    border-radius: 14px;
+    padding: 16px;
+    background: #fafbff;
+}
+
+.bfsi-modal-chart-title {
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: var(--bfsi-text-secondary);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.bfsi-modal-chart-title i {
+    color: var(--bfsi-primary);
+}
+
+.bfsi-modal-chart-wrapper {
+    position: relative;
+    height: 180px;
+}
+
+.bfsi-modal-chart-wrapper canvas {
+    max-height: 180px !important;
+}
+
+/* Modal action buttons */
+.bfsi-modal-actions {
+    display: flex;
+    gap: 10px;
+    padding: 20px 28px;
+    border-top: 1px solid #f0f0f5;
+    flex-wrap: wrap;
+}
+
+.bfsi-modal-btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 10px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.bfsi-modal-btn.primary {
+    background: var(--bfsi-primary);
+    color: #fff;
+    box-shadow: 0 4px 14px rgba(124, 58, 237, 0.3);
+}
+
+.bfsi-modal-btn.primary:hover {
+    background: var(--bfsi-primary-dark);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(124, 58, 237, 0.4);
+}
+
+.bfsi-modal-btn.secondary {
+    background: #f1f5f9;
+    color: var(--bfsi-text-secondary);
+}
+
+.bfsi-modal-btn.secondary:hover {
+    background: #e2e8f0;
+}
+
+.bfsi-modal-btn.ai {
+    background: linear-gradient(135deg, var(--bfsi-primary), var(--bfsi-indigo));
+    color: #fff;
+    box-shadow: 0 4px 14px rgba(79, 70, 229, 0.3);
+}
+
+.bfsi-modal-btn.ai:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(79, 70, 229, 0.4);
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   COACHING SESSIONS LIST (modal tab)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+.bfsi-sessions-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.bfsi-session-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    border-radius: 10px;
+    background: #fafbff;
+    border: 1px solid #f0f0f5;
+    transition: background 0.1s;
+}
+
+.bfsi-session-item:hover {
+    background: #f0f4ff;
+}
+
+.bfsi-session-date {
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--bfsi-text-secondary);
+    min-width: 80px;
+}
+
+.bfsi-session-type {
+    font-size: 0.68rem;
+    font-weight: 600;
+    padding: 3px 8px;
+    border-radius: 6px;
+    background: #E0E7FF;
+    color: var(--bfsi-indigo);
+}
+
+.bfsi-session-notes {
+    flex: 1;
+    font-size: 0.78rem;
+    color: var(--bfsi-text-secondary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   ACTION PLANS LIST (modal tab)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+.bfsi-plans-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.bfsi-plan-item {
+    padding: 14px;
+    border-radius: 12px;
+    background: #fafbff;
+    border: 1px solid #f0f0f5;
+}
+
+.bfsi-plan-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.bfsi-plan-title {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--bfsi-text-primary);
+}
+
+.bfsi-plan-status {
+    font-size: 0.65rem;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 6px;
+    text-transform: uppercase;
+}
+
+.bfsi-plan-status.in-progress {
+    background: var(--bfsi-info-light);
+    color: #1D4ED8;
+}
+
+.bfsi-plan-status.committed {
+    background: var(--bfsi-success-light);
+    color: #047857;
+}
+
+.bfsi-plan-progress {
+    height: 6px;
+    background: #E5E7EB;
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.bfsi-plan-progress-fill {
+    height: 100%;
+    border-radius: 3px;
+    background: linear-gradient(90deg, var(--bfsi-primary), var(--bfsi-indigo));
+    transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   QUICK ACTIONS BAR
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+.bfsi-quick-actions {
+    background: var(--bfsi-card-bg);
+    border-radius: var(--bfsi-card-radius);
+    padding: 20px 24px;
+    box-shadow: var(--bfsi-card-shadow);
+    border: 1px solid var(--bfsi-border);
+    margin: 0 28px 28px;
+}
+
+.bfsi-quick-actions h3 {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--bfsi-text-primary);
+    margin-bottom: 14px;
+}
+
+.bfsi-quick-actions h3 i {
+    color: #F59E0B;
+    margin-right: 8px;
+}
+
+.bfsi-qa-buttons {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.bfsi-qa-buttons .btn {
+    padding: 10px 18px;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 0.82rem;
+    transition: all 0.2s ease;
+}
+
+.bfsi-qa-buttons .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   DARK MODE
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+.o_dark .bfsi-manager-dashboard {
+    --bfsi-bg: linear-gradient(135deg, #0f0a1f 0%, #1a1625 100%);
+    --bfsi-card-bg: #1e1b2e;
+    --bfsi-card-shadow: 0 2px 12px rgba(0, 0, 0, 0.2);
+    --bfsi-card-hover-shadow: 0 8px 30px rgba(0, 0, 0, 0.35);
+    --bfsi-border: rgba(255, 255, 255, 0.06);
+    --bfsi-text-primary: #e2e8f0;
+    --bfsi-text-secondary: #94a3b8;
+    --bfsi-text-muted: #64748b;
+}
+
+.o_dark .bfsi-card-metrics,
+.o_dark .bfsi-card-metric,
+.o_dark .bfsi-modal-stat,
+.o_dark .bfsi-modal-chart,
+.o_dark .bfsi-session-item,
+.o_dark .bfsi-plan-item {
+    border-color: #2d2a3f;
+    background: #252240;
+}
+
+.o_dark .bfsi-modal-tabs {
+    background: #1e1b2e;
+    border-color: #2d2a3f;
+}
+
+.o_dark .bfsi-modal-header {
+    border-color: #2d2a3f;
+}
+
+.o_dark .bfsi-modal-actions {
+    border-color: #2d2a3f;
+}
+
+.o_dark .bfsi-chart-title {
+    border-color: #2d2a3f;
+}
+
+.o_dark .bfsi-filter-btn {
+    border-color: #3d3a4f;
+    color: #94a3b8;
+}
+
+.o_dark .bfsi-filter-btn.active {
+    border-color: var(--bfsi-primary);
+    background: var(--bfsi-primary);
+    color: #fff;
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   RESPONSIVE
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+@media (max-width: 768px) {
+    .bfsi-summary-cards {
+        grid-template-columns: 1fr 1fr;
+        padding: 0 16px;
+    }
+
+    .bfsi-team-grid {
+        grid-template-columns: 1fr;
+        padding: 0 16px 16px;
+    }
+
+    .bfsi-charts-section {
+        grid-template-columns: 1fr;
+        padding: 0 16px;
+    }
+
+    .bfsi-dashboard-header {
+        flex-direction: column;
+        text-align: center;
+        padding: 20px 16px;
+    }
+
+    .bfsi-dash-title {
+        font-size: 1.3rem;
+    }
+
+    .bfsi-modal {
+        width: 95vw;
+        max-height: 90vh;
+        border-radius: 16px;
+    }
+
+    .bfsi-modal-charts {
+        grid-template-columns: 1fr;
+    }
+
+    .bfsi-modal-stats {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .bfsi-quick-actions {
+        margin: 0 16px 16px;
+    }
+
+    .bfsi-section-header {
+        padding: 0 16px;
+    }
+
+    .bfsi-quick-filters {
+        padding: 0 16px;
+    }
+}
+
+@media (max-width: 480px) {
+    .bfsi-summary-cards {
+        grid-template-columns: 1fr;
+    }
+
+    .bfsi-modal-actions {
+        flex-direction: column;
+    }
+
+    .bfsi-modal-header {
+        flex-direction: column;
+        text-align: center;
+    }
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   ANIMATIONS
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+@keyframes bfsi-pulse {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
         opacity: 0.5;
     }
+}
 
-    p {
-        margin: 0;
-        font-size: 14px;
+.bfsi-loading-pulse {
+    animation: bfsi-pulse 1.5s infinite;
+}
+
+/* Score ring entrance animation */
+@keyframes bfsi-score-ring-appear {
+    from {
+        stroke-dashoffset: var(--ring-circumference);
+    }
+
+    to {
+        stroke-dashoffset: var(--ring-target-offset);
     }
 }
 
-// ============================================
-// FOOTER
-// ============================================
+/* Card stagger entrance */
+@keyframes bfsi-card-enter {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
 
-.bfsi-dashboard-footer {
-    display: flex;
-    justify-content: center;
-    gap: 12px;
-    margin-top: 24px;
-    padding-top: 24px;
-    border-top: 1px solid $border-color;
-
-    .btn {
-        border-radius: 8px;
+    to {
+        opacity: 1;
+        transform: translateY(0);
     }
 }
 
-// ============================================
-// RESPONSIVE ADJUSTMENTS
-// ============================================
-
-@media (max-width: $mobile-max) {
-    .bfsi-team-table {
-        // Card-like layout on mobile
-        min-width: auto;
-
-        thead {
-            display: none;
-        }
-
-        tbody {
-            tr {
-                display: flex;
-                flex-direction: column;
-                padding: 16px;
-                margin-bottom: 12px;
-                border-radius: 12px;
-                border: 1px solid $border-color;
-                background: white;
-
-                &.critical,
-                &.high-priority {
-                    border-left-width: 4px;
-                }
-            }
-
-            td {
-                padding: 4px 0;
-                border: none;
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-
-                &::before {
-                    content: attr(data-label);
-                    font-weight: 600;
-                    font-size: 12px;
-                    color: $text-secondary;
-                }
-
-                &.col-name {
-                    flex-direction: column;
-                    align-items: flex-start;
-                    margin-bottom: 8px;
-                    padding-bottom: 8px;
-                    border-bottom: 1px solid $border-color;
-
-                    &::before {
-                        display: none;
-                    }
-                }
-
-                &.col-actions {
-                    margin-top: 12px;
-                    padding-top: 12px;
-                    border-top: 1px solid $border-color;
-
-                    &::before {
-                        display: none;
-                    }
-
-                    .action-buttons {
-                        justify-content: center;
-                        width: 100%;
-
-                        .btn {
-                            flex: 1;
-                            max-width: 80px;
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    .bfsi-dashboard-footer {
-        flex-direction: column;
-
-        .btn {
-            width: 100%;
-        }
-    }
+.bfsi-team-card {
+    animation: bfsi-card-enter 0.4s cubic-bezier(0.4, 0, 0.2, 1) both;
 }
 
-// ============================================
-// DARK MODE
-// ============================================
+.bfsi-team-card:nth-child(1) {
+    animation-delay: 0s;
+}
 
-.o_dark_mode {
-    .bfsi-manager-dashboard {
-        background: #1a1a2e;
-    }
+.bfsi-team-card:nth-child(2) {
+    animation-delay: 0.05s;
+}
 
-    .summary-card,
-    .bfsi-quick-filters,
-    .bfsi-team-table-container {
-        background: #16213e;
-        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
-    }
+.bfsi-team-card:nth-child(3) {
+    animation-delay: 0.1s;
+}
 
-    .dashboard-title,
-    .card-value {
-        color: #e0e0e0;
-    }
+.bfsi-team-card:nth-child(4) {
+    animation-delay: 0.15s;
+}
 
-    .bfsi-team-table {
-        thead {
-            background: #1a1a2e;
+.bfsi-team-card:nth-child(5) {
+    animation-delay: 0.2s;
+}
 
-            th {
-                border-color: #2a2a4e;
-            }
-        }
+.bfsi-team-card:nth-child(6) {
+    animation-delay: 0.25s;
+}
 
-        tbody tr {
-            border-color: #2a2a4e;
+.bfsi-team-card:nth-child(7) {
+    animation-delay: 0.3s;
+}
 
-            &:hover {
-                background: #1a1a2e;
-            }
-        }
-    }
+.bfsi-team-card:nth-child(8) {
+    animation-delay: 0.35s;
+}
 
-    .banker-name,
-    .sessions-count {
-        color: #e0e0e0;
-    }
+/* Summary card stagger */
+.bfsi-summary-card {
+    animation: bfsi-card-enter 0.5s cubic-bezier(0.4, 0, 0.2, 1) both;
+}
 
-    .rank-badge {
-        background: #2a2a4e;
-        color: #e0e0e0;
-    }
+.bfsi-summary-card:nth-child(1) {
+    animation-delay: 0s;
+}
 
-    .filter-btn,
-    .sort-btn {
-        background: #16213e;
-        border-color: #2a2a4e;
-        color: #a0a0a0;
+.bfsi-summary-card:nth-child(2) {
+    animation-delay: 0.08s;
+}
 
-        &:hover {
-            border-color: $primary-color;
-        }
-    }
+.bfsi-summary-card:nth-child(3) {
+    animation-delay: 0.16s;
+}
+
+.bfsi-summary-card:nth-child(4) {
+    animation-delay: 0.24s;
 }

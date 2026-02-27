@@ -588,6 +588,29 @@ class HREmployee(models.Model):
         if active_plans:
             context['active_plans'] = [p.get_plan_summary_for_ai() for p in active_plans[:2]]
 
+        # If this employee is a branch manager, include team data
+        if self.branch_id and self.banker_type in ('branch_manager', 'regional_manager'):
+            team_members = self.env['hr.employee'].search([
+                ('branch_id', '=', self.branch_id.id),
+                ('id', '!=', self.id),
+                ('banker_type', 'not in', ['branch_manager', 'regional_manager']),
+            ], order='current_month_rank asc')
+            team_data = []
+            for member in team_members:
+                member_info = {
+                    'name': member.name,
+                    'role': member.job_id.name if member.job_id else member.banker_type or 'Banker',
+                    'rank': member.current_month_rank,
+                    'score': round(member.latest_overall_score, 1),
+                    'rank_movement': member.rank_movement,
+                    'coaching_priority': member.coaching_priority or 'low',
+                    'sessions_received': member.coaching_sessions_received,
+                    'active_plans': member.active_action_plan_count,
+                }
+                team_data.append(member_info)
+            context['team_members'] = team_data
+            context['is_manager'] = True
+
         return context
 
     def action_ai_coach_chat(self, message, context=None):
@@ -616,8 +639,14 @@ class HREmployee(models.Model):
         system_prompt = self._build_ai_coach_system_prompt(full_context, session_type, is_manager)
         user_prompt = self._build_ai_coach_user_prompt(message, full_context, session_type)
 
-        # Get AI provider
-        provider = self.env['hr.ai.provider.config'].get_active_provider()
+        # Get AI provider via factory
+        try:
+            from ..ai_providers.provider_factory import AIProviderFactory
+            provider = AIProviderFactory.get_provider(env=self.env)
+        except Exception as e:
+            _logger = logging.getLogger(__name__)
+            _logger.error("Failed to get AI provider: %s", str(e))
+            provider = None
 
         if not provider:
             return {
@@ -627,20 +656,30 @@ class HREmployee(models.Model):
             }
 
         try:
-            # Call AI provider
-            ai_response = provider.generate_contextual_coaching(
-                context=full_context,
-                message=message,
-                session_type=session_type,
-                is_manager=is_manager
-            )
+            # Build combined prompt
+            full_prompt = f"{system_prompt}\n\n{user_prompt}"
 
-            return {
-                'response': ai_response.get('response', 'I apologize, but I could not generate a response.'),
-                'suggested_actions': ai_response.get('suggested_actions', []),
-                'learning_content': ai_response.get('learning_content', None),
-                'follow_up_questions': ai_response.get('follow_up_questions', [])
-            }
+            # Call AI provider
+            ai_text = provider.generate_text(full_prompt, max_tokens=800, temperature=0.7)
+
+            # Try to parse as JSON for structured response
+            try:
+                import json
+                ai_response = json.loads(ai_text)
+                return {
+                    'response': ai_response.get('response', ai_text),
+                    'suggested_actions': ai_response.get('suggested_actions', []),
+                    'learning_content': ai_response.get('learning_content', None),
+                    'follow_up_questions': ai_response.get('follow_up_questions', [])
+                }
+            except (json.JSONDecodeError, TypeError):
+                # Plain text response
+                return {
+                    'response': ai_text,
+                    'suggested_actions': self._get_fallback_actions(session_type),
+                    'learning_content': None,
+                    'follow_up_questions': []
+                }
 
         except Exception as e:
             # Log error and return fallback response
@@ -705,7 +744,15 @@ Coaching Priority: {context.get('coaching_priority', 'N/A')}
                 prompt += f"- {plan}\n"
             prompt += "\n"
 
-        prompt += f"User Message: {message}"
+        # Include team data for managers
+        if context.get('team_members'):
+            prompt += "TEAM MEMBERS (you manage these bankers):\n"
+            for member in context['team_members']:
+                priority_flag = '🔴' if member['coaching_priority'] == 'critical' else '🟡' if member['coaching_priority'] == 'high' else '🟢'
+                prompt += f"  - {member['name']} ({member['role']}): Rank #{member['rank']}, Score {member['score']}%, Movement {member['rank_movement']:+d}, Priority: {priority_flag}{member['coaching_priority']}, Sessions: {member['sessions_received']}, Active Plans: {member['active_plans']}\n"
+            prompt += "\n"
+
+        prompt += f"User Message: {message}\n\nIMPORTANT: Answer using the ACTUAL data provided above. Reference specific names, scores, and metrics when answering questions about team or performance."
 
         return prompt
 

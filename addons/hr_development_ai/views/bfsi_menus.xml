@@ -119,4 +119,11 @@
         action="action_bfsi_kpi_target"
         sequence="1"/>
 
+    <menuitem
+        id="menu_bfsi_ai_provider_config"
+        name="AI Provider"
+        parent="menu_bfsi_configuration"
+        action="action_ai_provider_config"
+        sequence="5"/>
+
 </odoo>

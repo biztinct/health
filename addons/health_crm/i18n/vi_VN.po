@@ -3118,3 +3118,395 @@ msgstr "👤 Vòng tròn xanh:"
 #: code:addons/health_crm/static/src/xml/relationship_graph_widget.xml:0
 msgid "👥 Light blue circles:"
 msgstr "👥 Vòng tròn xanh nhạt:"
+
+#. module: health_crm
+msgid "Detailed Reason"
+msgstr "Lý do chi tiết"
+
+#. module: health_crm
+msgid "Sub-Category"
+msgstr "Danh mục phụ"
+
+#. module: health_crm
+msgid "Booking Summary"
+msgstr "Tóm tắt lịch hẹn"
+
+#. module: health_crm
+msgid "Home Address"
+msgstr "Địa chỉ nhà"
+
+#. module: health_crm
+msgid "Ward/Commune"
+msgstr "Phường/Xã"
+
+#. module: health_crm
+msgid "Tax Number"
+msgstr "Mã số thuế"
+
+#. module: health_crm
+msgid "Date"
+msgstr "Ngày"
+
+#. module: health_crm
+msgid "Other Contact Details"
+msgstr "Chi tiết liên hệ khác"
+
+#. module: health_crm
+msgid "Their Relationship to Client"
+msgstr "Mối quan hệ với khách hàng"
+
+#. module: health_crm
+msgid "Reported By (us)"
+msgstr "Được báo cáo bởi (chúng tôi)"
+
+#. module: health_crm
+msgid "Alternative Telephone"
+msgstr "Số điện thoại thay thế"
+
+#. module: health_crm
+msgid "Referrer Details"
+msgstr "Chi tiết người giới thiệu"
+
+#. module: health_crm
+msgid "Client ID"
+msgstr "Mã khách hàng"
+
+#. module: health_crm
+msgid "Tên"
+msgstr "Tên"
+
+#. module: health_crm
+msgid "Assign To"
+msgstr "Phân công cho"
+
+#. module: health_crm
+msgid "Finish &amp; Create Booking"
+msgstr "Hoàn tất & Tạo lịch hẹn"
+
+#. module: health_crm
+msgid "Close"
+msgstr "Đóng"
+
+#. module: health_crm
+msgid "Ngày liên hệ"
+msgstr "Ngày liên hệ"
+
+#. module: health_crm
+msgid "Apartment/Unit"
+msgstr "Căn hộ/Phòng"
+
+#. module: health_crm
+msgid "Date of Birth"
+msgstr "Ngày sinh"
+
+#. module: health_crm
+msgid "Instructions"
+msgstr "Hướng dẫn"
+
+#. module: health_crm
+msgid "Escalate Contact"
+msgstr "Chuyển cấp liên hệ"
+
+#. module: health_crm
+msgid "Building Name"
+msgstr "Tên tòa nhà"
+
+#. module: health_crm
+msgid "Commission Details"
+msgstr "Chi tiết hoa hồng"
+
+#. module: health_crm
+msgid "Cancellation Reason"
+msgstr "Lý do hủy"
+
+#. module: health_crm
+msgid "← TRANG CHỦ (Đánh dấu rác)"
+msgstr "← TRANG CHỦ (Đánh dấu rác)"
+
+#. module: health_crm
+msgid "Consultation from"
+msgstr "Tư vấn từ"
+
+#. module: health_crm
+msgid "Alley/Lane"
+msgstr "Ngõ/Hẻm"
+
+#. module: health_crm
+msgid "Recorded At"
+msgstr "Được ghi lại lúc"
+
+#. module: health_crm
+msgid "Sub-Alley"
+msgstr "Ngách"
+
+#. module: health_crm
+msgid "Specific Person (Optional)"
+msgstr "Người cụ thể (Tùy chọn)"
+
+#. module: health_crm
+msgid "Select Contact"
+msgstr "Chọn liên hệ"
+
+#. module: health_crm
+msgid "This is a New Client"
+msgstr "Đây là khách hàng mới"
+
+#. module: health_crm
+msgid "Phương thức liên hệ"
+msgstr "Phương thức liên hệ"
+
+#. module: health_crm
+msgid "Reschedule?"
+msgstr "Lên lịch lại?"
+
+#. module: health_crm
+msgid "Client wants to reschedule?"
+msgstr "Khách hàng muốn lên lịch lại?"
+
+#. module: health_crm
+msgid "Previous"
+msgstr "Trang trước"
+
+#. module: health_crm
+msgid "Edit Address"
+msgstr "Sửa địa chỉ"
+
+#. module: health_crm
+msgid "Service Fee (VND)"
+msgstr "Phí dịch vụ (VNĐ)"
+
+#. module: health_crm
+msgid "Follow-up Activities"
+msgstr "Hoạt động theo dõi"
+
+#. module: health_crm
+msgid "Person"
+msgstr "Người"
+
+#. module: health_crm
+msgid "Hủy"
+msgstr "Hủy"
+
+#. module: health_crm
+msgid "Escalation Details"
+msgstr "Chi tiết chuyển cấp"
+
+#. module: health_crm
+msgid "→ Select"
+msgstr "→ Chọn"
+
+#. module: health_crm
+msgid "Select"
+msgstr "Chọn"
+
+#. module: health_crm
+msgid "Address"
+msgstr "Địa chỉ"
+
+#. module: health_crm
+msgid "Service Location"
+msgstr "Vị trí dịch vụ"
+
+#. module: health_crm
+msgid "Thông tin liên hệ"
+msgstr "Thông tin liên hệ"
+
+#. module: health_crm
+msgid "Tỉnh thành phân vùng"
+msgstr "Tỉnh thành phân vùng"
+
+#. module: health_crm
+msgid "Duration (Hours)"
+msgstr "Thời lượng (Giờ)"
+
+#. module: health_crm
+msgid "Associated Client"
+msgstr "Khách hàng liên kết"
+
+#. module: health_crm
+msgid "Time"
+msgstr "Giờ"
+
+#. module: health_crm
+msgid "Full Name"
+msgstr "Họ và tên"
+
+#. module: health_crm
+msgid "Position/Role"
+msgstr "Vị trí/Vai trò"
+
+#. module: health_crm
+msgid "Next"
+msgstr "Trang sau"
+
+#. module: health_crm
+msgid "Date &amp; Time"
+msgstr "Ngày & Giờ"
+
+#. module: health_crm
+msgid "Confirm Escalation"
+msgstr "Xác nhận chuyển cấp"
+
+#. module: health_crm
+msgid "Create Booking"
+msgstr "Tạo lịch hẹn"
+
+#. module: health_crm
+msgid "Additional Notes"
+msgstr "Ghi chú bổ sung"
+
+#. module: health_crm
+msgid "House Number"
+msgstr "Số nhà"
+
+#. module: health_crm
+msgid "Name (on client side)"
+msgstr "Tên (Phía khách hàng)"
+
+#. module: health_crm
+msgid "Số điện thoại"
+msgstr "Số điện thoại"
+
+#. module: health_crm
+msgid "Contact ID"
+msgstr "Mã liên hệ"
+
+#. module: health_crm
+msgid "Sử dụng liên hệ hiện có"
+msgstr "Sử dụng liên hệ hiện có"
+
+#. module: health_crm
+msgid "Reason Category"
+msgstr "Danh mục lý do"
+
+#. module: health_crm
+msgid "Reschedule Preferences"
+msgstr "Sở thích lên lịch lại"
+
+#. module: health_crm
+msgid "Send Consultation Request"
+msgstr "Gửi yêu cầu tư vấn"
+
+#. module: health_crm
+msgid "Escalate To"
+msgstr "Chuyển cấp đến"
+
+#. module: health_crm
+msgid "District"
+msgstr "Quận/Huyện"
+
+#. module: health_crm
+msgid "Who Cancelled?"
+msgstr "Người hủy?"
+
+#. module: health_crm
+msgid "TIẾP THEO →"
+msgstr "TIẾP THEO →"
+
+#. module: health_crm
+msgid "Record Cancellation"
+msgstr "Ghi nhận hủy"
+
+#. module: health_crm
+msgid "Mã liên hệ"
+msgstr "Mã liên hệ"
+
+#. module: health_crm
+msgid "Service Notes"
+msgstr "Ghi chú dịch vụ"
+
+#. module: health_crm
+msgid "Gender"
+msgstr "Giới tính"
+
+#. module: health_crm
+msgid "Commission Due To"
+msgstr "Hoa hồng cho"
+
+#. module: health_crm
+msgid "Lead ID"
+msgstr "Mã tiềm năng"
+
+#. module: health_crm
+msgid "Reason"
+msgstr "Lý do"
+
+#. module: health_crm
+msgid "New Client Information"
+msgstr "Thông tin khách hàng mới"
+
+#. module: health_crm
+msgid "Reason for Escalation"
+msgstr "Lý do chuyển cấp"
+
+#. module: health_crm
+msgid "Loại"
+msgstr "Loại"
+
+#. module: health_crm
+msgid "City/Province"
+msgstr "Tỉnh/Thành phố"
+
+#. module: health_crm
+msgid "Back to Contact"
+msgstr "Quay lại liên hệ"
+
+#. module: health_crm
+msgid "Confirm Cancellation"
+msgstr ""
+
+#. module: health_crm
+msgid "🔍 Tìm kiếm"
+msgstr "🔍 Tìm kiếm"
+
+#. module: health_crm
+msgid "Last Staff Who Visited This Client"
+msgstr ""
+
+#. module: health_crm
+msgid "Service Type"
+msgstr ""
+
+#. module: health_crm
+msgid "Associated Leads"
+msgstr "Tiềm năng liên kết"
+
+#. module: health_crm
+msgid "Representative Details"
+msgstr "Chi tiết người đại diện"
+
+#. module: health_crm
+msgid "Duration"
+msgstr ""
+
+#. module: health_crm
+msgid "Commission %"
+msgstr "% Hoa hồng"
+
+#. module: health_crm
+msgid "Representative Address"
+msgstr "Địa chỉ người đại diện"
+
+#. module: health_crm
+msgid "Save Address"
+msgstr "Lưu địa chỉ"
+
+#. module: health_crm
+msgid "Continue as New Contact"
+msgstr "Tiếp tục tạo mới"
+
+#. module: health_crm
+msgid "Service"
+msgstr "Dịch vụ"
+
+#. module: health_crm
+msgid "Name"
+msgstr "Tên"
+
+#. module: health_crm
+msgid "Service Selection"
+msgstr "Chọn dịch vụ"
+
+#. module: health_crm
+msgid "Liên hệ mới"
+msgstr "Liên hệ mới"

@@ -1,0 +1,282 @@
+﻿English Label,Vietnamese Translation,Module Source
+Day,Ngày,health_pwa
+Booking,Đặt lịch,health_pwa
+Patients,Bệnh nhân,health_pwa
+Call,Gọi,health_pwa
+Profile,,health_pwa
+Today,Hôm nay,health_pwa
+Week,Tuần,health_pwa
+Month,Tháng,health_pwa
+Select date,Chọn ngày,health_pwa
+Loading bookings...,Đang tải lịch hẹn...,health_pwa
+Loading details...,Đang tải chi tiết...,health_pwa
+Close,Đóng,health_pwa
+Booking Details,Chi tiết đặt lịch,health_pwa
+Scheduled Visit,Lịch thăm khám,health_pwa
+Date & Time:,Ngày & Giờ:,health_pwa
+Services:,Dịch vụ:,health_pwa
+Package:,Gói:,health_pwa
+Contact Information,Liên hệ Thông tin,health_pwa
+Address:,Địa chỉ:,health_pwa
+Primary Contact:,Liên hệ chính:,health_pwa
+View Intake Summary,Xem tóm tắt tiếp nhận,health_pwa
+Cancel/Refuse Visit,Hủy/Từ chối lượt thăm,health_pwa
+Start Service,Bắt đầu Dịch vụ,health_pwa
+Clinical Notes,Lâm sàng Ghi chú,health_pwa
+Diagnosis,Chẩn đoán,health_pwa
+Type here...,Nhập tại đây...,health_pwa
+Referring Doctor,Bác sĩ giới thiệu,health_pwa
+Goal of Care,Mục tiêu chăm sóc,health_pwa
+Required Equipment,Bắt buộc Thiết bị,health_pwa
+Intake Notes,Ghi chú tiếp nhận,health_pwa
+Clinical Observations,Quan sát lâm sàng,health_pwa
+Enter clinical observations...,Nhập quan sát lâm sàng...,health_pwa
+Enter diagnosis...,Nhập chẩn đoán...,health_pwa
+Treatment Performed,Điều trị Perbiểu mẫued,health_pwa
+Describe treatment provided...,Describe Điều trị provided...,health_pwa
+Notes,Ghi chú,health_pwa
+Enter clinical notes...,Nhập ghi chú lâm sàng...,health_pwa
+Attach Photo,Đính kèm ảnh,health_pwa
+Take Photo,Chụp ảnh,health_pwa
+Verify Invoice,Xác minh hóa đơn,health_pwa
+Qty,SL,health_pwa
+Disc %,CK %,health_pwa
+Price,Giá,health_pwa
+Total,Tổng,health_pwa
+Discount Reason:,Lý do giảm giá:,health_pwa
+Required: Explain discount,Bắt buộc: Giải thích chiết khấu,health_pwa
+Subtotal,Thành tiền,health_pwa
+Tax,Thuế,health_pwa
+Verification Notes,Ghi chú xác minh,health_pwa
+Required: Explain the changes made to Qty or Discount...,Bắt buộc: Giải thích các thay đổi về Số lượng hoặc Chiết khấu...,health_pwa
+Add any general comments about this invoice...,Thêm bất kỳ ghi chú chung nào về hóa đơn này...,health_pwa
+Invoice verified successfully!,Xác minh hóa đơn thành công!,health_pwa
+Cancel,Hủy,health_pwa
+Save Quote,Lưu báo giá,health_pwa
+Payment,Thanh toán,health_pwa
+Complete Service - Payment Collection,Hoàn thành Dịch vụ - Thanh toán Collection,health_pwa
+Payment Timing,Thời điểm thanh toán,health_pwa
+Pay Now,Thanh toán ngay,health_pwa
+Pay Later,Pay Sau,health_pwa
+Payment Method,Phương thức thanh toán,health_pwa
+Cash,Tiền mặt,health_pwa
+Card,Thẻ,health_pwa
+Bank Transfer,Chuyển khoản ngân hàng,health_pwa
+Service Notes,Ghi chú dịch vụ,health_pwa
+Enter any additional service or payment notes...,Nhập thêm ghi chú dịch vụ hoặc thanh toán...,health_pwa
+Create Invoice Now,Tạo mới Hóa đơn Bây giờ,health_pwa
+Amount,Số tiền,health_pwa
+Now,Ngay,health_pwa
+Later,Để sau,health_pwa
+Not set,Chưa thiết lập,health_pwa
+Draft,Nháp,health_pwa
+Confirmed,Đã xác nhận,health_pwa
+Assigned,Phân cônged,health_pwa
+In Progress,Trong Progress,health_pwa
+Completed,Đã hoàn thành,health_pwa
+Cancelled,Đã hủy,health_pwa
+Unknown,Không xác định,health_pwa
+Other,Khác,health_base
+Extra Rights,,health_base
+Home Page,Trang chủ,health_flow
+Sales & CRM,Bán hàng & CRM,health_flow
+Contacts,Liên hệs,health_flow
+Log new contact / View contacts,Ghi liên hệ mới / Xem liên hệ,health_flow
+Follow-up Activities,Hoạt động theo dõi,health_flow
+Manage leads and activities,Quản lý liên hệ và hoạt động,health_flow
+All Contacts,Tất cả liên hệ,health_flow
+View all contacts by status,Xem tất cả liên hệ theo trạng thái,health_flow
+All Clients,Tất cả khách hàng,health_flow
+View all clients,Xem tất cả khách hàng,health_flow
+Bookings and Assignments,Lịch hẹn và phân công,health_flow
+Search,Tìm kiếm,health_flow
+Search bookings,Tìm kiếm lịch hẹn,health_flow
+Booking Calendar,Lịch đặt hẹn,health_flow
+Visual booking calendar,Lịch hẹn trực quan,health_flow
+All Bookings,Tất cả đặt lịch,health_flow
+All bookings (grouped by month),Tất cả lịch hẹn (nhóm theo tháng),health_flow
+Staff Workload,Khối lượng công việc nhân viên,health_flow
+Staff workload overview,Tổng quan khối lượng công việc nhân viên,health_flow
+Staff Assignment,Nhân viên Phân công,health_flow
+Assignment timeline view,Giao diện dòng thời gian phân công,health_flow
+Draft bookings,Lịch hẹn nháp,health_flow
+Assigned bookings,Lịch hẹn đã phân công,health_flow
+Scheduled,Đã lên lịch,health_flow
+Scheduled bookings,Lịch hẹn đã lên lịch,health_flow
+In progress bookings,Lịch hẹn đang thực hiện,health_flow
+Completed bookings,Lịch hẹn hoàn thành,health_flow
+Invoicing,Hóa đơn,health_flow
+AR Dashboard,AR Bảng điều khiển,health_flow
+Accounts receivable overview,Tổng quan công nợ phải thu,health_flow
+Payment Transactions,Thanh toán Transhành độngs,health_flow
+Payment history,Lịch sử thanh toán,health_flow
+Invoices,Hóa đơns,health_flow
+All invoices,Tất cả hóa đơn,health_flow
+Admin,Quản trị,health_flow
+Pricing Engines,Công cụ định giá,health_flow
+Configure pricing engines,Cấu hình công cụ định giá,health_flow
+Package Products,Gói Sản phẩms,health_flow
+Service packages,Gói dịch vụ,health_flow
+Pricing Rules,Quy tắc định giá,health_flow
+Define pricing rules,Xác định quy tắc định giá,health_flow
+Quick Edit Rules,Chỉnh sửa nhanh quy tắc,health_flow
+Quick edit pricing,Chỉnh sửa nhanh giá,health_flow
+Portable Equipment,Thiết bị di động,health_flow
+Track equipment,Theo dõi thiết bị,health_flow
+Healthcare Staff,Nhân viên y tế,health_flow
+Staff directory,Danh bạ nhân viên,health_flow
+Healthcare Facilities,Cơ sở y tế,health_flow
+Facilities management,Quản lý cơ sở,health_flow
+Catchment Provinces,Tỉnh phục vụ,health_flow
+Catchment provinces,Tỉnh thành phân vùng,health_flow
+Patient Categories,Phân loại bệnh nhân,health_flow
+Patient categories,Phân loại bệnh nhân,health_flow
+Service Types,Loại dịch vụ,health_flow
+Define services,Xác định dịch vụ,health_flow
+Symptoms,Triệu chứng,health_flow
+Configure symptoms,Cấu hình triệu chứng,health_flow
+Referral Sources,Nguồn giới thiệu,health_flow
+Referral sources,Nguồn giới thiệu,health_flow
+Insurance Providers,Nhà cung cấp bảo hiểm,health_flow
+Insurance providers,Nhà cung cấp bảo hiểm,health_flow
+Urgency Levels,Mức độ khẩn cấp,health_flow
+Urgency levels,Mức độ khẩn cấp,health_flow
+Client Info,Thông tin khách hàng,health_landing
+Lead details and contact,Chi tiết liên hệ và thông tin,health_landing
+Relations,Quan hệ,health_landing
+"Caregivers, payers, contacts","Người chăm sóc, người thanh toán, liên hệ",health_landing
+Source,Nguồn,health_landing
+Lead acquisition source,Nguồn tiếp nhận liên hệ,health_landing
+Internal Notes,Nội bộ Ghi chú,health_landing
+Notes and requirements,Ghi chú và yêu cầu,health_landing
+Map,Bản đồ,health_landing
+Address and location,Địa chỉ và vị trí,health_landing
+Initial Contact,Ban đầu Liên hệ,health_landing
+Lead,Tiềm năng,health_landing
+Lost Booking,Lịch hẹn đã mất,health_landing
+Spam Call,Cuộc gọi rác,health_landing
+Pending Callback,Chờ gọi lại,health_landing
+Pending Follow-up,Đang chờ Theo dõi,health_landing
+Service Booked,Dịch vụ Đã đặt,health_landing
+Interested,Quan tâm,health_landing
+Not Interested,Không quan tâm,health_landing
+Rejected,Từ chốied,health_landing
+No Follow-up Required,Không cần theo dõi,health_landing
+Leads,Tiềm năngs,health_landing
+Lead Information,Thông tin liên hệ,health_landing
+Lead Relationships,Mối quan hệ liên hệ,health_landing
+Lead Location,Vị trí liên hệ,health_landing
+Lead Source,Nguồn liên hệ,health_landing
+This contact has been marked as spam,Liên hệ này đã được đánh dấu là rác,health_landing
+Spam Marked,Đã đánh dấu rác,health_landing
+Failed to mark as spam,Không thể đánh dấu là rác,health_landing
+Patient Management,Bệnh nhân Quản lý,health_landing
+Manage patient records and information,Quản lý hồ sơ và thông tin bệnh nhân,health_landing
+Client,Khách hàng,health_landing
+View patient hub-and-spoke dashboard,Xem bảng điều khiển hub-and-spoke bệnh nhân,health_landing
+Scheduling & Staff,Lịch trình & Nhân viên,health_landing
+Staff scheduling and workload management,Quản lý lịch trình và khối lượng công việc nhân viên,health_landing
+Assignment Dashboard,Bảng điều khiển phân công,health_landing
+View staff assignments,Xem phân công nhân viên,health_landing
+Visual Scheduler,Bộ lập lịch trực quan,health_landing
+Visual scheduling interface,Giao diện lập lịch trực quan,health_landing
+Timeline View,Xem dòng thời gian,health_landing
+Timeline of assignments,Dòng thời gian phân công,health_landing
+Staff Availability,Khả dụng nhân viên,health_landing
+Manage staff availability,Quản lý khả dụng nhân viên,health_landing
+Monitor staff workload,Giám sát khối lượng công việc nhân viên,health_landing
+Healthcare Skills,Kỹ năng y tế,health_landing
+Manage staff skills,Quản lý kỹ năng nhân viên,health_landing
+Service Areas,Dịch vụ Diện tíchs,health_landing
+Configure service areas,Cấu hình khu vực dịch vụ,health_landing
+Manage healthcare staff,Quản lý nhân viên y tế,health_landing
+CRM,CRM,health_landing
+Customer relationship management,Quản lý quan hệ khách hàng,health_landing
+Manage potential customers,Quản lý khách hàng tiềm năng,health_landing
+CRM Contacts,CRM Liên hệs,health_landing
+Track customer interactions,Theo dõi tương tác khách hàng,health_landing
+Customers,Khách hàng,health_landing
+View all customers,Xem tất cả khách hàng,health_landing
+Healthcare Relationships,Y tế Mối quan hệs,health_landing
+Manage patient relationships,Quản lý mối quan hệ bệnh nhân,health_landing
+Field Service,Dịch vụ tại hiện trường,health_landing
+Mobile healthcare service management,Quản lý dịch vụ y tế di động,health_landing
+Field Service Orders,Đơn dịch vụ tại hiện trường,health_landing
+Manage service orders,Quản lý đơn dịch vụ,health_landing
+Communications,Truyền thông,health_landing
+Real-time team communications,Truyền thông nhóm thời gian thực,health_landing
+Track medical equipment,Theo dõi thiết bị y tế,health_landing
+Clinical Protocols,Quy trình lâm sàng,health_landing
+Clinical guidelines,Hướng dẫn lâm sàng,health_landing
+Field Service Teams,Đội ngũ dịch vụ tại hiện trường,health_landing
+Manage service teams,Quản lý đội ngũ dịch vụ,health_landing
+Service Packages,Dịch vụ Góis,health_landing
+Manage service packages and products,Quản lý gói dịch vụ và sản phẩm,health_landing
+Configure package products,Cấu hình sản phẩm gói,health_landing
+Patient Packages,Gói bệnh nhân,health_landing
+View patient subscriptions,Xem đăng ký bệnh nhân,health_landing
+Advanced Pricelist,Bảng giá nâng cao,health_landing
+Dynamic pricing rules and engines,Quy tắc và công cụ định giá linh hoạt,health_landing
+Manage pricing rules,Quản lý quy tắc định giá,health_landing
+Inline edit pricing rules,Chỉnh sửa nhanh quy tắc định giá,health_landing
+Billing & Invoicing,Thanh toán & Hóa đơn,health_landing
+Financial management and billing,Quản lý tài chính và thanh toán,health_landing
+Service Billing,Dịch vụ Thanh toán,health_landing
+Create and manage invoices,Tạo và quản lý hóa đơn,health_landing
+Overdue Patients,Bệnh nhân quá hạn,health_landing
+Track outstanding payments,Theo dõi thanh toán quá hạn,health_landing
+View payment history,Xem lịch sử thanh toán,health_landing
+Process Payments,Xử lý Thanh toán,health_landing
+Payment workflow,Quy trình thanh toán,health_landing
+Facilities,Cơ sở,health_landing
+Healthcare facility management,Quản lý cơ sở y tế,health_landing
+Manage facility locations,Quản lý vị trí cơ sở,health_landing
+Configuration,Cấu hình,health_landing
+System configuration and settings,Cấu hình và cài đặt hệ thống,health_landing
+Configure patient types,Cấu hình loại bệnh nhân,health_landing
+Define service types,Xác định loại dịch vụ,health_landing
+Medical Specialties,Chuyên khoa y tế,health_landing
+Manage specialties,Quản lý chuyên khoa,health_landing
+Symptom catalog,Danh mục triệu chứng,health_landing
+Track referral sources,Theo dõi nguồn giới thiệu,health_landing
+Insurance companies,Công ty bảo hiểm,health_landing
+Priority levels,Mức độ ưu tiên,health_landing
+Personal details and contact,,health_landing
+Packages,Góis,health_landing
+Active service packages,,health_landing
+Bookings,Đặt lịchs,health_landing
+Appointments and visits,,health_landing
+Financials,,health_landing
+Invoices and payments,,health_landing
+Client Information,Khách hàng Thông tin,health_landing
+Patient Relationships,Mối quan hệ bệnh nhân,health_landing
+Patient Location,Vị trí bệnh nhân,health_landing
+Patient Bookings,Lịch hẹn bệnh nhân,health_landing
+Patient Financials,Tài chính bệnh nhân,health_landing
+View service packages,Xem gói dịch vụ,health_landing
+Quote,Báo giá,health_landing
+Healthcare quote,Báo giá y tế,health_landing
+Confirm Booking,Xác nhận Đặt lịch,health_landing
+Confirm the booking,Xác nhận lịch hẹn,health_landing
+Equipment,Thiết bị,health_landing
+Required equipment,Thiết bị yêu cầu,health_landing
+Main booking hub,Trung tâm lịch hẹn chính,health_landing
+Assign staff to booking,Phân công nhân viên cho lịch hẹn,health_landing
+Start the service,Bắt đầu dịch vụ,health_landing
+Fill clinical notes,Điền ghi chú lâm sàng,health_landing
+Invoice,Hóa đơn,health_landing
+Create invoice,Tạo hóa đơn,health_landing
+Immediate payment,Thanh toán ngay,health_landing
+Defer payment,Thanh toán sau,health_landing
+Collect Cash,Thu tiền mặt,health_landing
+OM collect cash,Quản lý thu tiền mặt,health_landing
+Payment Received,Thanh toán Nhậnd,health_landing
+Payment received,Đã nhận thanh toán,health_landing
+Payment has already been received for this booking. No further payment actions are needed.,Đã nhận thanh toán cho lịch hẹn này. Không cần thực hiện thêm hành động thanh toán nào.,health_landing
+Payment Completed,Thanh toán hoàn tất,health_landing
+Please create an invoice before processing payment.,Vui lòng tạo hóa đơn trước khi xử lý thanh toán.,health_landing
+Invoice Required,Yêu cầu hóa đơn,health_landing
+Equipment Requirements,Thiết bị Yêu cầus,health_landing
+Payment Collection,Thu tiền thanh toán,health_landing
+Collect Cash from Nurse,Collect Tiền mặt Từ Y tá,health_landing
+No phone number available,Không có số điện thoại,health_voip24h

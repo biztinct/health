@@ -565,3 +565,55 @@ msgstr "Nhà cung cấp bảo hiểm"
 #. module: javascript
 msgid "Urgency levels"
 msgstr "Mức độ khẩn cấp"
+
+#. module: health_flow
+msgid "Booking Notifications"
+msgstr "Thông báo lịch hẹn"
+
+#. module: health_flow
+msgid "No new notifications"
+msgstr "Không có thông báo mới"
+
+#. module: health_flow
+msgid "Clients"
+msgstr "Khách hàng"
+
+#. module: health_flow
+msgid "Sales &amp; CRM"
+msgstr "Bán hàng &amp; CRM"
+
+#. module: health_flow
+msgid "Analytics"
+msgstr "Phân tích"
+
+#. module: health_flow
+msgid "Audit"
+msgstr "Kiểm tra"
+
+#. module: health_flow
+msgid "Booking Search"
+msgstr "Tìm kiếm lịch hẹn"
+
+#. module: health_flow
+msgid "Search by name, phone, or email..."
+msgstr "Tìm theo tên, số điện thoại, hoặc email..."
+
+#. module: health_flow
+msgid "Search by client name, phone, or booking code..."
+msgstr "Tìm theo tên khách hàng, số điện thoại, hoặc mã lịch hẹn..."
+
+#. module: health_flow
+msgid "Merge "
+msgstr "Gộp "
+
+#. module: health_flow
+msgid " contacts"
+msgstr " liên hệ"
+
+#. module: health_flow
+msgid "No CRM results found"
+msgstr "Không tìm thấy kết quả CRM"
+
+#. module: health_flow
+msgid "No bookings found"
+msgstr "Không tìm thấy lịch hẹn"
