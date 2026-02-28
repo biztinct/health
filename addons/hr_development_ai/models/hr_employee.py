@@ -259,6 +259,7 @@ class HREmployee(models.Model):
             'type': 'ir.actions.act_window',
             'res_model': 'hr.employee.skill',
             'view_mode': 'list,form',
+            'views': [[False, 'list'], [False, 'form']],
             'domain': [('employee_id', '=', self.id)],
             'context': {'default_employee_id': self.id}
         }
@@ -272,6 +273,7 @@ class HREmployee(models.Model):
                 'type': 'ir.actions.act_window',
                 'res_model': 'hr.development.plan',
                 'view_mode': 'form',
+                'views': [[False, 'form']],
                 'res_id': self.active_development_plan_id.id
             }
         else:
@@ -280,6 +282,7 @@ class HREmployee(models.Model):
                 'type': 'ir.actions.act_window',
                 'res_model': 'hr.development.plan',
                 'view_mode': 'form',
+                'views': [[False, 'form']],
                 'context': {'default_employee_id': self.id},
                 'target': 'new'
             }
@@ -328,6 +331,7 @@ class HREmployee(models.Model):
             'type': 'ir.actions.act_window',
             'res_model': 'hr.skill.gap',
             'view_mode': 'list,form',
+            'views': [[False, 'list'], [False, 'form']],
             'domain': [('employee_id', '=', self.id), ('job_id', '=', self.job_id.id)],
             'context': {
                 'search_default_major_gaps': 1  # Filter for major gaps
@@ -342,6 +346,7 @@ class HREmployee(models.Model):
             'type': 'ir.actions.act_window',
             'res_model': 'hr.coaching.nudge',
             'view_mode': 'list,form',
+            'views': [[False, 'list'], [False, 'form']],
             'domain': [('employee_id', '=', self.id)],
             'context': {'default_employee_id': self.id}
         }
@@ -495,6 +500,7 @@ class HREmployee(models.Model):
             'type': 'ir.actions.act_window',
             'res_model': 'bfsi.performance.kpi',
             'view_mode': 'list,form',
+            'views': [[False, 'list'], [False, 'form']],
             'domain': [('employee_id', '=', self.id)],
             'context': {'default_employee_id': self.id}
         }
@@ -507,6 +513,7 @@ class HREmployee(models.Model):
             'type': 'ir.actions.act_window',
             'res_model': 'bfsi.action.plan',
             'view_mode': 'list,form',
+            'views': [[False, 'list'], [False, 'form']],
             'domain': [('employee_id', '=', self.id)],
             'context': {'default_employee_id': self.id}
         }

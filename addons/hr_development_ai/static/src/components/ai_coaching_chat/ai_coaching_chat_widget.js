@@ -68,13 +68,38 @@ export class AiCoachingChatWidget extends Component {
         }
 
         try {
-            // Parse ai_transcript if it's JSON
+            // Try to parse as JSON first (legacy format)
             const parsed = JSON.parse(transcript);
             this.state.messages = parsed.messages || [];
         } catch (e) {
-            // If not JSON, treat as plain text message
+            // Parse formatted text back into messages
             if (transcript.trim()) {
-                this.state.messages = [{
+                const separator = '─────────────────────';
+                const blocks = transcript.split(separator).map(b => b.trim()).filter(Boolean);
+                const messages = [];
+                for (const block of blocks) {
+                    if (block.startsWith('👤 You:') || block.startsWith('👤 You:\n')) {
+                        messages.push({
+                            role: 'user',
+                            content: block.replace(/^👤 You:\n?/, '').trim(),
+                            timestamp: new Date().toISOString()
+                        });
+                    } else if (block.startsWith('🤖 AI Coach:') || block.startsWith('🤖 AI Coach:\n')) {
+                        messages.push({
+                            role: 'assistant',
+                            content: block.replace(/^🤖 AI Coach:\n?/, '').trim(),
+                            timestamp: new Date().toISOString()
+                        });
+                    } else {
+                        // Fallback - treat as assistant message
+                        messages.push({
+                            role: 'assistant',
+                            content: block,
+                            timestamp: new Date().toISOString()
+                        });
+                    }
+                }
+                this.state.messages = messages.length > 0 ? messages : [{
                     role: 'assistant',
                     content: transcript,
                     timestamp: new Date().toISOString()
@@ -171,18 +196,31 @@ export class AiCoachingChatWidget extends Component {
         }
 
         const fieldName = this.props.fieldName || 'ai_transcript';
-        const transcript = JSON.stringify({
-            messages: this.state.messages,
-            updated_at: new Date().toISOString()
-        });
+        const transcript = this.formatTranscript(this.state.messages);
 
         // Update the field value and persist
         await this.props.record.update({
             [fieldName]: transcript
         });
         if (this.props.record.save) {
-            await this.props.record.save({ reload: false });
+            await this.props.record.save({ reload: true });
         }
+    }
+
+    /**
+     * Format messages array into readable text
+     */
+    formatTranscript(messages) {
+        if (!messages || !messages.length) return '';
+        const lines = messages.map(msg => {
+            if (msg.role === 'user') {
+                return `👤 You:\n${msg.content}`;
+            } else if (msg.role === 'assistant') {
+                return `🤖 AI Coach:\n${msg.content}`;
+            }
+            return `${msg.role}:\n${msg.content}`;
+        });
+        return lines.join('\n\n─────────────────────\n\n');
     }
 
     /**

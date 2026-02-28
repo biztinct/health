@@ -157,8 +157,8 @@ class BFSICoachingStrategy(models.Model):
     generation_date = fields.Datetime(string='Generation Date')
     ai_confidence = fields.Float(
         string='AI Confidence',
-        digits=(3, 2),
-        help='AI confidence score for the strategy (0-1)'
+        digits=(5, 2),
+        help='AI confidence score for the strategy (0-100%)'
     )
 
     @api.depends('banker_id', 'kpi_snapshot_date')
@@ -273,19 +273,19 @@ Focus on:
             self.write({
                 'performance_summary': strategy_data.get('performance_summary', ''),
                 'root_cause_analysis': strategy_data.get('root_cause_analysis', ''),
-                'strengths': json.dumps(strategy_data.get('strengths', [])),
-                'improvement_areas': json.dumps(strategy_data.get('improvement_areas', [])),
-                'coaching_themes': json.dumps(strategy_data.get('coaching_themes', [])),
+                'strengths': self._format_list_field(strategy_data.get('strengths', [])),
+                'improvement_areas': self._format_list_field(strategy_data.get('improvement_areas', [])),
+                'coaching_themes': self._format_list_field(strategy_data.get('coaching_themes', [])),
                 'ai_strategy': strategy_data.get('strategy', ''),
                 'proposed_plan': strategy_data.get('proposed_plan', ''),
-                'session_guide': json.dumps(strategy_data.get('session_guide', {}), indent=2),
-                'opening_questions': json.dumps(strategy_data.get('opening_questions', [])),
-                'probing_questions': json.dumps(strategy_data.get('probing_questions', [])),
-                'closing_questions': json.dumps(strategy_data.get('closing_questions', [])),
-                'coaching_tips': json.dumps(strategy_data.get('coaching_tips', [])),
-                'roleplay_scenarios': json.dumps(strategy_data.get('roleplay_scenarios', [])),
-                'learning_recommendations': json.dumps(strategy_data.get('learning_recommendations', [])),
-                'ai_confidence': strategy_data.get('confidence', 0.75),
+                'session_guide': self._format_session_guide(strategy_data.get('session_guide', {})),
+                'opening_questions': self._format_list_field(strategy_data.get('opening_questions', []), numbered=True),
+                'probing_questions': self._format_list_field(strategy_data.get('probing_questions', []), numbered=True),
+                'closing_questions': self._format_list_field(strategy_data.get('closing_questions', []), numbered=True),
+                'coaching_tips': self._format_list_field(strategy_data.get('coaching_tips', []), prefix='💡'),
+                'roleplay_scenarios': self._format_scenarios(strategy_data.get('roleplay_scenarios', [])),
+                'learning_recommendations': self._format_learning(strategy_data.get('learning_recommendations', [])),
+                'ai_confidence': strategy_data.get('confidence', 0.75) * 100,
                 'ai_provider': 'openai',
                 'generation_date': fields.Datetime.now(),
                 'state': 'generated'
@@ -351,6 +351,80 @@ Focus on:
         """Mark strategy as completed after session"""
         self.ensure_one()
         self.state = 'completed'
+
+    @api.model
+    def _format_list_field(self, items, numbered=False, prefix='•'):
+        """Convert a list to clean readable text"""
+        if not items or not isinstance(items, list):
+            return str(items) if items else ''
+        lines = []
+        for i, item in enumerate(items, 1):
+            if isinstance(item, str):
+                if numbered:
+                    lines.append(f"{i}. {item}")
+                else:
+                    lines.append(f"{prefix} {item}")
+            else:
+                lines.append(f"{prefix} {str(item)}")
+        return '\n'.join(lines)
+
+    @api.model
+    def _format_session_guide(self, guide):
+        """Convert session guide dict to readable text"""
+        if not guide or not isinstance(guide, dict):
+            return str(guide) if guide else ''
+        sections = []
+        labels = {
+            'opening': '🟢 Opening',
+            'exploration': '🔍 Exploration',
+            'action_planning': '📋 Action Planning',
+            'closing': '🏁 Closing'
+        }
+        for key, label in labels.items():
+            if key in guide:
+                sections.append(f"{label}\n{guide[key]}")
+        if not sections:
+            for key, value in guide.items():
+                sections.append(f"▸ {key.replace('_', ' ').title()}\n{value}")
+        return '\n\n'.join(sections)
+
+    @api.model
+    def _format_scenarios(self, scenarios):
+        """Convert roleplay scenarios list to readable text"""
+        if not scenarios or not isinstance(scenarios, list):
+            return str(scenarios) if scenarios else ''
+        parts = []
+        for i, s in enumerate(scenarios, 1):
+            if isinstance(s, dict):
+                lines = [f"━━━ Scenario {i}: {s.get('title', 'Untitled')} ━━━"]
+                if s.get('situation'):
+                    lines.append(f"Situation: {s['situation']}")
+                if s.get('banker_personality'):
+                    lines.append(f"Banker personality: {s['banker_personality']}")
+                if s.get('coaching_goal'):
+                    lines.append(f"Goal: {s['coaching_goal']}")
+                parts.append('\n'.join(lines))
+            else:
+                parts.append(f"{i}. {str(s)}")
+        return '\n\n'.join(parts)
+
+    @api.model
+    def _format_learning(self, recs):
+        """Convert learning recommendations to readable text"""
+        if not recs or not isinstance(recs, list):
+            return str(recs) if recs else ''
+        parts = []
+        for i, r in enumerate(recs, 1):
+            if isinstance(r, dict):
+                lines = [f"📚 {r.get('topic', 'Topic ' + str(i))}"]
+                if r.get('why'):
+                    lines.append(f"   Why: {r['why']}")
+                if r.get('format'):
+                    lines.append(f"   Format: {r['format']}")
+                parts.append('\n'.join(lines))
+            else:
+                parts.append(f"📚 {str(r)}")
+        return '\n'.join(parts)
 
     def get_formatted_questions(self, question_type='opening'):
         """Get formatted questions for display"""
@@ -443,9 +517,47 @@ class BFSICoachingRoleplayWizard(models.TransientModel):
             scenarios = wizard.strategy_id.get_roleplay_scenarios() if wizard.strategy_id else []
             if scenarios and wizard.scenario_index < len(scenarios):
                 scenario = scenarios[wizard.scenario_index]
-                wizard.current_scenario = json.dumps(scenario, indent=2)
+                if isinstance(scenario, dict):
+                    lines = []
+                    if scenario.get('title'):
+                        lines.append(f"📋 {scenario['title']}")
+                    if scenario.get('situation'):
+                        lines.append(f"Situation: {scenario['situation']}")
+                    if scenario.get('banker_personality'):
+                        lines.append(f"Banker: {scenario['banker_personality']}")
+                    if scenario.get('coaching_goal'):
+                        lines.append(f"Goal: {scenario['coaching_goal']}")
+                    wizard.current_scenario = '\n'.join(lines)
+                else:
+                    wizard.current_scenario = str(scenario)
             else:
                 wizard.current_scenario = "No scenarios available"
+
+    @api.model
+    def _format_conversation(self, history_json):
+        """Format JSON conversation history into readable chat text"""
+        try:
+            history = json.loads(history_json) if isinstance(history_json, str) else history_json
+        except (json.JSONDecodeError, TypeError):
+            return history_json or ''
+
+        if not history or not isinstance(history, list):
+            return ''
+
+        lines = []
+        for msg in history:
+            if isinstance(msg, dict):
+                role = msg.get('role', 'unknown')
+                content = msg.get('content', '')
+                if role == 'manager':
+                    lines.append(f"👤 Manager:\n{content}")
+                elif role == 'banker':
+                    lines.append(f"🏦 Banker (AI):\n{content}")
+                else:
+                    lines.append(f"{role}:\n{content}")
+            else:
+                lines.append(str(msg))
+        return '\n\n─────────────────────\n\n'.join(lines)
 
     def action_send_message(self):
         """Send manager's message and get AI response as banker"""
@@ -462,8 +574,14 @@ class BFSICoachingRoleplayWizard(models.TransientModel):
             scenarios = self.strategy_id.get_roleplay_scenarios()
             scenario = scenarios[self.scenario_index] if scenarios else {}
 
-            # Parse conversation history
-            history = json.loads(self.conversation_history) if self.conversation_history else []
+            # Parse conversation history (stored as JSON internally)
+            try:
+                history = json.loads(self.conversation_history) if self.conversation_history else []
+                # If it's not a list (e.g. already formatted text), start fresh
+                if not isinstance(history, list):
+                    history = []
+            except (json.JSONDecodeError, TypeError):
+                history = []
 
             # Add manager's message to history
             history.append({
@@ -475,7 +593,7 @@ class BFSICoachingRoleplayWizard(models.TransientModel):
             prompt = f"""You are roleplaying as a banker named {self.banker_id.name} in a coaching practice session.
 
 SCENARIO:
-{json.dumps(scenario, indent=2)}
+{json.dumps(scenario, indent=2) if isinstance(scenario, dict) else str(scenario)}
 
 CONVERSATION SO FAR:
 {json.dumps(history, indent=2)}
@@ -510,10 +628,11 @@ Format your response as JSON:
                 'content': response_data.get('banker_response', '')
             })
 
+            # Store formatted text for display
             self.write({
                 'ai_response': response_data.get('banker_response', ''),
                 'feedback': response_data.get('feedback', ''),
-                'conversation_history': json.dumps(history),
+                'conversation_history': self._format_conversation(history),
                 'manager_message': ''  # Clear input
             })
 
@@ -549,8 +668,9 @@ Format your response as JSON:
         }
 
     def action_save_practice(self):
-        """Save the practice session to strategy"""
+        """Save the practice session to strategy as formatted text"""
         self.ensure_one()
+        # Save already-formatted conversation to strategy
         self.strategy_id.roleplay_conversation = self.conversation_history
 
         return {

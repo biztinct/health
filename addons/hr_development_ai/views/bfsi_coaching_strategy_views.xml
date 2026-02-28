@@ -44,24 +44,22 @@
                         <group string="Target Banker">
                             <field name="banker_id" widget="many2one_avatar_employee"/>
                             <field name="branch_id"/>
-                            <field name="performance_kpi_id"/>
+                            <field name="performance_kpi_id" options="{'no_open': True}"/>
                         </group>
                         <group string="Strategy Info">
                             <field name="manager_id" widget="many2one_avatar_employee"/>
                             <field name="kpi_snapshot_date"/>
                             <field name="ai_provider"/>
-                            <field name="ai_confidence" widget="progressbar"/>
+                            <field name="ai_confidence" widget="percentpie"/>
                             <field name="generation_date"/>
                         </group>
                     </group>
                     <notebook>
                         <page string="Performance Analysis" name="analysis">
-                            <group string="Performance Summary">
-                                <field name="performance_summary" nolabel="1" widget="html"/>
-                            </group>
-                            <group string="Root Cause Analysis">
-                                <field name="root_cause_analysis" nolabel="1" widget="html"/>
-                            </group>
+                            <h3>Performance Summary</h3>
+                            <field name="performance_summary" nolabel="1" widget="html"/>
+                            <h3>Root Cause Analysis</h3>
+                            <field name="root_cause_analysis" nolabel="1" widget="html"/>
                             <group>
                                 <group string="Identified Strengths">
                                     <field name="strengths" nolabel="1" widget="text"/>
@@ -72,20 +70,16 @@
                             </group>
                         </page>
                         <page string="Coaching Strategy" name="strategy">
-                            <group string="Coaching Themes">
-                                <field name="coaching_themes" nolabel="1"/>
-                            </group>
-                            <group string="AI Coaching Strategy">
-                                <field name="ai_strategy" nolabel="1" widget="html"/>
-                            </group>
-                            <group string="Proposed Coaching Plan">
-                                <field name="proposed_plan" nolabel="1" widget="html"/>
-                            </group>
+                            <h3>Coaching Themes</h3>
+                            <field name="coaching_themes" nolabel="1"/>
+                            <h3>AI Coaching Strategy</h3>
+                            <field name="ai_strategy" nolabel="1" widget="html"/>
+                            <h3>Proposed Coaching Plan</h3>
+                            <field name="proposed_plan" nolabel="1" widget="html"/>
                         </page>
                         <page string="Session Guide" name="session_guide">
-                            <group string="Step-by-Step Session Guide">
-                                <field name="session_guide" nolabel="1"/>
-                            </group>
+                            <h3>Step-by-Step Session Guide</h3>
+                            <field name="session_guide" nolabel="1"/>
                             <group>
                                 <group string="Opening Questions">
                                     <field name="opening_questions" nolabel="1"/>
@@ -104,12 +98,12 @@
                             </group>
                         </page>
                         <page string="Roleplay Scenarios" name="roleplay">
-                            <group string="Practice Scenarios">
-                                <field name="roleplay_scenarios" nolabel="1"/>
-                            </group>
-                            <group string="Practice Conversation History" invisible="not roleplay_conversation">
+                            <h3>Practice Scenarios</h3>
+                            <field name="roleplay_scenarios" nolabel="1"/>
+                            <div invisible="not roleplay_conversation">
+                                <h3>Practice Conversation History</h3>
                                 <field name="roleplay_conversation" nolabel="1" readonly="1"/>
-                            </group>
+                            </div>
                         </page>
                         <page string="Learning Recommendations" name="learning">
                             <field name="learning_recommendations" nolabel="1"/>

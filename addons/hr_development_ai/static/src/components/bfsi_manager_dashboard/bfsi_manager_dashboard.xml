@@ -61,7 +61,7 @@
 
                         <div class="bfsi-summary-cards">
                             <!-- Needs Coaching -->
-                            <div class="bfsi-summary-card bfsi-needs-coaching" t-on-click="() => filterByPriority('critical')">
+                            <div class="bfsi-summary-card bfsi-needs-coaching" t-on-click="filterByCritical">
                                 <div class="bfsi-kpi-top">
                                     <div>
                                         <div class="bfsi-kpi-heading">Needs Coaching</div>
@@ -75,7 +75,7 @@
                             </div>
 
                             <!-- Team Score -->
-                            <div class="bfsi-summary-card bfsi-avg-score">
+                            <div class="bfsi-summary-card bfsi-avg-score" t-on-click="viewAllKPIs">
                                 <div class="bfsi-kpi-top">
                                     <div>
                                         <div class="bfsi-kpi-heading">Team Score</div>
@@ -112,7 +112,7 @@
                             </div>
 
                             <!-- AI Insights -->
-                            <div class="bfsi-summary-card action-plans">
+                            <div class="bfsi-summary-card action-plans" t-on-click="viewAllStrategies">
                                 <div class="bfsi-kpi-top">
                                     <div>
                                         <div class="bfsi-kpi-heading">AI Insights</div>
@@ -204,76 +204,6 @@
                             </div>
                         </div>
 
-                    </div>
-
-                    <!-- RIGHT COLUMN: AI Coach Sidebar -->
-                    <div class="bfsi-ai-sidebar">
-                        <div class="bfsi-ai-sidebar-card">
-                            <!-- AI Coach Header -->
-                            <div class="bfsi-ai-header">
-                                <div class="bfsi-ai-title">AI Coach</div>
-                                <div class="bfsi-ai-status">
-                                    <span class="bfsi-ai-dot"></span> Online
-                                </div>
-                            </div>
-
-                            <!-- AI Insights List -->
-                            <div class="bfsi-ai-insights">
-                                <t t-foreach="filteredTeam.slice(0, 3)" t-as="m" t-key="m.id">
-                                    <div class="bfsi-ai-insight">
-                                        <div class="bfsi-ai-insight-icon">
-                                            <i class="fa fa-lightbulb-o"></i>
-                                        </div>
-                                        <div class="bfsi-ai-insight-body">
-                                            <div class="bfsi-ai-insight-text">
-                                                <strong>AI Insight:</strong> Team score for
-                                                <t t-esc="m.name"/> is <t t-esc="Math.round(m.latest_overall_score || 0)"/>%.
-                                            </div>
-                                            <div class="bfsi-ai-insight-rec">
-                                                <strong>Recommendation:</strong>
-                                                <t t-if="(m.latest_overall_score || 0) >= 75">
-                                                    Offer recognition during the next check-in.
-                                                </t>
-                                                <t t-elif="(m.latest_overall_score || 0) >= 50">
-                                                    Schedule a coaching session to improve key metrics.
-                                                </t>
-                                                <t t-else="">
-                                                    Urgent: create an action plan for improvement.
-                                                </t>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </t>
-                                <div t-if="filteredTeam.length === 0" class="bfsi-ai-insight" style="text-align:center; color:#9CA3AF;">
-                                    No insights available yet.
-                                </div>
-                            </div>
-
-                            <!-- Chat Input -->
-                            <div class="bfsi-ai-chat-input">
-                                <input type="text" placeholder="Ask AI Coach..." class="bfsi-ai-input"/>
-                                <button class="bfsi-ai-send">
-                                    <i class="fa fa-paper-plane"></i>
-                                </button>
-                            </div>
-                        </div>
-
-                        <!-- Quick Actions -->
-                        <div class="bfsi-ai-sidebar-card" style="margin-top:16px;">
-                            <div class="bfsi-ai-header">
-                                <div class="bfsi-ai-title">Quick Actions</div>
-                            </div>
-                            <div class="bfsi-qa-grid">
-                                <button class="bfsi-qa-btn" t-on-click="viewAllStrategies">
-                                    <i class="fa fa-lightbulb-o"></i>
-                                    <span>All Strategies</span>
-                                </button>
-                                <button class="bfsi-qa-btn" t-on-click="viewAllSessions">
-                                    <i class="fa fa-comments"></i>
-                                    <span>All Sessions</span>
-                                </button>
-                            </div>
-                        </div>
                     </div>
 
                 </div>

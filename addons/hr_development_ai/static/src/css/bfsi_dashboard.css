@@ -24,9 +24,9 @@
     --bfsi-info-light: #DBEAFE;
     --bfsi-bg: linear-gradient(135deg, #f0f4ff 0%, #fafbff 50%, #f5f0ff 100%);
     --bfsi-card-bg: #ffffff;
-    --bfsi-card-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
-    --bfsi-card-hover-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
-    --bfsi-card-radius: 16px;
+    --bfsi-card-shadow: 0 2px 8px rgba(0, 0, 0, 0.08), 0 1px 3px rgba(0, 0, 0, 0.04);
+    --bfsi-card-hover-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+    --bfsi-card-radius: 14px;
     --bfsi-text-primary: #1e1b4b;
     --bfsi-text-secondary: #6B7280;
     --bfsi-text-muted: #9CA3AF;
@@ -46,6 +46,41 @@
 .bfsi-manager-dashboard .o_content {
     background: transparent !important;
 }
+
+/* ── Clean single-color progress bars ── */
+/* Override Odoo's dual-colored progressbar to use a single clean color */
+.o_progressbar .o_progressbar_complete,
+.o_field_progressbar .o_progressbar .o_progressbar_complete {
+    background: linear-gradient(90deg, #4F46E5, #6366F1) !important;
+    border-radius: 20px !important;
+}
+
+.o_progressbar .o_progressbar_value {
+    color: #fff !important;
+    font-weight: 600 !important;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2) !important;
+    font-size: 0.75rem !important;
+    background: transparent !important;
+    min-width: 34px !important;
+}
+
+.o_progressbar {
+    background: #E5E7EB !important;
+    border-radius: 20px !important;
+    height: 22px !important;
+    overflow: hidden !important;
+}
+
+/* List view progress bars - slimmer */
+.o_list_renderer .o_progressbar {
+    height: 18px !important;
+}
+
+.o_list_renderer .o_progressbar .o_progressbar_value {
+    font-size: 0.7rem !important;
+}
+
+
 
 /* ── Loading State ── */
 .bfsi-dashboard-loading {
@@ -71,9 +106,9 @@
 .bfsi-dashboard-header {
     background: linear-gradient(135deg, var(--bfsi-header-start) 0%, var(--bfsi-header-end) 60%, #4338ca 100%);
     color: #fff;
-    padding: 24px 32px;
-    border-radius: 0 0 20px 20px;
-    margin: 0 0 24px 0;
+    padding: 12px 24px;
+    border-radius: 0 0 16px 16px;
+    margin: 0 0 16px 0;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -115,10 +150,10 @@
 
 .bfsi-manager-dashboard .bfsi-dash-title {
     color: #fff !important;
-    font-size: 1.6rem;
-    font-weight: 800;
-    margin: 0 0 4px 0;
-    letter-spacing: -0.3px;
+    font-size: 1rem;
+    font-weight: 700;
+    margin: 0;
+    letter-spacing: -0.2px;
 }
 
 .bfsi-manager-dashboard .bfsi-dash-title i {
@@ -164,16 +199,16 @@
    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
 .bfsi-summary-cards {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 16px;
-    padding: 0 28px;
-    margin-bottom: 24px;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    padding: 0 !important;
+    margin-bottom: 14px;
 }
 
 .bfsi-manager-dashboard .bfsi-summary-card {
     background: var(--bfsi-card-bg);
     border-radius: var(--bfsi-card-radius);
-    padding: 20px;
+    padding: 14px 16px;
     display: flex;
     align-items: flex-start;
     gap: 14px;
@@ -203,13 +238,13 @@
 }
 
 .bfsi-manager-dashboard .bfsi-card-icon {
-    width: 48px;
-    height: 48px;
-    border-radius: 12px;
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.3rem;
+    font-size: 1rem;
     flex-shrink: 0;
 }
 
@@ -255,9 +290,9 @@
 }
 
 .bfsi-manager-dashboard .bfsi-card-value {
-    font-size: 1.8rem;
+    font-size: 1.5rem;
     font-weight: 800;
-    line-height: 1;
+    line-height: 1.1;
     color: var(--bfsi-text-primary);
 }
 
@@ -389,15 +424,15 @@
    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
 .bfsi-team-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-    gap: 16px;
-    padding: 0 28px 28px;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    padding: 0;
 }
 
 .bfsi-team-card {
     background: var(--bfsi-card-bg);
     border-radius: var(--bfsi-card-radius);
-    padding: 20px;
+    padding: 10px 12px;
     box-shadow: var(--bfsi-card-shadow);
     border: 1px solid var(--bfsi-border);
     border-left: 4px solid transparent;
@@ -460,24 +495,24 @@
 /* Card top row: avatar + info + score ring */
 .bfsi-card-top {
     display: flex;
-    align-items: flex-start;
-    gap: 14px;
-    margin-bottom: 14px;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 4px;
 }
 
 .bfsi-avatar {
-    width: 48px;
-    height: 48px;
-    border-radius: 14px;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.1rem;
+    font-size: 0.85rem;
     font-weight: 700;
     color: #fff;
     flex-shrink: 0;
     background: linear-gradient(135deg, var(--bfsi-primary), var(--bfsi-indigo));
-    box-shadow: 0 4px 12px rgba(124, 58, 237, 0.25);
+    box-shadow: 0 2px 8px rgba(124, 58, 237, 0.2);
 }
 
 .bfsi-card-info {
@@ -486,7 +521,7 @@
 }
 
 .bfsi-card-name {
-    font-size: 0.95rem;
+    font-size: 0.8rem;
     font-weight: 700;
     color: var(--bfsi-text-primary);
     white-space: nowrap;
@@ -495,7 +530,7 @@
 }
 
 .bfsi-card-role {
-    font-size: 0.72rem;
+    font-size: 0.65rem;
     color: var(--bfsi-text-muted);
     font-weight: 500;
 }
@@ -665,16 +700,16 @@
 }
 
 .bfsi-action-btn {
-    padding: 6px 12px;
+    padding: 4px 10px;
     border: none;
-    border-radius: 8px;
-    font-size: 0.72rem;
+    border-radius: 6px;
+    font-size: 0.65rem;
     font-weight: 600;
     cursor: pointer;
     transition: all 0.15s;
     display: flex;
     align-items: center;
-    gap: 4px;
+    gap: 3px;
 }
 
 .bfsi-action-btn.coach {
@@ -1217,14 +1252,14 @@
 
 /* Header Logo Circle */
 .bfsi-header-logo {
-    width: 42px;
-    height: 42px;
+    width: 32px;
+    height: 32px;
     border-radius: 50%;
     background: rgba(255, 255, 255, 0.2);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 0.85rem;
+    font-size: 0.7rem;
     font-weight: 800;
     color: #fff;
     border: 2px solid rgba(255, 255, 255, 0.3);
@@ -1237,14 +1272,14 @@
     align-items: center;
     gap: 10px;
     background: rgba(255, 255, 255, 0.1);
-    padding: 8px 16px;
-    border-radius: 12px;
+    padding: 6px 12px;
+    border-radius: 10px;
     border: 1px solid rgba(255, 255, 255, 0.15);
 }
 
 .bfsi-branch-avatar {
-    width: 36px;
-    height: 36px;
+    width: 28px;
+    height: 28px;
     border-radius: 50%;
     background: rgba(255, 255, 255, 0.15);
     display: flex;
@@ -1290,10 +1325,8 @@
 
 /* ── 2-Column Layout ── */
 .bfsi-layout-wrapper {
-    display: grid;
-    grid-template-columns: 1fr 320px;
-    gap: 24px;
-    padding: 0 24px 24px;
+    display: block;
+    padding: 0 20px 20px;
     align-items: start;
 }
 
@@ -1303,10 +1336,10 @@
 
 /* KPI Section Title */
 .bfsi-kpi-title {
-    font-size: 1rem;
-    font-weight: 800;
+    font-size: 0.85rem;
+    font-weight: 700;
     color: var(--bfsi-text-primary);
-    margin-bottom: 12px;
+    margin-bottom: 8px;
     letter-spacing: -0.2px;
 }
 
@@ -1318,16 +1351,16 @@
 }
 
 .bfsi-kpi-heading {
-    font-size: 0.72rem;
+    font-size: 0.65rem;
     font-weight: 600;
     color: var(--bfsi-text-secondary);
-    margin-bottom: 4px;
+    margin-bottom: 2px;
 }
 
 .bfsi-kpi-subtitle {
-    font-size: 0.68rem;
+    font-size: 0.58rem;
     color: var(--bfsi-text-muted);
-    margin-top: 8px;
+    margin-top: 6px;
     font-weight: 500;
 }
 
@@ -1373,14 +1406,14 @@
 /* ── Large Centered Score Ring ── */
 .bfsi-score-ring-large {
     position: relative;
-    width: 110px;
-    height: 110px;
-    margin: 8px auto 8px;
+    width: 70px;
+    height: 70px;
+    margin: 2px auto 2px;
 }
 
 .bfsi-score-ring-large svg {
-    width: 110px;
-    height: 110px;
+    width: 70px;
+    height: 70px;
     transform: rotate(-90deg);
 }
 
@@ -1400,8 +1433,8 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    font-size: 1.4rem;
-    font-weight: 900;
+    font-size: 0.92rem;
+    font-weight: 800;
     color: var(--bfsi-text-primary);
 }
 
@@ -1436,19 +1469,11 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 10px;
-    margin-bottom: 12px;
+    gap: 8px;
+    margin-bottom: 6px;
 }
 
-/* Update team grid to 2 columns */
-.bfsi-team-grid {
-    grid-template-columns: repeat(2, 1fr) !important;
-}
 
-/* Update summary cards padding */
-.bfsi-summary-cards {
-    padding: 0 !important;
-}
 
 /* ── AI Coach Sidebar ── */
 .bfsi-ai-sidebar {

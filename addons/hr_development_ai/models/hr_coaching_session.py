@@ -393,14 +393,14 @@ Response:"""
         user_message = self.ai_chat_input.strip()
 
         try:
-            # Parse existing transcript as JSON
+            # Parse existing transcript - handle both JSON and formatted text
             messages = []
             if self.ai_transcript:
                 try:
                     transcript_data = json.loads(self.ai_transcript)
                     messages = transcript_data.get('messages', [])
                 except (json.JSONDecodeError, ValueError):
-                    # If existing data is not JSON, start fresh
+                    # If existing data is formatted text, start fresh for internal tracking
                     pass
 
             # Add user's message
@@ -420,25 +420,22 @@ Response:"""
                 'timestamp': fields.Datetime.now().isoformat()
             })
 
-            # Save updated transcript as JSON
-            self.ai_transcript = json.dumps({
-                'messages': messages,
-                'updated_at': fields.Datetime.now().isoformat()
-            }, indent=2)
+            # Save as formatted readable text
+            self.ai_transcript = self._format_chat_transcript(messages)
 
             # Clear the input field
             self.ai_chat_input = ''
 
-            # Return action to reload the form and show notification
+            # Return action to reload the dialog form
             return {
-                'type': 'ir.actions.client',
-                'tag': 'display_notification',
-                'params': {
-                    'title': _('AI Response Received'),
-                    'message': _('The AI coach has responded to your message.'),
-                    'type': 'success',
-                    'sticky': False,
-                }
+                'type': 'ir.actions.act_window',
+                'name': _('AI Coaching Chat'),
+                'res_model': 'hr.coaching.session',
+                'res_id': self.id,
+                'view_mode': 'form',
+                'views': [[self.env.ref('hr_development_ai.view_coaching_session_ai_chat_dialog').id, 'form']],
+                'target': 'new',
+                'context': {'dialog_size': 'large'}
             }
 
         except Exception as e:
@@ -450,6 +447,22 @@ Response:"""
                 'Failed to send message to AI coach. Please try again.\n\n'
                 'Error: %s'
             ) % str(e))
+
+    def _format_chat_transcript(self, messages):
+        """Format chat messages list into readable text"""
+        if not messages:
+            return ''
+        lines = []
+        for msg in messages:
+            role = msg.get('role', 'unknown')
+            content = msg.get('content', '')
+            if role == 'user':
+                lines.append(f"👤 You:\n{content}")
+            elif role == 'assistant':
+                lines.append(f"🤖 AI Coach:\n{content}")
+            else:
+                lines.append(f"{role}:\n{content}")
+        return '\n\n─────────────────────\n\n'.join(lines)
 
     # ===================
     # BFSI Methods

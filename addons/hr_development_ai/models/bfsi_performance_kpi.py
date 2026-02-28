@@ -11,6 +11,23 @@ class BFSIPerformanceKPI(models.Model):
     _description = 'BFSI Performance KPI'
     _inherit = ['mail.thread']
     _order = 'period_date desc, employee_id'
+    _rec_name = 'display_name'
+
+    name = fields.Char(
+        string='Name',
+        compute='_compute_name',
+        store=True
+    )
+
+    @api.depends('employee_id', 'period_date')
+    def _compute_name(self):
+        for rec in self:
+            if rec.employee_id and rec.period_date:
+                rec.name = f"{rec.employee_id.name} - {rec.period_date.strftime('%b %d')}"
+            elif rec.employee_id:
+                rec.name = rec.employee_id.name
+            else:
+                rec.name = f"KPI #{rec.id or 'New'}"
 
     employee_id = fields.Many2one(
         'hr.employee',
@@ -490,7 +507,10 @@ Provide analysis in the following JSON format:
 }}
 """
             response = ai_provider.generate_text(prompt, max_tokens=800, temperature=0.5)
-            self.ai_analysis = response
+
+            # Parse and format the response
+            formatted = self._format_ai_analysis(response)
+            self.ai_analysis = formatted
 
             return {
                 'type': 'ir.actions.client',
@@ -512,3 +532,56 @@ Provide analysis in the following JSON format:
                     'type': 'danger',
                 }
             }
+
+    def _format_ai_analysis(self, response):
+        """Format AI analysis JSON into clean readable text"""
+        import re
+        try:
+            # Try to parse as JSON
+            data = json.loads(response)
+        except (json.JSONDecodeError, TypeError):
+            # Try to extract JSON from response text
+            try:
+                json_match = re.search(r'\{.*\}', response, re.DOTALL)
+                if json_match:
+                    data = json.loads(json_match.group())
+                else:
+                    return response  # Return as-is if no JSON found
+            except (json.JSONDecodeError, TypeError):
+                return response
+
+        sections = []
+
+        # Strengths
+        if data.get('strengths'):
+            lines = ['✅ STRENGTHS']
+            for item in data['strengths']:
+                lines.append(f'  • {item}')
+            sections.append('\n'.join(lines))
+
+        # Improvement Areas
+        if data.get('improvement_areas'):
+            lines = ['⚠️ IMPROVEMENT AREAS']
+            for item in data['improvement_areas']:
+                lines.append(f'  • {item}')
+            sections.append('\n'.join(lines))
+
+        # Root Causes
+        if data.get('root_causes'):
+            lines = ['🔍 ROOT CAUSES']
+            for item in data['root_causes']:
+                lines.append(f'  • {item}')
+            sections.append('\n'.join(lines))
+
+        # Quick Wins
+        if data.get('quick_wins'):
+            lines = ['🚀 QUICK WINS']
+            for i, item in enumerate(data['quick_wins'], 1):
+                lines.append(f'  {i}. {item}')
+            sections.append('\n'.join(lines))
+
+        # Coaching Focus
+        if data.get('coaching_focus'):
+            sections.append(f'🎯 COACHING FOCUS\n  {data["coaching_focus"]}')
+
+        return '\n\n'.join(sections) if sections else response

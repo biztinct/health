@@ -630,7 +630,15 @@ export class BfsiManagerDashboard extends Component {
                 'action_start_ai_coaching',
                 [bankerId]
             );
-            this.action.doAction(result);
+            if (result && typeof result === 'object') {
+                if (!result.views) {
+                    result.views = [[false, 'form']];
+                }
+                this.action.doAction(result);
+            } else {
+                this.notification.add('Coaching session started', { type: 'success' });
+                await this.refresh();
+            }
         } catch (error) {
             console.error('Error starting coaching session:', error);
             this.notification.add('Failed to start coaching session', { type: 'danger' });
@@ -644,7 +652,15 @@ export class BfsiManagerDashboard extends Component {
                 'action_generate_coaching_strategy',
                 [bankerId]
             );
-            this.action.doAction(result);
+            if (result && typeof result === 'object') {
+                if (!result.views) {
+                    result.views = [[false, 'form']];
+                }
+                this.action.doAction(result);
+            } else {
+                this.notification.add('Strategy generated', { type: 'success' });
+                await this.refresh();
+            }
         } catch (error) {
             console.error('Error generating strategy:', error);
             this.notification.add('Failed to generate coaching strategy', { type: 'danger' });
@@ -678,6 +694,20 @@ export class BfsiManagerDashboard extends Component {
         this.state.isLoading = false;
         await this.renderDashboardCharts();
         this.notification.add('Dashboard refreshed', { type: 'success' });
+    }
+
+    filterByCritical() {
+        this.state.filterPriority = this.state.filterPriority === 'critical' ? 'all' : 'critical';
+    }
+
+    viewAllKPIs() {
+        this.action.doAction({
+            type: 'ir.actions.act_window',
+            name: 'Performance KPIs',
+            res_model: 'bfsi.performance.kpi',
+            views: [[false, 'list'], [false, 'form']],
+            domain: this.state.branchId ? [['branch_id', '=', this.state.branchId]] : [],
+        });
     }
 
     viewAllStrategies() {
