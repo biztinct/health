@@ -110,6 +110,14 @@ export class BfsiManagerDashboard extends Component {
             showBankerModal: false,
             bankerDetail: null,
             modalTab: 'performance',
+
+            // Coaching/Plans filter state
+            coachingFilter: 'this_month',
+            coachingDateFrom: '',
+            coachingDateTo: '',
+            plansFilter: 'this_month',
+            plansDateFrom: '',
+            plansDateTo: '',
         });
 
         onWillStart(async () => {
@@ -358,25 +366,25 @@ export class BfsiManagerDashboard extends Component {
                 { order: 'period_date desc', limit: 6 }
             );
 
-            // Get coaching sessions
+            // Get coaching sessions (all, no limit)
             let sessions = [];
             try {
                 sessions = await this.orm.searchRead(
                     'hr.coaching.session',
                     [['employee_id', '=', bankerId]],
                     ['name', 'session_date', 'session_type', 'state', 'discussion_notes'],
-                    { order: 'session_date desc', limit: 5 }
+                    { order: 'session_date desc' }
                 );
             } catch (_) { }
 
-            // Get action plans
+            // Get action plans (all, no limit)
             let plans = [];
             try {
                 plans = await this.orm.searchRead(
                     'bfsi.action.plan',
                     [['employee_id', '=', bankerId]],
-                    ['name', 'state', 'completion_rate'],
-                    { order: 'create_date desc', limit: 5 }
+                    ['name', 'state', 'completion_rate', 'create_date', 'item_ids'],
+                    { order: 'create_date desc' }
                 );
             } catch (_) { }
 
@@ -409,6 +417,7 @@ export class BfsiManagerDashboard extends Component {
                 sessions: sessions.map(s => ({
                     id: s.id,
                     date: s.session_date || '-',
+                    raw_date: s.session_date || '',
                     type: s.session_type || 'General',
                     notes: s.name || s.discussion_notes || '',
                 })),
@@ -419,8 +428,14 @@ export class BfsiManagerDashboard extends Component {
                     state: p.state || 'draft',
                     state_label: stateLabels[p.state] || p.state || 'Draft',
                     completion: p.completion_rate || 0,
+                    create_date: p.create_date || '',
+                    item_count: (p.item_ids || []).length,
                 })),
             };
+
+            // Reset filters
+            this.state.coachingFilter = 'this_month';
+            this.state.plansFilter = 'this_month';
 
             // Render modal charts after data is available
             await new Promise(r => setTimeout(r, 300));
@@ -449,6 +464,121 @@ export class BfsiManagerDashboard extends Component {
             views: [[false, 'form']],
             target: 'current',
         });
+    }
+
+    /* ━━━ FILTER HELPERS ━━━ */
+
+    _getDateRange(filterType) {
+        const now = new Date();
+        let from, to;
+        if (filterType === 'this_month') {
+            from = new Date(now.getFullYear(), now.getMonth(), 1);
+            to = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+        } else if (filterType === 'last_month') {
+            from = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+            to = new Date(now.getFullYear(), now.getMonth(), 0);
+        }
+        const fmt = (d) => d.toISOString().slice(0, 10);
+        return { from: fmt(from), to: fmt(to) };
+    }
+
+    _filterByDate(items, dateField, filterType, customFrom, customTo) {
+        if (filterType === 'this_month' || filterType === 'last_month') {
+            const range = this._getDateRange(filterType);
+            return items.filter(item => {
+                const d = (item[dateField] || '').slice(0, 10);
+                return d >= range.from && d <= range.to;
+            });
+        }
+        if (filterType === 'custom' && customFrom && customTo) {
+            return items.filter(item => {
+                const d = (item[dateField] || '').slice(0, 10);
+                return d >= customFrom && d <= customTo;
+            });
+        }
+        return items; // 'all' or custom without dates
+    }
+
+    get filteredSessions() {
+        const sessions = this.state.bankerDetail?.sessions || [];
+        if (this.state.coachingFilter === 'all' || this.state.coachingFilter === 'custom' && (!this.state.coachingDateFrom || !this.state.coachingDateTo)) {
+            if (this.state.coachingFilter !== 'custom') return sessions;
+            return sessions;
+        }
+        return this._filterByDate(
+            sessions, 'raw_date', this.state.coachingFilter,
+            this.state.coachingDateFrom, this.state.coachingDateTo
+        );
+    }
+
+    get filteredPlans() {
+        const plans = this.state.bankerDetail?.plans || [];
+        if (this.state.plansFilter === 'all' || this.state.plansFilter === 'custom' && (!this.state.plansDateFrom || !this.state.plansDateTo)) {
+            if (this.state.plansFilter !== 'custom') return plans;
+            return plans;
+        }
+        return this._filterByDate(
+            plans, 'create_date', this.state.plansFilter,
+            this.state.plansDateFrom, this.state.plansDateTo
+        );
+    }
+
+    filterSessions(filterType) {
+        if (filterType === 'all') {
+            // Open list view in Odoo
+            const empId = this.state.bankerDetail?.id;
+            this.closeBankerModal();
+            this.action.doAction({
+                type: 'ir.actions.act_window',
+                name: 'Coaching Sessions',
+                res_model: 'hr.coaching.session',
+                views: [[false, 'list'], [false, 'form']],
+                domain: [['employee_id', '=', empId]],
+                context: { group_by: ['session_date:month'] },
+                target: 'current',
+            });
+            return;
+        }
+        this.state.coachingFilter = filterType;
+    }
+
+    filterPlans(filterType) {
+        if (filterType === 'all') {
+            const empId = this.state.bankerDetail?.id;
+            this.closeBankerModal();
+            this.action.doAction({
+                type: 'ir.actions.act_window',
+                name: 'Action Plans',
+                res_model: 'bfsi.action.plan',
+                views: [[false, 'list'], [false, 'form']],
+                domain: [['employee_id', '=', empId]],
+                context: { group_by: ['create_date:month'] },
+                target: 'current',
+            });
+            return;
+        }
+        this.state.plansFilter = filterType;
+    }
+
+    onCoachingDateChange(field, ev) {
+        if (field === 'from') this.state.coachingDateFrom = ev.target.value;
+        else this.state.coachingDateTo = ev.target.value;
+    }
+
+    onPlansDateChange(field, ev) {
+        if (field === 'from') this.state.plansDateFrom = ev.target.value;
+        else this.state.plansDateTo = ev.target.value;
+    }
+
+    applyCustomSessionFilter() {
+        // Force re-render by toggling filter
+        this.state.coachingFilter = '';
+        this.state.coachingFilter = 'custom';
+    }
+
+    applyCustomPlanFilter() {
+        this.state.plansFilter = '';
+        this.state.plansFilter = 'custom';
     }
 
     /* ━━━ MODAL CHARTS ━━━ */

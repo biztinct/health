@@ -304,9 +304,33 @@
 
                             <!-- COACHING TAB -->
                             <div t-if="state.modalTab === 'coaching'">
-                                <div class="bfsi-sessions-list">
-                                    <t t-if="state.bankerDetail.sessions and state.bankerDetail.sessions.length > 0">
-                                        <t t-foreach="state.bankerDetail.sessions" t-as="session" t-key="session.id">
+                                <!-- Filter Buttons -->
+                                <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:12px; align-items:center;">
+                                    <button class="btn btn-sm" t-attf-class="btn btn-sm {{ state.coachingFilter === 'all' ? 'btn-primary' : 'btn-outline-secondary' }}" t-on-click="() => this.filterSessions('all')">
+                                        <i class="fa fa-list me-1"/>All Sessions
+                                    </button>
+                                    <button class="btn btn-sm" t-attf-class="btn btn-sm {{ state.coachingFilter === 'last_month' ? 'btn-primary' : 'btn-outline-secondary' }}" t-on-click="() => this.filterSessions('last_month')">
+                                        <i class="fa fa-calendar-minus-o me-1"/>Last Month
+                                    </button>
+                                    <button class="btn btn-sm" t-attf-class="btn btn-sm {{ state.coachingFilter === 'this_month' ? 'btn-primary' : 'btn-outline-secondary' }}" t-on-click="() => this.filterSessions('this_month')">
+                                        <i class="fa fa-calendar me-1"/>This Month
+                                    </button>
+                                    <button class="btn btn-sm" t-attf-class="btn btn-sm {{ state.coachingFilter === 'custom' ? 'btn-primary' : 'btn-outline-secondary' }}" t-on-click="() => this.filterSessions('custom')">
+                                        <i class="fa fa-calendar-check-o me-1"/>Custom
+                                    </button>
+                                </div>
+                                <!-- Custom Date Range -->
+                                <div t-if="state.coachingFilter === 'custom'" style="display:flex; gap:10px; margin-bottom:12px; align-items:center;">
+                                    <label style="font-size:0.8rem; font-weight:600;">From:</label>
+                                    <input type="date" class="form-control form-control-sm" style="width:auto;" t-att-value="state.coachingDateFrom" t-on-change="(ev) => this.onCoachingDateChange('from', ev)"/>
+                                    <label style="font-size:0.8rem; font-weight:600;">To:</label>
+                                    <input type="date" class="form-control form-control-sm" style="width:auto;" t-att-value="state.coachingDateTo" t-on-change="(ev) => this.onCoachingDateChange('to', ev)"/>
+                                    <button class="btn btn-sm btn-primary" t-on-click="applyCustomSessionFilter">Apply</button>
+                                </div>
+                                <!-- Sessions List -->
+                                <div class="bfsi-sessions-list" style="max-height:350px; overflow-y:auto;">
+                                    <t t-if="filteredSessions.length > 0">
+                                        <t t-foreach="filteredSessions" t-as="session" t-key="session.id">
                                             <div class="bfsi-session-item" style="cursor:pointer;" t-on-click="() => this.openRecord('hr.coaching.session', session.id)">
                                                 <div class="bfsi-session-date"><t t-esc="session.date"/></div>
                                                 <div class="bfsi-session-type"><t t-esc="session.type"/></div>
@@ -316,20 +340,49 @@
                                     </t>
                                     <div t-else="" style="text-align:center; padding:30px; color:#9CA3AF;">
                                         <i class="fa fa-comments" style="font-size:2rem; margin-bottom:8px;"></i>
-                                        <p>No coaching sessions recorded yet.</p>
+                                        <p>No coaching sessions found for this period.</p>
                                     </div>
                                 </div>
                             </div>
 
                             <!-- ACTION PLANS TAB -->
                             <div t-if="state.modalTab === 'plans'">
-                                <div class="bfsi-plans-list">
-                                    <t t-if="state.bankerDetail.plans and state.bankerDetail.plans.length > 0">
-                                        <t t-foreach="state.bankerDetail.plans" t-as="plan" t-key="plan.id">
+                                <!-- Filter Buttons -->
+                                <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:12px; align-items:center;">
+                                    <button class="btn btn-sm" t-attf-class="btn btn-sm {{ state.plansFilter === 'all' ? 'btn-primary' : 'btn-outline-secondary' }}" t-on-click="() => this.filterPlans('all')">
+                                        <i class="fa fa-list me-1"/>All Plans
+                                    </button>
+                                    <button class="btn btn-sm" t-attf-class="btn btn-sm {{ state.plansFilter === 'last_month' ? 'btn-primary' : 'btn-outline-secondary' }}" t-on-click="() => this.filterPlans('last_month')">
+                                        <i class="fa fa-calendar-minus-o me-1"/>Last Month
+                                    </button>
+                                    <button class="btn btn-sm" t-attf-class="btn btn-sm {{ state.plansFilter === 'this_month' ? 'btn-primary' : 'btn-outline-secondary' }}" t-on-click="() => this.filterPlans('this_month')">
+                                        <i class="fa fa-calendar me-1"/>This Month
+                                    </button>
+                                    <button class="btn btn-sm" t-attf-class="btn btn-sm {{ state.plansFilter === 'custom' ? 'btn-primary' : 'btn-outline-secondary' }}" t-on-click="() => this.filterPlans('custom')">
+                                        <i class="fa fa-calendar-check-o me-1"/>Custom
+                                    </button>
+                                </div>
+                                <!-- Custom Date Range -->
+                                <div t-if="state.plansFilter === 'custom'" style="display:flex; gap:10px; margin-bottom:12px; align-items:center;">
+                                    <label style="font-size:0.8rem; font-weight:600;">From:</label>
+                                    <input type="date" class="form-control form-control-sm" style="width:auto;" t-att-value="state.plansDateFrom" t-on-change="(ev) => this.onPlansDateChange('from', ev)"/>
+                                    <label style="font-size:0.8rem; font-weight:600;">To:</label>
+                                    <input type="date" class="form-control form-control-sm" style="width:auto;" t-att-value="state.plansDateTo" t-on-change="(ev) => this.onPlansDateChange('to', ev)"/>
+                                    <button class="btn btn-sm btn-primary" t-on-click="applyCustomPlanFilter">Apply</button>
+                                </div>
+                                <!-- Plans List -->
+                                <div class="bfsi-plans-list" style="max-height:350px; overflow-y:auto;">
+                                    <t t-if="filteredPlans.length > 0">
+                                        <t t-foreach="filteredPlans" t-as="plan" t-key="plan.id">
                                             <div class="bfsi-plan-item" style="cursor:pointer;" t-on-click="() => this.openRecord('bfsi.action.plan', plan.id)">
                                                 <div class="bfsi-plan-header">
                                                     <div class="bfsi-plan-title"><t t-esc="plan.name"/></div>
-                                                    <span t-attf-class="bfsi-plan-status {{ plan.state }}"><t t-esc="plan.state_label"/></span>
+                                                    <div style="display:flex; gap:8px; align-items:center;">
+                                                        <span style="font-size:0.72rem; background:#EEF2FF; color:#4F46E5; padding:2px 8px; border-radius:10px;">
+                                                            <i class="fa fa-tasks me-1"/><t t-esc="plan.item_count || 0"/> items
+                                                        </span>
+                                                        <span t-attf-class="bfsi-plan-status {{ plan.state }}"><t t-esc="plan.state_label"/></span>
+                                                    </div>
                                                 </div>
                                                 <div class="bfsi-plan-progress">
                                                     <div class="bfsi-plan-progress-fill" t-attf-style="width: {{ plan.completion || 0 }}%"></div>
@@ -342,7 +395,7 @@
                                     </t>
                                     <div t-else="" style="text-align:center; padding:30px; color:#9CA3AF;">
                                         <i class="fa fa-tasks" style="font-size:2rem; margin-bottom:8px;"></i>
-                                        <p>No action plans found.</p>
+                                        <p>No action plans found for this period.</p>
                                     </div>
                                 </div>
                             </div>
