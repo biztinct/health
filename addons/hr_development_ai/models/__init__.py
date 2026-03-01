@@ -30,3 +30,4 @@ from . import bfsi_kpi_target
 from . import bfsi_performance_kpi
 from . import bfsi_action_plan  # Contains BFSIActionPlan and BFSIActionPlanItem
 from . import bfsi_coaching_strategy  # Contains BFSICoachingStrategy and BFSICoachingRoleplayWizard
+from . import bfsi_progress_wizard

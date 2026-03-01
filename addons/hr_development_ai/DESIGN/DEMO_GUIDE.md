@@ -57,7 +57,7 @@ _Still logged as **minh.nv**_
      - **Roleplay Scenarios**: Practice scenarios for the manager
      - **Learning Recommendations**: Suggested learning content
    - **LIVE DEMO**: Create a NEW strategy for Tuan:
-     - Go to Coaching Strategies → Create
+     - Go to Coaching Strategies → CreateAlso the coaching sessions do not appear here although I started the coaching session by clicking on the button below
      - Select banker "Hoang Minh Tuan"
      - Click **"Generate AI Strategy"** → watch AI populate all fields
 
@@ -74,17 +74,18 @@ _Still logged as **minh.nv**_
    - Click **"Open AI Chat"** or use the chat widget on the form
    - Type coaching questions → AI provides contextual responses with KPI data
    - Show AI suggesting powerful questions and next steps
-   - Click **"Capture KPI Context"** to snapshot current performance
-   - Click **"Generate Action Items (AI)"** → AI creates action items from conversation
-   - Show the **"Create Action Plan"** button
+   - In the header buttons:
+     - Click **"Capture KPI Context"** → snapshots current performance data for AI context
+     - Click **"Generate Action Items (AI)"** → AI analyzes the conversation and creates action plan items automatically
+     - Click **"Create Action Plan"** → creates or opens an action plan linked to this session
 
 7. **AI Coach Panel (Persistent Sidebar)**
-   - Notice the AI Coach icon in the top-right system tray
-   - Click to expand → shows contextual greeting with KPI summary
-   - Try Quick Actions:
-     - "Check KPIs" → AI reviews your performance
-     - "Get Coaching" → AI provides improvement tips
-     - "Difficult Scenario" → AI helps with a customer scenario
+   - Notice the AI Coach panel on the right side (visible to BFSI Banker/Manager users)
+   - Shows contextual greeting with KPI summary (score, rank, conversions, meetings)
+   - Quick Actions are always visible:
+     - **Banker view**: Check KPIs, Action Plan, Get Coaching, Help Me Handle
+     - **Manager view**: Team Overview, Needs Coaching, AI Strategy, Practice
+   - Type a message for contextual coaching based on actual performance data
 
 ### PHASE 4: Banker Self-Service (10 min)
 _Login as **nam.lh** (Banker)_
@@ -146,3 +147,5 @@ _Login back as **minh.nv**_
 3. **Data Freshness**: KPI dates are relative to today. Every re-run of the script creates fresh data
 4. **Show Both Personas**: Always demo BOTH the Branch Manager AND the Banker view
 5. **The WOW Moment**: The "Generate AI Strategy" button filling all tabs automatically is the biggest wow factor
+6. **Session State**: Coaching session buttons (Capture KPI, Generate Action Items, Create Action Plan) only appear when session is In Progress or Completed
+7. **AI Coach Panel**: Quick Actions are always visible. Panel requires BFSI Banker or Branch Manager group access

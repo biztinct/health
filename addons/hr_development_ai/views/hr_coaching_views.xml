@@ -11,6 +11,9 @@
                     <button name="action_start_session" string="Start Session" type="object" class="oe_highlight" invisible="state != 'scheduled'"/>
                     <button name="action_complete_session" string="Complete Session" type="object" class="oe_highlight" invisible="state != 'in_progress'"/>
                     <button name="action_generate_ai_summary" string="Generate AI Summary" type="object" invisible="state != 'completed'"/>
+                    <button name="action_capture_kpi_context" string="Capture KPI Context" type="object" icon="fa-camera" invisible="state not in ['in_progress', 'completed']"/>
+                    <button name="action_generate_action_items_ai" string="Generate Action Items (AI)" type="object" icon="fa-magic" class="btn-success" invisible="state not in ['in_progress', 'completed']"/>
+                    <button name="action_create_action_plan" string="Create Action Plan" type="object" icon="fa-tasks" invisible="state not in ['in_progress', 'completed']"/>
                     <button name="action_cancel_session" string="Cancel" type="object" invisible="state in ['completed', 'cancelled']"/>
                     <field name="state" widget="statusbar" statusbar_visible="scheduled,in_progress,completed"/>
                 </header>
@@ -63,8 +66,8 @@
                                 </group>
                             </group>
                         </page>
-                        <page string="Action Items" name="actions">
-                            <field name="action_items" placeholder="Follow-up actions agreed upon..."/>
+                        <page string="AI Session Summary" name="actions">
+                            <field name="action_items" placeholder="AI-generated session summary will appear here after clicking Generate AI Summary..."/>
                         </page>
                         <page string="Skills Discussed" name="skills">
                             <field name="skill_ids">
@@ -294,26 +297,19 @@
                         </ul>
                     </div>
 
-                    <group>
-                        <group colspan="2">
-                            <field name="ai_chat_history"
-                                   widget="text"
-                                   readonly="1"
-                                   nolabel="1"
-                                   placeholder="No messages yet. Start a conversation with your AI coach!"
-                                   style="min-height: 300px; background-color: #f8f9fa; padding: 15px; border-radius: 5px; font-family: monospace; white-space: pre-wrap;"/>
-                        </group>
-                    </group>
+                    <field name="ai_chat_history"
+                           widget="text"
+                           readonly="1"
+                           nolabel="1"
+                           placeholder="No messages yet. Start a conversation with your AI coach!"
+                           style="min-height: 300px; background-color: #f8f9fa; padding: 15px; border-radius: 5px; font-family: monospace; white-space: pre-wrap;"/>
 
-                    <group>
-                        <group colspan="2">
-                            <separator string="Type Your Message"/>
-                            <field name="ai_chat_input"
-                                   widget="text"
-                                   nolabel="1"
-                                   placeholder="Type your message here...&#10;&#10;Example: What skills should I focus on developing?"/>
-                        </group>
-                    </group>
+                    <separator string="Type Your Message"/>
+                    <field name="ai_chat_input"
+                           widget="text"
+                           nolabel="1"
+                           placeholder="Type your message here...&#10;&#10;Example: What skills should I focus on developing?"
+                           style="min-height: 80px;"/>
                 </sheet>
                 <footer>
                     <button string="Send to AI"

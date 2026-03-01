@@ -305,18 +305,23 @@ Response:"""
             from ..ai_providers.provider_factory import get_ai_provider
             ai_provider = get_ai_provider(self.env)
 
-            # Parse ai_transcript if it's JSON
+            # Get transcript text — handle both JSON (legacy) and formatted text
             transcript_text = ''
-            try:
-                import json
-                transcript_data = json.loads(self.ai_transcript) if self.ai_transcript else {}
-                messages = transcript_data.get('messages', [])
-                transcript_text = '\n'.join([
-                    f"{msg['role'].upper()}: {msg['content']}"
-                    for msg in messages
-                ]) or self.discussion_notes or ''
-            except (json.JSONDecodeError, KeyError):
-                transcript_text = self.ai_transcript or self.discussion_notes or ''
+            if self.ai_transcript:
+                try:
+                    import json
+                    transcript_data = json.loads(self.ai_transcript)
+                    messages = transcript_data.get('messages', [])
+                    transcript_text = '\n'.join([
+                        f"{msg['role'].upper()}: {msg['content']}"
+                        for msg in messages
+                    ])
+                except (json.JSONDecodeError, KeyError, ValueError):
+                    # Already formatted text — use directly
+                    transcript_text = self.ai_transcript
+
+            if not transcript_text:
+                transcript_text = self.discussion_notes or ''
 
             if transcript_text:
                 summary = ai_provider.summarize_meeting(transcript_text)
@@ -330,7 +335,7 @@ Response:"""
                     {''.join(f'<li>{point}</li>' for point in summary.get('key_points', []))}
                 </ul>
 
-                <p><strong>Action Items:</strong></p>
+                <p><strong>Recommended Next Steps:</strong></p>
                 <ul>
                     {''.join(f'<li>{action}</li>' for action in summary.get('action_items', []))}
                 </ul>
@@ -400,8 +405,8 @@ Response:"""
                     transcript_data = json.loads(self.ai_transcript)
                     messages = transcript_data.get('messages', [])
                 except (json.JSONDecodeError, ValueError):
-                    # If existing data is formatted text, start fresh for internal tracking
-                    pass
+                    # Parse formatted text back into messages
+                    messages = self._parse_formatted_transcript(self.ai_transcript)
 
             # Add user's message
             messages.append({
@@ -464,6 +469,25 @@ Response:"""
                 lines.append(f"{role}:\n{content}")
         return '\n\n─────────────────────\n\n'.join(lines)
 
+    def _parse_formatted_transcript(self, text):
+        """Parse formatted chat transcript text back into messages list"""
+        if not text:
+            return []
+        separator = '─────────────────────'
+        blocks = [b.strip() for b in text.split(separator) if b.strip()]
+        messages = []
+        for block in blocks:
+            if block.startswith('👤 You:'):
+                content = block[len('👤 You:'):].strip()
+                messages.append({'role': 'user', 'content': content})
+            elif block.startswith('🤖 AI Coach:'):
+                content = block[len('🤖 AI Coach:'):].strip()
+                messages.append({'role': 'assistant', 'content': content})
+            else:
+                # Fallback
+                messages.append({'role': 'assistant', 'content': block})
+        return messages
+
     # ===================
     # BFSI Methods
     # ===================
@@ -496,6 +520,7 @@ Response:"""
                 'res_model': 'bfsi.action.plan',
                 'res_id': self.action_plan_id.id,
                 'view_mode': 'form',
+                'views': [[False, 'form']],
             }
 
         # Create new action plan
@@ -514,6 +539,7 @@ Response:"""
             'res_model': 'bfsi.action.plan',
             'res_id': plan.id,
             'view_mode': 'form',
+            'views': [[False, 'form']],
         }
 
     def action_generate_action_items_ai(self):
@@ -537,7 +563,8 @@ Response:"""
                         f"{msg['role'].upper()}: {msg['content']}"
                         for msg in messages
                     ])
-                except:
+                except (json.JSONDecodeError, ValueError):
+                    # Already formatted text — use directly
                     transcript = self.ai_transcript
 
             if not transcript:
@@ -587,18 +614,31 @@ Focus on:
                 else:
                     raise UserError(_('Could not parse AI response.'))
 
+            # Valid selection values for bfsi.action.plan.item
+            valid_kpi_categories = {'input', 'behavior', 'output', 'outcome'}
+            valid_specific_kpis = {
+                'dials', 'connects', 'meetings', 'script_adherence',
+                'objection_handling', 'need_analysis', 'product_knowledge',
+                'conversion', 'revenue', 'customer_satisfaction', 'other'
+            }
+            valid_priorities = {'high', 'medium', 'low'}
+
             # Create action items
             items_created = 0
             for idx, item in enumerate(data.get('action_items', []), 1):
+                kpi_cat = item.get('kpi_category', '')
+                spec_kpi = item.get('specific_kpi', '')
+                priority = item.get('priority', 'medium')
+
                 self.env['bfsi.action.plan.item'].create({
                     'action_plan_id': self.action_plan_id.id,
                     'sequence': idx * 10,
                     'name': item.get('name', 'Action Item'),
                     'description': item.get('description', ''),
-                    'kpi_category': item.get('kpi_category'),
-                    'specific_kpi': item.get('specific_kpi'),
+                    'kpi_category': kpi_cat if kpi_cat in valid_kpi_categories else False,
+                    'specific_kpi': spec_kpi if spec_kpi in valid_specific_kpis else 'other',
                     'success_criteria': item.get('success_criteria', ''),
-                    'priority': item.get('priority', 'medium'),
+                    'priority': priority if priority in valid_priorities else 'medium',
                 })
                 items_created += 1
 

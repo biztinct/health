@@ -297,6 +297,7 @@ class BFSIActionPlan(models.Model):
             'name': _('Report Progress'),
             'res_model': 'bfsi.action.plan.progress.wizard',
             'view_mode': 'form',
+            'views': [[False, 'form']],
             'target': 'new',
             'context': {
                 'default_action_plan_id': self.id,

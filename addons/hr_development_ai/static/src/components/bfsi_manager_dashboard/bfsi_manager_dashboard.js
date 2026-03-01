@@ -364,7 +364,7 @@ export class BfsiManagerDashboard extends Component {
                 sessions = await this.orm.searchRead(
                     'hr.coaching.session',
                     [['employee_id', '=', bankerId]],
-                    ['session_date', 'session_type', 'notes'],
+                    ['name', 'session_date', 'session_type', 'state', 'discussion_notes'],
                     { order: 'session_date desc', limit: 5 }
                 );
             } catch (_) { }
@@ -410,7 +410,7 @@ export class BfsiManagerDashboard extends Component {
                     id: s.id,
                     date: s.session_date || '-',
                     type: s.session_type || 'General',
-                    notes: s.notes || '',
+                    notes: s.name || s.discussion_notes || '',
                 })),
 
                 plans: plans.map(p => ({
@@ -438,6 +438,17 @@ export class BfsiManagerDashboard extends Component {
         this.state.bankerDetail = null;
         destroyChart('modalRadar');
         destroyChart('modalTrend');
+    }
+
+    openRecord(model, id) {
+        this.closeBankerModal();
+        this.action.doAction({
+            type: 'ir.actions.act_window',
+            res_model: model,
+            res_id: id,
+            views: [[false, 'form']],
+            target: 'current',
+        });
     }
 
     /* ━━━ MODAL CHARTS ━━━ */

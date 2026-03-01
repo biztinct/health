@@ -180,7 +180,7 @@
                 </div>
 
                 <!-- Quick Actions -->
-                <div class="bfsi-ai-coach-quick-actions" t-if="state.showQuickActions and state.messages.length &lt;= 1 and !state.isMinimized">
+                <div class="bfsi-ai-coach-quick-actions" t-if="state.showQuickActions and !state.isMinimized">
                     <div class="quick-actions-label">Quick Actions</div>
 
                     <!-- Banker Quick Actions -->

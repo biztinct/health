@@ -69,3 +69,5 @@ access_bfsi_action_plan_item_manager,bfsi.action.plan.item manager,model_bfsi_ac
 access_bfsi_coaching_strategy_user,bfsi.coaching.strategy user,model_bfsi_coaching_strategy,group_bfsi_banker,1,0,0,0
 access_bfsi_coaching_strategy_manager,bfsi.coaching.strategy manager,model_bfsi_coaching_strategy,group_bfsi_branch_manager,1,1,1,1
 access_bfsi_coaching_roleplay_wizard_user,bfsi.coaching.roleplay.wizard user,model_bfsi_coaching_roleplay_wizard,group_bfsi_branch_manager,1,1,1,1
+access_bfsi_progress_wizard_user,bfsi.action.plan.progress.wizard user,model_bfsi_action_plan_progress_wizard,group_bfsi_banker,1,1,1,1
+access_bfsi_progress_wizard_manager,bfsi.action.plan.progress.wizard manager,model_bfsi_action_plan_progress_wizard,group_bfsi_branch_manager,1,1,1,1

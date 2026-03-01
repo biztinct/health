@@ -307,7 +307,7 @@
                                 <div class="bfsi-sessions-list">
                                     <t t-if="state.bankerDetail.sessions and state.bankerDetail.sessions.length > 0">
                                         <t t-foreach="state.bankerDetail.sessions" t-as="session" t-key="session.id">
-                                            <div class="bfsi-session-item">
+                                            <div class="bfsi-session-item" style="cursor:pointer;" t-on-click="() => this.openRecord('hr.coaching.session', session.id)">
                                                 <div class="bfsi-session-date"><t t-esc="session.date"/></div>
                                                 <div class="bfsi-session-type"><t t-esc="session.type"/></div>
                                                 <div class="bfsi-session-notes"><t t-esc="session.notes || 'No notes'"/></div>
@@ -326,7 +326,7 @@
                                 <div class="bfsi-plans-list">
                                     <t t-if="state.bankerDetail.plans and state.bankerDetail.plans.length > 0">
                                         <t t-foreach="state.bankerDetail.plans" t-as="plan" t-key="plan.id">
-                                            <div class="bfsi-plan-item">
+                                            <div class="bfsi-plan-item" style="cursor:pointer;" t-on-click="() => this.openRecord('bfsi.action.plan', plan.id)">
                                                 <div class="bfsi-plan-header">
                                                     <div class="bfsi-plan-title"><t t-esc="plan.name"/></div>
                                                     <span t-attf-class="bfsi-plan-status {{ plan.state }}"><t t-esc="plan.state_label"/></span>

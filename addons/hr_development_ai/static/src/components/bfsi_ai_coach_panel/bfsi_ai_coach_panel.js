@@ -379,7 +379,6 @@ export class BfsiAiCoachPanel extends Component {
 
         if (message) {
             this.state.inputMessage = message;
-            this.state.showQuickActions = false;
             await this.sendMessage();
         }
     }
@@ -407,7 +406,6 @@ export class BfsiAiCoachPanel extends Component {
 
         if (message) {
             this.state.inputMessage = message;
-            this.state.showQuickActions = false;
             await this.sendMessage();
         }
     }
