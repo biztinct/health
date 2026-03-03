@@ -848,6 +848,7 @@ export class BfsiManagerDashboard extends Component {
             res_model: 'bfsi.performance.kpi',
             views: [[false, 'list'], [false, 'form']],
             domain: this.state.branchId ? [['branch_id', '=', this.state.branchId]] : [],
+            context: { group_by: ['period_date:month'] },
         });
     }
 
@@ -864,10 +865,11 @@ export class BfsiManagerDashboard extends Component {
     viewAllSessions() {
         this.action.doAction({
             type: 'ir.actions.act_window',
-            name: 'Coaching Sessions',
-            res_model: 'hr.coaching.session',
+            name: 'Active Plans',
+            res_model: 'bfsi.action.plan',
             views: [[false, 'list'], [false, 'form']],
-            domain: [['branch_id', '=', this.state.branchId]],
+            domain: [['state', 'in', ['committed', 'in_progress']]],
+            context: { group_by: ['create_date:month', 'employee_id'] },
         });
     }
 }

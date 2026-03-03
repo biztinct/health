@@ -40,88 +40,173 @@
                             <field name="rank_movement" widget="statinfo" string="Dropped"/>
                         </button>
                     </div>
-                    <group>
-                        <group string="Record Info">
-                            <field name="employee_id" widget="many2one_avatar_employee"/>
-                            <field name="branch_id"/>
-                            <field name="period_date"/>
-                            <field name="period_type"/>
-                        </group>
-                        <group string="Overall Performance">
-                            <field name="overall_score" widget="progressbar"/>
-                            <field name="deviation_score"/>
-                            <field name="coaching_priority" widget="badge"/>
-                            <field name="currency_id" invisible="1"/>
-                        </group>
-                    </group>
+
+                    <div class="vu-section">
+                        <div class="vu-section__title">
+                            <span class="vu-section__icon" data-icon="activity"/>
+                            <div>
+                                <span>Performance Overview</span>
+                                <small class="text-muted d-block">Banker details, period, and overall score</small>
+                            </div>
+                        </div>
+                        <div class="vu-section-grid">
+                            <div class="vu-card">
+                                <div class="vu-card__title">
+                                    <span class="vu-section__icon" data-icon="id-card"/>
+                                    <span>Record Info</span>
+                                </div>
+                                <group col="2">
+                                    <field name="employee_id" widget="many2one_avatar_employee"/>
+                                    <field name="branch_id"/>
+                                    <field name="period_date"/>
+                                    <field name="period_type"/>
+                                </group>
+                            </div>
+                            <div class="vu-card">
+                                <div class="vu-card__title">
+                                    <span class="vu-section__icon" data-icon="timeline"/>
+                                    <span>Overall Performance</span>
+                                </div>
+                                <group col="2">
+                                    <field name="overall_score" widget="progressbar"/>
+                                    <field name="deviation_score"/>
+                                    <field name="coaching_priority" widget="badge"/>
+                                    <field name="currency_id" invisible="1"/>
+                                </group>
+                            </div>
+                        </div>
+                    </div>
+
                     <notebook>
                         <page string="Input KPIs" name="input_kpis">
-                            <group>
-                                <group>
-                                    <field name="dials_per_hour"/>
-                                    <field name="total_dials"/>
-                                    <field name="connects"/>
-                                    <field name="connect_rate" widget="progressbar"/>
-                                </group>
-                                <group>
-                                    <field name="meetings_scheduled"/>
-                                    <field name="meetings_conducted"/>
-                                    <field name="calls_made"/>
-                                    <field name="hours_worked"/>
-                                </group>
-                            </group>
+                            <div class="vu-section-grid">
+                                <div class="vu-card">
+                                    <div class="vu-card__title">
+                                        <span class="vu-section__icon" data-icon="file-text"/>
+                                        <span>Call Activity</span>
+                                    </div>
+                                    <group>
+                                        <field name="dials_per_hour"/>
+                                        <field name="total_dials"/>
+                                        <field name="connects"/>
+                                        <field name="connect_rate" widget="progressbar"/>
+                                    </group>
+                                </div>
+                                <div class="vu-card">
+                                    <div class="vu-card__title">
+                                        <span class="vu-section__icon" data-icon="calendar"/>
+                                        <span>Meetings and Hours</span>
+                                    </div>
+                                    <group>
+                                        <field name="meetings_scheduled"/>
+                                        <field name="meetings_conducted"/>
+                                        <field name="calls_made"/>
+                                        <field name="hours_worked"/>
+                                    </group>
+                                </div>
+                            </div>
                         </page>
                         <page string="Behavior KPIs" name="behavior_kpis">
-                            <group>
-                                <group>
-                                    <field name="script_adherence" widget="progressbar"/>
-                                    <field name="objection_handling_score" widget="progressbar"/>
-                                    <field name="need_analysis_quality" widget="progressbar"/>
-                                </group>
-                                <group>
-                                    <field name="product_knowledge_score" widget="progressbar"/>
-                                    <field name="compliance_score" widget="progressbar"/>
-                                    <field name="customer_satisfaction" widget="progressbar"/>
-                                </group>
-                            </group>
+                            <div class="vu-section-grid">
+                                <div class="vu-card">
+                                    <div class="vu-card__title">
+                                        <span class="vu-section__icon" data-icon="shield-check"/>
+                                        <span>Skills and Compliance</span>
+                                    </div>
+                                    <group>
+                                        <field name="script_adherence" widget="progressbar"/>
+                                        <field name="objection_handling_score" widget="progressbar"/>
+                                        <field name="need_analysis_quality" widget="progressbar"/>
+                                    </group>
+                                </div>
+                                <div class="vu-card">
+                                    <div class="vu-card__title">
+                                        <span class="vu-section__icon" data-icon="heart-pulse"/>
+                                        <span>Knowledge and Satisfaction</span>
+                                    </div>
+                                    <group>
+                                        <field name="product_knowledge_score" widget="progressbar"/>
+                                        <field name="compliance_score" widget="progressbar"/>
+                                        <field name="customer_satisfaction" widget="progressbar"/>
+                                    </group>
+                                </div>
+                            </div>
                         </page>
                         <page string="Output KPIs" name="output_kpis">
-                            <group>
-                                <group>
-                                    <field name="conversions"/>
-                                    <field name="conversion_rate" widget="progressbar"/>
-                                    <field name="products_sold"/>
-                                </group>
-                                <group>
-                                    <field name="appointments_set"/>
-                                    <field name="leads_generated"/>
-                                    <field name="proposals_submitted"/>
-                                </group>
-                            </group>
+                            <div class="vu-section-grid">
+                                <div class="vu-card">
+                                    <div class="vu-card__title">
+                                        <span class="vu-section__icon" data-icon="activity"/>
+                                        <span>Conversions</span>
+                                    </div>
+                                    <group>
+                                        <field name="conversions"/>
+                                        <field name="conversion_rate" widget="progressbar"/>
+                                        <field name="products_sold"/>
+                                    </group>
+                                </div>
+                                <div class="vu-card">
+                                    <div class="vu-card__title">
+                                        <span class="vu-section__icon" data-icon="clipboard-list"/>
+                                        <span>Pipeline</span>
+                                    </div>
+                                    <group>
+                                        <field name="appointments_set"/>
+                                        <field name="leads_generated"/>
+                                        <field name="proposals_submitted"/>
+                                    </group>
+                                </div>
+                            </div>
                         </page>
                         <page string="Outcome KPIs" name="outcome_kpis">
-                            <group>
-                                <group>
-                                    <field name="revenue" widget="monetary"/>
-                                    <field name="commission" widget="monetary"/>
-                                </group>
-                                <group>
-                                    <field name="aum" widget="monetary"/>
-                                    <field name="loan_amount" widget="monetary"/>
-                                    <field name="premium_collected" widget="monetary"/>
-                                </group>
-                            </group>
+                            <div class="vu-section-grid">
+                                <div class="vu-card">
+                                    <div class="vu-card__title">
+                                        <span class="vu-section__icon" data-icon="credit-card"/>
+                                        <span>Revenue and Commission</span>
+                                    </div>
+                                    <group>
+                                        <field name="revenue" widget="monetary"/>
+                                        <field name="commission" widget="monetary"/>
+                                    </group>
+                                </div>
+                                <div class="vu-card">
+                                    <div class="vu-card__title">
+                                        <span class="vu-section__icon" data-icon="building"/>
+                                        <span>Assets and Lending</span>
+                                    </div>
+                                    <group>
+                                        <field name="aum" widget="monetary"/>
+                                        <field name="loan_amount" widget="monetary"/>
+                                        <field name="premium_collected" widget="monetary"/>
+                                    </group>
+                                </div>
+                            </div>
                         </page>
                         <page string="AI Analysis" name="ai_analysis">
-                            <group>
+                            <div class="vu-card">
+                                <div class="vu-card__title">
+                                    <span class="vu-section__icon" data-icon="heart-pulse"/>
+                                    <span>AI Performance Analysis</span>
+                                </div>
                                 <field name="ai_analysis" nolabel="1" placeholder="Click 'Generate AI Analysis' to get insights..."/>
-                            </group>
-                            <group>
+                            </div>
+                            <div class="vu-card">
+                                <div class="vu-card__title">
+                                    <span class="vu-section__icon" data-icon="book-open"/>
+                                    <span>AI Recommendations</span>
+                                </div>
                                 <field name="ai_recommendations" nolabel="1"/>
-                            </group>
+                            </div>
                         </page>
                         <page string="Notes" name="notes">
-                            <field name="notes" placeholder="Additional notes..."/>
+                            <div class="vu-card">
+                                <div class="vu-card__title">
+                                    <span class="vu-section__icon" data-icon="file-text"/>
+                                    <span>Additional Notes</span>
+                                </div>
+                                <field name="notes" placeholder="Additional notes..."/>
+                            </div>
                         </page>
                     </notebook>
                 </sheet>
@@ -188,82 +273,159 @@
                             <field name="name"/>
                         </h1>
                     </div>
-                    <group>
-                        <group string="Target Scope">
-                            <field name="employee_id" widget="many2one_avatar_employee"/>
-                            <field name="job_id"/>
-                            <field name="branch_id"/>
-                            <field name="banker_type"/>
-                        </group>
-                        <group string="Validity">
-                            <field name="period_type"/>
-                            <field name="valid_from"/>
-                            <field name="valid_to"/>
-                            <field name="priority"/>
-                            <field name="is_active" widget="boolean_toggle"/>
-                            <field name="currency_id" invisible="1"/>
-                        </group>
-                    </group>
+
+                    <div class="vu-section">
+                        <div class="vu-section__title">
+                            <span class="vu-section__icon" data-icon="clipboard-list"/>
+                            <div>
+                                <span>Target Configuration</span>
+                                <small class="text-muted d-block">Scope, validity, and priority settings</small>
+                            </div>
+                        </div>
+                        <div class="vu-section-grid">
+                            <div class="vu-card">
+                                <div class="vu-card__title">
+                                    <span class="vu-section__icon" data-icon="users-group"/>
+                                    <span>Target Scope</span>
+                                </div>
+                                <group col="2">
+                                    <field name="employee_id" widget="many2one_avatar_employee"/>
+                                    <field name="job_id"/>
+                                    <field name="branch_id"/>
+                                    <field name="banker_type"/>
+                                </group>
+                            </div>
+                            <div class="vu-card">
+                                <div class="vu-card__title">
+                                    <span class="vu-section__icon" data-icon="calendar"/>
+                                    <span>Validity</span>
+                                </div>
+                                <group col="2">
+                                    <field name="period_type"/>
+                                    <field name="valid_from"/>
+                                    <field name="valid_to"/>
+                                    <field name="priority"/>
+                                    <field name="is_active" widget="boolean_toggle"/>
+                                    <field name="currency_id" invisible="1"/>
+                                </group>
+                            </div>
+                        </div>
+                    </div>
+
                     <notebook>
                         <page string="Input Targets" name="input_targets">
-                            <group>
-                                <group>
-                                    <field name="target_dials_per_hour"/>
-                                    <field name="target_total_dials"/>
-                                    <field name="target_connects"/>
-                                </group>
-                                <group>
-                                    <field name="target_meetings_scheduled"/>
-                                    <field name="target_meetings_conducted"/>
-                                    <field name="target_calls_made"/>
-                                </group>
-                            </group>
+                            <div class="vu-section-grid">
+                                <div class="vu-card">
+                                    <div class="vu-card__title">
+                                        <span class="vu-section__icon" data-icon="file-text"/>
+                                        <span>Call Targets</span>
+                                    </div>
+                                    <group>
+                                        <field name="target_dials_per_hour"/>
+                                        <field name="target_total_dials"/>
+                                        <field name="target_connects"/>
+                                    </group>
+                                </div>
+                                <div class="vu-card">
+                                    <div class="vu-card__title">
+                                        <span class="vu-section__icon" data-icon="calendar"/>
+                                        <span>Meeting Targets</span>
+                                    </div>
+                                    <group>
+                                        <field name="target_meetings_scheduled"/>
+                                        <field name="target_meetings_conducted"/>
+                                        <field name="target_calls_made"/>
+                                    </group>
+                                </div>
+                            </div>
                         </page>
                         <page string="Behavior Targets" name="behavior_targets">
-                            <group>
-                                <group>
-                                    <field name="target_script_adherence"/>
-                                    <field name="target_objection_handling"/>
-                                    <field name="target_need_analysis"/>
-                                </group>
-                                <group>
-                                    <field name="target_product_knowledge"/>
-                                    <field name="target_compliance"/>
-                                    <field name="target_customer_satisfaction"/>
-                                </group>
-                            </group>
+                            <div class="vu-section-grid">
+                                <div class="vu-card">
+                                    <div class="vu-card__title">
+                                        <span class="vu-section__icon" data-icon="shield-check"/>
+                                        <span>Skills Targets</span>
+                                    </div>
+                                    <group>
+                                        <field name="target_script_adherence"/>
+                                        <field name="target_objection_handling"/>
+                                        <field name="target_need_analysis"/>
+                                    </group>
+                                </div>
+                                <div class="vu-card">
+                                    <div class="vu-card__title">
+                                        <span class="vu-section__icon" data-icon="heart-pulse"/>
+                                        <span>Quality Targets</span>
+                                    </div>
+                                    <group>
+                                        <field name="target_product_knowledge"/>
+                                        <field name="target_compliance"/>
+                                        <field name="target_customer_satisfaction"/>
+                                    </group>
+                                </div>
+                            </div>
                         </page>
                         <page string="Output Targets" name="output_targets">
-                            <group>
-                                <group>
-                                    <field name="target_conversions"/>
-                                    <field name="target_conversion_rate"/>
-                                    <field name="target_products_sold"/>
-                                </group>
-                                <group>
-                                    <field name="target_appointments_set"/>
-                                    <field name="target_leads_generated"/>
-                                    <field name="target_proposals_submitted"/>
-                                    <field name="target_connect_rate"/>
-                                </group>
-                            </group>
+                            <div class="vu-section-grid">
+                                <div class="vu-card">
+                                    <div class="vu-card__title">
+                                        <span class="vu-section__icon" data-icon="activity"/>
+                                        <span>Conversion Targets</span>
+                                    </div>
+                                    <group>
+                                        <field name="target_conversions"/>
+                                        <field name="target_conversion_rate"/>
+                                        <field name="target_products_sold"/>
+                                    </group>
+                                </div>
+                                <div class="vu-card">
+                                    <div class="vu-card__title">
+                                        <span class="vu-section__icon" data-icon="clipboard-list"/>
+                                        <span>Pipeline Targets</span>
+                                    </div>
+                                    <group>
+                                        <field name="target_appointments_set"/>
+                                        <field name="target_leads_generated"/>
+                                        <field name="target_proposals_submitted"/>
+                                        <field name="target_connect_rate"/>
+                                    </group>
+                                </div>
+                            </div>
                         </page>
                         <page string="Outcome Targets" name="outcome_targets">
-                            <group>
-                                <group>
-                                    <field name="target_revenue" widget="monetary"/>
-                                    <field name="target_commission" widget="monetary"/>
-                                    <field name="target_overall_score"/>
-                                </group>
-                                <group>
-                                    <field name="target_aum" widget="monetary"/>
-                                    <field name="target_loan_amount" widget="monetary"/>
-                                    <field name="target_premium" widget="monetary"/>
-                                </group>
-                            </group>
+                            <div class="vu-section-grid">
+                                <div class="vu-card">
+                                    <div class="vu-card__title">
+                                        <span class="vu-section__icon" data-icon="credit-card"/>
+                                        <span>Revenue Targets</span>
+                                    </div>
+                                    <group>
+                                        <field name="target_revenue" widget="monetary"/>
+                                        <field name="target_commission" widget="monetary"/>
+                                        <field name="target_overall_score"/>
+                                    </group>
+                                </div>
+                                <div class="vu-card">
+                                    <div class="vu-card__title">
+                                        <span class="vu-section__icon" data-icon="building"/>
+                                        <span>Asset Targets</span>
+                                    </div>
+                                    <group>
+                                        <field name="target_aum" widget="monetary"/>
+                                        <field name="target_loan_amount" widget="monetary"/>
+                                        <field name="target_premium" widget="monetary"/>
+                                    </group>
+                                </div>
+                            </div>
                         </page>
                         <page string="Notes" name="notes">
-                            <field name="notes" placeholder="Additional notes..."/>
+                            <div class="vu-card">
+                                <div class="vu-card__title">
+                                    <span class="vu-section__icon" data-icon="file-text"/>
+                                    <span>Additional Notes</span>
+                                </div>
+                                <field name="notes" placeholder="Additional notes..."/>
+                            </div>
                         </page>
                     </notebook>
                 </sheet>

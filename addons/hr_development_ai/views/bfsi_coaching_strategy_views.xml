@@ -40,78 +40,187 @@
                             <field name="name"/>
                         </h1>
                     </div>
-                    <group>
-                        <group string="Target Banker">
-                            <field name="banker_id" widget="many2one_avatar_employee"/>
-                            <field name="branch_id"/>
-                            <field name="performance_kpi_id" options="{'no_open': True}"/>
-                        </group>
-                        <group string="Strategy Info">
-                            <field name="manager_id" widget="many2one_avatar_employee"/>
-                            <field name="kpi_snapshot_date"/>
-                            <field name="ai_provider"/>
-                            <field name="ai_confidence" widget="percentpie"/>
-                            <field name="generation_date"/>
-                        </group>
-                    </group>
+
+                    <div class="vu-section">
+                        <div class="vu-section__title">
+                            <span class="vu-section__icon" data-icon="clipboard-list"/>
+                            <div>
+                                <span>Strategy Overview</span>
+                                <small class="text-muted d-block">Target banker, AI analysis and configuration</small>
+                            </div>
+                        </div>
+                        <div class="vu-section-grid">
+                            <div class="vu-card">
+                                <div class="vu-card__title">
+                                    <span class="vu-section__icon" data-icon="users-group"/>
+                                    <span>Target Banker</span>
+                                </div>
+                                <group col="2">
+                                    <field name="banker_id" widget="many2one_avatar_employee"/>
+                                    <field name="branch_id"/>
+                                    <field name="performance_kpi_id" options="{'no_open': True}"/>
+                                </group>
+                            </div>
+                            <div class="vu-card">
+                                <div class="vu-card__title">
+                                    <span class="vu-section__icon" data-icon="timeline"/>
+                                    <span>Strategy Info</span>
+                                </div>
+                                <group col="2">
+                                    <field name="manager_id" widget="many2one_avatar_employee"/>
+                                    <field name="kpi_snapshot_date"/>
+                                    <field name="ai_provider"/>
+                                    <field name="ai_confidence" widget="percentpie"/>
+                                    <field name="generation_date"/>
+                                </group>
+                            </div>
+                        </div>
+                    </div>
+
                     <notebook>
                         <page string="Performance Analysis" name="analysis">
-                            <h3>Performance Summary</h3>
-                            <field name="performance_summary" nolabel="1" widget="html"/>
-                            <h3>Root Cause Analysis</h3>
-                            <field name="root_cause_analysis" nolabel="1" widget="html"/>
-                            <group>
-                                <group string="Identified Strengths">
-                                    <field name="strengths" nolabel="1" widget="text"/>
-                                </group>
-                                <group string="Improvement Areas">
-                                    <field name="improvement_areas" nolabel="1" widget="text"/>
-                                </group>
-                            </group>
+                            <div class="vu-card">
+                                <div class="vu-card__title">
+                                    <span class="vu-section__icon" data-icon="activity"/>
+                                    <span>Performance Summary</span>
+                                </div>
+                                <field name="performance_summary" nolabel="1" widget="html"/>
+                            </div>
+                            <div class="vu-card">
+                                <div class="vu-card__title">
+                                    <span class="vu-section__icon" data-icon="heart-pulse"/>
+                                    <span>Root Cause Analysis</span>
+                                </div>
+                                <field name="root_cause_analysis" nolabel="1" widget="html"/>
+                            </div>
+                            <div class="vu-section-grid">
+                                <div class="vu-card">
+                                    <div class="vu-card__title">
+                                        <span class="vu-section__icon" data-icon="shield-check"/>
+                                        <span>Identified Strengths</span>
+                                    </div>
+                                    <group>
+                                        <field name="strengths" nolabel="1" widget="text"/>
+                                    </group>
+                                </div>
+                                <div class="vu-card">
+                                    <div class="vu-card__title">
+                                        <span class="vu-section__icon" data-icon="alert-triangle"/>
+                                        <span>Improvement Areas</span>
+                                    </div>
+                                    <group>
+                                        <field name="improvement_areas" nolabel="1" widget="text"/>
+                                    </group>
+                                </div>
+                            </div>
                         </page>
                         <page string="Coaching Strategy" name="strategy">
-                            <h3>Coaching Themes</h3>
-                            <field name="coaching_themes" nolabel="1"/>
-                            <h3>AI Coaching Strategy</h3>
-                            <field name="ai_strategy" nolabel="1" widget="html"/>
-                            <h3>Proposed Coaching Plan</h3>
-                            <field name="proposed_plan" nolabel="1" widget="html"/>
+                            <div class="vu-card">
+                                <div class="vu-card__title">
+                                    <span class="vu-section__icon" data-icon="tag"/>
+                                    <span>Coaching Themes</span>
+                                </div>
+                                <field name="coaching_themes" nolabel="1"/>
+                            </div>
+                            <div class="vu-card">
+                                <div class="vu-card__title">
+                                    <span class="vu-section__icon" data-icon="heart-pulse"/>
+                                    <span>AI Coaching Strategy</span>
+                                </div>
+                                <field name="ai_strategy" nolabel="1" widget="html"/>
+                            </div>
+                            <div class="vu-card">
+                                <div class="vu-card__title">
+                                    <span class="vu-section__icon" data-icon="clipboard-list"/>
+                                    <span>Proposed Coaching Plan</span>
+                                </div>
+                                <field name="proposed_plan" nolabel="1" widget="html"/>
+                            </div>
                         </page>
                         <page string="Session Guide" name="session_guide">
-                            <h3>Step-by-Step Session Guide</h3>
-                            <field name="session_guide" nolabel="1"/>
-                            <group>
-                                <group string="Opening Questions">
-                                    <field name="opening_questions" nolabel="1"/>
-                                </group>
-                                <group string="Probing Questions">
-                                    <field name="probing_questions" nolabel="1"/>
-                                </group>
-                            </group>
-                            <group>
-                                <group string="Closing Questions">
-                                    <field name="closing_questions" nolabel="1"/>
-                                </group>
-                                <group string="Coaching Tips">
-                                    <field name="coaching_tips" nolabel="1"/>
-                                </group>
-                            </group>
+                            <div class="vu-card">
+                                <div class="vu-card__title">
+                                    <span class="vu-section__icon" data-icon="file-text"/>
+                                    <span>Step-by-Step Session Guide</span>
+                                </div>
+                                <field name="session_guide" nolabel="1"/>
+                            </div>
+                            <div class="vu-section-grid">
+                                <div class="vu-card">
+                                    <div class="vu-card__title">
+                                        <span class="vu-section__icon" data-icon="book-open"/>
+                                        <span>Opening Questions</span>
+                                    </div>
+                                    <group>
+                                        <field name="opening_questions" nolabel="1"/>
+                                    </group>
+                                </div>
+                                <div class="vu-card">
+                                    <div class="vu-card__title">
+                                        <span class="vu-section__icon" data-icon="activity"/>
+                                        <span>Probing Questions</span>
+                                    </div>
+                                    <group>
+                                        <field name="probing_questions" nolabel="1"/>
+                                    </group>
+                                </div>
+                            </div>
+                            <div class="vu-section-grid">
+                                <div class="vu-card">
+                                    <div class="vu-card__title">
+                                        <span class="vu-section__icon" data-icon="shield-check"/>
+                                        <span>Closing Questions</span>
+                                    </div>
+                                    <group>
+                                        <field name="closing_questions" nolabel="1"/>
+                                    </group>
+                                </div>
+                                <div class="vu-card">
+                                    <div class="vu-card__title">
+                                        <span class="vu-section__icon" data-icon="heart-pulse"/>
+                                        <span>Coaching Tips</span>
+                                    </div>
+                                    <group>
+                                        <field name="coaching_tips" nolabel="1"/>
+                                    </group>
+                                </div>
+                            </div>
                         </page>
                         <page string="Roleplay Scenarios" name="roleplay">
-                            <h3>Practice Scenarios</h3>
-                            <field name="roleplay_scenarios" nolabel="1"/>
-                            <div invisible="not roleplay_conversation">
-                                <h3>Practice Conversation History</h3>
+                            <div class="vu-card">
+                                <div class="vu-card__title">
+                                    <span class="vu-section__icon" data-icon="users-group"/>
+                                    <span>Practice Scenarios</span>
+                                </div>
+                                <field name="roleplay_scenarios" nolabel="1"/>
+                            </div>
+                            <div class="vu-card" invisible="not roleplay_conversation">
+                                <div class="vu-card__title">
+                                    <span class="vu-section__icon" data-icon="timeline"/>
+                                    <span>Practice Conversation History</span>
+                                </div>
                                 <field name="roleplay_conversation" nolabel="1" readonly="1"/>
                             </div>
                         </page>
                         <page string="Learning Recommendations" name="learning">
-                            <field name="learning_recommendations" nolabel="1"/>
+                            <div class="vu-card">
+                                <div class="vu-card__title">
+                                    <span class="vu-section__icon" data-icon="book-open"/>
+                                    <span>Recommended Learning</span>
+                                </div>
+                                <field name="learning_recommendations" nolabel="1"/>
+                            </div>
                         </page>
                         <page string="Linked Session" name="session" invisible="not coaching_session_id">
-                            <group>
-                                <field name="coaching_session_id"/>
-                            </group>
+                            <div class="vu-card">
+                                <div class="vu-card__title">
+                                    <span class="vu-section__icon" data-icon="calendar"/>
+                                    <span>Linked Coaching Session</span>
+                                </div>
+                                <group>
+                                    <field name="coaching_session_id"/>
+                                </group>
+                            </div>
                         </page>
                     </notebook>
                 </sheet>

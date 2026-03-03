@@ -28,54 +28,107 @@
                             <field name="coach_id" invisible="session_type == 'ai'"/>
                         </h3>
                     </div>
-                    <group>
-                        <group string="Session Details">
-                            <field name="session_type"/>
-                            <field name="topic"/>
-                            <field name="session_date"/>
-                            <field name="duration"/>
-                        </group>
-                        <group string="Outcomes">
-                            <field name="outcome"/>
-                            <field name="employee_satisfaction"/>
-                            <field name="next_session_date"/>
-                        </group>
-                    </group>
+
+                    <div class="vu-section">
+                        <div class="vu-section__title">
+                            <span class="vu-section__icon" data-icon="clipboard-list"/>
+                            <div>
+                                <span>Session Overview</span>
+                                <small class="text-muted d-block">Session details, type, and outcomes</small>
+                            </div>
+                        </div>
+                        <div class="vu-section-grid">
+                            <div class="vu-card">
+                                <div class="vu-card__title">
+                                    <span class="vu-section__icon" data-icon="file-text"/>
+                                    <span>Session Details</span>
+                                </div>
+                                <group col="2">
+                                    <field name="session_type"/>
+                                    <field name="topic"/>
+                                    <field name="session_date"/>
+                                    <field name="duration"/>
+                                </group>
+                            </div>
+                            <div class="vu-card">
+                                <div class="vu-card__title">
+                                    <span class="vu-section__icon" data-icon="activity"/>
+                                    <span>Outcomes</span>
+                                </div>
+                                <group col="2">
+                                    <field name="outcome"/>
+                                    <field name="employee_satisfaction"/>
+                                    <field name="next_session_date"/>
+                                </group>
+                            </div>
+                        </div>
+                    </div>
+
                     <notebook>
                         <page string="Description" name="description">
-                            <field name="description" placeholder="What will be discussed in this session..."/>
+                            <div class="vu-card">
+                                <div class="vu-card__title">
+                                    <span class="vu-section__icon" data-icon="file-text"/>
+                                    <span>Session Description</span>
+                                </div>
+                                <field name="description" placeholder="What will be discussed in this session..."/>
+                            </div>
                         </page>
                         <page string="Discussion Notes" name="notes">
-                            <field name="discussion_notes" placeholder="Notes from the coaching conversation..."/>
+                            <div class="vu-card">
+                                <div class="vu-card__title">
+                                    <span class="vu-section__icon" data-icon="clipboard-list"/>
+                                    <span>Coaching Conversation Notes</span>
+                                </div>
+                                <field name="discussion_notes" placeholder="Notes from the coaching conversation..."/>
+                            </div>
                         </page>
                         <page string="AI Coaching Chat" name="ai_chat" invisible="session_type not in ['ai', 'hybrid']">
-                            <group>
+                            <div class="vu-card">
+                                <div class="vu-card__title">
+                                    <span class="vu-section__icon" data-icon="timeline"/>
+                                    <span>AI Coaching Chat</span>
+                                </div>
                                 <group>
-                                    <button name="action_open_ai_chat"
-                                            type="object"
-                                            string="Open AI Chat"
-                                            class="btn-primary"
-                                            icon="fa-comments"/>
+                                    <group>
+                                        <button name="action_open_ai_chat"
+                                                type="object"
+                                                string="Open AI Chat"
+                                                class="btn-primary"
+                                                icon="fa-comments"/>
+                                    </group>
+                                    <group>
+                                        <field name="ai_transcript"
+                                               widget="text"
+                                               readonly="1"
+                                               string="Chat Transcript"
+                                               placeholder="Chat conversation will be saved here..."/>
+                                    </group>
                                 </group>
-                                <group>
-                                    <field name="ai_transcript"
-                                           widget="text"
-                                           readonly="1"
-                                           string="Chat Transcript"
-                                           placeholder="Chat conversation will be saved here..."/>
-                                </group>
-                            </group>
+                            </div>
                         </page>
                         <page string="AI Session Summary" name="actions">
-                            <field name="action_items" placeholder="AI-generated session summary will appear here after clicking Generate AI Summary..."/>
+                            <div class="vu-card">
+                                <div class="vu-card__title">
+                                    <span class="vu-section__icon" data-icon="heart-pulse"/>
+                                    <span>AI-Generated Session Summary</span>
+                                </div>
+                                <field name="action_items" placeholder="AI-generated session summary will appear here after clicking Generate AI Summary..."/>
+                            </div>
                         </page>
                         <page string="Skills Discussed" name="skills">
-                            <field name="skill_ids">
-                                <list>
-                                    <field name="name"/>
-                                    <field name="category_id"/>
-                                </list>
-                            </field>
+                            <div class="vu-card">
+                                <div class="vu-card__title">
+                                    <span class="vu-section__icon" data-icon="book-open"/>
+                                    <span>Skills Covered in Session</span>
+                                </div>
+                                <field name="skill_ids">
+                                    <list>
+                                        <field name="name"/>
+                                        <field name="category_id"/>
+                                    </list>
+                                </field>
+                            </div>
                         </page>
                     </notebook>
                 </sheet>
