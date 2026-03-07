@@ -136,6 +136,23 @@ class HRCoachingSession(models.Model):
         help='AI-generated strategy used for this session'
     )
 
+    # Related fields from coaching strategy for form display
+    strategy_opening_questions = fields.Text(
+        related='coaching_strategy_id.opening_questions', string='Opening Questions', readonly=True
+    )
+    strategy_probing_questions = fields.Text(
+        related='coaching_strategy_id.probing_questions', string='Probing Questions', readonly=True
+    )
+    strategy_closing_questions = fields.Text(
+        related='coaching_strategy_id.closing_questions', string='Closing Questions', readonly=True
+    )
+    strategy_coaching_tips = fields.Text(
+        related='coaching_strategy_id.coaching_tips', string='Coaching Tips', readonly=True
+    )
+    strategy_session_guide = fields.Html(
+        related='coaching_strategy_id.session_guide', string='Session Guide', readonly=True
+    )
+
     action_plan_id = fields.Many2one(
         'bfsi.action.plan',
         string='Action Plan',
@@ -159,6 +176,11 @@ class HRCoachingSession(models.Model):
         string='Branch',
         related='employee_id.branch_id',
         store=True
+    )
+
+    ai_suggested_questions = fields.Html(
+        string='AI Suggested Questions',
+        help='AI-generated coaching questions for the manager to ask during the session'
     )
 
     @api.depends('ai_transcript')
@@ -234,6 +256,94 @@ class HRCoachingSession(models.Model):
         """Cancel coaching session"""
         self.ensure_one()
         self.state = 'cancelled'
+
+    def action_suggest_questions(self):
+        """Use AI to generate real-time coaching questions based on banker's KPIs and session topic"""
+        self.ensure_one()
+
+        try:
+            from ..ai_providers.provider_factory import get_ai_provider
+            ai_provider = get_ai_provider(self.env)
+
+            topic = dict(self._fields['topic'].selection).get(self.topic, 'General')
+
+            # Get KPI context
+            kpi_context = ''
+            if self.kpi_context:
+                kpi_context = self.kpi_context
+            elif self.employee_id:
+                try:
+                    context = self.employee_id.get_performance_context_for_ai()
+                    kpi_context = json.dumps(context, indent=2, default=str)
+                except Exception:
+                    kpi_context = 'No KPI data available'
+
+            # Get strategy context if linked
+            strategy_context = ''
+            if self.coaching_strategy_id:
+                strategy = self.coaching_strategy_id
+                strategy_context = f"""
+EXISTING COACHING STRATEGY:
+- Strengths: {strategy.strengths or 'Not analyzed'}
+- Improvement Areas: {strategy.improvement_areas or 'Not analyzed'}
+- Coaching Themes: {strategy.coaching_themes or 'Not analyzed'}
+"""
+
+            prompt = f"""You are an expert sales coaching consultant for a bank. Generate a structured set of coaching questions for a branch manager to use during a coaching session with a banker.
+
+SESSION DETAILS:
+- Banker: {self.employee_id.name}
+- Topic: {topic}
+- Session Type: {dict(self._fields['session_type'].selection).get(self.session_type, 'AI Coaching')}
+
+PERFORMANCE DATA:
+{kpi_context or 'No KPI data available'}
+{strategy_context}
+
+Generate questions in EXACTLY this HTML format (do NOT use markdown):
+
+<h4>🎯 Opening Questions</h4>
+<p>Use these to start the conversation and build rapport</p>
+<ol>
+<li><strong>Question text here</strong><br/><em>Purpose: why this question matters</em></li>
+</ol>
+
+<h4>🔍 Probing Questions</h4>
+<p>Use these to explore root causes and deeper issues</p>
+<ol>
+<li><strong>Question text here</strong><br/><em>Purpose: why this question matters</em></li>
+</ol>
+
+<h4>💡 Action-Oriented Questions</h4>
+<p>Use these to drive commitments and next steps</p>
+<ol>
+<li><strong>Question text here</strong><br/><em>Purpose: why this question matters</em></li>
+</ol>
+
+<h4>📋 Coaching Tips</h4>
+<ul>
+<li>Tip text here</li>
+</ul>
+
+Generate 3-4 questions per category. Reference the banker's actual performance numbers where possible. Keep questions open-ended and non-judgmental."""
+
+            response_text = ai_provider.generate_text(
+                prompt=prompt,
+                max_tokens=1500,
+                temperature=0.7
+            )
+
+            if response_text:
+                self.ai_suggested_questions = response_text
+            else:
+                self.ai_suggested_questions = '<p class="text-warning">Could not generate questions. Please try again.</p>'
+
+        except ImportError:
+            self.ai_suggested_questions = '<p class="text-danger">AI provider not configured. Please set up an AI provider in Configuration.</p>'
+        except Exception as e:
+            import logging
+            logging.getLogger(__name__).error(f"AI suggest questions failed: {e}")
+            self.ai_suggested_questions = f'<p class="text-danger">Error generating questions: {str(e)}</p>'
 
     def action_send_ai_message(self, message):
         """Send message to AI coach and get response

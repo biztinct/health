@@ -116,6 +116,100 @@
                                 <field name="action_items" placeholder="AI-generated session summary will appear here after clicking Generate AI Summary..."/>
                             </div>
                         </page>
+                        <page string="AI Coaching Guide" name="ai_coaching_guide" groups="hr_development_ai.group_bfsi_branch_manager">
+                            <div class="vu-section">
+                                <div class="vu-section__title">
+                                    <span class="vu-section__icon" data-icon="heart-pulse"/>
+                                    <div>
+                                        <span>AI Coaching Guide</span>
+                                        <small class="text-muted d-block">AI-generated questions and coaching strategy for this session</small>
+                                    </div>
+                                </div>
+                                <div class="vu-section-grid">
+                                    <div class="vu-card">
+                                        <div class="vu-card__title">
+                                            <span class="vu-section__icon" data-icon="clipboard-list"/>
+                                            <span>Linked Strategy</span>
+                                        </div>
+                                        <group>
+                                            <field name="coaching_strategy_id" domain="[('banker_id', '=', employee_id)]" options="{'no_create': True}"/>
+                                        </group>
+                                    </div>
+                                    <div class="vu-card">
+                                        <div class="vu-card__title">
+                                            <span class="vu-section__icon" data-icon="activity"/>
+                                            <span>Generate Questions</span>
+                                        </div>
+                                        <group>
+                                            <button name="action_suggest_questions"
+                                                    type="object"
+                                                    string="✨ Suggest Coaching Questions"
+                                                    class="btn-primary w-100"
+                                                    icon="fa-magic"
+                                                    help="AI generates contextual coaching questions based on banker's KPIs"/>
+                                        </group>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="vu-card" invisible="not ai_suggested_questions">
+                                <div class="vu-card__title">
+                                    <span class="vu-section__icon" data-icon="timeline"/>
+                                    <span>AI Suggested Questions</span>
+                                </div>
+                                <field name="ai_suggested_questions" nolabel="1" readonly="1"/>
+                            </div>
+
+                            <div class="vu-section" invisible="not coaching_strategy_id">
+                                <div class="vu-section__title">
+                                    <span class="vu-section__icon" data-icon="shield-check"/>
+                                    <div>
+                                        <span>Strategy Questions</span>
+                                        <small class="text-muted d-block">Pre-generated questions from the linked coaching strategy</small>
+                                    </div>
+                                </div>
+                                <div class="vu-section-grid">
+                                    <div class="vu-card">
+                                        <div class="vu-card__title">
+                                            <span class="vu-section__icon" data-icon="file-text"/>
+                                            <span>Opening Questions</span>
+                                        </div>
+                                        <field name="strategy_opening_questions" string="Questions" readonly="1"/>
+                                    </div>
+                                    <div class="vu-card">
+                                        <div class="vu-card__title">
+                                            <span class="vu-section__icon" data-icon="activity"/>
+                                            <span>Probing Questions</span>
+                                        </div>
+                                        <field name="strategy_probing_questions" string="Questions" readonly="1"/>
+                                    </div>
+                                </div>
+                                <div class="vu-section-grid">
+                                    <div class="vu-card">
+                                        <div class="vu-card__title">
+                                            <span class="vu-section__icon" data-icon="clipboard-list"/>
+                                            <span>Closing Questions</span>
+                                        </div>
+                                        <field name="strategy_closing_questions" string="Questions" readonly="1"/>
+                                    </div>
+                                    <div class="vu-card">
+                                        <div class="vu-card__title">
+                                            <span class="vu-section__icon" data-icon="book-open"/>
+                                            <span>Coaching Tips</span>
+                                        </div>
+                                        <field name="strategy_coaching_tips" string="Tips" readonly="1"/>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="vu-card" invisible="not coaching_strategy_id">
+                                <div class="vu-card__title">
+                                    <span class="vu-section__icon" data-icon="heart-pulse"/>
+                                    <span>Session Guide</span>
+                                </div>
+                                <field name="strategy_session_guide" string="Guide" readonly="1" nolabel="1"/>
+                            </div>
+                        </page>
                         <page string="Skills Discussed" name="skills">
                             <div class="vu-card">
                                 <div class="vu-card__title">
@@ -182,6 +276,23 @@
             </p>
             <p>
                 Create coaching sessions for employees with AI or human coaches to support their development.
+            </p>
+        </field>
+    </record>
+
+    <!-- My Coaching Sessions Action (Banker Self-Coaching) -->
+    <record id="action_hr_coaching_session_my" model="ir.actions.act_window">
+        <field name="name">My Coaching Sessions</field>
+        <field name="res_model">hr.coaching.session</field>
+        <field name="view_mode">list,calendar,form</field>
+        <field name="domain">[('employee_id.user_id', '=', uid)]</field>
+        <field name="context">{'default_session_type': 'ai', 'default_is_bfsi_session': True}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Start an AI Coaching Session
+            </p>
+            <p>
+                Create a new coaching session to get personalized AI coaching on your performance and development.
             </p>
         </field>
     </record>

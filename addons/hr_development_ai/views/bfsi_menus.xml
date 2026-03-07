@@ -60,6 +60,14 @@
         sequence="20"/>
 
     <menuitem
+        id="menu_bfsi_strategic_selection"
+        name="Strategic Selection"
+        parent="menu_bfsi_coaching"
+        action="action_bfsi_strategic_selection"
+        sequence="0"
+        groups="hr_development_ai.group_bfsi_branch_manager"/>
+
+    <menuitem
         id="menu_bfsi_coaching_strategies"
         name="Coaching Strategies"
         parent="menu_bfsi_coaching"
@@ -80,6 +88,21 @@
         parent="menu_bfsi_coaching"
         action="action_bfsi_action_plan_my"
         sequence="3"/>
+
+    <menuitem
+        id="menu_bfsi_my_coaching_sessions"
+        name="My Coaching Sessions"
+        parent="menu_bfsi_coaching"
+        action="action_hr_coaching_session_my"
+        sequence="4"/>
+
+    <menuitem
+        id="menu_bfsi_coaching_sessions"
+        name="Coaching Sessions"
+        parent="menu_bfsi_coaching"
+        action="action_hr_coaching_session"
+        sequence="5"
+        groups="hr_development_ai.group_bfsi_branch_manager"/>
 
     <!-- Organization Menu -->
     <menuitem

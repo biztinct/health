@@ -10,11 +10,12 @@
                 <field name="period_date"/>
                 <field name="employee_id" widget="many2one_avatar_employee"/>
                 <field name="branch_id"/>
-                <field name="overall_score" widget="progressbar"/>
+                <field name="overall_score" widget="badge" decoration-danger="overall_score &lt; 40" decoration-warning="overall_score &lt; 60" decoration-success="overall_score &gt;= 80"/>
                 <field name="branch_rank"/>
                 <field name="rank_movement"/>
                 <field name="revenue" widget="monetary"/>
                 <field name="conversions"/>
+                <field name="coaching_session_count" string="Sessions" optional="show"/>
                 <field name="coaching_priority" widget="badge" decoration-danger="coaching_priority == 'critical'" decoration-warning="coaching_priority == 'high'" decoration-info="coaching_priority == 'medium'" decoration-success="coaching_priority == 'low'"/>
             </list>
         </field>
@@ -89,7 +90,7 @@
                                         <field name="dials_per_hour"/>
                                         <field name="total_dials"/>
                                         <field name="connects"/>
-                                        <field name="connect_rate" widget="progressbar"/>
+                                        <field name="connect_rate"/>
                                     </group>
                                 </div>
                                 <div class="vu-card">
@@ -114,9 +115,9 @@
                                         <span>Skills and Compliance</span>
                                     </div>
                                     <group>
-                                        <field name="script_adherence" widget="progressbar"/>
-                                        <field name="objection_handling_score" widget="progressbar"/>
-                                        <field name="need_analysis_quality" widget="progressbar"/>
+                                        <field name="script_adherence"/>
+                                        <field name="objection_handling_score"/>
+                                        <field name="need_analysis_quality"/>
                                     </group>
                                 </div>
                                 <div class="vu-card">
@@ -125,9 +126,9 @@
                                         <span>Knowledge and Satisfaction</span>
                                     </div>
                                     <group>
-                                        <field name="product_knowledge_score" widget="progressbar"/>
-                                        <field name="compliance_score" widget="progressbar"/>
-                                        <field name="customer_satisfaction" widget="progressbar"/>
+                                        <field name="product_knowledge_score"/>
+                                        <field name="compliance_score"/>
+                                        <field name="customer_satisfaction"/>
                                     </group>
                                 </div>
                             </div>
@@ -141,7 +142,7 @@
                                     </div>
                                     <group>
                                         <field name="conversions"/>
-                                        <field name="conversion_rate" widget="progressbar"/>
+                                        <field name="conversion_rate"/>
                                         <field name="products_sold"/>
                                     </group>
                                 </div>
@@ -478,6 +479,40 @@
                 Set KPI targets
             </p>
             <p>Define targets by employee, job position, or branch.</p>
+        </field>
+    </record>
+
+    <!-- Strategic Selection View - Manager selects bankers for coaching -->
+    <record id="view_bfsi_strategic_selection_list" model="ir.ui.view">
+        <field name="name">bfsi.performance.kpi.strategic.selection</field>
+        <field name="model">bfsi.performance.kpi</field>
+        <field name="arch" type="xml">
+            <list string="Strategic Selection" decoration-danger="coaching_priority == 'critical'" decoration-warning="coaching_priority == 'high'" default_order="coaching_priority desc, overall_score asc">
+                <field name="employee_id" widget="many2one_avatar_employee"/>
+                <field name="branch_id"/>
+                <field name="period_date"/>
+                <field name="overall_score" widget="badge" decoration-danger="overall_score &lt; 40" decoration-warning="overall_score &lt; 60" decoration-success="overall_score &gt;= 80"/>
+                <field name="deviation_score"/>
+                <field name="branch_rank"/>
+                <field name="coaching_session_count" string="Sessions"/>
+                <field name="coaching_priority" widget="badge" decoration-danger="coaching_priority == 'critical'" decoration-warning="coaching_priority == 'high'" decoration-info="coaching_priority == 'medium'" decoration-success="coaching_priority == 'low'"/>
+                <button name="%(action_bfsi_coaching_strategy)d" type="action" string="Coach" icon="fa-magic" class="btn-link" context="{'default_banker_id': employee_id}"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Strategic Selection Action -->
+    <record id="action_bfsi_strategic_selection" model="ir.actions.act_window">
+        <field name="name">Strategic Selection</field>
+        <field name="res_model">bfsi.performance.kpi</field>
+        <field name="view_mode">list,form</field>
+        <field name="view_id" ref="view_bfsi_strategic_selection_list"/>
+        <field name="context">{'search_default_this_month': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Select Bankers for Coaching
+            </p>
+            <p>View bankers ranked by AI-identified coaching needs. Click "Coach" to generate a coaching strategy.</p>
         </field>
     </record>
 

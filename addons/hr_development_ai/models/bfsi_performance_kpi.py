@@ -271,6 +271,20 @@ class BFSIPerformanceKPI(models.Model):
         help='AI-generated improvement recommendations'
     )
 
+    # Strategic Selection - Session count for this employee
+    coaching_session_count = fields.Integer(
+        string='Sessions',
+        compute='_compute_coaching_session_count',
+        help='Number of coaching sessions for this employee'
+    )
+
+    def _compute_coaching_session_count(self):
+        Session = self.env['hr.coaching.session']
+        for rec in self:
+            rec.coaching_session_count = Session.search_count([
+                ('employee_id', '=', rec.employee_id.id),
+            ])
+
     notes = fields.Text(string='Notes')
 
     _sql_constraints = [
