@@ -9,10 +9,10 @@
             <t t-if="state.currentView === 'main'">
                 <div class="health_landing_dashboard_header">
                     <h1 class="health_landing_dashboard_title">
-                        <i class="fa fa-heartbeat"/> Hệ thống quản lý y tế
+                        <i class="fa fa-heartbeat"/> Healthcare Management System
                     </h1>
                     <p class="health_landing_dashboard_subtitle">
-                        Dịch vụ Y tế Gia đình Việt - Úc - Chọn một mô-đun để tiếp tục
+                        Viet-Uc Family Healthcare Services - Select a module to continue
                     </p>
                 </div>
 
@@ -23,7 +23,7 @@
                         <input
                             type="text"
                             class="health_landing_search_input"
-                            placeholder="Tìm kiếm mô-đun và tính năng... (Ctrl+K)"
+                            placeholder="Search modules and features... (Ctrl+K)"
                             t-model="state.searchQuery"
                             t-on-input="onSearchInput"
                             t-ref="searchInput"
@@ -41,7 +41,7 @@
                 <!-- Recently Accessed -->
                 <div class="health_landing_quick_access" t-if="state.recentlyAccessed.length > 0 and !state.searchQuery">
                     <div class="health_landing_quick_access_title">
-                        <i class="fa fa-clock-o"/> Truy cập gần đây
+                        <i class="fa fa-clock-o"/> Recently Accessed
                     </div>
                     <div class="health_landing_quick_access_grid">
                         <t t-foreach="state.recentlyAccessed" t-as="recent" t-key="recent.id">
@@ -63,7 +63,7 @@
                 <!-- Favorites -->
                 <div class="health_landing_quick_access" t-if="state.favorites.length > 0 and !state.searchQuery">
                     <div class="health_landing_quick_access_title">
-                        <i class="fa fa-star"/> Yêu thích
+                        <i class="fa fa-star"/> Favorites
                     </div>
                     <div class="health_landing_quick_access_grid">
                         <t t-foreach="state.favorites" t-as="favorite" t-key="favorite.id">
@@ -102,7 +102,7 @@
                     <div class="health_landing_empty_icon">
                         <i class="fa fa-search"/>
                     </div>
-                    <p>Không tìm thấy mô-đun hoặc tính năng cho "<t t-esc="state.searchQuery"/>"</p>
+                    <p>No modules or features found for "<t t-esc="state.searchQuery"/>"</p>
                 </div>
             </t>
 
@@ -112,7 +112,7 @@
                 <div class="health_landing_breadcrumb">
                     <span class="health_landing_breadcrumb_item">
                         <a class="health_landing_breadcrumb_link" t-on-click="() => this.showMain()">
-                            <i class="fa fa-home"/> Trang chủ
+                            <i class="fa fa-home"/> Home
                         </a>
                     </span>
                     <span class="health_landing_breadcrumb_separator">/</span>
@@ -121,7 +121,7 @@
 
                 <!-- Back Button -->
                 <button class="health_landing_back_btn" t-on-click="() => this.showMain()">
-                    <i class="fa fa-arrow-left"/> Quay lại bảng điều khiển
+                    <i class="fa fa-arrow-left"/> Back to Dashboard
                 </button>
 
                 <!-- Submenu Header -->
@@ -157,9 +157,9 @@
                     patientName="state.selectedPatientName"
                     onBack="() => this.showMain()"
                     onBreadcrumbRoot="() => this.showMain()"
-                    breadcrumbRootLabel="'Trang ch\u1EE7'"
-                    breadcrumbMiddleLabel="'Qu\u1EA3n l\u00FD b\u1EC7nh nh\u00E2n'"
-                    breadcrumbClientLabel="'Kh\u00E1ch h\u00E0ng'"
+                    breadcrumbRootLabel="'Home'"
+                    breadcrumbMiddleLabel="'Patient Management'"
+                    breadcrumbClientLabel="'Client'"
                     onSpokeClick="(spoke, patientId) => this.onSpokeClick(spoke, patientId)"
                 />
 
@@ -194,11 +194,11 @@
                         <!-- Modal Body -->
                         <div class="health_landing_modal_body">
                             <p class="health_landing_modal_description">
-                                Khám phá đầy đủ các tính năng có sẵn trong mô-đun này.
+                                Explore the full set of features available in this module.
                             </p>
 
                             <!-- Quick Actions List -->
-                            <div class="health_landing_modal_actions_title">Thao tác nhanh</div>
+                            <div class="health_landing_modal_actions_title">Quick Actions</div>
                             <ul class="health_landing_modal_actions_list">
                                 <t t-foreach="state.modalModule.submenus.slice(0, 5)" t-as="action" t-key="action.name">
                                     <li class="health_landing_modal_action_item" t-on-click="() => this.launchAction(action.action, action.name, action.icon)">
@@ -213,10 +213,10 @@
                         <!-- Modal Footer -->
                         <div class="health_landing_modal_footer">
                             <button class="health_landing_modal_btn health_landing_modal_btn_secondary" t-on-click="closeModal">
-                                Đóng
+                                Close
                             </button>
                             <button class="health_landing_modal_btn health_landing_modal_btn_primary" t-on-click="() => { this.showSubmenu(state.modalModule); this.closeModal(); }">
-                                <i class="fa fa-th"/> Xem tất cả tính năng
+                                <i class="fa fa-th"/> View All Features
                             </button>
                         </div>
                     </div>

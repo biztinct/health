@@ -8,7 +8,7 @@
             <!-- Header with breadcrumb and back button -->
             <div class="hub_spoke_header">
                 <button class="health_landing_back_btn" t-on-click="props.onBack">
-                    <i class="fa fa-arrow-left"/> Quay lại
+                    <i class="fa fa-arrow-left"/> Back
                 </button>
 
                 <div class="health_landing_breadcrumb">
@@ -29,14 +29,14 @@
                     <i class="fa fa-user-circle"/> <t t-esc="props.patientName"/>
                 </h1>
                 <p class="hub_spoke_subtitle">
-                    <span class="hub_spoke_subtitle_tag hub_spoke_subtitle_tag--client">Chi tiết khách hàng</span>
+                    <span class="hub_spoke_subtitle_tag hub_spoke_subtitle_tag--client">Client Details</span>
                 </p>
             </div>
 
             <!-- Loading State -->
             <div class="health_landing_loading" t-if="state.loading">
                 <i class="fa fa-spinner health_landing_loading_spinner"/>
-                <p>Đang tải dữ liệu bệnh nhân...</p>
+                <p>Loading patient data...</p>
             </div>
 
             <!-- SVG Hub-and-Spoke Diagram -->
@@ -173,7 +173,7 @@
                 <!-- Legend / Instructions -->
                 <div class="hub_spoke_legend">
                     <p>
-                        <i class="fa fa-hand-pointer-o"/> Nhấp vào bất kỳ phần nào để xem chi tiết
+                        <i class="fa fa-hand-pointer-o"/> Click any section to view details
                     </p>
                 </div>
             </div>

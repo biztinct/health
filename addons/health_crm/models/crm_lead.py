@@ -747,7 +747,26 @@ class HealthLead(models.Model):
         return records
     
     def write(self, vals):
-        """Override write to handle relationship changes"""
+        """Override write to handle relationship changes and sync contact_status."""
+        
+        # Server-side sync: when contact_outcome changes, also update contact_status
+        # This is required because contact_status is readonly in the form view,
+        # so onchange-set values are NOT included in the save payload by Odoo.
+        if 'contact_outcome' in vals and 'contact_status' not in vals:
+            outcome_to_status = {
+                'service_booked': 'booking',
+                'pending_follow_up': 'lead',
+                'rejected': 'lost_booking',
+                'no_response': 'lead',
+                'booking_lost': 'lost_booking',
+            }
+            new_status = outcome_to_status.get(vals['contact_outcome'])
+            if new_status:
+                vals['contact_status'] = new_status
+            # Also sync health_contact_outcome for consistency
+            if 'health_contact_outcome' not in vals:
+                vals['health_contact_outcome'] = vals['contact_outcome']
+        
         result = super().write(vals)
         
         # If relationship fields were changed, reprocess relationships only when conditions are met
@@ -761,8 +780,10 @@ class HealthLead(models.Model):
     @api.onchange('health_contact_outcome')
     def _onchange_health_contact_outcome(self):
         """
-        Sync contact_status when health_contact_outcome changes from the dropdown.
-        This ensures the status badge reflects the selected outcome.
+        Sync contact_status when health_contact_outcome changes.
+        NOTE: health_contact_outcome is invisible on all forms, so this
+        only fires from programmatic changes. The user-facing onchange
+        is _onchange_contact_outcome below.
         """
         if not self.health_contact_outcome:
             return
@@ -782,6 +803,31 @@ class HealthLead(models.Model):
             self.contact_status = new_status
             # Also sync contact_outcome for consistency
             self.contact_outcome = self.health_contact_outcome
+    
+    @api.onchange('contact_outcome')
+    def _onchange_contact_outcome(self):
+        """
+        Sync contact_status when the user changes the visible Contact Outcome
+        dropdown on the Lead Info form. This is the primary user-facing onchange.
+        Also syncs health_contact_outcome for consistency.
+        """
+        if not self.contact_outcome:
+            return
+        
+        # Map contact_outcome values to contact_status
+        outcome_to_status = {
+            'service_booked': 'booking',      # Service Booked → Booking status
+            'pending_follow_up': 'lead',      # Pending Follow-up → Lead status
+            'rejected': 'lost_booking',       # Rejected → Lost Booking status
+            'no_response': 'lead',            # No Response → Keep as Lead
+            'booking_lost': 'lost_booking',   # Booking Lost → Lost Booking status
+        }
+        
+        new_status = outcome_to_status.get(self.contact_outcome)
+        if new_status and self.contact_status != new_status:
+            self.contact_status = new_status
+            # Also sync health_contact_outcome for consistency
+            self.health_contact_outcome = self.contact_outcome
     
     def _generate_unique_contact_code(self, vals):
         """

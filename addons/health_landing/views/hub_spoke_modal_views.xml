@@ -413,8 +413,7 @@
 
                     <group>
                         <group string="Contact Status">
-                            <field name="contact_status" readonly="1"/>
-                            <field name="contact_outcome" invisible="1"/>
+                            <field name="contact_status" readonly="1" force_save="1"/>
                             <field name="booking_lost_reason" invisible="contact_outcome != 'booking_lost'"/>
                         </group>
                     </group>

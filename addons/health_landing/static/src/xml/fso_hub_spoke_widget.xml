@@ -8,7 +8,7 @@
             <!-- Compact Header with FSO ID and Status Bar -->
             <div class="fso_spoke_header">
                 <button class="health_landing_back_btn" t-on-click="props.onBack">
-                    <i class="fa fa-arrow-left"/> Quay lại
+                    <i class="fa fa-arrow-left"/> Back
                 </button>
 
                 <div class="health_landing_breadcrumb">
@@ -71,7 +71,7 @@
             <!-- Loading State -->
             <div class="health_landing_loading" t-if="state.loading">
                 <i class="fa fa-spinner health_landing_loading_spinner"/>
-                <p>Đang tải dữ liệu quy trình...</p>
+                <p>Loading workflow data...</p>
             </div>
 
             <!-- SVG Flowchart Layout -->

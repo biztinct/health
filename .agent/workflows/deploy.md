@@ -6,7 +6,9 @@ description: Deploy modules to VietUc UAT server and restart Odoo
 
 # Deploy to VietUc UAT
 
-Use this workflow whenever you modify any `health_*` modules and need to deploy changes to the UAT server.
+> **AUTO-DEPLOY RULE**: Every time you make code changes to any `health_*` module, you MUST automatically deploy, upgrade, and restart WITHOUT the user asking. Do not wait for the user to say "deploy" — just do it as part of completing the task.
+
+Use this workflow whenever you modify any `health_*` modules. This runs automatically after every change.
 
 ## Steps
 
@@ -21,55 +23,60 @@ Replace `<module_name>` with the actual module(s) modified, e.g.:
 - `health_crm` - for CRM lead changes  
 - `health_base` - for base model changes
 - `all` - to copy all health_* modules
+- Multiple modules: `./rd health_crm health_landing`
 
-2. Restart the Odoo service on the UAT server:
+2. Stop the Odoo service, upgrade modules via command line, then restart:
 // turbo
 ```bash
-ssh VietUcUAT "sudo service odoo-server restart"
+ssh VietUcUAT "sudo service odoo-server stop && sudo su - odoo -s /bin/bash -c '/odoo/odoo-server/odoo-bin -c /etc/odoo-server.conf -u <module_name> -d vietuat --stop-after-init' 2>&1 | tail -20 && sudo service odoo-server start"
 ```
 
-3. Wait for the server to come back up:
+Replace `<module_name>` with the comma-separated list of modules, e.g. `health_landing,health_crm`.
+This stops the service, runs the upgrade (which applies XML/data changes), and restarts.
+
+3. Wait for the server to come back up and verify:
 // turbo
 ```bash
-sleep 15 && ssh VietUcUAT "sudo service odoo-server status" | head -10
+sleep 15 && ssh VietUcUAT "sudo service odoo-server status" | head -5
 ```
 
-4. Upgrade the module in Odoo (if XML views or data files changed):
-   - Open browser and navigate to: https://care.biztinct.com/odoo/apps
-   - Search for the module name (e.g., "health_base")
-   - Click on the module dropdown (three dots or menu icon)
-   - Click "Upgrade"
-   - Wait for the upgrade to complete (page will reload)
-   - If an error occurs, note the error message and fix the issue
+Confirm output shows `Active: active (running)`.
 
-## Combined Command Example
+## Server Details
 
-For a single module:
+| Item | Value |
+|------|-------|
+| SSH alias | `VietUcUAT` |
+| Database | `vietuat` |
+| Odoo bin | `/odoo/odoo-server/odoo-bin` |
+| Config | `/etc/odoo-server.conf` |
+| Addons path | `/odoo/odoo-server/addons` |
+| UAT URL | `https://care.biztinct.com` |
+
+## Combined One-Liner Example
+
+For deploying and upgrading multiple modules in one go:
 ```bash
-cd /Users/adity/Documents/GitHub/health19/addons && ./rd health_landing && ssh VietUcUAT "sudo service odoo-server restart"
+cd /Users/adity/Documents/GitHub/health19/addons && ./rd health_crm health_landing && ssh VietUcUAT "sudo service odoo-server stop && sudo su - odoo -s /bin/bash -c '/odoo/odoo-server/odoo-bin -c /etc/odoo-server.conf -u health_landing,health_crm -d vietuat --stop-after-init' 2>&1 | tail -20 && sudo service odoo-server start"
 ```
 
-For multiple modules:
+## Quick Deploy (Python-only changes, no XML)
+
+If you only changed `.py` files (no XML views/data), a simple restart is enough:
 ```bash
-cd /Users/adity/Documents/GitHub/health19/addons && ./rd health_crm health_landing && ssh VietUcUAT "sudo service odoo-server restart"
+cd /Users/adity/Documents/GitHub/health19/addons && ./rd <module_name> && ssh VietUcUAT "sudo service odoo-server restart"
 ```
 
-## Quick Deploy with Direct SCP (for single files)
+## Quick Deploy (single file via SCP)
 
-If you need to deploy a single file quickly:
 ```bash
 scp /path/to/file VietUcUAT:/odoo/odoo-server/addons/<module>/path/to/file
 ```
 
-Example:
-```bash
-scp /Users/adity/Documents/GitHub/health19/addons/health_base/views/health_audit_log_views.xml VietUcUAT:/odoo/odoo-server/addons/health_base/views/
-```
-
 ## Notes
 - The `rd` script uses `scp` to copy files to `VietUcUAT:/odoo/odoo-server/addons/`
-- After restart, verify changes in browser at the UAT URL
+- **XML/data changes** require the `-u` upgrade step; a simple restart is NOT enough
+- **Python changes** take effect after server restart (no `-u` needed)
+- **JavaScript/CSS changes** may need a browser hard refresh (Ctrl+Shift+R)
 - Use `./rd list` to see available health modules
-- **IMPORTANT**: If you modified XML views, you MUST upgrade the module in Odoo Apps for changes to take effect
-- Python file changes take effect after server restart
-- JavaScript/CSS changes may need a browser hard refresh (Ctrl+Shift+R)
+- The upgrade command exits with code 0 on success; RST warnings are harmless

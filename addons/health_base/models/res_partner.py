@@ -698,11 +698,13 @@ class ResPartner(models.Model):
     
     @api.constrains('phone', 'mobile')
     def _check_phone(self):
-        """Validate phone number format"""
+        """Validate phone number format — permissive to support international formats"""
+        # Allow digits, spaces, dashes, dots, parentheses, plus sign — min 5 chars
+        phone_pattern = re.compile(r'^\+?[\d\s\-\.\(\)]{5,20}$')
         for partner in self:
-            if partner.phone and not re.match(r'^\+?[\d\s\-\(\)]{7,15}$', partner.phone):
+            if partner.phone and not phone_pattern.match(partner.phone):
                 raise ValidationError(_('Please enter a valid phone number.'))
-            if partner.mobile and not re.match(r'^\+?[\d\s\-\(\)]{7,15}$', partner.mobile):
+            if partner.mobile and not phone_pattern.match(partner.mobile):
                 raise ValidationError(_('Please enter a valid mobile number.'))
 
     @api.constrains('is_patient', 'catchment_province_id')
