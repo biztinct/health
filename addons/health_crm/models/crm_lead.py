@@ -746,6 +746,62 @@ class HealthLead(models.Model):
         
         return records
     
+    # =========================================================================
+    # CRITICAL: Override phone/email sync to prevent contact→client contamination
+    # =========================================================================
+    # In standard Odoo CRM, lead.phone syncs back to partner_id.phone via 
+    # _inverse_phone. But in healthcare CRM, the caller (contact) can be a 
+    # different person than the client (partner_id). A caregiver's phone 
+    # should NOT overwrite the patient's phone.
+    
+    def _inverse_phone(self):
+        """Override to prevent syncing contact phone to client partner.
+        
+        Only sync phone to partner if the caller IS the client.
+        When a caregiver calls, lead.phone is the caregiver's phone,
+        NOT the client's phone - so it must NOT be written to partner.
+        """
+        for lead in self:
+            if lead.contact_relationship_type == 'client' or not lead.contact_relationship_type:
+                # Caller IS the client - safe to sync phone to partner
+                if lead._get_partner_phone_update(force_void=False):
+                    lead.partner_id.phone = lead.phone
+            # else: caller is NOT the client - do NOT sync phone
+    
+    def _inverse_email_from(self):
+        """Override to prevent syncing contact email to client partner.
+        
+        Same logic as _inverse_phone - only sync when caller IS the client.
+        """
+        for lead in self:
+            if lead.contact_relationship_type == 'client' or not lead.contact_relationship_type:
+                # Caller IS the client - safe to sync email to partner
+                if lead._get_partner_email_update(force_void=False):
+                    lead.partner_id.email = lead.email_from
+            # else: caller is NOT the client - do NOT sync email
+    
+    def _compute_phone(self):
+        """Override to prevent partner phone from overwriting contact phone.
+        
+        When a caregiver calls, lead.phone should stay as the caregiver's phone,
+        NOT be replaced by the client's (partner's) phone.
+        """
+        for lead in self:
+            if lead.contact_relationship_type == 'client' or not lead.contact_relationship_type:
+                # Caller IS the client - standard behavior
+                if lead.partner_id.phone and lead._get_partner_phone_update():
+                    lead.phone = lead.partner_id.phone
+            # else: caller is NOT the client - keep the contact's phone
+    
+    def _compute_email_from(self):
+        """Override to prevent partner email from overwriting contact email."""
+        for lead in self:
+            if lead.contact_relationship_type == 'client' or not lead.contact_relationship_type:
+                # Caller IS the client - standard behavior  
+                if lead.partner_id.email and lead._get_partner_email_update():
+                    lead.email_from = lead.partner_id.email
+            # else: caller is NOT the client - keep the contact's email
+
     def write(self, vals):
         """Override write to handle relationship changes and sync contact_status."""
         
@@ -1227,13 +1283,31 @@ class HealthLead(models.Model):
         # are different people. Use partner data for client fields, NOT lead data
         # (lead.phone/email_from belong to the CONTACT, not the CLIENT)
         if self.partner_id:
+            # Partner linked - use partner's (client's) data
             client_phone = self.partner_id.phone or self.partner_id.mobile or ''
             client_email = self.partner_id.email or ''
             client_address = self.partner_id.street or ''
-        else:
+        elif self.contact_relationship_type == 'client':
+            # Caller IS the client - lead.phone IS the client's phone
             client_phone = self.phone or ''
             client_email = self.email_from or ''
             client_address = self.street_address or ''
+        else:
+            # Caller is NOT the client (caregiver, payer, etc.)
+            # Do NOT use lead.phone - it belongs to the caller, not the client
+            # Try to find client by client_name in res.partner
+            client_phone = ''
+            client_email = ''
+            client_address = ''
+            if self.client_name:
+                client_partner = self.env['res.partner'].search([
+                    ('is_patient', '=', True),
+                    ('name', 'ilike', self.client_name),
+                ], limit=1)
+                if client_partner:
+                    client_phone = client_partner.phone or client_partner.mobile or ''
+                    client_email = client_partner.email or ''
+                    client_address = client_partner.street or ''
         
         return {
             'type': 'ir.actions.act_window',

@@ -96,30 +96,91 @@ class HealthContactSearchWizard(models.TransientModel):
     def action_select_record(self, record_type, record_id):
         """
         Called when user selects a record from the search results.
-        Opens the appropriate form based on record type.
+        Populates the initial wizard with the selected contact's data
+        and returns to it.
         """
+        if not self.source_wizard_id:
+            # No source wizard - fallback to opening the record directly
+            if record_type == 'client':
+                return {
+                    'type': 'ir.actions.act_window',
+                    'name': _('Client Details'),
+                    'res_model': 'res.partner',
+                    'res_id': record_id,
+                    'view_mode': 'form',
+                    'target': 'current',
+                }
+            else:
+                return {'type': 'ir.actions.act_window_close'}
+        
+        wizard = self.source_wizard_id
+        update_vals = {}
+        
         if record_type == 'client':
-            # Open client form (res.partner)
-            return {
-                'type': 'ir.actions.act_window',
-                'name': _('Client Details'),
-                'res_model': 'res.partner',
-                'res_id': record_id,
-                'view_mode': 'form',
-                'views': [(self.env.ref('health_base.view_health_patient_form').id, 'form')],
-                'target': 'current',
-            }
-        else:
-            # Open lead/contact hub-spoke dashboard
+            # Selected a client (res.partner with is_patient=True)
+            partner = self.env['res.partner'].browse(record_id)
+            if partner.exists():
+                update_vals['name'] = partner.name
+                update_vals['phone'] = partner.phone or partner.mobile or ''
+                update_vals['email'] = partner.email or ''
+                # Client is calling for themselves - set relationship to 'client'
+                update_vals['contact_relationship_type'] = 'client'
+                update_vals['selected_client_id'] = partner.id
+                update_vals['client_name'] = partner.name
+                
+        elif record_type == 'lead':
+            # Selected a lead (crm.lead)
             lead = self.env['crm.lead'].browse(record_id)
-            return {
-                'type': 'ir.actions.client',
-                'tag': 'health_landing_lead_hub',
-                'params': {
-                    'lead_id': lead.id,
-                    'lead_name': lead.name,
-                },
-            }
+            if lead.exists():
+                update_vals['name'] = lead.name or ''
+                update_vals['phone'] = lead.phone or ''
+                update_vals['email'] = lead.email_from or ''
+                # Auto-populate relationship from the lead's last interaction
+                if lead.contact_relationship_type:
+                    update_vals['contact_relationship_type'] = lead.contact_relationship_type
+                # Auto-populate client name from the lead
+                if lead.client_name:
+                    update_vals['client_name'] = lead.client_name
+                # If the lead has a partner_id (linked client), set it
+                if lead.partner_id:
+                    update_vals['selected_client_id'] = lead.partner_id.id
+                    if not lead.client_name:
+                        update_vals['client_name'] = lead.partner_id.name
+                        
+        elif record_type == 'contact':
+            # Selected a contact (crm.lead in initial/active status)
+            lead = self.env['crm.lead'].browse(record_id)
+            if lead.exists():
+                update_vals['name'] = lead.name or ''
+                update_vals['phone'] = lead.phone or ''
+                update_vals['email'] = lead.email_from or ''
+                # Auto-populate from the contact's data
+                if lead.contact_relationship_type:
+                    update_vals['contact_relationship_type'] = lead.contact_relationship_type
+                if lead.client_name:
+                    update_vals['client_name'] = lead.client_name
+                if lead.partner_id:
+                    update_vals['selected_client_id'] = lead.partner_id.id
+                    if not lead.client_name:
+                        update_vals['client_name'] = lead.partner_id.name
+        
+        # Write all updates to the source wizard
+        if update_vals:
+            wizard.write(update_vals)
+        
+        # Return to the initial wizard
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _('New Contact'),
+            'res_model': 'health.initial.contact.wizard',
+            'res_id': wizard.id,
+            'view_mode': 'form',
+            'views': [(self.env.ref('health_crm.view_initial_contact_wizard_form').id, 'form')],
+            'target': 'new',
+            'context': {
+                'form_view_initial_mode': 'edit',
+            },
+        }
     
     def action_continue_new(self):
         """

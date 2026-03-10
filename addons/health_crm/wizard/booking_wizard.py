@@ -560,9 +560,31 @@ class HealthBookingWizard(models.TransientModel):
                     defaults['client_gender'] = client.gender
             else:
                 defaults['is_new_client'] = True
-                defaults['client_name'] = lead.name
-                defaults['client_phone'] = lead.phone
-                defaults['client_email'] = lead.email_from
-                defaults['client_address'] = lead.street_address
+                # Check relationship type to avoid phone contamination
+                if lead.contact_relationship_type == 'client':
+                    # Caller IS the client - lead data is client data
+                    defaults['client_name'] = lead.name
+                    defaults['client_phone'] = lead.phone
+                    defaults['client_email'] = lead.email_from
+                    defaults['client_address'] = lead.street_address
+                else:
+                    # Caller is NOT the client (caregiver, payer, etc.)
+                    # Do NOT use lead.phone - it belongs to the caller
+                    defaults['client_name'] = lead.client_name or lead.name
+                    defaults['client_phone'] = ''
+                    defaults['client_email'] = ''
+                    defaults['client_address'] = ''
+                    # Try to find client by client_name
+                    if lead.client_name:
+                        client_partner = self.env['res.partner'].search([
+                            ('is_patient', '=', True),
+                            ('name', 'ilike', lead.client_name),
+                        ], limit=1)
+                        if client_partner:
+                            defaults['client_id'] = client_partner.id
+                            defaults['is_new_client'] = False
+                            defaults['client_phone'] = client_partner.phone or client_partner.mobile or ''
+                            defaults['client_email'] = client_partner.email or ''
+                            defaults['client_address'] = client_partner.street or ''
         
         return defaults
