@@ -261,6 +261,7 @@ class HealthInitialContactWizard(models.TransientModel):
                     'id': lead.patient_id.id,
                     'name': lead.patient_id.name,
                     'code': lead.patient_id.patient_code or '',
+                    'phone': lead.patient_id.phone or lead.patient_id.mobile or '',
                 }
             
             record = {
@@ -340,6 +341,10 @@ class HealthInitialContactWizard(models.TransientModel):
             if associated_client:
                 associated_info = f"Client: {associated_client['name']}"
             
+            client_phone = ''
+            if associated_client:
+                client_phone = associated_client.get('phone', '')
+            
             line_vals.append((0, 0, {
                 'record_type': 'lead',
                 'record_id': lead['id'],
@@ -348,6 +353,7 @@ class HealthInitialContactWizard(models.TransientModel):
                 'email': lead.get('email', ''),
                 'code': lead.get('code', ''),
                 'associated_info': associated_info,
+                'client_phone': client_phone,
             }))
         
         # Add contacts with associated client info
@@ -357,6 +363,10 @@ class HealthInitialContactWizard(models.TransientModel):
             if associated_client:
                 associated_info = f"Client: {associated_client['name']}"
             
+            client_phone = ''
+            if associated_client:
+                client_phone = associated_client.get('phone', '')
+            
             line_vals.append((0, 0, {
                 'record_type': 'contact',
                 'record_id': contact['id'],
@@ -365,6 +375,7 @@ class HealthInitialContactWizard(models.TransientModel):
                 'email': contact.get('email', ''),
                 'code': contact.get('code', ''),
                 'associated_info': associated_info,
+                'client_phone': client_phone,
             }))
         
         # Create the search wizard with lines explicitly saved to database

@@ -60,6 +60,7 @@
                                 <field name="phone" string="Phone"/>
                                 <field name="email" string="Email"/>
                                 <field name="code" string="Lead ID"/>
+                                <field name="client_phone" string="Client Phone" optional="show"/>
                                 <field name="associated_info" string="Associated Client" 
                                        widget="char" optional="show"/>
                                 <button name="action_select" type="object" 
@@ -84,6 +85,7 @@
                                 <field name="phone" string="Phone"/>
                                 <field name="email" string="Email"/>
                                 <field name="code" string="Contact ID"/>
+                                <field name="client_phone" string="Client Phone" optional="show"/>
                                 <field name="associated_info" string="Associated Client" 
                                        widget="char" optional="show"/>
                                 <button name="action_select" type="object" 
