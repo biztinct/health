@@ -8,12 +8,21 @@
         <field name="arch" type="xml">
             <form string="New Contact">
                 <sheet>
-                    <!-- Header with title and close button styling -->
+                    <!-- Header with title and inline metadata -->
                     <div class="oe_title" style="margin-bottom: 20px;">
                         <h1>
                             <span class="fa fa-phone-square" style="color: #4299e1; margin-right: 10px;"/>
                             New Contact
                         </h1>
+                        <div class="text-muted" style="font-size: 0.85em; margin-top: 4px;">
+                            <field name="contact_datetime" widget="datetime" readonly="1" nolabel="1" class="oe_inline"/>
+                            <span class="mx-2">·</span>
+                            <field name="contact_type" widget="badge" nolabel="1" class="oe_inline"
+                                   decoration-success="contact_type == 'new'"
+                                   decoration-info="contact_type == 'repeat'"/>
+                            <span invisible="not contact_id" class="mx-2">·</span>
+                            <field name="contact_id" readonly="1" nolabel="1" class="oe_inline" invisible="not contact_id"/>
+                        </div>
                     </div>
 
                     <!-- Duplicate Warning Alert -->
@@ -50,19 +59,6 @@
                     <field name="existing_partner_id" invisible="1"/>
                     <field name="is_spam_caller" invisible="1"/>
 
-                    <!-- Contact DateTime and Auto fields -->
-                    <group>
-                        <group>
-                            <field name="contact_datetime" string="Contact Date" readonly="1"/>
-                        </group>
-                        <group>
-                            <field name="contact_id" string="Contact ID" placeholder="Auto-generated"/>
-                            <field name="contact_type" string="Type" widget="badge" 
-                                   decoration-success="contact_type == 'new'"
-                                   decoration-info="contact_type == 'repeat'"/>
-                        </group>
-                    </group>
-
                     <separator string="Contact Information"/>
 
                     <!-- Main Contact Fields -->
@@ -86,6 +82,30 @@
                                    placeholder="e.g. 0909 123 456"/>
                             <field name="email" string="Email" widget="email"
                                    placeholder="e.g. email@example.com"/>
+                        </group>
+                    </group>
+
+                    <separator string="Relationship Context"/>
+
+                    <!-- Relationship Context - full width -->
+                    <group>
+                        <field name="contact_relationship_type" widget="radio" 
+                               options="{'horizontal': true}"
+                               nolabel="1"/>
+                    </group>
+                    <group invisible="contact_relationship_type == 'client'">
+                        <group>
+                            <label for="client_name" string="Client Name"/>
+                            <div class="o_row">
+                                <field name="client_name" nolabel="1" 
+                                       placeholder="Enter client name..."
+                                       required="contact_relationship_type != 'client'"
+                                       class="oe_inline"/>
+                                <button name="action_search_client_by_name" type="object" 
+                                        class="btn btn-outline-primary btn-sm"
+                                        string="🔍 Search" 
+                                        title="Search for existing clients"/>
+                            </div>
                         </group>
                     </group>
 

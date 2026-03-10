@@ -68,22 +68,18 @@
                         </h2>
                         
                         <group>
-                            <field name="is_new_client" string="This is a New Client"/>
+                            <field name="is_new_client" string="This is a New Client" readonly="1"/>
                         </group>
                         
-                        <!-- Existing Client Selection -->
-                        <group invisible="is_new_client">
-                            <group>
-                                <field name="client_id" string="Select Client" 
-                                       placeholder="Search existing clients..."
-                                       options="{'no_create': false}"/>
-                            </group>
-                        </group>
+                        <!-- Hidden client_id for existing client reference -->
+                        <field name="client_id" invisible="1"/>
                         
-                        <!-- New Client Fields -->
-                        <group invisible="not is_new_client">
-                            <group string="New Client Information">
-                                <field name="client_name" string="Full Name" required="is_new_client"/>
+                        <!-- Client Fields - shown in both modes -->
+                        <group>
+                            <group string="Client Information">
+                                <field name="client_name" string="Full Name" 
+                                       required="1"
+                                       readonly="not is_new_client"/>
                                 <field name="client_phone" string="Phone" widget="phone"/>
                                 <field name="client_email" string="Email" widget="email"/>
                             </group>

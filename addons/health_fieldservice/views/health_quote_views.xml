@@ -83,6 +83,12 @@
                     </notebook>
                 </sheet>
                 <chatter reload_on_follower="True"/>
+                <footer>
+                    <button name="action_save_and_return_to_fso" type="object"
+                            string="Save" class="btn-primary"
+                            help="Save quote and return to Booking"/>
+                    <button string="Discard" class="btn-secondary" special="cancel"/>
+                </footer>
             </form>
         </field>
     </record>

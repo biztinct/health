@@ -80,6 +80,37 @@ class HealthInitialContactWizard(models.TransientModel):
     )
     
     # =========================================================================
+    # RELATIONSHIP CONTEXT
+    # =========================================================================
+    
+    contact_relationship_type = fields.Selection([
+        ('client', 'Client'),
+        ('caregiver', 'Caregiver'),
+        ('payer', 'Payer'),
+        ('referrer', 'Referrer'),
+        ('emergency_contact', 'Emergency Contact'),
+        ('legal_guardian', 'Legal Guardian'),
+        ('healthcare_proxy', 'Healthcare Proxy'),
+        ('client_representative', 'Client Representative'),
+        ('family_member', 'Family Member'),
+        ('friend', 'Friend'),
+        ('professional', 'Professional Care Provider'),
+    ], string='I am the:', default='client',
+       help='Relationship of the caller to the client/patient')
+    
+    client_name = fields.Char(
+        'Client Name',
+        help='Name of the actual client/patient when caller is not the client'
+    )
+    
+    selected_client_id = fields.Many2one(
+        'res.partner',
+        string='Selected Client',
+        domain="[('is_patient', '=', True)]",
+        help='The actual client/patient record if selected from search'
+    )
+    
+    # =========================================================================
     # EXISTING CONTACT DETECTION
     # =========================================================================
     
@@ -458,6 +489,74 @@ class HealthInitialContactWizard(models.TransientModel):
     # WIZARD ACTIONS
     # =========================================================================
     
+    def action_search_client_by_name(self):
+        """
+        Search for existing clients by the client_name field.
+        Opens a popup with matching clients to select from.
+        """
+        self.ensure_one()
+        
+        search_term = self.client_name
+        if not search_term or len(search_term) < 2:
+            return {
+                'type': 'ir.actions.client',
+                'tag': 'display_notification',
+                'params': {
+                    'title': _('Search'),
+                    'message': _('Please enter at least 2 characters in Client Name to search.'),
+                    'type': 'warning',
+                    'sticky': False,
+                }
+            }
+        
+        # Search for clients (res.partner with is_patient=True)
+        partners = self.env['res.partner'].search([
+            ('is_patient', '=', True),
+            '|', '|',
+            ('name', 'ilike', search_term),
+            ('phone', 'ilike', search_term),
+            ('email', 'ilike', search_term),
+        ], limit=15)
+        
+        if not partners:
+            return {
+                'type': 'ir.actions.client',
+                'tag': 'display_notification',
+                'params': {
+                    'title': _('No Clients Found'),
+                    'message': _('No existing clients match "%s". You can continue with this name.') % search_term,
+                    'type': 'info',
+                    'sticky': False,
+                }
+            }
+        
+        # Create search wizard with results, linking back to this initial contact wizard
+        wizard = self.env['health.client.search.wizard'].create({
+            'search_term': search_term,
+            'source_initial_wizard_id': self.id,
+        })
+        
+        # Add client lines
+        for p in partners:
+            self.env['health.client.search.line'].create({
+                'wizard_id': wizard.id,
+                'partner_id': p.id,
+                'name': p.name,
+                'phone': p.phone or '',
+                'email': p.email or '',
+                'code': p.patient_code or '',
+            })
+        
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _('Select Client'),
+            'res_model': 'health.client.search.wizard',
+            'res_id': wizard.id,
+            'view_mode': 'form',
+            'target': 'new',
+            'context': {'form_view_initial_mode': 'edit'},
+        }
+    
     def action_next(self):
         """
         NEXT button - Create or update contact and open Contact Details form
@@ -471,12 +570,18 @@ class HealthInitialContactWizard(models.TransientModel):
         # If existing contact found, update it and open
         if self.existing_contact_id:
             lead = self.existing_contact_id
-            lead.write({
+            update_vals = {
                 'contact_datetime': self.contact_datetime,
                 'mode_of_contact': self.mode_of_contact,
                 'contact_type': 'repeat',
                 'contact_status': 'active',  # Reactivate if was spam
-            })
+                'contact_relationship_type': self.contact_relationship_type,
+            }
+            if self.client_name:
+                update_vals['client_name'] = self.client_name
+            if self.selected_client_id:
+                update_vals['partner_id'] = self.selected_client_id.id
+            lead.write(update_vals)
         else:
             # Create new lead/contact
             lead_vals = {
@@ -489,10 +594,15 @@ class HealthInitialContactWizard(models.TransientModel):
                 'contact_type': 'new',
                 'contact_status': 'active',
                 'type': 'opportunity',  # Use opportunity type for contacts
+                'contact_relationship_type': self.contact_relationship_type,
             }
+            if self.client_name:
+                lead_vals['client_name'] = self.client_name
             
             # Link to existing partner if found
-            if self.existing_partner_id:
+            if self.selected_client_id:
+                lead_vals['partner_id'] = self.selected_client_id.id
+            elif self.existing_partner_id:
                 lead_vals['partner_id'] = self.existing_partner_id.id
                 lead_vals['contact_type'] = 'repeat'
             

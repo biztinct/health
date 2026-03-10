@@ -367,6 +367,20 @@ class HealthBookingWizard(models.TransientModel):
         if self.client_id:
             # Existing client selected
             client = self.client_id
+            # Update existing client with any changes from the wizard
+            update_vals = {}
+            if self.client_phone and self.client_phone != (client.phone or ''):
+                update_vals['phone'] = self.client_phone
+            if self.client_email and self.client_email != (client.email or ''):
+                update_vals['email'] = self.client_email
+            if self.client_dob and self.client_dob != client.birth_date:
+                update_vals['birth_date'] = self.client_dob
+            if self.client_gender and self.client_gender != (client.gender or ''):
+                update_vals['gender'] = self.client_gender
+            if self.client_address and self.client_address != (client.street or ''):
+                update_vals['street'] = self.client_address
+            if update_vals:
+                client.write(update_vals)
         elif self.is_new_client and self.lead_id:
             # New client from lead - use lead's _get_or_create_patient to properly 
             # transfer unique_contact_code as patient_code
@@ -381,7 +395,7 @@ class HealthBookingWizard(models.TransientModel):
             if self.client_address and not client.street:
                 update_vals['street'] = self.client_address
             if self.client_dob:
-                update_vals['birthdate'] = self.client_dob
+                update_vals['birth_date'] = self.client_dob
             if self.client_gender:
                 update_vals['gender'] = self.client_gender
             if update_vals:
@@ -404,7 +418,7 @@ class HealthBookingWizard(models.TransientModel):
                 'email': self.client_email,
                 'street': self.client_address,
                 'is_patient': True,
-                'birthdate': self.client_dob,
+                'birth_date': self.client_dob,
                 'gender': self.client_gender,
                 'catchment_province_id': catchment_province.id if catchment_province else False,
             })
@@ -527,16 +541,28 @@ class HealthBookingWizard(models.TransientModel):
         if lead_id and self.env.context.get('active_model') == 'crm.lead':
             lead = self.env['crm.lead'].browse(lead_id)
             defaults['lead_id'] = lead.id
-            defaults['client_name'] = lead.name
-            defaults['client_phone'] = lead.phone
-            defaults['client_email'] = lead.email_from
-            defaults['client_address'] = lead.street_address
             
-            # Check if there's an existing partner
+            # Check if there's an existing partner (client)
             if lead.partner_id:
-                defaults['client_id'] = lead.partner_id.id
+                client = lead.partner_id
+                defaults['client_id'] = client.id
                 defaults['is_new_client'] = False
+                # Populate fields ONLY from the client record - never fall back
+                # to lead.phone/lead.email_from because those belong to the
+                # CONTACT (caller), not the CLIENT (patient)
+                defaults['client_name'] = client.name
+                defaults['client_phone'] = client.phone or client.mobile or ''
+                defaults['client_email'] = client.email or ''
+                defaults['client_address'] = client.street or ''
+                if hasattr(client, 'birth_date'):
+                    defaults['client_dob'] = client.birth_date
+                if hasattr(client, 'gender'):
+                    defaults['client_gender'] = client.gender
             else:
                 defaults['is_new_client'] = True
+                defaults['client_name'] = lead.name
+                defaults['client_phone'] = lead.phone
+                defaults['client_email'] = lead.email_from
+                defaults['client_address'] = lead.street_address
         
         return defaults

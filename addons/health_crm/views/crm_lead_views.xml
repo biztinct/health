@@ -587,15 +587,19 @@
         </field>
     </record>
 
-    <!-- Healthcare Opportunities List View Extension - Change name field label -->
+    <!-- Healthcare Opportunities List View Extension - Fix column labels -->
     <record id="view_healthcare_opportunity_tree" model="ir.ui.view">
         <field name="name">crm.lead.tree.opportunities.healthcare</field>
         <field name="model">crm.lead</field>
         <field name="inherit_id" ref="crm.crm_case_tree_view_oppor"/>
         <field name="arch" type="xml">
-            <!-- Change field label 'name' to 'Client name' in opportunity list view -->
+            <!-- 'name' field is the caller/contact person, NOT the client -->
             <xpath expr="//field[@name='name']" position="attributes">
-                <attribute name="string">Client name</attribute>
+                <attribute name="string">Contact Name</attribute>
+            </xpath>
+            <!-- Replace contact_name with client_name (actual client/patient) -->
+            <xpath expr="//field[@name='contact_name']" position="replace">
+                <field name="client_name" string="Client Name"/>
             </xpath>
             <!-- Replace stage_id with contact_status -->
             <xpath expr="//field[@name='stage_id']" position="replace">

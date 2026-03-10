@@ -1223,6 +1223,18 @@ class HealthLead(models.Model):
             client_name = self.name
         
         # Open the booking wizard with context from this lead
+        # IMPORTANT: When partner_id exists, the contact (caller) and client (patient)
+        # are different people. Use partner data for client fields, NOT lead data
+        # (lead.phone/email_from belong to the CONTACT, not the CLIENT)
+        if self.partner_id:
+            client_phone = self.partner_id.phone or self.partner_id.mobile or ''
+            client_email = self.partner_id.email or ''
+            client_address = self.partner_id.street or ''
+        else:
+            client_phone = self.phone or ''
+            client_email = self.email_from or ''
+            client_address = self.street_address or ''
+        
         return {
             'type': 'ir.actions.act_window',
             'name': _('Create Booking'),
@@ -1233,9 +1245,9 @@ class HealthLead(models.Model):
             'context': {
                 'default_lead_id': self.id,
                 'default_client_name': client_name,
-                'default_client_phone': self.phone,
-                'default_client_email': self.email_from,
-                'default_client_address': self.street_address,
+                'default_client_phone': client_phone,
+                'default_client_email': client_email,
+                'default_client_address': client_address,
                 'default_client_id': self.partner_id.id if self.partner_id else False,
                 'default_is_new_client': not bool(self.partner_id),
             }

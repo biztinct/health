@@ -941,26 +941,29 @@ class HealthStaffAssignment(models.Model):
     def _send_confirmation_notifications(self):
         """Send notifications when assignment is confirmed"""
         # Notify patient
-        if self.appointment_id.patient_id.email:
-            template = self.env.ref('health_fieldservice.email_template_assignment_confirmed', False)
-            if template:
-                template.send_mail(self.id, force_send=True)
+        try:
+            if self.appointment_id and self.appointment_id.patient_id and self.appointment_id.patient_id.email:
+                template = self.env.ref('health_fieldservice.email_template_assignment_confirmed', False)
+                if template:
+                    template.send_mail(self.id, force_send=True)
+        except Exception:
+            pass  # Silently fail - email should never block confirmation
         
         # Notify operations team
         try:
-            ops_users = self.env.ref('health_base.group_healthcare_operations_manager').users
-            for user in ops_users:
-                try:
-                    self.message_post(
-                        body=_('Assignment confirmed for FSO %s') % self.fso_id.name,
-                        partner_ids=user.partner_id.ids,
-                        message_type='notification'
-                    )
-                except Exception:
-                    pass  # Silently fail - no email notifications required
-        except ValueError:
-            # If group doesn't exist, skip notification
-            pass
+            ops_group = self.env.ref('health_base.group_healthcare_operations_manager', False)
+            if ops_group:
+                for user in ops_group.user_ids:
+                    try:
+                        self.message_post(
+                            body=_('Assignment confirmed for FSO %s') % self.fso_id.name,
+                            partner_ids=user.partner_id.ids,
+                            message_type='notification'
+                        )
+                    except Exception:
+                        pass  # Silently fail
+        except Exception:
+            pass  # If group doesn't exist, skip notification
     
     def _update_staff_availability(self):
         """Update staff availability matrix after completion"""
