@@ -37,19 +37,17 @@
                     </group>
                     
                     <!-- Payment Choice (Main Decision) -->
-                    <group string="💰 Payment Collection">
-                        <field name="payment_choice" widget="radio" nolabel="1"/>
-                    </group>
+                    <separator string="💰 PAYMENT COLLECTION"/>
+                    <field name="payment_choice" widget="radio" nolabel="1"/>
                     
                     <!-- Pay Now Options -->
-                    <group string="💳 Payment Method" 
-                           invisible="payment_choice != 'pay_now'">
+                    <div invisible="payment_choice != 'pay_now'">
+                        <separator string="💳 PAYMENT METHOD"/>
                         <field name="payment_method" widget="radio" nolabel="1"/>
-                    </group>
+                    </div>
                     
                     <!-- Prepaid Package Options -->
-                    <group string="🎁 Prepaid Package Consumption"
-                           invisible="payment_method != 'prepaid'">
+                    <group invisible="payment_method != 'prepaid'" col="2">
                         <group>
                             <field name="prepaid_package_id" 
                                    domain="[('patient_id', '=', patient_id), ('state', '=', 'active'), ('remaining_services', '>', 0)]"/>
@@ -66,24 +64,21 @@
                     </group>
                     
                     <!-- Payment Proof for Non-Cash -->
-                    <group string="📸 Payment Proof"
-                           invisible="not payment_proof_required">
+                    <div invisible="not payment_proof_required">
+                        <separator string="📸 PAYMENT PROOF"/>
                         <field name="payment_proof_required" invisible="1"/>
                         <field name="payment_proof_attachment_ids" nolabel="1" 
                                widget="many2many_binary"
                                help="Take photo/screenshot of bank transfer, card payment, or QR code confirmation"/>
-                    </group>
+                    </div>
                     
                     <!-- Nurse Notes -->
-                    <group string="📝 Service Notes">
-                        <field name="nurse_notes" nolabel="1" 
-                               placeholder="Additional notes about service delivery, patient condition, payment collection, etc."/>
-                    </group>
+                    <separator string="📝 SERVICE NOTES"/>
+                    <field name="nurse_notes" nolabel="1" 
+                           placeholder="Additional notes about service delivery, patient condition, payment collection, etc."/>
                     
-                    <!-- Invoice Options -->
-                    <group string="🧾 Invoice Processing">
-                        <field name="create_invoice_now"/>
-                    </group>
+                    <!-- Hidden field for create_invoice_now (always true, not shown to user) -->
+                    <field name="create_invoice_now" invisible="1"/>
                     
                 </sheet>
                 

@@ -198,7 +198,13 @@ class HealthCashDeliveryWizard(models.TransientModel):
         ], limit=1)
         
         if not cash_journal:
-            return False
+            raise UserError(_(
+                'No Cash journal found in the system.\n\n'
+                'To fix this, go to:\n'
+                'Accounting → Configuration → Journals → Create\n'
+                'Set Type = "Cash" and configure the default accounts.\n\n'
+                'The AR payment cannot be created without a Cash journal.'
+            ))
         
         # Create standard account.payment record
         payment_vals = {
@@ -214,7 +220,7 @@ class HealthCashDeliveryWizard(models.TransientModel):
         payment = self.env['account.payment'].create(payment_vals)
         payment.action_post()
         
-        # Link to transaction
+        # Link to transaction and update status to reconciled
         self.transaction_id.write({
             'payment_id': payment.id,
             'status': 'reconciled',

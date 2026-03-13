@@ -47,13 +47,13 @@
                     <button name="action_create_and_open_quote" type="object"
                             string="Create Quote" class="btn-info"
                             icon="fa-file-text-o"
-                            invisible="sale_order_id or not context.get('show_modal_quote_button')"
+                            invisible="sale_order_id or state not in ('draft', 'booked')"
                             help="Create a quote for this booking"/>
 
                     <button name="action_view_quote" type="object"
                             string="Quote" class="btn-info"
                             icon="fa-file-text-o"
-                            invisible="not sale_order_id or not context.get('show_modal_quote_button')"
+                            invisible="not sale_order_id"
                             help="Open the quote for this booking"/>
 
                     <button name="action_start_service" type="object"

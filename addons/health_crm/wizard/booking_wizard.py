@@ -454,14 +454,22 @@ class HealthBookingWizard(models.TransientModel):
         
         # Link client to lead and update status
         if self.lead_id and client:
-            self.lead_id.write({
+            lead_update_vals = {
                 'patient_id': client.id,
                 'partner_id': client.id,  # Also set partner_id for View Client Dashboard button
                 'contact_status': 'booking',
                 'booking_status': 'pending',
                 'health_contact_outcome': 'service_booked',
                 'contact_outcome': 'service_booked',
-            })
+            }
+            self.lead_id.write(lead_update_vals)
+            
+            # If caller is a representative (not the client), ensure the relation is created
+            if self.lead_id.contact_relationship_type and self.lead_id.contact_relationship_type != 'client':
+                representative = self.lead_id._create_or_get_representative()
+                if representative:
+                    self.lead_id._create_health_relationship(client, representative)
+            
             # Post to chatter
             self.lead_id.message_post(
                 body=_('Booking created: %s for client: %s (ID: %s)') % (

@@ -131,14 +131,11 @@ class HealthBookingCancelWizard(models.TransientModel):
             self.cancellation_notes
         )
 
-        # Show success message
+        # Reload the booking form to show updated cancelled status
         return {
-            'type': 'ir.actions.client',
-            'tag': 'display_notification',
-            'params': {
-                'title': _('Booking Cancelled'),
-                'message': _('Booking %s has been cancelled successfully.') % self.booking_id.name,
-                'type': 'success',
-                'sticky': False,
-            }
+            'type': 'ir.actions.act_window',
+            'res_model': 'health.fieldservice.order',
+            'res_id': self.booking_id.id,
+            'view_mode': 'form',
+            'target': 'current',
         }

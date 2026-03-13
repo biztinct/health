@@ -223,20 +223,8 @@ class HealthBookingCancellationWizard(models.TransientModel):
                     date_deadline=fields.Date.today(),
                 )
         
-        # Return notification
-        return {
-            'type': 'ir.actions.client',
-            'tag': 'display_notification',
-            'params': {
-                'title': _('Cancellation Recorded'),
-                'message': _('Booking cancellation has been recorded successfully.'),
-                'type': 'success',
-                'sticky': False,
-                'next': {
-                    'type': 'ir.actions.act_window_close',
-                }
-            }
-        }
+        # Close the wizard dialog
+        return {'type': 'ir.actions.act_window_close'}
     
     def _format_cancellation_message(self, html=False):
         """Format cancellation details for storage/display"""

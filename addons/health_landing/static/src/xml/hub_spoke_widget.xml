@@ -29,7 +29,9 @@
                     <i class="fa fa-user-circle"/> <t t-esc="props.patientName"/>
                 </h1>
                 <p class="hub_spoke_subtitle">
-                    <span class="hub_spoke_subtitle_tag hub_spoke_subtitle_tag--client">Client Details</span>
+                    <span style="display: inline-flex; align-items: center; gap: 6px; padding: 5px 16px; background: linear-gradient(135deg, #e0f2f1, #b2dfdb); border: 1px solid #80cbc4; border-radius: 20px; color: #00695c; font-weight: 600; font-size: 12px; letter-spacing: 0.5px; text-transform: uppercase;">
+                        <i class="fa fa-hospital-o" style="font-size: 13px;"/> Client Dashboard
+                    </span>
                 </p>
             </div>
 

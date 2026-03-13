@@ -103,6 +103,12 @@ class HealthInitialContactWizard(models.TransientModel):
         help='Name of the actual client/patient when caller is not the client'
     )
     
+    is_primary_representative = fields.Boolean(
+        'Primary',
+        default=False,
+        help='Designate this representative as the primary contact for their role (e.g. primary caregiver)'
+    )
+    
     selected_client_id = fields.Many2one(
         'res.partner',
         string='Selected Client',
@@ -587,6 +593,7 @@ class HealthInitialContactWizard(models.TransientModel):
                 'contact_type': 'repeat',
                 'contact_status': 'active',  # Reactivate if was spam
                 'contact_relationship_type': self.contact_relationship_type,
+                'is_primary_representative': self.is_primary_representative,
             }
             if self.client_name:
                 update_vals['client_name'] = self.client_name
@@ -606,6 +613,7 @@ class HealthInitialContactWizard(models.TransientModel):
                 'contact_status': 'active',
                 'type': 'opportunity',  # Use opportunity type for contacts
                 'contact_relationship_type': self.contact_relationship_type,
+                'is_primary_representative': self.is_primary_representative,
             }
             if self.client_name:
                 lead_vals['client_name'] = self.client_name

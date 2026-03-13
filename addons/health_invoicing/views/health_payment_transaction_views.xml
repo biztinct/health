@@ -33,7 +33,7 @@
                         invisible="payment_method != 'cash' or status != 'pending_delivery'"/>
                 <button type="object" name="action_create_ar_payment" 
                         icon="fa-plus-circle" title="Create AR Payment"
-                        invisible="payment_id or transaction_type == 'prepaid'"/>
+                        invisible="status == 'reconciled' or payment_id or transaction_type == 'prepaid'"/>
             </list>
         </field>
     </record>
@@ -56,7 +56,7 @@
                             
                     <button type="object" name="action_create_ar_payment"
                             string="Create AR Payment" class="btn-success"
-                            invisible="payment_id or transaction_type == 'prepaid'"
+                            invisible="status == 'reconciled' or payment_id or transaction_type == 'prepaid'"
                             groups="health_invoicing.group_health_invoicing_user"/>
                             
                     <button type="object" name="action_create_refund"

@@ -395,6 +395,10 @@ class HealthNursePaymentWizard(models.TransientModel):
             })
         else:
             # Regular payment collection
+            # Non-cash payments (credit card, bank transfer, QR code) are
+            # reconciled immediately — no physical cash delivery needed.
+            # Cash payments go through pending_delivery → delivered_to_om flow.
+            is_cash = self.payment_method == 'cash'
             transaction = self.env['health.payment.transaction'].create({
                 'patient_id': self.patient_id.id,
                 'fso_id': self.fso_id.id,
@@ -402,16 +406,18 @@ class HealthNursePaymentWizard(models.TransientModel):
                 'amount': self.final_amount,
                 'payment_method': self.payment_method,
                 'transaction_type': 'immediate',
-                'status': 'collected' if self.payment_method != 'cash' else 'pending_delivery',
+                'status': 'pending_delivery' if is_cash else 'reconciled',
                 'collected_by_id': self.nurse_id.id,
                 'transaction_notes': self.nurse_notes or f'Payment collected on completion - {self.fso_id.name}',
                 'nurse_override_reason': self.nurse_override_reason if self.amount_adjustment != 0 else False,
                 'original_invoice_amount': self.calculated_amount if self.amount_adjustment != 0 else False,
                 'payment_proof_attachment_ids': [(6, 0, self.payment_proof_attachment_ids.ids)],
+                'ar_reconciliation_date': fields.Datetime.now() if not is_cash else False,
             })
             
             # Create account.payment for non-cash payments immediately
-            if self.payment_method != 'cash':
+            # and reconcile with invoice — goes straight to Reconciled in AR
+            if not is_cash:
                 ar_payment = self._create_ar_payment(transaction, invoice)
                 transaction.payment_id = ar_payment.id
         

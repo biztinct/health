@@ -29,6 +29,7 @@ class PatientHubAction extends Component {
         this.patientName = this.props.action.params?.patient_name;
         this.menuId = this.props.action.params?.menu_id;
         this.isHealthFlow = Boolean(this.props.action.params?.health_flow_origin);
+        this.sourceLeadId = this.props.action.params?.source_lead_id;
         this.breadcrumbRootLabel = this.isHealthFlow ? "Health Flow" : "Home";
         this.breadcrumbMiddleLabel = this.isHealthFlow ? "" : "Patient Management";
         this.breadcrumbClientLabel = "Client";
@@ -111,6 +112,18 @@ class PatientHubAction extends Component {
      * Back to patient kanban
      */
     async onBack() {
+        if (this.sourceLeadId) {
+            // Opened from a lead's Lead Info - go back to the lead hub-spoke dashboard
+            await this.env.services.action.doAction({
+                type: 'ir.actions.act_window',
+                res_model: 'crm.lead',
+                res_id: this.sourceLeadId,
+                view_mode: 'form',
+                target: 'current',
+                views: [[false, 'form']],
+            });
+            return;
+        }
         if (this.isHealthFlow) {
             await this.returnToHealthFlowClients();
             return;

@@ -107,6 +107,10 @@
                                         title="Search for existing clients"/>
                             </div>
                         </group>
+                        <group>
+                            <field name="is_primary_representative" widget="boolean_toggle"
+                                   string="Primary"/>
+                        </group>
                     </group>
 
                     <separator string="Mode of Contact"/>

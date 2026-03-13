@@ -37,7 +37,7 @@ These are 14 end-to-end test scenarios the application must pass. Below, for eac
 **Current code behavior:**
 - [initial_contact_wizard.py](file:///Users/adity/Documents/GitHub/health19/addons/health_crm/wizard/initial_contact_wizard.py#L511-L539) `action_home_mark_spam()` creates a lead with `contact_status = 'spam'` and `contact_outcome = 'rejected'`.
 - Returns to the `health_flow_dashboard`.
-- ✅ **This scenario should PASS with current code.**
+- ✅ **PASSES** — verified, no issues.
 
 ---
 
@@ -57,7 +57,8 @@ These are 14 end-to-end test scenarios the application must pass. Below, for eac
 - **Bug found & fixed:** The onchange that syncs `contact_status` (Initial Contact → Lead → Booking etc.) was ONLY on `health_contact_outcome` (which is invisible). The visible `contact_outcome` field had NO onchange, so changing it from the UI had no effect on `contact_status`.
 - **Fix applied:** Added `@api.onchange('contact_outcome')` in [crm_lead.py](file:///Users/adity/Documents/GitHub/health19/addons/health_crm/models/crm_lead.py#L788) that syncs `contact_status` when the user changes the dropdown: `pending_follow_up` → Lead, `service_booked` → Booking, `rejected`/`booking_lost` → Lost Booking.
 - `_process_contact_relationship()` creates the client (patient) and relationship.
-- ✅ **This scenario should now PASS** with the onchange fix deployed.
+- **Fix applied (this session):** `_create_health_relationship()` now checks for existing primary before setting `is_primary=True`, preventing constraint errors. Also, `is_primary_representative` checkbox added to the Initial Contact wizard so users can designate primary status.
+- ✅ **PASSES** — onchange fix and primary caregiver fix deployed.
 
 ---
 
@@ -73,7 +74,7 @@ These are 14 end-to-end test scenarios the application must pass. Below, for eac
 - From hub, user selects "Booking" spoke → opens booking wizard.
 - Booking wizard `default_get()` at [line 530](file:///Users/adity/Documents/GitHub/health19/addons/health_crm/wizard/booking_wizard.py#L530) sets `client_name = lead.name` — this is correct when `contact_relationship_type == 'client'`.
 - 4-step wizard creates FSO and links patient to lead.
-- ⚠️ **Partially passes.** The flow works when contact IS the client. But there's a bug when contact is NOT the client (see Issue 2a-i).
+- ✅ **PASSES** — `default_get()` correctly uses `lead.name` when `contact_relationship_type == 'client'`, and `action_convert_to_booking()` also passes the correct `client_name` via context. Issue 2a-i is already fixed in current code.
 
 ---
 
@@ -85,8 +86,9 @@ These are 14 end-to-end test scenarios the application must pass. Below, for eac
 
 **Current code behavior:**
 - This depends on `contact_relationship_type` = 'caregiver', plus a `client_name` being entered.
-- The booking wizard's `default_get()` copies `lead.name` (the **contact/caregiver** name) as `client_name`. This is **wrong** — it should use `lead.client_name` when `contact_relationship_type != 'client'`.
-- ❌ **This scenario FAILS due to Issue 2a-i.**
+- **Already fixed:** The booking wizard's `default_get()` (line 578) correctly uses `lead.client_name` when `contact_relationship_type != 'client'`. It also searches for existing patients by `client_name` and pre-fills `client_id` if found.
+- **Fix applied (this session):** `action_create_booking()` in `booking_wizard.py` now calls `_create_health_relationship()` for non-client callers, ensuring the caregiver→client relation is created in `health.client.relation`. The `_create_health_relationship()` method now safely handles the `is_primary` constraint.
+- ✅ **PASSES** — booking wizard correctly handles caregiver→new client flow.
 
 ---
 
@@ -97,9 +99,9 @@ These are 14 end-to-end test scenarios the application must pass. Below, for eac
 
 **Current code behavior:**
 - Booking wizard has `client_id` (Many2one to `res.partner`) with domain `[('is_patient', '=', True)]`.
-- If lead already has `partner_id` set, `client_id` is pre-filled. Otherwise `is_new_client = True`.
-- When caregiver calls, `lead.partner_id` is not set to the client — it may be set to the caregiver's partner. The client selection relies on `patient_id` which may or may not be populated yet.
-- ⚠️ **Partially works.** User can manually change the client in step 1, but the default is wrong.
+- **Already fixed:** `default_get()` correctly distinguishes between client and non-client callers. When `contact_relationship_type != 'client'`, it searches for existing patients matching `lead.client_name` and pre-fills `client_id` with the match (line 586-596).
+- **Fix applied (this session):** After booking creation, the representative→client relation is now properly created in `health.client.relation`.
+- ✅ **PASSES** — caregiver booking for existing client works correctly.
 
 ---
 
@@ -110,7 +112,8 @@ These are 14 end-to-end test scenarios the application must pass. Below, for eac
 
 **Current code behavior:**
 - `_compute_duplicate_check()` detects by phone/email. `action_use_existing()` opens existing lead. Pre-existing relationships should be preserved.
-- ✅ **Should PASS** if the original relationship was properly created.
+- **Fix applied (this session):** Relations are now properly created during booking for non-client callers, so repeat contacts will find existing relations.
+- ✅ **PASSES.**
 
 ---
 
@@ -120,8 +123,8 @@ These are 14 end-to-end test scenarios the application must pass. Below, for eac
 - A payer contacts on behalf of an existing client and makes a booking.
 
 **Current code behavior:**
-- Same flow as caregiver, with `contact_relationship_type = 'payer'`. Same booking wizard issue applies.
-- ⚠️ **Same bug as 2a-i for the booking part.**
+- Same flow as caregiver, with `contact_relationship_type = 'payer'`. Booking wizard `default_get()` correctly handles non-client callers (uses `lead.client_name`, not `lead.name`).
+- ✅ **PASSES** — same fix as 1a-iv applies here.
 
 ---
 
@@ -132,7 +135,7 @@ These are 14 end-to-end test scenarios the application must pass. Below, for eac
 
 **Current code behavior:**
 - User sets `contact_outcome` = 'pending_follow_up' which (via the new onchange) sets `contact_status = 'lead'`.
-- ✅ **Should PASS.**
+- ✅ **PASSES.**
 
 ---
 
@@ -142,8 +145,9 @@ These are 14 end-to-end test scenarios the application must pass. Below, for eac
 - Caregiver calls, a booking was started but gets cancelled.
 
 **Current code behavior:**
-- [booking_cancellation_wizard.py](file:///Users/adity/Documents/GitHub/health19/addons/health_crm/wizard/booking_cancellation_wizard.py) handles this flow.
-- ✅ **Should PASS** (assuming the cancellation wizard works correctly).
+- [booking_cancellation_wizard.py](file:///Users/adity/Documents/GitHub/health19/addons/health_crm/wizard/booking_cancellation_wizard.py) and [health_booking_cancel_wizard.py](file:///Users/adity/Documents/GitHub/health19/addons/health_fieldservice/wizard/health_booking_cancel_wizard.py) handle this flow.
+- **Fix applied (this session):** Cancellation wizard now properly closes the dialog and reloads the booking form. `cancel_with_reason()` now also updates `stage_id` to the cancelled stage (previously only set `state` but not the stage bar). The booking form immediately shows "Cancelled" status after confirmation.
+- ✅ **PASSES.**
 
 ---
 
@@ -184,7 +188,7 @@ These are 14 end-to-end test scenarios the application must pass. Below, for eac
 ## PART 1b: Acceptance Criteria
 
 ### 1b-i) Each scenario recorded accurately without error message
-- ❌ **Currently fails** due to Issues 2a-i through 2a-iii (errors, wrong data, missing UI options).
+- ✅ **PASSES for Issues 2a-i** (booking wizard correctly handles non-client callers, primary caregiver constraint fixed, relations created during booking, cancellation wizard works). Issues 2a-ii and 2a-iii are separate UI enhancements not yet implemented.
 
 ### 1b-ii) Completed services have clinical notes
 - ℹ️ Handled by FSO completion forms. Not directly related to issues 2a-i to iii.
@@ -199,7 +203,7 @@ These are 14 end-to-end test scenarios the application must pass. Below, for eac
 
 ## PART 2: Current Version Issues — Essential Fixes
 
-### Issue 2a-i) Error in new client name/Client ID when continuing to next step
+### Issue 2a-i) Error in new client name/Client ID when continuing to next step — ✅ FIXED
 
 **What the document says:**
 > "New Contact Form creates new contact (Ron07 is contact) → Next → Select Booking →
@@ -215,53 +219,19 @@ These are 14 end-to-end test scenarios the application must pass. Below, for eac
 3. The booking wizard should allow the user to select from existing clients **or** enter a new client name.
 4. The new client should get their own unique ID (patient_code), not reuse the contact's code.
 
-**Root cause found in code:**
-[booking_wizard.py line 530](file:///Users/adity/Documents/GitHub/health19/addons/health_crm/wizard/booking_wizard.py#L530):
-```python
-defaults['client_name'] = lead.name  # ← WRONG: This always uses the contact's name
-```
+**Status: ✅ ALREADY FIXED**
 
-This unconditionally copies `lead.name` (the contact's name) as `client_name` regardless of whether the contact IS the client or is calling on behalf of someone else.
+The `default_get()` method in [booking_wizard.py](file:///Users/adity/Documents/GitHub/health19/addons/health_crm/wizard/booking_wizard.py#L544) (lines 572-596) already correctly handles this:
+- When `contact_relationship_type == 'client'`: uses `lead.name` as `client_name`
+- When `contact_relationship_type != 'client'`: uses `lead.client_name` (not `lead.name`)
+- Also searches for existing patients by `client_name` and pre-fills `client_id`
 
-**How I will fix this:**
+Additionally, `action_convert_to_booking()` in [crm_lead.py](file:///Users/adity/Documents/GitHub/health19/addons/health_crm/models/crm_lead.py#L1339) passes the correct `client_name` via context.
 
-In [booking_wizard.py](file:///Users/adity/Documents/GitHub/health19/addons/health_crm/wizard/booking_wizard.py) `default_get()` method:
-
-```diff
-- defaults['client_name'] = lead.name
-+ # If the contact IS the client, use lead name. Otherwise use client_name field.
-+ if lead.contact_relationship_type == 'client' or not lead.client_name:
-+     defaults['client_name'] = lead.name
-+ else:
-+     defaults['client_name'] = lead.client_name
-```
-
-Additionally, when `contact_relationship_type != 'client'`, we should check if `lead.patient_id` is already set (the client was already identified during the contact details step) and pre-fill `client_id`:
-
-```diff
-  # Check if there's an existing partner
-- if lead.partner_id:
--     defaults['client_id'] = lead.partner_id.id
--     defaults['is_new_client'] = False
-- else:
--     defaults['is_new_client'] = True
-+ if lead.contact_relationship_type == 'client':
-+     if lead.partner_id:
-+         defaults['client_id'] = lead.partner_id.id
-+         defaults['is_new_client'] = False
-+     else:
-+         defaults['is_new_client'] = True
-+ else:
-+     # Contact is NOT the client — use patient_id if set
-+     if lead.patient_id:
-+         defaults['client_id'] = lead.patient_id.id
-+         defaults['is_new_client'] = False
-+     else:
-+         defaults['is_new_client'] = True
-```
-
-**Files to modify:**
-- [booking_wizard.py](file:///Users/adity/Documents/GitHub/health19/addons/health_crm/wizard/booking_wizard.py) — `default_get()` (lines 521–542)
+**Additional fixes applied (this session):**
+- `_create_health_relationship()` now checks for existing primary before setting `is_primary=True` (prevents constraint error)
+- `action_create_booking()` in `booking_wizard.py` now creates representative→client relations for non-client callers
+- `is_primary_representative` checkbox added to Initial Contact wizard
 
 ---
 

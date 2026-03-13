@@ -2403,13 +2403,23 @@ class HealthFieldServiceOrderUnified(models.Model):
         """Cancel booking with structured cancellation data"""
         self.ensure_one()
 
-        self.write({
+        # Find the cancelled stage
+        cancelled_stage = self.env['health.fieldservice.stage'].search([
+            ('state', '=', 'cancelled'),
+            ('active', '=', True)
+        ], order='sequence', limit=1)
+
+        write_vals = {
             'state': 'cancelled',
             'cancellation_reason_id': cancellation_reason_id,
             'cancelled_by': self.env.user.id,
             'cancellation_date': fields.Datetime.now(),
             'cancellation_notes': cancellation_notes,
-        })
+        }
+        if cancelled_stage:
+            write_vals['stage_id'] = cancelled_stage.id
+
+        self.write(write_vals)
 
         # Cancel all related staff assignments
         if self.assignment_ids:

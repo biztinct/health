@@ -594,6 +594,13 @@ class HealthLead(models.Model):
         help='Secondary caregiver for this lead (Caregiver 2 ID)'
     )
     
+    # Whether the representative should be primary for their role
+    is_primary_representative = fields.Boolean(
+        'Primary Representative',
+        default=False,
+        help='Whether this representative should be the primary contact for their role'
+    )
+    
     # Healthcare relationships for leads
     primary_caregiver_id = fields.Many2one(
         'res.partner',
@@ -1123,16 +1130,39 @@ class HealthLead(models.Model):
         if existing_relation:
             return existing_relation
 
+        # Map role and check for existing primary
+        mapped_role = role_mapping.get(self.contact_relationship_type, 'client_representative')
+        
+        # Check if a primary already exists for this client+role
+        existing_primary = self.env['health.client.relation'].search([
+            ('client_id', '=', patient.id),
+            ('role', '=', mapped_role),
+            ('is_primary', '=', True),
+            ('active', '=', True),
+        ], limit=1)
+        
+        # Determine if this should be primary:
+        # 1. If user explicitly marked as primary in initial contact, honor that
+        # 2. If no existing primary exists, set as primary by default
+        # 3. Otherwise, set as non-primary to avoid constraint error
+        should_be_primary = self.is_primary_representative or not bool(existing_primary)
+        
         relation_vals = {
             'client_id': patient.id,
             'representative_id': representative.id,
-            'role': role_mapping.get(self.contact_relationship_type, 'client_representative'),
-            'is_primary': True,  # First relationship of this type is primary
+            'role': mapped_role,
+            'is_primary': False,  # Create as non-primary first to avoid constraint
             'can_schedule_appointments': True,  # Default permission
             'can_receive_medical_info': self.contact_relationship_type in ['legal_guardian', 'healthcare_proxy', 'emergency_contact'],
         }
 
-        return self.env['health.client.relation'].create(relation_vals)
+        relation = self.env['health.client.relation'].create(relation_vals)
+        
+        # If should be primary, use action_set_as_primary() to safely swap designation
+        if should_be_primary:
+            relation.action_set_as_primary()
+        
+        return relation
 
     def _populate_relationship_field(self, representative):
         """Populate the appropriate relationship field in the lead"""
@@ -1247,6 +1277,69 @@ class HealthLead(models.Model):
                 'default_date_deadline': self.next_follow_up_date or fields.Date.today(),
             }
         }
+
+    def action_view_lead_activities(self):
+        """Open a list view of activities for this lead in a modal.
+        When the activity list is closed, returns to the Lead Info modal.
+        """
+        self.ensure_one()
+        
+        # Build the "return to Lead Info" action to use as close_action
+        lead_info_view = self.env.ref('health_landing.view_lead_client_info_modal', raise_if_not_found=False)
+        return_action = {
+            'type': 'ir.actions.act_window',
+            'name': _('%s - Lead Info') % self.name,
+            'res_model': 'crm.lead',
+            'res_id': self.id,
+            'view_mode': 'form',
+            'views': [(lead_info_view.id if lead_info_view else False, 'form')],
+            'target': 'new',
+            'context': {'form_view_initial_mode': 'edit'},
+        }
+        
+        # Get the ir.model record for crm.lead (needed for mail.activity creation)
+        crm_lead_model = self.env['ir.model']._get('crm.lead')
+        
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _('Activities for: %s') % self.name,
+            'res_model': 'mail.activity',
+            'view_mode': 'list,form',
+            'target': 'new',
+            'domain': [
+                ('res_model', '=', 'crm.lead'),
+                ('res_id', '=', self.id),
+            ],
+            'context': {
+                'default_res_model_id': crm_lead_model.id,
+                'default_res_model': 'crm.lead',
+                'default_res_id': self.id,
+            },
+            'close_action': return_action,
+        }
+
+    def action_schedule_new_activity(self):
+        """Open the activity scheduling wizard for this lead.
+        Used as an alternative to the non-functional 'New' button
+        in the mail.activity list view within modals.
+        """
+        self.ensure_one()
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _('Schedule Activity for: %s') % self.name,
+            'res_model': 'mail.activity.schedule',
+            'view_mode': 'form',
+            'target': 'new',
+            'context': {
+                'active_model': 'crm.lead',
+                'active_id': self.id,
+                'active_ids': [self.id],
+                'default_res_model': 'crm.lead',
+                'default_res_ids': [self.id],
+                'dialog_size': 'medium',
+            },
+        }
+
 
     @api.depends('appointment_ids')
     def _compute_appointment_count(self):
@@ -1776,6 +1869,7 @@ class HealthLead(models.Model):
             }
         
         # Open the Client Dashboard (Patient Hub) for this client
+        # Pass source_lead_id so Back returns to the lead dashboard
         return {
             'type': 'ir.actions.client',
             'tag': 'health_landing_patient_hub',
@@ -1783,6 +1877,7 @@ class HealthLead(models.Model):
             'params': {
                 'patient_id': client.id,
                 'patient_name': client.name,
+                'source_lead_id': self.id,
             },
         }
 
