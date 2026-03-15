@@ -9,17 +9,20 @@
         <field name="arch" type="xml">
             <!-- Add Red Invoice State column and quick action after payment_state -->
             <xpath expr="//field[@name='payment_state']" position="after">
+                <field name="red_invoice_enabled" column_invisible="1"/>
                 <field name="red_invoice_state" widget="badge"
                        decoration-success="red_invoice_state=='issued'"
                        decoration-warning="red_invoice_state=='pending'"
                        decoration-info="red_invoice_state=='issuing'"
                        decoration-danger="red_invoice_state=='failed'"
                        decoration-muted="red_invoice_state in ('not_required', 'cancelled')"
-                       string="Red Invoice Status"/>
+                       string="Red Invoice Status"
+                       column_invisible="not red_invoice_enabled"/>
                 <button name="action_view_red_invoice_pdf" type="object"
                         class="oe_link"
                         string="Red Invoice"
                         icon="fa-file-pdf-o"
+                        column_invisible="not red_invoice_enabled"
                         />
                 <field name="red_invoice_pdf_attachment_id" invisible="1"/>
                 <field name="red_invoice_download_attachment_id" invisible="1"/>
@@ -53,22 +56,23 @@
         <field name="inherit_id" ref="account.view_move_form"/>
         <field name="arch" type="xml">
             <header position="inside">
+                <field name="red_invoice_enabled" invisible="1"/>
                 <button name="action_redinvoice_generate" type="object" string="Generate Red Invoice"
                         class="btn-primary"
-                        modifiers='{"invisible": ["|", ["move_type", "not in", ["out_invoice","out_refund"]], ["state","!=", "posted"]]}'/>
+                        invisible="not red_invoice_enabled or move_type not in ('out_invoice','out_refund') or state != 'posted'"/>
                 <button name="action_redinvoice_download_zip" type="object" string="Download Red Invoice"
                         class="btn-secondary"
-                        modifiers='{"invisible": ["|", ["red_invoice_state","!=","issued"], ["move_type","not in", ["out_invoice","out_refund"]]]}'/>
+                        invisible="not red_invoice_enabled or red_invoice_state != 'issued' or move_type not in ('out_invoice','out_refund')"/>
                 <button name="action_redinvoice_download_pdf" type="object" string="Download PDF"
                         class="btn-secondary"
-                        modifiers='{"invisible": ["|", ["red_invoice_state","!=","issued"], ["move_type","not in", ["out_invoice","out_refund"]]]}'/>
+                        invisible="not red_invoice_enabled or red_invoice_state != 'issued' or move_type not in ('out_invoice','out_refund')"/>
                 <button name="action_redinvoice_cancel" type="object" string="Cancel Red Invoice"
-                        modifiers='{"invisible": ["|", ["red_invoice_state","!=","issued"], ["move_type","not in", ["out_invoice","out_refund"]]]}'/>
+                        invisible="not red_invoice_enabled or red_invoice_state != 'issued' or move_type not in ('out_invoice','out_refund')"/>
             </header>
 
             <notebook position="inside">
                 <page string="Red Invoice" name="red_invoice_tab"
-                      modifiers='{"invisible": [["move_type", "not in", ["out_invoice","out_refund"]]]}'>
+                      invisible="not red_invoice_enabled or move_type not in ('out_invoice','out_refund')">
                     <group>
                         <group string="Status">
                             <field name="red_invoice_state" widget="badge"/>
@@ -99,7 +103,7 @@
                     </group>
                 </page>
                 <page string="Red Invoice Log" name="red_invoice_log"
-                      modifiers='{"invisible": [["move_type", "not in", ["out_invoice","out_refund"]]]}'>
+                      invisible="not red_invoice_enabled or move_type not in ('out_invoice','out_refund')">
                     <field name="red_invoice_request_ids" readonly="1" nolabel="1">
                         <list>
                             <field name="create_date"/>

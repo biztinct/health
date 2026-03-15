@@ -164,6 +164,19 @@ class HealthLead(models.Model):
         help='Number of similar/duplicate leads found'
     )
 
+    # Phone duplicate detection for confirmation dialog
+    phone_duplicate_lead_id = fields.Many2one(
+        'crm.lead', string='Existing Contact with Same Phone',
+        compute='_compute_phone_duplicate', store=False,
+        help='If set, an existing contact/lead with the same phone number was found'
+    )
+    phone_duplicate_name = fields.Char(
+        'Duplicate Contact Name', compute='_compute_phone_duplicate', store=False,
+    )
+    phone_duplicate_code = fields.Char(
+        'Duplicate Contact Code', compute='_compute_phone_duplicate', store=False,
+    )
+
     # CRITICAL: FROM EXCEL REQUIREMENTS - Lead Management Table
     next_action_at = fields.Datetime(
         'Next Action At',
@@ -891,6 +904,76 @@ class HealthLead(models.Model):
             self.contact_status = new_status
             # Also sync health_contact_outcome for consistency
             self.health_contact_outcome = self.contact_outcome
+
+    @api.onchange('phone')
+    def _onchange_phone_duplicate(self):
+        """Check if the entered phone number matches an existing contact/lead.
+        If so, show a warning asking user to use existing or continue creating new."""
+        if not self.phone or len(self.phone) < 5:
+            return
+
+        # Search for existing leads/contacts with the same phone
+        domain = [('phone', '=', self.phone), ('type', '=', 'opportunity')]
+        if self.id:
+            domain.append(('id', '!=', self.id))
+
+        existing = self.search(domain, limit=1)
+        if existing:
+            return {
+                'warning': {
+                    'title': _('⚠️ Existing Contact Found'),
+                    'message': _(
+                        'An existing contact with this phone number was found:\n\n'
+                        '  • Name: %s\n'
+                        '  • Code: %s\n'
+                        '  • Status: %s\n\n'
+                        'You can use the "Use Existing Contact" button near the phone field '
+                        'to navigate to the existing record, or continue to create a new contact.'
+                    ) % (
+                        existing.name,
+                        existing.unique_contact_code or 'N/A',
+                        dict(existing._fields['contact_status'].selection).get(
+                            existing.contact_status, existing.contact_status or 'N/A'
+                        ),
+                    ),
+                }
+            }
+
+    @api.depends('phone')
+    def _compute_phone_duplicate(self):
+        """Compute whether an existing contact/lead has the same phone number."""
+        for record in self:
+            if not record.phone or len(record.phone) < 5:
+                record.phone_duplicate_lead_id = False
+                record.phone_duplicate_name = False
+                record.phone_duplicate_code = False
+                continue
+
+            domain = [('phone', '=', record.phone), ('type', '=', 'opportunity')]
+            if record.id:
+                domain.append(('id', '!=', record.id))
+
+            existing = self.search(domain, limit=1)
+            record.phone_duplicate_lead_id = existing.id if existing else False
+            record.phone_duplicate_name = existing.name if existing else False
+            record.phone_duplicate_code = existing.unique_contact_code if existing else False
+
+    def action_navigate_to_phone_duplicate(self):
+        """Navigate to the existing contact/lead that has the same phone number."""
+        self.ensure_one()
+        if not self.phone_duplicate_lead_id:
+            raise UserError(_('No duplicate contact found.'))
+
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _('Existing Contact'),
+            'res_model': 'crm.lead',
+            'res_id': self.phone_duplicate_lead_id.id,
+            'view_mode': 'form',
+            'views': [[False, 'form']],
+            'context': {'form_view_ref': 'health_crm.view_healthcare_opportunity_form'},
+            'target': 'current',
+        }
     
     def _generate_unique_contact_code(self, vals):
         """

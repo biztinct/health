@@ -186,10 +186,10 @@
                     </h1>
 
                     <!-- Active Service Packages with Gauge Widgets -->
-                    <group string="Service Packages" name="active_packages_section"
-                           invisible="not is_patient or active_packages_count == 0">
+                    <div invisible="not is_patient or active_packages_count == 0">
+                        <separator string="ACTIVE SERVICE PACKAGES"/>
                         <field name="active_service_packages" nolabel="1">
-                            <kanban create="false" edit="false" delete="false">
+                            <kanban create="false" edit="false" delete="false" class="o_kanban_mobile">
                                 <field name="name"/>
                                 <field name="service_type"/>
                                 <field name="total_services"/>
@@ -220,7 +220,7 @@
                                 </templates>
                             </kanban>
                         </field>
-                    </group>
+                    </div>
 
                     <!-- Show message when no packages -->
                     <group invisible="active_packages_count &gt; 0">

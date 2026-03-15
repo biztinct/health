@@ -7,7 +7,12 @@
         <field name="arch" type="xml">
             <xpath expr="//app[@name='general_settings']" position="inside">
                 <block title="Red Invoice (Viettel SInvoice)" name="redinvoice_block">
-                    <setting string="Credentials &amp; Defaults" name="redinvoice_credentials">
+                    <setting string="Enable Red Invoice" name="redinvoice_master_toggle"
+                             help="Master toggle — when unchecked, all Red Invoice functionality is disabled (no API calls, no auto-issue, tax tabs hidden)">
+                        <field name="enable_red_invoice"/>
+                    </setting>
+                    <setting string="Credentials &amp; Defaults" name="redinvoice_credentials"
+                             invisible="not enable_red_invoice">
                         <div class="content-group">
                             <label for="red_supplier_tax_code"/>
                             <field name="red_supplier_tax_code"/>
@@ -29,7 +34,8 @@
                             <field name="red_invoice_exchange_user"/>
                         </div>
                     </setting>
-                    <setting string="Seller Payment / QR78" name="redinvoice_qr78">
+                    <setting string="Seller Payment / QR78" name="redinvoice_qr78"
+                             invisible="not enable_red_invoice">
                         <div class="content-group">
                             <label for="red_invoice_bank_name"/>
                             <field name="red_invoice_bank_name"/>
@@ -47,7 +53,8 @@
                             <field name="red_invoice_merchant_city"/>
                         </div>
                     </setting>
-                    <setting string="Automation" name="redinvoice_automation">
+                    <setting string="Automation" name="redinvoice_automation"
+                             invisible="not enable_red_invoice">
                         <div class="content-group">
                             <label for="red_invoice_auto_issue"/>
                             <field name="red_invoice_auto_issue"/>

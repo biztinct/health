@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- 
+        Note: The Red Invoice master toggle is defined directly in health_redinvoice module.
+        This file is kept for the MISA integration toggle (future use).
+    -->
+</odoo>

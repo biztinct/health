@@ -71,6 +71,8 @@ class HealthFlowAction extends Component {
             // Booking notifications
             bookingNotifications: [],
             bookingNotificationsOpen: false,
+            // Client choice modal (Select Existing / Add New)
+            clientChoiceModalOpen: false,
         });
 
         // Panel data configuration
@@ -387,11 +389,34 @@ class HealthFlowAction extends Component {
     }
 
     /**
-     * Handle center circle (Client) click
+     * Handle center circle (Client) click - show choice popup
      */
     async onCenterClick() {
         console.log('[Health Flow] Center (Client) clicked');
+        this.state.clientChoiceModalOpen = true;
+    }
+
+    /**
+     * Select Existing Client - opens patient list (original behavior)
+     */
+    async onSelectExistingClient() {
+        this.state.clientChoiceModalOpen = false;
         await this.launchAction('client');
+    }
+
+    /**
+     * Add New Client - opens patient form in create mode
+     */
+    async onAddNewClient() {
+        this.state.clientChoiceModalOpen = false;
+        await this.launchAction('client-new');
+    }
+
+    /**
+     * Close client choice modal
+     */
+    closeClientChoiceModal() {
+        this.state.clientChoiceModalOpen = false;
     }
 
     /**

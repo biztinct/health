@@ -28,7 +28,10 @@
             <!-- Add Tax Authority Status in a separate group -->
             <notebook position="inside">
                 <page string="Tax Authority &amp; Compliance" name="tax_compliance"
-                      invisible="move_type not in ['out_invoice', 'out_refund']">
+                      invisible="move_type not in ['out_invoice', 'out_refund'] or not red_invoice_enabled">
+
+                    <!-- Hidden field for Red Invoice toggle visibility -->
+                    <field name="red_invoice_enabled" invisible="1"/>
 
                     <!-- Discount Warning Banner -->
                     <field name="has_discounts" invisible="1"/>

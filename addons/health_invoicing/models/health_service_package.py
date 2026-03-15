@@ -23,6 +23,7 @@ class HealthServicePackage(models.Model):
     name = fields.Char(
         'Package Name',
         required=True,
+        readonly=True,
         tracking=True,
         help='Name for this service package (e.g., "7-Session Physiotherapy Package")'
     )

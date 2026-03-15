@@ -55,6 +55,21 @@
                         invisible="state != 'in_progress' or is_invoiced"
                         groups="health_invoicing.group_health_invoicing_user"
                         help="Complete service and launch payment collection workflow"/>
+
+                <!-- Service Package Selection Wizard -->
+                <button type="object" name="action_open_service_package_wizard"
+                        string="📦 Service Package" class="btn-secondary"
+                        invisible="state in ('completed', 'completed_pending_invoice', 'cancelled', 'closed')"
+                        help="Select a prepaid service package for this booking"/>
+
+                <!-- Ensure sale_order_id field is loaded for modifier evaluation -->
+                <field name="sale_order_id" invisible="1"/>
+                
+                <!-- Pay Quote Button - Prepay service before completion -->
+                <button type="object" name="action_prepay_quote"
+                        string="💳 Pay Quote" class="btn-info"
+                        invisible="state not in ('confirmed', 'assigned', 'in_progress')"
+                        help="Pay for the quoted services in advance"/>
                         
                 <!-- Alternative Manual Invoice Creation removed - use main Create Invoice button instead -->
                         
@@ -62,13 +77,15 @@
             
             <!-- Add Service Package Selection (Always Visible for Easy Package Booking) -->
             <xpath expr="//group[1]" position="after">
-                <group string="📦 Service Package Integration" name="package_selection"
+                <group string="Service Package" name="package_selection"
                        groups="health_invoicing.group_health_invoicing_user">
                     <group>
                         <field name="package_id" 
-                               placeholder="Select a prepaid package (optional)"
-                               help="Select a prepaid service package to consume services from"
-                               domain="[('patient_id', '=', patient_id), ('state', '=', 'active'), ('remaining_services', '>', 0)]"/>
+                               readonly="1"
+                               nolabel="1"
+                               options="{'open': True}"
+                               help="Assigned via the Service Package button"
+                               domain="[('patient_id', '=', patient_id), ('state', '=', 'active'), ('remaining_services', '&gt;', 0)]"/>
                         <field name="package_consumption_quantity" 
                                invisible="1"
                                help="Number of services to consume from selected package"/>

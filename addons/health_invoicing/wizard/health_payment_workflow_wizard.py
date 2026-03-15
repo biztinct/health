@@ -426,6 +426,12 @@ class HealthPaymentWorkflowWizard(models.TransientModel):
     
     def _submit_to_tax_authorities(self):
         """Submit invoice to Vietnamese Tax Authorities"""
+        # Skip if Red Invoice feature is disabled
+        if self.env['ir.config_parameter'].sudo().get_param(
+            'vietnamese_tax.red_invoice_enabled', 'True'
+        ) != 'True':
+            return
+        
         try:
             # Set completion time for audit trail
             self.invoice_id.write({

@@ -38,7 +38,7 @@ export class LeadHubSpokeWidget extends Component {
         this.spokes = [
             {
                 id: "client_info",
-                label: _t("Client Info"),
+                label: _t("Lead Info"),
                 icon: "fa-user",
                 color: "#1565C0",
                 lightColor: "#ffffff",

@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Service Package Selection Wizard Form -->
+    <record id="view_service_package_wizard_form" model="ir.ui.view">
+        <field name="name">health.service.package.wizard.form</field>
+        <field name="model">health.service.package.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Service Package Selection">
+                <field name="fso_id" invisible="1"/>
+                <field name="patient_id" invisible="1"/>
+
+                <div class="alert alert-info mb-3" role="alert">
+                    <strong>📦 Select a Service Package</strong> for client
+                    <field name="patient_id" class="fw-bold" readonly="1" nolabel="1"/>.
+                    <br/>
+                    <small class="text-muted">
+                        Choose an existing prepaid package to link to this booking.
+                        One service will be consumed from the selected package.
+                    </small>
+                </div>
+
+                <field name="line_ids" nolabel="1">
+                    <list editable="bottom" create="false" delete="false"
+                          decoration-muted="not is_selectable"
+                          decoration-success="selected and is_selectable">
+                        <field name="selected" string="✓"
+                               readonly="not is_selectable"
+                               widget="boolean"/>
+                        <field name="package_name" string="Package"/>
+                        <field name="service_type" string="Type"/>
+                        <field name="total_services" string="Total"/>
+                        <field name="consumed_services" string="Used"/>
+                        <field name="remaining_services" string="Remaining"
+                               widget="badge"
+                               decoration-success="remaining_services > 3"
+                               decoration-warning="remaining_services > 0 and remaining_services &lt;= 3"
+                               decoration-danger="remaining_services == 0"/>
+
+                        <field name="package_id" column_invisible="1"/>
+                        <field name="is_selectable" column_invisible="1"/>
+                        <field name="wizard_id" column_invisible="1"/>
+                    </list>
+                </field>
+
+                <footer>
+                    <button name="action_confirm" type="object"
+                            string="Assign Package" class="btn-primary"
+                            icon="fa-check"/>
+                    <button name="action_clear_package" type="object"
+                            string="Remove Package" class="btn-warning"
+                            icon="fa-times"
+                            title="Remove any currently assigned package"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- Wizard Action -->
+    <record id="action_service_package_wizard" model="ir.actions.act_window">
+        <field name="name">Select Service Package</field>
+        <field name="res_model">health.service.package.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <!-- Security: access for wizard models -->
+    <!-- Wizard line model access -->
+
+</odoo>

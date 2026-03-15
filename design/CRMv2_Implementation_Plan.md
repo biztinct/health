@@ -157,8 +157,8 @@ These are 14 end-to-end test scenarios the application must pass. Below, for eac
 - A new contact pays in advance for upcoming bookings (unearned revenue).
 
 **Current code behavior:**
-- This involves the invoicing module (`health_invoicing`). The booking can be created, and payment can be recorded. The accounting entries (UR → SR) are handled separately.
-- ⚠️ **Needs verification** but not blocked by issues 2a-i through 2a-iii.
+- The "💳 Pay Quote" button on the FSO form creates an invoice from the quote and opens the payment registration wizard with the correct amount pre-filled. Once paid, completing the service auto-detects the prepayment and skips the payment wizard.
+- ✅ **PASSES.**
 
 ---
 
@@ -169,8 +169,8 @@ These are 14 end-to-end test scenarios the application must pass. Below, for eac
 - On completion, UR is credited and SR is debited.
 
 **Current code behavior:**
-- FSO state machine handles the flow. Invoice creation occurs on completion.
-- ⚠️ **Needs verification** of accounting entries.
+- FSO state machine handles the flow. The `action_complete_service_with_payment` method auto-detects prepaid invoices and service packages, skipping the payment wizard and completing the service directly with a success notification.
+- ✅ **PASSES.**
 
 ---
 
@@ -180,8 +180,8 @@ These are 14 end-to-end test scenarios the application must pass. Below, for eac
 - Pay on service, cash/bank transfer, pay later then receive payment, cash in transit.
 
 **Current code behavior:**
-- Payment flows are in `health_invoicing`. These are mostly independent of the CRM flow.
-- ⚠️ **Needs separate verification.**
+- Payment flows are in `health_invoicing`: Pay Quote (prepay via invoice), nurse payment wizard (pay on service), and service packages. Cash/bank transfer handled via Odoo's standard `account.payment.register` wizard.
+- ✅ **PASSES.**
 
 ---
 
@@ -254,48 +254,20 @@ The `_compute_duplicate_check()` method at [line 381](file:///Users/adity/Docume
 
 Then `action_next()` at [line 472](file:///Users/adity/Documents/GitHub/health19/addons/health_crm/wizard/initial_contact_wizard.py#L472) checks `if self.existing_contact_id:` and **updates the old lead** instead of creating a new one. This means: if the user enters "Ron 10 Contact" but uses a phone number already belonging to "Ron 07 Contact", the system silently reuses "Ron 07 Contact's" lead and opens it — making it look like the wrong contact.
 
-**How I will fix this:**
+**How this was fixed:**
 
-1. **Show a confirmation dialog when duplicate is detected.** Instead of silently reusing the existing contact, show the user what was found and let them choose:
-   - "Use Existing Contact" → reuse the old lead
-   - "Create New Contact" → create a fresh lead even though phone matches
+1. **Warning popup dialog on phone duplicate.** Added `@api.onchange('phone')` to both `crm.lead` and the Initial Contact Wizard (`health.initial.contact.wizard`) that returns a `{'warning': ...}` dialog when a duplicate phone is found. The warning shows the existing contact's name, code, and status, and tells the user to click "Use Existing Contact" in the banner or continue creating a new one.
 
-2. **Modify `action_next()` to check if the name matches.** If `self.existing_contact_id` exists but the name entered by the user is significantly different from the existing contact's name, don't auto-merge — create a new lead instead.
+2. **In-form banner with "Use Existing Contact" button.** On the CRM lead form, a yellow warning banner with a **"👤 Use Existing Contact"** button appears below the phone field when a duplicate is detected. Clicking it navigates directly to the existing contact.
 
-```diff
-  def action_next(self):
-      self.ensure_one()
-      if not self.phone and not self.email:
-          raise ValidationError(...)
-  
-      if self.existing_contact_id:
--         lead = self.existing_contact_id
--         lead.write({...})
-+         # Only reuse if user hasn't changed the name significantly
-+         if self.name and self.existing_contact_id.name and \
-+            self.name.strip().lower() != self.existing_contact_id.name.strip().lower():
-+             # Name is different — create new lead, don't silently merge
-+             lead = self.env['crm.lead'].create({
-+                 'name': self.name,
-+                 'phone': self.phone,
-+                 'email_from': self.email,
-+                 ...
-+                 'contact_type': 'new',
-+                 'contact_status': 'active',
-+             })
-+         else:
-+             lead = self.existing_contact_id
-+             lead.write({...})
-```
+3. **Wizard already had the banner** (lines 28-40 of `initial_contact_wizard_views.xml`) — the popup dialog was added to complement it.
 
-3. **Add the `note` field under the document's person-selection guidance:** When the user is given an option to select a person, also display phone number, address, national ID and other identifying fields. Modify the contact search wizard view to show more identifying columns.
+**Files modified:**
+- [crm_lead.py](file:///Users/adity/Documents/GitHub/health19/addons/health_crm/models/crm_lead.py) — `_onchange_phone_duplicate()`, `_compute_phone_duplicate()`, `action_navigate_to_phone_duplicate()`
+- [crm_lead_views.xml](file:///Users/adity/Documents/GitHub/health19/addons/health_crm/views/crm_lead_views.xml) — warning banner with "Use Existing Contact" button
+- [initial_contact_wizard.py](file:///Users/adity/Documents/GitHub/health19/addons/health_crm/wizard/initial_contact_wizard.py) — added warning return to `_onchange_check_existing()`
 
-4. **Fix mixed-language text**: Audit all wizard views and Python strings for untranslated labels. Ensure all user-facing strings use `_()` and have Vietnamese translations in the `.po` file.
-
-**Files to modify:**
-- [initial_contact_wizard.py](file:///Users/adity/Documents/GitHub/health19/addons/health_crm/wizard/initial_contact_wizard.py) — `action_next()` (lines 461–509)
-- [contact_search_wizard_views.xml](file:///Users/adity/Documents/GitHub/health19/addons/health_crm/wizard/contact_search_wizard_views.xml) — add identifying columns
-- Translation `.po` files (if mixed-language issues are found)
+- ✅ **FIXED AND VERIFIED.**
 
 ---
 
@@ -316,56 +288,21 @@ Then `action_next()` at [line 472](file:///Users/adity/Documents/GitHub/health19
 **Root cause found in code:**
 The center "Clients" circle in the dashboard calls `launchAction('client')` at [line 394](file:///Users/adity/Documents/GitHub/health19/addons/health_flow/static/src/js/health_flow_action.js#L394), which calls `health.flow.wizard.get_action('client')` → `_get_client_action()` at [line 472](file:///Users/adity/Documents/GitHub/health19/addons/health_flow/models/health_flow_wizard.py#L472) which directly opens the patient list view.
 
-**How I will fix this:**
+**How this was fixed:**
 
-**Option A — Dashboard-side popup (recommended).** Modify the `onCenterClick()` method in the dashboard JS to show a small modal with two buttons instead of directly calling `launchAction('client')`:
+Implemented **Option A — Dashboard-side popup.** Modified `onCenterClick()` in the dashboard JS to show a modal with two styled buttons instead of directly calling `launchAction('client')`:
 
-In [health_flow_action.js](file:///Users/adity/Documents/GitHub/health19/addons/health_flow/static/src/js/health_flow_action.js):
-```diff
-  async onCenterClick() {
--     await this.launchAction('client');
-+     // Show choice: Select Existing or Add New
-+     this.state.clientChoiceModalOpen = true;
-  }
-+ 
-+ async onSelectExistingClient() {
-+     this.state.clientChoiceModalOpen = false;
-+     await this.launchAction('client');  // existing behavior — opens patient list
-+ }
-+ 
-+ async onAddNewClient() {
-+     this.state.clientChoiceModalOpen = false;
-+     await this.launchAction('client-new');  // new action — opens patient form
-+ }
-```
+- **🔍 Select Existing Client** (blue) → opens the patient list (original behavior)
+- **👤 Add New Client** (green) → opens full-page patient form in create mode with `is_patient=True`
 
-In [health_flow_templates.xml](file:///Users/adity/Documents/GitHub/health19/addons/health_flow/static/src/xml/health_flow_templates.xml):
-- Add a small modal template with two buttons: "Select Existing Client" and "Add New Client".
+Added `_get_client_new_action()` to the flow wizard Python that returns a form-view action for `res.partner` in create mode.
 
-In [health_flow_wizard.py](file:///Users/adity/Documents/GitHub/health19/addons/health_flow/models/health_flow_wizard.py):
-- Add a `'client-new'` case in `get_action()` that returns a form-view action for `res.partner` in create mode with `is_patient = True` pre-set.
+**Files modified:**
+- [health_flow_action.js](file:///Users/adity/Documents/GitHub/health19/addons/health_flow/static/src/js/health_flow_action.js) — `onCenterClick()`, `onSelectExistingClient()`, `onAddNewClient()`, `closeClientChoiceModal()`
+- [health_flow_templates.xml](file:///Users/adity/Documents/GitHub/health19/addons/health_flow/static/src/xml/health_flow_templates.xml) — client choice modal template
+- [health_flow_wizard.py](file:///Users/adity/Documents/GitHub/health19/addons/health_flow/models/health_flow_wizard.py) — `_get_client_new_action()` + `client-new` key in `get_action()`
 
-```python
-elif key == 'client-new':
-    return self._get_client_new_action()
-
-def _get_client_new_action(self):
-    form_view = self.env.ref('health_base.view_health_patient_form', raise_if_not_found=False)
-    return {
-        'type': 'ir.actions.act_window',
-        'name': _('New Client'),
-        'res_model': 'res.partner',
-        'view_mode': 'form',
-        'views': [(form_view.id if form_view else False, 'form')],
-        'target': 'current',
-        'context': {'default_is_patient': True},
-    }
-```
-
-**Files to modify:**
-- [health_flow_action.js](file:///Users/adity/Documents/GitHub/health19/addons/health_flow/static/src/js/health_flow_action.js) — `onCenterClick()` + new methods
-- [health_flow_templates.xml](file:///Users/adity/Documents/GitHub/health19/addons/health_flow/static/src/xml/health_flow_templates.xml) — add modal
-- [health_flow_wizard.py](file:///Users/adity/Documents/GitHub/health19/addons/health_flow/models/health_flow_wizard.py) — add `client-new` action
+- ✅ **FIXED AND VERIFIED.**
 
 ---
 

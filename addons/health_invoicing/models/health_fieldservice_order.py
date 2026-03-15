@@ -3,6 +3,9 @@
 from odoo import models, fields, api, _
 from odoo.exceptions import UserError
 
+import logging
+_logger = logging.getLogger(__name__)
+
 
 class HealthFieldserviceOrder(models.Model):
     _inherit = 'health.fieldservice.order'
@@ -129,11 +132,49 @@ class HealthFieldserviceOrder(models.Model):
     
     # Enhanced FSO Completion Workflow
     def action_complete_service_with_payment(self):
-        """Complete service and launch payment collection workflow"""
+        """Complete service and launch payment collection workflow.
+        If all services are prepaid (invoice fully paid or package covers it),
+        skip the payment wizard and complete directly with a notification.
+        """
         self.ensure_one()
 
         if self.state != 'in_progress':
             raise UserError(_('Only services in progress can be completed.'))
+        
+        # Check if fully prepaid
+        is_fully_paid = False
+        prepaid_message = ''
+        
+        # Case 1: Invoice exists and is fully paid
+        if self.invoice_id and self.invoice_id.payment_state in ('paid', 'in_payment'):
+            is_fully_paid = True
+            prepaid_message = _(
+                'All services have been prepaid via invoice %s. '
+                'Service completed successfully.'
+            ) % self.invoice_id.name
+        
+        # Case 2: Service package covers this booking
+        elif self.is_package_service and self.package_id:
+            is_fully_paid = True
+            prepaid_message = _(
+                'This service is covered by package "%s" (%d remaining). '
+                'Service completed successfully.'
+            ) % (self.package_id.name, self.package_id.remaining_services)
+        
+        if is_fully_paid:
+            # Complete the service directly without payment wizard
+            self.action_complete_service()
+            return {
+                'type': 'ir.actions.client',
+                'tag': 'display_notification',
+                'params': {
+                    'title': _('✅ Service Completed - Prepaid'),
+                    'message': prepaid_message,
+                    'type': 'success',
+                    'sticky': False,
+                    'next': {'type': 'ir.actions.act_window_close'},
+                }
+            }
         
         if self.is_invoiced:
             raise UserError(_('This service has already been invoiced.'))
@@ -149,6 +190,70 @@ class HealthFieldserviceOrder(models.Model):
                 'default_fso_id': self.id,
                 'default_patient_id': self.patient_id.id,
             }
+        }
+    
+    def action_prepay_quote(self):
+        """Prepay the quote: create invoice from sale order and open payment registration."""
+        self.ensure_one()
+        
+        if not self.sale_order_id:
+            raise UserError(_('No quote exists for this booking. Please create a quote first.'))
+        
+        if not self.sale_order_id.order_line:
+            raise UserError(_('The quote has no line items. Please add services to the quote first.'))
+        
+        # Step 1: Confirm the sale order if still in draft/sent
+        if self.sale_order_id.state in ('draft', 'sent'):
+            self.sale_order_id.action_confirm()
+        
+        # Step 2: Create invoice from confirmed sale order if not already invoiced
+        if not self.invoice_id:
+            # Create invoice directly from sale order lines (full amount, not delivered qty)
+            invoices = self.sale_order_id._create_invoices(final=True)
+            
+            if invoices:
+                invoice = invoices[0]
+                # Post (validate) the invoice
+                invoice.action_post()
+                # Link to FSO
+                self.write({
+                    'invoice_id': invoice.id,
+                    'is_invoiced': True,
+                })
+            else:
+                raise UserError(_('Could not create invoice from the quote.'))
+        
+        invoice = self.invoice_id
+        
+        # Step 3: Check if already fully paid
+        if invoice.payment_state in ('paid', 'in_payment'):
+            return {
+                'type': 'ir.actions.client',
+                'tag': 'display_notification',
+                'params': {
+                    'title': _('Already Paid'),
+                    'message': _('Invoice %s is already fully paid.') % invoice.name,
+                    'type': 'info',
+                    'sticky': False,
+                }
+            }
+        
+        # Step 4: Open payment registration wizard with clean context
+        # Must NOT inherit parent context which has active_model='health.fieldservice.order'
+        # The wizard's default_get needs active_model='account.move' with the invoice IDs
+        ctx = {
+            'active_model': 'account.move',
+            'active_ids': [invoice.id],
+            'active_id': invoice.id,
+            'dont_redirect_to_payments': True,
+        }
+        return {
+            'name': _('Register Payment'),
+            'type': 'ir.actions.act_window',
+            'res_model': 'account.payment.register',
+            'view_mode': 'form',
+            'target': 'new',
+            'context': ctx,
         }
     
     def action_view_payment_transactions(self):
@@ -501,3 +606,21 @@ class HealthFieldserviceOrder(models.Model):
         # The reservation that happens at booking confirmation is sufficient to manage package inventory.
 
         return result
+
+    def action_open_service_package_wizard(self):
+        """Open the Service Package selection wizard."""
+        self.ensure_one()
+        if not self.patient_id:
+            raise UserError(_('Please set a client before selecting a service package.'))
+
+        return {
+            'name': _('Select Service Package'),
+            'type': 'ir.actions.act_window',
+            'res_model': 'health.service.package.wizard',
+            'view_mode': 'form',
+            'target': 'new',
+            'context': {
+                'default_fso_id': self.id,
+                'default_patient_id': self.patient_id.id,
+            },
+        }

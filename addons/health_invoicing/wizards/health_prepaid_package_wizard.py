@@ -210,19 +210,15 @@ class HealthPrepaidPackageWizard(models.TransientModel):
                 ('invoice_id', '=', invoice.id)
             ], limit=1, order='create_date desc')
             
-            # Submit to tax authorities (Vietnamese compliance)
-            try:
-                invoice.action_submit_to_tax_authority()
-            except Exception as e:
-                # Log but don't block - can be submitted later
-                if package:
-                    try:
-                        package.message_post(
-                            body=f"Invoice created but tax submission failed: {str(e)}. Please submit manually.",
-                            subject="Tax Submission Warning"
-                        )
-                    except Exception:
-                        pass  # Silently fail - no email notifications required
+            # Submit to tax authorities (Vietnamese compliance - only if Red Invoice enabled)
+            red_invoice_enabled = self.env['ir.config_parameter'].sudo().get_param(
+                'vietnamese_tax.red_invoice_enabled', 'True'
+            ) == 'True'
+            if red_invoice_enabled:
+                try:
+                    invoice.action_submit_to_tax_authority()
+                except Exception:
+                    pass  # Don't block on tax submission failure
         else:
             # If no invoice requested, create package directly
             package = self.package_product_id.create_patient_package(

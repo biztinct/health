@@ -38,7 +38,7 @@
         <field name="name">health.service.package.form</field>
         <field name="model">health.service.package</field>
         <field name="arch" type="xml">
-            <form string="Service Package" class="o_form_record_package">
+            <form string="Service Package" class="o_form_record_package p-3">
                 <header>
                     <field name="state" widget="statusbar" statusbar_visible="active,exhausted,expired"/>
                     
@@ -98,7 +98,7 @@
                     <!-- Package Title -->
                     <div class="oe_title">
                         <h1 class="d-flex justify-content-between align-items-center">
-                            <field name="name" class="o_text_overflow" placeholder="Package Name"/>
+                            <field name="name" class="o_text_overflow" placeholder="Package Name" readonly="1"/>
                         </h1>
                     </div>
                     
@@ -124,8 +124,7 @@
                             
                             <!-- Visual Progress Bar -->
                             <div class="o_field_widget">
-                                <span class="o_form_label">Service Progress:</span>
-                                <div class="progress" style="height: 20px; margin-top: 5px; position: relative;">
+                                <div class="progress" style="height: 20px; position: relative;">
                                     <div class="progress-bar bg-success" role="progressbar"
                                          style="width: calc(100% * consumed_services / total_services);"
                                          aria-valuenow="consumed_services" aria-valuemin="0" aria-valuemax="total_services">
@@ -136,6 +135,7 @@
                                         </span>
                                     </div>
                                 </div>
+                                <span class="o_form_label mt-1 d-block text-muted" style="font-size: 11px;">Service Progress</span>
                             </div>
                         </group>
                     </group>
@@ -153,13 +153,13 @@
                     </group>
                     
                     <!-- Package Notes -->
-                    <group string="Package Details &amp; Notes">
+                    <group string="Package Details &amp; Notes" class="p-2">
                         <field name="package_notes" nolabel="1" 
                                placeholder="Package details, service descriptions, terms &amp; conditions..."/>
                     </group>
                     
                     <!-- Invoice Integration -->
-                    <group string="Invoice &amp; Payment" 
+                    <group string="Invoice &amp; Payment" class="p-2"
                            invisible="not invoice_id and not invoice_line_id">
                         <field name="invoice_id" readonly="1" invisible="not invoice_id"/>
                         <field name="invoice_line_id" readonly="1" invisible="not invoice_line_id" 

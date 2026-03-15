@@ -195,6 +195,26 @@ class HealthcareInvoice(models.Model):
         help='Customer tax registration number'
     )
 
+    # Red Invoice configuration toggle (for view visibility)
+    red_invoice_enabled = fields.Boolean(
+        'Red Invoice Enabled',
+        compute='_compute_red_invoice_enabled',
+    )
+
+    def _compute_red_invoice_enabled(self):
+        """Check if Red Invoice feature is enabled in settings"""
+        enabled = self.env['ir.config_parameter'].sudo().get_param(
+            'vietnamese_tax.red_invoice_enabled', 'True'
+        ) == 'True'
+        for record in self:
+            record.red_invoice_enabled = enabled
+
+    def _is_red_invoice_enabled(self):
+        """Helper: check if Red Invoice is enabled (for use in Python methods)"""
+        return self.env['ir.config_parameter'].sudo().get_param(
+            'vietnamese_tax.red_invoice_enabled', 'True'
+        ) == 'True'
+
     # Discount tracking fields
     has_discounts = fields.Boolean(
         'Has Discounts',
@@ -260,7 +280,7 @@ class HealthcareInvoice(models.Model):
         """Override write to handle status changes"""
         result = super().write(vals)
         
-        # Handle posting - submit to tax authorities
+        # Handle posting - submit to tax authorities (only if Red Invoice enabled)
         if 'state' in vals and vals['state'] == 'posted':
             for invoice in self:
                 if invoice.move_type in ('out_invoice', 'out_refund'):
@@ -268,8 +288,10 @@ class HealthcareInvoice(models.Model):
                     if invoice.move_type == 'out_invoice':
                         invoice._create_healthcare_package_instances()
                     
-                    invoice._submit_to_tax_authorities()
-                    invoice._sync_to_misa()
+                    # Only submit to tax/MISA if Red Invoice is enabled
+                    if invoice._is_red_invoice_enabled():
+                        invoice._submit_to_tax_authorities()
+                        invoice._sync_to_misa()
         
         return result
 
@@ -333,6 +355,10 @@ class HealthcareInvoice(models.Model):
     def _submit_to_tax_authorities(self):
         """Submit invoice to Vietnamese Tax Authorities (real-time)"""
         self.ensure_one()
+        
+        # Skip if Red Invoice feature is disabled
+        if not self._is_red_invoice_enabled():
+            return True
         
         if self.tax_authority_submission_status in ('submitted', 'accepted'):
             return True
@@ -687,6 +713,10 @@ class HealthcareInvoice(models.Model):
         """Synchronize invoice to MISA accounting system"""
         self.ensure_one()
         
+        # Skip if Red Invoice (and therefore MISA) is disabled
+        if not self._is_red_invoice_enabled():
+            return True
+        
         if self.misa_sync_status == 'synced':
             return True
         
@@ -778,6 +808,9 @@ class HealthcareInvoice(models.Model):
 
     def action_submit_to_tax_authorities(self):
         """Manual action to submit to tax authorities"""
+        if not self._is_red_invoice_enabled():
+            raise UserError(_('Vietnamese Red Invoice feature is disabled. Enable it in Settings → Invoicing.'))
+        
         for invoice in self:
             if invoice.state != 'posted':
                 raise UserError(_('Only posted invoices can be submitted to tax authorities.'))
@@ -853,6 +886,10 @@ class HealthcareInvoice(models.Model):
     @api.constrains('tax_authority_submission_status', 'state')
     def _check_tax_submission_requirements(self):
         """Ensure tax submission compliance"""
+        # Skip entirely if Red Invoice is disabled
+        if not self._is_red_invoice_enabled():
+            return
+        
         for invoice in self:
             if (invoice.state == 'posted' and 
                 invoice.move_type in ('out_invoice', 'out_refund') and

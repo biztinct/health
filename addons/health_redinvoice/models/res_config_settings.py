@@ -24,3 +24,28 @@ class ResConfigSettings(models.TransientModel):
     red_invoice_district_name = fields.Char(related='company_id.red_invoice_district_name', readonly=False)
     red_invoice_auto_issue = fields.Boolean(string='Auto-create Red Invoice on Post', config_parameter='health_redinvoice.auto_issue', default=True)
     red_invoice_allow_download_pdf = fields.Boolean(string='Download Converted PDF', config_parameter='health_redinvoice.download_pdf', default=True)
+
+    # Master toggle — NOT using config_parameter= because Odoo deletes
+    # the ir.config_parameter record when a Boolean is False, causing it
+    # to always revert to the default 'True'. We handle get/set manually.
+    enable_red_invoice = fields.Boolean(
+        string='Enable Red Invoice',
+        help='Master toggle — when unchecked, all Red Invoice functionality is disabled '
+             '(no API calls, no auto-issue, tax tabs hidden on invoices).'
+    )
+
+    def get_values(self):
+        res = super().get_values()
+        res['enable_red_invoice'] = self.env['ir.config_parameter'].sudo().get_param(
+            'vietnamese_tax.red_invoice_enabled', 'True'
+        ) == 'True'
+        return res
+
+    def set_values(self):
+        super().set_values()
+        # Store as string so Odoo never deletes the parameter
+        self.env['ir.config_parameter'].sudo().set_param(
+            'vietnamese_tax.red_invoice_enabled',
+            'True' if self.enable_red_invoice else 'False'
+        )
+

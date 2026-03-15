@@ -487,11 +487,41 @@ class HealthInitialContactWizard(models.TransientModel):
                     # Pre-fill name if not already set
                     if not self.name and self.existing_contact_id.name:
                         self.name = self.existing_contact_id.name
+                    return {
+                        'warning': {
+                            'title': _('⚠️ Existing Contact Found'),
+                            'message': _(
+                                'An existing contact with this phone/email was found:\n\n'
+                                '  • Name: %s\n'
+                                '  • Code: %s\n\n'
+                                'Click "Use Existing Contact" in the banner to navigate to '
+                                'the existing record, or continue to create a new contact.'
+                            ) % (
+                                self.existing_contact_id.name,
+                                self.existing_contact_id.unique_contact_code or 'N/A',
+                            ),
+                        }
+                    }
                 elif self.existing_partner_id:
                     self.contact_type = 'repeat'
                     self.contact_id = self.existing_partner_id.patient_code
                     if not self.name and self.existing_partner_id.name:
                         self.name = self.existing_partner_id.name
+                    return {
+                        'warning': {
+                            'title': _('⚠️ Existing Client Found'),
+                            'message': _(
+                                'An existing client with this phone/email was found:\n\n'
+                                '  • Name: %s\n'
+                                '  • Client ID: %s\n\n'
+                                'Click "Use Existing Contact" in the banner to navigate to '
+                                'the existing record, or continue to create a new contact.'
+                            ) % (
+                                self.existing_partner_id.name,
+                                self.existing_partner_id.patient_code or 'N/A',
+                            ),
+                        }
+                    }
     
     @api.model
     def default_get(self, fields_list):

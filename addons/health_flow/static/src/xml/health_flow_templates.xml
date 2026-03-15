@@ -198,6 +198,34 @@
 
             </div>
 
+            <!-- Client Choice Modal (Select Existing / Add New) -->
+            <t t-if="state.clientChoiceModalOpen">
+                <div class="health_flow_search_modal_backdrop" t-on-click="() =&gt; this.closeClientChoiceModal()">
+                    <div class="health_flow_search_modal" t-on-click.stop="" style="max-width: 420px; padding: 30px;">
+                        <div class="health_flow_search_modal_header" style="margin-bottom: 20px;">
+                            <h3>Clients</h3>
+                            <div class="health_flow_search_modal_close" t-on-click="() =&gt; this.closeClientChoiceModal()">
+                                <i class="fa fa-times"></i>
+                            </div>
+                        </div>
+                        <div style="display: flex; flex-direction: column; gap: 12px;">
+                            <div role="button"
+                                 style="display: flex; align-items: center; gap: 15px; padding: 16px 20px; border-radius: 10px; background: linear-gradient(135deg, #4299e1, #3182ce); color: white; cursor: pointer; font-size: 16px; font-weight: 600; transition: transform 0.15s;"
+                                 t-on-click="() =&gt; this.onSelectExistingClient()">
+                                <i class="fa fa-search fa-lg"></i>
+                                <span>Select Existing Client</span>
+                            </div>
+                            <div role="button"
+                                 style="display: flex; align-items: center; gap: 15px; padding: 16px 20px; border-radius: 10px; background: linear-gradient(135deg, #48bb78, #38a169); color: white; cursor: pointer; font-size: 16px; font-weight: 600; transition: transform 0.15s;"
+                                 t-on-click="() =&gt; this.onAddNewClient()">
+                                <i class="fa fa-user-plus fa-lg"></i>
+                                <span>Add New Client</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </t>
+
             <!-- Booking Search Modal -->
             <t t-if="state.searchModalOpen">
                 <div class="health_flow_search_modal_backdrop" t-on-click="() => this.closeSearchModal()">

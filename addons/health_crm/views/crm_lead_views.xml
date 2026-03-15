@@ -331,11 +331,27 @@
                                         <group col="2">
                                             <field name="email_from" string="Email" widget="email"/>
                                             <field name="phone" widget="phone"/>
+                                            <field name="phone_duplicate_lead_id" invisible="1"/>
+                                            <field name="phone_duplicate_name" invisible="1"/>
+                                            <field name="phone_duplicate_code" invisible="1"/>
                                             <field name="contact_datetime" string="Contact Date and Time"/>
                                             <field name="mode_of_contact" string="Mode of Contact"/>
                                             <field name="referrer_id" string="Referrer" options="{'no_create': True}"/>
                                             <field name="emergency_contact_id" string="Emergency Contact" options="{'no_create': True}"/>
                                         </group>
+                                        <!-- Duplicate Phone Warning Banner -->
+                                        <div class="alert alert-warning d-flex align-items-center justify-content-between" role="alert"
+                                             invisible="not phone_duplicate_lead_id"
+                                             style="margin: 8px 0; padding: 10px 15px; gap: 12px;">
+                                            <div>
+                                                <strong>⚠️ Existing contact found with this phone:</strong>
+                                                <span class="fw-bold"><field name="phone_duplicate_name" readonly="1" nolabel="1"/></span>
+                                                (<field name="phone_duplicate_code" readonly="1" nolabel="1"/>)
+                                            </div>
+                                            <button name="action_navigate_to_phone_duplicate" type="object"
+                                                    class="btn btn-sm btn-primary"
+                                                    string="👤 Use Existing Contact"/>
+                                        </div>
                                     </div>
                                     
                                     <div class="vu-card">

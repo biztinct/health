@@ -87,6 +87,8 @@ class HealthFlowWizard(models.TransientModel):
             return self._get_booking_action(key)
         elif key == 'client':
             return self._get_client_action()
+        elif key == 'client-new':
+            return self._get_client_new_action()
         elif key == 'analytics':
             # Open My Dashboard directly using the dashboard_amcharts client action
             return self._get_my_dashboard_action()
@@ -518,6 +520,22 @@ class HealthFlowWizard(models.TransientModel):
                     'sticky': False,
                 }
             }
+
+    @api.model
+    def _get_client_new_action(self):
+        """Open client form in create mode (full-page, Option A)."""
+        form_view = self.env.ref('health_base.view_health_patient_form', raise_if_not_found=False)
+        action = {
+            'type': 'ir.actions.act_window',
+            'name': _('New Client'),
+            'res_model': 'res.partner',
+            'view_mode': 'form',
+            'views': [(form_view.id if form_view else False, 'form')],
+            'target': 'current',
+            'context': {'default_is_patient': True},
+        }
+        action = self._ensure_action_name(action, _('New Client'))
+        return self._apply_flow_context(action)
 
     @api.model
     def _get_my_dashboard_action(self):

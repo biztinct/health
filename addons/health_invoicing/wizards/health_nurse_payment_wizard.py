@@ -356,18 +356,22 @@ class HealthNursePaymentWizard(models.TransientModel):
         # Post invoice and submit to tax authorities
         invoice.action_post()
         
-        # Vietnamese tax submission
-        try:
-            invoice.action_submit_to_tax_authority()
-        except Exception as e:
-            # Log warning but don't block the process
+        # Vietnamese tax submission (only if Red Invoice is enabled)
+        red_invoice_enabled = self.env['ir.config_parameter'].sudo().get_param(
+            'vietnamese_tax.red_invoice_enabled', 'True'
+        ) == 'True'
+        if red_invoice_enabled:
             try:
-                invoice.message_post(
-                    body=f"Invoice created but tax submission failed: {str(e)}. Please submit manually.",
-                    subject="Tax Submission Warning"
-                )
-            except Exception:
-                pass  # Silently fail - no email notifications required
+                invoice.action_submit_to_tax_authority()
+            except Exception as e:
+                # Log warning but don't block the process
+                try:
+                    invoice.message_post(
+                        body=f"Invoice created but tax submission failed: {str(e)}. Please submit manually.",
+                        subject="Tax Submission Warning"
+                    )
+                except Exception:
+                    pass  # Silently fail - no email notifications required
         
         return invoice
     

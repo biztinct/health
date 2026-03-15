@@ -92,6 +92,7 @@
         'views/health_payment_collection_wizard_views.xml',
         'views/health_nurse_payment_wizard_views.xml',
         'views/health_cash_delivery_wizard_views.xml',
+        'wizard/service_package_wizard_views.xml',
         
         # Views - Accounting Extensions (Basic implementation first)
         'views/account_move_views.xml',
@@ -105,6 +106,9 @@
         'views/health_payment_transaction_views.xml',
         'views/health_prepaid_service_views.xml',
         'views/health_ar_dashboard_views.xml',
+        
+        # Settings
+        'views/res_config_settings_views.xml',
         
         # Menus
         'views/health_invoicing_menus.xml',
