@@ -226,6 +226,107 @@
                 </div>
             </t>
 
+            <!-- Master Data Modal -->
+            <t t-if="state.masterDataModalOpen">
+                <div class="health_flow_search_modal_backdrop" t-on-click="() =&gt; this.closeMasterDataModal()">
+                    <div class="health_flow_search_modal" t-on-click.stop="" style="max-width: 520px; padding: 30px;">
+                        <div class="health_flow_search_modal_header" style="margin-bottom: 20px;">
+                            <h3>Master Data</h3>
+                            <div class="health_flow_search_modal_close" t-on-click="() =&gt; this.closeMasterDataModal()">
+                                <i class="fa fa-times"></i>
+                            </div>
+                        </div>
+                        <div style="display: flex; flex-direction: column; gap: 10px;">
+                            <div role="button"
+                                 style="display: flex; align-items: center; gap: 14px; padding: 14px 18px; border-radius: 10px; background: #f7fafc; border: 1px solid #e2e8f0; cursor: pointer; font-size: 15px; font-weight: 500; transition: all 0.15s; color: #2d3748;"
+                                 t-on-click="() =&gt; this.onMasterDataSelect('admin-facilities')">
+                                <i class="fa fa-building fa-lg" style="color: #9f7aea; width: 24px; text-align: center;"></i>
+                                <span>Healthcare Facility</span>
+                            </div>
+                            <div role="button"
+                                 style="display: flex; align-items: center; gap: 14px; padding: 14px 18px; border-radius: 10px; background: #f7fafc; border: 1px solid #e2e8f0; cursor: pointer; font-size: 15px; font-weight: 500; transition: all 0.15s; color: #2d3748;"
+                                 t-on-click="() =&gt; this.onMasterDataSelect('admin-catchment-provinces')">
+                                <i class="fa fa-globe fa-lg" style="color: #9f7aea; width: 24px; text-align: center;"></i>
+                                <span>Catchment Province</span>
+                            </div>
+                            <div role="button"
+                                 style="display: flex; align-items: center; gap: 14px; padding: 14px 18px; border-radius: 10px; background: #f7fafc; border: 1px solid #e2e8f0; cursor: pointer; font-size: 15px; font-weight: 500; transition: all 0.15s; color: #2d3748;"
+                                 t-on-click="() =&gt; this.onMasterDataSelect('admin-service-types')">
+                                <i class="fa fa-list-ul fa-lg" style="color: #9f7aea; width: 24px; text-align: center;"></i>
+                                <span>Service Types</span>
+                            </div>
+                            <div role="button"
+                                 style="display: flex; align-items: center; gap: 14px; padding: 14px 18px; border-radius: 10px; background: #f7fafc; border: 1px solid #e2e8f0; cursor: pointer; font-size: 15px; font-weight: 500; transition: all 0.15s; color: #2d3748;"
+                                 t-on-click="() =&gt; this.onMasterDataSelect('admin-symptoms')">
+                                <i class="fa fa-heartbeat fa-lg" style="color: #9f7aea; width: 24px; text-align: center;"></i>
+                                <span>Symptoms</span>
+                            </div>
+                            <div role="button"
+                                 style="display: flex; align-items: center; gap: 14px; padding: 14px 18px; border-radius: 10px; background: #f7fafc; border: 1px solid #e2e8f0; cursor: pointer; font-size: 15px; font-weight: 500; transition: all 0.15s; color: #2d3748;"
+                                 t-on-click="() =&gt; this.onMasterDataSelect('admin-referral-sources')">
+                                <i class="fa fa-share-alt fa-lg" style="color: #9f7aea; width: 24px; text-align: center;"></i>
+                                <span>Referral Sources</span>
+                            </div>
+                            <div role="button"
+                                 style="display: flex; align-items: center; gap: 14px; padding: 14px 18px; border-radius: 10px; background: #f7fafc; border: 1px solid #e2e8f0; cursor: pointer; font-size: 15px; font-weight: 500; transition: all 0.15s; color: #2d3748;"
+                                 t-on-click="() =&gt; this.onMasterDataSelect('admin-insurance')">
+                                <i class="fa fa-shield fa-lg" style="color: #9f7aea; width: 24px; text-align: center;"></i>
+                                <span>Insurance Provider</span>
+                            </div>
+                            <div role="button"
+                                 style="display: flex; align-items: center; gap: 14px; padding: 14px 18px; border-radius: 10px; background: #f7fafc; border: 1px solid #e2e8f0; cursor: pointer; font-size: 15px; font-weight: 500; transition: all 0.15s; color: #2d3748;"
+                                 t-on-click="() =&gt; this.onMasterDataSelect('admin-urgency-levels')">
+                                <i class="fa fa-exclamation-circle fa-lg" style="color: #9f7aea; width: 24px; text-align: center;"></i>
+                                <span>Urgency Levels</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </t>
+
+            <!-- User Management Modal -->
+            <t t-if="state.userMgmtModalOpen">
+                <div class="health_flow_search_modal_backdrop" t-on-click="() =&gt; this.closeUserMgmtModal()">
+                    <div class="health_flow_search_modal" t-on-click.stop="" style="max-width: 480px; padding: 30px;">
+                        <div class="health_flow_search_modal_header" style="margin-bottom: 20px;">
+                            <h3>User Management</h3>
+                            <div class="health_flow_search_modal_close" t-on-click="() =&gt; this.closeUserMgmtModal()">
+                                <i class="fa fa-times"></i>
+                            </div>
+                        </div>
+                        <div style="display: flex; flex-direction: column; gap: 10px;">
+                            <div role="button"
+                                 style="display: flex; align-items: center; gap: 14px; padding: 16px 18px; border-radius: 10px; background: linear-gradient(135deg, #9f7aea, #805ad5); color: white; cursor: pointer; font-size: 15px; font-weight: 600; transition: all 0.15s;"
+                                 t-on-click="() =&gt; this.onUserMgmtSelect('admin-user-list')">
+                                <i class="fa fa-user-circle fa-lg" style="width: 24px; text-align: center;"></i>
+                                <div>
+                                    <span>Users</span>
+                                    <div style="font-size: 12px; font-weight: 400; opacity: 0.85; margin-top: 2px;">Add, edit, and manage user accounts</div>
+                                </div>
+                            </div>
+                            <div role="button"
+                                 style="display: flex; align-items: center; gap: 14px; padding: 16px 18px; border-radius: 10px; background: linear-gradient(135deg, #805ad5, #6b46c1); color: white; cursor: pointer; font-size: 15px; font-weight: 600; transition: all 0.15s;"
+                                 t-on-click="() =&gt; this.onUserMgmtSelect('admin-access-roles')">
+                                <i class="fa fa-key fa-lg" style="width: 24px; text-align: center;"></i>
+                                <div>
+                                    <span>Access Roles</span>
+                                    <div style="font-size: 12px; font-weight: 400; opacity: 0.85; margin-top: 2px;">Define permission bundles for user groups</div>
+                                </div>
+                            </div>
+                            <div role="button"
+                                 style="display: flex; align-items: center; gap: 14px; padding: 16px 18px; border-radius: 10px; background: linear-gradient(135deg, #6b46c1, #553c9a); color: white; cursor: pointer; font-size: 15px; font-weight: 600; transition: all 0.15s;"
+                                 t-on-click="() =&gt; this.onUserMgmtSelect('admin-role-management')">
+                                <i class="fa fa-shield fa-lg" style="width: 24px; text-align: center;"></i>
+                                <div>
+                                    <span>Role Management</span>
+                                    <div style="font-size: 12px; font-weight: 400; opacity: 0.85; margin-top: 2px;">Configure restrictions, hidden menus, and field access</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </t>
+
             <!-- Booking Search Modal -->
             <t t-if="state.searchModalOpen">
                 <div class="health_flow_search_modal_backdrop" t-on-click="() => this.closeSearchModal()">

@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ====================================================
+         Healthcare Users Action (Tenant Admin)
+         Opens simplified user management views
+         ==================================================== -->
+    <record id="action_healthcare_users" model="ir.actions.act_window">
+        <field name="name">Users</field>
+        <field name="res_model">res.users</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('share', '=', False)]</field>
+        <field name="context">{'active_test': False}</field>
+        <field name="view_ids" eval="[(5, 0, 0),
+            (0, 0, {'view_mode': 'list', 'view_id': ref('view_health_users_list')}),
+            (0, 0, {'view_mode': 'form', 'view_id': ref('view_health_users_form')})]"/>
+        <field name="search_view_id" ref="view_health_users_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first user
+            </p>
+            <p>
+                Add users and assign them access roles to control what they can do in the system.
+            </p>
+        </field>
+    </record>
+
+    <!-- ====================================================
+         Healthcare Access Roles Action (Tenant Admin)
+         Opens role management with filtered groups
+         ==================================================== -->
+    <record id="action_healthcare_access_roles" model="ir.actions.act_window">
+        <field name="name">Access Roles</field>
+        <field name="res_model">access.role</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first access role
+            </p>
+            <p>
+                Access roles define what permissions a group of users have.
+                Assign roles to users to control their access.
+            </p>
+        </field>
+    </record>
+
+    <!-- ====================================================
+         Healthcare Role Management Action (Tenant Admin)
+         Opens role management (menu hiding, restrictions, etc.)
+         ==================================================== -->
+    <record id="action_healthcare_role_management" model="ir.actions.act_window">
+        <field name="name">Role Management</field>
+        <field name="res_model">role.management</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Configure role restrictions
+            </p>
+            <p>
+                Define fine-grained restrictions for each role: hide menus, 
+                disable buttons, restrict exports, and control field visibility.
+            </p>
+        </field>
+    </record>
+
+</odoo>

@@ -73,6 +73,10 @@ class HealthFlowAction extends Component {
             bookingNotificationsOpen: false,
             // Client choice modal (Select Existing / Add New)
             clientChoiceModalOpen: false,
+            // Master Data modal
+            masterDataModalOpen: false,
+            // User Management modal
+            userMgmtModalOpen: false,
         });
 
         // Panel data configuration
@@ -121,20 +125,13 @@ class HealthFlowAction extends Component {
                 title: _t('Admin'),
                 color: '#9f7aea', // Purple
                 items: [
-                    { key: 'admin-pricing-engines', label: _t('Pricing Engines'), icon: 'fa-cogs', desc: _t('Configure pricing engines') },
+                    { key: 'admin-user-management', label: _t('User Management'), icon: 'fa-users', desc: _t('Manage users & roles'), isUserMgmt: true },
+                    { key: 'admin-master-data', label: _t('Master Data'), icon: 'fa-database', desc: _t('Master data management'), isMasterData: true },
                     { key: 'admin-package-products', label: _t('Package Products'), icon: 'fa-cube', desc: _t('Service packages') },
                     { key: 'admin-pricing-rules', label: _t('Pricing Rules'), icon: 'fa-list-ul', desc: _t('Define pricing rules') },
-                    { key: 'admin-quick-edit-rules', label: _t('Quick Edit Rules'), icon: 'fa-edit', desc: _t('Quick edit pricing') },
                     { key: 'admin-portable-equipment', label: _t('Portable Equipment'), icon: 'fa-briefcase', desc: _t('Track equipment') },
                     { key: 'admin-healthcare-staff', label: _t('Healthcare Staff'), icon: 'fa-user-md', desc: _t('Staff directory') },
-                    { key: 'admin-facilities', label: _t('Healthcare Facilities'), icon: 'fa-building', desc: _t('Facilities management') },
-                    { key: 'admin-catchment-provinces', label: _t('Catchment Provinces'), icon: 'fa-globe', desc: _t('Catchment provinces') },
                     { key: 'admin-patient-categories', label: _t('Patient Categories'), icon: 'fa-bookmark', desc: _t('Patient categories') },
-                    { key: 'admin-service-types', label: _t('Service Types'), icon: 'fa-list-ul', desc: _t('Define services') },
-                    { key: 'admin-symptoms', label: _t('Symptoms'), icon: 'fa-heartbeat', desc: _t('Configure symptoms') },
-                    { key: 'admin-referral-sources', label: _t('Referral Sources'), icon: 'fa-share-alt', desc: _t('Referral sources') },
-                    { key: 'admin-insurance', label: _t('Insurance Providers'), icon: 'fa-shield', desc: _t('Insurance providers') },
-                    { key: 'admin-urgency-levels', label: _t('Urgency Levels'), icon: 'fa-exclamation-circle', desc: _t('Urgency levels') },
                 ],
             },
         };
@@ -444,12 +441,60 @@ class HealthFlowAction extends Component {
             return;
         }
 
+        // Handle Master Data popup
+        if (item.isMasterData) {
+            this.state.masterDataModalOpen = true;
+            return;
+        }
+
+        // Handle User Management popup
+        if (item.isUserMgmt) {
+            this.state.userMgmtModalOpen = true;
+            return;
+        }
+
         // Save state before launching action (so breadcrumb return restores panel)
         if (!this.isRestoring) {
             this.saveState(this.state.activePrimary);
         }
 
         await this.launchAction(item.key);
+    }
+
+    /**
+     * Close Master Data modal
+     */
+    closeMasterDataModal() {
+        this.state.masterDataModalOpen = false;
+    }
+
+    /**
+     * Handle Master Data option selection
+     */
+    async onMasterDataSelect(key) {
+        this.state.masterDataModalOpen = false;
+        if (!this.isRestoring) {
+            this.saveState(this.state.activePrimary);
+        }
+        await this.launchAction(key);
+    }
+
+    /**
+     * Close User Management modal
+     */
+    closeUserMgmtModal() {
+        this.state.userMgmtModalOpen = false;
+    }
+
+    /**
+     * Handle User Management option selection
+     */
+    async onUserMgmtSelect(key) {
+        this.state.userMgmtModalOpen = false;
+        if (!this.isRestoring) {
+            this.saveState(this.state.activePrimary);
+        }
+        await this.launchAction(key);
     }
 
     /**

@@ -127,10 +127,11 @@ class HealthFlowWizard(models.TransientModel):
             'invoicing-ar-management': ('health_invoicing.action_healthcare_cash_management', _('AR Management')),
 
             # Admin Panel (Configuration)
-            'admin-pricing-engines': ('advanced_pricing.action_advanced_pricing_engines', _('Pricing Engines')),
+            'admin-user-list': ('health_user_admin.action_healthcare_users', _('Users')),
+            'admin-access-roles': ('health_user_admin.action_healthcare_access_roles', _('Access Roles')),
+            'admin-role-management': ('health_user_admin.action_healthcare_role_management', _('Role Management')),
             'admin-package-products': ('health_invoicing.action_healthcare_package_products', _('Package Products')),
             'admin-pricing-rules': ('advanced_pricing.action_pricing_rules_with_visual', _('Pricing Rules')),
-            'admin-quick-edit-rules': ('advanced_pricing.action_pricing_rules_quick_edit', _('Quick Edit Rules')),
             'admin-portable-equipment': ('health_fieldservice.action_health_portable_equipment', _('Portable Equipment')),
             'admin-healthcare-staff': ('health_fieldservice.action_healthcare_staff', _('Healthcare Staff')),
             'admin-facilities': ('health_base.action_health_facility', _('Healthcare Facilities')),
