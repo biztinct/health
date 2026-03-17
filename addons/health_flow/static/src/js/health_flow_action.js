@@ -105,12 +105,16 @@ class HealthFlowAction extends Component {
                 ],
             },
             invoicing: {
-                title: _t('Invoicing'),
+                title: _t('Finance'),
                 color: '#48bb78', // Green
                 items: [
-                    { key: 'invoicing-ar', label: _t('AR Dashboard'), icon: 'fa-dashboard', desc: _t('Accounts receivable overview') },
-                    { key: 'invoicing-payments', label: _t('Payment Transactions'), icon: 'fa-credit-card', desc: _t('Payment history') },
                     { key: 'invoicing-invoices', label: _t('Invoices'), icon: 'fa-file-text-o', desc: _t('All invoices') },
+                    { key: 'invoicing-ar', label: _t('Accounts Receivable'), icon: 'fa-dashboard', desc: _t('Unpaid invoices & aging') },
+                    { key: 'invoicing-ar-management', label: _t('AR Management'), icon: 'fa-tasks', desc: _t('Payments, cash transit, refunds') },
+                    { key: 'invoicing-add-invoice', label: _t('Add New Invoice'), icon: 'fa-plus-circle', desc: _t('Create manual invoice') },
+                    { key: 'invoicing-vat-log', label: _t('VAT Invoices Log'), icon: 'fa-book', desc: _t('VAT log for MISA validation') },
+                    { key: 'invoicing-ar-log', label: _t('AR Transactions Log'), icon: 'fa-list-alt', desc: _t('Double-entry journal log') },
+                    { key: 'invoicing-payments', label: _t('Payment Transactions'), icon: 'fa-credit-card', desc: _t('Payment history') },
                 ],
             },
             admin: {

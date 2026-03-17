@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ===== VAT Invoices Log ===== -->
+
+    <!-- VAT Invoices Log - List View -->
+    <record id="view_healthcare_vat_invoice_log_list" model="ir.ui.view">
+        <field name="name">Healthcare VAT Invoices Log</field>
+        <field name="model">account.move</field>
+        <field name="priority">20</field>
+        <field name="arch" type="xml">
+            <list string="VAT Invoices Log"
+                  decoration-success="state=='posted' and payment_state=='paid'"
+                  decoration-info="state=='posted' and payment_state in ('partial', 'not_paid')"
+                  decoration-warning="state=='draft'"
+                  default_order="invoice_date desc"
+                  export_xlsx="1">
+                <field name="invoice_date" string="Date"/>
+                <field name="vat_serial_code" string="Serial (Ký hiệu)" optional="show"/>
+                <field name="name" string="Invoice No (Số)"/>
+                <field name="retail_invoice_number" string="Retail No" optional="show"/>
+                <field name="partner_id" string="Customer"/>
+                <field name="customer_tax_code" string="Tax Code" optional="show"/>
+                <!-- Invoice totals -->
+                <field name="amount_untaxed" string="Subtotal" sum="Total Subtotal"/>
+                <field name="amount_tax" string="VAT Amount" sum="Total VAT"/>
+                <field name="amount_total" string="Total" sum="Grand Total"/>
+                <!-- Status -->
+                <field name="payment_state" string="Payment"
+                       widget="badge"
+                       decoration-success="payment_state == 'paid'"
+                       decoration-warning="payment_state == 'partial'"
+                       decoration-danger="payment_state == 'not_paid'"/>
+                <field name="tax_authority_submission_status" string="Tax Submission" optional="show"
+                       widget="badge"
+                       decoration-success="tax_authority_submission_status == 'accepted'"
+                       decoration-info="tax_authority_submission_status == 'submitted'"
+                       decoration-warning="tax_authority_submission_status in ('pending', 'draft')"
+                       decoration-danger="tax_authority_submission_status in ('rejected', 'error')"/>
+                <field name="misa_sync_status" string="MISA" optional="show"
+                       widget="badge"
+                       decoration-success="misa_sync_status == 'synced'"
+                       decoration-warning="misa_sync_status == 'syncing'"
+                       decoration-danger="misa_sync_status == 'sync_error'"/>
+                <!-- Hidden -->
+                <field name="state" column_invisible="1"/>
+                <field name="currency_id" column_invisible="1"/>
+                <field name="company_id" column_invisible="1"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_healthcare_vat_invoice_log_search" model="ir.ui.view">
+        <field name="name">Healthcare VAT Invoices Log Search</field>
+        <field name="model">account.move</field>
+        <field name="priority">20</field>
+        <field name="arch" type="xml">
+            <search string="Search VAT Invoices">
+                <field name="name"/>
+                <field name="partner_id"/>
+                <field name="vat_serial_code"/>
+                <field name="retail_invoice_number"/>
+                <filter name="posted" string="Posted" domain="[('state', '=', 'posted')]"/>
+                <filter name="this_month" string="This Month" domain="[('invoice_date', '&gt;=', (context_today() - relativedelta(day=1)).strftime('%Y-%m-%d'))]"/>
+                <filter name="misa_not_synced" string="Not Synced to MISA"
+                        domain="[('misa_sync_status', '!=', 'synced')]"/>
+                <filter name="group_partner" string="Customer" context="{'group_by': 'partner_id'}"/>
+                <filter name="group_month" string="Month" context="{'group_by': 'invoice_date:month'}"/>
+            </search>
+        </field>
+    </record>
+
+    <!-- VAT Invoices Log - Action -->
+    <record id="action_healthcare_vat_invoice_log" model="ir.actions.act_window">
+        <field name="name">VAT Invoices Log</field>
+        <field name="res_model">account.move</field>
+        <field name="view_mode">list,form</field>
+        <field name="view_id" ref="view_healthcare_vat_invoice_log_list"/>
+        <field name="search_view_id" ref="view_healthcare_vat_invoice_log_search"/>
+        <field name="domain">[('move_type', 'in', ('out_invoice', 'out_refund')), ('state', '=', 'posted')]</field>
+        <field name="context">{'search_default_posted': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No VAT invoices yet
+            </p>
+            <p>
+                This log shows every posted VAT invoice for MISA validation.
+                Use the export button to download as Excel/CSV.
+            </p>
+        </field>
+    </record>
+
+
+    <!-- ===== AR Transactions Log ===== -->
+
+    <!-- AR Transactions Log - List View -->
+    <record id="view_healthcare_ar_transaction_log_list" model="ir.ui.view">
+        <field name="name">Healthcare AR Transactions Log</field>
+        <field name="model">health.ar.transaction.log</field>
+        <field name="arch" type="xml">
+            <list string="AR Transactions Log"
+                  decoration-success="status=='posted'"
+                  decoration-warning="status=='draft'"
+                  decoration-danger="status=='reversed'"
+                  default_order="transaction_datetime desc"
+                  export_xlsx="1">
+                <field name="transaction_id" string="Transaction ID"/>
+                <field name="crm_event_id" string="CRM Event" optional="show"/>
+                <field name="booking_id" string="Booking" optional="show"/>
+                <field name="event_type" string="Event Type"
+                       widget="badge"
+                       decoration-info="event_type in ('invoice', 'service_delivery')"
+                       decoration-success="event_type == 'payment'"
+                       decoration-danger="event_type in ('refund', 'credit_note')"
+                       decoration-warning="event_type == 'handover'"/>
+                <field name="transaction_datetime" string="DateTime"/>
+                <field name="posting_date" string="Posting Date"/>
+                <field name="company_id" string="Company" optional="show"/>
+                <field name="company_entity_code" string="Entity" optional="show"/>
+                <field name="partner_id" string="Client"/>
+                <field name="debit_account_id" string="Debit Account"/>
+                <field name="credit_account_id" string="Credit Account"/>
+                <field name="amount" string="Amount" sum="Total"/>
+                <field name="currency_id" column_invisible="1"/>
+                <field name="amount_in_words" string="Amount in Words" optional="hide"/>
+                <field name="posting_path" string="Posting Path" optional="show"/>
+                <field name="prepared_by" string="Prepared By" optional="show"/>
+                <field name="facility_id" string="Facility" optional="show"/>
+                <field name="status" string="Status"
+                       widget="badge"
+                       decoration-success="status == 'posted'"
+                       decoration-warning="status == 'draft'"
+                       decoration-danger="status == 'reversed'"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_healthcare_ar_transaction_log_search" model="ir.ui.view">
+        <field name="name">Healthcare AR Transactions Log Search</field>
+        <field name="model">health.ar.transaction.log</field>
+        <field name="arch" type="xml">
+            <search string="Search AR Transactions">
+                <field name="transaction_id"/>
+                <field name="partner_id"/>
+                <field name="booking_id"/>
+                <filter name="posted" string="Posted" domain="[('status', '=', 'posted')]"/>
+                <filter name="today" string="Today" domain="[('posting_date', '=', context_today().strftime('%Y-%m-%d'))]"/>
+                <filter name="invoices" string="Invoices" domain="[('event_type', '=', 'invoice')]"/>
+                <filter name="payments" string="Payments" domain="[('event_type', '=', 'payment')]"/>
+                <filter name="refunds" string="Refunds" domain="[('event_type', 'in', ('refund', 'credit_note'))]"/>
+                <filter name="group_event" string="Event Type" context="{'group_by': 'event_type'}"/>
+                <filter name="group_partner" string="Client" context="{'group_by': 'partner_id'}"/>
+                <filter name="group_date" string="Posting Date" context="{'group_by': 'posting_date:month'}"/>
+            </search>
+        </field>
+    </record>
+
+    <!-- AR Transactions Log - Form View -->
+    <record id="view_healthcare_ar_transaction_log_form" model="ir.ui.view">
+        <field name="name">Healthcare AR Transaction Log Form</field>
+        <field name="model">health.ar.transaction.log</field>
+        <field name="arch" type="xml">
+            <form string="AR Transaction" create="0" edit="0">
+                <sheet>
+                    <group>
+                        <group string="Transaction">
+                            <field name="transaction_id"/>
+                            <field name="event_type"/>
+                            <field name="status"/>
+                            <field name="posting_path"/>
+                        </group>
+                        <group string="Dates">
+                            <field name="transaction_datetime"/>
+                            <field name="posting_date"/>
+                            <field name="prepared_by"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Accounting">
+                            <field name="debit_account_id"/>
+                            <field name="credit_account_id"/>
+                            <field name="amount"/>
+                            <field name="currency_id"/>
+                            <field name="amount_in_words"/>
+                        </group>
+                        <group string="References">
+                            <field name="company_id"/>
+                            <field name="partner_id"/>
+                            <field name="move_id"/>
+                            <field name="payment_id"/>
+                            <field name="booking_id"/>
+                            <field name="crm_event_id"/>
+                            <field name="facility_id"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- AR Transactions Log - Action -->
+    <record id="action_healthcare_ar_transaction_log" model="ir.actions.act_window">
+        <field name="name">AR Transactions Log</field>
+        <field name="res_model">health.ar.transaction.log</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_healthcare_ar_transaction_log_search"/>
+        <field name="context">{'search_default_posted': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No AR transactions recorded yet
+            </p>
+            <p>
+                This log shows every accounts receivable journal transaction
+                in a flat double-entry format for MISA validation.
+                Transactions are auto-created when invoices are posted or payments are recorded.
+                Use the export button to download as Excel/CSV.
+            </p>
+        </field>
+    </record>
+
+    <!-- Menus for Finance section -->
+    <menuitem
+        id="menu_health_vat_invoice_log"
+        name="VAT Invoices Log"
+        parent="menu_health_invoicing_reports"
+        action="action_healthcare_vat_invoice_log"
+        sequence="10"/>
+
+    <menuitem
+        id="menu_health_ar_transaction_log"
+        name="AR Transactions Log"
+        parent="menu_health_invoicing_reports"
+        action="action_healthcare_ar_transaction_log"
+        sequence="20"/>
+
+</odoo>

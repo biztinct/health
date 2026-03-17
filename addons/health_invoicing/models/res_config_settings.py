@@ -13,3 +13,11 @@ class ResConfigSettings(models.TransientModel):
         help='Enable synchronization with MISA accounting system. '
              'Requires Red Invoice to be enabled.'
     )
+
+    vat_serial_prefix = fields.Char(
+        'VAT Serial Prefix',
+        config_parameter='vietnamese_tax.vat_serial_prefix',
+        help='Yearly prefix for VAT invoice serial codes (e.g. "C26T" for 2026). '
+             'Applied when generating new VAT invoices.',
+        default='',
+    )

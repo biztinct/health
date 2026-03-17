@@ -195,6 +195,17 @@ class HealthcareInvoice(models.Model):
         help='Customer tax registration number'
     )
 
+    # VAT Invoice tracking fields (for VAT Invoices Log)
+    vat_serial_code = fields.Char(
+        'VAT Serial Code (Ký hiệu)',
+        help='Yearly serial prefix e.g. 1C26MVU — configured in Settings',
+    )
+    retail_invoice_number = fields.Char(
+        'Retail Invoice Number',
+        help='Auto-generated retail invoice number (Hóa Đơn Bán Lẻ)',
+        copy=False,
+    )
+
     # Red Invoice configuration toggle (for view visibility)
     red_invoice_enabled = fields.Boolean(
         'Red Invoice Enabled',
@@ -292,6 +303,12 @@ class HealthcareInvoice(models.Model):
                     if invoice._is_red_invoice_enabled():
                         invoice._submit_to_tax_authorities()
                         invoice._sync_to_misa()
+
+                    # Auto-populate AR Transaction Log
+                    try:
+                        self.env['health.ar.transaction.log']._create_from_move(invoice)
+                    except Exception:
+                        pass  # Don't block posting if log creation fails
         
         return result
 

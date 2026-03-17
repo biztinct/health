@@ -53,4 +53,12 @@ class HealthcarePayment(models.Model):
     @api.model
     def create(self, vals):
         """Override create to handle basic healthcare payment automation"""
-        return super().create(vals)
+        result = super().create(vals)
+        # Auto-populate AR Transaction Log for posted payments
+        for payment in result:
+            if payment.state == 'posted':
+                try:
+                    self.env['health.ar.transaction.log']._create_from_payment(payment)
+                except Exception:
+                    pass  # Don't block payment if log creation fails
+        return result

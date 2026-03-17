@@ -16,6 +16,7 @@
 # - Migration path: FSO completion -> auto package consumption
 
 from . import account_move
+from . import account_move_line  # NEW: AR view enhancement fields (phone, aging, facility)
 from . import account_payment
 from . import sale_order  # NEW: Discount reason on sale order lines
 from . import misa_integration
@@ -27,3 +28,4 @@ from . import res_partner
 from . import health_fieldservice_order  # NEW: Package integration fields added
 from . import product_template  # NEW: Healthcare package product support
 from . import res_config_settings  # Red Invoice toggle settings
+from . import health_ar_transaction_log  # NEW: AR Transaction Log for MISA validation

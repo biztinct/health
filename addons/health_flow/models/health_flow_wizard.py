@@ -92,6 +92,19 @@ class HealthFlowWizard(models.TransientModel):
         elif key == 'analytics':
             # Open My Dashboard directly using the dashboard_amcharts client action
             return self._get_my_dashboard_action()
+        elif key == 'invoicing-add-invoice':
+            # Open account.move form in create mode for manual invoice
+            action = {
+                'type': 'ir.actions.act_window',
+                'name': _('New Invoice'),
+                'res_model': 'account.move',
+                'view_mode': 'form',
+                'views': [(False, 'form')],
+                'target': 'current',
+                'context': {'default_move_type': 'out_invoice'},
+            }
+            action = self._ensure_action_name(action, _('New Invoice'))
+            return self._apply_flow_context(action)
 
         # Map keys to action xmlid
         mapping = {
@@ -105,10 +118,13 @@ class HealthFlowWizard(models.TransientModel):
             'booking-staff': ('health_fieldservice.action_staff_workload_dashboard', _('Staff Workload')),
             'booking-staff-assignment': ('health_fieldservice.action_assignment_web_timeline_view', _('Staff Assignment Timeline')),
 
-            # Invoicing Panel
-            'invoicing-ar': ('health_invoicing.action_healthcare_ar_dashboard', _('AR Dashboard')),
+            # Invoicing / Finance Panel
+            'invoicing-ar': ('health_invoicing.action_healthcare_ar_dashboard', _('Accounts Receivable')),
             'invoicing-payments': ('health_invoicing.action_health_payment_transaction', _('Payment Transactions')),
             'invoicing-invoices': ('health_invoicing.action_healthcare_invoices', _('Invoices')),
+            'invoicing-vat-log': ('health_invoicing.action_healthcare_vat_invoice_log', _('VAT Invoices Log')),
+            'invoicing-ar-log': ('health_invoicing.action_healthcare_ar_transaction_log', _('AR Transactions Log')),
+            'invoicing-ar-management': ('health_invoicing.action_healthcare_cash_management', _('AR Management')),
 
             # Admin Panel (Configuration)
             'admin-pricing-engines': ('advanced_pricing.action_advanced_pricing_engines', _('Pricing Engines')),

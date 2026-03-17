@@ -16,14 +16,18 @@
                   
                 <!-- Healthcare-specific columns first -->
                 <field name="partner_id" string="Client" readonly="1"/>
+                <field name="partner_phone" string="Phone" optional="show"/>
                 <field name="move_id" string="Invoice" readonly="1"/>
                 <field name="invoice_date" readonly="1"/>
                 <field name="date_maturity" string="Due Date"/>
-                <field name="amount_residual" sum="Total Outstanding" string="Outstanding Amount"/>
+                <field name="aging_days" string="Aging (Days)" optional="show"/>
+                <field name="amount_residual" sum="Total Outstanding" string="Outstanding"/>
+                <field name="amount_paid" sum="Total Paid" string="Paid" optional="show"/>
                 
                 <!-- Service information -->
                 <field name="invoice_origin" readonly="1" string="Service Origin"/>
-                <field name="payment_term_id" readonly="1" string="Payment Terms"/>
+                <field name="facility_id" string="Facility" optional="show"/>
+                <field name="payment_term_id" readonly="1" string="Payment Terms" optional="hide"/>
                 
                 <!-- Financial details -->
                 <field name="debit" readonly="1" sum="Total Debit" optional="hide"/>
