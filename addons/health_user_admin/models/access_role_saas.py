@@ -36,6 +36,8 @@ FORBIDDEN_GROUP_XMLIDS = [
 ]
 
 # Privilege names whose groups SHOULD be shown to tenant admins.
+# NOTE: 'Inventory' removed (duplicate of Purchase under Supply Chain)
+#       'Attendances' removed (duplicate of Employees under Human Resources)
 ALLOWED_PRIVILEGE_NAMES = {
     'Sales',
     'Productivity',
@@ -51,8 +53,6 @@ ALLOWED_PRIVILEGE_NAMES = {
     'Project',
     'Purchase',
     'Timesheets',
-    'Attendances',
-    'Inventory',
     'Contact',
     'Products',
     'Export',
