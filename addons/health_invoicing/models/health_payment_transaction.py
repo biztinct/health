@@ -19,7 +19,10 @@ class HealthPaymentTransaction(models.Model):
     _inherit = ['mail.thread', 'mail.activity.mixin']
     _order = 'transaction_date desc'
     _rec_name = 'display_name'
-    
+
+    # Archive support — set active=False to hide records from all views
+    active = fields.Boolean(default=True)
+
     # Core Transaction Information
     name = fields.Char(
         'Transaction Reference',
@@ -132,7 +135,9 @@ class HealthPaymentTransaction(models.Model):
         'hr.employee',
         string='Collected By',
         domain="[('is_healthcare_staff', '=', True)]",
-        default=lambda self: self._get_current_employee(),
+        compute='_compute_collected_by',
+        store=True,
+        readonly=False,
         tracking=True,
         help='Healthcare staff who collected this payment'
     )
@@ -152,6 +157,15 @@ class HealthPaymentTransaction(models.Model):
             ('is_healthcare_staff', '=', True)
         ], limit=1)
         return employee.id if employee else False
+
+    @api.depends('received_by_om_id')
+    def _compute_collected_by(self):
+        for rec in self:
+            if rec.received_by_om_id and not rec.collected_by_id:
+                rec.collected_by_id = rec.received_by_om_id
+            elif not rec.collected_by_id:
+                # Fall back to current user's employee
+                rec.collected_by_id = rec._get_current_employee()
     
     # Payment Proof and Documentation
     payment_proof_attachment_ids = fields.Many2many(

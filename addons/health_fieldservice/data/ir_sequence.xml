@@ -5,7 +5,7 @@
     <record id="seq_health_fieldservice_order" model="ir.sequence">
         <field name="name">Booking</field>
         <field name="code">health.fieldservice.order</field>
-        <field name="prefix">FSO-</field>
+        <field name="prefix">BK</field>
         <field name="padding">4</field>
         <field name="number_next">1000</field>
         <field name="number_increment">1</field>

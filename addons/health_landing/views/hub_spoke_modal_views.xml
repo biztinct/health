@@ -351,7 +351,7 @@
 
                     <!-- All Invoices List -->
                     <group string="Invoices">
-                        <field name="invoice_ids" nolabel="1" domain="[('move_type', '=', 'out_invoice')]">
+                        <field name="customer_invoice_ids" nolabel="1">
                             <list create="false" delete="false" decoration-success="state == 'posted' and payment_state == 'paid'" decoration-warning="state == 'draft'" decoration-info="state == 'posted' and payment_state == 'partial'" decoration-danger="state == 'posted' and payment_state == 'not_paid'">
                                 <field name="name"/>
                                 <field name="invoice_date"/>

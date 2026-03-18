@@ -218,11 +218,7 @@ class HealthARTransactionLog(models.Model):
     @api.depends('company_id')
     def _compute_entity_code(self):
         for rec in self:
-            if rec.company_id:
-                # Use short code convention: first company = VAFHS, second = CSTNVU
-                rec.company_entity_code = rec.company_id.name[:10] if rec.company_id else ''
-            else:
-                rec.company_entity_code = ''
+            rec.company_entity_code = rec.company_id.name[:10] if rec.company_id else ''
 
     @api.model
     def _derive_posting_path(self, move=None, payment=None):

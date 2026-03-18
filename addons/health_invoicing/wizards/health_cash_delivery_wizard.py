@@ -235,15 +235,21 @@ class HealthCashDeliveryWizard(models.TransientModel):
     
     def _reconcile_payment_with_invoice(self, payment, invoice):
         """Reconcile payment with invoice using standard Odoo methods"""
-        if payment.state != 'posted' or invoice.state != 'posted':
+        # In Odoo 19, account.payment.state may be 'in_process' after posting,
+        # but the underlying journal entry (move_id) has state='posted'.
+        # Check the move state instead of the payment state.
+        payment_move = payment.move_id
+        if not payment_move or payment_move.state != 'posted' or invoice.state != 'posted':
             return False
             
-        # Use standard reconciliation
-        payment_lines = payment.line_ids.filtered(
+        # Use standard reconciliation on the journal entry lines
+        payment_lines = payment_move.line_ids.filtered(
             lambda line: line.account_id.account_type in ('asset_receivable', 'liability_payable')
+                         and not line.reconciled
         )
         invoice_lines = invoice.line_ids.filtered(
             lambda line: line.account_id.account_type in ('asset_receivable', 'liability_payable')
+                         and not line.reconciled
         )
         
         if payment_lines and invoice_lines:

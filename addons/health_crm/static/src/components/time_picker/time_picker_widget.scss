@@ -1,0 +1,187 @@
+/* ================================================================
+   Premium Time Picker Widget
+   Inspired by Calendly / Google Calendar appointment booking
+   Uses inline SVG icons (Lucide-style) for crisp, theme-aware rendering
+   ================================================================ */
+
+.tp_container {
+    width: 100%;
+    max-width: 420px;
+}
+
+/* --- SVG icon base --- */
+.tp_svg_icon {
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+}
+
+/* --- Selected time display --- */
+.tp_display {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+    padding: 10px 16px;
+    background: linear-gradient(135deg, #e8f5e9 0%, #f1f8e9 100%);
+    border-radius: 12px;
+    border: 1px solid #c8e6c9;
+}
+
+.tp_clock_icon {
+    width: 22px;
+    height: 22px;
+    color: #2e7d32;
+}
+
+.tp_display_time {
+    font-size: 22px;
+    font-weight: 700;
+    color: #2e6b33;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 1px;
+}
+
+/* --- Section toggle tabs --- */
+.tp_tabs {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 12px;
+    padding: 3px;
+    background: #f5f5f5;
+    border-radius: 10px;
+}
+
+.tp_tab {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    padding: 7px 6px;
+    border: none;
+    border-radius: 8px;
+    background: transparent;
+    color: #888;
+    font-size: 12.5px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    .tp_svg_icon {
+        color: #aaa;
+        transition: color 0.2s ease;
+    }
+
+    &:hover {
+        background: rgba(46, 107, 51, 0.06);
+        color: #2e6b33;
+
+        .tp_svg_icon {
+            color: #43a047;
+        }
+    }
+
+    &.tp_tab_active {
+        background: #fff;
+        color: #2e6b33;
+        font-weight: 600;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+
+        .tp_svg_icon {
+            color: #2e7d32;
+        }
+    }
+}
+
+/* --- Time slot grid --- */
+.tp_grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 6px;
+}
+
+.tp_slot {
+    position: relative;
+    padding: 9px 4px;
+    border: 1.5px solid #e0e0e0;
+    border-radius: 8px;
+    background: #fff;
+    color: #424242;
+    font-size: 13px;
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    text-align: center;
+
+    &:hover:not(:disabled) {
+        border-color: #43a047;
+        background: #f1f8e9;
+        color: #2e6b33;
+        transform: translateY(-1px);
+        box-shadow: 0 2px 6px rgba(67, 160, 71, 0.15);
+    }
+
+    &:active:not(:disabled) {
+        transform: translateY(0);
+    }
+
+    /* Selected state */
+    &.tp_slot_selected {
+        background: linear-gradient(135deg, #43a047 0%, #2e7d32 100%);
+        color: #fff;
+        border-color: #2e7d32;
+        font-weight: 600;
+        box-shadow: 0 2px 8px rgba(46, 125, 50, 0.3);
+
+        &:hover:not(:disabled) {
+            background: linear-gradient(135deg, #388e3c 0%, #1b5e20 100%);
+            color: #fff;
+        }
+    }
+
+    /* Current time indicator */
+    &.tp_slot_now:not(.tp_slot_selected) {
+        border-color: #81c784;
+        background: #f9fbe7;
+
+        &::after {
+            content: "";
+            position: absolute;
+            top: 3px;
+            right: 3px;
+            width: 5px;
+            height: 5px;
+            background: #43a047;
+            border-radius: 50%;
+        }
+    }
+
+    /* Readonly state */
+    &.tp_slot_readonly {
+        opacity: 0.7;
+        cursor: default;
+
+        &:hover {
+            transform: none;
+            box-shadow: none;
+        }
+    }
+
+    &:disabled {
+        cursor: default;
+    }
+}
+
+/* --- Responsive --- */
+@media (max-width: 400px) {
+    .tp_grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .tp_tab {
+        font-size: 11px;
+        padding: 6px 4px;
+    }
+}

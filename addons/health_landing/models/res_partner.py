@@ -20,6 +20,14 @@ class ResPartner(models.Model):
         help='Past field service orders'
     )
 
+    customer_invoice_ids = fields.One2many(
+        'account.move',
+        'partner_id',
+        string='Customer Invoices',
+        domain=[('move_type', '=', 'out_invoice')],
+        help='Customer invoices only (excludes payment entries and journal entries)'
+    )
+
     @api.depends('is_patient')
     def _compute_fso_bookings(self):
         """Compute upcoming and past FSO bookings"""

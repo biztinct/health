@@ -102,6 +102,10 @@
             'health_crm/static/src/components/relationship_hierarchy/relationship_hierarchy.scss',
             # Healthcare lead form redirect - redirects to hub-spoke dashboard
             'health_crm/static/src/js/healthcare_lead_form_redirect.js',
+            # Time Picker Widget (premium booking time selector)
+            'health_crm/static/src/components/time_picker/time_picker_widget.js',
+            'health_crm/static/src/components/time_picker/time_picker_widget.xml',
+            'health_crm/static/src/components/time_picker/time_picker_widget.scss',
         ],
     },
     # 'demo': [

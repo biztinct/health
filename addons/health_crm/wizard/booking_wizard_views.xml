@@ -148,7 +148,7 @@
                         <group>
                             <group string="Date &amp; Time">
                                 <field name="booking_date" string="Date"/>
-                                <field name="booking_time" string="Time" widget="float_time"/>
+                                <field name="booking_time" string="Time" widget="time_picker"/>
                                 <field name="booking_duration" string="Duration (Hours)"/>
                             </group>
                             <group string="Notes">
@@ -193,7 +193,7 @@
                             </group>
                             <group>
                                 <field name="booking_date" string="Date" readonly="1"/>
-                                <field name="booking_time" string="Time" widget="float_time" readonly="1"/>
+                                <field name="booking_time" string="Time" widget="time_picker" readonly="1"/>
                             </group>
                         </group>
                     </div>

@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="health_crm.TimePickerWidget">
+        <div class="tp_container">
+            <!-- Selected time display -->
+            <div class="tp_display">
+                <svg class="tp_svg_icon tp_clock_icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"/>
+                    <polyline points="12 6 12 12 16 14"/>
+                </svg>
+                <span class="tp_display_time" t-esc="displayTime"/>
+            </div>
+
+            <!-- Section toggle tabs -->
+            <div class="tp_tabs">
+                <button class="tp_tab"
+                        t-att-class="{ tp_tab_active: state.section === 'morning' }"
+                        t-on-click="() => this.onSetSection('morning')">
+                    <!-- Sunrise icon -->
+                    <svg class="tp_svg_icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 2v4"/>
+                        <path d="M4.93 7.93l2.83 2.83"/>
+                        <path d="M19.07 7.93l-2.83 2.83"/>
+                        <path d="M2 16h20"/>
+                        <path d="M7 16a5 5 0 0 1 10 0"/>
+                    </svg>
+                    Morning
+                </button>
+                <button class="tp_tab"
+                        t-att-class="{ tp_tab_active: state.section === 'afternoon' }"
+                        t-on-click="() => this.onSetSection('afternoon')">
+                    <!-- Sun icon -->
+                    <svg class="tp_svg_icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="4"/>
+                        <path d="M12 2v2"/>
+                        <path d="M12 20v2"/>
+                        <path d="M4.93 4.93l1.41 1.41"/>
+                        <path d="M17.66 17.66l1.41 1.41"/>
+                        <path d="M2 12h2"/>
+                        <path d="M20 12h2"/>
+                        <path d="M6.34 17.66l-1.41 1.41"/>
+                        <path d="M19.07 4.93l-1.41 1.41"/>
+                    </svg>
+                    Afternoon
+                </button>
+                <button class="tp_tab"
+                        t-att-class="{ tp_tab_active: state.section === 'evening' }"
+                        t-on-click="() => this.onSetSection('evening')">
+                    <!-- Moon icon -->
+                    <svg class="tp_svg_icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>
+                    </svg>
+                    Evening
+                </button>
+            </div>
+
+            <!-- Time slot grid -->
+            <div class="tp_grid">
+                <t t-foreach="activeSlots" t-as="slot" t-key="slot.value">
+                    <button class="tp_slot"
+                            t-att-class="{
+                                tp_slot_selected: isSelected(slot.value),
+                                tp_slot_now: isNow(slot.value),
+                                tp_slot_readonly: props.readonly
+                            }"
+                            t-on-click="() => this.onSelectSlot(slot.value)"
+                            t-att-disabled="props.readonly">
+                        <t t-esc="slot.label"/>
+                    </button>
+                </t>
+            </div>
+        </div>
+    </t>
+
+</templates>

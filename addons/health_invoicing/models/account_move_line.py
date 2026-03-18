@@ -11,6 +11,9 @@ class HealthcareMoveLine(models.Model):
     """
     _inherit = 'account.move.line'
 
+    # Archive support — inherits from parent move
+    active = fields.Boolean(related='move_id.active', store=True)
+
     # --- Related fields for AR view ---
 
     partner_phone = fields.Char(

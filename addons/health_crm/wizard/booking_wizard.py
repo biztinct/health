@@ -496,15 +496,25 @@ class HealthBookingWizard(models.TransientModel):
         }
     
     def _get_scheduled_datetime(self):
-        """Convert date and time to datetime"""
-        from datetime import datetime, timedelta
+        """Convert date and time to UTC datetime.
+
+        The user enters the time in their local timezone (e.g. 15:00 in UTC+11).
+        Odoo stores Datetime fields as UTC, so we must convert local → UTC
+        to avoid the stored value being off by the timezone offset.
+        """
+        from datetime import datetime
+        import pytz
         if self.booking_date:
             hours = int(self.booking_time)
             minutes = int((self.booking_time - hours) * 60)
-            return datetime.combine(
+            naive_local = datetime.combine(
                 self.booking_date,
                 datetime.min.time()
             ).replace(hour=hours, minute=minutes)
+            # Get user's timezone (fall back to UTC if not set)
+            user_tz = pytz.timezone(self.env.user.tz or 'UTC')
+            local_dt = user_tz.localize(naive_local)
+            return local_dt.astimezone(pytz.utc).replace(tzinfo=None)
         return False
     
     def _notify_om_new_booking(self, booking):

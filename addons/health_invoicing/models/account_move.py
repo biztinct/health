@@ -20,6 +20,9 @@ class HealthcareInvoice(models.Model):
     """
     _inherit = 'account.move'
 
+    # Archive support — set active=False to hide records from all views
+    active = fields.Boolean(default=True)
+
     # Healthcare service integration
     fieldservice_order_id = fields.Many2one(
         'health.fieldservice.order',
