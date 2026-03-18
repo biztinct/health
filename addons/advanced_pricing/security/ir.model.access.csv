@@ -7,3 +7,7 @@ access_pricing_config_user,pricing.config.user,model_advanced_pricing_config,bas
 access_pricing_config_manager,pricing.config.manager,model_advanced_pricing_config,base.group_system,1,1,1,1
 access_visual_wizard_user,visual.wizard.user,model_advanced_pricing_visual_wizard,base.group_user,1,1,1,1
 access_visual_wizard_manager,visual.wizard.manager,model_advanced_pricing_visual_wizard,base.group_system,1,1,1,1
+access_import_wizard_user,import.wizard.user,model_advanced_pricing_import_wizard,base.group_user,1,1,1,1
+access_import_wizard_manager,import.wizard.manager,model_advanced_pricing_import_wizard,base.group_system,1,1,1,1
+access_reject_wizard_user,reject.wizard.user,model_pricing_rule_reject_wizard,base.group_user,1,1,1,1
+access_reject_wizard_manager,reject.wizard.manager,model_pricing_rule_reject_wizard,base.group_system,1,1,1,1

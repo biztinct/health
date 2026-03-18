@@ -1944,3 +1944,290 @@ msgstr "📋 Thêm Từ Catalog"
 #: model_terms:ir.ui.view,arch_db:advanced_pricing.product_view_kanban_catalog_booking_quote
 msgid "📋 Product Catalog"
 msgstr "📋 Sản phẩm Catalog"
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__region
+msgid "Region/Catchment Area"
+msgstr "Khu vực/Vùng phục vụ"
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__item_code
+msgid "Item Code"
+msgstr "Mã dịch vụ"
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__trigger_source
+msgid "Trigger Source"
+msgstr "Nguồn kích hoạt"
+
+#. module: advanced_pricing
+#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__trigger_source__booking_form
+msgid "Booking/Form"
+msgstr "Đặt chỗ/Biểu mẫu"
+
+#. module: advanced_pricing
+#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__trigger_source__app_clock
+msgid "App Clock"
+msgstr "Đồng hồ ứng dụng"
+
+#. module: advanced_pricing
+#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__trigger_source__provider_after_service
+msgid "Provider after Service"
+msgstr "Nhà cung cấp sau Dịch vụ"
+
+#. module: advanced_pricing
+#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__trigger_source__public_holidays_table
+msgid "Public Holidays Table"
+msgstr "Bảng ngày lễ"
+
+#. module: advanced_pricing
+#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__trigger_source__cmf_booking_form
+msgid "CMF + Booking Form"
+msgstr "CMF + Biểu mẫu đặt chỗ"
+
+#. module: advanced_pricing
+#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__trigger_source__quotation_booking_form
+msgid "Quotation on Booking Form"
+msgstr "Báo giá trên Biểu mẫu đặt chỗ"
+
+#. module: advanced_pricing
+#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__trigger_source__service_duration_log
+msgid "Service Duration Log"
+msgstr "Nhật ký thời lượng dịch vụ"
+
+#. module: advanced_pricing
+#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__trigger_source__booking_form_provider
+msgid "Booking/Form & Provider after Service"
+msgstr "Đặt chỗ/Biểu mẫu & Nhà cung cấp sau Dịch vụ"
+
+#. module: advanced_pricing
+#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__trigger_source__manual
+msgid "Manual Entry"
+msgstr "Nhập thủ công"
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__data_required
+msgid "Data Required"
+msgstr "Dữ liệu cần thiết"
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__notes
+msgid "Rule Notes"
+msgstr "Ghi chú quy tắc"
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__valid_from
+msgid "Valid From"
+msgstr "Hiệu lực từ"
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__valid_to
+msgid "Valid To"
+msgstr "Hiệu lực đến"
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__is_after_hours_or_weekend
+msgid "After Hours or Weekend"
+msgstr "Ngoài giờ hoặc Cuối tuần"
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__wound_count_min
+msgid "Min Wound Count"
+msgstr "Số vết thương tối thiểu"
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__wound_count_max
+msgid "Max Wound Count"
+msgstr "Số vết thương tối đa"
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__injection_count_min
+msgid "Min Injection Count"
+msgstr "Số mũi tiêm tối thiểu"
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__iv_fluid_count_min
+msgid "Min IV Fluid Bottles"
+msgstr "Số chai dịch truyền tối thiểu"
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__medication_count_min
+msgid "Min Additional Medications"
+msgstr "Số thuốc bổ sung tối thiểu"
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__requires_home_service
+msgid "Requires Home Service"
+msgstr "Yêu cầu dịch vụ tại nhà"
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__requires_other_service_same_visit
+msgid "Other Service Same Visit"
+msgstr "Dịch vụ khác cùng lần khám"
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__requires_multi_client_same_location
+msgid "Multiple Clients Same Location"
+msgstr "Nhiều khách hàng cùng địa điểm"
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__requires_bilingual_provider
+msgid "Requires Bilingual Provider"
+msgstr "Yêu cầu nhà cung cấp song ngữ"
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__is_repeat_booking
+msgid "Repeat/Multiple Booking"
+msgstr "Đặt lịch lặp lại/Nhiều lần"
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__is_manual_quote
+msgid "Manual Quote/Override"
+msgstr "Báo giá thủ công/Ghi đè"
+
+#. module: advanced_pricing
+#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__action_type__discount
+msgid "Discount Base Price"
+msgstr "Giảm giá cơ bản"
+
+#. module: advanced_pricing
+#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_rule__action_type__per_unit
+msgid "Amount Per Unit"
+msgstr "Số tiền trên mỗi đơn vị"
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_rule__per_unit_field
+msgid "Per Unit Field"
+msgstr "Trường tính theo đơn vị"
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_product_template__rounding_rule
+msgid "Rounding Rule"
+msgstr "Quy tắc làm tròn"
+
+#. module: advanced_pricing
+#: model:ir.model.fields.selection,name:advanced_pricing.selection__product_template__rounding_rule__round_1000
+msgid "Round up to next 1,000"
+msgstr "Làm tròn lên 1.000 tiếp theo"
+
+#. module: advanced_pricing
+#: model:ir.model.fields.selection,name:advanced_pricing.selection__product_template__rounding_rule__round_5min
+msgid "Round up to next 5 mins"
+msgstr "Làm tròn lên 5 phút tiếp theo"
+
+#. module: advanced_pricing
+#: model:ir.model.fields.selection,name:advanced_pricing.selection__product_template__rounding_rule__round_30min
+msgid "Round up to next 30 mins"
+msgstr "Làm tròn lên 30 phút tiếp theo"
+
+#. module: advanced_pricing
+#: model:ir.model.fields.selection,name:advanced_pricing.selection__product_template__rounding_rule__round_half_hour
+msgid "Round up to next half hour"
+msgstr "Làm tròn lên nửa giờ tiếp theo"
+
+#. module: advanced_pricing
+#: model:ir.model.fields.selection,name:advanced_pricing.selection__product_template__rounding_rule__round_hour
+msgid "Round up to next hour"
+msgstr "Làm tròn lên giờ tiếp theo"
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_import_wizard__import_type
+msgid "Import Type"
+msgstr "Loại nhập"
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_import_wizard__import_log
+msgid "Import Log"
+msgstr "Nhật ký nhập"
+
+#. module: advanced_pricing
+#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_import_wizard__import_type__base
+msgid "Base Price List (Products)"
+msgstr "Bảng giá cơ bản (Sản phẩm)"
+
+#. module: advanced_pricing
+#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_import_wizard__import_type__adjustments
+msgid "Adjustments (Pricing Rules)"
+msgstr "Điều chỉnh (Quy tắc giá)"
+
+#. module: advanced_pricing
+#: model:ir.model.fields.selection,name:advanced_pricing.selection__advanced_pricing_import_wizard__import_type__both
+msgid "Both (Products + Rules)"
+msgstr "Cả hai (Sản phẩm + Quy tắc)"
+
+#. module: advanced_pricing
+#: model:ir.actions.act_window,name:advanced_pricing.action_pricing_import_wizard
+#: model:ir.ui.menu,name:advanced_pricing.menu_pricing_import
+#: model:ir.ui.menu,name:advanced_pricing.menu_healthcare_pricing_import
+msgid "Import Price List"
+msgstr "Nhập bảng giá"
+
+#. module: advanced_pricing
+#: model:ir.model,name:advanced_pricing.model_advanced_pricing_import_wizard
+msgid "Import Pricing Rules from Excel"
+msgstr "Nhập quy tắc giá từ Excel"
+
+#. module: advanced_pricing
+#: model:ir.model.fields,field_description:advanced_pricing.field_advanced_pricing_import_wizard__file
+msgid "Excel File"
+msgstr "Tập tin Excel"
+
+#. module: advanced_pricing
+#: model_terms:ir.ui.view,arch_db:advanced_pricing.view_pricing_rule_form
+msgid "Service-Specific Conditions"
+msgstr "Điều kiện theo dịch vụ"
+
+#. module: advanced_pricing
+#: model_terms:ir.ui.view,arch_db:advanced_pricing.view_pricing_rule_form
+msgid "Rule Metadata"
+msgstr "Thông tin quy tắc"
+
+#. module: advanced_pricing
+#: model_terms:ir.ui.view,arch_db:advanced_pricing.view_pricing_rule_form
+msgid "Wound & Injection Counts"
+msgstr "Số vết thương & Mũi tiêm"
+
+#. module: advanced_pricing
+#: model_terms:ir.ui.view,arch_db:advanced_pricing.view_pricing_rule_form
+msgid "Compound Conditions"
+msgstr "Điều kiện kết hợp"
+
+#. module: advanced_pricing
+#: model_terms:ir.ui.view,arch_db:advanced_pricing.view_pricing_rule_form
+msgid "Data Source"
+msgstr "Nguồn dữ liệu"
+
+#. module: advanced_pricing
+#: model_terms:ir.ui.view,arch_db:advanced_pricing.view_pricing_rule_form
+msgid "Notes"
+msgstr "Ghi chú"
+
+#. module: advanced_pricing
+#: model_terms:ir.ui.view,arch_db:advanced_pricing.view_pricing_rule_search
+msgid "Region"
+msgstr "Khu vực"
+
+#. module: advanced_pricing
+#: model_terms:ir.ui.view,arch_db:advanced_pricing.view_pricing_rule_search
+msgid "Hanoi"
+msgstr "Hà Nội"
+
+#. module: advanced_pricing
+#: model_terms:ir.ui.view,arch_db:advanced_pricing.view_pricing_rule_search
+msgid "HCMC"
+msgstr "TP.HCM"
+
+#. module: advanced_pricing
+#: model_terms:ir.ui.view,arch_db:advanced_pricing.view_pricing_import_wizard_form
+msgid "Import"
+msgstr "Nhập"
+
+#. module: advanced_pricing
+#: model_terms:ir.ui.view,arch_db:advanced_pricing.view_pricing_import_wizard_form
+msgid "Close"
+msgstr "Đóng"
+
+#. module: advanced_pricing
+#: model_terms:ir.ui.view,arch_db:advanced_pricing.view_pricing_import_wizard_form
+msgid "Import Price List"
+msgstr "Nhập bảng giá"

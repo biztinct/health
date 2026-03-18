@@ -69,9 +69,14 @@ cd /Users/adity/Documents/GitHub/health19/addons && ./rd <module_name> && ssh Vi
 
 ## Quick Deploy (single file via SCP)
 
+When deploying individual files outside of the `rd` script, copy to `/tmp/` first then move with correct ownership:
 ```bash
-scp /path/to/file VietUcUAT:/odoo/odoo-server/addons/<module>/path/to/file
+scp /path/to/file VietUcUAT:/tmp/ && ssh VietUcUAT "sudo cp /tmp/<filename> /odoo/odoo-server/addons/<module>/path/to/<filename> && sudo chown odoo:odoo /odoo/odoo-server/addons/<module>/path/to/<filename>"
 ```
+
+> **Important**: The `chown odoo:odoo` step is required for ALL file types (.py, .js, .xml, .css).
+> The Odoo process runs as user `odoo`. Files copied via `sudo cp` are owned by `root:root`,
+> which the Odoo process cannot read — causing silent failures or import errors.
 
 ## Notes
 - The `rd` script uses `scp` to copy files to `VietUcUAT:/odoo/odoo-server/addons/`

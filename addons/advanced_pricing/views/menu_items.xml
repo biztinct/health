@@ -115,4 +115,18 @@
               action="action_advanced_pricing_config"
               sequence="30"/>
 
+    <menuitem id="menu_pricing_import"
+              name="Import Price List"
+              parent="menu_advanced_pricing_root"
+              action="action_pricing_import_wizard"
+              sequence="35"/>
+
+    <!-- Healthcare Import Menu -->
+    <menuitem id="menu_healthcare_pricing_import"
+              name="Import Price List"
+              parent="menu_healthcare_advanced_pricelist"
+              action="action_pricing_import_wizard"
+              sequence="30"
+              groups="health_base.group_healthcare_manager,health_base.group_healthcare_admin,health_base.group_healthcare_owner"/>
+
 </odoo>

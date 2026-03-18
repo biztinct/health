@@ -134,13 +134,83 @@ class AdvancedPricingRule(models.Model):
     
     service_city = fields.Char('Service City', help='Apply only for services in this city')
     
+    # Region / Catchment area (flexible for future expansion)
+    region = fields.Char('Region/Catchment Area', tracking=True,
+                         help='Region this rule applies to, e.g., Hanoi, HCMC')
+    
+    # Rule metadata from Excel price list
+    item_code = fields.Char('Item Code', tracking=True,
+                            help='Reference code from price list (e.g., bs_010, dd_020)')
+    trigger_source = fields.Selection([
+        ('booking_form', 'Booking/Form'),
+        ('app_clock', 'App Clock'),
+        ('provider_after_service', 'Provider after Service'),
+        ('public_holidays_table', 'Public Holidays Table'),
+        ('cmf_booking_form', 'CMF + Booking Form'),
+        ('quotation_booking_form', 'Quotation on Booking Form'),
+        ('service_duration_log', 'Service Duration Log'),
+        ('booking_form_provider', 'Booking/Form & Provider after Service'),
+        ('manual', 'Manual Entry'),
+    ], string='Trigger Source', tracking=True,
+       help='Where the data for this rule condition comes from')
+    data_required = fields.Char('Data Required', tracking=True,
+                                help='What data the rule needs to evaluate (e.g., service_location, number of wounds)')
+    notes = fields.Text('Rule Notes', tracking=True)
+    
+    # Validity period
+    valid_from = fields.Date('Valid From', tracking=True)
+    valid_to = fields.Date('Valid To', tracking=True)
+    
+    # Combined time condition (OR logic for after hours or weekend)
+    is_after_hours_or_weekend = fields.Boolean('After Hours or Weekend',
+        help='Apply when service is either after hours OR on weekend (OR logic)')
+    
+    # Service-specific quantity conditions (from Excel: number of wounds, injections, etc.)
+    wound_count_min = fields.Integer('Min Wound Count',
+        help='Minimum number of wounds to apply this rule')
+    wound_count_max = fields.Integer('Max Wound Count',
+        help='Maximum number of wounds to apply this rule')
+    injection_count_min = fields.Integer('Min Injection Count',
+        help='Minimum number of injections to apply this rule (e.g., after 1st injection)')
+    iv_fluid_count_min = fields.Integer('Min IV Fluid Bottles',
+        help='Minimum number of IV fluid bottles to apply this rule')
+    medication_count_min = fields.Integer('Min Additional Medications',
+        help='Minimum number of additional medications to apply this rule')
+    
+    # Compound conditions (modeled as separate booleans, evaluated as AND)
+    requires_home_service = fields.Boolean('Requires Home Service',
+        help='Apply only when service location is at home')
+    requires_other_service_same_visit = fields.Boolean('Other Service Same Visit',
+        help='Apply only when client receives another service on the same visit')
+    requires_multi_client_same_location = fields.Boolean('Multiple Clients Same Location',
+        help='Apply for clients after the first at the same location')
+    requires_bilingual_provider = fields.Boolean('Requires Bilingual Provider',
+        help='Apply only when client requires a bilingual provider')
+    is_repeat_booking = fields.Boolean('Repeat/Multiple Booking',
+        help='Apply for multiple and/or repeat bookings')
+    is_manual_quote = fields.Boolean('Manual Quote/Override',
+        help='This rule requires manual pricing — value set on booking form or receipt')
+    
     action_type = fields.Selection([
         ('add', 'Add Amount'),
         ('multiply', 'Multiply by Factor'),
         ('percentage', 'Apply Percentage'),
         ('fixed', 'Set Fixed Price'),
+        ('discount', 'Discount Base Price'),
+        ('per_unit', 'Amount Per Unit'),
         ('formula', 'Apply Formula')
     ], string='Action Type', default='add', tracking=True)
+    
+    # Per-unit configuration (e.g., 10,000 per km)
+    per_unit_field = fields.Selection([
+        ('distance', 'Distance (km)'),
+        ('wound_count', 'Wound Count'),
+        ('injection_count', 'Injection Count'),
+        ('iv_fluid_count', 'IV Fluid Count'),
+        ('medication_count', 'Medication Count'),
+        ('service_units', 'Service Units'),
+    ], string='Per Unit Field',
+       help='Which field to multiply the action value by when action_type is per_unit')
 
     action_value = fields.Float('Action Value', tracking=True)
     action_formula = fields.Text('Action Formula', tracking=True)
@@ -321,6 +391,29 @@ class AdvancedPricingRule(models.Model):
         """Evaluate if this rule applies"""
         self.ensure_one()
         
+        # Skip manual quote rules (they require manual pricing input)
+        if self.is_manual_quote:
+            _logger.info(f"  Rule {self.name}: SKIPPED - Manual quote rule")
+            return False
+        
+        # Check validity period
+        if self.valid_from or self.valid_to:
+            from datetime import date
+            today = date.today()
+            if self.valid_from and today < self.valid_from:
+                _logger.info(f"  Rule {self.name}: FAILED - Not yet valid (starts {self.valid_from})")
+                return False
+            if self.valid_to and today > self.valid_to:
+                _logger.info(f"  Rule {self.name}: FAILED - Expired (ended {self.valid_to})")
+                return False
+        
+        # Check region if set
+        if self.region:
+            service_region = context_data.get('region', '')
+            if service_region and service_region.lower() != self.region.lower():
+                _logger.info(f"  Rule {self.name}: FAILED - Region mismatch ({service_region} vs {self.region})")
+                return False
+        
         _logger.info(f"  Rule {self.name}: Checking product applicability for product {product_id}")
         # Check product applicability (like standard pricelist rules)
         if not self._check_product_applicability(product_id):
@@ -482,6 +575,60 @@ class AdvancedPricingRule(models.Model):
             if context_data.get('service_city', '').lower() != self.service_city.lower():
                 return False
         
+        # Combined after-hours OR weekend condition
+        if self.is_after_hours_or_weekend:
+            is_after_hours = context_data.get('is_after_hours', False)
+            is_weekend = context_data.get('is_weekend', False)
+            if not (is_after_hours or is_weekend):
+                _logger.info(f"    After-hours-or-weekend condition FAILED")
+                return False
+        
+        # Service-specific quantity conditions
+        if self.wound_count_min and self.wound_count_min > 0:
+            wounds = context_data.get('wound_count', 0)
+            if wounds < self.wound_count_min:
+                return False
+        if self.wound_count_max and self.wound_count_max > 0:
+            wounds = context_data.get('wound_count', 0)
+            if wounds > self.wound_count_max:
+                return False
+        
+        if self.injection_count_min and self.injection_count_min > 0:
+            injections = context_data.get('injection_count', 0)
+            if injections < self.injection_count_min:
+                return False
+        
+        if self.iv_fluid_count_min and self.iv_fluid_count_min > 0:
+            iv_fluids = context_data.get('iv_fluid_count', 0)
+            if iv_fluids < self.iv_fluid_count_min:
+                return False
+        
+        if self.medication_count_min and self.medication_count_min > 0:
+            medications = context_data.get('medication_count', 0)
+            if medications < self.medication_count_min:
+                return False
+        
+        # Compound boolean conditions
+        if self.requires_home_service:
+            if context_data.get('service_location') != 'home':
+                return False
+        
+        if self.requires_other_service_same_visit:
+            if not context_data.get('has_other_service_same_visit', False):
+                return False
+        
+        if self.requires_multi_client_same_location:
+            if not context_data.get('is_multi_client_same_location', False):
+                return False
+        
+        if self.requires_bilingual_provider:
+            if not context_data.get('requires_bilingual_provider', False):
+                return False
+        
+        if self.is_repeat_booking:
+            if not context_data.get('is_repeat_booking', False):
+                return False
+        
         return True
     
     def _check_product_applicability(self, product_id):
@@ -518,6 +665,39 @@ class AdvancedPricingRule(models.Model):
             return price * (1 + self.action_value / 100)
         elif self.action_type == 'fixed':
             return self.action_value
+        elif self.action_type == 'discount':
+            # Discount base price by percentage (e.g., 0.1 = 10% discount)
+            return price * (1 - self.action_value)
+        elif self.action_type == 'per_unit':
+            # Amount per unit of a context field (e.g., 10,000 per km above threshold)
+            unit_count = 0
+            threshold = 0
+            if self.per_unit_field:
+                field_map = {
+                    'distance': 'distance',
+                    'wound_count': 'wound_count',
+                    'injection_count': 'injection_count',
+                    'iv_fluid_count': 'iv_fluid_count',
+                    'medication_count': 'medication_count',
+                    'service_units': 'service_units',
+                }
+                context_key = field_map.get(self.per_unit_field, self.per_unit_field)
+                unit_count = context_data.get(context_key, 0)
+
+                # Use the min condition as threshold (e.g., distance_min = 8 means
+                # charge per km ABOVE 8km, so effective_units = distance - 8)
+                threshold_map = {
+                    'distance': self.distance_min or 0,
+                    'wound_count': (self.wound_count_min or 1) - 1,  # "after 1st" = threshold 1
+                    'injection_count': (self.injection_count_min or 1) - 1,
+                    'iv_fluid_count': (self.iv_fluid_count_min or 1) - 1,
+                    'medication_count': (self.medication_count_min or 1) - 1,
+                    'service_units': self.service_units_min or 0,
+                }
+                threshold = threshold_map.get(self.per_unit_field, 0)
+
+            effective_units = max(0, unit_count - threshold)
+            return price + (self.action_value * effective_units)
         
         return price
     

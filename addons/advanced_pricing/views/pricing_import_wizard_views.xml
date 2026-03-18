@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_pricing_import_wizard_form" model="ir.ui.view">
+        <field name="name">advanced.pricing.import.wizard.form</field>
+        <field name="model">advanced.pricing.import.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Import Price List">
+                <group>
+                    <field name="file" filename="filename"/>
+                    <field name="filename" invisible="1"/>
+                    <field name="engine_id"/>
+                    <field name="import_type"/>
+                </group>
+                <group invisible="not import_log">
+                    <field name="import_log" widget="text" readonly="1"/>
+                </group>
+                <footer>
+                    <button name="import_rules" string="Import" type="object"
+                            class="oe_highlight" invisible="import_log"/>
+                    <button string="Close" class="oe_link" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action to open import wizard -->
+    <record id="action_pricing_import_wizard" model="ir.actions.act_window">
+        <field name="name">Import Price List</field>
+        <field name="res_model">advanced.pricing.import.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+</odoo>

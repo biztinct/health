@@ -41,6 +41,7 @@ Features:
         'views/sale_order_views.xml',
         'views/visual_rule_builder_views.xml',
         'views/product_catalog_views.xml',
+        'views/pricing_import_wizard_views.xml',
         'views/menu_items.xml',
         'data/demo_data.xml',
         'data/pricing_rule_templates.xml',

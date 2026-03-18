@@ -1,6 +1,20 @@
 # -*- coding: utf-8 -*-
 from odoo import models, fields, api
 
+
+class ProductTemplate(models.Model):
+    _inherit = 'product.template'
+
+    rounding_rule = fields.Selection([
+        ('round_1000', 'Round up to next 1,000'),
+        ('round_5min', 'Round up to next 5 mins'),
+        ('round_30min', 'Round up to next 30 mins'),
+        ('round_half_hour', 'Round up to next half hour'),
+        ('round_hour', 'Round up to next hour'),
+    ], string='Rounding Rule',
+       help='Rounding rule applied to the calculated price for this product')
+
+
 class ProductProduct(models.Model):
     _inherit = 'product.product'
     
