@@ -339,31 +339,29 @@ class HealthStaffAssignment(models.Model):
             else:
                 record.equipment_assigned = False
 
-    @api.depends('planned_start_time', 'assignment_date')
+    @api.depends('planned_start_time', 'assignment_date', 'fso_id.booking_timezone')
     def _compute_formatted_datetime(self):
         """Format datetime as '21/Oct-10:30 AM' for timeline display"""
         for record in self:
             dt = record.planned_start_time or record.assignment_date
             if dt:
-                # Convert to user's timezone
-                user_tz = self.env.user.tz or 'UTC'
+                bk_tz = (record.fso_id._get_booking_tz() if record.fso_id else False) or 'Asia/Ho_Chi_Minh'
                 from pytz import timezone
-                local_dt = dt.replace(tzinfo=timezone('UTC')).astimezone(timezone(user_tz))
+                local_dt = dt.replace(tzinfo=timezone('UTC')).astimezone(timezone(bk_tz))
                 # Format: "21/Oct-10:30 AM" (no spaces around hyphen)
                 record.formatted_datetime = local_dt.strftime('%d/%b-%I:%M %p')
             else:
                 record.formatted_datetime = ''
 
-    @api.depends('planned_start_time', 'assignment_date')
+    @api.depends('planned_start_time', 'assignment_date', 'fso_id.booking_timezone')
     def _compute_formatted_time(self):
         """Format time only as '09:30 AM' for timeline display"""
         for record in self:
             dt = record.planned_start_time or record.assignment_date
             if dt:
-                # Convert to user's timezone
-                user_tz = self.env.user.tz or 'UTC'
+                bk_tz = (record.fso_id._get_booking_tz() if record.fso_id else False) or 'Asia/Ho_Chi_Minh'
                 from pytz import timezone
-                local_dt = dt.replace(tzinfo=timezone('UTC')).astimezone(timezone(user_tz))
+                local_dt = dt.replace(tzinfo=timezone('UTC')).astimezone(timezone(bk_tz))
                 # Format: "09:30 AM" (time only, no date)
                 record.formatted_time = local_dt.strftime('%I:%M %p')
             else:

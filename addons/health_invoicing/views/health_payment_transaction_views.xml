@@ -70,12 +70,12 @@
                     <!-- Status Alerts -->
                     <div class="alert alert-warning" role="alert" 
                          invisible="payment_method != 'cash' or status != 'pending_delivery'">
-                        <strong>💰 Cash Delivery Pending:</strong> This cash payment needs to be delivered to the Operations Manager.
+                        <strong><i class="fa fa-money"/> Cash Delivery Pending:</strong> This cash payment needs to be delivered to the Operations Manager.
                     </div>
                     
                     <div class="alert alert-info" role="alert" 
                          invisible="transaction_type != 'prepaid'">
-                        <strong>🎁 Prepaid Service:</strong> This payment was processed using a prepaid service package.
+                        <strong><i class="fa fa-gift"/> Prepaid Service:</strong> This payment was processed using a prepaid service package.
                     </div>
                     
                     <!-- Smart Buttons -->

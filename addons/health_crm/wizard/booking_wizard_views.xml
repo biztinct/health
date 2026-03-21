@@ -146,13 +146,14 @@
                         </h2>
                         
                         <group>
+                            <group string="Location &amp; Facility">
+                                <field name="catchment_province_id" string="Catchment Province"/>
+                                <field name="facility_id" string="Healthcare Facility"/>
+                            </group>
                             <group string="Date &amp; Time">
                                 <field name="booking_date" string="Date"/>
                                 <field name="booking_time" string="Time" widget="time_picker"/>
                                 <field name="booking_duration" string="Duration (Hours)"/>
-                            </group>
-                            <group string="Notes">
-                                <!-- Service Location is now in Step 2 -->
                             </group>
                         </group>
                         
@@ -190,6 +191,7 @@
                             <group>
                                 <field name="client_display_name" string="Client" readonly="1"/>
                                 <field name="service_type" string="Service" readonly="1"/>
+                                <field name="facility_id" string="Facility" readonly="1"/>
                             </group>
                             <group>
                                 <field name="booking_date" string="Date" readonly="1"/>

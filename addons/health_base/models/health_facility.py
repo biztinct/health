@@ -65,6 +65,12 @@ class Facility(models.Model):
                                  default='Monday-Friday: 8:00-17:00\nSaturday: 8:00-12:00')
     timezone = fields.Selection('_get_timezone_list', string='Timezone', 
                                default='Asia/Ho_Chi_Minh')
+
+    @api.onchange('catchment_province_id')
+    def _onchange_catchment_province_id(self):
+        """Copy timezone from catchment province when province is selected"""
+        if self.catchment_province_id and self.catchment_province_id.timezone:
+            self.timezone = self.catchment_province_id.timezone
     
     # Services and Capabilities
     services_offered = fields.Many2many('health.service.type', 

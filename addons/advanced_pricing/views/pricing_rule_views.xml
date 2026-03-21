@@ -32,21 +32,21 @@
 
                     <!-- Visual Builder -->
                     <button name="action_open_visual_builder" type="object"
-                            string="🎨 Visual Builder" class="btn-primary"
+                            string="Visual Builder" class="btn-primary" icon="fa-paint-brush"
                             help="Open drag-and-drop visual rule builder"/>
                 </header>
                 <sheet>
                     <!-- Warning banner for non-approved rules -->
                     <div class="alert alert-warning" role="alert"
                          invisible="approval_status == 'approved'">
-                        <strong>⚠️ This rule will NOT be used in pricing calculations</strong>
+                        <strong><i class="fa fa-exclamation-triangle"/> This rule will NOT be used in pricing calculations</strong>
                         <span invisible="approval_status != 'draft'"> - Submit for board approval to enable pricing</span>
                         <span invisible="approval_status != 'pending'"> - Awaiting board approval before it can be used</span>
                         <span invisible="approval_status != 'rejected'"> - Rule has been rejected and cannot be used</span>
                     </div>
                     <div class="alert alert-info" role="alert"
                          invisible="approval_status != 'approved'">
-                        <strong>✅ This rule is approved</strong> - It will be used in pricing calculations when active (not archived).
+                        <strong><i class="fa fa-check-circle"/> This rule is approved</strong> - It will be used in pricing calculations when active (not archived).
                     </div>
                     <div class="oe_button_box" name="button_box">
                         <button name="action_create_visual_rule" type="object" 
@@ -235,11 +235,11 @@
                   decoration-muted="approval_status == 'draft'">
                 <header>
                     <button name="action_create_visual_rule" type="object"
-                            string="🎨 Create Visual Rule" class="btn-primary"
+                            string="Create Visual Rule" class="btn-primary" icon="fa-paint-brush"
                             display="always" invisible="1"
                             help="Create a new visual pricing rule using drag-and-drop builder"/>
                     <button name="%(action_pricing_import_wizard)d" type="action"
-                            string="📥 Import Price List" class="btn-secondary"
+                            string="Import Price List" class="btn-secondary" icon="fa-download"
                             display="always"
                             help="Import products and pricing rules from Excel file"/>
                 </header>
@@ -282,7 +282,7 @@
                   decoration-muted="approval_status == 'draft'">
                 <header>
                     <button name="action_create_visual_rule" type="object"
-                            string="🎨 Create Visual Rule" class="btn-primary"
+                            string="Create Visual Rule" class="btn-primary" icon="fa-paint-brush"
                             help="Create a new visual pricing rule using drag-and-drop builder"/>
                 </header>
                 <field name="sequence" widget="handle"/>

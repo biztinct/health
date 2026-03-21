@@ -12,14 +12,14 @@
                 <div class="d-flex justify-content-between align-items-center mb-3 bg-light p-2 rounded" 
                      invisible="not context.get('order_id')">
                     <div class="d-flex align-items-center">
-                        <h5 class="mb-0 me-3">📋 Product Catalog</h5>
+                        <h5 class="mb-0 me-3"><i class="fa fa-list"/> Product Catalog</h5>
                         <span class="text-muted">
                             Adding products to Healthcare Quote
                         </span>
                     </div>
                     <div>
                         <button name="action_return_to_healthcare_quote" 
-                                string="🏥 Back to Booking Quote" 
+                                string="Back to Booking Quote" icon="fa-medkit"
                                 type="object" 
                                 class="btn btn-primary"
                                 help="Return to Healthcare Quote"/>

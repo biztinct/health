@@ -185,17 +185,27 @@ class HealthPrepaidPackageWizard(models.TransientModel):
         
         # Step 1: Create Invoice (if requested) - Let invoice posting create the package automatically
         if self.create_invoice:
+            # CRMv2 Scenario A: Prepayment → Credit Unearned Revenue (UR), NOT Service Revenue
+            # Revenue is only recognized when the prepaid service is consumed (UR→SR)
+            ur_account = self.env.ref(
+                'health_invoicing.account_unearned_revenue', raise_if_not_found=False
+            )
+            invoice_line_vals = {
+                'name': f'{self.package_name} ({self.total_services} services)',
+                'product_id': self.package_product_id.product_variant_ids[0].id,
+                'quantity': 1,
+                'price_unit': self.package_price,
+                'product_uom_id': self.package_product_id.uom_id.id,
+            }
+            # Override income account to Unearned Revenue for proper revenue deferral
+            if ur_account:
+                invoice_line_vals['account_id'] = ur_account.id
+
             invoice = self.env['account.move'].create({
                 'move_type': 'out_invoice',
                 'partner_id': self.patient_id.id,
                 'invoice_origin': f'Prepaid Package: {self.package_name}',
-                'invoice_line_ids': [(0, 0, {
-                    'name': f'{self.package_name} ({self.total_services} services)',
-                    'product_id': self.package_product_id.product_variant_ids[0].id,
-                    'quantity': 1,
-                    'price_unit': self.package_price,
-                    'product_uom_id': self.package_product_id.uom_id.id,
-                })],
+                'invoice_line_ids': [(0, 0, invoice_line_vals)],
             })
             
             invoice_id = invoice.id

@@ -25,7 +25,7 @@
             <xpath expr="//field[@name='order_line']//control//button[@name='action_add_from_catalog']" position="after">
                 <span invisible="not parent.use_advanced_pricing" 
                       class="text-muted px-2">
-                    📊 Advanced Pricing Active
+                    <i class="fa fa-bar-chart me-1"/> Advanced Pricing Active
                 </span>
             </xpath>
             
@@ -75,15 +75,15 @@
                 <div class="row mt-3">
                     <div class="col-12 text-center">
                         <button name="action_add_from_catalog"
-                                string="📋 Add from Catalog"
+                                string="Add from Catalog"
                                 type="object"
-                                class="btn btn-primary me-2"
+                                class="btn btn-primary me-2" icon="fa-list"
                                 context="{'order_id': id, 'child_field': 'order_line'}"
                                 help="Add products from catalog"/>
                         <button name="action_recalculate_advanced_prices" 
-                                string="💰 Recalc Pricing" 
+                                string="Recalc Pricing" 
                                 type="object" 
-                                class="btn btn-secondary"
+                                class="btn btn-secondary" icon="fa-refresh"
                                 help="Recalculate prices using advanced pricing rules"/>
                     </div>
                 </div>

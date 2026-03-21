@@ -105,6 +105,57 @@ class HealthFlowWizard(models.TransientModel):
             }
             action = self._ensure_action_name(action, _('New Invoice'))
             return self._apply_flow_context(action)
+        elif key == 'ar-account-payment':
+            # AR Management (a): Unpaid invoices for payment registration
+            action = {
+                'type': 'ir.actions.act_window',
+                'name': _('Account Payment'),
+                'res_model': 'account.move',
+                'view_mode': 'list,form',
+                'views': [(False, 'list'), (False, 'form')],
+                'target': 'current',
+                'domain': [
+                    ('move_type', '=', 'out_invoice'),
+                    ('state', '=', 'posted'),
+                    ('payment_state', 'in', ['not_paid', 'partial']),
+                ],
+                'context': {'default_move_type': 'out_invoice'},
+            }
+            action = self._ensure_action_name(action, _('Account Payment'))
+            return self._apply_flow_context(action)
+        elif key == 'ar-cash-in-transit':
+            # AR Management (b): Cash transactions pending delivery to HO
+            action = {
+                'type': 'ir.actions.act_window',
+                'name': _('Cash In Transit Transfers'),
+                'res_model': 'health.payment.transaction',
+                'view_mode': 'list,form',
+                'views': [(False, 'list'), (False, 'form')],
+                'target': 'current',
+                'domain': [
+                    ('payment_method', '=', 'cash'),
+                    ('status', 'in', ['pending_delivery', 'collected']),
+                ],
+            }
+            action = self._ensure_action_name(action, _('Cash In Transit Transfers'))
+            return self._apply_flow_context(action)
+        elif key == 'ar-refund-credit':
+            # AR Management (c): Credit notes and refunds
+            action = {
+                'type': 'ir.actions.act_window',
+                'name': _('Refund / Credit'),
+                'res_model': 'account.move',
+                'view_mode': 'list,form',
+                'views': [(False, 'list'), (False, 'form')],
+                'target': 'current',
+                'domain': [
+                    ('move_type', '=', 'out_refund'),
+                    ('state', '=', 'posted'),
+                ],
+                'context': {'default_move_type': 'out_refund'},
+            }
+            action = self._ensure_action_name(action, _('Refund / Credit'))
+            return self._apply_flow_context(action)
 
         # Map keys to action xmlid
         mapping = {
@@ -124,7 +175,6 @@ class HealthFlowWizard(models.TransientModel):
             'invoicing-invoices': ('health_invoicing.action_healthcare_invoices', _('Invoices')),
             'invoicing-vat-log': ('health_invoicing.action_healthcare_vat_invoice_log', _('VAT Invoices Log')),
             'invoicing-ar-log': ('health_invoicing.action_healthcare_ar_transaction_log', _('AR Transactions Log')),
-            'invoicing-ar-management': ('health_invoicing.action_healthcare_cash_management', _('AR Management')),
 
             # Admin Panel (Configuration)
             'admin-user-list': ('health_user_admin.action_healthcare_users', _('Users')),

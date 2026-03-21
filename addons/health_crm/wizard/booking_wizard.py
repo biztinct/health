@@ -231,7 +231,32 @@ class HealthBookingWizard(models.TransientModel):
         default=fields.Date.today,
         help='Date of the booking'
     )
-    
+
+    catchment_province_id = fields.Many2one(
+        'health.catchment.province',
+        string='Catchment Province',
+        help='Catchment province for the booking (defaults from client record)'
+    )
+
+    facility_id = fields.Many2one(
+        'health.facility',
+        string='Healthcare Facility',
+        domain="[('active', '=', True), ('catchment_province_id', '=', catchment_province_id)]",
+        help='Facility for this booking. Timezone is derived from this facility.'
+    )
+
+    @api.onchange('client_id')
+    def _onchange_client_for_province(self):
+        """Set catchment province from client's record"""
+        if self.client_id and self.client_id.catchment_province_id:
+            self.catchment_province_id = self.client_id.catchment_province_id
+
+    @api.onchange('catchment_province_id')
+    def _onchange_catchment_province_id(self):
+        """Reset facility when catchment province changes"""
+        if self.facility_id and self.facility_id.catchment_province_id != self.catchment_province_id:
+            self.facility_id = False
+
     booking_time = fields.Float(
         'Booking Time',
         help='Time of the booking (24h format)'
@@ -361,6 +386,9 @@ class HealthBookingWizard(models.TransientModel):
         """Create the booking from wizard data"""
         self.ensure_one()
         
+        if not self.facility_id:
+            raise ValidationError(_('Please select a Healthcare Facility before creating the booking.'))
+        
         # Create or get client
         client = None
         
@@ -437,6 +465,10 @@ class HealthBookingWizard(models.TransientModel):
             'scheduled_duration': self.booking_duration,
             'service_location': self.service_location,
             'intake_notes': self.booking_notes,
+            'facility_id': self.facility_id.id if self.facility_id else False,
+            'booking_timezone': self.facility_id.timezone if self.facility_id else (
+                self.catchment_province_id.timezone if self.catchment_province_id else 'Asia/Ho_Chi_Minh'
+            ),
             # Commission fields
             'commission_due_to': self.commission_due_to.id if self.commission_due_to else False,
             'commission_percentage': self.commission_percentage,
@@ -498,9 +530,9 @@ class HealthBookingWizard(models.TransientModel):
     def _get_scheduled_datetime(self):
         """Convert date and time to UTC datetime.
 
-        The user enters the time in their local timezone (e.g. 15:00 in UTC+11).
-        Odoo stores Datetime fields as UTC, so we must convert local → UTC
-        to avoid the stored value being off by the timezone offset.
+        The time picker shows service times in the facility's timezone.
+        We interpret the entered time using the facility's timezone and convert
+        to UTC for storage.
         """
         from datetime import datetime
         import pytz
@@ -511,9 +543,14 @@ class HealthBookingWizard(models.TransientModel):
                 self.booking_date,
                 datetime.min.time()
             ).replace(hour=hours, minute=minutes)
-            # Get user's timezone (fall back to UTC if not set)
-            user_tz = pytz.timezone(self.env.user.tz or 'UTC')
-            local_dt = user_tz.localize(naive_local)
+            # Use facility timezone, fallback to catchment province, then default
+            tz_name = 'Asia/Ho_Chi_Minh'
+            if self.facility_id and self.facility_id.timezone:
+                tz_name = self.facility_id.timezone
+            elif self.catchment_province_id and self.catchment_province_id.timezone:
+                tz_name = self.catchment_province_id.timezone
+            facility_tz = pytz.timezone(tz_name)
+            local_dt = facility_tz.localize(naive_local)
             return local_dt.astimezone(pytz.utc).replace(tzinfo=None)
         return False
     

@@ -100,6 +100,7 @@
     ],
     'assets': {
         'web.assets_backend': [
+            'health_fieldservice/static/src/css/booking_calendar.css',
             'health_fieldservice/static/src/css/healthcare_quote.css',
             'health_fieldservice/static/src/css/service_timer.css',
             'health_fieldservice/static/src/css/assignment_dashboard.css',

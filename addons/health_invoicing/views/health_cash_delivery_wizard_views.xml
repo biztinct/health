@@ -9,7 +9,7 @@
             <form string="Confirm Cash Delivery to OM">
                 <sheet>
                     <div class="oe_title">
-                        <h1>💰 Confirm Cash Delivery</h1>
+                        <h1><i class="fa fa-money"/> Confirm Cash Delivery</h1>
                         <h3>Operations Manager Cash Receipt Confirmation</h3>
                     </div>
                     
@@ -56,7 +56,7 @@
                     
                     <!-- Important Notice -->
                     <div class="alert alert-info" role="alert">
-                        <strong>📋 Important:</strong> Please verify that:
+                        <strong><i class="fa fa-clipboard"/> Important:</strong> Please verify that:
                         <ul>
                             <li>Cash amount matches the transaction amount exactly</li>
                             <li>All bills are genuine and in acceptable condition</li>
@@ -68,8 +68,8 @@
                 </sheet>
                 
                 <footer>
-                    <button string="💰 Confirm Cash Receipt" name="action_confirm_cash_delivery" 
-                            type="object" class="btn-success"/>
+                    <button string="Confirm Cash Receipt" name="action_confirm_cash_delivery" 
+                            type="object" class="btn-success" icon="fa-check-circle"/>
                     <button string="Cancel" class="btn-secondary" special="cancel"/>
                 </footer>
             </form>

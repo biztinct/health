@@ -11,9 +11,9 @@
             <header position="inside">
                 <button name="action_process_payment" 
                         type="object" 
-                        string="💳 Process Payment" 
+                        string="Process Payment" icon="fa-credit-card"
                         class="btn-success"
-                        invisible="state != 'posted' or payment_state in ['paid', 'in_payment']"
+                        invisible="1"
                         help="Process payment for this invoice"/>
             </header>
             
@@ -37,7 +37,7 @@
                     <field name="has_discounts" invisible="1"/>
                     <field name="currency_id" invisible="1"/>
                     <div class="alert alert-warning" role="alert" invisible="not has_discounts">
-                        <strong>⚠️ Discounts Applied:</strong> This invoice has discounts totaling
+                        <strong><i class="fa fa-exclamation-triangle"/> Discounts Applied:</strong> This invoice has discounts totaling
                         <field name="total_discount_amount" widget="monetary" readonly="1"/>
                         <br/>All discounted line items must have a reason in the "Discount Reason" field.
                     </div>

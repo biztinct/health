@@ -83,6 +83,7 @@
         'security/ir.model.access.csv',
         
         # Configuration Data
+        'data/healthcare_chart_of_accounts.xml',
         'data/sequences.xml',
         'data/vietnamese_tax_config.xml',
         

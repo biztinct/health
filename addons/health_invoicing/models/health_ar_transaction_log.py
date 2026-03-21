@@ -303,6 +303,70 @@ class HealthARTransactionLog(models.Model):
         })
 
     @api.model
+    def _log_move_posting(self, move, event_type=None, booking=None, partner=None, crm_lead=None):
+        """Alias for _create_from_move with optional event_type override.
+
+        Called by nurse_payment_wizard (CIT entries, UR→SR reclassification)
+        and cash_delivery_wizard (settlement entries).
+
+        Args:
+            move: The posted account.move to log.
+            event_type: Override event type (e.g. 'payment', 'handover', 'service_delivery').
+            booking: Optional health.fieldservice.order to link (falls back to move.fieldservice_order_id).
+            partner: Optional res.partner to link (falls back to move.partner_id).
+            crm_lead: Optional crm.lead to link (falls back to booking.crm_lead_id).
+        """
+        if not move or move.state != 'posted':
+            return
+
+        # If caller specifies event_type, use it; otherwise auto-detect
+        if event_type:
+            # Find debit and credit accounts from move lines
+            debit_account = False
+            credit_account = False
+            total_amount = 0.0
+            for line in move.line_ids:
+                if line.debit > 0 and not debit_account:
+                    debit_account = line.account_id.id
+                    total_amount = line.debit
+                if line.credit > 0 and not credit_account:
+                    credit_account = line.account_id.id
+
+            if not total_amount:
+                total_amount = abs(move.amount_total)
+
+            # Use provided context or fall back to auto-detection from the move
+            if not booking:
+                booking = move.fieldservice_order_id if hasattr(move, 'fieldservice_order_id') else False
+            if not crm_lead and booking:
+                crm_lead = booking.crm_lead_id if hasattr(booking, 'crm_lead_id') else False
+            if not partner:
+                partner = move.partner_id if move.partner_id else False
+            facility = booking.facility_id if booking and hasattr(booking, 'facility_id') else False
+
+            self.create({
+                'crm_event_id': crm_lead.id if crm_lead else False,
+                'booking_id': booking.id if booking else False,
+                'event_type': event_type,
+                'transaction_datetime': fields.Datetime.now(),
+                'posting_date': move.date,
+                'company_id': move.company_id.id,
+                'debit_account_id': debit_account,
+                'credit_account_id': credit_account,
+                'amount': total_amount,
+                'currency_id': move.currency_id.id,
+                'amount_in_words': _amount_to_vietnamese_words(total_amount),
+                'move_id': move.id,
+                'partner_id': partner.id if partner else False,
+                'prepared_by': self.env.user.id,
+                'posting_path': self._derive_posting_path(move=move),
+                'status': 'posted',
+                'facility_id': facility.id if facility else False,
+            })
+        else:
+            self._create_from_move(move)
+
+    @api.model
     def _create_from_payment(self, payment):
         """Create log entry from a posted account.payment."""
         if not payment:

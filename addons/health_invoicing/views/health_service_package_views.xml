@@ -44,7 +44,7 @@
                     
                     <!-- Package Actions -->
                     <button type="object" name="action_create_booking"
-                            string="📅 Create Service Booking" class="btn-success"
+                             string="Create Service Booking" class="btn-success" icon="fa-calendar-plus-o"
                             invisible="state != 'active' or remaining_services == 0"
                             groups="health_invoicing.group_health_invoicing_user"
                             help="Create a new FSO booking from this package"/>
@@ -60,12 +60,12 @@
                     <!-- Package Status Alert -->
                     <div class="alert alert-warning" role="alert" 
                          invisible="remaining_services &gt; 5">
-                        <strong>⚠️ Low Service Count:</strong> Only <field name="remaining_services"/> services remaining in this package.
+                        <strong><i class="fa fa-exclamation-triangle"/> Low Service Count:</strong> Only <field name="remaining_services"/> services remaining in this package.
                     </div>
                     
                     <div class="alert alert-danger" role="alert" 
                          invisible="state != 'exhausted'">
-                        <strong>🚫 Package Exhausted:</strong> All services in this package have been consumed.
+                        <strong><i class="fa fa-ban"/> Package Exhausted:</strong> All services in this package have been consumed.
                     </div>
                     
                     <!-- Smart Buttons -->

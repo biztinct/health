@@ -77,6 +77,8 @@ class HealthFlowAction extends Component {
             masterDataModalOpen: false,
             // User Management modal
             userMgmtModalOpen: false,
+            // AR Management modal
+            arMgmtModalOpen: false,
         });
 
         // Panel data configuration
@@ -114,7 +116,7 @@ class HealthFlowAction extends Component {
                 items: [
                     { key: 'invoicing-invoices', label: _t('Invoices'), icon: 'fa-file-text-o', desc: _t('All invoices') },
                     { key: 'invoicing-ar', label: _t('Accounts Receivable'), icon: 'fa-dashboard', desc: _t('Unpaid invoices & aging') },
-                    { key: 'invoicing-ar-management', label: _t('AR Management'), icon: 'fa-tasks', desc: _t('Payments, cash transit, refunds') },
+                    { key: 'invoicing-ar-management', label: _t('AR Management'), icon: 'fa-tasks', desc: _t('Payments, cash transit, refunds'), isArMgmt: true },
                     { key: 'invoicing-add-invoice', label: _t('Add New Invoice'), icon: 'fa-plus-circle', desc: _t('Create manual invoice') },
                     { key: 'invoicing-vat-log', label: _t('VAT Invoices Log'), icon: 'fa-book', desc: _t('VAT log for MISA validation') },
                     { key: 'invoicing-ar-log', label: _t('AR Transactions Log'), icon: 'fa-list-alt', desc: _t('Double-entry journal log') },
@@ -453,6 +455,12 @@ class HealthFlowAction extends Component {
             return;
         }
 
+        // Handle AR Management popup
+        if (item.isArMgmt) {
+            this.state.arMgmtModalOpen = true;
+            return;
+        }
+
         // Save state before launching action (so breadcrumb return restores panel)
         if (!this.isRestoring) {
             this.saveState(this.state.activePrimary);
@@ -491,6 +499,24 @@ class HealthFlowAction extends Component {
      */
     async onUserMgmtSelect(key) {
         this.state.userMgmtModalOpen = false;
+        if (!this.isRestoring) {
+            this.saveState(this.state.activePrimary);
+        }
+        await this.launchAction(key);
+    }
+
+    /**
+     * Close AR Management modal
+     */
+    closeArMgmtModal() {
+        this.state.arMgmtModalOpen = false;
+    }
+
+    /**
+     * Handle AR Management option selection
+     */
+    async onArMgmtSelect(key) {
+        this.state.arMgmtModalOpen = false;
         if (!this.isRestoring) {
             this.saveState(this.state.activePrimary);
         }

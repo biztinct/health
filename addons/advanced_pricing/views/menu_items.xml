@@ -51,7 +51,7 @@
             </p>
             <p>
                 Quick edit pricing rules with inline editing. Click a cell to edit values directly.
-                ⚠️ Editing approved rules will reset them to Draft status requiring re-approval.
+                WARNING: Editing approved rules will reset them to Draft status requiring re-approval.
             </p>
         </field>
     </record>

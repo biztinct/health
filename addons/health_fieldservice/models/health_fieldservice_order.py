@@ -317,6 +317,32 @@ class HealthFieldServiceOrderUnified(models.Model):
         tracking=True,
         help='When the service is scheduled to be performed'
     )
+
+    booking_timezone = fields.Char(
+        'Booking Timezone',
+        compute='_compute_booking_timezone',
+        store=True,
+        readonly=False,
+        help='Timezone for this booking. Derived from facility timezone, '
+             'falls back to catchment province timezone.'
+    )
+
+    @api.depends('facility_id', 'facility_id.timezone', 'patient_catchment_province_id',
+                 'patient_catchment_province_id.timezone')
+    def _compute_booking_timezone(self):
+        """Compute booking timezone from facility, fallback to catchment province."""
+        for record in self:
+            if record.facility_id and record.facility_id.timezone:
+                record.booking_timezone = record.facility_id.timezone
+            elif record.patient_catchment_province_id and record.patient_catchment_province_id.timezone:
+                record.booking_timezone = record.patient_catchment_province_id.timezone
+            else:
+                record.booking_timezone = record.booking_timezone or 'Asia/Ho_Chi_Minh'
+
+    def _get_booking_tz(self):
+        """Helper: return the effective timezone string for this booking."""
+        self.ensure_one()
+        return self.booking_timezone or 'Asia/Ho_Chi_Minh'
     
     scheduled_date = fields.Date(
         'Scheduled Date',
@@ -341,40 +367,36 @@ class HealthFieldServiceOrderUnified(models.Model):
         help='Month and year for kanban grouping (e.g., "October 2025")'
     )
 
-    @api.depends('scheduled_datetime')
+    @api.depends('scheduled_datetime', 'booking_timezone')
     def _compute_scheduled_date(self):
         for record in self:
             if record.scheduled_datetime:
-                # Convert from UTC storage to user's timezone for date computation
                 utc_dt = pytz.UTC.localize(record.scheduled_datetime)
-                user_tz = pytz.timezone(self.env.user.tz or 'UTC')
-                local_dt = utc_dt.astimezone(user_tz)
+                bk_tz = pytz.timezone(record._get_booking_tz())
+                local_dt = utc_dt.astimezone(bk_tz)
                 record.scheduled_date = local_dt.date()
             else:
                 record.scheduled_date = False
     
-    @api.depends('scheduled_datetime')
+    @api.depends('scheduled_datetime', 'booking_timezone')
     def _compute_scheduled_time(self):
         for record in self:
             if record.scheduled_datetime:
-                # Convert from UTC storage to user's timezone
                 utc_dt = pytz.UTC.localize(record.scheduled_datetime)
-                user_tz = pytz.timezone(self.env.user.tz or 'UTC')
-                local_dt = utc_dt.astimezone(user_tz)
+                bk_tz = pytz.timezone(record._get_booking_tz())
+                local_dt = utc_dt.astimezone(bk_tz)
                 record.scheduled_time = local_dt.hour + local_dt.minute / 60.0
             else:
                 record.scheduled_time = 0.0
 
-    @api.depends('scheduled_datetime')
+    @api.depends('scheduled_datetime', 'booking_timezone')
     def _compute_scheduled_month(self):
         """Compute month-year label for kanban grouping"""
         for record in self:
             if record.scheduled_datetime:
-                # Convert from UTC storage to user's timezone
                 utc_dt = pytz.UTC.localize(record.scheduled_datetime)
-                user_tz = pytz.timezone(self.env.user.tz or 'UTC')
-                local_dt = utc_dt.astimezone(user_tz)
-                # Format as "October 2025"
+                bk_tz = pytz.timezone(record._get_booking_tz())
+                local_dt = utc_dt.astimezone(bk_tz)
                 record.scheduled_month = local_dt.strftime('%B %Y')
             else:
                 record.scheduled_month = 'Unscheduled'
@@ -566,9 +588,8 @@ class HealthFieldServiceOrderUnified(models.Model):
                 # Create naive datetime first
                 naive_dt = datetime.combine(record.scheduled_date, datetime.min.time().replace(hour=hours, minute=minutes))
                 
-                # Convert to user's timezone then to UTC for storage
-                user_tz = pytz.timezone(self.env.user.tz or 'UTC')
-                local_dt = user_tz.localize(naive_dt)
+                bk_tz = pytz.timezone(record._get_booking_tz())
+                local_dt = bk_tz.localize(naive_dt)
                 utc_dt = local_dt.astimezone(pytz.UTC)
                 
                 record.scheduled_datetime = utc_dt.replace(tzinfo=None)  # Store as naive UTC
@@ -583,9 +604,8 @@ class HealthFieldServiceOrderUnified(models.Model):
                 # Create naive datetime first
                 naive_dt = datetime.combine(record.scheduled_date, datetime.min.time().replace(hour=hours, minute=minutes))
                 
-                # Convert to user's timezone then to UTC for storage
-                user_tz = pytz.timezone(self.env.user.tz or 'UTC')
-                local_dt = user_tz.localize(naive_dt)
+                bk_tz = pytz.timezone(record._get_booking_tz())
+                local_dt = bk_tz.localize(naive_dt)
                 utc_dt = local_dt.astimezone(pytz.UTC)
                 
                 record.scheduled_datetime = utc_dt.replace(tzinfo=None)  # Store as naive UTC
@@ -753,9 +773,16 @@ class HealthFieldServiceOrderUnified(models.Model):
     facility_id = fields.Many2one(
         'health.facility',
         string='Healthcare Facility',
-        domain=[('active', '=', True)],
-        help='Facility where service will be provided (for clinic/hospital visits)'
+        required=True,
+        domain="[('active', '=', True), ('catchment_province_id', '=', patient_catchment_province_id)]",
+        help='Facility where service will be provided. Timezone for booking is derived from this facility.'
     )
+
+    @api.onchange('patient_catchment_province_id')
+    def _onchange_patient_catchment_province(self):
+        """Reset facility when catchment province changes (domain filter will update)"""
+        if self.facility_id and self.facility_id.catchment_province_id != self.patient_catchment_province_id:
+            self.facility_id = False
     
     # Home Visit Address (Client Requirement)
     service_address = fields.Text(

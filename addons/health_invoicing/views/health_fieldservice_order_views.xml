@@ -50,15 +50,15 @@
                 
                 <!-- Primary Nurse Workflow Button -->
                 <button type="object" name="action_complete_service_with_payment"
-                        string="💰 Complete Service &amp; Collect Payment"
-                        class="btn-success"
+                        string="Complete Service &amp; Collect Payment"
+                        class="btn-success" icon="fa-money"
                         invisible="state != 'in_progress' or is_invoiced"
                         groups="health_invoicing.group_health_invoicing_user"
                         help="Complete service and launch payment collection workflow"/>
 
                 <!-- Service Package Selection Wizard -->
                 <button type="object" name="action_open_service_package_wizard"
-                        string="📦 Service Package" class="btn-secondary"
+                        string="Service Package" class="btn-secondary" icon="fa-cube"
                         invisible="state in ('completed', 'completed_pending_invoice', 'cancelled', 'closed')"
                         help="Select a prepaid service package for this booking"/>
 
@@ -67,7 +67,7 @@
                 
                 <!-- Pay Quote Button - Prepay service before completion -->
                 <button type="object" name="action_prepay_quote"
-                        string="💳 Pay Quote" class="btn-info"
+                        string="Pay Quote" class="btn-info" icon="fa-credit-card"
                         invisible="state not in ('confirmed', 'assigned', 'in_progress')"
                         help="Pay for the quoted services in advance"/>
                         
@@ -78,6 +78,7 @@
             <!-- Add Service Package Selection (Always Visible for Easy Package Booking) -->
             <xpath expr="//group[1]" position="after">
                 <group string="Service Package" name="package_selection"
+                       invisible="not package_id"
                        groups="health_invoicing.group_health_invoicing_user">
                     <group>
                         <field name="package_id" 
@@ -109,7 +110,7 @@
                 <!-- Package Status Alert -->
                 <div class="alert alert-info" role="alert" 
                      invisible="not package_id">
-                    <strong>📦 Package Selected:</strong> 
+                    <strong><i class="fa fa-cube"/> Package Selected:</strong> 
                     <field name="package_id" readonly="1" nolabel="1"/> - 
                     Services will be consumed from this prepaid package.
                 </div>

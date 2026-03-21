@@ -46,6 +46,24 @@ class HealthCatchmentProvince(models.Model):
         default=True,
         help="Is this catchment province currently active?"
     )
+
+    timezone = fields.Selection(
+        '_get_timezone_list',
+        string="Timezone",
+        default='Asia/Ho_Chi_Minh',
+        help="Default timezone for this catchment province. "
+             "Copied to facilities when they select this province."
+    )
+
+    @api.model
+    def _get_timezone_list(self):
+        """Get timezone list for the region"""
+        return [
+            ('Asia/Ho_Chi_Minh', 'Ho Chi Minh City (GMT+7)'),
+            ('Asia/Hanoi', 'Hanoi (GMT+7)'),
+            ('Asia/Bangkok', 'Bangkok (GMT+7)'),
+            ('UTC', 'UTC (GMT+0)'),
+        ]
     
     # Relationship to facilities
     facility_ids = fields.One2many(

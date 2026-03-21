@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <!-- Inject Export All button into the ListView control panel buttons -->
+    <t t-name="health_flow.ListControllerExportButton" t-inherit="web.ListView" t-inherit-mode="extension">
+        <xpath expr="//button[hasclass('o_list_button_add')]" position="after">
+            <button type="button"
+                    class="btn btn-outline-primary ms-1 o_list_export_all_btn"
+                    t-on-click="onExportAll">
+                <i class="fa fa-download me-1"/>
+                Export All
+            </button>
+        </xpath>
+    </t>
+
+</templates>

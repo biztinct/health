@@ -44,7 +44,9 @@ Technical Features:
         'web.assets_backend': [
             'health_flow/static/src/css/health_flow.css',
             'health_flow/static/src/js/health_flow_action.js',
+            'health_flow/static/src/js/list_export_button.js',
             'health_flow/static/src/xml/health_flow_templates.xml',
+            'health_flow/static/src/xml/list_export_button.xml',
         ],
     },
     'installable': True,

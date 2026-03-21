@@ -113,8 +113,9 @@
         <field name="search_view_id" ref="view_healthcare_ar_payments_filter"/>
         <field name="domain">[
             ('account_id.reconcile', '=', True),
-            ('balance', '!=', 0),
-            ('account_id.account_type', '=', 'asset_receivable')
+            ('account_id.account_type', '=', 'asset_receivable'),
+            ('move_id.move_type', 'in', ['out_invoice', 'out_refund']),
+            ('amount_residual', '!=', 0)
         ]</field>
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">

@@ -11,7 +11,7 @@
                 <field name="patient_id" invisible="1"/>
 
                 <div class="alert alert-info mb-3" role="alert">
-                    <strong>📦 Select a Service Package</strong> for client
+                    <strong><i class="fa fa-cube"/> Select a Service Package</strong> for client
                     <field name="patient_id" class="fw-bold" readonly="1" nolabel="1"/>.
                     <br/>
                     <small class="text-muted">

@@ -37,12 +37,12 @@
                     </group>
                     
                     <!-- Payment Choice (Main Decision) -->
-                    <separator string="💰 PAYMENT COLLECTION"/>
+                    <separator string="PAYMENT COLLECTION"/>
                     <field name="payment_choice" widget="radio" nolabel="1"/>
                     
                     <!-- Pay Now Options -->
                     <div invisible="payment_choice != 'pay_now'">
-                        <separator string="💳 PAYMENT METHOD"/>
+                        <separator string="PAYMENT METHOD"/>
                         <field name="payment_method" widget="radio" nolabel="1"/>
                     </div>
                     
@@ -65,7 +65,7 @@
                     
                     <!-- Payment Proof for Non-Cash -->
                     <div invisible="not payment_proof_required">
-                        <separator string="📸 PAYMENT PROOF"/>
+                        <separator string="PAYMENT PROOF"/>
                         <field name="payment_proof_required" invisible="1"/>
                         <field name="payment_proof_attachment_ids" nolabel="1" 
                                widget="many2many_binary"
@@ -73,7 +73,7 @@
                     </div>
                     
                     <!-- Nurse Notes -->
-                    <separator string="📝 SERVICE NOTES"/>
+                    <separator string="SERVICE NOTES"/>
                     <field name="nurse_notes" nolabel="1" 
                            placeholder="Additional notes about service delivery, patient condition, payment collection, etc."/>
                     
@@ -84,13 +84,13 @@
                 
                 <footer>
                     <!-- Pay Now Button -->
-                    <button string="💰 Collect Payment Now" name="action_process_payment" 
-                            type="object" class="btn-success"
+                    <button string="Collect Payment Now" name="action_process_payment" 
+                            type="object" class="btn-success" icon="fa-money"
                             invisible="payment_choice != 'pay_now'"/>
                     
                     <!-- Pay Later Button -->
-                    <button string="📧 Send Invoice (Pay Later)" name="action_process_payment" 
-                            type="object" class="btn-primary"
+                    <button string="Send Invoice (Pay Later)" name="action_process_payment" 
+                            type="object" class="btn-primary" icon="fa-envelope"
                             invisible="payment_choice != 'pay_later'"/>
                     
                     <button string="Cancel" class="btn-secondary" special="cancel"/>

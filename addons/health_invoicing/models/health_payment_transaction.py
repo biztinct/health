@@ -226,6 +226,13 @@ class HealthPaymentTransaction(models.Model):
         tracking=True
     )
     
+    cit_move_id = fields.Many2one(
+        'account.move',
+        string='CIT Journal Entry',
+        help='Cash in Transit journal entry (Debit CIT, Credit AR) created when nurse collects cash',
+        copy=False,
+    )
+    
     ar_reconciled = fields.Boolean(
         'AR Reconciled',
         related='payment_id.is_reconciled',

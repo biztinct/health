@@ -948,6 +948,78 @@ class HealthcareInvoice(models.Model):
             }
         }
 
+    def action_post(self):
+        """Override to check CRMv2 hard accounting rules (warning only)."""
+        result = super().action_post()
+        for move in self:
+            warnings = move._check_healthcare_posting_rules()
+            if warnings:
+                warning_text = '<br/>'.join(warnings)
+                move.message_post(
+                    body=f'⚠️ <b>CRMv2 Posting Rule Warning</b><br/>{warning_text}',
+                    subject='Posting Rule Warning',
+                    message_type='notification',
+                )
+        return result
+
+    def _check_healthcare_posting_rules(self):
+        """Check CRMv2 hard accounting rules. Returns list of warning messages."""
+        self.ensure_one()
+        warnings = []
+
+        sr_account = self.env.ref(
+            'health_invoicing.account_service_revenue', raise_if_not_found=False
+        )
+        ur_account = self.env.ref(
+            'health_invoicing.account_unearned_revenue', raise_if_not_found=False
+        )
+        cit_account = self.env.ref(
+            'health_invoicing.account_cash_in_transit_nurse', raise_if_not_found=False
+        )
+        if not sr_account:
+            return warnings  # Accounts not configured — skip checks
+
+        sr_id = sr_account.id
+        ur_id = ur_account.id if ur_account else 0
+        cit_id = cit_account.id if cit_account else 0
+
+        # Collect debit/credit accounts from the move lines
+        debit_account_ids = set()
+        credit_account_ids = set()
+        debit_account_types = set()
+        credit_account_types = set()
+
+        for line in self.line_ids:
+            if line.debit > 0:
+                debit_account_ids.add(line.account_id.id)
+                debit_account_types.add(line.account_id.account_type)
+            if line.credit > 0:
+                credit_account_ids.add(line.account_id.id)
+                credit_account_types.add(line.account_id.account_type)
+
+        # Rule 4: When SR is credited, only UR, AR, or CIT may be on the debit side
+        if sr_id in credit_account_ids:
+            allowed_debit_types = {'asset_receivable'}  # AR
+            allowed_debit_ids = {ur_id, cit_id} - {0}
+            for acct_id in debit_account_ids:
+                acct = self.env['account.account'].browse(acct_id)
+                if acct_id not in allowed_debit_ids and acct.account_type not in allowed_debit_types:
+                    warnings.append(
+                        f'Rule 4: Account "{acct.name}" (type: {acct.account_type}) '
+                        f'debited while Service Revenue is credited. '
+                        f'Only UR, AR, or CIT should be on the debit side.'
+                    )
+
+        # Rule 8: Cash/Bank must NOT directly credit SR
+        cash_types = {'asset_cash'}
+        if sr_id in credit_account_ids and debit_account_types & cash_types:
+            warnings.append(
+                'Rule 8: Cash/Bank account is debiting while Service Revenue is credited. '
+                'Cash receipt should never directly credit Service Revenue.'
+            )
+
+        return warnings
+
 
 class HealthcareInvoiceLine(models.Model):
     """Healthcare-specific invoice line extensions"""

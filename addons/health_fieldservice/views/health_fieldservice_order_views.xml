@@ -79,10 +79,9 @@
                 <div class="alert alert-info" role="alert"
                      invisible="not sale_order_id or state != 'draft'"
                      groups="health_base.group_healthcare_operations_manager">
-                    <div class="d-flex align-items-center">
-                        <i class="fa fa-info-circle me-2" title="Information"/>
+                    <div>
                         <div>
-                            <strong>📋 Quote Available:</strong>
+                            <strong><i class="fa fa-file-text-o"/> Quote Available:</strong>
                             A quote exists for this booking. You can add items or confirm without a quote.
                             <a href="#" class="btn btn-link p-0" role="button" name="action_view_quote" type="object">
                                 Click here to view/edit quote
@@ -95,10 +94,9 @@
                 <div class="alert alert-warning" role="alert"
                      invisible="state != 'completed_pending_invoice'"
                      groups="health_base.group_healthcare_operations_manager">
-                    <div class="d-flex align-items-center">
-                        <i class="fa fa-clock-o me-2" title="Pending invoice reminder"/>
+                    <div>
                         <div>
-                            <strong>⏳ Awaiting Invoice:</strong>
+                            <strong><i class="fa fa-clock-o"/> Awaiting Invoice:</strong>
                             Service completed by part-time staff. Operations team needs to create the invoice.
                             <a href="#" class="btn btn-link p-0" role="button" name="action_create_final_invoice" type="object">
                                 Click here to create invoice
@@ -110,10 +108,9 @@
                 <!-- Completion Readiness Status Banner -->
                 <div class="alert alert-info" role="alert"
                      invisible="state not in ['in_progress'] or (clinical_notes_submitted and invoice_submitted)">
-                    <div class="d-flex align-items-center">
-                        <i class="fa fa-exclamation-circle me-2" title="Completion requirements"/>
+                    <div>
                         <div>
-                            <strong>📋 Service Completion Requirements:</strong>
+                            <strong><i class="fa fa-clipboard"/> Service Completion Requirements:</strong>
                             <ul class="mb-0 mt-2">
                                 <li invisible="clinical_notes_submitted">
                                     <strong>Clinical Notes:</strong> Required - Please complete clinical documentation
@@ -130,10 +127,9 @@
                 <div class="alert alert-warning" role="alert"
                      invisible="state != 'draft'"
                      groups="health_base.group_healthcare_operations_manager">
-                    <div class="d-flex align-items-center">
-                        <i class="fa fa-exclamation-triangle me-2" title="Confirmation requirements"/>
+                    <div>
                         <div>
-                            <strong>✅ Service Confirmation Requirements:</strong>
+                            <strong><i class="fa fa-check-circle text-success"/> Service Confirmation Requirements:</strong>
                             <p class="mb-0 mt-2">Before confirming this booking, you must complete ONE of the following:</p>
                             <ul class="mb-0 mt-2">
                                 <li>
@@ -241,7 +237,10 @@
                                            context="{'form_view_ref': 'health_base.view_health_patient_form'}"/>
                                     <field name="service_type"/>
                                     <field name="has_staff_assigned" invisible="1"/>
+                                    <field name="patient_catchment_province_id"/>
+                                    <field name="facility_id"/>
                                     <field name="scheduled_datetime" readonly="has_staff_assigned"/>
+                                    <field name="booking_timezone" readonly="1"/>
                                     <field name="scheduled_duration" widget="integer"/>
                                     <field name="team_id"/>
                                 </group>
@@ -358,10 +357,10 @@
                                     </div>
                                 </div>
                                 <div class="alert alert-warning" role="alert" invisible="clinical_notes_submitted">
-                                    <p><strong>⚠️ Required:</strong> Clinical notes must be submitted before completing the service.</p>
+                                    <p><strong><i class="fa fa-exclamation-triangle"/> Required:</strong> Clinical notes must be submitted before completing the service.</p>
                                 </div>
                                 <div class="alert alert-success" role="alert" invisible="not clinical_notes_submitted">
-                                    <p><strong>✓ Clinical Notes Submitted:</strong> Clinical documentation is complete.</p>
+                                    <p><strong><i class="fa fa-check text-success"/> Clinical Notes Submitted:</strong> Clinical documentation is complete.</p>
                                 </div>
                                 <div class="vu-section-grid">
                                     <div class="vu-card">
@@ -474,7 +473,7 @@
                             </div>
                         </page>
 
-                        <page string="Real-time Communication" name="communication">
+                        <page string="Real-time Communication" name="communication" invisible="1">
                             <div class="vu-card">
                                 <div class="vu-card__title">
                                     <span class="vu-section__icon" data-icon="timeline"/>
@@ -549,7 +548,7 @@
                                     </div>
                                 </div>
                                 <div class="alert alert-info" role="alert">
-                                    <p><strong>ℹ️ Part-Time Staff Workflow:</strong> This service was completed by part-time/casual staff who do not have invoice creation permissions. Operations team has been notified to create the invoice.</p>
+                                    <p><strong><i class="fa fa-info-circle"/> Part-Time Staff Workflow:</strong> This service was completed by part-time/casual staff who do not have invoice creation permissions. Operations team has been notified to create the invoice.</p>
                                 </div>
                                 <div class="vu-section-grid">
                                     <div class="vu-card">

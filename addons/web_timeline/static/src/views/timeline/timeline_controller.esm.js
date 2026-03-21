@@ -245,6 +245,8 @@ export class TimelineController extends Component {
         if (item.group > 0) {
             context[`default_${this.model.last_group_bys[0]}`] = item.group;
         }
+        // Track whether the record was saved so onClose doesn't undo it
+        let recordSaved = false;
         // Show popup
         this.dialogService.add(
             FormViewDialog,
@@ -252,12 +254,20 @@ export class TimelineController extends Component {
                 resId: false,
                 context: makeContext([context], this.env.searchModel.context),
                 onRecordSaved: async (record) => {
-                    const new_record = await this.model.create_completed(record.resId);
-                    callback(new_record);
+                    recordSaved = true;
+                    // Reload full data so the item appears at its corrected
+                    // server-side datetime (e.g. from FSO), not at the click position.
+                    await this.model.load(this.getSearchProps());
+                    this.render();
                 },
                 resModel: this.model.model_name,
             },
-            {onClose: () => callback()}
+            {onClose: () => {
+                if (!recordSaved) {
+                    // Dialog closed without saving — remove the temporary item
+                    callback();
+                }
+            }}
         );
     }
 }

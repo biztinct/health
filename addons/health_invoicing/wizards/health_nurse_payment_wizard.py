@@ -354,6 +354,15 @@ class HealthNursePaymentWizard(models.TransientModel):
             })
         
         # Post invoice and submit to tax authorities
+        # CRMv2: Override income account to Service Revenue – Healthcare
+        sr_account = self.env.ref(
+            'health_invoicing.account_service_revenue', raise_if_not_found=False
+        )
+        if sr_account:
+            for line in invoice.invoice_line_ids:
+                if line.account_id and line.account_id.account_type in ('income', 'income_other'):
+                    line.account_id = sr_account.id
+
         invoice.action_post()
         
         # Vietnamese tax submission (only if Red Invoice is enabled)
@@ -383,6 +392,10 @@ class HealthNursePaymentWizard(models.TransientModel):
                 fso_id=self.fso_id.id,
                 quantity=self.services_to_consume
             )
+            
+            # CRMv2 Scenario B: Service delivered (prepaid) → Debit UR, Credit SR
+            # Reclassify revenue from Unearned Revenue to Service Revenue
+            self._create_ur_to_sr_reclassification(invoice)
             
             # Create transaction record for prepaid consumption
             transaction = self.env['health.payment.transaction'].create({
@@ -419,9 +432,15 @@ class HealthNursePaymentWizard(models.TransientModel):
                 'ar_reconciliation_date': fields.Datetime.now() if not is_cash else False,
             })
             
-            # Create account.payment for non-cash payments immediately
-            # and reconcile with invoice — goes straight to Reconciled in AR
-            if not is_cash:
+            if is_cash:
+                # CRMv2 Scenario E: Nurse receives cash
+                # Entry 1 (invoice posting already did): Debit AR → Credit SR
+                # Entry 2 (here): Debit CIT → Credit AR
+                # This settles the AR immediately but tracks cash as "in transit"
+                self._create_cit_journal_entry(transaction, invoice)
+            else:
+                # Create account.payment for non-cash payments immediately
+                # and reconcile with invoice — goes straight to Reconciled in AR
                 ar_payment = self._create_ar_payment(transaction, invoice)
                 transaction.payment_id = ar_payment.id
         
@@ -579,3 +598,171 @@ class HealthNursePaymentWizard(models.TransientModel):
             return True
             
         return False
+
+    def _create_cit_journal_entry(self, transaction, invoice):
+        """CRMv2 Scenario E: Nurse receives cash → Debit CIT, Credit AR.
+
+        Creates a journal entry that:
+        - Debits Cash in Transit – Nurse (asset) — cash is with the nurse
+        - Credits Accounts Receivable — AR is settled from the client's perspective
+        Then reconciles the AR line with the invoice so the invoice shows as Paid.
+        """
+        cit_account = self.env.ref(
+            'health_invoicing.account_cash_in_transit_nurse', raise_if_not_found=False
+        )
+        if not cit_account:
+            return False
+
+        # Get the AR account from the invoice
+        ar_lines = invoice.line_ids.filtered(
+            lambda l: l.account_id.account_type == 'asset_receivable'
+        )
+        if not ar_lines:
+            return False
+        ar_account = ar_lines[0].account_id
+
+        amount = abs(self.final_amount)
+
+        # Use a miscellaneous journal for the CIT entry
+        misc_journal = self.env['account.journal'].search([
+            ('type', '=', 'general'),
+            ('company_id', '=', self.env.company.id),
+        ], limit=1)
+        if not misc_journal:
+            return False
+
+        # Create journal entry: Debit CIT, Credit AR
+        move_vals = {
+            'move_type': 'entry',
+            'journal_id': misc_journal.id,
+            'date': fields.Date.today(),
+            'ref': f'Nurse cash collection: {self.fso_id.name}',
+            'line_ids': [
+                (0, 0, {
+                    'name': f'Cash in Transit - Nurse: {self.fso_id.name}',
+                    'account_id': cit_account.id,
+                    'partner_id': self.patient_id.id,
+                    'debit': amount,
+                    'credit': 0.0,
+                }),
+                (0, 0, {
+                    'name': f'AR settled by nurse cash: {self.fso_id.name}',
+                    'account_id': ar_account.id,
+                    'partner_id': self.patient_id.id,
+                    'debit': 0.0,
+                    'credit': amount,
+                }),
+            ],
+        }
+
+        cit_move = self.env['account.move'].create(move_vals)
+        cit_move.action_post()
+
+        # Store the CIT move on the transaction for the cash delivery wizard
+        transaction.write({
+            'cit_move_id': cit_move.id,
+        })
+
+        # Reconcile the AR credit line with the invoice's AR debit line
+        # so the invoice shows as "Paid"
+        cit_ar_lines = cit_move.line_ids.filtered(
+            lambda l: l.account_id.account_type == 'asset_receivable'
+                      and not l.reconciled
+        )
+        invoice_ar_lines = invoice.line_ids.filtered(
+            lambda l: l.account_id.account_type == 'asset_receivable'
+                      and not l.reconciled
+        )
+        if cit_ar_lines and invoice_ar_lines:
+            try:
+                (cit_ar_lines + invoice_ar_lines).reconcile()
+            except Exception:
+                pass  # Don't block on reconciliation failure
+
+        # Log to AR Transaction Log
+        ARLog = self.env.get('health.ar.transaction.log')
+        if ARLog is not None:
+            try:
+                ARLog._log_move_posting(
+                    cit_move, event_type='payment',
+                    booking=self.fso_id,
+                    partner=self.patient_id,
+                    crm_lead=self.fso_id.crm_lead_id if self.fso_id and hasattr(self.fso_id, 'crm_lead_id') else None,
+                )
+            except Exception:
+                pass
+
+        return cit_move
+
+    def _create_ur_to_sr_reclassification(self, invoice):
+        """CRMv2 Scenario B: Create UR → SR reclassification journal entry.
+
+        When a prepaid service is consumed, revenue must be moved from
+        Unearned Revenue (liability) to Service Revenue (income).
+        This entry: Debit UR, Credit SR for the consumed amount.
+        """
+        ur_account = self.env.ref(
+            'health_invoicing.account_unearned_revenue', raise_if_not_found=False
+        )
+        sr_account = self.env.ref(
+            'health_invoicing.account_service_revenue', raise_if_not_found=False
+        )
+        if not ur_account or not sr_account:
+            return False
+
+        # Use the price_per_service from the package × consumed quantity
+        amount = 0.0
+        if self.prepaid_package_id and self.prepaid_package_id.price_per_service:
+            amount = self.prepaid_package_id.price_per_service * self.services_to_consume
+        if not amount:
+            amount = self.final_amount
+
+        # Find a miscellaneous journal for the reclassification entry
+        misc_journal = self.env['account.journal'].search([
+            ('type', '=', 'general'),
+            ('company_id', '=', self.env.company.id),
+        ], limit=1)
+        if not misc_journal:
+            return False
+
+        # Create the reclassification journal entry
+        move_vals = {
+            'move_type': 'entry',
+            'journal_id': misc_journal.id,
+            'date': fields.Date.today(),
+            'ref': f'Prepaid revenue recognition: {self.fso_id.name}',
+            'line_ids': [
+                (0, 0, {
+                    'name': f'UR→SR: Prepaid service consumed - {self.fso_id.name}',
+                    'account_id': ur_account.id,
+                    'partner_id': self.patient_id.id,
+                    'debit': amount,
+                    'credit': 0.0,
+                }),
+                (0, 0, {
+                    'name': f'UR→SR: Service revenue recognized - {self.fso_id.name}',
+                    'account_id': sr_account.id,
+                    'partner_id': self.patient_id.id,
+                    'debit': 0.0,
+                    'credit': amount,
+                }),
+            ],
+        }
+
+        reclass_move = self.env['account.move'].create(move_vals)
+        reclass_move.action_post()
+
+        # Log to AR Transaction Log
+        ARLog = self.env.get('health.ar.transaction.log')
+        if ARLog is not None:
+            try:
+                ARLog._log_move_posting(
+                    reclass_move, event_type='service_delivery',
+                    booking=self.fso_id,
+                    partner=self.patient_id,
+                    crm_lead=self.fso_id.crm_lead_id if self.fso_id and hasattr(self.fso_id, 'crm_lead_id') else None,
+                )
+            except Exception:
+                pass  # Don't block service delivery on logging failure
+
+        return reclass_move

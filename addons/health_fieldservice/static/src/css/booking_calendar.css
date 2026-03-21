@@ -1,0 +1,364 @@
+/* ============================================================
+   VAFHS Healthcare — Booking Calendar Styling
+   Modern, pastel-themed calendar with clean typography
+   ============================================================ */
+
+/* ── Calendar grid: subtle borders, warm background ── */
+.o_calendar_view .fc .fc-scrollgrid {
+    border-color: #d1d9e6 !important;
+}
+
+.o_calendar_view .fc .fc-scrollgrid td,
+.o_calendar_view .fc .fc-scrollgrid th {
+    border-color: #d1d9e6 !important;
+    border-width: 1.5px !important;
+}
+
+/* Day cell styling: light warm background */
+.o_calendar_view .fc .fc-daygrid-day {
+    background: #fafbfd !important;
+    transition: background 0.2s ease;
+}
+
+.o_calendar_view .fc .fc-daygrid-day:hover {
+    background: #f0f4fa !important;
+}
+
+/* Today highlight: soft blue accent */
+.o_calendar_view .fc .fc-day-today {
+    background: #eef4ff !important;
+}
+
+.o_calendar_view .fc .fc-day-today .fc-daygrid-day-number {
+    background: #4f8cff;
+    color: #fff;
+    border-radius: 50%;
+    width: 28px;
+    height: 28px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 13px;
+}
+
+/* Column headers: clean uppercase */
+.o_calendar_view .fc .fc-col-header-cell {
+    background: #f4f6fb !important;
+    border-bottom: 2.5px solid #c5cedb !important;
+    padding: 8px 0 !important;
+}
+
+.o_calendar_view .fc .fc-col-header-cell-cushion {
+    font-weight: 700 !important;
+    font-size: 11px !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.8px !important;
+    color: #5a6a7e !important;
+}
+
+/* Week number column */
+.o_calendar_view .fc .fc-daygrid-day.fc-day-other {
+    background: #f7f8fa !important;
+}
+
+.o_calendar_view .fc .fc-daygrid-day.fc-day-other .fc-daygrid-day-number {
+    opacity: 0.4;
+}
+
+/* Day numbers */
+.o_calendar_view .fc .fc-daygrid-day-number {
+    font-weight: 600;
+    font-size: 13px;
+    color: #4a5568;
+    padding: 6px 8px !important;
+}
+
+
+/* ══════════════════════════════════════════════════════════════
+   EVENT PILLS — Force pastel backgrounds + black thick border
+   Uses extreme specificity to override Odoo inline styles
+   ══════════════════════════════════════════════════════════════ */
+
+/* Master rule: outer event gets thick black border only */
+.o_calendar_view .fc-event,
+.o_calendar_view .fc .fc-event,
+.o_calendar_view .fc .fc-daygrid-event,
+.o_calendar_view .fc .fc-daygrid-event-harness .fc-event,
+.o_calendar_view .fc .fc-h-event,
+.o_calendar_view .fc-daygrid-event,
+.o_calendar_renderer .fc-event {
+    border: 2.5px solid #222 !important;
+    border-radius: 6px !important;
+    padding: 2px 6px !important;
+    margin: 1.5px 2px !important;
+    font-size: 12px !important;
+    font-weight: 600 !important;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08) !important;
+    overflow: hidden !important;
+}
+
+/* Inner content: NO border, NO padding — just inherit parent */
+.o_calendar_view .fc-event .fc-event-main,
+.o_calendar_view .fc .fc-event .fc-event-main,
+.o_calendar_view .fc .fc-daygrid-event .fc-event-main,
+.o_calendar_view .fc .fc-h-event .fc-event-main {
+    border: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+.o_calendar_view .fc-event:hover,
+.o_calendar_view .fc .fc-event:hover,
+.o_calendar_view .fc .fc-daygrid-event:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15) !important;
+    z-index: 10;
+}
+
+/* ── Pastel color overrides — uses [style*=] to beat inline ── */
+
+/* Color 0 – Soft Rose */
+.o_calendar_view .o_calendar_color_0,
+.o_calendar_view .fc .o_calendar_color_0,
+.o_calendar_view [class*="o_calendar_color_0"].fc-event,
+.o_calendar_view .fc-event.o_calendar_color_0 {
+    background-color: #fce4ec !important;
+    color: #880e4f !important;
+}
+
+/* Color 1 – Lavender */
+.o_calendar_view .o_calendar_color_1,
+.o_calendar_view .fc .o_calendar_color_1,
+.o_calendar_view [class*="o_calendar_color_1"].fc-event,
+.o_calendar_view .fc-event.o_calendar_color_1 {
+    background-color: #ede7f6 !important;
+    color: #4a148c !important;
+}
+
+/* Color 2 – Mint */
+.o_calendar_view .o_calendar_color_2,
+.o_calendar_view .fc .o_calendar_color_2,
+.o_calendar_view [class*="o_calendar_color_2"].fc-event,
+.o_calendar_view .fc-event.o_calendar_color_2 {
+    background-color: #e0f2f1 !important;
+    color: #004d40 !important;
+}
+
+/* Color 3 – Sky Blue */
+.o_calendar_view .o_calendar_color_3,
+.o_calendar_view .fc .o_calendar_color_3,
+.o_calendar_view [class*="o_calendar_color_3"].fc-event,
+.o_calendar_view .fc-event.o_calendar_color_3 {
+    background-color: #e3f2fd !important;
+    color: #0d47a1 !important;
+}
+
+/* Color 4 – Peach */
+.o_calendar_view .o_calendar_color_4,
+.o_calendar_view .fc .o_calendar_color_4,
+.o_calendar_view [class*="o_calendar_color_4"].fc-event,
+.o_calendar_view .fc-event.o_calendar_color_4 {
+    background-color: #fff3e0 !important;
+    color: #e65100 !important;
+}
+
+/* Color 5 – Soft Green */
+.o_calendar_view .o_calendar_color_5,
+.o_calendar_view .fc .o_calendar_color_5,
+.o_calendar_view [class*="o_calendar_color_5"].fc-event,
+.o_calendar_view .fc-event.o_calendar_color_5 {
+    background-color: #e8f5e9 !important;
+    color: #1b5e20 !important;
+}
+
+/* Color 6 – Coral */
+.o_calendar_view .o_calendar_color_6,
+.o_calendar_view .fc .o_calendar_color_6,
+.o_calendar_view [class*="o_calendar_color_6"].fc-event,
+.o_calendar_view .fc-event.o_calendar_color_6 {
+    background-color: #fbe9e7 !important;
+    color: #bf360c !important;
+}
+
+/* Color 7 – Powder Blue */
+.o_calendar_view .o_calendar_color_7,
+.o_calendar_view .fc .o_calendar_color_7,
+.o_calendar_view [class*="o_calendar_color_7"].fc-event,
+.o_calendar_view .fc-event.o_calendar_color_7 {
+    background-color: #e1f5fe !important;
+    color: #01579b !important;
+}
+
+/* Color 8 – Butter Yellow */
+.o_calendar_view .o_calendar_color_8,
+.o_calendar_view .fc .o_calendar_color_8,
+.o_calendar_view [class*="o_calendar_color_8"].fc-event,
+.o_calendar_view .fc-event.o_calendar_color_8 {
+    background-color: #fffde7 !important;
+    color: #f57f17 !important;
+}
+
+/* Color 9 – Lilac */
+.o_calendar_view .o_calendar_color_9,
+.o_calendar_view .fc .o_calendar_color_9,
+.o_calendar_view [class*="o_calendar_color_9"].fc-event,
+.o_calendar_view .fc-event.o_calendar_color_9 {
+    background-color: #f3e5f5 !important;
+    color: #6a1b9a !important;
+}
+
+/* Color 10 – Teal */
+.o_calendar_view .o_calendar_color_10,
+.o_calendar_view .fc .o_calendar_color_10,
+.o_calendar_view [class*="o_calendar_color_10"].fc-event,
+.o_calendar_view .fc-event.o_calendar_color_10 {
+    background-color: #e0f7fa !important;
+    color: #006064 !important;
+}
+
+/* Color 11 – Warm Gray */
+.o_calendar_view .o_calendar_color_11,
+.o_calendar_view .fc .o_calendar_color_11,
+.o_calendar_view [class*="o_calendar_color_11"].fc-event,
+.o_calendar_view .fc-event.o_calendar_color_11 {
+    background-color: #eceff1 !important;
+    color: #37474f !important;
+}
+
+/* ── Nuclear override: strip Odoo inline background-color ── */
+.o_calendar_view .fc-event[style],
+.o_calendar_view .fc-event[style] .fc-event-main {
+    background-color: inherit !important;
+}
+
+/* Force the .fc-event-main inside events to also be transparent */
+.o_calendar_view .fc .fc-event .fc-event-main,
+.o_calendar_view .fc .fc-daygrid-event .fc-event-main {
+    background: transparent !important;
+    color: inherit !important;
+}
+
+/* The dot / bullet in event also needs to pick up the color */
+.o_calendar_view .fc .fc-daygrid-event-dot {
+    display: none !important;
+}
+
+/* ── Event text: readable ── */
+.o_calendar_view .fc .fc-event .fc-event-title {
+    font-weight: 600 !important;
+    line-height: 1.4 !important;
+}
+
+.o_calendar_view .fc .fc-event .fc-event-time {
+    font-weight: 700 !important;
+    opacity: 0.85;
+}
+
+/* ── "+N more" link styling ── */
+.o_calendar_view .fc .fc-daygrid-more-link {
+    font-size: 11px !important;
+    font-weight: 600 !important;
+    color: #5c6bc0 !important;
+    padding: 2px 6px !important;
+    border-radius: 4px !important;
+    background: #eef0ff !important;
+    transition: background 0.2s ease;
+}
+
+.o_calendar_view .fc .fc-daygrid-more-link:hover {
+    background: #d9ddff !important;
+    text-decoration: none;
+}
+
+/* ── Toolbar / header area ── */
+.o_calendar_view .o_calendar_header {
+    border-bottom: 2px solid #e2e8f0 !important;
+    padding-bottom: 10px !important;
+    margin-bottom: 12px !important;
+}
+
+.o_calendar_view .fc .fc-toolbar-title {
+    font-weight: 700 !important;
+    font-size: 20px !important;
+    color: #2d3748 !important;
+}
+
+/* Navigation buttons */
+.o_calendar_view .fc .fc-button-primary {
+    background-color: #f7fafc !important;
+    border: 1.5px solid #cbd5e0 !important;
+    color: #4a5568 !important;
+    font-weight: 600 !important;
+    border-radius: 6px !important;
+    transition: all 0.2s ease;
+}
+
+.o_calendar_view .fc .fc-button-primary:hover {
+    background-color: #edf2f7 !important;
+    border-color: #a0aec0 !important;
+    color: #2d3748 !important;
+}
+
+.o_calendar_view .fc .fc-button-primary.fc-button-active,
+.o_calendar_view .fc .fc-button-primary:active {
+    background-color: #4f8cff !important;
+    border-color: #4f8cff !important;
+    color: #fff !important;
+}
+
+/* ── Side panel / filter chips ── */
+.o_calendar_view .o_calendar_filter_item {
+    border-radius: 8px !important;
+    padding: 4px 10px !important;
+    margin: 2px 0 !important;
+    transition: background 0.2s ease;
+}
+
+.o_calendar_view .o_calendar_filter_item:hover {
+    background: #f0f4fa;
+}
+
+/* ── Popover / event popup ── */
+.o_cw_popover {
+    border-radius: 10px !important;
+    border: 1.5px solid #e2e8f0 !important;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12) !important;
+}
+
+.o_cw_popover .popover-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+    color: #fff !important;
+    border-radius: 8px 8px 0 0 !important;
+    font-weight: 600 !important;
+    border: none !important;
+}
+
+.o_cw_popover .popover-body {
+    padding: 12px 16px !important;
+}
+
+/* ── Week / day time grid styling ── */
+.o_calendar_view .fc .fc-timegrid-slot {
+    border-color: #e8ecf2 !important;
+    height: 46px !important;
+}
+
+.o_calendar_view .fc .fc-timegrid-axis-cushion {
+    font-size: 11px !important;
+    font-weight: 500 !important;
+    color: #718096 !important;
+}
+
+/* Current time indicator */
+.o_calendar_view .fc .fc-timegrid-now-indicator-line {
+    border-color: #e53e3e !important;
+    border-width: 2px !important;
+}
+
+.o_calendar_view .fc .fc-timegrid-now-indicator-arrow {
+    border-color: #e53e3e !important;
+}

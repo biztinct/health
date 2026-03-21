@@ -63,10 +63,11 @@
     border-radius: 8px;
     background: transparent;
     color: #888;
-    font-size: 12.5px;
+    font-size: 12px;
     font-weight: 500;
     cursor: pointer;
     transition: all 0.2s ease;
+    white-space: nowrap;
 
     .tp_svg_icon {
         color: #aaa;

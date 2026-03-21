@@ -190,7 +190,111 @@ class HealthCashDeliveryWizard(models.TransientModel):
         }
     
     def _create_standard_payment(self):
-        """Create standard payment record using Odoo AR system"""
+        """Create payment record to settle Cash in Transit when OM receives cash.
+        
+        CRMv2 flow:
+        - Step 1 (nurse collects): Debit CIT → Credit AR (already done)
+        - Step 2 (OM receives - HERE): Debit Cash → Credit CIT
+        
+        If no CIT entry exists (legacy transactions), fall back to standard
+        payment: Debit Cash → Credit AR.
+        """
+        # Check if this transaction has a CIT entry to settle
+        cit_move = self.transaction_id.cit_move_id if hasattr(self.transaction_id, 'cit_move_id') else False
+        
+        if cit_move:
+            # New CRMv2 flow: Debit Cash, Credit CIT
+            return self._create_cit_settlement_entry(cit_move)
+        else:
+            # Legacy fallback: standard Debit Cash → Credit AR
+            return self._create_legacy_cash_payment()
+
+    def _create_cit_settlement_entry(self, cit_move):
+        """Create journal entry: Debit Cash → Credit CIT (OM receives cash from nurse)."""
+        cit_account = self.env.ref(
+            'health_invoicing.account_cash_in_transit_nurse', raise_if_not_found=False
+        )
+        if not cit_account:
+            return self._create_legacy_cash_payment()
+
+        # Get the cash account from the Cash journal
+        cash_journal = self.env['account.journal'].search([
+            ('type', '=', 'cash'),
+            ('company_id', '=', self.env.company.id)
+        ], limit=1)
+        if not cash_journal:
+            raise UserError(_('No Cash journal found. Please configure one in Accounting settings.'))
+
+        # Use the cash journal's default debit account
+        cash_account = cash_journal.default_account_id
+        if not cash_account:
+            raise UserError(_('Cash journal has no default account configured.'))
+
+        amount = abs(self.transaction_id.amount)
+
+        # Use a miscellaneous journal for the CIT settlement
+        misc_journal = self.env['account.journal'].search([
+            ('type', '=', 'general'),
+            ('company_id', '=', self.env.company.id),
+        ], limit=1)
+        if not misc_journal:
+            misc_journal = cash_journal  # Fallback to cash journal
+
+        # Create journal entry: Debit Cash, Credit CIT
+        move_vals = {
+            'move_type': 'entry',
+            'journal_id': misc_journal.id,
+            'date': self.delivery_date.date() if self.delivery_date else fields.Date.today(),
+            'ref': f'Cash handover to OM: {self.transaction_id.name}',
+            'line_ids': [
+                (0, 0, {
+                    'name': f'Cash received from nurse: {self.transaction_id.name}',
+                    'account_id': cash_account.id,
+                    'partner_id': self.transaction_id.patient_id.id,
+                    'debit': amount,
+                    'credit': 0.0,
+                }),
+                (0, 0, {
+                    'name': f'CIT settled - nurse cash delivered: {self.transaction_id.name}',
+                    'account_id': cit_account.id,
+                    'partner_id': self.transaction_id.patient_id.id,
+                    'debit': 0.0,
+                    'credit': amount,
+                }),
+            ],
+        }
+
+        settlement_move = self.env['account.move'].create(move_vals)
+        settlement_move.action_post()
+
+        # Update transaction status
+        self.transaction_id.write({
+            'status': 'reconciled',
+            'ar_reconciliation_date': fields.Datetime.now()
+        })
+
+        # Log to AR Transaction Log
+        ARLog = self.env.get('health.ar.transaction.log')
+        if ARLog is not None:
+            try:
+                # Get booking from the transaction's FSO link
+                txn = self.transaction_id
+                fso = txn.fso_id if hasattr(txn, 'fso_id') and txn.fso_id else None
+                patient = txn.patient_id if txn.patient_id else None
+                crm = fso.crm_lead_id if fso and hasattr(fso, 'crm_lead_id') else None
+                ARLog._log_move_posting(
+                    settlement_move, event_type='handover',
+                    booking=fso,
+                    partner=patient,
+                    crm_lead=crm,
+                )
+            except Exception:
+                pass
+
+        return settlement_move
+
+    def _create_legacy_cash_payment(self):
+        """Legacy fallback: Create standard payment (Debit Cash → Credit AR)."""
         # Get appropriate cash journal
         cash_journal = self.env['account.journal'].search([
             ('type', '=', 'cash'),
