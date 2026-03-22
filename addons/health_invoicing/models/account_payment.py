@@ -98,6 +98,39 @@ class HealthcarePayment(models.Model):
                     booking = inv.fieldservice_order_id
                     break
 
+        # Fallback: find invoices from the context (Register Payment wizard source)
+        if not booking:
+            active_ids = self.env.context.get('active_ids', [])
+            active_model = self.env.context.get('active_model', '')
+            if active_model == 'account.move' and active_ids:
+                ctx_invoices = self.env['account.move'].browse(active_ids)
+                for inv in ctx_invoices:
+                    if not invoice:
+                        invoice = inv
+                    if hasattr(inv, 'fieldservice_order_id') and inv.fieldservice_order_id:
+                        booking = inv.fieldservice_order_id
+                        break
+
+        # Fallback: find most recent invoice for the same partner that has a booking
+        if not booking and patient:
+            partner_invoices = self.env['account.move'].search([
+                ('partner_id', '=', patient.id),
+                ('move_type', '=', 'out_invoice'),
+                ('fieldservice_order_id', '!=', False),
+            ], order='id desc', limit=1)
+            if partner_invoices:
+                booking = partner_invoices.fieldservice_order_id
+                if not invoice:
+                    invoice = partner_invoices
+
+        # Fallback: check payment's own fieldservice_order_id (advance payments)
+        if not booking and self.fieldservice_order_id:
+            booking = self.fieldservice_order_id
+
+        # Fallback: check payment's journal entry for booking link
+        if not booking and self.move_id and hasattr(self.move_id, 'fieldservice_order_id') and self.move_id.fieldservice_order_id:
+            booking = self.move_id.fieldservice_order_id
+
         # Determine payment method from journal type
         journal_type = self.journal_id.type if self.journal_id else ''
         if journal_type == 'cash':

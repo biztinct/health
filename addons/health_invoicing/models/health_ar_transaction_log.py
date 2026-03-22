@@ -404,6 +404,43 @@ class HealthARTransactionLog(models.Model):
                         facility = booking.facility_id
                     break
 
+        # Fallback: find invoices from the context (Register Payment wizard source)
+        if not booking:
+            active_ids = self.env.context.get('active_ids', [])
+            active_model = self.env.context.get('active_model', '')
+            if active_model == 'account.move' and active_ids:
+                invoices = self.env['account.move'].browse(active_ids)
+                for inv in invoices:
+                    if hasattr(inv, 'fieldservice_order_id') and inv.fieldservice_order_id:
+                        booking = inv.fieldservice_order_id
+                        if hasattr(booking, 'crm_lead_id'):
+                            crm_lead = booking.crm_lead_id
+                        if hasattr(booking, 'facility_id'):
+                            facility = booking.facility_id
+                        break
+
+        # Fallback: find most recent invoice for the same partner that has a booking
+        if not booking and payment.partner_id:
+            partner_invoices = self.env['account.move'].search([
+                ('partner_id', '=', payment.partner_id.id),
+                ('move_type', '=', 'out_invoice'),
+                ('fieldservice_order_id', '!=', False),
+            ], order='id desc', limit=1)
+            if partner_invoices:
+                booking = partner_invoices.fieldservice_order_id
+                if hasattr(booking, 'crm_lead_id'):
+                    crm_lead = booking.crm_lead_id
+                if hasattr(booking, 'facility_id'):
+                    facility = booking.facility_id
+
+        # Fallback: check payment's own fieldservice_order_id
+        if not booking and hasattr(payment, 'fieldservice_order_id') and payment.fieldservice_order_id:
+            booking = payment.fieldservice_order_id
+            if hasattr(booking, 'crm_lead_id'):
+                crm_lead = booking.crm_lead_id
+            if hasattr(booking, 'facility_id'):
+                facility = booking.facility_id
+
         self.create({
             'crm_event_id': crm_lead.id if crm_lead else False,
             'booking_id': booking.id if booking else False,
