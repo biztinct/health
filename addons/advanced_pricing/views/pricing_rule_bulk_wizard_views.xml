@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Bulk Submit/Approve Wizard Form View -->
+    <record id="view_pricing_rule_bulk_wizard_form" model="ir.ui.view">
+        <field name="name">pricing.rule.bulk.wizard.form</field>
+        <field name="model">pricing.rule.bulk.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Bulk Pricing Rule Action">
+                <sheet>
+                    <!-- Header info -->
+                    <div class="alert alert-info" role="alert"
+                         invisible="mode != 'submit'">
+                        <strong><i class="fa fa-paper-plane"/> Submit for Approval</strong>
+                        — All draft rules are pre-selected. Toggle off any you don't want to submit.
+                    </div>
+                    <div class="alert alert-success" role="alert"
+                         invisible="mode != 'approve'">
+                        <strong><i class="fa fa-check-circle"/> Approve Rules</strong>
+                        — All pending rules are pre-selected. Toggle off any you don't want to approve.
+                    </div>
+
+                    <group>
+                        <group>
+                            <field name="mode" invisible="1"/>
+                            <field name="rule_count" string="Total Rules"/>
+                            <field name="selected_count" string="Selected"/>
+                        </group>
+                    </group>
+
+                    <!-- Rules list -->
+                    <field name="line_ids" nolabel="1">
+                        <list editable="bottom" create="false" delete="false">
+                            <field name="selected" widget="boolean_toggle"/>
+                            <field name="name"/>
+                            <field name="region" optional="show"/>
+                            <field name="item_code" optional="show"/>
+                            <field name="engine_name" optional="show"/>
+                            <field name="action_type_display" string="Action" optional="show"/>
+                            <field name="action_value" optional="show"/>
+                            <field name="rule_id" column_invisible="1"/>
+                        </list>
+                    </field>
+                </sheet>
+                <footer>
+                    <button name="action_confirm" type="object"
+                            string="Submit for Approval" class="btn-primary"
+                            icon="fa-paper-plane"
+                            invisible="mode != 'submit'"/>
+                    <button name="action_confirm" type="object"
+                            string="Approve Selected" class="btn-success"
+                            icon="fa-check"
+                            invisible="mode != 'approve'"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action: Bulk Submit for Approval -->
+    <record id="action_pricing_rule_bulk_submit" model="ir.actions.act_window">
+        <field name="name">Submit Rules for Approval</field>
+        <field name="res_model">pricing.rule.bulk.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+        <field name="context">{'default_mode': 'submit'}</field>
+    </record>
+
+    <!-- Action: Bulk Approve -->
+    <record id="action_pricing_rule_bulk_approve" model="ir.actions.act_window">
+        <field name="name">Approve Pricing Rules</field>
+        <field name="res_model">pricing.rule.bulk.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+        <field name="context">{'default_mode': 'approve'}</field>
+    </record>
+
+</odoo>

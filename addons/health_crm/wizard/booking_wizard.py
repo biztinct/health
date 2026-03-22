@@ -280,11 +280,37 @@ class HealthBookingWizard(models.TransientModel):
     # STEP 4: ASSIGN BOOKING
     # =========================================================================
     
+    assigned_staff_ids = fields.Many2many(
+        'hr.employee',
+        'booking_wizard_assigned_staff_rel',
+        'wizard_id', 'employee_id',
+        string='Assigned Staff',
+        domain="[('is_healthcare_staff', '=', True), ('employment_status', '=', 'active'), ('healthcare_role', '!=', 'doctor'), ('primary_facility_id', '=', facility_id)]",
+        help='Staff members to assign to this booking (filtered by selected facility)'
+    )
+    
+    lead_staff_id = fields.Many2one(
+        'hr.employee',
+        string='Lead Staff',
+        domain="[('is_healthcare_staff', '=', True), ('employment_status', '=', 'active'), ('healthcare_role', '!=', 'doctor'), ('primary_facility_id', '=', facility_id)]",
+        help='Primary staff member responsible for this service'
+    )
+    
+    assigned_doctor_ids = fields.Many2many(
+        'hr.employee',
+        'booking_wizard_assigned_doctor_rel',
+        'wizard_id', 'doctor_id',
+        string='Assigned Doctors',
+        domain="[('is_healthcare_staff', '=', True), ('healthcare_role', '=', 'doctor'), ('employment_status', '=', 'active'), ('primary_facility_id', '=', facility_id)]",
+        help='Doctors to assign to this booking (filtered by selected facility)'
+    )
+    
+    # Legacy field - kept for backward compatibility
     assigned_nurse_id = fields.Many2one(
         'hr.employee',
         string='Assigned Nurse/Staff',
         domain="[('job_id.name', 'ilike', 'nurse')]",
-        help='Staff member to assign to this booking'
+        help='Deprecated - use assigned_staff_ids instead'
     )
     
     assignment_notes = fields.Text(
@@ -311,6 +337,8 @@ class HealthBookingWizard(models.TransientModel):
             if not self.service_type:
                 raise ValidationError(_('Please select a service type.'))
         elif self.current_step == '3_booking':
+            if not self.facility_id:
+                raise ValidationError(_('Please select a Healthcare Facility before proceeding.'))
             if not self.booking_date:
                 raise ValidationError(_('Please select a booking date.'))
         
@@ -476,13 +504,28 @@ class HealthBookingWizard(models.TransientModel):
             'service_fee_vnd': self.service_fee_vnd,
         }
         
-        # Assign staff if provided
+        # Assign staff if provided (legacy support)
         if self.assigned_nurse_id:
             booking_vals['primary_nurse_id'] = self.assigned_nurse_id.id
         
         # Create booking
         FSO = self.env['health.fieldservice.order']
         booking = FSO.create(booking_vals)
+        
+        # Assign staff from wizard fields (this triggers FSO inverse methods
+        # which create health.staff.assignment records automatically)
+        staff_update = {}
+        if self.assigned_staff_ids:
+            staff_update['assigned_staff_ids'] = [(6, 0, self.assigned_staff_ids.ids)]
+        if self.lead_staff_id:
+            # Ensure lead staff is in assigned_staff_ids too
+            staff_ids = set(self.assigned_staff_ids.ids) if self.assigned_staff_ids else set()
+            staff_ids.add(self.lead_staff_id.id)
+            staff_update['assigned_staff_ids'] = [(6, 0, list(staff_ids))]
+        if self.assigned_doctor_ids:
+            staff_update['assigned_doctor_ids'] = [(6, 0, self.assigned_doctor_ids.ids)]
+        if staff_update:
+            booking.write(staff_update)
         
         # Link client to lead and update status
         if self.lead_id and client:

@@ -32,6 +32,21 @@ class HealthFieldserviceOrder(models.Model):
         help='Whether this FSO has been invoiced'
     )
     
+    is_invoice_paid = fields.Boolean(
+        'Invoice Paid',
+        compute='_compute_is_invoice_paid',
+        store=False,
+        help='True if the linked invoice is fully paid'
+    )
+    
+    @api.depends('invoice_id', 'invoice_id.payment_state')
+    def _compute_is_invoice_paid(self):
+        for fso in self:
+            fso.is_invoice_paid = (
+                fso.invoice_id and
+                fso.invoice_id.payment_state in ('paid', 'in_payment')
+            )
+    
     payment_transaction_ids = fields.One2many(
         'health.payment.transaction',
         'fso_id',

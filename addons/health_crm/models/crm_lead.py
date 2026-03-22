@@ -1198,11 +1198,11 @@ class HealthLead(models.Model):
             'referrer': 'referrer',
             'emergency_contact': 'emergency_contact',
             'legal_guardian': 'legal_guardian',
-            'healthcare_proxy': 'healthcare_proxy',
+            'healthcare_proxy': 'legal_guardian',       # Healthcare proxy → Legal Guardian (closest match)
             'client_representative': 'client_representative',
-            'family_member': 'family_member',
-            'friend': 'friend',
-            'professional': 'professional',
+            'family_member': 'client_representative',   # Family member → Client Representative
+            'friend': 'client_representative',           # Friend → Client Representative
+            'professional': 'referrer',                  # Professional → Referrer
         }
 
         # Avoid duplicate relations for the same pair/role

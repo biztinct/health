@@ -166,23 +166,32 @@
                     <!-- STEP 4: Assign Booking -->
                     <div invisible="current_step != '4_assign'">
                         <h2 style="margin-bottom: 20px;">
-                            <span class="fa fa-user-md" style="margin-right: 10px; color: #43A047;"/>
-                            Assign Booking (Optional)
+                            <span class="fa fa-users" style="margin-right: 10px; color: #43A047;"/>
+                            Assignment and Staff
                         </h2>
                         
                         <div class="alert alert-info" role="alert">
                             <span class="fa fa-info-circle" style="margin-right: 10px;"/>
                             Staff assignment is optional. You can assign later if needed.
+                            Staff are filtered by the selected Healthcare Facility.
                         </div>
                         
+                        <!-- Hidden field for domain evaluation -->
+                        <field name="facility_id" invisible="1"/>
+                        
                         <group>
-                            <group>
-                                <field name="assigned_nurse_id" string="Assign To"/>
+                            <group string="Staff Assignment">
+                                <field name="assigned_staff_ids" string="Assigned Staff" widget="many2many_tags"/>
+                                <field name="lead_staff_id" string="Lead Staff"/>
                             </group>
-                            <group>
-                                <field name="assignment_notes" string="Instructions" 
-                                       placeholder="Special instructions for assigned staff..."/>
+                            <group string="Doctors">
+                                <field name="assigned_doctor_ids" string="Assigned Doctors" widget="many2many_tags"/>
                             </group>
+                        </group>
+                        
+                        <group>
+                            <field name="assignment_notes" string="Instructions" 
+                                   placeholder="Special instructions for assigned staff..."/>
                         </group>
                         
                         <!-- Booking Summary -->

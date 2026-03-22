@@ -655,21 +655,30 @@ class HealthStaffAssignment(models.Model):
         has_fso_records = any(record.fso_id for record in self)
 
         if has_fso_records:
-            # Remove timeline-written datetime fields for FSO-linked assignments
-            # They'll be recomputed from FSO's scheduled_datetime and scheduled_duration
+            # Force FSO datetime values for FSO-linked assignments instead of
+            # allowing timeline widget to set click-position datetimes
             protected_fields = []
 
-            if 'assignment_date' in vals:
-                vals.pop('assignment_date')
-                protected_fields.append('assignment_date')
+            for record in self.filtered(lambda r: r.fso_id and r.fso_id.scheduled_datetime):
+                fso = record.fso_id
+                duration_minutes = fso.scheduled_duration if fso.scheduled_duration else 60
+                fso_end = fso.scheduled_datetime + timedelta(minutes=duration_minutes)
 
-            if 'planned_start_time' in vals:
-                vals.pop('planned_start_time')
-                protected_fields.append('planned_start_time')
+                if 'assignment_date' in vals and vals['assignment_date'] != fso.scheduled_datetime:
+                    vals['assignment_date'] = fso.scheduled_datetime
+                    if 'assignment_date' not in protected_fields:
+                        protected_fields.append('assignment_date')
 
-            if 'planned_end_time' in vals:
-                vals.pop('planned_end_time')
-                protected_fields.append('planned_end_time')
+                if 'planned_start_time' in vals and vals['planned_start_time'] != fso.scheduled_datetime:
+                    vals['planned_start_time'] = fso.scheduled_datetime
+                    if 'planned_start_time' not in protected_fields:
+                        protected_fields.append('planned_start_time')
+
+                if 'planned_end_time' in vals and vals['planned_end_time'] != fso_end:
+                    vals['planned_end_time'] = fso_end
+                    if 'planned_end_time' not in protected_fields:
+                        protected_fields.append('planned_end_time')
+                break  # All FSO-linked records share the same FSO datetime
 
             if protected_fields:
                 _logger.info(f"🛡️  Protected {', '.join(protected_fields)} from timeline override for FSO-linked assignments")

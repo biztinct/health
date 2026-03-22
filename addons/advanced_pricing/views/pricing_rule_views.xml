@@ -234,6 +234,15 @@
                   decoration-danger="approval_status == 'rejected'"
                   decoration-muted="approval_status == 'draft'">
                 <header>
+                    <button name="%(action_pricing_rule_bulk_submit)d" type="action"
+                            string="Submit for Approval" class="btn-primary" icon="fa-paper-plane"
+                            display="always"
+                            help="Bulk submit draft pricing rules for board approval"/>
+                    <button name="%(action_pricing_rule_bulk_approve)d" type="action"
+                            string="Approve" class="btn-success" icon="fa-check"
+                            display="always"
+                            groups="health_base.group_healthcare_owner"
+                            help="Bulk approve pending pricing rules"/>
                     <button name="action_create_visual_rule" type="object"
                             string="Create Visual Rule" class="btn-primary" icon="fa-paint-brush"
                             display="always" invisible="1"
@@ -281,6 +290,15 @@
                   decoration-danger="approval_status == 'rejected'"
                   decoration-muted="approval_status == 'draft'">
                 <header>
+                    <button name="%(action_pricing_rule_bulk_submit)d" type="action"
+                            string="Submit for Approval" class="btn-primary" icon="fa-paper-plane"
+                            display="always"
+                            help="Bulk submit draft pricing rules for board approval"/>
+                    <button name="%(action_pricing_rule_bulk_approve)d" type="action"
+                            string="Approve" class="btn-success" icon="fa-check"
+                            display="always"
+                            groups="health_base.group_healthcare_owner"
+                            help="Bulk approve pending pricing rules"/>
                     <button name="action_create_visual_rule" type="object"
                             string="Create Visual Rule" class="btn-primary" icon="fa-paint-brush"
                             help="Create a new visual pricing rule using drag-and-drop builder"/>

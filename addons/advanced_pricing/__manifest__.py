@@ -34,6 +34,7 @@ Features:
     'data': [
         'security/ir.model.access.csv',
         'views/pricing_engine_views.xml',
+        'views/pricing_rule_bulk_wizard_views.xml',
         'views/pricing_rule_views.xml',
         'views/pricing_rule_reject_wizard_views.xml',
         'views/pricing_configuration_views.xml',

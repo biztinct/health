@@ -11,3 +11,7 @@ access_import_wizard_user,import.wizard.user,model_advanced_pricing_import_wizar
 access_import_wizard_manager,import.wizard.manager,model_advanced_pricing_import_wizard,base.group_system,1,1,1,1
 access_reject_wizard_user,reject.wizard.user,model_pricing_rule_reject_wizard,base.group_user,1,1,1,1
 access_reject_wizard_manager,reject.wizard.manager,model_pricing_rule_reject_wizard,base.group_system,1,1,1,1
+access_bulk_wizard_user,bulk.wizard.user,model_pricing_rule_bulk_wizard,base.group_user,1,1,1,1
+access_bulk_wizard_manager,bulk.wizard.manager,model_pricing_rule_bulk_wizard,base.group_system,1,1,1,1
+access_bulk_wizard_line_user,bulk.wizard.line.user,model_pricing_rule_bulk_wizard_line,base.group_user,1,1,1,1
+access_bulk_wizard_line_manager,bulk.wizard.line.manager,model_pricing_rule_bulk_wizard_line,base.group_system,1,1,1,1

@@ -294,10 +294,10 @@ class AdvancedPricingRule(models.Model):
 
                 # Create activity for board approval
                 board_group = self.env.ref('health_base.group_healthcare_owner')
-                if board_group and board_group.users:
+                if board_group and board_group.user_ids:
                     rule.activity_schedule(
                         'mail.mail_activity_data_todo',
-                        user_id=board_group.users[0].id,
+                        user_id=board_group.user_ids[0].id,
                         summary=f'Re-approval Required: {rule.name}',
                         note=f'Pricing rule was modified and requires board re-approval before it can be used again.'
                     )
@@ -319,7 +319,7 @@ class AdvancedPricingRule(models.Model):
         # Create activity for all board members
         board_group = self.env.ref('health_base.group_healthcare_owner')
         if board_group:
-            for board_member in board_group.users:
+            for board_member in board_group.user_ids:
                 self.activity_schedule(
                     'mail.mail_activity_data_todo',
                     user_id=board_member.id,

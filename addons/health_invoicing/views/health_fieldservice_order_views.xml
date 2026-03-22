@@ -64,11 +64,12 @@
 
                 <!-- Ensure sale_order_id field is loaded for modifier evaluation -->
                 <field name="sale_order_id" invisible="1"/>
+                <field name="is_invoice_paid" invisible="1"/>
                 
                 <!-- Pay Quote Button - Prepay service before completion -->
                 <button type="object" name="action_prepay_quote"
                         string="Pay Quote" class="btn-info" icon="fa-credit-card"
-                        invisible="state not in ('confirmed', 'assigned', 'in_progress')"
+                        invisible="state in ('draft', 'completed', 'completed_pending_invoice', 'cancelled', 'closed') or not sale_order_id or is_invoice_paid"
                         help="Pay for the quoted services in advance"/>
                         
                 <!-- Alternative Manual Invoice Creation removed - use main Create Invoice button instead -->

@@ -3,6 +3,9 @@
 from odoo import api, fields, models, _
 from odoo.exceptions import UserError
 from datetime import datetime, timedelta
+import logging
+
+_logger = logging.getLogger(__name__)
 
 
 class HealthcarePayment(models.Model):
@@ -50,26 +53,90 @@ class HealthcarePayment(models.Model):
         copy=False
     )
 
-    @api.model
-    def create(self, vals):
-        """Override create to handle basic healthcare payment automation"""
-        result = super().create(vals)
-        # Auto-populate AR Transaction Log for payments created directly as posted
-        for payment in result:
-            if payment.state == 'posted':
-                try:
-                    self.env['health.ar.transaction.log']._create_from_payment(payment)
-                except Exception:
-                    pass  # Don't block payment if log creation fails
-        return result
-
     def action_post(self):
-        """Override action_post to log payments to AR Transaction Log."""
+        """Override action_post to log payments to AR Transaction Log
+        and auto-create health.payment.transaction records."""
         result = super().action_post()
         for payment in self:
-            if payment.state == 'posted':
+            # Odoo 19 states: draft, in_process, paid, canceled, rejected
+            # After action_post, state will be 'in_process' or 'paid' (never 'posted')
+            if payment.state in ('paid', 'in_process'):
+                # 1) AR Transaction Log
                 try:
                     self.env['health.ar.transaction.log']._create_from_payment(payment)
-                except Exception:
-                    pass  # Don't block payment if log creation fails
+                except Exception as e:
+                    _logger.warning(
+                        'Failed to create AR transaction log for payment %s: %s',
+                        payment.display_name, e,
+                    )
+
+                # 2) Auto-create health.payment.transaction if not already linked
+                if not payment.health_transaction_id:
+                    try:
+                        payment._create_health_payment_transaction()
+                    except Exception as e:
+                        _logger.warning(
+                            'Failed to create health payment transaction for payment %s: %s',
+                            payment.display_name, e,
+                        )
         return result
+
+    def _create_health_payment_transaction(self):
+        """Create a health.payment.transaction record from this payment."""
+        self.ensure_one()
+
+        # Determine booking and invoice from reconciled invoices
+        booking = False
+        invoice = False
+        patient = self.partner_id
+
+        if self.reconciled_invoice_ids:
+            for inv in self.reconciled_invoice_ids:
+                if not invoice:
+                    invoice = inv
+                if hasattr(inv, 'fieldservice_order_id') and inv.fieldservice_order_id:
+                    booking = inv.fieldservice_order_id
+                    break
+
+        # Determine payment method from journal type
+        journal_type = self.journal_id.type if self.journal_id else ''
+        if journal_type == 'cash':
+            payment_method = 'cash'
+        elif journal_type == 'bank':
+            payment_method = 'bank_transfer'
+        else:
+            payment_method = 'other'
+
+        # Determine transaction type
+        if self.payment_type == 'inbound':
+            transaction_type = 'immediate'
+        else:
+            transaction_type = 'refund'
+
+        vals = {
+            'patient_id': patient.id if patient else False,
+            'fso_id': booking.id if booking else False,
+            'invoice_id': invoice.id if invoice else False,
+            'amount': self.amount,
+            'payment_method': payment_method,
+            'transaction_type': transaction_type,
+            'status': 'reconciled',
+            'transaction_date': fields.Datetime.now(),
+            'payment_id': self.id,
+            'transaction_notes': _('Auto-created from payment %s') % self.display_name,
+        }
+
+        # Only create if patient exists (required field on health.payment.transaction)
+        if not vals.get('patient_id'):
+            _logger.info(
+                'Skipping health payment transaction for payment %s — no patient/partner.',
+                self.display_name,
+            )
+            return
+
+        transaction = self.env['health.payment.transaction'].create(vals)
+        self.health_transaction_id = transaction.id
+        _logger.info(
+            'Created health payment transaction %s for payment %s',
+            transaction.name, self.display_name,
+        )
