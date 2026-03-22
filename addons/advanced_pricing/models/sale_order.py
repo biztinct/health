@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from odoo import models, fields, api
+from odoo.fields import Domain
 
 class SaleOrder(models.Model):
     _inherit = 'sale.order'
@@ -466,7 +467,37 @@ class SaleOrder(models.Model):
             })
         
         return context
-    
+
+    def _get_product_catalog_domain(self):
+        """Override to filter catalog products by booking's catchment province.
+
+        Products have region suffixes in their default_code (e.g. _hanoi, _tphcm).
+        When opened from a booking with a catchment province, only show products
+        matching that province's region.
+        """
+        domain = super()._get_product_catalog_domain()
+
+        # Find the FSO booking linked to this sale order
+        fso = self.fso_id
+        if not fso and self.id:
+            # Fallback: reverse search if fso_id computed field isn't stored yet
+            fso = self.env['health.fieldservice.order'].search(
+                [('sale_order_id', '=', self.id)], limit=1
+            )
+
+        if fso and fso.patient_catchment_province_id:
+            province = fso.patient_catchment_province_id
+            # Map province name to product default_code suffix
+            province_to_suffix = {
+                'Hanoi': 'hanoi',
+                'Ho Chi Minh City': 'tphcm',
+            }
+            suffix = province_to_suffix.get(province.name)
+            if suffix:
+                domain = domain & Domain('default_code', '=like', f'%_{suffix}')
+
+        return domain
+
     def action_add_from_catalog(self):
         """Add context marker for FSO quotes to enable auto-redirect after catalog"""
         # For FSO quotes, add healthcare context to standard catalog
