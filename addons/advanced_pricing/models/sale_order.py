@@ -16,6 +16,10 @@ class SaleOrder(models.Model):
     use_advanced_pricing = fields.Boolean('Use Advanced Pricing', 
                                          compute='_compute_use_advanced_pricing')
     advanced_pricing_details = fields.Text('Pricing Calculation Details')
+    pricing_breakdown_html = fields.Html('Pricing Breakdown', sanitize=False, readonly=True,
+                                         help='Shows applied pricing rules and calculations after Recalc Pricing')
+    pre_service_amount = fields.Float('Pre-Service Amount', readonly=True,
+                                      help='Quote total at time of advance payment, used to calculate post-service delta')
     
     # Computed fields from FSO for pricing rules
     fso_distance = fields.Float('Distance (km)', 
@@ -288,7 +292,11 @@ class SaleOrder(models.Model):
     def action_recalculate_advanced_prices(self):
         """Recalculate prices using advanced pricing engine"""
         self.ensure_one()
-        
+
+        # Ensure fso_id is populated (stored computed field may not be up to date)
+        if not self.fso_id:
+            self._compute_fso_id()
+
         if not self.use_advanced_pricing:
             # Show message if advanced pricing is not enabled
             return {
@@ -395,58 +403,307 @@ class SaleOrder(models.Model):
                 }
             }
     
-    def _update_pricing_notes(self):
-        """Update sale order note with user-friendly pricing rule explanations"""
+    def action_post_service_recalc(self):
+        """Recalculate pricing with post-service procedure counts and handle delta.
+        
+        Called automatically before final invoice creation. Compares the new total
+        against pre_service_amount (set at advance payment). If delta > 0, creates
+        a supplementary invoice. If delta < 0, creates a credit note.
+        """
         self.ensure_one()
         
+        if not self.fso_id:
+            return {'type': 'ir.actions.client', 'tag': 'display_notification',
+                    'params': {'title': 'No Booking', 'message': 'No booking linked to this quote.',
+                               'type': 'warning', 'sticky': False}}
+        
+        # Store current total before recalc (if pre_service_amount not yet set)
+        original_total = self.pre_service_amount or self.amount_total
+        
+        # Force recompute FSO fields
+        self.invalidate_recordset(['fso_id'])
+        if hasattr(self, '_compute_fso_fields'):
+            self._compute_fso_fields()
+        if hasattr(self, '_compute_use_advanced_pricing'):
+            self._compute_use_advanced_pricing()
+        
+        # Recalculate prices with current FSO data (including updated procedure counts)
+        for line in self.order_line:
+            if line.product_id:
+                line._compute_advanced_price()
+        
+        # Update pricing breakdown
+        self._update_pricing_notes()
+        
+        new_total = self.amount_total
+        delta = new_total - original_total
+        
+        import logging
+        _logger = logging.getLogger(__name__)
+        _logger.info('Post-service recalc: original=%.2f, new=%.2f, delta=%.2f', original_total, new_total, delta)
+        
+        if abs(delta) < 0.01:
+            # No difference — just return notification
+            return {'type': 'ir.actions.client', 'tag': 'display_notification',
+                    'params': {'title': 'Pricing Up-to-Date',
+                               'message': f'No change in pricing. Total remains {new_total:,.0f} đ.',
+                               'type': 'info', 'sticky': False}}
+        
+        if delta > 0 and self.pre_service_amount > 0:
+            # Client owes more — create supplementary invoice
+            try:
+                supp_invoice = self._create_supplementary_invoice(delta)
+                if supp_invoice:
+                    return {'type': 'ir.actions.client', 'tag': 'display_notification',
+                            'params': {'title': 'Supplementary Invoice Created',
+                                       'message': f'Post-service adjustment: +{delta:,.0f} đ. Supplementary invoice {supp_invoice.name} created.',
+                                       'type': 'warning', 'sticky': True}}
+            except Exception as e:
+                _logger.warning('Failed to create supplementary invoice: %s', e)
+        
+        elif delta < 0 and self.pre_service_amount > 0:
+            # Overpayment — create credit note
+            try:
+                credit_note = self._create_credit_note(abs(delta))
+                if credit_note:
+                    return {'type': 'ir.actions.client', 'tag': 'display_notification',
+                            'params': {'title': 'Credit Note Created',
+                                       'message': f'Post-service adjustment: {delta:,.0f} đ. Credit note {credit_note.name} created.',
+                                       'type': 'info', 'sticky': True}}
+            except Exception as e:
+                _logger.warning('Failed to create credit note: %s', e)
+        
+        return {'type': 'ir.actions.client', 'tag': 'display_notification',
+                'params': {'title': 'Pricing Recalculated',
+                           'message': f'New total: {new_total:,.0f} đ (was {original_total:,.0f} đ, delta: {delta:+,.0f} đ)',
+                           'type': 'success', 'sticky': False}}
+    
+    def _create_supplementary_invoice(self, delta_amount):
+        """Create a supplementary invoice for the post-service excess amount"""
+        self.ensure_one()
+        fso = self.fso_id
+        
+        # Build description of what changed
+        changes = []
+        if fso.injection_count > 1:
+            changes.append(f'{fso.injection_count - 1} extra injection(s)')
+        if fso.medication_count > 1:
+            changes.append(f'{fso.medication_count - 1} extra medication(s)')
+        if fso.wound_count > 1:
+            changes.append(f'{fso.wound_count - 1} extra wound treatment(s)')
+        if fso.iv_fluid_count > 0:
+            changes.append(f'{fso.iv_fluid_count} IV fluid bag(s)')
+        
+        description = ', '.join(changes) if changes else 'Post-service adjustment'
+        
+        invoice_vals = {
+            'move_type': 'out_invoice',
+            'partner_id': self.partner_id.id,
+            'invoice_origin': f'Supplementary: {fso.name}',
+            'ref': f'{fso.name} - Post-Service Adjustment',
+            'invoice_line_ids': [(0, 0, {
+                'name': f'Post-Service Adjustment ({description})',
+                'quantity': 1,
+                'price_unit': delta_amount,
+            })],
+        }
+        
+        # Link to FSO if field exists
+        if 'fieldservice_order_id' in self.env['account.move']._fields:
+            invoice_vals['fieldservice_order_id'] = fso.id
+        
+        invoice = self.env['account.move'].create(invoice_vals)
+        return invoice
+    
+    def _create_credit_note(self, credit_amount):
+        """Create a credit note for post-service overpayment"""
+        self.ensure_one()
+        fso = self.fso_id
+        
+        invoice_vals = {
+            'move_type': 'out_refund',
+            'partner_id': self.partner_id.id,
+            'invoice_origin': f'Credit: {fso.name}',
+            'ref': f'{fso.name} - Post-Service Credit',
+            'invoice_line_ids': [(0, 0, {
+                'name': 'Post-Service Credit (service cost less than prepaid amount)',
+                'quantity': 1,
+                'price_unit': credit_amount,
+            })],
+        }
+        
+        if 'fieldservice_order_id' in self.env['account.move']._fields:
+            invoice_vals['fieldservice_order_id'] = fso.id
+        
+        credit = self.env['account.move'].create(invoice_vals)
+        return credit
+
+    def _update_pricing_notes(self):
+        """Build HTML pricing breakdown showing applied rules and calculations"""
+        self.ensure_one()
+
         if not self.use_advanced_pricing or not self.order_line:
+            self.pricing_breakdown_html = False
             return
-        
-        # Start building the note with HTML formatting
-        note_parts = []
-        note_parts.append("<strong>=== HEALTHCARE PRICING BREAKDOWN ===</strong><br/><br/>")
-        note_parts.append("<strong>PRICING SUMMARY:</strong><br/><br/>")
-        
-        # Process each order line
-        for line_idx, line in enumerate(self.order_line, 1):
+
+        def fmt(amount):
+            """Format number as VND with thousand separators"""
+            return f"{amount:,.0f}"
+
+        # Get the engine to find which rules matched
+        engine = None
+        if self.pricelist_id.advanced_engine_id:
+            engine = self.pricelist_id.advanced_engine_id
+        else:
+            config = self.env['advanced.pricing.config'].get_config()
+            if config.default_engine_id:
+                engine = config.default_engine_id
+
+        html = []
+        html.append('<div style="margin-top:12px;">')
+        html.append('<h4 style="margin-bottom:8px;">📋 Pricing Breakdown</h4>')
+
+        # Context factors summary
+        factors = []
+        if self.fso_id:
+            fso = self.fso_id
+            loc = self.fso_service_location
+            if loc == 'home':
+                factors.append('🏠 Home Visit')
+            elif loc == 'clinic':
+                factors.append('🏥 Clinic Visit')
+            if self.fso_distance and self.fso_distance > 0:
+                factors.append(f'📍 Distance: {self.fso_distance:.1f} km')
+            if self.is_after_hours:
+                factors.append('🌙 After Hours')
+            if self.is_weekend:
+                factors.append('📅 Weekend')
+            if self.is_holiday:
+                factors.append(f'🎌 Holiday ({self.holiday_type or "Public"})')
+
+        if factors:
+            html.append('<div style="background:#f0f4ff;padding:8px 12px;border-radius:6px;margin-bottom:10px;font-size:13px;">')
+            html.append(' &nbsp;|&nbsp; '.join(factors))
+            html.append('</div>')
+
+        # Table header
+        html.append('<table style="width:100%;border-collapse:collapse;font-size:13px;">')
+        html.append('<thead><tr style="background:#f8f9fa;">')
+        html.append('<th style="padding:6px 8px;text-align:left;border-bottom:2px solid #dee2e6;">Product</th>')
+        html.append('<th style="padding:6px 8px;text-align:right;border-bottom:2px solid #dee2e6;">Base Price</th>')
+        html.append('<th style="padding:6px 8px;text-align:left;border-bottom:2px solid #dee2e6;">Rules Applied</th>')
+        html.append('<th style="padding:6px 8px;text-align:right;border-bottom:2px solid #dee2e6;">Final Price</th>')
+        html.append('<th style="padding:6px 8px;text-align:right;border-bottom:2px solid #dee2e6;">Qty</th>')
+        html.append('<th style="padding:6px 8px;text-align:right;border-bottom:2px solid #dee2e6;">Subtotal</th>')
+        html.append('</tr></thead>')
+        html.append('<tbody>')
+
+        grand_total = 0
+        for line in self.order_line:
             if not line.product_id:
                 continue
-                
+
             base_price = line.base_price or line.product_id.list_price or 0
             final_price = line.price_unit or 0
-            line_total_final = final_price * line.product_uom_qty
-            
-            note_parts.append(f"<strong>ITEM {line_idx}: {line.product_id.name}</strong><br/>")
-            note_parts.append(f"• Base Price: ${base_price:,.2f} per unit<br/>")
-            note_parts.append(f"• Quantity: {line.product_uom_qty}<br/>")
-            
-            # Calculate adjustment and show reason if there's a difference
-            price_difference = final_price - base_price
-            if abs(price_difference) > 0.01:  # Only show if there's a meaningful difference
-                adjustment_total = price_difference * line.product_uom_qty
-                
-                # Determine pricing factor reason
-                pricing_reason = ""
-                if hasattr(self, 'is_after_hours') and self.is_after_hours:
-                    pricing_reason = "After hours service"
-                elif hasattr(self, 'is_weekend') and self.is_weekend:
-                    pricing_reason = "Weekend service"
-                elif hasattr(self, 'is_holiday') and self.is_holiday:
-                    pricing_reason = "Holiday service"
-                elif hasattr(self, 'fso_urgency') and self.fso_urgency in ['urgent', 'emergency']:
-                    urgency_label = dict(self._fields['fso_urgency'].selection).get(self.fso_urgency, self.fso_urgency)
-                    pricing_reason = f"{urgency_label.title()} priority"
-                elif hasattr(line, 'applied_rules') and line.applied_rules:
-                    pricing_reason = line.applied_rules
-                else:
-                    pricing_reason = "Special pricing applied"
-                
-                note_parts.append(f"• Adjustment Total: ${adjustment_total:+,.2f} ({pricing_reason})<br/>")
-            
-            note_parts.append(f"• Final Total: ${line_total_final:,.2f}<br/><br/>")
-        
-        # Update the note field with HTML content
-        self.note = ''.join(note_parts)
+            qty = line.product_uom_qty
+            subtotal = final_price * qty
+            grand_total += subtotal
+            diff = final_price - base_price
+
+            # Find matching rules for this product
+            rules_text = []
+            if engine and engine.rule_ids:
+                # Build context for evaluation
+                ctx = {
+                    'distance': self.fso_distance or 0,
+                    'appointment_hour': self.appointment_hour or 0,
+                    'is_weekend': self.is_weekend,
+                    'is_holiday': self.is_holiday,
+                    'holiday_type': self.holiday_type,
+                    'is_after_hours': self.is_after_hours,
+                    'service_type': self.fso_service_type,
+                    'service_location': self.fso_service_location,
+                    'urgency': self.fso_urgency,
+                    'priority': self.fso_priority,
+                    'region': '',
+                    # Post-service procedure counts
+                    'injection_count': self.fso_id.injection_count or 0 if self.fso_id else 0,
+                    'medication_count': self.fso_id.medication_count or 0 if self.fso_id else 0,
+                    'wound_count': self.fso_id.wound_count or 0 if self.fso_id else 0,
+                    'iv_fluid_count': self.fso_id.iv_fluid_count or 0 if self.fso_id else 0,
+                }
+                # Determine region from product code
+                code = line.product_id.default_code or ''
+                if '_tphcm' in code:
+                    ctx['region'] = 'HCMC'
+                elif '_hanoi' in code:
+                    ctx['region'] = 'Hanoi'
+
+                approved_rules = engine.rule_ids.filtered(
+                    lambda r: r.active and r.approval_status == 'approved'
+                )
+                for rule in approved_rules.sorted('sequence'):
+                    try:
+                        if rule.evaluate_condition(line.product_id.id, self.partner_id.id, qty, ctx):
+                            # Format the rule description
+                            action_desc = ''
+                            if rule.action_type == 'add':
+                                action_desc = f'+{fmt(rule.action_value)} đ'
+                            elif rule.action_type == 'fixed':
+                                action_desc = f'→ {fmt(rule.action_value)} đ'
+                            elif rule.action_type == 'multiply':
+                                action_desc = f'×{rule.action_value}'
+                            elif rule.action_type == 'discount':
+                                action_desc = f'-{rule.action_value*100:.0f}%'
+                            elif rule.action_type == 'per_unit':
+                                action_desc = f'+{fmt(rule.action_value)} đ/unit'
+                            elif rule.action_type == 'percentage':
+                                action_desc = f'+{rule.action_value}%'
+
+                            # Short trigger name from rule name
+                            short_name = rule.name
+                            # Strip region prefix like "HCMC - Product Name - "
+                            parts = short_name.split(' - ')
+                            if len(parts) >= 3:
+                                short_name = parts[-1]  # Last segment is the trigger
+                            elif len(parts) == 2:
+                                short_name = parts[-1]
+
+                            rules_text.append(f'{short_name} <b>{action_desc}</b>')
+                    except Exception:
+                        pass
+
+            # Row color based on adjustment
+            row_style = ''
+            if abs(diff) > 0.01:
+                row_style = ' style="background:#fff8e1;"' if diff > 0 else ' style="background:#e8f5e9;"'
+
+            html.append(f'<tr{row_style}>')
+            html.append(f'<td style="padding:6px 8px;border-bottom:1px solid #eee;">{line.product_id.default_code or ""}<br/><small style="color:#666">{line.product_id.name}</small></td>')
+            html.append(f'<td style="padding:6px 8px;text-align:right;border-bottom:1px solid #eee;">{fmt(base_price)} đ</td>')
+
+            if rules_text:
+                rules_html = '<br/>'.join(rules_text)
+                html.append(f'<td style="padding:6px 8px;border-bottom:1px solid #eee;font-size:12px;">{rules_html}</td>')
+            elif abs(diff) < 0.01:
+                html.append(f'<td style="padding:6px 8px;border-bottom:1px solid #eee;color:#999;">No adjustments</td>')
+            else:
+                html.append(f'<td style="padding:6px 8px;border-bottom:1px solid #eee;">{fmt(diff):>+} đ adjustment</td>')
+
+            html.append(f'<td style="padding:6px 8px;text-align:right;border-bottom:1px solid #eee;font-weight:bold;">{fmt(final_price)} đ</td>')
+            html.append(f'<td style="padding:6px 8px;text-align:right;border-bottom:1px solid #eee;">{qty:.0f}</td>')
+            html.append(f'<td style="padding:6px 8px;text-align:right;border-bottom:1px solid #eee;font-weight:bold;">{fmt(subtotal)} đ</td>')
+            html.append('</tr>')
+
+        html.append('</tbody>')
+        html.append(f'<tfoot><tr style="background:#f8f9fa;font-weight:bold;">')
+        html.append(f'<td colspan="5" style="padding:6px 8px;text-align:right;border-top:2px solid #dee2e6;">Total</td>')
+        html.append(f'<td style="padding:6px 8px;text-align:right;border-top:2px solid #dee2e6;">{fmt(grand_total)} đ</td>')
+        html.append('</tr></tfoot>')
+        html.append('</table>')
+        html.append('</div>')
+
+        self.pricing_breakdown_html = ''.join(html)
     
     def _get_action_add_from_catalog_extra_context(self):
         """Override to ensure catalog returns to Healthcare Quote form for FSO orders"""
@@ -534,9 +791,13 @@ class SaleOrderLine(models.Model):
                 continue
             
             if not line.order_id.pricelist_id.advanced_engine_id:
-                continue
-            
-            engine = line.order_id.pricelist_id.advanced_engine_id
+                # Fallback to default engine from pricing configuration
+                config = self.env['advanced.pricing.config'].get_config()
+                if not config.default_engine_id:
+                    continue
+                engine = config.default_engine_id
+            else:
+                engine = line.order_id.pricelist_id.advanced_engine_id
             
             # Build context data with FSO fields for pricing rules
             context_data = {
@@ -564,6 +825,11 @@ class SaleOrderLine(models.Model):
                     'priority': line.order_id.fso_priority,
                     'service_units': line.order_id.service_units,
                     'service_city': line.order_id.service_city,
+                    # Post-service procedure counts
+                    'injection_count': line.order_id.fso_id.injection_count or 0,
+                    'medication_count': line.order_id.fso_id.medication_count or 0,
+                    'wound_count': line.order_id.fso_id.wound_count or 0,
+                    'iv_fluid_count': line.order_id.fso_id.iv_fluid_count or 0,
                 }
                 context_data.update(fso_context)
             

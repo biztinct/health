@@ -510,6 +510,16 @@ a {
     }
 }
 
+.vu-section__icon[data-icon="syringe"] {
+    background: rgba(0, 137, 123, 0.15);
+    color: #00796B;
+
+    &::after {
+        mask-image: url('/health_base/static/src/img/lucide/syringe.svg');
+        -webkit-mask-image: url('/health_base/static/src/img/lucide/syringe.svg');
+    }
+}
+
 .vu-section-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));

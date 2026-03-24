@@ -1385,6 +1385,12 @@ window.healthPWA = {
         const capturedPhoto = ref(null);
         const photoPreviewUrl = ref(null);
 
+        // Post-service procedure counts
+        const injectionCount = ref(1);
+        const medicationCount = ref(1);
+        const woundCount = ref(1);
+        const ivFluidCount = ref(0);
+
         // Timer state
         const timerInterval = ref(null);
         const currentTime = ref(new Date());
@@ -1981,6 +1987,11 @@ window.healthPWA = {
             // Non-doctor mode: use single notes field (strip HTML tags)
             clinicalNotesText.value = stripHtmlTags(selectedBookingDetail.value?.clinical_notes) || '';
           }
+          // Populate procedure counts
+          injectionCount.value = selectedBookingDetail.value?.injection_count ?? 1;
+          medicationCount.value = selectedBookingDetail.value?.medication_count ?? 1;
+          woundCount.value = selectedBookingDetail.value?.wound_count ?? 1;
+          ivFluidCount.value = selectedBookingDetail.value?.iv_fluid_count ?? 0;
         };
 
         // Close clinical notes modal
@@ -1992,6 +2003,10 @@ window.healthPWA = {
           treatmentPerformed.value = '';
           capturedPhoto.value = null;
           photoPreviewUrl.value = null;
+          injectionCount.value = 1;
+          medicationCount.value = 1;
+          woundCount.value = 1;
+          ivFluidCount.value = 0;
         };
 
         // Capture photo from camera
@@ -2029,7 +2044,11 @@ window.healthPWA = {
                 diagnosis: diagnosis.value,
                 treatment_performed: treatmentPerformed.value,
                 medications_prescribed: '',
-                vital_signs: ''
+                vital_signs: '',
+                injection_count: injectionCount.value,
+                medication_count: medicationCount.value,
+                wound_count: woundCount.value,
+                iv_fluid_count: ivFluidCount.value,
               };
             } else {
               // Non-doctor mode: validate single field
@@ -2039,7 +2058,11 @@ window.healthPWA = {
                 diagnosis: '',
                 treatment_performed: '',
                 medications_prescribed: '',
-                vital_signs: ''
+                vital_signs: '',
+                injection_count: injectionCount.value,
+                medication_count: medicationCount.value,
+                wound_count: woundCount.value,
+                iv_fluid_count: ivFluidCount.value,
               };
             }
 
@@ -2528,6 +2551,10 @@ window.healthPWA = {
           treatmentPerformed,  // Doctor-specific field
           capturedPhoto,
           photoPreviewUrl,
+          injectionCount,
+          medicationCount,
+          woundCount,
+          ivFluidCount,
           startService,
           openClinicalNotesModal,
           closeClinicalNotesModal,
@@ -3037,6 +3064,29 @@ window.healthPWA = {
                     rows="6"></textarea>
                 </div>
               </template>
+
+              <!-- Service Procedures (for both modes) -->
+              <div class="clinical-form-group" style="background: #f8f9fa; border-radius: 8px; padding: 12px; margin-bottom: 12px;">
+                <label class="clinical-form-label" style="font-weight: 600; margin-bottom: 8px; display: block;">{{ _t('Service Procedures') }}</label>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                  <div>
+                    <label style="font-size: 12px; color: #666;">{{ _t('Injections') }}</label>
+                    <input type="number" v-model.number="injectionCount" min="0" class="clinical-form-field" style="padding: 6px 10px; text-align: center;" />
+                  </div>
+                  <div>
+                    <label style="font-size: 12px; color: #666;">{{ _t('Medications') }}</label>
+                    <input type="number" v-model.number="medicationCount" min="0" class="clinical-form-field" style="padding: 6px 10px; text-align: center;" />
+                  </div>
+                  <div>
+                    <label style="font-size: 12px; color: #666;">{{ _t('Wounds') }}</label>
+                    <input type="number" v-model.number="woundCount" min="0" class="clinical-form-field" style="padding: 6px 10px; text-align: center;" />
+                  </div>
+                  <div>
+                    <label style="font-size: 12px; color: #666;">{{ _t('IV Fluid Bags') }}</label>
+                    <input type="number" v-model.number="ivFluidCount" min="0" class="clinical-form-field" style="padding: 6px 10px; text-align: center;" />
+                  </div>
+                </div>
+              </div>
 
               <!-- Photo capture section (for both modes) -->
               <div class="clinical-form-group">
@@ -4554,7 +4604,11 @@ window.healthPWA = {
           diagnosis: '',
           treatment_performed: '',
           medications_prescribed: '',
-          vital_signs: ''
+          vital_signs: '',
+          injection_count: 1,
+          medication_count: 1,
+          wound_count: 1,
+          iv_fluid_count: 0,
         });
         const capturedImages = ref([]);
         const quoteData = ref(null);
@@ -4661,6 +4715,11 @@ window.healthPWA = {
                   console.log('Setting vital_signs:', orderData.vital_signs);
                   clinicalNotesData.value.vital_signs = orderData.vital_signs;
                 }
+                // Procedure counts
+                clinicalNotesData.value.injection_count = orderData.injection_count ?? 1;
+                clinicalNotesData.value.medication_count = orderData.medication_count ?? 1;
+                clinicalNotesData.value.wound_count = orderData.wound_count ?? 1;
+                clinicalNotesData.value.iv_fluid_count = orderData.iv_fluid_count ?? 0;
 
                 console.log('Final clinicalNotesData.value:', clinicalNotesData.value);
 
@@ -5746,6 +5805,29 @@ window.healthPWA = {
                     <textarea v-model="clinicalNotesData.vital_signs"
                               rows="2"
                               placeholder="Blood pressure, temperature, heart rate..."></textarea>
+                  </div>
+
+                  <!-- Service Procedures -->
+                  <div class="form-group" style="background: #f8f9fa; border-radius: 8px; padding: 12px;">
+                    <label style="font-weight: 600; margin-bottom: 8px; display: block;">Service Procedures</label>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                      <div>
+                        <label style="font-size: 12px; color: #666;">Injections</label>
+                        <input type="number" v-model.number="clinicalNotesData.injection_count" min="0" style="width: 100%; padding: 6px 10px; text-align: center; border: 1px solid #ddd; border-radius: 4px;" />
+                      </div>
+                      <div>
+                        <label style="font-size: 12px; color: #666;">Medications</label>
+                        <input type="number" v-model.number="clinicalNotesData.medication_count" min="0" style="width: 100%; padding: 6px 10px; text-align: center; border: 1px solid #ddd; border-radius: 4px;" />
+                      </div>
+                      <div>
+                        <label style="font-size: 12px; color: #666;">Wounds</label>
+                        <input type="number" v-model.number="clinicalNotesData.wound_count" min="0" style="width: 100%; padding: 6px 10px; text-align: center; border: 1px solid #ddd; border-radius: 4px;" />
+                      </div>
+                      <div>
+                        <label style="font-size: 12px; color: #666;">IV Fluid Bags</label>
+                        <input type="number" v-model.number="clinicalNotesData.iv_fluid_count" min="0" style="width: 100%; padding: 6px 10px; text-align: center; border: 1px solid #ddd; border-radius: 4px;" />
+                      </div>
+                    </div>
                   </div>
 
                   <!-- Image Capture Section -->

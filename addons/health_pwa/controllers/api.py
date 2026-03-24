@@ -402,6 +402,11 @@ class HealthPWAAPIController(http.Controller):
                 'treatment_performed': order.treatment_performed if hasattr(order, 'treatment_performed') else None,
                 'medications_prescribed': order.medications_prescribed if hasattr(order, 'medications_prescribed') else None,
                 'vital_signs': order.vital_signs if hasattr(order, 'vital_signs') else None,
+                # Post-service procedure counts
+                'injection_count': order.injection_count if hasattr(order, 'injection_count') else 1,
+                'medication_count': order.medication_count if hasattr(order, 'medication_count') else 1,
+                'wound_count': order.wound_count if hasattr(order, 'wound_count') else 1,
+                'iv_fluid_count': order.iv_fluid_count if hasattr(order, 'iv_fluid_count') else 0,
                 # Intake notes fields
                 'referring_doctor_id': order.referring_doctor_id.id if hasattr(order, 'referring_doctor_id') and order.referring_doctor_id else None,
                 'referring_doctor_name': order.referring_doctor_id.name if hasattr(order, 'referring_doctor_id') and order.referring_doctor_id else None,
@@ -881,6 +886,14 @@ class HealthPWAAPIController(http.Controller):
                 update_vals['medications_prescribed'] = medications_prescribed
             if vital_signs:
                 update_vals['vital_signs'] = vital_signs
+
+            # Post-service procedure counts
+            for count_field in ['injection_count', 'medication_count', 'wound_count', 'iv_fluid_count']:
+                if count_field in data and data[count_field] is not None:
+                    try:
+                        update_vals[count_field] = int(data[count_field])
+                    except (ValueError, TypeError):
+                        pass
 
             if update_vals:
                 order.write(update_vals)

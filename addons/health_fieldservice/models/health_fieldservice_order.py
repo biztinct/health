@@ -1210,6 +1210,16 @@ class HealthFieldServiceOrderUnified(models.Model):
     patient_condition_after = fields.Text('Patient Condition (After)', help='client condition after service')
     vital_signs = fields.Text('Vital Signs', help='Recorded vital signs during service')
     
+    # Post-service procedure counts (filled by provider after service delivery)
+    # Used by advanced pricing engine for "every additional" rules
+    injection_count = fields.Integer('Injections Given', default=1,
+        help='Number of injections administered during this visit (first included in base price)')
+    medication_count = fields.Integer('Medications Given', default=1,
+        help='Number of medications administered during this visit (first included in base price)')
+    wound_count = fields.Integer('Wounds Treated', default=1,
+        help='Number of wounds treated during this visit (first included in base price)')
+    iv_fluid_count = fields.Integer('IV Fluid Bags', default=0,
+        help='Number of IV fluid bags used during this visit')
     # Follow-up requirements
     follow_up_required = fields.Boolean('Follow-up Required')
     follow_up_date = fields.Date('Follow-up Date')
@@ -1511,6 +1521,17 @@ class HealthFieldServiceOrderUnified(models.Model):
         if 'scheduled_datetime' in vals and vals['scheduled_datetime']:
             self._handle_scheduling()
 
+        # Auto-advance to 'confirmed' (Booked) when draft booking has a quote with items
+        for record in self:
+            if record.state == 'draft' and record.sale_order_id and record.sale_order_id.order_line:
+                confirmed_stage = self.env['health.fieldservice.stage'].search([
+                    ('state', '=', 'confirmed'),
+                    ('active', '=', True)
+                ], order='sequence', limit=1)
+                if confirmed_stage:
+                    record.stage_id = confirmed_stage
+                    record.state = 'confirmed'
+
         # Auto-advance to 'assigned' state when staff is assigned
         for record in self:
             if record.state == 'confirmed' and record.assigned_staff_ids:
@@ -1612,6 +1633,15 @@ class HealthFieldServiceOrderUnified(models.Model):
                 self.sale_order_id = quote.id
             else:
                 raise UserError(_('Failed to create quote. Please create a quote first.'))
+        
+        # Auto-recalculate pricing with post-service procedure counts
+        # This updates the quote with actual injection/medication/wound counts
+        quote = self.sale_order_id
+        if hasattr(quote, 'action_post_service_recalc') and quote.use_advanced_pricing:
+            import logging
+            _logger = logging.getLogger(__name__)
+            _logger.info('Auto post-service recalc for FSO %s before invoicing', self.name)
+            quote.action_post_service_recalc()
         
         # Open quote for editing with Create Invoice context
         return self._open_quote_for_invoicing()

@@ -47,7 +47,7 @@
                     <button name="action_create_and_open_quote" type="object"
                             string="Create Quote" class="btn-info"
                             icon="fa-file-text-o"
-                            invisible="sale_order_id or state not in ('draft', 'booked')"
+                            invisible="sale_order_id or state not in ('draft', 'confirmed')"
                             help="Create a quote for this booking"/>
 
                     <button name="action_view_quote" type="object"
@@ -403,6 +403,20 @@
                                             <field name="patient_condition_before" placeholder="Patient condition before service..."/>
                                             <field name="patient_condition_after" placeholder="Patient condition after service..."/>
                                             <field name="vital_signs" placeholder="Record vital signs..."/>
+                                        </group>
+                                    </div>
+                                </div>
+                                <div class="vu-section-grid" invisible="state not in ('in_progress', 'completed', 'completed_pending_invoice')">
+                                    <div class="vu-card">
+                                        <div class="vu-card__title">
+                                            <span class="vu-section__icon" data-icon="syringe"/>
+                                            <span>Service Procedures</span>
+                                        </div>
+                                        <group col="4">
+                                            <field name="injection_count"/>
+                                            <field name="medication_count"/>
+                                            <field name="wound_count"/>
+                                            <field name="iv_fluid_count"/>
                                         </group>
                                     </div>
                                 </div>

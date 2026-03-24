@@ -72,6 +72,11 @@
             
             <!-- Add Catalog button after the order lines field -->
             <xpath expr="//field[@name='order_line']" position="after">
+                <!-- Pricing breakdown (shown after Recalc Pricing) -->
+                <field name="pricing_breakdown_html" nolabel="1" 
+                       invisible="not pricing_breakdown_html"
+                       class="mt-2 mb-2"/>
+                
                 <div class="row mt-3">
                     <div class="col-12 text-center">
                         <button name="action_add_from_catalog"
@@ -83,8 +88,14 @@
                         <button name="action_recalculate_advanced_prices" 
                                 string="Recalc Pricing" 
                                 type="object" 
-                                class="btn btn-secondary" icon="fa-refresh"
+                                class="btn btn-secondary me-2" icon="fa-refresh"
                                 help="Recalculate prices using advanced pricing rules"/>
+                        <button name="action_post_service_recalc" 
+                                string="Post-Service Recalc" 
+                                type="object" 
+                                class="btn btn-warning" icon="fa-calculator"
+                                invisible="not context.get('invoicing_mode')"
+                                help="Recalculate with actual procedure counts and create adjustment if needed"/>
                     </div>
                 </div>
             </xpath>
