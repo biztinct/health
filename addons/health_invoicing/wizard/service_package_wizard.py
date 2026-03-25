@@ -86,27 +86,25 @@ class ServicePackageWizard(models.TransientModel):
         return res
 
     def action_confirm(self):
-        """Assign the selected existing package to the FSO."""
+        """Assign the selected existing packages to the FSO."""
         self.ensure_one()
 
         selected_lines = self.line_ids.filtered(lambda l: l.selected and l.is_selectable)
 
         if not selected_lines:
-            raise UserError(_('Please select a package to use for this booking.'))
+            raise UserError(_('Please select at least one package to use for this booking.'))
 
-        if len(selected_lines) > 1:
-            raise UserError(_('Only one package can be selected per booking.'))
+        package_ids = selected_lines.mapped('package_id').ids
+        self.fso_id.write({'package_ids': [(6, 0, package_ids)]})
 
-        package = selected_lines[0].package_id
-        self.fso_id.write({'package_id': package.id})
-
+        pkg_names = ', '.join(selected_lines.mapped('package_id.name'))
         return {
             'type': 'ir.actions.client',
             'tag': 'display_notification',
             'params': {
-                'title': _('Package Assigned'),
-                'message': _('Package "%s" linked to booking %s. %d service(s) remaining.') % (
-                    package.name, self.fso_id.name, package.remaining_services
+                'title': _('Package(s) Assigned'),
+                'message': _('%d package(s) linked to booking %s: %s') % (
+                    len(package_ids), self.fso_id.name, pkg_names
                 ),
                 'type': 'success',
                 'sticky': False,
@@ -145,15 +143,15 @@ class ServicePackageWizard(models.TransientModel):
         }
 
     def action_clear_package(self):
-        """Remove any package assignment from the FSO."""
+        """Remove all package assignments from the FSO."""
         self.ensure_one()
-        self.fso_id.write({'package_id': False})
+        self.fso_id.write({'package_ids': [(5, 0, 0)]})
         return {
             'type': 'ir.actions.client',
             'tag': 'display_notification',
             'params': {
-                'title': _('Package Removed'),
-                'message': _('Service package removed from booking %s.') % self.fso_id.name,
+                'title': _('Packages Removed'),
+                'message': _('All service packages removed from booking %s.') % self.fso_id.name,
                 'type': 'warning',
                 'sticky': False,
                 'next': {'type': 'ir.actions.act_window_close'},
@@ -215,7 +213,7 @@ class ServicePackageWizardLine(models.TransientModel):
             'name': _('Package Booking History - %s') % self.package_name,
             'type': 'ir.actions.act_window',
             'res_model': 'health.fieldservice.order',
-            'domain': [('package_id', '=', self.package_id.id)],
+            'domain': [('package_ids', 'in', [self.package_id.id])],
             'view_mode': 'list',
             'target': 'new',
             'context': {'create': False},

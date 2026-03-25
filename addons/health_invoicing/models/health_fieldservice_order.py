@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+from markupsafe import Markup
 from odoo import models, fields, api, _
 from odoo.exceptions import UserError
 
@@ -80,25 +81,50 @@ class HealthFieldserviceOrder(models.Model):
         default=lambda self: self.env.company.currency_id
     )
     
-    # Prepaid Package Integration (REPLACING health.prepaid.service model)
+    # Prepaid Package Integration — MULTI-PACKAGE (Many2many)
+    # Keep package_id as a compatibility alias (computed from package_ids)
+    package_ids = fields.Many2many(
+        'health.service.package',
+        'health_fso_package_rel',
+        'fso_id',
+        'package_id',
+        string='Service Packages',
+        domain="[('patient_id', '=', patient_id), ('state', '=', 'active'), ('remaining_services', '>', 0)]",
+        help='Prepaid service packages to consume from (1 service consumed from each)'
+    )
+
+    # Backward-compatible computed field so existing code/views referencing package_id still work
     package_id = fields.Many2one(
         'health.service.package',
-        string='Service Package',
-        domain="[('patient_id', '=', patient_id), ('state', '=', 'active'), ('remaining_services', '>', 0)]",
-        help='Prepaid service package to consume from (if any)'
+        string='Service Package (Primary)',
+        compute='_compute_package_id',
+        inverse='_inverse_package_id',
+        help='Primary service package (first of package_ids). For backward compatibility.'
     )
+
+    @api.depends('package_ids')
+    def _compute_package_id(self):
+        for fso in self:
+            fso.package_id = fso.package_ids[:1]
+
+    def _inverse_package_id(self):
+        for fso in self:
+            if fso.package_id:
+                fso.package_ids = [(6, 0, [fso.package_id.id])]
+            else:
+                fso.package_ids = [(5, 0, 0)]
     
     is_package_service = fields.Boolean(
         'Package Service',
         compute='_compute_is_package_service',
         store=True,
-        help='True if this FSO consumes from a prepaid package'
+        help='True if this FSO consumes from prepaid packages'
     )
     
     package_consumption_quantity = fields.Integer(
-        'Services Consumed',
+        'Services Consumed Per Package',
         default=1,
-        help='Number of services consumed from the package (default: 1)'
+        help='Number of services consumed from EACH package (default: 1)'
     )
     
     package_service_value = fields.Monetary(
@@ -106,7 +132,7 @@ class HealthFieldserviceOrder(models.Model):
         currency_field='currency_id',
         compute='_compute_package_service_value',
         store=True,
-        help='Value of services consumed from package'
+        help='Total value of services consumed from all packages'
     )
     
     # Legacy field for backward compatibility (will be removed)
@@ -114,19 +140,23 @@ class HealthFieldserviceOrder(models.Model):
         'health.prepaid.service',
         'fso_id',
         string='Prepaid Consumptions (DEPRECATED)',
-        help='Legacy prepaid service consumptions - use package_id instead'
+        help='Legacy prepaid service consumptions - use package_ids instead'
     )
     
-    @api.depends('package_id')
+    @api.depends('package_ids')
     def _compute_is_package_service(self):
         for fso in self:
-            fso.is_package_service = bool(fso.package_id)
+            fso.is_package_service = bool(fso.package_ids)
     
-    @api.depends('package_id', 'package_consumption_quantity')
+    @api.depends('package_ids', 'package_consumption_quantity')
     def _compute_package_service_value(self):
         for fso in self:
-            if fso.package_id and fso.package_consumption_quantity:
-                fso.package_service_value = fso.package_id.price_per_service * fso.package_consumption_quantity
+            if fso.package_ids and fso.package_consumption_quantity:
+                total_value = sum(
+                    pkg.price_per_service * fso.package_consumption_quantity
+                    for pkg in fso.package_ids
+                )
+                fso.package_service_value = total_value
             else:
                 fso.package_service_value = 0.0
     
@@ -148,7 +178,7 @@ class HealthFieldserviceOrder(models.Model):
     # Enhanced FSO Completion Workflow
     def action_complete_service_with_payment(self):
         """Complete service and launch payment collection workflow.
-        If all services are prepaid (invoice fully paid or package covers it),
+        If all services are prepaid (invoice fully paid or packages cover it),
         skip the payment wizard and complete directly with a notification.
         """
         self.ensure_one()
@@ -168,13 +198,14 @@ class HealthFieldserviceOrder(models.Model):
                 'Service completed successfully.'
             ) % self.invoice_id.name
         
-        # Case 2: Service package covers this booking
-        elif self.is_package_service and self.package_id:
+        # Case 2: Service packages cover this booking
+        elif self.is_package_service and self.package_ids:
+            pkg_names = ', '.join(self.package_ids.mapped('name'))
             is_fully_paid = True
             prepaid_message = _(
-                'This service is covered by package "%s" (%d remaining). '
+                'This service is covered by package(s): %s. '
                 'Service completed successfully.'
-            ) % (self.package_id.name, self.package_id.remaining_services)
+            ) % pkg_names
         
         if is_fully_paid:
             # Complete the service directly without payment wizard
@@ -183,7 +214,7 @@ class HealthFieldserviceOrder(models.Model):
                 'type': 'ir.actions.client',
                 'tag': 'display_notification',
                 'params': {
-                    'title': _('✅ Service Completed - Prepaid'),
+                    'title': _('Service Completed - Prepaid'),
                     'message': prepaid_message,
                     'type': 'success',
                     'sticky': False,
@@ -254,8 +285,6 @@ class HealthFieldserviceOrder(models.Model):
             }
         
         # Step 4: Open payment registration wizard with clean context
-        # Must NOT inherit parent context which has active_model='health.fieldservice.order'
-        # The wizard's default_get needs active_model='account.move' with the invoice IDs
         ctx = {
             'active_model': 'account.move',
             'active_ids': [invoice.id],
@@ -318,8 +347,7 @@ class HealthFieldserviceOrder(models.Model):
         elif self.base_price:
             amount += self.base_price
         else:
-            # Default amount if no specific pricing found
-            amount = 100.0  # Default service amount
+            amount = 100.0
         
         # Create invoice
         invoice = self.env['account.move'].create({
@@ -350,76 +378,77 @@ class HealthFieldserviceOrder(models.Model):
         }
 
     # -------------------------------------------------------------------------
-    # Package helpers (moved from health_fieldservice)
+    # Package helpers — multi-package aware
     # -------------------------------------------------------------------------
     def _reserve_package_service(self):
-        """Reserve services from the package on booking confirmation."""
+        """Reserve services from ALL assigned packages on booking confirmation."""
         self.ensure_one()
-        if not self.package_id:
+        if not self.package_ids:
             return False
 
-        quantity_to_reserve = self.package_consumption_quantity or 1
-        self.package_id.consumed_services += quantity_to_reserve
-
-        try:
-            self.package_id.message_post(
-                body=_(
-                    '<p><strong>Service Reserved</strong></p>'
-                    '<ul>'
-                    '<li><strong>Booking:</strong> %s</li>'
-                    '<li><strong>Patient:</strong> %s</li>'
-                    '<li><strong>Services Reserved:</strong> %d</li>'
-                    '<li><strong>Services Remaining:</strong> %d</li>'
-                    '</ul>'
-                ) % (
-                    self.name,
-                    self.patient_id.name if self.patient_id else 'N/A',
-                    quantity_to_reserve,
-                    self.package_id.remaining_services
-                ),
-                subject=_('Service Reserved - %s') % self.name,
-                message_type='notification'
-            )
-        except Exception as e:
-            _logger.warning('Could not log package reservation for FSO %s: %s', self.name, str(e))
+        quantity_per_pkg = self.package_consumption_quantity or 1
+        for pkg in self.package_ids:
+            pkg.consumed_services += quantity_per_pkg
+            try:
+                pkg.message_post(
+                    body=Markup(_(
+                        '<p><strong>Service Reserved</strong></p>'
+                        '<ul>'
+                        '<li><strong>Booking:</strong> %s</li>'
+                        '<li><strong>Patient:</strong> %s</li>'
+                        '<li><strong>Services Reserved:</strong> %d</li>'
+                        '<li><strong>Services Remaining:</strong> %d</li>'
+                        '</ul>'
+                    )) % (
+                        self.name,
+                        self.patient_id.name if self.patient_id else 'N/A',
+                        quantity_per_pkg,
+                        pkg.remaining_services
+                    ),
+                    subject=_('Service Reserved - %s') % self.name,
+                    message_type='notification'
+                )
+            except Exception as e:
+                _logger.warning('Could not log package reservation for FSO %s: %s', self.name, str(e))
 
         return True
 
     def _release_package_service(self):
-        """Release reserved services if booking is cancelled."""
+        """Release reserved services from ALL assigned packages if booking is cancelled."""
         self.ensure_one()
-        if not self.package_id:
+        if not self.package_ids:
             return False
 
-        quantity_to_release = self.package_consumption_quantity or 1
-        self.package_id.consumed_services -= quantity_to_release
-        if self.package_id.consumed_services < 0:
-            self.package_id.consumed_services = 0
+        quantity_per_pkg = self.package_consumption_quantity or 1
+        for pkg in self.package_ids:
+            pkg.consumed_services -= quantity_per_pkg
+            if pkg.consumed_services < 0:
+                pkg.consumed_services = 0
 
-        if self.package_id.state == 'exhausted':
-            self.package_id.state = 'active'
+            if pkg.state == 'exhausted':
+                pkg.state = 'active'
 
-        try:
-            self.package_id.message_post(
-                body=_(
-                    '<p><strong>Service Released (Booking Cancelled)</strong></p>'
-                    '<ul>'
-                    '<li><strong>Booking:</strong> %s</li>'
-                    '<li><strong>Patient:</strong> %s</li>'
-                    '<li><strong>Services Released:</strong> %d</li>'
-                    '<li><strong>Services Remaining:</strong> %d</li>'
-                    '</ul>'
-                ) % (
-                    self.name,
-                    self.patient_id.name if self.patient_id else 'N/A',
-                    quantity_to_release,
-                    self.package_id.remaining_services
-                ),
-                subject=_('Service Released - %s') % self.name,
-                message_type='notification'
-            )
-        except Exception as e:
-            _logger.warning('Could not log package release for FSO %s: %s', self.name, str(e))
+            try:
+                pkg.message_post(
+                    body=Markup(_(
+                        '<p><strong>Service Released (Booking Cancelled)</strong></p>'
+                        '<ul>'
+                        '<li><strong>Booking:</strong> %s</li>'
+                        '<li><strong>Patient:</strong> %s</li>'
+                        '<li><strong>Services Released:</strong> %d</li>'
+                        '<li><strong>Services Remaining:</strong> %d</li>'
+                        '</ul>'
+                    )) % (
+                        self.name,
+                        self.patient_id.name if self.patient_id else 'N/A',
+                        quantity_per_pkg,
+                        pkg.remaining_services
+                    ),
+                    subject=_('Service Released - %s') % self.name,
+                    message_type='notification'
+                )
+            except Exception as e:
+                _logger.warning('Could not log package release for FSO %s: %s', self.name, str(e))
 
         return True
 
@@ -428,7 +457,7 @@ class HealthFieldserviceOrder(models.Model):
     # -------------------------------------------------------------------------
     def _check_confirmation_requirements(self):
         """
-        Allow confirmation with either a quote (with lines) or a valid package.
+        Allow confirmation with either a quote (with lines) or valid packages.
         """
         self.ensure_one()
         has_quote_with_items = (
@@ -440,22 +469,25 @@ class HealthFieldserviceOrder(models.Model):
         if has_quote_with_items:
             return True, None
 
-        if self.package_id:
+        if self.package_ids:
             required_quantity = self.package_consumption_quantity or 1
-            if self.package_id.remaining_services < required_quantity:
+            insufficient = self.package_ids.filtered(
+                lambda p: p.remaining_services < required_quantity
+            )
+            if insufficient:
+                names = ', '.join(insufficient.mapped('name'))
                 error_msg = _(
-                    'Cannot confirm booking: Package "%s" does not have sufficient remaining services.\n'
-                    'Required: %d service(s)\n'
-                    'Available: %d service(s)\n\n'
-                    'Please select a different package or create a quote instead.'
-                ) % (self.package_id.name, required_quantity, self.package_id.remaining_services)
+                    'Cannot confirm booking: Package(s) "%s" do not have sufficient remaining services.\n'
+                    'Required: %d service(s) per package.\n\n'
+                    'Please remove insufficient packages or create a quote instead.'
+                ) % (names, required_quantity)
                 return False, error_msg
             return True, None
 
         error_msg = _(
             'Booking cannot be confirmed. You must complete ONE of the following:\n'
-            '• Create a Quote with at least one service/product line item\n'
-            '• Select a prepaid Service Package'
+            '- Create a Quote with at least one service/product line item\n'
+            '- Select a prepaid Service Package'
         )
         return False, error_msg
 
@@ -463,30 +495,30 @@ class HealthFieldserviceOrder(models.Model):
         """Confirm booking, allowing package-based reservations."""
         res = super().action_confirm_booking()
         for order in self:
-            if order.package_id:
+            if order.package_ids:
                 order._reserve_package_service()
         return res
 
     def cancel_with_reason(self, cancellation_reason_id, cancellation_notes):
         """Release package services if booking is cancelled."""
         for order in self:
-            if order.package_id:
+            if order.package_ids:
                 order._release_package_service()
         return super().cancel_with_reason(cancellation_reason_id, cancellation_notes)
 
     def action_complete_service(self):
-        """Allow completion when payment is prepaid via package."""
+        """Allow completion when payment is prepaid via packages."""
         self.ensure_one()
 
         if not self.clinical_notes_submitted:
             raise UserError(_(
                 'Clinical notes are required before completing the service.\n\n'
                 'Please fill in at least one of the following:\n'
-                '• Clinical Notes\n'
-                '• Treatment Performed'
+                '- Clinical Notes\n'
+                '- Treatment Performed'
             ))
 
-        if not self.invoice_submitted and not self.package_id:
+        if not self.invoice_submitted and not self.package_ids:
             raise UserError(_(
                 'Invoice or Quote is required before completing the service.\n\n'
                 'Alternatively, a service package must be assigned if payment is prepaid.'
@@ -552,65 +584,58 @@ class HealthFieldserviceOrder(models.Model):
     
     # Package Service Consumption Methods
     def action_consume_package_service(self):
-        """Consume services from package when FSO is completed"""
+        """Consume services from ALL assigned packages when FSO is completed"""
         self.ensure_one()
         
-        if not self.package_id:
+        if not self.package_ids:
             return False
         
-        if self.package_consumption_quantity <= 0:
+        qty = self.package_consumption_quantity
+        if qty <= 0:
             return False
         
-        if self.package_id.remaining_services < self.package_consumption_quantity:
-            raise UserError(_(
-                'Cannot consume %d service(s) from package "%s". Only %d service(s) remaining.\n\n'
-                'This may have happened because other field service orders completed and consumed '
-                'services from the same package. This validation is performed to ensure accurate '
-                'package tracking. Please contact operations management if this is unexpected.'
-            ) % (self.package_consumption_quantity, self.package_id.name, self.package_id.remaining_services))
-        
-        # Consume services from package (direct consumption without separate model)
-        self.package_id.consumed_services += self.package_consumption_quantity
-        
-        # Check if package is exhausted
-        if self.package_id.remaining_services == 0:
-            self.package_id.state = 'exhausted'
-            try:
-                self.package_id.message_post(
-                    body=f"Package exhausted by FSO {self.name} - all {self.package_id.total_services} services consumed.",
-                    subject="Package Services Exhausted"
-                )
-            except Exception:
-                pass  # Silently fail - no email notifications required
-        else:
-            try:
-                self.package_id.message_post(
-                    body=f"FSO {self.name} consumed {self.package_consumption_quantity} service(s). "
-                         f"{self.package_id.remaining_services} services remaining.",
-                    subject="Package Service Consumed"
-                )
-            except Exception:
-                pass  # Silently fail - no email notifications required
+        for pkg in self.package_ids:
+            if pkg.remaining_services < qty:
+                raise UserError(_(
+                    'Cannot consume %d service(s) from package "%s". Only %d service(s) remaining.\n\n'
+                    'Please contact operations management if this is unexpected.'
+                ) % (qty, pkg.name, pkg.remaining_services))
+            
+            # Consume
+            pkg.consumed_services += qty
+            
+            # Check if exhausted
+            if pkg.remaining_services == 0:
+                pkg.state = 'exhausted'
+                try:
+                    pkg.message_post(
+                        body=f"Package exhausted by FSO {self.name} - all {pkg.total_services} services consumed.",
+                        subject="Package Services Exhausted"
+                    )
+                except Exception:
+                    pass
+            else:
+                try:
+                    pkg.message_post(
+                        body=f"FSO {self.name} consumed {qty} service(s). "
+                             f"{pkg.remaining_services} services remaining.",
+                        subject="Package Service Consumed"
+                    )
+                except Exception:
+                    pass
 
         # Record consumption in FSO message
+        pkg_names = ', '.join(self.package_ids.mapped('name'))
         try:
             self.message_post(
-                body=f"Consumed {self.package_consumption_quantity} service(s) from package '{self.package_id.name}'. "
-                     f"Service value: {self.package_service_value:,.0f} {self.currency_id.symbol}",
+                body=f"Consumed {qty} service(s) from each of: {pkg_names}. "
+                     f"Total service value: {self.package_service_value:,.0f} {self.currency_id.symbol}",
                 subject="Package Service Consumed"
             )
         except Exception:
-            pass  # Silently fail - no email notifications required
+            pass
         
         return True
-    
-    @api.onchange('package_id')
-    def _onchange_package_id(self):
-        """Auto-fill service details when package is selected"""
-        if self.package_id:
-            # Auto-set service type if it matches
-            if self.package_id.service_type in dict(self._fields.get('service_type', fields.Selection([])).selection):
-                self.service_type = self.package_id.service_type
     
     def write(self, vals):
         """Override write to handle package services"""
@@ -618,7 +643,6 @@ class HealthFieldserviceOrder(models.Model):
 
         # NOTE: Package services are now reserved at booking confirmation time (via _reserve_package_service)
         # We do NOT consume them again at completion to avoid double-consumption.
-        # The reservation that happens at booking confirmation is sufficient to manage package inventory.
 
         return result
 

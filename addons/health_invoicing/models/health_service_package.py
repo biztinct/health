@@ -180,12 +180,14 @@ class HealthServicePackage(models.Model):
         help='Manual notes about this package - service details, special conditions, etc.'
     )
     
-    # Service Consumption Tracking (Using FSOs directly)
-    fso_ids = fields.One2many(
+    # Service Consumption Tracking (Using FSOs directly via M2M)
+    fso_ids = fields.Many2many(
         'health.fieldservice.order',
+        'health_fso_package_rel',
         'package_id',
+        'fso_id',
         string='Service Orders',
-        help='Bookings that consumed from this package'
+        help='Bookings linked to this package'
     )
     
     consumption_count = fields.Integer(
@@ -215,10 +217,7 @@ class HealthServicePackage(models.Model):
     
     def _compute_booking_count(self):
         for package in self:
-            # Count all FSOs linked to this package (both booked and completed)
-            package.booking_count = self.env['health.fieldservice.order'].search_count([
-                ('package_id', '=', package.id)
-            ])
+            package.booking_count = len(package.fso_ids)
     
     # Constraints and Validations
     @api.constrains('total_services', 'consumed_services')
@@ -338,10 +337,10 @@ class HealthServicePackage(models.Model):
             'name': _('Service Orders - Package Consumption'),
             'type': 'ir.actions.act_window',
             'res_model': 'health.fieldservice.order',
-            'domain': [('package_id', '=', self.id)],
+            'domain': [('package_ids', 'in', [self.id])],
             'view_mode': 'list,form',
             'target': 'current',
-            'context': {'default_package_id': self.id, 'default_patient_id': self.patient_id.id}
+            'context': {'default_patient_id': self.patient_id.id}
         }
     
     def action_refund_package(self):
@@ -435,11 +434,10 @@ class HealthServicePackage(models.Model):
             'name': _('Package Bookings'),
             'type': 'ir.actions.act_window',
             'res_model': 'health.fieldservice.order',
-            'domain': [('package_id', '=', self.id)],
+            'domain': [('package_ids', 'in', [self.id])],
             'view_mode': 'list,form',
             'target': 'current',
             'context': {
-                'default_package_id': self.id,
                 'default_patient_id': self.patient_id.id,
             }
         }

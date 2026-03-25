@@ -76,7 +76,7 @@ a {
     display: block;
     width: 100%;
     padding: var(--vu-space-lg);
-    margin-bottom: var(--vu-space-lg);
+    margin-bottom: var(--vu-space-md);
     background: var(--vu-surface-card);
     border: 1px solid var(--vu-border-soft);
     border-radius: var(--vu-radius-md);
@@ -169,7 +169,7 @@ a {
     padding-bottom: var(--vu-space-xs);
     padding-left: var(--vu-space-lg);
     padding-right: var(--vu-space-lg);
-    margin: var(--vu-space-md) 0;
+    margin: var(--vu-space-xs) 0 !important;
 }
 
 .o_form_view .o_horizontal_separator::after,

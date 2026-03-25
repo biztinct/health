@@ -223,7 +223,6 @@
                 <field name="assignment_role"/>
                 <field name="state" decoration-success="state=='completed'" decoration-warning="state=='assigned'" decoration-danger="state=='cancelled'"/>
                 <field name="priority"/>
-                <field name="assignment_score" widget="percentage"/>
             </list>
         </field>
     </record>

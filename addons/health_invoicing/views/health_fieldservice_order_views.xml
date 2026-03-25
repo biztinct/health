@@ -78,59 +78,53 @@
             
             <!-- Add Service Package Selection (Always Visible for Easy Package Booking) -->
             <xpath expr="//group[1]" position="after">
-                <group string="Service Package" name="package_selection"
-                       invisible="not package_id"
+                <group string="Service Packages" name="package_selection"
+                       invisible="not package_ids"
                        groups="health_invoicing.group_health_invoicing_user">
                     <group>
-                        <field name="package_id" 
+                        <field name="package_ids"
+                               widget="many2many_tags"
                                readonly="1"
-                               nolabel="1"
-                               options="{'open': True}"
-                               help="Assigned via the Service Package button"
-                               domain="[('patient_id', '=', patient_id), ('state', '=', 'active'), ('remaining_services', '&gt;', 0)]"/>
+                               nolabel="0"
+                               string="Assigned Packages"
+                               help="Assigned via the Service Package button"/>
                         <field name="package_consumption_quantity" 
                                invisible="1"
-                               help="Number of services to consume from selected package"/>
+                               help="Number of services to consume from each package"/>
                         <field name="currency_id" invisible="1"/>
                         <field name="is_package_service" readonly="1" invisible="1"/>
                         <field name="package_service_value" readonly="1" widget="monetary"
                                invisible="1"/>
                     </group>
                 </group>
-                
-                <!-- Optional Insurance Claim Link -->
-                <group string="Insurance Claim (optional)" name="insurance_claim_link"
-                       groups="health_invoicing.group_insurance_claims">
-                    <group>
-                        <field name="insurance_claim_id"
-                               options="{'no_create': False}"
-                               placeholder="Link to insurance claim invoice (if any)"/>
-                    </group>
-                </group>
+
                 
                 <!-- Package Status Alert -->
                 <div class="alert alert-info" role="alert" 
-                     invisible="not package_id">
-                    <strong><i class="fa fa-cube"/> Package Selected:</strong> 
-                    <field name="package_id" readonly="1" nolabel="1"/> - 
-                    Services will be consumed from this prepaid package.
+                     invisible="not package_ids">
+                    <strong><i class="fa fa-cube"/> Packages Selected:</strong> 
+                    <field name="package_ids" widget="many2many_tags" readonly="1" nolabel="1"/> - 
+                    1 service will be consumed from each package.
                 </div>
-                
-                <group string="Payment and Invoice Summary" name="payment_summary"
+            </xpath>
+            
+            <!-- Move payment fields into the Quote and Invoice Status card -->
+            <xpath expr="//field[@name='invoice_state']" position="after">
+                <field name="is_invoiced" readonly="1"
+                       groups="health_invoicing.group_health_invoicing_user"/>
+                <field name="total_paid_amount" readonly="1"
                        invisible="not is_invoiced"
-                       groups="health_invoicing.group_health_invoicing_user">
-                    <group>
-                        <field name="is_invoiced" readonly="1"/>
-                        <field name="total_paid_amount" readonly="1"/>
-                        <field name="outstanding_amount" readonly="1" 
-                               invisible="outstanding_amount == 0"/>
-                    </group>
-                    <group>
-                        <field name="invoice_id" readonly="1" invisible="not invoice_id"/>
-                        <field name="payment_transaction_count" readonly="1" 
-                               invisible="payment_transaction_count == 0"/>
-                    </group>
-                </group>
+                       groups="health_invoicing.group_health_invoicing_user"/>
+                <field name="outstanding_amount" readonly="1" 
+                       invisible="outstanding_amount == 0 or not is_invoiced"
+                       groups="health_invoicing.group_health_invoicing_user"/>
+                <field name="payment_transaction_count" readonly="1" 
+                       invisible="payment_transaction_count == 0"
+                       groups="health_invoicing.group_health_invoicing_user"/>
+                <field name="insurance_claim_id"
+                       options="{'no_create': False}"
+                       placeholder="Link to insurance claim invoice (if any)"
+                       groups="health_invoicing.group_insurance_claims"/>
             </xpath>
             
             <!-- Add Payment Tracking Tab -->
@@ -160,10 +154,10 @@
                            invisible="not is_package_service"
                            groups="health_invoicing.group_health_invoicing_user">
                         <p><strong>Package Service Integration:</strong></p>
-                        <p>Package: <field name="package_id" readonly="1" nolabel="1"/></p>
+                        <p>Packages: <field name="package_ids" widget="many2many_tags" readonly="1" nolabel="1"/></p>
                         <!-- Hidden: Services Consumed and Service Value not needed in UI -->
-                        <p invisible="1">Services Consumed: <field name="package_consumption_quantity" readonly="1" nolabel="1"/></p>
-                        <p invisible="1">Service Value: <field name="package_service_value" readonly="1" nolabel="1" widget="monetary"/></p>
+                        <p invisible="1">Services Consumed Per Package: <field name="package_consumption_quantity" readonly="1" nolabel="1"/></p>
+                        <p invisible="1">Total Service Value: <field name="package_service_value" readonly="1" nolabel="1" widget="monetary"/></p>
                         
                         <!-- Legacy Prepaid Consumptions (hidden - deprecated) -->
                         <separator string="Legacy Consumption Records (Deprecated)" invisible="1"/>

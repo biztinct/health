@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+from markupsafe import Markup
 from odoo import models, fields, api, _
 from odoo.exceptions import ValidationError, UserError
 from datetime import datetime, timedelta
@@ -1800,7 +1801,7 @@ class HealthFieldServiceOrderUnified(models.Model):
                 # Post informational message to chatter
                 try:
                     self.message_post(
-                        body=_('📋 <strong>Quote Required:</strong> This booking needs a healthcare quote before it can be confirmed. Use the "Create Quote" smart button to add services and pricing.'),
+                        body=Markup(_('📋 <strong>Quote Required:</strong> This booking needs a healthcare quote before it can be confirmed. Use the "Create Quote" smart button to add services and pricing.')),
                         message_type='notification',
                         subtype_xmlid='mail.mt_note'
                     )
@@ -1877,7 +1878,7 @@ class HealthFieldServiceOrderUnified(models.Model):
             quote_or_package = self.sale_order_id.name if self.sale_order_id else self.name
             try:
                 self.message_post(
-                    body=_('✅ <strong>Booking Confirmed:</strong> Booking moved to %s stage. %s is ready for service delivery.') % (confirmed_stage.name, quote_or_package),
+                    body=Markup(_('✅ <strong>Booking Confirmed:</strong> Booking moved to %s stage. %s is ready for service delivery.')) % (confirmed_stage.name, quote_or_package),
                     message_type='notification',
                     subtype_xmlid='mail.mt_note'
                 )
@@ -2196,11 +2197,11 @@ class HealthFieldServiceOrderUnified(models.Model):
         
         # Post note in chatter
         self.message_post(
-            body=_(
+            body=Markup(_(
                 '<p><strong>Invoice Authorization Notice</strong></p>'
                 '<p>This booking was created by %(user)s (Healthcare Staff). '
                 'Operations team has been notified to handle invoice creation.</p>'
-            ) % {'user': self.env.user.name},
+            )) % {'user': self.env.user.name},
             message_type='notification',
             subtype_xmlid='mail.mt_note',
         )
@@ -2251,11 +2252,11 @@ class HealthFieldServiceOrderUnified(models.Model):
         # Log message in chatter (no email required, just internal note)
         try:
             self.message_post(
-                body=f"""
-                    <p><strong>Service Completed by Part-Time Staff</strong></p>
-                    <p>Assigned staff: {self.lead_staff_id.name} (Part-Time)</p>
-                    <p>Operations team has been notified to create invoice.</p>
-                """,
+                body=Markup(
+                    '<p><strong>Service Completed by Part-Time Staff</strong></p>'
+                    '<p>Assigned staff: %s (Part-Time)</p>'
+                    '<p>Operations team has been notified to create invoice.</p>'
+                ) % self.lead_staff_id.name,
                 subject='Service Completed - Requires Operations Invoicing',
                 message_type='notification'
             )
@@ -2379,7 +2380,7 @@ class HealthFieldServiceOrderUnified(models.Model):
         # Post message to chatter
         try:
             self.message_post(
-                body=_('✅ <strong>Booking Closed:</strong> Cash collected by Operations Manager. Booking moved to Closed stage.'),
+                body=Markup(_('✅ <strong>Booking Closed:</strong> Cash collected by Operations Manager. Booking moved to Closed stage.')),
                 message_type='notification',
                 subtype_xmlid='mail.mt_note'
             )

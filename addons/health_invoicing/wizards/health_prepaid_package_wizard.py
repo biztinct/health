@@ -293,7 +293,7 @@ class HealthPrepaidPackageWizard(models.TransientModel):
             
             # If opened from a booking, auto-assign and return to booking
             if self.source_fso_id:
-                self.source_fso_id.write({'package_id': package.id})
+                self.source_fso_id.write({'package_ids': [(4, package.id)]})
                 booking_name = self.source_fso_id.name
                 return {
                     'type': 'ir.actions.client',

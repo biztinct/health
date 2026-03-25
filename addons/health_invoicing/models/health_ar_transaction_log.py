@@ -240,7 +240,7 @@ class HealthARTransactionLog(models.Model):
             else:
                 parts.append('OTHER')
         elif move:
-            if move.fieldservice_order_id and move.fieldservice_order_id.package_id:
+            if move.fieldservice_order_id and move.fieldservice_order_id.package_ids:
                 parts.append('PREPAID')
             else:
                 parts.append('STANDARD')
