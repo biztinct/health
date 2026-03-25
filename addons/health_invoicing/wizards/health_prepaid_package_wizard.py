@@ -17,6 +17,13 @@ class HealthPrepaidPackageWizard(models.TransientModel):
     _name = 'health.prepaid.package.wizard'
     _description = 'Prepaid Package Creation Wizard'
     
+    # Optional: if opened from a booking wizard, auto-assign package to this FSO
+    source_fso_id = fields.Many2one(
+        'health.fieldservice.order',
+        string='Source Booking',
+        help='If set, the created package will be auto-assigned to this booking',
+    )
+    
     # Patient Information
     patient_id = fields.Many2one(
         'res.partner',
@@ -284,7 +291,25 @@ class HealthPrepaidPackageWizard(models.TransientModel):
             except Exception:
                 pass  # Silently fail - no email notifications required
             
-            # Return action to view the created package
+            # If opened from a booking, auto-assign and return to booking
+            if self.source_fso_id:
+                self.source_fso_id.write({'package_id': package.id})
+                booking_name = self.source_fso_id.name
+                return {
+                    'type': 'ir.actions.client',
+                    'tag': 'display_notification',
+                    'params': {
+                        'title': _('Package Purchased and Assigned'),
+                        'message': _('%s created and assigned to booking %s.') % (
+                            package.name, booking_name
+                        ),
+                        'type': 'success',
+                        'sticky': False,
+                        'next': {'type': 'ir.actions.act_window_close'},
+                    }
+                }
+            
+            # Default: open the created package form
             return {
                 'name': _('Prepaid Service Package'),
                 'type': 'ir.actions.act_window',

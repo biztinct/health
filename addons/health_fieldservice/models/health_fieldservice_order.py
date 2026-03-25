@@ -1210,8 +1210,8 @@ class HealthFieldServiceOrderUnified(models.Model):
     patient_condition_after = fields.Text('Patient Condition (After)', help='client condition after service')
     vital_signs = fields.Text('Vital Signs', help='Recorded vital signs during service')
     
-    # Post-service procedure counts (filled by provider after service delivery)
-    # Used by advanced pricing engine for "every additional" rules
+    # Post-service procedure counts (also stored on sale.order for pricing engine)
+    # Both models store independently; quote form is the primary editing surface
     injection_count = fields.Integer('Injections Given', default=1,
         help='Number of injections administered during this visit (first included in base price)')
     medication_count = fields.Integer('Medications Given', default=1,

@@ -1,50 +1,114 @@
 
-/* Professional compact card for web_timeline items */
+/* ============================================================================
+   PREMIUM TIMELINE CARDS — SaaS-Inspired Assignment Blocks
+   Inspired by: Calendly, Linear, Notion Calendar
+   ============================================================================ */
+
+/* Base card — glass-morphism with accent left border */
 .hf-wt-card {
     display: flex;
     flex-direction: column;
-    gap: 6px;
-    padding: 8px 10px;
-    background: #fff;
+    gap: 4px;
+    padding: 10px 14px 10px 12px;
+    background: linear-gradient(135deg, rgba(255,255,255,0.97) 0%, rgba(248,250,252,0.95) 100%);
+    backdrop-filter: blur(8px);
     border: none;
-    border-radius: 6px;
+    border-left: 4px solid var(--hf-wt-accent, #6366f1);
+    border-radius: 8px;
     max-width: 320px;
-    line-height: 1.25;
-    transition: all 0.2s ease;
+    line-height: 1.3;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: visible;
 }
+
+.hf-wt-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-radius: 8px;
+    background: linear-gradient(135deg,
+        rgba(99, 102, 241, 0.04) 0%,
+        rgba(139, 92, 246, 0.02) 100%);
+    pointer-events: none;
+    z-index: 0;
+    transition: opacity 0.25s ease;
+}
+
+/* Client name — bold & dark, single line */
 .hf-wt-title {
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 700;
-    color: #111;
-    /* Allow name to overflow outside the box - keep on one line */
+    color: #1e293b;
     overflow: visible;
     white-space: nowrap;
+    letter-spacing: -0.01em;
+    position: relative;
+    z-index: 1;
 }
+
+/* Meta line — time + duration pill */
 .hf-wt-meta {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    font-size: 12px;
-    color: #4b5563;
+    gap: 6px;
+    font-size: 11px;
+    color: #64748b;
+    font-weight: 500;
+    position: relative;
+    z-index: 1;
 }
+
+/* Duration badge */
+.hf-wt-meta span {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+}
+
 .hf-wt-left, .hf-wt-right { display: flex; align-items: center; gap: 6px; }
 
-/* Timeline item configuration - Simple blue border for all cards */
+/* ============================================================================
+   TIMELINE ITEM — outer vis.js container
+   ============================================================================ */
+
+/* Clean outer container with subtle shadow */
 .o_timeline_view .vis-item.vis-range {
-    /* Thick uniform blue border for all cards - improves drag & drop performance */
-    border: 4px solid #3b82f6 !important;
-    border-radius: 8px !important;
+    border: none !important;
+    border-radius: 10px !important;
     background: transparent !important;
     padding: 0 !important;
-    box-shadow: 0 2px 6px rgba(59, 130, 246, 0.2) !important;
-    transition: all 0.2s ease !important;
+    box-shadow:
+        0 1px 3px rgba(0, 0, 0, 0.06),
+        0 4px 12px rgba(99, 102, 241, 0.08) !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    cursor: pointer;
 }
 
-/* Hover effect on timeline items */
+/* Hover — lift + glow */
 .o_timeline_view .vis-item.vis-range:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.25) !important;
-    border-width: 5px !important;
+    transform: translateY(-3px) scale(1.01);
+    box-shadow:
+        0 8px 25px rgba(99, 102, 241, 0.18),
+        0 2px 8px rgba(0, 0, 0, 0.08) !important;
+}
+
+/* Hover inner card — subtle highlight */
+.o_timeline_view .vis-item.vis-range:hover .hf-wt-card::before {
+    opacity: 1;
+    background: linear-gradient(135deg,
+        rgba(99, 102, 241, 0.08) 0%,
+        rgba(139, 92, 246, 0.04) 100%);
+}
+
+/* Selected state */
+.o_timeline_view .vis-item.vis-range.vis-selected {
+    box-shadow:
+        0 0 0 2px #6366f1,
+        0 8px 25px rgba(99, 102, 241, 0.25) !important;
 }
 
 /* Remove connector lines */
@@ -71,21 +135,86 @@
     overflow: visible !important;
 }
 
-/* Month view: Left-positioned items (odd days) */
+/* ============================================================================
+   GROUP ROW LABELS — Left sidebar staff names
+   ============================================================================ */
+
+.o_timeline_view .vis-label .vis-inner {
+    font-weight: 600;
+    font-size: 13px;
+    color: #334155;
+    letter-spacing: -0.01em;
+    padding: 8px 14px;
+}
+
+/* Alternate row backgrounds for readability */
+.o_timeline_view .vis-foreground .vis-group:nth-child(even) {
+    background: rgba(248, 250, 252, 0.6);
+}
+
+/* ============================================================================
+   VIEW MODES — Responsive density
+   ============================================================================ */
+
+/* Month view: ensure readable cards */
 .o_timeline_view[data-timeline-mode="month"] .vis-item.vis-range.month-day-left {
     width: 48% !important;
     left: 1% !important;
 }
 
-/* Month view: Right-positioned items (even days) */
 .o_timeline_view[data-timeline-mode="month"] .vis-item.vis-range.month-day-right {
     width: 48% !important;
     left: 51% !important;
 }
 
-/* Prevent card content from being compressed in week/month view */
 .o_timeline_view[data-timeline-mode="week"] .vis-item.vis-range .hf-wt-card,
 .o_timeline_view[data-timeline-mode="month"] .vis-item.vis-range .hf-wt-card {
     white-space: normal;
     max-width: 100%;
+}
+
+/* Day view: taller cards with more info */
+.o_timeline_view[data-timeline-mode="day"] .hf-wt-card {
+    padding: 12px 16px 12px 14px;
+    gap: 6px;
+}
+
+.o_timeline_view[data-timeline-mode="day"] .hf-wt-title {
+    font-size: 14px;
+}
+
+/* ============================================================================
+   TIME AXIS — cleaner header
+   ============================================================================ */
+
+.o_timeline_view .vis-time-axis .vis-text {
+    font-size: 11px;
+    font-weight: 600;
+    color: #94a3b8;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+.o_timeline_view .vis-time-axis .vis-text.vis-major {
+    font-size: 12px;
+    color: #475569;
+    font-weight: 700;
+}
+
+/* Today marker */
+.o_timeline_view .vis-current-time {
+    background-color: #ef4444 !important;
+    width: 2px !important;
+}
+
+/* ============================================================================
+   GRID LINES — subtle
+   ============================================================================ */
+
+.o_timeline_view .vis-grid.vis-minor {
+    border-color: rgba(226, 232, 240, 0.5) !important;
+}
+
+.o_timeline_view .vis-grid.vis-major {
+    border-color: rgba(203, 213, 225, 0.7) !important;
 }

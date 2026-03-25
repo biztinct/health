@@ -20,6 +20,16 @@ class SaleOrder(models.Model):
                                          help='Shows applied pricing rules and calculations after Recalc Pricing')
     pre_service_amount = fields.Float('Pre-Service Amount', readonly=True,
                                       help='Quote total at time of advance payment, used to calculate post-service delta')
+
+    # Post-service procedure counts (source of truth for pricing)
+    injection_count = fields.Integer('Injections Given', default=1,
+                                     help='Number of injections administered. First is included in base price.')
+    medication_count = fields.Integer('Medications Given', default=1,
+                                      help='Number of medications administered. First is included in base price.')
+    wound_count = fields.Integer('Wounds Treated', default=1,
+                                 help='Number of wounds treated. First is included in base price.')
+    iv_fluid_count = fields.Integer('IV Fluid Bags', default=0,
+                                    help='Number of IV fluid bags used. Not included in base price.')
     
     # Computed fields from FSO for pricing rules
     fso_distance = fields.Float('Distance (km)', 
@@ -485,14 +495,14 @@ class SaleOrder(models.Model):
         
         # Build description of what changed
         changes = []
-        if fso.injection_count > 1:
-            changes.append(f'{fso.injection_count - 1} extra injection(s)')
-        if fso.medication_count > 1:
-            changes.append(f'{fso.medication_count - 1} extra medication(s)')
-        if fso.wound_count > 1:
-            changes.append(f'{fso.wound_count - 1} extra wound treatment(s)')
-        if fso.iv_fluid_count > 0:
-            changes.append(f'{fso.iv_fluid_count} IV fluid bag(s)')
+        if self.injection_count > 1:
+            changes.append(f'{self.injection_count - 1} extra injection(s)')
+        if self.medication_count > 1:
+            changes.append(f'{self.medication_count - 1} extra medication(s)')
+        if self.wound_count > 1:
+            changes.append(f'{self.wound_count - 1} extra wound treatment(s)')
+        if self.iv_fluid_count > 0:
+            changes.append(f'{self.iv_fluid_count} IV fluid bag(s)')
         
         description = ', '.join(changes) if changes else 'Post-service adjustment'
         
@@ -626,11 +636,11 @@ class SaleOrder(models.Model):
                     'urgency': self.fso_urgency,
                     'priority': self.fso_priority,
                     'region': '',
-                    # Post-service procedure counts
-                    'injection_count': self.fso_id.injection_count or 0 if self.fso_id else 0,
-                    'medication_count': self.fso_id.medication_count or 0 if self.fso_id else 0,
-                    'wound_count': self.fso_id.wound_count or 0 if self.fso_id else 0,
-                    'iv_fluid_count': self.fso_id.iv_fluid_count or 0 if self.fso_id else 0,
+                    # Post-service procedure counts (from quote itself)
+                    'injection_count': self.injection_count or 0,
+                    'medication_count': self.medication_count or 0,
+                    'wound_count': self.wound_count or 0,
+                    'iv_fluid_count': self.iv_fluid_count or 0,
                 }
                 # Determine region from product code
                 code = line.product_id.default_code or ''
@@ -825,11 +835,11 @@ class SaleOrderLine(models.Model):
                     'priority': line.order_id.fso_priority,
                     'service_units': line.order_id.service_units,
                     'service_city': line.order_id.service_city,
-                    # Post-service procedure counts
-                    'injection_count': line.order_id.fso_id.injection_count or 0,
-                    'medication_count': line.order_id.fso_id.medication_count or 0,
-                    'wound_count': line.order_id.fso_id.wound_count or 0,
-                    'iv_fluid_count': line.order_id.fso_id.iv_fluid_count or 0,
+                    # Post-service procedure counts (from quote itself)
+                    'injection_count': line.order_id.injection_count or 0,
+                    'medication_count': line.order_id.medication_count or 0,
+                    'wound_count': line.order_id.wound_count or 0,
+                    'iv_fluid_count': line.order_id.iv_fluid_count or 0,
                 }
                 context_data.update(fso_context)
             

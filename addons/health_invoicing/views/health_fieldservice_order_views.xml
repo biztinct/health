@@ -50,7 +50,7 @@
                 
                 <!-- Primary Nurse Workflow Button -->
                 <button type="object" name="action_complete_service_with_payment"
-                        string="Complete Service &amp; Collect Payment"
+                        string="Complete Service and Collect Payment"
                         class="btn-success" icon="fa-money"
                         invisible="state != 'in_progress' or is_invoiced"
                         groups="health_invoicing.group_health_invoicing_user"
@@ -116,7 +116,7 @@
                     Services will be consumed from this prepaid package.
                 </div>
                 
-                <group string="Payment &amp; Invoice Summary" name="payment_summary"
+                <group string="Payment and Invoice Summary" name="payment_summary"
                        invisible="not is_invoiced"
                        groups="health_invoicing.group_health_invoicing_user">
                     <group>
@@ -135,7 +135,7 @@
             
             <!-- Add Payment Tracking Tab -->
             <xpath expr="//notebook" position="inside">
-                <page string="Payments &amp; Transactions" name="payment_tracking"
+                <page string="Payments and Transactions" name="payment_tracking"
                       invisible="payment_transaction_count == 0"
                       groups="health_invoicing.group_health_invoicing_user">
                     

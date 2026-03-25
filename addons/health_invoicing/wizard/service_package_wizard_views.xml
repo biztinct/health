@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-    <!-- Service Package Selection Wizard Form -->
+    <!-- Service Package Selection & Purchase Wizard Form -->
     <record id="view_service_package_wizard_form" model="ir.ui.view">
         <field name="name">health.service.package.wizard.form</field>
         <field name="model">health.service.package.wizard</field>
@@ -9,44 +9,82 @@
             <form string="Service Package Selection">
                 <field name="fso_id" invisible="1"/>
                 <field name="patient_id" invisible="1"/>
+                <field name="has_existing_packages" invisible="1"/>
 
                 <div class="alert alert-info mb-3" role="alert">
-                    <strong><i class="fa fa-cube"/> Select a Service Package</strong> for client
+                    <strong><i class="fa fa-cube"/> Select or Purchase a Service Package</strong> for client
                     <field name="patient_id" class="fw-bold" readonly="1" nolabel="1"/>.
                     <br/>
                     <small class="text-muted">
-                        Choose an existing prepaid package to link to this booking.
-                        One service will be consumed from the selected package.
+                        Select an existing prepaid package, or purchase a new one from the catalog below.
                     </small>
                 </div>
 
-                <field name="line_ids" nolabel="1">
-                    <list editable="bottom" create="false" delete="false"
-                          decoration-muted="not is_selectable"
-                          decoration-success="selected and is_selectable">
-                        <field name="selected" string="✓"
-                               readonly="not is_selectable"
-                               widget="boolean"/>
-                        <field name="package_name" string="Package"/>
-                        <field name="service_type" string="Type"/>
-                        <field name="total_services" string="Total"/>
-                        <field name="consumed_services" string="Used"/>
-                        <field name="remaining_services" string="Remaining"
-                               widget="badge"
-                               decoration-success="remaining_services > 3"
-                               decoration-warning="remaining_services > 0 and remaining_services &lt;= 3"
-                               decoration-danger="remaining_services == 0"/>
+                <!-- SECTION 1: Existing Packages -->
+                <div invisible="not has_existing_packages">
+                    <h4 class="mt-2 mb-2">
+                        <i class="fa fa-check-circle text-success"/> Existing Client Packages
+                    </h4>
+                    <field name="line_ids" nolabel="1">
+                        <list editable="bottom" create="false" delete="false"
+                              decoration-muted="not is_selectable"
+                              decoration-success="selected and is_selectable">
+                            <field name="selected" string="✓"
+                                   readonly="not is_selectable"
+                                   widget="boolean"/>
+                            <field name="package_name" string="Package"/>
+                            <field name="service_type" string="Type"/>
+                            <field name="total_services" string="Total"/>
+                            <field name="consumed_services" string="Used"/>
+                            <field name="remaining_services" string="Remaining"
+                                   widget="badge"
+                                   decoration-success="remaining_services > 3"
+                                   decoration-warning="remaining_services > 0 and remaining_services &lt;= 3"
+                                   decoration-danger="remaining_services == 0"/>
 
-                        <field name="package_id" column_invisible="1"/>
-                        <field name="is_selectable" column_invisible="1"/>
+                            <field name="package_id" column_invisible="1"/>
+                            <field name="is_selectable" column_invisible="1"/>
+                            <field name="wizard_id" column_invisible="1"/>
+                        </list>
+                    </field>
+                </div>
+
+                <!-- Divider between sections -->
+                <div invisible="not has_existing_packages" class="mt-3 mb-1">
+                    <hr/>
+                </div>
+
+                <!-- SECTION 2: Available Package Products for Purchase -->
+                <h4 class="mt-2 mb-2">
+                    <i class="fa fa-shopping-cart text-primary"/> Purchase New Package
+                </h4>
+                <small class="text-muted d-block mb-2">
+                    Select a package product below and click "Purchase &amp; Assign" to create a new package for this client.
+                </small>
+                <field name="product_line_ids" nolabel="1">
+                    <list editable="bottom" create="false" delete="false"
+                          decoration-success="selected">
+                        <field name="selected" string="Buy" widget="boolean"/>
+                        <field name="product_name" string="Package"/>
+                        <field name="service_count" string="Services"/>
+                        <field name="price" string="Price" widget="float"/>
+                        <field name="price_per_service" string="Per Service" widget="float"/>
+
+                        <field name="product_template_id" column_invisible="1"/>
                         <field name="wizard_id" column_invisible="1"/>
                     </list>
                 </field>
 
                 <footer>
                     <button name="action_confirm" type="object"
-                            string="Assign Package" class="btn-primary"
-                            icon="fa-check"/>
+                            string="✅ Assign Existing" class="btn-primary"
+                            icon="fa-check"
+                            title="Assign the selected existing package to this booking"
+                            invisible="not has_existing_packages"/>
+                    <button name="action_purchase_and_assign" type="object"
+                            string="🛒 Purchase and Assign" class="btn-success"
+                            icon="fa-shopping-cart"
+                            title="Purchase a new package from the selected product and assign to this booking"/>
                     <button name="action_clear_package" type="object"
                             string="Remove Package" class="btn-warning"
                             icon="fa-times"
