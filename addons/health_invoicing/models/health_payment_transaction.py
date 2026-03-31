@@ -57,6 +57,7 @@ class HealthPaymentTransaction(models.Model):
         tracking=True,
         help='client who made the payment'
     )
+    patient_phone = fields.Char('Phone', related='patient_id.phone', readonly=True)
     
     fso_id = fields.Many2one(
         'health.fieldservice.order',

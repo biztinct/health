@@ -400,6 +400,7 @@
                 <field name="age_display"/>
                 <field name="gender"/>
                 <field name="phone" widget="phone"/>
+                <field name="national_id" optional="show"/>
                 <field name="patient_category_id"/>
                 <field name="patient_status"/>
                 <field name="source_type"/>

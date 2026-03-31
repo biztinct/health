@@ -12,6 +12,8 @@
                   decoration-muted="state in ('expired', 'cancelled', 'refunded')">
                 <field name="display_name"/>
                 <field name="patient_id"/>
+                <field name="patient_phone" widget="phone" optional="show"/>
+                <field name="patient_national_id" optional="show"/>
                 <field name="service_type"/>
                 <field name="total_services"/>
                 <field name="consumed_services"/>

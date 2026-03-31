@@ -235,6 +235,16 @@
                                 <group col="2">
                                     <field name="patient_id" readonly="1"
                                            context="{'form_view_ref': 'health_base.view_health_patient_form'}"/>
+                                    <field name="patient_phone" widget="phone" string="Phone"/>
+                                    <field name="patient_national_id" string="National ID"/>
+                                    <label for="patient_address_display" string="Client Address"/>
+                                    <div class="o_row align-items-start">
+                                        <field name="patient_address_display" nolabel="1" readonly="1" class="flex-grow-1"/>
+                                        <button name="action_edit_patient_address"
+                                                type="object"
+                                                class="btn btn-link p-0 fa fa-pencil text-muted"
+                                                title="Edit address"/>
+                                    </div>
                                     <field name="service_type"/>
                                     <field name="has_staff_assigned" invisible="1"/>
                                     <field name="patient_catchment_province_id"/>
@@ -603,6 +613,8 @@
         <field name="arch" type="xml">
             <list string="Bookings" default_order="create_date desc">
                 <field name="display_name" string="Booking"/>
+                <field name="patient_id" string="Client"/>
+                <field name="patient_phone" string="Phone" widget="phone" optional="show"/>
                 <field name="service_type"/>
                 <field name="scheduled_datetime"/>
                 <field name="assigned_staff_ids" widget="many2many_tags" options="{'color_field': 'color'}"/>

@@ -14,6 +14,7 @@
                 <field name="name"/>
                 <field name="transaction_date"/>
                 <field name="patient_id"/>
+                <field name="patient_phone" widget="phone" optional="show"/>
                 <field name="amount" widget="monetary"/>
                 <field name="payment_method"/>
                 <field name="transaction_type" widget="badge"

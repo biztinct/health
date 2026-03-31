@@ -223,6 +223,8 @@ class HealthFieldServiceOrderUnified(models.Model):
     patient_phone = fields.Char('Patient Phone', related='patient_id.mobile', readonly=True)
     patient_email = fields.Char('Patient Email', related='patient_id.email', readonly=True)
     patient_age = fields.Char('Patient Age', related='patient_id.age_display', readonly=True)
+    patient_national_id = fields.Char('National ID', related='patient_id.national_id', readonly=True)
+    patient_address_display = fields.Text('Client Address', related='patient_id.vietnamese_address', readonly=True)
     
     # Catchment Province for staff filtering
     patient_catchment_province_id = fields.Many2one(
@@ -2035,6 +2037,13 @@ class HealthFieldServiceOrderUnified(models.Model):
     # ============================================================================
     
     # action_confirm_booking method moved above with quote validation
+    
+    def action_edit_patient_address(self):
+        """Open modal to edit the linked patient's Vietnamese address fields."""
+        self.ensure_one()
+        if not self.patient_id:
+            raise UserError(_('No client is linked to this booking.'))
+        return self.patient_id.action_edit_vietnamese_address()
     
     def action_start_service(self):
         """Start the service execution - moves booking to In Progress stage"""

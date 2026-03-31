@@ -51,6 +51,8 @@ class HealthServicePackage(models.Model):
         tracking=True,
         help='client who purchased this package'
     )
+    patient_phone = fields.Char('Phone', related='patient_id.phone', readonly=True)
+    patient_national_id = fields.Char('National ID', related='patient_id.national_id', readonly=True)
     
     service_type = fields.Selection([
         ('physiotherapy', 'Physiotherapy'),
