@@ -33,10 +33,24 @@ class HealthFSOCashCollectionWizard(models.TransientModel):
     )
 
     total_price = fields.Monetary(
-        related='fso_id.total_price',
         string='Total Amount',
+        compute='_compute_total_price',
+        currency_field='currency_id',
         readonly=True
     )
+
+    @api.depends('fso_id', 'fso_id.invoice_id', 'fso_id.sale_order_id')
+    def _compute_total_price(self):
+        for wiz in self:
+            if wiz.fso_id and wiz.fso_id.invoice_id:
+                wiz.total_price = abs(
+                    wiz.fso_id.invoice_id.amount_total_signed
+                    or wiz.fso_id.invoice_id.amount_total or 0.0
+                )
+            elif wiz.fso_id and wiz.fso_id.sale_order_id:
+                wiz.total_price = wiz.fso_id.sale_order_id.amount_total or 0.0
+            else:
+                wiz.total_price = 0.0
 
     currency_id = fields.Many2one(
         'res.currency',
@@ -77,8 +91,15 @@ class HealthFSOCashCollectionWizard(models.TransientModel):
         fso_id = self.env.context.get('default_fso_id')
         if fso_id:
             fso = self.env['health.fieldservice.order'].browse(fso_id)
-            # Pre-fill cash amount with total price
-            res['cash_amount'] = fso.total_price
+            # Pre-fill cash amount: prefer invoice amount, fallback to sale order, then total_price
+            amount = 0.0
+            if fso.invoice_id:
+                amount = abs(fso.invoice_id.amount_total_signed or fso.invoice_id.amount_total or 0.0)
+            elif fso.sale_order_id:
+                amount = fso.sale_order_id.amount_total or 0.0
+            else:
+                amount = fso.total_price or 0.0
+            res['cash_amount'] = amount
 
         return res
 

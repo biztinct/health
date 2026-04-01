@@ -156,6 +156,35 @@ class HealthFlowWizard(models.TransientModel):
             }
             action = self._ensure_action_name(action, _('Refund / Credit'))
             return self._apply_flow_context(action)
+        elif key == 'admin-pricelist':
+            # Open product.product with the catalog search view which has a searchpanel
+            # providing a left sidebar with category/subcategory navigation
+            search_view = self.env.ref(
+                'product.product_view_search_catalog', raise_if_not_found=False
+            )
+            kanban_view = self.env.ref(
+                'product.product_kanban_view', raise_if_not_found=False
+            )
+            action = {
+                'type': 'ir.actions.act_window',
+                'name': _('Pricelist'),
+                'res_model': 'product.product',
+                'view_mode': 'kanban,list,form',
+                'views': [
+                    (kanban_view.id if kanban_view else False, 'kanban'),
+                    (False, 'list'),
+                    (False, 'form'),
+                ],
+                'target': 'current',
+                'context': {
+                    'default_type': 'service',
+                    'default_sale_ok': True,
+                },
+            }
+            if search_view:
+                action['search_view_id'] = [search_view.id, search_view.name]
+            action = self._ensure_action_name(action, _('Pricelist'))
+            return self._apply_flow_context(action)
 
         # Map keys to action xmlid
         mapping = {

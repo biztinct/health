@@ -136,6 +136,16 @@ class HealthFSOClinicalNotesWizard(models.TransientModel):
         """Save clinical notes to FSO and return to dashboard"""
         self.ensure_one()
 
+        # Validate: at least Clinical Notes or Treatment Performed must be filled
+        import re
+        notes_text = re.sub(r'<[^>]+>', '', self.clinical_notes or '').strip() if self.clinical_notes else ''
+        treatment_text = (self.treatment_performed or '').strip()
+        if not notes_text and not treatment_text:
+            raise UserError(_(
+                'Please fill in at least "Clinical Notes" or "Treatment Performed" before saving. '
+                'Use the Cancel button if you do not wish to save.'
+            ))
+
         # Update FSO with clinical notes
         self.fso_id.write({
             'symptoms': self.symptoms,

@@ -281,6 +281,15 @@ class HealthNursePaymentWizard(models.TransientModel):
             update_vals['invoice_id'] = invoice.id
             update_vals['is_invoiced'] = True
 
+        # Set payment method on FSO so dashboard can track the payment path
+        if self.payment_choice == 'pay_now' and self.payment_method:
+            update_vals['payment_method'] = self.payment_method
+            # If cash, nurse has already collected it
+            if self.payment_method == 'cash':
+                update_vals['cash_collected_by_nurse'] = True
+        elif self.payment_choice == 'pay_later':
+            update_vals['payment_method'] = 'pay_later'
+
         self.fso_id.write(update_vals)
 
         # Success message and return action

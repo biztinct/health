@@ -236,7 +236,7 @@
                                 <i class="fa fa-times"></i>
                             </div>
                         </div>
-                        <div style="display: flex; flex-direction: column; gap: 10px;">
+                        <div style="display: flex; flex-direction: column; gap: 10px; overflow-y: auto; max-height: calc(80vh - 100px);">
                             <div role="button"
                                  style="display: flex; align-items: center; gap: 14px; padding: 14px 18px; border-radius: 10px; background: #f7fafc; border: 1px solid #e2e8f0; cursor: pointer; font-size: 15px; font-weight: 500; transition: all 0.15s; color: #2d3748;"
                                  t-on-click="() =&gt; this.onMasterDataSelect('admin-facilities')">

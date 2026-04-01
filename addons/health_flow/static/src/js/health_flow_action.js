@@ -129,6 +129,7 @@ class HealthFlowAction extends Component {
                 items: [
                     { key: 'admin-user-management', label: _t('User Management'), icon: 'fa-users', desc: _t('Manage users & roles'), isUserMgmt: true },
                     { key: 'admin-master-data', label: _t('Master Data'), icon: 'fa-database', desc: _t('Master data management'), isMasterData: true },
+                    { key: 'admin-pricelist', label: _t('Pricelist'), icon: 'fa-list-alt', desc: _t('Product catalog & pricing') },
                     { key: 'admin-package-products', label: _t('Package Products'), icon: 'fa-cube', desc: _t('Service packages') },
                     { key: 'admin-pricing-rules', label: _t('Pricing Rules'), icon: 'fa-list-ul', desc: _t('Define pricing rules') },
                     { key: 'admin-portable-equipment', label: _t('Portable Equipment'), icon: 'fa-briefcase', desc: _t('Track equipment') },
