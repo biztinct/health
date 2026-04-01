@@ -36,16 +36,16 @@ a {
 // Clean card styling for healthcare forms
 .o_form_sheet_bg {
     background: var(--vu-surface-panel);
-    padding: var(--vu-space-lg);
+    padding: var(--vu-space-sm) var(--vu-space-lg) var(--vu-space-lg);
     border: 0 !important;
     box-shadow: none !important;
 }
 
 .o_form_sheet {
-    @include vu-card(var(--vu-space-xl));
+    @include vu-card(var(--vu-space-lg));
     font-family: var(--vu-font-family-base);
     border: 0;
-    box-shadow: var(--vu-shadow-lg);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
     --formView-sheet-border-width: 0;
     --formView-sheet-margin-x: 0;
     border-width: 0 !important;
@@ -75,12 +75,12 @@ a {
 .o_form_view .kept-for-backward-compat:not(:has(.o_field_widget[name="groups_id"])) {
     display: block;
     width: 100%;
-    padding: var(--vu-space-lg);
-    margin-bottom: var(--vu-space-md);
+    padding: var(--vu-space-md);
+    margin-bottom: var(--vu-space-sm);
     background: var(--vu-surface-card);
     border: 1px solid var(--vu-border-soft);
     border-radius: var(--vu-radius-md);
-    box-shadow: var(--vu-shadow-lg);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 
 .o_form_view .o_group:not(.o_inner_group):has(>.o_group.row:not(.o_inner_group)):not(:has(.o_field_widget[name="groups_id"])),
@@ -117,16 +117,25 @@ a {
     grid-auto-rows: max-content;
     align-content: flex-start !important;
     justify-content: flex-start;
-    padding: var(--vu-space-md);
+    padding: var(--vu-space-sm);
     background: var(--vu-surface-card);
     border: 1px solid var(--vu-border-soft);
     border-radius: var(--vu-radius-md);
-    box-shadow: var(--vu-shadow-lg);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 
+// Tighter row gap inside inner groups for compact form fields
+.o_form_view .o_inner_group {
+    gap: 2px var(--vu-space-sm) !important;
+    margin-bottom: var(--vu-space-xs) !important;
+}
+
+// =============================================================================
+// CHATTER — Match compact body font
+// =============================================================================
 .oe_chatter,
 .o-mail-Chatter {
-    font-size: var(--vu-font-size-sm);
+    font-size: 0.8125rem !important;   // Match body 13px
     line-height: var(--vu-line-height-normal);
 }
 
@@ -142,8 +151,40 @@ a {
 .o-mail-Chatter .o-mail-Chatter-logNote,
 .o-mail-Chatter .o-mail-Chatter-activity,
 .o-mail-Chatter .o-mail-Message-textContent {
-    font-size: inherit;
+    font-size: inherit !important;
     line-height: inherit;
+}
+
+// Chatter topbar buttons (Send message, Log note, Activity)
+.o-mail-Chatter .o-mail-Chatter-topbar .btn,
+.o-mail-Chatter .o-mail-Chatter-topbar button {
+    font-size: 0.75rem !important;
+    padding: 3px 10px !important;
+}
+
+// Activity items
+.o-mail-Activity {
+    font-size: 0.8125rem !important;
+}
+
+// Composer text area
+.o-mail-Composer .o-mail-Composer-input,
+.o-mail-Composer textarea {
+    font-size: 0.8125rem !important;
+}
+
+// Message author name / date
+.o-mail-Message-header,
+.o-mail-Message-author,
+.o-mail-Message-date {
+    font-size: 0.75rem !important;
+}
+
+// Planned Activities heading
+.o-mail-Chatter .o-mail-Activity-summary,
+.o-mail-Chatter h4,
+.o-mail-Chatter h5 {
+    font-size: 0.8125rem !important;
 }
 
 .o_form_view .o_group.o_group_no_card {
@@ -232,12 +273,12 @@ a {
 .vu-section {
     display: flex;
     flex-direction: column;
-    gap: var(--vu-space-lg);
-    padding: var(--vu-space-lg);
+    gap: var(--vu-space-sm);
+    padding: var(--vu-space-sm) var(--vu-space-md);
     background: var(--vu-surface-card);
-    border-radius: var(--vu-radius-lg);
+    border-radius: var(--vu-radius-md);
     border: 1px solid var(--vu-border-soft);
-    box-shadow: var(--vu-shadow-sm);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
 }
 
 .vu-section:has(>.vu-section-grid) {
@@ -266,19 +307,29 @@ a {
 }
 
 .vu-section__title {
-    font-size: var(--vu-font-size-lg);
+    font-size: 0.8125rem;
     font-weight: 600;
     letter-spacing: .02em;
     color: var(--vu-text-primary);
     display: flex;
     align-items: center;
-    gap: var(--vu-space-sm);
+    gap: var(--vu-space-xs);
+}
+
+// Subtitle text under section title
+.vu-section__title + div,
+.vu-section__title + span,
+.vu-section__title + p {
+    font-size: 0.75rem;
+    color: var(--vu-text-secondary);
+    margin-top: -2px;
+    margin-bottom: 2px;
 }
 
 .vu-section__icon {
-    width: 40px;
-    height: 40px;
-    border-radius: 12px;
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
     background: var(--vu-surface-hover);
     display: inline-flex;
     align-items: center;
@@ -288,8 +339,8 @@ a {
 
     &::after {
         content: '';
-        width: 20px;
-        height: 20px;
+        width: 16px;
+        height: 16px;
         mask-repeat: no-repeat;
         mask-position: center;
         mask-size: contain;
@@ -528,11 +579,11 @@ a {
 }
 
 .vu-card {
-    @include vu-card(var(--vu-space-lg));
+    @include vu-card(var(--vu-space-md));
     display: flex;
     flex-direction: column;
-    gap: var(--vu-space-md);
-    box-shadow: 0 12px 30px rgba(15, 35, 75, 0.08), 0 3px 12px rgba(15, 35, 75, 0.04);
+    gap: var(--vu-space-sm);
+    box-shadow: 0 1px 4px rgba(15, 35, 75, 0.06);
 }
 
 .vu-card__title {
@@ -613,99 +664,99 @@ a {
 
 // Healthcare Badge Colors (ID, Age, etc.) - Professional pill-shaped badges
 .badge.bg-info {
-    background: linear-gradient(135deg, #E4F4FD 0%, #83C5FA 100%) !important; // Accent Blue gradient
-    color: #0D356B !important; // Deep Blue Darkest text
-    border: 2px solid #42A5F5 !important; // Accent Blue border
-    border-radius: 20px !important; // Circular/pill shape
-    font-size: 16px !important;
+    background: linear-gradient(135deg, #E4F4FD 0%, #83C5FA 100%) !important;
+    color: #0D356B !important;
+    border: 1.5px solid #42A5F5 !important;
+    border-radius: 16px !important;
+    font-size: 13px !important;
     font-weight: 600 !important;
-    box-shadow: 0 2px 6px rgba(66, 165, 245, 0.15) !important; // Subtle shadow
+    padding: 3px 10px !important;
+    box-shadow: 0 1px 3px rgba(66, 165, 245, 0.12) !important;
     transition: all 0.2s ease !important;
 
     strong {
-        color: #1565C0 !important; // Label in Deep Blue
+        color: #1565C0 !important;
         font-weight: 700 !important;
-        margin-right: 4px;
+        margin-right: 3px;
     }
 
-    // Ensure fields inside badges display properly
     .o_field_widget {
         display: inline-block !important;
         background: transparent !important;
         border: none !important;
-        color: #0D356B !important; // Deep Blue Darkest text
+        color: #0D356B !important;
         padding: 0 !important;
-        margin: 0 0 0 4px !important;
-        width: 120px !important;
-        min-width: 120px !important;
-        max-width: 200px !important;
-        font-size: 16px !important;
+        margin: 0 0 0 3px !important;
+        width: 100px !important;
+        min-width: 80px !important;
+        max-width: 160px !important;
+        font-size: 13px !important;
 
         input,
         span {
             background: transparent !important;
             border: none !important;
-            color: #0D356B !important; // Deep Blue Darkest text
+            color: #0D356B !important;
             padding: 0 !important;
-            width: 120px !important;
-            min-width: 120px !important;
+            width: 100px !important;
+            min-width: 80px !important;
             box-shadow: none !important;
             font-weight: 600 !important;
-            font-size: 16px !important;
+            font-size: 13px !important;
         }
     }
 
     &:hover {
-        box-shadow: 0 3px 8px rgba(66, 165, 245, 0.25) !important;
+        box-shadow: 0 2px 6px rgba(66, 165, 245, 0.2) !important;
         transform: translateY(-1px);
     }
 }
 
 .badge.bg-secondary {
-    background: linear-gradient(135deg, #E4F4FD 0%, #C2E4F1 100%) !important; // Light Accent Blue gradient
-    color: #1F5E97 !important; // Accent Blue Darkest text
-    border: 2px solid #1565C0 !important; // Deep Blue border
-    border-radius: 20px !important; // Circular/pill shape
-    font-size: 16px !important;
+    background: linear-gradient(135deg, #E4F4FD 0%, #C2E4F1 100%) !important;
+    color: #1F5E97 !important;
+    border: 1.5px solid #1565C0 !important;
+    border-radius: 16px !important;
+    font-size: 13px !important;
     font-weight: 600 !important;
-    box-shadow: 0 2px 6px rgba(21, 101, 192, 0.15) !important; // Subtle shadow
+    padding: 3px 10px !important;
+    box-shadow: 0 1px 3px rgba(21, 101, 192, 0.12) !important;
     transition: all 0.2s ease !important;
 
     strong {
-        color: #1565C0 !important; // Label in Deep Blue
+        color: #1565C0 !important;
         font-weight: 700 !important;
-        margin-right: 4px;
+        margin-right: 3px;
     }
 
-    // Ensure fields inside badges display properly
     .o_field_widget {
         display: inline-block !important;
         background: transparent !important;
         border: none !important;
-        color: #1F5E97 !important; // Accent Blue Darkest text
+        color: #1F5E97 !important;
         padding: 0 !important;
-        margin: 0 0 0 4px !important;
-        width: 120px !important;
-        min-width: 120px !important;
-        max-width: 200px !important;
-        font-size: 16px !important;
+        margin: 0 0 0 3px !important;
+        width: 100px !important;
+        min-width: 80px !important;
+        max-width: 160px !important;
+        font-size: 13px !important;
 
         input,
         span {
             background: transparent !important;
             border: none !important;
-            color: #1F5E97 !important; // Accent Blue Darkest text
+            color: #1F5E97 !important;
             padding: 0 !important;
-            width: 120px !important;
-            min-width: 120px !important;
+            width: 100px !important;
+            min-width: 80px !important;
             box-shadow: none !important;
             font-weight: 600 !important;
-            font-size: 16px !important;
+            font-size: 13px !important;
         }
     }
 
     &:hover {
-        box-shadow: 0 3px 8px rgba(21, 101, 192, 0.25) !important;
+        box-shadow: 0 2px 6px rgba(21, 101, 192, 0.2) !important;
         transform: translateY(-1px);
     }
 }
@@ -847,16 +898,16 @@ a {
 .o_form_view header .o_statusbar_buttons {
     display: flex;
     flex-wrap: wrap;
-    gap: 8px;
-    padding: 8px 0;
+    gap: 5px;
+    padding: 4px 0;
 
     // Base button style - light background with dark border
     button {
         display: inline-flex;
         align-items: center;
-        gap: 6px;
-        padding: 8px 18px;
-        font-size: 13px;
+        gap: 4px;
+        padding: 5px 14px;
+        font-size: 12px;
         font-weight: 700;
         border-radius: 50px;
         cursor: pointer;
@@ -1114,4 +1165,333 @@ a {
     button[name*="assign"] i.fa {
         color: #fff !important;
     }
+}
+
+// =============================================================================
+// COMPACT TITLE AREA
+// =============================================================================
+.o_form_view .oe_title > h1 {
+    min-height: 28px !important;
+    font-size: 1.15rem;
+    line-height: 1.2;
+    margin-bottom: 2px !important;
+}
+
+.o_form_view .oe_title > h2 {
+    min-height: 24px !important;
+    font-size: 1rem;
+    margin-bottom: 2px !important;
+}
+
+.o_form_view .oe_title {
+    max-width: 80%;
+    margin-bottom: 4px !important;
+}
+
+// Compact avatar size
+.o_form_view .oe_avatar .img,
+.o_form_view .oe_avatar > img {
+    width: 64px !important;
+    height: 64px !important;
+}
+
+// Compact status bar area
+.o_form_view .o_form_statusbar {
+    padding-top: 2px !important;
+    padding-bottom: 2px !important;
+    min-height: auto !important;
+}
+
+// Compact status widget (New Client > Active > Inactive arrows)
+.o_form_view .o_statusbar_status {
+    font-size: 0.75rem;
+
+    .o_arrow_button {
+        padding: 3px 12px !important;
+        font-size: 0.75rem;
+    }
+}
+
+// Compact stat buttons (Bookings, Packages, Payments)
+.o_form_view .oe_button_box .oe_stat_button {
+    padding: 2px 8px !important;
+    min-height: auto !important;
+    font-size: 0.75rem;
+
+    .o_stat_info {
+        .o_stat_value {
+            font-size: 0.875rem;
+            line-height: 1.2;
+        }
+        .o_stat_text {
+            font-size: 0.7rem;
+        }
+    }
+}
+
+// Tighter badge row spacing
+.o_form_view .oe_title + div,
+.o_form_view .oe_title ~ .d-flex,
+.o_form_view .oe_title ~ div:has(.badge) {
+    margin-top: 2px !important;
+    margin-bottom: 4px !important;
+}
+
+// Compact card titles inside vu-cards
+.vu-card__title {
+    font-size: 0.78rem !important;
+    gap: var(--vu-space-xs);
+    margin-bottom: 0 !important;
+}
+
+// =============================================================================
+// SMOOTHER INPUT FIELDS
+// =============================================================================
+.o_form_view .o_field_widget .o_input,
+.o_form_view .o_field_widget input.o_input,
+.o_form_view .o_field_widget textarea.o_input,
+.o_form_view .o_field_widget select.o_input {
+    border-width: 1px;
+    padding: 4px 8px;
+    font-size: inherit;
+    transition: border-color var(--vu-transition-fast), background var(--vu-transition-fast);
+
+    &:hover:not(:focus) {
+        background: var(--vu-surface-panel);
+    }
+}
+
+// Compact form labels — slightly smaller, tighter
+.o_form_view .o_form_label {
+    font-size: 0.8125rem;
+    margin-bottom: 1px;
+}
+
+// =============================================================================
+// COMPACT NOTEBOOK / TABS
+// =============================================================================
+.o_form_view .o_notebook {
+    margin-top: var(--vu-space-sm);
+}
+
+.o_form_view .o_notebook > ul > li > a,
+.o_form_view .o_notebook > .nav-tabs > li > a,
+.o_form_view .o_notebook .nav-link {
+    font-size: 0.8125rem;
+    padding: var(--vu-space-xs) var(--vu-space-sm);
+}
+
+// =============================================================================
+// RESPONSIVE FONT SCALING
+// =============================================================================
+// Slightly smaller on ≤1400px screens
+@media (max-width: 1400px) {
+    body {
+        font-size: 0.8125rem; // 13px
+    }
+
+    .o_form_view .o_form_label {
+        font-size: 0.78rem;
+    }
+
+    .o_form_view .o_form_sheet {
+        padding: var(--vu-space-md);
+    }
+}
+
+// Even more compact on ≤1200px screens
+@media (max-width: 1200px) {
+    body {
+        font-size: 0.78rem; // ~12.5px
+    }
+
+    .o_form_view .o_form_label {
+        font-size: 0.75rem;
+    }
+
+    .o_form_view .oe_title > h1 {
+        font-size: 1.25rem;
+        min-height: 34px !important;
+    }
+
+    .o_form_view .o_form_sheet {
+        padding: var(--vu-space-sm);
+    }
+
+    .badge.bg-info,
+    .badge.bg-secondary {
+        font-size: 12px !important;
+        padding: 2px 8px !important;
+    }
+}
+
+// =============================================================================
+// LIST VIEW COMPACTNESS
+// =============================================================================
+.o_list_view .o_data_row > .o_data_cell {
+    padding-top: 4px;
+    padding-bottom: 4px;
+    font-size: 0.8125rem;
+}
+
+.o_list_view thead th {
+    font-size: 0.78rem;
+    padding-top: 6px;
+    padding-bottom: 6px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    color: var(--vu-text-secondary);
+}
+
+// =============================================================================
+// GLOBAL PROPORTIONAL FONT OVERRIDES — All remaining components
+// =============================================================================
+// Root web client — ensure 13px cascades everywhere
+.o_web_client {
+    font-size: 0.8125rem;
+}
+
+// Navbar
+.o_main_navbar {
+    font-size: 0.8125rem !important;
+
+    .o_menu_brand,
+    .o_menu_entry,
+    .dropdown-item {
+        font-size: 0.8125rem !important;
+    }
+
+    .o_navbar_apps_menu .dropdown-item {
+        font-size: 0.8125rem !important;
+    }
+
+    // Navbar badge counters
+    .badge {
+        font-size: 0.65rem !important;
+    }
+}
+
+// Control panel — breadcrumbs, search, pager
+.o_control_panel {
+    font-size: 0.8125rem;
+
+    .breadcrumb-item {
+        font-size: 0.8125rem;
+    }
+
+    .o_cp_searchbar input {
+        font-size: 0.8125rem;
+    }
+
+    // Pager
+    .o_pager {
+        font-size: 0.78rem;
+    }
+
+    // Action buttons in control panel
+    .o_cp_action_menus .dropdown-toggle,
+    .o_cp_buttons .btn {
+        font-size: 0.8125rem;
+    }
+}
+
+// Dropdowns globally
+.dropdown-menu {
+    font-size: 0.8125rem !important;
+
+    .dropdown-item {
+        font-size: 0.8125rem !important;
+        padding: 4px 12px;
+    }
+}
+
+// Modals / Dialogs
+.modal .modal-content {
+    font-size: 0.8125rem;
+
+    .modal-title {
+        font-size: 1rem;
+    }
+
+    .modal-body {
+        font-size: 0.8125rem;
+    }
+
+    .modal-footer .btn {
+        font-size: 0.8125rem;
+    }
+}
+
+// Kanban view
+.o_kanban_view .o_kanban_record {
+    font-size: 0.8125rem;
+}
+
+.o_kanban_view .o_kanban_group_header {
+    font-size: 0.8125rem;
+    font-weight: 600;
+}
+
+// Search panel (left sidebar)
+.o_search_panel {
+    font-size: 0.8125rem;
+
+    .o_search_panel_label {
+        font-size: 0.78rem;
+    }
+
+    .o_search_panel_category_value,
+    .o_search_panel_filter_value {
+        font-size: 0.78rem;
+    }
+
+    .o_search_panel_section_header {
+        font-size: 0.78rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.03em;
+    }
+}
+
+// Many2many tags
+.o_field_many2many_tags .badge {
+    font-size: 0.75rem !important;
+    padding: 2px 6px !important;
+}
+
+// Wizard dialogs (inline forms in modals)
+.o_dialog .o_form_view {
+    font-size: 0.8125rem;
+
+    .o_form_label {
+        font-size: 0.78rem;
+    }
+}
+
+// Breadcrumb
+.o_breadcrumb .active {
+    font-size: 0.9rem;
+}
+
+// Status bar inside forms
+.o_form_view .o_form_statusbar .o_statusbar_buttons button {
+    font-size: 12px;
+}
+
+// Tooltip
+.o_tooltip {
+    font-size: 0.75rem !important;
+}
+
+// Many2one dropdown results
+.o_field_many2one_selection .dropdown-menu,
+.ui-autocomplete {
+    font-size: 0.8125rem !important;
+}
+
+// Sidebar attachments link count
+.o-mail-Chatter .o-mail-Chatter-topbar .btn .badge,
+.o-mail-Chatter .o-mail-Chatter-topbar .fa {
+    font-size: 0.75rem !important;
 }

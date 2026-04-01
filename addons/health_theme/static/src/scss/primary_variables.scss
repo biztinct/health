@@ -119,6 +119,12 @@ $btn-border-radius: $border-radius;
 $btn-border-radius-sm: $border-radius-sm;
 $btn-border-radius-lg: $border-radius-lg;
 
+// ===== COMPACT FONT & SPACING OVERRIDES =====
+// Reduce from Odoo's 14px default to 13px for denser information display
+$font-size-base: 0.8125rem;         // 13px – compact yet readable
+$o-font-size-base: 0.8125rem;
+$o-form-spacing-unit: 3px;          // Tighter form row gaps (default ~5px)
+
 // ===== THEME COLOR MAP (For Odoo Badge/Status Components) =====
 $o-theme-text-colors: (
     "primary": $vu-deep-blue,
@@ -224,14 +230,14 @@ $font-weight-extrabold: 800;
     --vu-line-height-normal: 1.5;
     --vu-line-height-relaxed: 1.75;
 
-    /* Spacing Scale (4px grid) */
-    --vu-space-xxs: 4px;
-    --vu-space-xs: 8px;
-    --vu-space-sm: 12px;
-    --vu-space-md: 16px;
-    --vu-space-lg: 24px;
-    --vu-space-xl: 32px;
-    --vu-space-xxl: 48px;
+    /* Spacing Scale – tightened for compact forms */
+    --vu-space-xxs: 2px;
+    --vu-space-xs: 4px;
+    --vu-space-sm: 8px;
+    --vu-space-md: 12px;
+    --vu-space-lg: 16px;
+    --vu-space-xl: 24px;
+    --vu-space-xxl: 36px;
 
     /* Elevation */
     --vu-shadow-sm: #{$vu-shadow-sm};
@@ -239,9 +245,9 @@ $font-weight-extrabold: 800;
     --vu-shadow-lg: #{$vu-shadow-lg};
 
     /* Radii */
-    --vu-radius-sm: 6px;
-    --vu-radius-md: 10px;
-    --vu-radius-lg: 16px;
+    --vu-radius-sm: 4px;
+    --vu-radius-md: 8px;
+    --vu-radius-lg: 12px;
 
     /* Transitions */
     --vu-transition-fast: 120ms ease;
