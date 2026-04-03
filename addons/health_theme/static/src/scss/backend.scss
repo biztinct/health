@@ -1495,3 +1495,30 @@ a {
 .o-mail-Chatter .o-mail-Chatter-topbar .fa {
     font-size: 0.75rem !important;
 }
+
+// =============================================================================
+// CONTROL PANEL — Breadcrumb / Search overlap fix
+// =============================================================================
+.o_control_panel .o_control_panel_main {
+    flex-wrap: wrap;
+    gap: 4px 8px;
+}
+
+.o_control_panel .o_control_panel_breadcrumbs {
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow: hidden;
+
+    .breadcrumb {
+        flex-wrap: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+}
+
+.o_control_panel .o_cp_searchbar {
+    flex: 0 1 auto;
+    min-width: 200px;
+    max-width: 350px;
+}

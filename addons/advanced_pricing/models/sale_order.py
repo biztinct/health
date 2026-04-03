@@ -841,6 +841,14 @@ class SaleOrderLine(models.Model):
                     'wound_count': line.order_id.wound_count or 0,
                     'iv_fluid_count': line.order_id.iv_fluid_count or 0,
                 }
+                # Determine region from product code suffix
+                code = line.product_id.default_code or ''
+                if '_tphcm' in code:
+                    fso_context['region'] = 'HCMC'
+                elif '_hanoi' in code:
+                    fso_context['region'] = 'Hanoi'
+                else:
+                    fso_context['region'] = ''
                 context_data.update(fso_context)
             
             # Calculate price using pricing engine
