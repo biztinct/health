@@ -37,7 +37,7 @@ class IrUiMenu(models.Model):
         return visible_menu_ids - hidden_menu_ids
 
     @api.model
-    @tools.ormcache('frozenset(self.env.user._get_group_ids())', 'debug')
-    def load_menus(self, debug=False):
-        """Override to ensure menus are loaded with caching."""
-        return super().load_menus(debug=debug)
+    def _invalidate_menu_cache(self):
+        """Clear both _visible_menu_ids and load_menus caches.
+        Call this when role management menus or user role assignments change."""
+        self.env.registry.clear_cache()

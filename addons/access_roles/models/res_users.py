@@ -79,6 +79,8 @@ class ResUsers(models.Model):
                 groups_to_remove = self.access_role_id.groups_ids
         result = super(ResUsers, self).write(vals)
         if 'access_role_id' in vals:
+            # Invalidate menu cache when role assignment changes
+            self.env['ir.ui.menu']._invalidate_menu_cache()
             if vals['access_role_id']:
                 new_role = self.env['access.role'].browse(vals['access_role_id'])
                 self.write({
