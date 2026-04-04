@@ -265,11 +265,39 @@
 
     <!-- Search view removed - relying on Odoo's automatic search view generation -->
 
+    <!-- Coaching Session Search View -->
+    <record id="view_hr_coaching_session_search" model="ir.ui.view">
+        <field name="name">hr.coaching.session.search</field>
+        <field name="model">hr.coaching.session</field>
+        <field name="arch" type="xml">
+            <search string="Search Coaching Sessions">
+                <field name="name"/>
+                <field name="employee_id"/>
+                <field name="coach_id"/>
+                <field name="session_type"/>
+                <field name="topic"/>
+                <separator/>
+                <filter name="scheduled" string="Scheduled" domain="[('state', '=', 'scheduled')]"/>
+                <filter name="in_progress" string="In Progress" domain="[('state', '=', 'in_progress')]"/>
+                <filter name="completed" string="Completed" domain="[('state', '=', 'completed')]"/>
+                <separator/>
+                <group>
+                    <filter name="group_by_session_month" string="Session Month" context="{'group_by': 'session_date:month'}"/>
+                    <filter name="group_by_employee" string="Coachee" context="{'group_by': 'employee_id'}"/>
+                    <filter name="group_by_coach" string="Coach" context="{'group_by': 'coach_id'}"/>
+                    <filter name="group_by_type" string="Type" context="{'group_by': 'session_type'}"/>
+                    <filter name="group_by_state" string="Status" context="{'group_by': 'state'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
     <!-- Coaching Session Action -->
     <record id="action_hr_coaching_session" model="ir.actions.act_window">
         <field name="name">Coaching Sessions</field>
         <field name="res_model">hr.coaching.session</field>
         <field name="view_mode">list,calendar,form</field>
+        <field name="context">{'search_default_group_by_session_month': 1}</field>
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">
                 Schedule a Coaching Session
@@ -286,7 +314,7 @@
         <field name="res_model">hr.coaching.session</field>
         <field name="view_mode">list,calendar,form</field>
         <field name="domain">[('employee_id.user_id', '=', uid)]</field>
-        <field name="context">{'default_session_type': 'ai', 'default_is_bfsi_session': True}</field>
+        <field name="context">{'default_session_type': 'ai', 'default_is_bfsi_session': True, 'search_default_group_by_session_month': 1}</field>
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">
                 Start an AI Coaching Session

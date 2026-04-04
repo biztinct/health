@@ -29,7 +29,12 @@
                     </group>
                     <notebook>
                         <page name="hide_menu" string="Hide Menu">
-                            <field name="menu_ids" options="{'no_create': True, 'no_create_edit':True}"/>
+                            <field name="menu_ids" options="{'no_create': True, 'no_create_edit':True}">
+                                <list string="Hidden Menus" delete="true" default_order="root_menu_name, parent_path">
+                                    <field name="root_menu_name" string="App"/>
+                                    <field name="complete_name" string="Full Menu Path"/>
+                                </list>
+                            </field>
                         </page>
                         <page name="hide_button_tab" string="Hide Any Button or Tab">
                             <field name="button_access_ids" widget="one2many">

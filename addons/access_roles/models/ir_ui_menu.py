@@ -19,12 +19,28 @@
 #    If not, see <http://www.gnu.org/licenses/>.
 #
 #############################################################################
-from odoo import api, models, tools
+from odoo import api, fields, models, tools
 
 
 class IrUiMenu(models.Model):
     """Extend ir.ui.menu to apply role-based UI restrictions."""
     _inherit = 'ir.ui.menu'
+
+    root_menu_name = fields.Char(
+        string='Root Menu',
+        compute='_compute_root_menu_name',
+        store=True,
+    )
+
+    @api.depends('parent_path')
+    def _compute_root_menu_name(self):
+        for menu in self:
+            if menu.parent_path:
+                root_id = int(menu.parent_path.split('/')[0])
+                root_menu = self.sudo().browse(root_id)
+                menu.root_menu_name = root_menu.name if root_menu.exists() else menu.name
+            else:
+                menu.root_menu_name = menu.name
 
     @api.model
     def _visible_menu_ids(self, debug=False):

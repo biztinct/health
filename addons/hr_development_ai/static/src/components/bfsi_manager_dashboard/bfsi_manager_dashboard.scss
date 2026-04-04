@@ -37,9 +37,30 @@
 /* ── Dashboard Container ── */
 .bfsi-manager-dashboard {
     font-family: var(--bfsi-font);
-    min-height: 100vh;
+    position: absolute;
+    inset: 0;
     background: var(--bfsi-bg);
     padding: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+/* Styled scrollbar for dashboard */
+.bfsi-manager-dashboard::-webkit-scrollbar {
+    width: 8px;
+}
+
+.bfsi-manager-dashboard::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.bfsi-manager-dashboard::-webkit-scrollbar-thumb {
+    background: #c4b5fd;
+    border-radius: 4px;
+}
+
+.bfsi-manager-dashboard::-webkit-scrollbar-thumb:hover {
+    background: var(--bfsi-primary);
 }
 
 .bfsi-manager-dashboard .o_action_manager,
