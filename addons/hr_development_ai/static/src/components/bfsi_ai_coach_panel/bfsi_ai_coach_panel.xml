@@ -135,7 +135,12 @@
                             </div>
                             <div class="message-content">
                                 <div class="message-bubble">
-                                    <t t-esc="message.content"/>
+                                    <t t-if="message.role === 'assistant'">
+                                        <t t-out="formatMarkdown(message.content)"/>
+                                    </t>
+                                    <t t-else="">
+                                        <t t-esc="message.content"/>
+                                    </t>
                                 </div>
                                 <div class="message-time">
                                     <t t-esc="formatTime(message.timestamp)"/>

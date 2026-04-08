@@ -1,6 +1,6 @@
 /** @odoo-module **/
 
-import { Component, useState, onWillStart, useRef, onMounted, onWillUnmount } from "@odoo/owl";
+import { Component, useState, onWillStart, useRef, onMounted, onWillUnmount, markup } from "@odoo/owl";
 import { useService } from "@web/core/utils/hooks";
 import { registry } from "@web/core/registry";
 import { user } from "@web/core/user";
@@ -345,6 +345,80 @@ export class BfsiAiCoachPanel extends Component {
     formatTime(timestamp) {
         const date = new Date(timestamp);
         return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    }
+
+    /**
+     * Parse markdown content to rich HTML for world-class AI chat display.
+     * Handles: headers, bold, italic, code blocks, inline code,
+     * numbered lists, bullet lists, blockquotes, horizontal rules.
+     */
+    formatMarkdown(text) {
+        if (!text) return markup('');
+
+        // Escape HTML entities first for safety
+        let html = text
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;');
+
+        // Code blocks (``` ... ```)
+        html = html.replace(/```([\s\S]*?)```/g, '<pre class="ai-code-block"><code>$1</code></pre>');
+
+        // Inline code (`...`)
+        html = html.replace(/`([^`]+)`/g, '<code class="ai-inline-code">$1</code>');
+
+        // Headers (### h3, ## h2, # h1)
+        html = html.replace(/^### (.+)$/gm, '<h4 class="ai-heading">$1</h4>');
+        html = html.replace(/^## (.+)$/gm, '<h3 class="ai-heading">$1</h3>');
+        html = html.replace(/^# (.+)$/gm, '<h2 class="ai-heading">$1</h2>');
+
+        // Bold + Italic (***text*** or ___text___)
+        html = html.replace(/\*\*\*(.+?)\*\*\*/g, '<strong><em>$1</em></strong>');
+
+        // Bold (**text** or __text__)
+        html = html.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+        html = html.replace(/__(.+?)__/g, '<strong>$1</strong>');
+
+        // Italic (*text* or _text_)
+        html = html.replace(/\*([^*]+)\*/g, '<em>$1</em>');
+        html = html.replace(/_([^_]+)_/g, '<em>$1</em>');
+
+        // Blockquotes (> text)
+        html = html.replace(/^&gt; (.+)$/gm, '<blockquote class="ai-blockquote">$1</blockquote>');
+
+        // Horizontal rules (--- or ***)
+        html = html.replace(/^(---|\*\*\*)$/gm, '<hr class="ai-divider"/>');
+
+        // Numbered lists: convert consecutive numbered lines into <ol>
+        html = html.replace(/((?:^\d+\.\s.+$\n?)+)/gm, (match) => {
+            const items = match.trim().split('\n').map(line => {
+                const content = line.replace(/^\d+\.\s/, '');
+                return `<li>${content}</li>`;
+            }).join('');
+            return `<ol class="ai-list">${items}</ol>`;
+        });
+
+        // Bullet lists: convert consecutive bullet lines into <ul>
+        html = html.replace(/((?:^[\-\*•]\s.+$\n?)+)/gm, (match) => {
+            const items = match.trim().split('\n').map(line => {
+                const content = line.replace(/^[\-\*•]\s/, '');
+                return `<li>${content}</li>`;
+            }).join('');
+            return `<ul class="ai-list">${items}</ul>`;
+        });
+
+        // Paragraphs: double newlines become paragraph breaks
+        html = html.replace(/\n\n+/g, '</p><p class="ai-paragraph">');
+        // Single newlines become line breaks (but not inside lists/code)
+        html = html.replace(/\n/g, '<br/>');
+
+        // Wrap in paragraph
+        html = `<p class="ai-paragraph">${html}</p>`;
+
+        // Clean up empty paragraphs
+        html = html.replace(/<p class="ai-paragraph">\s*<\/p>/g, '');
+
+        return markup(html);
     }
 
     /**
