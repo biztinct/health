@@ -79,9 +79,10 @@ class HRCoachingSession(models.Model):
         help='Type your message to the AI coach here'
     )
 
-    ai_chat_history = fields.Text(
+    ai_chat_history = fields.Html(
         string='Chat History',
         compute='_compute_ai_chat_history',
+        sanitize=False,
         help='Formatted chat conversation history'
     )
 
@@ -185,10 +186,32 @@ class HRCoachingSession(models.Model):
 
     @api.depends('ai_transcript')
     def _compute_ai_chat_history(self):
-        """Format AI transcript JSON into readable chat history"""
+        """Format AI transcript into rich HTML chat history"""
+        import re
+
+        def _md_to_html(text):
+            """Convert markdown-like text to HTML"""
+            if not text:
+                return ''
+            # Escape HTML
+            html = text.replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;')
+            # Bold
+            html = re.sub(r'\*\*(.+?)\*\*', r'<strong>\1</strong>', html)
+            html = re.sub(r'__(.+?)__', r'<strong>\1</strong>', html)
+            # Italic
+            html = re.sub(r'\*([^*]+)\*', r'<em>\1</em>', html)
+            # Numbered items
+            html = re.sub(r'^(\d+)\.\s+(.+)$', r'<div style="padding:4px 0 4px 24px;position:relative;"><span style="position:absolute;left:0;color:#4F46E5;font-weight:700;">\1.</span>\2</div>', html, flags=re.MULTILINE)
+            # Bullet items
+            html = re.sub(r'^[\-\*•]\s+(.+)$', r'<div style="padding:2px 0 2px 18px;position:relative;color:#6B7280;font-size:13px;"><span style="position:absolute;left:4px;top:9px;width:5px;height:5px;background:#7C3AED;border-radius:50%;display:inline-block;"></span>\1</div>', html, flags=re.MULTILINE)
+            # Line breaks
+            html = html.replace('\n\n', '</p><p style="margin:6px 0;">')
+            html = html.replace('\n', '<br/>')
+            return html
+
         for record in self:
             if not record.ai_transcript:
-                record.ai_chat_history = "No messages yet. Start a conversation with your AI coach!"
+                record.ai_chat_history = '<div style="text-align:center;padding:40px 20px;color:#9CA3AF;"><i class="fa fa-comments" style="font-size:2rem;margin-bottom:8px;display:block;"></i><p>No messages yet. Start a conversation with your AI coach!</p></div>'
                 continue
 
             try:
@@ -197,41 +220,62 @@ class HRCoachingSession(models.Model):
                 messages = transcript_data.get('messages', [])
 
                 if not messages:
-                    record.ai_chat_history = "No messages yet. Start a conversation with your AI coach!"
+                    record.ai_chat_history = '<div style="text-align:center;padding:40px 20px;color:#9CA3AF;"><p>No messages yet.</p></div>'
                     continue
 
-                # Format messages into readable text
-                formatted_lines = []
+                # Build rich HTML chat
+                html_parts = ['<div style="display:flex;flex-direction:column;gap:16px;padding:8px 0;">']
+
                 for msg in messages:
                     role = msg.get('role', 'unknown')
                     content = msg.get('content', '')
                     timestamp = msg.get('timestamp', '')
 
-                    # Format timestamp if present
                     time_str = ''
                     if timestamp:
                         try:
                             from datetime import datetime
                             dt = datetime.fromisoformat(timestamp.replace('Z', '+00:00'))
-                            time_str = f" [{dt.strftime('%H:%M')}]"
-                        except:
+                            time_str = dt.strftime('%H:%M')
+                        except Exception:
                             pass
 
-                    # Format based on role
                     if role == 'user':
-                        formatted_lines.append(f"You{time_str}: {content}")
-                    elif role == 'assistant':
-                        formatted_lines.append(f"AI Coach{time_str}: {content}")
+                        html_parts.append(f'''
+                        <div style="display:flex;gap:10px;align-items:flex-start;">
+                            <div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#4F46E5,#7C3AED);color:white;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:13px;">
+                                <i class="fa fa-user"></i>
+                            </div>
+                            <div style="flex:1;">
+                                <div style="font-size:12px;font-weight:600;color:#4F46E5;margin-bottom:3px;">👤 You {f'<span style="color:#9CA3AF;font-weight:400;margin-left:6px;">{time_str}</span>' if time_str else ''}</div>
+                                <div style="background:linear-gradient(135deg,#4F46E5,#7C3AED);color:white;padding:10px 14px;border-radius:14px 14px 14px 4px;font-size:13.5px;line-height:1.5;">
+                                    {content}
+                                </div>
+                            </div>
+                        </div>''')
                     else:
-                        formatted_lines.append(f"{role.title()}{time_str}: {content}")
+                        formatted_content = _md_to_html(content)
+                        html_parts.append(f'''
+                        <div style="display:flex;gap:10px;align-items:flex-start;">
+                            <div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#312e81,#7C3AED);color:white;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:13px;">
+                                <i class="fa fa-robot"></i>
+                            </div>
+                            <div style="flex:1;">
+                                <div style="font-size:12px;font-weight:600;color:#312e81;margin-bottom:3px;">🤖 AI Coach {f'<span style="color:#9CA3AF;font-weight:400;margin-left:6px;">{time_str}</span>' if time_str else ''}</div>
+                                <div style="background:linear-gradient(135deg,#ffffff,#f5f3ff);border:1px solid rgba(79,70,229,0.1);padding:12px 14px;border-radius:14px 14px 14px 4px;font-size:13.5px;line-height:1.6;color:#1e1b4b;">
+                                    <p style="margin:0;">{formatted_content}</p>
+                                </div>
+                            </div>
+                        </div>''')
 
-                    formatted_lines.append("")  # Blank line between messages
-
-                record.ai_chat_history = "\n".join(formatted_lines)
+                html_parts.append('</div>')
+                record.ai_chat_history = ''.join(html_parts)
 
             except (json.JSONDecodeError, ValueError):
-                # If not valid JSON, show as plain text
-                record.ai_chat_history = record.ai_transcript or "No messages yet."
+                # If not valid JSON, try to format plain text
+                text = record.ai_transcript or ''
+                formatted = _md_to_html(text)
+                record.ai_chat_history = f'<div style="padding:8px;font-size:13.5px;line-height:1.6;white-space:pre-wrap;">{formatted}</div>'
 
     def action_start_session(self):
         """Start coaching session"""

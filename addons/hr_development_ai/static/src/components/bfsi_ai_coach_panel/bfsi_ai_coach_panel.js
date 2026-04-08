@@ -389,14 +389,9 @@ export class BfsiAiCoachPanel extends Component {
         // Horizontal rules (--- or ***)
         html = html.replace(/^(---|\*\*\*)$/gm, '<hr class="ai-divider"/>');
 
-        // Numbered lists: convert consecutive numbered lines into <ol>
-        html = html.replace(/((?:^\d+\.\s.+$\n?)+)/gm, (match) => {
-            const items = match.trim().split('\n').map(line => {
-                const content = line.replace(/^\d+\.\s/, '');
-                return `<li>${content}</li>`;
-            }).join('');
-            return `<ol class="ai-list">${items}</ol>`;
-        });
+        // Numbered items: each `\d+. text` becomes a CSS-counter div
+        // This ensures numbering persists across the entire message
+        html = html.replace(/^\d+\.\s+(.+)$/gm, '<div class="ai-numbered-item">$1</div>');
 
         // Bullet lists: convert consecutive bullet lines into <ul>
         html = html.replace(/((?:^[\-\*•]\s.+$\n?)+)/gm, (match) => {
@@ -404,7 +399,7 @@ export class BfsiAiCoachPanel extends Component {
                 const content = line.replace(/^[\-\*•]\s/, '');
                 return `<li>${content}</li>`;
             }).join('');
-            return `<ul class="ai-list">${items}</ul>`;
+            return `<ul class="ai-list ai-bullet-list">${items}</ul>`;
         });
 
         // Paragraphs: double newlines become paragraph breaks

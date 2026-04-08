@@ -98,11 +98,13 @@
                                                 icon="fa-comments"/>
                                     </group>
                                     <group>
-                                        <field name="ai_transcript"
-                                               widget="text"
+                                        <field name="ai_chat_history"
+                                               widget="html"
                                                readonly="1"
                                                string="Chat Transcript"
-                                               placeholder="Chat conversation will be saved here..."/>
+                                               nolabel="1"
+                                               class="w-100"
+                                               options="{'collaborative': false, 'codeview': false}"/>
                                     </group>
                                 </group>
                             </div>

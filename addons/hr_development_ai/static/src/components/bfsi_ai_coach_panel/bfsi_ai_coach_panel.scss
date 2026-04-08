@@ -504,6 +504,10 @@ $desktop-min: 1024px;
     font-size: 14px;
     word-wrap: break-word;
 
+    // Reset numbered-item counter at the bubble level
+    // so numbering persists across the entire message
+    counter-reset: ai-num-counter;
+
     // ── Rich AI Content Formatting ──
     // Inspired by ChatGPT, Claude, and Gemini chat UIs
 
@@ -552,55 +556,58 @@ $desktop-min: 1024px;
         color: $text-secondary;
     }
 
-    // Numbered & Bullet lists
-    .ai-list {
-        margin: 8px 0;
+    // Numbered items — CSS counter auto-increments across the message
+    .ai-numbered-item {
+        position: relative;
+        padding: 6px 0 6px 28px;
+        line-height: 1.5;
+        font-size: 13.5px;
+        counter-increment: ai-num-counter;
+
+        &::before {
+            content: counter(ai-num-counter) ".";
+            position: absolute;
+            left: 0;
+            top: 6px;
+            color: $primary-color;
+            font-weight: 800;
+            font-size: 13px;
+            min-width: 18px;
+        }
+
+        & + .ai-numbered-item {
+            border-top: 1px solid rgba(0, 0, 0, 0.04);
+        }
+    }
+
+    // Bullet lists
+    .ai-bullet-list {
+        margin: 4px 0;
         padding-left: 0;
         list-style: none;
 
         li {
             position: relative;
-            padding: 4px 0 4px 24px;
+            padding: 3px 0 3px 20px;
             line-height: 1.5;
-            font-size: 13.5px;
+            font-size: 13px;
+            color: $text-secondary;
 
             &::before {
+                content: '';
                 position: absolute;
-                left: 0;
-                top: 5px;
-                font-weight: 700;
-                font-size: 12px;
+                left: 4px;
+                top: 10px;
+                width: 5px;
+                height: 5px;
+                background: $accent-violet;
+                border-radius: 50%;
             }
 
-            // Subtle separator between items
             & + li {
-                border-top: 1px solid rgba(0, 0, 0, 0.04);
+                border-top: 1px solid rgba(0, 0, 0, 0.03);
             }
         }
-    }
-
-    ol.ai-list {
-        counter-reset: ai-counter;
-
-        li {
-            counter-increment: ai-counter;
-
-            &::before {
-                content: counter(ai-counter) ".";
-                color: $primary-color;
-                font-weight: 800;
-                font-size: 13px;
-            }
-        }
-    }
-
-    ul.ai-list li::before {
-        content: '';
-        width: 6px;
-        height: 6px;
-        background: $primary-color;
-        border-radius: 50%;
-        top: 10px;
     }
 
     // Code blocks
