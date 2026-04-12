@@ -6,6 +6,7 @@
             <t t-set="head_website">
                 <title>Viet Uc</title>
             </t>
+            <t t-set="pwa_asset_version">1.0.59</t>
             <t t-set="head">
                 <!-- PWA Meta Tags -->
                 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"/>
@@ -28,10 +29,9 @@
                 <link href="https://cdn.jsdelivr.net/npm/quasar@2.14.0/dist/quasar.prod.css" rel="stylesheet" type="text/css"/>
                 
                 <!-- Custom PWA Styles (versioned for hard refresh) -->
-                <t t-set="pwa_asset_version">1.0.31</t>
-                <link href="/health_pwa/static/src/css/app.css?v=${pwa_asset_version}" rel="stylesheet" type="text/css"/>
-                <link href="/health_pwa/static/src/css/mobile.css?v=${pwa_asset_version}" rel="stylesheet" type="text/css"/>
-                <link href="/health_pwa/static/src/css/health.css?v=${pwa_asset_version}" rel="stylesheet" type="text/css"/>
+                <link t-attf-href="/health_pwa/static/src/css/app.css?v=#{pwa_asset_version}" rel="stylesheet" type="text/css"/>
+                <link t-attf-href="/health_pwa/static/src/css/mobile.css?v=#{pwa_asset_version}" rel="stylesheet" type="text/css"/>
+                <link t-attf-href="/health_pwa/static/src/css/health.css?v=#{pwa_asset_version}" rel="stylesheet" type="text/css"/>
                 <style>
                     /* Small floating badge to show the running PWA version */
                     #pwa-version-badge {
@@ -138,10 +138,63 @@
                 Viet Uc v<t t-esc="pwa_asset_version"/>
             </div>
             
-            <!-- Language Toggle Button (Fixed Position) -->
-            <div id="pwa-lang-toggle" style="position: fixed; top: 10px; right: 10px; z-index: 9999; background: white; border-radius: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); overflow: hidden; display: flex;">
-                <button onclick="window.PWA_switchLanguage('vi')" id="pwa-lang-btn-vi" style="padding: 8px 16px; border: none; background: #875A7B; color: white; cursor: pointer; font-size: 14px; transition: all 0.3s;">VI</button>
-                <button onclick="window.PWA_switchLanguage('en')" id="pwa-lang-btn-en" style="padding: 8px 16px; border: none; background: transparent; color: #666; cursor: pointer; font-size: 14px; transition: all 0.3s;">EN</button>
+            <!-- Language Toggle Button (positioned below the header, left side) -->
+            <div id="pwa-lang-toggle" style="position: fixed; top: 62px; right: 12px; z-index: 98; background: rgba(255,255,255,0.95); border-radius: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); overflow: hidden; display: flex; border: 1px solid #eee;">
+                <button onclick="window.PWA_switchLanguage('vi')" id="pwa-lang-btn-vi" style="padding: 4px 10px; border: none; background: #875A7B; color: white; cursor: pointer; font-size: 11px; font-weight: 600; transition: all 0.3s;">VI</button>
+                <button onclick="window.PWA_switchLanguage('en')" id="pwa-lang-btn-en" style="padding: 4px 10px; border: none; background: transparent; color: #666; cursor: pointer; font-size: 11px; font-weight: 600; transition: all 0.3s;">EN</button>
+            </div>
+
+            <!-- Smart Install Overlay (shown when ?install=1) -->
+            <div id="pwa-install-overlay" class="pwa-install-overlay" style="display: none;">
+                <div class="pwa-install-card">
+                    <button class="pwa-install-close" id="pwa-install-close-btn">×</button>
+                    <div class="pwa-install-icon-wrap">
+                        <img src="/health_pwa/static/icons/icon-192.png" alt="Viet Uc" class="pwa-install-app-icon"/>
+                    </div>
+                    <h2 class="pwa-install-title">Viet Uc</h2>
+                    <p class="pwa-install-subtitle-vi">Cài đặt ứng dụng lên điện thoại</p>
+                    <p class="pwa-install-subtitle-en">Install app on your phone</p>
+
+                    <!-- Android: one-tap install button -->
+                    <div id="pwa-install-android" style="display: none;">
+                        <button class="pwa-install-action-btn" id="pwa-install-now-btn">
+                            📲 Cài đặt ngay / Install Now
+                        </button>
+                        <p class="pwa-install-hint">Nhấn nút trên để thêm Viet Uc vào màn hình chính</p>
+                        <p class="pwa-install-hint-en">Tap the button above to add Viet Uc to your home screen</p>
+                    </div>
+
+                    <!-- iOS: visual guide -->
+                    <div id="pwa-install-ios" style="display: none;">
+                        <div class="pwa-install-steps">
+                            <div class="pwa-install-step">
+                                <div class="pwa-install-step-num">1</div>
+                                <div class="pwa-install-step-text">
+                                    Nhấn nút <strong>Chia sẻ</strong> <span class="pwa-ios-share-icon">⬆</span> ở dưới cùng
+                                    <span class="pwa-install-step-en">Tap the <strong>Share</strong> button at the bottom</span>
+                                </div>
+                            </div>
+                            <div class="pwa-install-step">
+                                <div class="pwa-install-step-num">2</div>
+                                <div class="pwa-install-step-text">
+                                    Chọn <strong>"Thêm vào MH chính"</strong> <span class="pwa-ios-add-icon">➕</span>
+                                    <span class="pwa-install-step-en">Select <strong>"Add to Home Screen"</strong></span>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Animated arrow pointing down to Safari share button -->
+                        <div class="pwa-install-arrow-wrap">
+                            <div class="pwa-install-arrow">↓</div>
+                        </div>
+                    </div>
+
+                    <!-- Already installed message -->
+                    <div id="pwa-install-done" style="display: none;">
+                        <div class="pwa-install-done-icon">✅</div>
+                        <p class="pwa-install-done-vi">Ứng dụng đã được cài đặt! Mở từ màn hình chính.</p>
+                        <p class="pwa-install-done-en">App is already installed! Open from your home screen.</p>
+                    </div>
+                </div>
             </div>
 
             <!-- JavaScript Configuration -->
@@ -158,6 +211,7 @@
                     websocketUrl: '/longpolling',
                     version: '1.0.0',
                     buildTime: '<t t-esc="datetime.datetime.now().isoformat()"/>',
+                    showInstallOverlay: <t t-if="show_install_overlay">true</t><t t-else="">false</t>,
                 };
 
                 // Language switching function for PWA app
@@ -232,8 +286,8 @@
             <script src="/health_pwa/static/src/js/utils/storage-manager.js"></script>
             
             <!-- Vue.js Application -->
-            <script src="/health_pwa/static/src/js/app.js?v=${pwa_asset_version}"></script>
-            <script src="/health_pwa/static/src/js/router.js?v=${pwa_asset_version}"></script>
+            <script t-attf-src="/health_pwa/static/src/js/app.js?v=#{pwa_asset_version}"></script>
+            <script t-attf-src="/health_pwa/static/src/js/router.js?v=#{pwa_asset_version}"></script>
 
             <!-- Initialize Language Preference -->
             <script>
@@ -274,7 +328,7 @@
             <script>
                 if ('serviceWorker' in navigator) {
                     let refreshing = false;
-                    const PWA_SW_VERSION = '1.0.31';
+                    const PWA_SW_VERSION = '1.0.58';
                     console.log('[PWA] registering service worker version', PWA_SW_VERSION);
 
                     // Detect when service worker updates and reload
@@ -348,6 +402,105 @@
                                         }
                                     });
                                 });
+
+                                // === Push Notification Subscription ===
+                                // Platform-aware: Android auto-subscribes, iOS needs user gesture
+                                if ('Notification' in window &amp;&amp; 'PushManager' in window) {
+                                    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+                                    const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+
+                                    // Helper: actual subscription logic (reused by both paths)
+                                    window._pwaPushSubscribe = async function() {
+                                        try {
+                                            // Fetch VAPID key first
+                                            const vapidResp = await fetch('/health_pwa/api/push/vapid-key');
+                                            const vapidData = await vapidResp.json();
+                                            if (!vapidData.success || !vapidData.data.enabled || !vapidData.data.vapid_public_key) {
+                                                console.log('[PWA Push] Push not enabled on server');
+                                                return false;
+                                            }
+
+                                            // Check existing subscription
+                                            const existingSub = await registration.pushManager.getSubscription();
+                                            if (existingSub) {
+                                                // Verify VAPID key hasn't changed
+                                                const currentKey = existingSub.options &amp;&amp; existingSub.options.applicationServerKey;
+                                                if (currentKey) {
+                                                    // Key matches — already subscribed correctly
+                                                    console.log('[PWA Push] Already subscribed');
+                                                    // Re-send to server in case it was lost
+                                                    var sj = existingSub.toJSON();
+                                                    await fetch('/health_pwa/api/push/subscribe', {
+                                                        method: 'POST',
+                                                        headers: { 'Content-Type': 'application/json' },
+                                                        body: JSON.stringify({ endpoint: sj.endpoint, keys: sj.keys }),
+                                                    });
+                                                    return true;
+                                                }
+                                                // VAPID key changed — unsubscribe old and re-subscribe
+                                                console.log('[PWA Push] VAPID key changed, re-subscribing...');
+                                                await existingSub.unsubscribe();
+                                            }
+                                            const permission = await Notification.requestPermission();
+                                            if (permission !== 'granted') {
+                                                console.log('[PWA Push] Permission denied');
+                                                return false;
+                                            }
+                                            const vapidKey = vapidData.data.vapid_public_key;
+                                            const padding = '='.repeat((4 - vapidKey.length % 4) % 4);
+                                            const base64 = (vapidKey + padding).replace(/-/g, '+').replace(/_/g, '/');
+                                            const rawData = atob(base64);
+                                            const appServerKey = new Uint8Array(rawData.length);
+                                            for (let i = 0; i &lt; rawData.length; i++) {
+                                                appServerKey[i] = rawData.charCodeAt(i);
+                                            }
+                                            const subscription = await registration.pushManager.subscribe({
+                                                userVisibleOnly: true,
+                                                applicationServerKey: appServerKey,
+                                            });
+                                            const subJson = subscription.toJSON();
+                                            await fetch('/health_pwa/api/push/subscribe', {
+                                                method: 'POST',
+                                                headers: { 'Content-Type': 'application/json' },
+                                                body: JSON.stringify({ endpoint: subJson.endpoint, keys: subJson.keys }),
+                                            });
+                                            console.log('[PWA Push] Subscribed successfully');
+                                            return true;
+                                        } catch (err) {
+                                            console.warn('[PWA Push] Subscribe failed:', err);
+                                            return false;
+                                        }
+                                    };
+
+                                    if (isIOS &amp;&amp; !isStandalone) {
+                                        console.log('[PWA Push] iOS Safari - push only works when installed to Home Screen');
+                                    } else {
+                                        // Check current permission state
+                                        registration.pushManager.getSubscription().then(function(existingSub) {
+                                            if (existingSub) {
+                                                console.log('[PWA Push] Already subscribed');
+                                                return;
+                                            }
+                                            // Not subscribed - check permission state and show appropriate banner
+                                            var permState = ('Notification' in window) ? Notification.permission : 'default';
+                                            if (permState === 'denied') {
+                                                // Permission was denied - show settings instruction banner
+                                                setTimeout(function() { _showPushBanner('denied'); }, 2000);
+                                            } else if (isIOS) {
+                                                // iOS needs user gesture - show enable banner
+                                                setTimeout(function() { _showPushBanner('default'); }, 2000);
+                                            } else {
+                                                // Android/Desktop: try auto-subscribe first
+                                                window._pwaPushSubscribe().then(function(ok) {
+                                                    if (!ok) {
+                                                        // If failed (denied/dismissed), show banner
+                                                        setTimeout(function() { _showPushBanner(Notification.permission); }, 2000);
+                                                    }
+                                                });
+                                            }
+                                        });
+                                    }
+                                }
                             })
                             .catch(function(registrationError) {
                                 console.log('SW registration failed: ', registrationError);
@@ -396,22 +549,165 @@
                     }
                 }
                 
+                // Push Notification Permission Banner (works on both iOS and Android)
+                function _showPushBanner(permissionState) {
+                    // Remove any existing banner
+                    var existing = document.getElementById('push-notif-banner');
+                    if (existing) existing.remove();
+
+                    var banner = document.createElement('div');
+                    banner.id = 'push-notif-banner';
+                    banner.style.cssText = 'position:fixed;bottom:0;left:0;right:0;z-index:9999;padding:20px 16px;padding-bottom:calc(20px + env(safe-area-inset-bottom,0px));color:#fff;box-shadow:0 -4px 24px rgba(0,0,0,0.25);animation:slideUpBanner 0.4s ease-out;font-family:-apple-system,BlinkMacSystemFont,sans-serif;';
+
+                    // Add animation style once
+                    if (!document.getElementById('push-banner-style')) {
+                        var style = document.createElement('style');
+                        style.id = 'push-banner-style';
+                        style.textContent = '@keyframes slideUpBanner{from{transform:translateY(100%);opacity:0}to{transform:translateY(0);opacity:1}}';
+                        document.head.appendChild(style);
+                    }
+
+                    if (permissionState === 'denied') {
+                        // Permission was denied - show red banner with settings instructions
+                        banner.style.background = 'linear-gradient(135deg,#e53935,#c62828)';
+                        var isIOSDevice = /iPad|iPhone|iPod/.test(navigator.userAgent);
+                        var settingsPath = isIOSDevice
+                            ? 'Cài đặt → Safari → Thông báo / Settings → Safari → Notifications'
+                            : 'Cài đặt → Thông báo → Chrome / Settings → Notifications → Chrome';
+                        banner.innerHTML = '\
+                            &lt;div style="display:flex;align-items:flex-start;gap:12px"&gt;\
+                                &lt;div style="font-size:28px;line-height:1"&gt;🔕&lt;/div&gt;\
+                                &lt;div style="flex:1"&gt;\
+                                    &lt;div style="font-weight:700;font-size:15px;margin-bottom:4px"&gt;Thông báo bị tắt / Notifications Blocked&lt;/div&gt;\
+                                    &lt;div style="font-size:13px;opacity:0.95;margin-bottom:6px"&gt;Bạn cần bật thông báo trong Cài đặt để nhận lịch hẹn mới.&lt;/div&gt;\
+                                    &lt;div style="font-size:12px;opacity:0.85;font-style:italic"&gt;Please enable notifications in your device Settings to receive booking alerts.&lt;/div&gt;\
+                                    &lt;div style="margin-top:8px;padding:8px 12px;background:rgba(255,255,255,0.15);border-radius:8px;font-size:12px;font-weight:500"&gt;📱 ' + settingsPath + '&lt;/div&gt;\
+                                &lt;/div&gt;\
+                            &lt;/div&gt;';
+                    } else {
+                        // Permission is 'default' - show green enable banner (no dismiss button)
+                        banner.style.background = 'linear-gradient(135deg,#4CAF50,#2e7d32)';
+                        banner.innerHTML = '\
+                            &lt;div style="display:flex;align-items:center;gap:12px"&gt;\
+                                &lt;div style="font-size:28px;line-height:1"&gt;🔔&lt;/div&gt;\
+                                &lt;div style="flex:1"&gt;\
+                                    &lt;div style="font-weight:700;font-size:15px;margin-bottom:2px"&gt;Bật thông báo / Enable Notifications&lt;/div&gt;\
+                                    &lt;div style="font-size:13px;opacity:0.9"&gt;Nhận thông báo ngay khi có lịch hẹn mới được giao cho bạn.&lt;/div&gt;\
+                                    &lt;div style="font-size:12px;opacity:0.8;font-style:italic"&gt;Get instant alerts when a booking is assigned to you.&lt;/div&gt;\
+                                &lt;/div&gt;\
+                                &lt;button id="push-enable-btn" style="padding:12px 20px;background:#fff;color:#2e7d32;border:none;border-radius:12px;font-weight:700;font-size:14px;cursor:pointer;white-space:nowrap;box-shadow:0 2px 8px rgba(0,0,0,0.15)"&gt;Bật / Enable&lt;/button&gt;\
+                            &lt;/div&gt;';
+                    }
+
+                    document.body.appendChild(banner);
+
+                    // Handle Enable button click
+                    var enableBtn = document.getElementById('push-enable-btn');
+                    if (enableBtn) {
+                        enableBtn.addEventListener('click', async function() {
+                            enableBtn.disabled = true;
+                            enableBtn.textContent = '...';
+                            var ok = await window._pwaPushSubscribe();
+                            if (ok) {
+                                banner.style.background = 'linear-gradient(135deg,#4CAF50,#2e7d32)';
+                                banner.innerHTML = '&lt;div style="text-align:center;padding:12px;font-size:16px;font-weight:600"&gt;✅ Thông báo đã bật! / Notifications enabled!&lt;/div&gt;';
+                                setTimeout(function() { banner.remove(); }, 2500);
+                            } else {
+                                // Permission was denied - show settings instructions
+                                _showPushBanner('denied');
+                            }
+                        });
+                    }
+                }
+                
                 // PWA Install Prompt
                 let deferredPrompt;
                 window.addEventListener('beforeinstallprompt', function(e) {
                     e.preventDefault();
                     deferredPrompt = e;
                     
-                    // Show install banner after 3 seconds
-                    setTimeout(function() {
-                        if (!localStorage.getItem('pwa-install-dismissed')) {
-                            document.getElementById('pwa-install-banner').style.display = 'block';
-                        }
-                    }, 3000);
+                    // If smart install overlay is active (from ?install=1), show Android install section
+                    if (window.healthPWAConfig &amp;&amp; window.healthPWAConfig.showInstallOverlay) {
+                        const androidSection = document.getElementById('pwa-install-android');
+                        if (androidSection) androidSection.style.display = 'block';
+                        // Hide iOS section since we have native prompt
+                        const iosSection = document.getElementById('pwa-install-ios');
+                        if (iosSection) iosSection.style.display = 'none';
+                    } else {
+                        // Normal flow: Show install banner after 3 seconds
+                        setTimeout(function() {
+                            if (!localStorage.getItem('pwa-install-dismissed')) {
+                                document.getElementById('pwa-install-banner').style.display = 'block';
+                            }
+                        }, 3000);
+                    }
                 });
                 
                 // Install button handler
                 document.addEventListener('DOMContentLoaded', function() {
+                    // === Smart Install Overlay Logic ===
+                    const installOverlay = document.getElementById('pwa-install-overlay');
+                    const installCloseBtn = document.getElementById('pwa-install-close-btn');
+                    const installNowBtn = document.getElementById('pwa-install-now-btn');
+                    
+                    if (window.healthPWAConfig &amp;&amp; window.healthPWAConfig.showInstallOverlay &amp;&amp; installOverlay) {
+                        // Check if already installed (standalone mode)
+                        const isStandalone = window.matchMedia('(display-mode: standalone)').matches 
+                                          || window.navigator.standalone === true;
+                        
+                        if (isStandalone) {
+                            // Already installed - show success message
+                            installOverlay.style.display = 'flex';
+                            const doneSection = document.getElementById('pwa-install-done');
+                            if (doneSection) doneSection.style.display = 'block';
+                            // Auto-close after 3 seconds
+                            setTimeout(() =&gt; { installOverlay.style.display = 'none'; }, 3000);
+                        } else {
+                            // Show the overlay
+                            installOverlay.style.display = 'flex';
+                            
+                            // Detect platform
+                            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) &amp;&amp; !window.MSStream;
+                            
+                            if (isIOS) {
+                                // iOS: show visual guide (no native prompt available)
+                                const iosSection = document.getElementById('pwa-install-ios');
+                                if (iosSection) iosSection.style.display = 'block';
+                            } else {
+                                // Android/Desktop: wait for beforeinstallprompt
+                                // If deferredPrompt already captured, show Android section immediately
+                                if (deferredPrompt) {
+                                    const androidSection = document.getElementById('pwa-install-android');
+                                    if (androidSection) androidSection.style.display = 'block';
+                                }
+                                // Otherwise, beforeinstallprompt handler above will show it when ready
+                            }
+                        }
+                    }
+                    
+                    // Smart overlay: Install Now button (Android)
+                    if (installNowBtn) {
+                        installNowBtn.addEventListener('click', async function() {
+                            if (deferredPrompt) {
+                                deferredPrompt.prompt();
+                                const { outcome } = await deferredPrompt.userChoice;
+                                console.log('[PWA Install] User choice:', outcome);
+                                if (outcome === 'accepted') {
+                                    if (installOverlay) installOverlay.style.display = 'none';
+                                }
+                                deferredPrompt = null;
+                            }
+                        });
+                    }
+                    
+                    // Smart overlay: Close button
+                    if (installCloseBtn) {
+                        installCloseBtn.addEventListener('click', function() {
+                            if (installOverlay) installOverlay.style.display = 'none';
+                        });
+                    }
+                    
+                    // === Original install banner logic ===
                     const installBtn = document.getElementById('pwa-install-btn');
                     const dismissBtn = document.getElementById('pwa-dismiss-btn');
                     const installBanner = document.getElementById('pwa-install-banner');
@@ -509,10 +805,10 @@
     
     <template id="service_worker_js" name="Service Worker JavaScript">
         <![CDATA[
-// Health PWA Service Worker v1.0.31
+// Health PWA Service Worker v1.0.59
 // IMPORTANT: Increment version number when deploying updates!
 
-const CACHE_VERSION = '1.0.31';
+const CACHE_VERSION = '1.0.59';
 const CACHE_NAME = `health-pwa-v${CACHE_VERSION}`;
 const OFFLINE_URL = '/health_pwa/offline';
 const API_CACHE_NAME = `health-pwa-api-v${CACHE_VERSION}`;
@@ -533,9 +829,9 @@ const STATIC_CACHE_URLS = [
     `/health_pwa/static/src/js/app.js?v=${CACHE_VERSION}`,
     `/health_pwa/static/src/js/router.js?v=${CACHE_VERSION}`,
     '/health_pwa/static/icons/icon-192.png',
-    'https://unpkg.com/vue@3.4.0/dist/vue.global.prod.js',
-    'https://unpkg.com/quasar@2.14.0/dist/quasar.umd.min.js',
-    'https://unpkg.com/pouchdb@8.0.0/dist/pouchdb.min.js',
+    // Note: External CDN URLs removed from pre-cache - they fail with CORS errors
+    // and cause the entire SW installation to fail, preventing cache updates.
+    // These are loaded directly via <script> tags and cached by the browser normally.
 ];
 
 // API endpoints to cache
@@ -600,12 +896,35 @@ self.addEventListener('fetch', event => {
         if (url.pathname.startsWith('/health_pwa/api/') || url.pathname.startsWith('/health_pwa/sync/')) {
             // API requests - Network First with Cache Fallback
             event.respondWith(handleAPIRequest(request));
+        } else if (request.mode === 'navigate' || url.pathname === '/health_pwa' || url.pathname === '/health_pwa/') {
+            // Navigation requests (HTML) - Network First to always get latest version
+            event.respondWith(handleNavigationRequest(request));
         } else {
-            // Static files - Cache First
+            // Static files (JS, CSS, images) - Cache First (versioned via query param)
             event.respondWith(handleStaticRequest(request));
         }
     }
 });
+// Handle navigation (HTML page) requests with Network First strategy
+async function handleNavigationRequest(request) {
+    try {
+        const response = await fetch(request);
+        if (response.ok) {
+            // Cache the latest HTML for offline use
+            const cache = await caches.open(CACHE_NAME);
+            cache.put(request, response.clone());
+        }
+        return response;
+    } catch (error) {
+        console.log('Navigation fetch failed, using cache');
+        const cache = await caches.open(CACHE_NAME);
+        const cachedResponse = await cache.match(request);
+        if (cachedResponse) return cachedResponse;
+        // Fallback to offline page
+        const offlineResponse = await cache.match(OFFLINE_URL);
+        return offlineResponse || new Response('Offline', { status: 503 });
+    }
+}
 
 // Handle API requests with Network First strategy
 async function handleAPIRequest(request) {
@@ -707,57 +1026,140 @@ async function performBackgroundSync() {
     }
 }
 
-// Push notification handler (for future use)
+// Push notification handler
 self.addEventListener('push', event => {
-    console.log('Push notification received:', event);
+    console.log('[SW] Push notification received');
     
-    const options = {
-        body: event.data ? event.data.text() : 'New health update available',
+    let notifData = {
+        title: 'Viet Uc',
+        body: 'New notification',
         icon: '/health_pwa/static/icons/icon-192.png',
         badge: '/health_pwa/static/icons/icon-96.png',
-        vibrate: [200, 100, 200],
         tag: 'health-pwa-notification',
-        actions: [
-            {
-                action: 'open',
-                title: 'Open App',
-                icon: '/health_pwa/static/icons/icon-96.png'
-            },
-            {
-                action: 'close',
-                title: 'Close',
-                icon: '/health_pwa/static/icons/icon-96.png'
-            }
-        ]
+        data: {},
     };
-    
+
+    if (event.data) {
+        try {
+            const payload = event.data.json();
+            notifData.title = payload.title || notifData.title;
+            notifData.body = payload.body || notifData.body;
+            notifData.icon = payload.icon || notifData.icon;
+            notifData.badge = payload.badge || notifData.badge;
+            notifData.tag = payload.tag || notifData.tag;
+            notifData.data = payload.data || {};
+        } catch (e) {
+            notifData.body = event.data.text();
+        }
+    }
+
+    // Build notification actions based on type
+    let actions = [
+        { action: 'open', title: 'Mở / Open' },
+        { action: 'close', title: 'Đóng / Close' }
+    ];
+
+    // Assignment notifications get Accept/Decline buttons
+    if (notifData.data && notifData.data.type === 'assignment' && notifData.data.assignment_id) {
+        actions = [
+            { action: 'accept', title: '✅ Accept' },
+            { action: 'decline', title: '❌ Decline' },
+        ];
+    }
+
+    const options = {
+        body: notifData.body,
+        icon: notifData.icon,
+        badge: notifData.badge,
+        vibrate: [200, 100, 200],
+        tag: notifData.tag,
+        data: notifData.data,
+        actions: actions,
+        requireInteraction: true,
+    };
+
     event.waitUntil(
-        self.registration.showNotification('Viet Uc', options)
+        self.registration.showNotification(notifData.title, options).then(() => {
+            // Notify all open clients to refresh notification count
+            return self.clients.matchAll({ type: 'window' }).then(clientList => {
+                clientList.forEach(client => {
+                    client.postMessage({ type: 'PUSH_RECEIVED' });
+                });
+            });
+        })
     );
 });
 
 // Notification click handler
 self.addEventListener('notificationclick', event => {
-    console.log('Notification clicked:', event);
+    console.log('[SW] Notification clicked:', event.action);
     event.notification.close();
     
-    if (event.action === 'open') {
+    if (event.action === 'close') return;
+
+    const notifData = event.notification.data || {};
+    const assignmentId = notifData.assignment_id;
+
+    // Handle Accept/Decline actions for assignments
+    if (assignmentId && (event.action === 'accept' || event.action === 'decline')) {
         event.waitUntil(
-            clients.matchAll().then(clientList => {
-                // Try to focus existing window
-                for (const client of clientList) {
-                    if (client.url.includes('/health_pwa') && 'focus' in client) {
-                        return client.focus();
+            fetch(`/health_pwa/api/assignments/${assignmentId}/respond`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action: event.action }),
+            }).then(resp => resp.json()).then(data => {
+                console.log('[SW] Assignment response:', data);
+                // Notify clients to refresh
+                return self.clients.matchAll({ type: 'window' }).then(clientList => {
+                    clientList.forEach(client => {
+                        client.postMessage({ type: 'PUSH_RECEIVED' });
+                    });
+                    // If no open clients, show a confirmation notification
+                    if (clientList.length === 0) {
+                        const msg = event.action === 'accept'
+                            ? '✅ Assignment confirmed'
+                            : '❌ Assignment declined';
+                        return self.registration.showNotification('Viet Uc', {
+                            body: msg,
+                            icon: '/health_pwa/static/icons/icon-192.png',
+                            tag: 'assignment-response',
+                        });
                     }
-                }
-                
-                // Open new window if no existing window
-                if (clients.openWindow) {
-                    return clients.openWindow('/health_pwa');
-                }
+                });
+            }).catch(err => {
+                console.error('[SW] Failed to respond to assignment:', err);
+                return self.registration.showNotification('Viet Uc', {
+                    body: '⚠️ Error responding to assignment. Please open the app.',
+                    icon: '/health_pwa/static/icons/icon-192.png',
+                    tag: 'assignment-response-error',
+                });
             })
         );
+        return;
     }
+
+    // Default: open the app (with notifications panel if assignment)
+    const urlToOpen = (notifData && notifData.type === 'assignment')
+        ? '/health_pwa#/today?showNotifications=1'
+        : (notifData && notifData.url)
+            ? notifData.url
+            : '/health_pwa';
+
+    event.waitUntil(
+        clients.matchAll({ type: 'window', includeUncontrolled: true }).then(clientList => {
+            // Try to focus existing window
+            for (const client of clientList) {
+                if (client.url.includes('/health_pwa') && 'focus' in client) {
+                    client.navigate(urlToOpen);
+                    return client.focus();
+                }
+            }
+            // Open new window if no existing window
+            if (clients.openWindow) {
+                return clients.openWindow(urlToOpen);
+            }
+        })
+    );
 });
 
 console.log('Health PWA Service Worker loaded successfully');

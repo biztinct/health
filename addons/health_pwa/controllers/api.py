@@ -448,7 +448,7 @@ class HealthPWAAPIController(http.Controller):
         except Exception as e:
             return self._prepare_json_response(error=str(e), status_code=500)
     
-    @http.route('/health_pwa/api/fso/<int:order_id>/update', type='json', auth='user', methods=['POST'], csrf=False)
+    @http.route('/health_pwa/api/fso/<int:order_id>/update', type='jsonrpc', auth='user', methods=['POST'], csrf=False)
     def api_fso_update(self, order_id, **kwargs):
         """Update field service order from mobile app"""
         if not self._check_api_access():
@@ -1735,6 +1735,18 @@ class HealthPWAAPIController(http.Controller):
                 # Get current user's employee record for booking credit tracking
                 current_employee = request.env.user.employee_id
 
+                # Get facility from the original order (required field)
+                facility_id = order.facility_id.id if order.facility_id else False
+                if not facility_id and patient.primary_facility_id:
+                    facility_id = patient.primary_facility_id.id
+                if not facility_id:
+                    # Fallback: get the first active facility
+                    default_facility = request.env['health.facility'].search([('active', '=', True)], limit=1)
+                    facility_id = default_facility.id if default_facility else False
+
+                if not facility_id:
+                    return self._prepare_json_response(error='No facility found. Please set a facility on the original booking.', status_code=400)
+
                 # Create new FSO
                 next_fso = request.env['health.fieldservice.order'].create({
                     'patient_id': patient.id,
@@ -1743,6 +1755,7 @@ class HealthPWAAPIController(http.Controller):
                     'lead_staff_id': assigned_staff_id if assigned_staff_id else False,
                     'state': fso_state,
                     'created_by_employee_id': current_employee.id if current_employee else False,
+                    'facility_id': facility_id,
                 })
 
                 # Increment booking credit for the staff member who created this booking
@@ -1950,4 +1963,248 @@ class HealthPWAAPIController(http.Controller):
 
         except Exception as e:
             _logger.error(f'Error getting current user: {str(e)}')
+            return self._prepare_json_response(error=str(e), status_code=500)
+
+    # ============================================================================
+    # IN-APP NOTIFICATION ENDPOINTS
+    # ============================================================================
+
+    @http.route('/health_pwa/api/notifications/pending', type='http', auth='user', methods=['GET'], csrf=False)
+    def api_get_pending_notifications(self, **kwargs):
+        """Get pending notifications (unconfirmed assignments + cancel/reschedule queue) for current user"""
+        try:
+            current_user = request.env.user
+            employee = request.env['hr.employee'].search([
+                ('user_id', '=', current_user.id)
+            ], limit=1)
+
+            if not employee:
+                return self._prepare_json_response(data={'notifications': [], 'count': 0})
+
+            notifications = []
+
+            # 1. Pending assignment confirmations (state='assigned', not yet confirmed by staff)
+            assignments = request.env['health.staff.assignment'].sudo().search([
+                ('staff_id', '=', employee.id),
+                ('state', '=', 'assigned'),
+            ], order='create_date desc', limit=50)
+
+            for assignment in assignments:
+                fso = assignment.fso_id
+                patient_name = fso.patient_id.name if fso and fso.patient_id else 'Unknown'
+                scheduled = ''
+                if fso and fso.scheduled_datetime:
+                    dt = fields.Datetime.context_timestamp(fso, fso.scheduled_datetime)
+                    scheduled = dt.strftime('%d/%m/%Y %H:%M')
+
+                service_type = ''
+                if fso and hasattr(fso, 'service_type') and fso.service_type:
+                    try:
+                        service_type = dict(fso._fields['service_type'].selection).get(fso.service_type, fso.service_type)
+                    except Exception:
+                        service_type = fso.service_type or ''
+
+                notifications.append({
+                    'id': assignment.id,
+                    'type': 'assignment',
+                    'fso_id': fso.id if fso else None,
+                    'fso_name': fso.name if fso else '',
+                    'patient_name': patient_name,
+                    'scheduled_datetime': scheduled,
+                    'service_type': service_type,
+                    'assignment_date': assignment.create_date.isoformat() if assignment.create_date else '',
+                    'state': assignment.state,
+                })
+
+            # 2. Cancel/Reschedule queue notifications (unread)
+            queue_notifs = request.env['health.pwa.staff.notification'].sudo().search([
+                ('user_id', '=', current_user.id),
+                ('is_read', '=', False),
+                ('active', '=', True),
+            ], order='create_date desc', limit=50)
+
+            for notif in queue_notifs:
+                notifications.append({
+                    'id': notif.id,
+                    'type': notif.notification_type,  # 'cancelled' or 'rescheduled'
+                    'fso_id': notif.fso_id.id if notif.fso_id else None,
+                    'fso_name': notif.fso_name or '',
+                    'patient_name': notif.patient_name or '',
+                    'message': notif.message or '',
+                    'old_datetime': notif.old_datetime or '',
+                    'new_datetime': notif.new_datetime or '',
+                    'assignment_date': notif.create_date.isoformat() if notif.create_date else '',
+                })
+
+            return self._prepare_json_response(data={
+                'notifications': notifications,
+                'count': len(notifications),
+            })
+
+        except Exception as e:
+            _logger.error(f'Error fetching pending notifications: {str(e)}')
+            return self._prepare_json_response(error=str(e), status_code=500)
+
+    @http.route('/health_pwa/api/notifications/<int:notif_id>/dismiss', type='http', auth='user', methods=['POST'], csrf=False)
+    def api_dismiss_notification(self, notif_id, **kwargs):
+        """Dismiss (mark as read) a cancel/reschedule notification"""
+        try:
+            notif = request.env['health.pwa.staff.notification'].sudo().browse(notif_id)
+            if not notif.exists():
+                return self._prepare_json_response(error='Notification not found', status_code=404)
+
+            # Verify ownership
+            if notif.user_id.id != request.env.user.id:
+                return self._prepare_json_response(error='Not your notification', status_code=403)
+
+            notif.write({'is_read': True})
+            return self._prepare_json_response(data={
+                'status': 'dismissed',
+                'notif_id': notif_id,
+            })
+
+        except Exception as e:
+            _logger.error(f'Error dismissing notification: {str(e)}')
+            return self._prepare_json_response(error=str(e), status_code=500)
+
+    @http.route('/health_pwa/api/assignments/<int:assignment_id>/respond', type='http', auth='user', methods=['POST'], csrf=False)
+    def api_respond_assignment(self, assignment_id, **kwargs):
+        """Accept or decline an assignment"""
+        try:
+            body = json.loads(request.httprequest.data or '{}')
+            action = body.get('action')  # 'accept' or 'decline'
+
+            if action not in ('accept', 'decline'):
+                return self._prepare_json_response(error='Invalid action. Use accept or decline.', status_code=400)
+
+            assignment = request.env['health.staff.assignment'].sudo().browse(assignment_id)
+            if not assignment.exists():
+                return self._prepare_json_response(error='Assignment not found', status_code=404)
+
+            # Verify the current user owns this assignment
+            current_user = request.env.user
+            employee = request.env['hr.employee'].search([
+                ('user_id', '=', current_user.id)
+            ], limit=1)
+
+            if not employee or assignment.staff_id.id != employee.id:
+                return self._prepare_json_response(error='Not your assignment', status_code=403)
+
+            if action == 'accept':
+                assignment.write({'state': 'confirmed'})
+                _logger.info('Assignment %s accepted by user %s', assignment_id, current_user.login)
+                return self._prepare_json_response(data={
+                    'status': 'accepted',
+                    'assignment_id': assignment_id,
+                    'message': 'Assignment confirmed successfully',
+                })
+            else:
+                assignment.write({'state': 'cancelled'})
+                _logger.info('Assignment %s declined by user %s', assignment_id, current_user.login)
+                return self._prepare_json_response(data={
+                    'status': 'declined',
+                    'assignment_id': assignment_id,
+                    'message': 'Assignment declined',
+                })
+
+        except Exception as e:
+            _logger.error(f'Error responding to assignment: {str(e)}')
+            return self._prepare_json_response(error=str(e), status_code=500)
+
+    # ============================================================================
+    # PUSH NOTIFICATION ENDPOINTS
+    # ============================================================================
+
+    @http.route('/health_pwa/api/push/vapid-key', type='http', auth='user', methods=['GET'], csrf=False)
+    def api_get_vapid_key(self, **kwargs):
+        """Return VAPID public key for frontend push subscription"""
+        try:
+            config = request.env['health.pwa.config'].sudo().search([
+                ('active', '=', True),
+                ('push_notifications_enabled', '=', True),
+            ], limit=1)
+
+            if not config or not config.vapid_public_key:
+                return self._prepare_json_response(data={'enabled': False, 'vapid_public_key': None})
+
+            return self._prepare_json_response(data={
+                'enabled': True,
+                'vapid_public_key': config.vapid_public_key,
+            })
+        except Exception as e:
+            _logger.error(f'Error getting VAPID key: {str(e)}')
+            return self._prepare_json_response(error=str(e), status_code=500)
+
+    @http.route('/health_pwa/api/push/subscribe', type='http', auth='user', methods=['POST'], csrf=False)
+    def api_push_subscribe(self, **kwargs):
+        """Save browser push subscription for current user"""
+        try:
+            # Parse JSON body
+            body = json.loads(request.httprequest.data or '{}')
+            endpoint = body.get('endpoint')
+            p256dh = body.get('keys', {}).get('p256dh')
+            auth = body.get('keys', {}).get('auth')
+
+            if not endpoint or not p256dh or not auth:
+                return self._prepare_json_response(
+                    error='Missing required fields: endpoint, keys.p256dh, keys.auth',
+                    status_code=400)
+
+            user_agent = request.httprequest.environ.get('HTTP_USER_AGENT', '')[:200]
+
+            # Check if this endpoint already exists
+            PushSub = request.env['health.pwa.push.subscription'].sudo()
+            existing = PushSub.search([('endpoint', '=', endpoint)], limit=1)
+
+            if existing:
+                # Update existing subscription (keys may have rotated)
+                existing.write({
+                    'user_id': request.env.uid,
+                    'p256dh_key': p256dh,
+                    'auth_key': auth,
+                    'browser_info': user_agent,
+                    'active': True,
+                })
+                _logger.info('Updated push subscription for user %s', request.env.uid)
+            else:
+                # Create new subscription
+                PushSub.create({
+                    'user_id': request.env.uid,
+                    'endpoint': endpoint,
+                    'p256dh_key': p256dh,
+                    'auth_key': auth,
+                    'browser_info': user_agent,
+                })
+                _logger.info('Created push subscription for user %s', request.env.uid)
+
+            return self._prepare_json_response(data={'subscribed': True})
+
+        except Exception as e:
+            _logger.error(f'Error saving push subscription: {str(e)}')
+            return self._prepare_json_response(error=str(e), status_code=500)
+
+    @http.route('/health_pwa/api/push/unsubscribe', type='http', auth='user', methods=['POST'], csrf=False)
+    def api_push_unsubscribe(self, **kwargs):
+        """Remove push subscription for current user"""
+        try:
+            body = json.loads(request.httprequest.data or '{}')
+            endpoint = body.get('endpoint')
+
+            if not endpoint:
+                return self._prepare_json_response(error='Missing endpoint', status_code=400)
+
+            PushSub = request.env['health.pwa.push.subscription'].sudo()
+            existing = PushSub.search([
+                ('endpoint', '=', endpoint),
+                ('user_id', '=', request.env.uid),
+            ])
+
+            if existing:
+                existing.write({'active': False})
+                _logger.info('Unsubscribed push for user %s', request.env.uid)
+
+            return self._prepare_json_response(data={'unsubscribed': True})
+
+        except Exception as e:
+            _logger.error(f'Error unsubscribing push: {str(e)}')
             return self._prepare_json_response(error=str(e), status_code=500)

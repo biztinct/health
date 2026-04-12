@@ -341,28 +341,26 @@ class HealthStaffAssignment(models.Model):
 
     @api.depends('planned_start_time', 'assignment_date', 'fso_id.booking_timezone')
     def _compute_formatted_datetime(self):
-        """Format datetime as '21/Oct-10:30 AM' for timeline display"""
+        """Format datetime in BOOKING timezone (not user tz) for timeline display."""
+        from pytz import timezone, utc
         for record in self:
             dt = record.planned_start_time or record.assignment_date
             if dt:
-                bk_tz = (record.fso_id._get_booking_tz() if record.fso_id else False) or 'Asia/Ho_Chi_Minh'
-                from pytz import timezone
-                local_dt = dt.replace(tzinfo=timezone('UTC')).astimezone(timezone(bk_tz))
-                # Format: "21/Oct-10:30 AM" (no spaces around hyphen)
+                bk_tz_name = (record.fso_id.booking_timezone if record.fso_id else False) or 'Asia/Ho_Chi_Minh'
+                local_dt = dt.replace(tzinfo=utc).astimezone(timezone(bk_tz_name))
                 record.formatted_datetime = local_dt.strftime('%d/%b-%I:%M %p')
             else:
                 record.formatted_datetime = ''
 
     @api.depends('planned_start_time', 'assignment_date', 'fso_id.booking_timezone')
     def _compute_formatted_time(self):
-        """Format time only as '09:30 AM' for timeline display"""
+        """Format time in BOOKING timezone (not user tz) for timeline display."""
+        from pytz import timezone, utc
         for record in self:
             dt = record.planned_start_time or record.assignment_date
             if dt:
-                bk_tz = (record.fso_id._get_booking_tz() if record.fso_id else False) or 'Asia/Ho_Chi_Minh'
-                from pytz import timezone
-                local_dt = dt.replace(tzinfo=timezone('UTC')).astimezone(timezone(bk_tz))
-                # Format: "09:30 AM" (time only, no date)
+                bk_tz_name = (record.fso_id.booking_timezone if record.fso_id else False) or 'Asia/Ho_Chi_Minh'
+                local_dt = dt.replace(tzinfo=utc).astimezone(timezone(bk_tz_name))
                 record.formatted_time = local_dt.strftime('%I:%M %p')
             else:
                 record.formatted_time = ''
@@ -646,7 +644,44 @@ class HealthStaffAssignment(models.Model):
             if vals.get('staff_id') and vals.get('state', 'draft') == 'draft':
                 vals['state'] = 'assigned'
 
-        return super().create(vals_list)
+        records = super().create(vals_list)
+
+        # POST-CREATE ENFORCEMENT: Force planned times to match FSO scheduled_datetime
+        # Belt-and-suspenders: the pre-create override above sets correct vals, but
+        # the timeline widget may issue a subsequent write() with click-position values.
+        # This enforcement ensures the DB is definitively correct after creation.
+        for record in records:
+            if record.fso_id and record.fso_id.scheduled_datetime and record.state != 'template':
+                correct_start = record.fso_id.scheduled_datetime
+                duration = record.fso_id.scheduled_duration or 60
+                correct_end = correct_start + timedelta(minutes=duration)
+                if (record.planned_start_time != correct_start or
+                        record.planned_end_time != correct_end or
+                        record.assignment_date != correct_start):
+                    self.env.cr.execute("""
+                        UPDATE health_staff_assignment
+                        SET planned_start_time = %s,
+                            planned_end_time = %s,
+                            assignment_date = %s
+                        WHERE id = %s
+                    """, (correct_start, correct_end, correct_start, record.id))
+                    record.invalidate_recordset(
+                        ['planned_start_time', 'planned_end_time', 'assignment_date']
+                    )
+                    _logger.info(
+                        '🔒 POST-CREATE: Forced assignment %s times to FSO %s datetime %s',
+                        record.name, record.fso_id.name, correct_start
+                    )
+
+        # Send push notification for assignments created in 'assigned' state
+        for record in records:
+            if record.state == 'assigned' and record.staff_id and record.fso_id:
+                try:
+                    record.fso_id._send_staff_assignment_notification(record.staff_id, record)
+                except Exception as e:
+                    _logger.warning('Failed to send push notification on assignment create: %s', e)
+
+        return records
     
     def write(self, vals):
         """Override write to handle automatic state transitions and date changes"""
@@ -734,7 +769,61 @@ class HealthStaffAssignment(models.Model):
                     if vals['staff_id']:
                         vals['state'] = 'assigned'
 
-        return super().write(vals)
+        result = super().write(vals)
+
+        # POST-WRITE ENFORCEMENT: Force planned times to match FSO scheduled_datetime
+        # The web_timeline widget calls write() AFTER create() to reposition items to the
+        # click position, overriding our pre-write protection. This direct SQL update
+        # guarantees FSO-linked assignments always have correct times.
+        if any(f in vals for f in ('planned_start_time', 'planned_end_time', 'assignment_date')):
+            for record in self:
+                if record.fso_id and record.fso_id.scheduled_datetime:
+                    correct_start = record.fso_id.scheduled_datetime
+                    duration = record.fso_id.scheduled_duration or 60
+                    correct_end = correct_start + timedelta(minutes=duration)
+                    if (record.planned_start_time != correct_start or
+                            record.planned_end_time != correct_end or
+                            record.assignment_date != correct_start):
+                        self.env.cr.execute("""
+                            UPDATE health_staff_assignment
+                            SET planned_start_time = %s,
+                                planned_end_time = %s,
+                                assignment_date = %s
+                            WHERE id = %s
+                        """, (correct_start, correct_end, correct_start, record.id))
+                        record.invalidate_recordset(
+                            ['planned_start_time', 'planned_end_time', 'assignment_date']
+                        )
+                        _logger.info(
+                            '🔒 POST-WRITE: Forced assignment %s times to FSO %s datetime %s',
+                            record.name, record.fso_id.name, correct_start
+                        )
+
+        # When assignment state changes to 'confirmed' (nurse accepted via PWA),
+        # advance the parent FSO from 'confirmed' (Booked) to 'assigned' state.
+        # NOTE: We do NOT advance on 'assigned' (staff just added) - the nurse must confirm first.
+        if 'state' in vals and vals['state'] == 'confirmed':
+            for record in self:
+                if record.fso_id and record.fso_id.state == 'confirmed' and record.staff_id:
+                    try:
+                        # Find the 'assigned' stage
+                        assigned_stage = self.env['health.fieldservice.stage'].search([
+                            ('state', '=', 'assigned'),
+                            ('active', '=', True)
+                        ], order='sequence', limit=1)
+                        if assigned_stage:
+                            record.fso_id.write({
+                                'stage_id': assigned_stage.id,
+                                'state': 'assigned',
+                            })
+                            _logger.info(
+                                'Advanced FSO %s from Booked to Assigned (assignment %s state → %s)',
+                                record.fso_id.name, record.id, vals['state']
+                            )
+                    except Exception as e:
+                        _logger.warning('Failed to advance FSO state: %s', e)
+
+        return result
 
     def _calculate_estimated_end(self, booking, new_start_datetime):
         """Calculate estimated end datetime based on booking duration"""

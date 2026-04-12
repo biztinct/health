@@ -109,7 +109,7 @@ export class BfsiManagerDashboard extends Component {
             // Banker Detail Modal
             showBankerModal: false,
             bankerDetail: null,
-            modalTab: 'performance',
+            modalTab: 'profile',
 
             // Coaching/Plans filter state
             coachingFilter: 'this_month',
@@ -132,6 +132,24 @@ export class BfsiManagerDashboard extends Component {
         });
     }
 
+    /* ━━━ ROLE DISPLAY HELPER ━━━ */
+
+    formatRole(banker) {
+        if (banker.job_id && banker.job_id[1]) return banker.job_id[1];
+        const ROLE_LABELS = {
+            'rm': 'Relationship Manager',
+            'branch_manager': 'Branch Manager',
+            'regional_manager': 'Regional Manager',
+            'telesales': 'Telesales Agent',
+            'field_sales': 'Field Sales Officer',
+            'loan_officer': 'Loan Officer',
+            'insurance_advisor': 'Insurance Advisor',
+            'wealth_manager': 'Wealth Manager',
+            'banker': 'Banker',
+        };
+        return ROLE_LABELS[banker.banker_type] || banker.banker_type || 'Banker';
+    }
+
     /* ━━━ SCORE RING HELPERS ━━━ */
 
     getScoreRingDasharray() {
@@ -149,6 +167,25 @@ export class BfsiManagerDashboard extends Component {
         if (score >= 75) return 'bfsi-score-high';
         if (score >= 50) return 'bfsi-score-medium';
         return 'bfsi-score-low';
+    }
+
+    getScoreBadgeClass(score) {
+        if (score >= 75) return 'low';
+        if (score >= 50) return 'medium';
+        return 'critical';
+    }
+
+    getBadgeClass(badge) {
+        const d = this.state.bankerDetail || {};
+        switch (badge) {
+            case 'top_performer': return (d.score || 0) >= 80 ? 'earned' : 'locked';
+            case 'podium': return (d.rank || 99) <= 3 ? 'earned' : 'locked';
+            case 'climber': return (d.movement || 0) >= 3 ? 'earned' : 'locked';
+            case 'coach_fav': return (d.sessions_count || 0) >= 5 ? 'earned' : 'locked';
+            case 'action_taker': return (d.plans_count || 0) >= 1 ? 'earned' : 'locked';
+            case 'excellence': return (d.score || 0) >= 90 ? 'earned' : 'locked';
+            default: return 'locked';
+        }
     }
 
     /* ━━━ DATA LOADING ━━━ */
@@ -339,7 +376,7 @@ export class BfsiManagerDashboard extends Component {
     async openBankerDetail(bankerId) {
         this.state.showBankerModal = true;
         this.state.bankerDetail = null;
-        this.state.modalTab = 'performance';
+        this.state.modalTab = 'profile';
 
         try {
             // Get full banker data
@@ -383,7 +420,7 @@ export class BfsiManagerDashboard extends Component {
                 plans = await this.orm.searchRead(
                     'bfsi.action.plan',
                     [['employee_id', '=', bankerId]],
-                    ['name', 'state', 'completion_rate', 'create_date', 'item_ids'],
+                    ['name', 'state', 'progress_percentage', 'create_date', 'item_ids'],
                     { order: 'create_date desc' }
                 );
             } catch (_) { }
@@ -398,7 +435,7 @@ export class BfsiManagerDashboard extends Component {
             this.state.bankerDetail = {
                 id: banker.id,
                 name: banker.name,
-                role: banker.job_id ? banker.job_id[1] : (banker.banker_type || 'Banker'),
+                role: this.formatRole(banker),
                 rank: banker.current_month_rank,
                 movement: banker.rank_movement,
                 score: banker.latest_overall_score || 0,
@@ -427,7 +464,7 @@ export class BfsiManagerDashboard extends Component {
                     name: p.name || 'Unnamed Plan',
                     state: p.state || 'draft',
                     state_label: stateLabels[p.state] || p.state || 'Draft',
-                    completion: p.completion_rate || 0,
+                    completion: p.progress_percentage || 0,
                     create_date: p.create_date || '',
                     item_count: (p.item_ids || []).length,
                 })),
@@ -453,6 +490,15 @@ export class BfsiManagerDashboard extends Component {
         this.state.bankerDetail = null;
         destroyChart('modalRadar');
         destroyChart('modalTrend');
+    }
+
+    async switchModalTab(tab) {
+        this.state.modalTab = tab;
+        if (tab === 'performance') {
+            // Wait for OWL to render the canvas elements
+            await new Promise(r => setTimeout(r, 100));
+            await this.renderModalCharts();
+        }
     }
 
     openRecord(model, id) {

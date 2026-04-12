@@ -56,6 +56,22 @@
                                 </div>
                             </group>
                         </page>
+                        <page string="AI Coach Appearance">
+                            <group>
+                                <group string="Avatar / Icon">
+                                    <field name="ai_coach_icon" widget="image" class="oe_avatar"/>
+                                    <div class="text-muted">
+                                        <p>Upload a custom avatar for the AI Coach panel. This image will appear in:</p>
+                                        <ul>
+                                            <li>The AI Coach pill (bottom-right button)</li>
+                                            <li>The AI Coach modal header</li>
+                                            <li>Each AI response message bubble</li>
+                                        </ul>
+                                        <p>Recommended: 128×128px PNG with transparent background.</p>
+                                    </div>
+                                </group>
+                            </group>
+                        </page>
                     </notebook>
                 </sheet>
             </form>

@@ -418,7 +418,7 @@ class HealthPWASyncController(http.Controller):
             'records': facility_records,
         }
     
-    @http.route('/health_pwa/sync/push', type='json', auth='user', methods=['POST'], csrf=False)
+    @http.route('/health_pwa/sync/push', type='jsonrpc', auth='user', methods=['POST'], csrf=False)
     def sync_push_changes(self, **kwargs):
         """Push changes from mobile device back to server"""
         if not self._check_sync_access():
@@ -619,7 +619,7 @@ class HealthPWASyncController(http.Controller):
         except Exception as e:
             return self._prepare_sync_response(error=str(e), status_code=500)
     
-    @http.route('/health_pwa/sync/reset', type='json', auth='user', methods=['POST'], csrf=False)
+    @http.route('/health_pwa/sync/reset', type='jsonrpc', auth='user', methods=['POST'], csrf=False)
     def sync_reset_client(self, **kwargs):
         """Reset client sync state - force full resync"""
         if not self._check_sync_access():

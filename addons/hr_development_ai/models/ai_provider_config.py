@@ -67,9 +67,32 @@ class AIProviderConfig(models.Model):
         ('failed', 'Connection Failed')
     ], string='Status', default='not_tested', readonly=True)
 
+    # AI Coach Appearance
+    ai_coach_icon = fields.Image(
+        string='AI Coach Avatar',
+        help='Upload a custom icon/avatar for the AI Coach panel. '
+             'Recommended size: 128x128 pixels. If not set, default robot icon is used.',
+        max_width=256, max_height=256,
+    )
+
     _sql_constraints = [
         ('company_uniq', 'unique(company_id)', 'Only one AI provider configuration per company!')
     ]
+
+    @api.model
+    def get_ai_coach_icon_url(self):
+        """Return the AI coach icon as a data URL for the frontend."""
+        config = self.search([
+            ('company_id', '=', self.env.company.id),
+            ('is_active', '=', True),
+        ], limit=1)
+        if config and config.ai_coach_icon:
+            import base64
+            icon_b64 = config.ai_coach_icon
+            if isinstance(icon_b64, bytes):
+                icon_b64 = icon_b64.decode('utf-8')
+            return 'data:image/png;base64,' + icon_b64
+        return False
 
     @api.model
     def get_config(self, company_id=None):

@@ -492,11 +492,12 @@
                     </div>
 
                     <field name="ai_chat_history"
-                           widget="text"
+                           widget="html"
                            readonly="1"
                            nolabel="1"
-                           placeholder="No messages yet. Start a conversation with your AI coach!"
-                           style="min-height: 300px; background-color: #f8f9fa; padding: 15px; border-radius: 5px; font-family: monospace; white-space: pre-wrap;"/>
+                           class="w-100"
+                           options="{'collaborative': false, 'codeview': false}"
+                           style="min-height: 300px;"/>
 
                     <separator string="Type Your Message"/>
                     <field name="ai_chat_input"

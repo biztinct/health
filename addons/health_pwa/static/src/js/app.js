@@ -143,12 +143,19 @@ window.healthPWA = {
           syncStatus: 'idle', // idle, syncing, completed, error
           notifications: [],
           bottomNavVisible: true,
-          viewKey: 0 // Key to force component refresh when navigating to same route
+          viewKey: 0, // Key to force component refresh when navigating to same route
+          pendingAssignments: [],
+          notifPanelOpen: false,
+          notifRespondingId: null, // ID of assignment being responded to
         });
         
         // Computed properties
         const isAuthenticated = computed(() => state.user !== null);
         const hasNotifications = computed(() => state.notifications.length > 0);
+
+        // Language helper — reads from same localStorage key as the VI/EN toggle
+        const getLang = () => localStorage.getItem('pwa_preferred_language') || 'vi';
+        const t = (vi, en) => getLang() === 'en' ? en : vi;
         
         // Navigation methods
         const navigate = (route, params = {}) => {
@@ -197,6 +204,75 @@ window.healthPWA = {
           const index = state.notifications.findIndex(n => n.id === id);
           if (index > -1) {
             state.notifications.splice(index, 1);
+          }
+        };
+
+        // Pending assignment notifications
+        const fetchPendingNotifications = async () => {
+          if (!state.isOnline) return;
+          try {
+            const resp = await fetch('/health_pwa/api/notifications/pending');
+            const data = await resp.json();
+            if (data.success && data.data) {
+              state.pendingAssignments = data.data.notifications || [];
+            }
+          } catch (err) {
+            console.warn('[Notifications] Failed to fetch:', err);
+          }
+        };
+
+        const toggleNotifPanel = () => {
+          state.notifPanelOpen = !state.notifPanelOpen;
+          if (state.notifPanelOpen) {
+            fetchPendingNotifications();
+          }
+        };
+
+        const respondToAssignment = async (assignmentId, action) => {
+          state.notifRespondingId = assignmentId;
+          try {
+            const resp = await fetch(`/health_pwa/api/assignments/${assignmentId}/respond`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ action }),
+            });
+            const data = await resp.json();
+            if (data.success) {
+              showNotification(
+                action === 'accept' ? 'Assignment confirmed!' : 'Assignment declined.',
+                action === 'accept' ? 'success' : 'warning'
+              );
+              // Refresh the list
+              await fetchPendingNotifications();
+              // Refresh today view if we're on it
+              if (state.currentRoute === 'today') {
+                state.viewKey++;
+              }
+            } else {
+              showNotification(data.error || 'Failed to respond', 'error');
+            }
+          } catch (err) {
+            showNotification('Network error', 'error');
+          } finally {
+            state.notifRespondingId = null;
+          }
+        };
+
+        const dismissNotification = async (notifId) => {
+          state.notifRespondingId = notifId;
+          try {
+            const resp = await fetch(`/health_pwa/api/notifications/${notifId}/dismiss`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+            });
+            const data = await resp.json();
+            if (data.success) {
+              await fetchPendingNotifications();
+            }
+          } catch (err) {
+            console.warn('Failed to dismiss notification:', err);
+          } finally {
+            state.notifRespondingId = null;
           }
         };
         
@@ -269,6 +345,29 @@ window.healthPWA = {
           if (state.isOnline) {
             setTimeout(() => syncData(), 1000);
           }
+
+          // Fetch pending notifications
+          await fetchPendingNotifications();
+          // Poll every 30 seconds for new notifications
+          setInterval(fetchPendingNotifications, 30000);
+
+          // Auto-open notification panel if URL has showNotifications param
+          if (window.location.hash.includes('showNotifications=1')) {
+            state.notifPanelOpen = true;
+            // Clean up the URL
+            window.history.replaceState({}, '', '/health_pwa#/today');
+          }
+
+          // Listen for push notification events to refresh and auto-open panel
+          if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.addEventListener('message', (event) => {
+              if (event.data && event.data.type === 'PUSH_RECEIVED') {
+                fetchPendingNotifications();
+                // Auto-open the notification panel
+                state.notifPanelOpen = true;
+              }
+            });
+          }
         });
         
         // Handle browser back/forward
@@ -319,7 +418,13 @@ window.healthPWA = {
           removeNotification,
           syncData,
           loadUserData,
-          handleCallClick
+          handleCallClick,
+          toggleNotifPanel,
+          respondToAssignment,
+          dismissNotification,
+          fetchPendingNotifications,
+          getLang,
+          t,
         };
       },
       
@@ -352,11 +457,97 @@ window.healthPWA = {
               </div>
               <h1 class="mobile-header-title">{{ getRouteTitle() }}</h1>
               <div class="mobile-header-right">
+                <button class="notif-bell-btn" @click="toggleNotifPanel" :class="{ active: state.notifPanelOpen }">
+                  <i class="material-icons">notifications</i>
+                  <span v-if="state.pendingAssignments.length > 0" class="notif-badge">{{ state.pendingAssignments.length }}</span>
+                </button>
                 <div v-if="!state.isOnline" class="status-dot status-offline" title="Offline"></div>
                 <div v-else-if="state.syncStatus === 'syncing'" class="status-dot status-sync" title="Syncing"></div>
                 <div v-else class="status-dot status-online" title="Online"></div>
               </div>
             </header>
+
+            <!-- Notification Panel -->
+            <div v-if="state.notifPanelOpen" class="notif-panel-overlay" @click="toggleNotifPanel"></div>
+            <transition name="slide-down">
+              <div v-if="state.notifPanelOpen" class="notif-panel">
+                <div class="notif-panel-header">
+                  <h3>📋 {{ t('Thông báo', 'Notifications') }}</h3>
+                  <button @click="toggleNotifPanel" class="notif-panel-close"><i class="material-icons">close</i></button>
+                </div>
+                <div v-if="state.pendingAssignments.length === 0" class="notif-panel-empty">
+                  <i class="material-icons" style="font-size:48px;opacity:0.3">notifications_none</i>
+                  <p>{{ t('Không có thông báo mới', 'No pending notifications') }}</p>
+                </div>
+                <div v-else class="notif-panel-list">
+                  <div v-for="notif in state.pendingAssignments" :key="notif.type + '-' + notif.id" class="notif-card" :class="'notif-card--' + notif.type">
+
+                    <!-- ASSIGNMENT notification -->
+                    <template v-if="notif.type === 'assignment'">
+                      <div class="notif-card-header">
+                        <span class="notif-type-badge notif-badge-assignment">{{ t('Xác nhận', 'Confirm') }}</span>
+                        <span class="notif-time">{{ notif.scheduled_datetime }}</span>
+                      </div>
+                      <div class="notif-card-body">
+                        <div class="notif-detail"><i class="material-icons">person</i> {{ notif.patient_name }}</div>
+                        <div class="notif-detail"><i class="material-icons">event</i> {{ notif.fso_name }}</div>
+                        <div v-if="notif.service_type" class="notif-detail"><i class="material-icons">medical_services</i> {{ notif.service_type }}</div>
+                      </div>
+                      <div class="notif-card-actions">
+                        <button class="notif-btn notif-btn-accept" @click="respondToAssignment(notif.id, 'accept')" :disabled="state.notifRespondingId === notif.id">
+                          <i class="material-icons">check_circle</i> {{ t('Chấp nhận', 'Accept') }}
+                        </button>
+                        <button class="notif-btn notif-btn-decline" @click="respondToAssignment(notif.id, 'decline')" :disabled="state.notifRespondingId === notif.id">
+                          <i class="material-icons">cancel</i> {{ t('Từ chối', 'Decline') }}
+                        </button>
+                      </div>
+                    </template>
+
+                    <!-- CANCELLED notification -->
+                    <template v-else-if="notif.type === 'cancelled'">
+                      <div class="notif-card-header">
+                        <span class="notif-type-badge notif-badge-cancelled">❌ {{ t('Đã hủy', 'Cancelled') }}</span>
+                      </div>
+                      <div class="notif-card-body">
+                        <div class="notif-detail"><i class="material-icons">person</i> {{ notif.patient_name }}</div>
+                        <div class="notif-detail"><i class="material-icons">event</i> {{ notif.fso_name }}</div>
+                        <div v-if="notif.message" class="notif-detail notif-message">{{ notif.message }}</div>
+                      </div>
+                      <div class="notif-card-actions">
+                        <button class="notif-btn notif-btn-ok" @click="dismissNotification(notif.id)" :disabled="state.notifRespondingId === notif.id">
+                          <i class="material-icons">done</i> OK
+                        </button>
+                      </div>
+                    </template>
+
+                    <!-- RESCHEDULED notification -->
+                    <template v-else-if="notif.type === 'rescheduled'">
+                      <div class="notif-card-header">
+                        <span class="notif-type-badge notif-badge-rescheduled">🔄 {{ t('Đã đổi lịch', 'Rescheduled') }}</span>
+                      </div>
+                      <div class="notif-card-body">
+                        <div class="notif-detail"><i class="material-icons">person</i> {{ notif.patient_name }}</div>
+                        <div class="notif-detail"><i class="material-icons">event</i> {{ notif.fso_name }}</div>
+                        <div v-if="notif.old_datetime" class="notif-detail notif-old-date">
+                          <i class="material-icons">event_busy</i>
+                          <span style="text-decoration:line-through;opacity:0.6">{{ notif.old_datetime }}</span>
+                        </div>
+                        <div v-if="notif.new_datetime" class="notif-detail notif-new-date">
+                          <i class="material-icons">event_available</i>
+                          <strong>{{ notif.new_datetime }}</strong>
+                        </div>
+                      </div>
+                      <div class="notif-card-actions">
+                        <button class="notif-btn notif-btn-ok" @click="dismissNotification(notif.id)" :disabled="state.notifRespondingId === notif.id">
+                          <i class="material-icons">done</i> OK
+                        </button>
+                      </div>
+                    </template>
+
+                  </div>
+                </div>
+              </div>
+            </transition>
             
             <!-- Main Content -->
             <main class="mobile-content">
@@ -1486,6 +1677,19 @@ window.healthPWA = {
             }
 
             const response = await fetch(url);
+
+            // Check if response is HTML (session expired / login redirect)
+            const contentType = response.headers.get('content-type') || '';
+            if (!response.ok || !contentType.includes('application/json')) {
+              if (response.status === 303 || response.redirected || contentType.includes('text/html')) {
+                catalogError.value = 'Session expired. Please reload the page.';
+                console.error('Catalog API returned non-JSON (likely session expired)');
+                return;
+              }
+              catalogError.value = `Server error (${response.status})`;
+              return;
+            }
+
             const result = await response.json();
 
             if (result.success && result.data) {
@@ -2955,17 +3159,16 @@ window.healthPWA = {
         <!-- Intake Summary Modal -->
         <div v-if="showIntakeSummaryModal && selectedBookingDetail" class="modal-backdrop" @click="toggleIntakeSummaryModal">
           <div class="intake-summary-modal" @click.stop>
-            <!-- Modal header with back button -->
-            <div class="modal-header">
-              <button @click="toggleIntakeSummaryModal" class="btn-modal-back">
-                <i class="material-icons">chevron_left</i>
-              </button>
-              <h3 class="modal-title">Intake Notes</h3>
-              <div style="width: 40px;"></div>
-            </div>
-
-            <!-- Modal scrollable content -->
+            <!-- Modal scrollable content (header inside body so it scrolls) -->
             <div class="modal-body">
+              <!-- Header row inside scrollable area -->
+              <div class="intake-scroll-header">
+                <button @click="toggleIntakeSummaryModal" class="btn-modal-back">
+                  <i class="material-icons">chevron_left</i>
+                </button>
+                <h3 class="modal-title">Intake Notes</h3>
+                <div style="width: 40px;"></div>
+              </div>
               <!-- Diagnosis -->
               <div class="intake-form-group">
                 <label class="intake-form-label">{{ _t('Diagnosis') }}</label>

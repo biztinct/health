@@ -34,9 +34,8 @@ export class BfsiAiCoachPanel extends Component {
             // Access control
             hasAccess: false,
 
-            // Panel state
-            isOpen: true,
-            isMinimized: false,
+            // Panel mode: 'pill' (minimized at bottom-right) or 'expanded' (centered modal)
+            panelMode: 'pill',
             isMobile: window.innerWidth < 768,
 
             // Chat state
@@ -57,6 +56,9 @@ export class BfsiAiCoachPanel extends Component {
             // Session tracking
             currentSessionId: null,
             sessionType: 'general', // 'general', 'kpi_review', 'action_plan', 'coaching'
+
+            // AI Coach custom icon URL (loaded from config)
+            aiCoachIconUrl: false,
         });
 
         // Check if user is manager
@@ -74,6 +76,7 @@ export class BfsiAiCoachPanel extends Component {
                 return; // Skip loading data if no access
             }
             await this.loadUserContext();
+            await this.loadAiCoachIcon();
             await this.loadKpiData();
             await this.loadInitialGreeting();
         });
@@ -93,13 +96,7 @@ export class BfsiAiCoachPanel extends Component {
      * Handle window resize for responsive behavior
      */
     handleResize() {
-        const wasMobile = this.state.isMobile;
         this.state.isMobile = window.innerWidth < 768;
-
-        // Auto-minimize on mobile if was open on desktop
-        if (!wasMobile && this.state.isMobile && this.state.isOpen) {
-            this.state.isMinimized = true;
-        }
     }
 
     /**
@@ -126,6 +123,24 @@ export class BfsiAiCoachPanel extends Component {
             }
         } catch (error) {
             console.error('Error loading user context:', error);
+        }
+    }
+
+    /**
+     * Load custom AI Coach icon from config
+     */
+    async loadAiCoachIcon() {
+        try {
+            const iconUrl = await this.orm.call(
+                'hr.ai.provider.config',
+                'get_ai_coach_icon_url',
+                []
+            );
+            if (iconUrl) {
+                this.state.aiCoachIconUrl = iconUrl;
+            }
+        } catch (error) {
+            console.warn('Could not load AI Coach icon:', error);
         }
     }
 
@@ -227,21 +242,16 @@ export class BfsiAiCoachPanel extends Component {
     }
 
     /**
-     * Toggle panel open/close
+     * Toggle between pill and expanded mode
      */
-    togglePanel() {
-        if (this.state.isMobile) {
-            this.state.isMinimized = !this.state.isMinimized;
+    toggleExpand() {
+        if (this.state.panelMode === 'pill') {
+            this.state.panelMode = 'expanded';
+            // Scroll to bottom after expansion animation
+            setTimeout(() => this.scrollToBottom(), 400);
         } else {
-            this.state.isOpen = !this.state.isOpen;
+            this.state.panelMode = 'pill';
         }
-    }
-
-    /**
-     * Minimize/maximize panel
-     */
-    toggleMinimize() {
-        this.state.isMinimized = !this.state.isMinimized;
     }
 
     /**

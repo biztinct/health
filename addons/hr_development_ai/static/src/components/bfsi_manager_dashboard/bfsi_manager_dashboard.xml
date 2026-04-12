@@ -83,7 +83,7 @@
                                             <t t-esc="Math.round(state.avgTeamScore)"/>%
                                             <svg class="bfsi-kpi-ring" viewBox="0 0 36 36">
                                                 <circle class="bfsi-ring-bg" cx="18" cy="18" r="14"/>
-                                                <circle t-attf-class="bfsi-ring-fill {{ state.avgTeamScore >= 75 ? 'bfsi-score-high' : state.avgTeamScore >= 50 ? 'bfsi-score-medium' : 'bfsi-score-low' }}"
+                                                <circle t-attf-class="bfsi-ring-fill {{ getScoreRingClass(state.avgTeamScore) }}"
                                                         cx="18" cy="18" r="14"
                                                         stroke-dasharray="87.96"
                                                         t-attf-style="stroke-dashoffset: {{ 87.96 - (87.96 * (state.avgTeamScore || 0) / 100) }}"/>
@@ -126,82 +126,125 @@
                             </div>
                         </div>
 
-                        <!-- Team Performance Section -->
-                        <div class="bfsi-kpi-title" style="margin-top:8px;">Team Performance</div>
+                        <!-- ═══ ORG CHART HIERARCHY ═══ -->
+                        <div class="bfsi-kpi-title" style="margin-top:8px;">
+                            <i class="fa fa-sitemap" style="color:var(--bfsi-primary); margin-right:6px;"></i>
+                            Team Org Chart
+                        </div>
 
-                        <!-- Team Member Cards — 2-col grid -->
-                        <div class="bfsi-team-grid">
-                            <t t-foreach="filteredTeam" t-as="banker" t-key="banker.id">
-                                <div t-attf-class="bfsi-team-card bfsi-prio-{{ banker.coaching_priority || 'low' }}"
-                                     t-on-click="() => this.openBankerDetail(banker.id)">
+                        <div class="bfsi-org-chart">
 
-                                    <!-- Card Header: Avatar + Name + Rank -->
-                                    <div class="bfsi-card-top">
-                                        <div class="bfsi-avatar">
-                                            <t t-esc="banker.name.charAt(0).toUpperCase()"/>
-                                        </div>
-                                        <div class="bfsi-card-info">
-                                            <div class="bfsi-card-name">
-                                                <t t-esc="banker.name"/>
-                                            </div>
-                                            <div class="bfsi-card-role">
-                                                <t t-esc="banker.job_id ? banker.job_id[1] : (banker.banker_type || 'Banker')"/>
-                                            </div>
-                                        </div>
-                                        <div class="bfsi-card-rank-num">
-                                            #<t t-esc="banker.current_month_rank || '-'"/>
+                            <!-- MANAGER NODE (Top Center) -->
+                            <div class="org-manager-node">
+                                <div class="org-manager-card">
+                                    <div class="org-mgr-avatar">
+                                        <i class="fa fa-building"></i>
+                                    </div>
+                                    <div class="org-mgr-info">
+                                        <div class="org-mgr-name"><t t-esc="state.managerName || 'Branch Manager'"/></div>
+                                        <div class="org-mgr-role">Branch Manager</div>
+                                        <div class="org-mgr-branch">
+                                            <i class="fa fa-map-marker"></i>
+                                            <t t-esc="state.branchName || 'Head Office'"/>
                                         </div>
                                     </div>
-
-                                    <!-- Large Centered Score Ring -->
-                                    <div class="bfsi-score-ring-large">
-                                        <svg viewBox="0 0 120 120">
-                                            <circle class="bfsi-ring-bg" cx="60" cy="60" r="50" stroke-width="8"/>
-                                            <circle t-attf-class="bfsi-ring-fill {{ getScoreRingClass(banker.latest_overall_score) }}"
-                                                    cx="60" cy="60" r="50" stroke-width="8"
-                                                    stroke-dasharray="314.16"
-                                                    t-attf-style="stroke-dashoffset: {{ 314.16 - (314.16 * (banker.latest_overall_score || 0) / 100) }}"/>
-                                        </svg>
-                                        <div class="bfsi-score-center-text">
-                                            <t t-esc="Math.round(banker.latest_overall_score || 0)"/>%
+                                    <div class="org-mgr-stats">
+                                        <div class="org-mgr-stat">
+                                            <span class="stat-val"><t t-esc="state.teamMembers.length"/></span>
+                                            <span class="stat-lbl">Team</span>
                                         </div>
-                                    </div>
-
-                                    <!-- Rank + Trend Row -->
-                                    <div class="bfsi-card-rank-row">
-                                        <span t-attf-class="bfsi-rank-badge {{ (banker.current_month_rank || 99) &lt;= 3 ? 'bfsi-rank-top' : '' }}">
-                                            🏆 #<t t-esc="banker.current_month_rank || '-'"/>
-                                        </span>
-                                        <t t-set="movement" t-value="getRankMovement(banker.rank_movement)"/>
-                                        <span t-attf-class="bfsi-trend {{ movement.class }}">
-                                            <i t-attf-class="fa {{ movement.icon }}"></i>
-                                            <t t-esc="movement.text"/>
-                                        </span>
-                                    </div>
-
-                                    <!-- Action Buttons -->
-                                    <div class="bfsi-card-actions">
-                                        <button class="bfsi-action-btn coach"
-                                                t-on-click.stop="() => this.startCoachingSession(banker.id)">
-                                            <i class="fa fa-play"></i> Coach
-                                        </button>
-                                        <button class="bfsi-action-btn strategy"
-                                                t-on-click.stop="() => this.generateStrategy(banker.id)">
-                                            <i class="fa fa-magic"></i> Strategy
-                                        </button>
-                                        <button class="bfsi-action-btn kpis"
-                                                t-on-click.stop="() => this.viewBankerKpis(banker.id)">
-                                            <i class="fa fa-line-chart"></i> KPIs
-                                        </button>
+                                        <div class="org-mgr-stat">
+                                            <span class="stat-val"><t t-esc="Math.round(state.avgTeamScore)"/>%</span>
+                                            <span class="stat-lbl">Avg Score</span>
+                                        </div>
                                     </div>
                                 </div>
-                            </t>
-
-                            <!-- Empty State -->
-                            <div t-if="filteredTeam.length === 0" class="bfsi-team-card" style="grid-column: 1 / -1; text-align:center; padding:40px; cursor:default;">
-                                <i class="fa fa-users" style="font-size:2rem; color:#D1D5DB; margin-bottom:12px;"></i>
-                                <p style="color:#6B7280; margin:0;">No team members found matching the current filter.</p>
                             </div>
+
+                            <!-- CONNECTOR LINES -->
+                            <div class="org-connector">
+                                <div class="org-connector-vertical"></div>
+                                <div class="org-connector-horizontal"></div>
+                            </div>
+
+                            <!-- BANKER NODES (Below) -->
+                            <div class="bfsi-team-grid">
+                                <t t-foreach="filteredTeam" t-as="banker" t-key="banker.id">
+                                    <div t-attf-class="bfsi-team-card bfsi-prio-{{ banker.coaching_priority || 'low' }}"
+                                         t-on-click="() => this.openBankerDetail(banker.id)">
+
+                                        <!-- Connector dot at top of card -->
+                                        <div class="org-card-connector-dot"></div>
+
+                                        <!-- Card Header: Avatar + Name + Rank -->
+                                        <div class="bfsi-card-top">
+                                            <div class="bfsi-avatar">
+                                                <t t-esc="banker.name.charAt(0).toUpperCase()"/>
+                                            </div>
+                                            <div class="bfsi-card-info">
+                                                <div class="bfsi-card-name">
+                                                    <t t-esc="banker.name"/>
+                                                </div>
+                                                <div class="bfsi-card-role">
+                                                    <t t-esc="formatRole(banker)"/>
+                                                </div>
+                                            </div>
+                                            <div class="bfsi-card-rank-num">
+                                                #<t t-esc="banker.current_month_rank || '-'"/>
+                                            </div>
+                                        </div>
+
+                                        <!-- Large Centered Score Ring -->
+                                        <div class="bfsi-score-ring-large">
+                                            <svg viewBox="0 0 120 120">
+                                                <circle class="bfsi-ring-bg" cx="60" cy="60" r="50" stroke-width="8"/>
+                                                <circle t-attf-class="bfsi-ring-fill {{ getScoreRingClass(banker.latest_overall_score) }}"
+                                                        cx="60" cy="60" r="50" stroke-width="8"
+                                                        stroke-dasharray="314.16"
+                                                        t-attf-style="stroke-dashoffset: {{ 314.16 - (314.16 * (banker.latest_overall_score || 0) / 100) }}"/>
+                                            </svg>
+                                            <div class="bfsi-score-center-text">
+                                                <t t-esc="Math.round(banker.latest_overall_score || 0)"/>%
+                                            </div>
+                                        </div>
+
+                                        <!-- Rank + Trend Row -->
+                                        <div class="bfsi-card-rank-row">
+                                            <span t-attf-class="bfsi-rank-badge {{ (banker.current_month_rank || 99) &lt;= 3 ? 'bfsi-rank-top' : '' }}">
+                                                🏆 #<t t-esc="banker.current_month_rank || '-'"/>
+                                            </span>
+                                            <t t-set="movement" t-value="getRankMovement(banker.rank_movement)"/>
+                                            <span t-attf-class="bfsi-trend {{ movement.class }}">
+                                                <i t-attf-class="fa {{ movement.icon }}"></i>
+                                                <t t-esc="movement.text"/>
+                                            </span>
+                                        </div>
+
+                                        <!-- Action Buttons -->
+                                        <div class="bfsi-card-actions">
+                                            <button class="bfsi-action-btn coach"
+                                                    t-on-click.stop="() => this.startCoachingSession(banker.id)">
+                                                <i class="fa fa-play"></i> Coach
+                                            </button>
+                                            <button class="bfsi-action-btn strategy"
+                                                    t-on-click.stop="() => this.generateStrategy(banker.id)">
+                                                <i class="fa fa-magic"></i> Strategy
+                                            </button>
+                                            <button class="bfsi-action-btn kpis"
+                                                    t-on-click.stop="() => this.viewBankerKpis(banker.id)">
+                                                <i class="fa fa-line-chart"></i> KPIs
+                                            </button>
+                                        </div>
+                                    </div>
+                                </t>
+
+                                <!-- Empty State -->
+                                <div t-if="filteredTeam.length === 0" class="bfsi-team-card" style="grid-column: 1 / -1; text-align:center; padding:40px; cursor:default;">
+                                    <i class="fa fa-users" style="font-size:2rem; color:#D1D5DB; margin-bottom:12px;"></i>
+                                    <p style="color:#6B7280; margin:0;">No team members found matching the current filter.</p>
+                                </div>
+                            </div>
+
                         </div>
 
                     </div>
@@ -252,26 +295,142 @@
 
                         <!-- Modal Tabs -->
                         <div class="bfsi-modal-tabs">
+                            <button t-attf-class="bfsi-modal-tab {{ state.modalTab === 'profile' ? 'active' : '' }}"
+                                    t-on-click="() => this.switchModalTab('profile')">
+                                <i class="fa fa-user me-1"></i> Profile
+                            </button>
                             <button t-attf-class="bfsi-modal-tab {{ state.modalTab === 'performance' ? 'active' : '' }}"
-                                    t-on-click="() => this.state.modalTab = 'performance'">
+                                    t-on-click="() => this.switchModalTab('performance')">
                                 <i class="fa fa-line-chart me-1"></i> Performance
                             </button>
                             <button t-attf-class="bfsi-modal-tab {{ state.modalTab === 'coaching' ? 'active' : '' }}"
-                                    t-on-click="() => this.state.modalTab = 'coaching'">
+                                    t-on-click="() => this.switchModalTab('coaching')">
                                 <i class="fa fa-comments me-1"></i> Coaching
                             </button>
                             <button t-attf-class="bfsi-modal-tab {{ state.modalTab === 'plans' ? 'active' : '' }}"
-                                    t-on-click="() => this.state.modalTab = 'plans'">
+                                    t-on-click="() => this.switchModalTab('plans')">
                                 <i class="fa fa-tasks me-1"></i> Action Plans
                             </button>
                             <button t-attf-class="bfsi-modal-tab {{ state.modalTab === 'history' ? 'active' : '' }}"
-                                    t-on-click="() => this.state.modalTab = 'history'">
+                                    t-on-click="() => this.switchModalTab('history')">
                                 <i class="fa fa-history me-1"></i> KPI History
+                            </button>
+                        </div>
+
+                        <!-- Modal Actions (Top) -->
+                        <div class="bfsi-modal-actions">
+                            <button class="bfsi-modal-btn primary" t-on-click="() => this.startCoachingSession(state.bankerDetail.id)">
+                                <i class="fa fa-play"></i> Start Coaching Session
+                            </button>
+                            <button class="bfsi-modal-btn ai" t-on-click="() => this.generateStrategy(state.bankerDetail.id)">
+                                <i class="fa fa-magic"></i> Generate AI Strategy
+                            </button>
+                            <button class="bfsi-modal-btn secondary" t-on-click="() => this.viewBankerKpis(state.bankerDetail.id)">
+                                <i class="fa fa-line-chart"></i> View Full KPIs
                             </button>
                         </div>
 
                         <!-- Modal Body -->
                         <div class="bfsi-modal-body">
+
+                            <!-- PROFILE TAB -->
+                            <div t-if="state.modalTab === 'profile'">
+                                <!-- Profile Header -->
+                                <div class="profile-section">
+                                    <div class="profile-details-grid">
+                                        <div class="profile-detail">
+                                            <i class="fa fa-briefcase"></i>
+                                            <div>
+                                                <div class="detail-label">Role</div>
+                                                <div class="detail-value"><t t-esc="state.bankerDetail.role"/></div>
+                                            </div>
+                                        </div>
+                                        <div class="profile-detail">
+                                            <i class="fa fa-building"></i>
+                                            <div>
+                                                <div class="detail-label">Branch</div>
+                                                <div class="detail-value"><t t-esc="state.branchName || 'N/A'"/></div>
+                                            </div>
+                                        </div>
+                                        <div class="profile-detail">
+                                            <i class="fa fa-trophy"></i>
+                                            <div>
+                                                <div class="detail-label">Current Rank</div>
+                                                <div class="detail-value">#<t t-esc="state.bankerDetail.rank || '-'"/></div>
+                                            </div>
+                                        </div>
+                                        <div class="profile-detail">
+                                            <i class="fa fa-heartbeat"></i>
+                                            <div>
+                                                <div class="detail-label">Coaching Priority</div>
+                                                <div class="detail-value">
+                                                    <span t-attf-class="bfsi-priority-badge {{ state.bankerDetail.priority || 'low' }}">
+                                                        <t t-esc="(state.bankerDetail.priority || 'low').toUpperCase()"/>
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Achievements / Badges -->
+                                <div class="profile-section">
+                                    <h4 class="profile-section-title"><i class="fa fa-star"></i> Achievements</h4>
+                                    <div class="badges-grid">
+                                        <div t-attf-class="badge-card {{ getBadgeClass('top_performer') }}">
+                                            <div class="badge-icon">🏆</div>
+                                            <div class="badge-name">Top Performer</div>
+                                            <div class="badge-desc">Score above 80%</div>
+                                        </div>
+                                        <div t-attf-class="badge-card {{ getBadgeClass('podium') }}">
+                                            <div class="badge-icon">🥇</div>
+                                            <div class="badge-name">Podium Finish</div>
+                                            <div class="badge-desc">Top 3 rank</div>
+                                        </div>
+                                        <div t-attf-class="badge-card {{ getBadgeClass('climber') }}">
+                                            <div class="badge-icon">📈</div>
+                                            <div class="badge-name">Rank Climber</div>
+                                            <div class="badge-desc">Improved 3+ ranks</div>
+                                        </div>
+                                        <div t-attf-class="badge-card {{ getBadgeClass('coach_fav') }}">
+                                            <div class="badge-icon">💬</div>
+                                            <div class="badge-name">Coach's Favorite</div>
+                                            <div class="badge-desc">5+ coaching sessions</div>
+                                        </div>
+                                        <div t-attf-class="badge-card {{ getBadgeClass('action_taker') }}">
+                                            <div class="badge-icon">📋</div>
+                                            <div class="badge-name">Action Taker</div>
+                                            <div class="badge-desc">Active action plan</div>
+                                        </div>
+                                        <div t-attf-class="badge-card {{ getBadgeClass('excellence') }}">
+                                            <div class="badge-icon">⭐</div>
+                                            <div class="badge-name">Excellence</div>
+                                            <div class="badge-desc">Score above 90%</div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Quick Stats Summary -->
+                                <div class="profile-section">
+                                    <h4 class="profile-section-title"><i class="fa fa-bar-chart"></i> Quick Stats</h4>
+                                    <div class="profile-stats-row">
+                                        <div class="profile-stat-card">
+                                            <div class="stat-number"><t t-esc="state.bankerDetail.sessions_count || 0"/></div>
+                                            <div class="stat-label">Coaching Sessions</div>
+                                        </div>
+                                        <div class="profile-stat-card">
+                                            <div class="stat-number"><t t-esc="state.bankerDetail.plans_count || 0"/></div>
+                                            <div class="stat-label">Active Plans</div>
+                                        </div>
+                                        <div class="profile-stat-card">
+                                            <div class="stat-number">
+                                                <t t-esc="(state.bankerDetail.kpi_history || []).length"/>
+                                            </div>
+                                            <div class="stat-label">KPI Records</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
 
                             <!-- PERFORMANCE TAB -->
                             <div t-if="state.modalTab === 'performance'">
@@ -417,7 +576,7 @@
                                                 <tr style="border-bottom:1px solid #f5f5f5;">
                                                     <td style="padding:8px;"><t t-esc="kpi.period"/></td>
                                                     <td style="padding:8px; text-align:center;">
-                                                        <span t-attf-class="bfsi-priority-badge {{ kpi.score >= 75 ? 'low' : kpi.score >= 50 ? 'medium' : 'critical' }}">
+                                                        <span t-attf-class="bfsi-priority-badge {{ getScoreBadgeClass(kpi.score) }}">
                                                             <t t-esc="Math.round(kpi.score)"/>%
                                                         </span>
                                                     </td>
@@ -435,18 +594,6 @@
                             </div>
                         </div>
 
-                        <!-- Modal Actions -->
-                        <div class="bfsi-modal-actions">
-                            <button class="bfsi-modal-btn primary" t-on-click="() => this.startCoachingSession(state.bankerDetail.id)">
-                                <i class="fa fa-play"></i> Start Coaching Session
-                            </button>
-                            <button class="bfsi-modal-btn ai" t-on-click="() => this.generateStrategy(state.bankerDetail.id)">
-                                <i class="fa fa-magic"></i> Generate AI Strategy
-                            </button>
-                            <button class="bfsi-modal-btn secondary" t-on-click="() => this.viewBankerKpis(state.bankerDetail.id)">
-                                <i class="fa fa-line-chart"></i> View Full KPIs
-                            </button>
-                        </div>
                     </t>
 
                     <!-- Modal Loading -->

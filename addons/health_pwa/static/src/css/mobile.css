@@ -858,24 +858,19 @@
 
 .modal-body {
   padding: var(--spacing-lg);
-  padding-bottom: calc(var(--spacing-lg) + 140px); /* Extra bottom padding for mobile to prevent cutoff */
   overflow-y: auto;
   flex: 1;
   -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
-  max-height: calc(100vh - 200px); /* Ensure scrollable area */
 }
 
 .modal-footer {
   display: flex;
   gap: var(--spacing-sm);
   padding: var(--spacing-lg);
-  padding-bottom: calc(var(--spacing-lg) + 100px + env(safe-area-inset-bottom, 20px)); /* Account for iPhone notch and extra space */
+  padding-bottom: calc(var(--spacing-lg) + 80px + env(safe-area-inset-bottom, 0px)); /* 80px for bottom nav bar clearance */
   border-top: 1px solid var(--border-color);
   flex-shrink: 0;
-  background: white; /* Ensure footer is visible over content */
-  position: sticky;
-  bottom: 0;
-  z-index: 100; /* Ensure footer stays on top */
+  background: white;
 }
 
 .modal-footer .btn {

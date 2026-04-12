@@ -83,6 +83,6 @@
     'application': True,  # This is a standalone application
     'sequence': 100,
     'external_dependencies': {
-        'python': [],
+        'python': ['pywebpush'],
     },
 }

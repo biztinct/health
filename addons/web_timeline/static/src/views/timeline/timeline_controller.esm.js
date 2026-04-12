@@ -255,6 +255,10 @@ export class TimelineController extends Component {
                 context: makeContext([context], this.env.searchModel.context),
                 onRecordSaved: async (record) => {
                     recordSaved = true;
+                    // IMPORTANT: Cancel the phantom item that vis-timeline created
+                    // at the click position. Without this, vis-timeline keeps the
+                    // phantom item visible even after we reload server data.
+                    callback(null);
                     // Reload full data so the item appears at its corrected
                     // server-side datetime (e.g. from FSO), not at the click position.
                     await this.model.load(this.getSearchProps());

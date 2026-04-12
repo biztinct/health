@@ -59,7 +59,7 @@
                     <button name="action_start_service" type="object"
                             string="Start Service" class="oe_highlight"
                             icon="fa-play-circle"
-                            invisible="state not in ('confirmed', 'assigned') or not assignment_ids"
+                            invisible="state != 'assigned' or not assignment_ids"
                             help="Start the service - only available when staff is assigned"/>
 
                     <button name="action_create_final_invoice" type="object"

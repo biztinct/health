@@ -108,6 +108,9 @@ class HealthPWAController(http.Controller):
             for k, v in fallback_map.items():
                 l10n_map.setdefault(k, v)
 
+            # Check if install overlay should be shown
+            show_install_overlay = kwargs.get('install') == '1'
+
             # Get company phone number for call functionality
             company_phone = request.env.company.phone or ''
 
@@ -119,6 +122,7 @@ class HealthPWAController(http.Controller):
                 'db_name': request.db,
                 'user_lang': user_lang,
                 'health_pwa_l10n': l10n_map,
+                'show_install_overlay': show_install_overlay,
             })
         except Exception as e:
             # Return simple HTML for debugging
@@ -142,7 +146,7 @@ class HealthPWAController(http.Controller):
             "name": "Viet Uc - Ứng dụng Y tế Di động",
             "short_name": "Viet Uc",
             "description": "Ứng dụng di động cho nhân viên y tế làm việc tại gia với khả năng offline",
-            "start_url": "/health_pwa?utm_source=pwa_installed&utm_medium=homescreen",
+            "start_url": "/health_pwa/?utm_source=pwa_installed&utm_medium=homescreen",
             "display": "standalone",
             "orientation": "portrait-primary",
             "theme_color": "#875A7B",

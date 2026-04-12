@@ -408,7 +408,7 @@ class HealthFieldServiceOrderUnified(models.Model):
     def _compute_assignment_count(self):
         """Compute the number of staff assignments for this FSO"""
         for record in self:
-            record.assignment_count = len(record.assignment_ids)
+            record.assignment_count = len(record.assignment_ids.filtered(lambda a: a.state != 'template'))
 
     @api.depends('assigned_staff_ids', 'assigned_doctor_ids')
     def _compute_has_staff_assigned(self):
@@ -1509,6 +1509,13 @@ class HealthFieldServiceOrderUnified(models.Model):
             if new_stage.state:
                 vals['state'] = new_stage.state
         
+        # Capture old scheduled_datetime before write (for reschedule notifications)
+        old_scheduled = {}
+        if 'scheduled_datetime' in vals and vals['scheduled_datetime']:
+            for record in self:
+                if record.scheduled_datetime:
+                    old_scheduled[record.id] = record.scheduled_datetime
+
         result = super().write(vals)
 
         if 'active' in vals:
@@ -1523,6 +1530,32 @@ class HealthFieldServiceOrderUnified(models.Model):
         # Handle scheduling
         if 'scheduled_datetime' in vals and vals['scheduled_datetime']:
             self._handle_scheduling()
+            # Resync all linked assignments' planned times to match the new FSO datetime
+            from datetime import timedelta as td
+            for record in self:
+                new_dt = record.scheduled_datetime
+                if new_dt and record.assignment_ids:
+                    duration_minutes = record.scheduled_duration or 60
+                    new_end = new_dt + td(minutes=duration_minutes)
+                    non_template = record.assignment_ids.filtered(lambda a: a.state != 'template')
+                    if non_template:
+                        non_template.with_context(skip_multi_assignment_update=True).write({
+                            'assignment_date': new_dt,
+                            'planned_start_time': new_dt,
+                            'planned_end_time': new_end,
+                        })
+                        _logger.info(
+                            'Resynced %d assignments for %s to %s',
+                            len(non_template), record.name, new_dt,
+                        )
+            # Notify assigned staff about rescheduling
+            for record in self:
+                if record.state in ('assigned', 'confirmed') and record.assignment_ids:
+                    for assignment in record.assignment_ids.filtered(lambda a: a.state in ('assigned', 'confirmed') and a.staff_id):
+                        record._send_staff_reschedule_notification(
+                            assignment.staff_id,
+                            old_datetime=old_scheduled.get(record.id) if old_scheduled else None,
+                        )
 
         # Auto-advance to 'confirmed' (Booked) when draft booking has a quote with items
         for record in self:
@@ -1535,10 +1568,10 @@ class HealthFieldServiceOrderUnified(models.Model):
                     record.stage_id = confirmed_stage
                     record.state = 'confirmed'
 
-        # Auto-advance to 'assigned' state when staff is assigned
-        for record in self:
-            if record.state == 'confirmed' and record.assigned_staff_ids:
-                record.state = 'assigned'
+        # NOTE: FSO does NOT auto-advance to 'assigned' when staff is added.
+        # It stays in 'confirmed' (Booked) until the nurse confirms the assignment
+        # via the PWA. The advance happens in health_staff_assignment.write()
+        # when assignment state changes to 'confirmed' (nurse accepted).
 
         return result
     
@@ -1548,8 +1581,9 @@ class HealthFieldServiceOrderUnified(models.Model):
             if new_state == 'assigned':
                 # Set assignment date
                 record.assignment_date = fields.Datetime.now()
-                # Notify assigned staff
-                record._notify_assigned_staff()
+                # NOTE: Do NOT re-notify staff here. The staff was already notified
+                # when the assignment was created via create(). This state change happens
+                # when the nurse ACCEPTS, so sending another push would be duplicate.
             
             elif new_state == 'in_progress':
                 # Set actual start time if not set
@@ -1776,7 +1810,7 @@ class HealthFieldServiceOrderUnified(models.Model):
         for record in self:
             for assignment in record.assignment_ids:
                 if assignment.staff_id:
-                    record._send_staff_assignment_notification(assignment.staff_id)
+                    record._send_staff_assignment_notification(assignment.staff_id, assignment)
     
     def _send_completion_notifications(self):
         """Send notifications when service is completed"""
@@ -1956,11 +1990,218 @@ class HealthFieldServiceOrderUnified(models.Model):
         except Exception:
             pass  # Silently fail - no email notifications required
     
-    def _send_staff_assignment_notification(self, staff):
-        """Send notification to assigned staff"""
-        # Implementation for staff notifications
-        pass
-    
+    def _send_staff_assignment_notification(self, staff, assignment=None):
+        """Send push notification to assigned staff member"""
+        self.ensure_one()
+        try:
+            # Find the user linked to this employee
+            if not staff.user_id:
+                _logger.info('Staff %s has no linked user - skipping push notification', staff.name)
+                return
+
+            push_config = self.env['health.pwa.config'].sudo().get_push_config()
+            if not push_config:
+                return
+
+            # Determine user language preference (lang is a related field from partner)
+            user_lang = getattr(staff.user_id, 'lang', None) or getattr(staff.user_id.partner_id, 'lang', None) or 'vi_VN'
+            is_en = user_lang.startswith('en')
+
+            # Build notification content
+            patient_name = self.patient_id.name if self.patient_id else ('Unknown' if is_en else 'Không rõ')
+            scheduled = ''
+            if self.scheduled_datetime:
+                # Format in a user-friendly way
+                dt = fields.Datetime.context_timestamp(self, self.scheduled_datetime)
+                scheduled = dt.strftime('%d/%m/%Y %H:%M')
+
+            service_type = ''
+            if hasattr(self, 'service_type') and self.service_type:
+                service_type = dict(self._fields['service_type'].selection).get(self.service_type, self.service_type)
+
+            if is_en:
+                title = '📋 New Booking Assignment'
+                body_parts = []
+                if patient_name:
+                    body_parts.append(f'Patient: {patient_name}')
+                if scheduled:
+                    body_parts.append(f'Date: {scheduled}')
+                if service_type:
+                    body_parts.append(f'Service: {service_type}')
+                body = '\n'.join(body_parts) or 'A new booking has been assigned to you.'
+            else:
+                title = '📋 Lịch hẹn mới'
+                body_parts = []
+                if patient_name:
+                    body_parts.append(f'Bệnh nhân: {patient_name}')
+                if scheduled:
+                    body_parts.append(f'Ngày: {scheduled}')
+                if service_type:
+                    body_parts.append(f'Dịch vụ: {service_type}')
+                body = '\n'.join(body_parts) or 'Bạn được phân công một lịch hẹn mới.'
+
+            push_config.send_push_notification(
+                user_id=staff.user_id.id,
+                title=title,
+                body=body,
+                data={
+                    'type': 'assignment',
+                    'fso_id': self.id,
+                    'assignment_id': assignment.id if assignment else None,
+                    'url': f'/health_pwa#/booking/{self.id}',
+                },
+                tag=f'booking-assigned-{self.id}',
+            )
+        except Exception as e:
+            _logger.warning('Failed to send assignment push notification: %s', e)
+
+    def _send_staff_cancellation_notification(self, staff):
+        """Send push notification to staff when their booking is cancelled.
+        Also creates a bell queue notification for the PWA panel.
+        """
+        self.ensure_one()
+        try:
+            if not staff.user_id:
+                return
+
+            patient_name = self.patient_id.name if self.patient_id else 'Unknown'
+
+            # Format date in booking timezone
+            tz_name = self.booking_timezone or 'Asia/Ho_Chi_Minh'
+            try:
+                import pytz
+                local_tz = pytz.timezone(tz_name)
+            except Exception:
+                import pytz
+                local_tz = pytz.timezone('Asia/Ho_Chi_Minh')
+
+            scheduled_str = ''
+            if self.scheduled_datetime:
+                dt_local = pytz.utc.localize(self.scheduled_datetime).astimezone(local_tz)
+                scheduled_str = dt_local.strftime('%d/%m/%Y %H:%M')
+
+            # Language-aware content
+            user_lang = getattr(staff.user_id, 'lang', None) or getattr(staff.user_id.partner_id, 'lang', None) or 'vi_VN'
+            is_en = user_lang.startswith('en')
+
+            if is_en:
+                title = '❌ Booking Cancelled'
+                body_parts = [f'Patient: {patient_name}']
+                if scheduled_str:
+                    body_parts.append(f'Date: {scheduled_str}')
+            else:
+                title = '❌ Lịch hẹn đã hủy'
+                body_parts = [f'Bệnh nhân: {patient_name}']
+                if scheduled_str:
+                    body_parts.append(f'Ngày: {scheduled_str}')
+            body = '\n'.join(body_parts)
+
+            # Create bell queue notification
+            self.env['health.pwa.staff.notification'].sudo().create({
+                'user_id': staff.user_id.id,
+                'fso_id': self.id,
+                'notification_type': 'cancelled',
+                'patient_name': patient_name,
+                'fso_name': self.name,
+                'message': body,
+            })
+
+            # Send push notification
+            push_config = self.env['health.pwa.config'].sudo().get_push_config()
+            if push_config:
+                push_config.send_push_notification(
+                    user_id=staff.user_id.id,
+                    title=title,
+                    body=body,
+                    data={
+                        'type': 'booking_cancelled',
+                        'fso_id': self.id,
+                        'url': f'/health_pwa#/today',
+                    },
+                    tag=f'booking-cancelled-{self.id}',
+                )
+        except Exception as e:
+            _logger.warning('Failed to send cancellation push notification: %s', e)
+
+    def _send_staff_reschedule_notification(self, staff, old_datetime=None):
+        """Send push notification to staff when their booking is rescheduled.
+        Also creates a bell queue notification for the PWA panel.
+        """
+        self.ensure_one()
+        try:
+            if not staff.user_id:
+                return
+
+            # Format dates in booking timezone
+            tz_name = self.booking_timezone or 'Asia/Ho_Chi_Minh'
+            try:
+                import pytz
+                local_tz = pytz.timezone(tz_name)
+            except Exception:
+                import pytz
+                local_tz = pytz.timezone('Asia/Ho_Chi_Minh')
+
+            old_dt_str = ''
+            if old_datetime:
+                old_dt_local = pytz.utc.localize(old_datetime).astimezone(local_tz)
+                old_dt_str = old_dt_local.strftime('%d/%m/%Y %H:%M')
+
+            new_dt_str = ''
+            if self.scheduled_datetime:
+                new_dt_local = pytz.utc.localize(self.scheduled_datetime).astimezone(local_tz)
+                new_dt_str = new_dt_local.strftime('%d/%m/%Y %H:%M')
+
+            patient_name = self.patient_id.name if self.patient_id else 'Unknown'
+
+            # Determine user language preference
+            user_lang = getattr(staff.user_id, 'lang', None) or getattr(staff.user_id.partner_id, 'lang', None) or 'vi_VN'
+            is_en = user_lang.startswith('en')
+
+            if is_en:
+                title = '🔄 Booking Rescheduled'
+                body_parts = [f'Patient: {patient_name}']
+                if old_dt_str:
+                    body_parts.append(f'Old: {old_dt_str}')
+                if new_dt_str:
+                    body_parts.append(f'New: {new_dt_str}')
+            else:
+                title = '🔄 Lịch hẹn đã đổi'
+                body_parts = [f'Bệnh nhân: {patient_name}']
+                if old_dt_str:
+                    body_parts.append(f'Cũ: {old_dt_str}')
+                if new_dt_str:
+                    body_parts.append(f'Mới: {new_dt_str}')
+            body = '\n'.join(body_parts)
+
+            # Create bell queue notification
+            self.env['health.pwa.staff.notification'].sudo().create({
+                'user_id': staff.user_id.id,
+                'fso_id': self.id,
+                'notification_type': 'rescheduled',
+                'patient_name': patient_name,
+                'fso_name': self.name,
+                'message': body,
+                'old_datetime': old_dt_str,
+                'new_datetime': new_dt_str,
+            })
+
+            # Send push notification
+            push_config = self.env['health.pwa.config'].sudo().get_push_config()
+            if push_config:
+                push_config.send_push_notification(
+                    user_id=staff.user_id.id,
+                    title=title,
+                    body=body,
+                    data={
+                        'type': 'booking_rescheduled',
+                        'fso_id': self.id,
+                        'url': f'/health_pwa#/booking/{self.id}',
+                    },
+                    tag=f'booking-rescheduled-{self.id}',
+                )
+        except Exception as e:
+            _logger.warning('Failed to send reschedule push notification: %s', e)
+
     def _notify_patient_service_completed(self):
         """Notify patient that service is completed"""
         # Implementation for completion notifications
@@ -2488,9 +2729,12 @@ class HealthFieldServiceOrderUnified(models.Model):
 
         self.write(write_vals)
 
-        # Cancel all related staff assignments
+        # Cancel all related staff assignments and notify staff
         if self.assignment_ids:
             for assignment in self.assignment_ids.filtered(lambda a: a.state not in ('cancelled', 'completed')):
+                # Notify staff before cancelling their assignment
+                if assignment.staff_id:
+                    self._send_staff_cancellation_notification(assignment.staff_id)
                 assignment.write({'state': 'cancelled'})
 
         # Archive draft invoice if exists
@@ -2841,7 +3085,7 @@ class HealthFieldServiceOrderUnified(models.Model):
             'type': 'ir.actions.act_window',
             'res_model': 'health.staff.assignment',
             'view_mode': 'list,form',
-            'domain': [('fso_id', '=', self.id)],
+            'domain': [('fso_id', '=', self.id), ('state', '!=', 'template')],
             'context': {'default_fso_id': self.id},
         }
     

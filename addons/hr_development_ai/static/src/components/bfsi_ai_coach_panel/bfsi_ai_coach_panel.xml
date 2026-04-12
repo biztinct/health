@@ -1,257 +1,247 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <templates xml:space="preserve">
 
-    <!-- BFSI AI Coach Panel - Persistent Sidebar Component -->
+    <!-- BFSI AI Coach Panel - Expandable Pill → Modal -->
     <t t-name="hr_development_ai.BfsiAiCoachPanel">
         <!-- Only render for users with BFSI coaching access -->
         <div t-if="state.hasAccess"
              t-ref="panel"
-             t-attf-class="bfsi-ai-coach-panel {{ state.isOpen ? 'open' : 'closed' }} {{ state.isMinimized ? 'minimized' : '' }} {{ state.isMobile ? 'mobile' : 'desktop' }}">
+             t-attf-class="bfsi-ai-coach-panel {{ state.panelMode }}">
 
-            <!-- Floating Toggle Button (Mobile) -->
-            <button t-if="state.isMobile and state.isMinimized"
-                    class="bfsi-ai-coach-fab"
-                    t-on-click="togglePanel">
-                <i class="fa fa-comment-o"></i>
-                <span class="bfsi-ai-coach-fab-badge" t-if="state.messages.length > 0">
-                    <t t-esc="state.messages.length"/>
-                </span>
+            <!-- ═══════════════════════════════════════
+                 MINIMIZED PILL (Bottom-Right)
+                 ═══════════════════════════════════════ -->
+            <button t-if="state.panelMode === 'pill'"
+                    class="bfsi-coach-pill"
+                    t-on-click="toggleExpand">
+                <div class="pill-avatar">
+                    <div class="pill-avatar-glow"></div>
+                    <img t-if="state.aiCoachIconUrl" t-att-src="state.aiCoachIconUrl" class="ai-coach-icon" alt="AI"/>
+                    <i t-else="" class="fa fa-robot"></i>
+                </div>
+                <div class="pill-text">
+                    <span class="pill-title">AI Coach</span>
+                    <span class="pill-status">
+                        <span class="status-dot online"></span>
+                        Online
+                    </span>
+                </div>
+                <i class="fa fa-chevron-up pill-expand-icon"></i>
             </button>
 
-            <!-- Main Panel Container -->
-            <div class="bfsi-ai-coach-container">
+            <!-- ═══════════════════════════════════════
+                 EXPANDED MODAL (Centered Overlay)
+                 ═══════════════════════════════════════ -->
+            <t t-if="state.panelMode === 'expanded'">
+                <!-- Blurred Backdrop -->
+                <div class="bfsi-coach-backdrop" t-on-click="toggleExpand"></div>
 
-                <!-- Panel Header -->
-                <div class="bfsi-ai-coach-header">
-                    <div class="bfsi-ai-coach-header-left">
-                        <div class="bfsi-ai-coach-avatar">
-                            <i class="fa fa-robot"></i>
+                <!-- Modal Container -->
+                <div class="bfsi-coach-modal">
+
+                    <!-- Modal Header -->
+                    <div class="bfsi-coach-modal-header">
+                        <div class="modal-header-left">
+                            <div class="modal-avatar">
+                                <div class="avatar-ring ring-1"></div>
+                                <div class="avatar-ring ring-2"></div>
+                                <div class="avatar-ring ring-3"></div>
+                                <div class="avatar-core">
+                                    <img t-if="state.aiCoachIconUrl" t-att-src="state.aiCoachIconUrl" class="ai-coach-icon" alt="AI"/>
+                                    <i t-else="" class="fa fa-robot"></i>
+                                </div>
+                            </div>
+                            <div class="modal-title-group">
+                                <h3>AI Performance Coach</h3>
+                                <span class="modal-status">
+                                    <span class="status-dot online"></span>
+                                    Online · Ready to help
+                                </span>
+                            </div>
                         </div>
-                        <div class="bfsi-ai-coach-title">
-                            <h4>AI Performance Coach</h4>
-                            <span class="bfsi-ai-coach-status">
-                                <span class="status-dot online"></span>
-                                Online
+                        <div class="modal-header-actions">
+                            <button class="modal-action-btn" t-on-click="clearChat" title="Clear Chat">
+                                <i class="fa fa-trash-o"></i>
+                            </button>
+                            <button class="modal-action-btn minimize-btn" t-on-click="toggleExpand" title="Minimize">
+                                <i class="fa fa-chevron-down"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- KPI Context Card -->
+                    <div class="bfsi-coach-context-bar" t-if="state.kpiData">
+                        <div class="context-chip">
+                            <span class="chip-icon">📊</span>
+                            <span class="chip-label">Score</span>
+                            <span t-attf-class="chip-value {{ state.kpiData.overall_score >= 75 ? 'good' : state.kpiData.overall_score >= 50 ? 'medium' : 'low' }}">
+                                <t t-esc="Math.round(state.kpiData.overall_score)"/>%
                             </span>
                         </div>
-                    </div>
-                    <div class="bfsi-ai-coach-header-actions">
-                        <button class="btn btn-sm btn-link" t-on-click="clearChat" title="Clear Chat">
-                            <i class="fa fa-trash-o"></i>
-                        </button>
-                        <button class="btn btn-sm btn-link" t-on-click="toggleMinimize" title="Minimize">
-                            <i t-attf-class="fa {{ state.isMinimized ? 'fa-chevron-up' : 'fa-chevron-down' }}"></i>
-                        </button>
-                        <button t-if="state.isMobile" class="btn btn-sm btn-link" t-on-click="togglePanel" title="Close">
-                            <i class="fa fa-times"></i>
-                        </button>
-                    </div>
-                </div>
-
-                <!-- KPI Context Card (if data available) -->
-                <div class="bfsi-ai-coach-context" t-if="state.kpiData and !state.isMinimized">
-                    <div class="bfsi-context-card">
-                        <div class="context-card-header">
-                            <span class="context-card-title">Your Performance</span>
-                            <button class="btn btn-sm btn-link" t-on-click="openDashboard">
-                                <i class="fa fa-external-link"></i>
-                            </button>
+                        <div class="context-chip">
+                            <span class="chip-icon">🏆</span>
+                            <span class="chip-label">Rank</span>
+                            <span class="chip-value">#<t t-esc="state.kpiData.branch_rank or '-'"/></span>
                         </div>
-                        <div class="context-card-body">
-                            <div class="context-metric main-score">
-                                <div class="metric-value">
-                                    <span t-attf-class="badge {{ getPerformanceBadgeClass(state.kpiData.overall_score) }}">
-                                        <t t-esc="Math.round(state.kpiData.overall_score)"/>%
-                                    </span>
-                                </div>
-                                <div class="metric-label">Overall Score</div>
-                            </div>
-                            <div class="context-metrics-row">
-                                <div class="context-metric">
-                                    <div class="metric-value">
-                                        #<t t-esc="state.kpiData.branch_rank or '-'"/>
-                                    </div>
-                                    <div class="metric-label">
-                                        Rank
-                                        <i t-if="state.kpiData.rank_movement"
-                                           t-attf-class="fa {{ getRankMovementIcon(state.kpiData.rank_movement) }} ms-1"></i>
-                                    </div>
-                                </div>
-                                <div class="context-metric">
-                                    <div class="metric-value">
-                                        <t t-esc="state.kpiData.conversions or 0"/>
-                                    </div>
-                                    <div class="metric-label">Conversions</div>
-                                </div>
-                                <div class="context-metric">
-                                    <div class="metric-value">
-                                        <t t-esc="state.kpiData.meetings_scheduled or 0"/>
-                                    </div>
-                                    <div class="metric-label">Meetings</div>
-                                </div>
-                            </div>
+                        <div class="context-chip">
+                            <span class="chip-icon">📈</span>
+                            <span class="chip-label">Conversions</span>
+                            <span class="chip-value"><t t-esc="state.kpiData.conversions or 0"/></span>
+                        </div>
+                        <div class="context-chip">
+                            <span class="chip-icon">📅</span>
+                            <span class="chip-label">Meetings</span>
+                            <span class="chip-value"><t t-esc="state.kpiData.meetings_scheduled or 0"/></span>
+                        </div>
+                        <div t-if="state.actionPlans.length > 0" class="context-chip">
+                            <span class="chip-icon">📋</span>
+                            <span class="chip-label">Plans</span>
+                            <span class="chip-value"><t t-esc="state.actionPlans.length"/></span>
                         </div>
                     </div>
 
-                    <!-- Active Action Plans -->
-                    <div class="bfsi-context-card" t-if="state.actionPlans.length > 0">
-                        <div class="context-card-header">
-                            <span class="context-card-title">Action Plans</span>
-                            <button class="btn btn-sm btn-link" t-on-click="openActionPlans">
-                                <i class="fa fa-external-link"></i>
-                            </button>
-                        </div>
-                        <div class="context-card-body">
-                            <t t-foreach="state.actionPlans" t-as="plan" t-key="plan.id">
-                                <div class="action-plan-mini">
-                                    <div class="plan-name text-truncate" t-esc="plan.name"/>
-                                    <div class="plan-progress">
-                                        <div class="progress" style="height: 4px;">
-                                            <div class="progress-bar"
-                                                 role="progressbar"
-                                                 t-attf-style="width: {{ plan.progress_percentage }}%;"
-                                                 t-att-aria-valuenow="plan.progress_percentage"
-                                                 aria-valuemin="0"
-                                                 aria-valuemax="100">
-                                            </div>
-                                        </div>
-                                        <span class="plan-progress-text">
-                                            <t t-esc="Math.round(plan.progress_percentage)"/>%
-                                        </span>
-                                    </div>
-                                </div>
-                            </t>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Chat Messages Area -->
-                <div class="bfsi-ai-coach-messages" t-if="!state.isMinimized">
-                    <t t-foreach="state.messages" t-as="message" t-key="message_index">
-                        <div t-attf-class="bfsi-chat-message {{ message.role }} {{ message.isError ? 'error' : '' }} {{ message.isGreeting ? 'greeting' : '' }}">
-                            <div class="message-avatar">
-                                <i t-if="message.role === 'assistant'" class="fa fa-robot"></i>
-                                <i t-else="" class="fa fa-user"></i>
-                            </div>
-                            <div class="message-content">
-                                <div class="message-bubble">
+                    <!-- Chat Messages Area -->
+                    <div class="bfsi-coach-messages">
+                        <t t-foreach="state.messages" t-as="message" t-key="message_index">
+                            <div t-attf-class="coach-message {{ message.role }} {{ message.isError ? 'error' : '' }} {{ message.isGreeting ? 'greeting' : '' }} msg-animate-in">
+                                <div class="msg-avatar">
                                     <t t-if="message.role === 'assistant'">
-                                        <t t-out="formatMarkdown(message.content)"/>
+                                        <div class="ai-msg-avatar">
+                                            <img t-if="state.aiCoachIconUrl" t-att-src="state.aiCoachIconUrl" class="ai-coach-icon" alt="AI"/>
+                                            <i t-else="" class="fa fa-robot"></i>
+                                        </div>
                                     </t>
                                     <t t-else="">
-                                        <t t-esc="message.content"/>
+                                        <div class="user-msg-avatar">
+                                            <i class="fa fa-user"></i>
+                                        </div>
                                     </t>
                                 </div>
-                                <div class="message-time">
-                                    <t t-esc="formatTime(message.timestamp)"/>
-                                </div>
+                                <div class="msg-body">
+                                    <div class="message-bubble">
+                                        <t t-if="message.role === 'assistant'">
+                                            <t t-out="formatMarkdown(message.content)"/>
+                                        </t>
+                                        <t t-else="">
+                                            <t t-esc="message.content"/>
+                                        </t>
+                                    </div>
+                                    <div class="msg-meta">
+                                        <span class="msg-time">
+                                            <t t-esc="formatTime(message.timestamp)"/>
+                                        </span>
+                                        <!-- Feedback buttons for AI messages -->
+                                        <div class="msg-feedback" t-if="message.role === 'assistant' and !message.isGreeting">
+                                            <button class="feedback-btn" title="Helpful">👍</button>
+                                            <button class="feedback-btn" title="Not helpful">👎</button>
+                                        </div>
+                                    </div>
 
-                                <!-- Suggested Actions (if any) -->
-                                <div class="message-actions" t-if="message.actions and message.actions.length > 0">
-                                    <t t-foreach="message.actions" t-as="action" t-key="action_index">
-                                        <button class="btn btn-sm btn-outline-primary"
-                                                t-on-click="() => this.onQuickAction(action.type)">
-                                            <t t-esc="action.label"/>
-                                        </button>
-                                    </t>
-                                </div>
+                                    <!-- Suggested Actions -->
+                                    <div class="msg-actions" t-if="message.actions and message.actions.length > 0">
+                                        <t t-foreach="message.actions" t-as="action" t-key="action_index">
+                                            <button class="msg-action-chip"
+                                                    t-on-click="() => this.onQuickAction(action.type)">
+                                                <t t-esc="action.label"/>
+                                            </button>
+                                        </t>
+                                    </div>
 
-                                <!-- Learning Content Link (if any) -->
-                                <div class="message-learning" t-if="message.learning_content">
-                                    <a href="#" class="learning-link">
-                                        <i class="fa fa-book me-1"></i>
-                                        <t t-esc="message.learning_content.title"/>
-                                    </a>
+                                    <!-- Learning Content Link -->
+                                    <div class="msg-learning" t-if="message.learning_content">
+                                        <a href="#" class="learning-link">
+                                            <i class="fa fa-book me-1"></i>
+                                            <t t-esc="message.learning_content.title"/>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+
+                        <!-- Typing Indicator -->
+                        <div class="coach-message assistant typing" t-if="state.isTyping">
+                            <div class="msg-avatar">
+                                <div class="ai-msg-avatar typing-pulse">
+                                    <img t-if="state.aiCoachIconUrl" t-att-src="state.aiCoachIconUrl" class="ai-coach-icon" alt="AI"/>
+                                    <i t-else="" class="fa fa-robot"></i>
+                                </div>
+                            </div>
+                            <div class="msg-body">
+                                <div class="message-bubble typing-bubble">
+                                    <div class="typing-dots">
+                                        <span></span>
+                                        <span></span>
+                                        <span></span>
+                                    </div>
+                                    <span class="typing-label">AI is analyzing...</span>
                                 </div>
                             </div>
                         </div>
-                    </t>
 
-                    <!-- Typing Indicator -->
-                    <div class="bfsi-chat-message assistant typing" t-if="state.isTyping">
-                        <div class="message-avatar">
-                            <i class="fa fa-robot"></i>
+                        <div t-ref="chatEnd"></div>
+                    </div>
+
+                    <!-- Quick Actions -->
+                    <div class="bfsi-coach-quick-actions" t-if="state.showQuickActions">
+                        <!-- Banker Quick Actions -->
+                        <div class="quick-actions-row" t-if="!isManager">
+                            <button class="qa-chip" t-on-click="() => this.onQuickAction('check_kpis')">
+                                <i class="fa fa-line-chart"></i> My KPIs
+                            </button>
+                            <button class="qa-chip" t-on-click="() => this.onQuickAction('action_plan')">
+                                <i class="fa fa-tasks"></i> Action Plan
+                            </button>
+                            <button class="qa-chip" t-on-click="() => this.onQuickAction('get_coaching')">
+                                <i class="fa fa-graduation-cap"></i> Coaching
+                            </button>
+                            <button class="qa-chip" t-on-click="() => this.onQuickAction('difficult_scenario')">
+                                <i class="fa fa-question-circle"></i> Help Me
+                            </button>
                         </div>
-                        <div class="message-content">
-                            <div class="message-bubble typing-indicator">
-                                <span></span>
-                                <span></span>
-                                <span></span>
-                            </div>
+
+                        <!-- Manager Quick Actions -->
+                        <div class="quick-actions-row" t-if="isManager">
+                            <button class="qa-chip" t-on-click="() => this.onManagerQuickAction('team_overview')">
+                                <i class="fa fa-users"></i> Team Overview
+                            </button>
+                            <button class="qa-chip" t-on-click="() => this.onManagerQuickAction('needs_coaching')">
+                                <i class="fa fa-exclamation-triangle"></i> Needs Coaching
+                            </button>
+                            <button class="qa-chip" t-on-click="() => this.onManagerQuickAction('generate_strategy')">
+                                <i class="fa fa-magic"></i> AI Strategy
+                            </button>
+                            <button class="qa-chip" t-on-click="() => this.onManagerQuickAction('practice_roleplay')">
+                                <i class="fa fa-comments"></i> Practice
+                            </button>
                         </div>
                     </div>
 
-                    <div t-ref="chatEnd"></div>
+                    <!-- Chat Input Area -->
+                    <div class="bfsi-coach-input-area">
+                        <div class="input-row">
+                            <textarea
+                                class="coach-input"
+                                placeholder="Type your message..."
+                                t-model="state.inputMessage"
+                                t-on-keydown="onKeydown"
+                                rows="1"
+                                t-att-disabled="state.isLoading"/>
+                            <button
+                                class="send-btn"
+                                t-on-click="sendMessage"
+                                t-att-disabled="state.isLoading or !state.inputMessage.trim()">
+                                <i t-if="state.isLoading" class="fa fa-spinner fa-spin"></i>
+                                <i t-else="" class="fa fa-paper-plane"></i>
+                            </button>
+                        </div>
+                        <div class="input-hint">
+                            Press Enter to send · Shift+Enter for new line
+                        </div>
+                    </div>
+
                 </div>
+            </t>
 
-                <!-- Quick Actions -->
-                <div class="bfsi-ai-coach-quick-actions" t-if="state.showQuickActions and !state.isMinimized">
-                    <div class="quick-actions-label">Quick Actions</div>
-
-                    <!-- Banker Quick Actions -->
-                    <div class="quick-actions-grid" t-if="!isManager">
-                        <button class="quick-action-btn" t-on-click="() => this.onQuickAction('check_kpis')">
-                            <i class="fa fa-line-chart"></i>
-                            <span>Check KPIs</span>
-                        </button>
-                        <button class="quick-action-btn" t-on-click="() => this.onQuickAction('action_plan')">
-                            <i class="fa fa-tasks"></i>
-                            <span>Action Plan</span>
-                        </button>
-                        <button class="quick-action-btn" t-on-click="() => this.onQuickAction('get_coaching')">
-                            <i class="fa fa-graduation-cap"></i>
-                            <span>Get Coaching</span>
-                        </button>
-                        <button class="quick-action-btn" t-on-click="() => this.onQuickAction('difficult_scenario')">
-                            <i class="fa fa-question-circle"></i>
-                            <span>Help Me Handle</span>
-                        </button>
-                    </div>
-
-                    <!-- Manager Quick Actions -->
-                    <div class="quick-actions-grid" t-if="isManager">
-                        <button class="quick-action-btn" t-on-click="() => this.onManagerQuickAction('team_overview')">
-                            <i class="fa fa-users"></i>
-                            <span>Team Overview</span>
-                        </button>
-                        <button class="quick-action-btn" t-on-click="() => this.onManagerQuickAction('needs_coaching')">
-                            <i class="fa fa-exclamation-triangle"></i>
-                            <span>Needs Coaching</span>
-                        </button>
-                        <button class="quick-action-btn" t-on-click="() => this.onManagerQuickAction('generate_strategy')">
-                            <i class="fa fa-magic"></i>
-                            <span>AI Strategy</span>
-                        </button>
-                        <button class="quick-action-btn" t-on-click="() => this.onManagerQuickAction('practice_roleplay')">
-                            <i class="fa fa-comments"></i>
-                            <span>Practice</span>
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Chat Input Area -->
-                <div class="bfsi-ai-coach-input" t-if="!state.isMinimized">
-                    <div class="input-wrapper">
-                        <textarea
-                            class="form-control"
-                            placeholder="Type your message..."
-                            t-model="state.inputMessage"
-                            t-on-keydown="onKeydown"
-                            rows="1"
-                            t-att-disabled="state.isLoading"/>
-                        <button
-                            class="btn btn-primary send-btn"
-                            t-on-click="sendMessage"
-                            t-att-disabled="state.isLoading or !state.inputMessage.trim()">
-                            <i t-if="state.isLoading" class="fa fa-spinner fa-spin"></i>
-                            <i t-else="" class="fa fa-paper-plane"></i>
-                        </button>
-                    </div>
-                    <div class="input-hint">
-                        Press Enter to send, Shift+Enter for new line
-                    </div>
-                </div>
-            </div>
         </div>
     </t>
 
