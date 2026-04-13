@@ -6,7 +6,7 @@
             <t t-set="head_website">
                 <title>Viet Uc</title>
             </t>
-            <t t-set="pwa_asset_version">1.0.59</t>
+            <t t-set="pwa_asset_version">1.0.60</t>
             <t t-set="head">
                 <!-- PWA Meta Tags -->
                 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"/>
@@ -149,19 +149,50 @@
                 <div class="pwa-install-card">
                     <button class="pwa-install-close" id="pwa-install-close-btn">×</button>
                     <div class="pwa-install-icon-wrap">
-                        <img src="/health_pwa/static/icons/icon-192.png" alt="Viet Uc" class="pwa-install-app-icon"/>
+                        <div class="pwa-install-app-icon-emoji">🏥</div>
                     </div>
                     <h2 class="pwa-install-title">Viet Uc</h2>
                     <p class="pwa-install-subtitle-vi">Cài đặt ứng dụng lên điện thoại</p>
                     <p class="pwa-install-subtitle-en">Install app on your phone</p>
 
-                    <!-- Android: one-tap install button -->
+                    <!-- Android: one-tap install button (shown when beforeinstallprompt fires) -->
                     <div id="pwa-install-android" style="display: none;">
                         <button class="pwa-install-action-btn" id="pwa-install-now-btn">
                             📲 Cài đặt ngay / Install Now
                         </button>
                         <p class="pwa-install-hint">Nhấn nút trên để thêm Viet Uc vào màn hình chính</p>
                         <p class="pwa-install-hint-en">Tap the button above to add Viet Uc to your home screen</p>
+                    </div>
+
+                    <!-- Android: manual install guide (fallback if beforeinstallprompt doesn't fire) -->
+                    <div id="pwa-install-android-manual" style="display: none;">
+                        <div class="pwa-install-steps">
+                            <div class="pwa-install-step">
+                                <div class="pwa-install-step-num">1</div>
+                                <div class="pwa-install-step-text">
+                                    Nhấn nút <strong>⋮</strong> (menu) ở góc trên bên phải
+                                    <span class="pwa-install-step-en">Tap the <strong>⋮</strong> (menu) button at the top right</span>
+                                </div>
+                            </div>
+                            <div class="pwa-install-step">
+                                <div class="pwa-install-step-num">2</div>
+                                <div class="pwa-install-step-text">
+                                    Chọn <strong>"Cài đặt ứng dụng"</strong> hoặc <strong>"Thêm vào MH chính"</strong>
+                                    <span class="pwa-install-step-en">Select <strong>"Install App"</strong> or <strong>"Add to Home Screen"</strong></span>
+                                </div>
+                            </div>
+                            <div class="pwa-install-step">
+                                <div class="pwa-install-step-num">3</div>
+                                <div class="pwa-install-step-text">
+                                    Nhấn <strong>"Cài đặt"</strong> để xác nhận
+                                    <span class="pwa-install-step-en">Tap <strong>"Install"</strong> to confirm</span>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Animated arrow pointing to top-right menu -->
+                        <div class="pwa-install-arrow-wrap pwa-install-arrow-topright">
+                            <div class="pwa-install-arrow">↗</div>
+                        </div>
                     </div>
 
                     <!-- iOS: visual guide -->
@@ -610,7 +641,7 @@
                             var ok = await window._pwaPushSubscribe();
                             if (ok) {
                                 banner.style.background = 'linear-gradient(135deg,#4CAF50,#2e7d32)';
-                                banner.innerHTML = '&lt;div style="text-align:center;padding:12px;font-size:16px;font-weight:600"&gt;✅ Thông báo đã bật! / Notifications enabled!&lt;/div&gt;';
+                                banner.innerHTML = '<div style="text-align:center;padding:12px;font-size:16px;font-weight:600">✅ Thông báo đã bật! / Notifications enabled!</div>';
                                 setTimeout(function() { banner.remove(); }, 2500);
                             } else {
                                 // Permission was denied - show settings instructions
@@ -628,16 +659,21 @@
                     
                     // If smart install overlay is active (from ?install=1), show Android install section
                     if (window.healthPWAConfig &amp;&amp; window.healthPWAConfig.showInstallOverlay) {
+                        // Show the one-tap install button
                         const androidSection = document.getElementById('pwa-install-android');
                         if (androidSection) androidSection.style.display = 'block';
-                        // Hide iOS section since we have native prompt
+                        // Hide the manual guide since we have native prompt
+                        const manualSection = document.getElementById('pwa-install-android-manual');
+                        if (manualSection) manualSection.style.display = 'none';
+                        // Hide iOS section
                         const iosSection = document.getElementById('pwa-install-ios');
                         if (iosSection) iosSection.style.display = 'none';
                     } else {
                         // Normal flow: Show install banner after 3 seconds
                         setTimeout(function() {
                             if (!localStorage.getItem('pwa-install-dismissed')) {
-                                document.getElementById('pwa-install-banner').style.display = 'block';
+                                var banner = document.getElementById('pwa-install-banner');
+                                if (banner) banner.style.display = 'block';
                             }
                         }, 3000);
                     }
@@ -661,7 +697,7 @@
                             const doneSection = document.getElementById('pwa-install-done');
                             if (doneSection) doneSection.style.display = 'block';
                             // Auto-close after 3 seconds
-                            setTimeout(() =&gt; { installOverlay.style.display = 'none'; }, 3000);
+                            setTimeout(function() { installOverlay.style.display = 'none'; }, 3000);
                         } else {
                             // Show the overlay
                             installOverlay.style.display = 'flex';
@@ -674,13 +710,17 @@
                                 const iosSection = document.getElementById('pwa-install-ios');
                                 if (iosSection) iosSection.style.display = 'block';
                             } else {
-                                // Android/Desktop: wait for beforeinstallprompt
-                                // If deferredPrompt already captured, show Android section immediately
+                                // Android/Desktop: check if native prompt is already available
                                 if (deferredPrompt) {
+                                    // Native prompt ready - show one-tap install button
                                     const androidSection = document.getElementById('pwa-install-android');
                                     if (androidSection) androidSection.style.display = 'block';
+                                } else {
+                                    // Native prompt not yet available - show manual guide immediately
+                                    // If beforeinstallprompt fires later, it will swap to one-tap button
+                                    const manualSection = document.getElementById('pwa-install-android-manual');
+                                    if (manualSection) manualSection.style.display = 'block';
                                 }
-                                // Otherwise, beforeinstallprompt handler above will show it when ready
                             }
                         }
                     }
@@ -805,10 +845,10 @@
     
     <template id="service_worker_js" name="Service Worker JavaScript">
         <![CDATA[
-// Health PWA Service Worker v1.0.59
+// Health PWA Service Worker v1.0.60
 // IMPORTANT: Increment version number when deploying updates!
 
-const CACHE_VERSION = '1.0.59';
+const CACHE_VERSION = '1.0.60';
 const CACHE_NAME = `health-pwa-v${CACHE_VERSION}`;
 const OFFLINE_URL = '/health_pwa/offline';
 const API_CACHE_NAME = `health-pwa-api-v${CACHE_VERSION}`;

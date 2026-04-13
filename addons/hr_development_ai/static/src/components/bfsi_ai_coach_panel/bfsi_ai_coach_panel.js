@@ -106,15 +106,27 @@ export class BfsiAiCoachPanel extends Component {
         try {
             const userId = user.userId;
 
-            // Get employee for current user
-            const employees = await this.orm.searchRead(
-                'hr.employee',
-                [['user_id', '=', userId]],
-                ['id', 'name', 'branch_id', 'banker_type', 'job_id', 'department_id',
-                    'current_month_rank', 'rank_movement', 'latest_overall_score',
-                    'coaching_priority', 'ai_coaching_enabled'],
-                { limit: 1 }
-            );
+            // Try reading full BFSI fields first
+            let employees = [];
+            try {
+                employees = await this.orm.searchRead(
+                    'hr.employee',
+                    [['user_id', '=', userId]],
+                    ['id', 'name', 'branch_id', 'banker_type', 'job_id', 'department_id',
+                        'current_month_rank', 'rank_movement', 'latest_overall_score',
+                        'coaching_priority', 'ai_coaching_enabled'],
+                    { limit: 1 }
+                );
+            } catch (_fieldError) {
+                // Fallback: public profile may restrict custom fields
+                console.warn('AI Coach: Full fields not accessible, using basic fields');
+                employees = await this.orm.searchRead(
+                    'hr.employee',
+                    [['user_id', '=', userId]],
+                    ['id', 'name'],
+                    { limit: 1 }
+                );
+            }
 
             if (employees.length > 0) {
                 this.state.employeeData = employees[0];
@@ -277,9 +289,14 @@ export class BfsiAiCoachPanel extends Component {
         setTimeout(() => this.scrollToBottom(), 100);
 
         try {
+            const employeeId = this.state.employeeData?.id;
+            if (!employeeId) {
+                throw new Error('No employee record found for current user');
+            }
+
             // Prepare context for AI
             const context = {
-                employee_id: this.state.employeeData?.id,
+                employee_id: employeeId,
                 is_manager: this.isManager,
                 kpi_data: this.state.kpiData,
                 action_plans: this.state.actionPlans,
@@ -290,7 +307,7 @@ export class BfsiAiCoachPanel extends Component {
             const result = await this.orm.call(
                 'hr.employee',
                 'action_ai_coach_chat',
-                [this.state.employeeData?.id || []],
+                [employeeId],
                 {
                     message: messageContent,
                     context: context
