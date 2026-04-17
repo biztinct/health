@@ -123,6 +123,12 @@ class HRCoachingSession(models.Model):
         ('cancelled', 'Cancelled')
     ], string='Status', default='scheduled', required=True, tracking=True)
 
+    is_self_coaching = fields.Boolean(
+        string='Is Self Coaching',
+        compute='_compute_is_self_coaching',
+        help='True if the current user is the coachee (self-coaching session)'
+    )
+
     # ===================
     # BFSI-Specific Fields
     # ===================
@@ -181,8 +187,40 @@ class HRCoachingSession(models.Model):
 
     ai_suggested_questions = fields.Html(
         string='AI Suggested Questions',
-        help='AI-generated coaching questions for the manager to ask during the session'
+        help='AI-generated coaching questions for the manager to ask during the session',
+        sanitize=False
     )
+
+    # AI Coaching Suggestions per question category
+    ai_suggestion_opening = fields.Html(
+        string='AI Suggestions - Opening',
+        sanitize=False,
+        help='AI-generated talking points for opening questions'
+    )
+    ai_suggestion_probing = fields.Html(
+        string='AI Suggestions - Probing',
+        sanitize=False,
+        help='AI-generated talking points for probing questions'
+    )
+    ai_suggestion_closing = fields.Html(
+        string='AI Suggestions - Closing',
+        sanitize=False,
+        help='AI-generated talking points for closing questions'
+    )
+    ai_suggestion_tips = fields.Html(
+        string='AI Suggestions - Tips',
+        sanitize=False,
+        help='AI-generated coaching tips and talking points'
+    )
+
+    @api.depends('employee_id')
+    def _compute_is_self_coaching(self):
+        """Determine if the current user is the coachee (self-coaching)"""
+        for session in self:
+            if session.employee_id and session.employee_id.user_id:
+                session.is_self_coaching = (session.employee_id.user_id.id == self.env.uid)
+            else:
+                session.is_self_coaching = False
 
     @api.depends('ai_transcript')
     def _compute_ai_chat_history(self):
@@ -223,10 +261,10 @@ class HRCoachingSession(models.Model):
                     record.ai_chat_history = '<div style="text-align:center;padding:40px 20px;color:#9CA3AF;"><p>No messages yet.</p></div>'
                     continue
 
-                # Build rich HTML chat
+                # Build rich HTML chat — newest messages first so latest is visible on dialog reload
                 html_parts = ['<div style="display:flex;flex-direction:column;gap:16px;padding:8px 0;">']
 
-                for msg in messages:
+                for msg in reversed(messages):
                     role = msg.get('role', 'unknown')
                     content = msg.get('content', '')
                     timestamp = msg.get('timestamp', '')
@@ -247,7 +285,7 @@ class HRCoachingSession(models.Model):
                                 <i class="fa fa-user"></i>
                             </div>
                             <div style="flex:1;">
-                                <div style="font-size:12px;font-weight:600;color:#4F46E5;margin-bottom:3px;">👤 You {f'<span style="color:#9CA3AF;font-weight:400;margin-left:6px;">{time_str}</span>' if time_str else ''}</div>
+                                <div style="font-size:12px;font-weight:600;color:#4F46E5;margin-bottom:3px;"><i class="fa fa-user" style="margin-right:4px;"></i> You {f'<span style="color:#9CA3AF;font-weight:400;margin-left:6px;">{time_str}</span>' if time_str else ''}</div>
                                 <div style="background:linear-gradient(135deg,#4F46E5,#7C3AED);color:white;padding:10px 14px;border-radius:14px 14px 14px 4px;font-size:13.5px;line-height:1.5;">
                                     {content}
                                 </div>
@@ -261,7 +299,7 @@ class HRCoachingSession(models.Model):
                                 <i class="fa fa-robot"></i>
                             </div>
                             <div style="flex:1;">
-                                <div style="font-size:12px;font-weight:600;color:#312e81;margin-bottom:3px;">🤖 AI Coach {f'<span style="color:#9CA3AF;font-weight:400;margin-left:6px;">{time_str}</span>' if time_str else ''}</div>
+                                <div style="font-size:12px;font-weight:600;color:#312e81;margin-bottom:3px;"><i class="fa fa-magic" style="margin-right:4px;color:#A78BFA;"></i> AI Coach {f'<span style="color:#9CA3AF;font-weight:400;margin-left:6px;">{time_str}</span>' if time_str else ''}</div>
                                 <div style="background:linear-gradient(135deg,#ffffff,#f5f3ff);border:1px solid rgba(79,70,229,0.1);padding:12px 14px;border-radius:14px 14px 14px 4px;font-size:13.5px;line-height:1.6;color:#1e1b4b;">
                                     <p style="margin:0;">{formatted_content}</p>
                                 </div>
@@ -388,6 +426,160 @@ Generate 3-4 questions per category. Reference the banker's actual performance n
             import logging
             logging.getLogger(__name__).error(f"AI suggest questions failed: {e}")
             self.ai_suggested_questions = f'<p class="text-danger">Error generating questions: {str(e)}</p>'
+
+    def action_ai_suggest_opening(self):
+        """AI suggest for opening questions"""
+        return self._get_ai_coaching_suggestion('opening')
+
+    def action_ai_suggest_probing(self):
+        """AI suggest for probing questions"""
+        return self._get_ai_coaching_suggestion('probing')
+
+    def action_ai_suggest_closing(self):
+        """AI suggest for closing questions"""
+        return self._get_ai_coaching_suggestion('closing')
+
+    def action_ai_suggest_tips(self):
+        """AI suggest for coaching tips"""
+        return self._get_ai_coaching_suggestion('tips')
+
+    def _get_ai_coaching_suggestion(self, category):
+        """Generate AI coaching suggestions for a specific question category.
+
+        Args:
+            category: one of 'opening', 'probing', 'closing', 'tips'
+        """
+        self.ensure_one()
+
+        field_map = {
+            'opening': 'ai_suggestion_opening',
+            'probing': 'ai_suggestion_probing',
+            'closing': 'ai_suggestion_closing',
+            'tips': 'ai_suggestion_tips',
+        }
+        target_field = field_map.get(category)
+        if not target_field:
+            return
+
+        category_labels = {
+            'opening': 'Opening Phase — Building Rapport',
+            'probing': 'Probing Phase — Exploring Root Causes',
+            'closing': 'Closing Phase — Driving Commitments',
+            'tips': 'General Coaching Tips & Techniques',
+        }
+
+        try:
+            from ..ai_providers.provider_factory import get_ai_provider
+            ai_provider = get_ai_provider(self.env)
+
+            # Get the questions for this category
+            questions_field_map = {
+                'opening': self.strategy_opening_questions,
+                'probing': self.strategy_probing_questions,
+                'closing': self.strategy_closing_questions,
+                'tips': self.strategy_coaching_tips,
+            }
+            questions_text = questions_field_map.get(category, '') or 'No specific questions available'
+
+            # Get KPI context
+            kpi_context = ''
+            if self.kpi_context:
+                kpi_context = self.kpi_context
+            elif self.employee_id:
+                try:
+                    context = self.employee_id.get_performance_context_for_ai()
+                    kpi_context = json.dumps(context, indent=2, default=str)
+                except Exception:
+                    kpi_context = 'No KPI data available'
+
+            # Get strategy context
+            strategy_context = ''
+            if self.coaching_strategy_id:
+                s = self.coaching_strategy_id
+                strategy_context = f"""
+COACHING STRATEGY:
+- Strengths: {s.strengths or 'Not analyzed'}
+- Improvement Areas: {s.improvement_areas or 'Not analyzed'}
+- Themes: {s.coaching_themes or 'Not analyzed'}
+- AI Strategy: {s.ai_strategy or 'Not available'}
+"""
+
+            # Get discussion notes context (for live session suggestions)
+            notes_context = ''
+            if self.discussion_notes:
+                notes_context = f"\nDISCUSSION NOTES SO FAR:\n{self.discussion_notes}\n"
+
+            prompt = f"""You are an expert sales performance coaching consultant for a bank. A branch manager is about to conduct a coaching session with a banker and needs your help with the **{category_labels.get(category, category)}** phase.
+
+BANKER: {self.employee_id.name}
+ROLE: {self.employee_id.job_id.name if self.employee_id.job_id else 'Banker'}
+
+PERFORMANCE DATA:
+{kpi_context or 'No KPI data available'}
+{strategy_context}
+{notes_context}
+
+THE QUESTIONS THE MANAGER HAS FOR THIS PHASE:
+{questions_text}
+
+Generate coaching suggestions in EXACTLY this HTML format:
+
+<div class="ai-suggest-section">
+<h5>🗣️ Talking Points</h5>
+<ul>
+<li><strong>Point 1:</strong> What to say, referencing specific data from the banker's performance</li>
+<li><strong>Point 2:</strong> Another talking point with concrete examples</li>
+<li><strong>Point 3:</strong> ...</li>
+</ul>
+
+<h5>🔢 Data to Reference</h5>
+<ul>
+<li><strong>Metric:</strong> Specific number and what it means</li>
+<li><strong>Comparison:</strong> How it compares to team/target</li>
+</ul>
+
+<h5>⚡ Handling Pushback</h5>
+<ul>
+<li><strong>If they say:</strong> "<em>common pushback</em>"<br/><strong>Respond with:</strong> "suggested response with empathy and data"</li>
+<li><strong>If they say:</strong> "<em>another common pushback</em>"<br/><strong>Respond with:</strong> "suggested response"</li>
+</ul>
+
+<h5>✅ Key Message to Drive Home</h5>
+<p><strong>The one takeaway:</strong> A clear, motivating message the banker should remember from this part of the conversation.</p>
+</div>
+
+CRITICAL RULES:
+- Use the banker's ACTUAL performance numbers in your suggestions
+- Be specific and actionable, not generic
+- Tone should be supportive and growth-oriented, never punitive
+- Reference real metrics from their KPI data
+- Keep each section concise (3-4 bullets max)
+"""
+
+            response_text = ai_provider.generate_text(
+                prompt=prompt,
+                max_tokens=1200,
+                temperature=0.7
+            )
+
+            if response_text:
+                # Strip markdown code fences that AI often wraps around HTML
+                import re
+                cleaned = re.sub(r'^```\w*\n?', '', response_text.strip())
+                cleaned = re.sub(r'\n?```$', '', cleaned.strip())
+                self.write({target_field: cleaned})
+            else:
+                self.write({target_field: '<p class="text-warning">Could not generate suggestions. Please try again.</p>'})
+
+        except ImportError:
+            self.write({target_field: '<p class="text-danger">AI provider not configured. Please set up an AI provider in Configuration.</p>'})
+        except Exception as e:
+            import logging
+            logging.getLogger(__name__).error(f"AI suggestion ({category}) failed: {e}")
+            self.write({target_field: f'<p class="text-danger">Error: {str(e)}</p>'})
+
+        # Return False to trigger form auto-refresh (Odoo re-reads record on False return)
+        return False
 
     def action_send_ai_message(self, message):
         """Send message to AI coach and get response
@@ -536,6 +728,118 @@ Response:"""
             'target': 'new',
             'context': {'dialog_size': 'large'}
         }
+
+    def action_send_quick_question(self):
+        """Send a pre-built quick question to AI coach.
+
+        Reads the question from context['quick_question'].
+        Called from quick question buttons in the AI Chat dialog.
+
+        Returns:
+            dict: Action to reload dialog
+        """
+        self.ensure_one()
+        question = self.env.context.get('quick_question', '')
+        if not question:
+            raise UserError(_('No question provided.'))
+        self.ai_chat_input = question
+        return self.action_send_ai_message_from_dialog()
+
+    def get_quick_questions(self):
+        """Get categorized quick questions for AI coaching chat
+
+        Returns questions based on session context, linked strategy, and KPI data.
+
+        Returns:
+            list: Categories of questions, each with title, icon, and questions
+        """
+        self.ensure_one()
+
+        categories = []
+
+        # 1. Performance Review questions
+        perf_questions = [
+            "What are my key strengths based on current KPIs?",
+            "Which KPI areas need the most improvement?",
+            "How does my performance compare to team averages?",
+            "What specific actions can improve my conversion rate?",
+        ]
+        categories.append({
+            'title': '📊 Performance Review',
+            'icon': 'fa-line-chart',
+            'questions': perf_questions
+        })
+
+        # 2. Sales & Client Engagement
+        sales_questions = [
+            "How can I improve my meeting-to-conversion ratio?",
+            "What techniques help in handling client objections?",
+            "How do I increase my connect rate on calls?",
+            "Give me tips for better client follow-up strategies.",
+        ]
+        categories.append({
+            'title': '🎯 Sales & Client Engagement',
+            'icon': 'fa-bullseye',
+            'questions': sales_questions
+        })
+
+        # 3. Strategy questions from linked strategy (if available)
+        if self.coaching_strategy_id:
+            strategy = self.coaching_strategy_id
+            strategy_questions = []
+            if strategy.opening_questions:
+                # Extract first question from each category
+                for line in str(strategy.opening_questions).split('\n'):
+                    clean = line.strip().lstrip('0123456789. ')
+                    if clean and len(clean) > 10:
+                        strategy_questions.append(clean)
+                        break
+            if strategy.probing_questions:
+                for line in str(strategy.probing_questions).split('\n'):
+                    clean = line.strip().lstrip('0123456789. ')
+                    if clean and len(clean) > 10:
+                        strategy_questions.append(clean)
+                        break
+            if strategy.closing_questions:
+                for line in str(strategy.closing_questions).split('\n'):
+                    clean = line.strip().lstrip('0123456789. ')
+                    if clean and len(clean) > 10:
+                        strategy_questions.append(clean)
+                        break
+            if strategy_questions:
+                categories.append({
+                    'title': '🧠 From Your Strategy',
+                    'icon': 'fa-magic',
+                    'questions': strategy_questions
+                })
+
+        # 4. Goal Setting & Action Planning
+        goal_questions = [
+            "Help me create a SMART goal for this month.",
+            "What should be my top 3 priorities this week?",
+            "How do I track progress on my action items?",
+            "What daily habits will improve my performance?",
+        ]
+        categories.append({
+            'title': '📋 Goals & Action Planning',
+            'icon': 'fa-tasks',
+            'questions': goal_questions
+        })
+
+        # 5. Skill Development
+        skill_questions = [
+            "What skills should I focus on developing?",
+            "How can I improve my leadership abilities?",
+            "Recommend training for better client management.",
+            "How do I develop better time management skills?",
+        ]
+        categories.append({
+            'title': '💡 Skill Development',
+            'icon': 'fa-graduation-cap',
+            'questions': skill_questions
+        })
+
+        return categories
 
     def action_send_ai_message_from_dialog(self):
         """Send message to AI from dialog and append response to transcript

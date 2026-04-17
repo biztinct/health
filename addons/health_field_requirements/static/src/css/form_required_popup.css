@@ -1,0 +1,216 @@
+/* ================================================================
+   Visual Required Markers — Red labels on form fields
+   ================================================================ */
+
+/* Both native and admin-configured required field labels */
+label.o_form_label.o_fr_required_label {
+    color: #dc2626 !important;
+    font-weight: 600 !important;
+}
+
+/* Red asterisk after native required labels */
+label.o_form_label.o_fr_required_label::after {
+    content: ' *';
+    color: #dc2626;
+    font-weight: 700;
+    font-size: 0.85em;
+}
+
+/* Admin-configured fields get a purple asterisk */
+label.o_form_label.o_fr_admin_required::after {
+    content: ' *';
+    color: #7c3aed;
+    font-weight: 700;
+    font-size: 0.85em;
+}
+
+/* Red left accent on ALL required field widgets */
+.o_field_widget.o_fr_required_field {
+    border-left: 3px solid #dc2626 !important;
+    padding-left: 6px !important;
+    border-radius: 2px;
+    transition: border-color 0.2s ease;
+}
+
+/* Purple left accent for admin-configured fields */
+.o_field_widget.o_fr_admin_field {
+    border-left-color: #7c3aed !important;
+}
+
+/* For header inputs without labels — red placeholder + bottom border */
+input.o_fr_required_input,
+select.o_fr_required_input,
+textarea.o_fr_required_input {
+    border-bottom: 2px solid #dc2626 !important;
+}
+
+input.o_fr_required_input::placeholder {
+    color: #dc2626 !important;
+    opacity: 0.6;
+}
+
+/* ================================================================
+   Missing Required Fields Dialog — Popup Styles
+   ================================================================ */
+
+.fr-missing-dialog {
+    font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+}
+
+/* Summary bar */
+.fr-missing-summary {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 16px 20px;
+    background: linear-gradient(135deg, #fef3c7, #fde68a);
+    border-radius: 12px;
+    margin-bottom: 16px;
+}
+
+.fr-missing-summary-icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: #f59e0b;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+}
+
+.fr-missing-summary-text {
+    font-size: 14px;
+    color: #78350f;
+    line-height: 1.4;
+}
+
+/* Legend */
+.fr-missing-legend {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 12px;
+    padding: 0 4px;
+}
+
+.fr-legend-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: #64748b;
+    font-weight: 500;
+}
+
+.fr-legend-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.fr-dot-native {
+    background: #ef4444;
+}
+
+.fr-dot-configured {
+    background: #8b5cf6;
+}
+
+/* Field list */
+.fr-missing-list {
+    max-height: 400px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.fr-missing-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 14px;
+    border-radius: 10px;
+    border: 1px solid #e2e8f0;
+    transition: all 0.15s ease;
+}
+
+.fr-missing-item:hover {
+    background: #f8fafc;
+}
+
+.fr-item-native {
+    border-left: 3px solid #ef4444;
+}
+
+.fr-item-configured {
+    border-left: 3px solid #8b5cf6;
+}
+
+.fr-missing-item-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.fr-missing-item-icon {
+    font-size: 12px;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    flex-shrink: 0;
+}
+
+.fr-item-native .fr-missing-item-icon {
+    background: #fef2f2;
+    color: #ef4444;
+}
+
+.fr-item-configured .fr-missing-item-icon {
+    background: #f5f3ff;
+    color: #8b5cf6;
+}
+
+.fr-missing-item-info {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+}
+
+.fr-missing-item-label {
+    font-weight: 600;
+    font-size: 13px;
+    color: #1e293b;
+}
+
+.fr-missing-item-name {
+    font-size: 11px;
+    color: #94a3b8;
+    font-family: 'SF Mono', 'Fira Code', monospace;
+}
+
+.fr-missing-item-badge {
+    font-size: 10px;
+    font-weight: 600;
+    padding: 3px 8px;
+    border-radius: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    white-space: nowrap;
+}
+
+.fr-badge-native {
+    background: #fef2f2;
+    color: #dc2626;
+}
+
+.fr-badge-configured {
+    background: #f5f3ff;
+    color: #7c3aed;
+}

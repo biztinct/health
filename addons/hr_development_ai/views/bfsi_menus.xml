@@ -6,6 +6,7 @@
         id="menu_bfsi_root"
         name="AI Performance Coaching"
         web_icon="hr_development_ai,static/description/icon.png"
+        action="action_bfsi_manager_dashboard"
         sequence="45"/>
 
     <!-- Dashboard Menu -->

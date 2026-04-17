@@ -216,6 +216,7 @@ class HealthFlowWizard(models.TransientModel):
             'admin-facilities': ('health_base.action_health_facility', _('Healthcare Facilities')),
             'admin-catchment-provinces': ('health_base.action_health_catchment_province', _('Catchment Provinces')),
             'admin-patient-categories': ('health_base.action_health_patient_category', _('Patient Categories')),
+            'admin-field-requirements': ('health_field_requirements.action_field_requirements_dashboard', _('Field Requirements')),
             'admin-service-types': ('health_base.action_health_service_type', _('Service Types')),
             'admin-symptoms': ('health_base.action_health_symptom', _('Symptoms')),
             'admin-referral-sources': ('health_base.action_health_referral_source', _('Referral Sources')),

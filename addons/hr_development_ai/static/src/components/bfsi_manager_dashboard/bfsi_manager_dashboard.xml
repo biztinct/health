@@ -319,11 +319,11 @@
 
                         <!-- Modal Actions (Top) -->
                         <div class="bfsi-modal-actions">
-                            <button class="bfsi-modal-btn primary" t-on-click="() => this.startCoachingSession(state.bankerDetail.id)">
-                                <i class="fa fa-play"></i> Start Coaching Session
-                            </button>
                             <button class="bfsi-modal-btn ai" t-on-click="() => this.generateStrategy(state.bankerDetail.id)">
                                 <i class="fa fa-magic"></i> Generate AI Strategy
+                            </button>
+                            <button class="bfsi-modal-btn primary" t-on-click="() => this.startCoachingSession(state.bankerDetail.id)">
+                                <i class="fa fa-play"></i> Start Coaching Session
                             </button>
                             <button class="bfsi-modal-btn secondary" t-on-click="() => this.viewBankerKpis(state.bankerDetail.id)">
                                 <i class="fa fa-line-chart"></i> View Full KPIs

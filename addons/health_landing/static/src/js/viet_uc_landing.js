@@ -235,6 +235,12 @@ class VietUcDashboard extends Component {
                         action: "health_invoicing.action_healthcare_package_products",
                         description: "Configure service packages"
                     },
+                    {
+                        name: "Field Requirements",
+                        icon: "fa-asterisk",
+                        action: "health_field_requirements.action_field_requirements_dashboard",
+                        description: "Configure mandatory fields per model and state"
+                    },
                 ],
             },
             {

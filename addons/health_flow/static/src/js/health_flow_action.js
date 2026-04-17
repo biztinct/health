@@ -135,6 +135,7 @@ class HealthFlowAction extends Component {
                     { key: 'admin-portable-equipment', label: _t('Portable Equipment'), icon: 'fa-briefcase', desc: _t('Track equipment') },
                     { key: 'admin-healthcare-staff', label: _t('Healthcare Staff'), icon: 'fa-user-md', desc: _t('Staff directory') },
                     { key: 'admin-patient-categories', label: _t('Patient Categories'), icon: 'fa-bookmark', desc: _t('Patient categories') },
+                    { key: 'admin-field-requirements', label: _t('Field Requirements'), icon: 'fa-asterisk', desc: _t('Configure mandatory fields') },
                 ],
             },
         };

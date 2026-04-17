@@ -1,0 +1,549 @@
+/* ================================================================
+   Field Requirements Dashboard — 4-Layer Drill-down Styles
+   ================================================================ */
+
+.fr-dashboard {
+    height: 100%;
+    max-height: calc(100vh - 50px);
+    overflow-y: auto;
+    background: linear-gradient(135deg, #f5f7fa 0%, #e8ecf1 100%);
+    padding: 0;
+    font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+}
+
+/* ----------------------------------------------------------------
+   Header + Breadcrumbs
+   ---------------------------------------------------------------- */
+.fr-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 32px;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+    color: #fff;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.fr-header-left {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.fr-title-icon {
+    color: #e94560;
+    font-size: 18px;
+}
+
+.fr-breadcrumbs {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 15px;
+}
+
+.fr-breadcrumb-sep {
+    color: rgba(255,255,255,0.35);
+    font-size: 10px;
+}
+
+.fr-breadcrumb-link {
+    color: rgba(255,255,255,0.65);
+    text-decoration: none;
+    transition: color 0.2s;
+    font-weight: 500;
+}
+
+.fr-breadcrumb-link:hover {
+    color: #fff;
+    text-decoration: none;
+}
+
+.fr-breadcrumb-current {
+    color: #fff;
+    font-weight: 700;
+}
+
+.fr-header-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.fr-header-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(255,255,255,0.12);
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.fr-badge-active {
+    background: rgba(72,187,120,0.25);
+    color: #9ae6b4;
+}
+
+/* ----------------------------------------------------------------
+   Phase subtitle
+   ---------------------------------------------------------------- */
+.fr-phase-subtitle {
+    padding: 20px 32px 8px;
+    color: #64748b;
+    font-size: 14px;
+}
+
+/* ----------------------------------------------------------------
+   Loading
+   ---------------------------------------------------------------- */
+.fr-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 80px 20px;
+    color: #94a3b8;
+    gap: 12px;
+}
+
+/* ================================================================
+   PHASE 1: NODES — large cards with colored top borders
+   ================================================================ */
+.fr-nodes-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 24px;
+    padding: 16px 32px 40px;
+}
+
+.fr-node-card {
+    background: #fff;
+    border-radius: 16px;
+    padding: 28px 24px 20px;
+    cursor: pointer;
+    border: 1px solid #e2e8f0;
+    border-top: 4px solid #ccc;
+    transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
+    text-align: center;
+}
+
+.fr-node-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 16px 48px rgba(0,0,0,0.12);
+}
+
+.fr-node-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: 16px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    margin-bottom: 14px;
+}
+
+.fr-node-name {
+    margin: 0 0 10px;
+    font-size: 17px;
+    font-weight: 700;
+    color: #1e293b;
+}
+
+.fr-node-meta {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    font-size: 12px;
+    color: #94a3b8;
+}
+
+.fr-node-rules-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: linear-gradient(135deg, #ecfdf5, #d1fae5);
+    color: #059669;
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-weight: 600;
+}
+
+/* ================================================================
+   PHASE 2: TILES — horizontal cards
+   ================================================================ */
+.fr-tiles-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 12px 32px 40px;
+    max-width: 700px;
+}
+
+.fr-tile-card {
+    display: flex;
+    align-items: center;
+    background: #fff;
+    border-radius: 12px;
+    padding: 16px 20px;
+    cursor: pointer;
+    border: 1px solid #e2e8f0;
+    border-left: 4px solid #ccc;
+    transition: all 0.2s ease;
+    gap: 16px;
+}
+
+.fr-tile-card:hover {
+    transform: translateX(4px);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+}
+
+.fr-tile-has-rules {
+    background: #f0fdf4;
+}
+
+.fr-tile-icon {
+    font-size: 20px;
+    width: 40px;
+    text-align: center;
+    flex-shrink: 0;
+}
+
+.fr-tile-body {
+    flex: 1;
+}
+
+.fr-tile-name {
+    margin: 0 0 2px;
+    font-size: 15px;
+    font-weight: 600;
+    color: #1e293b;
+}
+
+.fr-tile-model-count {
+    font-size: 12px;
+    color: #94a3b8;
+}
+
+.fr-tile-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.fr-mini-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    background: linear-gradient(135deg, #ecfdf5, #d1fae5);
+    color: #059669;
+    padding: 3px 10px;
+    border-radius: 10px;
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.fr-mini-badge-green {
+    background: linear-gradient(135deg, #ecfdf5, #d1fae5);
+    color: #059669;
+}
+
+.fr-tile-arrow {
+    color: #cbd5e1;
+    font-size: 12px;
+}
+
+/* ================================================================
+   PHASE 3: MODELS — similar to tiles but slightly different
+   ================================================================ */
+.fr-models-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 12px 32px 40px;
+    max-width: 700px;
+}
+
+.fr-model-card {
+    display: flex;
+    align-items: center;
+    background: #fff;
+    border-radius: 12px;
+    padding: 16px 20px;
+    cursor: pointer;
+    border: 1px solid #e2e8f0;
+    transition: all 0.2s ease;
+    gap: 16px;
+}
+
+.fr-model-card:hover {
+    transform: translateX(4px);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+    border-color: #4299e1;
+}
+
+.fr-model-has-rules {
+    border-left: 4px solid #48bb78;
+    background: #f0fdf4;
+}
+
+.fr-model-icon {
+    font-size: 18px;
+    width: 40px;
+    text-align: center;
+    color: #64748b;
+    flex-shrink: 0;
+}
+
+.fr-model-body {
+    flex: 1;
+}
+
+.fr-model-name {
+    margin: 0 0 2px;
+    font-size: 15px;
+    font-weight: 600;
+    color: #1e293b;
+}
+
+.fr-model-tech {
+    font-size: 12px;
+    color: #94a3b8;
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    background: none;
+    padding: 0;
+}
+
+.fr-model-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* ================================================================
+   PHASE 4: FIELDS TABLE
+   ================================================================ */
+.fr-fields-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 32px;
+    background: #fff;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.fr-search-box {
+    position: relative;
+    width: 320px;
+}
+
+.fr-search-box i {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #94a3b8;
+    font-size: 14px;
+}
+
+.fr-search-box input {
+    width: 100%;
+    padding: 10px 12px 10px 36px;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    font-size: 14px;
+    background: #f8fafc;
+    transition: all 0.2s ease;
+}
+
+.fr-search-box input:focus {
+    outline: none;
+    border-color: #4299e1;
+    background: #fff;
+    box-shadow: 0 0 0 3px rgba(66,153,225,0.15);
+}
+
+.fr-model-tech-label {
+    font-size: 12px;
+    color: #94a3b8;
+    background: #f1f5f9;
+    padding: 4px 10px;
+    border-radius: 6px;
+}
+
+.fr-fields-table-wrap {
+    padding: 0 32px 40px;
+    overflow-x: auto;
+}
+
+.fr-fields-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    background: #fff;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    margin-top: 16px;
+}
+
+.fr-fields-table thead th {
+    background: linear-gradient(135deg, #f8fafc, #f1f5f9);
+    padding: 14px 16px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: #475569;
+    border-bottom: 2px solid #e2e8f0;
+    text-align: left;
+    white-space: nowrap;
+}
+
+.fr-fields-table tbody tr {
+    transition: background 0.15s ease;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.fr-fields-table tbody tr:hover { background: #f8fafc; }
+.fr-fields-table tbody tr:last-child { border-bottom: none; }
+
+.fr-fields-table td {
+    padding: 12px 16px;
+    font-size: 13px;
+    vertical-align: middle;
+}
+
+.fr-row-active { background: #f0fdf4 !important; }
+.fr-row-active:hover { background: #ecfdf5 !important; }
+.fr-row-saving { opacity: 0.7; pointer-events: none; }
+
+.fr-col-field { min-width: 200px; }
+.fr-col-type { width: 90px; }
+.fr-col-global { width: 130px; text-align: center; }
+.fr-col-roles { min-width: 180px; }
+.fr-col-states { min-width: 180px; }
+.fr-col-active { width: 80px; text-align: center; }
+.fr-col-actions { width: 70px; text-align: center; }
+
+.fr-field-info { display: flex; flex-direction: column; gap: 2px; }
+.fr-field-label { font-weight: 600; color: #1e293b; font-size: 13px; }
+.fr-field-name { font-size: 11px; color: #94a3b8; font-family: 'SF Mono', 'Fira Code', monospace; }
+
+.fr-type-badge {
+    display: inline-block;
+    background: #f1f5f9;
+    color: #64748b;
+    padding: 2px 8px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 500;
+    font-family: 'SF Mono', 'Fira Code', monospace;
+}
+
+/* Toggle switch */
+.fr-toggle {
+    position: relative;
+    display: inline-block;
+    width: 42px;
+    height: 24px;
+    cursor: pointer;
+}
+.fr-toggle.disabled { opacity: 0.4; cursor: not-allowed; }
+.fr-toggle input { opacity: 0; width: 0; height: 0; position: absolute; }
+
+.fr-toggle-slider {
+    position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+    background: #cbd5e1;
+    border-radius: 24px;
+    transition: all 0.3s ease;
+}
+
+.fr-toggle-slider::before {
+    content: '';
+    position: absolute;
+    width: 18px; height: 18px;
+    left: 3px; bottom: 3px;
+    background: #fff;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+}
+
+.fr-toggle input:checked + .fr-toggle-slider { background: #4f46e5; }
+.fr-toggle input:checked + .fr-toggle-slider.fr-toggle-active { background: #059669; }
+.fr-toggle input:checked + .fr-toggle-slider::before { transform: translateX(18px); }
+
+/* Roles */
+.fr-roles-selector { display: flex; flex-wrap: wrap; gap: 4px; }
+
+.fr-role-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 10px;
+    border-radius: 14px;
+    font-size: 11px;
+    font-weight: 500;
+    background: #f1f5f9;
+    color: #64748b;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: 1px solid #e2e8f0;
+}
+.fr-role-chip input { display: none; }
+.fr-role-chip.selected {
+    background: linear-gradient(135deg, #eef2ff, #e0e7ff);
+    color: #4f46e5;
+    border-color: #a5b4fc;
+}
+.fr-role-chip:hover { border-color: #a5b4fc; }
+
+.fr-all-roles-label { color: #059669; font-size: 12px; font-weight: 500; font-style: italic; }
+.fr-disabled-text { color: #cbd5e1; font-size: 14px; }
+
+.fr-state-input {
+    width: 100%;
+    padding: 6px 10px;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    font-size: 12px;
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    background: #fff;
+    transition: all 0.2s ease;
+}
+.fr-state-input:focus {
+    outline: none;
+    border-color: #4299e1;
+    box-shadow: 0 0 0 2px rgba(66,153,225,0.15);
+}
+.fr-state-input::placeholder { color: #cbd5e1; }
+
+.fr-delete-btn {
+    background: none; border: none;
+    color: #ef4444; cursor: pointer;
+    padding: 4px 8px; border-radius: 6px;
+    font-size: 14px; transition: all 0.2s ease;
+    opacity: 0.5;
+}
+.fr-delete-btn:hover { opacity: 1; background: #fef2f2; }
+
+.fr-saving-icon { color: #4299e1; font-size: 14px; }
+
+/* ----------------------------------------------------------------
+   Responsive
+   ---------------------------------------------------------------- */
+@media (max-width: 768px) {
+    .fr-header { padding: 14px 16px; }
+    .fr-nodes-grid { grid-template-columns: 1fr 1fr; padding: 12px 16px; gap: 12px; }
+    .fr-tiles-grid, .fr-models-grid { padding: 12px 16px; }
+    .fr-fields-table-wrap { padding: 0 12px 20px; }
+    .fr-search-box { width: 100%; }
+    .fr-fields-toolbar { flex-direction: column; gap: 8px; padding: 10px 16px; }
+}

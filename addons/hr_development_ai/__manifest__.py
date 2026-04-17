@@ -97,6 +97,9 @@ Inspired by world-class platforms: SAP SuccessFactors, Workday Skills Cloud, Bet
         # Menus (must be loaded AFTER all views that define actions)
         'views/hr_development_menus.xml',
         'views/bfsi_menus.xml',
+
+        # AI Dashboard
+        'views/bfsi_ai_dashboard_views.xml',
     ],
     'demo': [
         'data/demo_data.xml',
@@ -141,6 +144,11 @@ Inspired by world-class platforms: SAP SuccessFactors, Workday Skills Cloud, Bet
             'hr_development_ai/static/src/components/bfsi_manager_dashboard/bfsi_manager_dashboard.js',
             'hr_development_ai/static/src/components/bfsi_manager_dashboard/bfsi_manager_dashboard.xml',
             'hr_development_ai/static/src/components/bfsi_manager_dashboard/bfsi_manager_dashboard.scss',
+
+            # BFSI AI Performance Dashboard (PerformX-inspired)
+            'hr_development_ai/static/src/components/bfsi_ai_dashboard/bfsi_ai_dashboard.js',
+            'hr_development_ai/static/src/components/bfsi_ai_dashboard/bfsi_ai_dashboard.xml',
+            'hr_development_ai/static/src/components/bfsi_ai_dashboard/bfsi_ai_dashboard.scss',
         ],
     },
     'installable': True,

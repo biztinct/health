@@ -420,7 +420,7 @@ export class BfsiManagerDashboard extends Component {
                 plans = await this.orm.searchRead(
                     'bfsi.action.plan',
                     [['employee_id', '=', bankerId]],
-                    ['name', 'state', 'progress_percentage', 'create_date', 'item_ids'],
+                    ['name', 'state', 'progress_percentage', 'create_date', 'action_item_count'],
                     { order: 'create_date desc' }
                 );
             } catch (_) { }
@@ -466,7 +466,7 @@ export class BfsiManagerDashboard extends Component {
                     state_label: stateLabels[p.state] || p.state || 'Draft',
                     completion: p.progress_percentage || 0,
                     create_date: p.create_date || '',
-                    item_count: (p.item_ids || []).length,
+                    item_count: p.action_item_count || 0,
                 })),
             };
 

@@ -89,7 +89,8 @@ class BFSICoachingStrategy(models.Model):
 
     proposed_plan = fields.Html(
         string='Proposed Coaching Plan',
-        help='Structured coaching plan with steps'
+        help='Structured coaching plan with steps',
+        sanitize=False
     )
 
     session_guide = fields.Html(
@@ -269,15 +270,25 @@ Focus on:
                 else:
                     raise UserError(_('AI response could not be parsed. Please try again.'))
 
+            # Helper to ensure values are strings (AI sometimes returns dicts/lists for Html fields)
+            def _safe_str(val, default=''):
+                if val is None:
+                    return default
+                if isinstance(val, dict):
+                    return self._format_dict_as_html(val)
+                if isinstance(val, list):
+                    return self._format_list_field(val)
+                return str(val)
+
             # Update fields from AI response
             self.write({
-                'performance_summary': strategy_data.get('performance_summary', ''),
-                'root_cause_analysis': strategy_data.get('root_cause_analysis', ''),
+                'performance_summary': _safe_str(strategy_data.get('performance_summary', '')),
+                'root_cause_analysis': _safe_str(strategy_data.get('root_cause_analysis', '')),
                 'strengths': self._format_list_field(strategy_data.get('strengths', [])),
                 'improvement_areas': self._format_list_field(strategy_data.get('improvement_areas', [])),
                 'coaching_themes': self._format_list_field(strategy_data.get('coaching_themes', [])),
-                'ai_strategy': strategy_data.get('strategy', ''),
-                'proposed_plan': strategy_data.get('proposed_plan', ''),
+                'ai_strategy': _safe_str(strategy_data.get('strategy', '')),
+                'proposed_plan': self._format_proposed_plan(strategy_data.get('proposed_plan', '')),
                 'session_guide': self._format_session_guide(strategy_data.get('session_guide', {})),
                 'opening_questions': self._format_list_field(strategy_data.get('opening_questions', []), numbered=True),
                 'probing_questions': self._format_list_field(strategy_data.get('probing_questions', []), numbered=True),
@@ -386,6 +397,53 @@ Focus on:
         if not sections:
             for key, value in guide.items():
                 sections.append(f"▸ {key.replace('_', ' ').title()}\n{value}")
+        return '\n\n'.join(sections)
+
+    @api.model
+    def _format_proposed_plan(self, plan):
+        """Convert proposed plan (dict or string) to readable text"""
+        if not plan:
+            return ''
+        if isinstance(plan, str):
+            return plan
+
+        if isinstance(plan, dict):
+            sections = []
+            for key, value in plan.items():
+                header = key.replace('_', ' ').title()
+                if isinstance(value, dict):
+                    details = []
+                    for sub_key, sub_val in value.items():
+                        details.append(f"  • {sub_key.replace('_', ' ').title()}: {sub_val}")
+                    sections.append(f"📅 {header}\n" + '\n'.join(details))
+                elif isinstance(value, list):
+                    items = [f"  • {item}" for item in value]
+                    sections.append(f"📅 {header}\n" + '\n'.join(items))
+                else:
+                    sections.append(f"📅 {header}: {value}")
+            return '\n\n'.join(sections)
+
+        if isinstance(plan, list):
+            return self._format_list_field(plan)
+
+        return str(plan)
+
+    @api.model
+    def _format_dict_as_html(self, data):
+        """Convert a dict to readable text (fallback for any dict field)"""
+        if not data or not isinstance(data, dict):
+            return str(data) if data else ''
+        sections = []
+        for key, value in data.items():
+            label = key.replace('_', ' ').title()
+            if isinstance(value, dict):
+                sub_items = [f"  • {k.replace('_', ' ').title()}: {v}" for k, v in value.items()]
+                sections.append(f"▸ {label}\n" + '\n'.join(sub_items))
+            elif isinstance(value, list):
+                items = [f"  • {item}" for item in value]
+                sections.append(f"▸ {label}\n" + '\n'.join(items))
+            else:
+                sections.append(f"▸ {label}: {value}")
         return '\n\n'.join(sections)
 
     @api.model

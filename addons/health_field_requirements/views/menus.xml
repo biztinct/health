@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Hidden menu entry for the action (accessible via dashboard tile) -->
+    <menuitem id="menu_field_requirements_root"
+              name="Field Requirements"
+              action="action_field_requirement_rules"
+              parent=""
+              groups="base.group_system"
+              sequence="999"/>
+</odoo>

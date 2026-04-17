@@ -1,0 +1,266 @@
+<?xml version="1.0" encoding="utf-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="health_field_requirements.Dashboard">
+        <div class="fr-dashboard">
+
+            <!-- ============================================================ -->
+            <!-- HEADER with Breadcrumbs                                       -->
+            <!-- ============================================================ -->
+            <div class="fr-header">
+                <div class="fr-header-left">
+                    <i class="fa fa-asterisk fr-title-icon"/>
+                    <div class="fr-breadcrumbs">
+                        <t t-foreach="breadcrumbs" t-as="crumb" t-key="crumb.phase">
+                            <t t-if="crumb_index > 0">
+                                <i class="fa fa-chevron-right fr-breadcrumb-sep"/>
+                            </t>
+                            <t t-if="crumb.phase !== state.phase">
+                                <a class="fr-breadcrumb-link" href="#"
+                                   t-on-click.prevent="() => this.onBreadcrumbClick(crumb)"
+                                   t-esc="crumb.label"/>
+                            </t>
+                            <t t-else="">
+                                <span class="fr-breadcrumb-current" t-esc="crumb.label"/>
+                            </t>
+                        </t>
+                    </div>
+                </div>
+                <div class="fr-header-right">
+                    <t t-if="state.phase === 'fields'">
+                        <span class="fr-header-badge fr-badge-active">
+                            <i class="fa fa-check-circle"/>
+                            <t t-esc="getActiveRuleCount()"/> / <t t-esc="getTotalFieldCount()"/> Active
+                        </span>
+                    </t>
+                </div>
+            </div>
+
+            <!-- ============================================================ -->
+            <!-- LOADING                                                       -->
+            <!-- ============================================================ -->
+            <t t-if="state.loading">
+                <div class="fr-loading">
+                    <i class="fa fa-spinner fa-spin fa-2x"/>
+                    <p>Loading...</p>
+                </div>
+            </t>
+
+            <!-- ============================================================ -->
+            <!-- PHASE 1: NODES                                                -->
+            <!-- ============================================================ -->
+            <t t-if="!state.loading and state.phase === 'nodes'">
+                <div class="fr-phase-subtitle">
+                    Select a section to configure field requirements
+                </div>
+                <div class="fr-nodes-grid">
+                    <t t-foreach="state.hierarchy" t-as="node" t-key="node.key">
+                        <div class="fr-node-card" t-on-click="() => this.onNodeClick(node)"
+                             t-att-style="'border-top-color: ' + node.color">
+                            <div class="fr-node-icon" t-att-style="'background: ' + node.color + '20; color: ' + node.color">
+                                <i t-att-class="'fa ' + node.icon"/>
+                            </div>
+                            <h3 class="fr-node-name" t-esc="node.name"/>
+                            <div class="fr-node-meta">
+                                <span class="fr-node-tiles-count">
+                                    <t t-esc="node.tiles.length"/> tiles
+                                </span>
+                                <t t-if="node.rule_count > 0">
+                                    <span class="fr-node-rules-badge">
+                                        <i class="fa fa-asterisk"/>
+                                        <t t-esc="node.rule_count"/> rules
+                                    </span>
+                                </t>
+                            </div>
+                        </div>
+                    </t>
+                </div>
+            </t>
+
+            <!-- ============================================================ -->
+            <!-- PHASE 2: TILES                                                -->
+            <!-- ============================================================ -->
+            <t t-if="!state.loading and state.phase === 'tiles'">
+                <div class="fr-phase-subtitle">
+                    Select a tile to see its models
+                </div>
+                <div class="fr-tiles-grid">
+                    <t t-foreach="state.selectedNode.tiles" t-as="tile" t-key="tile.key">
+                        <div class="fr-tile-card" t-on-click="() => this.onTileClick(tile)"
+                             t-att-class="{'fr-tile-has-rules': tile.rule_count > 0}"
+                             t-att-style="'border-left-color: ' + state.selectedNode.color">
+                            <div class="fr-tile-icon" t-att-style="'color: ' + state.selectedNode.color">
+                                <i t-att-class="'fa ' + tile.icon"/>
+                            </div>
+                            <div class="fr-tile-body">
+                                <h4 class="fr-tile-name" t-esc="tile.name"/>
+                                <span class="fr-tile-model-count">
+                                    <t t-esc="tile.models.length"/> model(s)
+                                </span>
+                            </div>
+                            <div class="fr-tile-right">
+                                <t t-if="tile.rule_count > 0">
+                                    <span class="fr-mini-badge">
+                                        <t t-esc="tile.rule_count"/> rules
+                                    </span>
+                                </t>
+                                <i class="fa fa-chevron-right fr-tile-arrow"/>
+                            </div>
+                        </div>
+                    </t>
+                </div>
+            </t>
+
+            <!-- ============================================================ -->
+            <!-- PHASE 3: MODELS                                               -->
+            <!-- ============================================================ -->
+            <t t-if="!state.loading and state.phase === 'models'">
+                <div class="fr-phase-subtitle">
+                    Select a model to configure its field requirements
+                </div>
+                <div class="fr-models-grid">
+                    <t t-foreach="state.selectedTile.models" t-as="model" t-key="model.model">
+                        <div class="fr-model-card" t-on-click="() => this.onModelClick(model)"
+                             t-att-class="{'fr-model-has-rules': model.rule_count > 0}">
+                            <div class="fr-model-icon">
+                                <i class="fa fa-table"/>
+                            </div>
+                            <div class="fr-model-body">
+                                <h4 class="fr-model-name" t-esc="model.name"/>
+                                <code class="fr-model-tech" t-esc="model.model"/>
+                            </div>
+                            <div class="fr-model-right">
+                                <t t-if="model.rule_count > 0">
+                                    <span class="fr-mini-badge fr-mini-badge-green">
+                                        <t t-esc="model.rule_count"/> rules
+                                    </span>
+                                </t>
+                                <i class="fa fa-chevron-right fr-tile-arrow"/>
+                            </div>
+                        </div>
+                    </t>
+                </div>
+            </t>
+
+            <!-- ============================================================ -->
+            <!-- PHASE 4: FIELDS                                               -->
+            <!-- ============================================================ -->
+            <t t-if="!state.loading and state.phase === 'fields'">
+                <div class="fr-fields-toolbar">
+                    <div class="fr-search-box">
+                        <i class="fa fa-search"/>
+                        <input type="text" placeholder="Search fields..."
+                               t-att-value="state.searchQuery"
+                               t-on-input="onSearchInput"/>
+                    </div>
+                    <code class="fr-model-tech-label" t-esc="state.selectedModel?.model"/>
+                </div>
+
+                <t t-if="state.fieldsLoading">
+                    <div class="fr-loading">
+                        <i class="fa fa-spinner fa-spin fa-2x"/>
+                        <p>Loading fields...</p>
+                    </div>
+                </t>
+
+                <t t-else="">
+                    <div class="fr-fields-table-wrap">
+                        <table class="fr-fields-table">
+                            <thead>
+                                <tr>
+                                    <th class="fr-col-field">Field</th>
+                                    <th class="fr-col-type">Type</th>
+                                    <th class="fr-col-active">Active</th>
+                                    <th class="fr-col-global">Global (All Roles)</th>
+                                    <th class="fr-col-roles">Roles</th>
+                                    <th class="fr-col-states">Required in States</th>
+                                    <th class="fr-col-actions"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-foreach="filteredFields" t-as="field" t-key="field.field_name">
+                                    <tr t-att-class="{'fr-row-active': field.active, 'fr-row-saving': state.savingField === field.field_name}">
+                                        <!-- Field Name -->
+                                        <td class="fr-col-field">
+                                            <div class="fr-field-info">
+                                                <span class="fr-field-label" t-esc="field.field_label"/>
+                                                <span class="fr-field-name" t-esc="field.field_name"/>
+                                            </div>
+                                        </td>
+                                        <!-- Type -->
+                                        <td class="fr-col-type">
+                                            <span class="fr-type-badge" t-esc="field.field_type"/>
+                                        </td>
+                                        <!-- Active Toggle (moved after Type) -->
+                                        <td class="fr-col-active">
+                                            <label class="fr-toggle">
+                                                <input type="checkbox"
+                                                       t-att-checked="field.active"
+                                                       t-on-change="() => this.onToggleActive(field)"/>
+                                                <span class="fr-toggle-slider fr-toggle-active"/>
+                                            </label>
+                                        </td>
+                                        <!-- Global Toggle -->
+                                        <td class="fr-col-global">
+                                            <label class="fr-toggle" t-att-class="{'disabled': !field.active}">
+                                                <input type="checkbox"
+                                                       t-att-checked="field.is_global"
+                                                       t-att-disabled="!field.active"
+                                                       t-on-change="() => this.onToggleGlobal(field)"/>
+                                                <span class="fr-toggle-slider"/>
+                                            </label>
+                                        </td>
+                                        <!-- Roles -->
+                                        <td class="fr-col-roles">
+                                            <t t-if="!field.is_global and field.active">
+                                                <div class="fr-roles-selector">
+                                                    <t t-foreach="state.availableRoles" t-as="role" t-key="role.id">
+                                                        <label class="fr-role-chip"
+                                                               t-att-class="{'selected': this.isRoleSelected(field, role.id)}">
+                                                            <input type="checkbox"
+                                                                   t-att-checked="this.isRoleSelected(field, role.id)"
+                                                                   t-on-change="() => this.onRoleToggle(field, role.id)"/>
+                                                            <span t-esc="role.name"/>
+                                                        </label>
+                                                    </t>
+                                                </div>
+                                            </t>
+                                            <t t-elif="field.is_global and field.active">
+                                                <span class="fr-all-roles-label">All roles</span>
+                                            </t>
+                                            <t t-else=""><span class="fr-disabled-text">—</span></t>
+                                        </td>
+                                        <!-- States -->
+                                        <td class="fr-col-states">
+                                            <t t-if="field.active">
+                                                <input type="text" class="fr-state-input"
+                                                       placeholder="e.g. draft, confirmed"
+                                                       t-att-value="field.state_values"
+                                                       t-on-input="(ev) => this.onStateValuesChange(field, ev)"
+                                                       t-on-blur="() => this.onStateValuesBlur(field)"/>
+                                            </t>
+                                            <t t-else=""><span class="fr-disabled-text">—</span></t>
+                                        </td>
+                                        <!-- Actions -->
+                                        <td class="fr-col-actions">
+                                            <t t-if="field.has_rule">
+                                                <button class="fr-delete-btn" title="Remove rule"
+                                                        t-on-click="() => this.onDeleteRule(field)">
+                                                    <i class="fa fa-trash-o"/>
+                                                </button>
+                                            </t>
+                                            <t t-if="state.savingField === field.field_name">
+                                                <i class="fa fa-spinner fa-spin fr-saving-icon"/>
+                                            </t>
+                                        </td>
+                                    </tr>
+                                </t>
+                            </tbody>
+                        </table>
+                    </div>
+                </t>
+            </t>
+        </div>
+    </t>
+
+</templates>
