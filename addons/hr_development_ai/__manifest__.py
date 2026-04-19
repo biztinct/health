@@ -92,6 +92,7 @@ Inspired by world-class platforms: SAP SuccessFactors, Workday Skills Cloud, Bet
         'views/bfsi_kpi_views.xml',
         'views/bfsi_action_plan_views.xml',
         'views/bfsi_coaching_strategy_views.xml',
+        'views/bfsi_kpi_integration_views.xml',
         'views/bfsi_progress_wizard_views.xml',
 
         # Menus (must be loaded AFTER all views that define actions)

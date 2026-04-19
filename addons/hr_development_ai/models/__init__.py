@@ -31,4 +31,5 @@ from . import bfsi_performance_kpi
 from . import bfsi_action_plan  # Contains BFSIActionPlan and BFSIActionPlanItem
 from . import bfsi_coaching_strategy  # Contains BFSICoachingStrategy and BFSICoachingRoleplayWizard
 from . import bfsi_progress_wizard
+from . import bfsi_kpi_integration  # KPI External System Integration
 from . import bfsi_ai_dashboard  # AI-Powered Performance Dashboard API

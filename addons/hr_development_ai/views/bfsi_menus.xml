@@ -6,67 +6,65 @@
         id="menu_bfsi_root"
         name="AI Performance Coaching"
         web_icon="hr_development_ai,static/description/icon.png"
-        action="action_bfsi_manager_dashboard"
         sequence="45"/>
 
-    <!-- Dashboard Menu -->
+    <!-- Intelligence Layer Menu (formerly Dashboard) -->
     <menuitem
         id="menu_bfsi_dashboard"
-        name="Dashboard"
+        name="Intelligence Layer"
         parent="menu_bfsi_root"
         sequence="1"/>
 
     <menuitem
-        id="menu_bfsi_manager_dashboard"
-        name="Manager Dashboard"
+        id="menu_bfsi_ai_insights"
+        name="AI Insights"
         parent="menu_bfsi_dashboard"
         action="action_bfsi_manager_dashboard"
-        sequence="1"
-        groups="hr_development_ai.group_bfsi_branch_manager"/>
+        sequence="1"/>
+
+    <menuitem
+        id="menu_bfsi_realtime_kpi_tracking"
+        name="Realtime KPI Tracking"
+        parent="menu_bfsi_dashboard"
+        action="action_bfsi_performance_kpi"
+        sequence="2"/>
 
     <menuitem
         id="menu_bfsi_my_performance"
         name="My Performance"
         parent="menu_bfsi_dashboard"
         action="action_bfsi_performance_kpi"
-        sequence="2"/>
+        sequence="3"/>
 
-    <!-- Performance Menu -->
+    <!-- Data Layer Menu (formerly Performance) -->
     <menuitem
         id="menu_bfsi_performance"
-        name="Performance"
+        name="Data Layer"
         parent="menu_bfsi_root"
         sequence="10"/>
 
     <menuitem
-        id="menu_bfsi_performance_kpi"
-        name="Performance KPIs"
-        parent="menu_bfsi_performance"
-        action="action_bfsi_performance_kpi"
-        sequence="1"/>
-
-    <menuitem
         id="menu_bfsi_kpi_targets"
-        name="KPI Targets"
+        name="KPI Baseline Targets"
         parent="menu_bfsi_performance"
         action="action_bfsi_kpi_target"
+        sequence="1"
+        groups="hr_development_ai.group_bfsi_branch_manager"/>
+
+    <menuitem
+        id="menu_bfsi_kpi_integration"
+        name="KPI Integration"
+        parent="menu_bfsi_performance"
+        action="action_bfsi_kpi_integration"
         sequence="2"
         groups="hr_development_ai.group_bfsi_branch_manager"/>
 
-    <!-- Coaching Menu -->
+    <!-- AI Coaching Menu (formerly Coaching) -->
     <menuitem
         id="menu_bfsi_coaching"
-        name="Coaching"
+        name="AI Coaching"
         parent="menu_bfsi_root"
         sequence="20"/>
-
-    <menuitem
-        id="menu_bfsi_strategic_selection"
-        name="Strategic Selection"
-        parent="menu_bfsi_coaching"
-        action="action_bfsi_strategic_selection"
-        sequence="2"
-        groups="hr_development_ai.group_bfsi_branch_manager"/>
 
     <menuitem
         id="menu_bfsi_coaching_strategies"
@@ -74,6 +72,14 @@
         parent="menu_bfsi_coaching"
         action="action_bfsi_coaching_strategy"
         sequence="1"
+        groups="hr_development_ai.group_bfsi_branch_manager"/>
+
+    <menuitem
+        id="menu_bfsi_strategic_selection"
+        name="Strategic Selection"
+        parent="menu_bfsi_coaching"
+        action="action_bfsi_strategic_selection"
+        sequence="2"
         groups="hr_development_ai.group_bfsi_branch_manager"/>
 
     <menuitem

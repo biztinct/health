@@ -4,6 +4,52 @@ from odoo import models, fields, api, _
 from datetime import timedelta
 
 
+class HREmployeePublic(models.Model):
+    _inherit = 'hr.employee.public'
+
+    # BFSI fields exposed on public profile
+    branch_id = fields.Many2one(
+        'bfsi.branch',
+        string='Branch',
+        readonly=True
+    )
+
+    banker_type = fields.Selection([
+        ('rm', 'Relationship Manager'),
+        ('branch_manager', 'Branch Manager'),
+        ('regional_manager', 'Regional Manager'),
+        ('telesales', 'Telesales Agent'),
+        ('field_sales', 'Field Sales Officer'),
+        ('loan_officer', 'Loan Officer'),
+        ('insurance_advisor', 'Insurance Advisor'),
+        ('wealth_manager', 'Wealth Manager'),
+        ('banker', 'Banker (General)')
+    ], string='Banker Type', readonly=True)
+
+    current_month_rank = fields.Integer(string='Current Month Rank', readonly=True)
+    previous_month_rank = fields.Integer(string='Previous Month Rank', readonly=True)
+    rank_movement = fields.Integer(string='Rank Movement', readonly=True)
+    latest_overall_score = fields.Float(string='Latest Performance Score', readonly=True)
+    coaching_priority = fields.Selection([
+        ('low', 'Low'),
+        ('medium', 'Medium'),
+        ('high', 'High'),
+        ('critical', 'Critical')
+    ], string='Coaching Priority', readonly=True)
+    ai_coaching_enabled = fields.Boolean(string='AI Coaching Enabled', readonly=True)
+
+    # Skills & development fields
+    skill_count = fields.Integer(string='Skills', readonly=True)
+    avg_skill_proficiency = fields.Float(string='Avg. Proficiency', readonly=True)
+    skills_matrix_data = fields.Text(string='Skills Matrix Data', readonly=True)
+    active_development_plan_id = fields.Many2one('hr.development.plan', string='Active Plan', readonly=True)
+    earned_certification_count = fields.Integer(string='Certifications', readonly=True)
+    is_mentor = fields.Boolean(string='Available as Mentor', readonly=True)
+    mentoring_capacity = fields.Integer(string='Mentoring Capacity', readonly=True)
+    career_path_id = fields.Many2one('hr.career.path', string='Career Path', readonly=True)
+    career_goals = fields.Html(string='Career Goals', readonly=True)
+
+
 class HREmployee(models.Model):
     _inherit = 'hr.employee'
 

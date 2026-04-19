@@ -434,6 +434,17 @@ class BFSIActionPlanItem(models.Model):
         string='Item Target Date'
     )
 
+    start_date = fields.Date(
+        string='Start Date',
+        default=lambda self: fields.Date.today(),
+        help='Start date for this action item'
+    )
+
+    target_end_date = fields.Date(
+        string='Target End Date',
+        help='Target completion date for this action item'
+    )
+
     # Progress
     progress = fields.Float(
         string='Progress %',
@@ -495,3 +506,12 @@ class BFSIActionPlanItem(models.Model):
     def action_mark_blocked(self):
         """Mark this item as blocked"""
         self.state = 'blocked'
+
+    @api.onchange('action_plan_id')
+    def _onchange_action_plan_id(self):
+        """Default start_date and target_end_date from parent plan"""
+        if self.action_plan_id:
+            if not self.start_date and self.action_plan_id.commitment_date:
+                self.start_date = self.action_plan_id.commitment_date
+            if not self.target_end_date and self.action_plan_id.target_date:
+                self.target_end_date = self.action_plan_id.target_date

@@ -31,6 +31,8 @@ class HrEmployeePublic(models.Model):
     can_create_invoices = fields.Boolean('Can Create Invoices', readonly=True)
     
     # Facility Assignment
+    healthcare_facility_id = fields.Many2one('health.facility', string='Healthcare Facility', readonly=True)
+    staff_catchment_province_id = fields.Many2one('health.catchment.province', string='Staff Catchment Province', readonly=True)
     primary_facility_id = fields.Many2one('health.facility', string='Primary Facility', readonly=True)
     
     # Availability Settings

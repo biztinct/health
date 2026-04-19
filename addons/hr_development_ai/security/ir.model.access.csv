@@ -75,3 +75,5 @@ access_hr_coaching_session_banker,hr.coaching.session banker,model_hr_coaching_s
 access_hr_skill_banker,hr.skill banker,model_hr_skill,group_bfsi_banker,1,0,0,0
 access_hr_skill_category_banker,hr.skill.category banker,model_hr_skill_category,group_bfsi_banker,1,0,0,0
 access_hr_ai_provider_config_banker,hr.ai.provider.config banker,model_hr_ai_provider_config,group_bfsi_banker,1,0,0,0
+access_bfsi_kpi_integration_user,bfsi.kpi.integration user,model_bfsi_kpi_integration,group_bfsi_banker,1,0,0,0
+access_bfsi_kpi_integration_manager,bfsi.kpi.integration manager,model_bfsi_kpi_integration,group_bfsi_branch_manager,1,1,1,1

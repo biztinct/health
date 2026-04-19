@@ -26,7 +26,7 @@
                             <i class="fa fa-bolt"/>
                         </div>
                         <div>
-                            <h1 class="ai-dash-title">AI-Powered Performance Dashboard</h1>
+                            <h1 class="ai-dash-title">Business Impact Dashboard</h1>
                             <p class="ai-dash-subtitle" t-if="state.branch.name">
                                 <i class="fa fa-building"/> <t t-esc="state.branch.name"/>
                                 <span t-if="state.branch.region" class="ai-dash-region">

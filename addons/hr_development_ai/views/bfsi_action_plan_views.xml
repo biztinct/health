@@ -161,9 +161,11 @@
                                         <field name="kpi_category"/>
                                         <field name="specific_kpi"/>
                                         <field name="priority"/>
+                                        <field name="start_date"/>
+                                        <field name="target_end_date"/>
                                         <field name="progress" widget="progressbar"/>
                                         <field name="state" widget="badge"/>
-                                        <button name="action_mark_complete" type="object" string="Complete" icon="fa-check" class="btn-link text-success" invisible="state == 'completed'"/>
+                                        <button name="action_mark_complete" type="object" string="✓ Complete" class="btn btn-success btn-sm" invisible="state == 'completed'"/>
                                     </list>
                                     <form>
                                         <div class="vu-section-grid">
