@@ -65,7 +65,7 @@
         name="Strategic Selection"
         parent="menu_bfsi_coaching"
         action="action_bfsi_strategic_selection"
-        sequence="0"
+        sequence="2"
         groups="hr_development_ai.group_bfsi_branch_manager"/>
 
     <menuitem
@@ -78,10 +78,10 @@
 
     <menuitem
         id="menu_bfsi_action_plans"
-        name="Action Plans"
+        name="Team Action Plans"
         parent="menu_bfsi_coaching"
         action="action_bfsi_action_plan"
-        sequence="2"/>
+        sequence="3"/>
 
     <menuitem
         id="menu_bfsi_my_action_plans"

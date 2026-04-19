@@ -70,4 +70,40 @@
         <field name="perm_unlink" eval="False"/>
     </record>
 
+    <!-- Manager: See team Performance KPIs (same branch) -->
+    <record id="bfsi_kpi_manager_rule" model="ir.rule">
+        <field name="name">BFSI: Manager sees team KPIs (same branch)</field>
+        <field name="model_id" ref="model_bfsi_performance_kpi"/>
+        <field name="domain_force">[('employee_id.branch_id.id', '=', user.employee_id.branch_id.id)]</field>
+        <field name="groups" eval="[(4, ref('group_bfsi_branch_manager'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+    <!-- Manager: See team Coaching Sessions (same branch) -->
+    <record id="bfsi_coaching_session_manager_rule" model="ir.rule">
+        <field name="name">BFSI: Manager sees team coaching sessions (same branch)</field>
+        <field name="model_id" ref="model_hr_coaching_session"/>
+        <field name="domain_force">[('employee_id.branch_id.id', '=', user.employee_id.branch_id.id)]</field>
+        <field name="groups" eval="[(4, ref('group_bfsi_branch_manager'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+    <!-- Manager: See team Action Plans (same branch) -->
+    <record id="bfsi_action_plan_manager_rule" model="ir.rule">
+        <field name="name">BFSI: Manager sees team action plans (same branch)</field>
+        <field name="model_id" ref="model_bfsi_action_plan"/>
+        <field name="domain_force">[('employee_id.branch_id.id', '=', user.employee_id.branch_id.id)]</field>
+        <field name="groups" eval="[(4, ref('group_bfsi_branch_manager'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
 </odoo>

@@ -310,7 +310,7 @@
                                                         <tr style="cursor:pointer;"
                                                             t-on-click="() => this.openRecord('hr.coaching.session', session.id)">
                                                             <td style="white-space:nowrap; font-size:0.75rem; color:#6B7280;">
-                                                                <t t-esc="session.session_date || '-'"/>
+                                                                <t t-esc="(session.session_date || '-').toString().split(' ')[0]"/>
                                                             </td>
                                                             <td>
                                                                 <div class="bfsi-list-item-title" style="white-space:normal;">
