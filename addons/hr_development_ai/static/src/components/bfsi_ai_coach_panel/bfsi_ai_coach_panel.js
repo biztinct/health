@@ -104,35 +104,30 @@ export class BfsiAiCoachPanel extends Component {
      */
     async loadUserContext() {
         try {
-            const userId = user.userId;
+            // Use server-side method that uses sudo() to bypass
+            // hr.employee public profile field restrictions
+            const ctx = await this.orm.call(
+                'hr.employee',
+                'get_dashboard_context',
+                []
+            );
 
-            // Try reading full BFSI fields first
-            let employees = [];
-            try {
-                employees = await this.orm.searchRead(
-                    'hr.employee',
-                    [['user_id', '=', userId]],
-                    ['id', 'name', 'branch_id', 'banker_type', 'job_id', 'department_id',
-                        'current_month_rank', 'rank_movement', 'latest_overall_score',
-                        'coaching_priority', 'ai_coaching_enabled'],
-                    { limit: 1 }
-                );
-            } catch (_fieldError) {
-                // Fallback: public profile may restrict custom fields
-                console.warn('AI Coach: Full fields not accessible, using basic fields');
-                employees = await this.orm.searchRead(
-                    'hr.employee',
-                    [['user_id', '=', userId]],
-                    ['id', 'name'],
-                    { limit: 1 }
-                );
+            if (ctx.error) {
+                console.warn('AI Coach: No employee record found');
+                return;
             }
 
-            if (employees.length > 0) {
-                this.state.employeeData = employees[0];
-                this.isManager = employees[0].banker_type === 'branch_manager' ||
-                    employees[0].banker_type === 'regional_manager';
-            }
+            this.state.employeeData = {
+                id: ctx.id,
+                name: ctx.name,
+                branch_id: ctx.branch_id ? [ctx.branch_id, ctx.branch_name] : false,
+                banker_type: ctx.banker_type,
+                current_month_rank: ctx.current_month_rank,
+                rank_movement: ctx.rank_movement,
+                latest_overall_score: ctx.latest_overall_score,
+                coaching_priority: ctx.coaching_priority,
+            };
+            this.isManager = ctx.is_manager || false;
         } catch (error) {
             console.error('Error loading user context:', error);
         }

@@ -71,3 +71,7 @@ access_bfsi_coaching_strategy_manager,bfsi.coaching.strategy manager,model_bfsi_
 access_bfsi_coaching_roleplay_wizard_user,bfsi.coaching.roleplay.wizard user,model_bfsi_coaching_roleplay_wizard,group_bfsi_branch_manager,1,1,1,1
 access_bfsi_progress_wizard_user,bfsi.action.plan.progress.wizard user,model_bfsi_action_plan_progress_wizard,group_bfsi_banker,1,1,1,1
 access_bfsi_progress_wizard_manager,bfsi.action.plan.progress.wizard manager,model_bfsi_action_plan_progress_wizard,group_bfsi_branch_manager,1,1,1,1
+access_hr_coaching_session_banker,hr.coaching.session banker,model_hr_coaching_session,group_bfsi_banker,1,1,1,0
+access_hr_skill_banker,hr.skill banker,model_hr_skill,group_bfsi_banker,1,0,0,0
+access_hr_skill_category_banker,hr.skill.category banker,model_hr_skill_category,group_bfsi_banker,1,0,0,0
+access_hr_ai_provider_config_banker,hr.ai.provider.config banker,model_hr_ai_provider_config,group_bfsi_banker,1,0,0,0

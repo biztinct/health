@@ -632,8 +632,12 @@ class HREmployee(models.Model):
         """
         self.ensure_one()
 
+        # Use sudo() to bypass public profile field restrictions
+        # so bankers can read their own performance data internally
+        emp_sudo = self.sudo()
+
         # Get employee performance context
-        perf_context = self.get_performance_context_for_ai()
+        perf_context = emp_sudo.get_performance_context_for_ai()
 
         # Merge with provided context
         full_context = {**perf_context, **(context or {})}
@@ -799,3 +803,69 @@ Coaching Priority: {context.get('coaching_priority', 'N/A')}
                 {'type': 'check_kpis', 'label': 'Check My KPIs'},
                 {'type': 'action_plan', 'label': 'View Action Plan'}
             ]
+
+    @api.model
+    def get_dashboard_context(self):
+        """Get dashboard context for the current user.
+        
+        Uses sudo() to bypass hr.employee public profile field restrictions
+        so bankers can read their own performance data.
+        
+        Returns dict with employee data, role detection, and for managers: team data.
+        """
+        user_id = self.env.uid
+        employee = self.env['hr.employee'].sudo().search(
+            [('user_id', '=', user_id)], limit=1
+        )
+        
+        if not employee:
+            return {'error': 'No employee record found'}
+        
+        result = {
+            'id': employee.id,
+            'name': employee.name,
+            'branch_id': employee.branch_id.id if employee.branch_id else False,
+            'branch_name': employee.branch_id.name if employee.branch_id else '',
+            'banker_type': employee.banker_type or '',
+            'current_month_rank': employee.current_month_rank,
+            'previous_month_rank': employee.previous_month_rank,
+            'rank_movement': employee.rank_movement,
+            'latest_overall_score': employee.latest_overall_score,
+            'coaching_priority': employee.coaching_priority or 'low',
+            'coaching_sessions_received': employee.coaching_sessions_received,
+            'active_action_plan_count': employee.active_action_plan_count,
+            'action_plan_completion_rate': employee.action_plan_completion_rate,
+        }
+        
+        # Detect role
+        manager_types = ['branch_manager', 'regional_manager']
+        is_manager = employee.banker_type in manager_types
+        result['is_manager'] = is_manager
+        
+        if is_manager and employee.branch_id:
+            # Load team data for managers
+            team = self.env['hr.employee'].sudo().search([
+                ('branch_id', '=', employee.branch_id.id),
+                ('banker_type', 'not in', manager_types),
+                ('id', '!=', employee.id),
+            ], order='current_month_rank asc')
+            
+            team_data = []
+            for member in team:
+                team_data.append({
+                    'id': member.id,
+                    'name': member.name,
+                    'job_id': [member.job_id.id, member.job_id.name] if member.job_id else False,
+                    'banker_type': member.banker_type or '',
+                    'current_month_rank': member.current_month_rank,
+                    'previous_month_rank': member.previous_month_rank,
+                    'rank_movement': member.rank_movement,
+                    'latest_overall_score': member.latest_overall_score,
+                    'coaching_priority': member.coaching_priority or 'low',
+                    'coaching_sessions_received': member.coaching_sessions_received,
+                    'active_action_plan_count': member.active_action_plan_count,
+                    'action_plan_completion_rate': member.action_plan_completion_rate,
+                })
+            result['team_members'] = team_data
+        
+        return result

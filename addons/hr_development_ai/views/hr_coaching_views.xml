@@ -12,8 +12,8 @@
                     <button name="action_complete_session" string="Complete Session" type="object" class="oe_highlight" invisible="state != 'in_progress'"/>
                     <button name="action_generate_ai_summary" string="Generate AI Summary" type="object" invisible="state != 'completed'"/>
                     <button name="action_capture_kpi_context" string="Capture KPI Context" type="object" icon="fa-camera" invisible="state not in ['in_progress', 'completed']"/>
-                    <button name="action_generate_action_items_ai" string="Generate Action Items (AI)" type="object" icon="fa-magic" class="btn-success" invisible="state not in ['in_progress', 'completed']"/>
-                    <button name="action_create_action_plan" string="Create Action Plan" type="object" icon="fa-tasks" invisible="state not in ['in_progress', 'completed']"/>
+                    <button name="action_generate_action_items_ai" string="Generate Action Items (AI)" type="object" icon="fa-magic" class="btn-success" invisible="state not in ['in_progress', 'completed'] or action_plan_id"/>
+                    <button name="action_create_action_plan" string="Action Plan" type="object" icon="fa-tasks" invisible="state not in ['in_progress', 'completed']"/>
                     <button name="action_cancel_session" string="Cancel" type="object" invisible="state in ['completed', 'cancelled']"/>
                     <field name="state" widget="statusbar" statusbar_visible="scheduled,in_progress,completed"/>
                 </header>
@@ -48,6 +48,7 @@
                                     <field name="topic"/>
                                     <field name="session_date"/>
                                     <field name="duration"/>
+                                    <field name="coaching_strategy_id" domain="[('banker_id', '=', employee_id)]" options="{'no_create': True}"/>
                                 </group>
                             </div>
                             <div class="vu-card">
@@ -84,15 +85,6 @@
                                     </div>
                                 </div>
                                 <div class="vu-section-grid">
-                                    <div class="vu-card">
-                                        <div class="vu-card__title">
-                                            <span class="vu-section__icon" data-icon="clipboard-list"/>
-                                            <span>Linked Strategy</span>
-                                        </div>
-                                        <group>
-                                            <field name="coaching_strategy_id" domain="[('banker_id', '=', employee_id)]" options="{'no_create': True}"/>
-                                        </group>
-                                    </div>
                                     <div class="vu-card">
                                         <div class="vu-card__title">
                                             <span class="vu-section__icon" data-icon="activity"/>
@@ -260,10 +252,10 @@
                                     <span class="vu-section__icon" data-icon="book-open"/>
                                     <span>Skills Covered in Session</span>
                                 </div>
-                                <field name="skill_ids">
+                                <field name="skill_ids" domain="[('skill_type_id.name', 'in', ['Soft Skills', 'Marketing'])]">
                                     <list>
                                         <field name="name"/>
-                                        <field name="category_id"/>
+                                        <field name="skill_type_id"/>
                                     </list>
                                 </field>
                             </div>

@@ -22,7 +22,330 @@
             </div>
 
             <!-- Main Dashboard -->
-            <div t-else="" class="bfsi-dashboard-content">
+            <div t-elif="state.isBankerMode and state.myPerformance" class="bfsi-dashboard-content">
+
+                <!-- ═══ BANKER "MY PERFORMANCE" HEADER ═══ -->
+                <div class="bfsi-dashboard-header">
+                    <div class="bfsi-header-left">
+                        <div style="display:flex; align-items:center; gap:12px;">
+                            <div class="bfsi-header-logo">AI</div>
+                            <div>
+                                <h1 class="bfsi-dash-title">My Performance</h1>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bfsi-header-right">
+                        <div class="bfsi-header-branch">
+                            <div class="bfsi-branch-avatar">
+                                <i class="fa fa-user"/>
+                            </div>
+                            <div>
+                                <div class="bfsi-branch-label"><t t-esc="state.managerName"/></div>
+                                <div class="bfsi-branch-name"><t t-esc="state.branchName || 'My Branch'"/></div>
+                            </div>
+                        </div>
+                        <button class="bfsi-refresh-btn" t-on-click="refresh" title="Refresh">
+                            <i class="fa fa-refresh"/>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="bfsi-layout-wrapper">
+                    <div class="bfsi-main-content" style="max-width: 100%;">
+
+                        <!-- KPI Summary Cards (full width row) -->
+                        <div class="bfsi-kpi-title">Performance Summary</div>
+                        <div class="bfsi-summary-cards">
+                            <!-- My Score -->
+                            <div class="bfsi-summary-card bfsi-avg-score">
+                                <div class="bfsi-kpi-top">
+                                    <div>
+                                        <div class="bfsi-kpi-heading">My Score</div>
+                                        <div class="bfsi-card-value">
+                                            <t t-esc="Math.round(state.myPerformance.score)"/>%
+                                            <svg class="bfsi-kpi-ring" viewBox="0 0 36 36">
+                                                <circle class="bfsi-ring-bg" cx="18" cy="18" r="14"/>
+                                                <circle t-attf-class="bfsi-ring-fill {{ getScoreRingClass(state.myPerformance.score) }}"
+                                                        cx="18" cy="18" r="14"
+                                                        stroke-dasharray="87.96"
+                                                        t-attf-style="stroke-dashoffset: {{ 87.96 - (87.96 * (state.myPerformance.score || 0) / 100) }}"/>
+                                            </svg>
+                                        </div>
+                                    </div>
+                                    <div class="bfsi-card-icon bfsi-icon-info">
+                                        <i class="fa fa-line-chart"/>
+                                    </div>
+                                </div>
+                                <div class="bfsi-kpi-subtitle">Overall Performance</div>
+                            </div>
+
+                            <!-- My Rank -->
+                            <div class="bfsi-summary-card bfsi-needs-coaching">
+                                <div class="bfsi-kpi-top">
+                                    <div>
+                                        <div class="bfsi-kpi-heading">Branch Rank</div>
+                                        <div class="bfsi-card-value">#<t t-esc="state.myPerformance.rank"/></div>
+                                    </div>
+                                    <div class="bfsi-card-icon bfsi-icon-primary">
+                                        <i class="fa fa-trophy"/>
+                                    </div>
+                                </div>
+                                <div class="bfsi-kpi-subtitle">
+                                    <t t-set="mv" t-value="getRankMovement(state.myPerformance.movement)"/>
+                                    <span t-attf-class="bfsi-trend {{ mv.class }}">
+                                        <i t-attf-class="fa {{ mv.icon }}"/> <t t-esc="mv.text"/>
+                                    </span> vs last month
+                                </div>
+                            </div>
+
+                            <!-- Coaching Sessions -->
+                            <div class="bfsi-summary-card sessions">
+                                <div class="bfsi-kpi-top">
+                                    <div>
+                                        <div class="bfsi-kpi-heading">Coaching Sessions</div>
+                                        <div class="bfsi-card-value"><t t-esc="state.myPerformance.sessions_count"/></div>
+                                    </div>
+                                    <div class="bfsi-card-icon bfsi-icon-success">
+                                        <i class="fa fa-comments"/>
+                                    </div>
+                                </div>
+                                <div class="bfsi-kpi-subtitle">Sessions Received</div>
+                            </div>
+
+                            <!-- Action Plans -->
+                            <div class="bfsi-summary-card action-plans">
+                                <div class="bfsi-kpi-top">
+                                    <div>
+                                        <div class="bfsi-kpi-heading">Action Plans</div>
+                                        <div class="bfsi-card-value"><t t-esc="state.myPerformance.plans_count"/></div>
+                                    </div>
+                                    <div class="bfsi-card-icon bfsi-icon-danger">
+                                        <i class="fa fa-tasks"/>
+                                    </div>
+                                </div>
+                                <div class="bfsi-kpi-subtitle">
+                                    <t t-esc="Math.round(state.myPerformance.plan_completion)"/>% complete
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- ═══ MINI TREND CHARTS ROW ═══ -->
+                        <div class="bfsi-mini-charts-row">
+                            <div class="bfsi-mini-chart-card">
+                                <div class="bfsi-mini-chart-header">
+                                    <span class="bfsi-mini-chart-label">Score Trend</span>
+                                    <span t-attf-class="bfsi-mini-chart-value {{ state.myPerformance.score >= 70 ? 'positive' : 'negative' }}">
+                                        <t t-esc="Math.round(state.myPerformance.score)"/>%
+                                    </span>
+                                </div>
+                                <div class="bfsi-mini-chart-canvas-wrap">
+                                    <canvas id="banker_score_trend"/>
+                                </div>
+                            </div>
+                            <div class="bfsi-mini-chart-card">
+                                <div class="bfsi-mini-chart-header">
+                                    <span class="bfsi-mini-chart-label">Revenue</span>
+                                    <span class="bfsi-mini-chart-value positive">
+                                        <t t-if="state.myPerformance.kpi_history and state.myPerformance.kpi_history.length > 0">
+                                            <t t-esc="(state.myPerformance.kpi_history[0].revenue || 0).toLocaleString()"/>
+                                        </t>
+                                    </span>
+                                </div>
+                                <div class="bfsi-mini-chart-canvas-wrap">
+                                    <canvas id="banker_revenue_trend"/>
+                                </div>
+                            </div>
+                            <div class="bfsi-mini-chart-card">
+                                <div class="bfsi-mini-chart-header">
+                                    <span class="bfsi-mini-chart-label">Rank Trend</span>
+                                    <span t-attf-class="bfsi-mini-chart-value {{ state.myPerformance.movement > 0 ? 'positive' : state.myPerformance.movement &lt; 0 ? 'negative' : '' }}">
+                                        #<t t-esc="state.myPerformance.rank"/>
+                                    </span>
+                                </div>
+                                <div class="bfsi-mini-chart-canvas-wrap">
+                                    <canvas id="banker_rank_trend"/>
+                                </div>
+                            </div>
+                            <div class="bfsi-mini-chart-card">
+                                <div class="bfsi-mini-chart-header">
+                                    <span class="bfsi-mini-chart-label">Conversions</span>
+                                    <span class="bfsi-mini-chart-value">
+                                        <t t-if="state.myPerformance.kpi_history and state.myPerformance.kpi_history.length > 0">
+                                            <t t-esc="state.myPerformance.kpi_history[0].conversions || 0"/>
+                                        </t>
+                                    </span>
+                                </div>
+                                <div class="bfsi-mini-chart-canvas-wrap">
+                                    <canvas id="banker_conversions_trend"/>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- ═══ RESPONSIVE 2-COLUMN GRID ═══ -->
+                        <div class="bfsi-banker-grid">
+
+                            <!-- LEFT COLUMN: KPI History + Action Plans -->
+                            <div class="bfsi-banker-col-main">
+                                <div class="bfsi-section-card">
+                                    <div class="bfsi-section-card-header">
+                                        <i class="fa fa-history"/>
+                                        <span>KPI History</span>
+                                    </div>
+                                    <div class="bfsi-section-card-body bfsi-scrollable">
+                                        <t t-if="state.myPerformance.kpi_history and state.myPerformance.kpi_history.length > 0">
+                                            <t t-foreach="groupedKpiHistory" t-as="group" t-key="group.sortKey">
+                                                <!-- Month Group Header -->
+                                                <div class="bfsi-group-header"
+                                                     t-on-click="() => this.toggleKpiGroup(group.label)">
+                                                    <div style="display:flex; align-items:center; gap:6px;">
+                                                        <i t-attf-class="fa {{ isKpiGroupCollapsed(group.label) ? 'fa-chevron-right' : 'fa-chevron-down' }}"
+                                                           style="font-size:0.65rem; color:#6366F1; width:10px;"/>
+                                                        <span style="font-weight:700; font-size:0.82rem; color:#1e1b4b;">
+                                                            <t t-esc="group.label"/>
+                                                        </span>
+                                                    </div>
+                                                    <span class="bfsi-group-badge">
+                                                        <t t-esc="group.items.length"/>
+                                                    </span>
+                                                </div>
+                                                <!-- Month Group Table -->
+                                                <table t-if="!isKpiGroupCollapsed(group.label)" class="bfsi-compact-table">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Date</th>
+                                                            <th style="text-align:center;">Score</th>
+                                                            <th style="text-align:center;">Revenue</th>
+                                                            <th style="text-align:center;">Conv.</th>
+                                                            <th style="text-align:center;">Rank</th>
+                                                            <th style="text-align:center;">Priority</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <t t-foreach="group.items" t-as="kpi" t-key="kpi.id">
+                                                            <tr>
+                                                                <td><t t-esc="kpi.period_date || '-'"/></td>
+                                                                <td style="text-align:center;">
+                                                                    <span t-attf-class="bfsi-priority-badge {{ getScoreBadgeClass(kpi.overall_score) }}">
+                                                                        <t t-esc="Math.round(kpi.overall_score || 0)"/>%
+                                                                    </span>
+                                                                </td>
+                                                                <td style="text-align:center;"><t t-esc="kpi.revenue || '-'"/></td>
+                                                                <td style="text-align:center;"><t t-esc="kpi.conversions || '-'"/></td>
+                                                                <td style="text-align:center;">#<t t-esc="kpi.branch_rank || '-'"/></td>
+                                                                <td style="text-align:center;">
+                                                                    <span t-attf-class="bfsi-priority-badge {{ kpi.coaching_priority || 'low' }}">
+                                                                        <t t-esc="(kpi.coaching_priority || 'low').toUpperCase()"/>
+                                                                    </span>
+                                                                </td>
+                                                            </tr>
+                                                        </t>
+                                                    </tbody>
+                                                </table>
+                                            </t>
+                                        </t>
+                                        <div t-else="" class="bfsi-empty-state">
+                                            <i class="fa fa-history"/>
+                                            <p>No KPI history available.</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- My Action Plans (below KPI History) -->
+                                <div class="bfsi-section-card" style="margin-top:16px;">
+                                    <div class="bfsi-section-card-header">
+                                        <i class="fa fa-tasks"/>
+                                        <span>My Action Plans</span>
+                                    </div>
+                                    <div class="bfsi-section-card-body">
+                                        <t t-if="state.myPerformance.plans and state.myPerformance.plans.length > 0">
+                                            <t t-foreach="state.myPerformance.plans" t-as="plan" t-key="plan.id">
+                                                <div class="bfsi-list-item"
+                                                     t-on-click="() => this.openRecord('bfsi.action.plan', plan.id)">
+                                                    <div style="flex:1; min-width:0;">
+                                                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+                                                            <div class="bfsi-list-item-title"><t t-esc="plan.name"/></div>
+                                                            <span t-attf-class="bfsi-plan-status {{ plan.state }}"><t t-esc="plan.state"/></span>
+                                                        </div>
+                                                        <div class="bfsi-plan-progress">
+                                                            <div class="bfsi-plan-progress-fill" t-attf-style="width: {{ plan.progress_percentage || 0 }}%"/>
+                                                        </div>
+                                                        <div style="font-size:0.7rem; color:#9CA3AF; margin-top:3px;">
+                                                            <t t-esc="Math.round(plan.progress_percentage || 0)"/>% ·
+                                                            <t t-esc="plan.action_item_count || 0"/> items
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </t>
+                                        </t>
+                                        <div t-else="" class="bfsi-empty-state">
+                                            <i class="fa fa-tasks"/>
+                                            <p>No action plans yet.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- RIGHT COLUMN: Coaching Sessions -->
+                            <div class="bfsi-banker-col-side">
+
+                                <!-- Recent Coaching Sessions (table with date column) -->
+                                <div class="bfsi-section-card">
+                                    <div class="bfsi-section-card-header">
+                                        <i class="fa fa-comments"/>
+                                        <span>Recent Coaching Sessions</span>
+                                    </div>
+                                    <div class="bfsi-section-card-body bfsi-scrollable">
+                                        <t t-if="state.myPerformance.sessions and state.myPerformance.sessions.length > 0">
+                                            <table class="bfsi-compact-table">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Date</th>
+                                                        <th>Session</th>
+                                                        <th>Type</th>
+                                                        <th style="text-align:center;">Status</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <t t-foreach="state.myPerformance.sessions" t-as="session" t-key="session.id">
+                                                        <tr style="cursor:pointer;"
+                                                            t-on-click="() => this.openRecord('hr.coaching.session', session.id)">
+                                                            <td style="white-space:nowrap; font-size:0.75rem; color:#6B7280;">
+                                                                <t t-esc="session.session_date || '-'"/>
+                                                            </td>
+                                                            <td>
+                                                                <div class="bfsi-list-item-title" style="white-space:normal;">
+                                                                    <t t-esc="session.name || 'Coaching Session'"/>
+                                                                </div>
+                                                            </td>
+                                                            <td style="font-size:0.75rem; color:#6B7280;">
+                                                                <t t-esc="session.session_type || '-'"/>
+                                                            </td>
+                                                            <td style="text-align:center;">
+                                                                <span t-attf-class="bfsi-plan-status {{ session.state }}">
+                                                                    <t t-esc="session.state"/>
+                                                                </span>
+                                                            </td>
+                                                        </tr>
+                                                    </t>
+                                                </tbody>
+                                            </table>
+                                        </t>
+                                        <div t-else="" class="bfsi-empty-state">
+                                            <i class="fa fa-comments"/>
+                                            <p>No coaching sessions yet.</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <!-- Manager Dashboard -->
+            <div t-elif="!state.isBankerMode" class="bfsi-dashboard-content">
 
                 <!-- ═══ COMPACT GRADIENT HEADER ═══ -->
                 <div class="bfsi-dashboard-header">

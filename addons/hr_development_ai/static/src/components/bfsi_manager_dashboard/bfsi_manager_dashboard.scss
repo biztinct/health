@@ -38,11 +38,16 @@
 .bfsi-manager-dashboard {
     font-family: var(--bfsi-font);
     width: 100%;
-    min-height: 100%;
+    height: 100vh;
     background: var(--bfsi-bg);
     padding: 0;
     overflow-y: auto;
     overflow-x: hidden;
+}
+
+/* Override Odoo action container to allow scrolling */
+.o_action_manager .o_action .bfsi-manager-dashboard {
+    height: calc(100vh - 46px); /* subtract navbar height */
 }
 
 /* Styled scrollbar for dashboard */
@@ -1782,4 +1787,248 @@
     letter-spacing: 0.3px;
     font-weight: 600;
     margin-top: 6px;
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   BANKER 2-COLUMN RESPONSIVE GRID
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+.bfsi-banker-grid {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr;
+    gap: 16px;
+    padding: 0 28px 28px;
+    align-items: start;
+}
+
+@media (max-width: 1024px) {
+    .bfsi-banker-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.bfsi-banker-col-side {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+/* Section Card (white card container) */
+.bfsi-section-card {
+    background: var(--bfsi-card-bg);
+    border-radius: var(--bfsi-card-radius);
+    box-shadow: var(--bfsi-card-shadow);
+    border: 1px solid var(--bfsi-border);
+    overflow: hidden;
+}
+
+.bfsi-section-card-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 14px 16px;
+    font-weight: 700;
+    font-size: 0.88rem;
+    color: var(--bfsi-text-primary);
+    border-bottom: 2px solid #f0f0f5;
+}
+
+.bfsi-section-card-header i {
+    color: var(--bfsi-primary);
+    font-size: 0.9rem;
+}
+
+.bfsi-section-card-body {
+    padding: 0;
+}
+
+.bfsi-section-card-body.bfsi-scrollable {
+    max-height: 420px;
+    overflow-y: auto;
+}
+
+.bfsi-section-card-body.bfsi-scrollable::-webkit-scrollbar {
+    width: 5px;
+}
+
+.bfsi-section-card-body.bfsi-scrollable::-webkit-scrollbar-thumb {
+    background: #c4b5fd;
+    border-radius: 3px;
+}
+
+/* Month Group Header */
+.bfsi-group-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 14px;
+    cursor: pointer;
+    user-select: none;
+    border-bottom: 1px solid #EEF2FF;
+    transition: background 0.1s;
+}
+
+.bfsi-group-header:hover {
+    background: #FAFAFF;
+}
+
+.bfsi-group-badge {
+    font-size: 0.68rem;
+    background: #EEF2FF;
+    color: #4F46E5;
+    padding: 1px 8px;
+    border-radius: 10px;
+    font-weight: 600;
+}
+
+/* Compact Table inside section cards */
+.bfsi-compact-table {
+    width: 100%;
+    font-size: 0.78rem;
+    border-collapse: collapse;
+}
+
+.bfsi-compact-table thead th {
+    padding: 6px 10px;
+    color: #6B7280;
+    font-weight: 600;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    border-bottom: 1px solid #f0f0f5;
+}
+
+.bfsi-compact-table tbody td {
+    padding: 6px 10px;
+    border-bottom: 1px solid #fafafa;
+}
+
+.bfsi-compact-table tbody tr:hover {
+    background: #FAFAFF;
+}
+
+/* List Item (sessions / plans) */
+.bfsi-list-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    border-bottom: 1px solid #f5f5f5;
+    cursor: pointer;
+    transition: background 0.12s;
+}
+
+.bfsi-list-item:hover {
+    background: #FAFAFF;
+}
+
+.bfsi-list-item:last-child {
+    border-bottom: none;
+}
+
+.bfsi-list-item-title {
+    font-weight: 600;
+    font-size: 0.82rem;
+    color: var(--bfsi-text-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.bfsi-list-item-meta {
+    font-size: 0.72rem;
+    color: var(--bfsi-text-muted);
+    margin-top: 2px;
+}
+
+/* Empty state */
+.bfsi-empty-state {
+    text-align: center;
+    padding: 28px 16px;
+    color: #9CA3AF;
+}
+
+.bfsi-empty-state i {
+    font-size: 1.8rem;
+    margin-bottom: 6px;
+    display: block;
+}
+
+.bfsi-empty-state p {
+    font-size: 0.82rem;
+    margin: 0;
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   BANKER MINI TREND CHARTS
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+.bfsi-mini-charts-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+    padding: 0 28px 16px;
+}
+
+@media (max-width: 1024px) {
+    .bfsi-mini-charts-row {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 600px) {
+    .bfsi-mini-charts-row {
+        grid-template-columns: 1fr;
+    }
+}
+
+.bfsi-mini-chart-card {
+    background: var(--bfsi-card-bg);
+    border-radius: 14px;
+    padding: 14px 16px 8px;
+    box-shadow: var(--bfsi-card-shadow);
+    border: 1px solid var(--bfsi-border);
+    transition: box-shadow 0.2s, transform 0.2s;
+}
+
+.bfsi-mini-chart-card:hover {
+    box-shadow: var(--bfsi-card-hover-shadow);
+    transform: translateY(-2px);
+}
+
+.bfsi-mini-chart-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 6px;
+}
+
+.bfsi-mini-chart-label {
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: var(--bfsi-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+}
+
+.bfsi-mini-chart-value {
+    font-size: 0.95rem;
+    font-weight: 800;
+    color: var(--bfsi-text-primary);
+}
+
+.bfsi-mini-chart-value.positive {
+    color: var(--bfsi-success);
+}
+
+.bfsi-mini-chart-value.negative {
+    color: var(--bfsi-danger);
+}
+
+.bfsi-mini-chart-canvas-wrap {
+    position: relative;
+    width: 100%;
+    height: 60px;
+}
+
+.bfsi-mini-chart-canvas-wrap canvas {
+    max-height: 60px !important;
 }

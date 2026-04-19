@@ -118,6 +118,11 @@ export class BfsiManagerDashboard extends Component {
             plansFilter: 'this_month',
             plansDateFrom: '',
             plansDateTo: '',
+
+            // Banker self-performance mode
+            isBankerMode: false,
+            bankerSelf: null,
+            myPerformance: null,
         });
 
         onWillStart(async () => {
@@ -128,7 +133,11 @@ export class BfsiManagerDashboard extends Component {
         onMounted(async () => {
             this.state.isLoading = false;
             // Render dashboard charts after data is loaded
-            await this.renderDashboardCharts();
+            if (this.state.isBankerMode) {
+                await this.renderBankerMiniCharts();
+            } else {
+                await this.renderDashboardCharts();
+            }
         });
     }
 
@@ -192,74 +201,285 @@ export class BfsiManagerDashboard extends Component {
 
     async loadManagerContext() {
         try {
-            const userId = user.userId;
-            const employees = await this.orm.searchRead(
+            // Use server-side method that uses sudo() to bypass
+            // hr.employee public profile field restrictions
+            const ctx = await this.orm.call(
                 'hr.employee',
-                [['user_id', '=', userId]],
-                ['id', 'name', 'branch_id', 'banker_type'],
-                { limit: 1 }
+                'get_dashboard_context',
+                []
             );
 
-            if (employees.length > 0 && employees[0].branch_id) {
-                this.state.managerId = employees[0].id;
-                this.state.managerName = employees[0].name;
-                this.state.branchId = employees[0].branch_id[0];
-                this.state.branchName = employees[0].branch_id[1];
+            if (ctx.error) {
+                this.state.error = ctx.error;
+                return;
+            }
+
+            this.state.managerId = ctx.id;
+            this.state.managerName = ctx.name;
+            this.state.branchId = ctx.branch_id || false;
+            this.state.branchName = ctx.branch_name || '';
+
+            if (ctx.is_manager) {
+                this.state.isBankerMode = false;
+
+                // Populate team data from server context
+                this.state.teamMembers = ctx.team_members || [];
+
+                // Calculate summary metrics
+                const bankers = this.state.teamMembers;
+                this.state.needsCoachingCount = bankers.filter(
+                    b => b.coaching_priority === 'high' || b.coaching_priority === 'critical'
+                ).length;
+
+                if (bankers.length > 0) {
+                    this.state.avgTeamScore = bankers.reduce(
+                        (sum, b) => sum + (b.latest_overall_score || 0), 0
+                    ) / bankers.length;
+
+                    this.state.totalSessions = bankers.reduce(
+                        (sum, b) => sum + (b.coaching_sessions_received || 0), 0
+                    );
+
+                    const withPlans = bankers.filter(b => b.active_action_plan_count > 0);
+                    if (withPlans.length > 0) {
+                        this.state.actionPlanCompletion = withPlans.reduce(
+                            (sum, b) => sum + (b.action_plan_completion_rate || 0), 0
+                        ) / withPlans.length;
+                    }
+                }
+            } else {
+                // Banker mode - show personal dashboard
+                this.state.isBankerMode = true;
+                this.state.bankerSelf = ctx;
             }
         } catch (error) {
             console.error('Error loading manager context:', error);
-            this.state.error = 'Failed to load manager information';
+            this.state.error = 'Failed to load dashboard data';
         }
     }
 
     async loadTeamData() {
-        if (!this.state.branchId) {
-            this.state.error = 'No branch assigned';
+        // For manager mode, team data is already loaded in loadManagerContext
+        if (!this.state.isBankerMode) {
             return;
         }
 
+        // Banker mode: load personal performance data
+        await this._loadBankerSelfData();
+    }
+
+    /* ━━━ BANKER SELF-PERFORMANCE DATA ━━━ */
+
+    async _loadBankerSelfData() {
         try {
-            const bankers = await this.orm.searchRead(
-                'hr.employee',
-                [
-                    ['branch_id', '=', this.state.branchId],
-                    ['banker_type', 'not in', ['branch_manager', 'regional_manager']],
-                    ['id', '!=', this.state.managerId]
-                ],
-                ['id', 'name', 'job_id', 'banker_type', 'current_month_rank',
-                    'previous_month_rank', 'rank_movement', 'latest_overall_score',
-                    'coaching_priority', 'coaching_sessions_received', 'active_action_plan_count',
-                    'action_plan_completion_rate'],
-                { order: 'current_month_rank asc' }
+            const empId = this.state.managerId;
+
+            // Load KPI history
+            const kpis = await this.orm.searchRead(
+                'bfsi.performance.kpi',
+                [['employee_id', '=', empId]],
+                ['overall_score', 'revenue', 'conversions', 'period_date',
+                    'branch_rank', 'rank_movement', 'coaching_priority'],
+                { order: 'period_date desc', limit: 12 }
             );
 
-            this.state.teamMembers = bankers;
-
-            // Calculate summary metrics
-            this.state.needsCoachingCount = bankers.filter(
-                b => b.coaching_priority === 'high' || b.coaching_priority === 'critical'
-            ).length;
-
-            if (bankers.length > 0) {
-                this.state.avgTeamScore = bankers.reduce(
-                    (sum, b) => sum + (b.latest_overall_score || 0), 0
-                ) / bankers.length;
-
-                this.state.totalSessions = bankers.reduce(
-                    (sum, b) => sum + (b.coaching_sessions_received || 0), 0
+            // Load coaching sessions
+            let sessions = [];
+            try {
+                sessions = await this.orm.searchRead(
+                    'hr.coaching.session',
+                    [['employee_id', '=', empId]],
+                    ['name', 'session_date', 'session_type', 'state'],
+                    { order: 'session_date desc', limit: 10 }
                 );
+            } catch (_) { }
 
-                const withPlans = bankers.filter(b => b.active_action_plan_count > 0);
-                if (withPlans.length > 0) {
-                    this.state.actionPlanCompletion = withPlans.reduce(
-                        (sum, b) => sum + (b.action_plan_completion_rate || 0), 0
-                    ) / withPlans.length;
-                }
-            }
+            // Load action plans
+            let plans = [];
+            try {
+                plans = await this.orm.searchRead(
+                    'bfsi.action.plan',
+                    [['employee_id', '=', empId]],
+                    ['name', 'state', 'progress_percentage', 'create_date', 'action_item_count'],
+                    { order: 'create_date desc', limit: 5 }
+                );
+            } catch (_) { }
 
+            const emp = this.state.bankerSelf;
+            this.state.myPerformance = {
+                score: emp.latest_overall_score || 0,
+                rank: emp.current_month_rank || '-',
+                movement: emp.rank_movement || 0,
+                priority: emp.coaching_priority || 'low',
+                sessions_count: emp.coaching_sessions_received || 0,
+                plans_count: emp.active_action_plan_count || 0,
+                plan_completion: emp.action_plan_completion_rate || 0,
+                kpi_history: kpis,
+                sessions: sessions,
+                plans: plans,
+            };
         } catch (error) {
-            console.error('Error loading team data:', error);
-            this.state.error = 'Failed to load team data';
+            console.error('Error loading banker self data:', error);
+            this.state.error = 'Failed to load your performance data';
+        }
+    }
+
+    /**
+     * Group KPI history by month for collapsible display
+     */
+    get groupedKpiHistory() {
+        const kpis = this.state.myPerformance?.kpi_history || [];
+        const groups = {};
+        const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June',
+            'July', 'August', 'September', 'October', 'November', 'December'];
+
+        for (const kpi of kpis) {
+            const dateStr = kpi.period_date || '';
+            if (!dateStr) continue;
+            const parts = dateStr.split('-');
+            const year = parts[0];
+            const monthIdx = parseInt(parts[1], 10) - 1;
+            const monthLabel = `${MONTHS[monthIdx] || parts[1]} ${year}`;
+            if (!groups[monthLabel]) {
+                groups[monthLabel] = { label: monthLabel, sortKey: dateStr.slice(0, 7), items: [], expanded: true };
+            }
+            groups[monthLabel].items.push(kpi);
+        }
+
+        // Sort groups descending
+        return Object.values(groups).sort((a, b) => b.sortKey.localeCompare(a.sortKey));
+    }
+
+    toggleKpiGroup(groupLabel) {
+        // Toggle group expansion in the grouped view
+        if (!this._kpiGroupState) this._kpiGroupState = {};
+        this._kpiGroupState[groupLabel] = !this._kpiGroupState[groupLabel];
+        // Force re-render
+        this.state.myPerformance = { ...this.state.myPerformance };
+    }
+
+    isKpiGroupCollapsed(groupLabel) {
+        if (!this._kpiGroupState) return false;
+        return !!this._kpiGroupState[groupLabel];
+    }
+
+    /* ━━━ BANKER MINI TREND CHARTS ━━━ */
+
+    async renderBankerMiniCharts() {
+        const kpis = this.state.myPerformance?.kpi_history || [];
+        if (!kpis.length) return;
+        if (!await loadChartJS()) return;
+
+        // Wait for DOM
+        await new Promise(r => setTimeout(r, 300));
+
+        // Reverse so oldest first for chart X axis
+        const sorted = [...kpis].reverse();
+        const labels = sorted.map(k => {
+            const d = k.period_date || '';
+            return d.slice(5); // MM-DD
+        });
+
+        const miniOpts = (yReverse = false) => ({
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false }, tooltip: { enabled: true, mode: 'index', intersect: false } },
+            scales: {
+                x: { display: false },
+                y: { display: false, reverse: yReverse },
+            },
+            elements: {
+                point: { radius: 0, hoverRadius: 3 },
+                line: { tension: 0.4, borderWidth: 2 },
+                bar: { borderRadius: 3 },
+            },
+            interaction: { mode: 'nearest', axis: 'x', intersect: false },
+        });
+
+        // 1) Score Trend (area)
+        const scoreCanvas = document.getElementById('banker_score_trend');
+        if (scoreCanvas) {
+            destroyChart('banker_score');
+            const ctx = scoreCanvas.getContext('2d');
+            const gradient = ctx.createLinearGradient(0, 0, 0, 70);
+            gradient.addColorStop(0, 'rgba(99, 102, 241, 0.3)');
+            gradient.addColorStop(1, 'rgba(99, 102, 241, 0.02)');
+            chartInstances['banker_score'] = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels,
+                    datasets: [{
+                        data: sorted.map(k => Math.round(k.overall_score || 0)),
+                        borderColor: '#6366F1',
+                        backgroundColor: gradient,
+                        fill: true,
+                    }]
+                },
+                options: miniOpts(),
+            });
+        }
+
+        // 2) Revenue Trend (bar)
+        const revCanvas = document.getElementById('banker_revenue_trend');
+        if (revCanvas) {
+            destroyChart('banker_revenue');
+            const ctx = revCanvas.getContext('2d');
+            chartInstances['banker_revenue'] = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels,
+                    datasets: [{
+                        data: sorted.map(k => k.revenue || 0),
+                        backgroundColor: 'rgba(16, 185, 129, 0.5)',
+                        borderColor: '#10B981',
+                        borderWidth: 1,
+                    }]
+                },
+                options: miniOpts(),
+            });
+        }
+
+        // 3) Rank Trend (line - reversed Y so lower=higher)
+        const rankCanvas = document.getElementById('banker_rank_trend');
+        if (rankCanvas) {
+            destroyChart('banker_rank');
+            const ctx = rankCanvas.getContext('2d');
+            const gradient = ctx.createLinearGradient(0, 0, 0, 70);
+            gradient.addColorStop(0, 'rgba(245, 158, 11, 0.25)');
+            gradient.addColorStop(1, 'rgba(245, 158, 11, 0.02)');
+            chartInstances['banker_rank'] = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels,
+                    datasets: [{
+                        data: sorted.map(k => k.branch_rank || 0),
+                        borderColor: '#F59E0B',
+                        backgroundColor: gradient,
+                        fill: true,
+                    }]
+                },
+                options: miniOpts(true), // reversed Y
+            });
+        }
+
+        // 4) Conversions (bar)
+        const convCanvas = document.getElementById('banker_conversions_trend');
+        if (convCanvas) {
+            destroyChart('banker_conv');
+            const ctx = convCanvas.getContext('2d');
+            chartInstances['banker_conv'] = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels,
+                    datasets: [{
+                        data: sorted.map(k => k.conversions || 0),
+                        backgroundColor: 'rgba(124, 58, 237, 0.45)',
+                        borderColor: '#7C3AED',
+                        borderWidth: 1,
+                    }]
+                },
+                options: miniOpts(),
+            });
         }
     }
 

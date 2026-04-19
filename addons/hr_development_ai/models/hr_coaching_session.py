@@ -222,6 +222,30 @@ class HRCoachingSession(models.Model):
             else:
                 session.is_self_coaching = False
 
+    @api.onchange('employee_id', 'session_type', 'session_date')
+    def _onchange_auto_name(self):
+        """Auto-generate session name with employee name and date"""
+        if self.employee_id:
+            type_label = dict(self._fields['session_type'].selection).get(self.session_type, 'Coaching')
+            date_str = ''
+            if self.session_date:
+                date_str = f" ({self.session_date.strftime('%Y-%m-%d')})"
+            self.name = f"{type_label}: {self.employee_id.name}{date_str}"
+
+    @api.onchange('employee_id')
+    def _onchange_employee_default_strategy(self):
+        """Default coaching_strategy_id to the latest strategy for the selected employee"""
+        if self.employee_id:
+            latest_strategy = self.env['bfsi.coaching.strategy'].search([
+                ('banker_id', '=', self.employee_id.id)
+            ], order='create_date desc', limit=1)
+            if latest_strategy:
+                self.coaching_strategy_id = latest_strategy.id
+            else:
+                self.coaching_strategy_id = False
+        else:
+            self.coaching_strategy_id = False
+
     @api.depends('ai_transcript')
     def _compute_ai_chat_history(self):
         """Format AI transcript into rich HTML chat history"""
@@ -644,7 +668,7 @@ Response:"""
             }
 
     def action_generate_ai_summary(self):
-        """Generate AI summary of session"""
+        """Generate AI summary of session and identify skills discussed"""
         self.ensure_one()
 
         try:
@@ -689,8 +713,11 @@ Response:"""
 
                 self.action_items = summary_html
 
+                # --- Also identify skills discussed ---
+                self._identify_skills_from_transcript(ai_provider, transcript_text)
+
                 return {
-                    'message': 'Summary generated successfully',
+                    'message': 'Summary and skills generated successfully',
                     'success': True
                 }
             else:
@@ -713,6 +740,72 @@ Response:"""
                 'message': f'Failed to generate summary: {str(e)}',
                 'success': False
             }
+
+    def _identify_skills_from_transcript(self, ai_provider, transcript_text):
+        """Use AI to identify skills discussed and populate skill_ids.
+
+        Only matches skills from 'Soft Skills' and 'Marketing' categories.
+        """
+        try:
+            # Get available skills from Soft Skills and Marketing skill types
+            allowed_types = self.env['hr.skill.type'].search([
+                ('name', 'in', ['Soft Skills', 'Marketing'])
+            ])
+            if not allowed_types:
+                return
+
+            available_skills = self.env['hr.skill'].search([
+                ('skill_type_id', 'in', allowed_types.ids)
+            ])
+            if not available_skills:
+                return
+
+            skill_list = ', '.join(available_skills.mapped('name'))
+
+            prompt = f"""Analyze this coaching conversation and identify which skills from the list below were discussed, practiced, or are relevant.
+
+COACHING CONVERSATION:
+{transcript_text[:3000]}
+
+AVAILABLE SKILLS (only pick from this list):
+{skill_list}
+
+Return ONLY a JSON array of skill names that were discussed. Example:
+["Communication", "Leadership", "Time Management"]
+
+If no skills match, return an empty array: []
+Return ONLY the JSON array, nothing else."""
+
+            response = ai_provider.generate_text(prompt, max_tokens=300, temperature=0.3)
+
+            if response:
+                import re
+                # Extract JSON array from response
+                cleaned = response.strip()
+                # Remove markdown code fences if present
+                cleaned = re.sub(r'^```\w*\n?', '', cleaned)
+                cleaned = re.sub(r'\n?```$', '', cleaned)
+                cleaned = cleaned.strip()
+
+                matched_names = json.loads(cleaned)
+                if isinstance(matched_names, list) and matched_names:
+                    # Find matching skill records (case-insensitive)
+                    matched_skills = self.env['hr.skill']
+                    for skill_name in matched_names:
+                        skill = available_skills.filtered(
+                            lambda s: s.name.lower().strip() == str(skill_name).lower().strip()
+                        )
+                        if skill:
+                            matched_skills |= skill[:1]
+
+                    if matched_skills:
+                        self.skill_ids = [(6, 0, matched_skills.ids)]
+
+        except Exception as e:
+            import logging
+            logging.getLogger(__name__).warning(
+                f"Skills identification failed for session {self.id}: {e}"
+            )
 
     def action_open_ai_chat(self):
         """Open AI Chat dialog"""

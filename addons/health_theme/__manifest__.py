@@ -64,6 +64,7 @@
         ],
         'web.assets_backend': [
             'health_theme/static/src/scss/backend.scss',
+            'health_theme/static/src/scss/loading_spinner.scss',
         ],
     },
     'installable': True,
