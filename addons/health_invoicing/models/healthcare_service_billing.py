@@ -54,6 +54,31 @@ class HealthcareServiceBilling(models.Model):
         required=True,
         help='client)'
     )
+
+    catchment_province_id = fields.Many2one(
+        'health.catchment.province',
+        string='Catchment Area',
+        compute='_compute_catchment_province_id',
+        store=True,
+        readonly=True,
+        help='Catchment area used for filtering and access control'
+    )
+
+    @api.depends('fieldservice_order_id.catchment_province_id',
+                 'patient_id.catchment_province_id',
+                 'patient_id.primary_facility_id.catchment_province_id',
+                 'customer_id.catchment_province_id',
+                 'customer_id.primary_facility_id.catchment_province_id')
+    def _compute_catchment_province_id(self):
+        for billing in self:
+            patient_catchment = billing.patient_id._get_health_catchment_province() if billing.patient_id else False
+            customer_catchment = billing.customer_id._get_health_catchment_province() if billing.customer_id else False
+            billing.catchment_province_id = (
+                billing.fieldservice_order_id.catchment_province_id
+                or patient_catchment
+                or customer_catchment
+                or False
+            )
     
     # Service details
     service_type = fields.Selection([
@@ -552,6 +577,15 @@ class HealthStaffTimeTracking(models.Model):
         'hr.employee',
         string='Staff Member',
         required=True
+    )
+
+    catchment_province_id = fields.Many2one(
+        'health.catchment.province',
+        string='Catchment Area',
+        related='billing_id.catchment_province_id',
+        store=True,
+        readonly=True,
+        help='Catchment area used for filtering and access control'
     )
     
     service_date = fields.Datetime(

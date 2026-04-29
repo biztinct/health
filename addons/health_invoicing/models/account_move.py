@@ -29,6 +29,29 @@ class HealthcareInvoice(models.Model):
         string='Booking',
         help='Booking that generated this invoice'
     )
+
+    catchment_province_id = fields.Many2one(
+        'health.catchment.province',
+        string='Catchment Area',
+        compute='_compute_catchment_province_id',
+        store=True,
+        readonly=True,
+        help='Catchment area used for filtering and access control'
+    )
+
+    @api.depends('fieldservice_order_id.catchment_province_id',
+                 'fieldservice_order_id.facility_id.catchment_province_id',
+                 'partner_id.catchment_province_id',
+                 'partner_id.primary_facility_id.catchment_province_id')
+    def _compute_catchment_province_id(self):
+        for move in self:
+            partner_catchment = move.partner_id._get_health_catchment_province() if move.partner_id else False
+            move.catchment_province_id = (
+                move.fieldservice_order_id.catchment_province_id
+                or partner_catchment
+                or move.fieldservice_order_id.facility_id.catchment_province_id
+                or False
+            )
     
     # appointment_id = fields.Many2one(
     #     'health.appointment',

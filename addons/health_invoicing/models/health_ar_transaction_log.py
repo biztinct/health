@@ -190,6 +190,31 @@ class HealthARTransactionLog(models.Model):
         readonly=True,
     )
 
+    catchment_province_id = fields.Many2one(
+        'health.catchment.province',
+        string='Catchment Area',
+        compute='_compute_catchment_province_id',
+        store=True,
+        readonly=True,
+        help='Catchment area used for filtering and access control'
+    )
+
+    @api.depends('booking_id.catchment_province_id',
+                 'move_id.catchment_province_id',
+                 'payment_id.catchment_province_id',
+                 'partner_id.catchment_province_id',
+                 'partner_id.primary_facility_id.catchment_province_id')
+    def _compute_catchment_province_id(self):
+        for log in self:
+            partner_catchment = log.partner_id._get_health_catchment_province() if log.partner_id else False
+            log.catchment_province_id = (
+                log.booking_id.catchment_province_id
+                or log.move_id.catchment_province_id
+                or log.payment_id.catchment_province_id
+                or partner_catchment
+                or False
+            )
+
     # Metadata
     prepared_by = fields.Many2one(
         'res.users',

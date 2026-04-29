@@ -58,6 +58,10 @@
             <search string="Search VAT Invoices">
                 <field name="name"/>
                 <field name="partner_id"/>
+                <field name="catchment_province_id" string="Catchment Area"/>
+                <separator string="Catchment Area"/>
+                <filter name="catchment_hcm" string="Ho Chi Minh City" domain="[('catchment_province_id.name', '=', 'Ho Chi Minh City')]"/>
+                <filter name="catchment_hanoi" string="Hanoi" domain="[('catchment_province_id.name', '=', 'Hanoi')]"/>
                 <field name="vat_serial_code"/>
                 <field name="retail_invoice_number"/>
                 <filter name="posted" string="Posted" domain="[('state', '=', 'posted')]"/>
@@ -65,6 +69,8 @@
                 <filter name="misa_not_synced" string="Not Synced to MISA"
                         domain="[('misa_sync_status', '!=', 'synced')]"/>
                 <filter name="group_partner" string="Customer" context="{'group_by': 'partner_id'}"/>
+                <filter name="group_catchment_province" string="Catchment Area"
+                        context="{'group_by': 'catchment_province_id'}"/>
                 <filter name="group_month" string="Month" context="{'group_by': 'invoice_date:month'}"/>
             </search>
         </field>
@@ -143,6 +149,10 @@
                 <field name="transaction_id"/>
                 <field name="partner_id"/>
                 <field name="booking_id"/>
+                <field name="catchment_province_id" string="Catchment Area"/>
+                <separator string="Catchment Area"/>
+                <filter name="catchment_hcm" string="Ho Chi Minh City" domain="[('catchment_province_id.name', '=', 'Ho Chi Minh City')]"/>
+                <filter name="catchment_hanoi" string="Hanoi" domain="[('catchment_province_id.name', '=', 'Hanoi')]"/>
                 <filter name="posted" string="Posted" domain="[('status', '=', 'posted')]"/>
                 <filter name="today" string="Today" domain="[('posting_date', '=', context_today().strftime('%Y-%m-%d'))]"/>
                 <filter name="invoices" string="Invoices" domain="[('event_type', '=', 'invoice')]"/>
@@ -150,6 +160,8 @@
                 <filter name="refunds" string="Refunds" domain="[('event_type', 'in', ('refund', 'credit_note'))]"/>
                 <filter name="group_event" string="Event Type" context="{'group_by': 'event_type'}"/>
                 <filter name="group_partner" string="Client" context="{'group_by': 'partner_id'}"/>
+                <filter name="group_catchment_province" string="Catchment Area"
+                        context="{'group_by': 'catchment_province_id'}"/>
                 <filter name="group_date" string="Posting Date" context="{'group_by': 'posting_date:month'}"/>
             </search>
         </field>

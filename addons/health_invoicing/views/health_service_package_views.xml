@@ -12,6 +12,7 @@
                   decoration-muted="state in ('expired', 'cancelled', 'refunded')">
                 <field name="display_name"/>
                 <field name="patient_id"/>
+                <field name="catchment_province_id" string="Catchment Area" optional="hide"/>
                 <field name="patient_phone" widget="phone" optional="show"/>
                 <field name="patient_national_id" optional="show"/>
                 <field name="service_type"/>
@@ -218,6 +219,13 @@
         <field name="arch" type="xml">
             <search string="Service Packages">
                 <field name="name"/>
+                <field name="patient_id" string="Client"/>
+                <field name="catchment_province_id" string="Catchment Area"/>
+                <separator string="Catchment Area"/>
+                <filter name="catchment_hcm" string="Ho Chi Minh City" domain="[('catchment_province_id.name', '=', 'Ho Chi Minh City')]"/>
+                <filter name="catchment_hanoi" string="Hanoi" domain="[('catchment_province_id.name', '=', 'Hanoi')]"/>
+                <filter name="group_by_catchment_province" string="Catchment Area"
+                        context="{'group_by': 'catchment_province_id'}"/>
             </search>
         </field>
     </record>

@@ -614,6 +614,7 @@
             <list string="Bookings" default_order="create_date desc">
                 <field name="display_name" string="Booking"/>
                 <field name="patient_id" string="Client"/>
+                <field name="catchment_province_id" string="Catchment Area" optional="hide"/>
                 <field name="patient_phone" string="Phone" widget="phone" optional="show"/>
                 <field name="service_type"/>
                 <field name="scheduled_datetime"/>
@@ -636,6 +637,7 @@
             <kanban default_group_by="stage_id" class="o_kanban_small_column">
                 <field name="name"/>
                 <field name="patient_id"/>
+                <field name="catchment_province_id"/>
                 <field name="assigned_staff_ids"/>
                 <field name="state"/>
                 <field name="priority"/>
@@ -715,9 +717,34 @@
                 <field name="lead_staff_id"
                        filters="1"
                        avatar_field="image_128"/>
+                <field name="catchment_province_id" string="Catchment Area" filters="1"/>
                 <field name="service_type"/>
                 <field name="state"/>
             </calendar>
+        </field>
+    </record>
+
+    <!-- Booking Search View -->
+    <record id="view_health_fieldservice_order_search" model="ir.ui.view">
+        <field name="name">health.fieldservice.order.search</field>
+        <field name="model">health.fieldservice.order</field>
+        <field name="arch" type="xml">
+            <search string="Search Bookings">
+                <field name="display_name" string="Booking"/>
+                <field name="patient_id" string="Client"/>
+                <field name="catchment_province_id" string="Catchment Area"/>
+                <separator string="Catchment Area"/>
+                <filter name="catchment_hcm" string="Ho Chi Minh City" domain="[('catchment_province_id.name', '=', 'Ho Chi Minh City')]"/>
+                <filter name="catchment_hanoi" string="Hanoi" domain="[('catchment_province_id.name', '=', 'Hanoi')]"/>
+                <field name="facility_id"/>
+                <field name="lead_staff_id"/>
+                <filter name="group_by_catchment_province" string="Catchment Area"
+                        context="{'group_by': 'catchment_province_id'}"/>
+                <filter name="group_by_facility" string="Facility"
+                        context="{'group_by': 'facility_id'}"/>
+                <filter name="group_by_stage" string="Stage"
+                        context="{'group_by': 'stage_id'}"/>
+            </search>
         </field>
     </record>
 
@@ -726,6 +753,7 @@
         <field name="name">Bookings</field>
         <field name="res_model">health.fieldservice.order</field>
         <field name="view_mode">calendar,kanban,list,form</field>
+        <field name="search_view_id" ref="view_health_fieldservice_order_search"/>
         <field name="context">{}</field>
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">

@@ -197,6 +197,11 @@ class ResPartner(models.Model):
     
     # Facility Assignment
     primary_facility_id = fields.Many2one('health.facility', string='Primary Facility')
+
+    def _get_health_catchment_province(self):
+        """Return the partner catchment, falling back to the primary facility."""
+        self.ensure_one()
+        return self.catchment_province_id or self.primary_facility_id.catchment_province_id
     
     # Healthcare facility relationship
     facility_id = fields.Many2one('health.facility', string='Facility Record',

@@ -30,6 +30,13 @@ class HealthcareMoveLine(models.Model):
         store=False,
     )
 
+    catchment_province_id = fields.Many2one(
+        related='move_id.catchment_province_id',
+        string='Catchment Area',
+        readonly=True,
+        store=True,
+    )
+
     # --- Computed fields ---
 
     aging_days = fields.Integer(

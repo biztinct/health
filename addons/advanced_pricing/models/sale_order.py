@@ -11,6 +11,27 @@ class SaleOrder(models.Model):
                             compute='_compute_fso_id',
                             store=True,
                             help='Booking that created this quote')
+
+    catchment_province_id = fields.Many2one(
+        'health.catchment.province',
+        string='Catchment Area',
+        compute='_compute_catchment_province_id',
+        store=True,
+        readonly=True,
+        help='Catchment area used for filtering and access control'
+    )
+
+    @api.depends('fso_id.catchment_province_id',
+                 'partner_id.catchment_province_id',
+                 'partner_id.primary_facility_id.catchment_province_id')
+    def _compute_catchment_province_id(self):
+        for order in self:
+            partner_catchment = order.partner_id._get_health_catchment_province() if order.partner_id else False
+            order.catchment_province_id = (
+                order.fso_id.catchment_province_id
+                or partner_catchment
+                or False
+            )
     
     # Pricing configuration
     use_advanced_pricing = fields.Boolean('Use Advanced Pricing', 

@@ -27,6 +27,24 @@ class HealthAppointment(models.Model):
         domain=[('is_patient', '=', True)],
         help='Client for this appointment'
     )
+
+    catchment_province_id = fields.Many2one(
+        'health.catchment.province',
+        string='Catchment Area',
+        compute='_compute_catchment_province_id',
+        store=True,
+        readonly=True,
+        help='Catchment area used for filtering and access control'
+    )
+
+    @api.depends('patient_id.catchment_province_id', 'patient_id.primary_facility_id.catchment_province_id')
+    def _compute_catchment_province_id(self):
+        for appointment in self:
+            appointment.catchment_province_id = (
+                appointment.patient_id._get_health_catchment_province()
+                if appointment.patient_id
+                else False
+            )
     
     start_datetime = fields.Datetime(
         'Start Date & Time',

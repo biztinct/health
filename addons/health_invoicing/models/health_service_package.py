@@ -53,6 +53,24 @@ class HealthServicePackage(models.Model):
     )
     patient_phone = fields.Char('Phone', related='patient_id.phone', readonly=True)
     patient_national_id = fields.Char('National ID', related='patient_id.national_id', readonly=True)
+
+    catchment_province_id = fields.Many2one(
+        'health.catchment.province',
+        string='Catchment Area',
+        compute='_compute_catchment_province_id',
+        store=True,
+        readonly=True,
+        help='Catchment area used for filtering and access control'
+    )
+
+    @api.depends('patient_id.catchment_province_id', 'patient_id.primary_facility_id.catchment_province_id')
+    def _compute_catchment_province_id(self):
+        for package in self:
+            package.catchment_province_id = (
+                package.patient_id._get_health_catchment_province()
+                if package.patient_id
+                else False
+            )
     
     service_type = fields.Selection([
         ('physiotherapy', 'Physiotherapy'),

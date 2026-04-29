@@ -52,7 +52,14 @@
         <field name="model">crm.lead</field>
         <field name="inherit_id" ref="crm.view_crm_case_opportunities_filter"/>
         <field name="arch" type="xml">
+            <xpath expr="//search" position="inside">
+                <field name="catchment_province_id" string="Catchment Area"/>
+                <separator string="Catchment Area"/>
+                <filter name="catchment_hcm" string="Ho Chi Minh City" domain="[('catchment_province_id.name', '=', 'Ho Chi Minh City')]"/>
+                <filter name="catchment_hanoi" string="Hanoi" domain="[('catchment_province_id.name', '=', 'Hanoi')]"/>
+            </xpath>
             <xpath expr="//group" position="inside">
+                <filter string="Catchment Area" name="groupby_catchment_province" context="{'group_by': 'catchment_province_id'}"/>
                 <filter string="Contact Status" name="groupby_contact_status" context="{'group_by': 'contact_status'}"/>
             </xpath>
         </field>
@@ -757,6 +764,8 @@
                 <!-- Sidebar filter: Salesperson with checkboxes -->
                 <field name="user_id" string="Salesperson" filters="1" 
                        widget="many2one_avatar_user" avatar_field="avatar_128"/>
+
+                <field name="catchment_province_id" string="Catchment Area" filters="1"/>
                 
                 <!-- Phone for Zalo calling (shown in popover) -->
                 <field name="phone" widget="phone"/>
@@ -779,6 +788,11 @@
                 <field name="phone"/>
                 <field name="user_id" string="Salesperson"/>
                 <field name="contact_status"/>
+                <field name="catchment_province_id" string="Catchment Area"/>
+
+                <separator string="Catchment Area"/>
+                <filter name="catchment_hcm" string="Ho Chi Minh City" domain="[('catchment_province_id.name', '=', 'Ho Chi Minh City')]"/>
+                <filter name="catchment_hanoi" string="Hanoi" domain="[('catchment_province_id.name', '=', 'Hanoi')]"/>
                 
                 <!-- Status filters -->
                 <filter string="Initial Contact" name="filter_active" 
@@ -809,6 +823,8 @@
                         context="{'group_by': 'contact_status'}"/>
                 <filter string="Salesperson" name="group_user" 
                         context="{'group_by': 'user_id'}"/>
+                <filter string="Catchment Area" name="group_catchment_province"
+                        context="{'group_by': 'catchment_province_id'}"/>
             </search>
         </field>
     </record>

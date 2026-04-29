@@ -58,6 +58,31 @@ class HealthPaymentTransaction(models.Model):
         help='client who made the payment'
     )
     patient_phone = fields.Char('Phone', related='patient_id.phone', readonly=True)
+
+    catchment_province_id = fields.Many2one(
+        'health.catchment.province',
+        string='Catchment Area',
+        compute='_compute_catchment_province_id',
+        store=True,
+        readonly=True,
+        help='Catchment area used for filtering and access control'
+    )
+
+    @api.depends('patient_id.catchment_province_id',
+                 'patient_id.primary_facility_id.catchment_province_id',
+                 'fso_id.catchment_province_id',
+                 'invoice_id.catchment_province_id',
+                 'package_id.catchment_province_id')
+    def _compute_catchment_province_id(self):
+        for transaction in self:
+            patient_catchment = transaction.patient_id._get_health_catchment_province() if transaction.patient_id else False
+            transaction.catchment_province_id = (
+                transaction.fso_id.catchment_province_id
+                or transaction.invoice_id.catchment_province_id
+                or transaction.package_id.catchment_province_id
+                or patient_catchment
+                or False
+            )
     
     fso_id = fields.Many2one(
         'health.fieldservice.order',

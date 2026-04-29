@@ -7,5 +7,10 @@
         <delete model="ir.rule" id="rule_fso_manager_all"/>
         <delete model="ir.rule" id="fieldservice_order_manager_rule"/>
         <delete model="ir.rule" id="rule_fso_system_admin"/>
+        <delete model="ir.rule" id="rule_fso_sales_user"/>
+        <delete model="ir.rule" id="rule_assignment_healthcare_staff"/>
+        <delete model="ir.rule" id="rule_fso_healthcare_staff"/>
+        <delete model="ir.rule" id="rule_availability_healthcare_staff"/>
+        <delete model="ir.rule" id="rule_assignment_manager_all"/>
     </data>
 </odoo>

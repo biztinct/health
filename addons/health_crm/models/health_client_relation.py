@@ -36,6 +36,24 @@ class HealthClientRelation(models.Model):
         ondelete="restrict",
         help="The person representing or supporting the client"
     )
+
+    catchment_province_id = fields.Many2one(
+        'health.catchment.province',
+        string='Catchment Area',
+        compute='_compute_catchment_province_id',
+        store=True,
+        readonly=True,
+        help='Catchment area used for filtering and access control'
+    )
+
+    @api.depends('client_id.catchment_province_id', 'client_id.primary_facility_id.catchment_province_id')
+    def _compute_catchment_province_id(self):
+        for relation in self:
+            relation.catchment_province_id = (
+                relation.client_id._get_health_catchment_province()
+                if relation.client_id
+                else False
+            )
     
     # Healthcare role classification - Limited to 6 essential roles
     role = fields.Selection([

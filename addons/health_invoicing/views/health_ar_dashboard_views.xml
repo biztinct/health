@@ -16,6 +16,7 @@
                   
                 <!-- Healthcare-specific columns first -->
                 <field name="partner_id" string="Client" readonly="1"/>
+                <field name="catchment_province_id" string="Catchment Area" optional="hide"/>
                 <field name="partner_phone" string="Phone" optional="show"/>
                 <field name="move_id" string="Invoice" readonly="1"/>
                 <field name="invoice_date" readonly="1"/>
@@ -67,6 +68,12 @@
         <field name="arch" type="xml">
             <search string="Search Healthcare Payments">
                 <field name="partner_id"/>
+                <field name="catchment_province_id" string="Catchment Area"/>
+                <separator string="Catchment Area"/>
+                <filter name="catchment_hcm" string="Ho Chi Minh City" domain="[('catchment_province_id.name', '=', 'Ho Chi Minh City')]"/>
+                <filter name="catchment_hanoi" string="Hanoi" domain="[('catchment_province_id.name', '=', 'Hanoi')]"/>
+                <filter name="group_by_catchment_province" string="Catchment Area"
+                        context="{'group_by': 'catchment_province_id'}"/>
             </search>
         </field>
     </record>
@@ -192,6 +199,7 @@
                 <!-- Key invoice information -->
                 <field name="name" string="Invoice Number" readonly="1"/>
                 <field name="partner_id" string="Client" readonly="1"/>
+                <field name="catchment_province_id" string="Catchment Area" optional="hide"/>
                 <field name="invoice_date" readonly="1"/>
                 <field name="invoice_date_due" widget="remaining_days" optional="show" invisible="payment_state in ('paid', 'in_payment')"/>
                 <field name="amount_total" readonly="1" sum="Total Amount"/>
@@ -225,6 +233,12 @@
         <field name="arch" type="xml">
             <search string="Search Healthcare Invoices">
                 <field name="partner_id"/>
+                <field name="catchment_province_id" string="Catchment Area"/>
+                <separator string="Catchment Area"/>
+                <filter name="catchment_hcm" string="Ho Chi Minh City" domain="[('catchment_province_id.name', '=', 'Ho Chi Minh City')]"/>
+                <filter name="catchment_hanoi" string="Hanoi" domain="[('catchment_province_id.name', '=', 'Hanoi')]"/>
+                <filter name="group_by_catchment_province" string="Catchment Area"
+                        context="{'group_by': 'catchment_province_id'}"/>
             </search>
         </field>
     </record>

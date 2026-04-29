@@ -235,6 +235,26 @@ class HealthFieldServiceOrderUnified(models.Model):
         help='Catchment province of the client - used to filter staff with matching healthcare facility'
     )
 
+    catchment_province_id = fields.Many2one(
+        'health.catchment.province',
+        string='Catchment Area',
+        compute='_compute_catchment_province_id',
+        store=True,
+        readonly=True,
+        help='Catchment area used for filtering and access control'
+    )
+
+    @api.depends('patient_id.catchment_province_id', 'patient_id.primary_facility_id.catchment_province_id',
+                 'facility_id.catchment_province_id')
+    def _compute_catchment_province_id(self):
+        for record in self:
+            patient_catchment = record.patient_id._get_health_catchment_province() if record.patient_id else False
+            record.catchment_province_id = (
+                patient_catchment
+                or record.facility_id.catchment_province_id
+                or False
+            )
+
     # Booking Creator Tracking (PWA Mobile Booking System)
     created_by_employee_id = fields.Many2one(
         'hr.employee',
@@ -3099,9 +3119,9 @@ class HealthFieldServiceOrderUnified(models.Model):
         return stage.id if stage else False
     
     @api.model
-    def _read_group_stage_ids(self, stages, domain, order):
+    def _read_group_stage_ids(self, stages, domain=None, order=None):
         """Return all active stages for kanban view, ordered by sequence"""
-        return self.env['health.fieldservice.stage'].search([('active', '=', True)], order='sequence')
+        return self.env['health.fieldservice.stage'].search([('active', '=', True)], order=order or 'sequence')
     
     def name_get(self):
         """Custom name display - format: Client Name (Booking ID)"""

@@ -30,7 +30,14 @@
     <record id="health_crm_lead_user_rule" model="ir.rule">
         <field name="name">Healthcare CRM Lead: User Access</field>
         <field name="model_id" ref="crm.model_crm_lead"/>
-        <field name="domain_force">['|', ('user_id', '=', user.id), ('user_id', '=', False)]</field>
+        <field name="domain_force">[
+            '&amp;',
+            '|', '|',
+            '&amp;', ('catchment_province_id', '=', user.catchment_province_id.id), ('catchment_province_id', '!=', False),
+            '&amp;', ('partner_id.catchment_province_id', '=', user.catchment_province_id.id), ('partner_id.catchment_province_id', '!=', False),
+            '&amp;', ('partner_id.primary_facility_id.catchment_province_id', '=', user.catchment_province_id.id), ('partner_id.primary_facility_id.catchment_province_id', '!=', False),
+            '|', ('user_id', '=', user.id), ('user_id', '=', False)
+        ]</field>
         <field name="groups" eval="[(4, ref('group_health_crm_user'))]"/>
         <field name="perm_read" eval="True"/>
         <field name="perm_write" eval="True"/>
@@ -39,10 +46,26 @@
     </record>
 
     <record id="health_crm_lead_manager_rule" model="ir.rule">
-        <field name="name">Healthcare CRM Lead: Manager Access</field>
+        <field name="name">Healthcare CRM Lead: Manager Own Catchment Access</field>
+        <field name="model_id" ref="crm.model_crm_lead"/>
+        <field name="domain_force">[
+            '|', '|',
+            '&amp;', ('catchment_province_id', '=', user.catchment_province_id.id), ('catchment_province_id', '!=', False),
+            '&amp;', ('partner_id.catchment_province_id', '=', user.catchment_province_id.id), ('partner_id.catchment_province_id', '!=', False),
+            '&amp;', ('partner_id.primary_facility_id.catchment_province_id', '=', user.catchment_province_id.id), ('partner_id.primary_facility_id.catchment_province_id', '!=', False)
+        ]</field>
+        <field name="groups" eval="[(4, ref('group_health_crm_manager'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="True"/>
+    </record>
+
+    <record id="health_crm_lead_owner_rule" model="ir.rule">
+        <field name="name">Healthcare CRM Lead: Owner All Access</field>
         <field name="model_id" ref="crm.model_crm_lead"/>
         <field name="domain_force">[(1, '=', 1)]</field>
-        <field name="groups" eval="[(4, ref('group_health_crm_manager'))]"/>
+        <field name="groups" eval="[(4, ref('health_base.group_healthcare_owner'))]"/>
         <field name="perm_read" eval="True"/>
         <field name="perm_write" eval="True"/>
         <field name="perm_create" eval="True"/>
@@ -54,7 +77,13 @@
     <record id="health_crm_partner_user_rule" model="ir.rule">
         <field name="name">Healthcare CRM Partner: User Access</field>
         <field name="model_id" ref="base.model_res_partner"/>
-        <field name="domain_force">['|', '|', ('is_patient', '=', True), ('is_caregiver', '=', True), '|', ('is_payer', '=', True), ('is_referrer', '=', True)]</field>
+        <field name="domain_force">[
+            '&amp;',
+            '|',
+            '&amp;', ('catchment_province_id', '=', user.catchment_province_id.id), ('catchment_province_id', '!=', False),
+            '&amp;', ('primary_facility_id.catchment_province_id', '=', user.catchment_province_id.id), ('primary_facility_id.catchment_province_id', '!=', False),
+            '|', '|', ('is_patient', '=', True), ('is_caregiver', '=', True), '|', ('is_payer', '=', True), ('is_referrer', '=', True)
+        ]</field>
         <field name="groups" eval="[(4, ref('group_health_crm_user'))]"/>
         <field name="perm_read" eval="True"/>
         <field name="perm_write" eval="True"/>
@@ -66,7 +95,11 @@
     <record id="health_client_relation_user_rule" model="ir.rule">
         <field name="name">Healthcare Client Relationship: User Access</field>
         <field name="model_id" ref="model_health_client_relation"/>
-        <field name="domain_force">['|', ('client_id.user_id', '=', user.id), ('representative_id.user_id', '=', user.id)]</field>
+        <field name="domain_force">[
+            '&amp;',
+            '&amp;', ('catchment_province_id', '=', user.catchment_province_id.id), ('catchment_province_id', '!=', False),
+            '|', ('client_id.user_id', '=', user.id), ('representative_id.user_id', '=', user.id)
+        ]</field>
         <field name="groups" eval="[(4, ref('group_health_crm_user'))]"/>
         <field name="perm_read" eval="True"/>
         <field name="perm_write" eval="True"/>
@@ -75,10 +108,21 @@
     </record>
 
     <record id="health_client_relation_manager_rule" model="ir.rule">
-        <field name="name">Healthcare Client Relationship: Manager Access</field>
+        <field name="name">Healthcare Client Relationship: Manager Own Catchment Access</field>
+        <field name="model_id" ref="model_health_client_relation"/>
+        <field name="domain_force">['&amp;', ('catchment_province_id', '=', user.catchment_province_id.id), ('catchment_province_id', '!=', False)]</field>
+        <field name="groups" eval="[(4, ref('group_health_crm_manager'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="True"/>
+    </record>
+
+    <record id="health_client_relation_owner_rule" model="ir.rule">
+        <field name="name">Healthcare Client Relationship: Owner All Access</field>
         <field name="model_id" ref="model_health_client_relation"/>
         <field name="domain_force">[(1, '=', 1)]</field>
-        <field name="groups" eval="[(4, ref('group_health_crm_manager'))]"/>
+        <field name="groups" eval="[(4, ref('health_base.group_healthcare_owner'))]"/>
         <field name="perm_read" eval="True"/>
         <field name="perm_write" eval="True"/>
         <field name="perm_create" eval="True"/>

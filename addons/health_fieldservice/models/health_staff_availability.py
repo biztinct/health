@@ -58,6 +58,24 @@ class HealthStaffAvailabilityMatrix(models.Model):
         ondelete='cascade',
         help='Booking that booked this slot'
     )
+
+    catchment_province_id = fields.Many2one(
+        'health.catchment.province',
+        string='Catchment Area',
+        compute='_compute_catchment_province_id',
+        store=True,
+        readonly=True,
+        help='Catchment area used for filtering and access control'
+    )
+
+    @api.depends('fso_id.catchment_province_id', 'staff_id.staff_catchment_province_id')
+    def _compute_catchment_province_id(self):
+        for slot in self:
+            slot.catchment_province_id = (
+                slot.fso_id.catchment_province_id
+                or slot.staff_id.staff_catchment_province_id
+                or False
+            )
     
     assignment_id = fields.Many2one(
         'health.staff.assignment',

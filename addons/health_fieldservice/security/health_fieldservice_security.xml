@@ -25,6 +25,8 @@
         <field name="name">Field Service Orders: Staff sees only assigned orders</field>
         <field name="model_id" ref="model_health_fieldservice_order"/>
         <field name="domain_force">[
+            '&amp;',
+            '&amp;', ('catchment_province_id', '=', user.catchment_province_id.id), ('catchment_province_id', '!=', False),
             '|', '|',
             ('assignment_ids.staff_id.user_id', '=', user.id),
             ('primary_doctor_id.user_id', '=', user.id),
@@ -39,10 +41,65 @@
 
     <!-- Manager/Dispatcher Rule: See all FSOs -->
     <record id="fieldservice_order_manager_rule" model="ir.rule">
-        <field name="name">Field Service Orders: Managers see all orders</field>
+        <field name="name">Field Service Orders: Managers see own catchment orders</field>
+        <field name="model_id" ref="model_health_fieldservice_order"/>
+        <field name="domain_force">['&amp;', ('catchment_province_id', '=', user.catchment_province_id.id), ('catchment_province_id', '!=', False)]</field>
+        <field name="groups" eval="[(4, ref('health_base.group_healthcare_operations_manager'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="True"/>
+    </record>
+
+    <record id="fieldservice_order_owner_rule" model="ir.rule">
+        <field name="name">Field Service Orders: Owner sees all orders</field>
         <field name="model_id" ref="model_health_fieldservice_order"/>
         <field name="domain_force">[(1, '=', 1)]</field>
-        <field name="groups" eval="[(4, ref('health_base.group_healthcare_operations_manager'))]"/>
+        <field name="groups" eval="[(4, ref('health_base.group_healthcare_owner'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="True"/>
+    </record>
+
+    <record id="appointment_manager_catchment_rule" model="ir.rule">
+        <field name="name">Appointments: Healthcare users see own catchment</field>
+        <field name="model_id" ref="model_health_appointment"/>
+        <field name="domain_force">['&amp;', ('catchment_province_id', '=', user.catchment_province_id.id), ('catchment_province_id', '!=', False)]</field>
+        <field name="groups" eval="[(4, ref('health_base.group_healthcare_receptionist')), (4, ref('health_base.group_healthcare_sales')), (4, ref('health_base.group_healthcare_nurse')), (4, ref('health_base.group_healthcare_head_nurse')), (4, ref('health_base.group_healthcare_doctor')), (4, ref('health_base.group_healthcare_operations_manager')), (4, ref('health_base.group_healthcare_finance')), (4, ref('health_base.group_healthcare_manager'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+    <record id="appointment_owner_rule" model="ir.rule">
+        <field name="name">Appointments: Owner sees all</field>
+        <field name="model_id" ref="model_health_appointment"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('health_base.group_healthcare_owner'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="True"/>
+    </record>
+
+    <record id="fieldservice_communication_catchment_rule" model="ir.rule">
+        <field name="name">Field Service Communications: Healthcare users see own catchment</field>
+        <field name="model_id" ref="model_health_fieldservice_communication"/>
+        <field name="domain_force">['&amp;', ('catchment_province_id', '=', user.catchment_province_id.id), ('catchment_province_id', '!=', False)]</field>
+        <field name="groups" eval="[(4, ref('health_base.group_healthcare_nurse')), (4, ref('health_base.group_healthcare_operations_manager')), (4, ref('health_base.group_healthcare_manager'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+    <record id="fieldservice_communication_owner_rule" model="ir.rule">
+        <field name="name">Field Service Communications: Owner sees all</field>
+        <field name="model_id" ref="model_health_fieldservice_communication"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('health_base.group_healthcare_owner'))]"/>
         <field name="perm_read" eval="True"/>
         <field name="perm_write" eval="True"/>
         <field name="perm_create" eval="True"/>

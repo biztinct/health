@@ -20,6 +20,15 @@ class HealthFieldServiceCommunication(models.Model):
         required=True,
         ondelete='cascade'
     )
+
+    catchment_province_id = fields.Many2one(
+        'health.catchment.province',
+        string='Catchment Area',
+        related='fieldservice_order_id.catchment_province_id',
+        store=True,
+        readonly=True,
+        help='Catchment area used for filtering and access control'
+    )
     
     subject = fields.Char('Subject', compute='_compute_subject', store=True)
     

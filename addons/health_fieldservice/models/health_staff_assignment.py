@@ -81,6 +81,15 @@ class HealthStaffAssignment(models.Model):
         store=True,
         help='Catchment province of the client - used to filter staff with matching healthcare facility'
     )
+
+    catchment_province_id = fields.Many2one(
+        'health.catchment.province',
+        string='Catchment Area',
+        related='fso_id.catchment_province_id',
+        store=True,
+        readonly=True,
+        help='Catchment area used for filtering and access control'
+    )
     
     assignment_role = fields.Selection([
         ('lead', 'Lead Staff'),

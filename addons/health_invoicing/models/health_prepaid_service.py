@@ -76,6 +76,15 @@ class HealthPrepaidService(models.Model):
         readonly=True,
         help='client who consumed this service'
     )
+
+    catchment_province_id = fields.Many2one(
+        'health.catchment.province',
+        string='Catchment Area',
+        related='package_id.catchment_province_id',
+        store=True,
+        readonly=True,
+        help='Catchment area used for filtering and access control'
+    )
     
     # Consumption Details
     quantity_consumed = fields.Integer(
