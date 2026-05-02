@@ -4,6 +4,8 @@ from odoo.fields import Domain
 
 class SaleOrder(models.Model):
     _inherit = 'sale.order'
+
+    active = fields.Boolean(default=True)
     
     # Get FSO that created this quote (reverse relationship)
     fso_id = fields.Many2one('health.fieldservice.order',

@@ -123,6 +123,7 @@
         <field name="mode">primary</field>
         <field name="arch" type="xml">
             <form string="Contact Details" js_class="healthcare_lead_form_redirect">
+                <field name="active" invisible="1"/>
                 <header>
                     <!-- CONTACT-FIRST ACTION MENU BAR -->
                     

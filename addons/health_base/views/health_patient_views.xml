@@ -12,6 +12,7 @@
         <field name="priority">0</field>
         <field name="arch" type="xml">
             <form string="Client Record" class="o_form_patient_record">
+                <field name="active" invisible="1"/>
                 <header>
                     <field name="patient_status" widget="statusbar" statusbar_visible="new,active,inactive"/>
                     <button name="action_activate_patient" string="Activate" type="object" class="oe_highlight"

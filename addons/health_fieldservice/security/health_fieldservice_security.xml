@@ -48,7 +48,7 @@
         <field name="perm_read" eval="True"/>
         <field name="perm_write" eval="True"/>
         <field name="perm_create" eval="True"/>
-        <field name="perm_unlink" eval="True"/>
+        <field name="perm_unlink" eval="False"/>
     </record>
 
     <record id="fieldservice_order_owner_rule" model="ir.rule">

@@ -17,6 +17,8 @@ class HealthStaffAvailabilityMatrix(models.Model):
     # Core Availability Fields
     # ============================================================================
     
+    active = fields.Boolean('Active', default=True)
+
     staff_id = fields.Many2one(
         'hr.employee',
         string='Staff Member',

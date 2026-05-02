@@ -1568,6 +1568,8 @@ class HealthStaffAssignmentEngine(models.Model):
     _name = 'health.staff.assignment.engine'
     _description = 'Intelligent Staff Assignment Engine'
     
+    active = fields.Boolean('Active', default=True)
+
     def calculate_skill_match_score(self, staff_ids, appointment):
         """
         Calculate how well staff skills match appointment requirements

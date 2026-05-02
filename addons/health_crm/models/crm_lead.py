@@ -1091,8 +1091,9 @@ class HealthLead(models.Model):
         self.ensure_one()
         return self.contact_outcome == 'service_booked' or self.health_contact_outcome == 'service_booked' or (self.stage_id and self.stage_id.is_won)
 
-    def _get_or_create_patient(self, patient_name=None):
+    def _get_or_create_patient(self, patient_name=None, patient_vals=None):
         """Create or get patient record. Transfers unique_contact_code as patient_code only when contact IS the client."""
+        patient_vals = patient_vals or {}
         if not patient_name:
             patient_name = self.name
             
@@ -1124,7 +1125,7 @@ class HealthLead(models.Model):
         # If contact is a representative (caregiver, family, etc.), patient should get its own code
         should_transfer_code = self.contact_relationship_type == 'client'
         
-        patient_vals = {
+        create_vals = {
             'name': patient_name,
             'is_patient': True,
             'is_company': False,
@@ -1139,11 +1140,11 @@ class HealthLead(models.Model):
         # Only transfer the lead's unique_contact_code when contact IS the client
         # When contact is a representative, let the patient generate its own code
         if should_transfer_code and self.unique_contact_code:
-            patient_vals['patient_code'] = self.unique_contact_code
+            create_vals['patient_code'] = self.unique_contact_code
 
         # Copy contact info from lead if contact is the client
         if self.contact_relationship_type == 'client':
-            patient_vals.update({
+            create_vals.update({
                 'phone': self.phone,
                 'email': self.email_from,
                 'street': self.street,
@@ -1162,8 +1163,20 @@ class HealthLead(models.Model):
                 'ward_commune': self.ward_commune,
                 # Note: vietnamese_address is computed automatically in res.partner
             })
-        
-        return self.env['res.partner'].create(patient_vals)
+
+        # Wizard-supplied values must be part of the initial create so
+        # configurable required-field checks see them before blocking the save.
+        # Accept any real res.partner field supplied by trusted server-side
+        # callers so future field-requirement additions only need the wizard to
+        # capture and pass the new field value.
+        partner_fields = self.env['res.partner']._fields
+        create_vals.update({
+            key: value
+            for key, value in patient_vals.items()
+            if key in partner_fields and value
+        })
+
+        return self.env['res.partner'].create(create_vals)
 
     def _create_or_get_representative(self):
         """Create or reuse representative record from lead contact info"""

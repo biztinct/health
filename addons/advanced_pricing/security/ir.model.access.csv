@@ -1,10 +1,10 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_pricing_engine_user,pricing.engine.user,model_advanced_pricing_engine,base.group_user,1,0,0,0
-access_pricing_engine_manager,pricing.engine.manager,model_advanced_pricing_engine,base.group_system,1,1,1,1
+access_pricing_engine_manager,pricing.engine.manager,model_advanced_pricing_engine,base.group_system,1,1,1,0
 access_pricing_rule_user,pricing.rule.user,model_advanced_pricing_rule,base.group_user,1,1,1,0
-access_pricing_rule_manager,pricing.rule.manager,model_advanced_pricing_rule,base.group_system,1,1,1,1
+access_pricing_rule_manager,pricing.rule.manager,model_advanced_pricing_rule,base.group_system,1,1,1,0
 access_pricing_config_user,pricing.config.user,model_advanced_pricing_config,base.group_user,1,0,0,0
-access_pricing_config_manager,pricing.config.manager,model_advanced_pricing_config,base.group_system,1,1,1,1
+access_pricing_config_manager,pricing.config.manager,model_advanced_pricing_config,base.group_system,1,1,1,0
 access_visual_wizard_user,visual.wizard.user,model_advanced_pricing_visual_wizard,base.group_user,1,1,1,1
 access_visual_wizard_manager,visual.wizard.manager,model_advanced_pricing_visual_wizard,base.group_system,1,1,1,1
 access_import_wizard_user,import.wizard.user,model_advanced_pricing_import_wizard,base.group_user,1,1,1,1
@@ -15,3 +15,11 @@ access_bulk_wizard_user,bulk.wizard.user,model_pricing_rule_bulk_wizard,base.gro
 access_bulk_wizard_manager,bulk.wizard.manager,model_pricing_rule_bulk_wizard,base.group_system,1,1,1,1
 access_bulk_wizard_line_user,bulk.wizard.line.user,model_pricing_rule_bulk_wizard_line,base.group_user,1,1,1,1
 access_bulk_wizard_line_manager,bulk.wizard.line.manager,model_pricing_rule_bulk_wizard_line,base.group_system,1,1,1,1
+access_pricing_engine_owner,pricing.engine.owner,model_advanced_pricing_engine,health_base.group_healthcare_owner,1,1,1,1
+access_pricing_rule_owner,pricing.rule.owner,model_advanced_pricing_rule,health_base.group_healthcare_owner,1,1,1,1
+access_pricing_config_owner,pricing.config.owner,model_advanced_pricing_config,health_base.group_healthcare_owner,1,1,1,1
+access_sale_order_healthcare_owner,sale.order healthcare owner,sale.model_sale_order,health_base.group_healthcare_owner,1,1,1,1
+access_sale_order_line_healthcare_owner,sale.order.line healthcare owner,sale.model_sale_order_line,health_base.group_healthcare_owner,1,1,1,1
+access_product_product_healthcare_owner,product.product healthcare owner,product.model_product_product,health_base.group_healthcare_owner,1,1,1,1
+access_product_template_healthcare_owner,product.template healthcare owner,product.model_product_template,health_base.group_healthcare_owner,1,1,1,1
+access_product_pricelist_healthcare_owner,product.pricelist healthcare owner,product.model_product_pricelist,health_base.group_healthcare_owner,1,1,1,1

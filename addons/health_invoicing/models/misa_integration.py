@@ -22,6 +22,8 @@ class MISAIntegration(models.Model):
     _inherit = ['mail.thread', 'mail.activity.mixin']
     _order = 'create_date desc'
 
+    active = fields.Boolean('Active', default=True, tracking=True)
+
     name = fields.Char(
         'Integration Name',
         required=True,
@@ -401,6 +403,8 @@ class MISASyncLog(models.Model):
     _name = 'misa.sync.log'
     _description = 'MISA Sync Log'
     _order = 'create_date desc'
+
+    active = fields.Boolean('Active', default=True)
 
     name = fields.Char(
         'Log Entry',

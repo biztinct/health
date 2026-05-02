@@ -1,3 +1,4 @@
+from . import soft_delete_guard
 from . import res_partner
 from . import health_lookup
 from . import res_users

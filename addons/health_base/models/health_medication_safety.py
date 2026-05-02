@@ -13,6 +13,8 @@ class MedicationSafety(models.Model):
     _name = 'health.medication.safety'
     _description = 'Medication Safety System'
 
+    active = fields.Boolean('Active', default=True)
+
     def check_drug_interactions(self, medications):
         """
         Uses RxNorm API and OpenFDA for interaction checking
@@ -190,6 +192,8 @@ class MedicationInteraction(models.Model):
     _description = 'Medication Interaction'
     _order = 'severity desc, create_date desc'
 
+    active = fields.Boolean('Active', default=True)
+
     medication1_id = fields.Many2one('health.medication', 'Medication 1', required=True)
     medication2_id = fields.Many2one('health.medication', 'Medication 2', required=True)
     
@@ -266,4 +270,3 @@ class Medication(models.Model):
     _sql_constraints = [
         ('name_unique', 'unique(name)', 'Medication name must be unique!')
     ]
-

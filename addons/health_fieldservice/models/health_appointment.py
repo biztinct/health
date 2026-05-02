@@ -19,6 +19,7 @@ class HealthAppointment(models.Model):
     # ============================================================================
     
     name = fields.Char('Appointment Reference', required=True, default='New Appointment')
+    active = fields.Boolean('Active', default=True, tracking=True)
     
     patient_id = fields.Many2one(
         'res.partner',

@@ -13,6 +13,8 @@ class MedicationSafety(models.Model):
     _name = 'health.medication.safety'
     _description = 'Medication Safety System'
 
+    active = fields.Boolean('Active', default=True)
+
     def check_drug_interactions(self, medications):
         """
         Uses RxNorm API and OpenFDA for interaction checking
@@ -190,6 +192,8 @@ class MedicationInteraction(models.Model):
     _description = 'Medication Interaction'
     _order = 'severity desc, create_date desc'
 
+    active = fields.Boolean('Active', default=True)
+
     medication1_id = fields.Many2one('health.medication', 'Medication 1', required=True)
     medication2_id = fields.Many2one('health.medication', 'Medication 2', required=True)
     
@@ -275,6 +279,7 @@ class ClinicalProtocol(models.Model):
     _order = 'protocol_type, name'
 
     name = fields.Char('Protocol Name', required=True, translate=True)
+    active = fields.Boolean('Active', default=True)
     protocol_type = fields.Selection([
         ('cdc', 'CDC Guidelines'),
         ('who', 'WHO Guidelines'),
@@ -284,7 +289,7 @@ class ClinicalProtocol(models.Model):
     ], string='Protocol Type', required=True, default='local')
     
     description = fields.Text('Description', translate=True)
-    is_active = fields.Boolean('Active', default=True)
+    is_active = fields.Boolean('Active', related='active', store=True, readonly=False)
     version = fields.Char('Version', default='1.0')
     last_updated = fields.Date('Last Updated', default=fields.Date.today)
     
@@ -383,6 +388,7 @@ class ProtocolQuestion(models.Model):
     _order = 'sequence, id'
 
     name = fields.Char('Question', required=True, translate=True)
+    active = fields.Boolean('Active', default=True)
     sequence = fields.Integer('Sequence', default=10)
     question_type = fields.Selection([
         ('yes_no', 'Yes/No'),
@@ -435,6 +441,7 @@ class ProtocolIntervention(models.Model):
     _order = 'sequence, id'
 
     name = fields.Char('Intervention Name', required=True, translate=True)
+    active = fields.Boolean('Active', default=True)
     sequence = fields.Integer('Sequence', default=10)
     intervention_type = fields.Selection([
         ('assessment', 'Assessment'),

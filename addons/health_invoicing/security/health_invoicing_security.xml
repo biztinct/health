@@ -81,7 +81,7 @@
         <field name="perm_read" eval="True"/>
         <field name="perm_write" eval="True"/>
         <field name="perm_create" eval="True"/>
-        <field name="perm_unlink" eval="True"/>
+        <field name="perm_unlink" eval="False"/>
     </record>
 
     <record id="rule_health_service_billing_owner" model="ir.rule">
@@ -104,7 +104,7 @@
         <field name="perm_read" eval="True"/>
         <field name="perm_write" eval="True"/>
         <field name="perm_create" eval="True"/>
-        <field name="perm_unlink" eval="True"/>
+        <field name="perm_unlink" eval="False"/>
     </record>
 
     <!-- Staff Time Tracking - Users can see their own and company records -->

@@ -15,6 +15,8 @@ class HealthcarePayment(models.Model):
     """
     _inherit = 'account.payment'
 
+    active = fields.Boolean(default=True)
+
     # Basic healthcare fields only - test if this resolves the '_unknown' error
     healthcare_payment_type = fields.Selection([
         ('patient_direct', 'Direct Patient Payment'),

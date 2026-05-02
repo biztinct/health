@@ -28,6 +28,8 @@ class HealthPrepaidService(models.Model):
     _rec_name = 'display_name'
     
     # Core Consumption Information
+    active = fields.Boolean('Active', default=True, tracking=True)
+
     name = fields.Char(
         'Consumption Reference',
         required=True,

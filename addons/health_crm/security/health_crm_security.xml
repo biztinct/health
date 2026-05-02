@@ -58,7 +58,7 @@
         <field name="perm_read" eval="True"/>
         <field name="perm_write" eval="True"/>
         <field name="perm_create" eval="True"/>
-        <field name="perm_unlink" eval="True"/>
+        <field name="perm_unlink" eval="False"/>
     </record>
 
     <record id="health_crm_lead_owner_rule" model="ir.rule">
@@ -115,7 +115,7 @@
         <field name="perm_read" eval="True"/>
         <field name="perm_write" eval="True"/>
         <field name="perm_create" eval="True"/>
-        <field name="perm_unlink" eval="True"/>
+        <field name="perm_unlink" eval="False"/>
     </record>
 
     <record id="health_client_relation_owner_rule" model="ir.rule">

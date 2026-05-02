@@ -14,6 +14,8 @@ class HealthFieldServiceCommunication(models.Model):
     _rec_name = 'subject'
     
     # Core communication fields
+    active = fields.Boolean('Active', default=True, tracking=True)
+
     fieldservice_order_id = fields.Many2one(
         'health.fieldservice.order',
         string='Booking',

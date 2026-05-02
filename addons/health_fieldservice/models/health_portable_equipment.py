@@ -225,6 +225,8 @@ class HealthEquipmentServiceHistory(models.Model):
     _description = 'Equipment Service History'
     _order = 'service_date desc'
     
+    active = fields.Boolean('Active', default=True)
+
     equipment_id = fields.Many2one('health.portable.equipment', required=True, ondelete='cascade')
     
     service_type = fields.Selection([

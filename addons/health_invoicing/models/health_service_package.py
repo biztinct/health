@@ -20,6 +20,8 @@ class HealthServicePackage(models.Model):
     _rec_name = 'display_name'
     
     # Core Package Information
+    active = fields.Boolean('Active', default=True, tracking=True)
+
     name = fields.Char(
         'Package Name',
         required=True,

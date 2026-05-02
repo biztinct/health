@@ -11,6 +11,8 @@ class FallRiskAssessment(models.Model):
     _description = 'Fall Risk Assessment'
     _order = 'create_date desc'
 
+    active = fields.Boolean('Active', default=True)
+
     patient_id = fields.Many2one('res.partner', 'Patient', required=True, 
                                 domain=[('is_patient', '=', True)])
     assessment_date = fields.Datetime('Assessment Date', default=fields.Datetime.now, required=True)
@@ -133,6 +135,8 @@ class ReadmissionRisk(models.Model):
     _name = 'health.readmission.risk'
     _description = 'Readmission Risk Assessment'
     _order = 'create_date desc'
+
+    active = fields.Boolean('Active', default=True)
 
     patient_id = fields.Many2one('res.partner', 'Patient', required=True,
                                 domain=[('is_patient', '=', True)])
@@ -260,4 +264,3 @@ class ReadmissionRisk(models.Model):
             
             interventions += "</ul>"
             record.recommended_interventions = interventions
-

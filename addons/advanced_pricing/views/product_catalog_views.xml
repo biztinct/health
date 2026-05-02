@@ -29,4 +29,18 @@
         </field>
     </record>
 
+    <record id="product_view_search_catalog_catchment_area" model="ir.ui.view">
+        <field name="name">product.view.search.catalog.catchment.area</field>
+        <field name="model">product.product</field>
+        <field name="inherit_id" ref="product.product_view_search_catalog"/>
+        <field name="arch" type="xml">
+            <xpath expr="//searchpanel/field[@name='categ_id']" position="before">
+                <field name="catalog_catchment_area"
+                       string="Catchment Area"
+                       icon="fa-map-marker"
+                       enable_counters="1"/>
+            </xpath>
+        </field>
+    </record>
+
 </odoo>

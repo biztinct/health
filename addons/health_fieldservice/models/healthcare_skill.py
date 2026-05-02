@@ -10,6 +10,7 @@ class HealthStaffSkill(models.Model):
     _rec_name = 'name'
 
     name = fields.Char('Skill Name', required=True)
+    active = fields.Boolean('Active', default=True)
     description = fields.Text('Description')
     skill_category = fields.Selection([
         ('medical', 'Medical'),
@@ -26,7 +27,7 @@ class HealthStaffSkill(models.Model):
     weight = fields.Float('Assignment Weight', default=1.0, 
                          help='Weight factor for assignment scoring (0.1 - 2.0)')
     
-    is_active = fields.Boolean('Active', default=True)
+    is_active = fields.Boolean('Active', related='active', store=True, readonly=False)
     
     # Related employees with this skill
     employee_ids = fields.Many2many('hr.employee', 'employee_skill_rel', 
@@ -48,6 +49,7 @@ class HealthServiceArea(models.Model):
     _rec_name = 'name'
 
     name = fields.Char('Area Name', required=True)
+    active = fields.Boolean('Active', default=True)
     description = fields.Text('Description')
     area_code = fields.Char('Area Code', required=True)
     
@@ -58,7 +60,7 @@ class HealthServiceArea(models.Model):
     
     # Assignment optimization
     travel_time_minutes = fields.Integer('Average Travel Time (Minutes)', default=15)
-    is_active = fields.Boolean('Active', default=True)
+    is_active = fields.Boolean('Active', related='active', store=True, readonly=False)
     
     # Coverage priority (1=highest, 5=lowest)
     priority = fields.Selection([

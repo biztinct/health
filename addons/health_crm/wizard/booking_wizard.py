@@ -440,7 +440,15 @@ class HealthBookingWizard(models.TransientModel):
         elif self.is_new_client and self.lead_id:
             # New client from lead - use lead's _get_or_create_patient to properly 
             # transfer unique_contact_code as patient_code
-            client = self.lead_id._get_or_create_patient(self.client_name)
+            client = self.lead_id._get_or_create_patient(self.client_name, {
+                'phone': self.client_phone,
+                'email': self.client_email,
+                'street': self.client_address,
+                'birth_date': self.client_dob,
+                'gender': self.client_gender,
+                'catchment_province_id': self.catchment_province_id.id if self.catchment_province_id else False,
+                'primary_facility_id': self.facility_id.id if self.facility_id else False,
+            })
             
             # Update client with additional info from wizard
             update_vals = {}

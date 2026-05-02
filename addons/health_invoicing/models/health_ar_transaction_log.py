@@ -87,6 +87,8 @@ class HealthARTransactionLog(models.Model):
     _rec_name = 'transaction_id'
 
     # --- Universal fields ---
+    active = fields.Boolean('Active', default=True)
+
     transaction_id = fields.Char(
         'Transaction ID',
         required=True,

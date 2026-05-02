@@ -20,6 +20,8 @@ class HealthcareServiceBilling(models.Model):
     _inherit = ['mail.thread', 'mail.activity.mixin']
     _order = 'create_date desc'
 
+    active = fields.Boolean('Active', default=True, tracking=True)
+
     name = fields.Char(
         'Billing Reference',
         required=True,
@@ -565,6 +567,8 @@ class HealthStaffTimeTracking(models.Model):
     _name = 'health.staff.time.tracking'
     _description = 'Healthcare Staff Time Tracking'
     _order = 'service_date desc, employee_id'
+
+    active = fields.Boolean('Active', default=True)
 
     billing_id = fields.Many2one(
         'health.service.billing',
