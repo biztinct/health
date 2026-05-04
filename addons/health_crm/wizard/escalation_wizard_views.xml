@@ -50,12 +50,12 @@
                                    options="{'horizontal': false}"
                                    invisible="escalation_type != 'transfer'"/>
                             
-                            <!-- Show selected person name -->
-                            <field name="selected_person_name" string="Person" readonly="1"
-                                   invisible="not selected_person_name"/>
-                            
-                            <field name="escalate_to_user_id" string="Specific Person (Optional)"
-                                   options="{'no_create': True}"/>
+                            <!-- Role-filtered person dropdown -->
+                            <field name="escalate_to_employee_id" string="Person"
+                                   options="{'no_create': True}"
+                                   invisible="not escalate_to"/>
+
+                            <field name="escalate_to_user_id" invisible="1"/>
                             <field name="urgency" widget="radio" options="{'horizontal': true}"/>
                         </group>
                     </group>

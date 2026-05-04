@@ -1,0 +1,246 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="bi_studio.VisualDesigner">
+        <div class="bi-visual-designer">
+            <t t-if="state.loading">
+                <div class="bi-loading" style="width:100%;height:100%;">
+                    <div class="bi-spinner"/>
+                </div>
+            </t>
+
+            <t t-else="">
+                <!-- LEFT PANEL — Fields from Dataset -->
+                <div class="bi-panel bi-field-explorer">
+                    <div class="bi-panel-header">
+                        <h3><i class="fa fa-database me-1"/> Fields</h3>
+                    </div>
+                    <div class="bi-field-search">
+                        <input type="text" placeholder="Search fields..."
+                               t-on-input="onFieldSearch"/>
+                    </div>
+                    <div class="bi-panel-body">
+                        <!-- Dimensions -->
+                        <t t-if="filteredDimensions.length">
+                            <div class="bi-field-group-header" style="cursor:default;">
+                                <i class="fa fa-tag me-2" style="color:var(--bi-info);"/>
+                                <span class="group-name">Dimensions</span>
+                                <span class="group-count" t-esc="filteredDimensions.length"/>
+                            </div>
+                            <t t-foreach="filteredDimensions" t-as="field" t-key="field.id">
+                                <div class="bi-field-item"
+                                     draggable="true"
+                                     t-on-click="() => this.setXAxis(field)"
+                                     t-on-dblclick="() => this.setXAxis(field)">
+                                    <span class="field-icon dimension">
+                                        <i class="fa fa-tag"/>
+                                    </span>
+                                    <span class="field-name"
+                                          t-esc="field.display_label || field.field_label"/>
+                                </div>
+                            </t>
+                        </t>
+
+                        <!-- Measures -->
+                        <t t-if="filteredMeasures.length">
+                            <div class="bi-field-group-header" style="cursor:default;margin-top:8px;">
+                                <i class="fa fa-calculator me-2" style="color:var(--bi-success);"/>
+                                <span class="group-name">Measures</span>
+                                <span class="group-count" t-esc="filteredMeasures.length"/>
+                            </div>
+                            <t t-foreach="filteredMeasures" t-as="field" t-key="field.id">
+                                <div class="bi-field-item"
+                                     t-on-click="() => this.addYAxis(field)"
+                                     t-on-dblclick="() => this.addYAxis(field)">
+                                    <span class="field-icon measure">
+                                        <i class="fa fa-calculator"/>
+                                    </span>
+                                    <span class="field-name"
+                                          t-esc="field.display_label || field.field_label"/>
+                                </div>
+                            </t>
+                        </t>
+
+                        <!-- Dates -->
+                        <t t-if="filteredDates.length">
+                            <div class="bi-field-group-header" style="cursor:default;margin-top:8px;">
+                                <i class="fa fa-calendar me-2" style="color:var(--bi-warning);"/>
+                                <span class="group-name">Dates</span>
+                                <span class="group-count" t-esc="filteredDates.length"/>
+                            </div>
+                            <t t-foreach="filteredDates" t-as="field" t-key="field.id">
+                                <div class="bi-field-item"
+                                     t-on-click="() => this.setXAxis(field)">
+                                    <span class="field-icon date">
+                                        <i class="fa fa-calendar"/>
+                                    </span>
+                                    <span class="field-name"
+                                          t-esc="field.display_label || field.field_label"/>
+                                </div>
+                            </t>
+                        </t>
+                    </div>
+                </div>
+
+                <!-- CENTER — Chart Preview -->
+                <div class="bi-panel bi-chart-canvas" style="border-right:none;">
+                    <div class="bi-panel-header">
+                        <h3>
+                            <input type="text" t-att-value="state.visualName"
+                                   t-on-change="(ev) => this.state.visualName = ev.target.value"
+                                   style="border:none;background:transparent;font-size:13px;font-weight:600;color:var(--bi-text);width:300px;"/>
+                        </h3>
+                        <div style="display:flex;gap:6px;">
+                            <button class="bi-toolbar-btn primary" t-on-click="saveVisual">
+                                <i class="fa fa-save"/> Save
+                            </button>
+                            <button class="bi-toolbar-btn" t-on-click="goBack">
+                                <i class="fa fa-arrow-left"/>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="bi-panel-body" style="padding:16px;display:flex;align-items:center;justify-content:center;">
+                        <t t-if="!hasChartConfig">
+                            <div class="bi-empty-state">
+                                <i class="fa fa-hand-pointer-o"/>
+                                <h3>Build Your Chart</h3>
+                                <p>Click a dimension field for the X-axis, then click a measure for the Y-axis.</p>
+                            </div>
+                        </t>
+                        <t t-elif="state.chartLoading">
+                            <div class="bi-loading">
+                                <div class="bi-spinner"/>
+                            </div>
+                        </t>
+                        <t t-else="">
+                            <ChartRenderer
+                                chartData="state.chartData"
+                                chartType="state.chartType"
+                                colorPalette="state.colorPalette"
+                                showLegend="state.showLegend"
+                                showLabels="state.showLabels"
+                                height="'100%'"
+                            />
+                        </t>
+                    </div>
+                </div>
+
+                <!-- RIGHT PANEL — Chart Config -->
+                <div class="bi-panel bi-config-panel">
+                    <div class="bi-panel-header">
+                        <h3><i class="fa fa-sliders me-1"/> Chart Config</h3>
+                    </div>
+                    <div class="bi-panel-body">
+                        <!-- Chart Type Grid -->
+                        <div class="bi-config-section">
+                            <label>Chart Type</label>
+                            <div class="bi-chart-types">
+                                <t t-foreach="chartTypes" t-as="ct" t-key="ct.value">
+                                    <div t-attf-class="bi-chart-type-btn {{ state.chartType === ct.value ? 'active' : '' }}"
+                                         t-on-click="() => this.selectChartType(ct.value)">
+                                        <i t-attf-class="fa {{ ct.icon }}"/>
+                                        <span t-esc="ct.label"/>
+                                    </div>
+                                </t>
+                            </div>
+                        </div>
+
+                        <!-- X-Axis Slot -->
+                        <div class="bi-config-section">
+                            <label>X-Axis (Categories)</label>
+                            <div t-attf-class="bi-drop-zone {{ state.xAxis ? 'has-field' : '' }}">
+                                <t t-if="state.xAxis">
+                                    <span class="slot-field">
+                                        <i class="fa fa-arrows-h"/>
+                                        <span t-esc="state.xAxis.label"/>
+                                        <span class="remove-btn" t-on-click="clearXAxis">
+                                            <i class="fa fa-times"/>
+                                        </span>
+                                    </span>
+                                </t>
+                                <t t-else="">
+                                    <span class="slot-label">
+                                        <i class="fa fa-arrows-h me-1"/> Click a dimension
+                                    </span>
+                                </t>
+                            </div>
+                        </div>
+
+                        <!-- Y-Axis Slot -->
+                        <div class="bi-config-section">
+                            <label>Y-Axis (Values)</label>
+                            <t t-foreach="state.yAxis" t-as="yf" t-key="yf_index">
+                                <div class="bi-drop-zone has-field" style="margin-bottom:4px;">
+                                    <span class="slot-field" style="background:var(--bi-success);">
+                                        <i class="fa fa-calculator"/>
+                                        <span t-esc="yf.label"/>
+                                        <small>(<t t-esc="yf.aggregation"/>)</small>
+                                        <span class="remove-btn" t-on-click="() => this.removeYAxis(yf_index)">
+                                            <i class="fa fa-times"/>
+                                        </span>
+                                    </span>
+                                </div>
+                            </t>
+                            <div class="bi-drop-zone">
+                                <span class="slot-label">
+                                    <i class="fa fa-plus me-1"/> Click a measure to add
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- Color Slot -->
+                        <div class="bi-config-section">
+                            <label>Color Grouping (Optional)</label>
+                            <div t-attf-class="bi-drop-zone {{ state.colorField ? 'has-field' : '' }}">
+                                <t t-if="state.colorField">
+                                    <span class="slot-field" style="background:var(--bi-accent);">
+                                        <i class="fa fa-paint-brush"/>
+                                        <span t-esc="state.colorField.label"/>
+                                        <span class="remove-btn" t-on-click="clearColorField">
+                                            <i class="fa fa-times"/>
+                                        </span>
+                                    </span>
+                                </t>
+                                <t t-else="">
+                                    <span class="slot-label">
+                                        <i class="fa fa-paint-brush me-1"/> Drag a dimension
+                                    </span>
+                                </t>
+                            </div>
+                        </div>
+
+                        <!-- Palette -->
+                        <div class="bi-config-section">
+                            <label>Color Palette</label>
+                            <select t-on-change="(ev) => { this.state.colorPalette = ev.target.value; this._autoRefresh(); }">
+                                <option value="default">Default</option>
+                                <option value="blue">Ocean Blue</option>
+                                <option value="green">Forest Green</option>
+                                <option value="sunset">Sunset</option>
+                                <option value="purple">Royal Purple</option>
+                                <option value="vivid">Vivid</option>
+                                <option value="pastel">Pastel</option>
+                                <option value="mono">Monochrome</option>
+                            </select>
+                        </div>
+
+                        <!-- Options -->
+                        <div class="bi-config-section">
+                            <label style="display:flex;align-items:center;gap:8px;text-transform:none;font-size:13px;">
+                                <input type="checkbox" t-att-checked="state.showLegend"
+                                       t-on-change="(ev) => this.state.showLegend = ev.target.checked"/>
+                                Show Legend
+                            </label>
+                            <label style="display:flex;align-items:center;gap:8px;text-transform:none;font-size:13px;margin-top:6px;">
+                                <input type="checkbox" t-att-checked="state.showLabels"
+                                       t-on-change="(ev) => this.state.showLabels = ev.target.checked"/>
+                                Show Data Labels
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </t>
+        </div>
+    </t>
+
+</templates>

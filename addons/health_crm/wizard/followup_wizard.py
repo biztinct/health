@@ -37,7 +37,7 @@ class HealthFollowUpWizard(models.TransientModel):
     contact_id = fields.Many2one(
         'crm.lead',
         string='Search Contact',
-        domain="[('contact_status', '=', 'contact')]",
+        domain="[('contact_status', 'not in', ['spam'])]",
         help='Search and select a contact to view their follow-ups'
     )
     

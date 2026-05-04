@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- BI Studio Security Groups -->
+    <record id="module_category_bi_studio" model="ir.module.category">
+        <field name="name">BI Studio</field>
+        <field name="description">Business Intelligence Analytics Platform</field>
+        <field name="sequence">100</field>
+    </record>
+
+    <!-- User: can view reports and datasets -->
+    <record id="group_bi_user" model="res.groups">
+        <field name="name">BI User</field>
+        <field name="category_id" ref="module_category_bi_studio"/>
+        <field name="comment">Can view dashboards, reports, and datasets shared with them.</field>
+    </record>
+
+    <!-- Manager: can create datasets, visuals, and reports -->
+    <record id="group_bi_manager" model="res.groups">
+        <field name="name">BI Manager</field>
+        <field name="category_id" ref="module_category_bi_studio"/>
+        <field name="implied_ids" eval="[(4, ref('group_bi_user'))]"/>
+        <field name="comment">Can create and manage datasets, visuals, and report pages.</field>
+    </record>
+
+    <!-- Admin: full control including business domains -->
+    <record id="group_bi_admin" model="res.groups">
+        <field name="name">BI Administrator</field>
+        <field name="category_id" ref="module_category_bi_studio"/>
+        <field name="implied_ids" eval="[(4, ref('group_bi_manager'))]"/>
+        <field name="comment">Full control: manage business domains, all datasets, and system configuration.</field>
+        <field name="users" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
+    </record>
+</odoo>

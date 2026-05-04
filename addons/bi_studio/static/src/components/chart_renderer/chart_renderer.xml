@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="bi_studio.ChartRenderer">
+        <div class="bi-chart-container"
+             t-ref="chart"
+             t-att-style="'height:' + (props.height || '100%') + ';width:100%;min-height:200px;'"/>
+    </t>
+
+</templates>

@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ===================================================================
+         BI Report Page — Form View
+         =================================================================== -->
+    <record id="view_bi_report_page_form" model="ir.ui.view">
+        <field name="name">bi.report.page.form</field>
+        <field name="model">bi.report.page</field>
+        <field name="arch" type="xml">
+            <form string="Report Page">
+                <header>
+                    <button name="action_open_report_canvas" type="object"
+                            string="Open Dashboard" class="btn-primary"
+                            icon="fa-tachometer"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_open_report_canvas" type="object"
+                                class="oe_stat_button" icon="fa-bar-chart">
+                            <field name="visual_count" widget="statinfo"
+                                   string="Visuals"/>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="e.g., Monthly Revenue Dashboard"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group string="Settings">
+                            <field name="description"/>
+                            <field name="theme"/>
+                            <field name="background_color" widget="color"/>
+                            <field name="accent_color" widget="color"/>
+                            <field name="sequence"/>
+                        </group>
+                        <group string="Options">
+                            <field name="auto_refresh"/>
+                            <field name="refresh_interval"
+                                   invisible="not auto_refresh"/>
+                            <field name="allow_export"/>
+                            <field name="is_public"/>
+                            <field name="owner_id"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Visuals" name="visuals">
+                            <field name="visual_ids" context="{'default_report_page_id': active_id}">
+                                <list>
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="name"/>
+                                    <field name="visual_type"/>
+                                    <field name="dataset_id"/>
+                                    <field name="width" string="W"/>
+                                    <field name="height" string="H"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Datasets" name="datasets">
+                            <field name="dataset_ids" widget="many2many_tags"/>
+                        </page>
+                        <page string="Access" name="access">
+                            <group>
+                                <field name="user_ids" widget="many2many_tags"/>
+                                <field name="group_ids" widget="many2many_tags"/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- BI Report Page — List View -->
+    <record id="view_bi_report_page_list" model="ir.ui.view">
+        <field name="name">bi.report.page.list</field>
+        <field name="model">bi.report.page</field>
+        <field name="arch" type="xml">
+            <list string="Report Pages">
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="visual_count" string="Visuals"/>
+                <field name="theme"/>
+                <field name="is_public"/>
+                <field name="owner_id"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- BI Report Page — Action -->
+    <record id="action_bi_report_page" model="ir.actions.act_window">
+        <field name="name">Dashboards</field>
+        <field name="res_model">bi.report.page</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first dashboard
+            </p>
+            <p>
+                Dashboards contain multiple charts and visuals
+                arranged in a flexible grid layout.
+            </p>
+        </field>
+    </record>
+
+</odoo>

@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ===================================================================
+         BI Visual — Form View
+         =================================================================== -->
+    <record id="view_bi_visual_form" model="ir.ui.view">
+        <field name="name">bi.visual.form</field>
+        <field name="model">bi.visual</field>
+        <field name="arch" type="xml">
+            <form string="Visual">
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="e.g., Revenue by Customer"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group string="Data">
+                            <field name="dataset_id"/>
+                            <field name="visual_type"/>
+                            <field name="report_page_id"/>
+                        </group>
+                        <group string="Layout">
+                            <field name="position_x"/>
+                            <field name="position_y"/>
+                            <field name="width"/>
+                            <field name="height"/>
+                            <field name="sequence"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Styling">
+                            <field name="color_palette"/>
+                            <field name="show_legend"/>
+                            <field name="show_labels"/>
+                            <field name="show_grid"/>
+                            <field name="enable_animation"/>
+                            <field name="background_color"/>
+                        </group>
+                        <group string="Interactivity">
+                            <field name="click_action"/>
+                            <field name="drill_down_enabled"/>
+                            <field name="target_action_id"
+                                   invisible="click_action != 'action'"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Configuration (JSON)" name="config">
+                            <field name="config_json" widget="ace"
+                                   options="{'mode': 'json'}"/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- BI Visual — List View -->
+    <record id="view_bi_visual_list" model="ir.ui.view">
+        <field name="name">bi.visual.list</field>
+        <field name="model">bi.visual</field>
+        <field name="arch" type="xml">
+            <list string="Visuals" decoration-muted="not active">
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="visual_type"/>
+                <field name="dataset_id"/>
+                <field name="report_page_id"/>
+                <field name="width" string="W"/>
+                <field name="height" string="H"/>
+                <field name="active" column_invisible="True"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- BI Visual — Action -->
+    <record id="action_bi_visual" model="ir.actions.act_window">
+        <field name="name">Visuals</field>
+        <field name="res_model">bi.visual</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+</odoo>

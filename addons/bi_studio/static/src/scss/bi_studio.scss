@@ -1,0 +1,652 @@
+/* BI Studio — Core Styles
+ * Apache ECharts + GridStack dashboard styling
+ */
+
+/* ===================================================================
+   CSS Custom Properties (Design Tokens)
+   =================================================================== */
+:root {
+    --bi-primary: #6366f1;
+    --bi-primary-light: #818cf8;
+    --bi-primary-dark: #4f46e5;
+    --bi-accent: #06b6d4;
+    --bi-success: #10b981;
+    --bi-warning: #f59e0b;
+    --bi-danger: #ef4444;
+    --bi-info: #3b82f6;
+
+    --bi-bg: #f8fafc;
+    --bi-surface: #ffffff;
+    --bi-surface-hover: #f1f5f9;
+    --bi-border: #e2e8f0;
+    --bi-border-light: #f1f5f9;
+
+    --bi-text: #1e293b;
+    --bi-text-secondary: #64748b;
+    --bi-text-muted: #94a3b8;
+
+    --bi-radius: 12px;
+    --bi-radius-sm: 8px;
+    --bi-radius-xs: 4px;
+    --bi-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+    --bi-shadow-md: 0 4px 6px -1px rgba(0,0,0,0.07), 0 2px 4px -2px rgba(0,0,0,0.05);
+    --bi-shadow-lg: 0 10px 25px -3px rgba(0,0,0,0.08), 0 4px 6px -4px rgba(0,0,0,0.05);
+
+    --bi-transition: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ===================================================================
+   Dataset Builder — 3-Panel Layout
+   =================================================================== */
+.bi-dataset-builder {
+    display: flex;
+    height: calc(100vh - 52px);
+    background: var(--bi-bg);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+.bi-panel {
+    display: flex;
+    flex-direction: column;
+    background: var(--bi-surface);
+    border-right: 1px solid var(--bi-border);
+    overflow: hidden;
+}
+
+.bi-panel-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--bi-border);
+    background: var(--bi-surface);
+    min-height: 52px;
+}
+
+.bi-panel-header h3 {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--bi-text);
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.bi-panel-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 8px;
+}
+
+/* Field Explorer (Left Panel) */
+.bi-field-explorer {
+    width: 280px;
+    min-width: 280px;
+}
+
+.bi-field-search {
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--bi-border-light);
+}
+
+.bi-field-search input {
+    width: 100%;
+    padding: 8px 12px 8px 32px;
+    border: 1px solid var(--bi-border);
+    border-radius: var(--bi-radius-sm);
+    font-size: 13px;
+    background: var(--bi-bg);
+    transition: border-color var(--bi-transition);
+}
+
+.bi-field-search input:focus {
+    outline: none;
+    border-color: var(--bi-primary);
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+
+/* Field Group */
+.bi-field-group {
+    margin-bottom: 4px;
+}
+
+.bi-field-group-header {
+    display: flex;
+    align-items: center;
+    padding: 8px 12px;
+    cursor: pointer;
+    border-radius: var(--bi-radius-xs);
+    transition: background var(--bi-transition);
+    user-select: none;
+}
+
+.bi-field-group-header:hover {
+    background: var(--bi-surface-hover);
+}
+
+.bi-field-group-header .chevron {
+    font-size: 10px;
+    color: var(--bi-text-muted);
+    margin-right: 8px;
+    transition: transform var(--bi-transition);
+}
+
+.bi-field-group-header .chevron.expanded {
+    transform: rotate(90deg);
+}
+
+.bi-field-group-header .group-name {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--bi-text-secondary);
+    flex: 1;
+}
+
+.bi-field-group-header .group-count {
+    font-size: 11px;
+    color: var(--bi-text-muted);
+    background: var(--bi-bg);
+    padding: 1px 6px;
+    border-radius: 10px;
+}
+
+/* Field Item */
+.bi-field-item {
+    display: flex;
+    align-items: center;
+    padding: 6px 12px 6px 32px;
+    cursor: grab;
+    border-radius: var(--bi-radius-xs);
+    transition: all var(--bi-transition);
+    font-size: 13px;
+    color: var(--bi-text);
+}
+
+.bi-field-item:hover {
+    background: var(--bi-surface-hover);
+}
+
+.bi-field-item:active {
+    cursor: grabbing;
+    opacity: 0.7;
+}
+
+.bi-field-item.selected {
+    background: rgba(99, 102, 241, 0.08);
+    color: var(--bi-primary);
+    font-weight: 500;
+}
+
+.bi-field-item .field-icon {
+    width: 20px;
+    text-align: center;
+    margin-right: 8px;
+    font-size: 11px;
+}
+
+.bi-field-item .field-icon.measure { color: var(--bi-success); }
+.bi-field-item .field-icon.dimension { color: var(--bi-info); }
+.bi-field-item .field-icon.date { color: var(--bi-warning); }
+
+.bi-field-item .field-name {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.bi-field-item .field-type {
+    font-size: 10px;
+    color: var(--bi-text-muted);
+    padding: 1px 5px;
+    background: var(--bi-bg);
+    border-radius: 3px;
+    margin-left: 4px;
+}
+
+/* Center Panel — Preview */
+.bi-preview-panel {
+    flex: 1;
+    min-width: 400px;
+}
+
+.bi-preview-table-wrap {
+    overflow: auto;
+    height: 100%;
+}
+
+.bi-preview-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+}
+
+.bi-preview-table th {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    background: var(--bi-bg);
+    padding: 10px 12px;
+    text-align: left;
+    font-weight: 600;
+    font-size: 12px;
+    color: var(--bi-text-secondary);
+    border-bottom: 2px solid var(--bi-border);
+    white-space: nowrap;
+}
+
+.bi-preview-table td {
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--bi-border-light);
+    color: var(--bi-text);
+    max-width: 200px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.bi-preview-table tr:hover td {
+    background: var(--bi-surface-hover);
+}
+
+/* Right Panel — Config */
+.bi-config-panel {
+    width: 300px;
+    min-width: 300px;
+    border-right: none;
+    border-left: 1px solid var(--bi-border);
+}
+
+.bi-config-section {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--bi-border-light);
+}
+
+.bi-config-section label {
+    display: block;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--bi-text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 6px;
+}
+
+.bi-config-section select,
+.bi-config-section input {
+    width: 100%;
+    padding: 7px 10px;
+    border: 1px solid var(--bi-border);
+    border-radius: var(--bi-radius-xs);
+    font-size: 13px;
+    background: var(--bi-surface);
+    color: var(--bi-text);
+}
+
+/* ===================================================================
+   Visual Designer — Chart Builder
+   =================================================================== */
+.bi-visual-designer {
+    display: flex;
+    height: calc(100vh - 52px);
+    background: var(--bi-bg);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* Chart Type Selector */
+.bi-chart-types {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 6px;
+    padding: 4px;
+}
+
+.bi-chart-type-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 4px;
+    border: 1px solid var(--bi-border);
+    border-radius: var(--bi-radius-sm);
+    background: var(--bi-surface);
+    cursor: pointer;
+    transition: all var(--bi-transition);
+    font-size: 11px;
+    color: var(--bi-text-secondary);
+}
+
+.bi-chart-type-btn:hover {
+    border-color: var(--bi-primary-light);
+    background: rgba(99, 102, 241, 0.04);
+}
+
+.bi-chart-type-btn.active {
+    border-color: var(--bi-primary);
+    background: rgba(99, 102, 241, 0.08);
+    color: var(--bi-primary);
+    font-weight: 600;
+}
+
+.bi-chart-type-btn i {
+    font-size: 18px;
+    margin-bottom: 4px;
+}
+
+/* Drop Zones (Field Slots) */
+.bi-drop-zone {
+    min-height: 48px;
+    border: 2px dashed var(--bi-border);
+    border-radius: var(--bi-radius-sm);
+    padding: 10px 12px;
+    margin-bottom: 8px;
+    transition: all var(--bi-transition);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.bi-drop-zone.drag-over {
+    border-color: var(--bi-primary);
+    background: rgba(99, 102, 241, 0.06);
+}
+
+.bi-drop-zone.has-field {
+    border-style: solid;
+    border-color: var(--bi-primary-light);
+    background: rgba(99, 102, 241, 0.04);
+}
+
+.bi-drop-zone .slot-label {
+    font-size: 12px;
+    color: var(--bi-text-muted);
+    font-weight: 500;
+}
+
+.bi-drop-zone .slot-field {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    background: var(--bi-primary);
+    color: white;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.bi-drop-zone .slot-field .remove-btn {
+    cursor: pointer;
+    opacity: 0.7;
+    font-size: 10px;
+}
+
+.bi-drop-zone .slot-field .remove-btn:hover {
+    opacity: 1;
+}
+
+/* Chart Canvas */
+.bi-chart-canvas {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: var(--bi-surface);
+}
+
+.bi-chart-container {
+    width: 100%;
+    height: 100%;
+    min-height: 300px;
+}
+
+/* ===================================================================
+   Report Canvas — Dashboard Layout
+   =================================================================== */
+.bi-report-canvas {
+    background: var(--bi-bg);
+    min-height: calc(100vh - 52px);
+    padding: 16px;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+.bi-report-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 20px;
+    background: var(--bi-surface);
+    border-radius: var(--bi-radius);
+    box-shadow: var(--bi-shadow);
+    margin-bottom: 16px;
+}
+
+.bi-report-toolbar h2 {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--bi-text);
+    margin: 0;
+}
+
+.bi-report-toolbar-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.bi-toolbar-btn {
+    padding: 8px 16px;
+    border-radius: var(--bi-radius-sm);
+    border: 1px solid var(--bi-border);
+    background: var(--bi-surface);
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--bi-text);
+    transition: all var(--bi-transition);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.bi-toolbar-btn:hover {
+    background: var(--bi-surface-hover);
+    border-color: var(--bi-primary-light);
+}
+
+.bi-toolbar-btn.primary {
+    background: var(--bi-primary);
+    color: white;
+    border-color: var(--bi-primary);
+}
+
+.bi-toolbar-btn.primary:hover {
+    background: var(--bi-primary-dark);
+}
+
+/* Dashboard Grid */
+.bi-dashboard-grid {
+    min-height: 500px;
+}
+
+/* Widget Card */
+.bi-widget-card {
+    background: var(--bi-surface);
+    border-radius: var(--bi-radius);
+    box-shadow: var(--bi-shadow);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transition: box-shadow var(--bi-transition);
+}
+
+.bi-widget-card:hover {
+    box-shadow: var(--bi-shadow-md);
+}
+
+.bi-widget-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--bi-border-light);
+}
+
+.bi-widget-header h4 {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--bi-text);
+    margin: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.bi-widget-header .widget-actions {
+    display: flex;
+    gap: 4px;
+    opacity: 0;
+    transition: opacity var(--bi-transition);
+}
+
+.bi-widget-card:hover .widget-actions {
+    opacity: 1;
+}
+
+.bi-widget-header .widget-action-btn {
+    width: 26px;
+    height: 26px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--bi-radius-xs);
+    border: none;
+    background: transparent;
+    color: var(--bi-text-muted);
+    cursor: pointer;
+    font-size: 12px;
+    transition: all var(--bi-transition);
+}
+
+.bi-widget-header .widget-action-btn:hover {
+    background: var(--bi-surface-hover);
+    color: var(--bi-text);
+}
+
+.bi-widget-body {
+    flex: 1;
+    padding: 8px;
+    overflow: hidden;
+}
+
+/* ===================================================================
+   Shared Components
+   =================================================================== */
+
+/* Empty State */
+.bi-empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+    text-align: center;
+}
+
+.bi-empty-state i {
+    font-size: 48px;
+    color: var(--bi-border);
+    margin-bottom: 16px;
+}
+
+.bi-empty-state h3 {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--bi-text);
+    margin: 0 0 8px 0;
+}
+
+.bi-empty-state p {
+    font-size: 13px;
+    color: var(--bi-text-muted);
+    margin: 0;
+    max-width: 280px;
+}
+
+/* Badge */
+.bi-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.bi-badge.measure {
+    background: rgba(16, 185, 129, 0.1);
+    color: var(--bi-success);
+}
+
+.bi-badge.dimension {
+    background: rgba(59, 130, 246, 0.1);
+    color: var(--bi-info);
+}
+
+.bi-badge.date {
+    background: rgba(245, 158, 11, 0.1);
+    color: var(--bi-warning);
+}
+
+/* Loading */
+.bi-loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+}
+
+.bi-spinner {
+    width: 32px;
+    height: 32px;
+    border: 3px solid var(--bi-border);
+    border-top-color: var(--bi-primary);
+    border-radius: 50%;
+    animation: bi-spin 0.8s linear infinite;
+}
+
+@keyframes bi-spin {
+    to { transform: rotate(360deg); }
+}
+
+/* Pill Tags */
+.bi-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+    background: var(--bi-bg);
+    color: var(--bi-text-secondary);
+    border: 1px solid var(--bi-border);
+}
+
+/* Scrollbar styling */
+.bi-panel-body::-webkit-scrollbar {
+    width: 6px;
+}
+
+.bi-panel-body::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.bi-panel-body::-webkit-scrollbar-thumb {
+    background: var(--bi-border);
+    border-radius: 3px;
+}
+
+.bi-panel-body::-webkit-scrollbar-thumb:hover {
+    background: var(--bi-text-muted);
+}

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ===================================================================
+         BI Studio — Menu Structure
+         =================================================================== -->
+
+    <!-- Root Menu -->
+    <menuitem id="menu_bi_studio_root"
+              name="BI Studio"
+              web_icon="bi_studio,static/description/icon.png"
+              sequence="95"/>
+
+    <!-- Dashboards -->
+    <menuitem id="menu_bi_dashboards"
+              name="Dashboards"
+              parent="menu_bi_studio_root"
+              action="action_bi_report_page"
+              sequence="10"/>
+
+    <!-- Datasets -->
+    <menuitem id="menu_bi_datasets"
+              name="Datasets"
+              parent="menu_bi_studio_root"
+              action="action_bi_dataset"
+              sequence="20"/>
+
+    <!-- Visuals (under Datasets) -->
+    <menuitem id="menu_bi_visuals"
+              name="Visuals"
+              parent="menu_bi_studio_root"
+              action="action_bi_visual"
+              sequence="30"/>
+
+    <!-- Configuration -->
+    <menuitem id="menu_bi_config"
+              name="Configuration"
+              parent="menu_bi_studio_root"
+              sequence="90"
+              groups="group_bi_admin"/>
+
+    <menuitem id="menu_bi_config_domains"
+              name="Business Domains"
+              parent="menu_bi_config"
+              action="action_bi_business_domain"
+              sequence="10"/>
+
+</odoo>

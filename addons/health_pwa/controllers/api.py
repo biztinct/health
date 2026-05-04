@@ -356,9 +356,20 @@ class HealthPWAAPIController(http.Controller):
                         'discount_reason': line.discount_reason if hasattr(line, 'discount_reason') and line.discount_reason else '',
                     })
 
+            # Determine if current user is a doctor (for clinical notes access)
+            user = request.env.user
+            is_doctor_user = user.healthcare_role in ('doctor', 'duty_doctor')
+            if not is_doctor_user:
+                employee = user.get_employee_record() if hasattr(user, 'get_employee_record') else False
+                if employee and hasattr(employee, 'healthcare_role') and employee.healthcare_role in ('doctor', 'duty_doctor'):
+                    is_doctor_user = True
+
+            clinical_notes_submitted = order.clinical_notes_submitted if hasattr(order, 'clinical_notes_submitted') else False
+
             order_data = {
                 'id': order.id,
                 'name': order.name,
+                'patient_name': order.patient_id.name if order.patient_id else None,
                 'state': order.state,
                 'actual_start_datetime': order.actual_start_datetime,
                 'actual_end_datetime': order.actual_end_datetime if hasattr(order, 'actual_end_datetime') else None,
@@ -397,11 +408,23 @@ class HealthPWAAPIController(http.Controller):
                 'phone': order.patient_phone,
                 'description': order.symptoms or order.patient_notes or '',
                 'patient_notes': order.patient_notes,
-                'clinical_notes': order.clinical_notes if hasattr(order, 'clinical_notes') else None,
-                'diagnosis': order.diagnosis if hasattr(order, 'diagnosis') else None,
-                'treatment_performed': order.treatment_performed if hasattr(order, 'treatment_performed') else None,
-                'medications_prescribed': order.medications_prescribed if hasattr(order, 'medications_prescribed') else None,
-                'vital_signs': order.vital_signs if hasattr(order, 'vital_signs') else None,
+                'patient_code': order.patient_code if hasattr(order, 'patient_code') else None,
+                'category_of_service': {
+                    'id': order.category_of_service_id.id,
+                    'name': order.category_of_service_id.name,
+                } if hasattr(order, 'category_of_service_id') and order.category_of_service_id else None,
+                'clinical_notes': order.clinical_notes if hasattr(order, 'clinical_notes') and (not clinical_notes_submitted or is_doctor_user) else None,
+                'clinical_notes_submitted': clinical_notes_submitted,
+                'diagnosis': order.diagnosis if hasattr(order, 'diagnosis') and (not clinical_notes_submitted or is_doctor_user) else None,
+                'treatment_performed': order.treatment_performed if hasattr(order, 'treatment_performed') and (not clinical_notes_submitted or is_doctor_user) else None,
+                'medications_prescribed': order.medications_prescribed if hasattr(order, 'medications_prescribed') and (not clinical_notes_submitted or is_doctor_user) else None,
+                'vital_signs': order.vital_signs if hasattr(order, 'vital_signs') and (not clinical_notes_submitted or is_doctor_user) else None,
+                'is_doctor_user': is_doctor_user,
+                'has_clinical_images': order.has_clinical_images if hasattr(order, 'has_clinical_images') else False,
+                'clinical_images': [
+                    {'id': att.id, 'filename': att.name, 'url': f'/web/content/{att.id}'}
+                    for att in (order.clinical_image_ids if hasattr(order, 'clinical_image_ids') else [])
+                ],
                 # Post-service procedure counts
                 'injection_count': order.injection_count if hasattr(order, 'injection_count') else 1,
                 'medication_count': order.medication_count if hasattr(order, 'medication_count') else 1,
@@ -861,6 +884,20 @@ class HealthPWAAPIController(http.Controller):
             if not order.exists():
                 return self._prepare_json_response(error='Order not found', status_code=404)
 
+            # Once clinical notes are submitted, only doctors can edit
+            if order.clinical_notes_submitted:
+                user = request.env.user
+                is_doctor = user.healthcare_role in ('doctor', 'duty_doctor')
+                if not is_doctor:
+                    employee = user.get_employee_record() if hasattr(user, 'get_employee_record') else False
+                    if employee and employee.healthcare_role in ('doctor', 'duty_doctor'):
+                        is_doctor = True
+                if not is_doctor:
+                    return self._prepare_json_response(
+                        error='Clinical notes already submitted. Only doctors can modify confirmed clinical notes.',
+                        status_code=403
+                    )
+
             # Get clinical notes from request body
             import json as json_module
             try:
@@ -895,9 +932,12 @@ class HealthPWAAPIController(http.Controller):
                     except (ValueError, TypeError):
                         pass
 
+            mark_submitted = data.get('mark_submitted', False)
+
             if update_vals:
                 order.write(update_vals)
-                # Mark clinical notes as submitted
+                order.write({'clinical_notes_submitted': True})
+            elif mark_submitted:
                 order.write({'clinical_notes_submitted': True})
 
             return self._prepare_json_response(data={
@@ -960,7 +1000,7 @@ class HealthPWAAPIController(http.Controller):
 
     @http.route('/health_pwa/api/fso/<int:order_id>/upload_image', type='http', auth='user', methods=['POST'], csrf=False)
     def api_fso_upload_image(self, order_id, **kwargs):
-        """Upload clinical image for FSO from mobile app"""
+        """Upload clinical image for FSO from mobile app - restricted to doctors"""
         if not self._check_api_access():
             return self._prepare_json_response(error='Access denied', status_code=403)
 
@@ -969,6 +1009,20 @@ class HealthPWAAPIController(http.Controller):
 
             if not order.exists():
                 return self._prepare_json_response(error='Order not found', status_code=404)
+
+            # After submission, only doctors can upload clinical images
+            if order.clinical_notes_submitted:
+                user = request.env.user
+                is_doctor = user.healthcare_role in ('doctor', 'duty_doctor')
+                if not is_doctor:
+                    employee = user.get_employee_record() if hasattr(user, 'get_employee_record') else False
+                    if employee and hasattr(employee, 'healthcare_role') and employee.healthcare_role in ('doctor', 'duty_doctor'):
+                        is_doctor = True
+                if not is_doctor:
+                    return self._prepare_json_response(
+                        error='Clinical notes already submitted. Only doctors can upload images after submission.',
+                        status_code=403
+                    )
 
             # Get uploaded file
             image_file = request.httprequest.files.get('image')
@@ -1941,12 +1995,11 @@ class HealthPWAAPIController(http.Controller):
                 ('user_id', '=', user.id)
             ], limit=1)
 
-            # Check if user is a doctor by checking healthcare_role field
             is_doctor = False
-            if employee:
-                # Check if healthcare_role field exists and is set to 'doctor'
-                if hasattr(employee, 'healthcare_role') and employee.healthcare_role:
-                    is_doctor = employee.healthcare_role.lower() == 'doctor'
+            if user.healthcare_role in ('doctor', 'duty_doctor'):
+                is_doctor = True
+            elif employee and hasattr(employee, 'healthcare_role') and employee.healthcare_role in ('doctor', 'duty_doctor'):
+                is_doctor = True
 
             user_data = {
                 'id': user.id,

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <!-- Bank Transfer Payment Method (inbound) -->
+        <record id="account_payment_method_bank_inbound" model="account.payment.method">
+            <field name="name">Bank</field>
+            <field name="code">bank_transfer</field>
+            <field name="payment_type">inbound</field>
+        </record>
+
+        <!-- Bank Transfer Payment Method (outbound) -->
+        <record id="account_payment_method_bank_outbound" model="account.payment.method">
+            <field name="name">Bank</field>
+            <field name="code">bank_transfer</field>
+            <field name="payment_type">outbound</field>
+        </record>
+
+    </data>
+</odoo>

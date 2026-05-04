@@ -1776,6 +1776,9 @@ window.healthPWA = {
 
         // Check if clinical notes are valid (has text OR image)
         const isClinicalNotesComplete = computed(() => {
+          if (selectedBookingDetail.value?.clinical_notes_submitted) {
+            return true;
+          }
           // Check local unsaved state
           const hasLocalNotes = clinicalNotesText.value && clinicalNotesText.value.trim().length > 0;
           const hasDoctorNotes = [clinicalObservations.value, diagnosis.value, treatmentPerformed.value]
@@ -1787,7 +1790,6 @@ window.healthPWA = {
                                   selectedBookingDetail.value.clinical_notes.trim().length > 0;
           const hasServerImages = selectedBookingDetail.value?.has_clinical_images === true;
 
-          // Return true if either local unsaved OR server-saved clinical notes/images exist
           return hasLocalNotes || hasDoctorNotes || hasLocalImage || hasServerNotes || hasServerImages;
         });
 
@@ -2278,7 +2280,7 @@ window.healthPWA = {
               return;
             }
 
-            // Step 1: Upload photo if available
+            // Step 1: Upload photo if available (photo alone is valid)
             if (hasPhoto) {
               console.log('Uploading photo...');
               const photoFormData = new FormData();
@@ -2300,6 +2302,13 @@ window.healthPWA = {
 
                 if (photoResponse.ok) {
                   console.log('Photo uploaded successfully');
+                  if (parsedPhotoResult?.data && selectedBookingDetail.value) {
+                    if (!selectedBookingDetail.value.clinical_images) {
+                      selectedBookingDetail.value.clinical_images = [];
+                    }
+                    selectedBookingDetail.value.clinical_images.push(parsedPhotoResult.data);
+                    selectedBookingDetail.value.has_clinical_images = true;
+                  }
                 } else {
                   console.warn('Photo upload returned non-200 status:', photoResponse.status);
                   alert('Warning: Photo upload failed but clinical notes will still be saved');
@@ -2338,9 +2347,25 @@ window.healthPWA = {
               console.log('Clinical notes saved successfully');
             }
 
+            // Step 2b: If only photo (no notes), still mark as submitted
+            if (hasPhoto && !hasNotes) {
+              try {
+                await fetch(`/health_pwa/api/fso/${selectedBookingId.value}/clinical_notes`, {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ mark_submitted: true })
+                });
+              } catch (e) {
+                console.warn('Could not mark clinical notes as submitted:', e);
+              }
+            }
+
             // Step 3: Update UI and close modal on success
-            if (selectedBookingDetail.value && hasNotes) {
-              selectedBookingDetail.value.clinical_notes = clinicalNotesText.value;
+            if (selectedBookingDetail.value) {
+              if (hasNotes) {
+                selectedBookingDetail.value.clinical_notes = clinicalNotesText.value;
+              }
+              selectedBookingDetail.value.clinical_notes_submitted = true;
             }
             alert('Clinical notes saved successfully');
             closeClinicalNotesModal();
@@ -3064,6 +3089,11 @@ window.healthPWA = {
                   <i class="material-icons">close</i>
                 </button>
               </div>
+              <!-- Client Name Banner -->
+              <div v-if="selectedBookingDetail?.patient_name" class="client-name-banner">
+                <i class="material-icons">person</i>
+                <span>{{ selectedBookingDetail.patient_name }}</span>
+              </div>
 
               <!-- Modal scrollable content -->
               <div class="modal-body">
@@ -3125,21 +3155,21 @@ window.healthPWA = {
 
                 <!-- After service start or when already in progress -->
                 <div v-if="serviceStartedForBooking === selectedBookingId || selectedBookingDetail?.state === 'in_progress'" class="modal-footer-content">
-                  <button @click="openClinicalNotesModal" class="btn btn-clinical-notes">
+                  <button v-if="!selectedBookingDetail?.clinical_notes_submitted || currentUser.is_doctor" @click="openClinicalNotesModal" class="btn btn-clinical-notes">
                     <i class="material-icons">description</i>
                     <span>{{ _t('Clinical Notes') }}</span>
                   </button>
-                  <!-- Verify Invoice Button (always visible, disabled when no quote or clinical notes incomplete) -->
+                  <!-- View Quote Button (always visible, disabled when no quote or clinical notes incomplete) -->
                   <button @click="openInvoiceModal"
                           :disabled="!selectedBookingDetail?.confirmation_requirements?.has_quote_with_items || !isClinicalNotesComplete"
                           class="btn btn-invoice"
                           :title="!selectedBookingDetail?.confirmation_requirements?.has_quote_with_items
                             ? 'No quote available'
                             : !isClinicalNotesComplete
-                            ? 'Please fill in the clinical notes or take image of the notes to raise Invoice'
-                            : 'Verify Invoice'">
+                            ? 'Please fill in the clinical notes or take image of the notes to view Quote'
+                            : 'View Quote'">
                     <i class="material-icons">receipt</i>
-                    <span>Verify Invoice</span>
+                    <span>View Quote</span>
                   </button>
                   <!-- Complete Service Button (shown only when no quote) -->
                   <button v-if="!selectedBookingDetail?.confirmation_requirements?.has_quote_with_items"
@@ -3168,6 +3198,11 @@ window.healthPWA = {
                 </button>
                 <h3 class="modal-title">Intake Notes</h3>
                 <div style="width: 40px;"></div>
+              </div>
+              <!-- Client Name Banner -->
+              <div v-if="selectedBookingDetail?.patient_name" class="client-name-banner">
+                <i class="material-icons">person</i>
+                <span>{{ selectedBookingDetail.patient_name }}</span>
               </div>
               <!-- Diagnosis -->
               <div class="intake-form-group">
@@ -3219,6 +3254,11 @@ window.healthPWA = {
               <button @click="closeClinicalNotesModal" class="btn-modal-close">
                 <i class="material-icons">close</i>
               </button>
+            </div>
+            <!-- Client Name Banner -->
+            <div v-if="selectedBookingDetail?.patient_name" class="client-name-banner">
+              <i class="material-icons">person</i>
+              <span>{{ selectedBookingDetail.patient_name }}</span>
             </div>
 
             <!-- Modal content -->
@@ -3309,12 +3349,22 @@ window.healthPWA = {
                   </button>
                 </div>
 
-                <!-- Photo preview -->
+                <!-- Photo preview (newly captured) -->
                 <div v-if="photoPreviewUrl" class="photo-preview">
                   <img :src="photoPreviewUrl" alt="Preview" />
                   <button @click="() => { capturedPhoto = null; photoPreviewUrl = null; }" class="btn-remove-photo">
                     <i class="material-icons">close</i>
                   </button>
+                </div>
+
+                <!-- Previously saved images from server -->
+                <div v-if="selectedBookingDetail?.clinical_images?.length > 0" style="margin-top: 8px;">
+                  <label class="clinical-form-label" style="font-size: 12px; color: #666;">{{ _t('Saved Images') }}</label>
+                  <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px;">
+                    <div v-for="img in selectedBookingDetail.clinical_images" :key="img.id" style="position: relative; border: 1px solid #ddd; border-radius: 8px; overflow: hidden; width: 100px; height: 100px;">
+                      <img :src="img.url" :alt="img.filename" style="width: 100%; height: 100%; object-fit: cover;" />
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -3322,7 +3372,7 @@ window.healthPWA = {
             <!-- Modal footer -->
             <div class="clinical-modal-footer">
               <button @click="closeClinicalNotesModal" class="btn btn-secondary">Cancel</button>
-              <button @click="saveClinicalNotes" class="btn btn-success">Save</button>
+              <button @click="saveClinicalNotes" class="btn btn-success">Confirm and Save</button>
             </div>
           </div>
         </div>
@@ -3333,11 +3383,16 @@ window.healthPWA = {
             <div class="modal-header">
               <h3>
                 <i class="material-icons">receipt</i>
-                {{ _t('Verify Invoice') }}
+                {{ _t('View Quote') }}
               </h3>
               <button @click="showInvoiceModal = false" class="modal-close">
                 <i class="material-icons">close</i>
               </button>
+            </div>
+            <!-- Client Name Banner -->
+            <div v-if="selectedBookingDetail?.patient_name" class="client-name-banner">
+              <i class="material-icons">person</i>
+              <span>{{ selectedBookingDetail.patient_name }}</span>
             </div>
             <div class="modal-body" v-if="quoteData">
               <!-- Quote Information -->
@@ -3476,6 +3531,11 @@ window.healthPWA = {
                   <button @click="showPaymentWizard = false" class="modal-close">
                     <i class="material-icons">close</i>
                   </button>
+                </div>
+                <!-- Client Name Banner -->
+                <div v-if="selectedBookingDetail?.patient_name" class="client-name-banner">
+                  <i class="material-icons">person</i>
+                  <span>{{ selectedBookingDetail.patient_name }}</span>
                 </div>
 
               <div class="modal-body">
@@ -5845,13 +5905,13 @@ window.healthPWA = {
                 <span>Clinical Notes</span>
               </button>
 
-              <!-- Verify Invoice Button (renamed from Invoice) -->
+              <!-- View Quote Button (renamed from Invoice) -->
               <button @click="loadQuote(true)"
                       class="btn btn-action btn-invoice"
                       :disabled="!isOnline || !order.confirmation_requirements?.has_quote_with_items"
-                      :title="!order.confirmation_requirements?.has_quote_with_items ? 'No quote associated with this booking' : 'Verify and review invoice'">
+                      :title="!order.confirmation_requirements?.has_quote_with_items ? 'No quote associated with this booking' : 'View Quote'">
                 <i class="material-icons">receipt</i>
-                <span>Verify Invoice</span>
+                <span>View Quote</span>
               </button>
 
               <!-- Payment Button (appears only after quote is verified) -->
@@ -5978,6 +6038,11 @@ window.healthPWA = {
                     <i class="material-icons">close</i>
                   </button>
                 </div>
+                <!-- Client Name Banner -->
+                <div v-if="order?.patient_name" class="client-name-banner">
+                  <i class="material-icons">person</i>
+                  <span>{{ order.patient_name }}</span>
+                </div>
                 <div class="modal-body">
                   <div class="form-group">
                     <label>Clinical Observations</label>
@@ -6071,6 +6136,11 @@ window.healthPWA = {
                   <button @click="showInvoice = false" class="modal-close">
                     <i class="material-icons">close</i>
                   </button>
+                </div>
+                <!-- Client Name Banner -->
+                <div v-if="order?.patient_name" class="client-name-banner">
+                  <i class="material-icons">person</i>
+                  <span>{{ order.patient_name }}</span>
                 </div>
                 <div class="modal-body" v-if="quoteData">
                   <div class="invoice-header">

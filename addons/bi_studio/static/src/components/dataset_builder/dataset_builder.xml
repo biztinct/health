@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="bi_studio.DatasetBuilder">
+        <div class="bi-dataset-builder">
+            <!-- Loading -->
+            <t t-if="state.loading">
+                <div class="bi-loading" style="width:100%;height:100%;">
+                    <div class="bi-spinner"/>
+                </div>
+            </t>
+
+            <t t-else="">
+                <!-- LEFT PANEL — Field Explorer -->
+                <div class="bi-panel bi-field-explorer">
+                    <div class="bi-panel-header">
+                        <h3><i class="fa fa-list-ul me-1"/> Fields</h3>
+                        <span class="bi-badge dimension" t-esc="selectedFieldCount + ' selected'"/>
+                    </div>
+
+                    <!-- Search -->
+                    <div class="bi-field-search">
+                        <input type="text" placeholder="Search fields..."
+                               t-on-input="onFieldSearch"
+                               t-att-value="state.fieldSearch"/>
+                    </div>
+
+                    <div class="bi-panel-body">
+                        <t t-foreach="groupNames" t-as="groupName" t-key="groupName">
+                            <div class="bi-field-group">
+                                <!-- Group Header -->
+                                <div class="bi-field-group-header"
+                                     t-on-click="() => this.toggleGroup(groupName)">
+                                    <i t-attf-class="fa chevron {{ isGroupExpanded(groupName) ? 'expanded' : '' }} fa-chevron-right"/>
+                                    <span class="group-name" t-esc="groupName"/>
+                                    <span class="group-count" t-esc="getGroupFieldCount(groupName)"/>
+                                </div>
+
+                                <!-- Fields -->
+                                <t t-if="isGroupExpanded(groupName)">
+                                    <t t-foreach="getGroupFields(groupName)" t-as="field" t-key="field.field_path">
+                                        <div t-attf-class="bi-field-item {{ isFieldSelected(field.field_path) ? 'selected' : '' }}"
+                                             t-on-click="() => this.toggleField(field.field_path)">
+                                            <span t-attf-class="field-icon {{ field.field_role }}">
+                                                <i t-attf-class="fa {{ getFieldIcon(field.field_role) }}"/>
+                                            </span>
+                                            <span class="field-name"
+                                                  t-esc="field.display_label || field.field_label"/>
+                                            <span class="field-type" t-esc="field.odoo_field_type"/>
+                                        </div>
+                                    </t>
+                                </t>
+                            </div>
+                        </t>
+
+                        <!-- Empty state -->
+                        <t t-if="groupNames.length === 0">
+                            <div class="bi-empty-state">
+                                <i class="fa fa-database"/>
+                                <h3>No fields available</h3>
+                                <p>Select a model in the dataset form to scan fields.</p>
+                            </div>
+                        </t>
+                    </div>
+                </div>
+
+                <!-- CENTER PANEL — Data Preview -->
+                <div class="bi-panel bi-preview-panel">
+                    <div class="bi-panel-header">
+                        <h3>
+                            <i class="fa fa-table me-1"/>
+                            Data Preview
+                            <t t-if="state.previewTotal > 0">
+                                <small style="font-weight:400;color:var(--bi-text-muted);">
+                                    (<t t-esc="state.previewTotal"/> records)
+                                </small>
+                            </t>
+                        </h3>
+                        <button class="bi-toolbar-btn" t-on-click="_refreshPreview"
+                                t-att-disabled="state.previewLoading">
+                            <i t-attf-class="fa fa-refresh {{ state.previewLoading ? 'fa-spin' : '' }}"/>
+                            Refresh
+                        </button>
+                    </div>
+
+                    <div class="bi-panel-body" style="padding:0;">
+                        <t t-if="state.previewLoading">
+                            <div class="bi-loading">
+                                <div class="bi-spinner"/>
+                            </div>
+                        </t>
+                        <t t-elif="state.previewColumns.length === 0">
+                            <div class="bi-empty-state" style="height:100%;">
+                                <i class="fa fa-eye"/>
+                                <h3>No data to preview</h3>
+                                <p>Select fields from the left panel to see data.</p>
+                            </div>
+                        </t>
+                        <t t-else="">
+                            <div class="bi-preview-table-wrap">
+                                <table class="bi-preview-table">
+                                    <thead>
+                                        <tr>
+                                            <t t-foreach="state.previewColumns" t-as="col" t-key="col.name">
+                                                <th>
+                                                    <span t-esc="col.label"/>
+                                                    <br/>
+                                                    <small class="bi-badge" t-att-class="col.role"
+                                                           t-esc="col.role"/>
+                                                </th>
+                                            </t>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <t t-foreach="state.previewRows" t-as="row" t-key="row_index">
+                                            <tr>
+                                                <t t-foreach="row" t-as="cell" t-key="cell_index">
+                                                    <td t-esc="formatCellValue(cell)"/>
+                                                </t>
+                                            </tr>
+                                        </t>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </t>
+                    </div>
+                </div>
+
+                <!-- RIGHT PANEL — Configuration -->
+                <div class="bi-panel bi-config-panel">
+                    <div class="bi-panel-header">
+                        <h3><i class="fa fa-cog me-1"/> Configuration</h3>
+                    </div>
+
+                    <div class="bi-panel-body">
+                        <!-- Grain -->
+                        <div class="bi-config-section">
+                            <label>Report Grain</label>
+                            <select t-on-change="(ev) => this.state.grainLevel = ev.target.value"
+                                    t-att-value="state.grainLevel">
+                                <option value="root">Root Model Level</option>
+                                <option value="child">Child/Line Level</option>
+                            </select>
+                        </div>
+
+                        <!-- Record Limit -->
+                        <div class="bi-config-section">
+                            <label>Record Limit</label>
+                            <input type="number" min="0" max="100000"
+                                   t-att-value="state.recordLimit"
+                                   t-on-change="(ev) => this.state.recordLimit = parseInt(ev.target.value) || 1000"/>
+                        </div>
+
+                        <!-- Sort -->
+                        <div class="bi-config-section">
+                            <label>Sort By</label>
+                            <input type="text" placeholder="Field path (e.g., amount_total)"
+                                   t-att-value="state.sortField"
+                                   t-on-change="(ev) => this.state.sortField = ev.target.value"/>
+                            <select style="margin-top:4px;"
+                                    t-on-change="(ev) => this.state.sortOrder = ev.target.value"
+                                    t-att-value="state.sortOrder">
+                                <option value="desc">Descending</option>
+                                <option value="asc">Ascending</option>
+                            </select>
+                        </div>
+
+                        <!-- Actions -->
+                        <div class="bi-config-section" style="border-bottom:none;">
+                            <button class="bi-toolbar-btn primary" style="width:100%;justify-content:center;"
+                                    t-on-click="saveDataset">
+                                <i class="fa fa-save"/> Save Dataset
+                            </button>
+                            <button class="bi-toolbar-btn" style="width:100%;justify-content:center;margin-top:8px;"
+                                    t-on-click="goBack">
+                                <i class="fa fa-arrow-left"/> Back to List
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </t>
+        </div>
+    </t>
+
+</templates>

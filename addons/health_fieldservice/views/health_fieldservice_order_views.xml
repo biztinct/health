@@ -20,23 +20,23 @@
                             invisible="state in ('draft', 'completed', 'completed_pending_invoice', 'cancelled', 'closed')"
                             help="Assign staff to this booking"/>
 
+                    <button name="action_confirm_booking" type="object"
+                            string="Client Confirmed" class="btn-success"
+                            icon="fa-check-circle"
+                            invisible="state != 'draft'"
+                            groups="health_base.group_healthcare_operations_manager"
+                            help="Confirm booking and move to next stage (quote is optional)"/>
+
                     <button name="action_cancel_booking" type="object"
                             string="Cancel Booking" class="btn-danger"
                             icon="fa-times-circle"
                             invisible="state in ('completed', 'completed_pending_invoice', 'cancelled')"/>
-                    
+
                     <button name="action_open_lead_dashboard" type="object"
                             string="Dashboard" class="btn-secondary"
                             icon="fa-bar-chart"
                             invisible="not crm_lead_id"
                             help="Open the lead dashboard for this booking"/>
-                    
-                    <button name="action_confirm_booking" type="object"
-                            string="Confirm Booking" class="btn-success"
-                            icon="fa-check-circle"
-                            invisible="state != 'draft'"
-                            groups="health_base.group_healthcare_operations_manager"
-                            help="Confirm booking and move to next stage (quote is optional)"/>
 
                     <button name="action_open_reschedule_calendar" type="object"
                             string="Reschedule" class="btn-secondary"
@@ -235,6 +235,7 @@
                                 <group col="2">
                                     <field name="patient_id" readonly="1"
                                            context="{'form_view_ref': 'health_base.view_health_patient_form'}"/>
+                                    <field name="patient_code" string="Client ID"/>
                                     <field name="patient_phone" widget="phone" string="Phone"/>
                                     <field name="patient_national_id" string="National ID"/>
                                     <label for="patient_address_display" string="Client Address"/>
@@ -263,7 +264,8 @@
                                 </div>
                                 <group col="2">
                                     <field name="assigned_staff_ids" widget="many2many_tags"
-                                           options="{'color_field': 'color', 'no_create': False}"/>
+                                           options="{'color_field': 'color', 'no_create': False}"
+                                           readonly="state == 'draft'"/>
                                     <field name="lead_staff_id"
                                            options="{'no_create': False}"/>
                                     <field name="assigned_doctor_ids" widget="many2many_tags"
@@ -357,7 +359,8 @@
                             </div>
                         </page>
 
-                        <page string="Clinical Notes" name="clinical_notes">
+                        <page string="Clinical Notes" name="clinical_notes"
+                              invisible="clinical_notes_submitted and not is_current_user_doctor">
                             <div class="vu-section">
                                 <div class="vu-section__title">
                                     <span class="vu-section__icon" data-icon="stethoscope"/>
@@ -380,7 +383,9 @@
                                         </div>
                                         <group>
                                             <field name="clinical_notes_submitted" invisible="1"/>
-                                            <field name="clinical_notes" widget="html" nolabel="1" placeholder="Enter clinical observations and notes..."/>
+                                            <field name="is_current_user_doctor" invisible="1"/>
+                                            <field name="clinical_notes" widget="html" nolabel="1" placeholder="Enter clinical observations and notes..."
+                                                   readonly="clinical_notes_submitted and not is_current_user_doctor"/>
                                         </group>
                                     </div>
                                     <div class="vu-card">
@@ -389,7 +394,8 @@
                                             <span>MOH Compliance - Diagnosis</span>
                                         </div>
                                         <group>
-                                            <field name="diagnosis" nolabel="1" placeholder="Enter medical diagnosis (Chuẩn đoán)..."/>
+                                            <field name="diagnosis" nolabel="1" placeholder="Enter medical diagnosis (Chuẩn đoán)..."
+                                                   readonly="clinical_notes_submitted and not is_current_user_doctor"/>
                                         </group>
                                     </div>
                                 </div>
@@ -400,8 +406,10 @@
                                             <span>Treatment Details</span>
                                         </div>
                                         <group>
-                                            <field name="treatment_performed" placeholder="Describe treatment provided..."/>
-                                            <field name="medications_prescribed" placeholder="List medications prescribed..."/>
+                                            <field name="treatment_performed" placeholder="Describe treatment provided..."
+                                                   readonly="clinical_notes_submitted and not is_current_user_doctor"/>
+                                            <field name="medications_prescribed" placeholder="List medications prescribed..."
+                                                   readonly="clinical_notes_submitted and not is_current_user_doctor"/>
                                         </group>
                                     </div>
                                     <div class="vu-card">
@@ -410,9 +418,12 @@
                                             <span>Client Assessment</span>
                                         </div>
                                         <group>
-                                            <field name="patient_condition_before" placeholder="Patient condition before service..."/>
-                                            <field name="patient_condition_after" placeholder="Patient condition after service..."/>
-                                            <field name="vital_signs" placeholder="Record vital signs..."/>
+                                            <field name="patient_condition_before" placeholder="Patient condition before service..."
+                                                   readonly="clinical_notes_submitted and not is_current_user_doctor"/>
+                                            <field name="patient_condition_after" placeholder="Patient condition after service..."
+                                                   readonly="clinical_notes_submitted and not is_current_user_doctor"/>
+                                            <field name="vital_signs" placeholder="Record vital signs..."
+                                                   readonly="clinical_notes_submitted and not is_current_user_doctor"/>
                                         </group>
                                     </div>
                                 </div>
@@ -427,6 +438,17 @@
                                             <field name="medication_count"/>
                                             <field name="wound_count"/>
                                             <field name="iv_fluid_count"/>
+                                        </group>
+                                    </div>
+                                </div>
+                                <div class="vu-section-grid">
+                                    <div class="vu-card">
+                                        <div class="vu-card__title">
+                                            <span class="vu-section__icon" data-icon="camera"/>
+                                            <span>Clinical Images</span>
+                                        </div>
+                                        <group>
+                                            <field name="clinical_image_ids" widget="many2many_binary" nolabel="1" colspan="2"/>
                                         </group>
                                     </div>
                                 </div>
@@ -480,7 +502,9 @@
                                             <span>Care Planning</span>
                                         </div>
                                         <group>
-                                            <field name="goal_of_care" placeholder="Primary goal or objective of care"/>
+                                            <field name="category_of_service_id" string="Category of Service"
+                                                   options="{'no_create': True}"
+                                                   domain="[]"/>
                                             <field name="required_equipment" placeholder="Equipment or supplies required for care"/>
                                         </group>
                                     </div>
@@ -614,6 +638,7 @@
             <list string="Bookings" default_order="create_date desc">
                 <field name="display_name" string="Booking"/>
                 <field name="patient_id" string="Client"/>
+                <field name="patient_code" string="Client ID" optional="show"/>
                 <field name="catchment_province_id" string="Catchment Area" optional="hide"/>
                 <field name="patient_phone" string="Phone" widget="phone" optional="show"/>
                 <field name="service_type"/>

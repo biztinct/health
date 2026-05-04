@@ -49,12 +49,7 @@
                         </span>
                     </t>
                 </h1>
-                <!-- Dashboard Type Identifier -->
-                <div style="display: flex; justify-content: center; margin: 4px 0 8px 0;">
-                    <span style="display: inline-flex; align-items: center; gap: 6px; padding: 5px 16px; background: linear-gradient(135deg, #fff3e0, #ffe0b2); border: 1px solid #ffcc80; border-radius: 20px; color: #e65100; font-weight: 600; font-size: 12px; letter-spacing: 0.5px; text-transform: uppercase;">
-                        <i class="fa fa-filter" style="font-size: 13px;"/> Lead Dashboard
-                    </span>
-                </div>
+                <!-- Dashboard Type Identifier (title removed) -->
                 <div class="hub_spoke_action_buttons">
                     <button type="button" class="hub_spoke_btn hub_spoke_btn--spam" t-on-click="onMarkSpamClick" title="Mark as Spam">
                         <i class="fa fa-ban"/> Mark Spam
@@ -131,7 +126,7 @@
                             t-att-r="hubRadius"
                             class="hub_spoke_center_circle"
                             fill="#E3F2FD"
-                            stroke="#1565C0"
+                            stroke="#64B5F6"
                             stroke-width="4"
                         />
 
@@ -151,7 +146,7 @@
                             t-att-y="centerY + 30"
                             class="hub_spoke_center_text"
                             text-anchor="middle"
-                            fill="#1565C0"
+                            fill="#64B5F6"
                             font-size="16"
                             font-weight="700"
                         >

@@ -435,12 +435,14 @@ class HealthBookingWizard(models.TransientModel):
                 update_vals['gender'] = self.client_gender
             if self.client_address and self.client_address != (client.street or ''):
                 update_vals['street'] = self.client_address
+            if self.catchment_province_id and self.catchment_province_id != client.catchment_province_id:
+                update_vals['catchment_province_id'] = self.catchment_province_id.id
             if update_vals:
-                client.write(update_vals)
+                client.with_context(_skip_field_requirements=True).write(update_vals)
         elif self.is_new_client and self.lead_id:
-            # New client from lead - use lead's _get_or_create_patient to properly 
+            # New client from lead - use lead's _get_or_create_patient to properly
             # transfer unique_contact_code as patient_code
-            client = self.lead_id._get_or_create_patient(self.client_name, {
+            client = self.lead_id.with_context(_skip_field_requirements=True)._get_or_create_patient(self.client_name, {
                 'phone': self.client_phone,
                 'email': self.client_email,
                 'street': self.client_address,
@@ -449,7 +451,7 @@ class HealthBookingWizard(models.TransientModel):
                 'catchment_province_id': self.catchment_province_id.id if self.catchment_province_id else False,
                 'primary_facility_id': self.facility_id.id if self.facility_id else False,
             })
-            
+
             # Update client with additional info from wizard
             update_vals = {}
             if self.client_phone and not client.phone:
@@ -460,11 +462,13 @@ class HealthBookingWizard(models.TransientModel):
                 update_vals['street'] = self.client_address
             if self.client_dob:
                 update_vals['birth_date'] = self.client_dob
-            if self.client_gender:
+            if self.client_gender and self.client_gender != (client.gender or ''):
                 update_vals['gender'] = self.client_gender
+            if self.catchment_province_id and self.catchment_province_id != client.catchment_province_id:
+                update_vals['catchment_province_id'] = self.catchment_province_id.id
             if update_vals:
-                client.write(update_vals)
-                
+                client.with_context(_skip_field_requirements=True).write(update_vals)
+
         elif self.is_new_client and self.client_name:
             # New client without lead - create directly with a default catchment province
             # Get default catchment province from user's facility or first available
@@ -475,8 +479,8 @@ class HealthBookingWizard(models.TransientModel):
             else:
                 # Get first available catchment province
                 catchment_province = self.env['health.catchment.province'].search([('active', '=', True)], limit=1)
-            
-            client = self.env['res.partner'].create({
+
+            client = self.env['res.partner'].with_context(_skip_field_requirements=True).create({
                 'name': self.client_name,
                 'phone': self.client_phone,
                 'email': self.client_email,
@@ -491,14 +495,14 @@ class HealthBookingWizard(models.TransientModel):
         
         # Update client with commission duration if 30_days is selected
         if self.commission_duration == '30_days' and client:
-            client.write({'commission_due_to': self.commission_duration})
+            client.with_context(_skip_field_requirements=True).write({'commission_due_to': self.commission_duration})
         
         # Create the booking (FSO)
         booking_vals = {
             'patient_id': client.id,
             'service_type': self.service_type or 'consultation',
             'scheduled_datetime': self._get_scheduled_datetime(),
-            'scheduled_duration': self.booking_duration,
+            'scheduled_duration': int(self.booking_duration * 60),
             'service_location': self.service_location,
             'intake_notes': self.booking_notes,
             'facility_id': self.facility_id.id if self.facility_id else False,
@@ -545,7 +549,7 @@ class HealthBookingWizard(models.TransientModel):
                 'health_contact_outcome': 'service_booked',
                 'contact_outcome': 'service_booked',
             }
-            self.lead_id.write(lead_update_vals)
+            self.lead_id.with_context(_skip_field_requirements=True).write(lead_update_vals)
             
             # If caller is a representative (not the client), ensure the relation is created
             if self.lead_id.contact_relationship_type and self.lead_id.contact_relationship_type != 'client':
@@ -642,7 +646,13 @@ class HealthBookingWizard(models.TransientModel):
     def default_get(self, fields_list):
         """Pre-fill from context lead"""
         defaults = super().default_get(fields_list)
-        
+
+        # Default catchment province from current user
+        if 'catchment_province_id' in fields_list:
+            user = self.env.user
+            if user.catchment_province_id:
+                defaults['catchment_province_id'] = user.catchment_province_id.id
+
         lead_id = self.env.context.get('default_lead_id') or self.env.context.get('active_id')
         if lead_id and self.env.context.get('active_model') == 'crm.lead':
             lead = self.env['crm.lead'].browse(lead_id)

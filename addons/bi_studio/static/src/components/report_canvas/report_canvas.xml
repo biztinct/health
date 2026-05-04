@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="bi_studio.ReportCanvas">
+        <div t-attf-class="bi-report-canvas {{ state.theme === 'dark' ? 'bi-dark-theme' : '' }}">
+            <!-- Loading -->
+            <t t-if="state.loading">
+                <div class="bi-loading" style="height:80vh;">
+                    <div class="bi-spinner"/>
+                </div>
+            </t>
+
+            <t t-else="">
+                <!-- Toolbar -->
+                <div class="bi-report-toolbar">
+                    <div style="display:flex;align-items:center;gap:12px;">
+                        <button class="bi-toolbar-btn" t-on-click="goBack">
+                            <i class="fa fa-arrow-left"/>
+                        </button>
+                        <h2 t-esc="state.reportName || 'Dashboard'"/>
+                    </div>
+                    <div class="bi-report-toolbar-actions">
+                        <button class="bi-toolbar-btn" t-on-click="refreshDashboard">
+                            <i class="fa fa-refresh"/> Refresh
+                        </button>
+                        <button t-attf-class="bi-toolbar-btn {{ state.isEditMode ? 'primary' : '' }}"
+                                t-on-click="toggleEditMode">
+                            <i class="fa fa-pencil"/>
+                            <t t-esc="state.isEditMode ? 'Done Editing' : 'Edit Layout'"/>
+                        </button>
+                        <button class="bi-toolbar-btn primary" t-on-click="addVisual"
+                                t-if="state.isEditMode">
+                            <i class="fa fa-plus"/> Add Visual
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Dashboard Grid -->
+                <t t-if="state.visuals.length === 0">
+                    <div class="bi-empty-state" style="height:60vh;">
+                        <i class="fa fa-tachometer"/>
+                        <h3>Empty Dashboard</h3>
+                        <p>Add datasets and visuals to build your dashboard.</p>
+                        <button class="bi-toolbar-btn primary" style="margin-top:16px;"
+                                t-on-click="addVisual">
+                            <i class="fa fa-plus"/> Add First Visual
+                        </button>
+                    </div>
+                </t>
+                <t t-else="">
+                    <div class="grid-stack bi-dashboard-grid" t-ref="grid">
+                        <t t-foreach="state.visuals" t-as="visual" t-key="visual.id">
+                            <div class="grid-stack-item"
+                                 t-att-gs-id="visual.id"
+                                 t-att-gs-x="visual.position.x"
+                                 t-att-gs-y="visual.position.y"
+                                 t-att-gs-w="visual.position.w || 6"
+                                 t-att-gs-h="visual.position.h || 4"
+                                 gs-min-w="2" gs-min-h="2">
+                                <div class="grid-stack-item-content">
+                                    <div class="bi-widget-card" style="height:100%;">
+                                        <div class="bi-widget-header">
+                                            <h4 t-esc="visual.name"/>
+                                            <div class="widget-actions">
+                                                <button class="widget-action-btn"
+                                                        t-on-click="() => this.openVisualSettings(visual.id)"
+                                                        title="Edit">
+                                                    <i class="fa fa-cog"/>
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div class="bi-widget-body">
+                                            <t t-if="visual.chart_data and (visual.chart_data.labels or visual.chart_data.datasets)">
+                                                <ChartRenderer
+                                                    chartData="visual.chart_data"
+                                                    chartType="visual.visual_type"
+                                                    colorPalette="visual.styling?.color_palette || 'default'"
+                                                    showLegend="visual.styling?.show_legend !== false"
+                                                    showLabels="visual.styling?.show_labels === true"
+                                                    height="'100%'"
+                                                />
+                                            </t>
+                                            <t t-else="">
+                                                <div class="bi-empty-state" style="height:100%;">
+                                                    <i class="fa fa-bar-chart" style="font-size:32px;"/>
+                                                    <p style="margin-top:8px;">Configure this visual</p>
+                                                </div>
+                                            </t>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+                    </div>
+                </t>
+            </t>
+        </div>
+    </t>
+
+</templates>

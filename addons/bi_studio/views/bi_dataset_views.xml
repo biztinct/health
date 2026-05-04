@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ===================================================================
+         BI Dataset — Form View
+         =================================================================== -->
+    <record id="view_bi_dataset_form" model="ir.ui.view">
+        <field name="name">bi.dataset.form</field>
+        <field name="model">bi.dataset</field>
+        <field name="arch" type="xml">
+            <form string="Dataset">
+                <header>
+                    <button name="action_open_dataset_builder" type="object"
+                            string="Open Dataset Builder" class="btn-primary"
+                            icon="fa-magic"/>
+                    <button name="action_refresh_fields" type="object"
+                            string="Refresh Fields" icon="fa-refresh"
+                            confirm="This will re-scan all fields. Custom labels will be preserved. Continue?"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_open_dataset_builder" type="object"
+                                class="oe_stat_button" icon="fa-table">
+                            <field name="selected_field_count" widget="statinfo"
+                                   string="Selected Fields"/>
+                        </button>
+                        <button class="oe_stat_button" icon="fa-database"
+                                type="object" name="action_open_dataset_builder">
+                            <field name="record_count" widget="statinfo"
+                                   string="Records"/>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="e.g., Monthly Revenue by Customer"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group string="Data Source">
+                            <field name="domain_id"/>
+                            <field name="model_id" options="{'no_create': True}"
+                                   context="{'dashboard_model': True}"/>
+                            <field name="model_name" invisible="1"/>
+                            <field name="model_label" invisible="1"/>
+                        </group>
+                        <group string="Options">
+                            <field name="grain_level"/>
+                            <field name="grain_child_field"
+                                   invisible="grain_level != 'child'"/>
+                            <field name="record_limit"/>
+                            <field name="sort_field"/>
+                            <field name="sort_order"/>
+                            <field name="is_shared"/>
+                            <field name="owner_id"/>
+                        </group>
+                    </group>
+                    <group string="Filters">
+                        <field name="domain_filter" widget="domain"
+                               options="{'model': model_name}"/>
+                    </group>
+                    <notebook>
+                        <page string="Fields" name="fields">
+                            <field name="field_ids">
+                                <list editable="bottom">
+                                    <field name="is_selected" widget="boolean_toggle"/>
+                                    <field name="field_label"/>
+                                    <field name="display_label"/>
+                                    <field name="field_path"/>
+                                    <field name="field_role" decoration-info="field_role == 'dimension'"
+                                           decoration-success="field_role == 'measure'"
+                                           decoration-warning="field_role == 'date'"/>
+                                    <field name="field_group"/>
+                                    <field name="default_aggregation"/>
+                                    <field name="odoo_field_type"/>
+                                    <field name="is_from_relation"/>
+                                    <field name="source_model_label"/>
+                                    <field name="sequence" widget="handle"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- BI Dataset — List View -->
+    <record id="view_bi_dataset_list" model="ir.ui.view">
+        <field name="name">bi.dataset.list</field>
+        <field name="model">bi.dataset</field>
+        <field name="arch" type="xml">
+            <list string="Datasets" decoration-muted="not active">
+                <field name="name"/>
+                <field name="domain_id"/>
+                <field name="model_label"/>
+                <field name="grain_level"/>
+                <field name="selected_field_count" string="Fields"/>
+                <field name="record_count" string="Records"/>
+                <field name="is_shared"/>
+                <field name="owner_id"/>
+                <field name="active" column_invisible="True"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- BI Dataset — Search View -->
+    <record id="view_bi_dataset_search" model="ir.ui.view">
+        <field name="name">bi.dataset.search</field>
+        <field name="model">bi.dataset</field>
+        <field name="arch" type="xml">
+            <search string="Search Datasets">
+                <field name="name"/>
+                <field name="model_name"/>
+                <field name="domain_id"/>
+                <filter string="My Datasets" name="my_datasets"
+                        domain="[('owner_id', '=', uid)]"/>
+                <filter string="Shared" name="shared"
+                        domain="[('is_shared', '=', True)]"/>
+                <separator/>
+                <group expand="0" string="Group By">
+                    <filter string="Domain" name="group_domain"
+                            context="{'group_by': 'domain_id'}"/>
+                    <filter string="Model" name="group_model"
+                            context="{'group_by': 'model_id'}"/>
+                    <filter string="Owner" name="group_owner"
+                            context="{'group_by': 'owner_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- BI Dataset — Action -->
+    <record id="action_bi_dataset" model="ir.actions.act_window">
+        <field name="name">Datasets</field>
+        <field name="res_model">bi.dataset</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_bi_dataset_search"/>
+        <field name="context">{'search_default_my_datasets': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first dataset
+            </p>
+            <p>
+                Datasets define what data you want to analyze.
+                Select a model, choose fields, and set filters.
+            </p>
+        </field>
+    </record>
+
+    <!-- BI Business Domain — Form View -->
+    <record id="view_bi_business_domain_form" model="ir.ui.view">
+        <field name="name">bi.business.domain.form</field>
+        <field name="model">bi.business.domain</field>
+        <field name="arch" type="xml">
+            <form string="Business Domain">
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button class="oe_stat_button" icon="fa-table"
+                                type="object" name="action_view_datasets"
+                                invisible="dataset_count == 0">
+                            <field name="dataset_count" widget="statinfo"
+                                   string="Datasets"/>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="e.g., Finance Analytics"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="description"/>
+                            <field name="icon" placeholder="fa-chart-bar"/>
+                            <field name="color" widget="color"/>
+                            <field name="sequence"/>
+                        </group>
+                        <group>
+                            <field name="group_ids" widget="many2many_tags"/>
+                            <field name="active"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Available Models" name="models">
+                            <field name="allowed_model_ids"
+                                   widget="many2many_tags"
+                                   options="{'no_create': True}"
+                                   context="{'dashboard_model': True}"/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- BI Business Domain — List View -->
+    <record id="view_bi_business_domain_list" model="ir.ui.view">
+        <field name="name">bi.business.domain.list</field>
+        <field name="model">bi.business.domain</field>
+        <field name="arch" type="xml">
+            <list string="Business Domains">
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="description"/>
+                <field name="dataset_count" string="Datasets"/>
+                <field name="active"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- BI Business Domain — Action -->
+    <record id="action_bi_business_domain" model="ir.actions.act_window">
+        <field name="name">Business Domains</field>
+        <field name="res_model">bi.business.domain</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+</odoo>

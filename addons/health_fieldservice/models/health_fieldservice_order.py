@@ -311,6 +311,11 @@ class HealthFieldServiceOrderUnified(models.Model):
         help='Contact who referred this patient'
     )
     goal_of_care = fields.Text('Goal of Care', help='Primary goal or objective of care for this booking')
+    category_of_service_id = fields.Many2one(
+        'product.category',
+        string='Category of Service',
+        help='Service category from the pricelist for this catchment area'
+    )
     required_equipment = fields.Text('Required Equipment', help='Equipment or supplies required for this service')
     intake_notes = fields.Text('Intake Notes', help='Additional intake assessment notes')
 
@@ -510,7 +515,7 @@ class HealthFieldServiceOrderUnified(models.Model):
                 )
                 role = 'lead' if not existing_lead else 'support'
 
-                self.env['health.staff.assignment'].create({
+                new_assignment = self.env['health.staff.assignment'].create({
                     'fso_id': record.id,
                     'staff_id': staff_id,
                     'assignment_date': record.scheduled_datetime or fields.Datetime.now(),
@@ -520,6 +525,13 @@ class HealthFieldServiceOrderUnified(models.Model):
                     'assignment_type': record._get_assignment_type(),
                     'priority': record.priority or '1',
                 })
+
+                # For confirmed bookings, notify new staff about the assignment
+                if record.state in ('confirmed', 'assigned', 'in_progress'):
+                    try:
+                        record._send_staff_assignment_notification(staff, new_assignment)
+                    except Exception as e:
+                        _logger.warning('Failed to send reassignment notification: %s', e)
 
             # Staff to remove - delete assignments
             staff_to_remove = current_staff_ids - new_staff_ids
@@ -1212,6 +1224,18 @@ class HealthFieldServiceOrderUnified(models.Model):
                 (record.treatment_performed and record.treatment_performed.strip())
             )
 
+    def _compute_is_current_user_doctor(self):
+        user = self.env.user
+        is_doctor = user.healthcare_role in ('doctor', 'duty_doctor')
+        if not is_doctor:
+            employee = self.env['hr.employee'].search(
+                [('user_id', '=', user.id), ('healthcare_role', 'in', ('doctor', 'duty_doctor'))],
+                limit=1
+            )
+            is_doctor = bool(employee)
+        for record in self:
+            record.is_current_user_doctor = is_doctor
+
     @api.depends('invoice_id', 'invoice_id.state', 'sale_order_id', 'sale_order_id.order_line')
     def _compute_invoice_status(self):
         """Check if invoice has been submitted (not draft)"""
@@ -1233,6 +1257,25 @@ class HealthFieldServiceOrderUnified(models.Model):
     patient_condition_after = fields.Text('Patient Condition (After)', help='client condition after service')
     vital_signs = fields.Text('Vital Signs', help='Recorded vital signs during service')
     
+    clinical_image_ids = fields.Many2many(
+        'ir.attachment', string='Clinical Images',
+        compute='_compute_clinical_image_ids', store=False,
+    )
+    has_clinical_images = fields.Boolean(
+        compute='_compute_clinical_image_ids', store=False,
+    )
+
+    def _compute_clinical_image_ids(self):
+        Attachment = self.env['ir.attachment']
+        for record in self:
+            images = Attachment.search([
+                ('res_model', '=', 'health.fieldservice.order'),
+                ('res_id', '=', record.id),
+                ('name', 'like', 'Clinical_Image_%'),
+            ])
+            record.clinical_image_ids = images
+            record.has_clinical_images = bool(images)
+
     # Post-service procedure counts (also stored on sale.order for pricing engine)
     # Both models store independently; quote form is the primary editing surface
     injection_count = fields.Integer('Injections Given', default=1,
@@ -1265,6 +1308,11 @@ class HealthFieldServiceOrderUnified(models.Model):
         compute='_compute_clinical_notes_status',
         store=True,
         help='True if clinical notes have been entered'
+    )
+
+    is_current_user_doctor = fields.Boolean(
+        compute='_compute_is_current_user_doctor',
+        store=False,
     )
 
     invoice_submitted = fields.Boolean(
@@ -1430,6 +1478,12 @@ class HealthFieldServiceOrderUnified(models.Model):
         elif self.service_type == 'clinic_visit':
             self.service_location = 'clinic'
     
+    @api.onchange('scheduled_datetime')
+    def _onchange_scheduled_datetime_duration(self):
+        """Preserve scheduled_duration default when scheduled_datetime changes."""
+        if not self.scheduled_duration or self.scheduled_duration < 1:
+            self.scheduled_duration = 60
+
     @api.onchange('appointment_type_id')
     def _onchange_appointment_type_id(self):
         """Auto-populate duration and pricing from appointment type"""
@@ -1482,11 +1536,13 @@ class HealthFieldServiceOrderUnified(models.Model):
 
     @api.model_create_multi
     def create(self, vals_list):
-        """Create FSO with auto-generated reference and default stage"""
+        """Create FSO with auto-generated reference and default stage.
+        Booking number is NOT generated at creation - it is assigned when
+        the booking moves to 'confirmed' (Booked) state.
+        """
         for vals in vals_list:
-            # Generate sequence number
             if vals.get('name', _('New Booking')) == _('New Booking'):
-                vals['name'] = self.env['ir.sequence'].next_by_code('health.fieldservice.order') or _('New Booking')
+                vals['name'] = _('New Booking')
             
             # Set customer to patient if not specified
             if vals.get('patient_id') and not vals.get('customer_id'):
@@ -1587,6 +1643,8 @@ class HealthFieldServiceOrderUnified(models.Model):
                 if confirmed_stage:
                     record.stage_id = confirmed_stage
                     record.state = 'confirmed'
+                    if not record.name or record.name == _('New Booking'):
+                        record.name = self.env['ir.sequence'].next_by_code('health.fieldservice.order') or _('New Booking')
 
         # NOTE: FSO does NOT auto-advance to 'assigned' when staff is added.
         # It stays in 'confirmed' (Booked) until the nurse confirms the assignment
@@ -1912,6 +1970,9 @@ class HealthFieldServiceOrderUnified(models.Model):
         """Confirm booking and move to confirmed stage"""
         self.ensure_one()
 
+        if not self.scheduled_datetime:
+            raise UserError(_('Please set the Scheduled Date & Time before confirming the booking.'))
+
         # Check confirmation requirements
         is_valid, error_message = self._check_confirmation_requirements()
         if not is_valid:
@@ -1926,9 +1987,14 @@ class HealthFieldServiceOrderUnified(models.Model):
         if not confirmed_stage:
             raise UserError(_('No confirmed stage found. Please configure stages properly.'))
 
+        # Generate booking number on confirmation
+        write_vals = {'stage_id': confirmed_stage.id}
+        if not self.name or self.name == _('New Booking'):
+            write_vals['name'] = self.env['ir.sequence'].next_by_code('health.fieldservice.order') or _('New Booking')
+
         # Move to confirmed stage (validation will happen in write method)
         try:
-            self.write({'stage_id': confirmed_stage.id})
+            self.write(write_vals)
 
             # Post confirmation message
             quote_or_package = self.sale_order_id.name if self.sale_order_id else self.name
@@ -1970,11 +2036,12 @@ class HealthFieldServiceOrderUnified(models.Model):
                 'currency_id': self.env.company.currency_id.id,
             })
         
-        # Create empty sales order
+        # Create empty sales order (fso_id links back to this booking)
         quote_vals = {
             'partner_id': self.patient_id.id,
             'origin': self.name,
             'pricelist_id': pricelist.id,
+            'fso_id': self.id,
             'state': 'draft',
             'note': f'Healthcare Quote for {self._get_service_type_label()} - {self.patient_id.name}',
         }
@@ -2874,11 +2941,12 @@ class HealthFieldServiceOrderUnified(models.Model):
                 'currency_id': self.env.company.currency_id.id,
             })
         
-        # Create sales order with FSO data
+        # Create sales order with FSO data (fso_id links back to this booking)
         quote_vals = {
             'partner_id': self.patient_id.id,
             'origin': self.name,
             'pricelist_id': pricelist.id,
+            'fso_id': self.id,
             'state': 'draft',
             'note': f'Healthcare Quote for {self._get_service_type_label()} - {self.patient_id.name}',
         }
@@ -3036,11 +3104,12 @@ class HealthFieldServiceOrderUnified(models.Model):
                 'currency_id': self.env.company.currency_id.id,
             })
         
-        # Create sales order
+        # Create sales order (fso_id links back to this booking)
         quote_vals = {
             'partner_id': self.patient_id.id,
             'origin': self.name,
             'pricelist_id': pricelist.id,
+            'fso_id': self.id,
             'state': 'draft',
             'note': f'Auto-generated Healthcare Quote for {self._get_service_type_label()} - {self.patient_id.name}',
         }

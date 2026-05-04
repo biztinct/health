@@ -1,0 +1,11 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_bi_business_domain_user,bi.business.domain user,model_bi_business_domain,group_bi_user,1,0,0,0
+access_bi_business_domain_admin,bi.business.domain admin,model_bi_business_domain,group_bi_admin,1,1,1,1
+access_bi_dataset_user,bi.dataset user,model_bi_dataset,group_bi_user,1,0,0,0
+access_bi_dataset_manager,bi.dataset manager,model_bi_dataset,group_bi_manager,1,1,1,1
+access_bi_dataset_field_user,bi.dataset.field user,model_bi_dataset_field,group_bi_user,1,0,0,0
+access_bi_dataset_field_manager,bi.dataset.field manager,model_bi_dataset_field,group_bi_manager,1,1,1,1
+access_bi_visual_user,bi.visual user,model_bi_visual,group_bi_user,1,0,0,0
+access_bi_visual_manager,bi.visual manager,model_bi_visual,group_bi_manager,1,1,1,1
+access_bi_report_page_user,bi.report.page user,model_bi_report_page,group_bi_user,1,0,0,0
+access_bi_report_page_manager,bi.report.page manager,model_bi_report_page,group_bi_manager,1,1,1,1

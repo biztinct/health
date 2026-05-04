@@ -53,7 +53,14 @@ class HealthEscalationWizard(models.TransientModel):
         string='Specific Person',
         help='Optionally select a specific person to handle this'
     )
-    
+
+    # Role-filtered employee dropdown
+    escalate_to_employee_id = fields.Many2one(
+        'hr.employee',
+        string='Person',
+        help='Select a person from the matching role in the catchment area'
+    )
+
     # Display the auto-selected person
     selected_person_name = fields.Char(
         'Selected Person',
@@ -61,7 +68,7 @@ class HealthEscalationWizard(models.TransientModel):
         store=False,
         help='The person who will receive this escalation'
     )
-    
+
     selected_person_id = fields.Many2one(
         'res.users',
         string='Selected Person Record',
@@ -109,11 +116,41 @@ class HealthEscalationWizard(models.TransientModel):
     # COMPUTED FIELDS
     # =========================================================================
     
-    @api.depends('escalate_to', 'escalate_to_user_id', 'lead_id')
+    @api.onchange('escalate_to')
+    def _onchange_escalate_to(self):
+        """Reset employee selection and return domain based on role and catchment"""
+        self.escalate_to_employee_id = False
+        if not self.escalate_to:
+            return {}
+
+        role_mapping = {
+            'duty_doctor': 'doctor',
+            'head_nurse': 'head_nurse',
+            'om': 'operations_manager',
+        }
+        healthcare_role = role_mapping.get(self.escalate_to)
+        if not healthcare_role:
+            return {}
+
+        domain = [
+            ('is_healthcare_staff', '=', True),
+            ('employment_status', '=', 'active'),
+            ('healthcare_role', '=', healthcare_role),
+        ]
+        catchment_province = self.lead_id.catchment_province_id if self.lead_id else False
+        if catchment_province:
+            domain.append(('primary_facility_id.catchment_province_id', '=', catchment_province.id))
+
+        return {'domain': {'escalate_to_employee_id': domain}}
+
+    @api.depends('escalate_to', 'escalate_to_user_id', 'escalate_to_employee_id', 'lead_id')
     def _compute_selected_person(self):
         """Compute the selected person based on escalate_to role and catchment province"""
         for wizard in self:
-            if wizard.escalate_to_user_id:
+            if wizard.escalate_to_employee_id and wizard.escalate_to_employee_id.user_id:
+                wizard.selected_person_id = wizard.escalate_to_employee_id.user_id
+                wizard.selected_person_name = wizard.escalate_to_employee_id.name
+            elif wizard.escalate_to_user_id:
                 wizard.selected_person_id = wizard.escalate_to_user_id
                 wizard.selected_person_name = wizard.escalate_to_user_id.name
             else:
@@ -216,7 +253,10 @@ class HealthEscalationWizard(models.TransientModel):
             raise ValidationError(_('Please provide a reason for escalation.'))
         
         # Get the person to notify
-        assigned_user = self.escalate_to_user_id or self._get_person_for_role()
+        if self.escalate_to_employee_id and self.escalate_to_employee_id.user_id:
+            assigned_user = self.escalate_to_employee_id.user_id
+        else:
+            assigned_user = self.escalate_to_user_id or self._get_person_for_role()
         
         if not assigned_user:
             raise ValidationError(_('Could not find a person to handle this escalation. Please select a specific person.'))

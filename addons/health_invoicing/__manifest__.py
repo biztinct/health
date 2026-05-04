@@ -86,6 +86,7 @@
         'data/healthcare_chart_of_accounts.xml',
         'data/sequences.xml',
         'data/vietnamese_tax_config.xml',
+        'data/payment_method_data.xml',
         
         # Wizards
         'views/health_payment_workflow_wizard_views.xml',

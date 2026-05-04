@@ -7,11 +7,11 @@ class SaleOrder(models.Model):
 
     active = fields.Boolean(default=True)
     
-    # Get FSO that created this quote (reverse relationship)
+    # Get FSO that created this quote
     fso_id = fields.Many2one('health.fieldservice.order',
                             string='Booking',
-                            compute='_compute_fso_id',
                             store=True,
+                            copy=False,
                             help='Booking that created this quote')
 
     catchment_province_id = fields.Many2one(
@@ -159,11 +159,17 @@ class SaleOrder(models.Model):
                               store=True,
                               help='Service city for location-based pricing rules')
     
-    def _compute_fso_id(self):
-        """Find FSO that created this quote using reverse relationship"""
+    def _populate_fso_id(self):
+        """Populate fso_id from reverse relationship if not already set.
+        
+        Called as a fallback during recalculation when fso_id wasn't
+        set at quote creation time (legacy quotes).
+        """
         for order in self:
-            fso = self.env['health.fieldservice.order'].search([('sale_order_id', '=', order.id)], limit=1)
-            order.fso_id = fso.id if fso else False
+            if not order.fso_id:
+                fso = self.env['health.fieldservice.order'].search([('sale_order_id', '=', order.id)], limit=1)
+                if fso:
+                    order.fso_id = fso.id
     
     @api.depends('fso_id')
     def _compute_fso_fields(self):
@@ -326,9 +332,9 @@ class SaleOrder(models.Model):
         """Recalculate prices using advanced pricing engine"""
         self.ensure_one()
 
-        # Ensure fso_id is populated (stored computed field may not be up to date)
+        # Ensure fso_id is populated (for legacy quotes created before this fix)
         if not self.fso_id:
-            self._compute_fso_id()
+            self._populate_fso_id()
 
         if not self.use_advanced_pricing:
             # Show message if advanced pricing is not enabled
@@ -366,8 +372,9 @@ class SaleOrder(models.Model):
         # Force recompute FSO fields (skip problematic ones for now)
         _logger.info("=== Recomputing FSO fields ===")
         try:
-            self._compute_fso_id()
-            self._compute_time_factors()  # Skip _compute_fso_fields temporarily
+            self._populate_fso_id()
+            self._compute_fso_fields()
+            self._compute_time_factors()
             _logger.info(f"After recompute - FSO ID: {self.fso_id}, Is After Hours: {self.is_after_hours}, Hour: {self.appointment_hour}")
         except Exception as e:
             _logger.error(f"Error during FSO field computation: {e}")
@@ -454,7 +461,7 @@ class SaleOrder(models.Model):
         original_total = self.pre_service_amount or self.amount_total
         
         # Force recompute FSO fields
-        self.invalidate_recordset(['fso_id'])
+        self._populate_fso_id()
         if hasattr(self, '_compute_fso_fields'):
             self._compute_fso_fields()
         if hasattr(self, '_compute_use_advanced_pricing'):
@@ -815,8 +822,11 @@ class SaleOrderLine(models.Model):
     price_calculation_log = fields.Text('Price Calculation Log')
     applied_rules = fields.Text('Applied Rules')
     
-    @api.depends('product_id', 'product_uom_qty', 'order_id.fso_id', 'order_id.fso_distance', 
-                 'order_id.is_weekend', 'order_id.is_holiday', 'order_id.service_units')
+    @api.depends('product_id', 'product_uom_qty', 'order_id.fso_id', 'order_id.fso_distance',
+                 'order_id.is_weekend', 'order_id.is_holiday', 'order_id.is_after_hours',
+                 'order_id.appointment_hour', 'order_id.fso_service_type',
+                 'order_id.fso_service_location', 'order_id.fso_urgency',
+                 'order_id.fso_priority', 'order_id.service_units')
     def _compute_advanced_price(self):
         """Compute price using advanced pricing engine with FSO context"""
         for line in self:
