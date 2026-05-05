@@ -77,6 +77,7 @@
         'report/moh_report_template.xml',
         'views/health_staff_assignment_wizard_views.xml',
         'views/health_booking_cancel_wizard_views.xml',
+        'views/health_clinical_note_views.xml',
         'views/health_fieldservice_order_views.xml',
         'views/health_fieldservice_stage_views.xml',
         'views/health_fieldservice_team_views.xml',

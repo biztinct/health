@@ -49,6 +49,33 @@ class HealthPWAAPIController(http.Controller):
             status=status_code
         )
     
+    def _serialize_clinical_notes(self, order):
+        notes = []
+        if hasattr(order, 'clinical_note_ids'):
+            for note in order.clinical_note_ids:
+                notes.append({
+                    'id': note.id,
+                    'author': note.author_id.name if note.author_id else 'Unknown',
+                    'author_role': note.author_role or 'Staff',
+                    'date': note.create_date.isoformat() if note.create_date else None,
+                    'clinical_notes': note.clinical_notes or '',
+                    'diagnosis': note.diagnosis or '',
+                    'treatment_performed': note.treatment_performed or '',
+                    'medications_prescribed': note.medications_prescribed or '',
+                    'vital_signs': note.vital_signs or '',
+                    'patient_condition_before': note.patient_condition_before or '',
+                    'patient_condition_after': note.patient_condition_after or '',
+                    'injection_count': note.injection_count,
+                    'medication_count': note.medication_count,
+                    'wound_count': note.wound_count,
+                    'iv_fluid_count': note.iv_fluid_count,
+                    'images': [
+                        {'id': att.id, 'filename': att.name, 'url': f'/web/content/{att.id}'}
+                        for att in note.image_ids
+                    ],
+                })
+        return notes
+
     @http.route('/health_pwa/api/patients', type='http', auth='user', methods=['GET'], csrf=False)
     def api_patients_list(self, **kwargs):
         """Get list of patients with pagination and filtering"""
@@ -356,14 +383,6 @@ class HealthPWAAPIController(http.Controller):
                         'discount_reason': line.discount_reason if hasattr(line, 'discount_reason') and line.discount_reason else '',
                     })
 
-            # Determine if current user is a doctor (for clinical notes access)
-            user = request.env.user
-            is_doctor_user = user.healthcare_role in ('doctor', 'duty_doctor')
-            if not is_doctor_user:
-                employee = user.get_employee_record() if hasattr(user, 'get_employee_record') else False
-                if employee and hasattr(employee, 'healthcare_role') and employee.healthcare_role in ('doctor', 'duty_doctor'):
-                    is_doctor_user = True
-
             clinical_notes_submitted = order.clinical_notes_submitted if hasattr(order, 'clinical_notes_submitted') else False
 
             order_data = {
@@ -413,23 +432,9 @@ class HealthPWAAPIController(http.Controller):
                     'id': order.category_of_service_id.id,
                     'name': order.category_of_service_id.name,
                 } if hasattr(order, 'category_of_service_id') and order.category_of_service_id else None,
-                'clinical_notes': order.clinical_notes if hasattr(order, 'clinical_notes') and (not clinical_notes_submitted or is_doctor_user) else None,
                 'clinical_notes_submitted': clinical_notes_submitted,
-                'diagnosis': order.diagnosis if hasattr(order, 'diagnosis') and (not clinical_notes_submitted or is_doctor_user) else None,
-                'treatment_performed': order.treatment_performed if hasattr(order, 'treatment_performed') and (not clinical_notes_submitted or is_doctor_user) else None,
-                'medications_prescribed': order.medications_prescribed if hasattr(order, 'medications_prescribed') and (not clinical_notes_submitted or is_doctor_user) else None,
-                'vital_signs': order.vital_signs if hasattr(order, 'vital_signs') and (not clinical_notes_submitted or is_doctor_user) else None,
-                'is_doctor_user': is_doctor_user,
-                'has_clinical_images': order.has_clinical_images if hasattr(order, 'has_clinical_images') else False,
-                'clinical_images': [
-                    {'id': att.id, 'filename': att.name, 'url': f'/web/content/{att.id}'}
-                    for att in (order.clinical_image_ids if hasattr(order, 'clinical_image_ids') else [])
-                ],
-                # Post-service procedure counts
-                'injection_count': order.injection_count if hasattr(order, 'injection_count') else 1,
-                'medication_count': order.medication_count if hasattr(order, 'medication_count') else 1,
-                'wound_count': order.wound_count if hasattr(order, 'wound_count') else 1,
-                'iv_fluid_count': order.iv_fluid_count if hasattr(order, 'iv_fluid_count') else 0,
+                'clinical_note_count': order.clinical_note_count if hasattr(order, 'clinical_note_count') else 0,
+                'clinical_notes_list': self._serialize_clinical_notes(order),
                 # Intake notes fields
                 'referring_doctor_id': order.referring_doctor_id.id if hasattr(order, 'referring_doctor_id') and order.referring_doctor_id else None,
                 'referring_doctor_name': order.referring_doctor_id.name if hasattr(order, 'referring_doctor_id') and order.referring_doctor_id else None,
@@ -456,15 +461,6 @@ class HealthPWAAPIController(http.Controller):
                 'has_quote_with_items': bool(order.sale_order_id and order.sale_order_id.order_line),
                 'has_package': bool(order.package_id),
             }
-
-            # Get clinical note attachments/images
-            attachments = request.env['ir.attachment'].search([
-                ('res_model', '=', 'health.fieldservice.order'),
-                ('res_id', '=', order.id),
-                ('name', 'ilike', 'Clinical_Image')
-            ])
-            order_data['has_clinical_images'] = len(attachments) > 0
-            order_data['clinical_images_count'] = len(attachments)
 
             return self._prepare_json_response(data=order_data)
             
@@ -667,16 +663,11 @@ class HealthPWAAPIController(http.Controller):
 
             reason = data.get('reason', 'No reason provided')
 
-            # Add cancellation note to clinical notes
             cancellation_note = f"Visit Cancelled/Refused: {reason}"
-            if order.clinical_notes:
-                order.write({
-                    'clinical_notes': order.clinical_notes + '\n\n' + cancellation_note
-                })
-            else:
-                order.write({
-                    'clinical_notes': cancellation_note
-                })
+            request.env['health.clinical.note'].create({
+                'order_id': order.id,
+                'clinical_notes': cancellation_note,
+            })
 
             # Set state to cancelled (if field exists) or update stage
             try:
@@ -729,20 +720,15 @@ class HealthPWAAPIController(http.Controller):
             payment_method = data.get('payment_method', 'cash')  # 'cash', 'bank_transfer', 'credit_card', etc.
             service_notes = data.get('service_notes', '')
             create_invoice_now = data.get('create_invoice_now', True)
-            clinical_notes = data.get('clinical_notes', '')
 
-            # Update clinical notes and service notes if provided
-            update_vals = {}
-            if clinical_notes:
-                update_vals['clinical_notes'] = clinical_notes
             if service_notes:
-                update_vals['nurse_notes'] = service_notes if hasattr(order, 'nurse_notes') else None
-                # If nurse_notes doesn't exist, add to clinical notes
-                if service_notes and not hasattr(order, 'nurse_notes'):
-                    update_vals['clinical_notes'] = (update_vals.get('clinical_notes', clinical_notes or '') + '\n\nService Notes: ' + service_notes).strip()
-
-            if update_vals:
-                order.write(update_vals)
+                if hasattr(order, 'nurse_notes'):
+                    order.write({'nurse_notes': service_notes})
+                else:
+                    request.env['health.clinical.note'].create({
+                        'order_id': order.id,
+                        'clinical_notes': f'Service Notes: {service_notes}',
+                    })
 
             # Complete the service using the standard method
             order.action_complete_service()
@@ -845,18 +831,14 @@ class HealthPWAAPIController(http.Controller):
 
             service_notes = data.get('service_notes', '')
 
-            # Update service notes if provided
             if service_notes:
-                update_vals = {}
                 if hasattr(order, 'nurse_notes'):
-                    update_vals['nurse_notes'] = service_notes
+                    order.write({'nurse_notes': service_notes})
                 else:
-                    # Add to clinical notes if nurse_notes doesn't exist
-                    clinical_notes = order.clinical_notes or ''
-                    update_vals['clinical_notes'] = (clinical_notes + '\n\nService Notes: ' + service_notes).strip()
-
-                if update_vals:
-                    order.write(update_vals)
+                    request.env['health.clinical.note'].create({
+                        'order_id': order.id,
+                        'clinical_notes': f'Service Notes: {service_notes}',
+                    })
 
             # Complete the service without creating an invoice
             order.action_complete_service()
@@ -874,75 +856,44 @@ class HealthPWAAPIController(http.Controller):
 
     @http.route('/health_pwa/api/fso/<int:order_id>/clinical_notes', type='http', auth='user', methods=['POST'], csrf=False)
     def api_fso_save_clinical_notes(self, order_id, **kwargs):
-        """Save clinical notes for FSO from mobile app"""
+        """Create a new clinical note record for the FSO"""
         if not self._check_api_access():
             return self._prepare_json_response(error='Access denied', status_code=403)
 
         try:
             order = request.env['health.fieldservice.order'].browse(order_id)
-
             if not order.exists():
                 return self._prepare_json_response(error='Order not found', status_code=404)
 
-            # Once clinical notes are submitted, only doctors can edit
-            if order.clinical_notes_submitted:
-                user = request.env.user
-                is_doctor = user.healthcare_role in ('doctor', 'duty_doctor')
-                if not is_doctor:
-                    employee = user.get_employee_record() if hasattr(user, 'get_employee_record') else False
-                    if employee and employee.healthcare_role in ('doctor', 'duty_doctor'):
-                        is_doctor = True
-                if not is_doctor:
-                    return self._prepare_json_response(
-                        error='Clinical notes already submitted. Only doctors can modify confirmed clinical notes.',
-                        status_code=403
-                    )
-
-            # Get clinical notes from request body
             import json as json_module
             try:
                 data = json_module.loads(request.httprequest.data.decode('utf-8')) if request.httprequest.data else {}
-            except:
+            except Exception:
                 data = {}
 
-            clinical_notes = data.get('clinical_notes', '')
-            diagnosis = data.get('diagnosis', '')
-            treatment_performed = data.get('treatment_performed', '')
-            medications_prescribed = data.get('medications_prescribed', '')
-            vital_signs = data.get('vital_signs', '')
+            note_vals = {'order_id': order.id}
 
-            # Update order
-            update_vals = {}
-            if clinical_notes:
-                update_vals['clinical_notes'] = clinical_notes
-            if diagnosis:
-                update_vals['diagnosis'] = diagnosis
-            if treatment_performed:
-                update_vals['treatment_performed'] = treatment_performed
-            if medications_prescribed:
-                update_vals['medications_prescribed'] = medications_prescribed
-            if vital_signs:
-                update_vals['vital_signs'] = vital_signs
+            for field in ('clinical_notes', 'diagnosis', 'treatment_performed',
+                          'medications_prescribed', 'vital_signs',
+                          'patient_condition_before', 'patient_condition_after'):
+                val = data.get(field, '')
+                if val:
+                    note_vals[field] = val
 
-            # Post-service procedure counts
-            for count_field in ['injection_count', 'medication_count', 'wound_count', 'iv_fluid_count']:
+            for count_field in ('injection_count', 'medication_count', 'wound_count', 'iv_fluid_count'):
                 if count_field in data and data[count_field] is not None:
                     try:
-                        update_vals[count_field] = int(data[count_field])
+                        note_vals[count_field] = int(data[count_field])
                     except (ValueError, TypeError):
                         pass
 
-            mark_submitted = data.get('mark_submitted', False)
-
-            if update_vals:
-                order.write(update_vals)
-                order.write({'clinical_notes_submitted': True})
-            elif mark_submitted:
-                order.write({'clinical_notes_submitted': True})
+            note = request.env['health.clinical.note'].create(note_vals)
 
             return self._prepare_json_response(data={
+                'note_id': note.id,
                 'clinical_notes_submitted': order.clinical_notes_submitted,
-                'message': 'Clinical notes saved successfully'
+                'clinical_note_count': order.clinical_note_count,
+                'message': 'Clinical note created successfully'
             })
 
         except Exception as e:
@@ -1000,48 +951,35 @@ class HealthPWAAPIController(http.Controller):
 
     @http.route('/health_pwa/api/fso/<int:order_id>/upload_image', type='http', auth='user', methods=['POST'], csrf=False)
     def api_fso_upload_image(self, order_id, **kwargs):
-        """Upload clinical image for FSO from mobile app - restricted to doctors"""
+        """Upload clinical image and attach to a clinical note"""
         if not self._check_api_access():
             return self._prepare_json_response(error='Access denied', status_code=403)
 
         try:
             order = request.env['health.fieldservice.order'].browse(order_id)
-
             if not order.exists():
                 return self._prepare_json_response(error='Order not found', status_code=404)
 
-            # After submission, only doctors can upload clinical images
-            if order.clinical_notes_submitted:
-                user = request.env.user
-                is_doctor = user.healthcare_role in ('doctor', 'duty_doctor')
-                if not is_doctor:
-                    employee = user.get_employee_record() if hasattr(user, 'get_employee_record') else False
-                    if employee and hasattr(employee, 'healthcare_role') and employee.healthcare_role in ('doctor', 'duty_doctor'):
-                        is_doctor = True
-                if not is_doctor:
-                    return self._prepare_json_response(
-                        error='Clinical notes already submitted. Only doctors can upload images after submission.',
-                        status_code=403
-                    )
-
-            # Get uploaded file
             image_file = request.httprequest.files.get('image')
             if not image_file:
                 return self._prepare_json_response(error='No image provided', status_code=400)
 
-            # Read image data
             import base64
             image_data = base64.b64encode(image_file.read())
 
-            # Create attachment for the image
             attachment = request.env['ir.attachment'].create({
                 'name': f'Clinical_Image_{order.name}_{datetime.now().strftime("%Y%m%d_%H%M%S")}.jpg',
                 'type': 'binary',
                 'datas': image_data,
-                'res_model': 'health.fieldservice.order',
-                'res_id': order.id,
+                'res_model': 'health.clinical.note',
                 'mimetype': image_file.content_type or 'image/jpeg',
             })
+
+            note_id = kwargs.get('note_id') or request.httprequest.form.get('note_id')
+            if note_id:
+                note = request.env['health.clinical.note'].browse(int(note_id))
+                if note.exists() and note.order_id.id == order.id:
+                    note.write({'image_ids': [(4, attachment.id)]})
 
             return self._prepare_json_response(data={
                 'attachment_id': attachment.id,

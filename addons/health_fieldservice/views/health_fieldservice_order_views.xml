@@ -359,8 +359,7 @@
                             </div>
                         </page>
 
-                        <page string="Clinical Notes" name="clinical_notes"
-                              invisible="clinical_notes_submitted and not is_current_user_doctor">
+                        <page string="Clinical Notes" name="clinical_notes">
                             <div class="vu-section">
                                 <div class="vu-section__title">
                                     <span class="vu-section__icon" data-icon="stethoscope"/>
@@ -369,89 +368,14 @@
                                         <small class="text-muted d-block">Notes, diagnosis, treatment and follow-up</small>
                                     </div>
                                 </div>
+                                <field name="clinical_notes_submitted" invisible="1"/>
                                 <div class="alert alert-warning" role="alert" invisible="clinical_notes_submitted">
-                                    <p><strong><i class="fa fa-exclamation-triangle"/> Required:</strong> Clinical notes must be submitted before completing the service.</p>
+                                    <p><strong><i class="fa fa-exclamation-triangle"/> Required:</strong> At least one clinical note must be added before completing the service.</p>
                                 </div>
                                 <div class="alert alert-success" role="alert" invisible="not clinical_notes_submitted">
-                                    <p><strong><i class="fa fa-check text-success"/> Clinical Notes Submitted:</strong> Clinical documentation is complete.</p>
+                                    <p><strong><i class="fa fa-check text-success"/> Clinical Notes Submitted:</strong> <field name="clinical_note_count" class="d-inline"/> note(s) recorded.</p>
                                 </div>
-                                <div class="vu-section-grid">
-                                    <div class="vu-card">
-                                        <div class="vu-card__title">
-                                            <span class="vu-section__icon" data-icon="file-text"/>
-                                            <span>Clinical Documentation</span>
-                                        </div>
-                                        <group>
-                                            <field name="clinical_notes_submitted" invisible="1"/>
-                                            <field name="is_current_user_doctor" invisible="1"/>
-                                            <field name="clinical_notes" widget="html" nolabel="1" placeholder="Enter clinical observations and notes..."
-                                                   readonly="clinical_notes_submitted and not is_current_user_doctor"/>
-                                        </group>
-                                    </div>
-                                    <div class="vu-card">
-                                        <div class="vu-card__title">
-                                            <span class="vu-section__icon" data-icon="heart-pulse"/>
-                                            <span>MOH Compliance - Diagnosis</span>
-                                        </div>
-                                        <group>
-                                            <field name="diagnosis" nolabel="1" placeholder="Enter medical diagnosis (Chuẩn đoán)..."
-                                                   readonly="clinical_notes_submitted and not is_current_user_doctor"/>
-                                        </group>
-                                    </div>
-                                </div>
-                                <div class="vu-section-grid">
-                                    <div class="vu-card">
-                                        <div class="vu-card__title">
-                                            <span class="vu-section__icon" data-icon="stethoscope"/>
-                                            <span>Treatment Details</span>
-                                        </div>
-                                        <group>
-                                            <field name="treatment_performed" placeholder="Describe treatment provided..."
-                                                   readonly="clinical_notes_submitted and not is_current_user_doctor"/>
-                                            <field name="medications_prescribed" placeholder="List medications prescribed..."
-                                                   readonly="clinical_notes_submitted and not is_current_user_doctor"/>
-                                        </group>
-                                    </div>
-                                    <div class="vu-card">
-                                        <div class="vu-card__title">
-                                            <span class="vu-section__icon" data-icon="activity"/>
-                                            <span>Client Assessment</span>
-                                        </div>
-                                        <group>
-                                            <field name="patient_condition_before" placeholder="Patient condition before service..."
-                                                   readonly="clinical_notes_submitted and not is_current_user_doctor"/>
-                                            <field name="patient_condition_after" placeholder="Patient condition after service..."
-                                                   readonly="clinical_notes_submitted and not is_current_user_doctor"/>
-                                            <field name="vital_signs" placeholder="Record vital signs..."
-                                                   readonly="clinical_notes_submitted and not is_current_user_doctor"/>
-                                        </group>
-                                    </div>
-                                </div>
-                                <div class="vu-section-grid" invisible="state not in ('in_progress', 'completed', 'completed_pending_invoice')">
-                                    <div class="vu-card">
-                                        <div class="vu-card__title">
-                                            <span class="vu-section__icon" data-icon="syringe"/>
-                                            <span>Service Procedures</span>
-                                        </div>
-                                        <group col="4">
-                                            <field name="injection_count"/>
-                                            <field name="medication_count"/>
-                                            <field name="wound_count"/>
-                                            <field name="iv_fluid_count"/>
-                                        </group>
-                                    </div>
-                                </div>
-                                <div class="vu-section-grid">
-                                    <div class="vu-card">
-                                        <div class="vu-card__title">
-                                            <span class="vu-section__icon" data-icon="camera"/>
-                                            <span>Clinical Images</span>
-                                        </div>
-                                        <group>
-                                            <field name="clinical_image_ids" widget="many2many_binary" nolabel="1" colspan="2"/>
-                                        </group>
-                                    </div>
-                                </div>
+                                <field name="clinical_note_ids" mode="list,kanban,form"/>
                                 <div class="vu-section-grid">
                                     <div class="vu-card">
                                         <div class="vu-card__title">

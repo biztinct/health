@@ -1214,27 +1214,12 @@ class HealthFieldServiceOrderUnified(models.Model):
         # The value is already set by the user, so we don't need to do anything here
         pass
 
-    @api.depends('clinical_notes', 'treatment_performed')
+    @api.depends('clinical_note_ids')
     def _compute_clinical_notes_status(self):
-        """Check if clinical notes have been submitted"""
         for record in self:
-            # Clinical notes are considered submitted if either clinical_notes or treatment_performed has content
-            record.clinical_notes_submitted = bool(
-                (record.clinical_notes and record.clinical_notes.strip()) or
-                (record.treatment_performed and record.treatment_performed.strip())
-            )
+            record.clinical_notes_submitted = bool(record.clinical_note_ids)
+            record.clinical_note_count = len(record.clinical_note_ids)
 
-    def _compute_is_current_user_doctor(self):
-        user = self.env.user
-        is_doctor = user.healthcare_role in ('doctor', 'duty_doctor')
-        if not is_doctor:
-            employee = self.env['hr.employee'].search(
-                [('user_id', '=', user.id), ('healthcare_role', 'in', ('doctor', 'duty_doctor'))],
-                limit=1
-            )
-            is_doctor = bool(employee)
-        for record in self:
-            record.is_current_user_doctor = is_doctor
 
     @api.depends('invoice_id', 'invoice_id.state', 'sale_order_id', 'sale_order_id.order_line')
     def _compute_invoice_status(self):
@@ -1247,37 +1232,28 @@ class HealthFieldServiceOrderUnified(models.Model):
             has_quote_with_items = record.sale_order_id and record.sale_order_id.order_line
             record.invoice_submitted = has_invoice or has_quote_with_items
 
-    # Clinical Documentation
-    clinical_notes = fields.Html('Clinical Notes', help='Clinical observations and notes from service provider')
-    treatment_performed = fields.Text('Treatment Performed', help='Detailed description of treatment provided')
-    medications_prescribed = fields.Text('Medications Prescribed', help='Medications prescribed during service')
-    
-    # Patient condition and assessment
-    patient_condition_before = fields.Text('Patient Condition (Before)', help='client condition before service')
-    patient_condition_after = fields.Text('Patient Condition (After)', help='client condition after service')
-    vital_signs = fields.Text('Vital Signs', help='Recorded vital signs during service')
-    
-    clinical_image_ids = fields.Many2many(
-        'ir.attachment', string='Clinical Images',
-        compute='_compute_clinical_image_ids', store=False,
+    # Clinical Notes (One2many — each note is an immutable record)
+    clinical_note_ids = fields.One2many(
+        'health.clinical.note', 'order_id',
+        string='Clinical Notes',
     )
-    has_clinical_images = fields.Boolean(
-        compute='_compute_clinical_image_ids', store=False,
+    clinical_note_count = fields.Integer(
+        compute='_compute_clinical_notes_status', store=True,
     )
 
-    def _compute_clinical_image_ids(self):
-        Attachment = self.env['ir.attachment']
-        for record in self:
-            images = Attachment.search([
-                ('res_model', '=', 'health.fieldservice.order'),
-                ('res_id', '=', record.id),
-                ('name', 'like', 'Clinical_Image_%'),
-            ])
-            record.clinical_image_ids = images
-            record.has_clinical_images = bool(images)
+    # Legacy flat fields kept for DB compatibility (no longer used in UI)
+    clinical_notes = fields.Html('Clinical Notes (Legacy)')
+    treatment_performed = fields.Text('Treatment Performed (Legacy)')
+    medications_prescribed = fields.Text('Medications Prescribed (Legacy)')
+    patient_condition_before = fields.Text('Patient Condition Before (Legacy)')
+    patient_condition_after = fields.Text('Patient Condition After (Legacy)')
+    vital_signs = fields.Text('Vital Signs (Legacy)')
+    clinical_image_ids = fields.Many2many(
+        'ir.attachment', 'health_fso_clinical_image_rel',
+        'fso_id', 'attachment_id', string='Clinical Images (Legacy)',
+    )
 
     # Post-service procedure counts (also stored on sale.order for pricing engine)
-    # Both models store independently; quote form is the primary editing surface
     injection_count = fields.Integer('Injections Given', default=1,
         help='Number of injections administered during this visit (first included in base price)')
     medication_count = fields.Integer('Medications Given', default=1,
@@ -1302,17 +1278,10 @@ class HealthFieldServiceOrderUnified(models.Model):
     
     completion_notes = fields.Text('Completion Notes', help='Notes about service completion')
 
-    # Validation status for job completion
     clinical_notes_submitted = fields.Boolean(
         'Clinical Notes Submitted',
         compute='_compute_clinical_notes_status',
         store=True,
-        help='True if clinical notes have been entered'
-    )
-
-    is_current_user_doctor = fields.Boolean(
-        compute='_compute_is_current_user_doctor',
-        store=False,
     )
 
     invoice_submitted = fields.Boolean(

@@ -4851,8 +4851,11 @@ p {
 .notif-card-header {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  gap: 8px;
   padding: 10px 12px 6px;
+}
+.notif-card-header .notif-time {
+  margin-left: auto;
 }
 
 .notif-type-badge {
@@ -4870,6 +4873,21 @@ p {
   font-size: 12px;
   color: #888;
   font-weight: 500;
+}
+
+.notif-dismiss-x {
+  background: none;
+  border: none;
+  font-size: 20px;
+  line-height: 1;
+  color: #999;
+  cursor: pointer;
+  padding: 0 4px;
+  margin-left: auto;
+  flex-shrink: 0;
+}
+.notif-dismiss-x:active {
+  color: #d32f2f;
 }
 
 .notif-card-body {

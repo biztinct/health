@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <!-- Clinical Note - Form View (read-only once saved) -->
+    <record id="view_health_clinical_note_form" model="ir.ui.view">
+        <field name="name">health.clinical.note.form</field>
+        <field name="model">health.clinical.note</field>
+        <field name="arch" type="xml">
+            <form string="Clinical Note" create="1" edit="0" delete="0">
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="display_name" readonly="1"/>
+                        </h1>
+                        <field name="author_role" readonly="1"/>
+                    </div>
+                    <group col="2">
+                        <group>
+                            <field name="author_id" readonly="1"/>
+                            <field name="create_date" readonly="1" string="Date"/>
+                        </group>
+                        <group>
+                            <field name="order_id" readonly="1"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Clinical Documentation">
+                            <group>
+                                <field name="clinical_notes" widget="html" nolabel="1" placeholder="Enter clinical observations and notes..." colspan="2"/>
+                            </group>
+                            <group col="2">
+                                <group string="Diagnosis &amp; Treatment">
+                                    <field name="diagnosis" placeholder="Enter diagnosis..."/>
+                                    <field name="treatment_performed" placeholder="Describe treatment provided..."/>
+                                    <field name="medications_prescribed" placeholder="List medications..."/>
+                                </group>
+                                <group string="Patient Assessment">
+                                    <field name="vital_signs" placeholder="Blood pressure, temperature..."/>
+                                    <field name="patient_condition_before" placeholder="Condition before service..."/>
+                                    <field name="patient_condition_after" placeholder="Condition after service..."/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Procedures">
+                            <group col="4">
+                                <field name="injection_count"/>
+                                <field name="medication_count"/>
+                                <field name="wound_count"/>
+                                <field name="iv_fluid_count"/>
+                            </group>
+                        </page>
+                        <page string="Images">
+                            <field name="image_ids" widget="many2many_binary" nolabel="1"/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Clinical Note - List View -->
+    <record id="view_health_clinical_note_list" model="ir.ui.view">
+        <field name="name">health.clinical.note.list</field>
+        <field name="model">health.clinical.note</field>
+        <field name="arch" type="xml">
+            <list string="Clinical Notes" create="1" edit="0" delete="0">
+                <field name="create_date" string="Date" widget="datetime"/>
+                <field name="author_name" string="Author"/>
+                <field name="author_role" string="Role"/>
+                <field name="clinical_notes" string="Notes" widget="html"/>
+                <field name="diagnosis"/>
+                <field name="treatment_performed"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Clinical Note - Kanban View -->
+    <record id="view_health_clinical_note_kanban" model="ir.ui.view">
+        <field name="name">health.clinical.note.kanban</field>
+        <field name="model">health.clinical.note</field>
+        <field name="arch" type="xml">
+            <kanban create="1" edit="0" delete="0" class="o_kanban_mobile">
+                <field name="id"/>
+                <field name="author_name"/>
+                <field name="author_role"/>
+                <field name="create_date"/>
+                <field name="clinical_notes"/>
+                <field name="diagnosis"/>
+                <field name="image_ids"/>
+                <templates>
+                    <t t-name="card">
+                        <div class="d-flex justify-content-between mb-1">
+                            <strong><field name="author_name"/></strong>
+                            <small class="text-muted"><field name="create_date" widget="datetime"/></small>
+                        </div>
+                        <div class="text-muted small mb-1">
+                            <field name="author_role"/>
+                        </div>
+                        <div class="mb-1" t-if="record.clinical_notes.raw_value">
+                            <field name="clinical_notes" widget="html"/>
+                        </div>
+                        <div class="text-muted small" t-if="record.diagnosis.raw_value">
+                            <strong>Diagnosis:</strong> <field name="diagnosis"/>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+</odoo>

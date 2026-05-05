@@ -487,6 +487,7 @@ window.healthPWA = {
                       <div class="notif-card-header">
                         <span class="notif-type-badge notif-badge-assignment">{{ t('Xác nhận', 'Confirm') }}</span>
                         <span class="notif-time">{{ notif.scheduled_datetime }}</span>
+                        <button class="notif-dismiss-x" @click.stop="dismissNotification(notif.id)" title="Dismiss">&times;</button>
                       </div>
                       <div class="notif-card-body">
                         <div class="notif-detail"><i class="material-icons">person</i> {{ notif.patient_name }}</div>
@@ -506,7 +507,8 @@ window.healthPWA = {
                     <!-- CANCELLED notification -->
                     <template v-else-if="notif.type === 'cancelled'">
                       <div class="notif-card-header">
-                        <span class="notif-type-badge notif-badge-cancelled">❌ {{ t('Đã hủy', 'Cancelled') }}</span>
+                        <span class="notif-type-badge notif-badge-cancelled">{{ t('Đã hủy', 'Cancelled') }}</span>
+                        <button class="notif-dismiss-x" @click.stop="dismissNotification(notif.id)" title="Dismiss">&times;</button>
                       </div>
                       <div class="notif-card-body">
                         <div class="notif-detail"><i class="material-icons">person</i> {{ notif.patient_name }}</div>
@@ -523,7 +525,8 @@ window.healthPWA = {
                     <!-- RESCHEDULED notification -->
                     <template v-else-if="notif.type === 'rescheduled'">
                       <div class="notif-card-header">
-                        <span class="notif-type-badge notif-badge-rescheduled">🔄 {{ t('Đã đổi lịch', 'Rescheduled') }}</span>
+                        <span class="notif-type-badge notif-badge-rescheduled">{{ t('Đã đổi lịch', 'Rescheduled') }}</span>
+                        <button class="notif-dismiss-x" @click.stop="dismissNotification(notif.id)" title="Dismiss">&times;</button>
                       </div>
                       <div class="notif-card-body">
                         <div class="notif-detail"><i class="material-icons">person</i> {{ notif.patient_name }}</div>
@@ -1519,8 +1522,6 @@ window.healthPWA = {
 
             if (result.success && result.data) {
               selectedBookingDetail.value = result.data;
-              // Initialize clinical notes text from loaded booking (strip HTML tags)
-              clinicalNotesText.value = stripHtmlTags(result.data.clinical_notes) || '';
               console.log('Loaded booking detail:', result.data);
             } else {
               detailError.value = result.error || 'Failed to load booking details';
@@ -1569,14 +1570,15 @@ window.healthPWA = {
         // Service Start state
         const serviceStartedForBooking = ref(null); // Stores which booking has service started
         const showClinicalNotesModal = ref(false);
+        const showClinicalNoteForm = ref(false);
+        const viewingClinicalNote = ref(null);
         const clinicalNotesText = ref('');
-        const clinicalObservations = ref('');  // Doctor-specific field
-        const diagnosis = ref('');  // Doctor-specific field
-        const treatmentPerformed = ref('');  // Doctor-specific field
+        const clinicalObservations = ref('');
+        const diagnosis = ref('');
+        const treatmentPerformed = ref('');
         const capturedPhoto = ref(null);
         const photoPreviewUrl = ref(null);
 
-        // Post-service procedure counts
         const injectionCount = ref(1);
         const medicationCount = ref(1);
         const woundCount = ref(1);
@@ -1779,18 +1781,8 @@ window.healthPWA = {
           if (selectedBookingDetail.value?.clinical_notes_submitted) {
             return true;
           }
-          // Check local unsaved state
-          const hasLocalNotes = clinicalNotesText.value && clinicalNotesText.value.trim().length > 0;
-          const hasDoctorNotes = [clinicalObservations.value, diagnosis.value, treatmentPerformed.value]
-            .some((val) => val && val.trim().length > 0);
-          const hasLocalImage = Boolean(capturedPhoto.value) || Boolean(photoPreviewUrl.value);
-
-          // Check server-saved state
-          const hasServerNotes = selectedBookingDetail.value?.clinical_notes &&
-                                  selectedBookingDetail.value.clinical_notes.trim().length > 0;
-          const hasServerImages = selectedBookingDetail.value?.has_clinical_images === true;
-
-          return hasLocalNotes || hasDoctorNotes || hasLocalImage || hasServerNotes || hasServerImages;
+          const notesList = selectedBookingDetail.value?.clinical_notes_list || [];
+          return notesList.length > 0;
         });
 
         // Start timer function
@@ -2181,37 +2173,50 @@ window.healthPWA = {
           }
         };
 
-        // Open clinical notes modal
         const openClinicalNotesModal = () => {
           showClinicalNotesModal.value = true;
-          if (currentUser.value.is_doctor) {
-            // Doctor mode: populate three separate fields (strip HTML tags)
-            clinicalObservations.value = stripHtmlTags(selectedBookingDetail.value?.clinical_notes) || '';
-            diagnosis.value = stripHtmlTags(selectedBookingDetail.value?.diagnosis) || '';
-            treatmentPerformed.value = stripHtmlTags(selectedBookingDetail.value?.treatment_performed) || '';
-          } else {
-            // Non-doctor mode: use single notes field (strip HTML tags)
-            clinicalNotesText.value = stripHtmlTags(selectedBookingDetail.value?.clinical_notes) || '';
-          }
-          // Populate procedure counts
-          injectionCount.value = selectedBookingDetail.value?.injection_count ?? 1;
-          medicationCount.value = selectedBookingDetail.value?.medication_count ?? 1;
-          woundCount.value = selectedBookingDetail.value?.wound_count ?? 1;
-          ivFluidCount.value = selectedBookingDetail.value?.iv_fluid_count ?? 0;
+          showClinicalNoteForm.value = false;
+          viewingClinicalNote.value = null;
         };
 
-        // Close clinical notes modal
-        const closeClinicalNotesModal = () => {
-          showClinicalNotesModal.value = false;
+        const openNewClinicalNoteForm = () => {
+          showClinicalNoteForm.value = true;
+          viewingClinicalNote.value = null;
           clinicalNotesText.value = '';
           clinicalObservations.value = '';
           diagnosis.value = '';
           treatmentPerformed.value = '';
           capturedPhoto.value = null;
           photoPreviewUrl.value = null;
-          injectionCount.value = 1;
-          medicationCount.value = 1;
-          woundCount.value = 1;
+          injectionCount.value = 0;
+          medicationCount.value = 0;
+          woundCount.value = 0;
+          ivFluidCount.value = 0;
+        };
+
+        const viewExistingNote = (note) => {
+          viewingClinicalNote.value = note;
+          showClinicalNoteForm.value = false;
+        };
+
+        const backToNotesList = () => {
+          showClinicalNoteForm.value = false;
+          viewingClinicalNote.value = null;
+        };
+
+        const closeClinicalNotesModal = () => {
+          showClinicalNotesModal.value = false;
+          showClinicalNoteForm.value = false;
+          viewingClinicalNote.value = null;
+          clinicalNotesText.value = '';
+          clinicalObservations.value = '';
+          diagnosis.value = '';
+          treatmentPerformed.value = '';
+          capturedPhoto.value = null;
+          photoPreviewUrl.value = null;
+          injectionCount.value = 0;
+          medicationCount.value = 0;
+          woundCount.value = 0;
           ivFluidCount.value = 0;
         };
 
@@ -2226,45 +2231,31 @@ window.healthPWA = {
           }
         };
 
-        // Save clinical notes and photo
         const saveClinicalNotes = async () => {
           try {
-            if (!selectedBookingId.value) {
-              console.error('No booking selected');
-              return;
-            }
+            if (!selectedBookingId.value) return;
 
-            // Determine validation based on user role
             let hasNotes = false;
             let requestData = {};
 
             if (currentUser.value.is_doctor) {
-              // Doctor mode: validate three fields
               hasNotes =
                 (clinicalObservations.value && clinicalObservations.value.trim().length > 0) ||
                 (diagnosis.value && diagnosis.value.trim().length > 0) ||
                 (treatmentPerformed.value && treatmentPerformed.value.trim().length > 0);
-
               requestData = {
                 clinical_notes: clinicalObservations.value,
                 diagnosis: diagnosis.value,
                 treatment_performed: treatmentPerformed.value,
-                medications_prescribed: '',
-                vital_signs: '',
                 injection_count: injectionCount.value,
                 medication_count: medicationCount.value,
                 wound_count: woundCount.value,
                 iv_fluid_count: ivFluidCount.value,
               };
             } else {
-              // Non-doctor mode: validate single field
               hasNotes = clinicalNotesText.value && clinicalNotesText.value.trim().length > 0;
               requestData = {
                 clinical_notes: clinicalNotesText.value,
-                diagnosis: '',
-                treatment_performed: '',
-                medications_prescribed: '',
-                vital_signs: '',
                 injection_count: injectionCount.value,
                 medication_count: medicationCount.value,
                 wound_count: woundCount.value,
@@ -2276,102 +2267,45 @@ window.healthPWA = {
 
             if (!hasNotes && !hasPhoto) {
               alert('Please provide clinical notes or take a photo before saving');
-              console.error('Please provide clinical notes or photo');
               return;
             }
 
-            // Step 1: Upload photo if available (photo alone is valid)
-            if (hasPhoto) {
-              console.log('Uploading photo...');
+            // Step 1: Create the clinical note record
+            const response = await fetch(`/health_pwa/api/fso/${selectedBookingId.value}/clinical_notes`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(hasNotes ? requestData : { clinical_notes: '(Photo attached)' })
+            });
+            const result = await response.json();
+            if (!response.ok || !result.data) {
+              throw new Error(result.error || 'Failed to create clinical note');
+            }
+            const noteId = result.data.note_id;
+
+            // Step 2: Upload photo if captured, linking to the new note
+            if (hasPhoto && noteId) {
               const photoFormData = new FormData();
               photoFormData.append('image', capturedPhoto.value);
-
+              photoFormData.append('note_id', noteId);
               try {
-                const photoResponse = await fetch(`/health_pwa/api/fso/${selectedBookingId.value}/upload_image`, {
+                await fetch(`/health_pwa/api/fso/${selectedBookingId.value}/upload_image`, {
                   method: 'POST',
                   body: photoFormData
                 });
-
-                const photoResult = await photoResponse.text();
-                let parsedPhotoResult;
-                try {
-                  parsedPhotoResult = JSON.parse(photoResult);
-                } catch (e) {
-                  console.warn('Photo upload response parsing issue:', photoResult);
-                }
-
-                if (photoResponse.ok) {
-                  console.log('Photo uploaded successfully');
-                  if (parsedPhotoResult?.data && selectedBookingDetail.value) {
-                    if (!selectedBookingDetail.value.clinical_images) {
-                      selectedBookingDetail.value.clinical_images = [];
-                    }
-                    selectedBookingDetail.value.clinical_images.push(parsedPhotoResult.data);
-                    selectedBookingDetail.value.has_clinical_images = true;
-                  }
-                } else {
-                  console.warn('Photo upload returned non-200 status:', photoResponse.status);
-                  alert('Warning: Photo upload failed but clinical notes will still be saved');
-                }
               } catch (photoErr) {
-                console.warn('Error uploading photo:', photoErr);
-                // Don't stop the process if photo upload fails - continue with notes
+                console.warn('Photo upload failed:', photoErr);
               }
             }
 
-            // Step 2: Save clinical notes if text is provided
-            if (hasNotes) {
-              console.log('Saving clinical notes...');
+            // Step 3: Refresh booking detail to get updated notes list
+            await fetchBookingDetail(selectedBookingId.value);
 
-              const response = await fetch(`/health_pwa/api/fso/${selectedBookingId.value}/clinical_notes`, {
-                method: 'POST',
-                headers: {
-                  'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(requestData)
-              });
-
-              const responseText = await response.text();
-              let result;
-              try {
-                result = JSON.parse(responseText);
-              } catch (e) {
-                console.error('Failed to parse response:', responseText);
-                throw new Error('Invalid server response');
-              }
-
-              if (!response.ok || !result.data) {
-                throw new Error(result.error || 'Failed to save clinical notes');
-              }
-
-              console.log('Clinical notes saved successfully');
-            }
-
-            // Step 2b: If only photo (no notes), still mark as submitted
-            if (hasPhoto && !hasNotes) {
-              try {
-                await fetch(`/health_pwa/api/fso/${selectedBookingId.value}/clinical_notes`, {
-                  method: 'POST',
-                  headers: { 'Content-Type': 'application/json' },
-                  body: JSON.stringify({ mark_submitted: true })
-                });
-              } catch (e) {
-                console.warn('Could not mark clinical notes as submitted:', e);
-              }
-            }
-
-            // Step 3: Update UI and close modal on success
-            if (selectedBookingDetail.value) {
-              if (hasNotes) {
-                selectedBookingDetail.value.clinical_notes = clinicalNotesText.value;
-              }
-              selectedBookingDetail.value.clinical_notes_submitted = true;
-            }
-            alert('Clinical notes saved successfully');
-            closeClinicalNotesModal();
+            alert('Clinical note saved successfully');
+            showClinicalNoteForm.value = false;
+            viewingClinicalNote.value = null;
           } catch (err) {
-            console.error('Error saving clinical notes:', err);
-            alert('Error saving clinical notes: ' + err.message);
+            console.error('Error saving clinical note:', err);
+            alert('Error saving clinical note: ' + err.message);
           }
         };
 
@@ -2774,10 +2708,12 @@ window.healthPWA = {
           // Service start and clinical notes
           serviceStartedForBooking,
           showClinicalNotesModal,
+          showClinicalNoteForm,
+          viewingClinicalNote,
           clinicalNotesText,
-          clinicalObservations,  // Doctor-specific field
-          diagnosis,  // Doctor-specific field
-          treatmentPerformed,  // Doctor-specific field
+          clinicalObservations,
+          diagnosis,
+          treatmentPerformed,
           capturedPhoto,
           photoPreviewUrl,
           injectionCount,
@@ -2787,6 +2723,9 @@ window.healthPWA = {
           startService,
           openClinicalNotesModal,
           closeClinicalNotesModal,
+          openNewClinicalNoteForm,
+          viewExistingNote,
+          backToNotesList,
           capturePhoto,
           saveClinicalNotes,
           completeServiceWithoutQuoteInTodayView,
@@ -3112,6 +3051,10 @@ window.healthPWA = {
                     <span class="label">{{ _t('Package:') }}</span>
                     <span class="value">{{ selectedBookingDetail.package.name }}</span>
                   </div>
+                  <div v-if="selectedBookingDetail.category_of_service && selectedBookingDetail.category_of_service.name" class="detail-row">
+                    <span class="label">{{ _t('Category of Service:') }}</span>
+                    <span class="value">{{ selectedBookingDetail.category_of_service.name }}</span>
+                  </div>
                 </div>
 
                 <!-- Contact Information Section -->
@@ -3155,7 +3098,7 @@ window.healthPWA = {
 
                 <!-- After service start or when already in progress -->
                 <div v-if="serviceStartedForBooking === selectedBookingId || selectedBookingDetail?.state === 'in_progress'" class="modal-footer-content">
-                  <button v-if="!selectedBookingDetail?.clinical_notes_submitted || currentUser.is_doctor" @click="openClinicalNotesModal" class="btn btn-clinical-notes">
+                  <button @click="openClinicalNotesModal" class="btn btn-clinical-notes">
                     <i class="material-icons">description</i>
                     <span>{{ _t('Clinical Notes') }}</span>
                   </button>
@@ -3245,134 +3188,175 @@ window.healthPWA = {
           </div>
         </div>
 
-        <!-- Clinical Notes Modal -->
+        <!-- Clinical Notes Modal (3 panels: list / form / read-only detail) -->
         <div v-if="showClinicalNotesModal && selectedBookingDetail" class="modal-backdrop" @click="closeClinicalNotesModal">
           <div class="clinical-notes-modal" @click.stop>
-            <!-- Modal header -->
             <div class="modal-header">
-                  <h3 class="modal-title">{{ _t('Clinical Notes') }}</h3>
+              <div style="display:flex;align-items:center;gap:8px;">
+                <button v-if="showClinicalNoteForm || viewingClinicalNote" @click="backToNotesList" class="btn-modal-back" style="padding:4px;">
+                  <i class="material-icons">arrow_back</i>
+                </button>
+                <h3 class="modal-title">{{ showClinicalNoteForm ? _t('New Clinical Note') : viewingClinicalNote ? _t('Clinical Note') : _t('Clinical Notes') }}</h3>
+              </div>
               <button @click="closeClinicalNotesModal" class="btn-modal-close">
                 <i class="material-icons">close</i>
               </button>
             </div>
-            <!-- Client Name Banner -->
             <div v-if="selectedBookingDetail?.patient_name" class="client-name-banner">
               <i class="material-icons">person</i>
               <span>{{ selectedBookingDetail.patient_name }}</span>
             </div>
 
-            <!-- Modal content -->
-            <div class="modal-body">
-              <!-- Doctor mode: Three separate fields -->
+            <!-- PANEL 1: Notes List (kanban cards) -->
+            <div v-if="!showClinicalNoteForm && !viewingClinicalNote" class="modal-body" style="padding: 12px;">
+              <div v-if="!selectedBookingDetail?.clinical_notes_list || selectedBookingDetail.clinical_notes_list.length === 0"
+                   style="text-align:center; padding: 24px 12px; color: #999;">
+                <i class="material-icons" style="font-size:48px; margin-bottom:8px;">note_add</i>
+                <p>{{ _t('No clinical notes yet.') }}</p>
+                <p style="font-size:13px;">{{ _t('Tap the button below to add the first clinical note.') }}</p>
+              </div>
+              <div v-else style="display:flex; flex-direction:column; gap:10px;">
+                <div v-for="note in selectedBookingDetail.clinical_notes_list" :key="note.id"
+                     @click="viewExistingNote(note)"
+                     style="background:#fff; border:1px solid #e0e0e0; border-radius:10px; padding:12px; cursor:pointer; box-shadow:0 1px 3px rgba(0,0,0,0.06);">
+                  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+                    <strong style="font-size:14px;">{{ note.author }}</strong>
+                    <small style="color:#999; font-size:11px;">{{ new Date(note.date).toLocaleString() }}</small>
+                  </div>
+                  <div style="font-size:12px; color:#2196F3; margin-bottom:4px;">{{ note.author_role }}</div>
+                  <div v-if="note.clinical_notes" style="font-size:13px; color:#333; margin-bottom:4px; white-space:pre-line; max-height:60px; overflow:hidden; text-overflow:ellipsis;">{{ note.clinical_notes.replace(/<[^>]*>/g, '') }}</div>
+                  <div v-if="note.diagnosis" style="font-size:12px; color:#666;"><strong>Dx:</strong> {{ note.diagnosis }}</div>
+                  <div v-if="note.images && note.images.length > 0" style="display:flex; gap:4px; margin-top:6px;">
+                    <div v-for="img in note.images.slice(0,3)" :key="img.id" style="width:40px;height:40px;border-radius:6px;overflow:hidden;border:1px solid #ddd;">
+                      <img :src="img.url" style="width:100%;height:100%;object-fit:cover;" />
+                    </div>
+                    <div v-if="note.images.length > 3" style="width:40px;height:40px;border-radius:6px;background:#f0f0f0;display:flex;align-items:center;justify-content:center;font-size:11px;color:#666;">+{{ note.images.length - 3 }}</div>
+                  </div>
+                </div>
+              </div>
+              <div class="clinical-modal-footer">
+                <button @click="openNewClinicalNoteForm" class="btn btn-success" style="width:100%;">
+                  <i class="material-icons" style="vertical-align:middle;margin-right:4px;">add</i>
+                  {{ _t('Add New Clinical Note') }}
+                </button>
+              </div>
+            </div>
+
+            <!-- PANEL 2: View Existing Note (read-only) -->
+            <div v-if="viewingClinicalNote && !showClinicalNoteForm" class="modal-body" style="padding: 12px;">
+              <div style="background:#f8f9fa; border-radius:8px; padding:12px; margin-bottom:12px;">
+                <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+                  <strong>{{ viewingClinicalNote.author }}</strong>
+                  <small style="color:#999;">{{ new Date(viewingClinicalNote.date).toLocaleString() }}</small>
+                </div>
+                <div style="font-size:12px; color:#2196F3;">{{ viewingClinicalNote.author_role }}</div>
+              </div>
+              <div v-if="viewingClinicalNote.clinical_notes" class="clinical-form-group">
+                <label class="clinical-form-label">{{ _t('Clinical Notes') }}</label>
+                <div style="padding:8px 12px; background:#fff; border:1px solid #e0e0e0; border-radius:8px; white-space:pre-line; font-size:14px;" v-html="viewingClinicalNote.clinical_notes"></div>
+              </div>
+              <div v-if="viewingClinicalNote.diagnosis" class="clinical-form-group">
+                <label class="clinical-form-label">{{ _t('Diagnosis') }}</label>
+                <div style="padding:8px 12px; background:#fff; border:1px solid #e0e0e0; border-radius:8px; font-size:14px;">{{ viewingClinicalNote.diagnosis }}</div>
+              </div>
+              <div v-if="viewingClinicalNote.treatment_performed" class="clinical-form-group">
+                <label class="clinical-form-label">{{ _t('Treatment Performed') }}</label>
+                <div style="padding:8px 12px; background:#fff; border:1px solid #e0e0e0; border-radius:8px; font-size:14px;">{{ viewingClinicalNote.treatment_performed }}</div>
+              </div>
+              <div v-if="viewingClinicalNote.medications_prescribed" class="clinical-form-group">
+                <label class="clinical-form-label">{{ _t('Medications Prescribed') }}</label>
+                <div style="padding:8px 12px; background:#fff; border:1px solid #e0e0e0; border-radius:8px; font-size:14px;">{{ viewingClinicalNote.medications_prescribed }}</div>
+              </div>
+              <div v-if="viewingClinicalNote.vital_signs" class="clinical-form-group">
+                <label class="clinical-form-label">{{ _t('Vital Signs') }}</label>
+                <div style="padding:8px 12px; background:#fff; border:1px solid #e0e0e0; border-radius:8px; font-size:14px;">{{ viewingClinicalNote.vital_signs }}</div>
+              </div>
+              <div v-if="viewingClinicalNote.injection_count || viewingClinicalNote.medication_count || viewingClinicalNote.wound_count || viewingClinicalNote.iv_fluid_count"
+                   style="background:#f8f9fa; border-radius:8px; padding:12px; margin-bottom:12px;">
+                <label class="clinical-form-label" style="font-weight:600; margin-bottom:8px; display:block;">{{ _t('Service Procedures') }}</label>
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:6px; font-size:13px;">
+                  <div v-if="viewingClinicalNote.injection_count"><strong>Injections:</strong> {{ viewingClinicalNote.injection_count }}</div>
+                  <div v-if="viewingClinicalNote.medication_count"><strong>Medications:</strong> {{ viewingClinicalNote.medication_count }}</div>
+                  <div v-if="viewingClinicalNote.wound_count"><strong>Wounds:</strong> {{ viewingClinicalNote.wound_count }}</div>
+                  <div v-if="viewingClinicalNote.iv_fluid_count"><strong>IV Bags:</strong> {{ viewingClinicalNote.iv_fluid_count }}</div>
+                </div>
+              </div>
+              <div v-if="viewingClinicalNote.images && viewingClinicalNote.images.length > 0" class="clinical-form-group">
+                <label class="clinical-form-label">{{ _t('Images') }}</label>
+                <div style="display:flex; flex-wrap:wrap; gap:8px;">
+                  <div v-for="img in viewingClinicalNote.images" :key="img.id" style="border:1px solid #ddd; border-radius:8px; overflow:hidden; width:100px; height:100px;">
+                    <img :src="img.url" :alt="img.filename" style="width:100%; height:100%; object-fit:cover;" />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- PANEL 3: New Clinical Note Form -->
+            <div v-if="showClinicalNoteForm" class="modal-body">
               <template v-if="currentUser.is_doctor">
-                <!-- Clinical Observations -->
                 <div class="clinical-form-group">
                   <label class="clinical-form-label">{{ _t('Clinical Observations') }}</label>
-                  <textarea
-                    v-model="clinicalObservations"
-                    class="clinical-form-field"
-                    :placeholder="_t('Enter clinical observations...')"
-                    rows="4"></textarea>
+                  <textarea v-model="clinicalObservations" class="clinical-form-field" :placeholder="_t('Enter clinical observations...')" rows="4"></textarea>
                 </div>
-
-                <!-- Diagnosis -->
                 <div class="clinical-form-group">
                   <label class="clinical-form-label">{{ _t('Diagnosis') }}</label>
-                  <textarea
-                    v-model="diagnosis"
-                    class="clinical-form-field"
-                    :placeholder="_t('Enter diagnosis...')"
-                    rows="4"></textarea>
+                  <textarea v-model="diagnosis" class="clinical-form-field" :placeholder="_t('Enter diagnosis...')" rows="3"></textarea>
                 </div>
-
-                <!-- Treatment Performed -->
                 <div class="clinical-form-group">
                   <label class="clinical-form-label">{{ _t('Treatment Performed') }}</label>
-                  <textarea
-                    v-model="treatmentPerformed"
-                    class="clinical-form-field"
-                    :placeholder="_t('Describe treatment provided...')"
-                    rows="4"></textarea>
+                  <textarea v-model="treatmentPerformed" class="clinical-form-field" :placeholder="_t('Describe treatment provided...')" rows="3"></textarea>
                 </div>
               </template>
-
-              <!-- Non-doctor mode: Single notes field -->
               <template v-else>
                 <div class="clinical-form-group">
                   <label class="clinical-form-label">{{ _t('Notes') }}</label>
-                  <textarea
-                    v-model="clinicalNotesText"
-                    class="clinical-form-field"
-                    :placeholder="_t('Enter clinical notes...')"
-                    rows="6"></textarea>
+                  <textarea v-model="clinicalNotesText" class="clinical-form-field" :placeholder="_t('Enter clinical notes...')" rows="6"></textarea>
                 </div>
               </template>
 
-              <!-- Service Procedures (for both modes) -->
-              <div class="clinical-form-group" style="background: #f8f9fa; border-radius: 8px; padding: 12px; margin-bottom: 12px;">
-                <label class="clinical-form-label" style="font-weight: 600; margin-bottom: 8px; display: block;">{{ _t('Service Procedures') }}</label>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+              <div class="clinical-form-group" style="background:#f8f9fa; border-radius:8px; padding:12px; margin-bottom:12px;">
+                <label class="clinical-form-label" style="font-weight:600; margin-bottom:8px; display:block;">{{ _t('Service Procedures') }}</label>
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
                   <div>
-                    <label style="font-size: 12px; color: #666;">{{ _t('Injections') }}</label>
-                    <input type="number" v-model.number="injectionCount" min="0" class="clinical-form-field" style="padding: 6px 10px; text-align: center;" />
+                    <label style="font-size:12px; color:#666;">{{ _t('Injections') }}</label>
+                    <input type="number" v-model.number="injectionCount" min="0" class="clinical-form-field" style="padding:6px 10px; text-align:center;" />
                   </div>
                   <div>
-                    <label style="font-size: 12px; color: #666;">{{ _t('Medications') }}</label>
-                    <input type="number" v-model.number="medicationCount" min="0" class="clinical-form-field" style="padding: 6px 10px; text-align: center;" />
+                    <label style="font-size:12px; color:#666;">{{ _t('Medications') }}</label>
+                    <input type="number" v-model.number="medicationCount" min="0" class="clinical-form-field" style="padding:6px 10px; text-align:center;" />
                   </div>
                   <div>
-                    <label style="font-size: 12px; color: #666;">{{ _t('Wounds') }}</label>
-                    <input type="number" v-model.number="woundCount" min="0" class="clinical-form-field" style="padding: 6px 10px; text-align: center;" />
+                    <label style="font-size:12px; color:#666;">{{ _t('Wounds') }}</label>
+                    <input type="number" v-model.number="woundCount" min="0" class="clinical-form-field" style="padding:6px 10px; text-align:center;" />
                   </div>
                   <div>
-                    <label style="font-size: 12px; color: #666;">{{ _t('IV Fluid Bags') }}</label>
-                    <input type="number" v-model.number="ivFluidCount" min="0" class="clinical-form-field" style="padding: 6px 10px; text-align: center;" />
+                    <label style="font-size:12px; color:#666;">{{ _t('IV Fluid Bags') }}</label>
+                    <input type="number" v-model.number="ivFluidCount" min="0" class="clinical-form-field" style="padding:6px 10px; text-align:center;" />
                   </div>
                 </div>
               </div>
 
-              <!-- Photo capture section (for both modes) -->
               <div class="clinical-form-group">
                 <label class="clinical-form-label">{{ _t('Attach Photo') }}</label>
                 <div class="photo-upload-container">
-                  <input
-                    type="file"
-                    ref="photoInput"
-                    @change="capturePhoto"
-                    accept="image/*"
-                    capture="environment"
-                    class="photo-input"
-                  />
+                  <input type="file" ref="photoInput" @change="capturePhoto" accept="image/*" capture="environment" class="photo-input" />
                   <button @click="$refs.photoInput?.click()" class="btn-photo-capture">
                     <i class="material-icons">camera_alt</i>
                     <span>{{ _t('Take Photo') }}</span>
                   </button>
                 </div>
-
-                <!-- Photo preview (newly captured) -->
                 <div v-if="photoPreviewUrl" class="photo-preview">
                   <img :src="photoPreviewUrl" alt="Preview" />
                   <button @click="() => { capturedPhoto = null; photoPreviewUrl = null; }" class="btn-remove-photo">
                     <i class="material-icons">close</i>
                   </button>
                 </div>
-
-                <!-- Previously saved images from server -->
-                <div v-if="selectedBookingDetail?.clinical_images?.length > 0" style="margin-top: 8px;">
-                  <label class="clinical-form-label" style="font-size: 12px; color: #666;">{{ _t('Saved Images') }}</label>
-                  <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px;">
-                    <div v-for="img in selectedBookingDetail.clinical_images" :key="img.id" style="position: relative; border: 1px solid #ddd; border-radius: 8px; overflow: hidden; width: 100px; height: 100px;">
-                      <img :src="img.url" :alt="img.filename" style="width: 100%; height: 100%; object-fit: cover;" />
-                    </div>
-                  </div>
-                </div>
               </div>
-            </div>
 
-            <!-- Modal footer -->
-            <div class="clinical-modal-footer">
-              <button @click="closeClinicalNotesModal" class="btn btn-secondary">Cancel</button>
-              <button @click="saveClinicalNotes" class="btn btn-success">Confirm and Save</button>
+              <div class="clinical-modal-footer">
+                <button @click="backToNotesList" class="btn btn-secondary">{{ _t('Cancel') }}</button>
+                <button @click="saveClinicalNotes" class="btn btn-success">{{ _t('Confirm and Save') }}</button>
+              </div>
             </div>
           </div>
         </div>
