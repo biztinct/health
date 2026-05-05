@@ -49,6 +49,45 @@ class HealthPWAAPIController(http.Controller):
             status=status_code
         )
     
+    def _create_follow_up_activity(self, order, patient, reason_note):
+        """Create a follow-up activity on the patient for the operations manager of the patient's primary facility."""
+        try:
+            facility = patient.primary_facility_id if hasattr(patient, 'primary_facility_id') else False
+            if not facility:
+                _logger.warning('No primary facility for patient %s, cannot create follow-up activity', patient.name)
+                return
+
+            ops_manager_employee = facility.facility_manager_id if facility.facility_manager_id else False
+            if not ops_manager_employee:
+                _logger.warning('No operations manager for facility %s, cannot create follow-up activity', facility.name)
+                return
+
+            ops_manager_user = ops_manager_employee.user_id if ops_manager_employee.user_id else False
+            if not ops_manager_user:
+                _logger.warning('Operations manager %s has no linked user, cannot create follow-up activity', ops_manager_employee.name)
+                return
+
+            activity_type = request.env.ref('mail.mail_activity_data_todo', raise_if_not_found=False)
+            if not activity_type:
+                _logger.warning('Todo activity type not found')
+                return
+
+            tomorrow = fields.Date.today() + timedelta(days=1)
+
+            patient.activity_schedule(
+                activity_type_id=activity_type.id,
+                summary=f'Follow-up required: {patient.name}',
+                note=f'<p><strong>Follow-up Required</strong></p>'
+                     f'<p>Booking: {order.name}</p>'
+                     f'<p>Reason: {reason_note}</p>'
+                     f'<p>Please follow up with the client.</p>',
+                date_deadline=tomorrow,
+                user_id=ops_manager_user.id,
+            )
+            _logger.info('Follow-up activity created for patient %s, assigned to %s', patient.name, ops_manager_user.name)
+        except Exception as e:
+            _logger.error('Error creating follow-up activity: %s', str(e))
+
     def _serialize_clinical_notes(self, order):
         notes = []
         if hasattr(order, 'clinical_note_ids'):
@@ -303,6 +342,7 @@ class HealthPWAAPIController(http.Controller):
                     'fso_name': order.name,
                     'patient_name': order.patient_id.name if order.patient_id else None,
                     'patient_id': order.patient_id.id if order.patient_id else None,
+                    'patient_code': order.patient_id.patient_code if order.patient_id else None,
                     'patient_phone': order.patient_phone,
                     'service_type': order._get_service_type_label() if hasattr(order, '_get_service_type_label') else order.service_type,
                     'appointment_type': '',
@@ -638,6 +678,27 @@ class HealthPWAAPIController(http.Controller):
         except Exception as e:
             return self._prepare_json_response(error=str(e), status_code=500)
 
+    @http.route('/health_pwa/api/cancellation_reasons', type='http', auth='user', methods=['GET'], csrf=False)
+    def api_get_cancellation_reasons(self, **kwargs):
+        """Get list of cancellation reasons for dropdown"""
+        if not self._check_api_access():
+            return self._prepare_json_response(error='Access denied', status_code=403)
+
+        try:
+            reasons = request.env['health.booking.cancellation.reason'].search(
+                [('active', '=', True)], order='sequence, name'
+            )
+            reasons_data = [{
+                'id': r.id,
+                'name': r.name,
+                'reason_type': r.reason_type,
+            } for r in reasons]
+
+            return self._prepare_json_response(data={'reasons': reasons_data})
+
+        except Exception as e:
+            return self._prepare_json_response(error=str(e), status_code=500)
+
     @http.route('/health_pwa/api/fso/<int:order_id>/cancel', type='http', auth='user', methods=['POST'], csrf=False)
     def api_fso_cancel_service(self, order_id, **kwargs):
         """Cancel/Refuse visit for FSO from mobile app"""
@@ -650,42 +711,39 @@ class HealthPWAAPIController(http.Controller):
             if not order.exists():
                 return self._prepare_json_response(error='Order not found', status_code=404)
 
-            # Check if order can be cancelled
             if order.state in ['completed', 'cancelled', 'closed']:
                 return self._prepare_json_response(error=f'Cannot cancel service in {order.state} state', status_code=400)
 
-            # Get cancellation reason from request body
             import json as json_module
             try:
                 data = json_module.loads(request.httprequest.data.decode('utf-8')) if request.httprequest.data else {}
             except:
                 data = {}
 
-            reason = data.get('reason', 'No reason provided')
+            cancellation_reason_id = data.get('cancellation_reason_id')
+            cancellation_notes = data.get('cancellation_notes', '')
 
-            cancellation_note = f"Visit Cancelled/Refused: {reason}"
+            if not cancellation_reason_id:
+                return self._prepare_json_response(error='Cancellation reason is required', status_code=400)
+
+            reason_record = request.env['health.booking.cancellation.reason'].browse(cancellation_reason_id)
+            if not reason_record.exists():
+                return self._prepare_json_response(error='Invalid cancellation reason', status_code=400)
+
+            cancellation_note = f"Visit Cancelled/Refused: {reason_record.name}"
+            if cancellation_notes:
+                cancellation_note += f" - {cancellation_notes}"
             request.env['health.clinical.note'].create({
                 'order_id': order.id,
                 'clinical_notes': cancellation_note,
             })
 
-            # Set state to cancelled (if field exists) or update stage
-            try:
-                # Try to call cancel action if it exists
-                if hasattr(order, 'action_cancel'):
-                    order.action_cancel()
-                else:
-                    # Otherwise, just set state to cancelled
-                    order.write({'state': 'cancelled'})
-            except Exception as cancel_error:
-                # If cancel action fails, try to set state directly
-                _logger.warning(f'Failed to use action_cancel, setting state directly: {str(cancel_error)}')
-                order.write({'state': 'cancelled'})
+            order.cancel_with_reason(cancellation_reason_id, cancellation_notes)
 
             return self._prepare_json_response(data={
                 'state': order.state,
                 'message': 'Visit cancelled successfully',
-                'cancellation_reason': reason
+                'cancellation_reason': reason_record.name
             })
 
         except Exception as e:
@@ -1419,6 +1477,7 @@ class HealthPWAAPIController(http.Controller):
                     'fso_name': fso.name,
                     'patient_name': patient.name if patient else 'Unknown',
                     'patient_id': patient.id if patient else None,
+                    'patient_code': patient.patient_code if patient else None,
                     'patient_phone': patient.mobile or patient.phone if patient else None,
                     'service_type': service_type_label,
                     'appointment_type': appointment_type,
@@ -1611,6 +1670,7 @@ class HealthPWAAPIController(http.Controller):
 
             reason = data.get('reason', '')
             other_reason_text = data.get('other_reason_text', '')
+            need_follow_up = data.get('need_follow_up', False)
 
             # Build the reason string
             if reason == 'Other':
@@ -1624,17 +1684,22 @@ class HealthPWAAPIController(http.Controller):
             if patient.assignment_notes:
                 patient.write({
                     'assignment_notes': patient.assignment_notes + '\n' + reason_note,
-                    'next_visit_date': False  # Clear next visit date
+                    'next_visit_date': False
                 })
             else:
                 patient.write({
                     'assignment_notes': reason_note,
-                    'next_visit_date': False  # Clear next visit date
+                    'next_visit_date': False
                 })
+
+            # Create follow-up activity if requested
+            if need_follow_up:
+                self._create_follow_up_activity(order, patient, reason_note)
 
             return self._prepare_json_response(data={
                 'message': 'Visit cancellation reason recorded successfully',
-                'patient_id': patient.id
+                'patient_id': patient.id,
+                'follow_up_created': need_follow_up
             })
 
         except Exception as e:
@@ -1907,6 +1972,7 @@ class HealthPWAAPIController(http.Controller):
                         'name': fso.name,
                         'patient_name': fso.patient_id.name if fso.patient_id else 'Unknown',
                         'patient_id': fso.patient_id.id if fso.patient_id else None,
+                        'patient_code': fso.patient_id.patient_code if fso.patient_id else None,
                         'scheduled_time': fso_dt_user_tz.strftime('%H:%M'),
                         'scheduled_datetime': fso.scheduled_datetime,
                         'service_type': fso._get_service_type_label() if hasattr(fso, '_get_service_type_label') else fso.service_type,

@@ -1604,6 +1604,15 @@ window.healthPWA = {
         // Track the completed booking ID for modal workflows
         const completedBookingId = ref(null);
 
+        // Cancellation Modal State
+        const showCancellationModal = ref(false);
+        const cancellationReasons = ref([]);
+        const cancellationFormData = ref({
+          reason_id: null,
+          notes: ''
+        });
+        const cancellationSubmitting = ref(false);
+
         // Client Details View State
         const showClientDetailsView = ref(false);
         const currentClientData = ref({
@@ -1636,7 +1645,8 @@ window.healthPWA = {
           quote_items: [],
           assigned_nurse_id: null,
           no_future_visit_reason: '',
-          other_reason_text: ''
+          other_reason_text: '',
+          need_follow_up: false
         });
         const noFutureVisitReasons = [
           { value: 'patient_died', label: 'Patient died' },
@@ -2091,45 +2101,60 @@ window.healthPWA = {
           }
         };
 
-        // Cancel/Refuse visit
+        // Load cancellation reasons from backend
+        const loadCancellationReasons = async () => {
+          if (cancellationReasons.value.length > 0) return;
+          try {
+            const response = await fetch('/health_pwa/api/cancellation_reasons');
+            const data = await response.json();
+            if (data.success && data.data?.reasons) {
+              cancellationReasons.value = data.data.reasons;
+            }
+          } catch (err) {
+            console.error('Error loading cancellation reasons:', err);
+          }
+        };
+
+        // Cancel/Refuse visit - open modal
         const cancelVisit = async () => {
-          if (!selectedBookingId.value) {
-            console.error('No booking selected');
+          if (!selectedBookingId.value) return;
+          await loadCancellationReasons();
+          cancellationFormData.value = { reason_id: null, notes: '' };
+          cancellationSubmitting.value = false;
+          showCancellationModal.value = true;
+        };
+
+        // Submit cancellation
+        const submitCancellation = async () => {
+          if (!cancellationFormData.value.reason_id) {
+            window.healthPWA.showNotification('Please select a cancellation reason', 'error');
             return;
           }
-
-          const reason = prompt('Please provide a reason for cancelling/refusing this visit:');
-          if (!reason || reason.trim() === '') {
-            alert('Cancellation reason is required');
-            return;
-          }
-
+          cancellationSubmitting.value = true;
           try {
             const response = await fetch(`/health_pwa/api/fso/${selectedBookingId.value}/cancel`, {
               method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-              },
+              headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({
-                reason: reason.trim()
+                cancellation_reason_id: cancellationFormData.value.reason_id,
+                cancellation_notes: cancellationFormData.value.notes.trim()
               })
             });
-
             const result = await response.json();
-
             if (result.success) {
-              alert('Visit cancelled successfully');
-              // Close the modal and refresh the bookings list
+              window.healthPWA.showNotification('Visit cancelled successfully', 'success');
+              showCancellationModal.value = false;
               selectedBookingId.value = null;
               selectedBookingDetail.value = null;
-              // Reload bookings
-              await loadBookings();
+              await loadBookingsForDate(currentDate.value);
             } else {
-              alert('Error: ' + (result.error || 'Failed to cancel visit'));
+              window.healthPWA.showNotification(result.error || 'Failed to cancel visit', 'error');
             }
           } catch (err) {
             console.error('Error cancelling visit:', err);
-            alert('Error cancelling visit: ' + err.message);
+            window.healthPWA.showNotification('Error cancelling visit: ' + err.message, 'error');
+          } finally {
+            cancellationSubmitting.value = false;
           }
         };
 
@@ -2442,7 +2467,8 @@ window.healthPWA = {
                 'Content-Type': 'application/json',
               },
               body: JSON.stringify({
-                reason: finalReason
+                reason: finalReason,
+                need_follow_up: nextVisitFormData.value.need_follow_up || false
               })
             });
 
@@ -2457,6 +2483,7 @@ window.healthPWA = {
               // Reset form
               nextVisitFormData.value.no_future_visit_reason = '';
               nextVisitFormData.value.other_reason_text = '';
+              nextVisitFormData.value.need_follow_up = false;
               // Refresh bookings list to reflect the change
               await loadBookingsForDate(currentDate.value);
             } else {
@@ -2522,19 +2549,15 @@ window.healthPWA = {
               currentUser.value.timezone || 'UTC'
             );
 
-            // Build request body - don't send assigned_staff_id when editing existing appointment
             const requestBody = {
               next_visit_date: isoDateTime,
               scheduled_datetime: isoDateTime,
               quote_items: nextVisitFormData.value.quote_items,
             };
 
-            // Only send assigned_staff_id and next_fso_id for new appointments
-            // When editing existing appointment (has_next_visit=true), do NOT update assignments
             if (!nextVisitData.value.has_next_visit) {
               requestBody.assigned_staff_id = nextVisitFormData.value.assigned_nurse_id;
             } else {
-              // When editing existing, send next_fso_id so backend knows to update
               requestBody.next_fso_id = nextVisitData.value.next_fso_id;
             }
 
@@ -2564,7 +2587,8 @@ window.healthPWA = {
                 quote_items: [],
                 assigned_nurse_id: null,
                 no_future_visit_reason: '',
-                other_reason_text: ''
+                other_reason_text: '',
+                need_follow_up: false
               };
               // Reset next visit data
               nextVisitData.value = {
@@ -2612,7 +2636,8 @@ window.healthPWA = {
               assigned_nurse_id: currentUser.value.employee_id,
               assigned_nurse_name: '',
               no_future_visit_reason: '',
-              other_reason_text: ''
+              other_reason_text: '',
+              need_follow_up: false
             };
             // Update nextVisitData with current patient
             nextVisitData.value.patient_id = currentClientData.value.id;
@@ -2633,10 +2658,11 @@ window.healthPWA = {
             scheduled_date: null,
             scheduled_time: null,
             quote_items: [],
-            assigned_nurse_id: currentUser.value.employee_id,  // Pre-populate with current user's employee ID
-            assigned_nurse_name: currentUser.value.name || '',  // Pre-populate with current user's name
+            assigned_nurse_id: currentUser.value.employee_id,
+            assigned_nurse_name: currentUser.value.name || '',
             no_future_visit_reason: '',
-            other_reason_text: ''
+            other_reason_text: '',
+            need_follow_up: false
           };
           showNextVisitModalA.value = false;
           showNextVisitModalB.value = true;
@@ -2721,6 +2747,7 @@ window.healthPWA = {
           woundCount,
           ivFluidCount,
           startService,
+          cancelVisit,
           openClinicalNotesModal,
           closeClinicalNotesModal,
           openNewClinicalNoteForm,
@@ -2750,6 +2777,12 @@ window.healthPWA = {
           saveQuoteWithComments,
           openPaymentWizard,
           completePayment,
+          // Cancellation modal
+          showCancellationModal,
+          cancellationReasons,
+          cancellationFormData,
+          cancellationSubmitting,
+          submitCancellation,
           // Next visit modal workflow
           completedBookingId,
           showNextVisitModalA,
@@ -2870,6 +2903,7 @@ window.healthPWA = {
                   <!-- Patient info -->
                   <div class="booking-patient-section">
                     <h3 class="booking-patient-name">{{ booking.patient_name }}</h3>
+                    <span v-if="booking.patient_code" style="margin-left: auto; font-weight: 600; font-size: 12px; color: #555;">{{ booking.patient_code }}</span>
                   </div>
 
                   <!-- Service type with action buttons inline -->
@@ -2921,6 +2955,7 @@ window.healthPWA = {
                     <!-- Patient info -->
                     <div class="booking-patient-section">
                       <h3 class="booking-patient-name">{{ booking.patient_name }}</h3>
+                      <span v-if="booking.patient_code" style="margin-left: auto; font-weight: 600; font-size: 12px; color: #555;">{{ booking.patient_code }}</span>
                     </div>
 
                     <!-- Service type with action buttons inline -->
@@ -2974,6 +3009,7 @@ window.healthPWA = {
                     <!-- Patient info -->
                     <div class="booking-patient-section">
                       <h3 class="booking-patient-name">{{ booking.patient_name }}</h3>
+                      <span v-if="booking.patient_code" style="margin-left: auto; font-weight: 600; font-size: 12px; color: #555;">{{ booking.patient_code }}</span>
                     </div>
 
                     <!-- Service type with action buttons inline -->
@@ -3032,6 +3068,7 @@ window.healthPWA = {
               <div v-if="selectedBookingDetail?.patient_name" class="client-name-banner">
                 <i class="material-icons">person</i>
                 <span>{{ selectedBookingDetail.patient_name }}</span>
+                <span v-if="selectedBookingDetail?.patient_code || selectedBookingDetail?.patient?.patient_code" style="margin-left: auto; font-weight: 600; color: #333; font-size: 13px;">{{ selectedBookingDetail.patient_code || selectedBookingDetail.patient?.patient_code }}</span>
               </div>
 
               <!-- Modal scrollable content -->
@@ -3129,6 +3166,73 @@ window.healthPWA = {
           </div>
         </div>
 
+        <!-- Cancellation Modal -->
+        <div v-if="showCancellationModal" class="modal-backdrop" @click="showCancellationModal = false" style="background: white;">
+          <div class="modal-container" @click.stop style="max-width: 420px;">
+            <div class="modal-header" style="background: #d32f2f; color: white;">
+              <h3 style="color: white;">
+                <i class="material-icons">cancel</i>
+                Cancel/Refuse Visit
+              </h3>
+              <button @click="showCancellationModal = false" class="modal-close" style="color: white;">
+                <i class="material-icons">close</i>
+              </button>
+            </div>
+            <div v-if="selectedBookingDetail?.patient_name" class="client-name-banner">
+              <i class="material-icons">person</i>
+              <span>{{ selectedBookingDetail.patient_name }}</span>
+              <span v-if="selectedBookingDetail?.patient_code || selectedBookingDetail?.patient?.patient_code" style="margin-left: auto; font-weight: 600; color: #333; font-size: 13px;">{{ selectedBookingDetail.patient_code || selectedBookingDetail.patient?.patient_code }}</span>
+            </div>
+            <div class="modal-body">
+              <div style="margin-bottom: 16px;">
+                <label style="display: block; font-size: 14px; font-weight: 600; color: #333; margin-bottom: 8px;">
+                  Cancellation Reason <span style="color: #d32f2f;">*</span>
+                </label>
+                <select v-model="cancellationFormData.reason_id"
+                  style="width: 100%; padding: 10px 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 14px; background: white; appearance: auto;">
+                  <option :value="null" disabled>Select a reason...</option>
+                  <optgroup v-if="cancellationReasons.filter(r => r.reason_type === 'patient').length" label="Patient-initiated">
+                    <option v-for="r in cancellationReasons.filter(r => r.reason_type === 'patient')" :key="r.id" :value="r.id">{{ r.name }}</option>
+                  </optgroup>
+                  <optgroup v-if="cancellationReasons.filter(r => r.reason_type === 'provider').length" label="Provider-initiated">
+                    <option v-for="r in cancellationReasons.filter(r => r.reason_type === 'provider')" :key="r.id" :value="r.id">{{ r.name }}</option>
+                  </optgroup>
+                  <optgroup v-if="cancellationReasons.filter(r => r.reason_type === 'system').length" label="System/Technical">
+                    <option v-for="r in cancellationReasons.filter(r => r.reason_type === 'system')" :key="r.id" :value="r.id">{{ r.name }}</option>
+                  </optgroup>
+                  <optgroup v-if="cancellationReasons.filter(r => r.reason_type === 'emergency').length" label="Emergency">
+                    <option v-for="r in cancellationReasons.filter(r => r.reason_type === 'emergency')" :key="r.id" :value="r.id">{{ r.name }}</option>
+                  </optgroup>
+                </select>
+              </div>
+              <div style="margin-bottom: 16px;">
+                <label style="display: block; font-size: 14px; font-weight: 600; color: #333; margin-bottom: 8px;">
+                  Cancellation Notes
+                </label>
+                <textarea v-model="cancellationFormData.notes"
+                  placeholder="Additional details about the cancellation..."
+                  style="width: 100%; padding: 10px 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 14px; min-height: 80px; resize: vertical; box-sizing: border-box;"
+                  rows="3"></textarea>
+              </div>
+              <div style="padding: 10px; background: #fff3e0; border-radius: 8px; border: 1px solid #ffe0b2; margin-bottom: 16px;">
+                <div style="display: flex; align-items: center; gap: 8px; font-size: 13px; color: #e65100;">
+                  <i class="material-icons" style="font-size: 18px;">warning</i>
+                  <span>Cancellation details will be logged for record-keeping.</span>
+                </div>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <div class="modal-footer-content">
+                <button @click="showCancellationModal = false" class="btn btn-secondary">Go Back</button>
+                <button @click="submitCancellation" class="btn btn-danger" :disabled="!cancellationFormData.reason_id || cancellationSubmitting">
+                  <span v-if="cancellationSubmitting">Cancelling...</span>
+                  <span v-else>Confirm Cancellation</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <!-- Intake Summary Modal -->
         <div v-if="showIntakeSummaryModal && selectedBookingDetail" class="modal-backdrop" @click="toggleIntakeSummaryModal">
           <div class="intake-summary-modal" @click.stop>
@@ -3146,6 +3250,7 @@ window.healthPWA = {
               <div v-if="selectedBookingDetail?.patient_name" class="client-name-banner">
                 <i class="material-icons">person</i>
                 <span>{{ selectedBookingDetail.patient_name }}</span>
+                <span v-if="selectedBookingDetail?.patient_code || selectedBookingDetail?.patient?.patient_code" style="margin-left: auto; font-weight: 600; color: #333; font-size: 13px;">{{ selectedBookingDetail.patient_code || selectedBookingDetail.patient?.patient_code }}</span>
               </div>
               <!-- Diagnosis -->
               <div class="intake-form-group">
@@ -3205,6 +3310,7 @@ window.healthPWA = {
             <div v-if="selectedBookingDetail?.patient_name" class="client-name-banner">
               <i class="material-icons">person</i>
               <span>{{ selectedBookingDetail.patient_name }}</span>
+              <span v-if="selectedBookingDetail?.patient_code || selectedBookingDetail?.patient?.patient_code" style="margin-left: auto; font-weight: 600; color: #333; font-size: 13px;">{{ selectedBookingDetail.patient_code || selectedBookingDetail.patient?.patient_code }}</span>
             </div>
 
             <!-- PANEL 1: Notes List (kanban cards) -->
@@ -3367,7 +3473,7 @@ window.healthPWA = {
             <div class="modal-header">
               <h3>
                 <i class="material-icons">receipt</i>
-                {{ _t('View Quote') }}
+                {{ _t('View Quote') }} <span v-if="quoteData" style="font-weight: 400; font-size: 14px; color: #666; margin-left: 4px;">{{ quoteData.name }}</span>
               </h3>
               <button @click="showInvoiceModal = false" class="modal-close">
                 <i class="material-icons">close</i>
@@ -3377,12 +3483,12 @@ window.healthPWA = {
             <div v-if="selectedBookingDetail?.patient_name" class="client-name-banner">
               <i class="material-icons">person</i>
               <span>{{ selectedBookingDetail.patient_name }}</span>
+              <span v-if="selectedBookingDetail?.patient?.patient_code" style="margin-left: auto; font-weight: 600; color: #333; font-size: 13px;">{{ selectedBookingDetail.patient.patient_code }}</span>
             </div>
             <div class="modal-body" v-if="quoteData">
               <!-- Quote Information -->
               <div class="invoice-header">
                 <div class="invoice-info">
-                  <h4>{{ quoteData.name }}</h4>
                   <span :class="'badge badge-' + (quoteData.state === 'sale' ? 'success' : 'info')">
                     {{ quoteData.state }}
                   </span>
@@ -3520,6 +3626,7 @@ window.healthPWA = {
                 <div v-if="selectedBookingDetail?.patient_name" class="client-name-banner">
                   <i class="material-icons">person</i>
                   <span>{{ selectedBookingDetail.patient_name }}</span>
+                  <span v-if="selectedBookingDetail?.patient_code || selectedBookingDetail?.patient?.patient_code" style="margin-left: auto; font-weight: 600; color: #333; font-size: 13px;">{{ selectedBookingDetail.patient_code || selectedBookingDetail.patient?.patient_code }}</span>
                 </div>
 
               <div class="modal-body">
@@ -3709,6 +3816,14 @@ window.healthPWA = {
                     rows="3"></textarea>
                 </div>
 
+                <!-- Need to Follow up checkbox -->
+                <div style="margin-top: 12px; padding: 12px; background: #f8f9fa; border-radius: 8px; border: 1px solid #e0e0e0;">
+                  <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; margin: 0; font-size: 14px; font-weight: 500; color: #333;">
+                    <input type="checkbox" v-model="nextVisitFormData.need_follow_up" style="width: 18px; height: 18px; accent-color: #1976d2; cursor: pointer;">
+                    Need to Follow up
+                  </label>
+                </div>
+
                 <!-- Submit button for no future visit -->
                 <div class="form-actions">
                   <button @click="showNoFutureVisitDropdown = false" class="btn btn-secondary">Cancel</button>
@@ -3837,7 +3952,7 @@ window.healthPWA = {
                       nextVisitFormData.assigned_nurse_id = null;
                     }" class="btn-clear-assignment">
                       <i class="material-icons">close</i>
-                      Clear Assignment
+                      Assign different nurse
                     </button>
                   </div>
                 </div>
@@ -4037,6 +4152,7 @@ window.healthPWA = {
                       <!-- Patient info -->
                       <div class="booking-patient-section">
                         <h3 class="booking-patient-name">{{ booking.patient_name }}</h3>
+                        <span v-if="booking.patient_code" style="margin-left: auto; font-weight: 600; font-size: 12px; color: #555;">{{ booking.patient_code }}</span>
                       </div>
 
                       <!-- Service type with action buttons inline -->
@@ -4227,6 +4343,11 @@ window.healthPWA = {
                     <i class="material-icons">map</i>
                   </button>
                 </div>
+              </div>
+
+              <!-- Patient code -->
+              <div v-if="patient.patient_code" style="font-size: 13px; font-weight: 600; color: #555; margin-top: -2px;">
+                {{ patient.patient_code }}
               </div>
 
               <!-- Patient address -->
@@ -4641,7 +4762,7 @@ window.healthPWA = {
               </div>
               <div class="list-item-content">
                 <h4 class="list-item-title">
-                  {{ order.service_type_name || 'Service Order' }} - {{ order.patient_name || 'Unknown Patient' }}
+                  {{ order.service_type_name || 'Service Order' }} - {{ order.patient_name || 'Unknown Patient' }} <span v-if="order.patient_code" style="font-weight: 400; font-size: 12px; color: #666;">{{ order.patient_code }}</span>
                 </h4>
                 <p class="list-item-subtitle">
                   Scheduled: {{ formatDateTime(order.scheduled_datetime) }}
@@ -4804,7 +4925,7 @@ window.healthPWA = {
               </div>
               <div class="list-item-content">
                 <h4 class="list-item-title">
-                  {{ order.service_type_name || 'Service Order' }} - {{ order.patient_name || 'Unknown Patient' }}
+                  {{ order.service_type_name || 'Service Order' }} - {{ order.patient_name || 'Unknown Patient' }} <span v-if="order.patient_code" style="font-weight: 400; font-size: 12px; color: #666;">{{ order.patient_code }}</span>
                 </h4>
                 <p class="list-item-subtitle">
                   Scheduled: {{ formatDateTime(order.scheduled_datetime) }}
@@ -4897,7 +5018,8 @@ window.healthPWA = {
           quote_items: [],
           assigned_nurse_id: null,
           no_future_visit_reason: '',
-          other_reason_text: ''
+          other_reason_text: '',
+          need_follow_up: false
         });
         const showNoFutureVisitDropdown = ref(false);
         const noFutureVisitReasons = [
@@ -5358,7 +5480,8 @@ window.healthPWA = {
                 'Content-Type': 'application/json',
               },
               body: JSON.stringify({
-                reason: finalReason
+                reason: finalReason,
+                need_follow_up: nextVisitFormData.value.need_follow_up || false
               })
             });
 
@@ -5371,6 +5494,7 @@ window.healthPWA = {
               // Reset form
               nextVisitFormData.value.no_future_visit_reason = '';
               nextVisitFormData.value.other_reason_text = '';
+              nextVisitFormData.value.need_follow_up = false;
               // Close modal and navigate back to today's bookings
               emit('navigate', 'today');
             } else {
@@ -5437,7 +5561,8 @@ window.healthPWA = {
                 quote_items: [],
                 assigned_nurse_id: null,
                 no_future_visit_reason: '',
-                other_reason_text: ''
+                other_reason_text: '',
+                need_follow_up: false
               };
             } else {
               window.healthPWA.showNotification('Failed to schedule: ' + (data.error || 'Unknown error'), 'error');
@@ -5823,7 +5948,7 @@ window.healthPWA = {
           <div v-else-if="order" class="order-details">
             <!-- Client Header - Mobilesample clean design -->
             <div class="order-client-header">
-              <h2>{{ order.patient?.name || order.patient_name || 'Unknown Client' }}</h2>
+              <h2>{{ order.patient?.name || order.patient_name || 'Unknown Client' }} <span v-if="order.patient_code || order.patient?.patient_code" style="font-weight: 400; font-size: 14px; color: #666;">{{ order.patient_code || order.patient?.patient_code }}</span></h2>
               <div class="order-client-meta">
                 <span v-if="order.name" class="order-number">
                   📋 {{ order.name }}
@@ -5930,7 +6055,7 @@ window.healthPWA = {
                 <div class="info-grid">
                   <div class="info-item">
                     <label>Name</label>
-                    <span>{{ order.patient_name || 'Not specified' }}</span>
+                    <span>{{ order.patient_name || 'Not specified' }} <span v-if="order.patient_code || order.patient?.patient_code" style="font-weight: 600; color: #333;">({{ order.patient_code || order.patient?.patient_code }})</span></span>
                   </div>
                   <div class="info-item" v-if="order.patient_details">
                     <label>Age / Gender</label>
@@ -6026,6 +6151,7 @@ window.healthPWA = {
                 <div v-if="order?.patient_name" class="client-name-banner">
                   <i class="material-icons">person</i>
                   <span>{{ order.patient_name }}</span>
+                  <span v-if="order?.patient_code" style="margin-left: auto; font-weight: 600; color: #333; font-size: 13px;">{{ order.patient_code }}</span>
                 </div>
                 <div class="modal-body">
                   <div class="form-group">
@@ -6115,7 +6241,7 @@ window.healthPWA = {
                 <div class="modal-header">
                   <h3>
                     <i class="material-icons">receipt</i>
-                    Invoice / Quote
+                    Invoice / Quote <span v-if="quoteData" style="font-weight: 400; font-size: 14px; color: #666; margin-left: 4px;">{{ quoteData.name }}</span>
                   </h3>
                   <button @click="showInvoice = false" class="modal-close">
                     <i class="material-icons">close</i>
@@ -6125,11 +6251,11 @@ window.healthPWA = {
                 <div v-if="order?.patient_name" class="client-name-banner">
                   <i class="material-icons">person</i>
                   <span>{{ order.patient_name }}</span>
+                  <span v-if="order?.patient_code" style="margin-left: auto; font-weight: 600; color: #333; font-size: 13px;">{{ order.patient_code }}</span>
                 </div>
                 <div class="modal-body" v-if="quoteData">
                   <div class="invoice-header">
                     <div class="invoice-info">
-                      <h4>{{ quoteData.name }}</h4>
                       <span :class="'badge badge-' + (quoteData.state === 'sale' ? 'success' : 'info')">
                         {{ quoteData.state }}
                       </span>
@@ -6361,7 +6487,7 @@ window.healthPWA = {
                       </div>
                       <div class="info-item">
                         <label style="font-size: 12px; color: #999;">Patient</label>
-                        <span style="font-size: 14px; color: #333;">{{ order.patient_name }}</span>
+                        <span style="font-size: 14px; color: #333;">{{ order.patient_name }} <span v-if="order.patient_code" style="font-weight: 600;">{{ order.patient_code }}</span></span>
                       </div>
                       <div class="info-item">
                         <label style="font-size: 12px; color: #999;">Calculated Invoice Amount</label>
