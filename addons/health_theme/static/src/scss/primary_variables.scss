@@ -59,6 +59,15 @@ $vu-info: #2A7ABF;                  // Information blue - info messages
 $vu-warning: #946200;               // Caution amber - warnings
 $vu-danger: #C0332A;                // Alert red - errors, critical
 
+// ===== WORKFLOW STATE COLORS (Booking & Order Lifecycle) =====
+$vu-state-draft: #64748b;           // Slate — new/unconfirmed
+$vu-state-confirmed: #2563eb;       // Blue — client confirmed
+$vu-state-assigned: #7c3aed;        // Purple — staff assigned
+$vu-state-active: #ea580c;          // Orange — service in progress
+$vu-state-completed: #16a34a;       // Green — service done
+$vu-state-cancelled: #dc2626;       // Red — cancelled
+$vu-state-closed: #475569;          // Dark slate — archived
+
 // ===== ODOO BRAND VARIABLE OVERRIDES =====
 
 // Override Odoo Community/Enterprise Brand Colors
@@ -238,6 +247,32 @@ $font-weight-extrabold: 800;
     --vu-space-lg: 16px;
     --vu-space-xl: 24px;
     --vu-space-xxl: 36px;
+
+    /* Workflow State Colors */
+    --vu-state-draft: #{$vu-state-draft};
+    --vu-state-confirmed: #{$vu-state-confirmed};
+    --vu-state-assigned: #{$vu-state-assigned};
+    --vu-state-active: #{$vu-state-active};
+    --vu-state-completed: #{$vu-state-completed};
+    --vu-state-cancelled: #{$vu-state-cancelled};
+    --vu-state-closed: #{$vu-state-closed};
+
+    --vu-state-draft-bg: #{rgba($vu-state-draft, 0.08)};
+    --vu-state-confirmed-bg: #{rgba($vu-state-confirmed, 0.08)};
+    --vu-state-assigned-bg: #{rgba($vu-state-assigned, 0.08)};
+    --vu-state-active-bg: #{rgba($vu-state-active, 0.08)};
+    --vu-state-completed-bg: #{rgba($vu-state-completed, 0.08)};
+    --vu-state-cancelled-bg: #{rgba($vu-state-cancelled, 0.08)};
+    --vu-state-closed-bg: #{rgba($vu-state-closed, 0.08)};
+
+    /* Field indicator tokens */
+    --vu-field-editable-border: #{$vu-card-border};
+    --vu-field-editable-bg: #{rgba($vu-deep-blue, 0.03)};
+    --vu-field-required-accent: #{$vu-warning};
+
+    /* Side sheet */
+    --vu-sheet-width: 480px;
+    --vu-sheet-shadow: -4px 0 24px rgba(0, 0, 0, 0.15);
 
     /* Elevation */
     --vu-shadow-sm: #{$vu-shadow-sm};

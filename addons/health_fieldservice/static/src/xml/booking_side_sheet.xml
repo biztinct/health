@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="health_fieldservice.BookingStaffSheet">
+        <!-- Trigger button — styled as vu-action-item in the action panel -->
+        <button class="vu-action-item" t-on-click="open" type="button">
+            <i class="fa fa-users"/> Staff Overview
+        </button>
+
+        <!-- Backdrop -->
+        <div t-attf-class="vu-side-sheet-backdrop #{state.isOpen ? 'vu-side-sheet-backdrop--visible' : ''}"
+             t-on-click="onBackdropClick"/>
+
+        <!-- Side Sheet Panel -->
+        <div t-attf-class="vu-side-sheet #{state.isOpen ? 'vu-side-sheet--open' : ''}">
+            <!-- Header -->
+            <div class="vu-side-sheet__header">
+                <div>
+                    <div class="vu-side-sheet__title">Staff Assignments</div>
+                    <div class="vu-side-sheet__subtitle"
+                         t-if="props.record.data.display_name"
+                         t-esc="props.record.data.display_name"/>
+                </div>
+                <div class="vu-side-sheet__close" t-on-click="close">
+                    <i class="fa fa-times"/>
+                </div>
+            </div>
+
+            <!-- Body -->
+            <div class="vu-side-sheet__body">
+                <!-- Loading -->
+                <div t-if="state.loading" class="text-center py-4 text-muted">
+                    <i class="fa fa-spinner fa-spin fa-2x"/>
+                    <div class="mt-2">Loading assignments...</div>
+                </div>
+
+                <!-- Content -->
+                <div t-if="!state.loading">
+                    <!-- Summary badges -->
+                    <div class="d-flex align-items-center gap-2 mb-3 pb-3"
+                         style="border-bottom: 1px solid var(--vu-border-soft, #e5e7eb);">
+                        <span class="badge rounded-pill text-bg-primary">
+                            <t t-esc="assignmentCount"/> total
+                        </span>
+                        <span class="badge rounded-pill text-bg-success" t-if="activeAssignments.length">
+                            <t t-esc="activeAssignments.length"/> active
+                        </span>
+                    </div>
+
+                    <!-- Empty state -->
+                    <div t-if="!assignmentCount"
+                         class="text-center py-4"
+                         style="color: var(--vu-text-secondary, #6b7280);">
+                        <i class="fa fa-user-plus fa-2x mb-2 d-block" style="opacity: 0.4;"/>
+                        <div style="font-size: 0.875rem; font-weight: 600;">No staff assigned yet</div>
+                        <div style="font-size: 0.75rem;" class="mt-1">
+                            Use the timeline view to drag-and-drop assignments.
+                        </div>
+                    </div>
+
+                    <!-- Assignment cards -->
+                    <t t-foreach="state.assignments" t-as="asn" t-key="asn.id">
+                        <div class="vu-recommendation-card mb-2">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div>
+                                    <div style="font-weight: 600; font-size: 0.875rem;">
+                                        <i class="fa fa-user-md me-1" style="color: var(--vu-brand-primary, #1565C0);"/>
+                                        <t t-esc="asn.staff_id[1]"/>
+                                    </div>
+                                    <div style="font-size: 0.75rem; color: var(--vu-text-secondary, #6b7280);" class="mt-1">
+                                        <span t-if="asn.assignment_type" class="me-2">
+                                            <i class="fa fa-tag"/> <t t-esc="asn.assignment_type"/>
+                                        </span>
+                                        <span t-if="asn.planned_start_time or asn.planned_end_time">
+                                            <i class="fa fa-clock-o"/>
+                                            <t t-esc="formatTime(asn.planned_start_time)"/>
+                                            - <t t-esc="formatTime(asn.planned_end_time)"/>
+                                        </span>
+                                    </div>
+                                </div>
+                                <span t-attf-class="badge rounded-pill #{getStatusClass(asn.assignment_status)}"
+                                      style="font-size: 0.6875rem;">
+                                    <t t-esc="getStatusLabel(asn.assignment_status)"/>
+                                </span>
+                            </div>
+                        </div>
+                    </t>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div class="vu-side-sheet__footer">
+                <div class="d-flex gap-2 w-100">
+                    <button class="vu-action-btn vu-action-btn--primary flex-grow-1"
+                            t-on-click="openFullTimeline" type="button">
+                        <i class="fa fa-calendar"/> Open Timeline
+                    </button>
+                    <button class="vu-action-btn vu-action-btn--secondary flex-grow-1"
+                            t-on-click="openAIAssign" type="button">
+                        <i class="fa fa-magic"/> AI Assign
+                    </button>
+                </div>
+            </div>
+        </div>
+    </t>
+
+</templates>

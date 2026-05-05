@@ -1,0 +1,118 @@
+// =============================================================================
+// FIELD INDICATORS — Visual language for field editability
+// =============================================================================
+// Global system that communicates which fields users can interact with.
+// Applies dashed borders for editable fields, muted styles for read-only,
+// and amber accents for required-but-empty fields.
+// =============================================================================
+
+// ---------------------------------------------------------------------------
+// Editable field — subtle dashed bottom border
+// ---------------------------------------------------------------------------
+.vu-field--editable {
+    border-bottom: 1px dashed var(--vu-field-editable-border);
+    padding-bottom: 1px;
+    transition: border-color var(--vu-transition-fast), background-color var(--vu-transition-fast);
+
+    &:hover {
+        border-bottom-color: var(--vu-brand-primary);
+        background-color: var(--vu-field-editable-bg);
+    }
+}
+
+// Inside an editing card, all non-readonly fields get the indicator
+.vu-detail-card--editing .o_field_widget:not(.o_readonly_modifier):not(.o_invisible_modifier) {
+    border-bottom: 1px dashed var(--vu-field-editable-border);
+    padding-bottom: 1px;
+    transition: border-color var(--vu-transition-fast), background-color var(--vu-transition-fast);
+
+    &:hover {
+        border-bottom-color: var(--vu-brand-primary);
+        background-color: var(--vu-field-editable-bg);
+    }
+}
+
+// ---------------------------------------------------------------------------
+// Read-only field — clean, no interaction affordance
+// ---------------------------------------------------------------------------
+.vu-field--readonly {
+    color: var(--vu-text-secondary);
+    border-bottom: none !important;
+}
+
+// In terminal states, all fields become read-only styled
+.o_form_view.vu-state--completed .vu-detail-card .o_field_widget,
+.o_form_view.vu-state--cancelled .vu-detail-card .o_field_widget,
+.o_form_view.vu-state--closed .vu-detail-card .o_field_widget {
+    color: var(--vu-text-secondary);
+}
+
+// ---------------------------------------------------------------------------
+// Required but empty — amber left accent
+// ---------------------------------------------------------------------------
+.vu-field--required-empty {
+    position: relative;
+    border-left: 3px solid var(--vu-field-required-accent) !important;
+    padding-left: var(--vu-space-sm) !important;
+}
+
+// ---------------------------------------------------------------------------
+// Recently changed / auto-filled — brief highlight animation
+// ---------------------------------------------------------------------------
+.vu-field--just-changed {
+    animation: vu-field-highlight 1.5s ease-out;
+}
+
+@keyframes vu-field-highlight {
+    0% { background-color: rgba(21, 101, 192, 0.12); }
+    100% { background-color: transparent; }
+}
+
+// ---------------------------------------------------------------------------
+// Computed / auto-filled badge
+// ---------------------------------------------------------------------------
+.vu-field--computed::after {
+    content: 'auto';
+    font-size: 0.5rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--vu-text-secondary);
+    background: var(--vu-surface-muted);
+    padding: 0 4px;
+    border-radius: 3px;
+    margin-left: var(--vu-space-xs);
+    vertical-align: middle;
+}
+
+// ---------------------------------------------------------------------------
+// Enhanced editing experience in Odoo forms
+// ---------------------------------------------------------------------------
+
+// Smooth input focus transitions
+.o_form_editable .o_field_widget:not(.o_readonly_modifier):not(.o_invisible_modifier) {
+    .o_input {
+        transition: border-color var(--vu-transition-fast), box-shadow var(--vu-transition-fast);
+
+        &:hover:not(:focus) {
+            border-color: var(--vu-brand-secondary);
+        }
+
+        &:focus {
+            border-color: var(--vu-brand-primary);
+            box-shadow: 0 1px 0 0 var(--vu-brand-primary);
+        }
+    }
+}
+
+// Mandatory field dot indicator (improves on Odoo default)
+.o_form_view .o_form_label.o_form_label_empty.o_required_modifier::after {
+    content: '';
+    display: inline-block;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--vu-field-required-accent);
+    margin-left: 4px;
+    vertical-align: middle;
+}

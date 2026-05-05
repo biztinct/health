@@ -130,6 +130,8 @@
             'health_fieldservice/static/src/xml/staff_workload_dashboard.xml',
             'health_fieldservice/static/src/xml/service_timer.xml',
             'health_fieldservice/static/src/xml/fso_calendar_popover.xml',
+            'health_fieldservice/static/src/js/booking_side_sheet.js',
+            'health_fieldservice/static/src/xml/booking_side_sheet.xml',
         ],
     },
     'installable': True,

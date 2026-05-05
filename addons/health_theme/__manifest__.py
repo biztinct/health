@@ -45,7 +45,7 @@
         - Modern pill-shaped badges for healthcare workflows
         - Custom navbar and control panel styling
     ''',
-    'version': '19.0.2.0.0',
+    'version': '19.0.3.0.0',
     'category': 'Themes/Backend',
     'license': 'LGPL-3',
     'author': 'VAFHS Healthcare System - Vietnam-Australia Family Health Service',
@@ -63,8 +63,24 @@
             ('prepend', 'health_theme/static/src/scss/primary_variables.scss'),
         ],
         'web.assets_backend': [
+            # Core theme
             'health_theme/static/src/scss/backend.scss',
             'health_theme/static/src/scss/loading_spinner.scss',
+            # VU Design System — Adaptive Form Framework
+            'health_theme/static/src/scss/state_system.scss',
+            'health_theme/static/src/scss/three_column.scss',
+            'health_theme/static/src/scss/progress_rail.scss',
+            'health_theme/static/src/scss/action_card.scss',
+            'health_theme/static/src/scss/inline_edit.scss',
+            'health_theme/static/src/scss/field_indicators.scss',
+            'health_theme/static/src/scss/side_sheet.scss',
+            # OWL components — JS
+            'health_theme/static/src/js/vu_form_state.js',
+            'health_theme/static/src/js/vu_progress_rail.js',
+            'health_theme/static/src/js/vu_side_sheet.js',
+            # OWL components — Templates
+            'health_theme/static/src/xml/vu_progress_rail.xml',
+            'health_theme/static/src/xml/vu_side_sheet.xml',
         ],
     },
     'installable': True,

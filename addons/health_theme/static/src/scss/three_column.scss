@@ -1,0 +1,224 @@
+// =============================================================================
+// THREE-COLUMN LAYOUT — Summary | Content | Actions
+// =============================================================================
+// Used for booking detail pages and any record that benefits from a persistent
+// summary panel (left), main working area (center), and action panel (right).
+// =============================================================================
+
+.vu-three-col {
+    display: grid;
+    grid-template-columns: 240px 1fr 260px;
+    gap: var(--vu-space-lg);
+    width: 100%;
+    min-height: 400px;
+}
+
+// ---------------------------------------------------------------------------
+// Left column — Booking/Record summary (always visible)
+// ---------------------------------------------------------------------------
+.vu-col-summary {
+    grid-column: 1;
+    grid-row: 1 / -1;
+    display: flex;
+    flex-direction: column;
+    gap: var(--vu-space-md);
+    position: sticky;
+    top: var(--vu-space-md);
+    align-self: start;
+    max-height: calc(100vh - 180px);
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--vu-border-soft) transparent;
+}
+
+// ---------------------------------------------------------------------------
+// Center column — Tabs, timeline, detail content (main work area)
+// ---------------------------------------------------------------------------
+.vu-col-content {
+    grid-column: 2;
+    grid-row: 1 / -1;
+    display: flex;
+    flex-direction: column;
+    gap: var(--vu-space-md);
+    min-width: 0;
+}
+
+// ---------------------------------------------------------------------------
+// Right column — Next Best Action & quick actions
+// ---------------------------------------------------------------------------
+.vu-col-actions {
+    grid-column: 3;
+    grid-row: 1 / -1;
+    display: flex;
+    flex-direction: column;
+    gap: var(--vu-space-md);
+    position: sticky;
+    top: var(--vu-space-md);
+    align-self: start;
+    max-height: calc(100vh - 180px);
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--vu-border-soft) transparent;
+}
+
+// ---------------------------------------------------------------------------
+// Summary panel components
+// ---------------------------------------------------------------------------
+
+// Container card for summary sections
+.vu-summary-card {
+    background: var(--vu-surface-card);
+    border: 1px solid var(--vu-border-soft);
+    border-radius: var(--vu-radius-md);
+    padding: var(--vu-space-md);
+    box-shadow: var(--vu-shadow-sm);
+}
+
+// Summary section header
+.vu-summary-header {
+    font-size: 0.6875rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--vu-text-secondary);
+    padding-bottom: var(--vu-space-xs);
+}
+
+// Key-value row in summary
+.vu-summary-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: var(--vu-space-xs) 0;
+    gap: var(--vu-space-sm);
+
+    &:not(:last-child) {
+        border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+    }
+}
+
+.vu-summary-row__label {
+    font-size: 0.75rem;
+    color: var(--vu-text-secondary);
+    flex-shrink: 0;
+    min-width: 72px;
+}
+
+.vu-summary-row__value {
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: var(--vu-text-primary);
+    text-align: right;
+    word-break: break-word;
+}
+
+// Divider between summary sections
+.vu-summary-divider {
+    height: 1px;
+    background: var(--vu-border-soft);
+    margin: var(--vu-space-xs) 0;
+}
+
+// Edit link in summary panel
+.vu-summary-edit {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--vu-space-xs);
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--vu-brand-primary);
+    cursor: pointer;
+    padding: var(--vu-space-xs) 0;
+    transition: color var(--vu-transition-fast);
+    border: none;
+    background: none;
+
+    &:hover {
+        color: var(--vu-brand-primary-dark);
+    }
+
+    .fa {
+        font-size: 0.65em;
+    }
+}
+
+// ---------------------------------------------------------------------------
+// Odoo form integration — ensure grid children don't overflow
+// ---------------------------------------------------------------------------
+.vu-three-col {
+    // Odoo's notebook generates wrapper divs; ensure they respect the grid
+    .vu-col-content .o_notebook,
+    .vu-col-content .tab-content,
+    .vu-col-content .tab-pane {
+        min-width: 0;
+        max-width: 100%;
+    }
+
+    // Ensure all direct children of columns don't break the layout
+    .vu-col-content > *,
+    .vu-col-actions > * {
+        min-width: 0;
+        max-width: 100%;
+    }
+}
+
+// ---------------------------------------------------------------------------
+// Responsive breakpoints
+// ---------------------------------------------------------------------------
+@media (max-width: 1280px) {
+    .vu-three-col {
+        grid-template-columns: 220px 1fr 240px;
+        gap: var(--vu-space-md);
+    }
+}
+
+@media (max-width: 1080px) {
+    .vu-three-col {
+        grid-template-columns: 1fr 240px;
+    }
+
+    .vu-col-summary {
+        grid-column: 1 / -1;
+        grid-row: 1;
+        flex-direction: row;
+        flex-wrap: wrap;
+        position: static;
+        max-height: none;
+        overflow: visible;
+        gap: var(--vu-space-sm);
+    }
+
+    .vu-col-summary .vu-summary-card {
+        flex: 1 1 200px;
+    }
+
+    .vu-col-content {
+        grid-column: 1;
+        grid-row: 2 / -1;
+    }
+
+    .vu-col-actions {
+        grid-column: 2;
+        grid-row: 2 / -1;
+    }
+}
+
+@media (max-width: 768px) {
+    .vu-three-col {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto auto auto;
+    }
+
+    .vu-col-summary,
+    .vu-col-content,
+    .vu-col-actions {
+        grid-column: 1;
+        position: static;
+        max-height: none;
+        overflow: visible;
+    }
+
+    .vu-col-actions {
+        order: -1;
+    }
+}
