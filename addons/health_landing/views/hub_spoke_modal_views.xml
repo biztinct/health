@@ -408,22 +408,22 @@
                                 class="oe_link"
                                 title="Open Client Dashboard"
                                 invisible="not partner_id"
-                                style="display: flex; align-items: center; gap: 8px; padding: 10px 18px; background: linear-gradient(135deg, #e6f7f0, #d1f0e4); border: 1px solid #b2e0cc; border-radius: 10px; color: #1a7a4e; font-weight: 600; font-size: 13px; cursor: pointer; transition: all 0.2s ease;">
-                            <span class="fa fa-user-md" style="display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; background: #2E7D32; color: white; border-radius: 8px; font-size: 16px;"/>
+                                style="display: flex; align-items: center; gap: 8px; padding: 10px 18px; background: linear-gradient(135deg, #E4F4FD, #d4e8fa); border: 1px solid #b3cef5; border-radius: 10px; color: #0D356B; font-weight: 600; font-size: 13px; cursor: pointer; transition: all 0.2s ease;">
+                            <span class="fa fa-user-md" style="display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; background: #1565C0; color: white; border-radius: 8px; font-size: 16px;"/>
                             <span>View Client Dashboard</span>
                         </button>
                         <button name="action_view_lead_activities" type="object"
                                 class="oe_link"
                                 title="View scheduled activities for this lead"
-                                style="display: flex; align-items: center; gap: 8px; padding: 10px 18px; background: linear-gradient(135deg, #e8f0fe, #d4e4fc); border: 1px solid #b3cef5; border-radius: 10px; color: #1a5bb5; font-weight: 600; font-size: 13px; cursor: pointer; transition: all 0.2s ease;">
+                                style="display: flex; align-items: center; gap: 8px; padding: 10px 18px; background: linear-gradient(135deg, #E4F4FD, #d4e8fa); border: 1px solid #b3cef5; border-radius: 10px; color: #0D356B; font-weight: 600; font-size: 13px; cursor: pointer; transition: all 0.2s ease;">
                             <span class="fa fa-calendar-check-o" style="display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; background: #1565C0; color: white; border-radius: 8px; font-size: 16px;"/>
                             <span>View Activities</span>
                         </button>
                         <button name="action_schedule_new_activity" type="object"
                                 class="oe_link"
                                 title="Schedule a new activity for this lead"
-                                style="display: flex; align-items: center; gap: 8px; padding: 10px 18px; background: linear-gradient(135deg, #fff3e0, #ffe0b2); border: 1px solid #ffcc80; border-radius: 10px; color: #e65100; font-weight: 600; font-size: 13px; cursor: pointer; transition: all 0.2s ease;">
-                            <span class="fa fa-plus-circle" style="display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; background: #EF6C00; color: white; border-radius: 8px; font-size: 16px;"/>
+                                style="display: flex; align-items: center; gap: 8px; padding: 10px 18px; background: linear-gradient(135deg, #E4F4FD, #d4e8fa); border: 1px solid #b3cef5; border-radius: 10px; color: #0D356B; font-weight: 600; font-size: 13px; cursor: pointer; transition: all 0.2s ease;">
+                            <span class="fa fa-plus-circle" style="display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; background: #1565C0; color: white; border-radius: 8px; font-size: 16px;"/>
                             <span>Schedule Activity</span>
                         </button>
                     </div>

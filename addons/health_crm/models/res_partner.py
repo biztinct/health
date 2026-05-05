@@ -295,7 +295,7 @@ class HealthContact(models.Model):
 
             # Referrer - Light Green
             if partner.is_referrer:
-                badges.append('<span class="badge rounded-pill me-1" style="background-color: #DBF0DB; color: #43A047; font-size: 0.875rem; padding: 0.35rem 0.75rem;"><i class="fa fa-check-circle"></i> Referrer</span>')
+                badges.append('<span class="badge rounded-pill me-1" style="background-color: #E4F4FD; color: #1565C0; font-size: 0.875rem; padding: 0.35rem 0.75rem;"><i class="fa fa-check-circle"></i> Referrer</span>')
 
             # Emergency Contact - Light Blue
             if partner.is_emergency_contact:

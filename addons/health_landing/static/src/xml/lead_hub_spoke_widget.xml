@@ -23,7 +23,7 @@
                     <!-- Spam Caller Warning Badge -->
                     <t t-if="isSpamCaller()">
                         <span class="badge rounded-pill" 
-                              style="background-color: #dc3545; color: white; font-size: 13px; padding: 5px 14px; font-weight: 600; animation: pulse 1.5s infinite;">
+                              style="background-color: #C0332A; color: white; font-size: 13px; padding: 5px 14px; font-weight: 600; animation: pulse 1.5s infinite;">
                             ⚠️ Spam Caller
                         </span>
                     </t>
@@ -36,15 +36,15 @@
                     </t>
                     <!-- Follow-up Required Badge -->
                     <t t-if="needsFollowup()">
-                        <span class="badge rounded-pill" 
-                              style="background-color: #e83e8c; color: white; font-size: 13px; padding: 5px 14px; font-weight: 600;">
+                        <span class="badge rounded-pill"
+                              style="background-color: #C0332A; color: white; font-size: 13px; padding: 5px 14px; font-weight: 600;">
                             <i class="fa fa-flag" style="margin-right: 4px;"/> Follow-up Required
                         </span>
                     </t>
                     <!-- Next Follow-up Date Badge -->
                     <t t-if="hasNextFollowup()">
-                        <span class="badge rounded-pill" 
-                              style="background-color: #6610f2; color: white; font-size: 13px; padding: 5px 14px; font-weight: 600;">
+                        <span class="badge rounded-pill"
+                              style="background-color: #7c3aed; color: white; font-size: 13px; padding: 5px 14px; font-weight: 600;">
                             <i class="fa fa-calendar" style="margin-right: 4px;"/> <t t-esc="getNextFollowupDate()"/>
                         </span>
                     </t>

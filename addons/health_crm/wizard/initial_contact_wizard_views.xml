@@ -42,7 +42,7 @@
                     <!-- SPAM Caller Warning Alert -->
                     <div class="alert alert-danger" role="alert" invisible="not is_spam_caller" style="margin-bottom: 20px;">
                         <div class="d-flex align-items-center">
-                            <span class="fa fa-ban fa-2x me-3" style="color: #dc3545;"/>
+                            <span class="fa fa-ban fa-2x me-3" style="color: #C0332A;"/>
                             <div>
                                 <strong>⚠️ SPAM CALLER DETECTED!</strong>
                                 <p class="mb-0"><field name="spam_warning" nolabel="1" readonly="1"/></p>

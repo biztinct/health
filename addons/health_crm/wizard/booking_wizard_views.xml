@@ -9,12 +9,12 @@
         <field name="arch" type="xml">
             <form string="Create Booking">
                 <sheet>
-                    <!-- Step Progress Indicator - Green leaf design -->
-                    <div style="margin-bottom: 20px; padding: 15px; background: linear-gradient(135deg, #2E6B33 0%, #43A047 100%); border-radius: 8px;">
+                    <!-- Step Progress Indicator -->
+                    <div style="margin-bottom: 20px; padding: 15px; background: linear-gradient(135deg, #0D47A1 0%, #1565C0 100%); border-radius: 8px;">
                         <div style="display: flex; justify-content: space-between; align-items: center; color: white;">
                             <!-- Step 1 Indicator -->
                             <div style="text-align: center; flex: 1;">
-                                <span style="background: white; color: #2E6B33; padding: 8px 16px; border-radius: 20px; font-weight: bold;" invisible="current_step != '1_client'">
+                                <span style="background: white; color: #1565C0; padding: 8px 16px; border-radius: 20px; font-weight: bold;" invisible="current_step != '1_client'">
                                     1. Client Details
                                 </span>
                                 <span style="background: rgba(255,255,255,0.3); color: white; padding: 8px 16px; border-radius: 20px;" invisible="current_step == '1_client'">
@@ -24,7 +24,7 @@
                             <div style="width: 50px; height: 2px; background: rgba(255,255,255,0.3);"/>
                             <!-- Step 2 Indicator -->
                             <div style="text-align: center; flex: 1;">
-                                <span style="background: white; color: #2E6B33; padding: 8px 16px; border-radius: 20px; font-weight: bold;" invisible="current_step != '2_services'">
+                                <span style="background: white; color: #1565C0; padding: 8px 16px; border-radius: 20px; font-weight: bold;" invisible="current_step != '2_services'">
                                     2. Services
                                 </span>
                                 <span style="background: rgba(255,255,255,0.3); color: white; padding: 8px 16px; border-radius: 20px;" invisible="current_step == '2_services'">
@@ -34,7 +34,7 @@
                             <div style="width: 50px; height: 2px; background: rgba(255,255,255,0.3);"/>
                             <!-- Step 3 Indicator -->
                             <div style="text-align: center; flex: 1;">
-                                <span style="background: white; color: #2E6B33; padding: 8px 16px; border-radius: 20px; font-weight: bold;" invisible="current_step != '3_booking'">
+                                <span style="background: white; color: #1565C0; padding: 8px 16px; border-radius: 20px; font-weight: bold;" invisible="current_step != '3_booking'">
                                     3. Booking
                                 </span>
                                 <span style="background: rgba(255,255,255,0.3); color: white; padding: 8px 16px; border-radius: 20px;" invisible="current_step == '3_booking'">
@@ -44,7 +44,7 @@
                             <div style="width: 50px; height: 2px; background: rgba(255,255,255,0.3);"/>
                             <!-- Step 4 Indicator -->
                             <div style="text-align: center; flex: 1;">
-                                <span style="background: white; color: #2E6B33; padding: 8px 16px; border-radius: 20px; font-weight: bold;" invisible="current_step != '4_assign'">
+                                <span style="background: white; color: #1565C0; padding: 8px 16px; border-radius: 20px; font-weight: bold;" invisible="current_step != '4_assign'">
                                     4. Assign
                                 </span>
                                 <span style="background: rgba(255,255,255,0.3); color: white; padding: 8px 16px; border-radius: 20px;" invisible="current_step == '4_assign'">
@@ -63,7 +63,7 @@
                     <!-- STEP 1: Client Details -->
                     <div invisible="current_step != '1_client'">
                         <h2 style="margin-bottom: 20px;">
-                            <span class="fa fa-user" style="margin-right: 10px; color: #43A047;"/>
+                            <span class="fa fa-user" style="margin-right: 10px; color: #1565C0;"/>
                             Client Details
                         </h2>
                         
@@ -106,7 +106,7 @@
                     <!-- STEP 2: Service Requirements -->
                     <div invisible="current_step != '2_services'">
                         <h2 style="margin-bottom: 20px;">
-                            <span class="fa fa-stethoscope" style="margin-right: 10px; color: #43A047;"/>
+                            <span class="fa fa-stethoscope" style="margin-right: 10px; color: #1565C0;"/>
                             Service Requirements
                         </h2>
                         
@@ -141,7 +141,7 @@
                     <!-- STEP 3: Booking Details -->
                     <div invisible="current_step != '3_booking'">
                         <h2 style="margin-bottom: 20px;">
-                            <span class="fa fa-calendar" style="margin-right: 10px; color: #43A047;"/>
+                            <span class="fa fa-calendar" style="margin-right: 10px; color: #1565C0;"/>
                             Booking Details
                         </h2>
                         
@@ -166,7 +166,7 @@
                     <!-- STEP 4: Assign Booking -->
                     <div invisible="current_step != '4_assign'">
                         <h2 style="margin-bottom: 20px;">
-                            <span class="fa fa-users" style="margin-right: 10px; color: #43A047;"/>
+                            <span class="fa fa-users" style="margin-right: 10px; color: #1565C0;"/>
                             Assignment and Staff
                         </h2>
                         
@@ -238,7 +238,7 @@
                     
                     <!-- Finish (on assign step) -->
                     <button name="action_finish" type="object"
-                            string="Finish &amp; Create Booking" class="btn-success"
+                            string="Finish &amp; Create Booking" class="btn-primary"
                             icon="fa-check-circle"
                             invisible="current_step != '4_assign'"/>
                     
@@ -258,7 +258,7 @@
             <form string="Edit Address">
                 <sheet>
                     <h2 style="margin-bottom: 20px;">
-                        <span class="fa fa-map-marker" style="margin-right: 10px; color: #43A047;"/>
+                        <span class="fa fa-map-marker" style="margin-right: 10px; color: #1565C0;"/>
                         Address Details
                     </h2>
                     

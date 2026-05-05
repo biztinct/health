@@ -234,32 +234,26 @@
 
                     <!-- Contact Status + Code Badges -->
                     <div style="position: absolute; top: 10px; right: 100px; z-index: 1000; display: flex; gap: 10px; align-items: center;">
-                        <!-- Contact Status Badge - Custom styled for consistency -->
-                        <!-- Active Status - Blue -->
-                        <span class="badge rounded-pill" style="background-color: #17a2b8; color: white; font-size: 14px; padding: 8px 18px; font-weight: 600; letter-spacing: 0.5px;" invisible="contact_status != 'active'">
+                        <!-- Contact Status Badge -->
+                        <span class="badge rounded-pill" style="background-color: #2A7ABF; color: white; font-size: 14px; padding: 8px 18px; font-weight: 600; letter-spacing: 0.5px;" invisible="contact_status != 'active'">
                             Active
                         </span>
-                        <!-- Booking Status - Green -->
-                        <span class="badge rounded-pill" style="background-color: #28a745; color: white; font-size: 14px; padding: 8px 18px; font-weight: 600; letter-spacing: 0.5px;" invisible="contact_status != 'booking'">
+                        <span class="badge rounded-pill" style="background-color: #176B47; color: white; font-size: 14px; padding: 8px 18px; font-weight: 600; letter-spacing: 0.5px;" invisible="contact_status != 'booking'">
                             Booking
                         </span>
-                        <!-- Lead Status - Orange/Warning -->
-                        <span class="badge rounded-pill" style="background-color: #ffc107; color: #212529; font-size: 14px; padding: 8px 18px; font-weight: 600; letter-spacing: 0.5px;" invisible="contact_status != 'lead'">
+                        <span class="badge rounded-pill" style="background-color: #946200; color: white; font-size: 14px; padding: 8px 18px; font-weight: 600; letter-spacing: 0.5px;" invisible="contact_status != 'lead'">
                             Lead
                         </span>
-                        <!-- Lost Booking Status - Red -->
-                        <span class="badge rounded-pill" style="background-color: #dc3545; color: white; font-size: 14px; padding: 8px 18px; font-weight: 600; letter-spacing: 0.5px;" invisible="contact_status != 'lost_booking'">
+                        <span class="badge rounded-pill" style="background-color: #C0332A; color: white; font-size: 14px; padding: 8px 18px; font-weight: 600; letter-spacing: 0.5px;" invisible="contact_status != 'lost_booking'">
                             Lost Booking
                         </span>
-                        <!-- Spam Status - Red -->
-                        <span class="badge rounded-pill" style="background-color: #dc3545; color: white; font-size: 14px; padding: 8px 18px; font-weight: 600; letter-spacing: 0.5px;" invisible="contact_status != 'spam'">
+                        <span class="badge rounded-pill" style="background-color: #C0332A; color: white; font-size: 14px; padding: 8px 18px; font-weight: 600; letter-spacing: 0.5px;" invisible="contact_status != 'spam'">
                             Spam Call
                         </span>
-                        <!-- Hidden field for status -->
                         <field name="contact_status" invisible="1"/>
-                        
-                        <!-- Contact ID Badge - Light orange background, black bold text -->
-                        <span class="badge rounded-pill" style="background-color: #FFE0B2; color: #000000; font-size: 14px; padding: 8px 18px; font-weight: 700; letter-spacing: 0.5px;">
+
+                        <!-- Contact ID Badge -->
+                        <span class="badge rounded-pill" style="background-color: #E4F4FD; color: #0D356B; font-size: 14px; padding: 8px 18px; font-weight: 700; letter-spacing: 0.5px;">
                             <field name="unique_contact_code" readonly="1" nolabel="1"/>
                         </span>
                     </div>
@@ -283,7 +277,7 @@
                             <field name="is_spam_caller" invisible="1"/>
                             <field name="contact_status" invisible="1"/>
                             <span class="badge rounded-pill" 
-                                  style="background-color: #dc3545; color: white; font-size: 12px; padding: 6px 14px; font-weight: 600; animation: pulse 1.5s infinite;" 
+                                  style="background-color: #C0332A; color: white; font-size: 12px; padding: 6px 14px; font-weight: 600; animation: pulse 1.5s infinite;" 
                                   invisible="not is_spam_caller or contact_status == 'booking'">
                                 ⚠️ Spam Caller
                             </span>
@@ -853,12 +847,12 @@
                 <br/>
                 <strong>Color Legend:</strong>
                 <ul>
-                    <li><span style="color: #dc3545;">●</span> Red = Overdue activities</li>
-                    <li><span style="color: #fd7e14;">●</span> Orange = Due today</li>
-                    <li><span style="color: #ffc107;">●</span> Yellow = Lead needs attention</li>
-                    <li><span style="color: #17a2b8;">●</span> Blue = Future activities</li>
-                    <li><span style="color: #28a745;">●</span> Green = Booking</li>
-                    <li><span style="color: #e83e8c;">●</span> Pink = New/Active</li>
+                    <li><span style="color: #C0332A;">●</span> Red = Overdue activities</li>
+                    <li><span style="color: #ea580c;">●</span> Orange = Due today</li>
+                    <li><span style="color: #946200;">●</span> Amber = Lead needs attention</li>
+                    <li><span style="color: #2A7ABF;">●</span> Blue = Future activities</li>
+                    <li><span style="color: #176B47;">●</span> Green = Booking</li>
+                    <li><span style="color: #7c3aed;">●</span> Purple = New/Active</li>
                 </ul>
             </p>
         </field>

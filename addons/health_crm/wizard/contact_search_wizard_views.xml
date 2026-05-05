@@ -23,7 +23,7 @@
 
                     <!-- Clients Section - Green Header (Highest Priority) -->
                     <div class="search-section" style="margin-bottom: 20px;" invisible="not client_line_ids">
-                        <h4 style="font-weight: 700; color: #2E7D32; border-bottom: 2px solid #2E7D32; padding-bottom: 8px; margin-bottom: 12px;">
+                        <h4 style="font-weight: 700; color: #1565C0; border-bottom: 2px solid #1565C0; padding-bottom: 8px; margin-bottom: 12px;">
                             <span class="fa fa-user-circle" style="margin-right: 8px;"/>
                             Clients
                             <small class="text-muted" style="font-size: 12px; font-weight: normal;"> - Existing patients who can book services</small>
