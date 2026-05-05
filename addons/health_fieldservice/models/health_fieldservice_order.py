@@ -3304,20 +3304,104 @@ class HealthFieldServiceOrderUnified(models.Model):
         }
 
     def action_open_fso_dashboard(self):
-        """Open the Booking workflow dashboard"""
+        """Open the Booking workflow dashboard as modal"""
         self.ensure_one()
-
-        # Navigate to the client dashboard with booking context
         return {
             'type': 'ir.actions.act_window',
-            'name': _('Booking Workflow Dashboard'),
+            'name': _('Booking Dashboard — %s') % self.display_name,
+            'res_model': 'res.partner',
+            'res_id': self.patient_id.id,
+            'view_mode': 'form',
+            'view_id': self.env.ref('health_base.view_health_patient_form').id,
+            'target': 'new',
+            'context': {
+                'active_tab': 'address_info',
+                'booking_id': self.id,
+            }
+        }
+
+    def action_open_client_form(self):
+        """Open the client/patient form view"""
+        self.ensure_one()
+        if not self.patient_id:
+            raise UserError(_('No client is linked to this booking.'))
+        return {
+            'type': 'ir.actions.act_window',
+            'name': self.patient_id.name,
             'res_model': 'res.partner',
             'res_id': self.patient_id.id,
             'view_mode': 'form',
             'view_id': self.env.ref('health_base.view_health_patient_form').id,
             'target': 'current',
+        }
+
+    def action_open_new_booking_wizard(self):
+        """Open the booking wizard pre-filled with this booking's client"""
+        self.ensure_one()
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _('New Booking'),
+            'res_model': 'health.booking.wizard',
+            'view_mode': 'form',
+            'target': 'new',
             'context': {
-                'active_tab': 'address_info',  # Default to first tab
-                'booking_id': self.id,  # Pass booking context
-            }
+                'default_client_name': self.patient_id.name if self.patient_id else '',
+                'default_client_phone': self.patient_phone or '',
+                'default_is_new_client': False,
+                'default_existing_patient_id': self.patient_id.id if self.patient_id else False,
+            },
+        }
+
+    def action_open_staff_timeline_modal(self):
+        """Open staff assignment timeline as a modal overlay"""
+        self.ensure_one()
+        import pytz
+        user_tz = pytz.timezone(self.env.user.tz or 'UTC')
+        appointment_datetime_utc = self.scheduled_datetime or fields.Datetime.now()
+        appointment_datetime_local = pytz.UTC.localize(appointment_datetime_utc).astimezone(user_tz)
+        appointment_date = appointment_datetime_local.strftime('%Y-%m-%d')
+
+        existing_template = self.env['health.staff.assignment'].search([
+            ('state', '=', 'template'),
+            ('fso_id', '=', self.id)
+        ], limit=1)
+        if not existing_template:
+            self.env['health.staff.assignment'].create({
+                'fso_id': self.id,
+                'staff_id': False,
+                'assignment_date': self.scheduled_datetime or fields.Datetime.now(),
+                'assignment_status': 'assigned',
+                'state': 'template',
+                'assignment_type': self._get_assignment_type(),
+                'priority': self.priority or '1',
+            })
+
+        timeline_view = self.env.ref('health_fieldservice.health_staff_assignment_timeline_view', raise_if_not_found=False)
+        list_view = self.env.ref('health_fieldservice.view_health_staff_assignment_list', raise_if_not_found=False)
+        form_view = self.env.ref('health_fieldservice.view_health_staff_assignment_form', raise_if_not_found=False)
+
+        views = []
+        if timeline_view:
+            views.append((timeline_view.id, 'timeline'))
+        if list_view:
+            views.append((list_view.id, 'list'))
+        if form_view:
+            views.append((form_view.id, 'form'))
+
+        return {
+            'name': _('Staff Assignment — %s') % appointment_date,
+            'type': 'ir.actions.act_window',
+            'res_model': 'health.staff.assignment',
+            'view_mode': 'timeline,list,form',
+            'views': views if views else False,
+            'target': 'new',
+            'domain': [('state', '!=', 'template')],
+            'context': {
+                'default_fso_id': self.id,
+                'default_assignment_date': appointment_datetime_utc,
+                'default_staff_id': False,
+                'date': appointment_date,
+                'initial_date': appointment_date,
+                'dialog_size': 'extra-large',
+            },
         }

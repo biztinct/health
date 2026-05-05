@@ -628,6 +628,27 @@
 
                             <div class="vu-action-section-label">Actions</div>
 
+                            <!-- Dashboard (modal) -->
+                            <button name="action_open_fso_dashboard" type="object"
+                                    class="vu-action-item">
+                                <i class="fa fa-th-large"/> Dashboard
+                            </button>
+
+                            <!-- Client Details -->
+                            <button name="action_open_client_form" type="object"
+                                    class="vu-action-item"
+                                    invisible="not patient_id">
+                                <i class="fa fa-id-card-o"/> Client Details
+                            </button>
+
+                            <!-- New Booking (wizard) -->
+                            <button name="action_open_new_booking_wizard" type="object"
+                                    class="vu-action-item">
+                                <i class="fa fa-plus-square"/> New Booking
+                            </button>
+
+                            <div class="vu-action-separator"/>
+
                             <!-- Quote actions -->
                             <button name="action_create_and_open_quote" type="object"
                                     class="vu-action-item"
@@ -645,39 +666,39 @@
                             <widget name="vu_staff_sheet"
                                     invisible="state in ('draft', 'completed', 'completed_pending_invoice', 'cancelled', 'closed')"/>
 
-                            <!-- Staff assignment — direct timeline link -->
-                            <button name="action_manual_assign_staff" type="object"
+                            <!-- Staff timeline — opens as modal -->
+                            <button name="action_open_staff_timeline_modal" type="object"
                                     class="vu-action-item"
                                     invisible="state in ('draft', 'completed', 'completed_pending_invoice', 'cancelled', 'closed')">
-                                <i class="fa fa-calendar"/> Staff Timeline
+                                <i class="fa fa-calendar-check-o"/> Staff Timeline
                             </button>
 
                             <!-- Reschedule -->
                             <button name="action_open_reschedule_calendar" type="object"
                                     class="vu-action-item"
                                     invisible="state in ('completed', 'completed_pending_invoice', 'cancelled', 'closed')">
-                                <i class="fa fa-calendar"/> Reschedule
+                                <i class="fa fa-clock-o"/> Reschedule
                             </button>
 
-                            <!-- Dashboard -->
+                            <!-- Lead Dashboard -->
                             <button name="action_open_lead_dashboard" type="object"
                                     class="vu-action-item"
                                     invisible="not crm_lead_id">
-                                <i class="fa fa-bar-chart"/> Lead Dashboard
+                                <i class="fa fa-line-chart"/> Lead Dashboard
                             </button>
 
                             <!-- Invoices -->
                             <button name="action_view_all_invoices" type="object"
                                     class="vu-action-item"
                                     invisible="not invoice_id">
-                                <i class="fa fa-file-text-o"/> View Invoices
+                                <i class="fa fa-money"/> View Invoices
                             </button>
 
                             <!-- Assignments -->
                             <button name="action_view_assignments" type="object"
                                     class="vu-action-item"
                                     invisible="not assignment_count">
-                                <i class="fa fa-list"/> View Assignments
+                                <i class="fa fa-list-ul"/> View Assignments
                             </button>
 
                             <div class="vu-action-separator"
