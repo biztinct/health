@@ -43,3 +43,5 @@ access_health_lead_reason_owner,health.lead.reason owner,model_health_lead_reaso
 access_health_province_owner,health.province owner,model_health_province,health_base.group_healthcare_owner,1,1,1,1
 access_health_catchment_province_crm_owner,health.catchment.province crm owner,health_base.model_health_catchment_province,health_base.group_healthcare_owner,1,1,1,1
 access_crm_lead_healthcare_owner,crm.lead healthcare owner,crm.model_crm_lead,health_base.group_healthcare_owner,1,1,1,1
+access_contact_action_wizard_user,health.contact.action.wizard user,model_health_contact_action_wizard,group_health_crm_user,1,1,1,1
+access_contact_action_wizard_manager,health.contact.action.wizard manager,model_health_contact_action_wizard,group_health_crm_manager,1,1,1,1

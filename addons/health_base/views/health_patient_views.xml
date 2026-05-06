@@ -18,8 +18,7 @@
                 </header>
 
                 <sheet string="Client">
-                    <div class="oe_button_box" name="button_box" groups="base.group_user" invisible="1">
-                        <!-- Smart buttons hidden — actions moved to right panel -->
+                    <div class="oe_button_box d-none" name="button_box" groups="base.group_user">
                     </div>
 
                     <!-- Title Bar -->
