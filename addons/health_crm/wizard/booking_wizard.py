@@ -25,7 +25,6 @@ class HealthBookingWizard(models.TransientModel):
         ('1_client', 'Client Details'),
         ('2_services', 'Service Requirements'),
         ('3_booking', 'Booking Details'),
-        ('4_assign', 'Assign Booking'),
     ], string='Current Step', default='1_client', required=True)
     
     # Source lead/contact
@@ -326,32 +325,26 @@ class HealthBookingWizard(models.TransientModel):
         """Move to next step"""
         self.ensure_one()
         
-        steps = ['1_client', '2_services', '3_booking', '4_assign']
+        steps = ['1_client', '2_services', '3_booking']
         current_idx = steps.index(self.current_step)
-        
-        # Validate current step before moving
+
         if self.current_step == '1_client':
             if not self.client_id and not self.client_name:
                 raise ValidationError(_('Please select or enter a client.'))
         elif self.current_step == '2_services':
             if not self.service_type:
                 raise ValidationError(_('Please select a service type.'))
-        elif self.current_step == '3_booking':
-            if not self.facility_id:
-                raise ValidationError(_('Please select a Healthcare Facility before proceeding.'))
-            if not self.booking_date:
-                raise ValidationError(_('Please select a booking date.'))
-        
+
         if current_idx < len(steps) - 1:
             self.current_step = steps[current_idx + 1]
-        
+
         return self._reload_wizard()
-    
+
     def action_prev_step(self):
         """Move to previous step"""
         self.ensure_one()
-        
-        steps = ['1_client', '2_services', '3_booking', '4_assign']
+
+        steps = ['1_client', '2_services', '3_booking']
         current_idx = steps.index(self.current_step)
         
         if current_idx > 0:

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-    <!-- Extend Patient Form View - Add Zalo Fields -->
+    <!-- Extend Patient Form View - Add Zalo Fields (Three-Column Layout) -->
     <record id="view_health_patient_form_zalo" model="ir.ui.view">
         <field name="name">res.partner.patient.form.zalo</field>
         <field name="model">res.partner</field>
@@ -19,8 +19,8 @@
                 </button>
             </xpath>
 
-            <!-- Add Zalo User ID field with action buttons after phone -->
-            <xpath expr="//field[@name='phone']" position="after">
+            <!-- Add Zalo User ID field after phone in the Other Information detail card -->
+            <xpath expr="//div[hasclass('vu-detail-card')]//field[@name='phone']" position="after">
                 <label for="zalo_user_id" string="Zalo User ID"/>
                 <div class="o_row">
                     <field name="zalo_user_id" placeholder="Zalo User ID (optional)" class="o_field_widget"/>
@@ -43,15 +43,15 @@
                 </div>
             </xpath>
 
-            <!-- Add invisible helper fields for computed values -->
-            <xpath expr="//field[@name='email']" position="after">
+            <!-- Add invisible helper fields after email in the detail card -->
+            <xpath expr="//div[hasclass('vu-detail-card')]//field[@name='email']" position="after">
                 <field name="has_zalo" invisible="1"/>
                 <field name="zalo_conversation_count" invisible="1"/>
                 <field name="zalo_conversation_id" invisible="1"/>
                 <field name="zalo_last_message_date" invisible="1"/>
             </xpath>
 
-            <!-- Add Zalo tab in notebook - Always visible so users can configure -->
+            <!-- Add Zalo tab in notebook -->
             <xpath expr="//notebook" position="inside">
                 <page string="Zalo Integration" name="zalo">
                     <group>
@@ -78,6 +78,22 @@
                         </group>
                     </group>
                 </page>
+            </xpath>
+
+            <!-- Add Zalo actions to right panel -->
+            <xpath expr="//div[@name='action_panel']" position="inside">
+                <button name="action_open_zalo_chat"
+                        type="object"
+                        class="vu-action-item"
+                        invisible="not has_zalo">
+                    <i class="fa fa-comment"/> Zalo Chat
+                </button>
+                <button name="action_call_zalo"
+                        type="object"
+                        class="vu-action-item"
+                        invisible="not has_zalo">
+                    <i class="fa fa-phone"/> Zalo Call
+                </button>
             </xpath>
 
         </field>

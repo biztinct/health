@@ -1,21 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
+    <!-- Add Booking button to the primary action card in right panel -->
     <record id="view_partner_form_fso_buttons" model="ir.ui.view">
         <field name="name">res.partner.form.fso.buttons</field>
         <field name="model">res.partner</field>
         <field name="inherit_id" ref="health_base.view_health_patient_form"/>
         <field name="arch" type="xml">
-            <header position="inside">
+            <xpath expr="//div[@name='primary_action_buttons']" position="inside">
                 <button name="action_create_fso"
                         type="object"
-                        string="Booking"
-                        class="btn-primary"
-                        invisible="not is_patient"/>
-            </header>
+                        class="vu-action-btn vu-action-btn--primary"
+                        invisible="not is_patient">
+                    <i class="fa fa-calendar-plus-o"/> New Booking
+                </button>
+            </xpath>
         </field>
     </record>
 
+    <!-- Service History and Staff stats injection -->
     <record id="view_partner_form_fso_stats" model="ir.ui.view">
         <field name="name">res.partner.form.fso.stats</field>
         <field name="model">res.partner</field>
@@ -32,7 +35,7 @@
                             </div>
                         </div>
 
-                        <div class="vu-card">
+                        <div class="vu-detail-card">
                             <div class="vu-card__title">
                                 <span class="vu-section__icon" data-icon="history"/>
                                 <span>Client Timeline</span>
@@ -41,7 +44,7 @@
                         </div>
 
                         <div class="vu-section-grid">
-                            <div class="vu-card">
+                            <div class="vu-detail-card">
                                 <div class="vu-card__title">
                                     <span class="vu-section__icon" data-icon="history"/>
                                     <span>Assignment Stats</span>
@@ -52,7 +55,8 @@
                                 </group>
                             </div>
 
-                            <div class="vu-card">
+                            <div class="vu-detail-card">
+                                <span class="vu-detail-card__edit-trigger"><i class="fa fa-pencil"/></span>
                                 <div class="vu-card__title">
                                     <span class="vu-section__icon" data-icon="users-group"/>
                                     <span>Preferred Healthcare Staff</span>
@@ -68,7 +72,5 @@
             </page>
         </field>
     </record>
-
-    <!-- Smart button for FSO count - REMOVED: Duplicate of health_base smart button -->
 
 </odoo>

@@ -3,13 +3,29 @@
 
     <t t-name="health_crm.TimePickerWidget">
         <div class="tp_container">
-            <!-- Selected time display -->
-            <div class="tp_display">
+            <!-- Selected time display — click to type custom time -->
+            <div class="tp_display" t-att-class="{ tp_display_clickable: !props.readonly }" t-on-click="onDisplayClick">
                 <svg class="tp_svg_icon tp_clock_icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <circle cx="12" cy="12" r="10"/>
                     <polyline points="12 6 12 12 16 14"/>
                 </svg>
-                <span class="tp_display_time" t-esc="displayTime"/>
+                <t t-if="state.editingManual">
+                    <input type="text" class="tp_manual_input"
+                           t-att-value="state.manualInput"
+                           t-on-input="onManualInput"
+                           t-on-keydown="onManualKeydown"
+                           t-on-blur="onManualBlur"
+                           placeholder="HH:MM"
+                           t-ref="manualInput"/>
+                </t>
+                <t t-else="">
+                    <span class="tp_display_time" t-esc="displayTime"/>
+                    <t t-if="!props.readonly">
+                        <span class="tp_edit_hint">
+                            <i class="fa fa-pencil" style="font-size: 12px; margin-left: 8px; opacity: 0.5;"/>
+                        </span>
+                    </t>
+                </t>
             </div>
 
             <!-- Section toggle tabs -->

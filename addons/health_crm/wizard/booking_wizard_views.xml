@@ -41,16 +41,6 @@
                                     3. Booking
                                 </span>
                             </div>
-                            <div style="width: 50px; height: 2px; background: rgba(255,255,255,0.3);"/>
-                            <!-- Step 4 Indicator -->
-                            <div style="text-align: center; flex: 1;">
-                                <span style="background: white; color: #1565C0; padding: 8px 16px; border-radius: 20px; font-weight: bold;" invisible="current_step != '4_assign'">
-                                    4. Assign
-                                </span>
-                                <span style="background: rgba(255,255,255,0.3); color: white; padding: 8px 16px; border-radius: 20px;" invisible="current_step == '4_assign'">
-                                    4. Assign
-                                </span>
-                            </div>
                         </div>
                     </div>
 
@@ -163,85 +153,34 @@
                         </group>
                     </div>
 
-                    <!-- STEP 4: Assign Booking -->
-                    <div invisible="current_step != '4_assign'">
-                        <h2 style="margin-bottom: 20px;">
-                            <span class="fa fa-users" style="margin-right: 10px; color: #1565C0;"/>
-                            Assignment and Staff
-                        </h2>
-                        
-                        <div class="alert alert-info" role="alert">
-                            <span class="fa fa-info-circle" style="margin-right: 10px;"/>
-                            Staff assignment is optional. You can assign later if needed.
-                            Staff are filtered by the selected Healthcare Facility.
-                        </div>
-                        
-                        <!-- Hidden field for domain evaluation -->
-                        <field name="facility_id" invisible="1"/>
-                        
-                        <group>
-                            <group string="Staff Assignment">
-                                <field name="assigned_staff_ids" string="Assigned Staff" widget="many2many_tags"/>
-                                <field name="lead_staff_id" string="Lead Staff"/>
-                            </group>
-                            <group string="Doctors">
-                                <field name="assigned_doctor_ids" string="Assigned Doctors" widget="many2many_tags"/>
-                            </group>
-                        </group>
-                        
-                        <group>
-                            <field name="assignment_notes" string="Instructions" 
-                                   placeholder="Special instructions for assigned staff..."/>
-                        </group>
-                        
-                        <!-- Booking Summary -->
-                        <separator string="Booking Summary"/>
-                        <group>
-                            <group>
-                                <field name="client_display_name" string="Client" readonly="1"/>
-                                <field name="service_type" string="Service" readonly="1"/>
-                                <field name="facility_id" string="Facility" readonly="1"/>
-                            </group>
-                            <group>
-                                <field name="booking_date" string="Date" readonly="1"/>
-                                <field name="booking_time" string="Time" widget="time_picker" readonly="1"/>
-                            </group>
-                        </group>
-                    </div>
 
                 </sheet>
 
                 <!-- Footer with Navigation Buttons -->
                 <footer>
                     <!-- Back to Contact (always visible) -->
-                    <button name="action_back_to_contact" type="object" 
-                            string="Back to Contact" class="btn-secondary"
+                    <button name="action_back_to_contact" type="object"
+                            string="&#x2190; Back to Contact" class="btn-secondary"
                             icon="fa-arrow-left"/>
-                    
+
                     <!-- Previous Step (not on step 1) -->
                     <button name="action_prev_step" type="object"
-                            string="Previous" class="btn-secondary"
+                            string="&#x2190; Previous" class="btn-secondary"
                             icon="fa-chevron-left"
                             invisible="current_step == '1_client'"/>
-                    
+
                     <!-- Next Step (not on final step) -->
                     <button name="action_next_step" type="object"
-                            string="Next" class="btn-primary"
+                            string="Next &#x2192;" class="btn-primary"
                             icon="fa-chevron-right"
-                            invisible="current_step == '4_assign'"/>
-                    
-                    <!-- Create Booking (on booking step) -->
+                            invisible="current_step == '3_booking'"/>
+
+                    <!-- Create Booking (on final step 3) -->
                     <button name="action_create_booking" type="object"
-                            string="Create Booking" class="btn-primary"
-                            icon="fa-check"
-                            invisible="current_step != '3_booking'"/>
-                    
-                    <!-- Finish (on assign step) -->
-                    <button name="action_finish" type="object"
-                            string="Finish &amp; Create Booking" class="btn-primary"
+                            string="&#x2714; Create Booking" class="btn-primary"
                             icon="fa-check-circle"
-                            invisible="current_step != '4_assign'"/>
-                    
+                            invisible="current_step != '3_booking'"/>
+
                     <!-- Cancel -->
                     <button string="Cancel" class="btn-secondary" special="cancel"/>
                 </footer>

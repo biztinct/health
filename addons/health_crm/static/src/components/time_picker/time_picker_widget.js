@@ -2,7 +2,7 @@
 
 import { registry } from "@web/core/registry";
 import { FloatTimeField } from "@web/views/fields/float_time/float_time_field";
-import { Component, useState } from "@odoo/owl";
+import { Component, useState, useRef, onPatched } from "@odoo/owl";
 
 /**
  * Premium Time Picker Widget
@@ -22,11 +22,19 @@ export class TimePickerWidget extends Component {
     setup() {
         this.state = useState({
             section: this._getInitialSection(),
+            editingManual: false,
+            manualInput: "",
         });
-        // Generate time slots
-        this.morningSlots = this._generateSlots(6, 12);   // 06:00 – 11:30
-        this.afternoonSlots = this._generateSlots(12, 18); // 12:00 – 17:30
-        this.eveningSlots = this._generateSlots(18, 22);   // 18:00 – 21:30
+        this.morningSlots = this._generateSlots(6, 12);
+        this.afternoonSlots = this._generateSlots(12, 18);
+        this.eveningSlots = this._generateSlots(18, 22);
+        this.manualInputRef = useRef("manualInput");
+        onPatched(() => {
+            if (this.state.editingManual && this.manualInputRef.el) {
+                this.manualInputRef.el.focus();
+                this.manualInputRef.el.select();
+            }
+        });
     }
 
     // ------- helpers -------
@@ -86,10 +94,51 @@ export class TimePickerWidget extends Component {
     onSelectSlot(slotValue) {
         if (this.props.readonly) return;
         this.props.record.update({ [this.props.name]: slotValue });
+        this.state.editingManual = false;
     }
 
     onSetSection(section) {
         this.state.section = section;
+    }
+
+    onDisplayClick() {
+        if (this.props.readonly) return;
+        this.state.editingManual = true;
+        this.state.manualInput = this.displayTime;
+    }
+
+    onManualInput(ev) {
+        this.state.manualInput = ev.target.value;
+    }
+
+    onManualKeydown(ev) {
+        if (ev.key === "Enter") {
+            this._applyManualTime();
+        } else if (ev.key === "Escape") {
+            this.state.editingManual = false;
+        }
+    }
+
+    onManualBlur() {
+        this._applyManualTime();
+    }
+
+    _applyManualTime() {
+        const raw = this.state.manualInput.trim();
+        const match = raw.match(/^(\d{1,2}):(\d{2})$/);
+        if (match) {
+            const h = parseInt(match[1], 10);
+            const m = parseInt(match[2], 10);
+            if (h >= 0 && h <= 23 && m >= 0 && m <= 59) {
+                const floatVal = h + m / 60;
+                this.props.record.update({ [this.props.name]: floatVal });
+                // Switch section to match new time
+                if (floatVal >= 18) this.state.section = "evening";
+                else if (floatVal >= 12) this.state.section = "afternoon";
+                else this.state.section = "morning";
+            }
+        }
+        this.state.editingManual = false;
     }
 }
 

@@ -2,10 +2,10 @@
 <odoo>
 
     <!-- =========================================================================
-         VAFHS Patient Management Views - State-of-the-Art Healthcare Interface
+         VAFHS Patient Management Views — Three-Column Layout
          ========================================================================= -->
 
-    <!-- Enhanced Patient Form View - Proper Odoo 19 Layout -->
+    <!-- Enhanced Patient Form View — 3-Column Layout matching Booking form -->
     <record id="view_health_patient_form" model="ir.ui.view">
         <field name="name">res.partner.patient.form</field>
         <field name="model">res.partner</field>
@@ -15,8 +15,6 @@
                 <field name="active" invisible="1"/>
                 <header>
                     <field name="patient_status" widget="statusbar" statusbar_visible="new,active,inactive"/>
-                    <button name="action_activate_patient" string="Activate" type="object" class="oe_highlight"
-                            invisible="patient_status == 'active'"/>
                 </header>
 
                 <sheet string="Client">
@@ -41,6 +39,7 @@
                         </button>
                     </div>
 
+                    <!-- Title Bar -->
                     <div class="oe_title">
                         <h1 class="d-flex align-items-center gap-3">
                             <field name="name" placeholder="Client Full Name" required="1" class="o_text_overflow flex-grow-1"/>
@@ -60,7 +59,7 @@
 
                     <!-- Alert Messages -->
                     <div class="alert alert-danger" role="alert" invisible="not allergies">
-                        <strong><i class="fa fa-exclamation-triangle"/> ALLERGIES:</strong>
+                        <strong><i class="fa fa-exclamation-triangle" title="Warning"/> ALLERGIES:</strong>
                         <field name="allergies" readonly="1"/>
                     </div>
                     <div class="alert alert-warning" role="alert" invisible="patient_status != 'new'">
@@ -68,319 +67,528 @@
                         Please complete all required information and verify insurance details.
                     </div>
 
-                    <div class="vu-section">
-                        <div class="vu-section__title">
-                            <span class="vu-section__icon" data-icon="id-card"/>
-                            <div>
-                                <span>Profile Overview</span>
-                                <small class="text-muted d-block">Identity, contact and onboarding source</small>
+                    <!-- ========================================================
+                         THREE-COLUMN LAYOUT
+                         Left:   Client Summary (identity, contact, location)
+                         Center: Profile details + tabbed notebook
+                         Right:  Actions panel
+                         ======================================================== -->
+                    <div class="vu-three-col mt-3">
+
+                        <!-- ====================================================
+                             LEFT COLUMN — Client Summary
+                             ==================================================== -->
+                        <div class="vu-col-summary">
+
+                            <!-- Identity -->
+                            <div class="vu-summary-card">
+                                <div class="vu-summary-header">Identity</div>
+                                <div class="vu-summary-row">
+                                    <span class="vu-summary-row__label">Name</span>
+                                    <span class="vu-summary-row__value">
+                                        <field name="name" readonly="1" nolabel="1"/>
+                                    </span>
+                                </div>
+                                <div class="vu-summary-row">
+                                    <span class="vu-summary-row__label">ID</span>
+                                    <span class="vu-summary-row__value">
+                                        <field name="patient_code_display" readonly="1" nolabel="1"/>
+                                    </span>
+                                </div>
+                                <div class="vu-summary-row">
+                                    <span class="vu-summary-row__label">Age</span>
+                                    <span class="vu-summary-row__value">
+                                        <field name="age_display" readonly="1" nolabel="1"/>
+                                    </span>
+                                </div>
+                                <div class="vu-summary-row">
+                                    <span class="vu-summary-row__label">Gender</span>
+                                    <span class="vu-summary-row__value">
+                                        <field name="gender" readonly="1" nolabel="1"/>
+                                    </span>
+                                </div>
+                                <div class="vu-summary-row">
+                                    <span class="vu-summary-row__label">Status</span>
+                                    <span class="vu-summary-row__value">
+                                        <field name="patient_status" readonly="1" nolabel="1" widget="badge"
+                                               decoration-success="patient_status == 'active'"
+                                               decoration-warning="patient_status == 'new'"
+                                               decoration-muted="patient_status == 'inactive'"/>
+                                    </span>
+                                </div>
                             </div>
+
+                            <!-- Contact -->
+                            <div class="vu-summary-card">
+                                <div class="vu-summary-header">Contact</div>
+                                <div class="vu-summary-row">
+                                    <span class="vu-summary-row__label">Phone</span>
+                                    <span class="vu-summary-row__value">
+                                        <field name="phone" readonly="1" nolabel="1" widget="phone"/>
+                                    </span>
+                                </div>
+                                <div class="vu-summary-row">
+                                    <span class="vu-summary-row__label">Email</span>
+                                    <span class="vu-summary-row__value">
+                                        <field name="email" readonly="1" nolabel="1" widget="email"/>
+                                    </span>
+                                </div>
+                                <div class="vu-summary-row">
+                                    <span class="vu-summary-row__label">Address</span>
+                                    <span class="vu-summary-row__value">
+                                        <field name="vietnamese_address" readonly="1" nolabel="1"/>
+                                    </span>
+                                </div>
+                            </div>
+
+                            <!-- Location -->
+                            <div class="vu-summary-card">
+                                <div class="vu-summary-header">Location</div>
+                                <div class="vu-summary-row">
+                                    <span class="vu-summary-row__label">Catchment</span>
+                                    <span class="vu-summary-row__value">
+                                        <field name="catchment_province_id" readonly="1" nolabel="1"/>
+                                    </span>
+                                </div>
+                                <div class="vu-summary-row">
+                                    <span class="vu-summary-row__label">Facility</span>
+                                    <span class="vu-summary-row__value">
+                                        <field name="primary_facility_id" readonly="1" nolabel="1"/>
+                                    </span>
+                                </div>
+                            </div>
+
+                            <!-- Category -->
+                            <div class="vu-summary-card">
+                                <div class="vu-summary-header">Category</div>
+                                <div class="vu-summary-row">
+                                    <span class="vu-summary-row__label">Category</span>
+                                    <span class="vu-summary-row__value">
+                                        <field name="patient_category_id" readonly="1" nolabel="1"/>
+                                    </span>
+                                </div>
+                                <div class="vu-summary-row">
+                                    <span class="vu-summary-row__label">Source</span>
+                                    <span class="vu-summary-row__value">
+                                        <field name="source_type" readonly="1" nolabel="1"/>
+                                    </span>
+                                </div>
+                            </div>
+
+                            <!-- Visits -->
+                            <div class="vu-summary-card">
+                                <div class="vu-summary-header">Visits</div>
+                                <div class="vu-summary-row">
+                                    <span class="vu-summary-row__label">Total</span>
+                                    <span class="vu-summary-row__value">
+                                        <field name="visit_count" readonly="1" nolabel="1"/>
+                                    </span>
+                                </div>
+                                <div class="vu-summary-row">
+                                    <span class="vu-summary-row__label">Last Visit</span>
+                                    <span class="vu-summary-row__value">
+                                        <field name="last_visit_date" readonly="1" nolabel="1"/>
+                                    </span>
+                                </div>
+                                <div class="vu-summary-row">
+                                    <span class="vu-summary-row__label">Next Visit</span>
+                                    <span class="vu-summary-row__value">
+                                        <field name="next_visit_date" readonly="1" nolabel="1"/>
+                                    </span>
+                                </div>
+                            </div>
+
                         </div>
-                        <div class="vu-section-grid">
-                            <div class="vu-card">
-                                <div class="vu-card__title">
+
+                        <!-- ====================================================
+                             CENTER COLUMN — Profile + Tabbed Content
+                             ==================================================== -->
+                        <div class="vu-col-content">
+
+                            <!-- Profile Overview -->
+                            <div class="vu-section">
+                                <div class="vu-section__title">
                                     <span class="vu-section__icon" data-icon="id-card"/>
-                                    <span>Personal Information</span>
-                                </div>
-                                <group col="2">
-                                    <field name="title"/>
-                                    <field name="first_name"/>
-                                    <field name="last_name"/>
-                                    <field name="middle_name"/>
-                                    <field name="vietnamese_name" placeholder="Tên tiếng Việt"/>
-                                    <field name="birth_date"/>
-                                    <field name="deceased"/>
-                                    <field name="gender"/>
-                                </group>
-                            </div>
-
-                            <div class="vu-card">
-                                <div class="vu-card__title">
-                                    <span class="vu-section__icon" data-icon="users-group"/>
-                                    <span>Other Information</span>
-                                </div>
-                                <group col="2">
-                                    <field name="phone" widget="phone" required="1"/>
-                                    <field name="mobile" widget="phone" invisible="1"/>
-                                    <field name="email" widget="email"/>
-                                    <field name="patient_category_id"/>
-                                    <field name="catchment_province_id" required="1"/>
-                                    <field name="primary_facility_id" domain="[('catchment_province_id', '=', catchment_province_id)]"/>
-                                    <field name="source_type"/>
-                                    <field name="national_id"/>
-                                    <field name="profession" string="Occupation"/>
-                                    <field name="ethnicity"/>
-                                    <field name="commission_due_to" string="Commission Duration"/>
-                                </group>
-                            </div>
-                        </div>
-                    </div>
-
-                    <notebook>
-                        <!-- Address Information Page -->
-                        <page string="Address Information" name="address_info">
-                            <div class="vu-section">
-                                <div class="vu-section__title">
-                                    <span class="vu-section__icon" data-icon="map-pin"/>
                                     <div>
-                                        <span>Address Information</span>
-                                        <small class="text-muted d-block">Home address plus geo location</small>
+                                        <span>Profile Overview</span>
+                                        <small class="text-muted d-block">Identity, contact and onboarding source</small>
                                     </div>
                                 </div>
                                 <div class="vu-section-grid">
-                                    <div class="vu-card">
+                                    <div class="vu-detail-card">
+                                        <span class="vu-detail-card__edit-trigger"><i class="fa fa-pencil" title="Edit"/></span>
                                         <div class="vu-card__title">
-                                            <span class="vu-section__icon" data-icon="file-text"/>
-                                            <span>Address Details</span>
+                                            <span class="vu-section__icon" data-icon="id-card"/>
+                                            <span>Personal Information</span>
                                         </div>
                                         <group col="2">
-                                            <label for="vietnamese_address" string="Home Address"/>
-                                            <div class="o_row align-items-start">
-                                                <field name="vietnamese_address" nolabel="1" readonly="1" widget="text" class="flex-grow-1"/>
-                                                <button name="action_edit_vietnamese_address"
-                                                        type="object"
-                                                        class="btn btn-link p-0 fa fa-pencil text-muted"
-                                                        title="Edit address"/>
-                                            </div>
-
-                                            <!-- Hidden fields for geocoding -->
-                                            <field name="address_search" invisible="1"/>
-                                            <field name="partner_latitude" invisible="1"/>
-                                            <field name="partner_longitude" invisible="1"/>
-                                            <field name="date_localization" invisible="1"/>
+                                            <field name="title"/>
+                                            <field name="first_name"/>
+                                            <field name="last_name"/>
+                                            <field name="middle_name"/>
+                                            <field name="vietnamese_name" placeholder="Tên tiếng Việt"/>
+                                            <field name="birth_date"/>
+                                            <field name="deceased"/>
+                                            <field name="gender"/>
                                         </group>
-                                        <div class="mt-2">
-                                            <button name="action_geocode_address_photon"
-                                                    type="object"
-                                                    class="btn btn-secondary btn-sm"
-                                                    icon="fa-map-marker"
-                                                    string="Geocode Address"/>
-                                        </div>
                                     </div>
-                                    <div class="vu-card">
+
+                                    <div class="vu-detail-card">
+                                        <span class="vu-detail-card__edit-trigger"><i class="fa fa-pencil" title="Edit"/></span>
                                         <div class="vu-card__title">
+                                            <span class="vu-section__icon" data-icon="users-group"/>
+                                            <span>Other Information</span>
+                                        </div>
+                                        <group col="2">
+                                            <field name="phone" widget="phone" required="1"/>
+                                            <field name="mobile" widget="phone" invisible="1"/>
+                                            <field name="email" widget="email"/>
+                                            <field name="patient_category_id"/>
+                                            <field name="catchment_province_id" required="1"/>
+                                            <field name="primary_facility_id" domain="[('catchment_province_id', '=', catchment_province_id)]"/>
+                                            <field name="source_type"/>
+                                            <field name="national_id"/>
+                                            <field name="profession" string="Occupation"/>
+                                            <field name="ethnicity"/>
+                                            <field name="commission_due_to" string="Commission Duration"/>
+                                        </group>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Notebook with all tabs -->
+                            <notebook>
+                                <!-- Address Information Page -->
+                                <page string="Address Information" name="address_info">
+                                    <div class="vu-section">
+                                        <div class="vu-section__title">
                                             <span class="vu-section__icon" data-icon="map-pin"/>
-                                            <span>Map Location</span>
+                                            <div>
+                                                <span>Address Information</span>
+                                                <small class="text-muted d-block">Home address plus geo location</small>
+                                            </div>
                                         </div>
-                                        <field name="geo_coordinates_display" widget="address_map" nolabel="1"/>
-                                    </div>
-                                </div>
-                            </div>
-                        </page>
+                                        <div class="vu-section-grid">
+                                            <div class="vu-detail-card">
+                                                <span class="vu-detail-card__edit-trigger"><i class="fa fa-pencil" title="Edit"/></span>
+                                                <div class="vu-card__title">
+                                                    <span class="vu-section__icon" data-icon="file-text"/>
+                                                    <span>Address Details</span>
+                                                </div>
+                                                <group col="2">
+                                                    <label for="vietnamese_address" string="Home Address"/>
+                                                    <div class="o_row align-items-start">
+                                                        <field name="vietnamese_address" nolabel="1" readonly="1" widget="text" class="flex-grow-1"/>
+                                                        <button name="action_edit_vietnamese_address"
+                                                                type="object"
+                                                                class="btn btn-link p-0 fa fa-pencil text-muted"
+                                                                title="Edit address"/>
+                                                    </div>
 
-                        <!-- Intake Notes -->
-                        <page string="Intake Notes" name="intake_notes">
-                            <div class="vu-section">
-                                <div class="vu-section__title">
-                                    <span class="vu-section__icon" data-icon="clipboard-list"/>
-                                    <div>
-                                        <span>Intake Notes</span>
-                                        <small class="text-muted d-block">Assessment snapshots and initial planning</small>
-                                    </div>
-                                </div>
-                                <div class="vu-section-grid">
-                                    <div class="vu-card">
-                                        <div class="vu-card__title">
-                                            <span class="vu-section__icon" data-icon="file-text"/>
-                                            <span>Assessment Information</span>
+                                                    <!-- Hidden fields for geocoding -->
+                                                    <field name="address_search" invisible="1"/>
+                                                    <field name="partner_latitude" invisible="1"/>
+                                                    <field name="partner_longitude" invisible="1"/>
+                                                    <field name="date_localization" invisible="1"/>
+                                                </group>
+                                                <div class="mt-2">
+                                                    <button name="action_geocode_address_photon"
+                                                            type="object"
+                                                            class="btn btn-secondary btn-sm"
+                                                            icon="fa-map-marker"
+                                                            string="Geocode Address"/>
+                                                </div>
+                                            </div>
+                                            <div class="vu-detail-card">
+                                                <div class="vu-card__title">
+                                                    <span class="vu-section__icon" data-icon="map-pin"/>
+                                                    <span>Map Location</span>
+                                                </div>
+                                                <field name="geo_coordinates_display" widget="address_map" nolabel="1"/>
+                                            </div>
                                         </div>
-                                        <group col="1">
-                                            <field name="intake_diagnosis" placeholder="Medical diagnosis and assessment findings" nolabel="1"/>
-                                        </group>
                                     </div>
-                                    <div class="vu-card">
-                                        <div class="vu-card__title">
-                                            <span class="vu-section__icon" data-icon="heart-pulse"/>
-                                            <span>Care Planning</span>
-                                        </div>
-                                        <group col="2">
-                                            <field name="intake_referring_doctor_id" placeholder="Select referring doctor or contact" options="{'no_create': True}"/>
-                                            <field name="intake_goal_of_care" placeholder="Primary goal or objective of care"/>
-                                            <field name="intake_required_equipment" placeholder="Equipment or supplies required for care"/>
-                                        </group>
-                                    </div>
-                                </div>
-                                <div class="vu-card">
-                                    <div class="vu-card__title">
-                                        <span class="vu-section__icon" data-icon="file-text"/>
-                                        <span>Additional Notes</span>
-                                    </div>
-                                    <group>
-                                    <field name="intake_notes" placeholder="Additional intake assessment notes and observations" nolabel="1"/>
-                                    </group>
-                                </div>
-                            </div>
-                        </page>
+                                </page>
 
-                        <!-- Insurance &amp; Billing -->
-                        <page string="Insurance &amp; Billing" name="insurance_billing">
-                            <div class="vu-section">
-                                <div class="vu-section__title">
-                                    <span class="vu-section__icon" data-icon="credit-card"/>
-                                    <div>
-                                        <span>Insurance &amp; Billing</span>
-                                        <small class="text-muted d-block">Coverage, payment preferences and reminders</small>
-                                    </div>
-                                </div>
-                                <div class="vu-section-grid">
-                                    <div class="vu-card">
-                                        <div class="vu-card__title">
-                                            <span class="vu-section__icon" data-icon="shield-check"/>
-                                            <span>Insurance Details</span>
+                                <!-- Intake Notes -->
+                                <page string="Intake Notes" name="intake_notes">
+                                    <div class="vu-section">
+                                        <div class="vu-section__title">
+                                            <span class="vu-section__icon" data-icon="clipboard-list"/>
+                                            <div>
+                                                <span>Intake Notes</span>
+                                                <small class="text-muted d-block">Assessment snapshots and initial planning</small>
+                                            </div>
                                         </div>
-                                        <group col="2">
-                                            <field name="insurance_provider"/>
-                                            <field name="insurance_number"/>
-                                            <field name="insurance_expiry"/>
-                                        </group>
-                                        <div class="alert alert-warning" invisible="not insurance_expiry or insurance_expiry &gt; context_today()" role="alert">
-                                            <i class="fa fa-exclamation-triangle"/> Insurance has expired - please update
+                                        <div class="vu-section-grid">
+                                            <div class="vu-detail-card">
+                                                <span class="vu-detail-card__edit-trigger"><i class="fa fa-pencil" title="Edit"/></span>
+                                                <div class="vu-card__title">
+                                                    <span class="vu-section__icon" data-icon="file-text"/>
+                                                    <span>Assessment Information</span>
+                                                </div>
+                                                <group col="1">
+                                                    <field name="intake_diagnosis" placeholder="Medical diagnosis and assessment findings" nolabel="1"/>
+                                                </group>
+                                            </div>
+                                            <div class="vu-detail-card">
+                                                <span class="vu-detail-card__edit-trigger"><i class="fa fa-pencil" title="Edit"/></span>
+                                                <div class="vu-card__title">
+                                                    <span class="vu-section__icon" data-icon="heart-pulse"/>
+                                                    <span>Care Planning</span>
+                                                </div>
+                                                <group col="2">
+                                                    <field name="intake_referring_doctor_id" placeholder="Select referring doctor or contact" options="{'no_create': True}"/>
+                                                    <field name="intake_goal_of_care" placeholder="Primary goal or objective of care"/>
+                                                    <field name="intake_required_equipment" placeholder="Equipment or supplies required for care"/>
+                                                </group>
+                                            </div>
+                                        </div>
+                                        <div class="vu-detail-card">
+                                            <span class="vu-detail-card__edit-trigger"><i class="fa fa-pencil" title="Edit"/></span>
+                                            <div class="vu-card__title">
+                                                <span class="vu-section__icon" data-icon="file-text"/>
+                                                <span>Additional Notes</span>
+                                            </div>
+                                            <group>
+                                                <field name="intake_notes" placeholder="Additional intake assessment notes and observations" nolabel="1"/>
+                                            </group>
                                         </div>
                                     </div>
-                                    <div class="vu-card">
-                                        <div class="vu-card__title">
+                                </page>
+
+                                <!-- Insurance &amp; Billing -->
+                                <page string="Insurance &amp; Billing" name="insurance_billing">
+                                    <div class="vu-section">
+                                        <div class="vu-section__title">
                                             <span class="vu-section__icon" data-icon="credit-card"/>
-                                            <span>Payment Preferences</span>
+                                            <div>
+                                                <span>Insurance &amp; Billing</span>
+                                                <small class="text-muted d-block">Coverage, payment preferences and reminders</small>
+                                            </div>
                                         </div>
-                                        <group col="1">
-                                            <field name="payment_method" required="1"/>
-                                        </group>
-                                    </div>
-                                </div>
-                            </div>
-                        </page>
-
-                        <!-- Service History -->
-                        <page string="Service History" name="service_history">
-                            <div class="vu-section">
-                                <div class="vu-section__title">
-                                    <span class="vu-section__icon" data-icon="history"/>
-                                    <div>
-                                        <span>Service History</span>
-                                        <small class="text-muted d-block">Field service visits and care interactions</small>
-                                    </div>
-                                </div>
-                                <div class="vu-card">
-                                    <div class="vu-card__title">
-                                        <span class="vu-section__icon" data-icon="history"/>
-                                        <span>History Timeline</span>
-                                    </div>
-                                    <p>
-                                        Service history entries will be displayed here once the <strong>health_fieldservice</strong> module injects the timeline widget.
-                                    </p>
-                                </div>
-                            </div>
-                        </page>
-
-                        <!-- Active Service Packages -->
-                        <page string="Active Packages" name="active_packages">
-                            <div class="vu-section">
-                                <div class="vu-section__title">
-                                    <span class="vu-section__icon" data-icon="package"/>
-                                    <div>
-                                        <span>Active Packages</span>
-                                        <small class="text-muted d-block">Bundles and prepaid services currently assigned</small>
-                                    </div>
-                                </div>
-                                <div class="vu-card">
-                                    <div class="vu-card__title">
-                                        <span class="vu-section__icon" data-icon="package"/>
-                                        <span>Package Summary</span>
-                                    </div>
-                                    <p>
-                                        Package information will be injected by the <strong>health_invoicing</strong> module.
-                                    </p>
-                                </div>
-                            </div>
-                        </page>
-
-                        <!-- Healthcare Relationships -->
-                        <page string="Healthcare Relationships" name="healthcare_relationships">
-                            <div class="vu-section">
-                                <div class="vu-section__title">
-                                    <span class="vu-section__icon" data-icon="users-group"/>
-                                    <div>
-                                        <span>Healthcare Relationships</span>
-                                        <small class="text-muted d-block">Visual hierarchy of clients and stakeholders</small>
-                                    </div>
-                                </div>
-                                <div class="alert alert-info" role="alert">
-                                    Relationship map widget is not available in this Odoo version.
-                                </div>
-                            </div>
-                        </page>
-
-                        <!-- Patient Journey &amp; Analytics -->
-                        <page string="Client Journey" name="patient_journey">
-                            <div class="vu-section">
-                                <div class="vu-section__title">
-                                    <span class="vu-section__icon" data-icon="timeline"/>
-                                    <div>
-                                        <span>Client Journey</span>
-                                        <small class="text-muted d-block">Registration milestones and visit cadence</small>
-                                    </div>
-                                </div>
-                                <div class="vu-section-grid">
-                                    <div class="vu-card">
-                                        <div class="vu-card__title">
-                                            <span class="vu-section__icon" data-icon="file-text"/>
-                                            <span>Registration Details</span>
+                                        <div class="vu-section-grid">
+                                            <div class="vu-detail-card">
+                                                <span class="vu-detail-card__edit-trigger"><i class="fa fa-pencil" title="Edit"/></span>
+                                                <div class="vu-card__title">
+                                                    <span class="vu-section__icon" data-icon="shield-check"/>
+                                                    <span>Insurance Details</span>
+                                                </div>
+                                                <group col="2">
+                                                    <field name="insurance_provider"/>
+                                                    <field name="insurance_number"/>
+                                                    <field name="insurance_expiry"/>
+                                                </group>
+                                                <div class="alert alert-warning" invisible="not insurance_expiry or insurance_expiry &gt; context_today()" role="alert">
+                                                    <i class="fa fa-exclamation-triangle" title="Warning"/> Insurance has expired - please update
+                                                </div>
+                                            </div>
+                                            <div class="vu-detail-card">
+                                                <span class="vu-detail-card__edit-trigger"><i class="fa fa-pencil" title="Edit"/></span>
+                                                <div class="vu-card__title">
+                                                    <span class="vu-section__icon" data-icon="credit-card"/>
+                                                    <span>Payment Preferences</span>
+                                                </div>
+                                                <group col="1">
+                                                    <field name="payment_method" required="1"/>
+                                                </group>
+                                            </div>
                                         </div>
-                                        <group col="2">
-                                            <field name="source_details" placeholder="Specific source details"/>
-                                            <field name="referral_source" invisible="source_type != 'referral'"/>
-                                            <field name="registration_date" readonly="1"/>
-                                        </group>
                                     </div>
-                                    <div class="vu-card">
-                                        <div class="vu-card__title">
+                                </page>
+
+                                <!-- Service History -->
+                                <page string="Service History" name="service_history">
+                                    <div class="vu-section">
+                                        <div class="vu-section__title">
+                                            <span class="vu-section__icon" data-icon="history"/>
+                                            <div>
+                                                <span>Service History</span>
+                                                <small class="text-muted d-block">Field service visits and care interactions</small>
+                                            </div>
+                                        </div>
+                                        <div class="vu-detail-card">
+                                            <div class="vu-card__title">
+                                                <span class="vu-section__icon" data-icon="history"/>
+                                                <span>History Timeline</span>
+                                            </div>
+                                            <p>
+                                                Service history entries will be displayed here once the <strong>health_fieldservice</strong> module injects the timeline widget.
+                                            </p>
+                                        </div>
+                                    </div>
+                                </page>
+
+                                <!-- Active Service Packages -->
+                                <page string="Active Packages" name="active_packages">
+                                    <div class="vu-section">
+                                        <div class="vu-section__title">
+                                            <span class="vu-section__icon" data-icon="package"/>
+                                            <div>
+                                                <span>Active Packages</span>
+                                                <small class="text-muted d-block">Bundles and prepaid services currently assigned</small>
+                                            </div>
+                                        </div>
+                                        <div class="vu-detail-card">
+                                            <div class="vu-card__title">
+                                                <span class="vu-section__icon" data-icon="package"/>
+                                                <span>Package Summary</span>
+                                            </div>
+                                            <p>
+                                                Package information will be injected by the <strong>health_invoicing</strong> module.
+                                            </p>
+                                        </div>
+                                    </div>
+                                </page>
+
+                                <!-- Healthcare Relationships -->
+                                <page string="Healthcare Relationships" name="healthcare_relationships">
+                                    <div class="vu-section">
+                                        <div class="vu-section__title">
+                                            <span class="vu-section__icon" data-icon="users-group"/>
+                                            <div>
+                                                <span>Healthcare Relationships</span>
+                                                <small class="text-muted d-block">Visual hierarchy of clients and stakeholders</small>
+                                            </div>
+                                        </div>
+                                        <div class="alert alert-info" role="alert">
+                                            Relationship map widget is not available in this Odoo version.
+                                        </div>
+                                    </div>
+                                </page>
+
+                                <!-- Patient Journey &amp; Analytics -->
+                                <page string="Client Journey" name="patient_journey">
+                                    <div class="vu-section">
+                                        <div class="vu-section__title">
                                             <span class="vu-section__icon" data-icon="timeline"/>
-                                            <span>Visit Tracking</span>
+                                            <div>
+                                                <span>Client Journey</span>
+                                                <small class="text-muted d-block">Registration milestones and visit cadence</small>
+                                            </div>
                                         </div>
-                                        <group col="2">
-                                            <field name="last_visit_date" readonly="1"/>
-                                            <field name="next_visit_date"/>
-                                            <field name="visit_count" readonly="1"/>
-                                        </group>
+                                        <div class="vu-section-grid">
+                                            <div class="vu-detail-card">
+                                                <span class="vu-detail-card__edit-trigger"><i class="fa fa-pencil" title="Edit"/></span>
+                                                <div class="vu-card__title">
+                                                    <span class="vu-section__icon" data-icon="file-text"/>
+                                                    <span>Registration Details</span>
+                                                </div>
+                                                <group col="2">
+                                                    <field name="source_details" placeholder="Specific source details"/>
+                                                    <field name="referral_source" invisible="source_type != 'referral'"/>
+                                                    <field name="registration_date" readonly="1"/>
+                                                </group>
+                                            </div>
+                                            <div class="vu-detail-card">
+                                                <span class="vu-detail-card__edit-trigger"><i class="fa fa-pencil" title="Edit"/></span>
+                                                <div class="vu-card__title">
+                                                    <span class="vu-section__icon" data-icon="timeline"/>
+                                                    <span>Visit Tracking</span>
+                                                </div>
+                                                <group col="2">
+                                                    <field name="last_visit_date" readonly="1"/>
+                                                    <field name="next_visit_date"/>
+                                                    <field name="visit_count" readonly="1"/>
+                                                </group>
+                                            </div>
+                                        </div>
+                                        <div class="vu-detail-card">
+                                            <div class="vu-card__title">
+                                                <span class="vu-section__icon" data-icon="timeline"/>
+                                                <span>Client Timeline</span>
+                                            </div>
+                                            <div class="alert alert-info" role="status">
+                                                <i class="fa fa-timeline" title="Timeline"/> Client timeline with appointments, treatments, and key events will be displayed here.
+                                            </div>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="vu-card">
-                                    <div class="vu-card__title">
-                                        <span class="vu-section__icon" data-icon="timeline"/>
-                                        <span>Client Timeline</span>
-                                    </div>
-                                    <div class="alert alert-info">
-                                        <i class="fa fa-timeline"/> Client timeline with appointments, treatments, and key events will be displayed here.
-                                    </div>
-                                </div>
-                            </div>
-                        </page>
+                                </page>
 
-                        <!-- Clinical Notes &amp; Communications -->
-                        <page string="Clinical Notes" name="clinical_notes">
-                            <div class="vu-section">
-                                <div class="vu-section__title">
-                                    <span class="vu-section__icon" data-icon="file-text"/>
-                                    <div>
-                                        <span>Clinical Notes &amp; Communications</span>
-                                        <small class="text-muted d-block">Care coordination and documentation coming soon</small>
+                                <!-- Clinical Notes &amp; Communications -->
+                                <page string="Clinical Notes" name="clinical_notes">
+                                    <div class="vu-section">
+                                        <div class="vu-section__title">
+                                            <span class="vu-section__icon" data-icon="file-text"/>
+                                            <div>
+                                                <span>Clinical Notes &amp; Communications</span>
+                                                <small class="text-muted d-block">Care coordination and documentation coming soon</small>
+                                            </div>
+                                        </div>
+                                        <div class="vu-detail-card">
+                                            <div class="vu-card__title">
+                                                <span class="vu-section__icon" data-icon="file-text"/>
+                                                <span>Clinical Documentation</span>
+                                            </div>
+                                            <div class="alert alert-secondary" role="status">
+                                                <i class="fa fa-stethoscope" title="Clinical"/> Clinical documentation system integration coming soon.
+                                            </div>
+                                        </div>
                                     </div>
+                                </page>
+                            </notebook>
+
+                        </div>
+
+                        <!-- ====================================================
+                             RIGHT COLUMN — Actions Panel
+                             ==================================================== -->
+                        <div class="vu-col-actions">
+
+                            <!-- Status-driven primary action -->
+                            <div class="vu-action-card vu-action-card--primary"
+                                 invisible="patient_status != 'new'">
+                                <div class="vu-action-card__title">
+                                    <i class="fa fa-check-circle"/> Activate Client
                                 </div>
-                                <div class="vu-card">
-                                    <div class="vu-card__title">
-                                        <span class="vu-section__icon" data-icon="file-text"/>
-                                        <span>Clinical Documentation</span>
-                                    </div>
-                                    <div class="alert alert-secondary">
-                                        <i class="fa fa-stethoscope"/> Clinical documentation system integration coming soon.
-                                    </div>
+                                <div class="vu-action-card__subtitle">
+                                    Complete all required information, then activate this client.
+                                </div>
+                                <div class="vu-action-card__actions">
+                                    <button name="action_activate_patient" type="object"
+                                            class="vu-action-btn vu-action-btn--primary">
+                                        <i class="fa fa-check"/> Activate
+                                    </button>
                                 </div>
                             </div>
-                        </page>
-                    </notebook>
+
+                            <div class="vu-action-card vu-action-card--primary"
+                                 invisible="patient_status != 'active'">
+                                <div class="vu-action-card__title">
+                                    <i class="fa fa-calendar-plus-o"/> Create Booking
+                                </div>
+                                <div class="vu-action-card__subtitle">
+                                    Schedule a new service visit for this client.
+                                </div>
+                                <div class="vu-action-card__actions" name="primary_action_buttons">
+                                    <!-- Booking button injected by health_fieldservice -->
+                                </div>
+                            </div>
+
+                            <!-- Secondary Actions -->
+                            <div class="vu-action-panel__header">
+                                <i class="fa fa-th-list"/> Actions
+                            </div>
+
+                            <div class="vu-action-panel" name="action_panel">
+
+                                <!-- View Bookings -->
+                                <button name="action_view_appointments" type="object"
+                                        class="vu-action-item"
+                                        invisible="not is_patient">
+                                    <i class="fa fa-calendar"/> View Bookings
+                                </button>
+
+                                <!-- Relationships button injected by health_crm -->
+
+                            </div>
+
+                        </div>
+
+                    </div><!-- /vu-three-col -->
                 </sheet>
 
-                <!-- Proper Odoo 19 Chatter Implementation -->
+                <!-- Chatter on right side (Odoo 19 renders this as right panel) -->
                 <chatter reload_on_follower="True"/>
             </form>
         </field>
