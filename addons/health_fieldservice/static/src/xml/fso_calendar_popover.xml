@@ -1,12 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <templates xml:space="preserve">
 
-    <!-- Extended Calendar Popover for Bookings with Dashboard Button -->
+    <!-- Calendar Popover Footer — Edit + Delete only (no Dashboard) -->
     <t t-name="health_fieldservice.FSO_CalendarPopover.footer">
-        <a href="#" class="btn btn-info o_cw_popover_dashboard" t-on-click="onDashboardAction">
-            <i class="fa fa-tachometer me-1"/>
-            Dashboard
-        </a>
         <t t-if="isEventEditable">
             <a href="#" class="btn btn-primary o_cw_popover_edit" t-on-click="onEditEvent">Edit</a>
         </t>

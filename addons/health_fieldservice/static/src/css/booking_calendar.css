@@ -330,11 +330,22 @@
 }
 
 .o_cw_popover .popover-header {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
-    color: #fff !important;
+    background: #f4f6fb !important;
+    color: #2d3748 !important;
     border-radius: 8px 8px 0 0 !important;
     font-weight: 600 !important;
     border: none !important;
+    border-bottom: 1px solid #e2e8f0 !important;
+}
+
+.o_cw_popover .card-header {
+    background: #f4f6fb !important;
+}
+
+.o_cw_popover .card-header .popover-header {
+    background: transparent !important;
+    color: #2d3748 !important;
+    font-weight: 600 !important;
 }
 
 .o_cw_popover .popover-body {

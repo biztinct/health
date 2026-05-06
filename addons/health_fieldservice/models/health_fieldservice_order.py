@@ -62,7 +62,19 @@ class HealthFieldServiceOrderUnified(models.Model):
                 record.display_name = f"{record.patient_id.name} ({record.name})"
             else:
                 record.display_name = record.name or 'New Booking'
-    
+
+    calendar_name = fields.Char(
+        compute='_compute_calendar_name', store=True)
+
+    @api.depends('patient_id', 'patient_id.name', 'patient_id.patient_code')
+    def _compute_calendar_name(self):
+        for record in self:
+            if record.patient_id:
+                code = record.patient_id.patient_code or ''
+                record.calendar_name = f"{record.patient_id.name} ({code})" if code else record.patient_id.name
+            else:
+                record.calendar_name = record.name or 'New Booking'
+
     def _get_service_type_label(self):
         """Get the human-readable label for service type"""
         self.ensure_one()

@@ -12,8 +12,13 @@
                      All action buttons moved to the right-column Action Panel.
                      ============================================================ -->
                 <header>
-                    <!-- Hidden buttons — kept for server actions / keyboard shortcuts
-                         but visually replaced by the Action Panel in the right column -->
+                    <button name="action_open_reschedule_calendar" type="object"
+                            string="Reschedule" icon="fa-clock-o"
+                            invisible="state in ('completed', 'completed_pending_invoice', 'cancelled', 'closed')"/>
+                    <button name="action_cancel_booking" type="object"
+                            string="Cancel Booking" icon="fa-times"
+                            invisible="state in ('completed', 'completed_pending_invoice', 'cancelled', 'closed')"
+                            confirm="Are you sure you want to cancel this booking?"/>
                     <button name="action_ai_assign_staff" type="object"
                             string="AI Assign Staff" class="oe_highlight"
                             icon="fa-magic" invisible="True"/>
@@ -826,8 +831,7 @@
                       scales="day,week,month,year"
                       quick_create="0"
                       event_open_popup="1"
-                      hide_time="true">
-                <field name="name"/>
+                      create_name_field="calendar_name">
                 <field name="patient_id"/>
                 <field name="lead_staff_id"
                        filters="1"
