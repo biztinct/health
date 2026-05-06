@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_contact_action_wizard_form" model="ir.ui.view">
+        <field name="name">health.contact.action.wizard.form</field>
+        <field name="model">health.contact.action.wizard</field>
+        <field name="arch" type="xml">
+            <form string="What would you like to do?">
+                <sheet>
+                    <div class="text-center">
+                        <h3 class="mb-4">
+                            <field name="lead_name" readonly="1" nolabel="1" class="fw-bold"/>
+                        </h3>
+                        <div class="d-flex flex-wrap justify-content-center gap-3">
+                            <button name="action_new_booking" type="object"
+                                    class="btn btn-lg btn-primary d-flex align-items-center gap-2"
+                                    style="min-width: 180px;">
+                                <i class="fa fa-calendar-plus-o"/> New Booking
+                            </button>
+                            <button name="action_escalate" type="object"
+                                    class="btn btn-lg btn-warning d-flex align-items-center gap-2"
+                                    style="min-width: 180px;">
+                                <i class="fa fa-level-up"/> Escalate
+                            </button>
+                            <button name="action_consultation" type="object"
+                                    class="btn btn-lg btn-info d-flex align-items-center gap-2"
+                                    style="min-width: 180px;">
+                                <i class="fa fa-comments"/> Consultation
+                            </button>
+                            <button name="action_send_message" type="object"
+                                    class="btn btn-lg btn-success d-flex align-items-center gap-2"
+                                    style="min-width: 180px;">
+                                <i class="fa fa-envelope"/> Send Message
+                            </button>
+                            <button name="action_log_activity" type="object"
+                                    class="btn btn-lg btn-secondary d-flex align-items-center gap-2"
+                                    style="min-width: 180px;">
+                                <i class="fa fa-clock-o"/> Log Activity
+                            </button>
+                            <button name="action_notes" type="object"
+                                    class="btn btn-lg btn-dark d-flex align-items-center gap-2"
+                                    style="min-width: 180px;">
+                                <i class="fa fa-sticky-note"/> Notes
+                            </button>
+                            <button name="action_mark_spam" type="object"
+                                    class="btn btn-lg btn-danger d-flex align-items-center gap-2"
+                                    style="min-width: 180px;">
+                                <i class="fa fa-ban"/> Mark Spam
+                            </button>
+                            <button name="action_other" type="object"
+                                    class="btn btn-lg btn-outline-secondary d-flex align-items-center gap-2"
+                                    style="min-width: 180px;">
+                                <i class="fa fa-th-large"/> Other
+                            </button>
+                        </div>
+                    </div>
+                </sheet>
+                <footer>
+                    <button string="Close" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+</odoo>

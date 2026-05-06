@@ -87,6 +87,22 @@
                     <i class="fa fa-list-alt"/> View Invoices
                 </button>
 
+                <!-- View Packages -->
+                <button type="object" name="action_view_service_packages"
+                        class="vu-action-item"
+                        invisible="service_package_count == 0"
+                        groups="health_invoicing.group_health_invoicing_user">
+                    <i class="fa fa-gift"/> Packages
+                </button>
+
+                <!-- View Payments -->
+                <button type="object" name="action_view_payment_transactions"
+                        class="vu-action-item"
+                        invisible="payment_transaction_count == 0"
+                        groups="health_invoicing.group_health_invoicing_user">
+                    <i class="fa fa-credit-card"/> Payments
+                </button>
+
             </xpath>
 
             <!-- Active Service Packages with Gauge Widgets - Inject into Active Packages page -->

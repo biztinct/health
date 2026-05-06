@@ -3316,20 +3316,16 @@ class HealthFieldServiceOrderUnified(models.Model):
         }
 
     def action_open_fso_dashboard(self):
-        """Open the Booking workflow dashboard as modal"""
+        """Open the Client form as modal dashboard"""
         self.ensure_one()
         return {
             'type': 'ir.actions.act_window',
-            'name': _('Booking Dashboard — %s') % self.display_name,
+            'name': _('Client Dashboard — %s') % self.patient_id.name,
             'res_model': 'res.partner',
             'res_id': self.patient_id.id,
             'view_mode': 'form',
             'view_id': self.env.ref('health_base.view_health_patient_form').id,
             'target': 'new',
-            'context': {
-                'active_tab': 'address_info',
-                'booking_id': self.id,
-            }
         }
 
     def action_open_client_form(self):

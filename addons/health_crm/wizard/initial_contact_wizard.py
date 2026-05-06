@@ -672,14 +672,17 @@ class HealthInitialContactWizard(models.TransientModel):
             if not lead.partner_id.zalo_user_id:
                 lead.partner_id.zalo_user_id = self.zalo_number
 
-        # Return action to open the Lead Hub-Spoke Dashboard
+        # Open the contact action selector modal
+        wizard = self.env['health.contact.action.wizard'].create({
+            'lead_id': lead.id,
+        })
         return {
-            'type': 'ir.actions.client',
-            'tag': 'health_landing_lead_hub',
-            'params': {
-                'lead_id': lead.id,
-                'lead_name': lead.name,
-            },
+            'type': 'ir.actions.act_window',
+            'name': _('What would you like to do?'),
+            'res_model': 'health.contact.action.wizard',
+            'res_id': wizard.id,
+            'view_mode': 'form',
+            'target': 'new',
         }
     
     def action_home_mark_spam(self):

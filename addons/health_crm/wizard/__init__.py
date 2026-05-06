@@ -8,3 +8,4 @@ from . import booking_cancellation_wizard
 from . import followup_wizard
 from . import booking_wizard
 from . import mail_activity_schedule_inherit
+from . import contact_action_wizard

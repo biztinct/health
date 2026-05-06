@@ -60,6 +60,7 @@
         'wizard/client_selection_wizard_views.xml',
         'wizard/relationship_add_wizard_views.xml',
         'wizard/initial_contact_wizard_views.xml',
+        'wizard/contact_action_wizard_views.xml',
         'wizard/contact_search_wizard_views.xml',
         'wizard/client_search_wizard_views.xml',
         'wizard/escalation_wizard_views.xml',
