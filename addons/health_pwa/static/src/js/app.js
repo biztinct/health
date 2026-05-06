@@ -1118,6 +1118,7 @@ window.healthPWA = {
                   patient_name: order.patient_name,
                   patient_id: order.patient_id,
                   patient_phone: order.phone,
+                  patient_zalo: order.patient_zalo || null,
                   service_type: order.service_type,
                   appointment_type: '',
                   scheduled_datetime: order.scheduled_datetime,
@@ -1206,6 +1207,7 @@ window.healthPWA = {
                   patient_name: order.patient_name,
                   patient_id: order.patient_id,
                   patient_phone: order.phone,
+                  patient_zalo: order.patient_zalo || null,
                   service_type: order.service_type,
                   appointment_type: '',
                   scheduled_datetime: order.scheduled_datetime,
@@ -1491,6 +1493,12 @@ window.healthPWA = {
             window.location.href = `tel:${phone}`;
           } else {
             alert('No phone number available');
+          }
+        };
+
+        const callZalo = (zaloId) => {
+          if (zaloId) {
+            window.location.href = `https://zalo.me/${zaloId}`;
           }
         };
 
@@ -2701,6 +2709,7 @@ window.healthPWA = {
           getStatusDisplay,
           isRunningLate,
           callPatient,
+          callZalo,
           openMap,
           isTransitioning,
           // Calendar functions
@@ -2917,6 +2926,9 @@ window.healthPWA = {
                     <div class="booking-action-icons">
                       <button @click.stop="callPatient(booking.patient_phone)" class="btn-icon-action btn-icon-call" title="Call patient">
                         <i class="material-icons">call</i>
+                      </button>
+                      <button v-if="booking.patient_zalo" @click.stop="callZalo(booking.patient_zalo)" class="btn-icon-action btn-icon-zalo" title="Zalo call" style="background: #0068FF; color: #fff;">
+                        <i class="material-icons">chat</i>
                       </button>
                       <button @click.stop="openMap(booking.location, booking.patient_name)" class="btn-icon-action btn-icon-map" title="Open map">
                         <i class="material-icons">map</i>
@@ -4263,6 +4275,12 @@ window.healthPWA = {
           }
         };
 
+        const callZalo = (zaloId) => {
+          if (zaloId) {
+            window.location.href = `https://zalo.me/${zaloId}`;
+          }
+        };
+
         const openMap = (location, patientName) => {
           if (location) {
             const encodedLocation = encodeURIComponent(location);
@@ -4282,6 +4300,7 @@ window.healthPWA = {
           formatDate,
           viewPatient,
           callPatient,
+          callZalo,
           openMap
         };
       },
@@ -4338,6 +4357,9 @@ window.healthPWA = {
                 <div class="booking-action-icons">
                   <button v-if="patient.phone" @click.stop="callPatient(patient.phone)" class="btn-icon-action btn-icon-call" title="Call patient">
                     <i class="material-icons">call</i>
+                  </button>
+                  <button v-if="patient.zalo_user_id" @click.stop="callZalo(patient.zalo_user_id)" class="btn-icon-action btn-icon-zalo" title="Zalo call" style="background: #0068FF; color: #fff;">
+                    <i class="material-icons">chat</i>
                   </button>
                   <button @click.stop="openMap(patient.street || patient.street2, patient.name)" class="btn-icon-action btn-icon-map" title="Open map">
                     <i class="material-icons">map</i>

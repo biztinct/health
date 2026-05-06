@@ -68,9 +68,9 @@
                             <div class="o_row">
                                 <field name="name" nolabel="1" placeholder="Contact name..." 
                                        class="oe_inline" style="font-size: 16px; flex: 1;"/>
-                                <button name="action_search_by_name" type="object" 
+                                <button name="action_search_by_name" type="object"
                                         class="btn btn-outline-primary btn-sm"
-                                        string="🔍 Search" 
+                                        string="🔍"
                                         title="Search for existing contacts, leads, or clients"/>
                             </div>
                             <field name="catchment_province_id" string="Catchment Province" 
@@ -78,8 +78,10 @@
                                    placeholder="Select catchment province..."/>
                         </group>
                         <group>
-                            <field name="phone" string="Phone" widget="phone" 
+                            <field name="phone" string="Phone" widget="phone"
                                    placeholder="e.g. 0909 123 456"/>
+                            <field name="zalo_number" string="Zalo" widget="phone"
+                                   placeholder="Zalo number (auto-filled from phone)"/>
                             <field name="email" string="Email" widget="email"
                                    placeholder="e.g. email@example.com"/>
                         </group>
@@ -101,9 +103,9 @@
                                        placeholder="Enter client name..."
                                        required="contact_relationship_type != 'client'"
                                        class="oe_inline"/>
-                                <button name="action_search_client_by_name" type="object" 
+                                <button name="action_search_client_by_name" type="object"
                                         class="btn btn-outline-primary btn-sm"
-                                        string="🔍 Search" 
+                                        string="🔍"
                                         title="Search for existing clients"/>
                             </div>
                         </group>

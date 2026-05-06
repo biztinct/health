@@ -19,24 +19,7 @@
 
                 <sheet string="Client">
                     <div class="oe_button_box" name="button_box" groups="base.group_user">
-                        <button name="action_view_appointments" type="object" class="oe_stat_button" icon="fa-calendar-check-o"
-                                invisible="not is_patient">
-                            <field name="visit_count" string="Bookings" widget="statinfo"/>
-                        </button>
-
-                        <!-- REPRESENTATIVE SIDE: My Patients -->
-                        <button name="action_view_my_patients_as_caregiver" type="object" class="oe_stat_button" icon="fa-user-md"
-                                invisible="not is_caregiver or caregiver_patient_count == 0">
-                            <field name="caregiver_patient_count" string="Clients I Care For" widget="statinfo"/>
-                        </button>
-                        <button name="action_view_my_patients_as_payer" type="object" class="oe_stat_button" icon="fa-credit-card"
-                                invisible="not is_payer or payer_patient_count == 0">
-                            <field name="payer_patient_count" string="Clients I Pay For" widget="statinfo"/>
-                        </button>
-                        <button name="action_view_my_patients_as_referrer" type="object" class="oe_stat_button" icon="fa-share-square-o"
-                                invisible="not is_referrer or referrer_patient_count == 0">
-                            <field name="referrer_patient_count" string="Clients I Referred" widget="statinfo"/>
-                        </button>
+                        <!-- Smart buttons injected by dependent modules -->
                     </div>
 
                     <!-- Title Bar -->
@@ -121,7 +104,7 @@
                             <!-- Contact -->
                             <div class="vu-summary-card">
                                 <div class="vu-summary-header">Contact</div>
-                                <div class="vu-summary-row">
+                                <div class="vu-summary-row" name="phone_summary_row">
                                     <span class="vu-summary-row__label">Phone</span>
                                     <span class="vu-summary-row__value">
                                         <field name="phone" readonly="1" nolabel="1" widget="phone"/>
@@ -602,7 +585,8 @@
             <list string="Client Registry" decoration-warning="patient_status=='new'"
                   decoration-danger="patient_status=='deceased'" decoration-muted="patient_status=='inactive'"
                   decoration-success="patient_category_id and 'VIP' in patient_category_id.name"
-                  create="true" edit="true" delete="true" sample="1">
+                  create="true" edit="true" delete="true" sample="1"
+                  open_form_view="1">
 
                 <field name="patient_code"/>
                 <field name="name"/>

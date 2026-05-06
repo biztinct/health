@@ -123,10 +123,10 @@
 // In Odoo 19, forms default to inline edit. When a field is readonly-rendered
 // but editable on click, we show a small pencil to signal interactivity.
 
-.o_form_view .o_inner_group .o_field_widget:not(.o_readonly_modifier):not(.o_invisible_modifier):not(.o_field_boolean):not(.o_field_many2many_tags):not(.o_field_one2many):not(.o_field_image):not(.o_field_binary) {
+// Target editable fields in both standard groups and custom card layouts
+.o_form_view .o_field_widget:not(.o_readonly_modifier):not(.o_invisible_modifier):not(.o_field_boolean):not(.o_field_many2many_tags):not(.o_field_one2many):not(.o_field_many2one):not(.o_field_image):not(.o_field_binary):not(.o_field_html):not(.o_field_text):not(.o_field_statusbar):not(.o_field_selection):not([name="priority"]) {
     position: relative;
 
-    // Pencil icon after the field value
     &::after {
         content: '\f040'; // fa-pencil
         font-family: FontAwesome;
@@ -147,7 +147,8 @@
     }
 }
 
-// Hide pencil for fields that already show edit triggers or are in edit mode
+// Hide pencil when field is in active edit mode
+.o_form_view .o_field_widget.o_field_widget .o_input:focus ~ ::after,
 .o_form_editable .o_field_widget.o_field_widget::after {
     display: none !important;
 }
@@ -159,7 +160,10 @@
     display: none !important;
 }
 
-// Hide pencil on actual readonly fields (server-side readonly)
-.o_form_view .o_field_widget.o_readonly_modifier::after {
+// Hide pencil on readonly fields, stat buttons, and summary cards
+.o_form_view .o_field_widget.o_readonly_modifier::after,
+.o_form_view .oe_button_box .o_field_widget::after,
+.o_form_view .vu-summary-card .o_field_widget::after,
+.o_form_view .vu-col-summary .o_field_widget::after {
     display: none !important;
 }

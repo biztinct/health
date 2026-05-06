@@ -344,6 +344,7 @@ class HealthPWAAPIController(http.Controller):
                     'patient_id': order.patient_id.id if order.patient_id else None,
                     'patient_code': order.patient_id.patient_code if order.patient_id else None,
                     'patient_phone': order.patient_phone,
+                    'patient_zalo': order.patient_id.zalo_user_id if order.patient_id and hasattr(order.patient_id, 'zalo_user_id') else None,
                     'service_type': order._get_service_type_label() if hasattr(order, '_get_service_type_label') else order.service_type,
                     'appointment_type': '',
                     'scheduled_datetime': order.scheduled_datetime,

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-    <!-- Extend Patient Form View - Add Zalo Fields (Three-Column Layout) -->
+    <!-- Extend Patient Form View - Add Zalo Fields -->
     <record id="view_health_patient_form_zalo" model="ir.ui.view">
         <field name="name">res.partner.patient.form.zalo</field>
         <field name="model">res.partner</field>
@@ -17,6 +17,16 @@
                         invisible="zalo_conversation_count == 0">
                     <field name="zalo_conversation_count" widget="statinfo" string="Zalo Chats"/>
                 </button>
+            </xpath>
+
+            <!-- Add Zalo number to left summary panel below Phone -->
+            <xpath expr="//div[@name='phone_summary_row']" position="after">
+                <div class="vu-summary-row">
+                    <span class="vu-summary-row__label">Zalo</span>
+                    <span class="vu-summary-row__value">
+                        <field name="zalo_user_id" readonly="1" nolabel="1" widget="phone"/>
+                    </span>
+                </div>
             </xpath>
 
             <!-- Add Zalo User ID field after phone in the Other Information detail card -->
@@ -86,13 +96,13 @@
                         type="object"
                         class="vu-action-item"
                         invisible="not has_zalo">
-                    <i class="fa fa-comment"/> Zalo Chat
+                    <i class="fa fa-comment" title="Zalo Chat"/> Zalo Chat
                 </button>
                 <button name="action_call_zalo"
                         type="object"
                         class="vu-action-item"
                         invisible="not has_zalo">
-                    <i class="fa fa-phone"/> Zalo Call
+                    <i class="fa fa-phone" title="Zalo Call"/> Zalo Call
                 </button>
             </xpath>
 

@@ -55,7 +55,12 @@ class HealthInitialContactWizard(models.TransientModel):
         'Phone Number',
         help='Contact phone number'
     )
-    
+
+    zalo_number = fields.Char(
+        'Zalo Number',
+        help='Zalo number for this contact (defaults to phone number)'
+    )
+
     email = fields.Char(
         'Email',
         help='Contact email address'
@@ -475,6 +480,11 @@ class HealthInitialContactWizard(models.TransientModel):
                         'Existing client found: %s (Client ID: %s)'
                     ) % (existing_partner.name, existing_partner.patient_code or 'N/A')
     
+    @api.onchange('phone')
+    def _onchange_phone_to_zalo(self):
+        if self.phone and not self.zalo_number:
+            self.zalo_number = self.phone
+
     @api.onchange('phone', 'email')
     def _onchange_check_existing(self):
         """Auto-detect existing contacts when phone/email is entered"""
@@ -656,7 +666,12 @@ class HealthInitialContactWizard(models.TransientModel):
                 lead_vals['contact_type'] = 'repeat'
             
             lead = self.env['crm.lead'].create(lead_vals)
-        
+
+        # Write Zalo number to linked partner if available
+        if self.zalo_number and lead.partner_id and hasattr(lead.partner_id, 'zalo_user_id'):
+            if not lead.partner_id.zalo_user_id:
+                lead.partner_id.zalo_user_id = self.zalo_number
+
         # Return action to open the Lead Hub-Spoke Dashboard
         return {
             'type': 'ir.actions.client',
