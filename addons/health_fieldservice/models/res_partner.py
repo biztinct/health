@@ -123,19 +123,18 @@ class ResPartner(models.Model):
                 partner.last_assignment_date = False
     
     def action_create_fso(self):
-        """Open booking wizard starting at Services step with client pre-filled"""
+        """Open quick booking wizard (2-step: Services + Booking) with client pre-filled"""
         if not self.is_patient:
             raise UserError(_('Only patients can have Bookings created.'))
 
         return {
             'type': 'ir.actions.act_window',
             'name': _('Create Booking'),
-            'res_model': 'health.booking.wizard',
+            'res_model': 'health.quick.booking.wizard',
             'view_mode': 'form',
             'target': 'new',
             'context': {
                 'default_client_id': self.id,
-                'default_current_step': '2_services',
             }
         }
     

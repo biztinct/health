@@ -161,37 +161,37 @@ class Partner(models.Model):
             'res_model': 'health.service.package',
             'domain': [('patient_id', '=', self.id)],
             'view_mode': 'list,form',
-            'target': 'current',
+            'target': 'new',
             'context': {
                 'default_patient_id': self.id,
                 'create': True,
             }
         }
-    
+
     def action_view_payment_transactions(self):
         """View payment transactions for this patient"""
         self.ensure_one()
-        
+
         if not self.is_patient:
             raise UserError(_('Payment transactions are only available for patients.'))
-        
+
         return {
             'name': _('Payment Transactions'),
             'type': 'ir.actions.act_window',
             'res_model': 'health.payment.transaction',
             'domain': [('patient_id', '=', self.id)],
             'view_mode': 'list,form',
-            'target': 'current',
+            'target': 'new',
             'context': {
                 'default_patient_id': self.id,
                 'create': True,
             }
         }
-    
+
     def action_view_invoices(self):
         """View all invoices for this patient"""
         self.ensure_one()
-        
+
         return {
             'name': _('Patient Invoices'),
             'type': 'ir.actions.act_window',
@@ -206,7 +206,7 @@ class Partner(models.Model):
                 (self.env.ref('account.view_move_tree').id, 'list'),
                 (self.env.ref('account.view_move_form').id, 'form'),
             ],
-            'target': 'current',
+            'target': 'new',
         }
     
     def action_view_outstanding_invoices(self):

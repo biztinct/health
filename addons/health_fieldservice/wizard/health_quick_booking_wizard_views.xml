@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_quick_booking_wizard_form" model="ir.ui.view">
+        <field name="name">health.quick.booking.wizard.form</field>
+        <field name="model">health.quick.booking.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Create Booking">
+                <sheet>
+                    <!-- Step Progress -->
+                    <div style="margin-bottom: 20px; padding: 15px; background: linear-gradient(135deg, #0D47A1 0%, #1565C0 100%); border-radius: 8px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; color: white;">
+                            <div style="text-align: center; flex: 1;">
+                                <span style="background: white; color: #1565C0; padding: 8px 16px; border-radius: 20px; font-weight: bold;"
+                                      invisible="current_step != '1_services'">
+                                    1. Services
+                                </span>
+                                <span style="background: rgba(255,255,255,0.3); color: white; padding: 8px 16px; border-radius: 20px;"
+                                      invisible="current_step == '1_services'">
+                                    1. Services
+                                </span>
+                            </div>
+                            <div style="width: 50px; height: 2px; background: rgba(255,255,255,0.3);"/>
+                            <div style="text-align: center; flex: 1;">
+                                <span style="background: white; color: #1565C0; padding: 8px 16px; border-radius: 20px; font-weight: bold;"
+                                      invisible="current_step != '2_booking'">
+                                    2. Booking
+                                </span>
+                                <span style="background: rgba(255,255,255,0.3); color: white; padding: 8px 16px; border-radius: 20px;"
+                                      invisible="current_step == '2_booking'">
+                                    2. Booking
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <field name="current_step" invisible="1"/>
+                    <field name="client_id" invisible="1"/>
+                    <field name="currency_id" invisible="1"/>
+
+                    <!-- STEP 1: Services -->
+                    <div invisible="current_step != '1_services'">
+                        <h2 style="margin-bottom: 20px;">
+                            <span class="fa fa-stethoscope" style="margin-right: 10px; color: #1565C0;"/>
+                            Service Requirements
+                        </h2>
+
+                        <group>
+                            <group string="SERVICE SELECTION">
+                                <field name="service_category" string="Category"/>
+                                <field name="service_type" string="Service Type" required="1"/>
+                                <field name="service_subcategory" string="Sub-Category"/>
+                                <field name="service_location" string="Service Location"/>
+                            </group>
+                            <group string="SERVICE NOTES">
+                                <field name="service_notes" nolabel="1" placeholder="Additional service requirements..."/>
+                            </group>
+                        </group>
+
+                        <separator string="COMMISSION DETAILS"/>
+
+                        <group>
+                            <group>
+                                <field name="commission_due_to" string="Commission Due To"/>
+                                <field name="commission_percentage" string="Commission %"/>
+                                <field name="commission_duration" string="Duration"/>
+                            </group>
+                            <group>
+                                <field name="service_fee_vnd" string="Service Fee (VND)"/>
+                            </group>
+                        </group>
+                    </div>
+
+                    <!-- STEP 2: Booking -->
+                    <div invisible="current_step != '2_booking'">
+                        <h2 style="margin-bottom: 20px;">
+                            <span class="fa fa-calendar" style="margin-right: 10px; color: #1565C0;"/>
+                            Booking Details
+                        </h2>
+
+                        <group>
+                            <group string="LOCATION &amp; FACILITY">
+                                <field name="catchment_province_id" string="Catchment Province"/>
+                                <field name="facility_id" string="Healthcare Facility" required="1"/>
+                            </group>
+                            <group string="DATE &amp; TIME">
+                                <field name="booking_date" string="Date"/>
+                                <field name="booking_time" string="Time" widget="time_picker"/>
+                                <field name="booking_duration" string="Duration (Hours)"/>
+                            </group>
+                        </group>
+
+                        <group>
+                            <field name="booking_notes" nolabel="1"
+                                   placeholder="Any special instructions or notes..."/>
+                        </group>
+                    </div>
+
+                </sheet>
+
+                <footer>
+                    <button name="action_prev_step" type="object"
+                            string="&#x2190; Previous" class="btn-secondary"
+                            icon="fa-chevron-left"
+                            invisible="current_step == '1_services'"/>
+
+                    <button name="action_next_step" type="object"
+                            string="Next &#x2192;" class="btn-primary"
+                            icon="fa-chevron-right"
+                            invisible="current_step == '2_booking'"/>
+
+                    <button name="action_create_booking" type="object"
+                            string="&#x2714; Create Booking" class="btn-primary"
+                            icon="fa-check-circle"
+                            invisible="current_step != '2_booking'"/>
+
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+</odoo>

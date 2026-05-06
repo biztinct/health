@@ -177,6 +177,12 @@
                             <!-- Relationships -->
                             <div class="vu-summary-card" name="relationships_summary">
                                 <div class="vu-summary-header">Relationships</div>
+                                <div class="vu-summary-row" invisible="not primary_referrer_id">
+                                    <span class="vu-summary-row__label">I have Referrer</span>
+                                    <span class="vu-summary-row__value">
+                                        <field name="primary_referrer_id" readonly="1" nolabel="1"/>
+                                    </span>
+                                </div>
                                 <div class="vu-summary-row">
                                     <span class="vu-summary-row__label">I am Caregiver for</span>
                                     <span class="vu-summary-row__value">

@@ -2,3 +2,4 @@
 
 from . import health_staff_assignment_wizard
 from . import health_booking_cancel_wizard
+from . import health_quick_booking_wizard

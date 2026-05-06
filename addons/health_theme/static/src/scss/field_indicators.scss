@@ -126,47 +126,51 @@
 }
 
 // ---------------------------------------------------------------------------
-// Pencil icon on editable fields — shows edit affordance in readonly mode
+// Pencil icon on editable fields — shows edit affordance on hover
 // ---------------------------------------------------------------------------
-// In Odoo 19, forms default to inline edit. When a field is readonly-rendered
-// but editable on click, we show a small pencil to signal interactivity.
+$_editable-field-selector: ':not(.o_readonly_modifier):not(.o_invisible_modifier):not(.o_field_boolean):not(.o_field_image):not(.o_field_binary):not(.o_field_one2many):not(.o_field_many2many_tags):not(.o_field_many2many):not(.o_field_statusbar)';
 
-// Target the inner content span of editable fields (Odoo 19 renders field
-// values inside .o_field_widget > span or .o_field_widget > .o_field_char_content etc.)
-// We target the outer widget wrapper and use a border-based indicator instead
-// of ::after pseudo-element which gets clipped by widget internals.
-.o_form_view .o_inner_group .o_wrap_field .o_cell.o_wrap_input .o_field_widget:not(.o_readonly_modifier):not(.o_invisible_modifier):not(.o_field_boolean):not(.o_field_image):not(.o_field_binary):not(.o_field_one2many):not(.o_field_many2many_tags) {
+.o_form_view .o_inner_group .o_wrap_field .o_cell.o_wrap_input .o_field_widget#{$_editable-field-selector},
+.o_form_view .vu-detail-card .o_field_widget#{$_editable-field-selector} {
+    position: relative;
     cursor: pointer;
-    border-bottom: 1px dashed transparent;
-    transition: border-color 0.15s ease;
 
-    &:hover {
-        border-bottom-color: var(--vu-brand-primary, #1565C0);
+    &::after {
+        content: '\f040'; // fa-pencil
+        font-family: 'FontAwesome';
+        position: absolute;
+        right: 4px;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 0.6875rem;
+        color: var(--vu-text-secondary, #6b7280);
+        opacity: 0;
+        transition: opacity 0.15s ease;
+        pointer-events: none;
+    }
+
+    &:hover::after {
+        opacity: 0.6;
     }
 }
 
-// Also target fields inside vu-detail-card (our custom card layout)
-.o_form_view .vu-detail-card .o_field_widget:not(.o_readonly_modifier):not(.o_invisible_modifier):not(.o_field_boolean):not(.o_field_image):not(.o_field_binary):not(.o_field_one2many):not(.o_field_many2many_tags) {
-    cursor: pointer;
-    border-bottom: 1px dashed transparent;
-    transition: border-color 0.15s ease;
-
-    &:hover {
-        border-bottom-color: var(--vu-brand-primary, #1565C0);
-    }
-}
-
-// Hide edit indicator on readonly fields, summary cards, and terminal states
+// Hide pencil on readonly fields, summary cards, and terminal states
 .o_form_view .o_field_widget.o_readonly_modifier,
 .o_form_view .vu-summary-card .o_field_widget,
 .o_form_view .vu-col-summary .o_field_widget {
-    border-bottom: none !important;
     cursor: default !important;
+
+    &::after {
+        display: none !important;
+    }
 }
 
 .o_form_view.vu-state--completed .o_field_widget,
 .o_form_view.vu-state--cancelled .o_field_widget,
 .o_form_view.vu-state--closed .o_field_widget {
-    border-bottom: none !important;
     cursor: default !important;
+
+    &::after {
+        display: none !important;
+    }
 }

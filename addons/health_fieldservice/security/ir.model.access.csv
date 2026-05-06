@@ -87,3 +87,6 @@ access_health_staff_availability_matrix_owner,health.staff.availability.matrix.o
 access_health_staff_skill_owner,health.staff.skill.owner,model_health_staff_skill,health_base.group_healthcare_owner,1,1,1,1
 access_health_service_area_owner,health.service.area.owner,model_health_service_area,health_base.group_healthcare_owner,1,1,1,1
 access_health_appointment_owner,health.appointment.owner,model_health_appointment,health_base.group_healthcare_owner,1,1,1,1
+access_health_quick_booking_wizard_user,health.quick.booking.wizard.user,model_health_quick_booking_wizard,health_base.group_healthcare_nurse,1,1,1,1
+access_health_quick_booking_wizard_manager,health.quick.booking.wizard.manager,model_health_quick_booking_wizard,health_base.group_healthcare_operations_manager,1,1,1,1
+access_health_quick_booking_wizard_owner,health.quick.booking.wizard.owner,model_health_quick_booking_wizard,health_base.group_healthcare_owner,1,1,1,1
