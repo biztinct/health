@@ -142,11 +142,9 @@ class ResPartner(models.Model):
     
     # Patient Status & Tracking
     patient_status = fields.Selection([
-        ('new', 'New Client'),
         ('active', 'Active'),
         ('inactive', 'Inactive'),
-        ('deceased', 'Deceased')
-    ], string='Client Status', default='new', tracking=True)
+    ], string='Client Status', default='active', tracking=True)
     deceased = fields.Boolean('Deceased', tracking=True)
     
     registration_date = fields.Datetime('Registration Date', default=fields.Datetime.now, readonly=True)

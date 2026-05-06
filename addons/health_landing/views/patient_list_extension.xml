@@ -30,7 +30,7 @@
             'search_default_active_patients': 1,
             'default_is_patient': True,
             'default_customer_rank': 1,
-            'default_patient_status': 'new',
+            'default_patient_status': 'active',
         }</field>
     </record>
 

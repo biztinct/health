@@ -14,7 +14,7 @@
             <form string="Client Record" class="o_form_patient_record">
                 <field name="active" invisible="1"/>
                 <header>
-                    <field name="patient_status" widget="statusbar" statusbar_visible="new,active,inactive"/>
+                    <field name="patient_status" widget="statusbar" statusbar_visible="active,inactive"/>
                 </header>
 
                 <sheet string="Client">
@@ -44,10 +44,6 @@
                     <div class="alert alert-danger" role="alert" invisible="not allergies">
                         <strong><i class="fa fa-exclamation-triangle" title="Warning"/> ALLERGIES:</strong>
                         <field name="allergies" readonly="1"/>
-                    </div>
-                    <div class="alert alert-warning" role="alert" invisible="patient_status != 'new'">
-                        <strong><i class="fa fa-info-circle"/> NEW CLIENT:</strong>
-                        Please complete all required information and verify insurance details.
                     </div>
 
                     <!-- ========================================================
@@ -93,10 +89,7 @@
                                 <div class="vu-summary-row">
                                     <span class="vu-summary-row__label">Status</span>
                                     <span class="vu-summary-row__value">
-                                        <field name="patient_status" readonly="1" nolabel="1" widget="badge"
-                                               decoration-success="patient_status == 'active'"
-                                               decoration-warning="patient_status == 'new'"
-                                               decoration-muted="patient_status == 'inactive'"/>
+                                        <field name="patient_status" nolabel="1"/>
                                     </span>
                                 </div>
                             </div>
@@ -181,6 +174,35 @@
                                 </div>
                             </div>
 
+                            <!-- Relationships -->
+                            <div class="vu-summary-card" name="relationships_summary">
+                                <div class="vu-summary-header">Relationships</div>
+                                <div class="vu-summary-row">
+                                    <span class="vu-summary-row__label">I am Caregiver for</span>
+                                    <span class="vu-summary-row__value">
+                                        <button name="action_view_my_patients_as_caregiver" type="object" class="btn btn-link p-0">
+                                            <field name="caregiver_patient_count" readonly="1" nolabel="1"/> clients
+                                        </button>
+                                    </span>
+                                </div>
+                                <div class="vu-summary-row">
+                                    <span class="vu-summary-row__label">I am Payer for</span>
+                                    <span class="vu-summary-row__value">
+                                        <button name="action_view_my_patients_as_payer" type="object" class="btn btn-link p-0">
+                                            <field name="payer_patient_count" readonly="1" nolabel="1"/> clients
+                                        </button>
+                                    </span>
+                                </div>
+                                <div class="vu-summary-row">
+                                    <span class="vu-summary-row__label">I am Referrer for</span>
+                                    <span class="vu-summary-row__value">
+                                        <button name="action_view_my_patients_as_referrer" type="object" class="btn btn-link p-0">
+                                            <field name="referrer_patient_count" readonly="1" nolabel="1"/> clients
+                                        </button>
+                                    </span>
+                                </div>
+                            </div>
+
                         </div>
 
                         <!-- ====================================================
@@ -188,59 +210,53 @@
                              ==================================================== -->
                         <div class="vu-col-content">
 
-                            <!-- Profile Overview -->
-                            <div class="vu-section">
-                                <div class="vu-section__title">
-                                    <span class="vu-section__icon" data-icon="id-card"/>
-                                    <div>
-                                        <span>Profile Overview</span>
-                                        <small class="text-muted d-block">Identity, contact and onboarding source</small>
-                                    </div>
-                                </div>
-                                <div class="vu-section-grid">
-                                    <div class="vu-detail-card">
-                                        <span class="vu-detail-card__edit-trigger"><i class="fa fa-pencil" title="Edit"/></span>
-                                        <div class="vu-card__title">
-                                            <span class="vu-section__icon" data-icon="id-card"/>
-                                            <span>Personal Information</span>
-                                        </div>
-                                        <group col="2">
-                                            <field name="title"/>
-                                            <field name="first_name"/>
-                                            <field name="last_name"/>
-                                            <field name="middle_name"/>
-                                            <field name="vietnamese_name" placeholder="Tên tiếng Việt"/>
-                                            <field name="birth_date"/>
-                                            <field name="deceased"/>
-                                            <field name="gender"/>
-                                        </group>
-                                    </div>
-
-                                    <div class="vu-detail-card">
-                                        <span class="vu-detail-card__edit-trigger"><i class="fa fa-pencil" title="Edit"/></span>
-                                        <div class="vu-card__title">
-                                            <span class="vu-section__icon" data-icon="users-group"/>
-                                            <span>Other Information</span>
-                                        </div>
-                                        <group col="2">
-                                            <field name="phone" widget="phone" required="1"/>
-                                            <field name="mobile" widget="phone" invisible="1"/>
-                                            <field name="email" widget="email"/>
-                                            <field name="patient_category_id"/>
-                                            <field name="catchment_province_id" required="1"/>
-                                            <field name="primary_facility_id" domain="[('catchment_province_id', '=', catchment_province_id)]"/>
-                                            <field name="source_type"/>
-                                            <field name="national_id"/>
-                                            <field name="profession" string="Occupation"/>
-                                            <field name="ethnicity"/>
-                                            <field name="commission_due_to" string="Commission Duration"/>
-                                        </group>
-                                    </div>
-                                </div>
-                            </div>
-
                             <!-- Notebook with all tabs -->
                             <notebook>
+                                <!-- Profile Overview (first tab) -->
+                                <page string="Profile Overview" name="profile_overview">
+                                    <div class="vu-section">
+                                        <div class="vu-section-grid">
+                                            <div class="vu-detail-card">
+                                                <span class="vu-detail-card__edit-trigger"><i class="fa fa-pencil" title="Edit"/></span>
+                                                <div class="vu-card__title">
+                                                    <span class="vu-section__icon" data-icon="id-card"/>
+                                                    <span>Personal Information</span>
+                                                </div>
+                                                <group col="2">
+                                                    <field name="title"/>
+                                                    <field name="first_name"/>
+                                                    <field name="last_name"/>
+                                                    <field name="middle_name"/>
+                                                    <field name="vietnamese_name" placeholder="Tên tiếng Việt"/>
+                                                    <field name="birth_date"/>
+                                                    <field name="deceased"/>
+                                                    <field name="gender"/>
+                                                </group>
+                                            </div>
+
+                                            <div class="vu-detail-card">
+                                                <span class="vu-detail-card__edit-trigger"><i class="fa fa-pencil" title="Edit"/></span>
+                                                <div class="vu-card__title">
+                                                    <span class="vu-section__icon" data-icon="users-group"/>
+                                                    <span>Other Information</span>
+                                                </div>
+                                                <group col="2">
+                                                    <field name="phone" widget="phone" required="1"/>
+                                                    <field name="mobile" widget="phone" invisible="1"/>
+                                                    <field name="email" widget="email"/>
+                                                    <field name="patient_category_id"/>
+                                                    <field name="catchment_province_id" required="1"/>
+                                                    <field name="primary_facility_id" domain="[('catchment_province_id', '=', catchment_province_id)]"/>
+                                                    <field name="source_type"/>
+                                                    <field name="national_id"/>
+                                                    <field name="profession" string="Occupation"/>
+                                                    <field name="ethnicity"/>
+                                                    <field name="commission_due_to" string="Commission Duration"/>
+                                                </group>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </page>
                                 <!-- Address Information Page -->
                                 <page string="Address Information" name="address_info">
                                     <div class="vu-section">
@@ -518,23 +534,7 @@
                              ==================================================== -->
                         <div class="vu-col-actions">
 
-                            <!-- Status-driven primary action -->
-                            <div class="vu-action-card vu-action-card--primary"
-                                 invisible="patient_status != 'new'">
-                                <div class="vu-action-card__title">
-                                    <i class="fa fa-check-circle"/> Activate Client
-                                </div>
-                                <div class="vu-action-card__subtitle">
-                                    Complete all required information, then activate this client.
-                                </div>
-                                <div class="vu-action-card__actions">
-                                    <button name="action_activate_patient" type="object"
-                                            class="vu-action-btn vu-action-btn--primary">
-                                        <i class="fa fa-check"/> Activate
-                                    </button>
-                                </div>
-                            </div>
-
+                            <!-- Create Booking action card -->
                             <div class="vu-action-card vu-action-card--primary"
                                  invisible="patient_status != 'active'">
                                 <div class="vu-action-card__title">
@@ -582,8 +582,7 @@
         <field name="name">res.partner.patient.list</field>
         <field name="model">res.partner</field>
         <field name="arch" type="xml">
-            <list string="Client Registry" decoration-warning="patient_status=='new'"
-                  decoration-danger="patient_status=='deceased'" decoration-muted="patient_status=='inactive'"
+            <list string="Client Registry" decoration-muted="patient_status=='inactive'"
                   decoration-success="patient_category_id and 'VIP' in patient_category_id.name"
                   create="true" edit="true" delete="true" sample="1"
                   open_form_view="1">
@@ -641,7 +640,7 @@
                                         <strong><field name="name"/></strong>
                                     </div>
                                 </div>
-                                <span class="badge badge-pill" t-att-class="record.patient_status.raw_value === 'new' ? 'badge-warning' : (record.patient_status.raw_value === 'active' ? 'badge-success' : 'badge-secondary')">
+                                <span class="badge badge-pill" t-att-class="record.patient_status.raw_value === 'active' ? 'badge-success' : 'badge-secondary'">
                                     <field name="patient_status"/>
                                 </span>
                             </div>
@@ -699,7 +698,6 @@
 
                 <!-- Status Filters -->
                 <filter name="active_patients" string="Active" domain="[('patient_status', '=', 'active')]"/>
-                <filter name="new_patients" string="New" domain="[('patient_status', '=', 'new')]"/>
                 <filter name="inactive_patients" string="Inactive" domain="[('patient_status', '=', 'inactive')]"/>
 
                 <separator/>
@@ -737,7 +735,7 @@
             'default_is_patient': True,
             'default_customer_rank': 1,
             'default_country_id': 241,
-            'default_patient_status': 'new',
+            'default_patient_status': 'active',
             'create': True,
             'edit': True,
             'delete': True
