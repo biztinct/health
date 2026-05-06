@@ -123,24 +123,21 @@ class ResPartner(models.Model):
                 partner.last_assignment_date = False
     
     def action_create_fso(self):
-        """Create a new Field Service Order for this patient"""
+        """Open booking wizard starting at Services step with client pre-filled"""
         if not self.is_patient:
             raise UserError(_('Only patients can have Bookings created.'))
-        
-        # Create new FSO with patient pre-filled
-        action = {
+
+        return {
             'type': 'ir.actions.act_window',
             'name': _('Create Booking'),
-            'res_model': 'health.fieldservice.order',
+            'res_model': 'health.booking.wizard',
             'view_mode': 'form',
-            'target': 'current',
+            'target': 'new',
             'context': {
-                'default_patient_id': self.id,
-                'default_customer_id': self.id,
-                'default_state': 'draft',
+                'default_client_id': self.id,
+                'default_current_step': '2_services',
             }
         }
-        return action
     
     def action_view_fso_orders(self):
         """View all Bookings for this patient"""

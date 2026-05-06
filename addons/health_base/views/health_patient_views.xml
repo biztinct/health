@@ -418,27 +418,8 @@
                                     </div>
                                 </page>
 
-                                <!-- Active Service Packages -->
-                                <page string="Active Packages" name="active_packages">
-                                    <div class="vu-section">
-                                        <div class="vu-section__title">
-                                            <span class="vu-section__icon" data-icon="package"/>
-                                            <div>
-                                                <span>Active Packages</span>
-                                                <small class="text-muted d-block">Bundles and prepaid services currently assigned</small>
-                                            </div>
-                                        </div>
-                                        <div class="vu-detail-card">
-                                            <div class="vu-card__title">
-                                                <span class="vu-section__icon" data-icon="package"/>
-                                                <span>Package Summary</span>
-                                            </div>
-                                            <p>
-                                                Package information will be injected by the <strong>health_invoicing</strong> module.
-                                            </p>
-                                        </div>
-                                    </div>
-                                </page>
+                                <!-- Active Packages (content injected by health_invoicing) -->
+                                <page string="Active Packages" name="active_packages" invisible="1"/>
 
                                 <!-- Healthcare Relationships -->
                                 <page string="Healthcare Relationships" name="healthcare_relationships">
