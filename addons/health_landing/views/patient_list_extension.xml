@@ -34,16 +34,6 @@
         }</field>
     </record>
 
-    <record id="view_health_patient_list_hub_spoke" model="ir.ui.view">
-        <field name="name">res.partner.patient.list.hub.spoke</field>
-        <field name="model">res.partner</field>
-        <field name="inherit_id" ref="health_base.view_health_patient_tree"/>
-        <field name="arch" type="xml">
-            <xpath expr="//list" position="attributes">
-                <attribute name="action">action_open_hub_spoke</attribute>
-                <attribute name="type">object</attribute>
-            </xpath>
-        </field>
-    </record>
+    <!-- List view click opens form directly (open_form_view="1" set in health_base) -->
 
 </odoo>

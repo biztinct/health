@@ -24,6 +24,7 @@
 
                     <!-- Title Bar -->
                     <div class="oe_title">
+                        <label for="name" string="Client" class="text-muted small"/>
                         <h1 class="d-flex align-items-center gap-3">
                             <field name="name" placeholder="Client Full Name" required="1" class="o_text_overflow flex-grow-1"/>
                             <div class="patient-badges">
@@ -419,7 +420,7 @@
                                 </page>
 
                                 <!-- Active Packages (content injected by health_invoicing) -->
-                                <page string="Active Packages" name="active_packages" invisible="1"/>
+                                <page string="Active Packages" name="active_packages"/>
 
                                 <!-- Healthcare Relationships -->
                                 <page string="Healthcare Relationships" name="healthcare_relationships">

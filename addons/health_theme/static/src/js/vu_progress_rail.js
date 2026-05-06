@@ -27,7 +27,12 @@ const DEFAULT_STEPS = [
 
 export class VuProgressRail extends Component {
     static template = "health_theme.VuProgressRail";
-    static props = { ...standardWidgetProps };
+    static props = {
+        ...standardWidgetProps,
+        steps: { type: String, optional: true },
+        labels: { type: String, optional: true },
+        stateField: { type: String, optional: true },
+    };
 
     get stateField() {
         return this.props.stateField || "state";
