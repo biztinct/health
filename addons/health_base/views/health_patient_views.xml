@@ -24,8 +24,8 @@
 
                     <!-- Title Bar -->
                     <div class="oe_title">
-                        <label for="name" string="Client" class="text-muted small"/>
                         <h1 class="d-flex align-items-center gap-3">
+                            <span class="fw-bold">Client</span>
                             <field name="name" placeholder="Client Full Name" required="1" class="o_text_overflow flex-grow-1"/>
                             <div class="patient-badges">
                                 <span class="badge patient-badge">

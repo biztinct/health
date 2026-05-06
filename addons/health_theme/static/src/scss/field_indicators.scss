@@ -105,6 +105,14 @@
     }
 }
 
+// Remove Odoo's default red left-border on required empty fields
+.o_form_view .o_field_widget.o_required_modifier .o_input,
+.o_form_view .o_field_widget.o_required_modifier input,
+.o_form_view .o_field_widget.o_required_modifier textarea {
+    border-left-color: var(--o-input-border-color, #dee2e6) !important;
+    border-left-width: 1px !important;
+}
+
 // Mandatory field dot indicator (improves on Odoo default)
 .o_form_view .o_form_label.o_form_label_empty.o_required_modifier::after {
     content: '';
