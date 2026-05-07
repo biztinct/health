@@ -17,6 +17,10 @@ const _t = (s) => {
   return s;
 };
 
+const getPWALocale = () => (
+  window.healthPWAConfig?.user_lang?.startsWith('vi') ? 'vi-VN' : 'en-US'
+);
+
 // Utility function to strip HTML tags from text
 const stripHtmlTags = (html) => {
   if (!html) return '';
@@ -437,8 +441,8 @@ window.healthPWA = {
                 <img src="/health_pwa/static/icons/icon-192.png" alt="Health Mobile" width="80" height="80"/>
               </div>
               <div class="loading-text">
-                <h3>Health Mobile</h3>
-                <p>Loading healthcare data...</p>
+                <h3>{{ _t('Health Mobile') }}</h3>
+                <p>{{ _t('Loading healthcare data...') }}</p>
               </div>
               <div class="loading-spinner">
                 <div class="spinner"></div>
@@ -461,9 +465,9 @@ window.healthPWA = {
                   <i class="material-icons">notifications</i>
                   <span v-if="state.pendingAssignments.length > 0" class="notif-badge">{{ state.pendingAssignments.length }}</span>
                 </button>
-                <div v-if="!state.isOnline" class="status-dot status-offline" title="Offline"></div>
-                <div v-else-if="state.syncStatus === 'syncing'" class="status-dot status-sync" title="Syncing"></div>
-                <div v-else class="status-dot status-online" title="Online"></div>
+                <div v-if="!state.isOnline" class="status-dot status-offline" :title="_t('Offline')"></div>
+                <div v-else-if="state.syncStatus === 'syncing'" class="status-dot status-sync" :title="_t('Syncing')"></div>
+                <div v-else class="status-dot status-online" :title="_t('Online')"></div>
               </div>
             </header>
 
@@ -487,7 +491,7 @@ window.healthPWA = {
                       <div class="notif-card-header">
                         <span class="notif-type-badge notif-badge-assignment">{{ t('Xác nhận', 'Confirm') }}</span>
                         <span class="notif-time">{{ notif.scheduled_datetime }}</span>
-                        <button class="notif-dismiss-x" @click.stop="dismissNotification(notif.id)" title="Dismiss">&times;</button>
+                        <button class="notif-dismiss-x" @click.stop="dismissNotification(notif.id)" :title="_t('Dismiss')">&times;</button>
                       </div>
                       <div class="notif-card-body">
                         <div class="notif-detail"><i class="material-icons">person</i> {{ notif.patient_name }}</div>
@@ -508,7 +512,7 @@ window.healthPWA = {
                     <template v-else-if="notif.type === 'cancelled'">
                       <div class="notif-card-header">
                         <span class="notif-type-badge notif-badge-cancelled">{{ t('Đã hủy', 'Cancelled') }}</span>
-                        <button class="notif-dismiss-x" @click.stop="dismissNotification(notif.id)" title="Dismiss">&times;</button>
+                        <button class="notif-dismiss-x" @click.stop="dismissNotification(notif.id)" :title="_t('Dismiss')">&times;</button>
                       </div>
                       <div class="notif-card-body">
                         <div class="notif-detail"><i class="material-icons">person</i> {{ notif.patient_name }}</div>
@@ -526,7 +530,7 @@ window.healthPWA = {
                     <template v-else-if="notif.type === 'rescheduled'">
                       <div class="notif-card-header">
                         <span class="notif-type-badge notif-badge-rescheduled">{{ t('Đã đổi lịch', 'Rescheduled') }}</span>
-                        <button class="notif-dismiss-x" @click.stop="dismissNotification(notif.id)" title="Dismiss">&times;</button>
+                        <button class="notif-dismiss-x" @click.stop="dismissNotification(notif.id)" :title="_t('Dismiss')">&times;</button>
                       </div>
                       <div class="notif-card-body">
                         <div class="notif-detail"><i class="material-icons">person</i> {{ notif.patient_name }}</div>
@@ -610,9 +614,9 @@ window.healthPWA = {
               
               <!-- Default/404 -->
               <div v-else class="error-view">
-                <h2>Page Not Found</h2>
-                <p>The requested page could not be found.</p>
-                <button @click="navigate('today')" class="btn btn-primary">Go to Today</button>
+                <h2>{{ _t('Page Not Found') }}</h2>
+                <p>{{ _t('The requested page could not be found.') }}</p>
+                <button @click="navigate('today')" class="btn btn-primary">{{ _t('Go to Today') }}</button>
               </div>
             </main>
             
@@ -676,12 +680,12 @@ window.healthPWA = {
       methods: {
         getRouteTitle() {
           const titles = {
-            today: 'Today',
-            patients: 'Patients',
-            patient: 'Patient Details',
-            profile: 'Profile'
+            today: _t('Today'),
+            patients: _t('Patients'),
+            patient: _t('Patient Details'),
+            profile: _t('Profile')
           };
-          return titles[this.state.currentRoute] || 'Health Mobile';
+          return titles[this.state.currentRoute] || _t('Health Mobile');
         },
         
         getCurrentRouteId() {
@@ -694,6 +698,8 @@ window.healthPWA = {
     
     // Create and mount Vue app
     const app = createApp(HealthApp);
+    app.config.globalProperties._t = _t;
+    app.provide('_t', _t);
     
     // Register global components (will be loaded from separate files)
     this.registerComponents(app);
@@ -733,10 +739,10 @@ window.healthPWA = {
       template: `
         <div class="dashboard-view">
           <div class="dashboard-header">
-            <h2>Welcome back, {{ user?.name || 'User' }}</h2>
+            <h2>{{ _t('Welcome back') }}, {{ user?.name || _t('User') }}</h2>
             <p v-if="!isOnline" class="offline-notice">
               <i class="material-icons">wifi_off</i>
-              Working offline
+              {{ _t('Working offline') }}
             </p>
           </div>
           
@@ -746,8 +752,8 @@ window.healthPWA = {
                 <i class="material-icons">people</i>
               </div>
               <div class="stat-content">
-                <h3>Patients</h3>
-                <p>Manage patient records</p>
+                <h3>{{ _t('Patients') }}</h3>
+                <p>{{ _t('Manage patient records') }}</p>
               </div>
             </div>
 
@@ -756,8 +762,8 @@ window.healthPWA = {
                 <i class="material-icons">assignment</i>
               </div>
               <div class="stat-content">
-                <h3>Field Orders</h3>
-                <p>View service orders</p>
+                <h3>{{ _t('Field Orders') }}</h3>
+                <p>{{ _t('View service orders') }}</p>
               </div>
             </div>
 
@@ -766,8 +772,8 @@ window.healthPWA = {
                 <i class="material-icons">group</i>
               </div>
               <div class="stat-content">
-                <h3>Teams</h3>
-                <p>Team management</p>
+                <h3>{{ _t('Teams') }}</h3>
+                <p>{{ _t('Team management') }}</p>
               </div>
             </div>
           </div>
@@ -775,15 +781,15 @@ window.healthPWA = {
           <div class="dashboard-actions">
             <button @click="$emit('sync')" class="btn btn-primary" :disabled="!isOnline">
               <i class="material-icons">sync</i>
-              Sync Data
+              {{ _t('Sync Data') }}
             </button>
-            <button @click="$emit('sync', true)" class="btn btn-secondary" :disabled="!isOnline" title="Force full sync of all data">
+            <button @click="$emit('sync', true)" class="btn btn-secondary" :disabled="!isOnline" :title="_t('Force full sync of all data')">
               <i class="material-icons">refresh</i>
-              Force Full Sync
+              {{ _t('Force Full Sync') }}
             </button>
-            <button @click="checkDebugInfo" class="btn btn-outline" :disabled="!isOnline" title="Check server data availability">
+            <button @click="checkDebugInfo" class="btn btn-outline" :disabled="!isOnline" :title="_t('Check server data availability')">
               <i class="material-icons">bug_report</i>
-              Debug Info
+              {{ _t('Debug Info') }}
             </button>
           </div>
         </div>
@@ -801,7 +807,7 @@ window.healthPWA = {
         const isLoading = ref(true);
         const error = ref(null);
         const staffName = ref('');
-        const displayDate = ref(new Date().toLocaleDateString());
+        const displayDate = ref(new Date().toLocaleDateString(getPWALocale()));
         const currentDate = ref(new Date());
         const touchStartX = ref(0);
         const touchStartY = ref(0);
@@ -958,8 +964,8 @@ window.healthPWA = {
               });
 
               bookings.value = bookingsList;
-              staffName.value = result.data.staff_name || 'Staff';
-              displayDate.value = dateObj.toLocaleDateString('en-US', {
+              staffName.value = result.data.staff_name || _t('Staff');
+              displayDate.value = dateObj.toLocaleDateString(getPWALocale(), {
                 weekday: 'long',
                 year: 'numeric',
                 month: 'long',
@@ -1097,12 +1103,12 @@ window.healthPWA = {
             const result = await response.json();
 
             if (result.success && result.data) {
-              staffName.value = result.data.staff_name || 'Staff';
+              staffName.value = result.data.staff_name || _t('Staff');
 
               // Group bookings by date
               const grouped = {};
               (result.data.orders || []).forEach(order => {
-                const bookingDate = parseOdooDateTime(order.scheduled_datetime).toLocaleDateString('en-US', {
+                const bookingDate = parseOdooDateTime(order.scheduled_datetime).toLocaleDateString(getPWALocale(), {
                   weekday: 'long',
                   year: 'numeric',
                   month: 'long',
@@ -1122,7 +1128,7 @@ window.healthPWA = {
                   service_type: order.service_type,
                   appointment_type: '',
                   scheduled_datetime: order.scheduled_datetime,
-                  scheduled_time: parseOdooDateTime(order.scheduled_datetime).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
+                  scheduled_time: parseOdooDateTime(order.scheduled_datetime).toLocaleTimeString(getPWALocale(), { hour: '2-digit', minute: '2-digit' }),
                   scheduled_duration: order.scheduled_duration || 60,
                   status: order.status,
                   status_display: order.status_display,
@@ -1155,7 +1161,7 @@ window.healthPWA = {
                 });
 
               groupedBookings.value = sortedGrouped;
-              displayDate.value = `Week of ${weekStart.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`;
+              displayDate.value = `${_t('Week of')} ${weekStart.toLocaleDateString(getPWALocale(), { month: 'short', day: 'numeric' })}`;
               console.log('Loaded week bookings:', sortedGrouped);
             } else {
               error.value = result.error || 'Failed to load week bookings';
@@ -1186,12 +1192,12 @@ window.healthPWA = {
             const result = await response.json();
 
             if (result.success && result.data) {
-              staffName.value = result.data.staff_name || 'Staff';
+              staffName.value = result.data.staff_name || _t('Staff');
 
               // Group bookings by date
               const grouped = {};
               (result.data.orders || []).forEach(order => {
-                const bookingDate = parseOdooDateTime(order.scheduled_datetime).toLocaleDateString('en-US', {
+                const bookingDate = parseOdooDateTime(order.scheduled_datetime).toLocaleDateString(getPWALocale(), {
                   weekday: 'long',
                   year: 'numeric',
                   month: 'long',
@@ -1211,7 +1217,7 @@ window.healthPWA = {
                   service_type: order.service_type,
                   appointment_type: '',
                   scheduled_datetime: order.scheduled_datetime,
-                  scheduled_time: parseOdooDateTime(order.scheduled_datetime).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
+                  scheduled_time: parseOdooDateTime(order.scheduled_datetime).toLocaleTimeString(getPWALocale(), { hour: '2-digit', minute: '2-digit' }),
                   scheduled_duration: order.scheduled_duration || 60,
                   status: order.status,
                   status_display: order.status_display,
@@ -1244,7 +1250,7 @@ window.healthPWA = {
                 });
 
               groupedBookings.value = sortedGrouped;
-              displayDate.value = dateInMonth.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+              displayDate.value = dateInMonth.toLocaleDateString(getPWALocale(), { month: 'long', year: 'numeric' });
               console.log('Loaded month bookings:', sortedGrouped);
             } else {
               error.value = result.error || 'Failed to load month bookings';
@@ -1492,7 +1498,7 @@ window.healthPWA = {
           if (phone) {
             window.location.href = `tel:${phone}`;
           } else {
-            alert('No phone number available');
+            alert(_t('No phone number available'));
           }
         };
 
@@ -1509,7 +1515,7 @@ window.healthPWA = {
             const mapsUrl = `https://www.google.com/maps/search/${encodedLocation}`;
             window.open(mapsUrl, '_blank');
           } else {
-            alert('Location not available');
+            alert(_t('Location not available'));
           }
         };
 
@@ -1563,7 +1569,7 @@ window.healthPWA = {
             return 'TBD';
           }
           const dateObj = parseOdooDateTime(selectedBookingDetail.value.scheduled_datetime);
-          return dateObj.toLocaleString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+          return dateObj.toLocaleString(getPWALocale(), { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
         });
 
         // Intake Summary Modal state
@@ -2887,14 +2893,14 @@ window.healthPWA = {
           <div v-else-if="error" class="error-message">
             <i class="material-icons">error</i>
             <p>{{ error }}</p>
-            <button @click="goToToday" class="btn btn-secondary">Retry</button>
+            <button @click="goToToday" class="btn btn-secondary">{{ _t('Retry') }}</button>
           </div>
 
           <!-- Day view -->
           <div v-else-if="viewMode === 'day'">
             <div v-if="bookings.length === 0" class="empty-state">
               <i class="material-icons">event_note</i>
-              <p>No bookings scheduled for this day</p>
+              <p>{{ _t('No bookings scheduled for this day') }}</p>
             </div>
 
             <div v-else class="bookings-list">
@@ -2924,13 +2930,13 @@ window.healthPWA = {
                       </span>
                     </p>
                     <div class="booking-action-icons">
-                      <button @click.stop="callPatient(booking.patient_phone)" class="btn-icon-action btn-icon-call" title="Call patient">
+                      <button @click.stop="callPatient(booking.patient_phone)" class="btn-icon-action btn-icon-call" :title="_t('Call patient')">
                         <i class="material-icons">call</i>
                       </button>
                       <button v-if="booking.patient_zalo" @click.stop="callZalo(booking.patient_zalo)" class="btn-icon-action btn-icon-zalo" title="Zalo call" style="background: #0068FF; color: #fff;">
                         <i class="material-icons">chat</i>
                       </button>
-                      <button @click.stop="openMap(booking.location, booking.patient_name)" class="btn-icon-action btn-icon-map" title="Open map">
+                      <button @click.stop="openMap(booking.location, booking.patient_name)" class="btn-icon-action btn-icon-map" :title="_t('Open map')">
                         <i class="material-icons">map</i>
                       </button>
                     </div>
@@ -2945,7 +2951,7 @@ window.healthPWA = {
           <div v-else-if="viewMode === 'week'">
             <div v-if="Object.keys(groupedBookings).length === 0" class="empty-state">
               <i class="material-icons">event_note</i>
-              <p>No bookings scheduled for this week</p>
+              <p>{{ _t('No bookings scheduled for this week') }}</p>
             </div>
 
             <div v-else class="grouped-bookings-list">
@@ -2979,10 +2985,10 @@ window.healthPWA = {
                       </span>
                     </p>
                       <div class="booking-action-icons">
-                        <button @click.stop="callPatient(booking.patient_phone)" class="btn-icon-action btn-icon-call" title="Call patient">
+                        <button @click.stop="callPatient(booking.patient_phone)" class="btn-icon-action btn-icon-call" :title="_t('Call patient')">
                           <i class="material-icons">call</i>
                         </button>
-                        <button @click.stop="openMap(booking.location, booking.patient_name)" class="btn-icon-action btn-icon-map" title="Open map">
+                        <button @click.stop="openMap(booking.location, booking.patient_name)" class="btn-icon-action btn-icon-map" :title="_t('Open map')">
                           <i class="material-icons">map</i>
                         </button>
                       </div>
@@ -2999,7 +3005,7 @@ window.healthPWA = {
           <div v-else-if="viewMode === 'month'">
             <div v-if="Object.keys(groupedBookings).length === 0" class="empty-state">
               <i class="material-icons">event_note</i>
-              <p>No bookings scheduled for this month</p>
+              <p>{{ _t('No bookings scheduled for this month') }}</p>
             </div>
 
             <div v-else class="grouped-bookings-list">
@@ -3033,10 +3039,10 @@ window.healthPWA = {
                       </span>
                     </p>
                       <div class="booking-action-icons">
-                        <button @click.stop="callPatient(booking.patient_phone)" class="btn-icon-action btn-icon-call" title="Call patient">
+                        <button @click.stop="callPatient(booking.patient_phone)" class="btn-icon-action btn-icon-call" :title="_t('Call patient')">
                           <i class="material-icons">call</i>
                         </button>
-                        <button @click.stop="openMap(booking.location, booking.patient_name)" class="btn-icon-action btn-icon-map" title="Open map">
+                        <button @click.stop="openMap(booking.location, booking.patient_name)" class="btn-icon-action btn-icon-map" :title="_t('Open map')">
                           <i class="material-icons">map</i>
                         </button>
                       </div>
@@ -3156,21 +3162,21 @@ window.healthPWA = {
                           :disabled="!selectedBookingDetail?.confirmation_requirements?.has_quote_with_items || !isClinicalNotesComplete"
                           class="btn btn-invoice"
                           :title="!selectedBookingDetail?.confirmation_requirements?.has_quote_with_items
-                            ? 'No quote available'
+                            ? _t('No quote available')
                             : !isClinicalNotesComplete
-                            ? 'Please fill in the clinical notes or take image of the notes to view Quote'
-                            : 'View Quote'">
+                            ? _t('Please fill in the clinical notes or take image of the notes to view Quote')
+                            : _t('View Quote')">
                     <i class="material-icons">receipt</i>
-                    <span>View Quote</span>
+                    <span>{{ _t('View Quote') }}</span>
                   </button>
                   <!-- Complete Service Button (shown only when no quote) -->
                   <button v-if="!selectedBookingDetail?.confirmation_requirements?.has_quote_with_items"
                           @click="completeServiceWithoutQuoteInTodayView"
                           :disabled="!isClinicalNotesComplete"
                           class="btn btn-success btn-complete-service"
-                          :title="!isClinicalNotesComplete ? 'Please fill in the clinical notes or take image of the notes to Complete this service' : 'Complete Service'">
+                          :title="!isClinicalNotesComplete ? _t('Please fill in the clinical notes or take image of the notes to Complete this service') : _t('Complete Service')">
                     <i class="material-icons">check_circle</i>
-                    <span>Complete Service</span>
+                    <span>{{ _t('Complete Service') }}</span>
                   </button>
                 </div>
               </div>
@@ -3184,7 +3190,7 @@ window.healthPWA = {
             <div class="modal-header" style="background: #d32f2f; color: white;">
               <h3 style="color: white;">
                 <i class="material-icons">cancel</i>
-                Cancel/Refuse Visit
+                {{ _t('Cancel/Refuse Visit') }}
               </h3>
               <button @click="showCancellationModal = false" class="modal-close" style="color: white;">
                 <i class="material-icons">close</i>
@@ -3198,47 +3204,47 @@ window.healthPWA = {
             <div class="modal-body">
               <div style="margin-bottom: 16px;">
                 <label style="display: block; font-size: 14px; font-weight: 600; color: #333; margin-bottom: 8px;">
-                  Cancellation Reason <span style="color: #d32f2f;">*</span>
+                  {{ _t('Cancellation Reason') }} <span style="color: #d32f2f;">*</span>
                 </label>
                 <select v-model="cancellationFormData.reason_id"
                   style="width: 100%; padding: 10px 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 14px; background: white; appearance: auto;">
-                  <option :value="null" disabled>Select a reason...</option>
-                  <optgroup v-if="cancellationReasons.filter(r => r.reason_type === 'patient').length" label="Patient-initiated">
+                  <option :value="null" disabled>{{ _t('Select a reason...') }}</option>
+                  <optgroup v-if="cancellationReasons.filter(r => r.reason_type === 'patient').length" :label="_t('Patient-initiated')">
                     <option v-for="r in cancellationReasons.filter(r => r.reason_type === 'patient')" :key="r.id" :value="r.id">{{ r.name }}</option>
                   </optgroup>
-                  <optgroup v-if="cancellationReasons.filter(r => r.reason_type === 'provider').length" label="Provider-initiated">
+                  <optgroup v-if="cancellationReasons.filter(r => r.reason_type === 'provider').length" :label="_t('Provider-initiated')">
                     <option v-for="r in cancellationReasons.filter(r => r.reason_type === 'provider')" :key="r.id" :value="r.id">{{ r.name }}</option>
                   </optgroup>
-                  <optgroup v-if="cancellationReasons.filter(r => r.reason_type === 'system').length" label="System/Technical">
+                  <optgroup v-if="cancellationReasons.filter(r => r.reason_type === 'system').length" :label="_t('System/Technical')">
                     <option v-for="r in cancellationReasons.filter(r => r.reason_type === 'system')" :key="r.id" :value="r.id">{{ r.name }}</option>
                   </optgroup>
-                  <optgroup v-if="cancellationReasons.filter(r => r.reason_type === 'emergency').length" label="Emergency">
+                  <optgroup v-if="cancellationReasons.filter(r => r.reason_type === 'emergency').length" :label="_t('Emergency')">
                     <option v-for="r in cancellationReasons.filter(r => r.reason_type === 'emergency')" :key="r.id" :value="r.id">{{ r.name }}</option>
                   </optgroup>
                 </select>
               </div>
               <div style="margin-bottom: 16px;">
                 <label style="display: block; font-size: 14px; font-weight: 600; color: #333; margin-bottom: 8px;">
-                  Cancellation Notes
+                  {{ _t('Cancellation Notes') }}
                 </label>
                 <textarea v-model="cancellationFormData.notes"
-                  placeholder="Additional details about the cancellation..."
+                  :placeholder="_t('Additional details about the cancellation...')"
                   style="width: 100%; padding: 10px 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 14px; min-height: 80px; resize: vertical; box-sizing: border-box;"
                   rows="3"></textarea>
               </div>
               <div style="padding: 10px; background: #fff3e0; border-radius: 8px; border: 1px solid #ffe0b2; margin-bottom: 16px;">
                 <div style="display: flex; align-items: center; gap: 8px; font-size: 13px; color: #e65100;">
                   <i class="material-icons" style="font-size: 18px;">warning</i>
-                  <span>Cancellation details will be logged for record-keeping.</span>
+                  <span>{{ _t('Cancellation details will be logged for record-keeping.') }}</span>
                 </div>
               </div>
             </div>
             <div class="modal-footer">
               <div class="modal-footer-content">
-                <button @click="showCancellationModal = false" class="btn btn-secondary">Go Back</button>
+                <button @click="showCancellationModal = false" class="btn btn-secondary">{{ _t('Go Back') }}</button>
                 <button @click="submitCancellation" class="btn btn-danger" :disabled="!cancellationFormData.reason_id || cancellationSubmitting">
-                  <span v-if="cancellationSubmitting">Cancelling...</span>
-                  <span v-else>Confirm Cancellation</span>
+                  <span v-if="cancellationSubmitting">{{ _t('Cancelling...') }}</span>
+                  <span v-else>{{ _t('Confirm Cancellation') }}</span>
                 </button>
               </div>
             </div>
@@ -3757,7 +3763,7 @@ window.healthPWA = {
                 <span>{{ currentClientData.patient_code }}</span>
               </div>
               <div class="detail-item">
-                <label>Phone</label>
+                <label>{{ _t('Phone') }}</label>
                 <span>{{ currentClientData.phone }}</span>
               </div>
               <div class="detail-item">
@@ -3765,7 +3771,7 @@ window.healthPWA = {
                 <span>{{ currentClientData.age || 'N/A' }}</span>
               </div>
               <div class="detail-item">
-                <label>Gender</label>
+                <label>{{ _t('Gender') }}</label>
                 <span>{{ currentClientData.gender }}</span>
               </div>
             </div>
@@ -4176,10 +4182,10 @@ window.healthPWA = {
                       </span>
                     </p>
                         <div class="booking-action-icons">
-                          <button @click.stop="callPatient(booking.phone)" class="btn-icon-action btn-icon-call" title="Call patient">
+                          <button @click.stop="callPatient(booking.phone)" class="btn-icon-action btn-icon-call" :title="_t('Call patient')">
                             <i class="material-icons">call</i>
                           </button>
-                          <button v-if="booking.address" @click.stop="openMap({gps_coordinates: booking.address}, booking.patient_name)" class="btn-icon-action btn-icon-map" title="Open map">
+                          <button v-if="booking.address" @click.stop="openMap({gps_coordinates: booking.address}, booking.patient_name)" class="btn-icon-action btn-icon-map" :title="_t('Open map')">
                             <i class="material-icons">map</i>
                           </button>
                         </div>
@@ -4252,15 +4258,15 @@ window.healthPWA = {
         });
         
         const formatDate = (dateStr) => {
-          if (!dateStr) return 'Never';
+          if (!dateStr) return _t('Never');
           const date = new Date(dateStr);
           const now = new Date();
           const diffDays = Math.floor((now - date) / (1000 * 60 * 60 * 24));
           
-          if (diffDays === 0) return 'Today';
-          if (diffDays === 1) return 'Yesterday';
-          if (diffDays < 7) return `${diffDays} days ago`;
-          return date.toLocaleDateString();
+          if (diffDays === 0) return _t('Today');
+          if (diffDays === 1) return _t('Yesterday');
+          if (diffDays < 7) return `${diffDays} ${_t('days ago')}`;
+          return date.toLocaleDateString(getPWALocale());
         };
         
         const viewPatient = (patientId) => {
@@ -4271,7 +4277,7 @@ window.healthPWA = {
           if (phone) {
             window.location.href = `tel:${phone}`;
           } else {
-            alert('No phone number available');
+            alert(_t('No phone number available'));
           }
         };
 
@@ -4287,7 +4293,7 @@ window.healthPWA = {
             const mapsUrl = `https://www.google.com/maps/search/${encodedLocation}`;
             window.open(mapsUrl, '_blank');
           } else {
-            alert('Location not available');
+            alert(_t('Location not available'));
           }
         };
 
@@ -4338,9 +4344,9 @@ window.healthPWA = {
             <div class="empty-icon">
               <i class="material-icons">people_outline</i>
             </div>
-            <h3>No Patients Found</h3>
-            <p v-if="searchQuery">No patients match your search criteria.</p>
-            <p v-else>No patients have been synced yet.</p>
+            <h3>{{ _t('No Patients Found') }}</h3>
+            <p v-if="searchQuery">{{ _t('No patients match your search criteria.') }}</p>
+            <p v-else>{{ _t('No patients have been synced yet.') }}</p>
           </div>
           
           <!-- Patients List -->
@@ -4353,15 +4359,15 @@ window.healthPWA = {
 
               <!-- Patient name with phone and map icons -->
               <div class="booking-service-row">
-                <h3 class="booking-patient-name" style="color: #9C4C00;">{{ patient.name || 'Unnamed Patient' }}</h3>
+                <h3 class="booking-patient-name" style="color: #9C4C00;">{{ patient.name || _t('Unnamed Patient') }}</h3>
                 <div class="booking-action-icons">
-                  <button v-if="patient.phone" @click.stop="callPatient(patient.phone)" class="btn-icon-action btn-icon-call" title="Call patient">
+                  <button v-if="patient.phone" @click.stop="callPatient(patient.phone)" class="btn-icon-action btn-icon-call" :title="_t('Call patient')">
                     <i class="material-icons">call</i>
                   </button>
                   <button v-if="patient.zalo_user_id" @click.stop="callZalo(patient.zalo_user_id)" class="btn-icon-action btn-icon-zalo" title="Zalo call" style="background: #0068FF; color: #fff;">
                     <i class="material-icons">chat</i>
                   </button>
-                  <button @click.stop="openMap(patient.street || patient.street2, patient.name)" class="btn-icon-action btn-icon-map" title="Open map">
+                  <button @click.stop="openMap(patient.street || patient.street2, patient.name)" class="btn-icon-action btn-icon-map" :title="_t('Open map')">
                     <i class="material-icons">map</i>
                   </button>
                 </div>
@@ -4421,13 +4427,13 @@ window.healthPWA = {
         });
         
         const formatDate = (dateStr) => {
-          if (!dateStr) return 'Not specified';
-          return new Date(dateStr).toLocaleDateString();
+          if (!dateStr) return _t('Not specified');
+          return new Date(dateStr).toLocaleDateString(getPWALocale());
         };
         
         const formatAge = (age) => {
-          if (!age) return 'Unknown';
-          return `${age} years old`;
+          if (!age) return _t('Unknown');
+          return `${age} ${_t('years old')}`;
         };
         
         const getStatusColor = (status) => {
@@ -4456,7 +4462,7 @@ window.healthPWA = {
             <div class="loading-spinner">
               <div class="spinner"></div>
             </div>
-            <p>Loading patient details...</p>
+            <p>{{ _t('Loading patient details...') }}</p>
           </div>
           
           <!-- Error State -->
@@ -4464,9 +4470,9 @@ window.healthPWA = {
             <div class="error-icon">
               <i class="material-icons">error</i>
             </div>
-            <h3>Error Loading Patient</h3>
+            <h3>{{ _t('Error Loading Patient') }}</h3>
             <p>{{ error }}</p>
-            <button @click="$emit('navigate', 'patients')" class="btn btn-primary">Back to Patients</button>
+            <button @click="$emit('navigate', 'patients')" class="btn btn-primary">{{ _t('Back to Patients') }}</button>
           </div>
           
           <!-- Patient Details -->
@@ -4477,10 +4483,10 @@ window.healthPWA = {
                 <i class="material-icons">person</i>
               </div>
               <div class="patient-header-info">
-                <h2>{{ patient.name || 'Unnamed Patient' }}</h2>
+                <h2>{{ patient.name || _t('Unnamed Patient') }}</h2>
                 <p class="patient-code" v-if="patient.patient_code">ID: {{ patient.patient_code }}</p>
                 <span :class="'badge badge-' + getStatusColor(patient.patient_status)">
-                  {{ patient.patient_status || 'Unknown Status' }}
+                  {{ patient.patient_status || _t('Unknown Status') }}
                 </span>
               </div>
             </div>
@@ -4492,27 +4498,27 @@ window.healthPWA = {
               <div class="info-section">
                 <h3>
                   <i class="material-icons">person</i>
-                  Basic Information
+                  {{ _t('Basic Information') }}
                 </h3>
                 <div class="info-grid">
                   <div class="info-item" v-if="patient.first_name || patient.last_name">
-                    <label>Full Name</label>
-                    <span>{{ [patient.first_name, patient.last_name].filter(Boolean).join(' ') || 'Not specified' }}</span>
+                    <label>{{ _t('Full Name') }}</label>
+                    <span>{{ [patient.first_name, patient.last_name].filter(Boolean).join(' ') || _t('Not specified') }}</span>
                   </div>
                   <div class="info-item" v-if="patient.birth_date">
-                    <label>Date of Birth</label>
+                    <label>{{ _t('Date of Birth') }}</label>
                     <span>{{ formatDate(patient.birth_date) }}</span>
                   </div>
                   <div class="info-item" v-if="patient.age">
-                    <label>Age</label>
+                    <label>{{ _t('Age') }}</label>
                     <span>{{ formatAge(patient.age) }}</span>
                   </div>
                   <div class="info-item" v-if="patient.gender">
-                    <label>Gender</label>
+                    <label>{{ _t('Gender') }}</label>
                     <span>{{ patient.gender }}</span>
                   </div>
                   <div class="info-item" v-if="patient.blood_group && patient.blood_group !== 'unknown'">
-                    <label>Blood Group</label>
+                    <label>{{ _t('Blood Group') }}</label>
                     <span>{{ patient.blood_group.toUpperCase() }}</span>
                   </div>
                 </div>
@@ -4522,24 +4528,24 @@ window.healthPWA = {
               <div class="info-section">
                 <h3>
                   <i class="material-icons">contact_phone</i>
-                  Contact Information
+                  {{ _t('Contact Information') }}
                 </h3>
                 <div class="info-grid">
                   <div class="info-item" v-if="patient.phone">
-                    <label>Phone</label>
+                    <label>{{ _t('Phone') }}</label>
                     <span>{{ patient.phone }}</span>
                   </div>
                   <div class="info-item" v-if="patient.mobile">
-                    <label>Mobile</label>
+                    <label>{{ _t('Mobile') }}</label>
                     <span>{{ patient.mobile }}</span>
                   </div>
                   <div class="info-item" v-if="patient.email">
-                    <label>Email</label>
+                    <label>{{ _t('Email') }}</label>
                     <span>{{ patient.email }}</span>
                   </div>
                   <div class="info-item" v-if="patient.street || patient.city">
-                    <label>Address</label>
-                    <span>{{ [patient.street, patient.city].filter(Boolean).join(', ') || 'Not specified' }}</span>
+                    <label>{{ _t('Address') }}</label>
+                    <span>{{ [patient.street, patient.city].filter(Boolean).join(', ') || _t('Not specified') }}</span>
                   </div>
                 </div>
               </div>
@@ -4548,15 +4554,15 @@ window.healthPWA = {
               <div class="info-section" v-if="patient.emergency_contact_name || patient.emergency_contact_phone">
                 <h3>
                   <i class="material-icons">emergency</i>
-                  Emergency Contact
+                  {{ _t('Emergency Contact') }}
                 </h3>
                 <div class="info-grid">
                   <div class="info-item" v-if="patient.emergency_contact_name">
-                    <label>Name</label>
+                    <label>{{ _t('Name') }}</label>
                     <span>{{ patient.emergency_contact_name }}</span>
                   </div>
                   <div class="info-item" v-if="patient.emergency_contact_phone">
-                    <label>Phone</label>
+                    <label>{{ _t('Phone') }}</label>
                     <span>{{ patient.emergency_contact_phone }}</span>
                   </div>
                 </div>
@@ -4566,15 +4572,15 @@ window.healthPWA = {
               <div class="info-section" v-if="patient.allergies || patient.medical_history">
                 <h3>
                   <i class="material-icons">medical_services</i>
-                  Medical Information
+                  {{ _t('Medical Information') }}
                 </h3>
                 <div class="info-grid">
                   <div class="info-item full-width" v-if="patient.allergies">
-                    <label>Known Allergies</label>
+                    <label>{{ _t('Known Allergies') }}</label>
                     <span>{{ patient.allergies }}</span>
                   </div>
                   <div class="info-item full-width" v-if="patient.medical_history">
-                    <label>Medical History</label>
+                    <label>{{ _t('Medical History') }}</label>
                     <span>{{ patient.medical_history }}</span>
                   </div>
                 </div>
@@ -4584,7 +4590,7 @@ window.healthPWA = {
               <div class="info-section" v-if="patient.recent_orders && patient.recent_orders.length > 0">
                 <h3>
                   <i class="material-icons">assignment</i>
-                  Recent Orders
+                  {{ _t('Recent Orders') }}
                 </h3>
                 <div class="orders-list">
                   <div 
@@ -4593,7 +4599,7 @@ window.healthPWA = {
                     class="order-item"
                     @click="$emit('navigate', 'order', {id: order.id})">
                     <div class="order-content">
-                      <h4>{{ order.service_type_name || 'Service Order' }}</h4>
+                      <h4>{{ order.service_type_name || _t('Service Order') }}</h4>
                       <p>{{ formatDate(order.scheduled_datetime) }}</p>
                     </div>
                     <div class="order-status">
@@ -4608,15 +4614,15 @@ window.healthPWA = {
               <div class="info-section">
                 <h3>
                   <i class="material-icons">history</i>
-                  Visit History
+                  {{ _t('Visit History') }}
                 </h3>
                 <div class="info-grid">
                   <div class="info-item" v-if="patient.last_visit_date">
-                    <label>Last Visit</label>
+                    <label>{{ _t('Last Visit') }}</label>
                     <span>{{ formatDate(patient.last_visit_date) }}</span>
                   </div>
                   <div class="info-item" v-if="patient.next_visit_date">
-                    <label>Next Visit</label>
+                    <label>{{ _t('Next Visit') }}</label>
                     <span>{{ formatDate(patient.next_visit_date) }}</span>
                   </div>
                 </div>
@@ -4629,9 +4635,9 @@ window.healthPWA = {
             <div class="error-icon">
               <i class="material-icons">person_off</i>
             </div>
-            <h3>Patient Not Found</h3>
-            <p>The requested patient could not be found.</p>
-            <button @click="$emit('navigate', 'patients')" class="btn btn-primary">Back to Patients</button>
+            <h3>{{ _t('Patient Not Found') }}</h3>
+            <p>{{ _t('The requested patient could not be found.') }}</p>
+            <button @click="$emit('navigate', 'patients')" class="btn btn-primary">{{ _t('Back to Patients') }}</button>
           </div>
         </div>
       `
@@ -6033,16 +6039,16 @@ window.healthPWA = {
                       class="btn btn-action btn-clinical"
                       :disabled="order.state !== 'in_progress'">
                 <i class="material-icons">note_add</i>
-                <span>Clinical Notes</span>
+                <span>{{ _t('Clinical Notes') }}</span>
               </button>
 
               <!-- View Quote Button (renamed from Invoice) -->
               <button @click="loadQuote(true)"
                       class="btn btn-action btn-invoice"
                       :disabled="!isOnline || !order.confirmation_requirements?.has_quote_with_items"
-                      :title="!order.confirmation_requirements?.has_quote_with_items ? 'No quote associated with this booking' : 'View Quote'">
+                      :title="!order.confirmation_requirements?.has_quote_with_items ? _t('No quote associated with this booking') : _t('View Quote')">
                 <i class="material-icons">receipt</i>
-                <span>View Quote</span>
+                <span>{{ _t('View Quote') }}</span>
               </button>
 
               <!-- Payment Button (appears only after quote is verified) -->
@@ -6050,9 +6056,9 @@ window.healthPWA = {
                       @click="openPaymentWizard"
                       class="btn btn-action btn-payment"
                       :disabled="!isOnline"
-                      title="Proceed to payment collection">
+                      :title="_t('Proceed to payment collection')">
                 <i class="material-icons">payment</i>
-                <span>Payment</span>
+                <span>{{ _t('Payment') }}</span>
               </button>
 
               <!-- Complete Service Button - No Quote (when no quote exists) -->
@@ -6061,7 +6067,7 @@ window.healthPWA = {
                       class="btn btn-action btn-complete-no-quote"
                       :disabled="!isOnline">
                 <i class="material-icons">check_circle</i>
-                <span>Complete Service</span>
+                <span>{{ _t('Complete Service') }}</span>
               </button>
             </div>
 
@@ -6072,27 +6078,27 @@ window.healthPWA = {
               <div class="info-section">
                 <h3>
                   <i class="material-icons">person</i>
-                  Patient Information
+                  {{ _t('Patient Information') }}
                 </h3>
                 <div class="info-grid">
                   <div class="info-item">
-                    <label>Name</label>
-                    <span>{{ order.patient_name || 'Not specified' }} <span v-if="order.patient_code || order.patient?.patient_code" style="font-weight: 600; color: #333;">({{ order.patient_code || order.patient?.patient_code }})</span></span>
+                    <label>{{ _t('Name') }}</label>
+                    <span>{{ order.patient_name || _t('Not specified') }} <span v-if="order.patient_code || order.patient?.patient_code" style="font-weight: 600; color: #333;">({{ order.patient_code || order.patient?.patient_code }})</span></span>
                   </div>
                   <div class="info-item" v-if="order.patient_details">
-                    <label>Age / Gender</label>
+                    <label>{{ _t('Age / Gender') }}</label>
                     <span>{{ order.patient_details.age || '-' }} / {{ order.patient_details.gender || '-' }}</span>
                   </div>
                   <div class="info-item" v-if="order.phone">
-                    <label>Phone</label>
+                    <label>{{ _t('Phone') }}</label>
                     <span>{{ order.phone }}</span>
                   </div>
                   <div class="info-item full-width" v-if="order.address">
-                    <label>Address</label>
+                    <label>{{ _t('Address') }}</label>
                     <span>{{ order.address }}</span>
                   </div>
                   <div class="info-item full-width" v-if="order.patient_details && order.patient_details.allergies">
-                    <label>Allergies</label>
+                    <label>{{ _t('Allergies') }}</label>
                     <span class="text-danger">{{ order.patient_details.allergies }}</span>
                   </div>
                 </div>
@@ -6102,29 +6108,29 @@ window.healthPWA = {
               <div class="info-section">
                 <h3>
                   <i class="material-icons">medical_services</i>
-                  Service Information
+                  {{ _t('Service Information') }}
                 </h3>
                 <div class="info-grid">
                   <div class="info-item">
-                    <label>Scheduled Time</label>
+                    <label>{{ _t('Scheduled Time') }}</label>
                     <span>{{ formatDateTime(order.scheduled_datetime) }}</span>
                   </div>
                   <div class="info-item" v-if="order.estimated_duration">
-                    <label>Estimated Duration</label>
-                    <span>{{ order.estimated_duration }} hours</span>
+                    <label>{{ _t('Estimated Duration') }}</label>
+                    <span>{{ order.estimated_duration }} {{ _t('hours') }}</span>
                   </div>
                   <div class="info-item" v-if="order.team">
-                    <label>Team</label>
+                    <label>{{ _t('Team') }}</label>
                     <span>{{ order.team }}</span>
                   </div>
                   <div class="info-item" v-if="order.priority">
-                    <label>Priority</label>
+                    <label>{{ _t('Priority') }}</label>
                     <span :class="order.priority === '3' ? 'text-danger' : ''">
-                      {{ order.priority === '3' ? 'High' : order.priority === '2' ? 'Medium' : 'Low' }}
+                      {{ order.priority === '3' ? _t('High') : order.priority === '2' ? _t('Medium') : _t('Low') }}
                     </span>
                   </div>
                   <div class="info-item full-width" v-if="order.description">
-                    <label>Description</label>
+                    <label>{{ _t('Description') }}</label>
                     <span>{{ order.description }}</span>
                   </div>
                 </div>
@@ -6134,23 +6140,23 @@ window.healthPWA = {
               <div class="info-section" v-if="order.actual_start_datetime">
                 <h3>
                   <i class="material-icons">schedule</i>
-                  Service Status
+                  {{ _t('Service Status') }}
                 </h3>
                 <div class="info-grid">
                   <div class="info-item">
-                    <label>Started At</label>
+                    <label>{{ _t('Started At') }}</label>
                     <span>{{ formatDateTime(order.actual_start_datetime) }}</span>
                   </div>
                   <div class="info-item" v-if="order.actual_end_datetime">
-                    <label>Completed At</label>
+                    <label>{{ _t('Completed At') }}</label>
                     <span>{{ formatDateTime(order.actual_end_datetime) }}</span>
                   </div>
                   <div class="info-item" v-if="order.actual_end_datetime">
-                    <label>Duration</label>
-                    <span>{{ order.actual_duration || '0' }} hours</span>
+                    <label>{{ _t('Duration') }}</label>
+                    <span>{{ order.actual_duration || '0' }} {{ _t('hours') }}</span>
                   </div>
                   <div class="info-item" v-else>
-                    <label>Elapsed Time</label>
+                    <label>{{ _t('Elapsed Time') }}</label>
                     <span class="text-primary">{{ elapsedTime }}</span>
                   </div>
                 </div>
@@ -6163,7 +6169,7 @@ window.healthPWA = {
                 <div class="modal-header">
                   <h3>
                     <i class="material-icons">note_add</i>
-                    Clinical Notes
+                    {{ _t('Clinical Notes') }}
                   </h3>
                   <button @click="showClinicalNotes = false" class="modal-close">
                     <i class="material-icons">close</i>
@@ -6177,54 +6183,54 @@ window.healthPWA = {
                 </div>
                 <div class="modal-body">
                   <div class="form-group">
-                    <label>Clinical Observations</label>
+                    <label>{{ _t('Clinical Observations') }}</label>
                     <textarea v-model="clinicalNotesData.clinical_notes"
                               rows="4"
-                              placeholder="Enter clinical observations and notes..."></textarea>
+                              :placeholder="_t('Enter clinical observations and notes...')"></textarea>
                   </div>
                   <div class="form-group">
-                    <label>Diagnosis</label>
+                    <label>{{ _t('Diagnosis') }}</label>
                     <textarea v-model="clinicalNotesData.diagnosis"
                               rows="3"
-                              placeholder="Enter diagnosis..."></textarea>
+                              :placeholder="_t('Enter diagnosis...')"></textarea>
                   </div>
                   <div class="form-group">
-                    <label>Treatment Performed</label>
+                    <label>{{ _t('Treatment Performed') }}</label>
                     <textarea v-model="clinicalNotesData.treatment_performed"
                               rows="3"
-                              placeholder="Describe treatment provided..."></textarea>
+                              :placeholder="_t('Describe treatment provided...')"></textarea>
                   </div>
                   <div class="form-group">
-                    <label>Medications Prescribed</label>
+                    <label>{{ _t('Medications Prescribed') }}</label>
                     <textarea v-model="clinicalNotesData.medications_prescribed"
                               rows="2"
-                              placeholder="List medications..."></textarea>
+                              :placeholder="_t('List medications...')"></textarea>
                   </div>
                   <div class="form-group">
-                    <label>Vital Signs</label>
+                    <label>{{ _t('Vital Signs') }}</label>
                     <textarea v-model="clinicalNotesData.vital_signs"
                               rows="2"
-                              placeholder="Blood pressure, temperature, heart rate..."></textarea>
+                              :placeholder="_t('Blood pressure, temperature, heart rate...')"></textarea>
                   </div>
 
                   <!-- Service Procedures -->
                   <div class="form-group" style="background: #f8f9fa; border-radius: 8px; padding: 12px;">
-                    <label style="font-weight: 600; margin-bottom: 8px; display: block;">Service Procedures</label>
+                    <label style="font-weight: 600; margin-bottom: 8px; display: block;">{{ _t('Service Procedures') }}</label>
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
                       <div>
-                        <label style="font-size: 12px; color: #666;">Injections</label>
+                        <label style="font-size: 12px; color: #666;">{{ _t('Injections') }}</label>
                         <input type="number" v-model.number="clinicalNotesData.injection_count" min="0" style="width: 100%; padding: 6px 10px; text-align: center; border: 1px solid #ddd; border-radius: 4px;" />
                       </div>
                       <div>
-                        <label style="font-size: 12px; color: #666;">Medications</label>
+                        <label style="font-size: 12px; color: #666;">{{ _t('Medications') }}</label>
                         <input type="number" v-model.number="clinicalNotesData.medication_count" min="0" style="width: 100%; padding: 6px 10px; text-align: center; border: 1px solid #ddd; border-radius: 4px;" />
                       </div>
                       <div>
-                        <label style="font-size: 12px; color: #666;">Wounds</label>
+                        <label style="font-size: 12px; color: #666;">{{ _t('Wounds') }}</label>
                         <input type="number" v-model.number="clinicalNotesData.wound_count" min="0" style="width: 100%; padding: 6px 10px; text-align: center; border: 1px solid #ddd; border-radius: 4px;" />
                       </div>
                       <div>
-                        <label style="font-size: 12px; color: #666;">IV Fluid Bags</label>
+                        <label style="font-size: 12px; color: #666;">{{ _t('IV Fluid Bags') }}</label>
                         <input type="number" v-model.number="clinicalNotesData.iv_fluid_count" min="0" style="width: 100%; padding: 6px 10px; text-align: center; border: 1px solid #ddd; border-radius: 4px;" />
                       </div>
                     </div>
@@ -6232,10 +6238,10 @@ window.healthPWA = {
 
                   <!-- Image Capture Section -->
                   <div class="form-group">
-                    <label>Clinical Images</label>
+                    <label>{{ _t('Clinical Images') }}</label>
                     <button @click="captureImage" class="btn btn-secondary btn-block">
                       <i class="material-icons">camera_alt</i>
-                      Capture Image
+                      {{ _t('Capture Image') }}
                     </button>
 
                     <!-- Captured Images Display -->
@@ -6663,14 +6669,14 @@ window.healthPWA = {
             const phoneDigits = clinicPhone.value.replace(/[^\d+]/g, '');
             window.location.href = `tel:${phoneDigits}`;
           } else {
-            alert('Clinic phone number not available');
+            alert(_t('Clinic phone number not available'));
           }
         };
 
         const copyPhone = () => {
           if (clinicPhone.value && clinicPhone.value !== 'N/A') {
             navigator.clipboard.writeText(clinicPhone.value);
-            alert('Phone number copied to clipboard!');
+            alert(_t('Phone number copied to clipboard!'));
           }
         };
 
@@ -6693,43 +6699,43 @@ window.healthPWA = {
           <div class="call-header">
             <h2>
               <i class="material-icons">call</i>
-              Contact Clinic
+              {{ _t('Contact Clinic') }}
             </h2>
           </div>
 
           <div v-if="isLoading" class="loading-spinner">
             <div class="spinner"></div>
-            <p>Loading clinic information...</p>
+            <p>{{ _t('Loading clinic information...') }}</p>
           </div>
 
           <div v-else-if="error" class="error-message">
             <i class="material-icons">error</i>
             <p>{{ error }}</p>
-            <button @click="loadClinicConfig" class="btn btn-secondary">Retry</button>
+            <button @click="loadClinicConfig" class="btn btn-secondary">{{ _t('Retry') }}</button>
           </div>
 
           <div v-else class="call-container">
             <div class="clinic-card">
               <div class="clinic-info">
                 <h3 class="clinic-name">{{ clinicName }}</h3>
-                <p class="clinic-phone-label">Phone Number</p>
+                <p class="clinic-phone-label">{{ _t('Phone Number') }}</p>
                 <p class="clinic-phone">{{ clinicPhone }}</p>
               </div>
 
               <div class="call-actions">
                 <button @click="initiateCall" class="btn btn-call-primary">
                   <i class="material-icons">call</i>
-                  <span>Call Now</span>
+                  <span>{{ _t('Call Now') }}</span>
                 </button>
                 <button @click="copyPhone" class="btn btn-copy">
                   <i class="material-icons">content_copy</i>
-                  <span>Copy Number</span>
+                  <span>{{ _t('Copy Number') }}</span>
                 </button>
               </div>
 
               <div class="call-info-box">
                 <i class="material-icons">info</i>
-                <p>Tap "Call Now" to initiate a call to the clinic directly from your phone.</p>
+                <p>{{ _t('Tap "Call Now" to initiate a call to the clinic directly from your phone.') }}</p>
               </div>
             </div>
           </div>

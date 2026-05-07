@@ -613,7 +613,7 @@ class HealthPWASyncController(http.Controller):
                     'orders_updated_last_7_days': recent_orders,
                 },
                 'server_version': '19.0',
-                'pwa_version': '1.0.0',
+                'pwa_version': '1.0.74',
             }
             
             return self._prepare_sync_response(data=status_data)

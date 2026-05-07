@@ -830,7 +830,7 @@
                       mode="month"
                       scales="day,week,month,year"
                       quick_create="0"
-                      event_open_popup="1"
+                      event_open_popup="0"
                       create_name_field="calendar_name">
                 <field name="patient_id"/>
                 <field name="lead_staff_id"

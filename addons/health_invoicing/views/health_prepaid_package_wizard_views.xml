@@ -55,7 +55,7 @@
                 </sheet>
                 
                 <footer>
-                    <button string="Create Package" name="action_create_package" 
+                    <button string="Purchase Package" name="action_create_package"
                             type="object" class="btn-primary"/>
                     <button string="Cancel" class="btn-secondary" special="cancel"/>
                 </footer>

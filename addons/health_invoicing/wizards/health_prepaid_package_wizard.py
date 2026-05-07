@@ -309,14 +309,18 @@ class HealthPrepaidPackageWizard(models.TransientModel):
                     }
                 }
             
-            # Default: open the created package form
             return {
-                'name': _('Prepaid Service Package'),
-                'type': 'ir.actions.act_window',
-                'res_model': 'health.service.package',
-                'res_id': package.id,
-                'view_mode': 'form',
-                'target': 'current',
+                'type': 'ir.actions.client',
+                'tag': 'display_notification',
+                'params': {
+                    'title': _('Package Purchased'),
+                    'message': _('%s created successfully for %s.') % (
+                        package.name, self.patient_id.name
+                    ),
+                    'type': 'success',
+                    'sticky': False,
+                    'next': {'type': 'ir.actions.act_window_close'},
+                }
             }
         else:
             # Fallback if package creation failed

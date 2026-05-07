@@ -8,42 +8,7 @@
         <field name="inherit_id" ref="health_fieldservice.view_health_fieldservice_order_form"/>
         <field name="arch" type="xml">
             
-            <!-- Add Smart Buttons for Payment Tracking -->
-            <xpath expr="//div[hasclass('oe_button_box')]" position="inside">
-                
-                <!-- Payment Transactions Smart Button -->
-                <button type="object" name="action_view_payment_transactions"
-                        class="oe_stat_button" icon="fa-credit-card"
-                        invisible="payment_transaction_count == 0"
-                        groups="health_invoicing.group_health_invoicing_user">
-                    <field name="payment_transaction_count" widget="statinfo" string="Payments"/>
-                </button>
-                
-                <!-- Invoice Smart Button -->
-                <button type="object" name="action_view_invoice"
-                        class="oe_stat_button" icon="fa-file-text"
-                        invisible="not is_invoiced"
-                        groups="health_invoicing.group_health_invoicing_user">
-                    <div class="o_field_widget o_stat_info">
-                        <span class="o_stat_value">Invoice</span>
-                        <span class="o_stat_text">View</span>
-                    </div>
-                </button>
-                
-                <!-- Outstanding Amount Button (if invoice exists with balance) -->
-                <button type="object" name="action_view_invoice"
-                        class="oe_stat_button" icon="fa-exclamation-circle"
-                        invisible="outstanding_amount == 0 or not is_invoiced"
-                        groups="health_invoicing.group_health_invoicing_user">
-                    <div class="o_field_widget o_stat_info">
-                        <span class="o_stat_value">
-                            <field name="outstanding_amount" widget="monetary" options="{'currency_field': 'currency_id'}"/>
-                        </span>
-                        <span class="o_stat_text">Outstanding</span>
-                    </div>
-                </button>
-                
-            </xpath>
+            <!-- Smart buttons removed — actions moved to right panel -->
             
             <!-- Enhanced Header Actions -->
             <xpath expr="//header" position="inside">
@@ -56,11 +21,7 @@
                         groups="health_invoicing.group_health_invoicing_user"
                         help="Complete service and launch payment collection workflow"/>
 
-                <!-- Service Package Selection Wizard -->
-                <button type="object" name="action_open_service_package_wizard"
-                        string="Service Package" class="btn-secondary" icon="fa-cube"
-                        invisible="state in ('completed', 'completed_pending_invoice', 'cancelled', 'closed')"
-                        help="Select a prepaid service package for this booking"/>
+                <!-- Service Package moved to action panel -->
 
                 <!-- Ensure sale_order_id field is loaded for modifier evaluation -->
                 <field name="sale_order_id" invisible="1"/>
@@ -175,6 +136,31 @@
                 </page>
             </xpath>
             
+        </field>
+    </record>
+
+    <!-- Add Select Prepaid Package to booking form action panel -->
+    <record id="view_fso_form_package_action" model="ir.ui.view">
+        <field name="name">FSO Package Action Panel Button</field>
+        <field name="model">health.fieldservice.order</field>
+        <field name="inherit_id" ref="health_fieldservice.view_health_fieldservice_order_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//button[@name='action_view_quote']" position="after">
+                <button type="object" name="action_open_service_package_wizard"
+                        class="vu-action-item"
+                        invisible="state in ('completed', 'completed_pending_invoice', 'cancelled', 'closed')"
+                        groups="health_invoicing.group_health_invoicing_user">
+                    <i class="fa fa-cube"/> Select Prepaid Package
+                </button>
+            </xpath>
+            <xpath expr="//button[@name='action_view_all_invoices']" position="after">
+                <button type="object" name="action_view_payment_transactions"
+                        class="vu-action-item"
+                        invisible="payment_transaction_count == 0"
+                        groups="health_invoicing.group_health_invoicing_user">
+                    <i class="fa fa-credit-card"/> View Payments
+                </button>
+            </xpath>
         </field>
     </record>
 

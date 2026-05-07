@@ -77,14 +77,14 @@
 
                 <footer>
                     <button name="action_confirm" type="object"
-                            string="✅ Assign Existing" class="btn-primary"
+                            string="✅ Select Existing" class="btn-primary"
                             icon="fa-check"
-                            title="Assign the selected existing package to this booking"
+                            title="Select the existing package for this booking"
                             invisible="not has_existing_packages"/>
                     <button name="action_purchase_and_assign" type="object"
-                            string="🛒 Purchase and Assign" class="btn-success"
+                            string="🛒 Purchase and Select" class="btn-success"
                             icon="fa-shopping-cart"
-                            title="Purchase a new package from the selected product and assign to this booking"/>
+                            title="Purchase a new package and select it for this booking"/>
                     <button name="action_clear_package" type="object"
                             string="Remove Package" class="btn-warning"
                             icon="fa-times"

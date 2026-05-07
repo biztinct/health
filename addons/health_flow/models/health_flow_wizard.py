@@ -39,7 +39,13 @@ class HealthFlowWizard(models.TransientModel):
             return action
         context = action.get('context', {})
         if isinstance(context, str):
-            context = eval(context)
+            from odoo.tools.safe_eval import safe_eval
+            eval_ctx = {
+                'context_today': lambda: fields.Date.today(),
+                'uid': self.env.uid,
+                'current_date': fields.Date.today(),
+            }
+            context = safe_eval(context, eval_ctx)
         menu = self.env.ref('health_flow.menu_health_flow_root', raise_if_not_found=False)
         if menu:
             context.setdefault('menu_id', menu.id)

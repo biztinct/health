@@ -186,18 +186,7 @@
                                         </group>
                                     </div>
                                     
-                                    <div class="vu-card">
-                                        <div class="vu-card__title">
-                                            <span class="vu-section__icon" data-icon="heart-pulse"/>
-                                            <span>Quality Assessment</span>
-                                        </div>
-                                        <group>
-                                            <field name="patient_satisfaction" widget="progressbar"/>
-                                            <field name="staff_performance_rating" widget="progressbar"/>
-                                            <field name="buffer_before"/>
-                                            <field name="buffer_after"/>
-                                        </group>
-                                    </div>
+                                    <!-- Quality Assessment removed per UX review -->
                                 </div>
                             </div>
                         </page>
