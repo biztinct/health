@@ -3,4 +3,6 @@ access_res_users_health_admin,res.users health user admin,base.model_res_users,h
 access_res_groups_health_admin,res.groups health user admin,base.model_res_groups,health_user_admin.group_health_user_admin,1,0,0,0
 access_access_role_health_admin,access.role health user admin,access_roles.model_access_role,health_user_admin.group_health_user_admin,1,1,1,0
 access_role_management_health_admin,role.management health user admin,access_roles.model_role_management,health_user_admin.group_health_user_admin,1,1,1,0
-access_hr_employee_health_admin,hr.employee health user admin,hr.model_hr_employee,health_user_admin.group_health_user_admin,1,0,0,0
+access_hr_employee_health_admin,hr.employee health user admin,hr.model_hr_employee,health_user_admin.group_health_user_admin,1,1,1,0
+access_health_create_user_wizard,health.create.user.wizard health user admin,model_health_create_user_wizard,health_user_admin.group_health_user_admin,1,1,1,0
+access_health_create_user_wizard_system,health.create.user.wizard system admin,model_health_create_user_wizard,base.group_system,1,1,1,0

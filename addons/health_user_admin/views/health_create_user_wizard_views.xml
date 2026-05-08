@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Create User Wizard Form -->
+    <record id="view_health_create_user_wizard_form" model="ir.ui.view">
+        <field name="name">Create User Wizard</field>
+        <field name="model">health.create.user.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Create User">
+                <sheet>
+                    <div class="oe_title mb-3">
+                        <h1>Create New User</h1>
+                    </div>
+                    <group>
+                        <group string="Account Information">
+                            <field name="name" placeholder="e.g. John Smith"/>
+                            <field name="login" string="Email" placeholder="e.g. john@company.com"/>
+                            <field name="phone" placeholder="e.g. +84 123 456 789"/>
+                            <field name="password" password="True" placeholder="Set initial password"/>
+                        </group>
+                        <group string="Access &amp; Role">
+                            <field name="access_role_id"/>
+                            <field name="healthcare_role"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Employment Details">
+                            <field name="employment_status"/>
+                            <field name="employment_type"/>
+                        </group>
+                        <group string="Regional Settings">
+                            <field name="company_id" groups="base.group_multi_company"
+                                   options="{'no_create': True}"/>
+                            <field name="lang"/>
+                            <field name="tz"/>
+                        </group>
+                    </group>
+                </sheet>
+                <footer>
+                    <button name="action_create_user" string="Create User"
+                            type="object" class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action to open the wizard -->
+    <record id="action_health_create_user_wizard" model="ir.actions.act_window">
+        <field name="name">Create User</field>
+        <field name="res_model">health.create.user.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+        <field name="view_id" ref="view_health_create_user_wizard_form"/>
+    </record>
+
+</odoo>

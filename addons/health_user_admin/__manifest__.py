@@ -1,6 +1,6 @@
 {
     'name': 'Healthcare User Administration',
-    'version': '19.0.1.0.0',
+    'version': '19.0.1.11.0',
     'category': 'Healthcare',
     'summary': 'SaaS-safe user and role management for healthcare tenants',
     'description': """
@@ -23,6 +23,7 @@ Tenant admins get full user/role control without the ability to:
     'website': 'https://www.biztinct.com',
     'depends': [
         'health_base',
+        'health_fieldservice',
         'access_roles',
         'hr',
     ],
@@ -30,9 +31,15 @@ Tenant admins get full user/role control without the ability to:
         'security/security.xml',
         'security/ir.model.access.csv',
         'security/ir_rules.xml',
+        'views/health_create_user_wizard_views.xml',
         'views/health_user_views.xml',
         'views/health_user_actions.xml',
     ],
+    'assets': {
+        'web.assets_backend': [
+            'health_user_admin/static/src/js/user_list_controller.js',
+        ],
+    },
     'installable': True,
     'auto_install': False,
     'application': False,

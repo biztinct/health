@@ -19,7 +19,10 @@ class HrEmployeePublic(models.Model):
         ('therapist', 'Therapist'),
         ('technician', 'Technician'),
         ('support', 'Support Staff'),
-        ('operations_manager', 'Operations Manager')
+        ('operations_manager', 'Operations Manager'),
+        ('admin', 'Admin'),
+        ('owner', 'Owner'),
+        ('accountant', 'Accountant'),
     ], string='Healthcare Role', compute='_compute_healthcare_flags', readonly=True)
 
     def _compute_healthcare_flags(self):

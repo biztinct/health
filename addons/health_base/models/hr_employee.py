@@ -21,5 +21,8 @@ class HrEmployee(models.Model):
         ('therapist', 'Therapist'),
         ('technician', 'Technician'),
         ('support', 'Support Staff'),
-        ('operations_manager', 'Operations Manager')
+        ('operations_manager', 'Operations Manager'),
+        ('admin', 'Admin'),
+        ('owner', 'Owner'),
+        ('accountant', 'Accountant'),
     ], string='Healthcare Role', tracking=True)

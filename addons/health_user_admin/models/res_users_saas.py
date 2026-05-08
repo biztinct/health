@@ -22,6 +22,17 @@ class ResUsersSaaS(models.Model):
     _inherit = 'res.users'
 
     @api.model
+    def action_open_create_user_wizard(self):
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _('Create User'),
+            'res_model': 'health.create.user.wizard',
+            'view_mode': 'form',
+            'views': [[False, 'form']],
+            'target': 'new',
+        }
+
+    @api.model
     def action_saas_create_user(self, vals):
         """Create a user from the simplified SaaS form.
         
@@ -93,8 +104,9 @@ class ResUsersSaaS(models.Model):
         self.sudo().action_reset_password()
 
     def _check_user_admin_access(self):
-        """Verify the current user has the Healthcare User Admin group."""
-        if not self.env.user.has_group('health_user_admin.group_health_user_admin'):
+        """Verify the current user has the Healthcare User Admin group or is a system admin."""
+        if not (self.env.user.has_group('health_user_admin.group_health_user_admin')
+                or self.env.user.has_group('base.group_system')):
             raise AccessError(_(
                 "You do not have permission to manage users. "
                 "Contact your administrator."
