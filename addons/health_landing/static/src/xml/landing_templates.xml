@@ -9,10 +9,10 @@
             <t t-if="state.currentView === 'main'">
                 <div class="health_landing_dashboard_header">
                     <h1 class="health_landing_dashboard_title">
-                        <i class="fa fa-heartbeat"/> Healthcare Management System
+                        <i class="fa fa-heartbeat"/> <t t-esc="this.t('Healthcare Management System')"/>
                     </h1>
                     <p class="health_landing_dashboard_subtitle">
-                        Viet-Uc Family Healthcare Services - Select a module to continue
+                        <t t-esc="this.t('Viet-Uc Family Healthcare Services - Select a module to continue')"/>
                     </p>
                 </div>
 
@@ -23,7 +23,7 @@
                         <input
                             type="text"
                             class="health_landing_search_input"
-                            placeholder="Search modules and features... (Ctrl+K)"
+                            t-att-placeholder="this.t('Search modules and features... (Ctrl+K)')"
                             t-model="state.searchQuery"
                             t-on-input="onSearchInput"
                             t-ref="searchInput"
@@ -41,7 +41,7 @@
                 <!-- Recently Accessed -->
                 <div class="health_landing_quick_access" t-if="state.recentlyAccessed.length > 0 and !state.searchQuery">
                     <div class="health_landing_quick_access_title">
-                        <i class="fa fa-clock-o"/> Recently Accessed
+                        <i class="fa fa-clock-o"/> <t t-esc="this.t('Recently Accessed')"/>
                     </div>
                     <div class="health_landing_quick_access_grid">
                         <t t-foreach="state.recentlyAccessed" t-as="recent" t-key="recent.id">
@@ -63,7 +63,7 @@
                 <!-- Favorites -->
                 <div class="health_landing_quick_access" t-if="state.favorites.length > 0 and !state.searchQuery">
                     <div class="health_landing_quick_access_title">
-                        <i class="fa fa-star"/> Favorites
+                        <i class="fa fa-star"/> <t t-esc="this.t('Favorites')"/>
                     </div>
                     <div class="health_landing_quick_access_grid">
                         <t t-foreach="state.favorites" t-as="favorite" t-key="favorite.id">
@@ -102,7 +102,7 @@
                     <div class="health_landing_empty_icon">
                         <i class="fa fa-search"/>
                     </div>
-                    <p>No modules or features found for "<t t-esc="state.searchQuery"/>"</p>
+                    <p><t t-esc="this.t('No modules or features found for')"/> "<t t-esc="state.searchQuery"/>"</p>
                 </div>
             </t>
 
@@ -112,7 +112,7 @@
                 <div class="health_landing_breadcrumb">
                     <span class="health_landing_breadcrumb_item">
                         <a class="health_landing_breadcrumb_link" t-on-click="() => this.showMain()">
-                            <i class="fa fa-home"/> Home
+                            <i class="fa fa-home"/> <t t-esc="this.t('Home')"/>
                         </a>
                     </span>
                     <span class="health_landing_breadcrumb_separator">/</span>
@@ -121,7 +121,7 @@
 
                 <!-- Back Button -->
                 <button class="health_landing_back_btn" t-on-click="() => this.showMain()">
-                    <i class="fa fa-arrow-left"/> Back to Dashboard
+                    <i class="fa fa-arrow-left"/> <t t-esc="this.t('Back to Dashboard')"/>
                 </button>
 
                 <!-- Submenu Header -->
@@ -194,11 +194,11 @@
                         <!-- Modal Body -->
                         <div class="health_landing_modal_body">
                             <p class="health_landing_modal_description">
-                                Explore the full set of features available in this module.
+                                <t t-esc="this.t('Explore the full set of features available in this module.')"/>
                             </p>
 
                             <!-- Quick Actions List -->
-                            <div class="health_landing_modal_actions_title">Quick Actions</div>
+                            <div class="health_landing_modal_actions_title" t-esc="this.t('Quick Actions')"/>
                             <ul class="health_landing_modal_actions_list">
                                 <t t-foreach="state.modalModule.submenus.slice(0, 5)" t-as="action" t-key="action.name">
                                     <li class="health_landing_modal_action_item" t-on-click="() => this.launchAction(action.action, action.name, action.icon)">
@@ -213,10 +213,10 @@
                         <!-- Modal Footer -->
                         <div class="health_landing_modal_footer">
                             <button class="health_landing_modal_btn health_landing_modal_btn_secondary" t-on-click="closeModal">
-                                Close
+                                <t t-esc="this.t('Close')"/>
                             </button>
                             <button class="health_landing_modal_btn health_landing_modal_btn_primary" t-on-click="() => { this.showSubmenu(state.modalModule); this.closeModal(); }">
-                                <i class="fa fa-th"/> View All Features
+                                <i class="fa fa-th"/> <t t-esc="this.t('View All Features')"/>
                             </button>
                         </div>
                     </div>

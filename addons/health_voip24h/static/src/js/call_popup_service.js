@@ -30,6 +30,10 @@ export class CallPopupService extends Component {
         this.bus.addChannel("voip_notifications");
     }
 
+    t(text) {
+        return _t(text);
+    }
+
     /**
      * Handle incoming bus notifications
      */

@@ -33,7 +33,7 @@
                     <!-- Notifications Dropdown -->
                     <div class="health_flow_notifications_dropdown" t-att-class="{'open': state.bookingNotificationsOpen}">
                         <div class="health_flow_notifications_header">
-                            <span>Booking Notifications</span>
+                            <span t-esc="this.t('Booking Notifications')"/>
                             <div class="health_flow_notifications_close" t-on-click="() => this.toggleBookingNotifications()">
                                 <i class="fa fa-times"></i>
                             </div>
@@ -42,7 +42,7 @@
                             <t t-if="state.bookingNotifications.length === 0">
                                 <div class="health_flow_notifications_empty">
                                     <i class="fa fa-check-circle"></i>
-                                    <span>No new notifications</span>
+                                    <span t-esc="this.t('No new notifications')"/>
                                 </div>
                             </t>
                             <t t-foreach="state.bookingNotifications" t-as="notification" t-key="notification.id">
@@ -133,7 +133,7 @@
                      tabindex="0"
                      t-on-click="() => this.onCenterClick()">
                     <i class="fa fa-users health_flow_center_icon"></i>
-                    <span class="health_flow_center_text">Clients</span>
+                    <span class="health_flow_center_text" t-esc="this.t('Clients')"/>
                 </div>
 
                 <!-- PRIMARY LEVEL: 6 Badges in Circle -->
@@ -145,7 +145,7 @@
                      t-att-class="{'active': state.activePrimary === 'crm'}"
                      t-on-click="() => this.onPrimaryClick('crm')">
                     <i class="fa fa-handshake-o health_flow_primary_icon"></i>
-                    <span class="health_flow_primary_text">Sales &amp; CRM</span>
+                    <span class="health_flow_primary_text" t-esc="this.t('Sales &amp; CRM')"/>
                 </div>
 
                 <!-- 2. Booking (Top Right - 2 o'clock) -->
@@ -155,7 +155,7 @@
                      t-att-class="{'active': state.activePrimary === 'booking'}"
                      t-on-click="() => this.onPrimaryClick('booking')">
                     <i class="fa fa-calendar-check-o health_flow_primary_icon"></i>
-                    <span class="health_flow_primary_text">Bookings</span>
+                    <span class="health_flow_primary_text" t-esc="this.t('Bookings')"/>
                 </div>
 
                 <!-- 3. Invoicing (Bottom Right - 4 o'clock) -->
@@ -165,7 +165,7 @@
                      t-att-class="{'active': state.activePrimary === 'invoicing'}"
                      t-on-click="() => this.onPrimaryClick('invoicing')">
                     <i class="fa fa-money health_flow_primary_icon"></i>
-                    <span class="health_flow_primary_text">Finance</span>
+                    <span class="health_flow_primary_text" t-esc="this.t('Finance')"/>
                 </div>
 
                 <!-- 4. Analytics (Bottom - 6 o'clock) -->
@@ -174,7 +174,7 @@
                      class="health_flow_primary_badge badge-analytics"
                      t-on-click="() => this.onPrimaryClick('analytics')">
                     <i class="fa fa-line-chart health_flow_primary_icon"></i>
-                    <span class="health_flow_primary_text">Analytics</span>
+                    <span class="health_flow_primary_text" t-esc="this.t('Analytics')"/>
                 </div>
 
                 <!-- 5. Audit (Bottom Left - 8 o'clock) -->
@@ -183,7 +183,7 @@
                      class="health_flow_primary_badge badge-audit"
                      t-on-click="() => this.onPrimaryClick('audit')">
                     <i class="fa fa-history health_flow_primary_icon"></i>
-                    <span class="health_flow_primary_text">Audit</span>
+                    <span class="health_flow_primary_text" t-esc="this.t('Audit')"/>
                 </div>
 
                 <!-- 6. Admin (Top Left - 10 o'clock) -->
@@ -193,7 +193,7 @@
                      t-att-class="{'active': state.activePrimary === 'admin'}"
                      t-on-click="() => this.onPrimaryClick('admin')">
                     <i class="fa fa-cogs health_flow_primary_icon"></i>
-                    <span class="health_flow_primary_text">Admin</span>
+                    <span class="health_flow_primary_text" t-esc="this.t('Admin')"/>
                 </div>
 
             </div>
@@ -203,7 +203,7 @@
                 <div class="health_flow_search_modal_backdrop" t-on-click="() =&gt; this.closeClientChoiceModal()">
                     <div class="health_flow_search_modal" t-on-click.stop="" style="max-width: 420px; padding: 30px;">
                         <div class="health_flow_search_modal_header" style="margin-bottom: 20px;">
-                            <h3>Clients</h3>
+                            <h3 t-esc="this.t('Clients')"/>
                             <div class="health_flow_search_modal_close" t-on-click="() =&gt; this.closeClientChoiceModal()">
                                 <i class="fa fa-times"></i>
                             </div>
@@ -213,13 +213,13 @@
                                  style="display: flex; align-items: center; gap: 15px; padding: 16px 20px; border-radius: 10px; background: linear-gradient(135deg, #4299e1, #3182ce); color: white; cursor: pointer; font-size: 16px; font-weight: 600; transition: transform 0.15s;"
                                  t-on-click="() =&gt; this.onSelectExistingClient()">
                                 <i class="fa fa-search fa-lg"></i>
-                                <span>Select Existing Client</span>
+                                <span t-esc="this.t('Select Existing Client')"/>
                             </div>
                             <div role="button"
                                  style="display: flex; align-items: center; gap: 15px; padding: 16px 20px; border-radius: 10px; background: linear-gradient(135deg, #48bb78, #38a169); color: white; cursor: pointer; font-size: 16px; font-weight: 600; transition: transform 0.15s;"
                                  t-on-click="() =&gt; this.onAddNewClient()">
                                 <i class="fa fa-user-plus fa-lg"></i>
-                                <span>Add New Client</span>
+                                <span t-esc="this.t('Add New Client')"/>
                             </div>
                         </div>
                     </div>
@@ -231,7 +231,7 @@
                 <div class="health_flow_search_modal_backdrop" t-on-click="() =&gt; this.closeMasterDataModal()">
                     <div class="health_flow_search_modal" t-on-click.stop="" style="max-width: 520px; padding: 30px;">
                         <div class="health_flow_search_modal_header" style="margin-bottom: 20px;">
-                            <h3>Master Data</h3>
+                            <h3 t-esc="this.t('Master Data')"/>
                             <div class="health_flow_search_modal_close" t-on-click="() =&gt; this.closeMasterDataModal()">
                                 <i class="fa fa-times"></i>
                             </div>
@@ -241,43 +241,43 @@
                                  style="display: flex; align-items: center; gap: 14px; padding: 14px 18px; border-radius: 10px; background: #f7fafc; border: 1px solid #e2e8f0; cursor: pointer; font-size: 15px; font-weight: 500; transition: all 0.15s; color: #2d3748;"
                                  t-on-click="() =&gt; this.onMasterDataSelect('admin-facilities')">
                                 <i class="fa fa-building fa-lg" style="color: #9f7aea; width: 24px; text-align: center;"></i>
-                                <span>Healthcare Facility</span>
+                                <span t-esc="this.t('Healthcare Facility')"/>
                             </div>
                             <div role="button"
                                  style="display: flex; align-items: center; gap: 14px; padding: 14px 18px; border-radius: 10px; background: #f7fafc; border: 1px solid #e2e8f0; cursor: pointer; font-size: 15px; font-weight: 500; transition: all 0.15s; color: #2d3748;"
                                  t-on-click="() =&gt; this.onMasterDataSelect('admin-catchment-provinces')">
                                 <i class="fa fa-globe fa-lg" style="color: #9f7aea; width: 24px; text-align: center;"></i>
-                                <span>Catchment Province</span>
+                                <span t-esc="this.t('Catchment Province')"/>
                             </div>
                             <div role="button"
                                  style="display: flex; align-items: center; gap: 14px; padding: 14px 18px; border-radius: 10px; background: #f7fafc; border: 1px solid #e2e8f0; cursor: pointer; font-size: 15px; font-weight: 500; transition: all 0.15s; color: #2d3748;"
                                  t-on-click="() =&gt; this.onMasterDataSelect('admin-service-types')">
                                 <i class="fa fa-list-ul fa-lg" style="color: #9f7aea; width: 24px; text-align: center;"></i>
-                                <span>Service Types</span>
+                                <span t-esc="this.t('Service Types')"/>
                             </div>
                             <div role="button"
                                  style="display: flex; align-items: center; gap: 14px; padding: 14px 18px; border-radius: 10px; background: #f7fafc; border: 1px solid #e2e8f0; cursor: pointer; font-size: 15px; font-weight: 500; transition: all 0.15s; color: #2d3748;"
                                  t-on-click="() =&gt; this.onMasterDataSelect('admin-symptoms')">
                                 <i class="fa fa-heartbeat fa-lg" style="color: #9f7aea; width: 24px; text-align: center;"></i>
-                                <span>Symptoms</span>
+                                <span t-esc="this.t('Symptoms')"/>
                             </div>
                             <div role="button"
                                  style="display: flex; align-items: center; gap: 14px; padding: 14px 18px; border-radius: 10px; background: #f7fafc; border: 1px solid #e2e8f0; cursor: pointer; font-size: 15px; font-weight: 500; transition: all 0.15s; color: #2d3748;"
                                  t-on-click="() =&gt; this.onMasterDataSelect('admin-referral-sources')">
                                 <i class="fa fa-share-alt fa-lg" style="color: #9f7aea; width: 24px; text-align: center;"></i>
-                                <span>Referral Sources</span>
+                                <span t-esc="this.t('Referral Sources')"/>
                             </div>
                             <div role="button"
                                  style="display: flex; align-items: center; gap: 14px; padding: 14px 18px; border-radius: 10px; background: #f7fafc; border: 1px solid #e2e8f0; cursor: pointer; font-size: 15px; font-weight: 500; transition: all 0.15s; color: #2d3748;"
                                  t-on-click="() =&gt; this.onMasterDataSelect('admin-insurance')">
                                 <i class="fa fa-shield fa-lg" style="color: #9f7aea; width: 24px; text-align: center;"></i>
-                                <span>Insurance Provider</span>
+                                <span t-esc="this.t('Insurance Provider')"/>
                             </div>
                             <div role="button"
                                  style="display: flex; align-items: center; gap: 14px; padding: 14px 18px; border-radius: 10px; background: #f7fafc; border: 1px solid #e2e8f0; cursor: pointer; font-size: 15px; font-weight: 500; transition: all 0.15s; color: #2d3748;"
                                  t-on-click="() =&gt; this.onMasterDataSelect('admin-urgency-levels')">
                                 <i class="fa fa-exclamation-circle fa-lg" style="color: #9f7aea; width: 24px; text-align: center;"></i>
-                                <span>Urgency Levels</span>
+                                <span t-esc="this.t('Urgency Levels')"/>
                             </div>
                         </div>
                     </div>
@@ -289,7 +289,7 @@
                 <div class="health_flow_search_modal_backdrop" t-on-click="() =&gt; this.closeUserMgmtModal()">
                     <div class="health_flow_search_modal" t-on-click.stop="" style="max-width: 480px; padding: 30px;">
                         <div class="health_flow_search_modal_header" style="margin-bottom: 20px;">
-                            <h3>User Management</h3>
+                            <h3 t-esc="this.t('User Management')"/>
                             <div class="health_flow_search_modal_close" t-on-click="() =&gt; this.closeUserMgmtModal()">
                                 <i class="fa fa-times"></i>
                             </div>
@@ -300,8 +300,8 @@
                                  t-on-click="() =&gt; this.onUserMgmtSelect('admin-user-list')">
                                 <i class="fa fa-user-circle fa-lg" style="color: #9f7aea; width: 24px; text-align: center;"></i>
                                 <div>
-                                    <span>Users</span>
-                                    <div style="font-size: 12px; font-weight: 400; color: #a0aec0; margin-top: 2px;">Add, edit, and manage user accounts</div>
+                                    <span t-esc="this.t('Users')"/>
+                                    <div style="font-size: 12px; font-weight: 400; color: #a0aec0; margin-top: 2px;" t-esc="this.t('Add, edit, and manage user accounts')"/>
                                 </div>
                             </div>
                             <div role="button"
@@ -309,8 +309,8 @@
                                  t-on-click="() =&gt; this.onUserMgmtSelect('admin-access-roles')">
                                 <i class="fa fa-key fa-lg" style="color: #9f7aea; width: 24px; text-align: center;"></i>
                                 <div>
-                                    <span>Access Roles</span>
-                                    <div style="font-size: 12px; font-weight: 400; color: #a0aec0; margin-top: 2px;">Define permission bundles for user groups</div>
+                                    <span t-esc="this.t('Access Roles')"/>
+                                    <div style="font-size: 12px; font-weight: 400; color: #a0aec0; margin-top: 2px;" t-esc="this.t('Define permission bundles for user groups')"/>
                                 </div>
                             </div>
                             <div role="button"
@@ -318,8 +318,8 @@
                                  t-on-click="() =&gt; this.onUserMgmtSelect('admin-role-management')">
                                 <i class="fa fa-shield fa-lg" style="color: #9f7aea; width: 24px; text-align: center;"></i>
                                 <div>
-                                    <span>Role Management</span>
-                                    <div style="font-size: 12px; font-weight: 400; color: #a0aec0; margin-top: 2px;">Configure restrictions, hidden menus, and field access</div>
+                                    <span t-esc="this.t('Role Management')"/>
+                                    <div style="font-size: 12px; font-weight: 400; color: #a0aec0; margin-top: 2px;" t-esc="this.t('Configure restrictions, hidden menus, and field access')"/>
                                 </div>
                             </div>
                         </div>
@@ -332,7 +332,7 @@
                 <div class="health_flow_search_modal_backdrop" t-on-click="() =&gt; this.closeArMgmtModal()">
                     <div class="health_flow_search_modal" t-on-click.stop="" style="max-width: 520px; padding: 30px;">
                         <div class="health_flow_search_modal_header" style="margin-bottom: 20px;">
-                            <h3>AR Management</h3>
+                            <h3 t-esc="this.t('AR Management')"/>
                             <div class="health_flow_search_modal_close" t-on-click="() =&gt; this.closeArMgmtModal()">
                                 <i class="fa fa-times"></i>
                             </div>
@@ -344,8 +344,8 @@
                                  t-on-click="() =&gt; this.onArMgmtSelect('ar-account-payment')">
                                 <i class="fa fa-money fa-lg" style="color: #9f7aea; width: 24px; text-align: center;"></i>
                                 <div>
-                                    <span>Account Payment</span>
-                                    <div style="font-size: 12px; font-weight: 400; color: #a0aec0; margin-top: 2px;">Record cash or bank transfer payments against invoices</div>
+                                    <span t-esc="this.t('Account Payment')"/>
+                                    <div style="font-size: 12px; font-weight: 400; color: #a0aec0; margin-top: 2px;" t-esc="this.t('Record cash or bank transfer payments against invoices')"/>
                                 </div>
                             </div>
                             <!-- (b) Cash In Transit Transfers -->
@@ -354,8 +354,8 @@
                                  t-on-click="() =&gt; this.onArMgmtSelect('ar-cash-in-transit')">
                                 <i class="fa fa-truck fa-lg" style="color: #9f7aea; width: 24px; text-align: center;"></i>
                                 <div>
-                                    <span>Cash In Transit Transfers</span>
-                                    <div style="font-size: 12px; font-weight: 400; color: #a0aec0; margin-top: 2px;">Nurse cash pending delivery to Head Office</div>
+                                    <span t-esc="this.t('Cash In Transit Transfers')"/>
+                                    <div style="font-size: 12px; font-weight: 400; color: #a0aec0; margin-top: 2px;" t-esc="this.t('Nurse cash pending delivery to Head Office')"/>
                                 </div>
                             </div>
                             <!-- (c) Refund / Credit -->
@@ -364,8 +364,8 @@
                                  t-on-click="() =&gt; this.onArMgmtSelect('ar-refund-credit')">
                                 <i class="fa fa-undo fa-lg" style="color: #9f7aea; width: 24px; text-align: center;"></i>
                                 <div>
-                                    <span>Refund / Credit</span>
-                                    <div style="font-size: 12px; font-weight: 400; color: #a0aec0; margin-top: 2px;">Issue credit notes and process refunds</div>
+                                    <span t-esc="this.t('Refund / Credit')"/>
+                                    <div style="font-size: 12px; font-weight: 400; color: #a0aec0; margin-top: 2px;" t-esc="this.t('Issue credit notes and process refunds')"/>
                                 </div>
                             </div>
                         </div>
@@ -378,7 +378,7 @@
                 <div class="health_flow_search_modal_backdrop" t-on-click="() => this.closeSearchModal()">
                     <div class="health_flow_search_modal" t-on-click.stop="">
                         <div class="health_flow_search_modal_header">
-                            <h3 t-esc="state.searchType === 'crm' ? 'CRM Search' : 'Booking Search'"/>
+                            <h3 t-esc="state.searchType === 'crm' ? this.t('CRM Search') : this.t('Booking Search')"/>
                             <div class="health_flow_search_modal_close" t-on-click="() => this.closeSearchModal()">
                                 <i class="fa fa-times"></i>
                             </div>
@@ -387,7 +387,7 @@
                             <div class="health_flow_search_form">
                                 <input type="text"
                                        class="health_flow_search_input"
-                                       t-att-placeholder="state.searchType === 'crm' ? 'Search by name, phone, or email...' : 'Search by client name, phone, or booking code...'"
+                                       t-att-placeholder="state.searchType === 'crm' ? this.t('Search by name, phone, or email...') : this.t('Search by client name, phone, or booking code...')"
                                        t-model="state.searchQuery"
                                        t-on-input="onSearchInput"/>
                             </div>
@@ -396,7 +396,7 @@
                                 <div class="health_flow_merge_controls" t-if="state.searchType === 'crm' and state.selectedLeadIds.length >= 2">
                                     <button class="health_flow_merge_button"
                                             t-on-click="() => this.mergeCrmLeads()">
-                                        <i class="fa fa-clone"/> Merge <t t-esc="state.selectedLeadIds.length"/> contacts
+                                        <i class="fa fa-clone"/> <t t-esc="this.t('Merge')"/> <t t-esc="state.selectedLeadIds.length"/> <t t-esc="this.t('contacts')"/>
                                     </button>
                                 </div>
 
@@ -426,7 +426,7 @@
                                 <!-- CRM Results -->
                                 <t t-if="state.searchType === 'crm'">
                                     <t t-if="state.searchResults.clients.length">
-                                        <div class="health_flow_search_section_title">Clients</div>
+                                        <div class="health_flow_search_section_title" t-esc="this.t('Clients')"/>
                                         <t t-foreach="state.searchResults.clients" t-as="result" t-key="result.id">
                                             <div class="health_flow_search_result_card"
                                                  t-att-class="'client-result'"
@@ -444,7 +444,7 @@
                                     </t>
 
                                     <t t-if="state.searchResults.leads.length">
-                                        <div class="health_flow_search_section_title">Contacts</div>
+                                        <div class="health_flow_search_section_title" t-esc="this.t('Contacts')"/>
                                         <t t-foreach="state.searchResults.leads" t-as="result" t-key="result.id">
                                             <div class="health_flow_search_result_card"
                                                  t-att-class="'status-' + result.contact_outcome + (this.isLeadSelected(result.id) ? ' selected' : '')"
@@ -469,7 +469,7 @@
                             </div>
                             <div class="health_flow_search_empty" t-if="state.searchQuery and this.getSearchResultCount() === 0">
                                 <i class="fa fa-search fa-3x"/>
-                                <p t-esc="state.searchType === 'crm' ? 'No CRM results found' : 'No bookings found'"/>
+                                <p t-esc="state.searchType === 'crm' ? this.t('No CRM results found') : this.t('No bookings found')"/>
                             </div>
                         </div>
                     </div>

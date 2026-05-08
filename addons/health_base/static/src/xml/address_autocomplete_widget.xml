@@ -8,7 +8,7 @@
                 <input
                     type="text"
                     class="address-search-input o_input"
-                    placeholder="Start typing address (min 3 characters)..."
+                    t-att-placeholder="this.t('Start typing address (min 3 characters)...')"
                     t-att-value="state.searchText"
                     t-on-input="onInputChange"
                     t-on-keydown="onKeydown"
@@ -47,7 +47,7 @@
             <div t-if="state.showDropdown and state.suggestions.length > 0" class="address-suggestions-dropdown">
                 <div class="address-suggestions-header">
                     <small class="text-muted">
-                        <i class="fa fa-map-marker"/> <t t-esc="state.suggestions.length"/> address<t t-if="state.suggestions.length != 1">es</t> found
+                        <i class="fa fa-map-marker"/> <t t-esc="state.suggestions.length"/> <t t-esc="state.suggestions.length === 1 ? this.t('address found') : this.t('addresses found')"/>
                     </small>
                 </div>
 
@@ -70,7 +70,7 @@
 
                 <div class="address-suggestions-footer">
                     <small class="text-muted">
-                        <i class="fa fa-info-circle"/> Powered by Photon (OpenStreetMap)
+                        <i class="fa fa-info-circle"/> <t t-esc="this.t('Powered by Photon (OpenStreetMap)')"/>
                     </small>
                 </div>
             </div>
@@ -78,7 +78,7 @@
             <!-- Help Text -->
             <div t-if="!state.showDropdown and !state.searchText and !state.hasError" class="address-help-text">
                 <small class="text-muted">
-                    <i class="fa fa-lightbulb-o"/> Tip: Type street, city, or landmark name to search addresses
+                    <i class="fa fa-lightbulb-o"/> <t t-esc="this.t('Tip: Type street, city, or landmark name to search addresses')"/>
                 </small>
             </div>
         </div>

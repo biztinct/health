@@ -2,7 +2,7 @@
 <templates xml:space="preserve">
 
     <t t-name="health_field_requirements.MissingFieldsDialog">
-        <Dialog title="'⚠ Missing Required Fields'" size="'md'">
+        <Dialog title="this.t('Missing Required Fields')" size="'md'">
             <div class="fr-missing-dialog">
 
                 <!-- Summary bar -->
@@ -11,7 +11,7 @@
                         <i class="fa fa-exclamation-triangle"/>
                     </div>
                     <div class="fr-missing-summary-text">
-                        <strong><t t-esc="props.missingFields.length"/> field(s)</strong> must be filled before saving.
+                        <strong><t t-esc="props.missingFields.length"/> <t t-esc="this.t('field(s)')"/></strong> <t t-esc="this.t('must be filled before saving.')"/>
                     </div>
                 </div>
 
@@ -20,13 +20,13 @@
                     <t t-if="props.nativeCount > 0">
                         <span class="fr-legend-item">
                             <span class="fr-legend-dot fr-dot-native"/>
-                            Form Required (<t t-esc="props.nativeCount"/>)
+                            <t t-esc="this.t('Form Required')"/> (<t t-esc="props.nativeCount"/>)
                         </span>
                     </t>
                     <t t-if="props.configuredCount > 0">
                         <span class="fr-legend-item">
                             <span class="fr-legend-dot fr-dot-configured"/>
-                            Admin Configured (<t t-esc="props.configuredCount"/>)
+                            <t t-esc="this.t('Admin Configured')"/> (<t t-esc="props.configuredCount"/>)
                         </span>
                     </t>
                 </div>
@@ -46,7 +46,7 @@
                             </div>
                             <span class="fr-missing-item-badge"
                                   t-att-class="field.source === 'configured' ? 'fr-badge-configured' : 'fr-badge-native'"
-                                  t-esc="field.source === 'configured' ? 'Admin Rule' : 'Required'"/>
+                                  t-esc="field.source === 'configured' ? this.t('Admin Rule') : this.t('Required')"/>
                         </div>
                     </t>
                 </div>
@@ -55,7 +55,7 @@
 
             <t t-set-slot="footer">
                 <button class="btn btn-primary" t-on-click="props.close">
-                    <i class="fa fa-pencil me-1"/> Go back and fill fields
+                    <i class="fa fa-pencil me-1"/> <t t-esc="this.t('Go back and fill fields')"/>
                 </button>
             </t>
         </Dialog>

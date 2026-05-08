@@ -13,7 +13,7 @@
                         <i class="fa fa-home"/> Home
                     </a>
                     <span class="health_landing_breadcrumb_separator">/</span>
-                    <a href="#" class="health_landing_breadcrumb_item" t-on-click="onContactsClick">Contacts</a>
+                    <a href="#" class="health_landing_breadcrumb_item" t-on-click="onContactsClick" t-esc="this.t('Contacts')"/>
                     <span class="health_landing_breadcrumb_separator">/</span>
                     <span class="health_landing_breadcrumb_item" t-esc="getLeadName()"/>
                 </div>
@@ -51,25 +51,25 @@
                 </h1>
                 <!-- Dashboard Type Identifier (title removed) -->
                 <div class="hub_spoke_action_buttons">
-                    <button type="button" class="hub_spoke_btn hub_spoke_btn--spam" t-on-click="onMarkSpamClick" title="Mark as Spam">
+                    <button type="button" class="hub_spoke_btn hub_spoke_btn--spam" t-on-click="onMarkSpamClick" t-att-title="this.t('Mark as Spam')">
                         <i class="fa fa-ban"/> Mark Spam
                     </button>
-                    <button type="button" class="hub_spoke_btn hub_spoke_btn--booking" t-on-click="onBookingClick" title="Create Booking">
+                    <button type="button" class="hub_spoke_btn hub_spoke_btn--booking" t-on-click="onBookingClick" t-att-title="this.t('Create Booking')">
                         <i class="fa fa-calendar-plus-o"/> Booking
                     </button>
-                    <button type="button" class="hub_spoke_btn hub_spoke_btn--consultation" t-on-click="onConsultationClick" title="Refer for Consultation">
+                    <button type="button" class="hub_spoke_btn hub_spoke_btn--consultation" t-on-click="onConsultationClick" t-att-title="this.t('Refer for Consultation')">
                         <i class="fa fa-comments"/> Consultation
                     </button>
-                    <button type="button" class="hub_spoke_btn hub_spoke_btn--escalate" t-on-click="onEscalateClick" title="Escalate Contact">
+                    <button type="button" class="hub_spoke_btn hub_spoke_btn--escalate" t-on-click="onEscalateClick" t-att-title="this.t('Escalate Contact')">
                         <i class="fa fa-level-up"/> Escalate
                     </button>
-                    <button type="button" class="hub_spoke_btn hub_spoke_btn--message" t-on-click="onSendMessageClick" title="Send Message">
+                    <button type="button" class="hub_spoke_btn hub_spoke_btn--message" t-on-click="onSendMessageClick" t-att-title="this.t('Send Message')">
                         <i class="fa fa-envelope"/> Send Message
                     </button>
-                    <button type="button" class="hub_spoke_btn hub_spoke_btn--activity" t-on-click="onLogActivityClick" title="Schedule Activity">
+                    <button type="button" class="hub_spoke_btn hub_spoke_btn--activity" t-on-click="onLogActivityClick" t-att-title="this.t('Schedule Activity')">
                         <i class="fa fa-clock-o"/> Log Activity
                     </button>
-                    <button type="button" class="hub_spoke_btn hub_spoke_btn--note" t-on-click="onLogNoteClick" title="Add Internal Note">
+                    <button type="button" class="hub_spoke_btn hub_spoke_btn--note" t-on-click="onLogNoteClick" t-att-title="this.t('Add Internal Note')">
                         <i class="fa fa-sticky-note"/> Notes
                     </button>
                 </div>
@@ -77,7 +77,7 @@
 
             <div class="health_landing_loading" t-if="state.loading">
                 <i class="fa fa-spinner health_landing_loading_spinner"/>
-                <p>Loading contact data...</p>
+                <p t-esc="this.t('Loading contact data...')"/>
             </div>
 
             <div class="hub_spoke_svg_container" t-if="!state.loading">

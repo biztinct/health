@@ -400,3 +400,51 @@ msgstr "Tải xuống"
 #: code:addons/health_voip24h/static/src/js/click_to_dial_widget.js:34
 msgid "No phone number available"
 msgstr "Không có số điện thoại"
+
+#. module: health_voip24h
+#. odoo-javascript
+#: code:addons/health_voip24h/static/src/xml/call_popup.xml:0
+msgid "Incoming Call"
+msgstr "Cuộc gọi đến"
+
+#. module: health_voip24h
+#. odoo-javascript
+#: code:addons/health_voip24h/static/src/xml/call_popup.xml:0
+msgid "Close"
+msgstr "Đóng"
+
+#. module: health_voip24h
+#. odoo-javascript
+#: code:addons/health_voip24h/static/src/xml/call_popup.xml:0
+msgid "View Contact"
+msgstr "Xem liên hệ"
+
+#. module: health_voip24h
+#. odoo-javascript
+#: code:addons/health_voip24h/static/src/xml/call_popup.xml:0
+msgid "View Lead"
+msgstr "Xem tiềm năng"
+
+#. module: health_voip24h
+#. odoo-javascript
+#: code:addons/health_voip24h/static/src/xml/call_popup.xml:0
+msgid "View Call Log"
+msgstr "Xem nhật ký cuộc gọi"
+
+#. module: health_voip24h
+#. odoo-javascript
+#: code:addons/health_voip24h/static/src/xml/call_popup.xml:0
+msgid "Ringing..."
+msgstr "Đang đổ chuông..."
+
+#. module: health_voip24h
+#. odoo-javascript
+#: code:addons/health_voip24h/static/src/xml/click_to_dial_widget.xml:0
+msgid "Click to dial"
+msgstr "Nhấn để gọi"
+
+#. module: health_voip24h
+#. odoo-javascript
+#: code:addons/health_voip24h/static/src/xml/click_to_dial_widget.xml:0
+msgid "Call"
+msgstr "Gọi"

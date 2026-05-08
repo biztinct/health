@@ -2,6 +2,7 @@
 
 import { Component, useState, onMounted, onWillUnmount, onPatched } from "@odoo/owl";
 import { registry } from "@web/core/registry";
+import { _t } from "@web/core/l10n/translation";
 
 export class ServiceTimer extends Component {
     static template = "health_fieldservice.ServiceTimer";
@@ -18,6 +19,10 @@ export class ServiceTimer extends Component {
         nolabel: { type: Boolean, optional: true },
         placeholder: { type: String, optional: true },
     };
+
+    t(text) {
+        return _t(text);
+    }
     
     setup() {
         console.log("ServiceTimer props:", this.props);
@@ -231,14 +236,14 @@ export class ServiceTimer extends Component {
     }
     
     getStatusText() {
-        if (!this.state) return 'Loading...';
+        if (!this.state) return _t('Loading...');
         
         if (this.state.isRunning) {
-            return 'Service in Progress';
+            return _t('Service in Progress');
         } else if (this.state.totalSeconds > 0) {
-            return 'Service Completed';
+            return _t('Service Completed');
         } else {
-            return 'Service Not Started';
+            return _t('Service Not Started');
         }
     }
     
@@ -256,18 +261,18 @@ export class ServiceTimer extends Component {
     
     formatDuration() {
         if (!this.state || this.state.totalSeconds === 0) {
-            return 'Ready to Start';
+            return _t('Ready to Start');
         }
 
         const hours = this.state.hours || 0;
         const minutes = this.state.minutes || 0;
 
         if (hours > 0) {
-            return `${hours}h ${minutes}m total`;
+            return _t("%s h %s m total", hours, minutes);
         } else if (minutes > 0) {
-            return `${minutes} minutes`;
+            return _t("%s minutes", minutes);
         } else {
-            return 'Just started';
+            return _t('Just started');
         }
     }
 

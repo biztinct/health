@@ -9,12 +9,12 @@
             <div class="card border-primary">
                 <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
                     <h6 class="m-0">
-                        <i class="fa fa-phone-square"/> Incoming Call
+                        <i class="fa fa-phone-square"/> <t t-esc="this.t('Incoming Call')"/>
                     </h6>
                     <button
                         class="btn btn-sm btn-link text-white p-0"
                         t-on-click="closePopup"
-                        title="Close">
+                        t-att-title="this.t('Close')">
                         <i class="fa fa-times"/>
                     </button>
                 </div>
@@ -36,7 +36,7 @@
                             t-if="state.activeCall.partner_id"
                             class="btn btn-outline-primary btn-sm"
                             t-on-click="openPartner">
-                            <i class="fa fa-user"/> View Contact
+                            <i class="fa fa-user"/> <t t-esc="this.t('View Contact')"/>
                         </button>
 
                         <!-- Open Lead -->
@@ -44,14 +44,14 @@
                             t-if="state.activeCall.lead_id"
                             class="btn btn-outline-primary btn-sm"
                             t-on-click="openLead">
-                            <i class="fa fa-handshake-o"/> View Lead
+                            <i class="fa fa-handshake-o"/> <t t-esc="this.t('View Lead')"/>
                         </button>
 
                         <!-- Open Call Log -->
                         <button
                             class="btn btn-outline-secondary btn-sm"
                             t-on-click="openCallLog">
-                            <i class="fa fa-list"/> View Call Log
+                            <i class="fa fa-list"/> <t t-esc="this.t('View Call Log')"/>
                         </button>
                     </div>
                 </div>
@@ -59,9 +59,9 @@
                 <!-- Ringing Animation -->
                 <div class="card-footer bg-light text-center">
                     <div class="spinner-grow spinner-grow-sm text-primary" role="status">
-                        <span class="visually-hidden">Ringing...</span>
+                        <span class="visually-hidden" t-esc="this.t('Ringing...')"/>
                     </div>
-                    <span class="ms-2 text-muted">Ringing...</span>
+                    <span class="ms-2 text-muted" t-esc="this.t('Ringing...')"/>
                 </div>
             </div>
         </div>

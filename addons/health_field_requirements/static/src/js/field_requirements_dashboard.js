@@ -17,6 +17,10 @@ class FieldRequirementsDashboard extends Component {
     static template = "health_field_requirements.Dashboard";
     static props = { "*": true };
 
+    t(text) {
+        return _t(text);
+    }
+
     setup() {
         this.orm = useService("orm");
         this.notification = useService("notification");

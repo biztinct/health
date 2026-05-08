@@ -3,6 +3,7 @@
 import { registry } from "@web/core/registry";
 import { Component, useState } from "@odoo/owl";
 import { useService } from "@web/core/utils/hooks";
+import { _t } from "@web/core/l10n/translation";
 
 /**
  * Staff Workload Dashboard Client Action
@@ -10,6 +11,10 @@ import { useService } from "@web/core/utils/hooks";
  */
 class StaffWorkloadDashboard extends Component {
     static template = "health_fieldservice.StaffWorkloadDashboardTemplate";
+
+    t(text) {
+        return _t(text);
+    }
 
     setup() {
         this.orm = useService("orm");
@@ -63,7 +68,7 @@ class StaffWorkloadDashboard extends Component {
 
         } catch (error) {
             console.error('Error loading dashboard data:', error);
-            this.notification.add("Error loading dashboard data: " + (error.message || 'Unknown error'), { type: "danger" });
+            this.notification.add(_t("Error loading dashboard data: ") + (error.message || _t('Unknown error')), { type: "danger" });
             this.state.isLoading = false;
         }
     }

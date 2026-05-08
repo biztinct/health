@@ -27,6 +27,10 @@ export class MissingFieldsDialog extends Component {
         nativeCount: Number,
         configuredCount: Number,
     };
+
+    t(text) {
+        return _t(text);
+    }
 }
 
 // =========================================================================

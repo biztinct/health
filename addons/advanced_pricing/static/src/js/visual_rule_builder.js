@@ -17,6 +17,10 @@ export class VisualRuleBuilder extends Component {
         onCancel: Function,
     };
 
+    t(text) {
+        return _t(text);
+    }
+
     setup() {
         this.orm = useService("orm");
         this.notification = useService("notification");

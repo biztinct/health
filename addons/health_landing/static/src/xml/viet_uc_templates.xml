@@ -23,7 +23,7 @@
                         <input
                             type="text"
                             class="health_landing_search_input"
-                            placeholder="Search modules... (Ctrl+K)"
+                            t-att-placeholder="this.t('Search modules... (Ctrl+K)')"
                             t-model="state.searchQuery"
                             t-on-input="onSearchInput"
                             t-ref="searchInput"
@@ -41,7 +41,7 @@
                 <!-- Recently Accessed -->
                 <div class="health_landing_quick_access" t-if="state.recentlyAccessed.length > 0 and !state.searchQuery">
                     <div class="health_landing_quick_access_title">
-                        <i class="fa fa-clock-o"/> Recently Accessed
+                        <i class="fa fa-clock-o"/> <t t-esc="this.t('Recently Accessed')"/>
                     </div>
                     <div class="health_landing_quick_access_grid">
                         <t t-foreach="state.recentlyAccessed" t-as="recent" t-key="recent.id">
@@ -61,7 +61,7 @@
                 <!-- Favorites -->
                 <div class="health_landing_quick_access" t-if="state.favorites.length > 0 and !state.searchQuery">
                     <div class="health_landing_quick_access_title">
-                        <i class="fa fa-star"/> Favorites
+                        <i class="fa fa-star"/> <t t-esc="this.t('Favorites')"/>
                     </div>
                     <div class="health_landing_quick_access_grid">
                         <t t-foreach="state.favorites" t-as="favorite" t-key="favorite.id">
@@ -98,7 +98,7 @@
                     <div class="health_landing_empty_icon">
                         <i class="fa fa-search"/>
                     </div>
-                    <p>No modules found for "<t t-esc="state.searchQuery"/>"</p>
+                    <p><t t-esc="this.t('No modules found for')"/> "<t t-esc="state.searchQuery"/>"</p>
                 </div>
             </t>
 

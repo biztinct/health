@@ -4,6 +4,7 @@ import { registry } from "@web/core/registry";
 import { useService } from "@web/core/utils/hooks";
 import { Component, useState, useRef, onMounted, onWillUnmount } from "@odoo/owl";
 import { Dialog } from "@web/core/dialog/dialog";
+import { _t } from "@web/core/l10n/translation";
 
 /**
  * Contact Search Dialog - Shows grouped search results for contacts, leads, and clients
@@ -22,6 +23,10 @@ class ContactSearchDialog extends Component {
         this.state = useState({
             selectedIndex: -1,
         });
+    }
+
+    t(text) {
+        return _t(text);
     }
 
     get hasResults() {
@@ -99,7 +104,7 @@ export const contactSearchService = {
                     // Navigate to client form (res.partner)
                     await action.doAction({
                         type: 'ir.actions.act_window',
-                        name: 'Client Details',
+                        name: _t('Client Details'),
                         res_model: 'res.partner',
                         res_id: record.id,
                         view_mode: 'form',
@@ -111,7 +116,7 @@ export const contactSearchService = {
                     // Navigate to lead/contact form (crm.lead)
                     await action.doAction({
                         type: 'ir.actions.act_window',
-                        name: 'Contact Details',
+                        name: _t('Contact Details'),
                         res_model: 'crm.lead',
                         res_id: record.id,
                         view_mode: 'form',
@@ -164,6 +169,10 @@ export class ContactNameField extends Component {
                 this.inputRef.el.removeEventListener('keydown', this.onKeyDown.bind(this));
             }
         });
+    }
+
+    t(text) {
+        return _t(text);
     }
 
     async onKeyDown(ev) {

@@ -4,6 +4,7 @@ import { Component, onWillStart, onMounted, onWillUpdateProps, onWillUnmount, us
 import { registry } from "@web/core/registry";
 import { loadJS } from "@web/core/assets";
 import { rpc } from "@web/core/network/rpc";
+import { _t } from "@web/core/l10n/translation";
 
 /**
  * Address Map Widget - Interactive map display for patient addresses
@@ -87,6 +88,10 @@ export class AddressMapWidget extends Component {
                 clearInterval(this.coordinatePoller);
             }
         });
+    }
+
+    t(text) {
+        return _t(text);
     }
 
     async fetchMapSettings() {
@@ -294,7 +299,7 @@ export class AddressMapWidget extends Component {
         });
 
         this.patientMarker = window.L.marker([lat, lon], { icon: patientIcon }).addTo(this.map);
-        this.patientMarker.bindPopup('<strong>Patient Location</strong>');
+        this.patientMarker.bindPopup(`<strong>${_t("Patient Location")}</strong>`);
     }
 
     addGooglePatientMarker(lat, lon) {
@@ -307,7 +312,7 @@ export class AddressMapWidget extends Component {
         this.patientMarker = new google.maps.Marker({
             position: { lat, lng: lon },
             map: this.map,
-            title: 'Patient Location',
+            title: _t("Patient Location"),
             icon: {
                 path: google.maps.SymbolPath.CIRCLE,
                 scale: 12,
@@ -357,7 +362,7 @@ export class AddressMapWidget extends Component {
         });
 
         this.facilityMarker = window.L.marker([lat, lon], { icon: facilityIcon }).addTo(this.map);
-        this.facilityMarker.bindPopup(`<strong>${name}</strong><br/>Primary Facility`);
+        this.facilityMarker.bindPopup(`<strong>${name}</strong><br/>${_t("Primary Facility")}`);
     }
 
     addGoogleFacilityMarker(lat, lon, name) {
@@ -388,7 +393,7 @@ export class AddressMapWidget extends Component {
         });
 
         const infoWindow = new google.maps.InfoWindow({
-            content: `<strong>${name}</strong><br/>Primary Facility`,
+            content: `<strong>${name}</strong><br/>${_t("Primary Facility")}`,
         });
         this.facilityMarker.addListener('click', () => infoWindow.open(this.map, this.facilityMarker));
     }
@@ -621,13 +626,29 @@ export class AddressMapWidget extends Component {
                 ]);
                 this.map.fitBounds(bounds, { padding: [50, 50] });
             } else {
-                throw new Error('No route found');
+                throw new Error(_t("No route found"));
             }
         } catch (error) {
             console.warn("OSRM routing failed:", error);
             this.state.routeError = 'Could not calculate driving route';
             this.showStraightLine(fromLat, fromLon, toLat, toLon);
         }
+    }
+
+    getRouteErrorText(error) {
+        const errorMessages = {
+            'No primary facility assigned': _t("No primary facility assigned"),
+            'Facility has no coordinates': _t("Facility has no coordinates"),
+            'Failed to load facility': _t("Failed to load facility"),
+            'No driving route found between locations': _t("No driving route found between locations"),
+            'Location coordinates not found': _t("Location coordinates not found"),
+            'Directions API access denied - check API key': _t("Directions API access denied - check API key"),
+            'Directions API quota exceeded': _t("Directions API quota exceeded"),
+            'Server error - try again later': _t("Server error - try again later"),
+            'Could not calculate route': _t("Could not calculate route"),
+            'Could not calculate driving route': _t("Could not calculate driving route"),
+        };
+        return errorMessages[error] || error;
     }
 
     showStraightLine(fromLat, fromLon, toLat, toLon) {

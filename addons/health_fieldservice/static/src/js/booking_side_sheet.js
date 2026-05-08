@@ -1,6 +1,7 @@
 /** @odoo-module */
 import { Component, useState, useExternalListener } from "@odoo/owl";
 import { registry } from "@web/core/registry";
+import { _t } from "@web/core/l10n/translation";
 import { useService } from "@web/core/utils/hooks";
 
 export class BookingStaffSheet extends Component {
@@ -21,6 +22,10 @@ export class BookingStaffSheet extends Component {
                 this.close();
             }
         });
+    }
+
+    t(text) {
+        return _t(text);
     }
 
     get resId() {
@@ -74,10 +79,10 @@ export class BookingStaffSheet extends Component {
 
     getStatusLabel(status) {
         const map = {
-            assigned: "Assigned",
-            in_progress: "In Progress",
-            completed: "Completed",
-            cancelled: "Cancelled",
+            assigned: _t("Assigned"),
+            in_progress: _t("In Progress"),
+            completed: _t("Completed"),
+            cancelled: _t("Cancelled"),
         };
         return map[status] || status;
     }

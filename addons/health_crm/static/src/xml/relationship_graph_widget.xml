@@ -5,26 +5,26 @@
         <div class="o_relationship_graph_widget">
             <t t-if="state.error">
                 <div class="alert alert-danger m-3">
-                    <strong>Error:</strong>
+                    <strong t-esc="this.t('Error:')"/>
                     <t t-esc="state.error"/>
                     <br/>
-                    <small>Check browser console for details</small>
+                    <small t-esc="this.t('Check browser console for details')"/>
                 </div>
             </t>
             <t t-elif="state.loading">
                 <div class="text-center p-5">
                     <i class="fa fa-spinner fa-spin fa-3x text-primary"/>
-                    <p class="mt-3">Loading relationship network...</p>
+                    <p class="mt-3" t-esc="this.t('Loading relationship network...')"/>
                 </div>
             </t>
             <t t-else="">
                 <div class="relationship-graph-container">
                 <div class="graph-header p-2 bg-light border-bottom">
                     <h5 class="mb-0">
-                        <i class="fa fa-project-diagram"/> Relationship Network Graph
+                        <i class="fa fa-project-diagram"/> <t t-esc="this.t('Relationship Network Graph')"/>
                     </h5>
                     <small class="text-muted">
-                        Interactive force-directed graph • Drag nodes to reposition • Hover for details
+                        <t t-esc="this.t('Interactive force-directed graph - Drag nodes to reposition - Hover for details')"/>
                     </small>
                 </div>
                 <svg t-ref="relationshipGraph"
@@ -34,10 +34,10 @@
                 </svg>
                 <div class="graph-footer p-2 bg-light border-top">
                     <small class="text-muted">
-                        <strong>👤 Blue circles:</strong> Patients  •
-                        <strong>👥 Light blue circles:</strong> Representatives  •
-                        <strong>Thick lines:</strong> Primary relationships  •
-                        <strong>Arrows:</strong> Relationship direction (Patient → Representative)
+                        <strong t-esc="this.t('Blue circles:')"/> <t t-esc="this.t('Patients')"/> -
+                        <strong t-esc="this.t('Light blue circles:')"/> <t t-esc="this.t('Representatives')"/> -
+                        <strong t-esc="this.t('Thick lines:')"/> <t t-esc="this.t('Primary relationships')"/> -
+                        <strong t-esc="this.t('Arrows:')"/> <t t-esc="this.t('Relationship direction (Patient to Representative)')"/>
                     </small>
                 </div>
                 </div>

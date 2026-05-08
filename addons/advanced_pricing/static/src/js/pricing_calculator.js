@@ -2,9 +2,14 @@
 
 import { Component, useState } from '@odoo/owl';
 import { useService } from '@web/core/utils/hooks';
+import { _t } from "@web/core/l10n/translation";
 
 export class PricingCalculator extends Component {
     static template = 'advanced_pricing.Calculator';
+
+    t(text) {
+        return _t(text);
+    }
     
     setup() {
         this.orm = useService('orm');

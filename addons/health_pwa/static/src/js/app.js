@@ -1451,7 +1451,7 @@ window.healthPWA = {
           if (!booking) return '#95a5a6';
 
           // Support both 'status' (old) and 'state' (new API) properties
-          const status = booking.status || booking.state || '';
+          const status = String(booking.status || booking.state || '').toLowerCase();
 
           // Check for Running Late (orange)
           if (isRunningLate(booking)) {
@@ -1472,26 +1472,26 @@ window.healthPWA = {
         };
 
         const getStatusDisplay = (booking) => {
-          if (!booking) return 'Unknown';
+          if (!booking) return _t('Unknown');
 
           // Show "Running Late" if applicable
           if (isRunningLate(booking)) {
-            return 'Running Late';
+            return _t('Running Late');
           }
 
           // Support both 'status' (old) and 'state' (new API) properties
           const status = booking.status || booking.state || '';
           const displayMap = {
-            'draft': 'Booked',
-            'confirmed': 'Confirmed',
-            'assigned': 'Assigned',
-            'in_progress': 'In Progress',
-            'completed': 'Completed',
-            'completed_pending_invoice': 'Pending Invoice',
-            'closed': 'Closed',
-            'cancelled': 'Cancelled'
+            'draft': _t('Booked'),
+            'confirmed': _t('Confirmed'),
+            'assigned': _t('Assigned'),
+            'in_progress': _t('In Progress'),
+            'completed': _t('Completed'),
+            'completed_pending_invoice': _t('Pending Invoice'),
+            'closed': _t('Closed'),
+            'cancelled': _t('Cancelled')
           };
-          return displayMap[status] || status || 'Unknown';
+          return displayMap[status] || status || _t('Unknown');
         };
 
         const callPatient = (phone) => {
@@ -4319,7 +4319,7 @@ window.healthPWA = {
             <input 
               type="text" 
               class="search-input" 
-              placeholder="Search patients..."
+              :placeholder="_t('Search patients...')"
               v-model="searchQuery">
           </div>
           
@@ -4328,7 +4328,7 @@ window.healthPWA = {
             <div class="loading-spinner">
               <div class="spinner"></div>
             </div>
-            <p>Loading patients...</p>
+            <p>{{ _t('Loading patients...') }}</p>
           </div>
           
           <!-- Error State -->
@@ -4336,7 +4336,7 @@ window.healthPWA = {
             <div class="error-icon">
               <i class="material-icons">error</i>
             </div>
-            <p>Failed to load patients: {{ error }}</p>
+            <p>{{ _t('Failed to load patients') }}: {{ error }}</p>
           </div>
           
           <!-- Empty State -->
@@ -4380,7 +4380,7 @@ window.healthPWA = {
 
               <!-- Patient address -->
               <div class="booking-patient-section">
-                <span class="booking-service-type">{{ patient.street || patient.street2 || 'No address provided' }}</span>
+                <span class="booking-service-type">{{ patient.street || patient.street2 || _t('No address provided') }}</span>
               </div>
             </div>
           </div>
@@ -4716,12 +4716,12 @@ window.healthPWA = {
         
         const getStatusLabel = (state) => {
           switch (state) {
-            case 'draft': return 'Draft';
-            case 'assigned': return 'Assigned';
-            case 'in_progress': return 'In Progress';
-            case 'completed': return 'Completed';
-            case 'cancelled': return 'Cancelled';
-            default: return 'Unknown';
+            case 'draft': return _t('Draft');
+            case 'assigned': return _t('Assigned');
+            case 'in_progress': return _t('In Progress');
+            case 'completed': return _t('Completed');
+            case 'cancelled': return _t('Cancelled');
+            default: return _t('Unknown');
           }
         };
         
@@ -4879,12 +4879,12 @@ window.healthPWA = {
 
         const getStatusLabel = (state) => {
           switch (state) {
-            case 'draft': return 'Draft';
-            case 'assigned': return 'Assigned';
-            case 'in_progress': return 'In Progress';
-            case 'completed': return 'Completed';
-            case 'cancelled': return 'Cancelled';
-            default: return 'Unknown';
+            case 'draft': return _t('Draft');
+            case 'assigned': return _t('Assigned');
+            case 'in_progress': return _t('In Progress');
+            case 'completed': return _t('Completed');
+            case 'cancelled': return _t('Cancelled');
+            default: return _t('Unknown');
           }
         };
 
@@ -6614,13 +6614,13 @@ window.healthPWA = {
             <div class="profile-avatar">
               <i class="material-icons">account_circle</i>
             </div>
-            <h2>{{ user?.name || 'User' }}</h2>
-            <p>{{ user?.email || 'No email' }}</p>
+            <h2>{{ user?.name || _t('User') }}</h2>
+            <p>{{ user?.email || _t('No email') }}</p>
           </div>
           <div class="profile-actions">
             <button @click="$emit('sync')" class="btn btn-primary" :disabled="!isOnline">
               <i class="material-icons">sync</i>
-              Sync Data
+              {{ _t('Sync Data') }}
             </button>
           </div>
         </div>

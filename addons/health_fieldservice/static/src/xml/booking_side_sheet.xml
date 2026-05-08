@@ -4,7 +4,7 @@
     <t t-name="health_fieldservice.BookingStaffSheet">
         <!-- Trigger button — styled as vu-action-item in the action panel -->
         <button class="vu-action-item" t-on-click="open" type="button">
-            <i class="fa fa-users"/> Staff Overview
+            <i class="fa fa-users"/> <t t-esc="this.t('Staff Overview')"/>
         </button>
 
         <!-- Backdrop -->
@@ -16,7 +16,7 @@
             <!-- Header -->
             <div class="vu-side-sheet__header">
                 <div>
-                    <div class="vu-side-sheet__title">Staff Assignments</div>
+                    <div class="vu-side-sheet__title" t-esc="this.t('Staff Assignments')"/>
                     <div class="vu-side-sheet__subtitle"
                          t-if="props.record.data.display_name"
                          t-esc="props.record.data.display_name"/>
@@ -31,7 +31,7 @@
                 <!-- Loading -->
                 <div t-if="state.loading" class="text-center py-4 text-muted">
                     <i class="fa fa-spinner fa-spin fa-2x"/>
-                    <div class="mt-2">Loading assignments...</div>
+                    <div class="mt-2" t-esc="this.t('Loading assignments...')"/>
                 </div>
 
                 <!-- Content -->
@@ -40,10 +40,10 @@
                     <div class="d-flex align-items-center gap-2 mb-3 pb-3"
                          style="border-bottom: 1px solid var(--vu-border-soft, #e5e7eb);">
                         <span class="badge rounded-pill text-bg-primary">
-                            <t t-esc="assignmentCount"/> total
+                            <t t-esc="assignmentCount"/> <t t-esc="this.t('total')"/>
                         </span>
                         <span class="badge rounded-pill text-bg-success" t-if="activeAssignments.length">
-                            <t t-esc="activeAssignments.length"/> active
+                            <t t-esc="activeAssignments.length"/> <t t-esc="this.t('active')"/>
                         </span>
                     </div>
 
@@ -52,9 +52,9 @@
                          class="text-center py-4"
                          style="color: var(--vu-text-secondary, #6b7280);">
                         <i class="fa fa-user-plus fa-2x mb-2 d-block" style="opacity: 0.4;"/>
-                        <div style="font-size: 0.875rem; font-weight: 600;">No staff assigned yet</div>
+                        <div style="font-size: 0.875rem; font-weight: 600;" t-esc="this.t('No staff assigned yet')"/>
                         <div style="font-size: 0.75rem;" class="mt-1">
-                            Use the timeline view to drag-and-drop assignments.
+                            <t t-esc="this.t('Use the timeline view to drag-and-drop assignments.')"/>
                         </div>
                     </div>
 
@@ -93,11 +93,11 @@
                 <div class="d-flex gap-2 w-100">
                     <button class="vu-action-btn vu-action-btn--primary flex-grow-1"
                             t-on-click="openFullTimeline" type="button">
-                        <i class="fa fa-calendar"/> Open Timeline
+                        <i class="fa fa-calendar"/> <t t-esc="this.t('Open Timeline')"/>
                     </button>
                     <button class="vu-action-btn vu-action-btn--secondary flex-grow-1"
                             t-on-click="openAIAssign" type="button">
-                        <i class="fa fa-magic"/> AI Assign
+                        <i class="fa fa-magic"/> <t t-esc="this.t('AI Assign')"/>
                     </button>
                 </div>
             </div>

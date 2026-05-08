@@ -18,7 +18,7 @@
                 <div class="d-flex justify-content-between align-items-center mb-2">
                     <div>
                         <i class="fa fa-map-marker text-danger me-1"/>
-                        <strong>Patient GPS:</strong>
+                        <strong t-esc="this.t('Patient GPS:')"/>
                         <span class="ms-1">
                             <t t-esc="props.record.data.partner_latitude.toFixed(6)"/>,
                             <t t-esc="props.record.data.partner_longitude.toFixed(6)"/>
@@ -38,15 +38,15 @@
                     <!-- Loading State -->
                     <div t-if="state.isLoadingRoute" class="text-center py-2">
                         <i class="fa fa-spinner fa-spin me-1"/>
-                        Calculating driving route...
+                        <t t-esc="this.t('Calculating driving route...')"/>
                     </div>
 
                     <!-- Route Error -->
                     <div t-elif="state.routeError" class="text-warning">
                         <i class="fa fa-exclamation-triangle me-1"/>
-                        <t t-esc="state.routeError"/>
+                        <t t-esc="getRouteErrorText(state.routeError)"/>
                         <span t-if="state.routeError === 'Facility has no coordinates'" class="ms-2">
-                            (Please geocode the facility first)
+                            <t t-esc="this.t('(Please geocode the facility first)')"/>
                         </span>
                     </div>
 
@@ -54,7 +54,7 @@
                     <div t-elif="state.drivingDistance" class="d-flex justify-content-between align-items-center">
                         <div>
                             <i class="fa fa-building text-success me-1"/>
-                            <strong>Route to <t t-esc="state.facilityName"/>:</strong>
+                            <strong><t t-esc="this.t('Route to')"/> <t t-esc="state.facilityName"/>:</strong>
                         </div>
                         <div class="text-end">
                             <span class="me-3">
@@ -71,7 +71,7 @@
                     <!-- Facility Coords -->
                     <div t-if="state.facilityLat and state.facilityLon" class="text-muted mt-1" style="font-size: 11px;">
                         <i class="fa fa-hospital-o text-success me-1"/>
-                        Facility GPS: <t t-esc="state.facilityLat.toFixed(6)"/>, <t t-esc="state.facilityLon.toFixed(6)"/>
+                        <t t-esc="this.t('Facility GPS:')"/> <t t-esc="state.facilityLat.toFixed(6)"/>, <t t-esc="state.facilityLon.toFixed(6)"/>
                     </div>
                 </div>
 
@@ -80,16 +80,16 @@
                     <div style="font-size: 11px;">
                         <span class="me-3">
                             <span style="display: inline-block; width: 12px; height: 12px; background: #E53935; border-radius: 50%; border: 2px solid white; box-shadow: 0 1px 2px rgba(0,0,0,0.2);"></span>
-                            <span class="ms-1">Patient</span>
+                            <span class="ms-1" t-esc="this.t('Patient')"/>
                         </span>
                         <span>
                             <span style="display: inline-block; width: 12px; height: 12px; background: #0F6D66; border-radius: 50%; border: 2px solid white; box-shadow: 0 1px 2px rgba(0,0,0,0.2);"></span>
-                            <span class="ms-1">Facility</span>
+                            <span class="ms-1" t-esc="this.t('Facility')"/>
                         </span>
                     </div>
                     <small class="text-muted">
                         <i t-att-class="state.mapProvider === 'google' ? 'fa fa-google' : 'fa fa-globe'" class="me-1"/>
-                        <t t-if="state.mapProvider === 'google'">Google Maps</t>
+                        <t t-if="state.mapProvider === 'google'" t-esc="this.t('Google Maps')"/>
                         <t t-else="">OpenStreetMap</t>
                     </small>
                 </div>
@@ -101,8 +101,8 @@
                  style="height: 400px; display: flex; flex-direction: column; align-items: center; justify-content: center; background: #f8f9fa; border-radius: 8px;">
                 <i class="fa fa-map-marker mb-3" style="font-size: 48px; color: #0F6D66; opacity: 0.5;"/>
                 <p style="margin: 0; font-size: 14px;">
-                    Click "Geocode Address" to set patient location<br/>
-                    <small>Map with driving route will display when coordinates are available</small>
+                    <t t-esc="this.t('Click &quot;Geocode Address&quot; to set patient location')"/><br/>
+                    <small t-esc="this.t('Map with driving route will display when coordinates are available')"/>
                 </p>
             </div>
         </div>

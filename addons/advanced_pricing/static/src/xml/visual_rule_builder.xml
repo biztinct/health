@@ -8,20 +8,20 @@
                 <div class="d-flex justify-content-between align-items-center p-3 border-bottom">
                     <h4 class="mb-0">
                         <i class="fa fa-puzzle-piece me-2"/>
-                        Visual Rule Builder
+                        <t t-esc="this.t('Visual Rule Builder')"/>
                     </h4>
                     <div class="btn-group">
                         <button class="btn btn-sm btn-outline-info" t-on-click="backToRulesList">
-                            <i class="fa fa-list"/> Back to Rules
+                            <i class="fa fa-list"/> <t t-esc="this.t('Back to Rules')"/>
                         </button>
                         <button class="btn btn-sm btn-outline-secondary" t-on-click="clearWorkspace">
-                            <i class="fa fa-trash"/> Clear
+                            <i class="fa fa-trash"/> <t t-esc="this.t('Clear')"/>
                         </button>
                         <button class="btn btn-sm btn-primary" t-on-click="saveRule">
-                            <i class="fa fa-save"/> Save Rule
+                            <i class="fa fa-save"/> <t t-esc="this.t('Save Rule')"/>
                         </button>
                         <button class="btn btn-sm btn-secondary" t-on-click="props.onCancel">
-                            <i class="fa fa-times"/> Cancel
+                            <i class="fa fa-times"/> <t t-esc="this.t('Cancel')"/>
                         </button>
                     </div>
                 </div>
@@ -30,9 +30,9 @@
             <!-- Loading State -->
             <div t-if="state.isLoading" class="text-center p-5">
                 <div class="spinner-border text-primary" role="status">
-                    <span class="visually-hidden">Loading Blockly...</span>
+                    <span class="visually-hidden" t-esc="this.t('Loading Blockly...')"/>
                 </div>
-                <p class="mt-3 text-muted">Initializing Visual Rule Builder...</p>
+                <p class="mt-3 text-muted" t-esc="this.t('Initializing Visual Rule Builder...')"/>
             </div>
 
             <!-- Main Content -->
@@ -43,14 +43,14 @@
                         <div class="blockly-container">
                             <!-- Templates Bar -->
                             <div t-if="!state.isLoading" class="templates-bar bg-light p-2 border-bottom">
-                                <small class="text-muted me-3">Quick Templates:</small>
+                                <small class="text-muted me-3" t-esc="this.t('Quick Templates:')"/>
                                 <button class="btn btn-sm btn-outline-primary me-2" 
                                         t-on-click="() => this.loadTemplate('distance_pricing')">
-                                    Distance Pricing
+                                    <t t-esc="this.t('Distance Pricing')"/>
                                 </button>
                                 <button class="btn btn-sm btn-outline-primary me-2" 
                                         t-on-click="() => this.loadTemplate('bulk_discount')">
-                                    Bulk Discount
+                                    <t t-esc="this.t('Bulk Discount')"/>
                                 </button>
                             </div>
                             
@@ -68,34 +68,34 @@
                             <div class="preview-header bg-light p-3 border-bottom">
                                 <h6 class="mb-0">
                                     <i class="fa fa-eye me-2"/>
-                                    Rule Preview
+                                    <t t-esc="this.t('Rule Preview')"/>
                                 </h6>
                             </div>
                             
                             <div class="preview-content p-3">
                                 <!-- Rule Name -->
                                 <div class="mb-3">
-                                    <label class="form-label">Rule Name:</label>
+                                    <label class="form-label" t-esc="this.t('Rule Name:')"/>
                                     <div class="fw-bold text-primary">
-                                        <t t-esc="state.previewRule.name or 'Untitled Rule'"/>
+                                        <t t-esc="state.previewRule.name or this.t('Untitled Rule')"/>
                                     </div>
                                 </div>
 
                                 <!-- Generated Code -->
                                 <div class="mb-3">
-                                    <label class="form-label">Generated Logic:</label>
-                                    <pre class="code-preview bg-light p-2 rounded small"><t t-esc="state.generatedCode or '// Build your rule using blocks'"/></pre>
+                                    <label class="form-label" t-esc="this.t('Generated Logic:')"/>
+                                    <pre class="code-preview bg-light p-2 rounded small"><t t-esc="state.generatedCode or this.t('// Build your rule using blocks')"/></pre>
                                 </div>
 
                                 <!-- Rule Description -->
                                 <div class="mb-3">
-                                    <label class="form-label">Description:</label>
+                                    <label class="form-label" t-esc="this.t('Description:')"/>
                                     <div class="text-muted small">
                                         <t t-if="!state.generatedCode">
-                                            Drag blocks from the left panel to build your pricing rule.
+                                            <t t-esc="this.t('Drag blocks from the left panel to build your pricing rule.')"/>
                                         </t>
                                         <t t-else="">
-                                            This rule will be evaluated when processing prices.
+                                            <t t-esc="this.t('This rule will be evaluated when processing prices.')"/>
                                         </t>
                                     </div>
                                 </div>
@@ -104,14 +104,14 @@
                                 <div class="help-section mt-4">
                                     <h6 class="text-primary">
                                         <i class="fa fa-question-circle me-1"/>
-                                        How to Build Rules:
+                                        <t t-esc="this.t('How to Build Rules:')"/>
                                     </h6>
                                     <ul class="small text-muted">
-                                        <li>Start with a "Pricing Rule" block</li>
-                                        <li>Add conditions from the "Conditions" category</li>
-                                        <li>Define actions from the "Actions" category</li>
-                                        <li>Use number blocks for values</li>
-                                        <li>Connect blocks by dragging</li>
+                                        <li t-esc="this.t('Start with a Pricing Rule block')"/>
+                                        <li t-esc="this.t('Add conditions from the Conditions category')"/>
+                                        <li t-esc="this.t('Define actions from the Actions category')"/>
+                                        <li t-esc="this.t('Use number blocks for values')"/>
+                                        <li t-esc="this.t('Connect blocks by dragging')"/>
                                     </ul>
                                 </div>
 
@@ -119,17 +119,17 @@
                                 <div class="examples-section mt-4">
                                     <h6 class="text-primary">
                                         <i class="fa fa-lightbulb me-1"/>
-                                        Example Rules:
+                                        <t t-esc="this.t('Example Rules:')"/>
                                     </h6>
                                     <div class="small text-muted">
-                                        <strong>Distance Pricing:</strong><br/>
-                                        If distance > 15km, add $50
+                                        <strong t-esc="this.t('Distance Pricing:')"/><br/>
+                                        <t t-esc="this.t('If distance > 15km, add $50')"/>
                                         <br/><br/>
-                                        <strong>Bulk Discount:</strong><br/>
-                                        If quantity >= 10, apply 10% discount
+                                        <strong t-esc="this.t('Bulk Discount:')"/><br/>
+                                        <t t-esc="this.t('If quantity >= 10, apply 10% discount')"/>
                                         <br/><br/>
-                                        <strong>Premium Time:</strong><br/>
-                                        If time > 5PM, multiply by 1.5
+                                        <strong t-esc="this.t('Premium Time:')"/><br/>
+                                        <t t-esc="this.t('If time > 5PM, multiply by 1.5')"/>
                                     </div>
                                 </div>
                             </div>

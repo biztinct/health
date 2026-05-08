@@ -570,3 +570,107 @@ msgstr "Loại liên hệ"
 #: model_terms:ir.ui.view,arch_db:health_zalo.view
 msgid "Contact Reason"
 msgstr "Lý do liên hệ"
+
+#. module: health_zalo
+#. odoo-javascript
+#: code:addons/health_zalo/static/src/xml/zalo_chat_hub.xml:0
+msgid "Zalo Messages (Viet Uc)"
+msgstr "Tin nhắn Zalo (Viet Uc)"
+
+#. module: health_zalo
+#. odoo-javascript
+#: code:addons/health_zalo/static/src/xml/zalo_chat_hub.xml:0
+#: code:addons/health_zalo/static/src/xml/zalo_chat_widget.xml:0
+msgid "Close"
+msgstr "Đóng"
+
+#. module: health_zalo
+#. odoo-javascript
+#: code:addons/health_zalo/static/src/xml/zalo_chat_hub.xml:0
+msgid "Loading conversations..."
+msgstr "Đang tải cuộc trò chuyện..."
+
+#. module: health_zalo
+#. odoo-javascript
+#: code:addons/health_zalo/static/src/xml/zalo_chat_hub.xml:0
+msgid "No conversations yet"
+msgstr "Chưa có cuộc trò chuyện"
+
+#. module: health_zalo
+#. odoo-javascript
+#: code:addons/health_zalo/static/src/xml/zalo_chat_hub.xml:0
+msgid "No messages"
+msgstr "Không có tin nhắn"
+
+#. module: health_zalo
+#. odoo-javascript
+#: code:addons/health_zalo/static/src/xml/zalo_chat_hub.xml:0
+#: code:addons/health_zalo/static/src/xml/zalo_chat_widget.xml:0
+msgid "Open Related Record"
+msgstr "Mở bản ghi liên quan"
+
+#. module: health_zalo
+#. odoo-javascript
+#: code:addons/health_zalo/static/src/xml/zalo_chat_hub.xml:0
+msgid "Enable Notifications"
+msgstr "Bật thông báo"
+
+#. module: health_zalo
+#. odoo-javascript
+#: code:addons/health_zalo/static/src/js/zalo_chat_widget.js:0
+msgid "Failed to load conversation"
+msgstr "Không tải được cuộc trò chuyện"
+
+#. module: health_zalo
+#. odoo-javascript
+#: code:addons/health_zalo/static/src/xml/zalo_chat_widget.xml:0
+msgid "Loading conversation..."
+msgstr "Đang tải cuộc trò chuyện..."
+
+#. module: health_zalo
+#. odoo-javascript
+#: code:addons/health_zalo/static/src/xml/zalo_chat_widget.xml:0
+msgid "Zalo Chat"
+msgstr "Trò chuyện Zalo"
+
+#. module: health_zalo
+#. odoo-javascript
+#: code:addons/health_zalo/static/src/xml/zalo_chat_widget.xml:0
+msgid "Open Record"
+msgstr "Mở bản ghi"
+
+#. module: health_zalo
+#. odoo-javascript
+#: code:addons/health_zalo/static/src/xml/zalo_chat_widget.xml:0
+msgid "No messages yet. Start a conversation!"
+msgstr "Chưa có tin nhắn. Bắt đầu cuộc trò chuyện!"
+
+#. module: health_zalo
+#. odoo-javascript
+#: code:addons/health_zalo/static/src/xml/zalo_chat_widget.xml:0
+msgid "Image"
+msgstr "Hình ảnh"
+
+#. module: health_zalo
+#. odoo-javascript
+#: code:addons/health_zalo/static/src/xml/zalo_chat_widget.xml:0
+msgid "File"
+msgstr "Tệp"
+
+#. module: health_zalo
+#. odoo-javascript
+#: code:addons/health_zalo/static/src/xml/zalo_chat_widget.xml:0
+msgid "Sent"
+msgstr "Đã gửi"
+
+#. module: health_zalo
+#. odoo-javascript
+#: code:addons/health_zalo/static/src/xml/zalo_chat_widget.xml:0
+msgid "Delivered"
+msgstr "Đã giao"
+
+#. module: health_zalo
+#. odoo-javascript
+#: code:addons/health_zalo/static/src/xml/zalo_chat_widget.xml:0
+msgid "Type a message..."
+msgstr "Nhập tin nhắn..."

@@ -617,3 +617,95 @@ msgstr "Không tìm thấy kết quả CRM"
 #. module: health_flow
 msgid "No bookings found"
 msgstr "Không tìm thấy lịch hẹn"
+
+#. module: health_flow
+msgid "Finance"
+msgstr "Tài chính"
+
+#. module: health_flow
+msgid "Select Existing Client"
+msgstr "Chọn khách hàng hiện có"
+
+#. module: health_flow
+msgid "Add New Client"
+msgstr "Thêm khách hàng mới"
+
+#. module: health_flow
+msgid "Master Data"
+msgstr "Dữ liệu chính"
+
+#. module: health_flow
+msgid "Healthcare Facility"
+msgstr "Cơ sở y tế"
+
+#. module: health_flow
+msgid "Catchment Province"
+msgstr "Tỉnh phụ trách"
+
+#. module: health_flow
+msgid "Insurance Provider"
+msgstr "Nhà cung cấp bảo hiểm"
+
+#. module: health_flow
+msgid "User Management"
+msgstr "Quản lý người dùng"
+
+#. module: health_flow
+msgid "Users"
+msgstr "Người dùng"
+
+#. module: health_flow
+msgid "Access Roles"
+msgstr "Vai trò truy cập"
+
+#. module: health_flow
+msgid "Role Management"
+msgstr "Quản lý vai trò"
+
+#. module: health_flow
+msgid "Add, edit, and manage user accounts"
+msgstr "Thêm, chỉnh sửa và quản lý tài khoản người dùng"
+
+#. module: health_flow
+msgid "Define permission bundles for user groups"
+msgstr "Định nghĩa bộ quyền cho nhóm người dùng"
+
+#. module: health_flow
+msgid "Configure restrictions, hidden menus, and field access"
+msgstr "Cấu hình hạn chế, menu ẩn và quyền truy cập trường"
+
+#. module: health_flow
+msgid "AR Management"
+msgstr "Quản lý công nợ phải thu"
+
+#. module: health_flow
+msgid "Account Payment"
+msgstr "Thanh toán tài khoản"
+
+#. module: health_flow
+msgid "Record cash or bank transfer payments against invoices"
+msgstr "Ghi nhận thanh toán tiền mặt hoặc chuyển khoản cho hóa đơn"
+
+#. module: health_flow
+msgid "Cash In Transit Transfers"
+msgstr "Chuyển tiền mặt đang vận chuyển"
+
+#. module: health_flow
+msgid "Nurse cash pending delivery to Head Office"
+msgstr "Tiền mặt của điều dưỡng đang chờ nộp về văn phòng chính"
+
+#. module: health_flow
+msgid "Refund / Credit"
+msgstr "Hoàn tiền / Ghi có"
+
+#. module: health_flow
+msgid "Issue credit notes and process refunds"
+msgstr "Phát hành phiếu ghi có và xử lý hoàn tiền"
+
+#. module: health_flow
+msgid "Merge"
+msgstr "Gộp"
+
+#. module: health_flow
+msgid "contacts"
+msgstr "liên hệ"

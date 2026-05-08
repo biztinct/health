@@ -2,6 +2,7 @@
 
 import { Component, useState, onWillUnmount } from "@odoo/owl";
 import { registry } from "@web/core/registry";
+import { _t } from "@web/core/l10n/translation";
 import { useService } from "@web/core/utils/hooks";
 
 export class AddressAutocompleteWidget extends Component {
@@ -37,6 +38,10 @@ export class AddressAutocompleteWidget extends Component {
                 clearTimeout(this.debounceTimer);
             }
         });
+    }
+
+    t(text) {
+        return _t(text);
     }
 
     /**
@@ -110,7 +115,7 @@ export class AddressAutocompleteWidget extends Component {
 
             if (this.state.suggestions.length === 0 && query.length >= this.MIN_SEARCH_LENGTH) {
                 this.state.hasError = true;
-                this.state.errorMessage = "No addresses found. Try a different search.";
+                this.state.errorMessage = _t("No addresses found. Try a different search.");
             }
 
         } catch (error) {
@@ -119,7 +124,7 @@ export class AddressAutocompleteWidget extends Component {
             this.state.showDropdown = false;
             this.state.isLoading = false;
             this.state.hasError = true;
-            this.state.errorMessage = "Search failed. Please check your connection.";
+            this.state.errorMessage = _t("Search failed. Please check your connection.");
         }
     }
 
@@ -196,7 +201,7 @@ export class AddressAutocompleteWidget extends Component {
         } catch (error) {
             console.error("Failed to select address:", error);
             this.state.hasError = true;
-            this.state.errorMessage = "Failed to apply address. Please try again.";
+            this.state.errorMessage = _t("Failed to apply address. Please try again.");
         }
     }
 

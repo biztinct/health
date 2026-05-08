@@ -8,21 +8,21 @@
                     <!-- Time Segments Only - No Icon -->
                     <div class="timer-segment">
                         <div class="timer-digit" t-esc="getFormattedHours()"/>
-                        <div class="timer-unit-label">Hours</div>
+                        <div class="timer-unit-label" t-esc="this.t('Hours')"/>
                     </div>
 
                     <div class="timer-separator">:</div>
 
                     <div class="timer-segment">
                         <div class="timer-digit" t-esc="getFormattedMinutes()"/>
-                        <div class="timer-unit-label">Minutes</div>
+                        <div class="timer-unit-label" t-esc="this.t('Minutes')"/>
                     </div>
 
                     <div class="timer-separator">:</div>
 
                     <div class="timer-segment">
                         <div class="timer-digit" t-esc="getFormattedSeconds()"/>
-                        <div class="timer-unit-label">Seconds</div>
+                        <div class="timer-unit-label" t-esc="this.t('Seconds')"/>
                     </div>
                 </div>
 

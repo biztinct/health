@@ -30,7 +30,7 @@
                     <t t-if="state.phase === 'fields'">
                         <span class="fr-header-badge fr-badge-active">
                             <i class="fa fa-check-circle"/>
-                            <t t-esc="getActiveRuleCount()"/> / <t t-esc="getTotalFieldCount()"/> Active
+                            <t t-esc="getActiveRuleCount()"/> / <t t-esc="getTotalFieldCount()"/> <t t-esc="this.t('Active')"/>
                         </span>
                     </t>
                 </div>
@@ -42,7 +42,7 @@
             <t t-if="state.loading">
                 <div class="fr-loading">
                     <i class="fa fa-spinner fa-spin fa-2x"/>
-                    <p>Loading...</p>
+                    <p t-esc="this.t('Loading...')"/>
                 </div>
             </t>
 
@@ -51,7 +51,7 @@
             <!-- ============================================================ -->
             <t t-if="!state.loading and state.phase === 'nodes'">
                 <div class="fr-phase-subtitle">
-                    Select a section to configure field requirements
+                    <t t-esc="this.t('Select a section to configure field requirements')"/>
                 </div>
                 <div class="fr-nodes-grid">
                     <t t-foreach="state.hierarchy" t-as="node" t-key="node.key">
@@ -63,12 +63,12 @@
                             <h3 class="fr-node-name" t-esc="node.name"/>
                             <div class="fr-node-meta">
                                 <span class="fr-node-tiles-count">
-                                    <t t-esc="node.tiles.length"/> tiles
+                                    <t t-esc="node.tiles.length"/> <t t-esc="this.t('tiles')"/>
                                 </span>
                                 <t t-if="node.rule_count > 0">
                                     <span class="fr-node-rules-badge">
                                         <i class="fa fa-asterisk"/>
-                                        <t t-esc="node.rule_count"/> rules
+                                        <t t-esc="node.rule_count"/> <t t-esc="this.t('rules')"/>
                                     </span>
                                 </t>
                             </div>
@@ -82,7 +82,7 @@
             <!-- ============================================================ -->
             <t t-if="!state.loading and state.phase === 'tiles'">
                 <div class="fr-phase-subtitle">
-                    Select a tile to see its models
+                    <t t-esc="this.t('Select a tile to see its models')"/>
                 </div>
                 <div class="fr-tiles-grid">
                     <t t-foreach="state.selectedNode.tiles" t-as="tile" t-key="tile.key">
@@ -95,13 +95,13 @@
                             <div class="fr-tile-body">
                                 <h4 class="fr-tile-name" t-esc="tile.name"/>
                                 <span class="fr-tile-model-count">
-                                    <t t-esc="tile.models.length"/> model(s)
+                                    <t t-esc="tile.models.length"/> <t t-esc="this.t('model(s)')"/>
                                 </span>
                             </div>
                             <div class="fr-tile-right">
                                 <t t-if="tile.rule_count > 0">
                                     <span class="fr-mini-badge">
-                                        <t t-esc="tile.rule_count"/> rules
+                                        <t t-esc="tile.rule_count"/> <t t-esc="this.t('rules')"/>
                                     </span>
                                 </t>
                                 <i class="fa fa-chevron-right fr-tile-arrow"/>
@@ -116,7 +116,7 @@
             <!-- ============================================================ -->
             <t t-if="!state.loading and state.phase === 'models'">
                 <div class="fr-phase-subtitle">
-                    Select a model to configure its field requirements
+                    <t t-esc="this.t('Select a model to configure its field requirements')"/>
                 </div>
                 <div class="fr-models-grid">
                     <t t-foreach="state.selectedTile.models" t-as="model" t-key="model.model">
@@ -132,7 +132,7 @@
                             <div class="fr-model-right">
                                 <t t-if="model.rule_count > 0">
                                     <span class="fr-mini-badge fr-mini-badge-green">
-                                        <t t-esc="model.rule_count"/> rules
+                                        <t t-esc="model.rule_count"/> <t t-esc="this.t('rules')"/>
                                     </span>
                                 </t>
                                 <i class="fa fa-chevron-right fr-tile-arrow"/>
@@ -149,7 +149,7 @@
                 <div class="fr-fields-toolbar">
                     <div class="fr-search-box">
                         <i class="fa fa-search"/>
-                        <input type="text" placeholder="Search fields..."
+                        <input type="text" t-att-placeholder="this.t('Search fields...')"
                                t-att-value="state.searchQuery"
                                t-on-input="onSearchInput"/>
                     </div>
@@ -159,7 +159,7 @@
                 <t t-if="state.fieldsLoading">
                     <div class="fr-loading">
                         <i class="fa fa-spinner fa-spin fa-2x"/>
-                        <p>Loading fields...</p>
+                        <p t-esc="this.t('Loading fields...')"/>
                     </div>
                 </t>
 
@@ -168,12 +168,12 @@
                         <table class="fr-fields-table">
                             <thead>
                                 <tr>
-                                    <th class="fr-col-field">Field</th>
-                                    <th class="fr-col-type">Type</th>
-                                    <th class="fr-col-active">Active</th>
-                                    <th class="fr-col-global">Global (All Roles)</th>
-                                    <th class="fr-col-roles">Roles</th>
-                                    <th class="fr-col-states">Required in States</th>
+                                    <th class="fr-col-field" t-esc="this.t('Field')"/>
+                                    <th class="fr-col-type" t-esc="this.t('Type')"/>
+                                    <th class="fr-col-active" t-esc="this.t('Active')"/>
+                                    <th class="fr-col-global" t-esc="this.t('Global (All Roles)')"/>
+                                    <th class="fr-col-roles" t-esc="this.t('Roles')"/>
+                                    <th class="fr-col-states" t-esc="this.t('Required in States')"/>
                                     <th class="fr-col-actions"></th>
                                 </tr>
                             </thead>
@@ -226,7 +226,7 @@
                                                 </div>
                                             </t>
                                             <t t-elif="field.is_global and field.active">
-                                                <span class="fr-all-roles-label">All roles</span>
+                                                <span class="fr-all-roles-label" t-esc="this.t('All roles')"/>
                                             </t>
                                             <t t-else=""><span class="fr-disabled-text">—</span></t>
                                         </td>
@@ -234,7 +234,7 @@
                                         <td class="fr-col-states">
                                             <t t-if="field.active">
                                                 <input type="text" class="fr-state-input"
-                                                       placeholder="e.g. draft, confirmed"
+                                                       t-att-placeholder="this.t('e.g. draft, confirmed')"
                                                        t-att-value="field.state_values"
                                                        t-on-input="(ev) => this.onStateValuesChange(field, ev)"
                                                        t-on-blur="() => this.onStateValuesBlur(field)"/>
@@ -244,7 +244,7 @@
                                         <!-- Actions -->
                                         <td class="fr-col-actions">
                                             <t t-if="field.has_rule">
-                                                <button class="fr-delete-btn" title="Remove rule"
+                                                <button class="fr-delete-btn" t-att-title="this.t('Remove rule')"
                                                         t-on-click="() => this.onDeleteRule(field)">
                                                     <i class="fa fa-trash-o"/>
                                                 </button>

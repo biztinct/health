@@ -22,7 +22,7 @@
                 <div class="health_landing_modal_body" t-if="state.loading">
                     <div class="text-center py-5">
                         <i class="fa fa-spinner fa-spin fa-3x text-primary"/>
-                        <p class="mt-3">Loading data...</p>
+                        <p class="mt-3" t-esc="this.t('Loading data...')"/>
                     </div>
                 </div>
 
@@ -38,23 +38,23 @@
                     <div class="health_landing_modal_body">
                         <div class="row">
                             <div class="col-md-6 mb-3">
-                                <label class="text-muted small">Patient Code</label>
+                                <label class="text-muted small" t-esc="this.t('Patient Code')"/>
                                 <div class="fw-bold" t-esc="state.data.patient_code"/>
                             </div>
                             <div class="col-md-6 mb-3">
-                                <label class="text-muted small">Age / Gender</label>
+                                <label class="text-muted small" t-esc="this.t('Age / Gender')"/>
                                 <div class="fw-bold"><t t-esc="state.data.age"/> years / <t t-esc="state.data.gender"/></div>
                             </div>
                             <div class="col-md-6 mb-3">
-                                <label class="text-muted small">Phone</label>
+                                <label class="text-muted small" t-esc="this.t('Phone')"/>
                                 <div class="fw-bold" t-esc="state.data.phone or state.data.mobile or 'N/A'"/>
                             </div>
                             <div class="col-md-6 mb-3">
-                                <label class="text-muted small">Email</label>
+                                <label class="text-muted small" t-esc="this.t('Email')"/>
                                 <div class="fw-bold" t-esc="state.data.email or 'N/A'"/>
                             </div>
                             <div class="col-12 mb-3">
-                                <label class="text-muted small">Address</label>
+                                <label class="text-muted small" t-esc="this.t('Address')"/>
                                 <div class="fw-bold">
                                     <t t-esc="state.data.street"/><t t-if="state.data.street2">, <t t-esc="state.data.street2"/></t><br/>
                                     <t t-esc="state.data.city"/>, <t t-esc="state.data.state_id ? state.data.state_id[1] : ''"/>
@@ -76,7 +76,7 @@
                                         <div class="fw-bold" t-esc="rel.representative_id[1]"/>
                                         <small class="text-muted" t-esc="rel.relationship_type"/>
                                         <t t-if="rel.is_primary">
-                                            <span class="badge bg-danger ms-2">PRIMARY</span>
+                                            <span class="badge bg-danger ms-2" t-esc="this.t('PRIMARY')"/>
                                         </t>
                                     </div>
                                 </div>
@@ -92,7 +92,7 @@
                                         <div class="fw-bold" t-esc="rel.representative_id[1]"/>
                                         <small class="text-muted" t-esc="rel.relationship_type"/>
                                         <t t-if="rel.is_primary">
-                                            <span class="badge bg-warning ms-2">PRIMARY</span>
+                                            <span class="badge bg-warning ms-2" t-esc="this.t('PRIMARY')"/>
                                         </t>
                                     </div>
                                 </div>
@@ -214,13 +214,13 @@
                             <div class="col-6">
                                 <div class="p-3 bg-warning bg-opacity-10 rounded text-center">
                                     <div class="h4 mb-0 text-warning" t-esc="formatCurrency(state.data.total_pending)"/>
-                                    <small class="text-muted">Total Pending</small>
+                                    <small class="text-muted" t-esc="this.t('Total Pending')"/>
                                 </div>
                             </div>
                             <div class="col-6">
                                 <div class="p-3 bg-danger bg-opacity-10 rounded text-center">
                                     <div class="h4 mb-0 text-danger" t-esc="state.data.overdue_count"/>
-                                    <small class="text-muted">Overdue Invoices</small>
+                                    <small class="text-muted" t-esc="this.t('Overdue Invoices')"/>
                                 </div>
                             </div>
                         </div>

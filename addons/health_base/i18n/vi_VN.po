@@ -4,17 +4,17 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Phiên bản: Odoo Server 19.0\n"
-"Báo cáo-Msgid-Bugs-Để: \n"
-"POT-Creation-Ngày: 2025-10-29 04:27+0000\n"
-"PO-Revision-Ngày: 2025-10-29 15:00+0000\n"
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-10-29 04:27+0000\n"
+"PO-Revision-Date: 2025-10-29 15:00+0000\n"
 "Last-Translator: \n"
-"Ngôn ngữ-Đội: Tiếng Việt\n"
-"Ngôn ngữ: vi_VN\n"
-"MIME-Phiên bản: 1.0\n"
-"Nội dung-Loại: văn bản/plain; charset=UTF-8\n"
-"Nội dung-Transfer-Encoding: \n"
-"Plural-Biểu mẫus: \n"
+"Language-Team: Tiếng Việt\n"
+"Language: vi_VN\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: nplurals=1; plural=0;\n"
 
 #. module: health_base
 #: model_terms:ir.ui.view,arch_db:health_base.view_health_patient_kanban
@@ -45,7 +45,7 @@ msgstr "<i class=\"fa fa-stethoscope\"/> Hệ thống tài liệu lâm sàng s�
 msgid ""
 "<i class=\"fa fa-timeline\"/> Client timeline with appointments, treatments,"
 " and key events will be displayed here."
-msgstr "<i class=\"fa fa-timeline\"/> Khách hàng dòng thời gian với cuộc hẹns, điều trịs, và key sự kiệns will be displayed ở đây."
+msgstr "<i class=\"fa fa-timeline\"/> Dòng thời gian khách hàng với các cuộc hẹn, điều trị và sự kiện quan trọng sẽ được hiển thị tại đây."
 
 #. module: health_base
 #: model_terms:ir.ui.view,arch_db:health_base.view_health_facility_kanban
@@ -404,12 +404,12 @@ msgstr "Có sẵn trong Phòng khám"
 #. module: health_base
 #: model:ir.model.fields,field_description:health_base.field_health_service_type__available_telemedicine
 msgid "Available via Telemedicine"
-msgstr "Có sẵn via Khám bệnh từ xa"
+msgstr "Có sẵn qua khám bệnh từ xa"
 
 #. module: health_base
 #: model:ir.model.fields,field_description:health_base.field_health_vietnamese_district__average_travel_time
 msgid "Average Travel Time (Minutes)"
-msgstr "Trung bình Travel Giờ (Phúts)"
+msgstr "Thời gian di chuyển trung bình (phút)"
 
 #. module: health_base
 #: model:ir.model.fields.selection,name:health_base.selection__res_partner__ethnicity__ba_na
@@ -439,7 +439,7 @@ msgstr "Phí đi lại cơ bản (VND)"
 #. module: health_base
 #: model:ir.model.constraint,message:health_base.constraint_health_service_type_positive_price
 msgid "Base price must be positive!"
-msgstr "Base giá must be positive!"
+msgstr "Giá cơ bản phải là số dương!"
 
 #. module: health_base
 #: model_terms:ir.ui.view,arch_db:health_base.view_health_facility_form
@@ -527,7 +527,7 @@ msgstr "CDC Guidelines"
 #. module: health_base
 #: model:ir.model.constraint,message:health_base.constraint_health_booking_cancellation_reason_name_unique
 msgid "Cancellation reason must be unique!"
-msgstr "Hủy bỏ lý do must be unique!"
+msgstr "Lý do hủy phải là duy nhất!"
 
 #. module: health_base
 #: model_terms:ir.ui.view,arch_db:health_base.view_health_facility_form
@@ -604,7 +604,7 @@ msgstr "Danh mục X"
 #. module: health_base
 #: model:ir.model.constraint,message:health_base.constraint_health_patient_category_name_unique
 msgid "Category name must be unique!"
-msgstr "Danh mục Tên must be unique!"
+msgstr "Tên danh mục phải là duy nhất!"
 
 #. module: health_base
 #: model:ir.model.fields.selection,name:health_base.selection__health_vietnamese_district__region__central
@@ -641,7 +641,7 @@ msgstr "Conren's Y tế"
 #. module: health_base
 #: model:ir.model.fields,field_description:health_base.field_health_protocol_question__choice_options
 msgid "Choice Options (one per line)"
-msgstr "Choice Tùy chọn (one per line)"
+msgstr "Tùy chọn lựa chọn (mỗi dòng một tùy chọn)"
 
 #. module: health_base
 #: model:ir.model.fields.selection,name:health_base.selection__res_partner__ethnicity__cham
@@ -944,7 +944,7 @@ msgstr "Bao phủ Chi tiết"
 #. module: health_base
 #: model:ir.model.constraint,message:health_base.constraint_health_insurance_provider_coverage_valid
 msgid "Coverage percentage must be between 0 and 100!"
-msgstr "Bao phủ phần trăm must be giữa 0 và 100!"
+msgstr "Tỷ lệ bao phủ phải nằm trong khoảng từ 0 đến 100!"
 
 #. module: health_base
 #: model:ir.model.fields,field_description:health_base.field_health_insurance_provider__covers_clinic_visits
@@ -976,14 +976,14 @@ msgstr "Tạo mới Cơ sở"
 msgid ""
 "Create public holidays with pricing multipliers for TET, National holidays, "
 "etc."
-msgstr "Tạo mới Công khai ngày lễs với pricing multipliers cho TET, National ngày lễs, etc."
+msgstr "Tạo ngày lễ với hệ số giá cho Tết, ngày lễ quốc gia, v.v."
 
 #. module: health_base
 #: model_terms:ir.actions.act_window,help:health_base.action_health_patient
 msgid ""
 "Create your first client record to begin managing healthcare services.<br>\n"
 "                Click the <strong>New</strong> button above to register your first client."
-msgstr "Tạo mới của bạn đầu tiên Khách hàng bản ghi Đến begin managing Y tế dịch vụs.<br>\n                Nhấn the <strong>Mới</strong> nút trên Đến đăng ký của bạn đầu tiên Khách hàng."
+msgstr "Tạo hồ sơ khách hàng đầu tiên để bắt đầu quản lý dịch vụ y tế.<br>\n                Nhấn nút <strong>Mới</strong> ở trên để đăng ký khách hàng đầu tiên."
 
 #. module: health_base
 #: model_terms:ir.actions.act_window,help:health_base.action_health_facility
@@ -1115,7 +1115,7 @@ msgstr "Đã mất"
 #. module: health_base
 #: model:ir.model.fields,field_description:health_base.field_health_insurance_provider__deductible_amount
 msgid "Deductible Amount (VND)"
-msgstr "Deductible Số tiền (VND)"
+msgstr "Số tiền khấu trừ (VND)"
 
 #. module: health_base
 #: model:ir.model.fields,field_description:health_base.field_health_insurance_provider__coverage_percentage
@@ -1195,7 +1195,7 @@ msgstr "Quận/Huyện Tên"
 #. module: health_base
 #: model:ir.model.constraint,message:health_base.constraint_health_vietnamese_district_district_province_unique
 msgid "District name must be unique within province!"
-msgstr "Quận/Huyện Tên must be unique vớiin Tỉnh!"
+msgstr "Tên quận/huyện phải là duy nhất trong tỉnh!"
 
 #. module: health_base
 #: model:ir.model.fields.selection,name:health_base.selection__hr_employee__healthcare_role__doctor
@@ -1226,17 +1226,17 @@ msgstr "Nhân bản đặt lịch"
 #. module: health_base
 #: model:ir.model.fields,field_description:health_base.field_health_service_type__duration_minutes
 msgid "Duration (Minutes)"
-msgstr "Thời lượng (Phúts)"
+msgstr "Thời lượng (phút)"
 
 #. module: health_base
 #: model:ir.model.fields,field_description:health_base.field_health_protocol_intervention__duration
 msgid "Duration (days)"
-msgstr "Thời lượng (days)"
+msgstr "Thời lượng (ngày)"
 
 #. module: health_base
 #: model:ir.model.constraint,message:health_base.constraint_health_service_type_positive_duration
 msgid "Duration must be positive!"
-msgstr "Thời lượng must be positive!"
+msgstr "Thời lượng phải là số dương!"
 
 #. module: health_base
 #: model:ir.model.fields,field_description:health_base.field_res_partner__ethnicity
@@ -1410,7 +1410,7 @@ msgstr "Loại cơ sở"
 #. module: health_base
 #: model:ir.model.constraint,message:health_base.constraint_health_facility_code_unique
 msgid "Facility code must be unique!"
-msgstr "Mã cơ sở must be unique!"
+msgstr "Mã cơ sở phải là duy nhất!"
 
 #. module: health_base
 #: model_terms:ir.ui.view,arch_db:health_base.view_health_facility_form
@@ -1420,7 +1420,7 @@ msgstr "Mã cơ sở..."
 #. module: health_base
 #: model:health.booking.cancellation.reason,description:health_base.cancel_reason_provider_facility
 msgid "Facility is unavailable or has issues preventing service delivery"
-msgstr "Cơ sở là uncó sẵn hoặc has issues prsự kiệning dịch vụ giao hàng"
+msgstr "Cơ sở không khả dụng hoặc có vấn đề ngăn cản việc cung cấp dịch vụ"
 
 #. module: health_base
 #: model:health.booking.cancellation.reason,name:health_base.cancel_reason_provider_facility
@@ -1864,7 +1864,7 @@ msgstr "Caoer điểm = caoer Ưu tiên"
 #. module: health_base
 #: model:ir.model.fields,field_description:health_base.field_health_fall_risk__history_of_falling
 msgid "History of Falling (25 points)"
-msgstr "Lịch sử of Falling (25 points)"
+msgstr "Tiền sử té ngã (25 điểm)"
 
 #. module: health_base
 #: model:ir.model.fields.selection,name:health_base.selection__res_partner__ethnicity__hoa
@@ -1949,13 +1949,13 @@ msgstr "Khám tại nhà Có sẵn"
 #. module: health_base
 #: model:ir.model.constraint,message:health_base.constraint_health_facility_positive_radius
 msgid "Home visit radius cannot be negative!"
-msgstr "Khám tại nhà radius cannot be negative!"
+msgstr "Bán kính thăm khám tại nhà không được âm!"
 
 #. module: health_base
 #. odoo-python
 #: code:addons/health_base/models/health_facility.py:0
 msgid "Home visit radius cannot be negative."
-msgstr "Khám tại nhà radius cannot be negative."
+msgstr "Bán kính thăm khám tại nhà không được âm."
 
 #. module: health_base
 #. odoo-python
@@ -2000,7 +2000,7 @@ msgstr "ID"
 #. module: health_base
 #: model:ir.model.fields,field_description:health_base.field_health_fall_risk__iv_therapy
 msgid "IV Therapy/Heparin Lock (20 points)"
-msgstr "IV Trị liệu/Heparin Lock (20 points)"
+msgstr "Truyền tĩnh mạch/khóa heparin (20 điểm)"
 
 #. module: health_base
 #: model:ir.model.fields,field_description:health_base.field_health_facility__activity_exception_icon
@@ -2021,7 +2021,7 @@ msgstr "Nếu kiểm traed, Mới Tin nhắn require của bạn attention."
 #: model:ir.model.fields,help:health_base.field_health_facility__message_has_error
 #: model:ir.model.fields,help:health_base.field_health_facility__message_has_sms_error
 msgid "If checked, some messages have a delivery error."
-msgstr "Nếu kiểm traed, một số Tin nhắn have a giao hàng Lỗi."
+msgstr "Nếu được chọn, một số tin nhắn có lỗi gửi."
 
 #. module: health_base
 #: model:ir.model.fields.selection,name:health_base.selection__health_service_type__category__imaging
@@ -2050,7 +2050,7 @@ msgstr "Không hoạt động"
 msgid ""
 "Include this holiday in pricing calculations (TET, National holidays = True,"
 " Observances = False)"
-msgstr "Include này ngày lễ trong pricing calculations (TET, National ngày lễs = Đúng, Observances = Sai)"
+msgstr "Bao gồm ngày lễ này trong tính giá (Tết, ngày lễ quốc gia = Đúng, ngày kỷ niệm = Sai)"
 
 #. module: health_base
 #: model_terms:ir.ui.view,arch_db:health_base.view_health_facility_form
@@ -2123,7 +2123,7 @@ msgstr "Tương tác"
 #. odoo-javascript
 #: code:addons/health_base/static/src/xml/address_map_widget.xml:0
 msgid "Interactive map will display when coordinates are available"
-msgstr "Tương tác Bản đồ will display khi nào Tọa độ are có sẵn"
+msgstr "Bản đồ tương tác sẽ hiển thị khi có tọa độ"
 
 #. module: health_base
 #: model:health.medical.specialty,name:health_base.specialty_internal_medicine
@@ -2362,7 +2362,7 @@ msgstr "Giấy phép Trạng thái"
 #. odoo-python
 #: code:addons/health_base/models/health_facility.py:0
 msgid "License expiry date cannot be in the past."
-msgstr "Ngày hết hạn giấy phép Ngày cannot be trong the past."
+msgstr "Ngày hết hạn giấy phép không được nằm trong quá khứ."
 
 #. module: health_base
 #: model_terms:ir.ui.view,arch_db:health_base.view_health_facility_form
@@ -2577,7 +2577,7 @@ msgstr "Thuốc An toàn Hệ thống"
 #. module: health_base
 #: model:ir.model.constraint,message:health_base.constraint_health_medication_name_unique
 msgid "Medication name must be unique!"
-msgstr "Thuốc Tên must be unique!"
+msgstr "Tên thuốc phải là duy nhất!"
 
 #. module: health_base
 #: model:ir.model.fields.selection,name:health_base.selection__health_medication_interaction__evidence_level__medium
@@ -2685,12 +2685,12 @@ msgstr "Morse Fall Điểm"
 #. module: health_base
 #: model:ir.model.fields.selection,name:health_base.selection__health_protocol_question__question_type__multiple_choice
 msgid "Multiple Choice"
-msgstr "Nhiều Choice"
+msgstr "Nhiều lựa chọn"
 
 #. module: health_base
 #: model:ir.model.fields,help:health_base.field_health_patient_category__price_multiplier
 msgid "Multiplier for service pricing"
-msgstr "Multiplier cho dịch vụ pricing"
+msgstr "Hệ số tính giá dịch vụ"
 
 #. module: health_base
 #: model:ir.model.fields.selection,name:health_base.selection__health_symptom__category__musculoskeletal
@@ -2700,7 +2700,7 @@ msgstr "Cơ xương khớp"
 #. module: health_base
 #: model:ir.model.constraint,message:health_base.constraint_health_facility_positive_rooms
 msgid "Must have at least one consultation room!"
-msgstr "Must have tại ít nhất one Tư vấn phòng!"
+msgstr "Phải có ít nhất một phòng tư vấn!"
 
 #. module: health_base
 #: model:ir.model.fields,field_description:health_base.field_health_facility__my_activity_date_deadline
@@ -2727,12 +2727,12 @@ msgstr "Tênd Diện tích"
 #. module: health_base
 #: model:ir.model.fields.selection,name:health_base.selection__resource_calendar_leaves__holiday_type__national
 msgid "National Holiday"
-msgstr "National Ngày lễ"
+msgstr "Ngày lễ quốc gia"
 
 #. module: health_base
 #: model_terms:ir.ui.view,arch_db:health_base.view_healthcare_public_holiday_search
 msgid "National Holidays"
-msgstr "National Ngày lễs"
+msgstr "Ngày lễ quốc gia"
 
 #. module: health_base
 #: model_terms:ir.ui.view,arch_db:health_base.view_health_patient_search
@@ -2816,14 +2816,14 @@ msgstr "Lần khám tiếp theo đã lên lịch"
 #. module: health_base
 #: model_terms:ir.actions.act_window,help:health_base.action_health_audit_log
 msgid "No audit logs found"
-msgstr "Không audit logs được tìm thấy"
+msgstr "Không tìm thấy nhật ký kiểm toán"
 
 #. module: health_base
 #. odoo-python
 #: code:addons/health_base/models/res_partner.py:0
 msgid ""
 "No coordinates found for this address. Please check the address details."
-msgstr "Không Tọa độ được tìm thấy cho này Địa chỉ. Vui lòng kiểm tra the Địa chỉ Chi tiết."
+msgstr "Không tìm thấy tọa độ cho địa chỉ này. Vui lòng kiểm tra chi tiết địa chỉ."
 
 #. module: health_base
 #: model_terms:ir.actions.act_window,help:health_base.action_health_facility
@@ -2838,17 +2838,17 @@ msgstr "Không Y tế Các cơ sở được tìm thấy"
 #. module: health_base
 #: model_terms:ir.actions.act_window,help:health_base.action_healthcare_public_holidays
 msgid "No public holidays defined yet!"
-msgstr "Không Công khai ngày lễs defined yet!"
+msgstr "Chưa định nghĩa ngày lễ nào!"
 
 #. module: health_base
 #: model:ir.model.fields.selection,name:health_base.selection__health_fall_risk__ambulatory_aid__none
 msgid "None/Bed rest/Nurse assist (0 points)"
-msgstr "Không có/Giường bệnh rest/Y tá assist (0 points)"
+msgstr "Không có/Nghỉ tại giường/Y tá hỗ trợ (0 điểm)"
 
 #. module: health_base
 #: model:ir.model.fields.selection,name:health_base.selection__health_fall_risk__gait_transfer__normal
 msgid "Normal/Bed rest/Immobile (0 points)"
-msgstr "Bình thường/Giường bệnh rest/Imdi động (0 points)"
+msgstr "Bình thường/Nghỉ tại giường/Bất động (0 điểm)"
 
 #. module: health_base
 #: model:ir.model.fields.selection,name:health_base.selection__health_vietnamese_district__region__north
@@ -2946,7 +2946,7 @@ msgstr "Online Y khoa Tư vấn via Zalo/Messenger"
 #: model:ir.model.fields,field_description:health_base.field_health_facility__operating_hours
 #: model_terms:ir.ui.view,arch_db:health_base.view_health_facility_form
 msgid "Operating Hours"
-msgstr "Opeđánh giá Giờs"
+msgstr "Giờ hoạt động"
 
 #. module: health_base
 #: model:ir.model.fields.selection,name:health_base.selection__health_facility__facility_status__operational
@@ -2964,7 +2964,7 @@ msgstr "Vận hành Người quản lý"
 #. module: health_base
 #: model:res.groups,comment:health_base.group_healthcare_operations_manager
 msgid "Operations Manager - scheduling oversight, staff coordination"
-msgstr "Vận hành Người quản lý - scheduling quasight, nhân viên coordination"
+msgstr "Quản lý vận hành - giám sát lịch trình, điều phối nhân viên"
 
 #. module: health_base
 #: model:ir.model.fields.selection,name:health_base.selection__health_clinical_protocol__compliance_level__optional
@@ -2974,7 +2974,7 @@ msgstr "Tùy chọn"
 #. module: health_base
 #: model:ir.model.fields.selection,name:health_base.selection__health_fall_risk__mental_status__oriented
 msgid "Oriented to own ability (0 points)"
-msgstr "Oriented Đến own ability (0 points)"
+msgstr "Nhận thức đúng khả năng bản thân (0 điểm)"
 
 #. module: health_base
 #: model:ir.model.fields.selection,name:health_base.selection__health_medication__therapeutic_category__other
@@ -2990,12 +2990,12 @@ msgstr "Khác"
 #. module: health_base
 #: model:ir.model.fields.selection,name:health_base.selection__health_fall_risk__mental_status__overestimates
 msgid "Overestimates/Forgets limitations (15 points)"
-msgstr "Quaestimates/Forgets limitations (15 points)"
+msgstr "Đánh giá quá cao/quên giới hạn bản thân (15 điểm)"
 
 #. module: health_base
 #: model:res.groups,comment:health_base.group_healthcare_owner
 msgid "Owner - full system access, business oversight"
-msgstr "Chủ sở hữu - Đầy đủ hệ thống truy cập, business quasight"
+msgstr "Chủ sở hữu - toàn quyền hệ thống, giám sát kinh doanh"
 
 #. module: health_base
 #: model:ir.model.fields,field_description:health_base.field_health_referral_source__is_paid_source
@@ -3063,32 +3063,32 @@ msgstr "Bệnh nhân Cổng thông tin - Xem own bản ghis, book Các cuộc h�
 #. module: health_base
 #: model:health.booking.cancellation.reason,description:health_base.cancel_reason_patient_financial
 msgid "Patient cannot afford the service at this time"
-msgstr "Bệnh nhân cannot afford the dịch vụ tại này Giờ"
+msgstr "Bệnh nhân hiện không đủ khả năng chi trả dịch vụ"
 
 #. module: health_base
 #: model:health.booking.cancellation.reason,description:health_base.cancel_reason_patient_transport
 msgid "Patient cannot arrange transportation to appointment"
-msgstr "Bệnh nhân cannot arphạm vi vận chuyểnation Đến Cuộc hẹn"
+msgstr "Bệnh nhân không thể sắp xếp phương tiện đến cuộc hẹn"
 
 #. module: health_base
 #: model:health.booking.cancellation.reason,description:health_base.cancel_reason_patient_noshow
 msgid "Patient did not attend and did not notify in advance"
-msgstr "Bệnh nhân did not attend và did not notify trong advance"
+msgstr "Bệnh nhân không tham dự và không thông báo trước"
 
 #. module: health_base
 #: model:health.booking.cancellation.reason,description:health_base.cancel_reason_patient_emergency
 msgid "Patient has an emergency that prevents attendance"
-msgstr "Bệnh nhân has an Khẩn cấp đó prsự kiệns attendance"
+msgstr "Bệnh nhân có tình huống khẩn cấp nên không thể tham dự"
 
 #. module: health_base
 #: model:health.booking.cancellation.reason,description:health_base.cancel_reason_patient_schedule
 msgid "Patient has another commitment or scheduling conflict"
-msgstr "Bệnh nhân has ankhác commitment hoặc scheduling conflict"
+msgstr "Bệnh nhân có việc khác hoặc bị trùng lịch"
 
 #. module: health_base
 #: model:health.booking.cancellation.reason,name:health_base.cancel_reason_patient_illness
 msgid "Patient is too ill to attend"
-msgstr "Bệnh nhân là too ill Đến attend"
+msgstr "Bệnh nhân quá yếu để tham dự"
 
 #. module: health_base
 #: model:health.booking.cancellation.reason,name:health_base.cancel_reason_patient_noshow
@@ -3098,13 +3098,13 @@ msgstr "Bệnh nhân Không-Hiển thị"
 #. module: health_base
 #: model:health.booking.cancellation.reason,description:health_base.cancel_reason_patient_nolongerneeded
 msgid "Patient's condition has improved or service is no longer required"
-msgstr "Bệnh nhân's Tình trạng has improved hoặc dịch vụ là Không longer Bắt buộc"
+msgstr "Tình trạng của bệnh nhân đã cải thiện hoặc không còn cần dịch vụ"
 
 #. module: health_base
 #: model:health.booking.cancellation.reason,description:health_base.cancel_reason_patient_illness
 msgid ""
 "Patient's condition has worsened or they are unable to attend due to illness"
-msgstr "Bệnh nhân's Tình trạng has worsened hoặc they are unable Đến attend hạn Đến illness"
+msgstr "Tình trạng của bệnh nhân xấu đi hoặc họ không thể tham dự do bệnh"
 
 #. module: health_base
 #: model:ir.model.fields.selection,name:health_base.selection__health_booking_cancellation_reason__reason_type__patient
@@ -3205,7 +3205,7 @@ msgstr "Vui lòng nhập số điện thoại hợp lệ."
 #. odoo-python
 #: code:addons/health_base/models/res_partner.py:0
 msgid "Please fill in at least the street or city before geocoding."
-msgstr "Vui lòng fill trong tại ít nhất the Đường hoặc Thành phố trước geocoding."
+msgstr "Vui lòng nhập ít nhất đường hoặc thành phố trước khi mã hóa địa lý."
 
 #. module: health_base
 #: model:ir.model.fields.selection,name:health_base.selection__health_readmission_risk__medication_compliance__poor
@@ -3221,7 +3221,7 @@ msgstr "Mã bưu điện"
 #. odoo-javascript
 #: code:addons/health_base/static/src/xml/address_autocomplete_widget.xml:0
 msgid "Powered by Photon (OpenStreetMap)"
-msgstr "Powered bởi Photon (MởĐườngMap)"
+msgstr "Cung cấp bởi Photon (OpenStreetMap)"
 
 #. module: health_base
 #: model:ir.model.fields.selection,name:health_base.selection__res_partner__gender__prefer_not_to_say
@@ -3243,7 +3243,7 @@ msgstr "Giá Multiplier"
 #. odoo-python
 #: code:addons/health_base/models/resource_calendar_leaves.py:0
 msgid "Price multiplier must be positive"
-msgstr "Giá multiplier must be positive"
+msgstr "Hệ số giá phải là số dương"
 
 #. module: health_base
 #: model_terms:ir.ui.view,arch_db:health_base.view_healthcare_public_holiday_list
@@ -3268,7 +3268,7 @@ msgstr "Ví dụ giá"
 #. module: health_base
 #: model_terms:ir.ui.view,arch_db:health_base.view_healthcare_public_holiday_form
 msgid "Pricing Examples for"
-msgstr "Pricing Examples cho"
+msgstr "Ví dụ tính giá cho"
 
 #. module: health_base
 #: model_terms:ir.ui.view,arch_db:health_base.view_healthcare_public_holiday_search
@@ -3304,7 +3304,7 @@ msgstr "Cơ sở y tế chính"
 msgid ""
 "Primary Facility is required for patients. Please select a facility to "
 "generate a valid Patient ID."
-msgstr "Cơ sở y tế chính là Bắt buộc cho Bệnh nhân. Vui lòng Chọn a Cơ sở Đến genetỷ lệ a valid Mã bệnh nhân."
+msgstr "Bệnh nhân bắt buộc phải có cơ sở y tế chính. Vui lòng chọn cơ sở để tạo mã bệnh nhân hợp lệ."
 
 #. module: health_base
 #: model:ir.model.fields,field_description:health_base.field_res_partner__primary_payer_id
@@ -3337,7 +3337,7 @@ msgstr "Ưu tiên Điểm"
 #. module: health_base
 #: model:ir.model.constraint,message:health_base.constraint_health_urgency_level_positive_score
 msgid "Priority score must be positive!"
-msgstr "Ưu tiên điểm must be positive!"
+msgstr "Điểm ưu tiên phải là số dương!"
 
 #. module: health_base
 #: model:ir.model.fields,field_description:health_base.field_res_partner__profession
@@ -3405,7 +3405,7 @@ msgstr "Nhà cung cấp Tên"
 #. module: health_base
 #: model:ir.model.constraint,message:health_base.constraint_health_insurance_provider_name_unique
 msgid "Provider name must be unique!"
-msgstr "Nhà cung cấp Tên must be unique!"
+msgstr "Tên nhà cung cấp phải là duy nhất!"
 
 #. module: health_base
 #: model:ir.model.fields.selection,name:health_base.selection__health_booking_cancellation_reason__reason_type__provider
@@ -3443,12 +3443,12 @@ msgstr "Mã tỉnh (2 digits)..."
 #. odoo-python
 #: code:addons/health_base/models/health_facility.py:0
 msgid "Province code must be exactly 2 digits (e.g., 01, 02, 03)."
-msgstr "Mã tỉnh must be exactly 2 digits (e.g., 01, 02, 03)."
+msgstr "Mã tỉnh phải có đúng 2 chữ số (ví dụ: 01, 02, 03)."
 
 #. module: health_base
 #: model:ir.model.constraint,message:health_base.constraint_health_facility_province_code_unique
 msgid "Province code must be unique!"
-msgstr "Mã tỉnh must be unique!"
+msgstr "Mã tỉnh phải là duy nhất!"
 
 #. module: health_base
 #: model:ir.model.fields,field_description:health_base.field_resource_calendar_leaves__province_id
@@ -3604,22 +3604,22 @@ msgstr "Mối quan hệ với bệnh nhân"
 #. module: health_base
 #: model:health.booking.cancellation.reason,description:health_base.cancel_reason_provider_equipment
 msgid "Required medical equipment is not available"
-msgstr "Bắt buộc Y khoa thiết bị là not có sẵn"
+msgstr "Thiết bị y tế bắt buộc không có sẵn"
 
 #. module: health_base
 #: model:ir.model.fields,field_description:health_base.field_health_service_type__requires_doctor
 msgid "Requires Doctor"
-msgstr "Requires Bác sĩ"
+msgstr "Yêu cầu bác sĩ"
 
 #. module: health_base
 #: model:ir.model.fields,field_description:health_base.field_health_urgency_level__requires_approval
 msgid "Requires Manager Approval"
-msgstr "Requires Người quản lý Approval"
+msgstr "Yêu cầu quản lý phê duyệt"
 
 #. module: health_base
 #: model:ir.model.fields,field_description:health_base.field_health_service_type__requires_nurse
 msgid "Requires Nurse"
-msgstr "Requires Y tá"
+msgstr "Yêu cầu y tá"
 
 #. module: health_base
 #: model:ir.model.fields,field_description:health_base.field_health_service_type__requires_travel
@@ -3710,12 +3710,12 @@ msgstr "Điểm cho Có"
 #. module: health_base
 #: model:ir.model.fields,field_description:health_base.field_health_protocol_question__score_scale
 msgid "Score per Scale Point"
-msgstr "Điểm per Scale Point"
+msgstr "Điểm cho mỗi mức thang đo"
 
 #. module: health_base
 #: model:ir.model.fields,field_description:health_base.field_health_fall_risk__secondary_diagnosis
 msgid "Secondary Diagnosis (15 points)"
-msgstr "Phụ Chẩn đoán (15 points)"
+msgstr "Chẩn đoán phụ (15 điểm)"
 
 #. module: health_base
 #: model:ir.model.fields,field_description:health_base.field_health_urgency_level__send_alerts
@@ -3796,7 +3796,7 @@ msgstr "Dịch vụ Loạis"
 #. module: health_base
 #: model:ir.model.constraint,message:health_base.constraint_health_service_type_code_unique
 msgid "Service code must be unique!"
-msgstr "Dịch vụ Mã must be unique!"
+msgstr "Mã dịch vụ phải là duy nhất!"
 
 #. module: health_base
 #: model_terms:ir.ui.view,arch_db:health_base.view_health_service_type_form
@@ -3874,7 +3874,7 @@ msgstr "Nguồn Loại"
 #. module: health_base
 #: model:ir.model.constraint,message:health_base.constraint_health_referral_source_name_unique
 msgid "Source name must be unique within the same source type!"
-msgstr "Nguồn Tên must be unique vớiin the same Nguồn Loại!"
+msgstr "Tên nguồn phải là duy nhất trong cùng loại nguồn!"
 
 #. module: health_base
 #: model:ir.model.fields.selection,name:health_base.selection__health_vietnamese_district__region__south
@@ -3905,7 +3905,7 @@ msgstr "Chuyên khoa Tên"
 #. module: health_base
 #: model:ir.model.constraint,message:health_base.constraint_health_medical_specialty_name_unique
 msgid "Specialty name must be unique!"
-msgstr "Chuyên khoa Tên must be unique!"
+msgstr "Tên chuyên khoa phải là duy nhất!"
 
 #. module: health_base
 #: model_terms:ir.ui.view,arch_db:health_base.view_health_patient_form
@@ -3930,24 +3930,24 @@ msgstr "Nhân viên uncó sẵn"
 #. module: health_base
 #: model:health.patient.category,description:health_base.patient_category_regular
 msgid "Standard healthcare patient"
-msgstr "Standard Y tế Bệnh nhân"
+msgstr "Bệnh nhân y tế tiêu chuẩn"
 
 #. module: health_base
 #: model:health.urgency.level,description:health_base.urgency_medium
 msgid "Standard medical appointment"
-msgstr "Standard Y khoa Cuộc hẹn"
+msgstr "Cuộc hẹn y tế tiêu chuẩn"
 
 #. module: health_base
 #. odoo-javascript
 #: code:addons/health_base/static/src/xml/address_autocomplete_widget.xml:0
 msgid "Start typing address (min 3 characters)..."
-msgstr "Bắt đầu typing Địa chỉ (min 3 characters)..."
+msgstr "Bắt đầu nhập địa chỉ (tối thiểu 3 ký tự)..."
 
 #. module: health_base
 #: model:ir.model.fields,help:health_base.field_res_partner__address_search
 #: model:ir.model.fields,help:health_base.field_res_users__address_search
 msgid "Start typing to search addresses (minimum 3 characters)"
-msgstr "Bắt đầu typing Đến Tìm kiếm địa chỉes (minimum 3 characters)"
+msgstr "Bắt đầu nhập để tìm kiếm địa chỉ (tối thiểu 3 ký tự)"
 
 #. module: health_base
 #: model_terms:ir.ui.view,arch_db:health_base.view_health_facility_search
@@ -4077,7 +4077,7 @@ msgstr "TET Ngày lễs"
 #. module: health_base
 #: model:ir.model.fields,field_description:health_base.field_health_urgency_level__response_time_hours
 msgid "Target Response Time (Hours)"
-msgstr "Target Response Giờ (Giờs)"
+msgstr "Thời gian phản hồi mục tiêu (giờ)"
 
 #. module: health_base
 #: model:ir.model.fields.selection,name:health_base.selection__hr_employee__healthcare_role__technician
@@ -4103,7 +4103,7 @@ msgstr "Khám bệnh từ xa Tư vấn"
 #. module: health_base
 #: model:ir.model.fields.selection,name:health_base.selection__health_facility__facility_status__closed_temporary
 msgid "Temporarily Closed"
-msgstr "Temporarily Đóngd"
+msgstr "Tạm thời đóng cửa"
 
 #. module: health_base
 #: model:ir.model.fields.selection,name:health_base.selection__health_protocol_question__question_type__text
@@ -4115,25 +4115,25 @@ msgstr "Văn bản"
 msgid ""
 "The audit log tracks all changes to critical healthcare data including pricing rules,\n"
 "                patient records, invoices, and service orders."
-msgstr "The Nhật ký kiểm toán theo dõis Tất cả changes Đến critical Y tế data bao gồm pricing quy tắcs,\n                Bệnh nhân bản ghis, hóa đơns, và dịch vụ thứ tựs."
+msgstr "Nhật ký kiểm toán theo dõi mọi thay đổi đối với dữ liệu y tế quan trọng, bao gồm quy tắc giá,\n                hồ sơ bệnh nhân, hóa đơn và đơn dịch vụ."
 
 #. module: health_base
 #. odoo-python
 #: code:addons/health_base/models/health_facility.py:0
 msgid "The following facilities have licenses expiring within 30 days:\n"
-msgstr "The theo dõiing Các cơ sở have giấy phéps expiring vớiin 30 days:\n"
+msgstr "Các cơ sở sau có giấy phép hết hạn trong vòng 30 ngày:\n"
 
 #. module: health_base
 #: model_terms:ir.actions.act_window,help:health_base.action_health_patient
 msgid ""
 "The system tracks client demographics, medical history, appointments, and "
 "billing."
-msgstr "The hệ thống theo dõis Khách hàng demobiểu đồics, Tiền sử bệnh, Các cuộc hẹn, và thanh toán."
+msgstr "Hệ thống theo dõi thông tin nhân khẩu học, tiền sử bệnh, cuộc hẹn và thanh toán của khách hàng."
 
 #. module: health_base
 #: model:ir.model.fields,field_description:health_base.field_health_medication__therapeutic_category
 msgid "Therapeutic Category"
-msgstr "Therapeutic Danh mục"
+msgstr "Danh mục điều trị"
 
 #. module: health_base
 #: model:ir.model.fields.selection,name:health_base.selection__hr_employee__healthcare_role__therapist
@@ -4156,7 +4156,7 @@ msgstr "Năm nay"
 msgid ""
 "This section will contain clinical notes, provider communications, and care "
 "coordination details."
-msgstr "Này phần will contain Lâm sàng Ghi chú, nhà cung cấp communications, và care coordination Chi tiết."
+msgstr "Phần này sẽ chứa ghi chú lâm sàng, trao đổi với nhà cung cấp và chi tiết điều phối chăm sóc."
 
 #. module: health_base
 #: model:ir.model.fields.selection,name:health_base.selection__res_partner__ethnicity__thai
@@ -4172,7 +4172,7 @@ msgstr "Múi giờ"
 #. odoo-javascript
 #: code:addons/health_base/static/src/xml/address_autocomplete_widget.xml:0
 msgid "Tip: Type street, city, or landmark name to search addresses"
-msgstr "Tip: Loại Đường, Thành phố, hoặc landmark Tên Đến Tìm kiếm địa chỉes"
+msgstr "Mẹo: Nhập tên đường, thành phố hoặc địa danh để tìm kiếm địa chỉ"
 
 #. module: health_base
 #: model_terms:ir.ui.view,arch_db:health_base.view_health_audit_log_search
@@ -4203,7 +4203,7 @@ msgstr "Tổng số lần khám"
 #. module: health_base
 #: model:ir.model.constraint,message:health_base.constraint_health_facility_positive_beds
 msgid "Total beds cannot be negative!"
-msgstr "Tổng cộng Giường bệnh cannot be negative!"
+msgstr "Tổng số giường không được âm!"
 
 #. module: health_base
 #: model:ir.model.fields,field_description:health_base.field_health_readmission_risk__transportation_issues
@@ -4218,12 +4218,12 @@ msgstr "Vận chuyểnation issues"
 #. module: health_base
 #: model:ir.model.fields,field_description:health_base.field_health_service_type__travel_time_minutes
 msgid "Travel Time (Minutes)"
-msgstr "Travel Giờ (Phúts)"
+msgstr "Thời gian di chuyển (phút)"
 
 #. module: health_base
 #: model:ir.model.fields,field_description:health_base.field_health_vietnamese_district__travel_zone
 msgid "Travel Zone"
-msgstr "Travel Khu vực"
+msgstr "Khu vực di chuyển"
 
 #. module: health_base
 #: model:ir.model.fields.selection,name:health_base.selection__health_protocol_intervention__intervention_type__treatment
@@ -4233,12 +4233,12 @@ msgstr "Điều trị"
 #. module: health_base
 #: model:ir.model.fields,help:health_base.field_resource_calendar_leaves__holiday_type
 msgid "Type of public holiday for pricing rules and scheduling"
-msgstr "Loại of Công khai ngày lễ cho pricing quy tắcs và scheduling"
+msgstr "Loại ngày lễ dùng cho quy tắc giá và lập lịch"
 
 #. module: health_base
 #: model:ir.model.fields,help:health_base.field_health_facility__activity_exception_decoration
 msgid "Type of the exception activity on record."
-msgstr "Loại of the exception Hoạt động trên bản ghi."
+msgstr "Loại hoạt động ngoại lệ trên bản ghi."
 
 #. module: health_base
 #: model:ir.model.fields.selection,name:health_base.selection__res_partner__ethnicity__tay
@@ -4262,18 +4262,18 @@ msgstr "Tên tòa nhà"
 msgid ""
 "Unable to connect to geocoding service. Please check your internet "
 "connection."
-msgstr "Unable Đến connect Đến geocoding dịch vụ. Vui lòng kiểm tra của bạn internet connection."
+msgstr "Không thể kết nối đến dịch vụ mã hóa địa lý. Vui lòng kiểm tra kết nối Internet của bạn."
 
 #. module: health_base
 #: model:ir.model.fields.selection,name:health_base.selection__health_facility__facility_status__construction
 msgid "Under Construction"
-msgstr "Dưới Construction"
+msgstr "Đang xây dựng"
 
 #. module: health_base
 #: model:ir.model.fields.selection,name:health_base.selection__health_facility__facility_status__maintenance
 #: model_terms:ir.ui.view,arch_db:health_base.view_health_facility_search
 msgid "Under Maintenance"
-msgstr "Dưới Maintenance"
+msgstr "Đang bảo trì"
 
 #. module: health_base
 #: model:ir.model.fields.selection,name:health_base.selection__health_medication_interaction__severity__unknown
@@ -4308,7 +4308,7 @@ msgstr "Khẩn cấp Mức độs"
 #. module: health_base
 #: model:ir.model.constraint,message:health_base.constraint_health_urgency_level_code_unique
 msgid "Urgency code must be unique!"
-msgstr "Khẩn cấp Mã must be unique!"
+msgstr "Mã mức khẩn cấp phải là duy nhất!"
 
 #. module: health_base
 #: model:health.urgency.level,description:health_base.urgency_high
@@ -4611,7 +4611,7 @@ msgstr "Khách hàng tôi chăm sóc"
 #: model:ir.model.fields,help:health_base.field_res_partner__my_patients_as_referrer
 #: model:ir.model.fields,help:health_base.field_res_users__my_patients_as_referrer
 msgid "clients I have referred to healthcare services"
-msgstr "Khách hàng I have referred Đến Y tế dịch vụs"
+msgstr "khách hàng tôi đã giới thiệu đến dịch vụ y tế"
 
 #. module: health_base
 #: model:ir.model.fields,help:health_base.field_res_partner__payer_patient_count
@@ -4629,13 +4629,13 @@ msgstr "Khách hàng tôi giới thiệu"
 #: model:ir.model.fields,help:health_base.field_res_partner__my_patients_as_caregiver
 #: model:ir.model.fields,help:health_base.field_res_users__my_patients_as_caregiver
 msgid "clients for whom I am the primary caregiver"
-msgstr "Khách hàng cho người mà I am the Người chăm sóc chính"
+msgstr "khách hàng mà tôi là người chăm sóc chính"
 
 #. module: health_base
 #: model:ir.model.fields,help:health_base.field_res_partner__my_patients_as_payer
 #: model:ir.model.fields,help:health_base.field_res_users__my_patients_as_payer
 msgid "clients for whom I am the primary payer"
-msgstr "Khách hàng cho người mà I am the Người thanh toán chính"
+msgstr "khách hàng mà tôi là người thanh toán chính"
 
 #. module: health_base
 #: model_terms:ir.ui.view,arch_db:health_base.view_health_service_type_form
@@ -4683,3 +4683,213 @@ msgstr "Ê Đê"
 #: model_terms:ir.ui.view,arch_db:health_base.view_healthcare_public_holiday_form
 msgid "× 100,000 ="
 msgstr "× 100,000 ="
+
+#. module: health_base
+#. odoo-javascript
+#: code:addons/health_base/static/src/js/health_base.js:0
+msgid "Install VAFHS App"
+msgstr "Cài đặt ứng dụng VAFHS"
+
+#. module: health_base
+#. odoo-javascript
+#: code:addons/health_base/static/src/js/health_base.js:0
+msgid "Install the VAFHS healthcare app for quick access and offline functionality."
+msgstr "Cài đặt ứng dụng y tế VAFHS để truy cập nhanh và sử dụng khi ngoại tuyến."
+
+#. module: health_base
+#. odoo-javascript
+#: code:addons/health_base/static/src/js/health_base.js:0
+msgid "Later"
+msgstr "Để sau"
+
+#. module: health_base
+#. odoo-javascript
+#: code:addons/health_base/static/src/js/health_base.js:0
+msgid "VAFHS app installed successfully!"
+msgstr "Ứng dụng VAFHS đã được cài đặt thành công!"
+
+#. module: health_base
+#. odoo-javascript
+#: code:addons/health_base/static/src/js/health_base.js:0
+msgid "Please enter a valid Vietnamese phone number"
+msgstr "Vui lòng nhập số điện thoại Việt Nam hợp lệ"
+
+#. module: health_base
+#. odoo-javascript
+#: code:addons/health_base/static/src/js/health_base.js:0
+msgid "Please enter a valid email address"
+msgstr "Vui lòng nhập địa chỉ email hợp lệ"
+
+#. module: health_base
+#. odoo-javascript
+#: code:addons/health_base/static/src/js/health_base.js:0
+msgid "Please enter a valid National ID (CCCD/CMND)"
+msgstr "Vui lòng nhập số CCCD/CMND hợp lệ"
+
+#. module: health_base
+#. odoo-javascript
+#: code:addons/health_base/static/src/js/health_base.js:0
+msgid "Connection restored. Syncing data..."
+msgstr "Đã khôi phục kết nối. Đang đồng bộ dữ liệu..."
+
+#. module: health_base
+#. odoo-javascript
+#: code:addons/health_base/static/src/js/health_base.js:0
+msgid "You are now offline. Some features may be limited."
+msgstr "Bạn hiện đang ngoại tuyến. Một số tính năng có thể bị hạn chế."
+
+#. module: health_base
+#. odoo-javascript
+#: code:addons/health_base/static/src/js/health_base.js:0
+msgid "Synced %s offline changes"
+msgstr "Đã đồng bộ %s thay đổi ngoại tuyến"
+
+#. module: health_base
+#. odoo-javascript
+#: code:addons/health_base/static/src/js/address_autocomplete_widget.js:0
+msgid "No addresses found. Try a different search."
+msgstr "Không tìm thấy địa chỉ. Hãy thử tìm kiếm khác."
+
+#. module: health_base
+#. odoo-javascript
+#: code:addons/health_base/static/src/js/address_autocomplete_widget.js:0
+msgid "Search failed. Please check your connection."
+msgstr "Tìm kiếm thất bại. Vui lòng kiểm tra kết nối của bạn."
+
+#. module: health_base
+#. odoo-javascript
+#: code:addons/health_base/static/src/js/address_autocomplete_widget.js:0
+msgid "Failed to apply address. Please try again."
+msgstr "Không thể áp dụng địa chỉ. Vui lòng thử lại."
+
+#. module: health_base
+#. odoo-javascript
+#: code:addons/health_base/static/src/js/address_map_widget.js:0
+msgid "Patient Location"
+msgstr "Vị trí bệnh nhân"
+
+#. module: health_base
+#. odoo-javascript
+#: code:addons/health_base/static/src/js/address_map_widget.js:0
+msgid "No primary facility assigned"
+msgstr "Chưa gán cơ sở y tế chính"
+
+#. module: health_base
+#. odoo-javascript
+#: code:addons/health_base/static/src/js/address_map_widget.js:0
+msgid "Facility has no coordinates"
+msgstr "Cơ sở chưa có tọa độ"
+
+#. module: health_base
+#. odoo-javascript
+#: code:addons/health_base/static/src/js/address_map_widget.js:0
+msgid "Failed to load facility"
+msgstr "Không thể tải cơ sở"
+
+#. module: health_base
+#. odoo-javascript
+#: code:addons/health_base/static/src/js/address_map_widget.js:0
+msgid "No driving route found between locations"
+msgstr "Không tìm thấy tuyến đường lái xe giữa các vị trí"
+
+#. module: health_base
+#. odoo-javascript
+#: code:addons/health_base/static/src/js/address_map_widget.js:0
+msgid "Location coordinates not found"
+msgstr "Không tìm thấy tọa độ vị trí"
+
+#. module: health_base
+#. odoo-javascript
+#: code:addons/health_base/static/src/js/address_map_widget.js:0
+msgid "Directions API access denied - check API key"
+msgstr "Quyền truy cập Directions API bị từ chối - hãy kiểm tra khóa API"
+
+#. module: health_base
+#. odoo-javascript
+#: code:addons/health_base/static/src/js/address_map_widget.js:0
+msgid "Directions API quota exceeded"
+msgstr "Đã vượt hạn mức Directions API"
+
+#. module: health_base
+#. odoo-javascript
+#: code:addons/health_base/static/src/js/address_map_widget.js:0
+msgid "Server error - try again later"
+msgstr "Lỗi máy chủ - vui lòng thử lại sau"
+
+#. module: health_base
+#. odoo-javascript
+#: code:addons/health_base/static/src/js/address_map_widget.js:0
+msgid "Could not calculate route"
+msgstr "Không thể tính tuyến đường"
+
+#. module: health_base
+#. odoo-javascript
+#: code:addons/health_base/static/src/js/address_map_widget.js:0
+msgid "Could not calculate driving route"
+msgstr "Không thể tính tuyến đường lái xe"
+
+#. module: health_base
+#. odoo-javascript
+#: code:addons/health_base/static/src/js/address_map_widget.js:0
+msgid "No route found"
+msgstr "Không tìm thấy tuyến đường"
+
+#. module: health_base
+#. odoo-javascript
+#: code:addons/health_base/static/src/xml/address_map_widget.xml:0
+msgid "Calculating driving route..."
+msgstr "Đang tính tuyến đường lái xe..."
+
+#. module: health_base
+#. odoo-javascript
+#: code:addons/health_base/static/src/xml/address_map_widget.xml:0
+msgid "(Please geocode the facility first)"
+msgstr "(Vui lòng mã hóa địa lý cơ sở trước)"
+
+#. module: health_base
+#. odoo-javascript
+#: code:addons/health_base/static/src/xml/address_map_widget.xml:0
+msgid "Route to"
+msgstr "Tuyến đường đến"
+
+#. module: health_base
+#. odoo-javascript
+#: code:addons/health_base/static/src/xml/address_map_widget.xml:0
+msgid "Facility GPS:"
+msgstr "GPS cơ sở:"
+
+#. module: health_base
+#. odoo-javascript
+#: code:addons/health_base/static/src/xml/address_map_widget.xml:0
+msgid "Click \"Geocode Address\" to set patient location"
+msgstr "Nhấn \"Mã hóa địa chỉ\" để đặt vị trí bệnh nhân"
+
+#. module: health_base
+#. odoo-javascript
+#: code:addons/health_base/static/src/xml/address_map_widget.xml:0
+msgid "Map with driving route will display when coordinates are available"
+msgstr "Bản đồ với tuyến đường lái xe sẽ hiển thị khi có tọa độ"
+
+#. module: health_base
+#. odoo-javascript
+#: code:addons/health_base/static/src/xml/address_autocomplete_widget.xml:0
+msgid "address found"
+msgstr "địa chỉ được tìm thấy"
+
+#. module: health_base
+#. odoo-javascript
+#: code:addons/health_base/static/src/xml/address_autocomplete_widget.xml:0
+msgid "addresses found"
+msgstr "địa chỉ được tìm thấy"
+
+#. module: health_base
+#. odoo-javascript
+#: code:addons/health_base/static/src/xml/address_map_widget.xml:0
+msgid "Patient GPS:"
+msgstr "GPS bệnh nhân:"
+
+#. module: health_base
+#. odoo-javascript
+#: code:addons/health_base/static/src/xml/address_map_widget.xml:0
+msgid "Google Maps"
+msgstr "Google Maps"

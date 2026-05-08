@@ -38,7 +38,7 @@
             <!-- Loading State -->
             <div class="health_landing_loading" t-if="state.loading">
                 <i class="fa fa-spinner health_landing_loading_spinner"/>
-                <p>Loading patient data...</p>
+                <p t-esc="this.t('Loading patient data...')"/>
             </div>
 
             <!-- SVG Hub-and-Spoke Diagram -->

@@ -4,16 +4,17 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Phiên bản: Odoo Server 19.0\n"
-"Báo cáo-Msgid-Bugs-Đến: \n"
-"POT-Creation-Ngày: 2025-10-29 05:47+0000\n"
-"PO-Revision-Ngày: 2025-10-29 05:47+0000\n"
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-10-29 05:47+0000\n"
+"PO-Revision-Date: 2025-10-29 05:47+0000\n"
 "Last-Translator: \n"
-"Ngôn ngữ-Đội: \n"
-"MIME-Phiên bản: 1.0\n"
-"Nội dung-Loại: văn bản/plain; charset=UTF-8\n"
-"Nội dung-Transfer-Encoding: \n"
-"Plural-Biểu mẫus: \n"
+"Language-Team: \n"
+"Language: vi_VN\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: nplurals=1; plural=0;\n"
 
 #. module: health_crm
 #: model_terms:ir.ui.view,arch_db:health_crm.view_client_selection_wizard_form
@@ -85,14 +86,18 @@ msgstr "<span class=\"o_stat_text\">Mạng lưới Biểu đồ</span>"
 msgid ""
 "<strong>Multiple clients found!</strong><br/>\n"
 "                        We found multiple patients with the name \""
-msgstr "<strong>Nhiều Khách hàng được tìm thấy!</strong><br/>\n                        Chúng tôi được tìm thấy nhiều Bệnh nhân với Tên \"
+msgstr ""
+"<strong>Tìm thấy nhiều khách hàng!</strong><br/>\n"
+"                        Chúng tôi tìm thấy nhiều bệnh nhân có tên \""
 
 #. module: health_crm
 #: model_terms:ir.actions.act_window,help:health_crm.action_healthcare_opportunities
 msgid ""
 "A healthcare contact is a potential patient, caregiver, or payer who has shown interest in your services. \n"
 "                Use this section to manage your healthcare relationships and track your interactions."
-msgstr "A Y tế Liên hệ là a tiềm năng Bệnh nhân, Người chăm sóc, hoặc Người thanh toán người đã thể hiện quan tâm đến dịch vụ của bạn. \n                Sử dụng phần này Đến quản lý Y tế mối quan hệ và theo dõi tương tác."
+msgstr ""
+"Liên hệ y tế là bệnh nhân, người chăm sóc hoặc người thanh toán tiềm năng đã quan tâm đến dịch vụ của bạn. \n"
+"                Sử dụng phần này để quản lý các mối quan hệ y tế và theo dõi tương tác."
 
 #. module: health_crm
 #. odoo-python
@@ -522,7 +527,7 @@ msgstr "Khách hàng Thông tin"
 #: model:ir.model.fields,field_description:health_crm.field_health_relationship_add_wizard__client_name
 #: model_terms:ir.ui.view,arch_db:health_crm.view_healthcare_opportunity_form
 msgid "Client Name"
-msgstr "Khách hàng Tên"
+msgstr "Tên khách hàng"
 
 #. module: health_crm
 #. odoo-python
@@ -539,7 +544,7 @@ msgstr "Khách hàng Tên là Bắt buộc khi nào you are not the Khách hàng
 #: model:ir.model.fields.selection,name:health_crm.selection__health_relationship_add_wizard__role__client_representative
 #: model_terms:ir.ui.view,arch_db:health_crm.view_healthcare_opportunity_form
 msgid "Client Representative"
-msgstr "Khách hàng Người đại diện"
+msgstr "Người đại diện khách hàng"
 
 #. module: health_crm
 #: model:ir.model,name:health_crm.model_health_client_selection_wizard
@@ -679,7 +684,7 @@ msgstr "Thông tin liên hệ"
 #. module: health_crm
 #: model_terms:ir.ui.view,arch_db:health_crm.view_healthcare_opportunity_form
 msgid "Contact Information"
-msgstr "Liên hệ Thông tin"
+msgstr "Thông tin liên hệ"
 
 #. module: health_crm
 #: model_terms:ir.ui.view,arch_db:health_crm.view_healthcare_opportunity_form
@@ -734,7 +739,7 @@ msgstr "Liên hệ Tên"
 #. module: health_crm
 #: model_terms:ir.ui.view,arch_db:health_crm.view_healthcare_opportunity_form
 msgid "Contact name..."
-msgstr "Liên hệ Tên..."
+msgstr "Tên liên hệ..."
 
 #. module: health_crm
 #: model:ir.model.fields,help:health_crm.field_health_client_relation__priority_order
@@ -756,7 +761,7 @@ msgstr "Liên hệed"
 #. module: health_crm
 #: model_terms:ir.ui.view,arch_db:health_crm.view_healthcare_lead2opportunity_partner
 msgid "Contacts"
-msgstr "Liên hệs"
+msgstr "Liên hệ"
 
 #. module: health_crm
 #: model:ir.model,name:health_crm.model_crm_lead2opportunity_partner
@@ -1389,7 +1394,7 @@ msgstr "Y tế Tùy chỉnh"
 #. module: health_crm
 #: model:ir.model.fields.selection,name:health_crm.selection__crm_lead__contact_relationship_type__healthcare_proxy
 msgid "Healthcare Proxy"
-msgstr "Y tế Proxy"
+msgstr "Người đại diện y tế"
 
 #. module: health_crm
 #: model:ir.actions.act_window,name:health_crm.action_health_client_relation
@@ -1692,7 +1697,7 @@ msgstr "Pháp lý Tài liệuation"
 #: model:ir.model.fields.selection,name:health_crm.selection__health_client_relation__role__legal_guardian
 #: model:ir.model.fields.selection,name:health_crm.selection__health_relationship_add_wizard__role__legal_guardian
 msgid "Legal Guardian"
-msgstr "Pháp lý Người giám hộ"
+msgstr "Người giám hộ pháp lý"
 
 #. module: health_crm
 #: model_terms:ir.ui.view,arch_db:health_crm.view_health_client_relation_search
@@ -2199,7 +2204,7 @@ msgstr "Ưu tiên thứ tự must be a positive Số."
 #. module: health_crm
 #: model:ir.model.fields.selection,name:health_crm.selection__crm_lead__contact_relationship_type__professional
 msgid "Professional Care Provider"
-msgstr "Chuyên nghiệp Care Nhà cung cấp"
+msgstr "Nhà cung cấp chăm sóc chuyên nghiệp"
 
 #. module: health_crm
 #: model:ir.model.fields.selection,name:health_crm.selection__health_client_relation__relationship_type__professional
@@ -3453,7 +3458,7 @@ msgstr "Quay lại liên hệ"
 
 #. module: health_crm
 msgid "Confirm Cancellation"
-msgstr ""
+msgstr "Xác nhận hủy"
 
 #. module: health_crm
 msgid "🔍 Tìm kiếm"
@@ -3461,11 +3466,11 @@ msgstr "🔍 Tìm kiếm"
 
 #. module: health_crm
 msgid "Last Staff Who Visited This Client"
-msgstr ""
+msgstr "Nhân viên gần nhất đã thăm khách hàng này"
 
 #. module: health_crm
 msgid "Service Type"
-msgstr ""
+msgstr "Loại dịch vụ"
 
 #. module: health_crm
 msgid "Associated Leads"
@@ -3477,7 +3482,7 @@ msgstr "Chi tiết người đại diện"
 
 #. module: health_crm
 msgid "Duration"
-msgstr ""
+msgstr "Thời lượng"
 
 #. module: health_crm
 msgid "Commission %"
@@ -3510,3 +3515,190 @@ msgstr "Chọn dịch vụ"
 #. module: health_crm
 msgid "Liên hệ mới"
 msgstr "Liên hệ mới"
+
+#. module: health_crm
+#. odoo-javascript
+#: code:addons/health_crm/static/src/xml/contact_search_widget.xml:0
+msgid "Select Existing Contact"
+msgstr "Chọn liên hệ hiện có"
+
+#. module: health_crm
+#. odoo-javascript
+#: code:addons/health_crm/static/src/xml/contact_search_widget.xml:0
+msgid "Searching for:"
+msgstr "Đang tìm kiếm:"
+
+#. module: health_crm
+#. odoo-javascript
+#: code:addons/health_crm/static/src/xml/contact_search_widget.xml:0
+msgid "Clients"
+msgstr "Khách hàng"
+
+#. module: health_crm
+#. odoo-javascript
+#: code:addons/health_crm/static/src/xml/contact_search_widget.xml:0
+msgid "No matching contacts, leads, or clients found for"
+msgstr "Không tìm thấy liên hệ, tiềm năng hoặc khách hàng phù hợp với"
+
+#. module: health_crm
+#. odoo-javascript
+#: code:addons/health_crm/static/src/xml/contact_search_widget.xml:0
+msgid "You can continue creating a new contact."
+msgstr "Bạn có thể tiếp tục tạo liên hệ mới."
+
+#. module: health_crm
+#. odoo-javascript
+#: code:addons/health_crm/static/src/xml/contact_search_widget.xml:0
+msgid "Continue Creating New Contact"
+msgstr "Tiếp tục tạo liên hệ mới"
+
+#. module: health_crm
+#. odoo-javascript
+#: code:addons/health_crm/static/src/xml/contact_search_widget.xml:0
+msgid "Press Tab to search for existing contacts"
+msgstr "Nhấn Tab để tìm liên hệ hiện có"
+
+#. module: health_crm
+#. odoo-javascript
+#: code:addons/health_crm/static/src/js/contact_search_widget.js:0
+msgid "Client Details"
+msgstr "Chi tiết khách hàng"
+
+#. module: health_crm
+#. odoo-javascript
+#: code:addons/health_crm/static/src/xml/relationship_graph_widget.xml:0
+msgid "Interactive force-directed graph - Drag nodes to reposition - Hover for details"
+msgstr "Biểu đồ tương tác - Kéo nút để đổi vị trí - Di chuột để xem chi tiết"
+
+#. module: health_crm
+#. odoo-javascript
+#: code:addons/health_crm/static/src/xml/relationship_graph_widget.xml:0
+msgid "Blue circles:"
+msgstr "Vòng tròn xanh:"
+
+#. module: health_crm
+#. odoo-javascript
+#: code:addons/health_crm/static/src/xml/relationship_graph_widget.xml:0
+msgid "Patients"
+msgstr "Bệnh nhân"
+
+#. module: health_crm
+#. odoo-javascript
+#: code:addons/health_crm/static/src/xml/relationship_graph_widget.xml:0
+msgid "Light blue circles:"
+msgstr "Vòng tròn xanh nhạt:"
+
+#. module: health_crm
+#. odoo-javascript
+#: code:addons/health_crm/static/src/xml/relationship_graph_widget.xml:0
+msgid "Representatives"
+msgstr "Người đại diện"
+
+#. module: health_crm
+#. odoo-javascript
+#: code:addons/health_crm/static/src/xml/relationship_graph_widget.xml:0
+msgid "Primary relationships"
+msgstr "Quan hệ chính"
+
+#. module: health_crm
+#. odoo-javascript
+#: code:addons/health_crm/static/src/xml/relationship_graph_widget.xml:0
+msgid "Relationship direction (Patient to Representative)"
+msgstr "Hướng quan hệ (Bệnh nhân đến Người đại diện)"
+
+#. module: health_crm
+#. odoo-javascript
+#: code:addons/health_crm/static/src/xml/relationship_address_widget.xml:0
+msgid "Edit address"
+msgstr "Sửa địa chỉ"
+
+#. module: health_crm
+#: model_terms:ir.ui.view,arch_db:health_crm.view_initial_contact_wizard_form
+msgid "Relationship Context"
+msgstr "Ngữ cảnh mối quan hệ"
+
+#. module: health_crm
+#: model_terms:ir.ui.view,arch_db:health_crm.view_initial_contact_wizard_form
+msgid "Mode of Contact"
+msgstr "Phương thức liên hệ"
+
+#. module: health_crm
+#: model_terms:ir.ui.view,arch_db:health_crm.view_initial_contact_wizard_form
+msgid "Search for existing contacts, leads, or clients"
+msgstr "Tìm liên hệ, tiềm năng hoặc khách hàng hiện có"
+
+#. module: health_crm
+#: model_terms:ir.ui.view,arch_db:health_crm.view_initial_contact_wizard_form
+msgid "Catchment Province"
+msgstr "Tỉnh phụ trách"
+
+#. module: health_crm
+#: model_terms:ir.ui.view,arch_db:health_crm.view_initial_contact_wizard_form
+msgid "Select catchment province..."
+msgstr "Chọn tỉnh phụ trách..."
+
+#. module: health_crm
+#: model_terms:ir.ui.view,arch_db:health_crm.view_initial_contact_wizard_form
+msgid "Zalo number (auto-filled from phone)"
+msgstr "Số Zalo (tự động điền từ số điện thoại)"
+
+#. module: health_crm
+#: model_terms:ir.ui.view,arch_db:health_crm.view_initial_contact_wizard_form
+msgid "Search for existing clients"
+msgstr "Tìm khách hàng hiện có"
+
+#. module: health_crm
+#: model_terms:ir.ui.view,arch_db:health_crm.view_initial_contact_wizard_form
+msgid "Primary"
+msgstr "Chính"
+
+#. module: health_crm
+#: model_terms:ir.ui.view,arch_db:health_crm.view_initial_contact_wizard_form
+msgid "← HOME (Mark as Junk)"
+msgstr "← TRANG CHỦ (Đánh dấu là rác)"
+
+#. module: health_crm
+#: model_terms:ir.ui.view,arch_db:health_crm.view_initial_contact_wizard_form
+msgid "NEXT →"
+msgstr "TIẾP →"
+
+#. module: health_crm
+#: model_terms:ir.ui.view,arch_db:health_crm.view_initial_contact_wizard_form
+msgid "This will mark the contact as junk/spam and return to the dashboard. Continue?"
+msgstr "Thao tác này sẽ đánh dấu liên hệ là rác/spam và quay lại bảng điều khiển. Tiếp tục?"
+
+#. module: health_crm
+#: model_terms:ir.ui.view,arch_db:health_crm.view_initial_contact_wizard_form
+msgid "Existing Contact Found!"
+msgstr "Đã tìm thấy liên hệ hiện có!"
+
+#. module: health_crm
+#: model_terms:ir.ui.view,arch_db:health_crm.view_initial_contact_wizard_form
+msgid "Use Existing Contact"
+msgstr "Dùng liên hệ hiện có"
+
+#. module: health_crm
+#: model_terms:ir.ui.view,arch_db:health_crm.view_initial_contact_wizard_form
+msgid "⚠️ SPAM CALLER DETECTED!"
+msgstr "⚠️ PHÁT HIỆN NGƯỜI GỌI SPAM!"
+
+#. module: health_crm
+#: model_terms:ir.ui.view,arch_db:health_crm.view_initial_contact_wizard_form
+msgid "You may still proceed if this is a legitimate call."
+msgstr "Bạn vẫn có thể tiếp tục nếu đây là cuộc gọi hợp lệ."
+
+#. module: health_crm
+#. odoo-python
+#: code:addons/health_crm/wizard/initial_contact_wizard.py:0
+msgid "Please provide at least a phone number or email address."
+msgstr "Vui lòng cung cấp ít nhất số điện thoại hoặc địa chỉ email."
+
+#. module: health_crm
+#: model_terms:ir.ui.view,arch_db:health_crm.view_initial_contact_wizard_form
+msgid "e.g. 0909 123 456"
+msgstr "ví dụ: 0909 123 456"
+
+#. module: health_crm
+#: model_terms:ir.ui.view,arch_db:health_crm.view_initial_contact_wizard_form
+msgid "e.g. email@example.com"
+msgstr "ví dụ: email@example.com"

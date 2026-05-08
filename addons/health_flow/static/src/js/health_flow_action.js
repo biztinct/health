@@ -27,6 +27,10 @@ class HealthFlowAction extends Component {
         return _t("Home Page");
     }
 
+    t(text) {
+        return _t(text);
+    }
+
     setup() {
         this.orm = useService("orm");
         this.action = useService("action");

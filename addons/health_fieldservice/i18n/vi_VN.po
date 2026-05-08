@@ -4,16 +4,17 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Phiên bản: Odoo Server 19.0\n"
-"Báo cáo-Msgid-Bugs-Đến: \n"
-"POT-Creation-Ngày: 2025-10-29 04:27+0000\n"
-"PO-Revision-Ngày: 2025-10-29 04:27+0000\n"
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-10-29 04:27+0000\n"
+"PO-Revision-Date: 2025-10-29 04:27+0000\n"
 "Last-Translator: \n"
-"Ngôn ngữ-Đội: \n"
-"MIME-Phiên bản: 1.0\n"
-"Nội dung-Loại: văn bản/plain; charset=UTF-8\n"
-"Nội dung-Transfer-Encoding: \n"
-"Plural-Biểu mẫus: \n"
+"Language-Team: \n"
+"Language: vi_VN\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: nplurals=1; plural=0;\n"
 
 #. module: health_fieldservice
 #. odoo-python
@@ -1281,7 +1282,7 @@ msgstr "Phân công optimized! Giao cho %s với %.1f%% AI confidence."
 #: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_staff_availability_form
 #: model_terms:ir.ui.view,arch_db:health_fieldservice.view_healthcare_staff_form
 msgid "Assignments"
-msgstr "Phân côngments"
+msgstr "Phân công"
 
 #. module: health_fieldservice
 #: model:ir.model.fields,help:health_fieldservice.field_health_fieldservice_order__sale_order_id
@@ -4736,7 +4737,7 @@ msgstr "Mới Phân công"
 #. odoo-python
 #: code:addons/health_fieldservice/models/health_fieldservice_order.py:0
 msgid "New Booking"
-msgstr "Mới Đặt lịch"
+msgstr "Lịch hẹn mới"
 
 #. module: health_fieldservice
 #. odoo-python
@@ -5224,7 +5225,7 @@ msgstr "Chỉ những phân công đang thực hiện mới có thể hoàn thà
 #. odoo-python
 #: code:addons/health_fieldservice/models/health_fieldservice_stage.py:0
 msgid "Only one stage can be default for state \"%s\""
-msgstr "Only one giai đoạn có thể là mặc định cho Tỉnh/Thành \"%s\"
+msgstr "Chỉ một giai đoạn có thể là mặc định cho trạng thái \"%s\""
 
 #. module: health_fieldservice
 #. odoo-python
@@ -5455,7 +5456,7 @@ msgstr "Bệnh nhân Tình trạng trước dịch vụ..."
 #. odoo-python
 #: code:addons/health_fieldservice/models/health_fieldservice_stage.py:0
 msgid "Patient contact confirmation is required for stage \"%s\""
-msgstr "Bệnh nhân Liên hệ xác nhậnation là Bắt buộc cho giai đoạn \"%s\"
+msgstr "Xác nhận liên hệ bệnh nhân là bắt buộc cho giai đoạn \"%s\""
 
 #. module: health_fieldservice
 #. odoo-python
@@ -5837,7 +5838,7 @@ msgstr "Trạng thái báo giá"
 #. odoo-python
 #: code:addons/health_fieldservice/models/health_fieldservice_stage.py:0
 msgid "Quote is required for stage \"%s\""
-msgstr "Báo giá là Bắt buộc cho giai đoạn \"%s\"
+msgstr "Báo giá là bắt buộc cho giai đoạn \"%s\""
 
 #. module: health_fieldservice
 #: model:ir.model.fields,help:health_fieldservice.field_health_fieldservice_stage__require_quote
@@ -5853,7 +5854,7 @@ msgstr "Báo giá phải có hạng mục để chuyển sang giai đoạn này"
 #. odoo-python
 #: code:addons/health_fieldservice/models/health_fieldservice_stage.py:0
 msgid "Quote with items is required for stage \"%s\""
-msgstr "Báo giá với items là Bắt buộc cho giai đoạn \"%s\"
+msgstr "Báo giá có hạng mục là bắt buộc cho giai đoạn \"%s\""
 
 #. module: health_fieldservice
 #. odoo-python
@@ -6493,7 +6494,7 @@ msgstr "Dịch vụ Lịch sử Tóm tắt"
 #: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_fieldservice_order_form
 #: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_staff_assignment_wizard_form
 msgid "Service Information"
-msgstr "Dịch vụ Thông tin"
+msgstr "Thông tin dịch vụ"
 
 #. module: health_fieldservice
 #. odoo-python
@@ -6890,7 +6891,7 @@ msgstr "Nhân viên phân công functionality requires the health_nhân viên_ph
 #. odoo-python
 #: code:addons/health_fieldservice/models/health_fieldservice_stage.py:0
 msgid "Staff assignment is required for stage \"%s\""
-msgstr "Nhân viên phân công là Bắt buộc cho giai đoạn \"%s\"
+msgstr "Phân công nhân viên là bắt buộc cho giai đoạn \"%s\""
 
 #. module: health_fieldservice
 #: model_terms:ir.actions.act_window,help:health_fieldservice.action_health_staff_assignment
@@ -8224,3 +8225,418 @@ msgstr "🤖 Áp dụng AI Optimization"
 #: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_ai_assignment_engine_form
 msgid "🧠 Train AI Model"
 msgstr "🧠 Train AI Mô hình"
+
+#. module: health_fieldservice
+msgid "Error loading dashboard data: "
+msgstr "Lỗi khi tải dữ liệu bảng điều khiển: "
+
+#. module: health_fieldservice
+msgid "Unknown error"
+msgstr "Lỗi không xác định"
+
+#. module: health_fieldservice
+msgid "Loading..."
+msgstr "Đang tải..."
+
+#. module: health_fieldservice
+msgid "Service Not Started"
+msgstr "Dịch vụ chưa bắt đầu"
+
+#. module: health_fieldservice
+msgid "Ready to Start"
+msgstr "Sẵn sàng bắt đầu"
+
+#. module: health_fieldservice
+msgid "%s h %s m total"
+msgstr "Tổng cộng %s giờ %s phút"
+
+#. module: health_fieldservice
+msgid "%s minutes"
+msgstr "%s phút"
+
+#. module: health_fieldservice
+msgid "Just started"
+msgstr "Vừa bắt đầu"
+
+#. module: health_fieldservice
+#. odoo-javascript
+#: code:addons/health_fieldservice/static/src/xml/booking_side_sheet.xml:0
+msgid "Staff Overview"
+msgstr "Tổng quan nhân viên"
+
+#. module: health_fieldservice
+#. odoo-javascript
+#: code:addons/health_fieldservice/static/src/xml/booking_side_sheet.xml:0
+msgid "Loading assignments..."
+msgstr "Đang tải phân công..."
+
+#. module: health_fieldservice
+#. odoo-javascript
+#: code:addons/health_fieldservice/static/src/xml/booking_side_sheet.xml:0
+msgid "total"
+msgstr "tổng"
+
+#. module: health_fieldservice
+#. odoo-javascript
+#: code:addons/health_fieldservice/static/src/xml/booking_side_sheet.xml:0
+msgid "active"
+msgstr "đang hoạt động"
+
+#. module: health_fieldservice
+#. odoo-javascript
+#: code:addons/health_fieldservice/static/src/xml/booking_side_sheet.xml:0
+msgid "No staff assigned yet"
+msgstr "Chưa phân công nhân viên"
+
+#. module: health_fieldservice
+#. odoo-javascript
+#: code:addons/health_fieldservice/static/src/xml/booking_side_sheet.xml:0
+msgid "Use the timeline view to drag-and-drop assignments."
+msgstr "Dùng chế độ dòng thời gian để kéo thả phân công."
+
+#. module: health_fieldservice
+#. odoo-javascript
+#: code:addons/health_fieldservice/static/src/xml/booking_side_sheet.xml:0
+msgid "Open Timeline"
+msgstr "Mở dòng thời gian"
+
+#. module: health_fieldservice
+#. odoo-javascript
+#: code:addons/health_fieldservice/static/src/xml/booking_side_sheet.xml:0
+msgid "AI Assign"
+msgstr "Phân công bằng AI"
+
+#. module: health_fieldservice
+#: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_fieldservice_order_form
+msgid "Service"
+msgstr "Dịch vụ"
+
+#. module: health_fieldservice
+#: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_fieldservice_order_form
+msgid "Schedule"
+msgstr "Lịch trình"
+
+#. module: health_fieldservice
+#: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_fieldservice_order_form
+msgid "Type"
+msgstr "Loại"
+
+#. module: health_fieldservice
+#: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_fieldservice_order_form
+msgid "Facility"
+msgstr "Cơ sở"
+
+#. module: health_fieldservice
+#: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_fieldservice_order_form
+msgid "Date/Time"
+msgstr "Ngày/Giờ"
+
+#. module: health_fieldservice
+#: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_fieldservice_order_form
+msgid "Duration"
+msgstr "Thời lượng"
+
+#. module: health_fieldservice
+#: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_fieldservice_order_form
+msgid "Timezone"
+msgstr "Múi giờ"
+
+#. module: health_fieldservice
+#: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_fieldservice_order_form
+msgid "Lead"
+msgstr "Phụ trách"
+
+#. module: health_fieldservice
+#: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_fieldservice_order_form
+msgid "Awaiting Invoice:"
+msgstr "Đang chờ hóa đơn:"
+
+#. module: health_fieldservice
+#: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_fieldservice_order_form
+msgid "Service completed by part-time staff."
+msgstr "Dịch vụ đã hoàn thành bởi nhân viên bán thời gian."
+
+#. module: health_fieldservice
+#: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_fieldservice_order_form
+msgid "Create invoice now"
+msgstr "Tạo hóa đơn ngay"
+
+#. module: health_fieldservice
+#: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_fieldservice_order_form
+msgid "Completion Requirements:"
+msgstr "Yêu cầu hoàn tất:"
+
+#. module: health_fieldservice
+#: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_fieldservice_order_form
+msgid "Clinical Notes required."
+msgstr "Cần ghi chú lâm sàng."
+
+#. module: health_fieldservice
+#: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_fieldservice_order_form
+msgid "Quote/Invoice required."
+msgstr "Cần báo giá/hóa đơn."
+
+#. module: health_fieldservice
+#: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_fieldservice_order_form
+msgid "Execution Timing"
+msgstr "Thời gian thực hiện"
+
+#. module: health_fieldservice
+#: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_fieldservice_order_form
+msgid "Quote & Invoice"
+msgstr "Báo giá & Hóa đơn"
+
+#. module: health_fieldservice
+#: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_fieldservice_order_form
+msgid "Clinical"
+msgstr "Lâm sàng"
+
+#. module: health_fieldservice
+#: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_fieldservice_order_form
+msgid "Required:"
+msgstr "Bắt buộc:"
+
+#. module: health_fieldservice
+#: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_fieldservice_order_form
+msgid "At least one clinical note must be added before completing the service."
+msgstr "Cần thêm ít nhất một ghi chú lâm sàng trước khi hoàn tất dịch vụ."
+
+#. module: health_fieldservice
+#: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_fieldservice_order_form
+msgid "Clinical Notes Submitted:"
+msgstr "Đã gửi ghi chú lâm sàng:"
+
+#. module: health_fieldservice
+#: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_fieldservice_order_form
+msgid "note(s) recorded."
+msgstr "ghi chú đã ghi nhận."
+
+#. module: health_fieldservice
+#: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_fieldservice_order_form
+msgid "Intake"
+msgstr "Tiếp nhận"
+
+#. module: health_fieldservice
+#: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_fieldservice_order_form
+msgid "Referring Information"
+msgstr "Thông tin giới thiệu"
+
+#. module: health_fieldservice
+#: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_fieldservice_order_form
+msgid "Care Planning"
+msgstr "Kế hoạch chăm sóc"
+
+#. module: health_fieldservice
+#: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_fieldservice_order_form
+msgid "Intake Notes"
+msgstr "Ghi chú tiếp nhận"
+
+#. module: health_fieldservice
+#: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_fieldservice_order_form
+msgid "Tracking"
+msgstr "Theo dõi"
+
+#. module: health_fieldservice
+#: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_fieldservice_order_form
+msgid "GPS Location"
+msgstr "Vị trí GPS"
+
+#. module: health_fieldservice
+#: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_fieldservice_order_form
+msgid "Cancellation"
+msgstr "Hủy"
+
+#. module: health_fieldservice
+#: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_fieldservice_order_form
+msgid "Completion"
+msgstr "Hoàn tất"
+
+#. module: health_fieldservice
+#: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_fieldservice_order_form
+msgid "Part-Time Staff Workflow:"
+msgstr "Quy trình nhân viên bán thời gian:"
+
+#. module: health_fieldservice
+#: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_fieldservice_order_form
+msgid "Operations team has been notified to create the invoice."
+msgstr "Đội vận hành đã được thông báo để tạo hóa đơn."
+
+#. module: health_fieldservice
+#: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_fieldservice_order_form
+msgid "Completion Info"
+msgstr "Thông tin hoàn tất"
+
+#. module: health_fieldservice
+#: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_fieldservice_order_form
+msgid "Next: Confirm with Client"
+msgstr "Tiếp theo: Xác nhận với khách hàng"
+
+#. module: health_fieldservice
+#: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_fieldservice_order_form
+msgid "Contact the client to confirm this booking, then click Confirm."
+msgstr "Liên hệ khách hàng để xác nhận lịch hẹn này, sau đó nhấn Xác nhận."
+
+#. module: health_fieldservice
+#: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_fieldservice_order_form
+msgid "Confirm Booking"
+msgstr "Xác nhận lịch hẹn"
+
+#. module: health_fieldservice
+#: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_fieldservice_order_form
+msgid "Next: Assign Staff"
+msgstr "Tiếp theo: Phân công nhân viên"
+
+#. module: health_fieldservice
+#: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_fieldservice_order_form
+msgid "Client confirmed. Assign nursing/medical staff to this booking."
+msgstr "Khách hàng đã xác nhận. Phân công nhân viên điều dưỡng/y tế cho lịch hẹn này."
+
+#. module: health_fieldservice
+#: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_fieldservice_order_form
+msgid "Staff assigned. Start the service when the scheduled time arrives."
+msgstr "Đã phân công nhân viên. Bắt đầu dịch vụ khi đến giờ hẹn."
+
+#. module: health_fieldservice
+#: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_fieldservice_order_form
+msgid "Service In Progress"
+msgstr "Dịch vụ đang thực hiện"
+
+#. module: health_fieldservice
+#: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_fieldservice_order_form
+msgid "Document clinical notes and create the invoice to complete."
+msgstr "Ghi nhận ghi chú lâm sàng và tạo hóa đơn để hoàn tất."
+
+#. module: health_fieldservice
+#: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_fieldservice_order_form
+msgid "Create the final invoice or close this booking."
+msgstr "Tạo hóa đơn cuối cùng hoặc đóng lịch hẹn này."
+
+#. module: health_fieldservice
+#: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_fieldservice_order_form
+msgid "See the Cancellation tab for details."
+msgstr "Xem tab Hủy để biết chi tiết."
+
+#. module: health_fieldservice
+#: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_fieldservice_order_form
+msgid "Actions"
+msgstr "Hành động"
+
+#. module: health_fieldservice
+#: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_fieldservice_order_form
+msgid "Staff Timeline"
+msgstr "Dòng thời gian nhân viên"
+
+#. module: health_fieldservice
+#: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_fieldservice_order_form
+msgid "Reschedule"
+msgstr "Đổi lịch"
+
+#. module: health_fieldservice
+#: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_fieldservice_order_form
+msgid "Lead Dashboard"
+msgstr "Bảng điều khiển tiềm năng"
+
+#. module: health_fieldservice
+#: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_fieldservice_order_form
+msgid "Address"
+msgstr "Địa chỉ"
+
+#. module: health_fieldservice
+#: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_fieldservice_order_form
+msgid "Name"
+msgstr "Tên"
+
+#. module: health_fieldservice
+#: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_fieldservice_order_form
+msgid "Phone"
+msgstr "Điện thoại"
+
+#. module: health_fieldservice
+#: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_fieldservice_order_form
+msgid "Are you sure you want to cancel this booking?"
+msgstr "Bạn có chắc chắn muốn hủy lịch hẹn này không?"
+
+#. module: health_fieldservice
+#: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_fieldservice_order_form
+msgid "Client ID"
+msgstr "Mã khách hàng"
+
+#. module: health_fieldservice
+#: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_fieldservice_order_form
+msgid "Catchment Area"
+msgstr "Khu vực phụ trách"
+
+#. module: health_fieldservice
+#: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_fieldservice_order_form
+msgid "Category of Service"
+msgstr "Danh mục dịch vụ"
+
+#. module: health_fieldservice
+#: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_fieldservice_order_form
+msgid "Client Address"
+msgstr "Địa chỉ khách hàng"
+
+#. module: health_fieldservice
+#: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_fieldservice_order_form
+msgid "Communication"
+msgstr "Giao tiếp"
+
+#. module: health_fieldservice
+#: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_fieldservice_order_form
+msgid "Edit address"
+msgstr "Sửa địa chỉ"
+
+#. module: health_fieldservice
+#: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_fieldservice_order_form
+msgid "Equipment or supplies required"
+msgstr "Thiết bị hoặc vật tư cần thiết"
+
+#. module: health_fieldservice
+#: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_fieldservice_order_form
+msgid "Additional intake assessment notes and observations"
+msgstr "Ghi chú và nhận xét đánh giá tiếp nhận bổ sung"
+
+#. module: health_fieldservice
+#: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_fieldservice_order_form
+msgid "National ID"
+msgstr "Số định danh"
+
+#. module: health_fieldservice
+#: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_fieldservice_order_form
+msgid "Scheduled time"
+msgstr "Thời gian đã lên lịch"
+
+#. module: health_fieldservice
+#: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_fieldservice_order_form
+msgid "Search Bookings"
+msgstr "Tìm lịch hẹn"
+
+#. module: health_fieldservice
+#: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_fieldservice_order_form
+msgid "Select referring doctor or contact"
+msgstr "Chọn bác sĩ hoặc liên hệ giới thiệu"
+
+#. module: health_fieldservice
+#: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_fieldservice_order_form
+msgid "Details"
+msgstr "Chi tiết"
+
+#. module: health_fieldservice
+#: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_fieldservice_order_form
+msgid "Client Details"
+msgstr "Chi tiết khách hàng"
+
+#. module: health_fieldservice
+#: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_fieldservice_order_form
+msgid "View Quote"
+msgstr "Xem báo giá"
+
+#. module: health_fieldservice
+#: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_fieldservice_order_form
+msgid "View Invoices"
+msgstr "Xem hóa đơn"
+
+#. module: health_fieldservice
+#: model_terms:ir.ui.view,arch_db:health_fieldservice.view_health_fieldservice_order_form
+msgid "Close"
+msgstr "Đóng"

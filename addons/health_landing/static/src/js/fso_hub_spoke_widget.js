@@ -28,6 +28,10 @@ export class FSOHubSpokeWidget extends Component {
         onBreadcrumbRoot: { type: Function, optional: true },
     };
 
+    t(text) {
+        return _t(text);
+    }
+
     setup() {
         this.orm = useService("orm");
         this.actionService = useService("action");

@@ -4,6 +4,7 @@ import { Component, useState, useRef, onMounted, onWillUnmount } from "@odoo/owl
 import { registry } from "@web/core/registry";
 import { useService } from "@web/core/utils/hooks";
 import { rpc } from "@web/core/network/rpc";
+import { _t } from "@web/core/l10n/translation";
 
 /**
  * Zalo Chat Widget Component
@@ -40,6 +41,10 @@ export class ZaloChatWidget extends Component {
         });
     }
 
+    t(text) {
+        return _t(text);
+    }
+
     /**
      * Load conversation and messages
      */
@@ -63,7 +68,7 @@ export class ZaloChatWidget extends Component {
             this.scrollToBottom();
         } catch (error) {
             console.error("Failed to load conversation:", error);
-            this.notification.add("Failed to load conversation", { type: "danger" });
+            this.notification.add(_t("Failed to load conversation"), { type: "danger" });
             this.state.loading = false;
         }
     }

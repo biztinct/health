@@ -3,6 +3,7 @@
 import { Component, useState } from '@odoo/owl';
 import { registry } from '@web/core/registry';
 import { useService } from '@web/core/utils/hooks';
+import { _t } from "@web/core/l10n/translation";
 
 export class PricingRuleBuilder extends Component {
     static template = 'advanced_pricing.RuleBuilder';
@@ -11,6 +12,10 @@ export class PricingRuleBuilder extends Component {
         onSave: { type: Function },
         onClose: { type: Function },
     };
+
+    t(text) {
+        return _t(text);
+    }
 
     setup() {
         this.orm = useService('orm');

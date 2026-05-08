@@ -23,6 +23,10 @@ export class LeadHubSpokeWidget extends Component {
         onBack: Function,
     };
 
+    t(text) {
+        return _t(text);
+    }
+
     setup() {
         this.orm = useService("orm");
         this.actionService = useService("action");

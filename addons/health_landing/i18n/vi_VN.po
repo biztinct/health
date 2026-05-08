@@ -4,16 +4,17 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Phiên bản: Odoo Server 19.0\n"
-"Báo cáo-Msgid-Bugs-Để: \n"
-"POT-Creation-Ngày: 2025-10-29 05:48+0000\n"
-"PO-Revision-Ngày: 2025-10-29 05:48+0000\n"
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-10-29 05:48+0000\n"
+"PO-Revision-Date: 2025-10-29 05:48+0000\n"
 "Last-Translator: \n"
-"Ngôn ngữ-Đội: \n"
-"MIME-Phiên bản: 1.0\n"
-"Nội dung-Loại: văn bản/plain; charset=UTF-8\n"
-"Nội dung-Transfer-Encoding: \n"
-"Plural-Biểu mẫus: \n"
+"Language-Team: \n"
+"Language: vi_VN\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: nplurals=1; plural=0;\n"
 
 #. module: health_landing
 #. odoo-python
@@ -1131,13 +1132,13 @@ msgstr "Không Hóa đơn has been Đã tạo cho này đặt lịch yet."
 #. odoo-javascript
 #: code:addons/health_landing/static/src/xml/viet_uc_templates.xml:0
 msgid "No modules found for \""
-msgstr "Không mô-đuns được tìm thấy cho \"
+msgstr "Không tìm thấy mô-đun cho \""
 
 #. module: health_landing
 #. odoo-javascript
 #: code:addons/health_landing/static/src/xml/landing_templates.xml:0
 msgid "No modules or features found for \""
-msgstr "Không mô-đuns hoặc features được tìm thấy cho \"
+msgstr "Không tìm thấy mô-đun hoặc tính năng cho \""
 
 #. module: health_landing
 #. odoo-python
@@ -2422,3 +2423,203 @@ msgstr "Mối quan hệ bệnh nhân"
 #. module: javascript
 msgid "Patient Location"
 msgstr "Vị trí bệnh nhân"
+
+#. module: javascript
+msgid "Patient management and client information"
+msgstr "Quản lý bệnh nhân và thông tin khách hàng"
+
+#. module: javascript
+msgid "Field service orders and booking management"
+msgstr "Quản lý đơn dịch vụ tại hiện trường và lịch hẹn"
+
+#. module: javascript
+msgid "Staff"
+msgstr "Nhân viên"
+
+#. module: javascript
+msgid "Accounts"
+msgstr "Kế toán"
+
+#. module: javascript
+msgid "Billing, invoicing, and financial management"
+msgstr "Quản lý thanh toán, hóa đơn và tài chính"
+
+#. module: javascript
+msgid "View all invoices"
+msgstr "Xem tất cả hóa đơn"
+
+#. module: javascript
+msgid "Configure patient categories"
+msgstr "Cấu hình phân loại bệnh nhân"
+
+#. module: javascript
+msgid "Configure symptoms"
+msgstr "Cấu hình triệu chứng"
+
+#. module: javascript
+msgid "Manage referral sources"
+msgstr "Quản lý nguồn giới thiệu"
+
+#. module: javascript
+msgid "Configure insurance"
+msgstr "Cấu hình bảo hiểm"
+
+#. module: javascript
+msgid "Define urgency levels"
+msgstr "Định nghĩa mức độ khẩn cấp"
+
+#. module: javascript
+msgid "Define pricing rules"
+msgstr "Định nghĩa quy tắc định giá"
+
+#. module: javascript
+msgid "Quick edit pricing rules"
+msgstr "Chỉnh sửa nhanh quy tắc định giá"
+
+#. module: javascript
+msgid "Configure healthcare facilities"
+msgstr "Cấu hình cơ sở y tế"
+
+#. module: javascript
+msgid "Configure service packages"
+msgstr "Cấu hình gói dịch vụ"
+
+#. module: javascript
+msgid "Field Requirements"
+msgstr "Yêu cầu trường"
+
+#. module: javascript
+msgid "Configure mandatory fields per model and state"
+msgstr "Cấu hình trường bắt buộc theo mô hình và trạng thái"
+
+#. module: javascript
+msgid "Audit Log"
+msgstr "Nhật ký kiểm tra"
+
+#. module: javascript
+msgid "System audit log and change tracking"
+msgstr "Nhật ký kiểm tra hệ thống và theo dõi thay đổi"
+
+#. module: health_landing
+msgid "No modules found for"
+msgstr "Không tìm thấy mô-đun cho"
+
+#. module: health_landing
+msgid "Viet-Uc Family Healthcare Services - Select a module to continue"
+msgstr "Dịch vụ Y tế Gia đình Việt-Úc - Chọn mô-đun để tiếp tục"
+
+#. module: health_landing
+msgid "No modules or features found for"
+msgstr "Không tìm thấy mô-đun hoặc tính năng cho"
+
+#. module: health_landing
+msgid "Back to Dashboard"
+msgstr "Quay lại bảng điều khiển"
+
+#. module: health_landing
+msgid "Explore the full set of features available in this module."
+msgstr "Khám phá toàn bộ tính năng có trong mô-đun này."
+
+#. module: javascript
+msgid "Lead Info"
+msgstr "Thông tin liên hệ"
+
+#. module: javascript
+msgid "Personal details and contact"
+msgstr "Thông tin cá nhân và liên hệ"
+
+#. module: javascript
+msgid "Packages"
+msgstr "Gói dịch vụ"
+
+#. module: javascript
+msgid "Active service packages"
+msgstr "Gói dịch vụ đang hoạt động"
+
+#. module: javascript
+msgid "Bookings"
+msgstr "Lịch hẹn"
+
+#. module: javascript
+msgid "Appointments and visits"
+msgstr "Cuộc hẹn và lượt thăm"
+
+#. module: javascript
+msgid "Financials"
+msgstr "Tài chính"
+
+#. module: javascript
+msgid "Invoices and payments"
+msgstr "Hóa đơn và thanh toán"
+
+#. module: javascript
+msgid "Complete Service"
+msgstr "Hoàn tất dịch vụ"
+
+#. module: javascript
+msgid "Complete service and collect payment"
+msgstr "Hoàn tất dịch vụ và thu tiền"
+
+#. module: javascript
+msgid "Step Locked"
+msgstr "Bước bị khóa"
+
+#. module: javascript
+msgid "No invoice or quote found for this booking."
+msgstr "Không tìm thấy hóa đơn hoặc báo giá cho lịch hẹn này."
+
+#. module: javascript
+msgid "Service completed successfully!"
+msgstr "Dịch vụ đã hoàn tất thành công!"
+
+#. module: javascript
+msgid "Service Completed"
+msgstr "Dịch vụ đã hoàn tất"
+
+#. module: javascript
+msgid "Could not complete service"
+msgstr "Không thể hoàn tất dịch vụ"
+
+#. module: javascript
+msgid "Error"
+msgstr "Lỗi"
+
+#. module: javascript
+msgid "Patient Code"
+msgstr "Mã bệnh nhân"
+
+#. module: javascript
+msgid "Contacts"
+msgstr "Liên hệ"
+
+#. module: javascript
+msgid "Mark as Spam"
+msgstr "Đánh dấu là spam"
+
+#. module: javascript
+msgid "Create Booking"
+msgstr "Tạo lịch hẹn"
+
+#. module: javascript
+msgid "Refer for Consultation"
+msgstr "Chuyển tư vấn"
+
+#. module: javascript
+msgid "Escalate Contact"
+msgstr "Chuyển cấp liên hệ"
+
+#. module: javascript
+msgid "Send Message"
+msgstr "Gửi tin nhắn"
+
+#. module: javascript
+msgid "Schedule Activity"
+msgstr "Lên lịch hoạt động"
+
+#. module: javascript
+msgid "Add Internal Note"
+msgstr "Thêm ghi chú nội bộ"
+
+#. module: javascript
+msgid "Loading contact data..."
+msgstr "Đang tải dữ liệu liên hệ..."

@@ -31,17 +31,17 @@
                     <div class="fso_status_stages_compact">
                         <div t-att-class="'fso_status_stage ' + (state.fsoData.show_draft_indicator ? 'active' : 'inactive')">
                             <div class="fso_status_icon"><i class="fa fa-file-o"/></div>
-                            <span class="fso_status_label">DRAFT</span>
+                            <span class="fso_status_label" t-esc="this.t('DRAFT')"/>
                         </div>
                         <i class="fa fa-angle-right fso_status_arrow"/>
                         <div t-att-class="'fso_status_stage ' + (state.fsoData.show_booked_indicator ? 'active' : 'inactive')">
                             <div class="fso_status_icon"><i class="fa fa-calendar-check-o"/></div>
-                            <span class="fso_status_label">BOOKED</span>
+                            <span class="fso_status_label" t-esc="this.t('BOOKED')"/>
                         </div>
                         <i class="fa fa-angle-right fso_status_arrow"/>
                         <div t-att-class="'fso_status_stage ' + (state.fsoData.show_assigned_indicator ? 'active' : 'inactive')">
                             <div class="fso_status_icon"><i class="fa fa-user-md"/></div>
-                            <span class="fso_status_label">ASSIGNED</span>
+                            <span class="fso_status_label" t-esc="this.t('ASSIGNED')"/>
                         </div>
                         <i class="fa fa-angle-right fso_status_arrow"/>
                         <div t-att-class="'fso_status_stage ' + (state.fsoData.show_in_progress_indicator ? 'active' : 'inactive')">
@@ -49,12 +49,12 @@
                                 <i class="fa fa-refresh fa-spin" t-if="state.fsoData.show_in_progress_indicator"/>
                                 <i class="fa fa-refresh" t-else=""/>
                             </div>
-                            <span class="fso_status_label">IN PROGRESS</span>
+                            <span class="fso_status_label" t-esc="this.t('IN PROGRESS')"/>
                         </div>
                         <i class="fa fa-angle-right fso_status_arrow"/>
                         <div t-att-class="'fso_status_stage ' + (state.fsoData.show_completed_indicator ? 'active completed' : 'inactive')">
                             <div class="fso_status_icon"><i class="fa fa-check-circle"/></div>
-                            <span class="fso_status_label">COMPLETED</span>
+                            <span class="fso_status_label" t-esc="this.t('COMPLETED')"/>
                         </div>
                     </div>
                 </div>
@@ -63,7 +63,7 @@
             <!-- Loading State -->
             <div class="health_landing_loading" t-if="state.loading">
                 <i class="fa fa-spinner health_landing_loading_spinner"/>
-                <p>Loading workflow data...</p>
+                <p t-esc="this.t('Loading workflow data...')"/>
             </div>
 
             <!-- SVG Flowchart Layout -->

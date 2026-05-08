@@ -3,6 +3,7 @@
 import { Component } from "@odoo/owl";
 import { registry } from "@web/core/registry";
 import { useService } from "@web/core/utils/hooks";
+import { _t } from "@web/core/l10n/translation";
 
 export class RelationshipAddressWidget extends Component {
     static template = "health_crm.RelationshipAddressWidget";
@@ -13,6 +14,10 @@ export class RelationshipAddressWidget extends Component {
 
     setup() {
         this.action = useService("action");
+    }
+
+    t(text) {
+        return _t(text);
     }
 
     get address() {

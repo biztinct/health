@@ -4,6 +4,7 @@ import { Component, useState } from "@odoo/owl";
 import { registry } from "@web/core/registry";
 import { useService } from "@web/core/utils/hooks";
 import { VisualRuleBuilder } from "./visual_rule_builder";
+import { _t } from "@web/core/l10n/translation";
 
 /**
  * Client Action for Visual Rule Builder
@@ -55,7 +56,7 @@ export class VisualRuleBuilderAction extends Component {
                 console.log('Created rule IDs:', ruleIds);
                 
                 // Show success notification
-                this.notification.add("Visual rule saved successfully! Returning to rules list...", {
+                this.notification.add(_t("Visual rule saved successfully! Returning to rules list..."), {
                     type: "success",
                 });
                 
@@ -66,7 +67,7 @@ export class VisualRuleBuilderAction extends Component {
             }
         } catch (error) {
             console.error("Failed to save visual rule:", error);
-            this.notification.add("Failed to save rule: " + (error.message || 'Unknown error'), {
+            this.notification.add(_t("Failed to save rule: ") + (error.message || _t('Unknown error')), {
                 type: "danger",
             });
         }
@@ -81,7 +82,7 @@ export class VisualRuleBuilderAction extends Component {
         try {
             await this.action.doAction({
                 type: 'ir.actions.act_window',
-                name: 'Pricing Rule',
+                name: _t('Pricing Rule'),
                 res_model: 'advanced.pricing.rule',
                 res_id: ruleId,
                 view_mode: 'form',
@@ -89,7 +90,7 @@ export class VisualRuleBuilderAction extends Component {
             });
         } catch (error) {
             console.warn('Failed to view rule:', error);
-            this.notification.add("Could not open rule form", { type: "warning" });
+            this.notification.add(_t("Could not open rule form"), { type: "warning" });
         }
     }
 
@@ -100,7 +101,7 @@ export class VisualRuleBuilderAction extends Component {
             // Direct navigation to replace current action completely
             await this.action.doAction({
                 type: 'ir.actions.act_window',
-                name: 'Pricing Rules',
+                name: _t('Pricing Rules'),
                 res_model: 'advanced.pricing.rule',
                 view_mode: 'list,form',
                 target: 'current',

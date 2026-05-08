@@ -12,7 +12,7 @@
                 <t t-if="state.loading">
                     <div class="zalo-chat-loading">
                         <i class="fa fa-spinner fa-spin fa-2x"/>
-                        <p>Loading conversation...</p>
+                        <p t-esc="this.t('Loading conversation...')"/>
                     </div>
                 </t>
 
@@ -27,15 +27,15 @@
                             <i t-else="" class="fa fa-user-circle fa-2x"/>
                         </div>
                         <div class="zalo-chat-header-info">
-                            <h4 class="zalo-chat-title" t-esc="state.conversation?.name || 'Zalo Chat'"/>
+                            <h4 class="zalo-chat-title" t-esc="state.conversation?.name || this.t('Zalo Chat')"/>
                             <span class="zalo-chat-subtitle">Viet Uc</span>
                         </div>
                         <button class="btn btn-sm btn-light zalo-chat-record-btn"
                                 t-on-click="openRelatedRecord"
-                                title="Open Related Record">
-                            <i class="fa fa-external-link"/> Open Record
+                                t-att-title="this.t('Open Related Record')">
+                            <i class="fa fa-external-link"/> <t t-esc="this.t('Open Record')"/>
                         </button>
-                        <button class="zalo-chat-close-btn" t-on-click="closeDialog" title="Close">
+                        <button class="zalo-chat-close-btn" t-on-click="closeDialog" t-att-title="this.t('Close')">
                             <i class="fa fa-times"/>
                         </button>
                     </div>
@@ -45,7 +45,7 @@
                     <t t-if="state.messages.length === 0">
                         <div class="zalo-chat-empty">
                             <i class="fa fa-comments-o fa-3x"/>
-                            <p>No messages yet. Start a conversation!</p>
+                            <p t-esc="this.t('No messages yet. Start a conversation!')"/>
                         </div>
                     </t>
 
@@ -69,14 +69,14 @@
                                     <!-- Image Message -->
                                     <t t-elif="message.message_type === 'image'">
                                         <div class="zalo-chat-message-image">
-                                            <i class="fa fa-image"/> Image
+                                            <i class="fa fa-image"/> <t t-esc="this.t('Image')"/>
                                         </div>
                                     </t>
 
                                     <!-- File Message -->
                                     <t t-elif="message.message_type === 'file'">
                                         <div class="zalo-chat-message-file">
-                                            <i class="fa fa-file"/> File
+                                            <i class="fa fa-file"/> <t t-esc="this.t('File')"/>
                                         </div>
                                     </t>
 
@@ -90,9 +90,9 @@
                                     <div class="zalo-chat-message-time">
                                         <small t-esc="formatTime(message.sent_date)"/>
                                         <t t-if="message.direction === 'outgoing'">
-                                            <i t-if="message.state === 'sent'" class="fa fa-check" title="Sent"/>
-                                            <i t-elif="message.state === 'delivered'" class="fa fa-check-double" title="Delivered"/>
-                                            <i t-elif="message.state === 'failed'" class="fa fa-exclamation-circle text-danger" title="Failed"/>
+                                            <i t-if="message.state === 'sent'" class="fa fa-check" t-att-title="this.t('Sent')"/>
+                                            <i t-elif="message.state === 'delivered'" class="fa fa-check-double" t-att-title="this.t('Delivered')"/>
+                                            <i t-elif="message.state === 'failed'" class="fa fa-exclamation-circle text-danger" t-att-title="this.t('Failed')"/>
                                         </t>
                                     </div>
                                 </div>
@@ -109,7 +109,7 @@
                         <textarea
                             t-ref="messageInput"
                             class="form-control zalo-chat-input-field"
-                            placeholder="Type a message..."
+                            t-att-placeholder="this.t('Type a message...')"
                             t-model="state.inputText"
                             t-on-keydown="onKeyDown"
                             rows="1"

@@ -3,6 +3,7 @@
 import { registry } from "@web/core/registry";
 import { Component, onWillStart, onMounted, useRef, useState } from "@odoo/owl";
 import { useService } from "@web/core/utils/hooks";
+import { _t } from "@web/core/l10n/translation";
 
 /**
  * D3.js Force-Directed Relationship Network Graph Widget
@@ -57,6 +58,10 @@ export class RelationshipGraphWidget extends Component {
         });
 
         console.log("=== RelationshipGraphWidget SETUP END ===");
+    }
+
+    t(text) {
+        return _t(text);
     }
 
     /**

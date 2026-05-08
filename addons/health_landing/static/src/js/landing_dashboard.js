@@ -19,6 +19,10 @@ import { PatientSpokeModal } from "./patient_spoke_modal";
  * - Professional animations
  */
 class HealthLandingDashboard extends Component {
+    t(text) {
+        return _t(text);
+    }
+
     setup() {
         this.actionService = useService("action");
         this.searchInputRef = useRef("searchInput");

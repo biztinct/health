@@ -8,6 +8,7 @@
 
 import { Component, onMounted, onWillUnmount, useState } from "@odoo/owl";
 import { registry } from "@web/core/registry";
+import { _t } from "@web/core/l10n/translation";
 import { useService } from "@web/core/utils/hooks";
 
 /**
@@ -187,14 +188,14 @@ export class HealthcareBaseWidget extends Component {
         installBanner.innerHTML = `
             <div class="health-card" style="position: fixed; bottom: 20px; right: 20px; z-index: 1000; max-width: 300px;">
                 <div class="health-card-header">
-                    <h4>Install VAFHS App</h4>
+                    <h4>${_t("Install VAFHS App")}</h4>
                     <button class="health-btn-close" onclick="this.closest('.health-install-prompt').remove()">×</button>
                 </div>
                 <div class="health-card-body">
-                    <p>Install the VAFHS healthcare app for quick access and offline functionality.</p>
+                    <p>${_t("Install the VAFHS healthcare app for quick access and offline functionality.")}</p>
                     <div style="display: flex; gap: 10px; margin-top: 15px;">
-                        <button class="health-btn health-btn-primary health-btn-sm" onclick="healthcareApp.installPWA()">Install</button>
-                        <button class="health-btn health-btn-outline health-btn-sm" onclick="this.closest('.health-install-prompt').remove()">Later</button>
+                        <button class="health-btn health-btn-primary health-btn-sm" onclick="healthcareApp.installPWA()">${_t("Install")}</button>
+                        <button class="health-btn health-btn-outline health-btn-sm" onclick="this.closest('.health-install-prompt').remove()">${_t("Later")}</button>
                     </div>
                 </div>
             </div>
@@ -210,7 +211,7 @@ export class HealthcareBaseWidget extends Component {
             this.deferredPrompt.prompt();
             const { outcome } = await this.deferredPrompt.userChoice;
             if (outcome === 'accepted') {
-                this.notification.add('VAFHS app installed successfully!', { type: 'success' });
+                this.notification.add(_t("VAFHS app installed successfully!"), { type: 'success' });
             }
             this.deferredPrompt = null;
         }
@@ -229,7 +230,7 @@ export class HealthcareBaseWidget extends Component {
                 const vietnamesePhoneRegex = /^(\+84|84|0)(3|5|7|8|9)[0-9]{8}$/;
                 
                 if (value && !vietnamesePhoneRegex.test(value.replace(/\s/g, ''))) {
-                    e.target.setCustomValidity('Please enter a valid Vietnamese phone number');
+                    e.target.setCustomValidity(_t("Please enter a valid Vietnamese phone number"));
                     e.target.classList.add('error');
                 } else {
                     e.target.setCustomValidity('');
@@ -247,7 +248,7 @@ export class HealthcareBaseWidget extends Component {
                 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
                 
                 if (value && !emailRegex.test(value)) {
-                    e.target.setCustomValidity('Please enter a valid email address');
+                    e.target.setCustomValidity(_t("Please enter a valid email address"));
                     e.target.classList.add('error');
                 } else {
                     e.target.setCustomValidity('');
@@ -266,7 +267,7 @@ export class HealthcareBaseWidget extends Component {
                 const nationalIdRegex = /^[0-9]{9,12}$/;
                 
                 if (value && !nationalIdRegex.test(value)) {
-                    e.target.setCustomValidity('Please enter a valid National ID (CCCD/CMND)');
+                    e.target.setCustomValidity(_t("Please enter a valid National ID (CCCD/CMND)"));
                     e.target.classList.add('error');
                 } else {
                     e.target.setCustomValidity('');
@@ -284,7 +285,7 @@ export class HealthcareBaseWidget extends Component {
         this.state.offline = false;
         document.querySelector('.health-offline-banner')?.classList.remove('show');
         this.syncOfflineData();
-        this.notification.add('Connection restored. Syncing data...', { type: 'info' });
+        this.notification.add(_t("Connection restored. Syncing data..."), { type: 'info' });
     }
     
     /**
@@ -293,7 +294,7 @@ export class HealthcareBaseWidget extends Component {
     onOffline() {
         this.state.offline = true;
         this.showOfflineBanner();
-        this.notification.add('You are now offline. Some features may be limited.', { type: 'warning' });
+        this.notification.add(_t("You are now offline. Some features may be limited."), { type: 'warning' });
     }
     
     /**
@@ -304,7 +305,7 @@ export class HealthcareBaseWidget extends Component {
         if (!banner) {
             banner = document.createElement('div');
             banner.className = 'health-offline-banner';
-            banner.innerHTML = '⚠️ You are offline. Some features may be limited.';
+            banner.innerHTML = `⚠️ ${_t("You are offline. Some features may be limited.")}`;
             document.body.appendChild(banner);
         }
         banner.classList.add('show');
@@ -329,7 +330,7 @@ export class HealthcareBaseWidget extends Component {
                 
                 // Clear offline data after successful sync
                 localStorage.removeItem('healthcare_offline_data');
-                this.notification.add(`Synced ${offlineData.length} offline changes`, { type: 'success' });
+                this.notification.add(_t("Synced %s offline changes", offlineData.length), { type: 'success' });
             }
         } catch (error) {
             console.error('Offline data sync failed:', error);

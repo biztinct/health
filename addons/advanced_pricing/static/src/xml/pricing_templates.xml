@@ -4,7 +4,7 @@
         <div class="o_advanced_pricing_widget">
             <div class="card">
                 <div class="card-header">
-                    <h5>Advanced Pricing Rules</h5>
+                    <h5 t-esc="this.t('Advanced Pricing Rules')"/>
                 </div>
                 <div class="card-body">
                     <t t-if="state.isLoading">
@@ -15,18 +15,18 @@
                     <t t-else="">
                         <t t-if="state.rules.length === 0">
                             <div class="alert alert-info">
-                                No pricing rules configured.
+                                <t t-esc="this.t('No pricing rules configured.')"/>
                             </div>
                         </t>
                         <t t-else="">
                             <table class="table table-sm">
                                 <thead>
                                     <tr>
-                                        <th>Sequence</th>
-                                        <th>Name</th>
-                                        <th>Level</th>
-                                        <th>Type</th>
-                                        <th>Status</th>
+                                        <th t-esc="this.t('Sequence')"/>
+                                        <th t-esc="this.t('Name')"/>
+                                        <th t-esc="this.t('Level')"/>
+                                        <th t-esc="this.t('Type')"/>
+                                        <th t-esc="this.t('Status')"/>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -34,11 +34,11 @@
                                         <tr>
                                             <td t-esc="rule.sequence"/>
                                             <td t-esc="rule.name"/>
-                                            <td t-esc="'Level ' + rule.level"/>
+                                            <td t-esc="this.t('Level') + ' ' + rule.level"/>
                                             <td t-esc="rule.rule_type"/>
                                             <td>
                                                 <span t-att-class="rule.active ? 'badge bg-success' : 'badge bg-danger'"
-                                                      t-esc="rule.active ? 'Active' : 'Inactive'"/>
+                                                      t-esc="rule.active ? this.t('Active') : this.t('Inactive')"/>
                                             </td>
                                         </tr>
                                     </t>
@@ -54,27 +54,27 @@
     <t t-name="advanced_pricing.RuleBuilder">
         <div class="o_pricing_rule_builder">
             <div class="modal-header">
-                <h5 class="modal-title">Visual Rule Builder</h5>
+                <h5 class="modal-title" t-esc="this.t('Visual Rule Builder')"/>
             </div>
             <div class="modal-body">
                 <div class="form-group">
-                    <label>Rule Name</label>
+                    <label t-esc="this.t('Rule Name')"/>
                     <input type="text" class="form-control" t-model="state.ruleName"/>
                 </div>
                 <div class="form-group">
-                    <label>Level</label>
+                    <label t-esc="this.t('Level')"/>
                     <select class="form-select" t-model="state.level">
-                        <option value="1">Level 1 - Base Rules</option>
-                        <option value="2">Level 2 - Cascading Rules</option>
+                        <option value="1" t-esc="this.t('Level 1 - Base Rules')"/>
+                        <option value="2" t-esc="this.t('Level 2 - Cascading Rules')"/>
                     </select>
                 </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" t-on-click="props.onClose">
-                    Cancel
+                    <t t-esc="this.t('Cancel')"/>
                 </button>
                 <button type="button" class="btn btn-primary" t-on-click="saveRule">
-                    Save Rule
+                    <t t-esc="this.t('Save Rule')"/>
                 </button>
             </div>
         </div>
@@ -84,7 +84,7 @@
         <div class="o_pricing_calculator">
             <div class="card">
                 <div class="card-header">
-                    <h5>Price Calculator</h5>
+                    <h5 t-esc="this.t('Price Calculator')"/>
                 </div>
                 <div class="card-body">
                     <t t-if="state.calculating">

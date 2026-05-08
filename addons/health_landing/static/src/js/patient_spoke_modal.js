@@ -2,6 +2,7 @@
 
 import { Component, useState, onWillStart } from "@odoo/owl";
 import { useService } from "@web/core/utils/hooks";
+import { _t } from "@web/core/l10n/translation";
 
 /**
  * Patient Spoke Modal Component
@@ -26,6 +27,10 @@ export class PatientSpokeModal extends Component {
         onEdit: Function,
         onItemClick: { type: Function, optional: true },
     };
+
+    t(text) {
+        return _t(text);
+    }
 
     setup() {
         this.orm = useService("orm");

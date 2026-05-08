@@ -3,6 +3,7 @@
 import { Component, useState, onMounted, onWillUnmount } from "@odoo/owl";
 import { useService } from "@web/core/utils/hooks";
 import { rpc } from "@web/core/network/rpc";
+import { _t } from "@web/core/l10n/translation";
 
 /**
  * Zalo Chat Hub Component
@@ -37,6 +38,10 @@ export class ZaloChatHub extends Component {
         onWillUnmount(() => {
             this.unsubscribeFromBus();
         });
+    }
+
+    t(text) {
+        return _t(text);
     }
 
     /**

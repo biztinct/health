@@ -4,16 +4,17 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Phiên bản: Odoo Server 19.0\n"
-"Báo cáo-Msgid-Bugs-Để: \n"
-"POT-Creation-Ngày: 2025-10-29 05:46+0000\n"
-"PO-Revision-Ngày: 2025-10-29 05:46+0000\n"
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-10-29 05:46+0000\n"
+"PO-Revision-Date: 2025-10-29 05:46+0000\n"
 "Last-Translator: \n"
-"Ngôn ngữ-Đội: \n"
-"MIME-Phiên bản: 1.0\n"
-"Nội dung-Loại: văn bản/plain; charset=UTF-8\n"
-"Nội dung-Transfer-Encoding: \n"
-"Plural-Biểu mẫus: \n"
+"Language-Team: \n"
+"Language: vi_VN\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: nplurals=1; plural=0;\n"
 
 #. module: health_invoicing
 #: model_terms:ir.ui.view,arch_db:health_invoicing.view_health_fieldservice_order_form_invoicing
@@ -27,7 +28,7 @@ msgstr "- \n                    Dịch vụs will be consumed Từ này pređã 
 msgid ""
 "<br/>All discounted line items must have a reason in the \"Discount Reason\""
 " field."
-msgstr "<br/>Tất cả dissố lượnged line items must have a lý do trong the \"Dissố lượng Lý do\ trường."
+msgstr "<br/>Tất cả dòng được giảm giá phải có lý do trong trường \"Lý do giảm giá\"."
 
 #. module: health_invoicing
 #: model_terms:ir.ui.view,arch_db:health_invoicing.view_health_payment_workflow_wizard_form
@@ -3347,7 +3348,7 @@ msgstr "Bệnh nhân"
 #: model:ir.model.fields.selection,name:health_invoicing.selection__health_service_billing__service_location__patient_home
 #: model:ir.model.fields.selection,name:health_invoicing.selection__product_template__healthcare_service_location__home
 msgid "Patient Home"
-msgstr "Bệnh nhân Trang chủ"
+msgstr "Nhà bệnh nhân"
 
 #. module: health_invoicing
 #. odoo-python
@@ -5453,3 +5454,13 @@ msgstr "📸 Thanh toán Proof"
 #: model_terms:ir.ui.view,arch_db:health_invoicing.view_health_nurse_payment_wizard_form
 msgid "🧾 Invoice Processing"
 msgstr "🧾 Hóa đơn Processing"
+
+#. module: health_invoicing
+#: model_terms:ir.ui.view,arch_db:health_invoicing.view_fso_form_package_action
+msgid "Select Prepaid Package"
+msgstr "Chọn gói trả trước"
+
+#. module: health_invoicing
+#: model_terms:ir.ui.view,arch_db:health_invoicing.view_fso_form_package_action
+msgid "View Payments"
+msgstr "Xem thanh toán"

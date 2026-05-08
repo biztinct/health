@@ -529,7 +529,7 @@ msgstr ""
 #. module: health_pwa
 #: model:ir.model.fields,field_description:health_pwa.field_health_pwa_staff_notification__fso_id
 msgid "Booking"
-msgstr ""
+msgstr "Đặt lịch"
 
 #. module: health_pwa
 #: model:ir.model.fields.selection,name:health_pwa.selection__health_pwa_staff_notification__notification_type__cancelled
@@ -556,14 +556,14 @@ msgstr ""
 msgid ""
 "Bạn không có quyền truy cập Viet Uc.\n"
 "                    Vui lòng liên hệ quản trị viên để được cấp quyền truy cập."
-msgstr ""
+msgstr "Bạn không có quyền truy cập Viet Uc.\\n                    Vui lòng liên hệ quản trị viên để được cấp quyền truy cập."
 
 #. module: health_pwa
 #: model_terms:ir.ui.view,arch_db:health_pwa.install_guide
 msgid ""
 "Bạn sẽ thấy biểu tượng cài đặt (dấu cộng hoặc mũi tên xuống) trên thanh địa "
 "chỉ của trình duyệt"
-msgstr ""
+msgstr "Bạn sẽ thấy biểu tượng cài đặt (dấu cộng hoặc mũi tên xuống) trên thanh địa chỉ của trình duyệt"
 
 #. module: health_pwa
 #: model_terms:ir.ui.view,arch_db:health_pwa.install_guide
@@ -575,7 +575,7 @@ msgstr ""
 #. module: health_pwa
 #: model_terms:ir.ui.view,arch_db:health_pwa.install_guide
 msgid "Chia sẻ với đồng nghiệp"
-msgstr ""
+msgstr "Chia sẻ với đồng nghiệp"
 
 #. module: health_pwa
 #: model_terms:ir.ui.view,arch_db:health_pwa.install_guide
@@ -665,12 +665,12 @@ msgstr ""
 #. module: health_pwa
 #: model_terms:ir.ui.view,arch_db:health_pwa.install_guide
 msgid "Cuộn xuống trong menu chia sẻ và nhấn \"Thêm vào Màn hình chính\""
-msgstr ""
+msgstr "Cuộn xuống trong menu chia sẻ và nhấn \\\"Thêm vào Màn hình chính\\\""
 
 #. module: health_pwa
 #: model_terms:ir.ui.view,arch_db:health_pwa.app_shell
 msgid "Cài đặt ứng dụng lên điện thoại"
-msgstr ""
+msgstr "Cài đặt ứng dụng lên điện thoại"
 
 #. module: health_pwa
 #. odoo-javascript
@@ -724,12 +724,12 @@ msgstr "Thông tin gỡ lỗi Health PWA"
 #. module: health_pwa
 #: model_terms:ir.ui.view,arch_db:health_pwa.install_guide
 msgid "Hướng dẫn cài đặt"
-msgstr ""
+msgstr "Hướng dẫn cài đặt"
 
 #. module: health_pwa
 #: model_terms:ir.ui.view,arch_db:health_pwa.install_guide
 msgid "Hướng dẫn cài đặt ứng dụng"
-msgstr ""
+msgstr "Hướng dẫn cài đặt ứng dụng"
 
 #. module: health_pwa
 #: model:ir.model.fields,field_description:health_pwa.field_health_pwa_config__id
@@ -761,7 +761,7 @@ msgstr "Kiểm tra JavaScript"
 #. module: health_pwa
 #: model_terms:ir.ui.view,arch_db:health_pwa.offline_page
 msgid "Không có kết nối"
-msgstr ""
+msgstr "Không có kết nối"
 
 #. module: health_pwa
 #: model_terms:ir.ui.view,arch_db:health_pwa.install_guide
@@ -833,12 +833,12 @@ msgstr "Các bước tiếp theo"
 #. module: health_pwa
 #: model_terms:ir.ui.view,arch_db:health_pwa.install_guide
 msgid "Nhấn \"Cài đặt\" để thêm Viet Uc vào màn hình chính"
-msgstr ""
+msgstr "Nhấn \\\"Cài đặt\\\" để thêm Viet Uc vào màn hình chính"
 
 #. module: health_pwa
 #: model_terms:ir.ui.view,arch_db:health_pwa.install_guide
 msgid "Nhấn \"Thêm\" để cài đặt Viet Uc vào màn hình chính"
-msgstr ""
+msgstr "Nhấn \\\"Thêm\\\" để cài đặt Viet Uc vào màn hình chính"
 
 #. module: health_pwa
 #: model_terms:ir.ui.view,arch_db:health_pwa.app_shell
@@ -879,12 +879,12 @@ msgstr ""
 #. module: health_pwa
 #: model_terms:ir.ui.view,arch_db:health_pwa.app_shell
 msgid "Nhấn nút trên để thêm Viet Uc vào màn hình chính"
-msgstr ""
+msgstr "Nhấn nút trên để thêm Viet Uc vào màn hình chính"
 
 #. module: health_pwa
 #: model_terms:ir.ui.view,arch_db:health_pwa.install_guide
 msgid "Nhấn vào biểu tượng cài đặt và xác nhận để cài đặt Viet Uc"
-msgstr ""
+msgstr "Nhấn vào biểu tượng cài đặt và xác nhận để cài đặt Viet Uc"
 
 #. module: health_pwa
 #: model:ir.model.fields,field_description:health_pwa.field_health_pwa_config__notes
@@ -914,7 +914,7 @@ msgstr ""
 #. module: health_pwa
 #: model:ir.model.fields,field_description:health_pwa.field_health_pwa_staff_notification__patient_name
 msgid "Patient Name"
-msgstr ""
+msgstr "Tên bệnh nhân"
 
 #. module: health_pwa
 #: model:ir.model.fields,help:health_pwa.field_health_pwa_config__vapid_private_key
@@ -938,12 +938,12 @@ msgstr ""
 #. module: health_pwa
 #: model_terms:ir.ui.view,arch_db:health_pwa.access_denied
 msgid "Quay lại hệ thống"
-msgstr ""
+msgstr "Quay lại hệ thống"
 
 #. module: health_pwa
 #: model_terms:ir.ui.view,arch_db:health_pwa.install_guide
 msgid "Quét mã QR này để cài đặt ứng dụng"
-msgstr ""
+msgstr "Quét mã QR này để cài đặt ứng dụng"
 
 #. module: health_pwa
 #: model:ir.model.fields,field_description:health_pwa.field_health_pwa_staff_notification__is_read
@@ -1040,29 +1040,29 @@ msgstr "Đang kiểm tra đầu cuối gỡ lỗi..."
 #. module: health_pwa
 #: model_terms:ir.ui.view,arch_db:health_pwa.offline_page
 msgid "Thử lại"
-msgstr ""
+msgstr "Thử lại"
 
 #. module: health_pwa
 #: model_terms:ir.ui.view,arch_db:health_pwa.install_guide
 msgid "Tiếng Việt"
-msgstr ""
+msgstr "Tiếng Việt"
 
 #. module: health_pwa
 #: model:ir.model.fields,field_description:health_pwa.field_health_pwa_staff_notification__notification_type
 msgid "Type"
-msgstr ""
+msgstr "Loại"
 
 #. module: health_pwa
 #: model_terms:ir.ui.view,arch_db:health_pwa.install_guide
 msgid "Tìm ba dấu chấm ở góc trên bên phải của trình duyệt Chrome"
-msgstr ""
+msgstr "Tìm ba dấu chấm ở góc trên bên phải của trình duyệt Chrome"
 
 #. module: health_pwa
 #: model_terms:ir.ui.view,arch_db:health_pwa.install_guide
 msgid ""
 "Tìm biểu tượng chia sẻ (mũi tên hướng lên) ở dưới cùng của trình duyệt "
 "Safari"
-msgstr ""
+msgstr "Tìm biểu tượng chia sẻ (mũi tên hướng lên) ở dưới cùng của trình duyệt Safari"
 
 #. module: health_pwa
 #: model_terms:ir.ui.view,arch_db:health_pwa.install_guide
@@ -1074,12 +1074,12 @@ msgstr ""
 #. module: health_pwa
 #: model_terms:ir.ui.view,arch_db:health_pwa.install_guide
 msgid "Tìm và nhấn \"Thêm vào Màn hình chính\" hoặc \"Cài đặt\" trong menu"
-msgstr ""
+msgstr "Tìm và nhấn \\\"Thêm vào Màn hình chính\\\" hoặc \\\"Cài đặt\\\" trong menu"
 
 #. module: health_pwa
 #: model_terms:ir.ui.view,arch_db:health_pwa.access_denied
 msgid "Từ chối truy cập"
-msgstr ""
+msgstr "Từ chối truy cập"
 
 #. module: health_pwa
 #: model:ir.model.fields,field_description:health_pwa.field_health_pwa_push_subscription__user_id
@@ -1122,12 +1122,12 @@ msgstr ""
 msgid ""
 "Viet Uc hiện không khả dụng.\n"
 "                    Vui lòng kiểm tra kết nối internet và thử lại."
-msgstr ""
+msgstr "Viet Uc hiện không khả dụng.\\n                    Vui lòng kiểm tra kết nối internet và thử lại."
 
 #. module: health_pwa
 #: model_terms:ir.ui.view,arch_db:health_pwa.install_guide
 msgid "Viet Uc sẽ có sẵn như một ứng dụng máy tính độc lập"
-msgstr ""
+msgstr "Viet Uc sẽ có sẵn như một ứng dụng máy tính độc lập"
 
 #. module: health_pwa
 #: model_terms:ir.ui.view,arch_db:health_pwa.app_shell
@@ -1166,12 +1166,12 @@ msgstr ""
 #. module: health_pwa
 #: model_terms:ir.ui.view,arch_db:health_pwa.app_shell
 msgid "Đang tải dữ liệu..."
-msgstr ""
+msgstr "Đang tải dữ liệu..."
 
 #. module: health_pwa
 #: model_terms:ir.ui.view,arch_db:health_pwa.app_shell
 msgid "Ứng dụng đã được cài đặt! Mở từ màn hình chính."
-msgstr ""
+msgstr "Ứng dụng đã được cài đặt! Mở từ màn hình chính."
 
 #. module: health_pwa
 #: model_terms:ir.ui.view,arch_db:health_pwa.install_guide
@@ -1181,7 +1181,7 @@ msgstr ""
 #. module: health_pwa
 #: model_terms:ir.ui.view,arch_db:health_pwa.install_guide
 msgid "⚠️ QUAN TRỌNG: Mở ứng dụng trước khi cài đặt!"
-msgstr ""
+msgstr "⚠️ QUAN TRỌNG: Mở ứng dụng trước khi cài đặt!"
 
 #. module: health_pwa
 #: model_terms:ir.ui.view,arch_db:health_pwa.debug_shell
@@ -1191,159 +1191,159 @@ msgstr "✓ Kết xuất mẫu hoạt động"
 #. module: health_pwa
 #: model_terms:ir.ui.view,arch_db:health_pwa.app_shell
 msgid "📲 Cài đặt ngay / Install Now"
-msgstr ""
+msgstr "📲 Cài đặt ngay / Install Now"
 
 #. module: health_pwa
-#: code:addons/health_pwa/static/src/js/app.js
+#: code:addons/health_pwa/static/src/js/app.js:0
 msgid "Health Mobile"
-msgstr "Health Mobile"
+msgstr "Y tế di động"
 
 #. module: health_pwa
-#: code:addons/health_pwa/static/src/js/app.js
+#: code:addons/health_pwa/static/src/js/app.js:0
 msgid "Loading healthcare data..."
 msgstr "Đang tải dữ liệu y tế..."
 
 #. module: health_pwa
-#: code:addons/health_pwa/static/src/js/app.js
+#: code:addons/health_pwa/static/src/js/app.js:0
 msgid "Patient Details"
 msgstr "Chi tiết bệnh nhân"
 
 #. module: health_pwa
-#: code:addons/health_pwa/static/src/js/app.js
+#: code:addons/health_pwa/static/src/js/app.js:0
 msgid "Basic Information"
 msgstr "Thông tin cơ bản"
 
 #. module: health_pwa
-#: code:addons/health_pwa/static/src/js/app.js
+#: code:addons/health_pwa/static/src/js/app.js:0
 msgid "Contact Information"
 msgstr "Thông tin liên hệ"
 
 #. module: health_pwa
-#: code:addons/health_pwa/static/src/js/app.js
+#: code:addons/health_pwa/static/src/js/app.js:0
 msgid "Full Name"
 msgstr "Họ và tên"
 
 #. module: health_pwa
-#: code:addons/health_pwa/static/src/js/app.js
+#: code:addons/health_pwa/static/src/js/app.js:0
 msgid "Date of Birth"
 msgstr "Ngày sinh"
 
 #. module: health_pwa
-#: code:addons/health_pwa/static/src/js/app.js
+#: code:addons/health_pwa/static/src/js/app.js:0
 msgid "Age"
 msgstr "Tuổi"
 
 #. module: health_pwa
-#: code:addons/health_pwa/static/src/js/app.js
+#: code:addons/health_pwa/static/src/js/app.js:0
 msgid "Gender"
 msgstr "Giới tính"
 
 #. module: health_pwa
-#: code:addons/health_pwa/static/src/js/app.js
+#: code:addons/health_pwa/static/src/js/app.js:0
 msgid "Phone"
 msgstr "Điện thoại"
 
 #. module: health_pwa
-#: code:addons/health_pwa/static/src/js/app.js
+#: code:addons/health_pwa/static/src/js/app.js:0
 msgid "Address"
 msgstr "Địa chỉ"
 
 #. module: health_pwa
-#: code:addons/health_pwa/static/src/js/app.js
+#: code:addons/health_pwa/static/src/js/app.js:0
 msgid "Patient Information"
 msgstr "Thông tin bệnh nhân"
 
 #. module: health_pwa
-#: code:addons/health_pwa/static/src/js/app.js
+#: code:addons/health_pwa/static/src/js/app.js:0
 msgid "Age / Gender"
 msgstr "Tuổi / Giới tính"
 
 #. module: health_pwa
-#: code:addons/health_pwa/static/src/js/app.js
+#: code:addons/health_pwa/static/src/js/app.js:0
 msgid "Allergies"
 msgstr "Dị ứng"
 
 #. module: health_pwa
-#: code:addons/health_pwa/static/src/js/app.js
+#: code:addons/health_pwa/static/src/js/app.js:0
 msgid "Service Information"
 msgstr "Thông tin dịch vụ"
 
 #. module: health_pwa
-#: code:addons/health_pwa/static/src/js/app.js
+#: code:addons/health_pwa/static/src/js/app.js:0
 msgid "Scheduled Time"
 msgstr "Thời gian đã lên lịch"
 
 #. module: health_pwa
-#: code:addons/health_pwa/static/src/js/app.js
+#: code:addons/health_pwa/static/src/js/app.js:0
 msgid "Estimated Duration"
 msgstr "Thời lượng dự kiến"
 
 #. module: health_pwa
-#: code:addons/health_pwa/static/src/js/app.js
+#: code:addons/health_pwa/static/src/js/app.js:0
 msgid "Team"
 msgstr "Đội"
 
 #. module: health_pwa
-#: code:addons/health_pwa/static/src/js/app.js
+#: code:addons/health_pwa/static/src/js/app.js:0
 msgid "Priority"
 msgstr "Mức ưu tiên"
 
 #. module: health_pwa
-#: code:addons/health_pwa/static/src/js/app.js
+#: code:addons/health_pwa/static/src/js/app.js:0
 msgid "Clinical Notes"
 msgstr "Ghi chú lâm sàng"
 
 #. module: health_pwa
-#: code:addons/health_pwa/static/src/js/app.js
+#: code:addons/health_pwa/static/src/js/app.js:0
 msgid "View Quote"
 msgstr "Xem báo giá"
 
 #. module: health_pwa
-#: code:addons/health_pwa/static/src/js/app.js
+#: code:addons/health_pwa/static/src/js/app.js:0
 msgid "Payment"
 msgstr "Thanh toán"
 
 #. module: health_pwa
-#: code:addons/health_pwa/static/src/js/app.js
+#: code:addons/health_pwa/static/src/js/app.js:0
 msgid "Complete Service"
 msgstr "Hoàn tất dịch vụ"
 
 #. module: health_pwa
-#: code:addons/health_pwa/static/src/js/app.js
+#: code:addons/health_pwa/static/src/js/app.js:0
 msgid "Service Status"
 msgstr "Trạng thái dịch vụ"
 
 #. module: health_pwa
-#: code:addons/health_pwa/static/src/js/app.js
+#: code:addons/health_pwa/static/src/js/app.js:0
 msgid "Clinical Observations"
 msgstr "Quan sát lâm sàng"
 
 #. module: health_pwa
-#: code:addons/health_pwa/static/src/js/app.js
+#: code:addons/health_pwa/static/src/js/app.js:0
 msgid "Treatment Performed"
 msgstr "Điều trị đã thực hiện"
 
 #. module: health_pwa
-#: code:addons/health_pwa/static/src/js/app.js
+#: code:addons/health_pwa/static/src/js/app.js:0
 msgid "Medications Prescribed"
 msgstr "Thuốc đã kê"
 
 #. module: health_pwa
-#: code:addons/health_pwa/static/src/js/app.js
+#: code:addons/health_pwa/static/src/js/app.js:0
 msgid "Vital Signs"
 msgstr "Dấu hiệu sinh tồn"
 
 #. module: health_pwa
-#: code:addons/health_pwa/static/src/js/app.js
+#: code:addons/health_pwa/static/src/js/app.js:0
 msgid "Service Procedures"
 msgstr "Thủ thuật dịch vụ"
 
 #. module: health_pwa
-#: code:addons/health_pwa/static/src/js/app.js
+#: code:addons/health_pwa/static/src/js/app.js:0
 msgid "Clinical Images"
 msgstr "Hình ảnh lâm sàng"
 
 #. module: health_pwa
-#: code:addons/health_pwa/static/src/js/app.js
+#: code:addons/health_pwa/static/src/js/app.js:0
 msgid "Capture Image"
 msgstr "Chụp ảnh"

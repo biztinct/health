@@ -24,6 +24,10 @@ export class ClickToDialWidget extends Component {
         this.orm = useService("orm");
     }
 
+    t(text) {
+        return _t(text);
+    }
+
     /**
      * Handle click on dial button
      */
