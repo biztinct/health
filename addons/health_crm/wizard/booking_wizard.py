@@ -26,6 +26,11 @@ class HealthBookingWizard(models.TransientModel):
         ('2_services', 'Service Requirements'),
         ('3_booking', 'Booking Details'),
     ], string='Current Step', default='1_client', required=True)
+
+    skip_client_step = fields.Boolean(
+        default=False,
+        help='Skip client step when opened from an existing booking'
+    )
     
     # Source lead/contact
     lead_id = fields.Many2one(
@@ -274,66 +279,54 @@ class HealthBookingWizard(models.TransientModel):
         'Booking Notes',
         help='Additional notes for the booking'
     )
-    
+
     # =========================================================================
-    # STEP 4: ASSIGN BOOKING
+    # STAFF ASSIGNMENT (legacy - kept for backward compatibility)
     # =========================================================================
-    
-    assigned_staff_ids = fields.Many2many(
-        'hr.employee',
-        'booking_wizard_assigned_staff_rel',
-        'wizard_id', 'employee_id',
-        string='Assigned Staff',
-        domain="[('is_healthcare_staff', '=', True), ('employment_status', '=', 'active'), ('healthcare_role', '!=', 'doctor'), ('primary_facility_id', '=', facility_id)]",
-        help='Staff members to assign to this booking (filtered by selected facility)'
-    )
-    
-    lead_staff_id = fields.Many2one(
-        'hr.employee',
-        string='Lead Staff',
-        domain="[('is_healthcare_staff', '=', True), ('employment_status', '=', 'active'), ('healthcare_role', '!=', 'doctor'), ('primary_facility_id', '=', facility_id)]",
-        help='Primary staff member responsible for this service'
-    )
-    
-    assigned_doctor_ids = fields.Many2many(
-        'hr.employee',
-        'booking_wizard_assigned_doctor_rel',
-        'wizard_id', 'doctor_id',
-        string='Assigned Doctors',
-        domain="[('is_healthcare_staff', '=', True), ('healthcare_role', '=', 'doctor'), ('employment_status', '=', 'active'), ('primary_facility_id', '=', facility_id)]",
-        help='Doctors to assign to this booking (filtered by selected facility)'
-    )
-    
-    # Legacy field - kept for backward compatibility
+
     assigned_nurse_id = fields.Many2one(
         'hr.employee',
         string='Assigned Nurse/Staff',
         domain="[('job_id.name', 'ilike', 'nurse')]",
-        help='Deprecated - use assigned_staff_ids instead'
-    )
-    
-    assignment_notes = fields.Text(
-        'Assignment Notes',
-        help='Instructions for the assigned staff'
     )
     
     # =========================================================================
     # NAVIGATION METHODS
     # =========================================================================
-    
+
+
+    # =========================================================================
+
+    def _get_steps(self):
+        if self.skip_client_step:
+            return ['2_services', '3_booking']
+        return ['1_client', '2_services', '3_booking']
+
+    def _validate_step(self, step):
+        missing = []
+        if step == '1_client':
+            if not self.client_id and not self.client_name:
+                missing.append('Client Name')
+        elif step == '2_services':
+            if not self.service_type:
+                missing.append('Service Type')
+        elif step == '3_booking':
+            if not self.facility_id:
+                missing.append('Healthcare Facility')
+            if not self.booking_date:
+                missing.append('Booking Date')
+        if missing:
+            raise ValidationError(
+                _('Please fill in the following required fields:\n• %s') % '\n• '.join(missing)
+            )
+
     def action_next_step(self):
         """Move to next step"""
         self.ensure_one()
-        
-        steps = ['1_client', '2_services', '3_booking']
-        current_idx = steps.index(self.current_step)
+        self._validate_step(self.current_step)
 
-        if self.current_step == '1_client':
-            if not self.client_id and not self.client_name:
-                raise ValidationError(_('Please select or enter a client.'))
-        elif self.current_step == '2_services':
-            if not self.service_type:
-                raise ValidationError(_('Please select a service type.'))
+        steps = self._get_steps()
+        current_idx = steps.index(self.current_step)
 
         if current_idx < len(steps) - 1:
             self.current_step = steps[current_idx + 1]
@@ -344,7 +337,7 @@ class HealthBookingWizard(models.TransientModel):
         """Move to previous step"""
         self.ensure_one()
 
-        steps = ['1_client', '2_services', '3_booking']
+        steps = self._get_steps()
         current_idx = steps.index(self.current_step)
         
         if current_idx > 0:
@@ -406,9 +399,7 @@ class HealthBookingWizard(models.TransientModel):
     def action_create_booking(self):
         """Create the booking from wizard data"""
         self.ensure_one()
-        
-        if not self.facility_id:
-            raise ValidationError(_('Please select a Healthcare Facility before creating the booking.'))
+        self._validate_step('3_booking')
         
         # Create or get client
         client = None
@@ -490,7 +481,7 @@ class HealthBookingWizard(models.TransientModel):
         if self.commission_duration == '30_days' and client:
             client.with_context(_skip_field_requirements=True).write({'commission_due_to': self.commission_duration})
         
-        # Create the booking (FSO)
+        # Create booking
         booking_vals = {
             'patient_id': client.id,
             'service_type': self.service_type or 'consultation',
@@ -502,36 +493,15 @@ class HealthBookingWizard(models.TransientModel):
             'booking_timezone': self.facility_id.timezone if self.facility_id else (
                 self.catchment_province_id.timezone if self.catchment_province_id else 'Asia/Ho_Chi_Minh'
             ),
-            # Commission fields
             'commission_due_to': self.commission_due_to.id if self.commission_due_to else False,
             'commission_percentage': self.commission_percentage,
             'commission_duration': self.commission_duration,
             'service_fee_vnd': self.service_fee_vnd,
         }
-        
-        # Assign staff if provided (legacy support)
         if self.assigned_nurse_id:
             booking_vals['primary_nurse_id'] = self.assigned_nurse_id.id
-        
-        # Create booking
-        FSO = self.env['health.fieldservice.order']
-        booking = FSO.create(booking_vals)
-        
-        # Assign staff from wizard fields (this triggers FSO inverse methods
-        # which create health.staff.assignment records automatically)
-        staff_update = {}
-        if self.assigned_staff_ids:
-            staff_update['assigned_staff_ids'] = [(6, 0, self.assigned_staff_ids.ids)]
-        if self.lead_staff_id:
-            # Ensure lead staff is in assigned_staff_ids too
-            staff_ids = set(self.assigned_staff_ids.ids) if self.assigned_staff_ids else set()
-            staff_ids.add(self.lead_staff_id.id)
-            staff_update['assigned_staff_ids'] = [(6, 0, list(staff_ids))]
-        if self.assigned_doctor_ids:
-            staff_update['assigned_doctor_ids'] = [(6, 0, self.assigned_doctor_ids.ids)]
-        if staff_update:
-            booking.write(staff_update)
-        
+        booking = self.env['health.fieldservice.order'].create(booking_vals)
+
         # Link client to lead and update status
         if self.lead_id and client:
             lead_update_vals = {
@@ -562,18 +532,13 @@ class HealthBookingWizard(models.TransientModel):
         
         # Notify OM about new booking
         self._notify_om_new_booking(booking)
-        
-        # Return to booking form with proper name for breadcrumb
-        booking_display_name = booking.display_name or booking.name or _('Booking')
-        return {
-            'type': 'ir.actions.act_window',
-            'name': booking_display_name,
-            'res_model': 'health.fieldservice.order',
-            'res_id': booking.id,
-            'view_mode': 'form',
-            'views': [[False, 'form']],
-            'target': 'current',
-        }
+
+        # Open summary wizard
+        summary_wiz = self.env['health.booking.summary.wizard'].create({
+            'booking_ids': [(6, 0, [booking.id])],
+            'source_wizard': 'booking',
+        })
+        return summary_wiz._open_summary()
     
     def _get_scheduled_datetime(self):
         """Convert date and time to UTC datetime.

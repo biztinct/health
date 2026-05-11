@@ -13,7 +13,10 @@
                 <group>
                     <group string="Healthcare Settings">
                         <field name="is_healthcare_staff"/>
-                        <field name="healthcare_role" invisible="not is_healthcare_staff"/>
+                        <field name="is_doctor_role" invisible="1"/>
+                        <field name="is_nurse_role" invisible="1"/>
+                        <field name="is_duty_doctor" invisible="not is_doctor_role"/>
+                        <field name="is_head_nurse" invisible="not is_nurse_role"/>
                         <field name="catchment_province_id" options="{'no_create': True}"/>
                     </group>
                 </group>

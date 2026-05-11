@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from odoo import models, fields
+from odoo import api, models, fields
 
 
 class HrEmployee(models.Model):
@@ -25,4 +25,38 @@ class HrEmployee(models.Model):
         ('admin', 'Admin'),
         ('owner', 'Owner'),
         ('accountant', 'Accountant'),
-    ], string='Healthcare Role', tracking=True)
+    ], string='Healthcare Role (Deprecated)', tracking=True)
+
+    access_role_id = fields.Many2one(
+        'access.role', string='Access Role',
+        compute='_compute_access_role', store=True, readonly=True,
+    )
+    is_duty_doctor = fields.Boolean('Is Duty Doctor', default=False, tracking=True)
+    is_head_nurse = fields.Boolean('Is Head Nurse', default=False, tracking=True)
+
+    is_doctor_role = fields.Boolean(
+        compute='_compute_role_flags', store=True,
+    )
+    is_nurse_role = fields.Boolean(
+        compute='_compute_role_flags', store=True,
+    )
+    is_om_role = fields.Boolean(
+        compute='_compute_role_flags', store=True,
+    )
+    access_role_display = fields.Char(
+        string='Role', compute='_compute_role_flags', store=True,
+    )
+
+    @api.depends('user_id', 'user_id.access_role_id')
+    def _compute_access_role(self):
+        for emp in self:
+            emp.access_role_id = emp.user_id.access_role_id if emp.user_id else False
+
+    @api.depends('access_role_id', 'access_role_id.name')
+    def _compute_role_flags(self):
+        for emp in self:
+            role_name = (emp.access_role_id.name or '').lower()
+            emp.is_doctor_role = 'doctor' in role_name
+            emp.is_nurse_role = 'nurse' in role_name
+            emp.is_om_role = 'operations manager' in role_name
+            emp.access_role_display = emp.access_role_id.name or ''

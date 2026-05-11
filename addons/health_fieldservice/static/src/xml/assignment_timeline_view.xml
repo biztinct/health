@@ -102,7 +102,7 @@
                                     <div class="o_staff_details">
                                         <h6 class="o_staff_name" t-esc="staff.name"/>
                                         <small class="text-muted">
-                                            <t t-esc="staff.healthcare_role"/> • <t t-esc="staff.staff_code"/>
+                                            <t t-esc="staff.access_role_display"/> • <t t-esc="staff.staff_code"/>
                                         </small>
                                         <div class="o_workload_mini">
                                             <div class="o_workload_bar">

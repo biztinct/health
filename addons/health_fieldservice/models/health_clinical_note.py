@@ -65,14 +65,12 @@ class HealthClinicalNote(models.Model):
             role = ''
             if rec.author_id:
                 user = rec.author_id
-                if user.healthcare_role:
-                    role = dict(user._fields['healthcare_role'].selection).get(user.healthcare_role, user.healthcare_role)
+                if user.access_role_id:
+                    role = user.access_role_id.name
                 if not role:
                     employee = self.env['hr.employee'].search(
                         [('user_id', '=', user.id)], limit=1
                     )
-                    if employee and employee.healthcare_role:
-                        role = dict(employee._fields['healthcare_role'].selection).get(
-                            employee.healthcare_role, employee.healthcare_role
-                        )
+                    if employee and employee.access_role_display:
+                        role = employee.access_role_display
             rec.author_role = role or 'Staff'

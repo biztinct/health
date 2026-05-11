@@ -117,7 +117,7 @@
                                     </div>
                                     <div class="o_staff_role_indicator">
                                         <span class="o_role_badge">
-                                            <t t-esc="staff.healthcare_role || this.t('Staff')"/>
+                                            <t t-esc="staff.access_role_display || this.t('Staff')"/>
                                         </span>
                                     </div>
                                 </div>

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_duplicate_booking_wizard_form" model="ir.ui.view">
+        <field name="name">health.duplicate.booking.wizard.form</field>
+        <field name="model">health.duplicate.booking.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Duplicate Booking">
+                <sheet>
+                    <h2 style="margin-bottom: 20px;">
+                        <span class="fa fa-copy" style="margin-right: 10px; color: #1565C0;"/>
+                        Duplicate Booking
+                    </h2>
+                    <div class="alert alert-info" role="alert" style="margin-bottom: 16px;">
+                        All booking details (client, staff, location, services) will be copied.
+                        Choose the new date and time below.
+                    </div>
+                    <group>
+                        <group string="Date &amp; Time">
+                            <field name="source_fso_id" invisible="1"/>
+                            <field name="booking_date" string="Date"/>
+                            <field name="booking_time" string="Time" widget="time_picker"/>
+                            <field name="booking_duration" string="Duration (Hours)"/>
+                        </group>
+                    </group>
+                </sheet>
+                <footer>
+                    <button name="action_duplicate_booking" type="object"
+                            string="&#x2714; Create Duplicate" class="btn-primary"
+                            icon="fa-check-circle"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+</odoo>

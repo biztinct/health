@@ -130,7 +130,7 @@ class Facility(models.Model):
     facility_manager_id = fields.Many2one(
         'hr.employee',
         string='Operations Manager',
-        domain="[('healthcare_role', '=', 'operations_manager')]",
+        domain="[('is_om_role', '=', True)]",
         tracking=True
     )
     head_nurse_id = fields.Many2one('res.users', string='Head Nurse')

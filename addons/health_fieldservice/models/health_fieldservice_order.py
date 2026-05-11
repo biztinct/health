@@ -493,7 +493,7 @@ class HealthFieldServiceOrderUnified(models.Model):
             else:
                 record.order_line_count = 0
     
-    @api.depends('assignment_ids.staff_id', 'assignment_ids.assignment_role', 'assignment_ids.staff_id.healthcare_role')
+    @api.depends('assignment_ids.staff_id', 'assignment_ids.assignment_role', 'assignment_ids.staff_id.is_doctor_role')
     def _compute_assigned_staff(self):
         """Compute assigned staff from assignment records"""
         for record in self:
@@ -501,7 +501,7 @@ class HealthFieldServiceOrderUnified(models.Model):
                 lambda a: a.state != 'template'
                 and a.assignment_role != 'doctor'
                 and a.staff_id
-                and a.staff_id.healthcare_role != 'doctor'
+                and not a.staff_id.is_doctor_role
             ).mapped('staff_id.id')
             record.assigned_staff_ids = [(6, 0, staff_ids)]
 
@@ -518,7 +518,7 @@ class HealthFieldServiceOrderUnified(models.Model):
             for staff_id in staff_to_add:
                 staff = self.env['hr.employee'].browse(staff_id)
                 # Skip doctors here (handled separately via assigned_doctor_ids)
-                if staff.healthcare_role == 'doctor':
+                if staff.is_doctor_role:
                     continue
 
                 # Enforce single lead: first non-doctor is lead, subsequent are support
@@ -708,7 +708,7 @@ class HealthFieldServiceOrderUnified(models.Model):
         domain=[
             ('is_healthcare_staff', '=', True),
             ('employment_status', '=', 'active'),
-            ('healthcare_role', '!=', 'doctor'),
+            ('is_doctor_role', '=', False),
         ],
         help='All staff members assigned to this service (editable - creates/updates assignments)'
     )
@@ -725,7 +725,7 @@ class HealthFieldServiceOrderUnified(models.Model):
     primary_doctor_id = fields.Many2one(
         'hr.employee',
         string='Primary Doctor',
-        domain=[('is_healthcare_staff', '=', True), ('healthcare_role', '=', 'doctor'), ('employment_status', '=', 'active')],
+        domain=[('is_healthcare_staff', '=', True), ('is_doctor_role', '=', True), ('employment_status', '=', 'active')],
         tracking=True
     )
 
@@ -738,7 +738,7 @@ class HealthFieldServiceOrderUnified(models.Model):
         inverse='_inverse_assigned_doctors',
         store=False,
         readonly=False,
-        domain=[('is_healthcare_staff', '=', True), ('healthcare_role', '=', 'doctor'), ('employment_status', '=', 'active')],
+        domain=[('is_healthcare_staff', '=', True), ('is_doctor_role', '=', True), ('employment_status', '=', 'active')],
         help='Doctors assigned from staff assignments (editable - creates/updates assignments with doctor role)'
     )
 
@@ -1653,6 +1653,8 @@ class HealthFieldServiceOrderUnified(models.Model):
                 # Set actual end time if not set
                 if not record.actual_end_datetime:
                     record.actual_end_datetime = fields.Datetime.now()
+                record._update_patient_last_visit_date()
+                record._update_patient_next_visit_date()
                 # Send completion notifications
                 record._send_completion_notifications()
                 # Delete the template assignment for this booking
@@ -1925,6 +1927,14 @@ class HealthFieldServiceOrderUnified(models.Model):
         else:
             # No scheduled FSO found - clear the next_visit_date
             self.patient_id.write({'next_visit_date': False})
+
+    def _update_patient_last_visit_date(self):
+        self.ensure_one()
+        if not self.patient_id:
+            return
+        end_dt = self.actual_end_datetime or fields.Datetime.now()
+        if not self.patient_id.last_visit_date or end_dt > self.patient_id.last_visit_date:
+            self.patient_id.write({'last_visit_date': end_dt})
 
     def _check_confirmation_requirements(self):
         """
@@ -3353,10 +3363,28 @@ class HealthFieldServiceOrderUnified(models.Model):
             'view_mode': 'form',
             'target': 'new',
             'context': {
+                'default_client_id': self.patient_id.id if self.patient_id else False,
                 'default_client_name': self.patient_id.name if self.patient_id else '',
                 'default_client_phone': self.patient_phone or '',
                 'default_is_new_client': False,
-                'default_existing_patient_id': self.patient_id.id if self.patient_id else False,
+                'default_skip_client_step': True,
+                'default_current_step': '2_services',
+            },
+        }
+
+    def action_open_duplicate_booking_wizard(self):
+        """Open the duplicate booking wizard pre-filled with this booking's data"""
+        self.ensure_one()
+        duration_hours = (self.scheduled_duration or 60) / 60.0
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _('Duplicate Booking'),
+            'res_model': 'health.duplicate.booking.wizard',
+            'view_mode': 'form',
+            'target': 'new',
+            'context': {
+                'default_source_fso_id': self.id,
+                'default_booking_duration': duration_hours,
             },
         }
 

@@ -136,25 +136,26 @@ class SaleOrder(models.Model):
     def action_save_and_return_to_fso(self):
         """Save quote and return to parent FSO regardless of workflow path"""
         self.ensure_one()
-        
+
+        if self.env.context.get('from_booking_wizard') or self.env.context.get('from_services_wizard'):
+            return {'type': 'ir.actions.act_window_close'}
+
         # Find the related FSO
         fso = self.env['health.fieldservice.order'].search([('sale_order_id', '=', self.id)], limit=1)
-        
+
         if fso:
-            # Navigate directly to the FSO
             return {
                 'type': 'ir.actions.act_window',
                 'name': f'Field Service Order - {fso.name}',
                 'res_model': 'health.fieldservice.order',
                 'res_id': fso.id,
                 'view_mode': 'form',
-                'target': 'main',  # Replace the entire view stack
+                'target': 'main',
                 'context': {
                     'from_quote_save': True,
                 }
             }
         else:
-            # Show warning if no FSO found
             return {
                 'type': 'ir.actions.client',
                 'tag': 'display_notification',
@@ -166,6 +167,10 @@ class SaleOrder(models.Model):
                 }
             }
     
+    def action_wizard_save_quote(self):
+        """Save and close — used when quote is opened from a wizard modal"""
+        return {'type': 'ir.actions.act_window_close'}
+
     def get_healthcare_quote_view_id(self):
         """Get the correct view ID for healthcare quotes"""
         self.ensure_one()

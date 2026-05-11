@@ -444,6 +444,7 @@ class HealthLead(models.Model):
         ('head_nurse', 'Head Nurse'),
         ('om', 'Operations Manager'),
         ('duty_doctor', 'Duty Doctor'),
+        ('other', 'Other'),
     ], string='Escalated To',
        help='Person/role this contact was escalated to')
     

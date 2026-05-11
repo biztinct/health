@@ -5,7 +5,9 @@ from odoo.exceptions import UserError
 class ResPartner(models.Model):
     """Extend res.partner with assignment-related patient data"""
     _inherit = 'res.partner'
-    
+
+    last_visit_date = fields.Datetime('Last Visit', readonly=True)
+
     # Assignment preferences for patients
     preferred_staff_id = fields.Many2one(
         'hr.employee',

@@ -2001,9 +2001,9 @@ class HealthPWAAPIController(http.Controller):
             ], limit=1)
 
             is_doctor = False
-            if user.healthcare_role in ('doctor', 'duty_doctor'):
+            if employee and employee.is_doctor_role:
                 is_doctor = True
-            elif employee and hasattr(employee, 'healthcare_role') and employee.healthcare_role in ('doctor', 'duty_doctor'):
+            elif hasattr(user, 'is_doctor_role') and user.is_doctor_role:
                 is_doctor = True
 
             user_data = {

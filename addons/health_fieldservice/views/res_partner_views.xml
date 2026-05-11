@@ -73,4 +73,16 @@
         </field>
     </record>
 
+    <!-- Replace Client Journey timeline placeholder with actual timeline -->
+    <record id="view_partner_form_fso_timeline" model="ir.ui.view">
+        <field name="name">res.partner.form.fso.timeline</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="health_base.view_health_patient_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//page[@name='patient_journey']//div[contains(@class,'vu-detail-card')][last()]//div[contains(@class,'alert')]" position="replace">
+                <field name="timeline_html" widget="html" readonly="1" nolabel="1"/>
+            </xpath>
+        </field>
+    </record>
+
 </odoo>

@@ -86,12 +86,6 @@
                                         <field name="gender" readonly="1" nolabel="1"/>
                                     </span>
                                 </div>
-                                <div class="vu-summary-row">
-                                    <span class="vu-summary-row__label">Status</span>
-                                    <span class="vu-summary-row__value">
-                                        <field name="patient_status" nolabel="1"/>
-                                    </span>
-                                </div>
                             </div>
 
                             <!-- Contact -->
@@ -134,45 +128,8 @@
                                 </div>
                             </div>
 
-                            <!-- Category -->
-                            <div class="vu-summary-card">
-                                <div class="vu-summary-header">Category</div>
-                                <div class="vu-summary-row">
-                                    <span class="vu-summary-row__label">Category</span>
-                                    <span class="vu-summary-row__value">
-                                        <field name="patient_category_id" readonly="1" nolabel="1"/>
-                                    </span>
-                                </div>
-                                <div class="vu-summary-row">
-                                    <span class="vu-summary-row__label">Source</span>
-                                    <span class="vu-summary-row__value">
-                                        <field name="source_type" readonly="1" nolabel="1"/>
-                                    </span>
-                                </div>
-                            </div>
-
-                            <!-- Visits -->
-                            <div class="vu-summary-card">
-                                <div class="vu-summary-header">Visits</div>
-                                <div class="vu-summary-row">
-                                    <span class="vu-summary-row__label">Total</span>
-                                    <span class="vu-summary-row__value">
-                                        <field name="visit_count" readonly="1" nolabel="1"/>
-                                    </span>
-                                </div>
-                                <div class="vu-summary-row">
-                                    <span class="vu-summary-row__label">Last Visit</span>
-                                    <span class="vu-summary-row__value">
-                                        <field name="last_visit_date" readonly="1" nolabel="1"/>
-                                    </span>
-                                </div>
-                                <div class="vu-summary-row">
-                                    <span class="vu-summary-row__label">Next Visit</span>
-                                    <span class="vu-summary-row__value">
-                                        <field name="next_visit_date" readonly="1" nolabel="1"/>
-                                    </span>
-                                </div>
-                            </div>
+                            <!-- patient_status still needed as hidden field for other views -->
+                            <field name="patient_status" invisible="1"/>
 
                             <!-- Relationships -->
                             <div class="vu-summary-card" name="relationships_summary">
@@ -541,13 +498,6 @@
                             </div>
 
                             <div class="vu-action-panel" name="action_panel">
-
-                                <!-- Dashboard -->
-                                <button name="action_open_hub_spoke" type="object"
-                                        class="vu-action-item"
-                                        invisible="not is_patient">
-                                    <i class="fa fa-th-large"/> Dashboard
-                                </button>
 
                                 <!-- View Bookings -->
                                 <button name="action_view_appointments" type="object"

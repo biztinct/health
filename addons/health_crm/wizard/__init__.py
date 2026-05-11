@@ -9,3 +9,7 @@ from . import followup_wizard
 from . import booking_wizard
 from . import mail_activity_schedule_inherit
 from . import contact_action_wizard
+from . import duplicate_booking_wizard
+from . import recurring_booking_wizard
+from . import booking_summary_wizard
+from . import booking_services_wizard

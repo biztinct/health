@@ -9,10 +9,10 @@
         <field name="arch" type="xml">
             <form string="Create Booking">
                 <sheet>
-                    <!-- Step Progress Indicator -->
-                    <div style="margin-bottom: 20px; padding: 15px; background: linear-gradient(135deg, #0D47A1 0%, #1565C0 100%); border-radius: 8px;">
+                    <!-- Step Progress Indicator — 3-step (full wizard) -->
+                    <div style="margin-bottom: 20px; padding: 15px; background: linear-gradient(135deg, #0D47A1 0%, #1565C0 100%); border-radius: 8px;"
+                         invisible="skip_client_step">
                         <div style="display: flex; justify-content: space-between; align-items: center; color: white;">
-                            <!-- Step 1 Indicator -->
                             <div style="text-align: center; flex: 1;">
                                 <span style="background: white; color: #1565C0; padding: 8px 16px; border-radius: 20px; font-weight: bold;" invisible="current_step != '1_client'">
                                     1. Client Details
@@ -22,7 +22,6 @@
                                 </span>
                             </div>
                             <div style="width: 50px; height: 2px; background: rgba(255,255,255,0.3);"/>
-                            <!-- Step 2 Indicator -->
                             <div style="text-align: center; flex: 1;">
                                 <span style="background: white; color: #1565C0; padding: 8px 16px; border-radius: 20px; font-weight: bold;" invisible="current_step != '2_services'">
                                     2. Services
@@ -32,7 +31,6 @@
                                 </span>
                             </div>
                             <div style="width: 50px; height: 2px; background: rgba(255,255,255,0.3);"/>
-                            <!-- Step 3 Indicator -->
                             <div style="text-align: center; flex: 1;">
                                 <span style="background: white; color: #1565C0; padding: 8px 16px; border-radius: 20px; font-weight: bold;" invisible="current_step != '3_booking'">
                                     3. Booking
@@ -44,8 +42,33 @@
                         </div>
                     </div>
 
+                    <!-- Step Progress Indicator — 2-step (from existing booking) -->
+                    <div style="margin-bottom: 20px; padding: 15px; background: linear-gradient(135deg, #0D47A1 0%, #1565C0 100%); border-radius: 8px;"
+                         invisible="not skip_client_step">
+                        <div style="display: flex; justify-content: space-between; align-items: center; color: white;">
+                            <div style="text-align: center; flex: 1;">
+                                <span style="background: white; color: #1565C0; padding: 8px 16px; border-radius: 20px; font-weight: bold;" invisible="current_step != '2_services'">
+                                    1. Services
+                                </span>
+                                <span style="background: rgba(255,255,255,0.3); color: white; padding: 8px 16px; border-radius: 20px;" invisible="current_step == '2_services'">
+                                    1. Services
+                                </span>
+                            </div>
+                            <div style="width: 50px; height: 2px; background: rgba(255,255,255,0.3);"/>
+                            <div style="text-align: center; flex: 1;">
+                                <span style="background: white; color: #1565C0; padding: 8px 16px; border-radius: 20px; font-weight: bold;" invisible="current_step != '3_booking'">
+                                    2. Booking
+                                </span>
+                                <span style="background: rgba(255,255,255,0.3); color: white; padding: 8px 16px; border-radius: 20px;" invisible="current_step == '3_booking'">
+                                    2. Booking
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- Hidden fields -->
                     <field name="current_step" invisible="1"/>
+                    <field name="skip_client_step" invisible="1"/>
                     <field name="lead_id" invisible="1"/>
                     <field name="currency_id" invisible="1"/>
                     <field name="address_edit_mode" invisible="1"/>
@@ -115,15 +138,12 @@
                         </group>
                         
                         <separator string="Commission Details"/>
-                        
-                        <group>
+
+                        <group col="1">
                             <group>
                                 <field name="commission_due_to" string="Commission Due To"/>
                                 <field name="commission_percentage" string="Commission %"/>
                                 <field name="commission_duration" string="Duration"/>
-                            </group>
-                            <group>
-                                <field name="service_fee_vnd" string="Service Fee (VND)"/>
                             </group>
                         </group>
                     </div>
@@ -134,11 +154,13 @@
                             <span class="fa fa-calendar" style="margin-right: 10px; color: #1565C0;"/>
                             Booking Details
                         </h2>
-                        
+
                         <group>
-                            <group string="Location &amp; Facility">
-                                <field name="catchment_province_id" string="Catchment Province"/>
-                                <field name="facility_id" string="Healthcare Facility"/>
+                            <group>
+                                <group string="Location &amp; Facility">
+                                    <field name="catchment_province_id" string="Catchment Province"/>
+                                    <field name="facility_id" string="Healthcare Facility"/>
+                                </group>
                             </group>
                             <group string="Date &amp; Time">
                                 <field name="booking_date" string="Date"/>
@@ -146,11 +168,11 @@
                                 <field name="booking_duration" string="Duration (Hours)"/>
                             </group>
                         </group>
-                        
-                        <group>
-                            <field name="booking_notes" string="Additional Notes" nolabel="1"
-                                   placeholder="Any special instructions or notes..."/>
-                        </group>
+
+                        <!-- Notes - full width -->
+                        <field name="booking_notes" nolabel="1"
+                               placeholder="Any special instructions or notes..."
+                               style="min-height: 60px;"/>
                     </div>
 
 
@@ -163,11 +185,11 @@
                             string="&#x2190; Back to Contact" class="btn-secondary"
                             icon="fa-arrow-left"/>
 
-                    <!-- Previous Step (not on step 1) -->
+                    <!-- Previous Step (not on first visible step) -->
                     <button name="action_prev_step" type="object"
                             string="&#x2190; Previous" class="btn-secondary"
                             icon="fa-chevron-left"
-                            invisible="current_step == '1_client'"/>
+                            invisible="current_step == '1_client' or (skip_client_step and current_step == '2_services')"/>
 
                     <!-- Next Step (not on final step) -->
                     <button name="action_next_step" type="object"

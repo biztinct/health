@@ -500,9 +500,9 @@ class HealthFieldserviceOrder(models.Model):
         return res
 
     def cancel_with_reason(self, cancellation_reason_id, cancellation_notes):
-        """Release package services if booking is cancelled."""
+        """Release package services if booking is cancelled (only if previously confirmed)."""
         for order in self:
-            if order.package_ids:
+            if order.package_ids and order.state in ('confirmed', 'assigned', 'in_progress'):
                 order._release_package_service()
         return super().cancel_with_reason(cancellation_reason_id, cancellation_notes)
 

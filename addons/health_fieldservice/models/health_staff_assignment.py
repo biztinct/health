@@ -1841,7 +1841,7 @@ class HealthStaffAssignmentEngine(models.Model):
             staff_data.append({
                 'id': staff.id,
                 'name': staff.name,
-                'role': staff.healthcare_role.title() if staff.healthcare_role else 'Healthcare Staff',
+                'role': staff.access_role_display or 'Healthcare Staff',
                 'status': status,
                 'statusText': status_text,
                 'appointmentCount': len(staff_assignments),
@@ -1931,7 +1931,7 @@ class HealthStaffAssignmentEngine(models.Model):
         # Create simple suggestions based on available staff
         suggestion_text = []
         for i, staff in enumerate(available_staff, 1):
-            job_title = staff.healthcare_role.title() if staff.healthcare_role else 'Healthcare Staff'
+            job_title = staff.access_role_display or 'Healthcare Staff'
             score = 85 + (i * 2)  # Simple scoring for demo
             suggestion_text.append(
                 f"{i}. {staff.name} ({job_title}) - Score: {score}%"

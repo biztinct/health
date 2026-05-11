@@ -31,8 +31,10 @@ export class TimePickerWidget extends Component {
         this.manualInputRef = useRef("manualInput");
         onPatched(() => {
             if (this.state.editingManual && this.manualInputRef.el) {
-                this.manualInputRef.el.focus();
-                this.manualInputRef.el.select();
+                const el = this.manualInputRef.el;
+                el.focus();
+                const len = el.value.length;
+                el.setSelectionRange(len, len);
             }
         });
     }

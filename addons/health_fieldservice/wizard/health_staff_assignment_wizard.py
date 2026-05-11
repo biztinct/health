@@ -54,7 +54,7 @@ class HealthStaffAssignmentWizard(models.TransientModel):
     doctor_id = fields.Many2one(
         'hr.employee',
         string='Assign Doctor',
-        domain="[('is_healthcare_staff', '=', True), ('healthcare_role', '=', 'doctor'), ('employment_status', '=', 'active')]",
+        domain="[('is_healthcare_staff', '=', True), ('is_doctor_role', '=', True), ('employment_status', '=', 'active')]",
         help='Optional: Assign a doctor to this service'
     )
 

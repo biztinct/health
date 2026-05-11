@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Add package_id to Services & Assignment Wizard -->
+    <record id="view_booking_services_wizard_form_package" model="ir.ui.view">
+        <field name="name">health.booking.services.wizard.form.package</field>
+        <field name="model">health.booking.services.wizard</field>
+        <field name="inherit_id" ref="health_crm.view_booking_services_wizard_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//group[@name='services_group']/field[@name='create_quote']" position="before">
+                <field name="package_id" string="Select Prepaid Package"
+                       options="{'no_create': True, 'no_open': True}"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

@@ -2,3 +2,4 @@
 
 from . import health_payment_workflow_wizard
 from . import service_package_wizard
+from . import booking_wizard_package

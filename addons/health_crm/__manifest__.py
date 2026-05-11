@@ -1,6 +1,6 @@
 {
     'name': 'VAFHS Healthcare CRM Integration',
-    'version': '19.0.1.0.0',
+    'version': '19.0.1.1.0',
     'category': 'Healthcare/CRM',
     'summary': 'Healthcare CRM integration inheriting from standard Odoo CRM',
     'description': """
@@ -67,7 +67,11 @@
         'wizard/booking_cancellation_wizard_views.xml',
         'wizard/followup_wizard_views.xml',
         'wizard/booking_wizard_views.xml',
-        
+        'wizard/duplicate_booking_wizard_views.xml',
+        'wizard/recurring_booking_wizard_views.xml',
+        'wizard/booking_summary_wizard_views.xml',
+        'wizard/booking_services_wizard_views.xml',
+
         # Views - CRM Extensions
         'views/health_client_relation_views.xml',
         'views/relationship_network_view.xml',  # Section 2.2 Option B - D3.js network graph

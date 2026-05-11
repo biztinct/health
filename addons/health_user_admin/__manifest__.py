@@ -1,6 +1,6 @@
 {
     'name': 'Healthcare User Administration',
-    'version': '19.0.1.11.0',
+    'version': '19.0.2.0.0',
     'category': 'Healthcare',
     'summary': 'SaaS-safe user and role management for healthcare tenants',
     'description': """

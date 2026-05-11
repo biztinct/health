@@ -44,6 +44,7 @@ class HealthEscalationWizard(models.TransientModel):
         ('duty_doctor', 'Duty Doctor'),
         ('head_nurse', 'Head Nurse'),
         ('om', 'Operations Manager'),
+        ('other', 'Other'),
     ], string='Escalate To', required=True,
        help='Person/role to escalate this contact to')
     
@@ -123,23 +124,22 @@ class HealthEscalationWizard(models.TransientModel):
         if not self.escalate_to:
             return {}
 
-        role_mapping = {
-            'duty_doctor': 'doctor',
-            'head_nurse': 'head_nurse',
-            'om': 'operations_manager',
-        }
-        healthcare_role = role_mapping.get(self.escalate_to)
-        if not healthcare_role:
-            return {}
-
         domain = [
             ('is_healthcare_staff', '=', True),
             ('employment_status', '=', 'active'),
-            ('healthcare_role', '=', healthcare_role),
         ]
+
         catchment_province = self.lead_id.catchment_province_id if self.lead_id else False
         if catchment_province:
             domain.append(('primary_facility_id.catchment_province_id', '=', catchment_province.id))
+
+        if self.escalate_to == 'duty_doctor':
+            domain.extend([('is_doctor_role', '=', True), ('is_duty_doctor', '=', True)])
+        elif self.escalate_to == 'head_nurse':
+            domain.extend([('is_nurse_role', '=', True), ('is_head_nurse', '=', True)])
+        elif self.escalate_to == 'om':
+            domain.append(('is_om_role', '=', True))
+        # 'other' — no additional role filter, show all staff in catchment
 
         return {'domain': {'escalate_to_employee_id': domain}}
 
@@ -168,75 +168,46 @@ class HealthEscalationWizard(models.TransientModel):
         Returns the first matching user.
         """
         self.ensure_one()
-        
-        if not self.escalate_to:
+
+        if not self.escalate_to or self.escalate_to == 'other':
             return False
-        
-        User = self.env['res.users']
+
         Employee = self.env['hr.employee']
-        
-        # Get the lead's catchment province
         catchment_province = self.lead_id.catchment_province_id if self.lead_id else False
-        
-        # Map escalate_to selection to healthcare_role
-        role_mapping = {
-            'duty_doctor': 'duty_doctor',
-            'head_nurse': 'head_nurse',
-            'om': 'operations_manager',
-        }
-        healthcare_role = role_mapping.get(self.escalate_to)
-        
-        if not healthcare_role:
-            return False
-        
-        # First try to find by user's catchment_province_id and healthcare_role
-        user_domain = [
-            ('active', '=', True),
-            ('healthcare_role', '=', healthcare_role),
-        ]
-        
-        if catchment_province:
-            # Try with catchment province filter first
-            user_domain.append(('catchment_province_id', '=', catchment_province.id))
-            user = User.search(user_domain, limit=1)
-            if user:
-                return user
-            
-            # If not found, try without catchment province filter
-            user_domain = [
-                ('active', '=', True),
-                ('healthcare_role', '=', healthcare_role),
-            ]
-        
-        user = User.search(user_domain, limit=1)
-        if user:
-            return user
-        
-        # Try finding via employee record
-        employee_domain = [
+
+        domain = [
             ('active', '=', True),
             ('is_healthcare_staff', '=', True),
-            ('healthcare_role', '=', healthcare_role),
             ('user_id', '!=', False),
         ]
-        
-        employee = Employee.search(employee_domain, limit=1)
-        if employee and employee.user_id:
-            return employee.user_id
-        
-        # Fallback to first admin user (using sudo to access internal users)
-        # Find any user that has admin access
+
+        if self.escalate_to == 'duty_doctor':
+            domain.extend([('is_doctor_role', '=', True), ('is_duty_doctor', '=', True)])
+        elif self.escalate_to == 'head_nurse':
+            domain.extend([('is_nurse_role', '=', True), ('is_head_nurse', '=', True)])
+        elif self.escalate_to == 'om':
+            domain.append(('is_om_role', '=', True))
+
+        if catchment_province:
+            emp = Employee.search(
+                domain + [('primary_facility_id.catchment_province_id', '=', catchment_province.id)],
+                limit=1,
+            )
+            if emp and emp.user_id:
+                return emp.user_id
+
+        emp = Employee.search(domain, limit=1)
+        if emp and emp.user_id:
+            return emp.user_id
+
         try:
             admin_group = self.env.ref('base.group_system', raise_if_not_found=False)
-            if admin_group:
-                admin_users = admin_group.users
-                if admin_users:
-                    return admin_users[0]
+            if admin_group and admin_group.users:
+                return admin_group.users[0]
         except Exception:
             pass
-        
-        # Final fallback - return first active internal user
-        return User.search([('active', '=', True), ('share', '=', False)], limit=1)
+
+        return self.env['res.users'].search([('active', '=', True), ('share', '=', False)], limit=1)
     
     # =========================================================================
     # WIZARD ACTIONS

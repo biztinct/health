@@ -49,6 +49,10 @@
                 </header>
                 <sheet>
                     <div class="oe_button_box" name="button_box">
+                        <button name="action_open_staff_details" type="object"
+                                class="oe_stat_button" icon="fa-user-md">
+                            <span>Staff Details</span>
+                        </button>
                         <button name="action_saas_reset_password" type="object"
                                 class="oe_stat_button" icon="fa-key"
                                 groups="health_user_admin.group_health_user_admin">

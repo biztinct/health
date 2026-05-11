@@ -49,8 +49,9 @@
                          ======================================================== -->
                     <div class="d-flex justify-content-between align-items-center mb-2" style="width: 100%;">
                         <div class="d-flex align-items-center gap-2">
-                            <h1 class="mb-0" style="font-size: 1.15rem;">
-                                <field name="display_name" readonly="1"/>
+                            <h1 class="mb-0 d-flex align-items-baseline gap-3">
+                                <span class="fw-bold">Booking</span>
+                                <span class="fw-normal"><field name="display_name" readonly="1" class="d-inline"/></span>
                             </h1>
                             <field name="priority" widget="priority"/>
                         </div>
@@ -528,14 +529,34 @@
                              ==================================================== -->
                         <div class="vu-col-actions">
 
-                            <!-- ── DRAFT: Confirm Client ── -->
-                            <div class="vu-action-card vu-action-card--primary vu-show-on-draft"
-                                 invisible="state != 'draft'">
+                            <!-- ── DRAFT without Quote: Create Quote ── -->
+                            <div name="draft_create_quote_card"
+                                 class="vu-action-card vu-action-card--primary vu-show-on-draft"
+                                 invisible="state != 'draft' or sale_order_id">
+                                <div class="vu-action-card__title">
+                                    <i class="fa fa-file-text-o"/> Next: Create Quote
+                                </div>
+                                <div class="vu-action-card__subtitle">
+                                    Create a quote for this booking before confirming with the client.
+                                </div>
+                                <div class="vu-action-card__actions">
+                                    <button name="action_create_and_open_quote" type="object"
+                                            class="vu-action-btn vu-action-btn--primary"
+                                            groups="health_base.group_healthcare_operations_manager">
+                                        <i class="fa fa-file-text-o"/> Create Quote
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- ── DRAFT with Quote: Confirm Client ── -->
+                            <div name="draft_confirm_client_card"
+                                 class="vu-action-card vu-action-card--primary vu-show-on-draft"
+                                 invisible="state != 'draft' or not sale_order_id">
                                 <div class="vu-action-card__title">
                                     <i class="fa fa-check-circle"/> Next: Confirm with Client
                                 </div>
                                 <div class="vu-action-card__subtitle">
-                                    Contact the client to confirm this booking, then click Confirm.
+                                    Quote created. Contact the client to confirm this booking, then click Confirm.
                                 </div>
                                 <div class="vu-action-card__actions">
                                     <button name="action_confirm_booking" type="object"
@@ -644,6 +665,13 @@
                                     class="vu-action-item"
                                     invisible="not patient_id">
                                 <i class="fa fa-id-card-o"/> Client Details
+                            </button>
+
+                            <!-- Duplicate Booking -->
+                            <button name="action_open_duplicate_booking_wizard" type="object"
+                                    class="vu-action-item"
+                                    invisible="state in ('cancelled', 'closed')">
+                                <i class="fa fa-copy"/> Duplicate Booking
                             </button>
 
                             <!-- New Booking (wizard) -->

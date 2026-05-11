@@ -48,7 +48,8 @@ class ResUsersSaaS(models.Model):
         # Whitelist allowed fields
         safe_vals = {}
         allowed_fields = {'name', 'login', 'password', 'phone', 'access_role_id',
-                          'company_id', 'company_ids', 'lang', 'tz'}
+                          'company_id', 'company_ids', 'lang', 'tz',
+                          'is_duty_doctor', 'is_head_nurse', 'catchment_province_id'}
         for key in vals:
             if key in allowed_fields:
                 safe_vals[key] = vals[key]
@@ -102,6 +103,30 @@ class ResUsersSaaS(models.Model):
                     "Cannot reset password for system administrator '%s'.", user.name
                 ))
         self.sudo().action_reset_password()
+
+    def action_open_staff_details(self):
+        self.ensure_one()
+        employee = self.get_employee_record()
+        if not employee:
+            return {
+                'type': 'ir.actions.client',
+                'tag': 'display_notification',
+                'params': {
+                    'title': _('No Employee Record'),
+                    'message': _('No employee record found for this user.'),
+                    'type': 'warning',
+                    'sticky': False,
+                },
+            }
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _('Staff Details'),
+            'res_model': 'hr.employee',
+            'res_id': employee.id,
+            'view_mode': 'form',
+            'view_id': self.env.ref('health_fieldservice.view_healthcare_staff_form').id,
+            'target': 'current',
+        }
 
     def _check_user_admin_access(self):
         """Verify the current user has the Healthcare User Admin group or is a system admin."""

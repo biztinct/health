@@ -20,7 +20,10 @@
                         </group>
                         <group string="Access &amp; Role">
                             <field name="access_role_id"/>
-                            <field name="healthcare_role"/>
+                            <field name="show_duty_doctor" invisible="1"/>
+                            <field name="show_head_nurse" invisible="1"/>
+                            <field name="is_duty_doctor" invisible="not show_duty_doctor"/>
+                            <field name="is_head_nurse" invisible="not show_head_nurse"/>
                         </group>
                     </group>
                     <group>
@@ -28,6 +31,14 @@
                             <field name="employment_status"/>
                             <field name="employment_type"/>
                         </group>
+                        <group string="Location Assignment">
+                            <field name="is_owner_role" invisible="1"/>
+                            <field name="catchment_province_id" options="{'no_create': True}"
+                                   required="not is_owner_role"/>
+                            <field name="healthcare_facility_id" options="{'no_create': True}"/>
+                        </group>
+                    </group>
+                    <group>
                         <group string="Regional Settings">
                             <field name="company_id" groups="base.group_multi_company"
                                    options="{'no_create': True}"/>

@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from odoo import models, fields
 
+
 class HrEmployeePublic(models.Model):
     _inherit = 'hr.employee.public'
 
@@ -23,7 +24,17 @@ class HrEmployeePublic(models.Model):
         ('admin', 'Admin'),
         ('owner', 'Owner'),
         ('accountant', 'Accountant'),
-    ], string='Healthcare Role', compute='_compute_healthcare_flags', readonly=True)
+    ], string='Healthcare Role (Deprecated)', compute='_compute_healthcare_flags', readonly=True)
+
+    access_role_display = fields.Char(
+        string='Role', compute='_compute_healthcare_flags', readonly=True,
+    )
+    is_doctor_role = fields.Boolean(
+        compute='_compute_healthcare_flags', readonly=True,
+    )
+    is_nurse_role = fields.Boolean(
+        compute='_compute_healthcare_flags', readonly=True,
+    )
 
     def _compute_healthcare_flags(self):
         employees = {emp.id: emp for emp in self.env['hr.employee'].sudo().browse(self.ids)}
@@ -31,3 +42,6 @@ class HrEmployeePublic(models.Model):
             emp = employees.get(public_rec.id)
             public_rec.is_healthcare_staff = bool(emp and emp.is_healthcare_staff)
             public_rec.healthcare_role = emp.healthcare_role if emp else False
+            public_rec.access_role_display = emp.access_role_display if emp else ''
+            public_rec.is_doctor_role = emp.is_doctor_role if emp else False
+            public_rec.is_nurse_role = emp.is_nurse_role if emp else False

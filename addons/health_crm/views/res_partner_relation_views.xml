@@ -25,4 +25,20 @@
         </field>
     </record>
 
+    <!-- Add Recurring Booking button to patient action panel -->
+    <record id="view_health_patient_form_recurring_booking" model="ir.ui.view">
+        <field name="name">res.partner.patient.form.recurring.booking</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="health_base.view_health_patient_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//button[@name='action_view_appointments']" position="after">
+                <button name="action_create_recurring_booking" type="object"
+                        class="vu-action-item"
+                        invisible="not is_patient">
+                    <i class="fa fa-repeat"/> Create Recurring Booking
+                </button>
+            </xpath>
+        </field>
+    </record>
+
 </odoo>

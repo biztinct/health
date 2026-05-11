@@ -53,7 +53,8 @@
                             <!-- Role-filtered person dropdown -->
                             <field name="escalate_to_employee_id" string="Person"
                                    options="{'no_create': True}"
-                                   invisible="not escalate_to"/>
+                                   invisible="not escalate_to"
+                                   required="escalate_to == 'other'"/>
 
                             <field name="escalate_to_user_id" invisible="1"/>
                             <field name="urgency" widget="radio" options="{'horizontal': true}"/>

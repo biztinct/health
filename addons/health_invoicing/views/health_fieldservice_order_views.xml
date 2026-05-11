@@ -145,6 +145,43 @@
         <field name="model">health.fieldservice.order</field>
         <field name="inherit_id" ref="health_fieldservice.view_health_fieldservice_order_form"/>
         <field name="arch" type="xml">
+
+            <!-- DRAFT without Quote/Package: also hide when package_ids present -->
+            <xpath expr="//div[@name='draft_create_quote_card']" position="attributes">
+                <attribute name="invisible">state != 'draft' or sale_order_id or package_ids</attribute>
+            </xpath>
+
+            <!-- Add Prepaid Package button next to Create Quote in primary card -->
+            <xpath expr="//div[@name='draft_create_quote_card']//button[@name='action_create_and_open_quote']" position="after">
+                <button name="action_open_service_package_wizard" type="object"
+                        class="vu-action-btn vu-action-btn--secondary"
+                        groups="health_invoicing.group_health_invoicing_user">
+                    <i class="fa fa-cube"/> Prepaid Package
+                </button>
+            </xpath>
+
+            <!-- DRAFT with Quote/Package: also show when package_ids present -->
+            <xpath expr="//div[@name='draft_confirm_client_card']" position="attributes">
+                <attribute name="invisible">state != 'draft' or (not sale_order_id and not package_ids)</attribute>
+            </xpath>
+
+            <!-- Update subtitle to reflect package option -->
+            <xpath expr="//div[@name='draft_confirm_client_card']//div[contains(@class,'vu-action-card__subtitle')]" position="replace">
+                <div class="vu-action-card__subtitle">
+                    Quote or package assigned. Contact the client to confirm this booking, then click Confirm.
+                </div>
+            </xpath>
+
+            <!-- Add Create Quote button in confirm card (when only package, no quote yet) -->
+            <xpath expr="//div[@name='draft_confirm_client_card']//button[@name='action_confirm_booking']" position="before">
+                <button name="action_create_and_open_quote" type="object"
+                        class="vu-action-btn vu-action-btn--secondary"
+                        invisible="sale_order_id"
+                        groups="health_base.group_healthcare_operations_manager">
+                    <i class="fa fa-file-text-o"/> Create Quote
+                </button>
+            </xpath>
+
             <xpath expr="//button[@name='action_view_quote']" position="after">
                 <button type="object" name="action_open_service_package_wizard"
                         class="vu-action-item"

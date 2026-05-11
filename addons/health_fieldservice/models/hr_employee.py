@@ -69,13 +69,11 @@ class HrEmployee(models.Model):
         help='Healthcare facility this staff belongs to. Used to filter staff by catchment province matching client area.'
     )
     
-    # Related field to get catchment province from healthcare facility
     staff_catchment_province_id = fields.Many2one(
         'health.catchment.province',
-        string='Staff Catchment Province',
-        related='healthcare_facility_id.catchment_province_id',
+        string='Catchment Province',
         store=True,
-        help='Catchment province derived from the healthcare facility'
+        help='Catchment province for this staff member. Select province first to filter healthcare facilities.'
     )
     
     # Service Capabilities
@@ -331,6 +329,16 @@ class HrEmployee(models.Model):
         """Compute invoice creation permission based on employment type"""
         for employee in self:
             employee.can_create_invoices = employee.employment_type == 'full_time'
+
+    @api.onchange('healthcare_facility_id')
+    def _onchange_healthcare_facility_id(self):
+        if self.healthcare_facility_id and self.healthcare_facility_id.catchment_province_id:
+            self.staff_catchment_province_id = self.healthcare_facility_id.catchment_province_id
+
+    @api.onchange('staff_catchment_province_id')
+    def _onchange_staff_catchment_province_id(self):
+        if self.healthcare_facility_id and self.healthcare_facility_id.catchment_province_id != self.staff_catchment_province_id:
+            self.healthcare_facility_id = False
 
     @api.depends('user_id')
     def _compute_current_assignments(self):
@@ -614,7 +622,7 @@ class HrEmployee(models.Model):
             'staff_info': {
                 'id': staff.id,
                 'name': staff.name,
-                'role': staff.healthcare_role,
+                'role': staff.access_role_display or 'Staff',
                 'current_status': staff.assignment_status,
                 'current_load': staff.current_load_percentage
             },

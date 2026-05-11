@@ -14,7 +14,7 @@
                 
                 <field name="name"/>
                 <field name="job_id"/>
-                <field name="healthcare_role"/>
+                <field name="access_role_display" string="Role"/>
                 <field name="work_email"/>
                 <field name="work_phone"/>
                 <field name="employment_status"/>
@@ -44,14 +44,21 @@
                     <group>
                         <group string="Healthcare Role and Status">
                             <field name="is_healthcare_staff"/>
-                            <field name="healthcare_role" required="is_healthcare_staff"/>
+                            <field name="access_role_id" readonly="1" string="Access Role"/>
+                            <field name="is_doctor_role" invisible="1"/>
+                            <field name="is_nurse_role" invisible="1"/>
+                            <field name="is_duty_doctor" invisible="not is_doctor_role"/>
+                            <field name="is_head_nurse" invisible="not is_nurse_role"/>
                             <field name="employment_status" required="is_healthcare_staff"/>
                             <field name="employment_type" required="is_healthcare_staff"
                                    help="Full-time staff can create invoices; Part-time/Casual require Operations invoicing"/>
                             <field name="can_create_invoices" readonly="1"
                                    invisible="not is_healthcare_staff"/>
                             <field name="license_number"/>
+                            <field name="staff_catchment_province_id" string="Catchment Province"
+                                   options="{'no_create': True}"/>
                             <field name="healthcare_facility_id" options="{'no_create': True}"
+                                   domain="[('catchment_province_id', '=', staff_catchment_province_id)]"
                                    help="Staff's healthcare facility - determines catchment province for booking assignments"/>
                             <field name="certification_expiry"/>
                         </group>

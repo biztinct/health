@@ -43,7 +43,7 @@ class StaffWorkloadDashboard extends Component {
             const staffMembers = await this.orm.searchRead(
                 "hr.employee",
                 [['is_healthcare_staff', '=', true]],
-                ['name', 'healthcare_role', 'employment_status']
+                ['name', 'access_role_display', 'employment_status']
             );
             
             // Debug: Log staff data to check names are loading

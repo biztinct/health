@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_recurring_booking_wizard_form" model="ir.ui.view">
+        <field name="name">health.recurring.booking.wizard.form</field>
+        <field name="model">health.recurring.booking.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Recurring Booking">
+                <sheet>
+                    <!-- Step Progress Indicator -->
+                    <div style="margin-bottom: 20px; padding: 15px; background: linear-gradient(135deg, #0D47A1 0%, #1565C0 100%); border-radius: 8px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; color: white;">
+                            <div style="text-align: center; flex: 1;">
+                                <span style="background: white; color: #1565C0; padding: 8px 16px; border-radius: 20px; font-weight: bold;" invisible="current_step != '1_services'">
+                                    1. Services
+                                </span>
+                                <span style="background: rgba(255,255,255,0.3); color: white; padding: 8px 16px; border-radius: 20px;" invisible="current_step == '1_services'">
+                                    1. Services
+                                </span>
+                            </div>
+                            <div style="width: 50px; height: 2px; background: rgba(255,255,255,0.3);"/>
+                            <div style="text-align: center; flex: 1;">
+                                <span style="background: white; color: #1565C0; padding: 8px 16px; border-radius: 20px; font-weight: bold;" invisible="current_step != '2_recurrence'">
+                                    2. Schedule
+                                </span>
+                                <span style="background: rgba(255,255,255,0.3); color: white; padding: 8px 16px; border-radius: 20px;" invisible="current_step == '2_recurrence'">
+                                    2. Schedule
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Hidden fields -->
+                    <field name="current_step" invisible="1"/>
+                    <field name="client_id" invisible="1"/>
+                    <field name="currency_id" invisible="1"/>
+
+                    <!-- STEP 1: Service Requirements -->
+                    <div invisible="current_step != '1_services'">
+                        <h2 style="margin-bottom: 20px;">
+                            <span class="fa fa-stethoscope" style="margin-right: 10px; color: #1565C0;"/>
+                            Service Requirements
+                        </h2>
+
+                        <group>
+                            <group string="Service Selection">
+                                <field name="service_category" string="Category"/>
+                                <field name="service_type" string="Service Type"/>
+                                <field name="service_subcategory" string="Sub-Category"/>
+                                <field name="service_location" string="Service Location"/>
+                            </group>
+                            <group string="Service Notes">
+                            </group>
+                        </group>
+                        <group>
+                            <field name="service_notes" nolabel="1" placeholder="Additional service requirements..." colspan="2"/>
+                        </group>
+
+                        <separator string="Commission Details"/>
+                        <group col="1">
+                            <group>
+                                <field name="commission_due_to"/>
+                                <field name="commission_percentage"/>
+                                <field name="commission_duration"/>
+                            </group>
+                        </group>
+                    </div>
+
+                    <!-- STEP 2: Recurrence & Location -->
+                    <div invisible="current_step != '2_recurrence'">
+                        <h2 style="margin-bottom: 20px;">
+                            <span class="fa fa-repeat" style="margin-right: 10px; color: #1565C0;"/>
+                            Recurring Schedule
+                        </h2>
+
+                        <group>
+                            <group string="Repeat On">
+                                <!-- Day selector as horizontal toggle row -->
+                                <div colspan="2" class="d-flex gap-2 mb-3 ms-2">
+                                    <div class="d-flex flex-column align-items-center">
+                                        <label for="day_mon" string="Mon" style="font-size: 12px; margin-bottom: 2px; font-weight: 500;"/>
+                                        <field name="day_mon" widget="boolean_toggle" nolabel="1"/>
+                                    </div>
+                                    <div class="d-flex flex-column align-items-center">
+                                        <label for="day_tue" string="Tue" style="font-size: 12px; margin-bottom: 2px; font-weight: 500;"/>
+                                        <field name="day_tue" widget="boolean_toggle" nolabel="1"/>
+                                    </div>
+                                    <div class="d-flex flex-column align-items-center">
+                                        <label for="day_wed" string="Wed" style="font-size: 12px; margin-bottom: 2px; font-weight: 500;"/>
+                                        <field name="day_wed" widget="boolean_toggle" nolabel="1"/>
+                                    </div>
+                                    <div class="d-flex flex-column align-items-center">
+                                        <label for="day_thu" string="Thu" style="font-size: 12px; margin-bottom: 2px; font-weight: 500;"/>
+                                        <field name="day_thu" widget="boolean_toggle" nolabel="1"/>
+                                    </div>
+                                    <div class="d-flex flex-column align-items-center">
+                                        <label for="day_fri" string="Fri" style="font-size: 12px; margin-bottom: 2px; font-weight: 500;"/>
+                                        <field name="day_fri" widget="boolean_toggle" nolabel="1"/>
+                                    </div>
+                                    <div class="d-flex flex-column align-items-center">
+                                        <label for="day_sat" string="Sat" style="font-size: 12px; margin-bottom: 2px; font-weight: 500;"/>
+                                        <field name="day_sat" widget="boolean_toggle" nolabel="1"/>
+                                    </div>
+                                    <div class="d-flex flex-column align-items-center">
+                                        <label for="day_sun" string="Sun" style="font-size: 12px; margin-bottom: 2px; font-weight: 500;"/>
+                                        <field name="day_sun" widget="boolean_toggle" nolabel="1"/>
+                                    </div>
+                                </div>
+                                <field name="booking_time" string="Time" widget="time_picker"/>
+                                <field name="booking_duration" string="Duration (Hours)"/>
+                                <field name="date_start" string="Start Date"/>
+                                <field name="date_end" string="End Date"/>
+                            </group>
+                            <group string="Location &amp; Facility">
+                                <field name="catchment_province_id" string="Catchment Province"/>
+                                <field name="facility_id" string="Healthcare Facility"/>
+                            </group>
+                        </group>
+
+                        <!-- Notes - full width -->
+                        <field name="booking_notes" nolabel="1"
+                               placeholder="Any special instructions or notes..."
+                               style="min-height: 60px;"/>
+
+                        <!-- Booking Preview -->
+                        <div class="alert alert-info d-flex align-items-center" role="alert"
+                             style="margin-top: 12px; border-radius: 8px;">
+                            <i class="fa fa-calendar-check-o fa-lg me-3" style="color: #1565C0;"/>
+                            <div>
+                                <strong>
+                                    <field name="booking_count" readonly="1" nolabel="1" class="d-inline"/>
+                                    bookings will be created
+                                </strong>
+                                <div class="text-muted" style="font-size: 13px;">
+                                    <field name="booking_summary" readonly="1" nolabel="1"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </sheet>
+
+                <footer>
+                    <!-- Previous (step 2 only) -->
+                    <button name="action_prev_step" type="object"
+                            string="&#x2190; Previous" class="btn-secondary"
+                            icon="fa-chevron-left"
+                            invisible="current_step == '1_services'"/>
+
+                    <!-- Next (step 1 only) -->
+                    <button name="action_next_step" type="object"
+                            string="Next &#x2192;" class="btn-primary"
+                            icon="fa-chevron-right"
+                            invisible="current_step != '1_services'"/>
+
+                    <!-- Create Bookings (step 2 only) -->
+                    <button name="action_create_recurring_bookings" type="object"
+                            string="&#x2714; Create Recurring Bookings" class="btn-primary"
+                            icon="fa-check-circle"
+                            invisible="current_step != '2_recurrence'"/>
+
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+</odoo>

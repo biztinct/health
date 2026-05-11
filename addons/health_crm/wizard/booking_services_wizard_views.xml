@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_booking_services_wizard_form" model="ir.ui.view">
+        <field name="name">health.booking.services.wizard.form</field>
+        <field name="model">health.booking.services.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Add Services &amp; Assignment">
+                <sheet>
+                    <field name="current_step" invisible="1"/>
+                    <field name="facility_id" invisible="1"/>
+                    <field name="client_id" invisible="1"/>
+
+                    <!-- Step Progress -->
+                    <div style="margin-bottom: 20px; padding: 12px; background: linear-gradient(135deg, #0D47A1 0%, #1565C0 100%); border-radius: 8px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; color: white;">
+                            <div style="text-align: center; flex: 1;">
+                                <span style="background: white; color: #1565C0; padding: 6px 14px; border-radius: 20px; font-weight: bold;"
+                                      invisible="current_step != '1_services'">
+                                    1. Services
+                                </span>
+                                <span style="background: rgba(255,255,255,0.3); color: white; padding: 6px 14px; border-radius: 20px;"
+                                      invisible="current_step == '1_services'">
+                                    1. Services
+                                </span>
+                            </div>
+                            <div style="width: 50px; height: 2px; background: rgba(255,255,255,0.3);"/>
+                            <div style="text-align: center; flex: 1;">
+                                <span style="background: white; color: #1565C0; padding: 6px 14px; border-radius: 20px; font-weight: bold;"
+                                      invisible="current_step != '2_assignment'">
+                                    2. Assignment
+                                </span>
+                                <span style="background: rgba(255,255,255,0.3); color: white; padding: 6px 14px; border-radius: 20px;"
+                                      invisible="current_step == '2_assignment'">
+                                    2. Assignment
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="margin-bottom: 15px; padding: 12px 16px; background: linear-gradient(135deg, #e3f2fd 0%, #f0f8ff 100%); border-radius: 8px; border-left: 4px solid #1565C0;">
+                        <span class="fa fa-info-circle" style="color: #1565C0; margin-right: 8px;"/>
+                        <strong>Applying to
+                            <field name="booking_count" readonly="1" nolabel="1" class="d-inline"/>
+                            booking(s)
+                        </strong>
+                    </div>
+
+                    <!-- STEP 1: Services -->
+                    <div invisible="current_step != '1_services'">
+                        <group name="services_group">
+                            <!-- package_id injected here by health_invoicing via xpath -->
+                            <field name="create_quote" string="Create Quote"/>
+                        </group>
+                    </div>
+
+                    <!-- STEP 2: Staff Assignment -->
+                    <div invisible="current_step != '2_assignment'">
+                        <group string="Staff Assignment">
+                            <field name="assigned_staff_ids" widget="many2many_tags"
+                                   string="Assigned Staff"/>
+                            <field name="lead_staff_id" string="Lead Staff"/>
+                        </group>
+                    </div>
+
+                </sheet>
+                <footer>
+                    <!-- Step 1 footer -->
+                    <button name="action_next_step" type="object"
+                            string="Next &#x2192;" class="btn-primary"
+                            icon="fa-chevron-right"
+                            invisible="current_step != '1_services'"/>
+
+                    <!-- Step 2 footer -->
+                    <button name="action_prev_step" type="object"
+                            string="&#x2190; Previous" class="btn-secondary"
+                            icon="fa-chevron-left"
+                            invisible="current_step != '2_assignment'"/>
+                    <button name="action_apply" type="object"
+                            string="Apply to All Bookings" class="btn-primary"
+                            icon="fa-check"
+                            invisible="current_step != '2_assignment'"/>
+
+                    <button string="Skip" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+</odoo>

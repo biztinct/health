@@ -605,3 +605,17 @@ class HealthContact(models.Model):
             }
         }
 
+    def action_create_recurring_booking(self):
+        self.ensure_one()
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _('Recurring Booking'),
+            'res_model': 'health.recurring.booking.wizard',
+            'view_mode': 'form',
+            'target': 'new',
+            'context': {
+                'default_client_id': self.id,
+                'default_catchment_province_id': self.catchment_province_id.id if self.catchment_province_id else False,
+            },
+        }
+

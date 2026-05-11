@@ -95,7 +95,8 @@
         'views/health_nurse_payment_wizard_views.xml',
         'views/health_cash_delivery_wizard_views.xml',
         'wizard/service_package_wizard_views.xml',
-        
+        'views/booking_wizard_package_views.xml',
+
         # Views - Accounting Extensions (Basic implementation first)
         'views/account_move_views.xml',
         'views/res_partner_views.xml',

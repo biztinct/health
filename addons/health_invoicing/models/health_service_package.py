@@ -17,7 +17,7 @@ class HealthServicePackage(models.Model):
     _description = 'Healthcare Service Package'
     _inherit = ['mail.thread', 'mail.activity.mixin']
     _order = 'create_date desc'
-    _rec_name = 'display_name'
+    _rec_name = 'name'
     
     # Core Package Information
     active = fields.Boolean('Active', default=True, tracking=True)

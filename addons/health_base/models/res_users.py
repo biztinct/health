@@ -11,8 +11,7 @@ class ResUsers(models.Model):
         default=False,
         help='Mark if this user is healthcare staff'
     )
-    
-    # Quick access to employee healthcare role
+
     healthcare_role = fields.Selection([
         ('doctor', 'Doctor'),
         ('duty_doctor', 'Duty Doctor'),
@@ -26,7 +25,7 @@ class ResUsers(models.Model):
         ('admin', 'Admin'),
         ('owner', 'Owner'),
         ('accountant', 'Accountant'),
-    ], string='Healthcare Role')
+    ], string='Healthcare Role (Deprecated)')
 
     # Designated catchment province/area
     catchment_province_id = fields.Many2one(
@@ -34,6 +33,22 @@ class ResUsers(models.Model):
         string='Catchment Province',
         help='The catchment province/area where this user primarily works'
     )
+
+    is_duty_doctor = fields.Boolean('Is Duty Doctor', default=False)
+    is_head_nurse = fields.Boolean('Is Head Nurse', default=False)
+    is_doctor_role = fields.Boolean(
+        compute='_compute_user_role_flags', store=True, readonly=True,
+    )
+    is_nurse_role = fields.Boolean(
+        compute='_compute_user_role_flags', store=True, readonly=True,
+    )
+
+    @api.depends('access_role_id', 'access_role_id.name')
+    def _compute_user_role_flags(self):
+        for user in self:
+            role_name = (user.access_role_id.name or '').lower() if user.access_role_id else ''
+            user.is_doctor_role = 'doctor' in role_name
+            user.is_nurse_role = 'nurse' in role_name
 
     def get_employee_record(self):
         """Get linked employee record if exists"""
@@ -48,7 +63,6 @@ class ResUsers(models.Model):
                     'name': self.name,
                     'user_id': self.id,
                     'is_healthcare_staff': True,
-                    'healthcare_role': self.healthcare_role or 'support'
                 })
         return False
     
