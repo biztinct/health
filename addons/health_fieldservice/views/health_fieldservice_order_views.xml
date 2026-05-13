@@ -913,4 +913,838 @@
         </field>
     </record>
 
+    <!-- ============================================================
+         OPS BOOKING FORM — Standalone form for operations dashboard
+         Uses js_class="ops_booking_form" to activate custom controller
+         with sidebar navigation. Only loaded via form_view_ref context.
+         ============================================================ -->
+    <record id="view_health_fso_form_ops" model="ir.ui.view">
+        <field name="name">health.fieldservice.order.form.ops</field>
+        <field name="model">health.fieldservice.order</field>
+        <field name="inherit_id" eval="False"/>
+        <field name="mode">primary</field>
+        <field name="priority">30</field>
+        <field name="arch" type="xml">
+            <form string="Booking" js_class="ops_booking_form">
+                <header>
+                    <button name="action_manual_assign_staff" type="object"
+                            string="Assign Staff" icon="fa-user-plus"
+                            class="oe_highlight"
+                            invisible="state != 'confirmed'"/>
+                    <button name="action_start_service" type="object"
+                            string="Start Service" icon="fa-play"
+                            class="btn-success"
+                            invisible="state != 'assigned' or not assignment_ids"/>
+                    <button name="action_open_duplicate_booking_wizard" type="object"
+                            string="Duplicate" icon="fa-copy"
+                            invisible="state in ('cancelled', 'closed')"/>
+                    <button name="action_open_reschedule_calendar" type="object"
+                            string="Reschedule" icon="fa-clock-o"
+                            invisible="state in ('completed', 'completed_pending_invoice', 'cancelled', 'closed')"/>
+                    <button name="action_cancel_booking" type="object"
+                            string="Cancel Booking" icon="fa-times"
+                            invisible="state in ('completed', 'completed_pending_invoice', 'cancelled', 'closed')"
+                            confirm="Are you sure you want to cancel this booking?"/>
+                    <button name="action_ai_assign_staff" type="object"
+                            string="AI Assign Staff" class="oe_highlight"
+                            icon="fa-magic" invisible="True"/>
+                    <button name="action_check_and_open_quote_if_needed"
+                            type="object" string="Check Quote" invisible="1"
+                            id="auto_quote_trigger"
+                            groups="health_base.group_healthcare_operations_manager"/>
+                </header>
+
+                <sheet>
+                    <div class="oe_button_box" name="button_box"/>
+
+                    <!-- Hidden dependency fields -->
+                    <field name="state" invisible="1"/>
+                    <field name="service_timer_active" invisible="1"/>
+                    <field name="actual_start_datetime" invisible="1"/>
+                    <field name="actual_end_datetime" invisible="1"/>
+                    <field name="assignment_ids" invisible="1"/>
+                    <field name="has_staff_assigned" invisible="1"/>
+                    <field name="clinical_notes_submitted" invisible="1"/>
+                    <field name="invoice_submitted" invisible="1"/>
+                    <field name="crm_lead_id" invisible="1"/>
+                    <field name="sale_order_id" invisible="1"/>
+                    <field name="invoice_id" invisible="1"/>
+                    <field name="urgency_level" invisible="1"/>
+                    <field name="currency_id" invisible="1"/>
+
+                    <!-- ========================================================
+                         HERO HEADER — Booking ID + State + Tags + Timer
+                         ======================================================== -->
+                    <div class="vu-booking-hero">
+                        <div class="vu-hero-left">
+                            <div class="vu-hero-title-row">
+                                <h1 class="vu-hero-title">
+                                    <field name="name" readonly="1" class="d-inline"/>
+                                </h1>
+                                <field name="state" widget="badge" class="vu-hero-state-badge"
+                                       decoration-info="state == 'draft'"
+                                       decoration-primary="state == 'confirmed'"
+                                       decoration-success="state in ('assigned', 'completed', 'closed')"
+                                       decoration-warning="state == 'in_progress'"
+                                       decoration-danger="state == 'cancelled'"/>
+                                <span class="badge rounded-pill vu-urgency-badge vu-urgency--urgent"
+                                      invisible="urgency_level != 'urgent'">
+                                    <i class="fa fa-arrow-up"/> Urgent
+                                </span>
+                                <span class="badge rounded-pill vu-urgency-badge vu-urgency--emergency"
+                                      invisible="urgency_level != 'emergency'">
+                                    <i class="fa fa-exclamation-triangle"/> Emergency
+                                </span>
+                                <field name="priority" widget="priority"/>
+                            </div>
+                            <div class="vu-hero-tags">
+                                <span class="badge rounded-pill vu-service-tag vu-service-tag--home-visit"
+                                      invisible="service_type != 'home_visit'">
+                                    <i class="fa fa-medkit"/> Home Visit
+                                </span>
+                                <span class="badge rounded-pill vu-service-tag vu-service-tag--clinic"
+                                      invisible="service_type != 'clinic_visit'">
+                                    <i class="fa fa-hospital-o"/> Clinic Visit
+                                </span>
+                                <span class="badge rounded-pill vu-service-tag vu-service-tag--telehealth"
+                                      invisible="service_type != 'teleconsultation'">
+                                    <i class="fa fa-video-camera"/> Teleconsultation
+                                </span>
+                                <span class="badge rounded-pill vu-service-tag vu-service-tag--hospital"
+                                      invisible="service_type != 'hospital_visit'">
+                                    <i class="fa fa-h-square"/> Hospital Visit
+                                </span>
+                                <span class="badge rounded-pill vu-service-tag vu-service-tag--lab"
+                                      invisible="service_type != 'lab_visit'">
+                                    <i class="fa fa-flask"/> Lab Visit
+                                </span>
+                            </div>
+                        </div>
+                        <div class="vu-hero-right">
+                            <div class="vu-hero-meta">
+                                <span class="vu-hero-meta__label">Created</span>
+                                <field name="create_date" readonly="1" class="vu-hero-meta__value"/>
+                                <span class="vu-hero-meta__by" invisible="not booking_user_id">
+                                    by <field name="booking_user_id" readonly="1" class="d-inline"
+                                              options="{'no_open': True}"/>
+                                </span>
+                            </div>
+                            <field name="actual_duration_display" widget="service_timer" nolabel="1"
+                                   invisible="not id" class="vu-hero-timer"/>
+                        </div>
+                    </div>
+
+                    <!-- ========================================================
+                         QUICK INFO BAR — Color-coded at-a-glance snapshot
+                         ======================================================== -->
+                    <div class="vu-quick-info">
+                        <div class="vu-quick-info__item">
+                            <div class="vu-quick-info__icon vu-qi-scheduled"><i class="fa fa-calendar"/></div>
+                            <div>
+                                <div class="vu-quick-info__label">Scheduled</div>
+                                <div class="vu-quick-info__value">
+                                    <field name="scheduled_datetime" readonly="1"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="vu-quick-info__item">
+                            <div class="vu-quick-info__icon vu-qi-service"><i class="fa fa-stethoscope"/></div>
+                            <div>
+                                <div class="vu-quick-info__label">Service Type</div>
+                                <div class="vu-quick-info__value">
+                                    <field name="service_type" readonly="1"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="vu-quick-info__item">
+                            <div class="vu-quick-info__icon vu-qi-duration"><i class="fa fa-clock-o"/></div>
+                            <div>
+                                <div class="vu-quick-info__label">Duration</div>
+                                <div class="vu-quick-info__value">
+                                    <field name="scheduled_duration" readonly="1" class="d-inline"/> mins
+                                </div>
+                            </div>
+                        </div>
+                        <div class="vu-quick-info__item">
+                            <div class="vu-quick-info__icon vu-qi-facility"><i class="fa fa-hospital-o"/></div>
+                            <div>
+                                <div class="vu-quick-info__label">Facility</div>
+                                <div class="vu-quick-info__value">
+                                    <field name="facility_id" readonly="1" options="{'no_open': True}"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="vu-quick-info__item">
+                            <div class="vu-quick-info__icon vu-qi-catchment"><i class="fa fa-map-marker"/></div>
+                            <div>
+                                <div class="vu-quick-info__label">Catchment</div>
+                                <div class="vu-quick-info__value">
+                                    <field name="patient_catchment_province_id" readonly="1" options="{'no_open': True}"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ========================================================
+                         PROGRESS RAIL
+                         ======================================================== -->
+                    <widget name="vu_progress_rail"/>
+
+                    <!-- ========================================================
+                         THREE-COLUMN LAYOUT
+                         Col 1: Client Information + Service Details
+                         Col 2: Staff Assignment + Location Details
+                         Col 3: Next Best Action + Financial + Quick Actions
+                         ======================================================== -->
+                    <div class="vu-three-col mt-3">
+
+                        <!-- COLUMN 1 -->
+                        <div class="vu-col-1">
+
+                            <!-- Client Information Card -->
+                            <div class="vu-client-card">
+                                <div class="vu-client-card__header">
+                                    <div class="vu-client-card__title">
+                                        <i class="fa fa-user-circle"/> Client Information
+                                    </div>
+                                    <button name="action_open_client_form" type="object"
+                                            class="vu-client-card__link"
+                                            invisible="not patient_id">
+                                        View Full Profile <i class="fa fa-external-link"/>
+                                    </button>
+                                </div>
+                                <div class="vu-client-card__body">
+                                    <div class="vu-client-card__avatar">
+                                        <field name="patient_id" widget="many2one_avatar" readonly="1"
+                                               options="{'no_open': True}" class="vu-client-avatar-widget"/>
+                                    </div>
+                                    <div class="vu-client-card__details">
+                                        <div class="vu-client-card__name">
+                                            <field name="patient_id" readonly="1"
+                                                   context="{'form_view_ref': 'health_base.view_health_patient_form'}"
+                                                   options="{'no_open': False}"/>
+                                        </div>
+                                        <div class="vu-client-card__contact">
+                                            <span class="vu-client-card__contact-item" invisible="not patient_phone">
+                                                <i class="fa fa-phone"/>
+                                                <field name="patient_phone" widget="phone" readonly="1"/>
+                                            </span>
+                                            <span class="vu-client-card__contact-item" invisible="not patient_email">
+                                                <i class="fa fa-envelope-o"/>
+                                                <field name="patient_email" readonly="1"/>
+                                            </span>
+                                        </div>
+                                        <div class="vu-client-card__address" invisible="not patient_address_display">
+                                            <i class="fa fa-map-marker"/>
+                                            <field name="patient_address_display" readonly="1"/>
+                                        </div>
+                                        <div class="vu-client-card__meta">
+                                            <span class="vu-client-card__meta-item" invisible="not patient_code">
+                                                ID: <field name="patient_code" readonly="1" class="d-inline"/>
+                                            </span>
+                                            <span class="vu-client-card__meta-item" invisible="patient_age == 'Age unknown' or not patient_age">
+                                                <field name="patient_age" readonly="1" class="d-inline"/>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Service Details Card -->
+                            <div class="vu-detail-card">
+                                <span class="vu-detail-card__edit-trigger"><i class="fa fa-pencil"/></span>
+                                <div class="vu-card__title">
+                                    <span class="vu-section__icon" data-icon="file-text"/>
+                                    <span>Service Details</span>
+                                </div>
+                                <group>
+                                    <field name="service_type"/>
+                                    <field name="category_of_service_id" string="Service Category"/>
+                                    <field name="scheduled_datetime" readonly="has_staff_assigned"/>
+                                    <field name="scheduled_duration" widget="integer"/>
+                                    <field name="service_location"/>
+                                    <field name="booking_timezone" readonly="1"/>
+                                    <field name="team_id"/>
+                                </group>
+                            </div>
+                        </div>
+
+                        <!-- COLUMN 2 -->
+                        <div class="vu-col-2">
+
+                            <!-- Staff Assignment Card -->
+                            <div class="vu-detail-card">
+                                <span class="vu-detail-card__edit-trigger"><i class="fa fa-pencil"/></span>
+                                <div class="vu-card__title">
+                                    <span class="vu-section__icon" data-icon="users-group"/>
+                                    <span>Staff Assignment</span>
+                                </div>
+                                <group>
+                                    <field name="assigned_staff_ids" widget="many2many_tags"
+                                           options="{'color_field': 'color', 'no_create': False}"
+                                           readonly="state == 'draft'"/>
+                                    <field name="lead_staff_id"
+                                           options="{'no_create': False}"/>
+                                    <field name="assigned_doctor_ids" widget="many2many_tags"
+                                           options="{'color_field': 'color', 'no_create': False}"/>
+                                </group>
+                            </div>
+
+                            <!-- Location Details Card -->
+                            <div class="vu-detail-card">
+                                <span class="vu-detail-card__edit-trigger"><i class="fa fa-pencil"/></span>
+                                <div class="vu-card__title">
+                                    <span class="vu-section__icon" data-icon="map-pin"/>
+                                    <span>Location Details</span>
+                                </div>
+                                <group>
+                                    <field name="facility_id"/>
+                                    <field name="patient_catchment_province_id"/>
+                                    <field name="patient_address_display" string="Address" readonly="1"/>
+                                    <field name="patient_notes" string="Additional Notes"/>
+                                </group>
+                            </div>
+                        </div>
+
+                        <!-- COLUMN 3 — Actions Sidebar -->
+                        <div class="vu-col-actions">
+
+                            <!-- ── DRAFT without Quote: Create Quote ── -->
+                            <div name="draft_create_quote_card"
+                                 class="vu-action-card vu-action-card--primary vu-show-on-draft"
+                                 invisible="state != 'draft' or sale_order_id">
+                                <div class="vu-action-card__supertitle">
+                                    <i class="fa fa-star vu-action-star"/> Next Best Action
+                                </div>
+                                <div class="vu-action-card__title">
+                                    Create Quote
+                                </div>
+                                <div class="vu-action-card__subtitle">
+                                    Create a quote for this booking before confirming with the client.
+                                </div>
+                                <div class="vu-action-card__actions">
+                                    <button name="action_create_and_open_quote" type="object"
+                                            class="vu-action-btn vu-action-btn--primary"
+                                            groups="health_base.group_healthcare_operations_manager">
+                                        <i class="fa fa-file-text-o"/> Create Quote
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- ── DRAFT with Quote: Confirm Client ── -->
+                            <div name="draft_confirm_client_card"
+                                 class="vu-action-card vu-action-card--primary vu-show-on-draft"
+                                 invisible="state != 'draft' or not sale_order_id">
+                                <div class="vu-action-card__supertitle">
+                                    <i class="fa fa-star vu-action-star"/> Next Best Action
+                                </div>
+                                <div class="vu-action-card__title">
+                                    Confirm with Client
+                                </div>
+                                <div class="vu-action-card__subtitle">
+                                    Quote created. Contact the client to confirm this booking, then click Confirm.
+                                </div>
+                                <div class="vu-action-card__actions">
+                                    <button name="action_confirm_booking" type="object"
+                                            class="vu-action-btn vu-action-btn--primary"
+                                            groups="health_base.group_healthcare_operations_manager">
+                                        <i class="fa fa-check"/> Confirm Booking
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- ── CONFIRMED: Assign Staff ── -->
+                            <div class="vu-action-card vu-action-card--primary vu-show-on-confirmed"
+                                 invisible="state != 'confirmed'">
+                                <div class="vu-action-card__supertitle">
+                                    <i class="fa fa-star vu-action-star"/> Next Best Action
+                                </div>
+                                <div class="vu-action-card__title">
+                                    Assign Staff
+                                </div>
+                                <div class="vu-action-card__subtitle">
+                                    Client confirmed. Assign nursing/medical staff to this booking.
+                                </div>
+                                <div class="vu-action-card__actions">
+                                    <button name="action_manual_assign_staff" type="object"
+                                            class="vu-action-btn vu-action-btn--primary">
+                                        <i class="fa fa-user-plus"/> Assign Staff
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- ── ASSIGNED: Start Service ── -->
+                            <div class="vu-action-card vu-action-card--primary vu-show-on-assigned"
+                                 invisible="state != 'assigned'">
+                                <div class="vu-action-card__supertitle">
+                                    <i class="fa fa-star vu-action-star"/> Next Best Action
+                                </div>
+                                <div class="vu-action-card__title">
+                                    Start Service
+                                </div>
+                                <div class="vu-action-card__subtitle">
+                                    Staff assigned. Start the service when the scheduled time arrives.
+                                </div>
+                                <div class="vu-action-card__actions">
+                                    <button name="action_start_service" type="object"
+                                            class="vu-action-btn vu-action-btn--primary"
+                                            invisible="not assignment_ids">
+                                        <i class="fa fa-play"/> Start Service
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- ── IN PROGRESS ── -->
+                            <div class="vu-action-card vu-action-card--primary vu-show-on-active"
+                                 invisible="state != 'in_progress'">
+                                <div class="vu-action-card__supertitle">
+                                    <i class="fa fa-star vu-action-star"/> Next Best Action
+                                </div>
+                                <div class="vu-action-card__title">
+                                    Service In Progress
+                                </div>
+                                <div class="vu-action-card__subtitle">
+                                    Document clinical notes and create the invoice to complete.
+                                </div>
+                            </div>
+
+                            <!-- ── COMPLETED ── -->
+                            <div class="vu-action-card vu-action-card--primary vu-show-on-completed"
+                                 invisible="state not in ('completed', 'completed_pending_invoice')">
+                                <div class="vu-action-card__supertitle">
+                                    <i class="fa fa-star vu-action-star"/> Next Best Action
+                                </div>
+                                <div class="vu-action-card__title">
+                                    Service Completed
+                                </div>
+                                <div class="vu-action-card__subtitle">
+                                    Create the final invoice or close this booking.
+                                </div>
+                                <div class="vu-action-card__actions">
+                                    <button name="action_create_final_invoice" type="object"
+                                            class="vu-action-btn vu-action-btn--primary"
+                                            invisible="invoice_id">
+                                        <i class="fa fa-money"/> Create Invoice
+                                    </button>
+                                    <button name="action_close_fso" type="object"
+                                            class="vu-action-btn vu-action-btn--secondary">
+                                        <i class="fa fa-folder"/> Close
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- ── CANCELLED ── -->
+                            <div class="vu-action-card vu-show-on-cancelled"
+                                 invisible="state != 'cancelled'"
+                                 style="border-left-color: var(--vu-state-cancelled);">
+                                <div class="vu-action-card__title" style="color: var(--vu-state-cancelled);">
+                                    <i class="fa fa-times-circle"/> Booking Cancelled
+                                </div>
+                                <div class="vu-action-card__subtitle">
+                                    See the Cancellation tab for details.
+                                </div>
+                            </div>
+
+                            <!-- Staff Overview Widget -->
+                            <widget name="vu_staff_sheet"
+                                    invisible="state in ('draft', 'completed', 'completed_pending_invoice', 'cancelled', 'closed')"/>
+
+                            <!-- Financial Summary -->
+                            <div class="vu-side-card">
+                                <div class="vu-side-card__header">
+                                    <i class="fa fa-credit-card"/> Financial Summary
+                                    <field name="quote_state" widget="badge" invisible="not sale_order_id"
+                                           class="ms-auto vu-fin-header-badge"/>
+                                </div>
+                                <div class="vu-side-card__body">
+                                    <div class="vu-side-card__row" invisible="not sale_order_id">
+                                        <span class="vu-side-card__label">Quote Status</span>
+                                        <span class="vu-side-card__value">
+                                            <field name="quote_state" readonly="1"/>
+                                        </span>
+                                    </div>
+                                    <div class="vu-side-card__row">
+                                        <span class="vu-side-card__label">Total Amount</span>
+                                        <span class="vu-side-card__value" invisible="not total_price">
+                                            <field name="total_price" widget="monetary" readonly="1"/>
+                                        </span>
+                                        <span class="vu-side-card__value text-muted" invisible="total_price">&#8212;</span>
+                                    </div>
+                                    <div class="vu-side-card__row">
+                                        <span class="vu-side-card__label">Balance Due</span>
+                                        <span class="vu-side-card__value text-muted">&#8212;</span>
+                                    </div>
+                                    <div class="vu-fin-actions mt-3"
+                                         invisible="not sale_order_id and not invoice_id">
+                                        <button name="action_view_quote" type="object"
+                                                class="vu-fin-btn vu-fin-btn--outline"
+                                                invisible="not sale_order_id">
+                                            <i class="fa fa-file-text"/> View Quote
+                                        </button>
+                                        <button name="action_view_all_invoices" type="object"
+                                                class="vu-fin-btn vu-fin-btn--outline"
+                                                invisible="not invoice_id">
+                                            <i class="fa fa-money"/> View Invoice
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- ════════════════════════════════════
+                                 QUICK ACTIONS (always visible)
+                                 ════════════════════════════════════ -->
+                            <div class="vu-action-separator"/>
+                            <div class="vu-action-section-label">Quick Actions</div>
+
+                            <button name="action_open_fso_dashboard" type="object"
+                                    class="vu-action-item">
+                                <i class="fa fa-th-large"/> Dashboard
+                            </button>
+
+                            <button name="action_open_client_form" type="object"
+                                    class="vu-action-item"
+                                    invisible="not patient_id">
+                                <i class="fa fa-id-card-o"/> Client Details
+                            </button>
+
+                            <button name="action_view_quote" type="object"
+                                    class="vu-action-item"
+                                    invisible="not sale_order_id">
+                                <i class="fa fa-file-text"/> View Quote
+                            </button>
+
+                            <button name="action_open_staff_timeline_modal" type="object"
+                                    class="vu-action-item"
+                                    invisible="state in ('draft', 'completed', 'completed_pending_invoice', 'cancelled', 'closed')">
+                                <i class="fa fa-calendar-check-o"/> Staff Timeline
+                            </button>
+
+                            <!-- ════════════════════════════════════
+                                 MORE ACTIONS (secondary)
+                                 ════════════════════════════════════ -->
+                            <div class="vu-action-separator"/>
+                            <div class="vu-action-section-label">More</div>
+
+                            <button name="action_open_duplicate_booking_wizard" type="object"
+                                    class="vu-action-item"
+                                    invisible="state in ('cancelled', 'closed')">
+                                <i class="fa fa-copy"/> Duplicate Booking
+                            </button>
+
+                            <button name="action_open_new_booking_wizard" type="object"
+                                    class="vu-action-item">
+                                <i class="fa fa-plus-square"/> New Booking
+                            </button>
+
+                            <button name="action_create_and_open_quote" type="object"
+                                    class="vu-action-item"
+                                    invisible="sale_order_id or state not in ('draft', 'confirmed')"
+                                    groups="health_base.group_healthcare_operations_manager">
+                                <i class="fa fa-file-text-o"/> Create Quote
+                            </button>
+
+                            <button name="action_open_reschedule_calendar" type="object"
+                                    class="vu-action-item"
+                                    invisible="state in ('completed', 'completed_pending_invoice', 'cancelled', 'closed')">
+                                <i class="fa fa-clock-o"/> Reschedule
+                            </button>
+
+                            <button name="action_view_all_invoices" type="object"
+                                    class="vu-action-item"
+                                    invisible="not invoice_id">
+                                <i class="fa fa-money"/> View Invoices
+                            </button>
+
+                            <button name="action_view_assignments" type="object"
+                                    class="vu-action-item"
+                                    invisible="not assignment_count">
+                                <i class="fa fa-list-ul"/> View Assignments
+                                <field name="assignment_count" invisible="1"/>
+                            </button>
+
+                            <button name="action_open_lead_dashboard" type="object"
+                                    class="vu-action-item"
+                                    invisible="not crm_lead_id">
+                                <i class="fa fa-line-chart"/> Lead Dashboard
+                            </button>
+
+                            <div class="vu-action-separator"
+                                 invisible="state in ('completed', 'completed_pending_invoice', 'cancelled', 'closed')"/>
+
+                            <button name="action_cancel_booking" type="object"
+                                    class="vu-action-item vu-action-item--danger"
+                                    invisible="state in ('completed', 'completed_pending_invoice', 'cancelled', 'closed')">
+                                <i class="fa fa-times-circle"/> Cancel Booking
+                            </button>
+                        </div>
+
+                    </div><!-- /vu-three-col -->
+
+                    <!-- ========================================================
+                         FULL-WIDTH SECTION — Banners + Tabs below 3-column grid
+                         ======================================================== -->
+
+                    <!-- Contextual Banners -->
+                    <div class="alert alert-warning mb-2" role="alert"
+                         invisible="state != 'completed_pending_invoice'"
+                         groups="health_base.group_healthcare_operations_manager">
+                        <strong><i class="fa fa-clock-o"/> Awaiting Invoice:</strong>
+                        Service completed by part-time staff.
+                        <button name="action_create_final_invoice" type="object"
+                                class="btn btn-link p-0">Create invoice now</button>
+                    </div>
+
+                    <div class="alert alert-info mb-2" role="alert"
+                         invisible="state not in ['in_progress'] or (clinical_notes_submitted and invoice_submitted)">
+                        <strong><i class="fa fa-clipboard"/> Completion Requirements:</strong>
+                        <span invisible="clinical_notes_submitted"> Clinical Notes required.</span>
+                        <span invisible="invoice_submitted"> Quote/Invoice required.</span>
+                    </div>
+
+                    <!-- ================================================
+                         CONSOLIDATED TABS — Full width
+                         ================================================ -->
+                    <notebook>
+                        <!-- TAB: Clinical -->
+                        <page string="Clinical" name="clinical_notes">
+                            <div class="alert alert-warning mb-2" role="alert"
+                                 invisible="clinical_notes_submitted or state not in ('in_progress', 'completed', 'completed_pending_invoice')">
+                                <strong><i class="fa fa-exclamation-triangle"/> Required:</strong>
+                                At least one clinical note must be added before completing the service.
+                            </div>
+                            <div class="alert alert-success mb-2" role="alert"
+                                 invisible="not clinical_notes_submitted">
+                                <i class="fa fa-check text-success"/> <strong>Clinical Notes Submitted:</strong>
+                                <field name="clinical_note_count" class="d-inline vu-field--computed"/> note(s) recorded.
+                            </div>
+                            <field name="clinical_note_ids" mode="list,kanban,form"/>
+
+                            <div class="vu-section-grid mt-3">
+                                <div class="vu-detail-card">
+                                    <span class="vu-detail-card__edit-trigger"><i class="fa fa-pencil"/></span>
+                                    <div class="vu-card__title">
+                                        <span class="vu-section__icon" data-icon="timeline"/>
+                                        <span>Follow-up</span>
+                                    </div>
+                                    <group>
+                                        <field name="follow_up_required"/>
+                                        <field name="follow_up_date" invisible="not follow_up_required"/>
+                                        <field name="follow_up_notes" invisible="not follow_up_required"
+                                               placeholder="Follow-up instructions..."/>
+                                    </group>
+                                </div>
+                                <div class="vu-detail-card">
+                                    <span class="vu-detail-card__edit-trigger"><i class="fa fa-pencil"/></span>
+                                    <div class="vu-card__title">
+                                        <span class="vu-section__icon" data-icon="heart-pulse"/>
+                                        <span>Service Quality</span>
+                                    </div>
+                                    <group>
+                                        <field name="service_rating"/>
+                                    </group>
+                                </div>
+                            </div>
+                        </page>
+
+                        <!-- TAB: Planning -->
+                        <page string="Planning" name="planning">
+                            <div class="vu-section-grid">
+                                <div class="vu-detail-card">
+                                    <span class="vu-detail-card__edit-trigger"><i class="fa fa-pencil"/></span>
+                                    <div class="vu-card__title">
+                                        <span class="vu-section__icon" data-icon="stethoscope"/>
+                                        <span>Referring Information</span>
+                                    </div>
+                                    <group>
+                                        <field name="referring_doctor_id"
+                                               placeholder="Select referring doctor or contact"
+                                               options="{'no_create': True}"/>
+                                    </group>
+                                </div>
+                                <div class="vu-detail-card">
+                                    <span class="vu-detail-card__edit-trigger"><i class="fa fa-pencil"/></span>
+                                    <div class="vu-card__title">
+                                        <span class="vu-section__icon" data-icon="clipboard-list"/>
+                                        <span>Care Planning</span>
+                                    </div>
+                                    <group>
+                                        <field name="category_of_service_id" string="Category of Service"
+                                               options="{'no_create': True}" domain="[]"/>
+                                        <field name="required_equipment"
+                                               placeholder="Equipment or supplies required"/>
+                                    </group>
+                                </div>
+                            </div>
+                            <div class="vu-section-grid mt-3">
+                                <div class="vu-detail-card">
+                                    <span class="vu-detail-card__edit-trigger"><i class="fa fa-pencil"/></span>
+                                    <div class="vu-card__title">
+                                        <span class="vu-section__icon" data-icon="package"/>
+                                        <span>Required Equipment</span>
+                                    </div>
+                                    <group>
+                                        <field name="required_equipment_ids" widget="many2many_tags"/>
+                                        <field name="equipment_checklist_complete" widget="boolean_toggle"/>
+                                    </group>
+                                </div>
+                                <div class="vu-detail-card">
+                                    <span class="vu-detail-card__edit-trigger"><i class="fa fa-pencil"/></span>
+                                    <div class="vu-card__title">
+                                        <span class="vu-section__icon" data-icon="package"/>
+                                        <span>Assigned Equipment</span>
+                                    </div>
+                                    <group>
+                                        <field name="assigned_equipment_ids" widget="many2many_tags"/>
+                                    </group>
+                                </div>
+                            </div>
+                            <div class="vu-detail-card mt-3">
+                                <span class="vu-detail-card__edit-trigger"><i class="fa fa-pencil"/></span>
+                                <div class="vu-card__title">
+                                    <span class="vu-section__icon" data-icon="file-text"/>
+                                    <span>Intake Notes</span>
+                                </div>
+                                <group>
+                                    <field name="intake_notes" nolabel="1"
+                                           placeholder="Additional intake assessment notes and observations"/>
+                                </group>
+                            </div>
+                        </page>
+
+                        <!-- TAB: Execution -->
+                        <page string="Execution" name="execution"
+                              invisible="state in ('draft', 'confirmed')">
+                            <div class="vu-section-grid">
+                                <div class="vu-detail-card">
+                                    <span class="vu-detail-card__edit-trigger"><i class="fa fa-pencil"/></span>
+                                    <div class="vu-card__title">
+                                        <span class="vu-section__icon" data-icon="map-pin"/>
+                                        <span>Execution Timing</span>
+                                    </div>
+                                    <group col="2">
+                                        <field name="actual_start_datetime" readonly="1"/>
+                                        <field name="actual_end_datetime" readonly="1"/>
+                                        <field name="adjusted_end_datetime"/>
+                                        <field name="actual_duration" readonly="1" string="Duration (Hours)" class="vu-field--computed"/>
+                                    </group>
+                                </div>
+                                <div class="vu-detail-card">
+                                    <span class="vu-detail-card__edit-trigger"><i class="fa fa-pencil"/></span>
+                                    <div class="vu-card__title">
+                                        <span class="vu-section__icon" data-icon="credit-card"/>
+                                        <span>Quote &amp; Invoice</span>
+                                    </div>
+                                    <group col="2">
+                                        <field name="sale_order_id" readonly="1" string="Healthcare Quote"/>
+                                        <field name="quote_state" widget="badge" invisible="not sale_order_id" class="vu-field--computed"/>
+                                        <field name="invoice_id" readonly="1"/>
+                                        <field name="invoice_state" widget="badge" invisible="not invoice_id" class="vu-field--computed"/>
+                                        <field name="invoice_count" invisible="1"/>
+                                        <field name="quote_count" invisible="1"/>
+                                        <field name="assignment_count" invisible="1"/>
+                                    </group>
+                                </div>
+                            </div>
+                            <div class="vu-detail-card mt-3" invisible="state == 'draft'">
+                                <div class="vu-card__title">
+                                    <span class="vu-section__icon" data-icon="users-group"/>
+                                    <span>Staff Assignments</span>
+                                </div>
+                                <field name="assignment_ids"/>
+                            </div>
+                        </page>
+
+                        <!-- TAB: Tracking -->
+                        <page string="Tracking" name="tracking">
+                            <div class="vu-detail-card">
+                                <div class="vu-card__title">
+                                    <span class="vu-section__icon" data-icon="map-pin"/>
+                                    <span>GPS Location</span>
+                                </div>
+                                <group>
+                                    <field name="gps_coordinates" readonly="1" class="vu-field--computed"/>
+                                </group>
+                            </div>
+                        </page>
+
+                        <!-- TAB: Cancellation -->
+                        <page string="Cancellation" name="cancellation"
+                              invisible="state != 'cancelled'">
+                            <div class="vu-section-grid">
+                                <div class="vu-detail-card vu-detail-card--locked">
+                                    <div class="vu-card__title">
+                                        <span class="vu-section__icon" data-icon="alert-triangle"/>
+                                        <span>Cancellation Details</span>
+                                    </div>
+                                    <group>
+                                        <field name="cancellation_reason_id" readonly="1"/>
+                                        <field name="cancelled_by" readonly="1"/>
+                                        <field name="cancellation_date" readonly="1"/>
+                                    </group>
+                                </div>
+                                <div class="vu-detail-card vu-detail-card--locked">
+                                    <div class="vu-card__title">
+                                        <span class="vu-section__icon" data-icon="file-text"/>
+                                        <span>Notes</span>
+                                    </div>
+                                    <group>
+                                        <field name="cancellation_notes" nolabel="1" readonly="1"/>
+                                    </group>
+                                </div>
+                            </div>
+                        </page>
+
+                        <!-- TAB: Completion -->
+                        <page string="Completion" name="completion"
+                              invisible="state != 'completed_pending_invoice'">
+                            <div class="alert alert-info mb-2" role="alert">
+                                <strong><i class="fa fa-info-circle"/> Part-Time Staff Workflow:</strong>
+                                Operations team has been notified to create the invoice.
+                            </div>
+                            <div class="vu-section-grid">
+                                <div class="vu-detail-card vu-detail-card--locked">
+                                    <div class="vu-card__title">
+                                        <span class="vu-section__icon" data-icon="users-group"/>
+                                        <span>Completion Info</span>
+                                    </div>
+                                    <group>
+                                        <field name="lead_staff_id" readonly="1"/>
+                                        <field name="actual_end_datetime" readonly="1"/>
+                                        <field name="actual_duration" readonly="1" class="vu-field--computed"/>
+                                    </group>
+                                </div>
+                                <div class="vu-detail-card vu-detail-card--locked">
+                                    <div class="vu-card__title">
+                                        <span class="vu-section__icon" data-icon="file-text"/>
+                                        <span>Notes</span>
+                                    </div>
+                                    <group>
+                                        <field name="completion_notes" nolabel="1" readonly="1"/>
+                                    </group>
+                                </div>
+                            </div>
+                        </page>
+
+                        <!-- Hidden: Communication -->
+                        <page string="Communication" name="communication" invisible="1">
+                            <field name="communication_ids" readonly="1">
+                                <list string="Communications" create="false">
+                                    <field name="create_date"/>
+                                    <field name="sender_id"/>
+                                    <field name="message_type"/>
+                                    <field name="priority" decoration-danger="priority == 'urgent'"/>
+                                    <field name="message"/>
+                                    <field name="is_read" widget="boolean_toggle"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+
+                </sheet>
+
+                <chatter reload_on_follower="True"/>
+            </form>
+        </field>
+    </record>
+
 </odoo>

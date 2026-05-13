@@ -373,3 +373,52 @@
 .o_calendar_view .fc .fc-timegrid-now-indicator-arrow {
     border-color: #e53e3e !important;
 }
+
+/* ── Service-type color coding for operations calendar ── */
+.o_calendar_view .fc-event[data-service-type="home_visit"],
+.o_calendar_view .fc-event.service-home-visit {
+    background-color: #1565C0 !important;
+    border-color: #1356A9 !important;
+}
+.o_calendar_view .fc-event[data-service-type="clinic_visit"],
+.o_calendar_view .fc-event.service-clinic-visit {
+    background-color: #7c3aed !important;
+    border-color: #6d28d9 !important;
+}
+.o_calendar_view .fc-event[data-service-type="follow_up"],
+.o_calendar_view .fc-event.service-follow-up {
+    background-color: #43A047 !important;
+    border-color: #388E3C !important;
+}
+.o_calendar_view .fc-event[data-service-type="consultation"],
+.o_calendar_view .fc-event.service-consultation {
+    background-color: #42A5F5 !important;
+    border-color: #2196F3 !important;
+}
+.o_calendar_view .fc-event[data-service-type="emergency"],
+.o_calendar_view .fc-event.service-emergency {
+    background-color: #E53935 !important;
+    border-color: #C62828 !important;
+}
+.o_calendar_view .fc-event[data-service-type="telemedicine"],
+.o_calendar_view .fc-event.service-telemedicine {
+    background-color: #00897B !important;
+    border-color: #00796B !important;
+}
+
+/* Active service pulse animation */
+.o_calendar_view .fc-event.service-active {
+    animation: calendar-pulse 2s infinite;
+}
+@keyframes calendar-pulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(234, 88, 12, 0.4); }
+    50% { box-shadow: 0 0 0 4px rgba(234, 88, 12, 0); }
+}
+
+/* Unassigned booking indicator */
+.o_calendar_view .fc-event.booking-unassigned {
+    border-style: dashed !important;
+    border-width: 2px !important;
+    border-color: #E53935 !important;
+    opacity: 0.85;
+}

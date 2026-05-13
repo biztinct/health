@@ -1,60 +1,83 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-    <!-- Staff Assignment Wizard Form View -->
+    <!-- Staff Assignment Wizard Form View — Enhanced with AI Suggestions -->
     <record id="view_health_staff_assignment_wizard_form" model="ir.ui.view">
         <field name="name">health.staff.assignment.wizard.form</field>
         <field name="model">health.staff.assignment.wizard</field>
         <field name="arch" type="xml">
-            <form string="Assign Staff to Service">
+            <form string="Assign Staff">
                 <sheet>
-                    <div class="oe_title">
+                    <div class="oe_title mb-3">
                         <h1>
-                            <span>Assign Staff to Service</span>
+                            <i class="fa fa-user-md me-2" style="color:#1565C0"/>
+                            <span>Assign Staff</span>
                         </h1>
                     </div>
-                    
-                    <div class="vu-section">
+
+                    <!-- Booking Context Bar -->
+                    <div class="vu-section mb-3">
                         <div class="vu-section__title">
                             <span class="vu-section__icon" data-icon="timeline"/>
                             <div>
-                                <span>Service Information</span>
-                                <small class="text-muted d-block">Booking, patient and schedule</small>
+                                <span>Booking Details</span>
+                                <small class="text-muted d-block">Service context for this assignment</small>
                             </div>
                         </div>
-                        <div class="vu-section-grid">
-                            <div class="vu-card">
-                                <group col="2">
-                                    <field name="fso_id" readonly="1"/>
-                                    <field name="patient_id" readonly="1"/>
-                                    <field name="service_type" readonly="1"/>
-                                    <field name="scheduled_datetime" readonly="1"/>
-                                    <field name="new_scheduled_datetime"
-                                           placeholder="Leave blank to keep current schedule"/>
-                                </group>
-                            </div>
-                            
-                            <div class="vu-card">
-                                <div class="vu-card__title">
-                                    <span class="vu-section__icon" data-icon="users-group"/>
-                                    <span>Staff Assignment</span>
-                                </div>
-                                <group col="2">
-                                    <field name="doctor_id"
-                                           options="{'no_create': True}"
-                                           placeholder="Select doctor (optional)..."/>
-                                    <field name="assigned_staff_ids"
-                                           widget="many2many_tags"
-                                           options="{'color_field': 'color', 'no_create': True}"
-                                           placeholder="Select nurses/staff members..."/>
-                                    <field name="lead_staff_id"
-                                           options="{'no_create': True}"
-                                           placeholder="Select lead nurse..."/>
-                                </group>
-                            </div>
+                        <div class="vu-card">
+                            <group col="3">
+                                <field name="fso_id" readonly="1"/>
+                                <field name="patient_id" readonly="1"/>
+                                <field name="service_type" readonly="1"/>
+                                <field name="scheduled_datetime" readonly="1"/>
+                                <field name="new_scheduled_datetime"
+                                       placeholder="Leave blank to keep current schedule"/>
+                            </group>
                         </div>
                     </div>
-                    
+
+                    <!-- AI Suggestions Widget -->
+                    <div class="vu-section mb-3">
+                        <div class="vu-section__title">
+                            <span class="vu-section__icon" data-icon="sparkles"/>
+                            <div>
+                                <span>AI Staff Recommendations</span>
+                                <small class="text-muted d-block">Scored by skill match, availability, workload &amp; proximity</small>
+                            </div>
+                        </div>
+                        <div class="vu-card">
+                            <field name="ai_suggestions_json" widget="ai_staff_suggestions" nolabel="1"/>
+                            <field name="selected_suggestion_staff_id" invisible="1"/>
+                        </div>
+                    </div>
+
+                    <!-- Manual Staff Assignment -->
+                    <div class="vu-section mb-3">
+                        <div class="vu-section__title">
+                            <span class="vu-section__icon" data-icon="users-group"/>
+                            <div>
+                                <span>Staff Assignment</span>
+                                <small class="text-muted d-block">Select or adjust staff manually</small>
+                            </div>
+                        </div>
+                        <div class="vu-card">
+                            <group col="2">
+                                <field name="doctor_id"
+                                       options="{'no_create': True}"
+                                       placeholder="Select doctor (optional)..."/>
+                                <field name="lead_staff_id"
+                                       options="{'no_create': True}"
+                                       placeholder="Select lead nurse..."/>
+                                <field name="assigned_staff_ids"
+                                       widget="many2many_tags"
+                                       options="{'color_field': 'color', 'no_create': True}"
+                                       placeholder="Select nurses/staff members..."
+                                       colspan="2"/>
+                            </group>
+                        </div>
+                    </div>
+
+                    <!-- Notes -->
                     <div class="vu-section">
                         <div class="vu-section__title">
                             <span class="vu-section__icon" data-icon="file-text"/>
@@ -63,23 +86,22 @@
                                 <small class="text-muted d-block">Optional context for the assignment</small>
                             </div>
                         </div>
-                        <div class="vu-section-grid">
-                            <div class="vu-card">
-                                <field name="assignment_notes" 
-                                       placeholder="Optional notes about the staff assignment..."
-                                       colspan="2"/>
-                            </div>
+                        <div class="vu-card">
+                            <field name="assignment_notes"
+                                   placeholder="Optional notes about the staff assignment..."
+                                   nolabel="1"/>
                         </div>
                     </div>
                 </sheet>
-                
+
                 <footer>
-                    <button name="action_assign_staff" 
-                            string="Assign Staff" 
-                            type="object" 
-                            class="btn-primary"/>
-                    <button string="Cancel" 
-                            class="btn-secondary" 
+                    <button name="action_assign_staff"
+                            string="Confirm Assignment"
+                            type="object"
+                            class="btn-primary"
+                            icon="fa-user-check"/>
+                    <button string="Cancel"
+                            class="btn-secondary"
                             special="cancel"/>
                 </footer>
             </form>

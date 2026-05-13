@@ -1,0 +1,283 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+<t t-name="health_fieldservice.OpsRecurringBooking">
+    <div class="ops-recurring-page">
+
+        <!-- SIDEBAR -->
+        <aside class="ops-sidebar">
+            <div class="ops-sidebar-logo" t-on-click="navigateHome" style="cursor:pointer">
+                <div class="ops-logo-icon"><i class="fa fa-heartbeat"/></div>
+                <div>
+                    <div class="ops-logo-text">VIET UC</div>
+                    <div class="ops-logo-sub">Healthcare Platform</div>
+                </div>
+            </div>
+            <nav class="ops-sidebar-nav">
+                <div class="ops-nav-section-label">Main</div>
+                <a class="ops-nav-item" t-on-click="() => this.navigateTo('dashboard')"><i class="fa fa-th-large"/> Dashboard</a>
+                <a class="ops-nav-item" t-on-click="() => this.navigateTo('bookings')"><i class="fa fa-calendar-check-o"/> Bookings</a>
+                <a class="ops-nav-item" t-on-click="() => this.navigateTo('clients')"><i class="fa fa-address-book-o"/> Clients</a>
+                <a class="ops-nav-item active"><i class="fa fa-repeat"/> Recurring</a>
+                <a class="ops-nav-item" t-on-click="() => this.navigateTo('staff')"><i class="fa fa-users"/> Staff</a>
+                <a class="ops-nav-item" t-on-click="() => this.navigateTo('calendar')"><i class="fa fa-calendar"/> Calendar</a>
+                <div class="ops-nav-section-label">Reports</div>
+                <a class="ops-nav-item" t-on-click="() => this.navigateTo('workload')"><i class="fa fa-bar-chart"/> Workload</a>
+                <a class="ops-nav-item" t-on-click="() => this.navigateTo('analytics')"><i class="fa fa-line-chart"/> Analytics</a>
+                <div class="ops-nav-section-label">System</div>
+                <a class="ops-nav-item" t-on-click="navigateHome"><i class="fa fa-arrow-left"/> Back to Odoo</a>
+            </nav>
+            <div class="ops-sidebar-user">
+                <div class="ops-user-avatar">OM</div>
+                <div class="ops-user-info">
+                    <div class="ops-user-name">Operations</div>
+                    <div class="ops-user-role">Manager</div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- MAIN -->
+        <div class="ops-main-content">
+
+            <header class="ops-top-header">
+                <div class="ops-header-left">
+                    <div class="cp-breadcrumb">
+                        <a t-on-click="() => this.navigateTo('dashboard')">Dashboard</a>
+                        <span class="cp-sep"><i class="fa fa-chevron-right" style="font-size:10px"/></span>
+                        <a t-on-click="() => this.navigateTo('bookings')">Bookings</a>
+                        <span class="cp-sep"><i class="fa fa-chevron-right" style="font-size:10px"/></span>
+                        <span class="cp-current">Recurring Booking</span>
+                    </div>
+                </div>
+            </header>
+
+            <t t-if="state.isLoading">
+                <div class="rb-loading">
+                    <i class="fa fa-spinner fa-spin fa-2x"/>
+                    <div>Loading...</div>
+                </div>
+            </t>
+
+            <t t-if="!state.isLoading">
+                <div class="rb-wizard-wrap">
+                    <div class="rb-wizard">
+
+                        <!-- HEADER -->
+                        <div class="rb-wizard-header">
+                            <div>
+                                <div class="rb-wizard-title"><i class="fa fa-repeat"/> Recurring Booking</div>
+                                <div class="rb-wizard-subtitle">
+                                    Create multiple bookings on a regular schedule
+                                    <t t-if="state.patient.name"> for <strong t-esc="state.patient.name"/></t>
+                                </div>
+                            </div>
+                            <button class="rb-close-btn" t-on-click="goBack"><i class="fa fa-times"/></button>
+                        </div>
+
+                        <!-- BODY -->
+                        <div class="rb-wizard-body">
+
+                            <!-- SERVICE SECTION -->
+                            <div class="rb-section-title"><i class="fa fa-stethoscope"/> Service</div>
+                            <div class="rb-form-row">
+                                <div class="rb-form-group">
+                                    <div class="rb-form-label">Service Type <span class="rb-req">*</span></div>
+                                    <select class="rb-form-input" t-on-change="onServiceTypeChange">
+                                        <t t-foreach="state.serviceTypes" t-as="st" t-key="st.key">
+                                            <option t-att-value="st.key"
+                                                    t-att-selected="st.key === state.serviceType"
+                                                    t-esc="st.label"/>
+                                        </t>
+                                    </select>
+                                </div>
+                                <div class="rb-form-group">
+                                    <div class="rb-form-label">Duration</div>
+                                    <select class="rb-form-input" t-on-change="onDurationChange">
+                                        <option value="1">1 hour</option>
+                                        <option value="2" selected="">2 hours</option>
+                                        <option value="3">3 hours</option>
+                                        <option value="4">4 hours</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="rb-form-row">
+                                <div class="rb-form-group">
+                                    <div class="rb-form-label">Preferred Time</div>
+                                    <select class="rb-form-input" t-on-change="onTimeChange">
+                                        <option value="7">07:00</option>
+                                        <option value="8">08:00</option>
+                                        <option value="9" selected="">09:00</option>
+                                        <option value="10">10:00</option>
+                                        <option value="11">11:00</option>
+                                        <option value="13">13:00</option>
+                                        <option value="14">14:00</option>
+                                        <option value="15">15:00</option>
+                                        <option value="16">16:00</option>
+                                    </select>
+                                </div>
+                                <div class="rb-form-group">
+                                    <div class="rb-form-label">Facility</div>
+                                    <select class="rb-form-input" t-on-change="onFacilityChange">
+                                        <t t-foreach="state.facilities" t-as="f" t-key="f.id">
+                                            <option t-att-value="f.id"
+                                                    t-att-selected="f.id === state.facilityId"
+                                                    t-esc="f.name"/>
+                                        </t>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- RECURRENCE PATTERN -->
+                            <div class="rb-section-title"><i class="fa fa-calendar"/> Recurrence Pattern</div>
+                            <div class="rb-pattern-options">
+                                <div t-attf-class="rb-pattern-btn #{state.pattern === 'daily' ? 'selected' : ''}"
+                                     t-on-click="() => this.selectPattern('daily')">
+                                    <i class="fa fa-calendar-o"/>
+                                    <div class="rb-pb-label">Daily</div>
+                                    <div class="rb-pb-desc">Every day</div>
+                                </div>
+                                <div t-attf-class="rb-pattern-btn #{state.pattern === 'weekly' ? 'selected' : ''}"
+                                     t-on-click="() => this.selectPattern('weekly')">
+                                    <i class="fa fa-calendar"/>
+                                    <div class="rb-pb-label">Weekly</div>
+                                    <div class="rb-pb-desc">Same days each week</div>
+                                </div>
+                                <div t-attf-class="rb-pattern-btn #{state.pattern === 'biweekly' ? 'selected' : ''}"
+                                     t-on-click="() => this.selectPattern('biweekly')">
+                                    <i class="fa fa-calendar"/>
+                                    <div class="rb-pb-label">Bi-Weekly</div>
+                                    <div class="rb-pb-desc">Every 2 weeks</div>
+                                </div>
+                                <div t-attf-class="rb-pattern-btn #{state.pattern === 'monthly' ? 'selected' : ''}"
+                                     t-on-click="() => this.selectPattern('monthly')">
+                                    <i class="fa fa-calendar"/>
+                                    <div class="rb-pb-label">Monthly</div>
+                                    <div class="rb-pb-desc">Same date each month</div>
+                                </div>
+                            </div>
+
+                            <!-- DAY SELECTOR (for weekly/biweekly) -->
+                            <t t-if="state.pattern === 'weekly' or state.pattern === 'biweekly'">
+                                <div class="rb-form-label" style="margin-bottom:6px">Repeat on days <span class="rb-req">*</span></div>
+                                <div class="rb-day-selector">
+                                    <button t-attf-class="rb-day-btn #{isDaySelected(0) ? 'selected' : ''}" t-on-click="() => this.toggleDay(0)">Mon</button>
+                                    <button t-attf-class="rb-day-btn #{isDaySelected(1) ? 'selected' : ''}" t-on-click="() => this.toggleDay(1)">Tue</button>
+                                    <button t-attf-class="rb-day-btn #{isDaySelected(2) ? 'selected' : ''}" t-on-click="() => this.toggleDay(2)">Wed</button>
+                                    <button t-attf-class="rb-day-btn #{isDaySelected(3) ? 'selected' : ''}" t-on-click="() => this.toggleDay(3)">Thu</button>
+                                    <button t-attf-class="rb-day-btn #{isDaySelected(4) ? 'selected' : ''}" t-on-click="() => this.toggleDay(4)">Fri</button>
+                                    <button t-attf-class="rb-day-btn #{isDaySelected(5) ? 'selected' : ''}" t-on-click="() => this.toggleDay(5)">Sat</button>
+                                    <button t-attf-class="rb-day-btn #{isDaySelected(6) ? 'selected' : ''}" t-on-click="() => this.toggleDay(6)">Sun</button>
+                                </div>
+                            </t>
+
+                            <!-- DATE RANGE -->
+                            <div class="rb-form-3col">
+                                <div class="rb-form-group">
+                                    <div class="rb-form-label">Start Date <span class="rb-req">*</span></div>
+                                    <input class="rb-form-input" type="date"
+                                           t-att-value="state.startDate"
+                                           t-on-change="onStartDateChange"/>
+                                </div>
+                                <div class="rb-form-group">
+                                    <div class="rb-form-label">End Type</div>
+                                    <select class="rb-form-input" disabled="">
+                                        <option>After X occurrences</option>
+                                    </select>
+                                </div>
+                                <div class="rb-form-group">
+                                    <div class="rb-form-label">Occurrences</div>
+                                    <input class="rb-form-input" type="number" min="1" max="52"
+                                           t-att-value="state.occurrences"
+                                           t-on-change="onOccurrencesChange"/>
+                                </div>
+                            </div>
+
+                            <!-- PREVIEW -->
+                            <t t-if="state.preview.length > 0">
+                                <div class="rb-preview-card">
+                                    <div class="rb-preview-title">
+                                        <i class="fa fa-eye"/>
+                                        Booking Preview — <t t-esc="state.preview.length"/> bookings will be created
+                                        <t t-if="conflictCount > 0">
+                                            <span class="rb-conflict-badge"><t t-esc="conflictCount"/> conflicts</span>
+                                        </t>
+                                    </div>
+                                    <div class="rb-preview-list">
+                                        <t t-foreach="state.preview" t-as="item" t-key="item.num">
+                                            <div class="rb-preview-item">
+                                                <div class="rb-preview-num" t-esc="item.num"/>
+                                                <div class="rb-preview-date" t-esc="item.date"/>
+                                                <div class="rb-preview-day" t-esc="item.time"/>
+                                                <div t-attf-class="rb-preview-status #{item.conflict ? 'conflict' : 'ok'}">
+                                                    <t t-if="!item.conflict"><i class="fa fa-check-circle"/> Available</t>
+                                                    <t t-if="item.conflict"><i class="fa fa-exclamation-triangle"/> Conflict</t>
+                                                </div>
+                                            </div>
+                                        </t>
+                                    </div>
+                                </div>
+                            </t>
+
+                            <!-- PACKAGE SUGGESTION -->
+                            <div class="rb-package-banner">
+                                <div class="rb-pkg-icon"><i class="fa fa-gift"/></div>
+                                <div class="rb-pkg-info">
+                                    <div class="rb-pkg-title">Save with a Package!</div>
+                                    <div class="rb-pkg-desc">Buy a multi-visit package for discounted rates</div>
+                                </div>
+                                <div class="rb-pkg-save">Save 20%</div>
+                            </div>
+
+                            <!-- NOTES -->
+                            <div class="rb-form-group" style="margin-top:14px">
+                                <div class="rb-form-label">Notes</div>
+                                <input class="rb-form-input" type="text"
+                                       placeholder="Optional notes for all bookings..."
+                                       t-on-change="onNotesChange"/>
+                            </div>
+
+                            <!-- SUMMARY -->
+                            <div class="rb-summary-box">
+                                <div class="rb-summary-row">
+                                    <span class="rb-sum-label">Service</span>
+                                    <span class="rb-sum-value"><t t-esc="serviceLabel"/> (<t t-esc="state.durationHours"/>h)</span>
+                                </div>
+                                <div class="rb-summary-row">
+                                    <span class="rb-sum-label">Pattern</span>
+                                    <span class="rb-sum-value" t-esc="previewSummary"/>
+                                </div>
+                                <div class="rb-summary-row">
+                                    <span class="rb-sum-label">Date Range</span>
+                                    <span class="rb-sum-value" t-esc="dateRange"/>
+                                </div>
+                                <div class="rb-summary-total">
+                                    <span class="rb-sum-label">Total Bookings</span>
+                                    <span class="rb-sum-value"><t t-esc="state.preview.length"/> bookings</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- FOOTER -->
+                        <div class="rb-wizard-footer">
+                            <button class="rb-footer-btn rb-btn-back" t-on-click="goBack">
+                                <i class="fa fa-arrow-left"/> Back
+                            </button>
+                            <div class="rb-footer-info">
+                                <t t-esc="state.preview.length"/> bookings will be created
+                            </div>
+                            <button class="rb-footer-btn rb-btn-create" t-on-click="createBookings"
+                                    t-att-disabled="state.isCreating">
+                                <t t-if="state.isCreating"><i class="fa fa-spinner fa-spin"/> Creating...</t>
+                                <t t-else=""><i class="fa fa-check"/> Create <t t-esc="state.preview.length"/> Bookings</t>
+                            </button>
+                        </div>
+
+                    </div>
+                </div>
+            </t>
+
+        </div>
+    </div>
+</t>
+
+</templates>

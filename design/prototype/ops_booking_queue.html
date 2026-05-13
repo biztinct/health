@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Booking Queue — VAFHS Operations</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+:root {
+  --vu-deep-blue: #1565C0; --vu-deep-blue-darker: #1356A9; --vu-deep-blue-darkest: #0D356B;
+  --vu-deep-blue-light: #83C5FA; --vu-deep-blue-lightest: #E4F4FD; --vu-accent-blue: #42A5F5;
+  --vu-hibiscus-red: #E53935; --vu-hibiscus-orange: #FB8C00; --vu-leaf-green: #43A047;
+  --state-draft: #64748b; --state-confirmed: #2563eb; --state-assigned: #7c3aed;
+  --state-active: #ea580c; --state-completed: #16a34a; --state-cancelled: #dc2626;
+  --text-primary: #212121; --text-secondary: #424242; --text-muted: #757575;
+  --surface-app: #F5F5F5; --surface-card: #FFFFFF; --border-soft: #E0E0E0; --border-strong: #BDBDBD;
+  --shadow-sm: 0 1px 3px rgba(33,33,33,.08); --shadow-md: 0 2px 8px rgba(33,33,33,.12);
+  --shadow-lg: 0 4px 16px rgba(33,33,33,.15);
+  --radius-sm: 4px; --radius-md: 8px; --radius-lg: 12px;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'Segoe UI',Arial,sans-serif; font-size:13px; color:var(--text-primary); background:var(--surface-app); line-height:1.5; -webkit-font-smoothing:antialiased; }
+h1,h2,h3,h4 { font-family:'Montserrat','Segoe UI',Arial,sans-serif; font-weight:600; }
+.app-wrapper { display:flex; min-height:100vh; }
+
+/* SIDEBAR (shared) */
+.sidebar { width:220px; background:var(--vu-deep-blue-darkest); color:white; display:flex; flex-direction:column; flex-shrink:0; position:fixed; top:0; left:0; bottom:0; z-index:100; }
+.sidebar-logo { padding:20px 16px; display:flex; align-items:center; gap:10px; border-bottom:1px solid rgba(255,255,255,.1); text-decoration:none; color:white; }
+.logo-icon { width:36px; height:36px; background:var(--vu-hibiscus-red); border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:18px; }
+.logo-text { font-family:'Montserrat'; font-weight:700; font-size:15px; letter-spacing:.5px; }
+.logo-sub { font-size:10px; opacity:.6; }
+.sidebar-nav { padding:12px 0; flex:1; }
+.nav-section-label { padding:16px 16px 6px; font-size:10px; text-transform:uppercase; letter-spacing:1.2px; opacity:.4; font-weight:600; }
+.nav-item { display:flex; align-items:center; gap:10px; padding:10px 16px; color:rgba(255,255,255,.7); text-decoration:none; font-size:13px; font-weight:500; transition:all 150ms; cursor:pointer; border-left:3px solid transparent; }
+.nav-item:hover { background:rgba(255,255,255,.08); color:white; }
+.nav-item.active { background:rgba(255,255,255,.12); color:white; border-left-color:var(--vu-accent-blue); }
+.nav-item i { width:20px; text-align:center; font-size:14px; }
+.nav-item .badge-count { margin-left:auto; background:var(--vu-hibiscus-red); color:white; font-size:10px; font-weight:700; padding:2px 6px; border-radius:10px; }
+.sidebar-user { padding:12px 16px; border-top:1px solid rgba(255,255,255,.1); display:flex; align-items:center; gap:10px; }
+.user-avatar { width:32px; height:32px; border-radius:50%; background:var(--vu-accent-blue); display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:700; }
+.user-info { flex:1; }
+.user-name { font-size:12px; font-weight:600; }
+.user-role { font-size:10px; opacity:.5; }
+
+/* MAIN */
+.main-content { flex:1; margin-left:220px; display:flex; flex-direction:column; }
+
+/* HEADER */
+.top-header { background:var(--surface-card); border-bottom:1px solid var(--border-soft); padding:12px 24px; display:flex; align-items:center; justify-content:space-between; position:sticky; top:0; z-index:50; box-shadow:var(--shadow-sm); }
+.header-left { display:flex; align-items:center; gap:12px; }
+.breadcrumb { display:flex; align-items:center; gap:6px; font-size:13px; }
+.breadcrumb a { color:var(--vu-deep-blue); text-decoration:none; font-weight:500; }
+.breadcrumb a:hover { text-decoration:underline; }
+.breadcrumb .sep { color:var(--text-muted); }
+.breadcrumb .current { color:var(--text-primary); font-weight:600; }
+.header-right { display:flex; align-items:center; gap:10px; }
+.header-btn { display:flex; align-items:center; gap:6px; padding:7px 14px; border:none; border-radius:var(--radius-md); font-size:12px; font-weight:600; cursor:pointer; transition:all 150ms; font-family:inherit; }
+.btn-primary { background:var(--vu-deep-blue); color:white; }
+.btn-primary:hover { background:var(--vu-deep-blue-darker); }
+.btn-outline { background:transparent; color:var(--text-secondary); border:1px solid var(--border-soft); }
+.btn-outline:hover { border-color:var(--vu-deep-blue); color:var(--vu-deep-blue); background:var(--vu-deep-blue-lightest); }
+
+/* PAGE BODY */
+.page-body { padding:20px 24px; flex:1; }
+
+/* FILTER BAR */
+.filter-bar { display:flex; align-items:center; gap:12px; margin-bottom:16px; flex-wrap:wrap; }
+.filter-bar .search-box { display:flex; align-items:center; gap:6px; padding:6px 12px; border:1px solid var(--border-soft); border-radius:var(--radius-md); background:var(--surface-card); min-width:240px; }
+.filter-bar .search-box input { border:none; outline:none; font-size:12px; font-family:inherit; flex:1; background:transparent; }
+.filter-bar .search-box i { color:var(--text-muted); font-size:13px; }
+.filter-select { padding:6px 10px; border:1px solid var(--border-soft); border-radius:var(--radius-md); font-size:12px; color:var(--text-secondary); background:var(--surface-card); cursor:pointer; font-family:inherit; }
+.filter-select:focus { outline:none; border-color:var(--vu-deep-blue); }
+
+/* STATUS TABS */
+.status-tabs { display:flex; gap:0; background:var(--surface-card); border:1px solid var(--border-soft); border-radius:var(--radius-md); overflow:hidden; margin-bottom:16px; }
+.status-tab { padding:10px 18px; font-size:12px; font-weight:600; cursor:pointer; border:none; background:transparent; color:var(--text-muted); transition:all 150ms; font-family:inherit; display:flex; align-items:center; gap:6px; border-right:1px solid var(--border-soft); }
+.status-tab:last-child { border-right:none; }
+.status-tab:hover { background:var(--surface-app); color:var(--text-primary); }
+.status-tab.active { background:var(--vu-deep-blue-lightest); color:var(--vu-deep-blue); }
+.tab-count { font-size:10px; font-weight:700; padding:1px 6px; border-radius:8px; background:var(--surface-app); color:var(--text-muted); }
+.status-tab.active .tab-count { background:var(--vu-deep-blue); color:white; }
+
+/* TABLE */
+.booking-table-wrap { background:var(--surface-card); border-radius:var(--radius-lg); box-shadow:var(--shadow-sm); border:1px solid var(--border-soft); overflow:hidden; }
+.booking-table { width:100%; border-collapse:collapse; }
+.booking-table thead th { padding:10px 14px; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.5px; color:var(--text-muted); background:var(--surface-app); border-bottom:1px solid var(--border-soft); text-align:left; white-space:nowrap; }
+.booking-table tbody tr { transition:background 100ms; cursor:pointer; }
+.booking-table tbody tr:hover { background:var(--vu-deep-blue-lightest); }
+.booking-table tbody td { padding:10px 14px; border-bottom:1px solid var(--border-soft); font-size:12px; vertical-align:middle; }
+.booking-table tbody tr:last-child td { border-bottom:none; }
+
+/* Table cells */
+.cell-id { font-weight:600; color:var(--vu-deep-blue); white-space:nowrap; }
+.cell-client { display:flex; align-items:center; gap:8px; }
+.client-avatar { width:28px; height:28px; border-radius:50%; background:var(--vu-deep-blue-lightest); color:var(--vu-deep-blue); display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:700; flex-shrink:0; }
+.client-name { font-weight:600; }
+.client-phone { font-size:11px; color:var(--text-muted); }
+.cell-service { display:flex; align-items:center; gap:4px; }
+.service-icon { width:22px; height:22px; border-radius:4px; display:flex; align-items:center; justify-content:center; font-size:10px; }
+.service-icon.home { background:#E4F4FD; color:var(--vu-deep-blue); }
+.service-icon.clinic { background:#F3E8FF; color:var(--state-assigned); }
+.service-icon.consult { background:#E0F7FA; color:var(--vu-accent-blue); }
+.service-icon.followup { background:#DBF0DB; color:var(--vu-leaf-green); }
+.cell-datetime { white-space:nowrap; }
+.cell-datetime .date { font-weight:600; }
+.cell-datetime .time { color:var(--text-muted); }
+.status-chip { display:inline-flex; align-items:center; gap:4px; padding:3px 8px; border-radius:10px; font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.4px; }
+.chip-draft { background:rgba(100,116,139,.1); color:var(--state-draft); }
+.chip-confirmed { background:rgba(37,99,235,.1); color:var(--state-confirmed); }
+.chip-assigned { background:rgba(124,58,237,.1); color:var(--state-assigned); }
+.chip-active { background:rgba(234,88,12,.1); color:var(--state-active); }
+.chip-completed { background:rgba(22,163,74,.1); color:var(--state-completed); }
+.chip-cancelled { background:rgba(220,38,38,.1); color:var(--state-cancelled); }
+.priority-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
+.priority-low { background:var(--state-completed); }
+.priority-normal { background:var(--vu-accent-blue); }
+.priority-high { background:var(--vu-hibiscus-orange); }
+.priority-urgent { background:var(--vu-hibiscus-red); }
+
+.cell-staff { display:flex; align-items:center; gap:4px; }
+.staff-avatar-xs { width:22px; height:22px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:8px; font-weight:700; color:white; flex-shrink:0; }
+.unassigned-label { font-size:11px; color:var(--vu-hibiscus-red); font-weight:600; font-style:italic; }
+
+.cell-actions { display:flex; gap:4px; }
+.row-action { width:28px; height:28px; border:1px solid var(--border-soft); border-radius:var(--radius-sm); background:transparent; cursor:pointer; display:flex; align-items:center; justify-content:center; color:var(--text-muted); transition:all 120ms; font-size:12px; }
+.row-action:hover { border-color:var(--vu-deep-blue); color:var(--vu-deep-blue); background:var(--vu-deep-blue-lightest); }
+.row-action.danger:hover { border-color:var(--state-cancelled); color:var(--state-cancelled); background:#FBE3E1; }
+
+/* Package badge */
+.package-badge { display:inline-flex; align-items:center; gap:3px; padding:2px 6px; border-radius:6px; font-size:10px; font-weight:600; background:#DBF0DB; color:var(--vu-leaf-green); margin-left:4px; }
+
+/* Pagination */
+.table-footer { padding:12px 18px; display:flex; align-items:center; justify-content:space-between; border-top:1px solid var(--border-soft); background:var(--surface-app); }
+.table-info { font-size:12px; color:var(--text-muted); }
+.pagination { display:flex; align-items:center; gap:4px; }
+.page-btn { width:30px; height:30px; border:1px solid var(--border-soft); border-radius:var(--radius-sm); background:var(--surface-card); cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:600; color:var(--text-secondary); transition:all 120ms; }
+.page-btn:hover { border-color:var(--vu-deep-blue); color:var(--vu-deep-blue); }
+.page-btn.active { background:var(--vu-deep-blue); color:white; border-color:var(--vu-deep-blue); }
+
+/* Bulk actions bar */
+.bulk-bar { display:none; align-items:center; gap:12px; padding:10px 18px; background:var(--vu-deep-blue-lightest); border-bottom:1px solid var(--vu-deep-blue-light); }
+.bulk-bar.show { display:flex; }
+.bulk-count { font-size:12px; font-weight:600; color:var(--vu-deep-blue); }
+.bulk-actions { display:flex; gap:6px; margin-left:auto; }
+
+::-webkit-scrollbar { width:6px; } ::-webkit-scrollbar-track { background:transparent; } ::-webkit-scrollbar-thumb { background:var(--border-soft); border-radius:3px; }
+</style>
+</head>
+<body>
+<div class="app-wrapper">
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <a class="sidebar-logo" href="ops_dashboard.html">
+      <div class="logo-icon"><i class="fas fa-heartbeat"></i></div>
+      <div><div class="logo-text">VIET UC</div><div class="logo-sub">Healthcare Platform</div></div>
+    </a>
+    <nav class="sidebar-nav">
+      <div class="nav-section-label">Main</div>
+      <a class="nav-item" href="ops_dashboard.html"><i class="fas fa-th-large"></i> Dashboard</a>
+      <a class="nav-item active"><i class="fas fa-calendar-check"></i> Bookings <span class="badge-count">4</span></a>
+      <a class="nav-item" href="staff_roster.html"><i class="fas fa-users"></i> Staff</a>
+      <a class="nav-item" href="ops_calendar.html"><i class="fas fa-calendar-alt"></i> Calendar</a>
+      <a class="nav-item" href="staff_roster.html"><i class="fas fa-clipboard-list"></i> Roster</a>
+      <div class="nav-section-label">Reports</div>
+      <a class="nav-item"><i class="fas fa-chart-bar"></i> Analytics</a>
+      <a class="nav-item"><i class="fas fa-file-alt"></i> MOH Reports</a>
+      <div class="nav-section-label">System</div>
+      <a class="nav-item"><i class="fas fa-cog"></i> Configuration</a>
+    </nav>
+    <div class="sidebar-user">
+      <div class="user-avatar">TL</div>
+      <div class="user-info"><div class="user-name">Tran Thi Lan</div><div class="user-role">Operations Manager</div></div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="main-content">
+    <header class="top-header">
+      <div class="header-left">
+        <div class="breadcrumb">
+          <a href="ops_dashboard.html">Dashboard</a>
+          <span class="sep"><i class="fas fa-chevron-right" style="font-size:10px"></i></span>
+          <span class="current">Booking Queue</span>
+        </div>
+      </div>
+      <div class="header-right">
+        <button class="header-btn btn-outline"><i class="fas fa-download"></i> Export</button>
+        <button class="header-btn btn-outline"><i class="fas fa-calendar-alt"></i> Calendar View</button>
+        <button class="header-btn btn-primary"><i class="fas fa-plus"></i> Create Booking</button>
+      </div>
+    </header>
+
+    <div class="page-body">
+      <!-- STATUS TABS -->
+      <div class="status-tabs">
+        <button class="status-tab active">All <span class="tab-count">48</span></button>
+        <button class="status-tab"><i class="fas fa-circle" style="font-size:6px;color:var(--state-draft)"></i> New <span class="tab-count">6</span></button>
+        <button class="status-tab"><i class="fas fa-circle" style="font-size:6px;color:var(--state-confirmed)"></i> Confirmed <span class="tab-count">8</span></button>
+        <button class="status-tab"><i class="fas fa-circle" style="font-size:6px;color:var(--state-assigned)"></i> Assigned <span class="tab-count">12</span></button>
+        <button class="status-tab"><i class="fas fa-circle" style="font-size:6px;color:var(--state-active)"></i> In Progress <span class="tab-count">3</span></button>
+        <button class="status-tab"><i class="fas fa-circle" style="font-size:6px;color:var(--state-completed)"></i> Completed <span class="tab-count">15</span></button>
+        <button class="status-tab"><i class="fas fa-circle" style="font-size:6px;color:var(--state-cancelled)"></i> Cancelled <span class="tab-count">4</span></button>
+      </div>
+
+      <!-- FILTER BAR -->
+      <div class="filter-bar">
+        <div class="search-box">
+          <i class="fas fa-search"></i>
+          <input type="text" placeholder="Search by client, booking ID, or phone...">
+        </div>
+        <select class="filter-select">
+          <option>All Services</option>
+          <option>Home Visit</option>
+          <option>Clinic Visit</option>
+          <option>Consultation</option>
+          <option>Follow-up</option>
+        </select>
+        <select class="filter-select">
+          <option>All Facilities</option>
+          <option>Viet Uc — Hanoi</option>
+          <option>Viet Uc — HCMC</option>
+        </select>
+        <select class="filter-select">
+          <option>All Priorities</option>
+          <option>Urgent</option>
+          <option>High</option>
+          <option>Normal</option>
+          <option>Low</option>
+        </select>
+        <select class="filter-select">
+          <option>Today</option>
+          <option>This Week</option>
+          <option>This Month</option>
+          <option>All Time</option>
+        </select>
+        <select class="filter-select">
+          <option>All Staff</option>
+          <option>Unassigned</option>
+          <option>Nguyen Thi Mai</option>
+          <option>Le Thi Hoa</option>
+          <option>Tran Minh Linh</option>
+        </select>
+      </div>
+
+      <!-- TABLE -->
+      <div class="booking-table-wrap">
+        <div class="bulk-bar" id="bulkBar">
+          <span class="bulk-count"><span id="selectedCount">0</span> selected</span>
+          <div class="bulk-actions">
+            <button class="header-btn btn-outline"><i class="fas fa-user-plus"></i> Assign Staff</button>
+            <button class="header-btn btn-outline"><i class="fas fa-calendar-alt"></i> Reschedule</button>
+            <button class="header-btn btn-outline"><i class="fas fa-copy"></i> Duplicate</button>
+            <button class="header-btn btn-outline" style="color:var(--state-cancelled);border-color:var(--state-cancelled)"><i class="fas fa-xmark"></i> Cancel</button>
+          </div>
+        </div>
+        <table class="booking-table">
+          <thead>
+            <tr>
+              <th style="width:30px"><input type="checkbox" id="selectAll"></th>
+              <th>Booking ID</th>
+              <th>Client</th>
+              <th>Service</th>
+              <th>Schedule</th>
+              <th>Priority</th>
+              <th>Staff</th>
+              <th>Status</th>
+              <th style="width:100px">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr onclick="window.location='ops_booking_detail.html'">
+              <td><input type="checkbox" class="row-check" onclick="event.stopPropagation()"></td>
+              <td><span class="cell-id">BK-2026-0847</span></td>
+              <td>
+                <div class="cell-client">
+                  <div class="client-avatar">TD</div>
+                  <div><div class="client-name">Tran Van Duc</div><div class="client-phone">0912 345 678</div></div>
+                </div>
+              </td>
+              <td><div class="cell-service"><div class="service-icon home"><i class="fas fa-house-medical"></i></div> Home Visit</div></td>
+              <td><div class="cell-datetime"><div class="date">May 11, 2026</div><div class="time">09:00 — 11:00</div></div></td>
+              <td><div style="display:flex;align-items:center;gap:6px"><div class="priority-dot priority-urgent"></div> Urgent</div></td>
+              <td><span class="unassigned-label">Unassigned</span></td>
+              <td><span class="status-chip chip-draft">New</span></td>
+              <td>
+                <div class="cell-actions" onclick="event.stopPropagation()">
+                  <button class="row-action" title="Assign Staff"><i class="fas fa-user-plus"></i></button>
+                  <button class="row-action" title="Reschedule"><i class="fas fa-calendar-alt"></i></button>
+                  <button class="row-action" title="View"><i class="fas fa-eye"></i></button>
+                </div>
+              </td>
+            </tr>
+            <tr onclick="window.location='ops_booking_detail.html'">
+              <td><input type="checkbox" class="row-check" onclick="event.stopPropagation()"></td>
+              <td><span class="cell-id">BK-2026-0848</span></td>
+              <td>
+                <div class="cell-client">
+                  <div class="client-avatar">PA</div>
+                  <div><div class="client-name">Pham Minh Anh</div><div class="client-phone">0987 654 321</div></div>
+                </div>
+              </td>
+              <td><div class="cell-service"><div class="service-icon clinic"><i class="fas fa-hospital"></i></div> Clinic Visit</div></td>
+              <td><div class="cell-datetime"><div class="date">May 11, 2026</div><div class="time">10:30 — 12:00</div></div></td>
+              <td><div style="display:flex;align-items:center;gap:6px"><div class="priority-dot priority-normal"></div> Normal</div></td>
+              <td><span class="unassigned-label">Unassigned</span></td>
+              <td><span class="status-chip chip-draft">New</span></td>
+              <td>
+                <div class="cell-actions" onclick="event.stopPropagation()">
+                  <button class="row-action" title="Assign Staff"><i class="fas fa-user-plus"></i></button>
+                  <button class="row-action" title="Reschedule"><i class="fas fa-calendar-alt"></i></button>
+                  <button class="row-action" title="View"><i class="fas fa-eye"></i></button>
+                </div>
+              </td>
+            </tr>
+            <tr onclick="window.location='ops_booking_detail.html'">
+              <td><input type="checkbox" class="row-check" onclick="event.stopPropagation()"></td>
+              <td><span class="cell-id">BK-2026-0845</span></td>
+              <td>
+                <div class="cell-client">
+                  <div class="client-avatar">HT</div>
+                  <div><div class="client-name">Hoang Minh Tuan</div><div class="client-phone">0976 543 210</div></div>
+                </div>
+              </td>
+              <td><div class="cell-service"><div class="service-icon home"><i class="fas fa-house-medical"></i></div> Home Visit</div></td>
+              <td><div class="cell-datetime"><div class="date">May 11, 2026</div><div class="time">08:00 — 11:00</div></div></td>
+              <td><div style="display:flex;align-items:center;gap:6px"><div class="priority-dot priority-normal"></div> Normal</div></td>
+              <td>
+                <div class="cell-staff">
+                  <div class="staff-avatar-xs" style="background:var(--state-assigned)">HO</div>
+                  <span style="font-weight:500">Le Thi Hoa</span>
+                </div>
+              </td>
+              <td><span class="status-chip chip-active"><i class="fas fa-circle" style="font-size:5px"></i> In Progress</span></td>
+              <td>
+                <div class="cell-actions" onclick="event.stopPropagation()">
+                  <button class="row-action" title="View"><i class="fas fa-eye"></i></button>
+                  <button class="row-action" title="Reassign"><i class="fas fa-user-pen"></i></button>
+                </div>
+              </td>
+            </tr>
+            <tr onclick="window.location='ops_booking_detail.html'">
+              <td><input type="checkbox" class="row-check" onclick="event.stopPropagation()"></td>
+              <td><span class="cell-id">BK-2026-0850</span></td>
+              <td>
+                <div class="cell-client">
+                  <div class="client-avatar">NL</div>
+                  <div><div class="client-name">Nguyen Van Long</div><div class="client-phone">0903 111 222</div></div>
+                </div>
+              </td>
+              <td>
+                <div class="cell-service">
+                  <div class="service-icon home"><i class="fas fa-house-medical"></i></div> Home Visit
+                  <span class="package-badge"><i class="fas fa-box" style="font-size:8px"></i> 7/10</span>
+                </div>
+              </td>
+              <td><div class="cell-datetime"><div class="date">May 11, 2026</div><div class="time">13:00 — 15:00</div></div></td>
+              <td><div style="display:flex;align-items:center;gap:6px"><div class="priority-dot priority-normal"></div> Normal</div></td>
+              <td><span class="unassigned-label">Unassigned</span></td>
+              <td><span class="status-chip chip-confirmed">Confirmed</span></td>
+              <td>
+                <div class="cell-actions" onclick="event.stopPropagation()">
+                  <button class="row-action" title="Assign Staff"><i class="fas fa-user-plus"></i></button>
+                  <button class="row-action" title="View"><i class="fas fa-eye"></i></button>
+                </div>
+              </td>
+            </tr>
+            <tr onclick="window.location='ops_booking_detail.html'">
+              <td><input type="checkbox" class="row-check" onclick="event.stopPropagation()"></td>
+              <td><span class="cell-id">BK-2026-0840</span></td>
+              <td>
+                <div class="cell-client">
+                  <div class="client-avatar">NP</div>
+                  <div><div class="client-name">Nguyen Hoang Phuc</div><div class="client-phone">0912 777 888</div></div>
+                </div>
+              </td>
+              <td><div class="cell-service"><div class="service-icon home"><i class="fas fa-house-medical"></i></div> Home Visit</div></td>
+              <td><div class="cell-datetime"><div class="date">May 11, 2026</div><div class="time">07:00 — 09:00</div></div></td>
+              <td><div style="display:flex;align-items:center;gap:6px"><div class="priority-dot priority-normal"></div> Normal</div></td>
+              <td>
+                <div class="cell-staff">
+                  <div class="staff-avatar-xs" style="background:var(--vu-accent-blue)">HA</div>
+                  <span style="font-weight:500">Do Thi Hanh</span>
+                </div>
+              </td>
+              <td><span class="status-chip chip-completed">Completed</span></td>
+              <td>
+                <div class="cell-actions" onclick="event.stopPropagation()">
+                  <button class="row-action" title="View"><i class="fas fa-eye"></i></button>
+                  <button class="row-action" title="Duplicate"><i class="fas fa-copy"></i></button>
+                </div>
+              </td>
+            </tr>
+            <tr onclick="window.location='ops_booking_detail.html'">
+              <td><input type="checkbox" class="row-check" onclick="event.stopPropagation()"></td>
+              <td><span class="cell-id">BK-2026-0852</span></td>
+              <td>
+                <div class="cell-client">
+                  <div class="client-avatar">VH</div>
+                  <div><div class="client-name">Vu Thi Huong</div><div class="client-phone">0908 333 444</div></div>
+                </div>
+              </td>
+              <td><div class="cell-service"><div class="service-icon home"><i class="fas fa-house-medical"></i></div> Home Visit</div></td>
+              <td><div class="cell-datetime"><div class="date">May 11, 2026</div><div class="time">15:00 — 16:30</div></div></td>
+              <td><div style="display:flex;align-items:center;gap:6px"><div class="priority-dot priority-urgent"></div> Urgent</div></td>
+              <td><span class="unassigned-label">Unassigned</span></td>
+              <td><span class="status-chip chip-draft">New</span></td>
+              <td>
+                <div class="cell-actions" onclick="event.stopPropagation()">
+                  <button class="row-action" title="Assign Staff"><i class="fas fa-user-plus"></i></button>
+                  <button class="row-action" title="View"><i class="fas fa-eye"></i></button>
+                </div>
+              </td>
+            </tr>
+            <tr onclick="window.location='ops_booking_detail.html'">
+              <td><input type="checkbox" class="row-check" onclick="event.stopPropagation()"></td>
+              <td><span class="cell-id">BK-2026-0838</span></td>
+              <td>
+                <div class="cell-client">
+                  <div class="client-avatar">DL</div>
+                  <div><div class="client-name">Dang Thi Loan</div><div class="client-phone">0916 555 666</div></div>
+                </div>
+              </td>
+              <td><div class="cell-service"><div class="service-icon home"><i class="fas fa-house-medical"></i></div> Home Visit</div></td>
+              <td><div class="cell-datetime"><div class="date">May 11, 2026</div><div class="time">07:30 — 09:00</div></div></td>
+              <td><div style="display:flex;align-items:center;gap:6px"><div class="priority-dot priority-normal"></div> Normal</div></td>
+              <td>
+                <div class="cell-staff">
+                  <div class="staff-avatar-xs" style="background:var(--vu-hibiscus-orange)">TH</div>
+                  <span style="font-weight:500">Pham Thu Hang</span>
+                </div>
+              </td>
+              <td><span class="status-chip chip-completed">Completed</span></td>
+              <td>
+                <div class="cell-actions" onclick="event.stopPropagation()">
+                  <button class="row-action" title="View"><i class="fas fa-eye"></i></button>
+                  <button class="row-action" title="Duplicate"><i class="fas fa-copy"></i></button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="table-footer">
+          <div class="table-info">Showing 1–7 of 48 bookings</div>
+          <div class="pagination">
+            <button class="page-btn"><i class="fas fa-chevron-left" style="font-size:10px"></i></button>
+            <button class="page-btn active">1</button>
+            <button class="page-btn">2</button>
+            <button class="page-btn">3</button>
+            <button class="page-btn">7</button>
+            <button class="page-btn"><i class="fas fa-chevron-right" style="font-size:10px"></i></button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+document.getElementById('selectAll').addEventListener('change', function() {
+  document.querySelectorAll('.row-check').forEach(c => c.checked = this.checked);
+  updateBulk();
+});
+document.querySelectorAll('.row-check').forEach(c => c.addEventListener('change', updateBulk));
+function updateBulk() {
+  const checked = document.querySelectorAll('.row-check:checked').length;
+  document.getElementById('selectedCount').textContent = checked;
+  document.getElementById('bulkBar').classList.toggle('show', checked > 0);
+}
+</script>
+</body>
+</html>

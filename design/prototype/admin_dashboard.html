@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Management Overview — VAFHS</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+:root{--vu-deep-blue:#1565C0;--vu-deep-blue-darker:#1356A9;--vu-deep-blue-darkest:#0D356B;--vu-deep-blue-light:#83C5FA;--vu-deep-blue-lightest:#E4F4FD;--vu-accent-blue:#42A5F5;--vu-hibiscus-red:#E53935;--vu-hibiscus-orange:#FB8C00;--vu-leaf-green:#43A047;--state-draft:#64748b;--state-confirmed:#2563eb;--state-assigned:#7c3aed;--state-active:#ea580c;--state-completed:#16a34a;--state-cancelled:#dc2626;--text-primary:#212121;--text-secondary:#424242;--text-muted:#757575;--surface-app:#F5F5F5;--surface-card:#FFFFFF;--border-soft:#E0E0E0;--border-strong:#BDBDBD;--shadow-sm:0 1px 3px rgba(33,33,33,.08);--shadow-md:0 2px 8px rgba(33,33,33,.12);--shadow-lg:0 4px 16px rgba(33,33,33,.15);--radius-sm:4px;--radius-md:8px;--radius-lg:12px}
+*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Segoe UI',Arial,sans-serif;font-size:13px;color:var(--text-primary);background:var(--surface-app);line-height:1.5;-webkit-font-smoothing:antialiased}h1,h2,h3,h4{font-family:'Montserrat','Segoe UI',Arial,sans-serif;font-weight:600}.app-wrapper{display:flex;min-height:100vh}
+
+.sidebar{width:220px;background:var(--vu-deep-blue-darkest);color:white;display:flex;flex-direction:column;flex-shrink:0;position:fixed;top:0;left:0;bottom:0;z-index:100}
+.sidebar-logo{padding:20px 16px;display:flex;align-items:center;gap:10px;border-bottom:1px solid rgba(255,255,255,.1);text-decoration:none;color:white}
+.logo-icon{width:36px;height:36px;background:var(--vu-hibiscus-red);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px}
+.logo-text{font-family:'Montserrat';font-weight:700;font-size:15px;letter-spacing:.5px}.logo-sub{font-size:10px;opacity:.6}
+.sidebar-nav{padding:12px 0;flex:1}
+.nav-section-label{padding:16px 16px 6px;font-size:10px;text-transform:uppercase;letter-spacing:1.2px;opacity:.4;font-weight:600}
+.nav-item{display:flex;align-items:center;gap:10px;padding:10px 16px;color:rgba(255,255,255,.7);text-decoration:none;font-size:13px;font-weight:500;transition:all 150ms;cursor:pointer;border-left:3px solid transparent}
+.nav-item:hover{background:rgba(255,255,255,.08);color:white}.nav-item.active{background:rgba(255,255,255,.12);color:white;border-left-color:var(--vu-accent-blue)}
+.nav-item i{width:20px;text-align:center;font-size:14px}.nav-item .badge-count{margin-left:auto;background:var(--vu-hibiscus-red);color:white;font-size:10px;font-weight:700;padding:2px 6px;border-radius:10px}
+.sidebar-user{padding:12px 16px;border-top:1px solid rgba(255,255,255,.1);display:flex;align-items:center;gap:10px}
+.user-avatar{width:32px;height:32px;border-radius:50%;background:var(--vu-accent-blue);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700}
+.user-info{flex:1}.user-name{font-size:12px;font-weight:600}.user-role{font-size:10px;opacity:.5}
+
+.main-content{flex:1;margin-left:220px;display:flex;flex-direction:column}
+.top-header{background:var(--surface-card);border-bottom:1px solid var(--border-soft);padding:12px 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;box-shadow:var(--shadow-sm)}
+.header-left{display:flex;align-items:center;gap:16px}
+.page-title{font-size:18px;font-weight:700;font-family:'Montserrat'}
+.header-right{display:flex;align-items:center;gap:10px}
+.header-btn{display:flex;align-items:center;gap:6px;padding:7px 14px;border:none;border-radius:var(--radius-md);font-size:12px;font-weight:600;cursor:pointer;transition:all 150ms;font-family:inherit}
+.btn-outline{background:transparent;color:var(--text-secondary);border:1px solid var(--border-soft)}.btn-outline:hover{border-color:var(--vu-deep-blue);color:var(--vu-deep-blue);background:var(--vu-deep-blue-lightest)}
+.filter-select{padding:6px 12px;border:1px solid var(--border-soft);border-radius:var(--radius-md);font-size:12px;color:var(--text-secondary);background:var(--surface-card);cursor:pointer;font-family:inherit}
+.dashboard-body{padding:20px 24px;flex:1}
+
+/* KPI */
+.kpi-row{display:grid;grid-template-columns:repeat(5,1fr);gap:16px;margin-bottom:20px}
+.kpi-card{background:var(--surface-card);border-radius:var(--radius-lg);padding:16px 18px;box-shadow:var(--shadow-sm);border:1px solid var(--border-soft);position:relative;overflow:hidden;transition:all 200ms;cursor:pointer}
+.kpi-card:hover{box-shadow:var(--shadow-md);transform:translateY(-1px)}
+.kpi-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+.k1::before{background:var(--vu-deep-blue)}.k2::before{background:var(--vu-leaf-green)}.k3::before{background:var(--vu-leaf-green)}.k4::before{background:var(--vu-hibiscus-orange)}.k5::before{background:var(--vu-hibiscus-red)}
+.kpi-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.kpi-icon{width:36px;height:36px;border-radius:var(--radius-md);display:flex;align-items:center;justify-content:center;font-size:16px}
+.k1 .kpi-icon{background:var(--vu-deep-blue-lightest);color:var(--vu-deep-blue)}.k2 .kpi-icon{background:#DBF0DB;color:var(--vu-leaf-green)}.k3 .kpi-icon{background:#DBF0DB;color:var(--vu-leaf-green)}.k4 .kpi-icon{background:#FFF3E0;color:var(--vu-hibiscus-orange)}.k5 .kpi-icon{background:#FBE3E1;color:var(--vu-hibiscus-red)}
+.kpi-trend{font-size:11px;font-weight:600;padding:2px 6px;border-radius:10px}
+.kpi-trend.up{background:#DBF0DB;color:#176B47}.kpi-trend.down{background:#FBE3E1;color:#C0332A}.kpi-trend.flat{background:var(--surface-app);color:var(--text-muted)}
+.kpi-value{font-size:26px;font-weight:800;font-family:'Montserrat';line-height:1.1;margin-bottom:2px}
+.kpi-label{font-size:12px;color:var(--text-muted);font-weight:500}
+.kpi-sublabel{font-size:10px;color:var(--text-muted);margin-top:4px}
+
+/* PANELS */
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:16px}
+.panel{background:var(--surface-card);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);border:1px solid var(--border-soft);overflow:hidden}
+.panel-header{padding:14px 18px;border-bottom:1px solid var(--border-soft);display:flex;align-items:center;justify-content:space-between}
+.panel-title{font-size:14px;font-weight:700;font-family:'Montserrat';display:flex;align-items:center;gap:8px}
+.panel-title i{color:var(--vu-deep-blue);font-size:14px}
+.panel-body{padding:16px 18px}
+
+/* CHART PLACEHOLDER */
+.chart-placeholder{width:100%;height:200px;background:var(--surface-app);border-radius:var(--radius-md);display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;overflow:hidden}
+
+/* SPARKLINE BARS (fake chart) */
+.sparkline{display:flex;align-items:flex-end;gap:3px;height:120px;padding:0 8px}
+.spark-bar{flex:1;border-radius:3px 3px 0 0;transition:height 300ms ease;min-width:0}
+.spark-bar:hover{opacity:.8}
+.sparkline-labels{display:flex;gap:3px;padding:4px 8px 0;font-size:9px;color:var(--text-muted)}
+.sparkline-labels span{flex:1;text-align:center}
+
+/* STAFF UTILIZATION */
+.staff-util-item{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border-soft)}
+.staff-util-item:last-child{border-bottom:none}
+.su-avatar{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:white;flex-shrink:0}
+.su-name{flex:0 0 120px;font-size:12px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.su-bar-wrap{flex:1;height:8px;background:var(--surface-app);border-radius:4px;overflow:hidden}
+.su-bar{height:100%;border-radius:4px;transition:width 500ms ease}
+.su-pct{font-size:12px;font-weight:700;font-family:'Montserrat';min-width:40px;text-align:right}
+
+/* ALERTS */
+.alert-item{display:flex;align-items:center;gap:10px;padding:10px;border-radius:var(--radius-md);margin-bottom:6px;transition:background 100ms;cursor:pointer}
+.alert-item:hover{background:var(--surface-app)}
+.alert-icon{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0}
+.alert-icon.warning{background:#FFF3E0;color:var(--vu-hibiscus-orange)}.alert-icon.danger{background:#FBE3E1;color:var(--vu-hibiscus-red)}.alert-icon.info{background:var(--vu-deep-blue-lightest);color:var(--vu-deep-blue)}.alert-icon.success{background:#DBF0DB;color:var(--vu-leaf-green)}
+.alert-content{flex:1}.alert-title{font-size:12px;font-weight:600}.alert-desc{font-size:11px;color:var(--text-muted)}
+.alert-time{font-size:10px;color:var(--text-muted);white-space:nowrap}
+
+/* LEADERBOARD */
+.leader-item{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border-soft)}
+.leader-item:last-child{border-bottom:none}
+.leader-rank{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0}
+.rank-1{background:linear-gradient(135deg,#FFD700,#FFA000);color:white}
+.rank-2{background:linear-gradient(135deg,#C0C0C0,#9E9E9E);color:white}
+.rank-3{background:linear-gradient(135deg,#CD7F32,#A0522D);color:white}
+.rank-other{background:var(--surface-app);color:var(--text-muted)}
+.leader-info{flex:1}.leader-name{font-size:12px;font-weight:600}.leader-role{font-size:10px;color:var(--text-muted)}
+.leader-stat{text-align:right}.leader-value{font-size:14px;font-weight:700;font-family:'Montserrat'}.leader-label{font-size:10px;color:var(--text-muted)}
+
+/* CONVERSION FUNNEL */
+.funnel{display:flex;flex-direction:column;gap:4px;align-items:center;padding:12px 0}
+.funnel-step{display:flex;align-items:center;gap:12px;width:100%}
+.funnel-bar{height:28px;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:white;transition:width 500ms ease}
+.funnel-label{font-size:11px;color:var(--text-muted);min-width:70px}
+.funnel-count{font-size:12px;font-weight:700;font-family:'Montserrat';min-width:40px;text-align:right}
+
+::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--border-soft);border-radius:3px}
+</style>
+</head>
+<body>
+<div class="app-wrapper">
+  <aside class="sidebar">
+    <a class="sidebar-logo" href="admin_dashboard.html">
+      <div class="logo-icon"><i class="fas fa-heartbeat"></i></div>
+      <div><div class="logo-text">VIET UC</div><div class="logo-sub">Healthcare Platform</div></div>
+    </a>
+    <nav class="sidebar-nav">
+      <div class="nav-section-label">Overview</div>
+      <a class="nav-item active"><i class="fas fa-th-large"></i> Dashboard</a>
+      <a class="nav-item"><i class="fas fa-chart-line"></i> KPIs</a>
+      <div class="nav-section-label">Operations</div>
+      <a class="nav-item" href="ops_dashboard.html"><i class="fas fa-clipboard-list"></i> Bookings</a>
+      <a class="nav-item" href="staff_roster.html"><i class="fas fa-users"></i> Staff</a>
+      <a class="nav-item" href="ops_calendar.html"><i class="fas fa-calendar-alt"></i> Calendar</a>
+      <div class="nav-section-label">Business</div>
+      <a class="nav-item" href="sales_dashboard.html"><i class="fas fa-filter"></i> Sales / CRM</a>
+      <a class="nav-item" href="finance_dashboard.html"><i class="fas fa-coins"></i> Finance</a>
+      <div class="nav-section-label">Management</div>
+      <a class="nav-item" href="admin_users.html"><i class="fas fa-users-cog"></i> Users &amp; Roles</a>
+      <a class="nav-item" href="admin_service_catalog.html"><i class="fas fa-stethoscope"></i> Service Catalog</a>
+      <a class="nav-item" href="admin_facility.html"><i class="fas fa-hospital"></i> Facilities</a>
+      <a class="nav-item" href="admin_staff_detail.html"><i class="fas fa-user-nurse"></i> Staff HR</a>
+      <a class="nav-item" href="admin_settings.html"><i class="fas fa-cog"></i> Settings</a>
+      <div class="nav-section-label">Monitoring</div>
+      <a class="nav-item" href="admin_audit_log.html"><i class="fas fa-clock-rotate-left"></i> Audit Log</a>
+      <a class="nav-item" href="admin_reports.html"><i class="fas fa-chart-bar"></i> Reports</a>
+    </nav>
+    <div class="sidebar-user">
+      <div class="user-avatar">AD</div>
+      <div class="user-info"><div class="user-name">Admin</div><div class="user-role">System Administrator</div></div>
+    </div>
+  </aside>
+
+  <div class="main-content">
+    <header class="top-header">
+      <div class="header-left">
+        <div class="page-title">Management Overview</div>
+      </div>
+      <div class="header-right">
+        <select class="filter-select">
+          <option>This Month — May 2026</option>
+          <option>Last Month</option>
+          <option>This Quarter</option>
+          <option>Year to Date</option>
+        </select>
+        <button class="header-btn btn-outline"><i class="fas fa-exchange-alt"></i> vs Last Month</button>
+        <button class="header-btn btn-outline"><i class="fas fa-download"></i> Export Report</button>
+      </div>
+    </header>
+
+    <div class="dashboard-body">
+      <!-- KPIs -->
+      <div class="kpi-row">
+        <div class="kpi-card k1">
+          <div class="kpi-header"><div class="kpi-icon"><i class="fas fa-calendar-check"></i></div><span class="kpi-trend up"><i class="fas fa-arrow-up" style="font-size:9px"></i> 12%</span></div>
+          <div class="kpi-value">142</div>
+          <div class="kpi-label">Bookings This Month</div>
+          <div class="kpi-sublabel">126 last month</div>
+        </div>
+        <div class="kpi-card k2">
+          <div class="kpi-header"><div class="kpi-icon"><i class="fas fa-check-circle"></i></div><span class="kpi-trend up"><i class="fas fa-arrow-up" style="font-size:9px"></i> 3%</span></div>
+          <div class="kpi-value">89%</div>
+          <div class="kpi-label">Completion Rate</div>
+          <div class="kpi-sublabel">86% last month</div>
+        </div>
+        <div class="kpi-card k3">
+          <div class="kpi-header"><div class="kpi-icon"><i class="fas fa-coins"></i></div><span class="kpi-trend up"><i class="fas fa-arrow-up" style="font-size:9px"></i> 8%</span></div>
+          <div class="kpi-value">156M</div>
+          <div class="kpi-label">Revenue (VND)</div>
+          <div class="kpi-sublabel">144M last month</div>
+        </div>
+        <div class="kpi-card k4">
+          <div class="kpi-header"><div class="kpi-icon"><i class="fas fa-user-clock"></i></div><span class="kpi-trend flat">0%</span></div>
+          <div class="kpi-value">94%</div>
+          <div class="kpi-label">Staff Utilization</div>
+          <div class="kpi-sublabel">Same as last month</div>
+        </div>
+        <div class="kpi-card k5">
+          <div class="kpi-header"><div class="kpi-icon"><i class="fas fa-flag"></i></div><span class="kpi-trend up" style="background:#DBF0DB;color:#176B47"><i class="fas fa-arrow-down" style="font-size:9px"></i> 2</span></div>
+          <div class="kpi-value" style="color:var(--vu-hibiscus-red)">3</div>
+          <div class="kpi-label">Open Issues</div>
+          <div class="kpi-sublabel">5 last month</div>
+        </div>
+      </div>
+
+      <!-- CHARTS ROW -->
+      <div class="grid-2">
+        <!-- BOOKING TRENDS -->
+        <div class="panel">
+          <div class="panel-header">
+            <div class="panel-title"><i class="fas fa-chart-line"></i> Booking Trends</div>
+          </div>
+          <div class="panel-body">
+            <div class="sparkline">
+              <div class="spark-bar" style="height:55%;background:var(--vu-deep-blue-light)"></div>
+              <div class="spark-bar" style="height:62%;background:var(--vu-deep-blue-light)"></div>
+              <div class="spark-bar" style="height:48%;background:var(--vu-deep-blue-light)"></div>
+              <div class="spark-bar" style="height:70%;background:var(--vu-deep-blue-light)"></div>
+              <div class="spark-bar" style="height:65%;background:var(--vu-deep-blue-light)"></div>
+              <div class="spark-bar" style="height:58%;background:var(--vu-deep-blue-light)"></div>
+              <div class="spark-bar" style="height:72%;background:var(--vu-deep-blue-light)"></div>
+              <div class="spark-bar" style="height:80%;background:var(--vu-deep-blue-light)"></div>
+              <div class="spark-bar" style="height:75%;background:var(--vu-deep-blue-light)"></div>
+              <div class="spark-bar" style="height:85%;background:var(--vu-deep-blue-light)"></div>
+              <div class="spark-bar" style="height:90%;background:var(--vu-deep-blue)"></div>
+              <div class="spark-bar" style="height:95%;background:var(--vu-deep-blue)"></div>
+            </div>
+            <div class="sparkline-labels">
+              <span>Jun</span><span>Jul</span><span>Aug</span><span>Sep</span><span>Oct</span><span>Nov</span><span>Dec</span><span>Jan</span><span>Feb</span><span>Mar</span><span>Apr</span><span>May</span>
+            </div>
+            <div style="display:flex;gap:16px;margin-top:12px;padding-top:8px;border-top:1px solid var(--border-soft)">
+              <div style="display:flex;align-items:center;gap:4px;font-size:11px;color:var(--text-muted)">
+                <div style="width:10px;height:10px;border-radius:2px;background:var(--vu-deep-blue)"></div> Current
+              </div>
+              <div style="display:flex;align-items:center;gap:4px;font-size:11px;color:var(--text-muted)">
+                <div style="width:10px;height:10px;border-radius:2px;background:var(--vu-deep-blue-light)"></div> Previous
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- CONVERSION FUNNEL -->
+        <div class="panel">
+          <div class="panel-header">
+            <div class="panel-title"><i class="fas fa-filter"></i> Lead-to-Booking Funnel</div>
+          </div>
+          <div class="panel-body">
+            <div class="funnel">
+              <div class="funnel-step">
+                <div class="funnel-label">Leads</div>
+                <div class="funnel-bar" style="width:100%;background:var(--state-draft)">245</div>
+                <div class="funnel-count">100%</div>
+              </div>
+              <div class="funnel-step">
+                <div class="funnel-label">Qualified</div>
+                <div class="funnel-bar" style="width:73%;background:var(--state-confirmed)">178</div>
+                <div class="funnel-count">73%</div>
+              </div>
+              <div class="funnel-step">
+                <div class="funnel-label">Proposal</div>
+                <div class="funnel-bar" style="width:52%;background:var(--state-assigned)">128</div>
+                <div class="funnel-count">52%</div>
+              </div>
+              <div class="funnel-step">
+                <div class="funnel-label">Booked</div>
+                <div class="funnel-bar" style="width:38%;background:var(--vu-leaf-green)">93</div>
+                <div class="funnel-count">38%</div>
+              </div>
+              <div class="funnel-step">
+                <div class="funnel-label">Completed</div>
+                <div class="funnel-bar" style="width:34%;background:var(--vu-deep-blue)">82</div>
+                <div class="funnel-count">34%</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- BOTTOM ROW -->
+      <div class="grid-3">
+        <!-- STAFF UTILIZATION -->
+        <div class="panel">
+          <div class="panel-header">
+            <div class="panel-title"><i class="fas fa-users"></i> Staff Utilization</div>
+          </div>
+          <div class="panel-body">
+            <div class="staff-util-item">
+              <div class="su-avatar" style="background:var(--vu-deep-blue)">MA</div>
+              <div class="su-name">Nguyen Thi Mai</div>
+              <div class="su-bar-wrap"><div class="su-bar" style="width:95%;background:var(--vu-hibiscus-red)"></div></div>
+              <div class="su-pct" style="color:var(--vu-hibiscus-red)">95%</div>
+            </div>
+            <div class="staff-util-item">
+              <div class="su-avatar" style="background:var(--state-assigned)">HO</div>
+              <div class="su-name">Le Thi Hoa</div>
+              <div class="su-bar-wrap"><div class="su-bar" style="width:88%;background:var(--vu-hibiscus-orange)"></div></div>
+              <div class="su-pct" style="color:var(--vu-hibiscus-orange)">88%</div>
+            </div>
+            <div class="staff-util-item">
+              <div class="su-avatar" style="background:var(--vu-leaf-green)">LI</div>
+              <div class="su-name">Tran Minh Linh</div>
+              <div class="su-bar-wrap"><div class="su-bar" style="width:76%;background:var(--vu-leaf-green)"></div></div>
+              <div class="su-pct" style="color:var(--vu-leaf-green)">76%</div>
+            </div>
+            <div class="staff-util-item">
+              <div class="su-avatar" style="background:var(--vu-hibiscus-orange)">TH</div>
+              <div class="su-name">Pham Thu Hang</div>
+              <div class="su-bar-wrap"><div class="su-bar" style="width:82%;background:var(--vu-leaf-green)"></div></div>
+              <div class="su-pct" style="color:var(--vu-leaf-green)">82%</div>
+            </div>
+            <div class="staff-util-item">
+              <div class="su-avatar" style="background:var(--vu-accent-blue)">HA</div>
+              <div class="su-name">Do Thi Hanh</div>
+              <div class="su-bar-wrap"><div class="su-bar" style="width:65%;background:var(--vu-accent-blue)"></div></div>
+              <div class="su-pct" style="color:var(--vu-accent-blue)">65%</div>
+            </div>
+            <div class="staff-util-item">
+              <div class="su-avatar" style="background:var(--state-draft)">NT</div>
+              <div class="su-name">Dr. Nguyen Van Thanh</div>
+              <div class="su-bar-wrap"><div class="su-bar" style="width:42%;background:var(--state-draft)"></div></div>
+              <div class="su-pct" style="color:var(--state-draft)">42%</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SALES LEADERBOARD -->
+        <div class="panel">
+          <div class="panel-header">
+            <div class="panel-title"><i class="fas fa-trophy"></i> Sales Leaderboard — May</div>
+          </div>
+          <div class="panel-body">
+            <div class="leader-item">
+              <div class="leader-rank rank-1">1</div>
+              <div class="leader-info"><div class="leader-name">Nguyen Thi Thanh</div><div class="leader-role">Sales Executive</div></div>
+              <div class="leader-stat"><div class="leader-value" style="color:var(--vu-leaf-green)">32</div><div class="leader-label">Bookings</div></div>
+            </div>
+            <div class="leader-item">
+              <div class="leader-rank rank-2">2</div>
+              <div class="leader-info"><div class="leader-name">Vo Thi Kim</div><div class="leader-role">Sales Executive</div></div>
+              <div class="leader-stat"><div class="leader-value" style="color:var(--vu-deep-blue)">28</div><div class="leader-label">Bookings</div></div>
+            </div>
+            <div class="leader-item">
+              <div class="leader-rank rank-3">3</div>
+              <div class="leader-info"><div class="leader-name">Tran Thi Mai Linh</div><div class="leader-role">Receptionist</div></div>
+              <div class="leader-stat"><div class="leader-value" style="color:var(--vu-deep-blue)">24</div><div class="leader-label">Bookings</div></div>
+            </div>
+            <div class="leader-item">
+              <div class="leader-rank rank-other">4</div>
+              <div class="leader-info"><div class="leader-name">Pham Van Huy</div><div class="leader-role">Sales Executive</div></div>
+              <div class="leader-stat"><div class="leader-value">18</div><div class="leader-label">Bookings</div></div>
+            </div>
+            <div class="leader-item">
+              <div class="leader-rank rank-other">5</div>
+              <div class="leader-info"><div class="leader-name">Le Anh Tuan</div><div class="leader-role">Sales Executive</div></div>
+              <div class="leader-stat"><div class="leader-value">15</div><div class="leader-label">Bookings</div></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ALERTS & ISSUES -->
+        <div class="panel">
+          <div class="panel-header">
+            <div class="panel-title"><i class="fas fa-bell"></i> Alerts &amp; Issues</div>
+            <span style="font-size:11px;color:var(--vu-hibiscus-red);font-weight:600">3 open</span>
+          </div>
+          <div class="panel-body" style="padding:10px 14px">
+            <div class="alert-item">
+              <div class="alert-icon danger"><i class="fas fa-exclamation-triangle"></i></div>
+              <div class="alert-content"><div class="alert-title">12 overdue payments</div><div class="alert-desc">Total outstanding: 4.8M VND — oldest 45 days</div></div>
+              <div class="alert-time">2h ago</div>
+            </div>
+            <div class="alert-item">
+              <div class="alert-icon warning"><i class="fas fa-user-clock"></i></div>
+              <div class="alert-content"><div class="alert-title">Nguyen Thi Mai at 95% utilization</div><div class="alert-desc">Risk of burnout — consider redistributing bookings</div></div>
+              <div class="alert-time">Today</div>
+            </div>
+            <div class="alert-item">
+              <div class="alert-icon info"><i class="fas fa-chart-line"></i></div>
+              <div class="alert-content"><div class="alert-title">Revenue up 8% this month</div><div class="alert-desc">On track to exceed monthly target of 160M VND</div></div>
+              <div class="alert-time">Today</div>
+            </div>
+            <div class="alert-item">
+              <div class="alert-icon success"><i class="fas fa-check-circle"></i></div>
+              <div class="alert-content"><div class="alert-title">VAT invoices submitted</div><div class="alert-desc">42 invoices successfully submitted to tax authority</div></div>
+              <div class="alert-time">Yesterday</div>
+            </div>
+            <div class="alert-item">
+              <div class="alert-icon warning"><i class="fas fa-calendar-xmark"></i></div>
+              <div class="alert-content"><div class="alert-title">4 unassigned bookings tomorrow</div><div class="alert-desc">May 13 — staff assignment needed for morning slots</div></div>
+              <div class="alert-time">Today</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

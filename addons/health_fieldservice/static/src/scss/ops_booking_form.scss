@@ -1,0 +1,1052 @@
+// =============================================================================
+// Ops Booking Form — Prototype-inspired design
+// Hybrid layout: ops sidebar + native Odoo form view with enhanced UX
+// =============================================================================
+
+// ─────────────────────────────────────────────────────────────────────────────
+// CHATTER — Hidden in ops form (not needed, steals width in XXL mode)
+// ─────────────────────────────────────────────────────────────────────────────
+.ops-booking-form-page {
+    .o-mail-Form-chatter,
+    .o-mail-ChatterContainer {
+        display: none !important;
+    }
+}
+
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Phase 1: Before mount — render in document flow so FormRenderer gets dims
+// ─────────────────────────────────────────────────────────────────────────────
+.ops-booking-form-page {
+    display: flex !important;
+    flex-direction: row !important;
+    background: var(--vu-surface-muted, #f8f9fa);
+}
+
+// Phase 2: After mount — break out of Odoo's layout chain
+.ops-booking-form-page.ops-mounted {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1050;
+}
+
+.ops-booking-form-page {
+
+    // Main content area (everything right of sidebar)
+    .ops-form-main-area {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        overflow: auto;
+        min-width: 0;
+    }
+
+    // Hide native Odoo control panel
+    .o_control_panel {
+        display: none !important;
+    }
+
+    // Form view container
+    .o_form_view_container {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        min-height: 0;
+        width: 100%;
+    }
+
+    .o_content {
+        flex: 1;
+        overflow: auto;
+        min-height: 0;
+        width: 100%;
+    }
+
+    .o_form_sheet_bg {
+        background: var(--vu-surface-muted, #f8f9fa);
+        max-width: 100% !important;
+        margin-right: 0 !important;
+    }
+
+    .o_form_sheet {
+        max-width: 100%;
+        padding: 16px 24px;
+    }
+
+    // ─────────────────────────────────────────────────────────────────────
+    // Ops header — breadcrumb + save/discard
+    // ─────────────────────────────────────────────────────────────────────
+    .ops-top-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 10px 24px;
+        background: #fff;
+        border-bottom: 1px solid #e2e8f0;
+        min-height: 52px;
+        flex-shrink: 0;
+    }
+
+    .ops-header-left {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+    }
+
+    .ops-header-right {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+
+        .o_form_status_indicator {
+            .o_form_status_indicator_buttons {
+                display: flex;
+                gap: 8px;
+            }
+        }
+    }
+
+    .bd-breadcrumb {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 13px;
+        color: #64748b;
+
+        a {
+            color: #64748b;
+            text-decoration: none;
+            cursor: pointer;
+
+            &:hover {
+                color: var(--vu-brand-primary, #1565C0);
+            }
+        }
+
+        .bd-sep {
+            color: #cbd5e1;
+        }
+
+        .bd-current {
+            color: #1e293b;
+            font-weight: 600;
+        }
+    }
+
+    // ─────────────────────────────────────────────────────────────────────
+    // Statusbar buttons — style to match prototype header buttons
+    // ─────────────────────────────────────────────────────────────────────
+    .o_form_statusbar {
+        background: var(--vu-surface-card, #fff);
+        border-bottom: 1px solid var(--vu-border-soft, #e2e8f0);
+        padding: 8px 16px;
+
+        .o_statusbar_buttons {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+
+            .btn {
+                border-radius: 6px;
+                font-size: 13px;
+                font-weight: 600;
+                padding: 6px 14px;
+                display: inline-flex;
+                align-items: center;
+                gap: 6px;
+            }
+
+            .btn-success {
+                background: #16a34a;
+                border-color: #16a34a;
+                color: #fff;
+
+                &:hover {
+                    background: #15803d;
+                    border-color: #15803d;
+                }
+            }
+        }
+
+        .o_statusbar_status {
+            display: none;
+        }
+    }
+
+    // ─────────────────────────────────────────────────────────────────────
+    // HERO HEADER — Booking ID + State + Tags
+    // ─────────────────────────────────────────────────────────────────────
+    .vu-booking-hero {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        padding: 12px 0 8px;
+        gap: 16px;
+    }
+
+    .vu-hero-left {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .vu-hero-title-row {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex-wrap: wrap;
+    }
+
+    .vu-hero-title {
+        font-size: 1.75rem !important;
+        font-weight: 700 !important;
+        color: #0f172a;
+        margin: 0 !important;
+        line-height: 1.2;
+
+        .o_field_widget {
+            font-size: inherit !important;
+            font-weight: inherit !important;
+        }
+    }
+
+    .vu-hero-state-badge {
+        .badge {
+            font-size: 0.75rem;
+            padding: 4px 12px;
+            border-radius: 50px;
+            font-weight: 600;
+            letter-spacing: 0.02em;
+        }
+    }
+
+    .vu-urgency-badge {
+        font-size: 0.75rem;
+        padding: 4px 12px;
+        font-weight: 600;
+        letter-spacing: 0.02em;
+    }
+
+    .vu-urgency--urgent {
+        background: #fef3c7;
+        color: #d97706;
+        border: 1px solid #fcd34d;
+    }
+
+    .vu-urgency--emergency {
+        background: #fee2e2;
+        color: #dc2626;
+        border: 1px solid #fca5a5;
+    }
+
+    .vu-hero-tags {
+        display: flex;
+        gap: 6px;
+        margin-top: 4px;
+        flex-wrap: wrap;
+    }
+
+    .vu-service-tag {
+        font-size: 0.75rem;
+        padding: 3px 10px;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+    }
+
+    .vu-service-tag--home-visit {
+        background: #dcfce7;
+        color: #16a34a;
+        border: 1px solid #86efac;
+    }
+
+    .vu-service-tag--clinic {
+        background: #dbeafe;
+        color: #2563eb;
+        border: 1px solid #93c5fd;
+    }
+
+    .vu-service-tag--telehealth {
+        background: #f3e8ff;
+        color: #9333ea;
+        border: 1px solid #c084fc;
+    }
+
+    .vu-service-tag--hospital {
+        background: #fef3c7;
+        color: #d97706;
+        border: 1px solid #fcd34d;
+    }
+
+    .vu-service-tag--lab {
+        background: #ecfdf5;
+        color: #059669;
+        border: 1px solid #6ee7b7;
+    }
+
+    .vu-hero-right {
+        text-align: right;
+        flex-shrink: 0;
+    }
+
+    .vu-hero-meta {
+        font-size: 0.75rem;
+        color: #64748b;
+        display: flex;
+        align-items: baseline;
+        gap: 4px;
+        flex-wrap: nowrap;
+        justify-content: flex-end;
+        white-space: nowrap;
+    }
+
+    .vu-hero-meta__label {
+        font-weight: 500;
+    }
+
+    .vu-hero-meta__value {
+        .o_field_widget {
+            display: inline !important;
+            font-size: 0.75rem !important;
+        }
+    }
+
+    .vu-hero-meta__by {
+        font-size: 0.75rem;
+        color: #94a3b8;
+
+        .o_field_widget {
+            display: inline !important;
+            font-size: 0.75rem !important;
+        }
+    }
+
+    .vu-hero-timer {
+        .vu-timer-display {
+            font-size: 1.25rem;
+        }
+    }
+
+    // ─────────────────────────────────────────────────────────────────────
+    // QUICK INFO BAR — At-a-glance booking details
+    // ─────────────────────────────────────────────────────────────────────
+    .vu-quick-info {
+        display: flex;
+        background: var(--vu-surface-card, #fff);
+        border: 1px solid var(--vu-border-soft, #e2e8f0);
+        border-radius: 10px;
+        padding: 0;
+        margin: 4px 0 12px;
+        overflow: hidden;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+    }
+
+    .vu-quick-info__item {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 14px 18px;
+        border-right: 1px solid var(--vu-border-soft, #e2e8f0);
+        min-width: 0;
+
+        &:last-child {
+            border-right: none;
+        }
+    }
+
+    .vu-quick-info__icon {
+        width: 36px;
+        height: 36px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        font-size: 1rem;
+        background: #eff6ff;
+        color: #2563eb;
+    }
+
+    .vu-quick-info__label {
+        font-size: 0.6875rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        color: #94a3b8;
+        margin-bottom: 2px;
+    }
+
+    .vu-quick-info__value {
+        font-size: 0.875rem;
+        font-weight: 600;
+        color: #1e293b;
+
+        .o_field_widget {
+            font-size: inherit !important;
+            font-weight: inherit !important;
+        }
+    }
+
+    // ─────────────────────────────────────────────────────────────────────
+    // THREE-COLUMN LAYOUT
+    // Col 1: Client + Service | Col 2: Staff + Location | Col 3: Actions
+    // ─────────────────────────────────────────────────────────────────────
+    .vu-three-col {
+        display: grid;
+        grid-template-columns: 1fr 1fr 340px;
+        gap: 16px;
+        width: 100%;
+    }
+
+    .vu-col-1,
+    .vu-col-2 {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+        min-width: 0;
+    }
+
+    .vu-col-actions {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        position: sticky;
+        top: 16px;
+        align-self: start;
+        max-height: calc(100vh - 200px);
+        overflow-y: auto;
+        scrollbar-width: thin;
+    }
+
+    // ─────────────────────────────────────────────────────────────────────
+    // CLIENT INFORMATION CARD — Rich client display
+    // ─────────────────────────────────────────────────────────────────────
+    .vu-client-card {
+        background: var(--vu-surface-card, #fff);
+        border: 1px solid var(--vu-border-soft, #e2e8f0);
+        border-radius: 10px;
+        padding: 20px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+    }
+
+    .vu-client-card__header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 16px;
+        padding-bottom: 12px;
+        border-bottom: 1px solid #f1f5f9;
+    }
+
+    .vu-client-card__title {
+        font-size: 0.9375rem;
+        font-weight: 700;
+        color: #1e293b;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+
+        .fa {
+            color: #64748b;
+        }
+    }
+
+    .vu-client-card__link {
+        font-size: 0.8125rem;
+        font-weight: 600;
+        color: var(--vu-brand-primary, #2563eb);
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 4px 8px;
+        border-radius: 6px;
+        transition: background 0.15s, color 0.15s;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+
+        &:hover {
+            background: #eff6ff;
+            color: #1d4ed8;
+        }
+
+        .fa {
+            font-size: 0.7em;
+        }
+    }
+
+    .vu-client-card__body {
+        display: flex;
+        gap: 16px;
+        align-items: flex-start;
+    }
+
+    .vu-client-card__avatar {
+        flex-shrink: 0;
+
+        .vu-client-avatar-widget {
+            .o_m2o_avatar {
+                width: 48px;
+                height: 48px;
+
+                > img {
+                    width: 48px;
+                    height: 48px;
+                    border-radius: 50%;
+                    object-fit: cover;
+                }
+
+                .o_m2o_avatar_empty {
+                    width: 48px;
+                    height: 48px;
+                    border-radius: 50%;
+                    background: #1e40af;
+                    color: #fff;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    font-size: 1.125rem;
+                    font-weight: 600;
+                }
+            }
+        }
+    }
+
+    .vu-client-card__details {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .vu-client-card__name {
+        font-size: 1.0625rem;
+        font-weight: 600;
+        color: #0f172a;
+        margin-bottom: 6px;
+
+        .o_field_widget {
+            font-size: inherit !important;
+            font-weight: inherit !important;
+        }
+    }
+
+    .vu-client-card__contact {
+        display: flex;
+        gap: 16px;
+        flex-wrap: wrap;
+        margin-bottom: 6px;
+    }
+
+    .vu-client-card__contact-item {
+        font-size: 0.8125rem;
+        color: #475569;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+
+        .fa {
+            color: #94a3b8;
+            font-size: 0.875rem;
+            width: 14px;
+            text-align: center;
+        }
+
+        .o_field_widget {
+            font-size: inherit !important;
+            display: inline !important;
+        }
+    }
+
+    .vu-client-card__address {
+        font-size: 0.8125rem;
+        color: #64748b;
+        display: flex;
+        align-items: flex-start;
+        gap: 6px;
+        margin-bottom: 6px;
+
+        .fa {
+            color: #94a3b8;
+            margin-top: 2px;
+            width: 14px;
+            text-align: center;
+        }
+
+        .o_field_widget {
+            font-size: inherit !important;
+        }
+    }
+
+    .vu-client-card__meta {
+        display: flex;
+        gap: 16px;
+        flex-wrap: wrap;
+    }
+
+    .vu-client-card__meta-item {
+        font-size: 0.75rem;
+        color: #94a3b8;
+
+        .o_field_widget {
+            font-size: inherit !important;
+            display: inline !important;
+        }
+    }
+
+    // ─────────────────────────────────────────────────────────────────────
+    // SIDE CARDS — Staff Assignment, Financial Summary
+    // ─────────────────────────────────────────────────────────────────────
+    .vu-side-card {
+        background: var(--vu-surface-card, #fff);
+        border: 1px solid var(--vu-border-soft, #e2e8f0);
+        border-radius: 10px;
+        padding: 16px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+    }
+
+    .vu-side-card__header {
+        font-size: 0.8125rem;
+        font-weight: 700;
+        color: #1e293b;
+        margin-bottom: 12px;
+        padding-bottom: 8px;
+        border-bottom: 1px solid #f1f5f9;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+
+        .fa {
+            color: #64748b;
+        }
+    }
+
+    .vu-side-card__body {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .vu-side-card__row {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 8px;
+        padding: 4px 0;
+
+        &:not(:last-child) {
+            border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+        }
+    }
+
+    .vu-side-card__label {
+        font-size: 0.75rem;
+        color: #64748b;
+        flex-shrink: 0;
+        min-width: 60px;
+        font-weight: 500;
+    }
+
+    .vu-side-card__empty {
+        text-align: center;
+        padding: 16px 8px;
+        color: #94a3b8;
+        font-size: 0.8125rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .vu-side-card__empty-icon {
+        font-size: 1.5rem;
+        color: #cbd5e1;
+    }
+
+    // ─────────────────────────────────────────────────────────────────────
+    // NOTEBOOK TABS — Clean tab styling
+    // ─────────────────────────────────────────────────────────────────────
+    .o_notebook {
+        .nav-tabs {
+            border-bottom: 2px solid #e2e8f0;
+            gap: 0;
+
+            .nav-link {
+                font-size: 0.8125rem;
+                font-weight: 600;
+                color: #64748b;
+                padding: 10px 16px;
+                border: none;
+                border-bottom: 2px solid transparent;
+                margin-bottom: -2px;
+                transition: color 0.15s, border-color 0.15s;
+
+                &:hover {
+                    color: #1e293b;
+                    border-bottom-color: #94a3b8;
+                }
+
+                &.active {
+                    color: var(--vu-brand-primary, #2563eb);
+                    border-bottom-color: var(--vu-brand-primary, #2563eb);
+                    background: transparent;
+                }
+            }
+        }
+
+        .tab-content {
+            padding-top: 16px;
+        }
+    }
+
+    // ─────────────────────────────────────────────────────────────────────
+    // OVERFLOW CONTAINMENT — Prevent cards from blowing out columns
+    // ─────────────────────────────────────────────────────────────────────
+    .vu-three-col {
+        .vu-col-1 > *,
+        .vu-col-2 > *,
+        .vu-col-actions > * {
+            min-width: 0;
+            max-width: 100%;
+        }
+    }
+
+    // ─────────────────────────────────────────────────────────────────────
+    // PROGRESS RAIL — Tighten spacing in ops context
+    // ─────────────────────────────────────────────────────────────────────
+    .vu-progress-rail {
+        margin: 8px 0;
+    }
+
+    // ─────────────────────────────────────────────────────────────────────
+    // QUICK INFO BAR — Color-coded icons
+    // ─────────────────────────────────────────────────────────────────────
+    .vu-qi-scheduled {
+        background: #eff6ff !important;
+        color: #2563eb !important;
+    }
+
+    .vu-qi-service {
+        background: #f5f3ff !important;
+        color: #7c3aed !important;
+    }
+
+    .vu-qi-duration {
+        background: #fffbeb !important;
+        color: #d97706 !important;
+    }
+
+    .vu-qi-facility {
+        background: #ecfdf5 !important;
+        color: #059669 !important;
+    }
+
+    .vu-qi-catchment {
+        background: #fdf2f8 !important;
+        color: #db2777 !important;
+    }
+
+    // ─────────────────────────────────────────────────────────────────────
+    // EDITABILITY INDICATORS — Dotted underline + hover confirmation
+    // ─────────────────────────────────────────────────────────────────────
+    .vu-detail-card {
+        .o_field_widget:not(.o_readonly_modifier):not([name="assignment_ids"]):not([name="clinical_note_ids"]) {
+            .o_input, input, select, textarea {
+                border-bottom: 1px dashed rgba(0, 0, 0, 0.12) !important;
+                border-radius: 0;
+                transition: border-color 0.15s, background-color 0.15s;
+
+                &:hover {
+                    border-bottom-color: var(--vu-brand-primary, #2563eb) !important;
+                    background-color: rgba(37, 99, 235, 0.03);
+                }
+
+                &:focus {
+                    border-bottom: 2px solid var(--vu-brand-primary, #2563eb) !important;
+                    background-color: rgba(37, 99, 235, 0.03);
+                }
+            }
+        }
+
+        .o_field_widget.o_readonly_modifier {
+            .o_input, input, select {
+                border-bottom: none !important;
+            }
+        }
+    }
+
+    // ─────────────────────────────────────────────────────────────────────
+    // CARD HEADERS — Border separator + icon color (prototype-match)
+    // ─────────────────────────────────────────────────────────────────────
+    .vu-detail-card > .vu-card__title {
+        padding: 14px 20px;
+        margin: calc(-1 * var(--vu-space-md, 16px)) calc(-1 * var(--vu-space-md, 16px)) var(--vu-space-md, 16px);
+        border-bottom: 1px solid var(--vu-border-soft, #E0E0E0);
+        font-size: 14px;
+        font-weight: 700;
+        color: #212121;
+        text-transform: none;
+        letter-spacing: 0;
+
+        .vu-section__icon {
+            color: var(--vu-brand-primary, #1565C0);
+        }
+    }
+
+
+    // ─────────────────────────────────────────────────────────────────────
+    // NEXT BEST ACTION — Golden star super-title
+    // ─────────────────────────────────────────────────────────────────────
+    .vu-action-card__supertitle {
+        font-size: 0.6875rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.4px;
+        color: #d97706;
+        margin-bottom: 4px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .vu-action-star {
+        color: #f59e0b !important;
+        font-size: 0.75rem;
+    }
+
+    // ─────────────────────────────────────────────────────────────────────
+    // SIDE CARD VALUES — Right-aligned bold values
+    // ─────────────────────────────────────────────────────────────────────
+    .vu-side-card__value {
+        font-size: 0.8125rem;
+        font-weight: 600;
+        color: #1e293b;
+
+        .o_field_widget {
+            font-size: inherit !important;
+            font-weight: inherit !important;
+            display: inline !important;
+        }
+    }
+
+    .vu-fin-header-badge {
+        .badge {
+            font-size: 0.6875rem;
+            padding: 2px 8px;
+            border-radius: 4px;
+        }
+    }
+
+    // ─────────────────────────────────────────────────────────────────────
+    // STATUSBAR BUTTONS — Outline variants + red cancel
+    // ─────────────────────────────────────────────────────────────────────
+    .o_form_statusbar .o_statusbar_buttons {
+        .btn:not(.oe_highlight):not(.btn-success) {
+            background: transparent;
+            border: 1px solid #e2e8f0;
+            color: #424242;
+
+            &:hover {
+                border-color: var(--vu-brand-primary, #1565C0);
+                color: var(--vu-brand-primary, #1565C0);
+                background: #eff6ff;
+            }
+        }
+
+        .btn:has(.fa-times) {
+            color: #dc2626;
+            border-color: #fca5a5;
+
+            &:hover {
+                background: #fee2e2;
+                border-color: #dc2626;
+            }
+        }
+    }
+
+    // ─────────────────────────────────────────────────────────────────────
+    // FINANCIAL SUMMARY — Line items, total, actions
+    // ─────────────────────────────────────────────────────────────────────
+    .vu-fin-line {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 6px 0;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+
+        &:last-of-type {
+            border-bottom: none;
+        }
+    }
+
+    .vu-fin-label {
+        font-size: 0.75rem;
+        color: #424242;
+    }
+
+    .vu-fin-amount {
+        font-size: 0.8125rem;
+        font-weight: 600;
+
+        .o_field_widget {
+            font-size: inherit !important;
+            font-weight: inherit !important;
+            display: inline !important;
+        }
+    }
+
+    .vu-fin-total {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-top: 10px;
+        margin-top: 4px;
+        border-top: 2px solid #212121;
+    }
+
+    .vu-fin-total-label {
+        font-size: 0.875rem;
+        font-weight: 700;
+        color: #212121;
+    }
+
+    .vu-fin-total-amount {
+        font-size: 0.9375rem;
+        font-weight: 700;
+        color: var(--vu-brand-primary, #1565C0);
+
+        .o_field_widget {
+            font-size: inherit !important;
+            font-weight: inherit !important;
+            display: inline !important;
+        }
+    }
+
+    .vu-fin-status-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 6px 0;
+        margin-top: 8px;
+    }
+
+    .vu-fin-actions {
+        display: flex;
+        gap: 8px;
+        margin-top: 12px;
+    }
+
+    .vu-fin-btn {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        padding: 8px;
+        border-radius: 8px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 150ms;
+        border: none;
+        background: none;
+    }
+
+    .vu-fin-btn--outline {
+        border: 1px solid var(--vu-border-soft, #e2e8f0);
+        color: #424242;
+
+        &:hover {
+            border-color: var(--vu-brand-primary, #1565C0);
+            color: var(--vu-brand-primary, #1565C0);
+            background: #eff6ff;
+        }
+    }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// RESPONSIVE — Mobile: hide sidebar, stack columns
+// ─────────────────────────────────────────────────────────────────────────────
+@media (max-width: 1100px) {
+    .ops-booking-form-page {
+        .vu-three-col {
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .vu-col-actions {
+            grid-column: 1 / -1;
+            position: static;
+            max-height: none;
+            overflow: visible;
+            flex-direction: row;
+            flex-wrap: wrap;
+        }
+
+        .vu-quick-info {
+            flex-wrap: wrap;
+        }
+
+        .vu-quick-info__item {
+            flex: 1 1 calc(33% - 1px);
+
+            &:nth-child(3) {
+                border-right: none;
+            }
+
+            &:nth-child(1),
+            &:nth-child(2),
+            &:nth-child(3) {
+                border-bottom: 1px solid var(--vu-border-soft, #e2e8f0);
+            }
+        }
+    }
+}
+
+@media (max-width: 768px) {
+    .ops-booking-form-page {
+        .ops-sidebar {
+            display: none;
+        }
+
+        .ops-form-main-area {
+            width: 100%;
+        }
+
+        .vu-three-col {
+            grid-template-columns: 1fr;
+        }
+
+        .vu-col-actions {
+            position: static;
+            max-height: none;
+            overflow: visible;
+            order: -1;
+            flex-direction: column;
+        }
+
+        .vu-booking-hero {
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .vu-hero-right {
+            text-align: left;
+        }
+
+        .vu-quick-info {
+            flex-direction: column;
+        }
+
+        .vu-quick-info__item {
+            border-right: none;
+            border-bottom: 1px solid var(--vu-border-soft, #e2e8f0);
+
+            &:last-child {
+                border-bottom: none;
+            }
+        }
+    }
+}

@@ -3441,3 +3441,1280 @@ class HealthFieldServiceOrderUnified(models.Model):
                 'dialog_size': 'extra-large',
             },
         }
+
+    # =========================================================================
+    # Operations Dashboard Data Methods
+    # =========================================================================
+
+    @api.model
+    def get_ops_dashboard_data(self, target_date, facility_id=False):
+        """Single RPC returning all ops dashboard data for the given date."""
+        from datetime import datetime, timedelta
+        import pytz
+
+        tz = pytz.timezone(self.env.user.tz or 'Asia/Ho_Chi_Minh')
+        if isinstance(target_date, str):
+            target_date = fields.Date.from_string(target_date)
+
+        day_start = tz.localize(datetime.combine(target_date, datetime.min.time())).astimezone(pytz.utc).replace(tzinfo=None)
+        day_end = tz.localize(datetime.combine(target_date, datetime.max.time())).astimezone(pytz.utc).replace(tzinfo=None)
+
+        base_domain = [
+            ('scheduled_datetime', '>=', day_start),
+            ('scheduled_datetime', '<=', day_end),
+            ('state', '!=', 'cancelled'),
+        ]
+        if facility_id:
+            base_domain.append(('facility_id', '=', facility_id))
+
+        all_fsos = self.search(base_domain, order='scheduled_datetime asc')
+
+        total = len(all_fsos)
+        needs_staff = len(all_fsos.filtered(lambda f: not f.has_staff_assigned and f.state in ('draft', 'confirmed')))
+        active_now = len(all_fsos.filtered(lambda f: f.state == 'in_progress'))
+        completed = len(all_fsos.filtered(lambda f: f.state in ('completed', 'completed_pending_invoice', 'closed')))
+        total_revenue = sum(all_fsos.mapped('total_price'))
+
+        service_breakdown = {}
+        for fso in all_fsos:
+            st = fso.service_type or 'other'
+            service_breakdown[st] = service_breakdown.get(st, 0) + 1
+
+        urgent_needs = len(all_fsos.filtered(
+            lambda f: not f.has_staff_assigned and f.state in ('draft', 'confirmed') and f.priority in ('3', '4')
+        ))
+        normal_needs = needs_staff - urgent_needs
+
+        kpis = {
+            'total_today': total,
+            'needs_assignment': needs_staff,
+            'urgent_needs': urgent_needs,
+            'normal_needs': normal_needs,
+            'active_now': active_now,
+            'completed_today': completed,
+            'revenue_today': total_revenue,
+            'service_breakdown': service_breakdown,
+        }
+
+        booking_fields = [
+            'id', 'name', 'state', 'priority', 'service_type',
+            'scheduled_datetime', 'scheduled_duration', 'estimated_end_datetime',
+            'has_staff_assigned', 'service_location',
+        ]
+        bookings = []
+        for fso in all_fsos:
+            patient_name = fso.patient_id.name if fso.patient_id else ''
+            lead_staff_name = fso.lead_staff_id.name if fso.lead_staff_id else ''
+            lead_staff_id = fso.lead_staff_id.id if fso.lead_staff_id else False
+            facility_name = fso.facility_id.name if fso.facility_id else ''
+            catchment = fso.catchment_province_id.name if fso.catchment_province_id else ''
+            appointment_type = fso.appointment_type_id.name if fso.appointment_type_id else ''
+
+            sched_local = ''
+            sched_time = ''
+            if fso.scheduled_datetime:
+                local_dt = pytz.utc.localize(fso.scheduled_datetime).astimezone(tz)
+                sched_local = local_dt.strftime('%Y-%m-%d %H:%M')
+                sched_time = local_dt.strftime('%H:%M')
+
+            bookings.append({
+                'id': fso.id,
+                'name': fso.name or '',
+                'state': fso.state,
+                'priority': fso.priority,
+                'service_type': fso.service_type or '',
+                'service_type_name': appointment_type,
+                'scheduled_datetime': sched_local,
+                'scheduled_time': sched_time,
+                'scheduled_duration': fso.scheduled_duration or 60,
+                'has_staff_assigned': fso.has_staff_assigned,
+                'service_location': fso.service_location or '',
+                'patient_name': patient_name,
+                'patient_id': fso.patient_id.id if fso.patient_id else False,
+                'lead_staff_name': lead_staff_name,
+                'lead_staff_id': lead_staff_id,
+                'facility_name': facility_name,
+                'catchment_name': catchment,
+                'total_price': fso.total_price or 0,
+            })
+
+        Employee = self.env['hr.employee']
+        staff_domain = [('is_healthcare_staff', '=', True), ('employment_status', '=', 'active')]
+        if facility_id:
+            staff_domain.append(('facility_ids', 'in', [facility_id]))
+        staff_members = Employee.search(staff_domain, order='name asc')
+
+        staff_list = []
+        for emp in staff_members:
+            today_assignments = self.env['health.staff.assignment'].search_count([
+                ('staff_id', '=', emp.id),
+                ('planned_start_time', '>=', day_start),
+                ('planned_start_time', '<=', day_end),
+                ('state', 'not in', ['cancelled', 'template']),
+            ])
+
+            status = 'available'
+            active_assignment = self.env['health.staff.assignment'].search([
+                ('staff_id', '=', emp.id),
+                ('state', '=', 'in_progress'),
+                ('planned_start_time', '>=', day_start),
+                ('planned_start_time', '<=', day_end),
+            ], limit=1)
+            if active_assignment:
+                status = 'busy'
+            elif emp.employment_status != 'active' or (hasattr(emp, 'assignment_status') and emp.assignment_status == 'off_duty'):
+                status = 'off'
+
+            next_available = ''
+            if status == 'busy' and active_assignment:
+                end_dt = active_assignment.planned_end_time
+                if end_dt:
+                    local_end = pytz.utc.localize(end_dt).astimezone(tz)
+                    next_available = local_end.strftime('%H:%M')
+
+            staff_list.append({
+                'id': emp.id,
+                'name': emp.name or '',
+                'role': emp.access_role_display or '',
+                'status': status,
+                'today_assignments': today_assignments,
+                'next_available': next_available,
+                'initials': ''.join([p[0].upper() for p in (emp.name or 'U').split()[:2]]),
+                'color_index': emp.color or 0,
+            })
+
+        timeline_blocks = []
+        assignments = self.env['health.staff.assignment'].search([
+            ('planned_start_time', '>=', day_start),
+            ('planned_start_time', '<=', day_end),
+            ('state', 'not in', ['cancelled', 'template']),
+        ], order='planned_start_time asc')
+
+        for asgn in assignments:
+            start_hour = 8
+            end_hour = 8
+            if asgn.planned_start_time:
+                local_start = pytz.utc.localize(asgn.planned_start_time).astimezone(tz)
+                start_hour = local_start.hour + local_start.minute / 60.0
+            if asgn.planned_end_time:
+                local_end = pytz.utc.localize(asgn.planned_end_time).astimezone(tz)
+                end_hour = local_end.hour + local_end.minute / 60.0
+
+            fso = asgn.fso_id
+            timeline_blocks.append({
+                'id': asgn.id,
+                'fso_id': fso.id if fso else False,
+                'staff_id': asgn.staff_id.id if asgn.staff_id else False,
+                'patient_name': fso.patient_id.name if fso and fso.patient_id else '',
+                'service_type': fso.service_type if fso else '',
+                'start_hour': round(start_hour, 2),
+                'end_hour': round(end_hour, 2),
+                'state': asgn.state,
+                'fso_state': fso.state if fso else '',
+            })
+
+        return {
+            'kpis': kpis,
+            'bookings': bookings,
+            'staff': staff_list,
+            'timeline_blocks': timeline_blocks,
+        }
+
+    def action_quick_assign_staff(self, staff_id):
+        """Inline staff assignment from dashboard/queue. Creates assignment and updates state."""
+        self.ensure_one()
+        if not staff_id:
+            return False
+
+        Employee = self.env['hr.employee']
+        staff = Employee.browse(staff_id)
+        if not staff.exists():
+            return False
+
+        existing = self.env['health.staff.assignment'].search([
+            ('fso_id', '=', self.id),
+            ('staff_id', '=', staff_id),
+            ('state', 'not in', ['cancelled', 'template']),
+        ], limit=1)
+        if existing:
+            return {'success': True, 'message': _('Staff already assigned')}
+
+        self.env['health.staff.assignment'].create({
+            'fso_id': self.id,
+            'staff_id': staff_id,
+            'assignment_role': 'lead' if not self.has_staff_assigned else 'support',
+            'state': 'assigned',
+        })
+
+        if self.state in ('draft', 'confirmed'):
+            self._handle_staff_assignment()
+
+        return {'success': True, 'message': _('Staff assigned successfully')}
+
+    @api.model
+    def create_booking_from_wizard(self, vals):
+        """Create a booking from the OWL booking wizard.
+        Accepts dict with booking_date, booking_time, booking_timezone for
+        local-to-UTC conversion."""
+        import pytz
+        from datetime import datetime
+
+        booking_date = vals.pop('booking_date', False)
+        booking_time = vals.pop('booking_time', False)
+        booking_tz = vals.pop('booking_timezone', 'Asia/Ho_Chi_Minh')
+        vals.pop('booking_notes', None)
+        vals.pop('service_notes', None)
+
+        if booking_date and booking_time is not False:
+            if isinstance(booking_date, str):
+                booking_date = fields.Date.from_string(booking_date)
+            hours = int(booking_time)
+            minutes = int(round((booking_time - hours) * 60))
+            naive_local = datetime.combine(booking_date, datetime.min.time()).replace(
+                hour=hours, minute=minutes
+            )
+            tz = pytz.timezone(booking_tz)
+            local_dt = tz.localize(naive_local)
+            utc_dt = local_dt.astimezone(pytz.utc).replace(tzinfo=None)
+            vals['scheduled_datetime'] = utc_dt
+
+        booking = self.create(vals)
+        return booking.id
+
+    @api.model
+    def get_ops_calendar_data(self, start_date, end_date, staff_id=False, service_type=False):
+        domain = [
+            ('scheduled_datetime', '>=', start_date),
+            ('scheduled_datetime', '<=', end_date),
+            ('state', '!=', 'cancelled'),
+        ]
+        if staff_id:
+            domain.append(('lead_staff_id', '=', int(staff_id)))
+        if service_type:
+            domain.append(('service_type', '=', service_type))
+
+        bookings = self.search(domain, order='scheduled_datetime asc')
+        events = []
+        for b in bookings:
+            events.append({
+                'id': b.id,
+                'name': b.name or '',
+                'patient_name': b.patient_id.name if b.patient_id else '',
+                'service_type': b.service_type or 'home_visit',
+                'state': b.state or 'draft',
+                'has_staff': b.has_staff_assigned,
+                'staff_name': b.lead_staff_id.name if b.lead_staff_id else '',
+                'start_dt': fields.Datetime.to_string(b.scheduled_datetime) if b.scheduled_datetime else '',
+                'duration': b.scheduled_duration or 60,
+                'priority': b.priority or '1',
+            })
+
+        staff = self.env['hr.employee'].search_read(
+            [('is_healthcare_staff', '=', True), ('employment_status', '=', 'active')],
+            ['name'],
+            order='name asc',
+        )
+
+        return {'events': events, 'staff': staff}
+
+    def get_booking_detail_data(self):
+        """Single RPC returning all booking detail data for the OWL component."""
+        self.ensure_one()
+        b = self
+
+        service_type_label = dict(b._fields['service_type'].selection).get(b.service_type, b.service_type or '')
+        state_label = dict(b._fields['state'].selection).get(b.state, b.state or '')
+        priority_label = dict(b._fields['priority'].selection).get(b.priority, '') if b.priority else ''
+        service_location_label = dict(b._fields['service_location'].selection).get(b.service_location, '') if b.service_location else ''
+        booking_source_label = dict(b._fields['booking_source'].selection).get(b.booking_source, '') if b.booking_source else ''
+
+        dur_mins = b.scheduled_duration or 60
+        dur_label = f"{dur_mins // 60}h" if dur_mins >= 60 else f"{dur_mins}min"
+        if dur_mins >= 60 and dur_mins % 60:
+            dur_label = f"{dur_mins // 60}h {dur_mins % 60}min"
+
+        time_range = ''
+        time_slot = ''
+        if b.scheduled_datetime:
+            start = b.scheduled_datetime
+            end = b.estimated_end_datetime
+            start_str = start.strftime('%H:%M')
+            end_str = end.strftime('%H:%M') if end else ''
+            date_str = start.strftime('%b %d, %Y')
+            time_range = f"{date_str} • {start_str}"
+            time_slot = start_str
+            if end_str:
+                time_range += f" — {end_str}"
+                time_slot += f" — {end_str}"
+
+        # Patient info with stats
+        p = b.patient_id
+        patient_initials = ''
+        if p and p.name:
+            parts = p.name.split()
+            patient_initials = ''.join(x[0] for x in parts if x)[:2].upper()
+
+        patient_stats = {'total_visits': 0, 'active_packages': 0, 'pending_payments': 0, 'satisfaction': 0}
+        if p:
+            try:
+                patient_stats['total_visits'] = self.search_count([
+                    ('patient_id', '=', p.id), ('state', 'in', ['completed', 'completed_pending_invoice', 'closed'])
+                ])
+                patient_stats['active_packages'] = self.env['health.prepaid.package'].search_count([
+                    ('partner_id', '=', p.id), ('state', '=', 'active')
+                ]) if 'health.prepaid.package' in self.env else 0
+                patient_stats['pending_payments'] = self.search_count([
+                    ('patient_id', '=', p.id), ('state', '=', 'completed_pending_invoice')
+                ])
+                ratings = self.search([
+                    ('patient_id', '=', p.id), ('service_rating', '!=', False)
+                ]).mapped(lambda r: int(r.service_rating) if r.service_rating else 0)
+                ratings = [r for r in ratings if r > 0]
+                patient_stats['satisfaction'] = round(sum(ratings) / len(ratings), 1) if ratings else 0
+            except Exception:
+                pass
+
+        patient = {
+            'id': p.id if p else False,
+            'name': p.name or '' if p else '',
+            'initials': patient_initials,
+            'code': p.patient_code or '' if p else '',
+            'phone': p.mobile or p.phone or '' if p else '',
+            'email': p.email or '' if p else '',
+            'address': b.patient_address_display or '',
+            'age': p.age_display or '' if p else '',
+            'stats': patient_stats,
+        }
+
+        # Staff info
+        staff = None
+        if b.lead_staff_id:
+            s = b.lead_staff_id
+            s_initials = ''
+            if s.name:
+                s_parts = s.name.split()
+                s_initials = ''.join(x[0] for x in s_parts if x)[:2].upper()
+            staff = {
+                'id': s.id,
+                'name': s.name or '',
+                'initials': s_initials,
+                'role': s.job_title or s.job_id.name if s.job_id else '',
+            }
+
+        # Suggested staff (top 3 by availability)
+        suggested_staff = []
+        if not b.has_staff_assigned:
+            try:
+                healthcare_staff = self.env['hr.employee'].search([
+                    ('is_healthcare_staff', '=', True),
+                    ('employment_status', '=', 'active'),
+                ], limit=10, order='name asc')
+                COLORS = ['#1565C0', '#43A047', '#7c3aed', '#E53935', '#FB8C00', '#00897B']
+                for idx, emp in enumerate(healthcare_staff[:3]):
+                    emp_initials = ''.join(x[0] for x in emp.name.split() if x)[:2].upper() if emp.name else 'U'
+                    today_count = self.search_count([
+                        ('lead_staff_id', '=', emp.id),
+                        ('scheduled_datetime', '>=', fields.Date.today().strftime('%Y-%m-%d 00:00:00')),
+                        ('scheduled_datetime', '<=', fields.Date.today().strftime('%Y-%m-%d 23:59:59')),
+                        ('state', 'not in', ['cancelled', 'closed']),
+                    ])
+                    score = max(60, 95 - idx * 12 - today_count * 3)
+                    suggested_staff.append({
+                        'id': emp.id,
+                        'name': emp.name or '',
+                        'initials': emp_initials,
+                        'color': COLORS[idx % len(COLORS)],
+                        'role': emp.job_title or '',
+                        'today_bookings': today_count,
+                        'score': score,
+                        'available': today_count < 5,
+                    })
+            except Exception:
+                pass
+
+        # Workflow steps
+        state_order = ['draft', 'confirmed', 'assigned', 'in_progress', 'completed', 'completed_pending_invoice', 'closed']
+        state_labels = {
+            'draft': 'Created', 'confirmed': 'Confirmed', 'assigned': 'Staff Assigned',
+            'in_progress': 'In Progress', 'completed': 'Completed',
+            'completed_pending_invoice': 'Invoiced', 'closed': 'Closed',
+        }
+        current_idx = state_order.index(b.state) if b.state in state_order else 0
+        steps = []
+        display_states = ['draft', 'confirmed', 'assigned', 'in_progress', 'completed', 'completed_pending_invoice']
+        for i, st in enumerate(display_states):
+            if i < current_idx:
+                status = 'completed'
+            elif i == current_idx:
+                status = 'active'
+            else:
+                status = 'pending'
+            steps.append({'key': st, 'label': state_labels.get(st, st), 'status': status, 'number': i + 1})
+
+        # Payment summary with line items
+        payment_lines = []
+        if b.base_price:
+            svc_desc = f"Service Fee ({service_type_label}"
+            if dur_label:
+                svc_desc += f" — {dur_label}"
+            svc_desc += ")"
+            payment_lines.append({'label': svc_desc, 'amount': b.base_price})
+        if b.travel_charge:
+            payment_lines.append({'label': 'Travel Surcharge', 'amount': b.travel_charge})
+        if b.urgency_charge:
+            payment_lines.append({'label': 'Urgent Priority Fee', 'amount': b.urgency_charge})
+        if b.equipment_charge:
+            payment_lines.append({'label': 'Equipment Charge', 'amount': b.equipment_charge})
+        if b.after_hours_charge:
+            payment_lines.append({'label': 'After Hours Fee', 'amount': b.after_hours_charge})
+
+        total_amount = b.sale_order_id.amount_total if b.sale_order_id else b.total_price or 0
+        payment = {
+            'total': total_amount,
+            'lines': payment_lines,
+            'invoice_state': b.invoice_state or 'none',
+            'has_invoice': bool(b.invoice_id),
+            'invoice_id': b.invoice_id.id if b.invoice_id else False,
+        }
+
+        # Assigned staff list
+        assigned_staff = []
+        for emp in b.assigned_staff_ids:
+            emp_initials = ''.join(x[0] for x in emp.name.split() if x)[:2].upper() if emp.name else 'U'
+            assigned_staff.append({
+                'id': emp.id,
+                'name': emp.name or '',
+                'initials': emp_initials,
+                'role': emp.job_title or '',
+            })
+
+        # Clinical notes
+        clinical_notes = []
+        try:
+            for note in b.clinical_note_ids.sorted('create_date', reverse=True)[:10]:
+                clinical_notes.append({
+                    'id': note.id,
+                    'date': note.create_date.strftime('%b %d, %Y • %H:%M') if note.create_date else '',
+                    'author': note.create_uid.name if note.create_uid else '',
+                    'content': note.name or note.note or '',
+                })
+        except Exception:
+            pass
+
+        # Equipment
+        equipment = []
+        try:
+            for eq in b.assigned_equipment_ids:
+                equipment.append({'id': eq.id, 'name': eq.name or ''})
+        except Exception:
+            pass
+
+        # Activity timeline (chatter messages)
+        timeline = []
+        try:
+            messages = self.env['mail.message'].search([
+                ('res_id', '=', b.id),
+                ('model', '=', 'health.fieldservice.order'),
+                ('message_type', 'in', ['comment', 'notification']),
+            ], order='date desc', limit=15)
+            for msg in messages:
+                timeline.append({
+                    'id': msg.id,
+                    'body': msg.body or '',
+                    'date': msg.date.strftime('%b %d, %Y • %H:%M') if msg.date else '',
+                    'author': msg.author_id.name if msg.author_id else '',
+                    'subtype': msg.subtype_id.name if msg.subtype_id else 'Note',
+                })
+        except Exception:
+            pass
+
+        # Execution timing
+        execution = {
+            'actual_start': b.actual_start_datetime.strftime('%b %d, %Y • %H:%M') if b.actual_start_datetime else '',
+            'actual_end': b.actual_end_datetime.strftime('%b %d, %Y • %H:%M') if b.actual_end_datetime else '',
+            'duration_display': b.actual_duration_display or '',
+            'duration_hours': round(b.actual_duration, 2) if b.actual_duration else 0,
+            'timer_active': b.service_timer_active or False,
+        }
+
+        # Quote info
+        quote = {
+            'id': b.sale_order_id.id if b.sale_order_id else False,
+            'name': b.sale_order_id.name if b.sale_order_id else '',
+            'state': b.sale_order_id.state if b.sale_order_id else '',
+        }
+
+        # Doctors
+        primary_doctor = None
+        if b.primary_doctor_id:
+            d = b.primary_doctor_id
+            d_initials = ''.join(x[0] for x in d.name.split() if x)[:2].upper() if d.name else 'DR'
+            primary_doctor = {'id': d.id, 'name': d.name or '', 'initials': d_initials, 'role': d.job_title or 'Doctor'}
+
+        assigned_doctors = []
+        for doc in b.assigned_doctor_ids:
+            doc_initials = ''.join(x[0] for x in doc.name.split() if x)[:2].upper() if doc.name else 'DR'
+            assigned_doctors.append({'id': doc.id, 'name': doc.name or '', 'initials': doc_initials, 'role': doc.job_title or 'Doctor'})
+
+        primary_nurse = None
+        if b.primary_nurse_id:
+            n = b.primary_nurse_id
+            n_initials = ''.join(x[0] for x in n.name.split() if x)[:2].upper() if n.name else 'RN'
+            primary_nurse = {'id': n.id, 'name': n.name or '', 'initials': n_initials, 'role': n.job_title or 'Nurse'}
+
+        # Clinical details
+        urgency_label = dict(b._fields['urgency_level'].selection).get(b.urgency_level, '') if b.urgency_level else ''
+        clinical = {
+            'symptoms': b.symptoms or '',
+            'diagnosis': b.diagnosis or '',
+            'goal_of_care': b.goal_of_care or '',
+            'intake_notes': b.intake_notes or '',
+            'service_requirements': b.service_requirements or '',
+            'urgency_level': b.urgency_level or '',
+            'urgency_label': urgency_label,
+            'referring_doctor': b.referring_doctor_id.name if b.referring_doctor_id else '',
+            'referring_doctor_id': b.referring_doctor_id.id if b.referring_doctor_id else False,
+            'injection_count': b.injection_count or 0,
+            'medication_count': b.medication_count or 0,
+            'wound_count': b.wound_count or 0,
+            'iv_fluid_count': b.iv_fluid_count or 0,
+            'clinical_notes_submitted': b.clinical_notes_submitted,
+            'clinical_note_count': b.clinical_note_count or 0,
+        }
+
+        # Follow-up
+        follow_up = {
+            'required': b.follow_up_required or False,
+            'date': b.follow_up_date.strftime('%b %d, %Y') if b.follow_up_date else '',
+            'date_raw': b.follow_up_date.isoformat() if b.follow_up_date else '',
+            'notes': b.follow_up_notes or '',
+        }
+
+        # Equipment & supplies
+        required_equipment_list = []
+        try:
+            for eq in b.required_equipment_ids:
+                required_equipment_list.append({'id': eq.id, 'name': eq.name or ''})
+        except Exception:
+            pass
+
+        equipment_data = {
+            'assigned': equipment,
+            'required': required_equipment_list,
+            'required_text': b.required_equipment or '',
+            'supplies_required': b.supplies_required or '',
+            'supplies_checklist': b.supplies_checklist or '',
+            'checklist_complete': b.equipment_checklist_complete or False,
+        }
+
+        # Location details
+        location = {
+            'type': b.service_location or '',
+            'type_label': service_location_label,
+            'facility': b.facility_id.name if b.facility_id else '',
+            'facility_id': b.facility_id.id if b.facility_id else False,
+            'address': b.service_address or b.visit_address or '',
+            'gps': b.gps_coordinates or '',
+            'travel_distance': b.travel_distance or 0,
+            'travel_time': b.travel_time_minutes or 0,
+            'online_url': b.online_meeting_url or '',
+            'online_platform': b.online_platform or '',
+        }
+
+        # Communication & coordination
+        communication = {
+            'patient_contacted': b.patient_contacted or False,
+            'staff_notified': b.staff_notified or False,
+            'reminders_sent': b.reminders_sent or False,
+            'last_communication': b.last_communication_date.strftime('%b %d, %Y • %H:%M') if b.last_communication_date else '',
+            'communication_count': b.communication_count or 0,
+        }
+
+        # Compliance
+        compliance = {
+            'moh_required': b.moh_submission_required or False,
+            'moh_date': b.moh_submission_date.strftime('%b %d, %Y') if b.moh_submission_date else '',
+            'moh_reference': b.moh_reference or '',
+            'misa_synced': b.misa_synced or False,
+            'misa_date': b.misa_sync_date.strftime('%b %d, %Y') if b.misa_sync_date else '',
+            'misa_reference': b.misa_reference or '',
+        }
+
+        # Financial extras
+        payment_status_label = dict(b._fields['payment_status'].selection).get(b.payment_status, '') if b.payment_status else ''
+        financial = {
+            'payment_status': b.payment_status or '',
+            'payment_status_label': payment_status_label,
+            'has_insurance': b.has_insurance or False,
+            'insurance_provider': b.insurance_provider or '',
+            'invoice_submitted': b.invoice_submitted or False,
+            'invoice_authorized': b.invoice_authorized or False,
+            'service_fee_vnd': b.service_fee_vnd or 0,
+            'commission_due_to': b.commission_due_to.name if b.commission_due_to else '',
+            'commission_percentage': b.commission_percentage or 0,
+            'commission_amount': b.commission_amount or 0,
+            'travel_fee': b.travel_fee or 0,
+        }
+
+        # Service rating
+        rating_label = dict(b._fields['service_rating'].selection).get(b.service_rating, '') if b.service_rating else ''
+
+        # Cancellation info
+        cancellation = {}
+        if b.state == 'cancelled':
+            cancellation = {
+                'reason': b.cancellation_reason_id.name if b.cancellation_reason_id else '',
+                'notes': b.cancellation_notes or '',
+                'date': b.cancellation_date.strftime('%b %d, %Y • %H:%M') if b.cancellation_date else '',
+                'cancelled_by': b.cancelled_by.name if b.cancelled_by else '',
+                'cancelled_by_client': b.cancelled_by_client or '',
+            }
+
+        # Confirmation info
+        confirmation_method_label = dict(b._fields['confirmation_method'].selection).get(b.confirmation_method, '') if b.confirmation_method else ''
+
+        return {
+            'booking': {
+                'id': b.id,
+                'name': b.name or '',
+                'state': b.state or 'draft',
+                'state_label': state_label,
+                'priority': b.priority or '1',
+                'priority_label': priority_label,
+                'service_type': b.service_type or '',
+                'service_type_label': service_type_label,
+                'service_category': b.service_category or '',
+                'service_location': b.service_location or '',
+                'service_location_label': service_location_label,
+                'time_range': time_range,
+                'date_label': b.scheduled_datetime.strftime('%b %d, %Y') if b.scheduled_datetime else '',
+                'time_label': time_slot,
+                'duration_label': dur_label,
+                'duration_minutes': dur_mins,
+                'facility': b.facility_id.name if b.facility_id else '',
+                'has_staff': b.has_staff_assigned,
+                'special_requirements': b.special_requirements or '',
+                'patient_notes': b.patient_notes or '',
+                'booking_source': booking_source_label,
+                'booking_source_key': b.booking_source or '',
+                'package': b.package_id.name if hasattr(b, 'package_id') and b.package_id else '',
+                'referral_source': b.booking_source or '',
+                'created_date': b.create_date.strftime('%b %d, %Y at %H:%M') if b.create_date else '',
+                'created_by': b.create_uid.name if b.create_uid else '',
+                'booked_by': b.booking_user_id.name if b.booking_user_id else '',
+                'confirmation_date': b.confirmation_date.strftime('%b %d, %Y at %H:%M') if b.confirmation_date else '',
+                'confirmed_by': b.confirmed_by_id.name if b.confirmed_by_id else '',
+                'confirmation_method': confirmation_method_label,
+                'timezone': b.booking_timezone or '',
+                'service_rating': b.service_rating or '',
+                'service_rating_label': rating_label,
+                'completion_notes': b.completion_notes or '',
+                'team': b.team_id.name if b.team_id else '',
+                'appointment_type': b.appointment_type_id.name if b.appointment_type_id else '',
+            },
+            'patient': patient,
+            'staff': staff,
+            'primary_doctor': primary_doctor,
+            'assigned_doctors': assigned_doctors,
+            'primary_nurse': primary_nurse,
+            'suggested_staff': suggested_staff,
+            'assigned_staff': assigned_staff,
+            'steps': steps,
+            'payment': payment,
+            'clinical': clinical,
+            'clinical_notes': clinical_notes,
+            'follow_up': follow_up,
+            'equipment': equipment_data,
+            'location': location,
+            'execution': execution,
+            'communication': communication,
+            'compliance': compliance,
+            'financial': financial,
+            'cancellation': cancellation,
+            'quote': quote,
+            'timeline': timeline,
+        }
+
+    def get_payment_collection_data(self):
+        """Single RPC returning all data needed for the payment collection OWL wizard."""
+        self.ensure_one()
+        b = self
+
+        patient_initials = ''
+        if b.patient_id and b.patient_id.name:
+            parts = b.patient_id.name.split()
+            patient_initials = ''.join(x[0] for x in parts if x)[:2].upper()
+
+        time_str = ''
+        if b.scheduled_datetime:
+            time_str = b.scheduled_datetime.strftime('%b %d, %Y')
+
+        service_label = dict(b._fields['service_type'].selection).get(b.service_type, '') if b.service_type else ''
+
+        breakdown_parts = []
+        if b.base_price:
+            breakdown_parts.append(f"Service: {b.base_price:,.0f}")
+        if b.travel_charge:
+            breakdown_parts.append(f"Travel: {b.travel_charge:,.0f}")
+        if b.urgency_charge:
+            breakdown_parts.append(f"Urgent: {b.urgency_charge:,.0f}")
+        if b.equipment_charge:
+            breakdown_parts.append(f"Equipment: {b.equipment_charge:,.0f}")
+        if b.after_hours_charge:
+            breakdown_parts.append(f"After-hours: {b.after_hours_charge:,.0f}")
+
+        amount_due = b.total_price or 0
+        if b.invoice_id and b.invoice_id.amount_residual:
+            amount_due = b.invoice_id.amount_residual
+
+        staff_options = []
+        try:
+            employees = self.env['hr.employee'].search([
+                ('department_id.name', 'ilike', 'health'),
+            ], limit=20, order='name')
+            if not employees:
+                employees = self.env['hr.employee'].search([], limit=20, order='name')
+            for emp in employees:
+                staff_options.append({'id': emp.id, 'name': emp.name or ''})
+        except Exception:
+            pass
+
+        return {
+            'booking': {
+                'id': b.id,
+                'name': b.name or '',
+                'service_type_label': service_label,
+                'date_label': time_str,
+            },
+            'patient': {
+                'id': b.patient_id.id if b.patient_id else False,
+                'name': b.patient_id.name or '' if b.patient_id else '',
+                'initials': patient_initials,
+            },
+            'amount': {
+                'due': amount_due,
+                'breakdown': ' + '.join(breakdown_parts),
+                'base_price': b.base_price or 0,
+                'travel_charge': b.travel_charge or 0,
+                'urgency_charge': b.urgency_charge or 0,
+                'equipment_charge': b.equipment_charge or 0,
+                'after_hours_charge': b.after_hours_charge or 0,
+                'total_price': b.total_price or 0,
+                'invoice_residual': b.invoice_id.amount_residual if b.invoice_id else 0,
+            },
+            'staff_options': staff_options,
+            'has_invoice': bool(b.invoice_id),
+            'invoice_id': b.invoice_id.id if b.invoice_id else False,
+        }
+
+    def action_process_owl_payment(self, payment_method, amount, collected_by_id=False, bank_name='', transfer_ref='', notes='', receipt_type='retail'):
+        """Process payment from the OWL payment collection wizard."""
+        self.ensure_one()
+
+        if amount <= 0:
+            return {'success': False, 'error': 'Payment amount must be positive.'}
+
+        journal_type = 'cash' if payment_method == 'cash' else 'bank'
+        journal = self.env['account.journal'].search([
+            ('type', '=', journal_type),
+            ('company_id', '=', self.env.company.id),
+        ], limit=1)
+        if not journal:
+            return {'success': False, 'error': f'No {journal_type} journal found. Configure in Accounting settings.'}
+
+        try:
+            payment_ref_parts = [f'Payment for {self.name}']
+            if bank_name:
+                payment_ref_parts.append(f'Bank: {bank_name}')
+            if transfer_ref:
+                payment_ref_parts.append(f'Ref: {transfer_ref}')
+
+            payment_vals = {
+                'payment_type': 'inbound',
+                'partner_type': 'customer',
+                'partner_id': self.patient_id.id,
+                'amount': amount,
+                'journal_id': journal.id,
+                'payment_reference': ' | '.join(payment_ref_parts),
+            }
+            payment = self.env['account.payment'].create(payment_vals)
+            payment.action_post()
+
+            if self.invoice_id and self.invoice_id.state == 'posted':
+                try:
+                    payment_lines = payment.move_id.line_ids.filtered(
+                        lambda l: l.account_id == payment.destination_account_id and not l.reconciled
+                    )
+                    invoice_lines = self.invoice_id.line_ids.filtered(
+                        lambda l: l.account_id.account_type == 'asset_receivable' and not l.reconciled
+                    )
+                    if payment_lines and invoice_lines:
+                        (payment_lines + invoice_lines).reconcile()
+                except Exception:
+                    pass
+
+            note_body = f"Payment collected: {amount:,.0f} VND via {payment_method}"
+            if collected_by_id:
+                collector = self.env['hr.employee'].browse(collected_by_id)
+                if collector.exists():
+                    note_body += f" by {collector.name}"
+            if notes:
+                note_body += f" — {notes}"
+            try:
+                self.message_post(body=note_body, subject="Payment Collected")
+            except Exception:
+                pass
+
+            return {'success': True, 'payment_id': payment.id}
+
+        except Exception as e:
+            return {'success': False, 'error': str(e)}
+
+    @api.model
+    def get_recurring_booking_options(self, patient_id=False):
+        """Return option lists for the recurring booking OWL wizard."""
+        service_types = [
+            {'key': 'home_visit', 'label': 'Home Visit'},
+            {'key': 'clinic_visit', 'label': 'Clinic Visit'},
+            {'key': 'consultation', 'label': 'Consultation'},
+            {'key': 'follow_up', 'label': 'Follow-up'},
+            {'key': 'telemedicine', 'label': 'Telemedicine'},
+            {'key': 'preventive', 'label': 'Preventive Care'},
+            {'key': 'rehabilitation', 'label': 'Rehabilitation'},
+        ]
+        facilities = []
+        try:
+            for f in self.env['health.facility'].search([('active', '=', True)], order='name', limit=50):
+                facilities.append({'id': f.id, 'name': f.name or ''})
+        except Exception:
+            pass
+
+        patient = {}
+        if patient_id:
+            p = self.env['res.partner'].browse(patient_id)
+            if p.exists():
+                initials = ''
+                if p.name:
+                    parts = p.name.split()
+                    initials = ''.join(x[0] for x in parts if x)[:2].upper()
+                patient = {
+                    'id': p.id,
+                    'name': p.name or '',
+                    'initials': initials,
+                }
+
+        return {
+            'service_types': service_types,
+            'facilities': facilities,
+            'patient': patient,
+        }
+
+    @api.model
+    def get_recurring_preview(self, patient_id, pattern, selected_days, start_date, occurrences, time_hour):
+        """Generate preview dates for recurring booking with conflict detection."""
+        from datetime import date as date_cls
+        preview = []
+        if not start_date or not selected_days:
+            return preview
+
+        try:
+            if isinstance(start_date, str):
+                start = datetime.strptime(start_date, '%Y-%m-%d').date()
+            else:
+                start = start_date
+        except Exception:
+            return preview
+
+        day_names = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+        interval = 1
+        if pattern == 'biweekly':
+            interval = 2
+
+        dates = []
+        current = start
+        max_iterations = 365
+        iteration = 0
+        week_num = 0
+        last_week = None
+
+        while len(dates) < occurrences and iteration < max_iterations:
+            current_week = current.isocalendar()[1]
+            if last_week is not None and current_week != last_week:
+                week_num += 1
+            last_week = current_week
+
+            if pattern == 'daily':
+                dates.append(current)
+            elif pattern in ('weekly', 'biweekly'):
+                if current.weekday() in selected_days:
+                    if pattern == 'weekly' or (week_num % interval == 0):
+                        dates.append(current)
+            elif pattern == 'monthly':
+                if current.day == start.day:
+                    dates.append(current)
+
+            current += timedelta(days=1)
+            iteration += 1
+
+        existing_fsos = {}
+        if patient_id and dates:
+            try:
+                fsos = self.search([
+                    ('patient_id', '=', patient_id),
+                    ('scheduled_datetime', '>=', datetime.combine(dates[0], datetime.min.time())),
+                    ('scheduled_datetime', '<=', datetime.combine(dates[-1], datetime.max.time())),
+                    ('state', 'not in', ['cancelled']),
+                ])
+                for fso in fsos:
+                    if fso.scheduled_datetime:
+                        d = fso.scheduled_datetime.date()
+                        existing_fsos.setdefault(d, []).append(fso.name or '')
+            except Exception:
+                pass
+
+        hours = int(time_hour)
+        minutes = int(round((time_hour - hours) * 60))
+        time_str = f"{hours:02d}:{minutes:02d}"
+
+        for i, d in enumerate(dates):
+            conflict_bookings = existing_fsos.get(d, [])
+            preview.append({
+                'num': i + 1,
+                'date': d.strftime('%b %d, %Y'),
+                'day': day_names[d.weekday()],
+                'time': time_str,
+                'conflict': bool(conflict_bookings),
+                'conflict_names': conflict_bookings[:2],
+            })
+
+        return preview
+
+    @api.model
+    def action_create_recurring_from_owl(self, patient_id, service_type, duration_hours, time_hour, facility_id, pattern, selected_days, start_date, occurrences, notes=''):
+        """Create recurring FSO bookings from the OWL wizard."""
+        if not patient_id or not service_type or not facility_id:
+            return {'success': False, 'error': 'Missing required fields.'}
+
+        preview = self.get_recurring_preview(patient_id, pattern, selected_days, start_date, occurrences, time_hour)
+        if not preview:
+            return {'success': False, 'error': 'No booking dates generated.'}
+
+        try:
+            if isinstance(start_date, str):
+                start_dt = datetime.strptime(start_date, '%Y-%m-%d').date()
+            else:
+                start_dt = start_date
+        except Exception:
+            return {'success': False, 'error': 'Invalid start date.'}
+
+        import pytz
+        facility = self.env['health.facility'].browse(facility_id)
+        tz_name = 'Asia/Ho_Chi_Minh'
+        if facility.exists() and hasattr(facility, 'timezone') and facility.timezone:
+            tz_name = facility.timezone
+        tz = pytz.timezone(tz_name)
+
+        hours = int(time_hour)
+        minutes = int(round((time_hour - hours) * 60))
+
+        day_names = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+        interval = 2 if pattern == 'biweekly' else 1
+        dates = []
+        current = start_dt
+        max_iterations = 365
+        iteration = 0
+        week_num = 0
+        last_week = None
+
+        while len(dates) < occurrences and iteration < max_iterations:
+            current_week = current.isocalendar()[1]
+            if last_week is not None and current_week != last_week:
+                week_num += 1
+            last_week = current_week
+
+            if pattern == 'daily':
+                dates.append(current)
+            elif pattern in ('weekly', 'biweekly'):
+                if current.weekday() in selected_days:
+                    if pattern == 'weekly' or (week_num % interval == 0):
+                        dates.append(current)
+            elif pattern == 'monthly':
+                if current.day == start_dt.day:
+                    dates.append(current)
+
+            current += timedelta(days=1)
+            iteration += 1
+
+        created_ids = []
+        for d in dates:
+            local_dt = datetime.combine(d, datetime.min.time()).replace(hour=hours, minute=minutes)
+            local_dt = tz.localize(local_dt)
+            utc_dt = local_dt.astimezone(pytz.UTC).replace(tzinfo=None)
+
+            vals = {
+                'patient_id': patient_id,
+                'service_type': service_type,
+                'facility_id': facility_id,
+                'scheduled_datetime': utc_dt,
+                'scheduled_duration': int(duration_hours * 60),
+                'intake_notes': notes or '',
+            }
+            fso = self.create(vals)
+            created_ids.append(fso.id)
+
+        return {
+            'success': True,
+            'count': len(created_ids),
+            'ids': created_ids,
+        }
+
+    def get_service_in_progress_data(self):
+        """Single RPC returning all data for the Service In-Progress OWL component."""
+        self.ensure_one()
+        b = self
+
+        # Patient
+        p = b.patient_id
+        patient_initials = ''
+        if p and p.name:
+            parts = p.name.split()
+            patient_initials = ''.join(x[0] for x in parts if x)[:2].upper()
+        patient = {
+            'id': p.id if p else False,
+            'name': p.name or '' if p else '',
+            'initials': patient_initials,
+            'age_gender': (p.age_display or '') if p else '',
+        }
+
+        # Staff
+        staff = None
+        if b.lead_staff_id:
+            s = b.lead_staff_id
+            s_init = ''
+            if s.name:
+                s_parts = s.name.split()
+                s_init = ''.join(x[0] for x in s_parts if x)[:2].upper()
+            staff = {
+                'id': s.id,
+                'name': s.name or '',
+                'initials': s_init,
+                'role': s.job_title or (s.job_id.name if s.job_id else ''),
+                'phone': s.work_phone or s.mobile_phone or '',
+            }
+
+        service_label = dict(b._fields['service_type'].selection).get(b.service_type, '') if b.service_type else ''
+        priority_label = dict(b._fields['priority'].selection).get(b.priority, '') if b.priority else ''
+
+        # Timer
+        start_iso = ''
+        start_display = ''
+        if b.actual_start_datetime:
+            start_iso = b.actual_start_datetime.isoformat()
+            start_display = b.actual_start_datetime.strftime('%H:%M')
+        est_dur = b.scheduled_duration or 60
+        est_end = ''
+        if b.actual_start_datetime:
+            end_dt = b.actual_start_datetime + timedelta(minutes=est_dur)
+            est_end = end_dt.strftime('%H:%M')
+
+        # Checklist from protocol steps
+        checklist = []
+        try:
+            if b.clinical_protocol_id:
+                for step in b.clinical_protocol_id.step_ids.sorted('sequence'):
+                    checklist.append({
+                        'id': step.id,
+                        'name': step.name or '',
+                        'required': step.is_required if hasattr(step, 'is_required') else False,
+                        'done': False,
+                        'time': '',
+                    })
+        except Exception:
+            pass
+        if not checklist:
+            checklist = [
+                {'id': 1, 'name': 'Patient identity verification', 'required': False, 'done': False, 'time': ''},
+                {'id': 2, 'name': 'Review medical history & allergies', 'required': False, 'done': False, 'time': ''},
+                {'id': 3, 'name': 'Record vital signs', 'required': True, 'done': False, 'time': ''},
+                {'id': 4, 'name': 'Physical examination', 'required': True, 'done': False, 'time': ''},
+                {'id': 5, 'name': 'Medication review & administration', 'required': False, 'done': False, 'time': ''},
+                {'id': 6, 'name': 'Patient education & instructions', 'required': False, 'done': False, 'time': ''},
+                {'id': 7, 'name': 'Post-visit summary & follow-up plan', 'required': True, 'done': False, 'time': ''},
+            ]
+
+        # Booking info
+        booking = {
+            'id': b.id,
+            'name': b.name or '',
+            'state': b.state or '',
+            'service_type_label': service_label,
+            'priority_label': priority_label,
+            'priority': b.priority or '1',
+            'address': b.patient_address_display or '',
+            'special_requirements': b.special_requirements or '',
+        }
+
+        # Payment
+        payment = {
+            'base_price': b.base_price or 0,
+            'travel_charge': b.travel_charge or 0,
+            'urgency_charge': b.urgency_charge or 0,
+            'total_price': b.total_price or 0,
+            'has_invoice': bool(b.invoice_id),
+            'invoice_id': b.invoice_id.id if b.invoice_id else False,
+        }
+
+        # Timeline
+        timeline = []
+        try:
+            messages = self.env['mail.message'].search([
+                ('res_id', '=', b.id),
+                ('model', '=', 'health.fieldservice.order'),
+                ('message_type', 'in', ['comment', 'notification']),
+            ], order='date desc', limit=10)
+            for msg in messages:
+                timeline.append({
+                    'body': msg.body or '',
+                    'date': msg.date.strftime('%H:%M') if msg.date else '',
+                    'author': msg.author_id.name if msg.author_id else '',
+                })
+        except Exception:
+            pass
+
+        return {
+            'booking': booking,
+            'patient': patient,
+            'staff': staff,
+            'timer': {
+                'start_iso': start_iso,
+                'start_display': start_display,
+                'est_duration_minutes': est_dur,
+                'est_end': est_end,
+            },
+            'checklist': checklist,
+            'payment': payment,
+            'timeline': timeline,
+        }
+
+    def get_staff_assignment_data(self):
+        """Single RPC for the Staff Assignment OWL wizard."""
+        self.ensure_one()
+        b = self
+
+        service_label = dict(b._fields['service_type'].selection).get(b.service_type, '') if b.service_type else ''
+        priority_label = dict(b._fields['priority'].selection).get(b.priority, '') if b.priority else ''
+
+        time_range = ''
+        date_label = ''
+        if b.scheduled_datetime:
+            start = b.scheduled_datetime
+            end = b.estimated_end_datetime
+            date_label = start.strftime('%b %d, %Y')
+            time_range = start.strftime('%H:%M')
+            if end:
+                time_range += f" — {end.strftime('%H:%M')}"
+
+        patient_name = b.patient_id.name or '' if b.patient_id else ''
+        patient_initials = ''
+        if patient_name:
+            parts = patient_name.split()
+            patient_initials = ''.join(x[0] for x in parts if x)[:2].upper()
+
+        booking = {
+            'id': b.id,
+            'name': b.name or '',
+            'patient_name': patient_name,
+            'patient_initials': patient_initials,
+            'patient_id': b.patient_id.id if b.patient_id else False,
+            'service_type_label': service_label,
+            'date_label': date_label,
+            'time_range': time_range,
+            'address': b.patient_address_display or '',
+            'priority': b.priority or '1',
+            'priority_label': priority_label,
+        }
+
+        staff_list = []
+        try:
+            employees = self.env['hr.employee'].search([
+                ('active', '=', True),
+            ], order='name', limit=30)
+
+            scheduled_date = b.scheduled_datetime.date() if b.scheduled_datetime else fields.Date.today()
+
+            for emp in employees:
+                initials = ''
+                if emp.name:
+                    p = emp.name.split()
+                    initials = ''.join(x[0] for x in p if x)[:2].upper()
+
+                today_count = 0
+                try:
+                    today_count = self.search_count([
+                        ('lead_staff_id', '=', emp.id),
+                        ('scheduled_datetime', '>=', datetime.combine(scheduled_date, datetime.min.time())),
+                        ('scheduled_datetime', '<=', datetime.combine(scheduled_date, datetime.max.time())),
+                        ('state', 'not in', ['cancelled']),
+                    ])
+                except Exception:
+                    pass
+
+                score = max(50, 95 - (today_count * 8))
+
+                staff_list.append({
+                    'id': emp.id,
+                    'name': emp.name or '',
+                    'initials': initials,
+                    'role': emp.job_title or (emp.job_id.name if emp.job_id else ''),
+                    'today_bookings': today_count,
+                    'score': score,
+                })
+        except Exception:
+            pass
+
+        staff_list.sort(key=lambda x: x['score'], reverse=True)
+        suggestions = staff_list[:3]
+        others = staff_list[3:7]
+
+        schedule_blocks = []
+        if suggestions:
+            for s in suggestions[:3]:
+                blocks = []
+                try:
+                    fsos = self.search([
+                        ('lead_staff_id', '=', s['id']),
+                        ('scheduled_datetime', '>=', datetime.combine(scheduled_date, datetime.min.time())),
+                        ('scheduled_datetime', '<=', datetime.combine(scheduled_date, datetime.max.time())),
+                        ('state', 'not in', ['cancelled']),
+                    ], order='scheduled_datetime')
+                    for fso in fsos:
+                        if fso.scheduled_datetime and fso.estimated_end_datetime:
+                            blocks.append({
+                                'start_hour': fso.scheduled_datetime.hour + fso.scheduled_datetime.minute / 60.0,
+                                'end_hour': fso.estimated_end_datetime.hour + fso.estimated_end_datetime.minute / 60.0,
+                                'name': fso.name or '',
+                                'type': 'existing',
+                            })
+                except Exception:
+                    pass
+                schedule_blocks.append({
+                    'staff_id': s['id'],
+                    'staff_name': s['name'],
+                    'blocks': blocks,
+                })
+
+        proposed_block = None
+        if b.scheduled_datetime and b.estimated_end_datetime:
+            proposed_block = {
+                'start_hour': b.scheduled_datetime.hour + b.scheduled_datetime.minute / 60.0,
+                'end_hour': b.estimated_end_datetime.hour + b.estimated_end_datetime.minute / 60.0,
+                'name': b.name or '',
+            }
+
+        return {
+            'booking': booking,
+            'suggestions': suggestions,
+            'others': others,
+            'schedule_blocks': schedule_blocks,
+            'proposed_block': proposed_block,
+        }

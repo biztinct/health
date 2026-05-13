@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sales Hub — VAFHS</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+:root {
+  --vu-deep-blue:#1565C0;--vu-deep-blue-darker:#1356A9;--vu-deep-blue-darkest:#0D356B;
+  --vu-deep-blue-light:#83C5FA;--vu-deep-blue-lightest:#E4F4FD;--vu-accent-blue:#42A5F5;
+  --vu-hibiscus-red:#E53935;--vu-hibiscus-orange:#FB8C00;--vu-leaf-green:#43A047;
+  --state-draft:#64748b;--state-confirmed:#2563eb;--state-assigned:#7c3aed;
+  --state-active:#ea580c;--state-completed:#16a34a;--state-cancelled:#dc2626;
+  --text-primary:#212121;--text-secondary:#424242;--text-muted:#757575;
+  --surface-app:#F5F5F5;--surface-card:#FFFFFF;--border-soft:#E0E0E0;--border-strong:#BDBDBD;
+  --shadow-sm:0 1px 3px rgba(33,33,33,.08);--shadow-md:0 2px 8px rgba(33,33,33,.12);--shadow-lg:0 4px 16px rgba(33,33,33,.15);
+  --radius-sm:4px;--radius-md:8px;--radius-lg:12px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',Arial,sans-serif;font-size:13px;color:var(--text-primary);background:var(--surface-app);line-height:1.5;-webkit-font-smoothing:antialiased}
+h1,h2,h3,h4{font-family:'Montserrat','Segoe UI',Arial,sans-serif;font-weight:600}
+.app-wrapper{display:flex;min-height:100vh}
+
+.sidebar{width:220px;background:var(--vu-deep-blue-darkest);color:white;display:flex;flex-direction:column;flex-shrink:0;position:fixed;top:0;left:0;bottom:0;z-index:100}
+.sidebar-logo{padding:20px 16px;display:flex;align-items:center;gap:10px;border-bottom:1px solid rgba(255,255,255,.1);text-decoration:none;color:white}
+.logo-icon{width:36px;height:36px;background:var(--vu-hibiscus-red);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px}
+.logo-text{font-family:'Montserrat';font-weight:700;font-size:15px;letter-spacing:.5px}
+.logo-sub{font-size:10px;opacity:.6}
+.sidebar-nav{padding:12px 0;flex:1}
+.nav-section-label{padding:16px 16px 6px;font-size:10px;text-transform:uppercase;letter-spacing:1.2px;opacity:.4;font-weight:600}
+.nav-item{display:flex;align-items:center;gap:10px;padding:10px 16px;color:rgba(255,255,255,.7);text-decoration:none;font-size:13px;font-weight:500;transition:all 150ms;cursor:pointer;border-left:3px solid transparent}
+.nav-item:hover{background:rgba(255,255,255,.08);color:white}
+.nav-item.active{background:rgba(255,255,255,.12);color:white;border-left-color:var(--vu-accent-blue)}
+.nav-item i{width:20px;text-align:center;font-size:14px}
+.nav-item .badge-count{margin-left:auto;background:var(--vu-hibiscus-red);color:white;font-size:10px;font-weight:700;padding:2px 6px;border-radius:10px}
+.sidebar-user{padding:12px 16px;border-top:1px solid rgba(255,255,255,.1);display:flex;align-items:center;gap:10px}
+.user-avatar{width:32px;height:32px;border-radius:50%;background:var(--vu-accent-blue);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700}
+.user-info{flex:1}.user-name{font-size:12px;font-weight:600}.user-role{font-size:10px;opacity:.5}
+
+.main-content{flex:1;margin-left:220px;display:flex;flex-direction:column}
+.top-header{background:var(--surface-card);border-bottom:1px solid var(--border-soft);padding:12px 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;box-shadow:var(--shadow-sm)}
+.header-left{display:flex;align-items:center;gap:16px}
+.page-title{font-size:18px;font-weight:700;font-family:'Montserrat'}
+.header-right{display:flex;align-items:center;gap:10px}
+.header-btn{display:flex;align-items:center;gap:6px;padding:7px 14px;border:none;border-radius:var(--radius-md);font-size:12px;font-weight:600;cursor:pointer;transition:all 150ms;font-family:inherit}
+.btn-primary{background:var(--vu-deep-blue);color:white}.btn-primary:hover{background:var(--vu-deep-blue-darker)}
+.btn-outline{background:transparent;color:var(--text-secondary);border:1px solid var(--border-soft)}.btn-outline:hover{border-color:var(--vu-deep-blue);color:var(--vu-deep-blue);background:var(--vu-deep-blue-lightest)}
+.header-search{display:flex;align-items:center;gap:8px;padding:7px 14px;border:1px solid var(--border-soft);border-radius:var(--radius-md);background:var(--surface-card);min-width:280px}
+.header-search input{border:none;outline:none;font-size:12px;font-family:inherit;flex:1;background:transparent}
+.header-search i{color:var(--text-muted);font-size:13px}
+.header-icon-btn{width:34px;height:34px;border:1px solid var(--border-soft);border-radius:var(--radius-md);background:var(--surface-card);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text-secondary);position:relative;transition:all 120ms}
+.header-icon-btn:hover{border-color:var(--vu-deep-blue);color:var(--vu-deep-blue);background:var(--vu-deep-blue-lightest)}
+.notif-dot{position:absolute;top:4px;right:4px;width:8px;height:8px;background:var(--vu-hibiscus-red);border-radius:50%;border:2px solid var(--surface-card)}
+
+.dashboard-body{padding:20px 24px;flex:1;overflow-y:auto}
+
+/* KPI */
+.kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:20px}
+.kpi-card{background:var(--surface-card);border-radius:var(--radius-lg);padding:16px 18px;box-shadow:var(--shadow-sm);border:1px solid var(--border-soft);position:relative;overflow:hidden;transition:all 200ms;cursor:pointer}
+.kpi-card:hover{box-shadow:var(--shadow-md);transform:translateY(-1px)}
+.kpi-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+.kpi-1::before{background:var(--vu-deep-blue)}.kpi-2::before{background:var(--vu-hibiscus-orange)}.kpi-3::before{background:var(--vu-leaf-green)}.kpi-4::before{background:var(--vu-hibiscus-red)}
+.kpi-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.kpi-icon{width:36px;height:36px;border-radius:var(--radius-md);display:flex;align-items:center;justify-content:center;font-size:16px}
+.kpi-1 .kpi-icon{background:var(--vu-deep-blue-lightest);color:var(--vu-deep-blue)}
+.kpi-2 .kpi-icon{background:#FFF3E0;color:var(--vu-hibiscus-orange)}
+.kpi-3 .kpi-icon{background:#DBF0DB;color:var(--vu-leaf-green)}
+.kpi-4 .kpi-icon{background:#FBE3E1;color:var(--vu-hibiscus-red)}
+.kpi-trend{font-size:11px;font-weight:600;padding:2px 6px;border-radius:10px}
+.kpi-trend.up{background:#DBF0DB;color:#176B47}.kpi-trend.down{background:#FBE3E1;color:#C0332A}
+.kpi-value{font-size:28px;font-weight:800;font-family:'Montserrat';line-height:1.1;margin-bottom:2px}
+.kpi-label{font-size:12px;color:var(--text-muted);font-weight:500}
+
+/* GRID */
+.main-grid{display:grid;grid-template-columns:1fr 380px;gap:16px}
+.panel{background:var(--surface-card);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);border:1px solid var(--border-soft);overflow:hidden}
+.panel-header{padding:14px 18px;border-bottom:1px solid var(--border-soft);display:flex;align-items:center;justify-content:space-between}
+.panel-title{font-size:14px;font-weight:700;font-family:'Montserrat';display:flex;align-items:center;gap:8px}
+.panel-title i{color:var(--vu-deep-blue);font-size:14px}
+.panel-body{padding:12px 16px;max-height:520px;overflow-y:auto}
+.panel-footer{padding:10px 18px;border-top:1px solid var(--border-soft);display:flex;justify-content:space-between;align-items:center;background:var(--surface-app)}
+.footer-link{font-size:12px;color:var(--vu-deep-blue);font-weight:600;cursor:pointer;text-decoration:none;display:flex;align-items:center;gap:4px}
+.footer-link:hover{text-decoration:underline}
+
+/* ACTIVITY ITEMS */
+.activity-item{display:flex;gap:12px;padding:10px 0;border-bottom:1px solid var(--border-soft);transition:background 100ms;cursor:pointer;border-radius:var(--radius-sm)}
+.activity-item:last-child{border-bottom:none}
+.activity-item:hover{background:var(--vu-deep-blue-lightest);margin:0 -8px;padding-left:8px;padding-right:8px}
+.activity-icon{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+.activity-icon.call{background:#E4F4FD;color:var(--vu-deep-blue)}
+.activity-icon.email{background:#FFF3E0;color:var(--vu-hibiscus-orange)}
+.activity-icon.meeting{background:#F3E8FF;color:var(--state-assigned)}
+.activity-icon.followup{background:#DBF0DB;color:var(--vu-leaf-green)}
+.activity-icon.overdue{background:#FBE3E1;color:var(--vu-hibiscus-red)}
+.activity-content{flex:1;min-width:0}
+.activity-title{font-size:12px;font-weight:600;display:flex;align-items:center;gap:6px}
+.activity-desc{font-size:11px;color:var(--text-muted);margin-top:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.activity-time{font-size:11px;color:var(--text-muted);white-space:nowrap;display:flex;flex-direction:column;align-items:flex-end;gap:4px}
+.activity-actions{display:flex;gap:4px}
+.act-btn{width:26px;height:26px;border:1px solid var(--border-soft);border-radius:var(--radius-sm);background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--text-muted);font-size:11px;transition:all 120ms}
+.act-btn:hover{border-color:var(--vu-deep-blue);color:var(--vu-deep-blue);background:var(--vu-deep-blue-lightest)}
+.act-btn.done:hover{border-color:var(--vu-leaf-green);color:var(--vu-leaf-green);background:#DBF0DB}
+.overdue-tag{font-size:9px;font-weight:700;padding:1px 5px;border-radius:6px;background:#FBE3E1;color:var(--vu-hibiscus-red);text-transform:uppercase}
+
+/* CLIENT SEARCH */
+.client-search-box{display:flex;align-items:center;gap:8px;padding:10px 14px;border:1px solid var(--border-soft);border-radius:var(--radius-md);background:var(--surface-app);margin-bottom:12px}
+.client-search-box input{border:none;outline:none;font-size:12px;font-family:inherit;flex:1;background:transparent}
+.client-search-box i{color:var(--text-muted)}
+
+.client-item{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:var(--radius-md);cursor:pointer;transition:background 100ms;text-decoration:none;color:inherit}
+.client-item:hover{background:var(--vu-deep-blue-lightest)}
+.client-avatar-sm{width:34px;height:34px;border-radius:50%;background:var(--vu-deep-blue-lightest);color:var(--vu-deep-blue);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0}
+.client-info-col{flex:1;min-width:0}
+.client-name-sm{font-size:12px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.client-phone-sm{font-size:11px;color:var(--text-muted)}
+.client-tag{font-size:9px;font-weight:700;padding:2px 6px;border-radius:6px}
+.tag-vip{background:rgba(251,140,0,.12);color:var(--vu-hibiscus-orange)}
+.tag-new{background:rgba(124,58,237,.1);color:var(--state-assigned)}
+
+/* BOOKING MINI CARDS */
+.booking-mini{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:var(--radius-md);border:1px solid var(--border-soft);margin-bottom:6px;cursor:pointer;transition:all 120ms}
+.booking-mini:hover{border-color:var(--vu-deep-blue-light);box-shadow:var(--shadow-sm)}
+.booking-mini:last-child{margin-bottom:0}
+.bm-time{font-size:12px;font-weight:700;font-family:'Montserrat';min-width:44px}
+.bm-info{flex:1;min-width:0}
+.bm-name{font-size:12px;font-weight:600}
+.bm-service{font-size:11px;color:var(--text-muted)}
+.status-dot-sm{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.dot-confirmed{background:var(--state-confirmed)}.dot-completed{background:var(--state-completed)}.dot-active{background:var(--state-active)}.dot-draft{background:var(--state-draft)}
+
+/* PIPELINE */
+.pipeline-mini{display:flex;gap:2px;margin-top:12px}
+.pipe-segment{flex:1;height:6px;border-radius:3px;position:relative;cursor:pointer}
+.pipe-segment:hover .pipe-tooltip{display:block}
+.pipe-tooltip{display:none;position:absolute;bottom:12px;left:50%;transform:translateX(-50%);background:var(--text-primary);color:white;font-size:10px;padding:3px 8px;border-radius:4px;white-space:nowrap;z-index:10}
+.pipe-new{background:var(--state-draft)}.pipe-qualified{background:var(--state-confirmed)}.pipe-proposal{background:var(--state-assigned)}.pipe-won{background:var(--vu-leaf-green)}
+.pipeline-labels{display:flex;justify-content:space-between;margin-top:6px}
+.pipe-label{font-size:10px;color:var(--text-muted);text-align:center}
+.pipe-label strong{display:block;font-size:14px;color:var(--text-primary);font-family:'Montserrat'}
+
+::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--border-soft);border-radius:3px}
+</style>
+</head>
+<body>
+<div class="app-wrapper">
+  <aside class="sidebar">
+    <a class="sidebar-logo" href="sales_dashboard.html">
+      <div class="logo-icon"><i class="fas fa-heartbeat"></i></div>
+      <div><div class="logo-text">VIET UC</div><div class="logo-sub">Healthcare Platform</div></div>
+    </a>
+    <nav class="sidebar-nav">
+      <div class="nav-section-label">Main</div>
+      <a class="nav-item active" href="sales_dashboard.html"><i class="fas fa-th-large"></i> Dashboard</a>
+      <a class="nav-item" href="client_profile.html"><i class="fas fa-users"></i> Clients</a>
+      <a class="nav-item" href="lead_detail.html"><i class="fas fa-filter"></i> Leads <span class="badge-count">12</span></a>
+      <a class="nav-item" href="ops_booking_queue.html"><i class="fas fa-calendar-check"></i> Bookings</a>
+      <a class="nav-item"><i class="fas fa-tasks"></i> Activities <span class="badge-count">3</span></a>
+      <div class="nav-section-label">Reports</div>
+      <a class="nav-item"><i class="fas fa-chart-line"></i> Performance</a>
+      <a class="nav-item"><i class="fas fa-file-alt"></i> Lead Sources</a>
+      <div class="nav-section-label">System</div>
+      <a class="nav-item"><i class="fas fa-cog"></i> Configuration</a>
+    </nav>
+    <div class="sidebar-user">
+      <div class="user-avatar">NT</div>
+      <div class="user-info"><div class="user-name">Nguyen Thi Thanh</div><div class="user-role">Sales Executive</div></div>
+    </div>
+  </aside>
+
+  <div class="main-content">
+    <header class="top-header">
+      <div class="header-left">
+        <div class="page-title">Sales Hub</div>
+      </div>
+      <div class="header-right">
+        <div class="header-search">
+          <i class="fas fa-search"></i>
+          <input type="text" placeholder="Search clients, leads, bookings...">
+          <kbd style="font-size:10px;padding:1px 5px;border:1px solid var(--border-soft);border-radius:3px;color:var(--text-muted);background:var(--surface-app)">/</kbd>
+        </div>
+        <button class="header-btn btn-primary" onclick="window.location='booking_wizard.html'"><i class="fas fa-plus"></i> New Booking</button>
+        <button class="header-btn btn-outline"><i class="fas fa-user-plus"></i> New Client</button>
+        <button class="header-icon-btn"><i class="fas fa-bell"></i><span class="notif-dot"></span></button>
+      </div>
+    </header>
+
+    <div class="dashboard-body">
+      <!-- KPIs -->
+      <div class="kpi-row">
+        <div class="kpi-card kpi-1">
+          <div class="kpi-header"><div class="kpi-icon"><i class="fas fa-calendar-check"></i></div><span class="kpi-trend up"><i class="fas fa-arrow-up" style="font-size:9px"></i> 15%</span></div>
+          <div class="kpi-value">8</div>
+          <div class="kpi-label">Today's Activities</div>
+        </div>
+        <div class="kpi-card kpi-2">
+          <div class="kpi-header"><div class="kpi-icon"><i class="fas fa-phone-volume"></i></div><span class="kpi-trend down"><i class="fas fa-arrow-down" style="font-size:9px"></i> 2</span></div>
+          <div class="kpi-value">3</div>
+          <div class="kpi-label">Follow-Ups Due</div>
+        </div>
+        <div class="kpi-card kpi-3">
+          <div class="kpi-header"><div class="kpi-icon"><i class="fas fa-calendar-plus"></i></div><span class="kpi-trend up"><i class="fas fa-arrow-up" style="font-size:9px"></i> 22%</span></div>
+          <div class="kpi-value">5</div>
+          <div class="kpi-label">Pending Bookings</div>
+        </div>
+        <div class="kpi-card kpi-4">
+          <div class="kpi-header"><div class="kpi-icon"><i class="fas fa-exclamation-triangle"></i></div></div>
+          <div class="kpi-value" style="color:var(--vu-hibiscus-red)">2</div>
+          <div class="kpi-label">Overdue Activities</div>
+        </div>
+      </div>
+
+      <div class="main-grid">
+        <!-- LEFT: Activities -->
+        <div style="display:flex;flex-direction:column;gap:16px">
+
+          <!-- TODAY'S ACTIONS -->
+          <div class="panel">
+            <div class="panel-header">
+              <div class="panel-title"><i class="fas fa-bolt"></i> Today's Actions</div>
+              <div style="display:flex;gap:4px">
+                <button class="header-btn btn-outline" style="padding:5px 10px;font-size:11px">All</button>
+                <button class="header-btn btn-outline" style="padding:5px 10px;font-size:11px">Calls</button>
+                <button class="header-btn btn-outline" style="padding:5px 10px;font-size:11px">Emails</button>
+                <button class="header-btn btn-outline" style="padding:5px 10px;font-size:11px">Meetings</button>
+              </div>
+            </div>
+            <div class="panel-body">
+              <div class="activity-item">
+                <div class="activity-icon overdue"><i class="fas fa-phone"></i></div>
+                <div class="activity-content">
+                  <div class="activity-title">Call Le Thi Hoa <span class="overdue-tag">overdue</span></div>
+                  <div class="activity-desc">Follow up on consultation inquiry — interested in home visit package</div>
+                </div>
+                <div class="activity-time">
+                  <span>Yesterday</span>
+                  <div class="activity-actions">
+                    <button class="act-btn done" title="Mark done"><i class="fas fa-check"></i></button>
+                    <button class="act-btn" title="Reschedule"><i class="fas fa-clock"></i></button>
+                  </div>
+                </div>
+              </div>
+              <div class="activity-item">
+                <div class="activity-icon overdue"><i class="fas fa-envelope"></i></div>
+                <div class="activity-content">
+                  <div class="activity-title">Email Vo Van Khanh <span class="overdue-tag">overdue</span></div>
+                  <div class="activity-desc">Send pricing information for corporate health check package</div>
+                </div>
+                <div class="activity-time">
+                  <span>2 days ago</span>
+                  <div class="activity-actions">
+                    <button class="act-btn done" title="Mark done"><i class="fas fa-check"></i></button>
+                    <button class="act-btn" title="Reschedule"><i class="fas fa-clock"></i></button>
+                  </div>
+                </div>
+              </div>
+              <div class="activity-item">
+                <div class="activity-icon call"><i class="fas fa-phone"></i></div>
+                <div class="activity-content">
+                  <div class="activity-title">Call Tran Van Duc</div>
+                  <div class="activity-desc">Confirm tomorrow's home visit appointment and discuss access</div>
+                </div>
+                <div class="activity-time">
+                  <span>09:00</span>
+                  <div class="activity-actions">
+                    <button class="act-btn done" title="Mark done"><i class="fas fa-check"></i></button>
+                    <button class="act-btn" title="Reschedule"><i class="fas fa-clock"></i></button>
+                  </div>
+                </div>
+              </div>
+              <div class="activity-item">
+                <div class="activity-icon email"><i class="fas fa-envelope"></i></div>
+                <div class="activity-content">
+                  <div class="activity-title">Email Pham Minh Anh</div>
+                  <div class="activity-desc">Send booking confirmation and pre-visit checklist</div>
+                </div>
+                <div class="activity-time">
+                  <span>10:30</span>
+                  <div class="activity-actions">
+                    <button class="act-btn done" title="Mark done"><i class="fas fa-check"></i></button>
+                    <button class="act-btn" title="Reschedule"><i class="fas fa-clock"></i></button>
+                  </div>
+                </div>
+              </div>
+              <div class="activity-item">
+                <div class="activity-icon meeting"><i class="fas fa-handshake"></i></div>
+                <div class="activity-content">
+                  <div class="activity-title">Meeting with Nguyen Van Long</div>
+                  <div class="activity-desc">Consultation follow-up — discuss ongoing care package options</div>
+                </div>
+                <div class="activity-time">
+                  <span>14:00</span>
+                  <div class="activity-actions">
+                    <button class="act-btn done" title="Mark done"><i class="fas fa-check"></i></button>
+                    <button class="act-btn" title="Reschedule"><i class="fas fa-clock"></i></button>
+                  </div>
+                </div>
+              </div>
+              <div class="activity-item">
+                <div class="activity-icon followup"><i class="fas fa-user-check"></i></div>
+                <div class="activity-content">
+                  <div class="activity-title">Follow up — Hoang Minh Tuan</div>
+                  <div class="activity-desc">Post-visit satisfaction check — completed home visit yesterday</div>
+                </div>
+                <div class="activity-time">
+                  <span>15:30</span>
+                  <div class="activity-actions">
+                    <button class="act-btn done" title="Mark done"><i class="fas fa-check"></i></button>
+                    <button class="act-btn" title="Reschedule"><i class="fas fa-clock"></i></button>
+                  </div>
+                </div>
+              </div>
+              <div class="activity-item">
+                <div class="activity-icon call"><i class="fas fa-phone"></i></div>
+                <div class="activity-content">
+                  <div class="activity-title">Call Dang Thi Loan</div>
+                  <div class="activity-desc">New lead from Facebook — interested in pediatric home visit</div>
+                </div>
+                <div class="activity-time">
+                  <span>16:00</span>
+                  <div class="activity-actions">
+                    <button class="act-btn done" title="Mark done"><i class="fas fa-check"></i></button>
+                    <button class="act-btn" title="Reschedule"><i class="fas fa-clock"></i></button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- LEAD PIPELINE MINI -->
+          <div class="panel">
+            <div class="panel-header">
+              <div class="panel-title"><i class="fas fa-filter"></i> Lead Pipeline</div>
+              <a class="footer-link" href="lead_detail.html">View All <i class="fas fa-arrow-right" style="font-size:10px"></i></a>
+            </div>
+            <div class="panel-body" style="padding:16px 18px">
+              <div class="pipeline-mini">
+                <div class="pipe-segment pipe-new" style="flex:3"><div class="pipe-tooltip">New: 12 leads</div></div>
+                <div class="pipe-segment pipe-qualified" style="flex:2"><div class="pipe-tooltip">Qualified: 8 leads</div></div>
+                <div class="pipe-segment pipe-proposal" style="flex:1.5"><div class="pipe-tooltip">Proposal: 5 leads</div></div>
+                <div class="pipe-segment pipe-won" style="flex:1"><div class="pipe-tooltip">Won: 3 leads</div></div>
+              </div>
+              <div class="pipeline-labels">
+                <div class="pipe-label"><strong>12</strong>New</div>
+                <div class="pipe-label"><strong>8</strong>Qualified</div>
+                <div class="pipe-label"><strong>5</strong>Proposal</div>
+                <div class="pipe-label"><strong>3</strong>Won</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- RIGHT: Clients & Bookings -->
+        <div style="display:flex;flex-direction:column;gap:16px">
+
+          <!-- QUICK CLIENT LOOKUP -->
+          <div class="panel">
+            <div class="panel-header">
+              <div class="panel-title"><i class="fas fa-search"></i> Quick Client Lookup</div>
+            </div>
+            <div class="panel-body">
+              <div class="client-search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" placeholder="Name, phone, or client code...">
+              </div>
+              <div style="font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.4px;font-weight:600;margin-bottom:8px">Recent Clients</div>
+              <a class="client-item" href="client_profile.html">
+                <div class="client-avatar-sm">TD</div>
+                <div class="client-info-col">
+                  <div class="client-name-sm">Tran Van Duc</div>
+                  <div class="client-phone-sm">0912 345 678</div>
+                </div>
+                <span class="client-tag tag-vip">VIP</span>
+              </a>
+              <a class="client-item" href="client_profile.html">
+                <div class="client-avatar-sm" style="background:rgba(124,58,237,.1);color:var(--state-assigned)">PA</div>
+                <div class="client-info-col">
+                  <div class="client-name-sm">Pham Minh Anh</div>
+                  <div class="client-phone-sm">0987 654 321</div>
+                </div>
+              </a>
+              <a class="client-item" href="client_profile.html">
+                <div class="client-avatar-sm" style="background:#DBF0DB;color:var(--vu-leaf-green)">NL</div>
+                <div class="client-info-col">
+                  <div class="client-name-sm">Nguyen Van Long</div>
+                  <div class="client-phone-sm">0903 111 222</div>
+                </div>
+                <span class="client-tag tag-new">New</span>
+              </a>
+              <a class="client-item" href="client_profile.html">
+                <div class="client-avatar-sm" style="background:#FFF3E0;color:var(--vu-hibiscus-orange)">LH</div>
+                <div class="client-info-col">
+                  <div class="client-name-sm">Le Thi Hoa</div>
+                  <div class="client-phone-sm">0976 543 210</div>
+                </div>
+              </a>
+              <a class="client-item" href="client_profile.html">
+                <div class="client-avatar-sm" style="background:#FBE3E1;color:var(--vu-hibiscus-red)">HT</div>
+                <div class="client-info-col">
+                  <div class="client-name-sm">Hoang Minh Tuan</div>
+                  <div class="client-phone-sm">0916 888 999</div>
+                </div>
+              </a>
+            </div>
+            <div class="panel-footer">
+              <a class="footer-link" href="client_profile.html"><i class="fas fa-users"></i> View All Clients</a>
+              <button class="header-btn btn-outline" style="padding:5px 10px;font-size:11px"><i class="fas fa-user-plus"></i> New Client</button>
+            </div>
+          </div>
+
+          <!-- TODAY'S BOOKINGS -->
+          <div class="panel">
+            <div class="panel-header">
+              <div class="panel-title"><i class="fas fa-calendar-day"></i> Today's Bookings</div>
+              <span style="font-size:11px;color:var(--text-muted)">May 12, 2026</span>
+            </div>
+            <div class="panel-body">
+              <div class="booking-mini">
+                <div class="bm-time">09:00</div>
+                <div class="bm-info">
+                  <div class="bm-name">Tran Van Duc</div>
+                  <div class="bm-service">Home Visit — General Health</div>
+                </div>
+                <div class="status-dot-sm dot-confirmed" title="Confirmed"></div>
+              </div>
+              <div class="booking-mini">
+                <div class="bm-time">10:30</div>
+                <div class="bm-info">
+                  <div class="bm-name">Pham Minh Anh</div>
+                  <div class="bm-service">Clinic Visit — Consultation</div>
+                </div>
+                <div class="status-dot-sm dot-active" title="In Progress"></div>
+              </div>
+              <div class="booking-mini">
+                <div class="bm-time">14:00</div>
+                <div class="bm-info">
+                  <div class="bm-name">Nguyen Van Long</div>
+                  <div class="bm-service">Home Visit — Package 7/10</div>
+                </div>
+                <div class="status-dot-sm dot-confirmed" title="Confirmed"></div>
+              </div>
+              <div class="booking-mini">
+                <div class="bm-time">15:00</div>
+                <div class="bm-info">
+                  <div class="bm-name">Vu Thi Huong</div>
+                  <div class="bm-service">Home Visit — Pediatric</div>
+                </div>
+                <div class="status-dot-sm dot-draft" title="Pending"></div>
+              </div>
+              <div class="booking-mini">
+                <div class="bm-time">16:30</div>
+                <div class="bm-info">
+                  <div class="bm-name">Dang Thi Loan</div>
+                  <div class="bm-service">Follow-up — Post-Visit</div>
+                </div>
+                <div class="status-dot-sm dot-completed" title="Completed"></div>
+              </div>
+            </div>
+            <div class="panel-footer">
+              <a class="footer-link"><i class="fas fa-calendar-alt"></i> View Calendar</a>
+              <button class="header-btn btn-primary" style="padding:5px 10px;font-size:11px" onclick="window.location='booking_wizard.html'"><i class="fas fa-plus"></i> New Booking</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

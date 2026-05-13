@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Staff Roster — VAFHS Operations</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+:root{--vu-deep-blue:#1565C0;--vu-deep-blue-darker:#1356A9;--vu-deep-blue-darkest:#0D356B;--vu-deep-blue-light:#83C5FA;--vu-deep-blue-lightest:#E4F4FD;--vu-accent-blue:#42A5F5;--vu-hibiscus-red:#E53935;--vu-hibiscus-orange:#FB8C00;--vu-leaf-green:#43A047;--state-draft:#64748b;--state-confirmed:#2563eb;--state-assigned:#7c3aed;--state-active:#ea580c;--state-completed:#16a34a;--state-cancelled:#dc2626;--text-primary:#212121;--text-secondary:#424242;--text-muted:#757575;--surface-app:#F5F5F5;--surface-card:#FFFFFF;--border-soft:#E0E0E0;--border-strong:#BDBDBD;--shadow-sm:0 1px 3px rgba(33,33,33,.08);--shadow-md:0 2px 8px rgba(33,33,33,.12);--shadow-lg:0 4px 16px rgba(33,33,33,.15);--radius-sm:4px;--radius-md:8px;--radius-lg:12px}
+*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Segoe UI',Arial,sans-serif;font-size:13px;color:var(--text-primary);background:var(--surface-app);line-height:1.5;-webkit-font-smoothing:antialiased}h1,h2,h3,h4{font-family:'Montserrat','Segoe UI',Arial,sans-serif;font-weight:600}.app-wrapper{display:flex;min-height:100vh}
+
+.sidebar{width:220px;background:var(--vu-deep-blue-darkest);color:white;display:flex;flex-direction:column;flex-shrink:0;position:fixed;top:0;left:0;bottom:0;z-index:100}
+.sidebar-logo{padding:20px 16px;display:flex;align-items:center;gap:10px;border-bottom:1px solid rgba(255,255,255,.1);text-decoration:none;color:white}
+.logo-icon{width:36px;height:36px;background:var(--vu-hibiscus-red);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px}
+.logo-text{font-family:'Montserrat';font-weight:700;font-size:15px;letter-spacing:.5px}.logo-sub{font-size:10px;opacity:.6}
+.sidebar-nav{padding:12px 0;flex:1}
+.nav-section-label{padding:16px 16px 6px;font-size:10px;text-transform:uppercase;letter-spacing:1.2px;opacity:.4;font-weight:600}
+.nav-item{display:flex;align-items:center;gap:10px;padding:10px 16px;color:rgba(255,255,255,.7);text-decoration:none;font-size:13px;font-weight:500;transition:all 150ms;cursor:pointer;border-left:3px solid transparent}
+.nav-item:hover{background:rgba(255,255,255,.08);color:white}.nav-item.active{background:rgba(255,255,255,.12);color:white;border-left-color:var(--vu-accent-blue)}
+.nav-item i{width:20px;text-align:center;font-size:14px}.nav-item .badge-count{margin-left:auto;background:var(--vu-hibiscus-red);color:white;font-size:10px;font-weight:700;padding:2px 6px;border-radius:10px}
+.sidebar-user{padding:12px 16px;border-top:1px solid rgba(255,255,255,.1);display:flex;align-items:center;gap:10px}
+.user-avatar{width:32px;height:32px;border-radius:50%;background:var(--vu-accent-blue);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700}
+.user-info{flex:1}.user-name{font-size:12px;font-weight:600}.user-role{font-size:10px;opacity:.5}
+
+.main-content{flex:1;margin-left:220px;display:flex;flex-direction:column}
+.top-header{background:var(--surface-card);border-bottom:1px solid var(--border-soft);padding:12px 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;box-shadow:var(--shadow-sm)}
+.header-left{display:flex;align-items:center;gap:12px}
+.breadcrumb{display:flex;align-items:center;gap:6px;font-size:13px}
+.breadcrumb a{color:var(--vu-deep-blue);text-decoration:none;font-weight:500}.breadcrumb .sep{color:var(--text-muted)}.breadcrumb .current{color:var(--text-primary);font-weight:600}
+.header-right{display:flex;align-items:center;gap:10px}
+.header-btn{display:flex;align-items:center;gap:6px;padding:7px 14px;border:none;border-radius:var(--radius-md);font-size:12px;font-weight:600;cursor:pointer;transition:all 150ms;font-family:inherit}
+.btn-primary{background:var(--vu-deep-blue);color:white}.btn-primary:hover{background:var(--vu-deep-blue-darker)}
+.btn-outline{background:transparent;color:var(--text-secondary);border:1px solid var(--border-soft)}.btn-outline:hover{border-color:var(--vu-deep-blue);color:var(--vu-deep-blue);background:var(--vu-deep-blue-lightest)}
+.filter-select{padding:6px 12px;border:1px solid var(--border-soft);border-radius:var(--radius-md);font-size:12px;color:var(--text-secondary);background:var(--surface-card);cursor:pointer;font-family:inherit}
+.page-body{padding:20px 24px;flex:1}
+
+/* STAFF GRID */
+.staff-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:16px}
+.staff-card{background:var(--surface-card);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);border:1px solid var(--border-soft);overflow:hidden;transition:all 200ms;cursor:pointer}
+.staff-card:hover{box-shadow:var(--shadow-md);transform:translateY(-2px)}
+.staff-card-header{padding:16px 18px;display:flex;align-items:center;gap:14px;position:relative}
+.staff-avatar-lg{width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;color:white;flex-shrink:0;position:relative}
+.status-indicator{position:absolute;bottom:0;right:0;width:14px;height:14px;border-radius:50%;border:2px solid white}
+.status-indicator.available{background:var(--vu-leaf-green)}.status-indicator.busy{background:var(--vu-hibiscus-orange)}.status-indicator.off{background:var(--state-cancelled)}
+.staff-details{flex:1}
+.staff-name-lg{font-size:14px;font-weight:700}
+.staff-role-lg{font-size:11px;color:var(--text-muted)}
+.staff-status-text{font-size:11px;font-weight:600;margin-top:2px}
+.staff-status-text.available{color:var(--vu-leaf-green)}.staff-status-text.busy{color:var(--vu-hibiscus-orange)}.staff-status-text.off{color:var(--state-cancelled)}
+
+.staff-card-stats{display:flex;gap:0;border-top:1px solid var(--border-soft);border-bottom:1px solid var(--border-soft)}
+.stat-cell{flex:1;padding:10px;text-align:center;border-right:1px solid var(--border-soft)}
+.stat-cell:last-child{border-right:none}
+.stat-num{font-size:16px;font-weight:800;font-family:'Montserrat'}
+.stat-txt{font-size:9px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.3px;font-weight:600}
+
+/* MINI SCHEDULE */
+.staff-schedule{padding:10px 14px}
+.schedule-label{font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.4px;font-weight:600;margin-bottom:6px}
+.schedule-blocks{display:flex;gap:4px;height:24px;align-items:stretch}
+.time-block{border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:600;color:white;flex-shrink:0;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding:0 4px}
+.time-block.booked{background:var(--vu-deep-blue)}.time-block.active{background:var(--state-active);animation:pulse-block 2s infinite}
+.time-block.free{background:var(--surface-app);border:1px dashed var(--border-soft);color:var(--text-muted)}
+.time-block.off-block{background:repeating-linear-gradient(45deg,var(--surface-app),var(--surface-app) 4px,var(--border-soft) 4px,var(--border-soft) 5px);color:var(--text-muted)}
+@keyframes pulse-block{0%,100%{opacity:1}50%{opacity:.7}}
+.schedule-times{display:flex;justify-content:space-between;font-size:9px;color:var(--text-muted);margin-top:3px;padding:0 2px}
+
+/* SKILLS */
+.skill-tags{padding:0 14px 12px;display:flex;gap:4px;flex-wrap:wrap}
+.skill-tag{padding:2px 8px;border-radius:10px;font-size:10px;font-weight:600;background:var(--vu-deep-blue-lightest);color:var(--vu-deep-blue)}
+.skill-tag.cert{background:#DBF0DB;color:var(--vu-leaf-green)}
+
+/* SUMMARY BAR */
+.summary-bar{display:flex;gap:16px;margin-bottom:16px}
+.summary-card{background:var(--surface-card);border-radius:var(--radius-md);padding:12px 16px;box-shadow:var(--shadow-sm);border:1px solid var(--border-soft);display:flex;align-items:center;gap:10px;flex:1}
+.summary-icon{width:36px;height:36px;border-radius:var(--radius-md);display:flex;align-items:center;justify-content:center;font-size:16px}
+.summary-value{font-size:20px;font-weight:800;font-family:'Montserrat'}
+.summary-label{font-size:11px;color:var(--text-muted)}
+
+/* TIMELINE SECTION */
+.timeline-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;margin-top:24px}
+.timeline-container{background:var(--surface-card);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);border:1px solid var(--border-soft);overflow:hidden}
+.timeline-grid{display:grid;grid-template-columns:140px 1fr;border-bottom:1px solid var(--border-soft)}
+.timeline-grid:last-child{border-bottom:none}
+.tl-name{padding:10px 14px;display:flex;align-items:center;gap:8px;border-right:1px solid var(--border-soft);background:var(--surface-app);font-size:12px;font-weight:600}
+.tl-name-avatar{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:white;flex-shrink:0}
+.tl-row{display:flex;align-items:center;padding:10px 8px;position:relative;min-height:44px}
+.tl-block{position:absolute;height:26px;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:600;color:white;z-index:1;padding:0 6px;cursor:pointer;transition:all 150ms}
+.tl-block:hover{filter:brightness(1.1);box-shadow:var(--shadow-md);transform:scale(1.02)}
+.tl-block.hv{background:var(--vu-deep-blue)}.tl-block.cv{background:var(--state-assigned)}.tl-block.fu{background:var(--vu-leaf-green)}.tl-block.active-now{background:var(--state-active);animation:pulse-block 2s infinite}
+.tl-block.off-day{background:repeating-linear-gradient(45deg,#eee,#eee 5px,#ddd 5px,#ddd 6px);color:var(--text-muted);width:100%!important;left:0!important}
+.tl-hours{display:grid;grid-template-columns:repeat(12,1fr);border-bottom:1px solid var(--border-soft);background:var(--surface-app)}
+.tl-hour{padding:6px 0;text-align:center;font-size:10px;color:var(--text-muted);font-weight:600;border-right:1px solid var(--border-soft)}
+.tl-hour:last-child{border-right:none}
+.tl-grid-lines{position:absolute;top:0;left:0;right:0;bottom:0;display:grid;grid-template-columns:repeat(12,1fr)}
+.tl-grid-line{border-right:1px solid var(--border-soft)}
+
+::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--border-soft);border-radius:3px}
+</style>
+</head>
+<body>
+<div class="app-wrapper">
+  <aside class="sidebar">
+    <a class="sidebar-logo" href="ops_dashboard.html">
+      <div class="logo-icon"><i class="fas fa-heartbeat"></i></div>
+      <div><div class="logo-text">VIET UC</div><div class="logo-sub">Healthcare Platform</div></div>
+    </a>
+    <nav class="sidebar-nav">
+      <div class="nav-section-label">Main</div>
+      <a class="nav-item" href="ops_dashboard.html"><i class="fas fa-th-large"></i> Dashboard</a>
+      <a class="nav-item" href="ops_booking_queue.html"><i class="fas fa-calendar-check"></i> Bookings <span class="badge-count">4</span></a>
+      <a class="nav-item active" href="staff_roster.html"><i class="fas fa-users"></i> Staff</a>
+      <a class="nav-item" href="ops_calendar.html"><i class="fas fa-calendar-alt"></i> Calendar</a>
+      <a class="nav-item"><i class="fas fa-clipboard-list"></i> Roster</a>
+      <div class="nav-section-label">Reports</div>
+      <a class="nav-item"><i class="fas fa-chart-bar"></i> Analytics</a>
+      <div class="nav-section-label">System</div>
+      <a class="nav-item"><i class="fas fa-cog"></i> Configuration</a>
+    </nav>
+    <div class="sidebar-user">
+      <div class="user-avatar">TL</div>
+      <div class="user-info"><div class="user-name">Tran Thi Lan</div><div class="user-role">Operations Manager</div></div>
+    </div>
+  </aside>
+
+  <div class="main-content">
+    <header class="top-header">
+      <div class="header-left">
+        <div class="breadcrumb">
+          <a href="ops_dashboard.html">Dashboard</a>
+          <span class="sep"><i class="fas fa-chevron-right" style="font-size:10px"></i></span>
+          <span class="current">Staff Roster</span>
+        </div>
+      </div>
+      <div class="header-right">
+        <select class="filter-select"><option>All Roles</option><option>Nurses</option><option>Doctors</option><option>Head Nurse</option></select>
+        <select class="filter-select"><option>All Status</option><option>Available</option><option>In Service</option><option>Off Today</option></select>
+        <button class="header-btn btn-outline"><i class="fas fa-table"></i> Grid</button>
+        <button class="header-btn btn-outline"><i class="fas fa-list"></i> List</button>
+      </div>
+    </header>
+
+    <div class="page-body">
+      <!-- SUMMARY -->
+      <div class="summary-bar">
+        <div class="summary-card">
+          <div class="summary-icon" style="background:var(--vu-deep-blue-lightest);color:var(--vu-deep-blue)"><i class="fas fa-users"></i></div>
+          <div><div class="summary-value">8</div><div class="summary-label">Total Staff</div></div>
+        </div>
+        <div class="summary-card">
+          <div class="summary-icon" style="background:#DBF0DB;color:var(--vu-leaf-green)"><i class="fas fa-circle-check"></i></div>
+          <div><div class="summary-value" style="color:var(--vu-leaf-green)">5</div><div class="summary-label">Available Now</div></div>
+        </div>
+        <div class="summary-card">
+          <div class="summary-icon" style="background:#FFF3E0;color:var(--vu-hibiscus-orange)"><i class="fas fa-spinner"></i></div>
+          <div><div class="summary-value" style="color:var(--vu-hibiscus-orange)">2</div><div class="summary-label">In Service</div></div>
+        </div>
+        <div class="summary-card">
+          <div class="summary-icon" style="background:#FBE3E1;color:var(--vu-hibiscus-red)"><i class="fas fa-calendar-xmark"></i></div>
+          <div><div class="summary-value" style="color:var(--vu-hibiscus-red)">1</div><div class="summary-label">Off Today</div></div>
+        </div>
+        <div class="summary-card">
+          <div class="summary-icon" style="background:#F3E8FF;color:var(--state-assigned)"><i class="fas fa-chart-pie"></i></div>
+          <div><div class="summary-value">82%</div><div class="summary-label">Avg Utilization</div></div>
+        </div>
+      </div>
+
+      <!-- STAFF CARDS -->
+      <div class="staff-grid">
+        <div class="staff-card">
+          <div class="staff-card-header">
+            <div class="staff-avatar-lg" style="background:var(--vu-deep-blue)">MA<span class="status-indicator available"></span></div>
+            <div class="staff-details">
+              <div class="staff-name-lg">Nguyen Thi Mai</div>
+              <div class="staff-role-lg">Nurse — Home Visit Specialist</div>
+              <div class="staff-status-text available">Available — Next booking at 14:00</div>
+            </div>
+          </div>
+          <div class="staff-card-stats">
+            <div class="stat-cell"><div class="stat-num">3</div><div class="stat-txt">Today</div></div>
+            <div class="stat-cell"><div class="stat-num">14</div><div class="stat-txt">This Week</div></div>
+            <div class="stat-cell"><div class="stat-num" style="color:var(--vu-hibiscus-red)">95%</div><div class="stat-txt">Utilization</div></div>
+            <div class="stat-cell"><div class="stat-num" style="color:var(--vu-leaf-green)">4.9</div><div class="stat-txt">Rating</div></div>
+          </div>
+          <div class="staff-schedule">
+            <div class="schedule-label">Today's Schedule</div>
+            <div class="schedule-blocks">
+              <div class="time-block booked" style="flex:2">07-09 HV</div>
+              <div class="time-block free" style="flex:2"></div>
+              <div class="time-block booked" style="flex:2">14-16 HV</div>
+              <div class="time-block booked" style="flex:1">16-17</div>
+              <div class="time-block free" style="flex:1"></div>
+            </div>
+            <div class="schedule-times"><span>07:00</span><span>12:00</span><span>18:00</span></div>
+          </div>
+          <div class="skill-tags">
+            <span class="skill-tag">General Health</span>
+            <span class="skill-tag">Pediatric</span>
+            <span class="skill-tag cert">BLS Certified</span>
+          </div>
+        </div>
+
+        <div class="staff-card">
+          <div class="staff-card-header">
+            <div class="staff-avatar-lg" style="background:var(--state-assigned)">HO<span class="status-indicator busy"></span></div>
+            <div class="staff-details">
+              <div class="staff-name-lg">Le Thi Hoa</div>
+              <div class="staff-role-lg">Nurse — General Practice</div>
+              <div class="staff-status-text busy">In Service — Until 11:30 (Home Visit)</div>
+            </div>
+          </div>
+          <div class="staff-card-stats">
+            <div class="stat-cell"><div class="stat-num">4</div><div class="stat-txt">Today</div></div>
+            <div class="stat-cell"><div class="stat-num">12</div><div class="stat-txt">This Week</div></div>
+            <div class="stat-cell"><div class="stat-num" style="color:var(--vu-hibiscus-orange)">88%</div><div class="stat-txt">Utilization</div></div>
+            <div class="stat-cell"><div class="stat-num" style="color:var(--vu-leaf-green)">4.7</div><div class="stat-txt">Rating</div></div>
+          </div>
+          <div class="staff-schedule">
+            <div class="schedule-label">Today's Schedule</div>
+            <div class="schedule-blocks">
+              <div class="time-block active" style="flex:3">08-11:30 HV</div>
+              <div class="time-block booked" style="flex:2">13-15 CV</div>
+              <div class="time-block booked" style="flex:2">15-17 HV</div>
+              <div class="time-block free" style="flex:1"></div>
+            </div>
+            <div class="schedule-times"><span>07:00</span><span>12:00</span><span>18:00</span></div>
+          </div>
+          <div class="skill-tags">
+            <span class="skill-tag">General Health</span>
+            <span class="skill-tag">Wound Care</span>
+            <span class="skill-tag cert">IV Certified</span>
+          </div>
+        </div>
+
+        <div class="staff-card">
+          <div class="staff-card-header">
+            <div class="staff-avatar-lg" style="background:var(--vu-leaf-green)">LI<span class="status-indicator available"></span></div>
+            <div class="staff-details">
+              <div class="staff-name-lg">Tran Minh Linh</div>
+              <div class="staff-role-lg">Nurse — Pediatric Specialist</div>
+              <div class="staff-status-text available">Available — Light day (1 booking)</div>
+            </div>
+          </div>
+          <div class="staff-card-stats">
+            <div class="stat-cell"><div class="stat-num">1</div><div class="stat-txt">Today</div></div>
+            <div class="stat-cell"><div class="stat-num">8</div><div class="stat-txt">This Week</div></div>
+            <div class="stat-cell"><div class="stat-num" style="color:var(--vu-leaf-green)">65%</div><div class="stat-txt">Utilization</div></div>
+            <div class="stat-cell"><div class="stat-num" style="color:var(--vu-leaf-green)">4.8</div><div class="stat-txt">Rating</div></div>
+          </div>
+          <div class="staff-schedule">
+            <div class="schedule-label">Today's Schedule</div>
+            <div class="schedule-blocks">
+              <div class="time-block free" style="flex:3"></div>
+              <div class="time-block booked" style="flex:2">13-15 HV</div>
+              <div class="time-block free" style="flex:3"></div>
+            </div>
+            <div class="schedule-times"><span>07:00</span><span>12:00</span><span>18:00</span></div>
+          </div>
+          <div class="skill-tags">
+            <span class="skill-tag">Pediatric</span>
+            <span class="skill-tag">Vaccination</span>
+            <span class="skill-tag cert">PALS Certified</span>
+          </div>
+        </div>
+
+        <div class="staff-card">
+          <div class="staff-card-header">
+            <div class="staff-avatar-lg" style="background:var(--vu-hibiscus-orange)">TH<span class="status-indicator available"></span></div>
+            <div class="staff-details">
+              <div class="staff-name-lg">Pham Thu Hang</div>
+              <div class="staff-role-lg">Nurse — Senior</div>
+              <div class="staff-status-text available">Available — Finished for today</div>
+            </div>
+          </div>
+          <div class="staff-card-stats">
+            <div class="stat-cell"><div class="stat-num">2</div><div class="stat-txt">Today</div></div>
+            <div class="stat-cell"><div class="stat-num">11</div><div class="stat-txt">This Week</div></div>
+            <div class="stat-cell"><div class="stat-num" style="color:var(--vu-leaf-green)">82%</div><div class="stat-txt">Utilization</div></div>
+            <div class="stat-cell"><div class="stat-num" style="color:var(--vu-leaf-green)">4.6</div><div class="stat-txt">Rating</div></div>
+          </div>
+          <div class="staff-schedule">
+            <div class="schedule-label">Today's Schedule</div>
+            <div class="schedule-blocks">
+              <div class="time-block booked" style="flex:2">07-09 HV</div>
+              <div class="time-block booked" style="flex:2">09-11 HV</div>
+              <div class="time-block free" style="flex:4"></div>
+            </div>
+            <div class="schedule-times"><span>07:00</span><span>12:00</span><span>18:00</span></div>
+          </div>
+          <div class="skill-tags">
+            <span class="skill-tag">General Health</span>
+            <span class="skill-tag">Elder Care</span>
+            <span class="skill-tag cert">BLS Certified</span>
+          </div>
+        </div>
+
+        <div class="staff-card">
+          <div class="staff-card-header">
+            <div class="staff-avatar-lg" style="background:var(--vu-accent-blue)">HA<span class="status-indicator busy"></span></div>
+            <div class="staff-details">
+              <div class="staff-name-lg">Do Thi Hanh</div>
+              <div class="staff-role-lg">Nurse — Home Visit</div>
+              <div class="staff-status-text busy">In Service — Until 10:00 (Follow-up)</div>
+            </div>
+          </div>
+          <div class="staff-card-stats">
+            <div class="stat-cell"><div class="stat-num">3</div><div class="stat-txt">Today</div></div>
+            <div class="stat-cell"><div class="stat-num">10</div><div class="stat-txt">This Week</div></div>
+            <div class="stat-cell"><div class="stat-num" style="color:var(--vu-leaf-green)">76%</div><div class="stat-txt">Utilization</div></div>
+            <div class="stat-cell"><div class="stat-num" style="color:var(--vu-leaf-green)">4.5</div><div class="stat-txt">Rating</div></div>
+          </div>
+          <div class="staff-schedule">
+            <div class="schedule-label">Today's Schedule</div>
+            <div class="schedule-blocks">
+              <div class="time-block active" style="flex:2">08-10 FU</div>
+              <div class="time-block booked" style="flex:2">10-12 HV</div>
+              <div class="time-block free" style="flex:1"></div>
+              <div class="time-block booked" style="flex:2">15-17 HV</div>
+              <div class="time-block free" style="flex:1"></div>
+            </div>
+            <div class="schedule-times"><span>07:00</span><span>12:00</span><span>18:00</span></div>
+          </div>
+          <div class="skill-tags">
+            <span class="skill-tag">General Health</span>
+            <span class="skill-tag">Rehabilitation</span>
+          </div>
+        </div>
+
+        <div class="staff-card" style="opacity:.7">
+          <div class="staff-card-header">
+            <div class="staff-avatar-lg" style="background:var(--state-draft)">NT<span class="status-indicator off"></span></div>
+            <div class="staff-details">
+              <div class="staff-name-lg">Dr. Nguyen Van Thanh</div>
+              <div class="staff-role-lg">Doctor — General Practitioner</div>
+              <div class="staff-status-text off">Off Today — Annual Leave</div>
+            </div>
+          </div>
+          <div class="staff-card-stats">
+            <div class="stat-cell"><div class="stat-num" style="color:var(--state-draft)">—</div><div class="stat-txt">Today</div></div>
+            <div class="stat-cell"><div class="stat-num">6</div><div class="stat-txt">This Week</div></div>
+            <div class="stat-cell"><div class="stat-num">42%</div><div class="stat-txt">Utilization</div></div>
+            <div class="stat-cell"><div class="stat-num" style="color:var(--vu-leaf-green)">4.9</div><div class="stat-txt">Rating</div></div>
+          </div>
+          <div class="staff-schedule">
+            <div class="schedule-label">Today's Schedule</div>
+            <div class="schedule-blocks">
+              <div class="time-block off-block" style="flex:1">OFF</div>
+            </div>
+          </div>
+          <div class="skill-tags">
+            <span class="skill-tag">Diagnostics</span>
+            <span class="skill-tag">Prescriptions</span>
+            <span class="skill-tag cert">MD Licensed</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- TIMELINE VIEW -->
+      <div class="timeline-header">
+        <h3 style="font-size:16px;display:flex;align-items:center;gap:8px"><i class="fas fa-timeline" style="color:var(--vu-deep-blue)"></i> Day Timeline — May 12, 2026</h3>
+      </div>
+      <div class="timeline-container">
+        <div class="timeline-grid" style="border-bottom:none">
+          <div class="tl-name" style="font-weight:700;font-size:10px;text-transform:uppercase;color:var(--text-muted)">Staff</div>
+          <div class="tl-hours">
+            <div class="tl-hour">07</div><div class="tl-hour">08</div><div class="tl-hour">09</div><div class="tl-hour">10</div><div class="tl-hour">11</div><div class="tl-hour">12</div><div class="tl-hour">13</div><div class="tl-hour">14</div><div class="tl-hour">15</div><div class="tl-hour">16</div><div class="tl-hour">17</div><div class="tl-hour">18</div>
+          </div>
+        </div>
+        <div class="timeline-grid">
+          <div class="tl-name"><div class="tl-name-avatar" style="background:var(--vu-deep-blue)">MA</div> Mai</div>
+          <div class="tl-row">
+            <div class="tl-grid-lines"><div class="tl-grid-line"></div><div class="tl-grid-line"></div><div class="tl-grid-line"></div><div class="tl-grid-line"></div><div class="tl-grid-line"></div><div class="tl-grid-line"></div><div class="tl-grid-line"></div><div class="tl-grid-line"></div><div class="tl-grid-line"></div><div class="tl-grid-line"></div><div class="tl-grid-line"></div><div class="tl-grid-line"></div></div>
+            <div class="tl-block hv" style="left:0%;width:16.6%" title="07:00-09:00 Home Visit">HV</div>
+            <div class="tl-block hv" style="left:58.3%;width:16.6%" title="14:00-16:00 Home Visit">HV</div>
+            <div class="tl-block cv" style="left:75%;width:8.3%" title="16:00-17:00 Clinic Visit">CV</div>
+          </div>
+        </div>
+        <div class="timeline-grid">
+          <div class="tl-name"><div class="tl-name-avatar" style="background:var(--state-assigned)">HO</div> Hoa</div>
+          <div class="tl-row">
+            <div class="tl-grid-lines"><div class="tl-grid-line"></div><div class="tl-grid-line"></div><div class="tl-grid-line"></div><div class="tl-grid-line"></div><div class="tl-grid-line"></div><div class="tl-grid-line"></div><div class="tl-grid-line"></div><div class="tl-grid-line"></div><div class="tl-grid-line"></div><div class="tl-grid-line"></div><div class="tl-grid-line"></div><div class="tl-grid-line"></div></div>
+            <div class="tl-block active-now" style="left:8.3%;width:29.1%" title="08:00-11:30 Home Visit (Active)">HV</div>
+            <div class="tl-block cv" style="left:50%;width:16.6%" title="13:00-15:00 Clinic Visit">CV</div>
+            <div class="tl-block hv" style="left:66.6%;width:16.6%" title="15:00-17:00 Home Visit">HV</div>
+          </div>
+        </div>
+        <div class="timeline-grid">
+          <div class="tl-name"><div class="tl-name-avatar" style="background:var(--vu-leaf-green)">LI</div> Linh</div>
+          <div class="tl-row">
+            <div class="tl-grid-lines"><div class="tl-grid-line"></div><div class="tl-grid-line"></div><div class="tl-grid-line"></div><div class="tl-grid-line"></div><div class="tl-grid-line"></div><div class="tl-grid-line"></div><div class="tl-grid-line"></div><div class="tl-grid-line"></div><div class="tl-grid-line"></div><div class="tl-grid-line"></div><div class="tl-grid-line"></div><div class="tl-grid-line"></div></div>
+            <div class="tl-block hv" style="left:50%;width:16.6%" title="13:00-15:00 Home Visit">HV</div>
+          </div>
+        </div>
+        <div class="timeline-grid">
+          <div class="tl-name"><div class="tl-name-avatar" style="background:var(--vu-hibiscus-orange)">TH</div> Hang</div>
+          <div class="tl-row">
+            <div class="tl-grid-lines"><div class="tl-grid-line"></div><div class="tl-grid-line"></div><div class="tl-grid-line"></div><div class="tl-grid-line"></div><div class="tl-grid-line"></div><div class="tl-grid-line"></div><div class="tl-grid-line"></div><div class="tl-grid-line"></div><div class="tl-grid-line"></div><div class="tl-grid-line"></div><div class="tl-grid-line"></div><div class="tl-grid-line"></div></div>
+            <div class="tl-block hv" style="left:0%;width:16.6%" title="07:00-09:00 Home Visit">HV</div>
+            <div class="tl-block hv" style="left:16.6%;width:16.6%" title="09:00-11:00 Home Visit">HV</div>
+          </div>
+        </div>
+        <div class="timeline-grid">
+          <div class="tl-name"><div class="tl-name-avatar" style="background:var(--vu-accent-blue)">HA</div> Hanh</div>
+          <div class="tl-row">
+            <div class="tl-grid-lines"><div class="tl-grid-line"></div><div class="tl-grid-line"></div><div class="tl-grid-line"></div><div class="tl-grid-line"></div><div class="tl-grid-line"></div><div class="tl-grid-line"></div><div class="tl-grid-line"></div><div class="tl-grid-line"></div><div class="tl-grid-line"></div><div class="tl-grid-line"></div><div class="tl-grid-line"></div><div class="tl-grid-line"></div></div>
+            <div class="tl-block active-now" style="left:8.3%;width:16.6%" title="08:00-10:00 Follow-up (Active)">FU</div>
+            <div class="tl-block hv" style="left:25%;width:16.6%" title="10:00-12:00 Home Visit">HV</div>
+            <div class="tl-block hv" style="left:66.6%;width:16.6%" title="15:00-17:00 Home Visit">HV</div>
+          </div>
+        </div>
+        <div class="timeline-grid">
+          <div class="tl-name" style="opacity:.5"><div class="tl-name-avatar" style="background:var(--state-draft)">NT</div> Dr.Thanh</div>
+          <div class="tl-row">
+            <div class="tl-grid-lines"><div class="tl-grid-line"></div><div class="tl-grid-line"></div><div class="tl-grid-line"></div><div class="tl-grid-line"></div><div class="tl-grid-line"></div><div class="tl-grid-line"></div><div class="tl-grid-line"></div><div class="tl-grid-line"></div><div class="tl-grid-line"></div><div class="tl-grid-line"></div><div class="tl-grid-line"></div><div class="tl-grid-line"></div></div>
+            <div class="tl-block off-day" title="Off Today — Annual Leave">OFF DAY</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

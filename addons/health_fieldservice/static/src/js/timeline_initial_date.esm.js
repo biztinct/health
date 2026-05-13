@@ -45,14 +45,10 @@ patch(TimelineRenderer.prototype, {
                     // YYYY-MM-DD format (most common)
                     if (typeof initial_date_str === 'string' && initial_date_str.length >= 10) {
                         current_date = DateTime.fromISO(initial_date_str);
-                        console.log('📅 Timeline: Using initial date from context:', initial_date_str, '→', current_date.toISODate());
                     }
                 } catch (e) {
-                    console.warn('⚠️ Timeline: Failed to parse initial_date, using today:', e);
                     current_date = DateTime.now();
                 }
-            } else {
-                console.log('ℹ️ Timeline: No initial_date in context, using today');
             }
 
             switch (this.mode.data) {

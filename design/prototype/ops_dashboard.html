@@ -1,0 +1,1089 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VAFHS Operations Command Center</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+:root {
+  --vu-deep-blue: #1565C0;
+  --vu-deep-blue-darker: #1356A9;
+  --vu-deep-blue-darkest: #0D356B;
+  --vu-deep-blue-light: #83C5FA;
+  --vu-deep-blue-lightest: #E4F4FD;
+  --vu-accent-blue: #42A5F5;
+  --vu-hibiscus-red: #E53935;
+  --vu-hibiscus-orange: #FB8C00;
+  --vu-leaf-green: #43A047;
+  --state-draft: #64748b;
+  --state-confirmed: #2563eb;
+  --state-assigned: #7c3aed;
+  --state-active: #ea580c;
+  --state-completed: #16a34a;
+  --state-cancelled: #dc2626;
+  --text-primary: #212121;
+  --text-secondary: #424242;
+  --text-muted: #757575;
+  --surface-app: #F5F5F5;
+  --surface-card: #FFFFFF;
+  --border-soft: #E0E0E0;
+  --border-strong: #BDBDBD;
+  --shadow-sm: 0 1px 3px rgba(33,33,33,0.08);
+  --shadow-md: 0 2px 8px rgba(33,33,33,0.12);
+  --shadow-lg: 0 4px 16px rgba(33,33,33,0.15);
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'Segoe UI', Arial, sans-serif;
+  font-size: 13px;
+  color: var(--text-primary);
+  background: var(--surface-app);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,h2,h3,h4,h5,h6 { font-family: 'Montserrat', 'Segoe UI', Arial, sans-serif; font-weight: 600; }
+
+.app-wrapper { display: flex; min-height: 100vh; }
+
+/* ===== SIDEBAR ===== */
+.sidebar {
+  width: 220px; background: var(--vu-deep-blue-darkest); color: white;
+  display: flex; flex-direction: column; flex-shrink: 0;
+  position: fixed; top: 0; left: 0; bottom: 0; z-index: 100;
+}
+.sidebar-logo {
+  padding: 20px 16px; display: flex; align-items: center; gap: 10px;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+.sidebar-logo .logo-icon {
+  width: 36px; height: 36px; background: var(--vu-hibiscus-red);
+  border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 18px;
+}
+.sidebar-logo .logo-text { font-family: 'Montserrat'; font-weight: 700; font-size: 15px; letter-spacing: .5px; }
+.sidebar-logo .logo-sub { font-size: 10px; opacity: .6; }
+.sidebar-nav { padding: 12px 0; flex: 1; }
+.nav-section-label {
+  padding: 16px 16px 6px; font-size: 10px; text-transform: uppercase;
+  letter-spacing: 1.2px; opacity: .4; font-weight: 600;
+}
+.nav-item {
+  display: flex; align-items: center; gap: 10px; padding: 10px 16px;
+  color: rgba(255,255,255,.7); text-decoration: none; font-size: 13px;
+  font-weight: 500; transition: all 150ms; cursor: pointer; border-left: 3px solid transparent;
+}
+.nav-item:hover { background: rgba(255,255,255,.08); color: white; }
+.nav-item.active { background: rgba(255,255,255,.12); color: white; border-left-color: var(--vu-accent-blue); }
+.nav-item i { width: 20px; text-align: center; font-size: 14px; }
+.nav-item .badge-count {
+  margin-left: auto; background: var(--vu-hibiscus-red); color: white;
+  font-size: 10px; font-weight: 700; padding: 2px 6px; border-radius: 10px; min-width: 18px; text-align: center;
+}
+.sidebar-user {
+  padding: 12px 16px; border-top: 1px solid rgba(255,255,255,.1);
+  display: flex; align-items: center; gap: 10px;
+}
+.user-avatar {
+  width: 32px; height: 32px; border-radius: 50%; background: var(--vu-accent-blue);
+  display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700;
+}
+.user-info { flex: 1; min-width: 0; }
+.user-name { font-size: 12px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.user-role { font-size: 10px; opacity: .5; }
+
+/* ===== MAIN ===== */
+.main-content { flex: 1; margin-left: 220px; display: flex; flex-direction: column; }
+
+/* ===== HEADER ===== */
+.top-header {
+  background: var(--surface-card); border-bottom: 1px solid var(--border-soft);
+  padding: 12px 24px; display: flex; align-items: center; justify-content: space-between;
+  position: sticky; top: 0; z-index: 50; box-shadow: var(--shadow-sm);
+}
+.header-left { display: flex; align-items: center; gap: 16px; }
+.page-title { font-size: 18px; font-weight: 700; font-family: 'Montserrat'; }
+.date-nav {
+  display: flex; align-items: center; gap: 8px; background: var(--surface-app);
+  border: 1px solid var(--border-soft); border-radius: var(--radius-md); padding: 4px;
+}
+.date-nav-btn {
+  width: 28px; height: 28px; border: none; background: transparent;
+  border-radius: var(--radius-sm); cursor: pointer; display: flex;
+  align-items: center; justify-content: center; color: var(--text-secondary); transition: all 120ms;
+}
+.date-nav-btn:hover { background: var(--vu-deep-blue-lightest); color: var(--vu-deep-blue); }
+.date-label { font-weight: 600; font-size: 13px; min-width: 160px; text-align: center; }
+.date-today {
+  font-size: 11px; color: var(--vu-deep-blue); font-weight: 600; cursor: pointer;
+  padding: 4px 8px; border-radius: var(--radius-sm); transition: background 120ms;
+}
+.date-today:hover { background: var(--vu-deep-blue-lightest); }
+.header-right { display: flex; align-items: center; gap: 12px; }
+.filter-select {
+  padding: 6px 12px; border: 1px solid var(--border-soft); border-radius: var(--radius-md);
+  font-size: 12px; color: var(--text-secondary); background: var(--surface-card);
+  cursor: pointer; font-family: inherit;
+}
+.filter-select:focus { outline: none; border-color: var(--vu-deep-blue); box-shadow: 0 0 0 3px rgba(21,101,192,.15); }
+.header-btn {
+  display: flex; align-items: center; gap: 6px; padding: 7px 14px; border: none;
+  border-radius: var(--radius-md); font-size: 12px; font-weight: 600;
+  cursor: pointer; transition: all 150ms; font-family: inherit;
+}
+.btn-primary { background: var(--vu-deep-blue); color: white; }
+.btn-primary:hover { background: var(--vu-deep-blue-darker); box-shadow: var(--shadow-md); }
+.header-icon-btn {
+  width: 34px; height: 34px; border: 1px solid var(--border-soft); border-radius: var(--radius-md);
+  background: var(--surface-card); display: flex; align-items: center; justify-content: center;
+  cursor: pointer; color: var(--text-secondary); position: relative; transition: all 120ms;
+}
+.header-icon-btn:hover { border-color: var(--vu-deep-blue); color: var(--vu-deep-blue); background: var(--vu-deep-blue-lightest); }
+.notification-dot {
+  position: absolute; top: 4px; right: 4px; width: 8px; height: 8px;
+  background: var(--vu-hibiscus-red); border-radius: 50%; border: 2px solid var(--surface-card);
+}
+
+/* ===== DASHBOARD ===== */
+.dashboard-body { padding: 20px 24px; flex: 1; overflow-y: auto; }
+
+/* KPI */
+.kpi-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px; margin-bottom: 20px; }
+.kpi-card {
+  background: var(--surface-card); border-radius: var(--radius-lg); padding: 16px 18px;
+  box-shadow: var(--shadow-sm); border: 1px solid var(--border-soft);
+  display: flex; flex-direction: column; transition: all 200ms; cursor: pointer;
+  position: relative; overflow: hidden;
+}
+.kpi-card:hover { box-shadow: var(--shadow-md); transform: translateY(-1px); }
+.kpi-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; }
+.kpi-total::before { background: var(--vu-deep-blue); }
+.kpi-needs-staff::before { background: var(--vu-hibiscus-red); }
+.kpi-active::before { background: var(--state-active); }
+.kpi-done::before { background: var(--state-completed); }
+.kpi-revenue::before { background: var(--vu-leaf-green); }
+.kpi-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+.kpi-icon {
+  width: 36px; height: 36px; border-radius: var(--radius-md);
+  display: flex; align-items: center; justify-content: center; font-size: 16px;
+}
+.kpi-total .kpi-icon { background: var(--vu-deep-blue-lightest); color: var(--vu-deep-blue); }
+.kpi-needs-staff .kpi-icon { background: #FBE3E1; color: var(--vu-hibiscus-red); }
+.kpi-active .kpi-icon { background: #FFF3E0; color: var(--state-active); }
+.kpi-done .kpi-icon { background: #DBF0DB; color: var(--state-completed); }
+.kpi-revenue .kpi-icon { background: #DBF0DB; color: var(--vu-leaf-green); }
+.kpi-trend { font-size: 11px; font-weight: 600; padding: 2px 6px; border-radius: 10px; }
+.kpi-trend.up { background: #DBF0DB; color: #176B47; }
+.kpi-trend.down { background: #FBE3E1; color: #C0332A; }
+.kpi-value { font-size: 28px; font-weight: 800; font-family: 'Montserrat'; line-height: 1.1; margin-bottom: 2px; }
+.kpi-label { font-size: 12px; color: var(--text-muted); font-weight: 500; }
+.kpi-sublabel { font-size: 11px; color: var(--text-muted); margin-top: 4px; }
+
+/* MAIN GRID */
+.main-grid { display: grid; grid-template-columns: 1fr 340px; gap: 16px; margin-bottom: 20px; }
+.panel {
+  background: var(--surface-card); border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm); border: 1px solid var(--border-soft); overflow: hidden;
+}
+.panel-header {
+  padding: 14px 18px; border-bottom: 1px solid var(--border-soft);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.panel-title {
+  font-size: 14px; font-weight: 700; font-family: 'Montserrat';
+  display: flex; align-items: center; gap: 8px;
+}
+.panel-title i { color: var(--vu-deep-blue); }
+.panel-tabs { display: flex; gap: 2px; background: var(--surface-app); border-radius: var(--radius-md); padding: 2px; }
+.panel-tab {
+  padding: 5px 12px; font-size: 11px; font-weight: 600; border: none;
+  background: transparent; border-radius: 6px; cursor: pointer; color: var(--text-muted);
+  transition: all 150ms; font-family: inherit; white-space: nowrap;
+}
+.panel-tab.active { background: var(--surface-card); color: var(--vu-deep-blue); box-shadow: var(--shadow-sm); }
+.panel-tab:hover:not(.active) { color: var(--text-primary); }
+.panel-tab .tab-badge {
+  display: inline-block; background: var(--vu-hibiscus-red); color: white;
+  font-size: 10px; padding: 1px 5px; border-radius: 8px; margin-left: 4px; font-weight: 700;
+}
+.panel-body { padding: 12px; max-height: 480px; overflow-y: auto; }
+.panel-body::-webkit-scrollbar { width: 4px; }
+.panel-body::-webkit-scrollbar-thumb { background: var(--border-soft); border-radius: 4px; }
+
+/* BOOKING CARD */
+.booking-card {
+  background: var(--surface-card); border: 1px solid var(--border-soft);
+  border-radius: var(--radius-md); padding: 12px 14px; margin-bottom: 8px;
+  transition: all 200ms; cursor: pointer; position: relative;
+}
+.booking-card:hover { border-color: var(--vu-deep-blue-light); box-shadow: var(--shadow-md); }
+.booking-card:last-child { margin-bottom: 0; }
+.booking-card.urgent { border-left: 3px solid var(--vu-hibiscus-red); }
+.booking-card.needs-staff { border-left: 3px solid var(--state-active); }
+.booking-card.assigned { border-left: 3px solid var(--state-assigned); }
+.booking-card.in-progress { border-left: 3px solid var(--state-active); background: #FFFAF5; }
+.booking-card-top { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 8px; }
+.booking-time { font-size: 14px; font-weight: 700; font-family: 'Montserrat'; }
+.booking-id { font-size: 11px; color: var(--text-muted); font-weight: 500; margin-left: 8px; }
+.status-chip {
+  display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px;
+  border-radius: 10px; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .5px;
+}
+.chip-draft { background: rgba(100,116,139,.1); color: var(--state-draft); }
+.chip-confirmed { background: rgba(37,99,235,.1); color: var(--state-confirmed); }
+.chip-assigned { background: rgba(124,58,237,.1); color: var(--state-assigned); }
+.chip-active { background: rgba(234,88,12,.1); color: var(--state-active); }
+.priority-urgent {
+  display: inline-flex; align-items: center; gap: 3px; padding: 2px 6px;
+  border-radius: 10px; font-size: 10px; font-weight: 700; background: #FBE3E1;
+  color: var(--vu-hibiscus-red); margin-left: 6px;
+}
+.booking-client { font-size: 13px; font-weight: 600; margin-bottom: 4px; display: flex; align-items: center; gap: 6px; }
+.booking-client i { font-size: 12px; color: var(--vu-deep-blue); }
+.booking-details { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 8px; }
+.booking-detail { display: flex; align-items: center; gap: 4px; font-size: 11px; color: var(--text-muted); }
+.booking-detail i { font-size: 11px; width: 14px; text-align: center; }
+.booking-detail .detail-value { color: var(--text-secondary); font-weight: 500; }
+
+/* ===== CUSTOM STAFF DROPDOWN ===== */
+.staff-dropdown-wrapper { position: relative; flex: 1; }
+.staff-dropdown-trigger {
+  width: 100%; padding: 6px 10px; border: 1px solid var(--border-soft);
+  border-radius: var(--radius-sm); font-size: 12px; font-family: inherit;
+  color: var(--text-muted); background: white; cursor: pointer; display: flex;
+  align-items: center; justify-content: space-between; transition: all 120ms;
+}
+.staff-dropdown-trigger:hover { border-color: var(--vu-deep-blue); }
+.staff-dropdown-trigger.open { border-color: var(--vu-deep-blue); box-shadow: 0 0 0 2px rgba(21,101,192,.15); }
+.staff-dropdown-trigger .trigger-text { display: flex; align-items: center; gap: 8px; }
+.staff-dropdown-trigger .trigger-text .inline-dot {
+  width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
+}
+.staff-dropdown-menu {
+  position: absolute; top: calc(100% + 4px); left: 0; right: 0;
+  background: var(--surface-card); border: 1px solid var(--border-soft);
+  border-radius: var(--radius-md); box-shadow: var(--shadow-lg);
+  z-index: 20; display: none; overflow: hidden;
+}
+.staff-dropdown-menu.show { display: block; }
+.staff-option {
+  padding: 8px 12px; display: flex; align-items: center; gap: 10px;
+  cursor: pointer; transition: background 100ms; font-size: 12px;
+}
+.staff-option:hover { background: var(--vu-deep-blue-lightest); }
+.staff-option-avatar {
+  width: 26px; height: 26px; border-radius: 50%; display: flex;
+  align-items: center; justify-content: center; font-size: 10px; font-weight: 700;
+  color: white; flex-shrink: 0; position: relative;
+}
+.staff-option-dot {
+  position: absolute; bottom: -1px; right: -1px; width: 10px; height: 10px;
+  border-radius: 50%; border: 2px solid var(--surface-card);
+}
+.staff-option-dot.dot-available { background: var(--state-completed); }
+.staff-option-dot.dot-busy { background: var(--state-active); }
+.staff-option-info { flex: 1; min-width: 0; }
+.staff-option-name { font-weight: 600; color: var(--text-primary); }
+.staff-option-meta { font-size: 11px; color: var(--text-muted); }
+
+/* ASSIGN ROW */
+.assign-inline {
+  display: flex; align-items: center; gap: 8px; margin-top: 8px;
+  padding-top: 8px; border-top: 1px solid var(--border-soft);
+}
+.assign-label { font-size: 11px; color: var(--text-muted); font-weight: 600; white-space: nowrap; }
+.assign-btn {
+  padding: 5px 10px; border: none; border-radius: var(--radius-sm);
+  font-size: 11px; font-weight: 700; cursor: pointer; transition: all 120ms; font-family: inherit;
+}
+.assign-btn-confirm { background: var(--vu-deep-blue); color: white; }
+.assign-btn-confirm:hover { background: var(--vu-deep-blue-darker); }
+
+/* ===== BOOKING ACTIONS MENU ===== */
+.booking-actions-wrapper { position: relative; }
+.more-btn {
+  width: 28px; height: 28px; border: 1px solid var(--border-soft); border-radius: var(--radius-sm);
+  background: transparent; cursor: pointer; display: flex; align-items: center;
+  justify-content: center; color: var(--text-muted); transition: all 120ms; font-size: 14px;
+}
+.more-btn:hover { border-color: var(--vu-deep-blue); color: var(--vu-deep-blue); background: var(--vu-deep-blue-lightest); }
+.actions-menu {
+  position: absolute; top: calc(100% + 4px); right: 0; width: 180px;
+  background: var(--surface-card); border: 1px solid var(--border-soft);
+  border-radius: var(--radius-md); box-shadow: var(--shadow-lg);
+  z-index: 30; display: none; overflow: hidden;
+}
+.actions-menu.show { display: block; }
+.actions-menu-item {
+  padding: 8px 12px; display: flex; align-items: center; gap: 8px;
+  font-size: 12px; color: var(--text-secondary); cursor: pointer; transition: background 100ms;
+}
+.actions-menu-item:hover { background: var(--vu-deep-blue-lightest); color: var(--vu-deep-blue); }
+.actions-menu-item i { width: 16px; text-align: center; font-size: 12px; }
+.actions-divider { height: 1px; background: var(--border-soft); margin: 2px 0; }
+.actions-menu-item.danger { color: var(--state-cancelled); }
+.actions-menu-item.danger:hover { background: #FBE3E1; color: var(--state-cancelled); }
+
+/* ASSIGNED STAFF DISPLAY */
+.assigned-staff {
+  display: flex; align-items: center; gap: 6px; margin-top: 8px;
+  padding-top: 8px; border-top: 1px solid var(--border-soft);
+}
+.staff-avatar-sm {
+  width: 24px; height: 24px; border-radius: 50%; display: flex;
+  align-items: center; justify-content: center; font-size: 10px; font-weight: 700; color: white;
+}
+.assigned-staff-name { font-size: 12px; font-weight: 600; }
+.assigned-staff-role { font-size: 10px; color: var(--text-muted); }
+.booking-actions-row { display: flex; gap: 4px; margin-left: auto; }
+.action-btn-sm {
+  padding: 3px 8px; border: 1px solid var(--border-soft); border-radius: var(--radius-sm);
+  background: transparent; font-size: 10px; cursor: pointer; color: var(--text-secondary);
+  transition: all 120ms; font-family: inherit;
+}
+.action-btn-sm:hover { border-color: var(--vu-deep-blue); color: var(--vu-deep-blue); background: var(--vu-deep-blue-lightest); }
+
+/* ===== STAFF ROSTER ===== */
+.staff-card {
+  display: flex; align-items: center; gap: 10px; padding: 10px 12px;
+  border-radius: var(--radius-md); margin-bottom: 6px; transition: all 150ms;
+  cursor: pointer; border: 1px solid transparent;
+}
+.staff-card:hover { background: var(--surface-app); border-color: var(--border-soft); }
+.staff-avatar {
+  width: 38px; height: 38px; border-radius: 50%; display: flex;
+  align-items: center; justify-content: center; font-weight: 700;
+  font-size: 14px; color: white; position: relative; flex-shrink: 0;
+}
+.status-dot {
+  position: absolute; bottom: 0; right: 0; width: 12px; height: 12px;
+  border-radius: 50%; border: 2px solid var(--surface-card);
+}
+.status-dot.available { background: var(--state-completed); }
+.status-dot.busy { background: var(--state-active); }
+.status-dot.off { background: var(--state-cancelled); }
+.staff-info { flex: 1; min-width: 0; }
+.staff-name { font-size: 13px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.staff-status-text { font-size: 11px; font-weight: 500; }
+.staff-status-text.available { color: var(--state-completed); }
+.staff-status-text.busy { color: var(--state-active); }
+.staff-status-text.off { color: var(--state-cancelled); }
+.staff-meta { font-size: 11px; color: var(--text-muted); }
+.staff-bookings-count { text-align: right; }
+.bookings-badge {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 24px; height: 24px; border-radius: 50%; font-size: 11px; font-weight: 700;
+  background: var(--vu-deep-blue-lightest); color: var(--vu-deep-blue);
+}
+.bookings-label { font-size: 9px; color: var(--text-muted); text-align: center; margin-top: 1px; }
+
+/* ===== TIMELINE ===== */
+.timeline-panel {
+  background: var(--surface-card); border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm); border: 1px solid var(--border-soft); overflow: hidden;
+}
+.timeline-header {
+  padding: 14px 18px; border-bottom: 1px solid var(--border-soft);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.timeline-title {
+  font-size: 14px; font-weight: 700; font-family: 'Montserrat';
+  display: flex; align-items: center; gap: 8px;
+}
+.timeline-title i { color: var(--vu-deep-blue); }
+.timeline-legend { display: flex; align-items: center; gap: 12px; font-size: 11px; }
+.legend-item { display: flex; align-items: center; gap: 4px; }
+.legend-swatch { width: 12px; height: 12px; border-radius: 3px; display: inline-block; }
+.timeline-view-toggle { display: flex; gap: 2px; background: var(--surface-app); border-radius: var(--radius-md); padding: 2px; }
+.toggle-btn {
+  padding: 4px 10px; border: none; background: transparent; border-radius: 6px;
+  font-size: 11px; font-weight: 600; cursor: pointer; color: var(--text-muted);
+  transition: all 150ms; font-family: inherit;
+}
+.toggle-btn.active { background: var(--surface-card); color: var(--vu-deep-blue); box-shadow: var(--shadow-sm); }
+.timeline-body { padding: 0; overflow-x: auto; }
+.timeline-grid { display: grid; grid-template-columns: 120px repeat(12, 1fr); min-width: 900px; }
+.timeline-corner {
+  padding: 8px 12px; background: var(--surface-app); border-bottom: 1px solid var(--border-soft);
+  border-right: 1px solid var(--border-soft); font-size: 10px; color: var(--text-muted); font-weight: 600;
+}
+.timeline-hour {
+  padding: 8px 4px; background: var(--surface-app); border-bottom: 1px solid var(--border-soft);
+  border-right: 1px solid rgba(224,224,224,.5); font-size: 10px; color: var(--text-muted);
+  text-align: center; font-weight: 500;
+}
+.timeline-hour.current-hour { color: var(--vu-deep-blue); font-weight: 700; background: var(--vu-deep-blue-lightest); }
+.timeline-staff-cell {
+  padding: 10px 12px; border-bottom: 1px solid var(--border-soft);
+  border-right: 1px solid var(--border-soft); display: flex; align-items: center;
+  gap: 8px; background: var(--surface-card);
+}
+.timeline-staff-avatar {
+  width: 26px; height: 26px; border-radius: 50%; display: flex;
+  align-items: center; justify-content: center; font-size: 10px; font-weight: 700;
+  color: white; flex-shrink: 0;
+}
+.timeline-staff-name { font-size: 12px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.timeline-slot {
+  position: relative; border-bottom: 1px solid var(--border-soft);
+  border-right: 1px solid rgba(224,224,224,.3); min-height: 44px; background: var(--surface-card);
+}
+.timeline-slot.current-col { background: rgba(21,101,192,.03); }
+.timeline-block {
+  position: absolute; top: 4px; bottom: 4px; border-radius: 6px; padding: 3px 8px;
+  font-size: 10px; font-weight: 600; color: white; display: flex; align-items: center;
+  gap: 4px; cursor: pointer; transition: all 150ms; z-index: 2; overflow: hidden; white-space: nowrap;
+}
+.timeline-block:hover { transform: scaleY(1.15); box-shadow: var(--shadow-md); z-index: 5; }
+.block-home-visit { background: var(--vu-deep-blue); }
+.block-clinic-visit { background: var(--state-assigned); }
+.block-consultation { background: var(--vu-accent-blue); }
+.block-follow-up { background: var(--vu-leaf-green); }
+.timeline-block-active { animation: pulse-active 2s infinite; }
+@keyframes pulse-active {
+  0%,100% { box-shadow: 0 0 0 0 rgba(234,88,12,.4); }
+  50% { box-shadow: 0 0 0 4px rgba(234,88,12,0); }
+}
+.off-day-bar {
+  position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+  background: repeating-linear-gradient(-45deg, transparent, transparent 4px, rgba(220,38,38,.04) 4px, rgba(220,38,38,.04) 8px);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 10px; color: var(--state-cancelled); font-weight: 600; letter-spacing: .5px;
+}
+
+/* FOOTER */
+.panel-footer {
+  padding: 10px 18px; border-top: 1px solid var(--border-soft);
+  display: flex; align-items: center; justify-content: space-between; background: var(--surface-app);
+}
+.footer-link {
+  font-size: 12px; font-weight: 600; color: var(--vu-deep-blue); text-decoration: none;
+  display: flex; align-items: center; gap: 4px; cursor: pointer; transition: color 120ms;
+}
+.footer-link:hover { color: var(--vu-deep-blue-darker); }
+.footer-btn {
+  display: flex; align-items: center; gap: 6px; padding: 6px 12px;
+  border: 1px dashed var(--border-soft); border-radius: var(--radius-md);
+  background: transparent; font-size: 12px; color: var(--text-muted);
+  cursor: pointer; transition: all 150ms; font-family: inherit;
+}
+.footer-btn:hover { border-color: var(--vu-deep-blue); color: var(--vu-deep-blue); background: var(--vu-deep-blue-lightest); }
+
+.live-dot {
+  width: 6px; height: 6px; background: var(--state-completed); border-radius: 50%;
+  display: inline-block; margin-right: 4px; animation: blink 1.5s infinite;
+}
+@keyframes blink { 0%,100% { opacity: 1; } 50% { opacity: .3; } }
+
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border-soft); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--border-strong); }
+</style>
+</head>
+<body>
+
+<div class="app-wrapper">
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-icon"><i class="fas fa-heartbeat"></i></div>
+      <div>
+        <div class="logo-text">VIET UC</div>
+        <div class="logo-sub">Healthcare Platform</div>
+      </div>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-section-label">Main</div>
+      <a class="nav-item active"><i class="fas fa-th-large"></i> Dashboard</a>
+      <a class="nav-item" href="ops_booking_queue.html"><i class="fas fa-calendar-check"></i> Bookings <span class="badge-count">4</span></a>
+      <a class="nav-item" href="staff_roster.html"><i class="fas fa-users"></i> Staff</a>
+      <a class="nav-item" href="ops_calendar.html"><i class="fas fa-calendar-alt"></i> Calendar</a>
+      <a class="nav-item" href="staff_roster.html"><i class="fas fa-clipboard-list"></i> Roster</a>
+      <div class="nav-section-label">Reports</div>
+      <a class="nav-item"><i class="fas fa-chart-bar"></i> Analytics</a>
+      <a class="nav-item"><i class="fas fa-file-alt"></i> MOH Reports</a>
+      <div class="nav-section-label">System</div>
+      <a class="nav-item"><i class="fas fa-cog"></i> Configuration</a>
+    </nav>
+    <div class="sidebar-user">
+      <div class="user-avatar">TL</div>
+      <div class="user-info">
+        <div class="user-name">Tran Thi Lan</div>
+        <div class="user-role">Operations Manager</div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="main-content">
+    <header class="top-header">
+      <div class="header-left">
+        <h1 class="page-title">Operations Center</h1>
+        <div class="date-nav">
+          <button class="date-nav-btn"><i class="fas fa-chevron-left"></i></button>
+          <span class="date-label">Sunday, May 11, 2026</span>
+          <button class="date-nav-btn"><i class="fas fa-chevron-right"></i></button>
+        </div>
+        <span class="date-today">Today</span>
+      </div>
+      <div class="header-right">
+        <select class="filter-select">
+          <option>All Facilities</option>
+          <option>Viet Uc — Hanoi</option>
+          <option>Viet Uc — HCMC</option>
+          <option>Viet Uc — Da Nang</option>
+        </select>
+        <a href="booking_wizard.html" class="header-btn btn-primary" style="text-decoration:none"><i class="fas fa-plus"></i> Create Booking</a>
+        <div class="header-icon-btn"><i class="fas fa-bell"></i><span class="notification-dot"></span></div>
+        <div class="header-icon-btn"><i class="fas fa-expand"></i></div>
+      </div>
+    </header>
+
+    <div class="dashboard-body">
+      <!-- KPI ROW -->
+      <div class="kpi-row">
+        <div class="kpi-card kpi-total">
+          <div class="kpi-header">
+            <div class="kpi-icon"><i class="fas fa-calendar-day"></i></div>
+            <span class="kpi-trend up"><i class="fas fa-arrow-up"></i> 12%</span>
+          </div>
+          <div class="kpi-value">14</div>
+          <div class="kpi-label">Total Today</div>
+          <div class="kpi-sublabel">10 home · 3 clinic · 1 consult</div>
+        </div>
+        <div class="kpi-card kpi-needs-staff">
+          <div class="kpi-header">
+            <div class="kpi-icon"><i class="fas fa-user-plus"></i></div>
+          </div>
+          <div class="kpi-value">4</div>
+          <div class="kpi-label">Needs Assignment</div>
+          <div class="kpi-sublabel">2 urgent · 2 normal</div>
+        </div>
+        <div class="kpi-card kpi-active">
+          <div class="kpi-header">
+            <div class="kpi-icon"><i class="fas fa-spinner"></i></div>
+            <span class="live-dot"></span>
+          </div>
+          <div class="kpi-value">3</div>
+          <div class="kpi-label">Active Now</div>
+          <div class="kpi-sublabel">Live — real-time updates</div>
+        </div>
+        <div class="kpi-card kpi-done">
+          <div class="kpi-header">
+            <div class="kpi-icon"><i class="fas fa-check-circle"></i></div>
+            <span class="kpi-trend up"><i class="fas fa-arrow-up"></i> 2</span>
+          </div>
+          <div class="kpi-value">7</div>
+          <div class="kpi-label">Completed Today</div>
+          <div class="kpi-sublabel">100% on time</div>
+        </div>
+        <div class="kpi-card kpi-revenue">
+          <div class="kpi-header">
+            <div class="kpi-icon"><i class="fas fa-coins"></i></div>
+            <span class="kpi-trend up"><i class="fas fa-arrow-up"></i> 8%</span>
+          </div>
+          <div class="kpi-value">$12.5M</div>
+          <div class="kpi-label">Revenue Today</div>
+          <div class="kpi-sublabel">$8.2M collected · $4.3M pending</div>
+        </div>
+      </div>
+
+      <!-- MAIN GRID -->
+      <div class="main-grid">
+        <!-- BOOKING QUEUE -->
+        <div class="panel">
+          <div class="panel-header">
+            <div class="panel-title"><i class="fas fa-list-check"></i> Booking Queue</div>
+            <div class="panel-tabs">
+              <button class="panel-tab active">Needs Staff <span class="tab-badge">4</span></button>
+              <button class="panel-tab">All Today</button>
+              <button class="panel-tab">Issues</button>
+            </div>
+          </div>
+          <div class="panel-body">
+
+            <!-- BOOKING 1: Urgent -->
+            <div class="booking-card urgent needs-staff" onclick="window.location='ops_booking_detail.html'" style="cursor:pointer">
+              <div class="booking-card-top">
+                <div>
+                  <span class="booking-time">09:00</span>
+                  <span class="booking-id">BK-2026-0847</span>
+                  <span class="priority-urgent"><i class="fas fa-bolt"></i> URGENT</span>
+                </div>
+                <div style="display:flex; align-items:center; gap:6px;">
+                  <span class="status-chip chip-draft"><i class="fas fa-circle" style="font-size:6px"></i> New</span>
+                  <div class="booking-actions-wrapper">
+                    <button class="more-btn" onclick="toggleMenu(this)"><i class="fas fa-ellipsis-v"></i></button>
+                    <div class="actions-menu">
+                      <div class="actions-menu-item"><i class="fas fa-eye"></i> View Details</div>
+                      <div class="actions-menu-item"><i class="fas fa-pen"></i> Edit Booking</div>
+                      <div class="actions-divider"></div>
+                      <div class="actions-menu-item"><i class="fas fa-copy"></i> Duplicate</div>
+                      <a href="recurring_booking_wizard.html" class="actions-menu-item" style="text-decoration:none;color:inherit"><i class="fas fa-repeat"></i> Create Recurring</a>
+                      <div class="actions-menu-item"><i class="fas fa-calendar-alt"></i> Reschedule</div>
+                      <div class="actions-divider"></div>
+                      <div class="actions-menu-item danger"><i class="fas fa-xmark"></i> Cancel Booking</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="booking-client"><i class="fas fa-user"></i> Tran Van Duc</div>
+              <div class="booking-details">
+                <div class="booking-detail"><i class="fas fa-house-medical"></i> <span class="detail-value">Home Visit</span></div>
+                <div class="booking-detail"><i class="fas fa-clock"></i> <span class="detail-value">2 hours</span></div>
+                <div class="booking-detail"><i class="fas fa-map-marker-alt"></i> <span class="detail-value">Ba Dinh, Hanoi</span></div>
+              </div>
+              <div class="assign-inline">
+                <span class="assign-label">Assign:</span>
+                <div class="staff-dropdown-wrapper">
+                  <div class="staff-dropdown-trigger" onclick="toggleDropdown(this)">
+                    <span class="trigger-text">Select staff...</span>
+                    <i class="fas fa-chevron-down" style="font-size:10px; color:var(--text-muted)"></i>
+                  </div>
+                  <div class="staff-dropdown-menu">
+                    <div class="staff-option" onclick="selectStaff(this, 'Nguyen Thi Mai', 'available')">
+                      <div class="staff-option-avatar" style="background:var(--vu-deep-blue)">MA
+                        <span class="staff-option-dot dot-available"></span>
+                      </div>
+                      <div class="staff-option-info">
+                        <div class="staff-option-name">Nguyen Thi Mai</div>
+                        <div class="staff-option-meta">Available · Next at 14:00</div>
+                      </div>
+                    </div>
+                    <div class="staff-option" onclick="selectStaff(this, 'Tran Minh Linh', 'available')">
+                      <div class="staff-option-avatar" style="background:var(--vu-leaf-green)">LI
+                        <span class="staff-option-dot dot-available"></span>
+                      </div>
+                      <div class="staff-option-info">
+                        <div class="staff-option-name">Tran Minh Linh</div>
+                        <div class="staff-option-meta">Available · Free all day</div>
+                      </div>
+                    </div>
+                    <div class="staff-option" onclick="selectStaff(this, 'Le Thi Hoa', 'busy')">
+                      <div class="staff-option-avatar" style="background:var(--state-assigned)">HO
+                        <span class="staff-option-dot dot-busy"></span>
+                      </div>
+                      <div class="staff-option-info">
+                        <div class="staff-option-name">Le Thi Hoa</div>
+                        <div class="staff-option-meta">In Service · Free at 11:30</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <button class="assign-btn assign-btn-confirm"><i class="fas fa-check"></i> Confirm</button>
+              </div>
+            </div>
+
+            <!-- BOOKING 2 -->
+            <div class="booking-card needs-staff">
+              <div class="booking-card-top">
+                <div>
+                  <span class="booking-time">10:30</span>
+                  <span class="booking-id">BK-2026-0848</span>
+                </div>
+                <div style="display:flex; align-items:center; gap:6px;">
+                  <span class="status-chip chip-draft"><i class="fas fa-circle" style="font-size:6px"></i> New</span>
+                  <div class="booking-actions-wrapper">
+                    <button class="more-btn" onclick="toggleMenu(this)"><i class="fas fa-ellipsis-v"></i></button>
+                    <div class="actions-menu">
+                      <div class="actions-menu-item"><i class="fas fa-eye"></i> View Details</div>
+                      <div class="actions-menu-item"><i class="fas fa-pen"></i> Edit Booking</div>
+                      <div class="actions-divider"></div>
+                      <div class="actions-menu-item"><i class="fas fa-copy"></i> Duplicate</div>
+                      <a href="recurring_booking_wizard.html" class="actions-menu-item" style="text-decoration:none;color:inherit"><i class="fas fa-repeat"></i> Create Recurring</a>
+                      <div class="actions-menu-item"><i class="fas fa-calendar-alt"></i> Reschedule</div>
+                      <div class="actions-divider"></div>
+                      <div class="actions-menu-item danger"><i class="fas fa-xmark"></i> Cancel Booking</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="booking-client"><i class="fas fa-user"></i> Pham Minh Anh</div>
+              <div class="booking-details">
+                <div class="booking-detail"><i class="fas fa-hospital"></i> <span class="detail-value">Clinic Visit</span></div>
+                <div class="booking-detail"><i class="fas fa-clock"></i> <span class="detail-value">1.5 hours</span></div>
+                <div class="booking-detail"><i class="fas fa-map-marker-alt"></i> <span class="detail-value">Hoan Kiem Clinic</span></div>
+              </div>
+              <div class="assign-inline">
+                <span class="assign-label">Assign:</span>
+                <div class="staff-dropdown-wrapper">
+                  <div class="staff-dropdown-trigger" onclick="toggleDropdown(this)">
+                    <span class="trigger-text">Select staff...</span>
+                    <i class="fas fa-chevron-down" style="font-size:10px; color:var(--text-muted)"></i>
+                  </div>
+                  <div class="staff-dropdown-menu">
+                    <div class="staff-option" onclick="selectStaff(this, 'Nguyen Thi Mai', 'available')">
+                      <div class="staff-option-avatar" style="background:var(--vu-deep-blue)">MA<span class="staff-option-dot dot-available"></span></div>
+                      <div class="staff-option-info"><div class="staff-option-name">Nguyen Thi Mai</div><div class="staff-option-meta">Available · Next at 14:00</div></div>
+                    </div>
+                    <div class="staff-option" onclick="selectStaff(this, 'Tran Minh Linh', 'available')">
+                      <div class="staff-option-avatar" style="background:var(--vu-leaf-green)">LI<span class="staff-option-dot dot-available"></span></div>
+                      <div class="staff-option-info"><div class="staff-option-name">Tran Minh Linh</div><div class="staff-option-meta">Available · Free all day</div></div>
+                    </div>
+                  </div>
+                </div>
+                <button class="assign-btn assign-btn-confirm"><i class="fas fa-check"></i> Confirm</button>
+              </div>
+            </div>
+
+            <!-- BOOKING 3: With package -->
+            <div class="booking-card needs-staff">
+              <div class="booking-card-top">
+                <div>
+                  <span class="booking-time">13:00</span>
+                  <span class="booking-id">BK-2026-0850</span>
+                </div>
+                <div style="display:flex; align-items:center; gap:6px;">
+                  <span class="status-chip chip-confirmed"><i class="fas fa-circle" style="font-size:6px"></i> Confirmed</span>
+                  <div class="booking-actions-wrapper">
+                    <button class="more-btn" onclick="toggleMenu(this)"><i class="fas fa-ellipsis-v"></i></button>
+                    <div class="actions-menu">
+                      <div class="actions-menu-item"><i class="fas fa-eye"></i> View Details</div>
+                      <div class="actions-menu-item"><i class="fas fa-pen"></i> Edit Booking</div>
+                      <div class="actions-divider"></div>
+                      <div class="actions-menu-item"><i class="fas fa-copy"></i> Duplicate</div>
+                      <a href="recurring_booking_wizard.html" class="actions-menu-item" style="text-decoration:none;color:inherit"><i class="fas fa-repeat"></i> Create Recurring</a>
+                      <div class="actions-menu-item"><i class="fas fa-calendar-alt"></i> Reschedule</div>
+                      <div class="actions-divider"></div>
+                      <div class="actions-menu-item danger"><i class="fas fa-xmark"></i> Cancel Booking</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="booking-client"><i class="fas fa-user"></i> Nguyen Van Long</div>
+              <div class="booking-details">
+                <div class="booking-detail"><i class="fas fa-house-medical"></i> <span class="detail-value">Home Visit</span></div>
+                <div class="booking-detail"><i class="fas fa-clock"></i> <span class="detail-value">2 hours</span></div>
+                <div class="booking-detail"><i class="fas fa-map-marker-alt"></i> <span class="detail-value">Cau Giay, Hanoi</span></div>
+                <div class="booking-detail"><i class="fas fa-box"></i> <span class="detail-value" style="color:var(--vu-leaf-green)">Package 10 sessions (7 left)</span></div>
+              </div>
+              <div class="assign-inline">
+                <span class="assign-label">Assign:</span>
+                <div class="staff-dropdown-wrapper">
+                  <div class="staff-dropdown-trigger" onclick="toggleDropdown(this)">
+                    <span class="trigger-text">Select staff...</span>
+                    <i class="fas fa-chevron-down" style="font-size:10px; color:var(--text-muted)"></i>
+                  </div>
+                  <div class="staff-dropdown-menu">
+                    <div class="staff-option" onclick="selectStaff(this, 'Nguyen Thi Mai', 'available')">
+                      <div class="staff-option-avatar" style="background:var(--vu-deep-blue)">MA<span class="staff-option-dot dot-available"></span></div>
+                      <div class="staff-option-info"><div class="staff-option-name">Nguyen Thi Mai</div><div class="staff-option-meta">Available · Free from 12:00</div></div>
+                    </div>
+                    <div class="staff-option" onclick="selectStaff(this, 'Tran Minh Linh', 'available')">
+                      <div class="staff-option-avatar" style="background:var(--vu-leaf-green)">LI<span class="staff-option-dot dot-available"></span></div>
+                      <div class="staff-option-info"><div class="staff-option-name">Tran Minh Linh</div><div class="staff-option-meta">Available · Free all day</div></div>
+                    </div>
+                  </div>
+                </div>
+                <button class="assign-btn assign-btn-confirm"><i class="fas fa-check"></i> Confirm</button>
+              </div>
+            </div>
+
+            <!-- BOOKING 4: Urgent -->
+            <div class="booking-card urgent needs-staff">
+              <div class="booking-card-top">
+                <div>
+                  <span class="booking-time">15:00</span>
+                  <span class="booking-id">BK-2026-0852</span>
+                  <span class="priority-urgent"><i class="fas fa-bolt"></i> URGENT</span>
+                </div>
+                <div style="display:flex; align-items:center; gap:6px;">
+                  <span class="status-chip chip-draft"><i class="fas fa-circle" style="font-size:6px"></i> New</span>
+                  <div class="booking-actions-wrapper">
+                    <button class="more-btn" onclick="toggleMenu(this)"><i class="fas fa-ellipsis-v"></i></button>
+                    <div class="actions-menu">
+                      <div class="actions-menu-item"><i class="fas fa-eye"></i> View Details</div>
+                      <div class="actions-menu-item"><i class="fas fa-pen"></i> Edit Booking</div>
+                      <div class="actions-divider"></div>
+                      <div class="actions-menu-item"><i class="fas fa-copy"></i> Duplicate</div>
+                      <a href="recurring_booking_wizard.html" class="actions-menu-item" style="text-decoration:none;color:inherit"><i class="fas fa-repeat"></i> Create Recurring</a>
+                      <div class="actions-menu-item"><i class="fas fa-calendar-alt"></i> Reschedule</div>
+                      <div class="actions-divider"></div>
+                      <div class="actions-menu-item danger"><i class="fas fa-xmark"></i> Cancel Booking</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="booking-client"><i class="fas fa-user"></i> Vu Thi Huong</div>
+              <div class="booking-details">
+                <div class="booking-detail"><i class="fas fa-house-medical"></i> <span class="detail-value">Home Visit</span></div>
+                <div class="booking-detail"><i class="fas fa-clock"></i> <span class="detail-value">1.5 hours</span></div>
+                <div class="booking-detail"><i class="fas fa-map-marker-alt"></i> <span class="detail-value">Thanh Xuan, Hanoi</span></div>
+              </div>
+              <div class="assign-inline">
+                <span class="assign-label">Assign:</span>
+                <div class="staff-dropdown-wrapper">
+                  <div class="staff-dropdown-trigger" onclick="toggleDropdown(this)">
+                    <span class="trigger-text">Select staff...</span>
+                    <i class="fas fa-chevron-down" style="font-size:10px; color:var(--text-muted)"></i>
+                  </div>
+                  <div class="staff-dropdown-menu">
+                    <div class="staff-option" onclick="selectStaff(this, 'Nguyen Thi Mai', 'available')">
+                      <div class="staff-option-avatar" style="background:var(--vu-deep-blue)">MA<span class="staff-option-dot dot-available"></span></div>
+                      <div class="staff-option-info"><div class="staff-option-name">Nguyen Thi Mai</div><div class="staff-option-meta">Available · Free from 14:00</div></div>
+                    </div>
+                    <div class="staff-option" onclick="selectStaff(this, 'Tran Minh Linh', 'available')">
+                      <div class="staff-option-avatar" style="background:var(--vu-leaf-green)">LI<span class="staff-option-dot dot-available"></span></div>
+                      <div class="staff-option-info"><div class="staff-option-name">Tran Minh Linh</div><div class="staff-option-meta">Available · Free from 13:00</div></div>
+                    </div>
+                  </div>
+                </div>
+                <button class="assign-btn assign-btn-confirm"><i class="fas fa-check"></i> Confirm</button>
+              </div>
+            </div>
+
+          </div>
+          <div class="panel-footer">
+            <a class="footer-link" href="ops_booking_queue.html"><i class="fas fa-list"></i> View All Bookings</a>
+            <a href="booking_wizard.html" class="footer-btn" style="text-decoration:none"><i class="fas fa-plus"></i> Create Booking</a>
+          </div>
+        </div>
+
+        <!-- STAFF ROSTER -->
+        <div class="panel">
+          <div class="panel-header">
+            <div class="panel-title"><i class="fas fa-user-nurse"></i> Staff Today</div>
+          </div>
+          <div class="panel-body" style="padding: 8px 6px;">
+            <div class="staff-card">
+              <div class="staff-avatar" style="background:var(--vu-deep-blue)">MA<span class="status-dot available"></span></div>
+              <div class="staff-info">
+                <div class="staff-name">Nguyen Thi Mai</div>
+                <div class="staff-status-text available">Available</div>
+                <div class="staff-meta">Next: 14:00 Home Visit</div>
+              </div>
+              <div class="staff-bookings-count"><div class="bookings-badge">2</div><div class="bookings-label">today</div></div>
+            </div>
+            <div class="staff-card">
+              <div class="staff-avatar" style="background:var(--state-assigned)">HO<span class="status-dot busy"></span></div>
+              <div class="staff-info">
+                <div class="staff-name">Le Thi Hoa</div>
+                <div class="staff-status-text busy">In Service</div>
+                <div class="staff-meta">Free at: 11:30</div>
+              </div>
+              <div class="staff-bookings-count"><div class="bookings-badge">3</div><div class="bookings-label">today</div></div>
+            </div>
+            <div class="staff-card">
+              <div class="staff-avatar" style="background:var(--vu-leaf-green)">LI<span class="status-dot available"></span></div>
+              <div class="staff-info">
+                <div class="staff-name">Tran Minh Linh</div>
+                <div class="staff-status-text available">Available</div>
+                <div class="staff-meta">Free all day</div>
+              </div>
+              <div class="staff-bookings-count"><div class="bookings-badge">1</div><div class="bookings-label">today</div></div>
+            </div>
+            <div class="staff-card">
+              <div class="staff-avatar" style="background:var(--vu-hibiscus-orange)">TH<span class="status-dot busy"></span></div>
+              <div class="staff-info">
+                <div class="staff-name">Pham Thu Hang</div>
+                <div class="staff-status-text busy">In Service</div>
+                <div class="staff-meta">Free at: 12:00</div>
+              </div>
+              <div class="staff-bookings-count"><div class="bookings-badge">3</div><div class="bookings-label">today</div></div>
+            </div>
+            <div class="staff-card">
+              <div class="staff-avatar" style="background:var(--vu-accent-blue)">HA<span class="status-dot available"></span></div>
+              <div class="staff-info">
+                <div class="staff-name">Do Thi Hanh</div>
+                <div class="staff-status-text available">Available</div>
+                <div class="staff-meta">Next: 13:30 Clinic</div>
+              </div>
+              <div class="staff-bookings-count"><div class="bookings-badge">2</div><div class="bookings-label">today</div></div>
+            </div>
+            <div class="staff-card">
+              <div class="staff-avatar" style="background:#9E9E9E">TH<span class="status-dot off"></span></div>
+              <div class="staff-info">
+                <div class="staff-name">Dr. Nguyen Van Thanh</div>
+                <div class="staff-status-text off">Day Off</div>
+                <div class="staff-meta">Returns: Monday</div>
+              </div>
+              <div class="staff-bookings-count"><div class="bookings-badge" style="background:#F5F5F5;color:#9E9E9E">0</div><div class="bookings-label">today</div></div>
+            </div>
+          </div>
+          <div class="panel-footer">
+            <a class="footer-link"><i class="fas fa-calendar-alt"></i> Full Schedule</a>
+            <a class="footer-link"><i class="fas fa-user-plus"></i> Manage Staff</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- TIMELINE -->
+      <div class="timeline-panel">
+        <div class="timeline-header">
+          <div class="timeline-title"><i class="fas fa-stream"></i> Today's Timeline</div>
+          <div style="display:flex; align-items:center; gap:16px;">
+            <div class="timeline-legend">
+              <span class="legend-item"><span class="legend-swatch" style="background:var(--vu-deep-blue)"></span> Home Visit</span>
+              <span class="legend-item"><span class="legend-swatch" style="background:var(--state-assigned)"></span> Clinic</span>
+              <span class="legend-item"><span class="legend-swatch" style="background:var(--vu-accent-blue)"></span> Consult</span>
+              <span class="legend-item"><span class="legend-swatch" style="background:var(--vu-leaf-green)"></span> Follow-up</span>
+            </div>
+            <div class="timeline-view-toggle">
+              <button class="toggle-btn active">Day</button>
+              <button class="toggle-btn">Week</button>
+            </div>
+          </div>
+        </div>
+        <div class="timeline-body">
+          <div class="timeline-grid">
+            <div class="timeline-corner">Staff</div>
+            <div class="timeline-hour">07:00</div>
+            <div class="timeline-hour">08:00</div>
+            <div class="timeline-hour">09:00</div>
+            <div class="timeline-hour current-hour">10:00</div>
+            <div class="timeline-hour">11:00</div>
+            <div class="timeline-hour">12:00</div>
+            <div class="timeline-hour">13:00</div>
+            <div class="timeline-hour">14:00</div>
+            <div class="timeline-hour">15:00</div>
+            <div class="timeline-hour">16:00</div>
+            <div class="timeline-hour">17:00</div>
+            <div class="timeline-hour">18:00</div>
+
+            <!-- Mai -->
+            <div class="timeline-staff-cell"><div class="timeline-staff-avatar" style="background:var(--vu-deep-blue)">MA</div><div class="timeline-staff-name">N.T. Mai</div></div>
+            <div class="timeline-slot"></div>
+            <div class="timeline-slot" style="position:relative"><div class="timeline-block block-home-visit" style="left:10%;width:85%"><i class="fas fa-house-medical" style="font-size:9px"></i> Hoang M.T.</div></div>
+            <div class="timeline-slot" style="position:relative"><div class="timeline-block block-home-visit" style="left:0;width:50%"></div></div>
+            <div class="timeline-slot current-col"></div>
+            <div class="timeline-slot"></div>
+            <div class="timeline-slot"></div>
+            <div class="timeline-slot"></div>
+            <div class="timeline-slot" style="position:relative"><div class="timeline-block block-home-visit" style="left:0;width:95%"><i class="fas fa-house-medical" style="font-size:9px"></i> Ly V. Hung</div></div>
+            <div class="timeline-slot" style="position:relative"><div class="timeline-block block-home-visit" style="left:0;width:50%"></div></div>
+            <div class="timeline-slot"></div>
+            <div class="timeline-slot"></div>
+            <div class="timeline-slot"></div>
+
+            <!-- Hoa (busy) -->
+            <div class="timeline-staff-cell"><div class="timeline-staff-avatar" style="background:var(--state-assigned)">HO</div><div class="timeline-staff-name">L.T. Hoa</div></div>
+            <div class="timeline-slot"></div>
+            <div class="timeline-slot" style="position:relative"><div class="timeline-block block-home-visit timeline-block-active" style="left:0;width:95%"><i class="fas fa-house-medical" style="font-size:9px"></i> H. Minh Tuan</div></div>
+            <div class="timeline-slot" style="position:relative"><div class="timeline-block block-home-visit timeline-block-active" style="left:0;width:95%"></div></div>
+            <div class="timeline-slot current-col" style="position:relative"><div class="timeline-block block-home-visit timeline-block-active" style="left:0;width:50%"></div></div>
+            <div class="timeline-slot"></div>
+            <div class="timeline-slot"></div>
+            <div class="timeline-slot" style="position:relative"><div class="timeline-block block-clinic-visit" style="left:0;width:95%"><i class="fas fa-hospital" style="font-size:9px"></i> N.T. Bich</div></div>
+            <div class="timeline-slot" style="position:relative"><div class="timeline-block block-clinic-visit" style="left:0;width:50%"></div></div>
+            <div class="timeline-slot" style="position:relative"><div class="timeline-block block-follow-up" style="left:50%;width:50%"><i class="fas fa-redo" style="font-size:9px"></i> T.V. Nam</div></div>
+            <div class="timeline-slot" style="position:relative"><div class="timeline-block block-follow-up" style="left:0;width:50%"></div></div>
+            <div class="timeline-slot"></div>
+            <div class="timeline-slot"></div>
+
+            <!-- Linh -->
+            <div class="timeline-staff-cell"><div class="timeline-staff-avatar" style="background:var(--vu-leaf-green)">LI</div><div class="timeline-staff-name">T.M. Linh</div></div>
+            <div class="timeline-slot"></div>
+            <div class="timeline-slot"></div>
+            <div class="timeline-slot"></div>
+            <div class="timeline-slot current-col"></div>
+            <div class="timeline-slot" style="position:relative"><div class="timeline-block block-consultation" style="left:0;width:95%"><i class="fas fa-stethoscope" style="font-size:9px"></i> P.V. Quang</div></div>
+            <div class="timeline-slot" style="position:relative"><div class="timeline-block block-consultation" style="left:0;width:25%"></div></div>
+            <div class="timeline-slot"></div>
+            <div class="timeline-slot"></div>
+            <div class="timeline-slot"></div>
+            <div class="timeline-slot"></div>
+            <div class="timeline-slot"></div>
+            <div class="timeline-slot"></div>
+
+            <!-- Hang (busy) -->
+            <div class="timeline-staff-cell"><div class="timeline-staff-avatar" style="background:var(--vu-hibiscus-orange)">TH</div><div class="timeline-staff-name">P.T. Hang</div></div>
+            <div class="timeline-slot" style="position:relative"><div class="timeline-block block-home-visit" style="left:50%;width:50%"><i class="fas fa-house-medical" style="font-size:9px"></i> D.T. Loan</div></div>
+            <div class="timeline-slot" style="position:relative"><div class="timeline-block block-home-visit" style="left:0;width:50%"></div></div>
+            <div class="timeline-slot" style="position:relative"><div class="timeline-block block-home-visit timeline-block-active" style="left:0;width:95%"><i class="fas fa-house-medical" style="font-size:9px"></i> B.V. Thang</div></div>
+            <div class="timeline-slot current-col" style="position:relative"><div class="timeline-block block-home-visit timeline-block-active" style="left:0;width:95%"></div></div>
+            <div class="timeline-slot" style="position:relative"><div class="timeline-block block-home-visit timeline-block-active" style="left:0;width:95%"></div></div>
+            <div class="timeline-slot" style="position:relative"><div class="timeline-block block-home-visit timeline-block-active" style="left:0;width:25%"></div></div>
+            <div class="timeline-slot" style="position:relative"><div class="timeline-block block-clinic-visit" style="left:50%;width:50%"><i class="fas fa-hospital" style="font-size:9px"></i> L.M. Hai</div></div>
+            <div class="timeline-slot" style="position:relative"><div class="timeline-block block-clinic-visit" style="left:0;width:50%"></div></div>
+            <div class="timeline-slot"></div>
+            <div class="timeline-slot"></div>
+            <div class="timeline-slot"></div>
+            <div class="timeline-slot"></div>
+
+            <!-- Hanh -->
+            <div class="timeline-staff-cell"><div class="timeline-staff-avatar" style="background:var(--vu-accent-blue)">HA</div><div class="timeline-staff-name">D.T. Hanh</div></div>
+            <div class="timeline-slot" style="position:relative"><div class="timeline-block block-home-visit" style="left:0;width:95%"><i class="fas fa-house-medical" style="font-size:9px"></i> N.H. Phuc</div></div>
+            <div class="timeline-slot" style="position:relative"><div class="timeline-block block-home-visit" style="left:0;width:95%"></div></div>
+            <div class="timeline-slot"></div>
+            <div class="timeline-slot current-col"></div>
+            <div class="timeline-slot"></div>
+            <div class="timeline-slot"></div>
+            <div class="timeline-slot" style="position:relative"><div class="timeline-block block-clinic-visit" style="left:50%;width:50%"><i class="fas fa-hospital" style="font-size:9px"></i> V.T. Thao</div></div>
+            <div class="timeline-slot" style="position:relative"><div class="timeline-block block-clinic-visit" style="left:0;width:95%"></div></div>
+            <div class="timeline-slot" style="position:relative"><div class="timeline-block block-clinic-visit" style="left:0;width:25%"></div></div>
+            <div class="timeline-slot"></div>
+            <div class="timeline-slot"></div>
+            <div class="timeline-slot"></div>
+
+            <!-- Dr. Nguyen (OFF) -->
+            <div class="timeline-staff-cell"><div class="timeline-staff-avatar" style="background:#9E9E9E">TH</div><div class="timeline-staff-name" style="color:var(--text-muted)">Dr. N.V. Thanh</div></div>
+            <div class="timeline-slot" style="position:relative"><div class="off-day-bar">OFF</div></div>
+            <div class="timeline-slot" style="position:relative"><div class="off-day-bar"></div></div>
+            <div class="timeline-slot" style="position:relative"><div class="off-day-bar"></div></div>
+            <div class="timeline-slot current-col" style="position:relative"><div class="off-day-bar"></div></div>
+            <div class="timeline-slot" style="position:relative"><div class="off-day-bar"></div></div>
+            <div class="timeline-slot" style="position:relative"><div class="off-day-bar"></div></div>
+            <div class="timeline-slot" style="position:relative"><div class="off-day-bar"></div></div>
+            <div class="timeline-slot" style="position:relative"><div class="off-day-bar"></div></div>
+            <div class="timeline-slot" style="position:relative"><div class="off-day-bar"></div></div>
+            <div class="timeline-slot" style="position:relative"><div class="off-day-bar"></div></div>
+            <div class="timeline-slot" style="position:relative"><div class="off-day-bar"></div></div>
+            <div class="timeline-slot" style="position:relative"><div class="off-day-bar"></div></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+// Close all menus when clicking outside
+document.addEventListener('click', function(e) {
+  if (!e.target.closest('.booking-actions-wrapper')) {
+    document.querySelectorAll('.actions-menu.show').forEach(m => m.classList.remove('show'));
+  }
+  if (!e.target.closest('.staff-dropdown-wrapper')) {
+    document.querySelectorAll('.staff-dropdown-menu.show').forEach(m => m.classList.remove('show'));
+    document.querySelectorAll('.staff-dropdown-trigger.open').forEach(t => t.classList.remove('open'));
+  }
+});
+
+function toggleMenu(btn) {
+  event.stopPropagation();
+  const menu = btn.nextElementSibling;
+  document.querySelectorAll('.actions-menu.show').forEach(m => { if (m !== menu) m.classList.remove('show'); });
+  menu.classList.toggle('show');
+}
+
+function toggleDropdown(trigger) {
+  event.stopPropagation();
+  const menu = trigger.nextElementSibling;
+  document.querySelectorAll('.staff-dropdown-menu.show').forEach(m => { if (m !== menu) m.classList.remove('show'); });
+  document.querySelectorAll('.staff-dropdown-trigger.open').forEach(t => { if (t !== trigger) t.classList.remove('open'); });
+  menu.classList.toggle('show');
+  trigger.classList.toggle('open');
+}
+
+function selectStaff(option, name, status) {
+  const wrapper = option.closest('.staff-dropdown-wrapper');
+  const trigger = wrapper.querySelector('.staff-dropdown-trigger');
+  const menu = wrapper.querySelector('.staff-dropdown-menu');
+  const dotColor = status === 'available' ? 'var(--state-completed)' : 'var(--state-active)';
+  trigger.querySelector('.trigger-text').innerHTML =
+    '<span class="inline-dot" style="background:' + dotColor + '"></span>' +
+    '<span style="color:var(--text-primary); font-weight:500">' + name + '</span>';
+  menu.classList.remove('show');
+  trigger.classList.remove('open');
+}
+</script>
+
+</body>
+</html>

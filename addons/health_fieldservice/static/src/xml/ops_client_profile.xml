@@ -1,0 +1,457 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+<t t-name="health_fieldservice.OpsClientProfile">
+    <div class="ops-client-profile-page">
+
+        <!-- SIDEBAR -->
+        <aside class="ops-sidebar">
+            <div class="ops-sidebar-logo" t-on-click="navigateHome" style="cursor:pointer">
+                <div class="ops-logo-icon"><i class="fa fa-heartbeat"/></div>
+                <div>
+                    <div class="ops-logo-text">VIET UC</div>
+                    <div class="ops-logo-sub">Healthcare Platform</div>
+                </div>
+            </div>
+            <nav class="ops-sidebar-nav">
+                <div class="ops-nav-section-label">Main</div>
+                <a class="ops-nav-item" t-on-click="() => this.navigateTo('dashboard')"><i class="fa fa-th-large"/> Dashboard</a>
+                <a class="ops-nav-item" t-on-click="() => this.navigateTo('bookings')"><i class="fa fa-calendar-check-o"/> Bookings</a>
+                <a class="ops-nav-item active"><i class="fa fa-address-book-o"/> Clients</a>
+                <a class="ops-nav-item" t-on-click="() => this.navigateTo('recurring')"><i class="fa fa-repeat"/> Recurring</a>
+                <a class="ops-nav-item" t-on-click="() => this.navigateTo('staff')"><i class="fa fa-users"/> Staff</a>
+                <a class="ops-nav-item" t-on-click="() => this.navigateTo('calendar')"><i class="fa fa-calendar"/> Calendar</a>
+                <div class="ops-nav-section-label">Reports</div>
+                <a class="ops-nav-item" t-on-click="() => this.navigateTo('workload')"><i class="fa fa-bar-chart"/> Workload</a>
+                <a class="ops-nav-item" t-on-click="() => this.navigateTo('analytics')"><i class="fa fa-line-chart"/> Analytics</a>
+                <div class="ops-nav-section-label">System</div>
+                <a class="ops-nav-item" t-on-click="navigateHome"><i class="fa fa-arrow-left"/> Back to Odoo</a>
+            </nav>
+            <div class="ops-sidebar-user">
+                <div class="ops-user-avatar" t-esc="currentUserInitials"/>
+                <div class="ops-user-info">
+                    <div class="ops-user-name" t-esc="currentUserName"/>
+                    <div class="ops-user-role">Operations Manager</div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT -->
+        <div class="ops-main-content">
+
+            <!-- HEADER -->
+            <header class="ops-top-header">
+                <div class="ops-header-left">
+                    <div class="cp-breadcrumb">
+                        <a t-on-click="() => this.navigateTo('dashboard')">Dashboard</a>
+                        <span class="cp-sep"><i class="fa fa-chevron-right" style="font-size:10px"/></span>
+                        <span class="cp-current" t-esc="state.profile.name || 'Client'"/>
+                    </div>
+                </div>
+                <div class="ops-header-right">
+                    <button class="ops-header-btn btn-outline" t-on-click="editClient"><i class="fa fa-pencil"/> Edit</button>
+                    <button class="ops-header-btn btn-primary" t-on-click="openCreateBooking"><i class="fa fa-plus"/> New Booking</button>
+                </div>
+            </header>
+
+            <!-- LOADING -->
+            <div t-if="state.isLoading" class="ops-loading">
+                <div class="spinner-border text-primary" role="status"/>
+                <span>Loading client profile...</span>
+            </div>
+
+            <!-- PROFILE CONTENT -->
+            <div t-if="!state.isLoading" class="cp-page-body">
+
+                <!-- PROFILE HEADER CARD -->
+                <div class="cp-profile-header">
+                    <div class="cp-banner"/>
+                    <div class="cp-profile-main">
+                        <div class="cp-avatar" t-esc="state.profile.initials || '??'"/>
+                        <div class="cp-info">
+                            <div class="cp-name">
+                                <t t-esc="state.profile.name"/>
+                                <span class="cp-code" t-esc="state.profile.patient_code"/>
+                            </div>
+                            <div class="cp-tags">
+                                <t t-if="state.profile.is_vip">
+                                    <span class="cp-tag cp-tag-vip"><i class="fa fa-star" style="font-size:9px"/> VIP Client</span>
+                                </t>
+                                <t t-if="state.profile.patient_status === 'active'">
+                                    <span class="cp-tag cp-tag-active"><i class="fa fa-circle" style="font-size:6px"/> Active</span>
+                                </t>
+                                <t t-if="state.profile.is_referrer">
+                                    <span class="cp-tag cp-tag-referral"><i class="fa fa-share-alt" style="font-size:9px"/> Referral Source</span>
+                                </t>
+                                <t t-if="state.profile.category_name and !state.profile.is_vip">
+                                    <span class="cp-tag cp-tag-active" t-esc="state.profile.category_name"/>
+                                </t>
+                            </div>
+                            <div class="cp-contact">
+                                <t t-if="state.profile.phone"><span><i class="fa fa-phone"/> <t t-esc="state.profile.phone"/></span></t>
+                                <t t-if="state.profile.email"><span><i class="fa fa-envelope"/> <t t-esc="state.profile.email"/></span></t>
+                                <t t-if="state.profile.address"><span><i class="fa fa-map-marker"/> <t t-esc="state.profile.address"/></span></t>
+                                <t t-if="state.profile.age_gender"><span><i class="fa fa-user"/> <t t-esc="state.profile.age_gender"/></span></t>
+                            </div>
+                        </div>
+                        <div class="cp-actions">
+                            <button class="cp-action-btn" title="Call"><i class="fa fa-phone"/></button>
+                            <button class="cp-action-btn" title="Message"><i class="fa fa-comment"/></button>
+                            <button class="cp-action-btn" title="Email"><i class="fa fa-envelope"/></button>
+                        </div>
+                    </div>
+                    <!-- Stats Row -->
+                    <div class="cp-stats-row">
+                        <div class="cp-stat">
+                            <div class="cp-stat-value" t-esc="state.stats.total_visits || 0"/>
+                            <div class="cp-stat-label">Total Visits</div>
+                        </div>
+                        <div class="cp-stat">
+                            <div class="cp-stat-value" t-esc="state.stats.active_packages || 0"/>
+                            <div class="cp-stat-label">Active Packages</div>
+                        </div>
+                        <div class="cp-stat">
+                            <div class="cp-stat-value cp-stat-green" t-esc="formatCurrency(state.stats.total_spent)"/>
+                            <div class="cp-stat-label">Total Spent (VND)</div>
+                        </div>
+                        <div class="cp-stat">
+                            <div class="cp-stat-value cp-stat-orange" t-esc="formatCurrency(state.stats.outstanding)"/>
+                            <div class="cp-stat-label">Outstanding (VND)</div>
+                        </div>
+                        <div class="cp-stat">
+                            <div class="cp-stat-value" t-esc="state.stats.satisfaction || '—'"/>
+                            <div class="cp-stat-label">Satisfaction</div>
+                        </div>
+                        <div class="cp-stat">
+                            <div class="cp-stat-value" t-esc="state.stats.referrals || 0"/>
+                            <div class="cp-stat-label">Referrals Made</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TABS -->
+                <div class="cp-tabs">
+                    <button t-attf-class="cp-tab #{state.activeTab === 'overview' ? 'active' : ''}"
+                            t-on-click="() => this.setTab('overview')">
+                        <i class="fa fa-th-large" style="font-size:12px"/> Overview
+                    </button>
+                    <button t-attf-class="cp-tab #{state.activeTab === 'bookings' ? 'active' : ''}"
+                            t-on-click="() => this.setTab('bookings')">
+                        <i class="fa fa-calendar-check-o" style="font-size:12px"/> Bookings
+                        <span class="cp-tab-badge" t-esc="state.totalBookings"/>
+                    </button>
+                    <button t-attf-class="cp-tab #{state.activeTab === 'packages' ? 'active' : ''}"
+                            t-on-click="() => this.setTab('packages')">
+                        <i class="fa fa-cube" style="font-size:12px"/> Packages
+                        <span class="cp-tab-badge" t-esc="state.totalPackages"/>
+                    </button>
+                    <button t-attf-class="cp-tab #{state.activeTab === 'payments' ? 'active' : ''}"
+                            t-on-click="() => this.setTab('payments')">
+                        <i class="fa fa-money" style="font-size:12px"/> Payments
+                        <span class="cp-tab-badge" t-esc="state.totalPayments"/>
+                    </button>
+                    <button t-attf-class="cp-tab #{state.activeTab === 'clinical' ? 'active' : ''}"
+                            t-on-click="() => this.setTab('clinical')">
+                        <i class="fa fa-medkit" style="font-size:12px"/> Clinical
+                    </button>
+                    <button t-attf-class="cp-tab #{state.activeTab === 'activity' ? 'active' : ''}"
+                            t-on-click="() => this.setTab('activity')">
+                        <i class="fa fa-comments" style="font-size:12px"/> Activity
+                    </button>
+                </div>
+
+                <!-- ==================== OVERVIEW TAB ==================== -->
+                <t t-if="state.activeTab === 'overview'">
+                    <div class="cp-content-grid">
+                        <!-- LEFT COLUMN -->
+                        <div class="cp-col">
+                            <!-- Recent Bookings -->
+                            <div class="cp-card">
+                                <div class="cp-card-header">
+                                    <div class="cp-card-title"><i class="fa fa-calendar-check-o"/> Recent Bookings</div>
+                                    <a class="cp-card-action" t-on-click="() => this.setTab('bookings')">
+                                        View All <t t-esc="state.totalBookings"/> <i class="fa fa-arrow-right" style="font-size:10px"/>
+                                    </a>
+                                </div>
+                                <t t-if="state.bookings.length === 0">
+                                    <div class="ops-empty-state" style="padding:30px 20px">
+                                        <i class="fa fa-calendar-o" style="font-size:32px"/>
+                                        <h4>No bookings yet</h4>
+                                        <p>Create the first booking for this client.</p>
+                                    </div>
+                                </t>
+                                <t t-else="">
+                                    <table class="cp-mini-table">
+                                        <thead><tr><th>Date</th><th>Service</th><th>Staff</th><th>Status</th></tr></thead>
+                                        <tbody>
+                                            <t t-foreach="state.bookings.slice(0, 5)" t-as="b" t-key="b.id">
+                                                <tr t-on-click="() => this.openBooking(b.id)">
+                                                    <td>
+                                                        <div style="font-weight:600" t-esc="b.date_label"/>
+                                                        <div style="font-size:11px;color:var(--vu-text-secondary)" t-esc="b.time_label"/>
+                                                    </td>
+                                                    <td t-esc="b.service_type"/>
+                                                    <td>
+                                                        <t t-if="b.has_staff"><t t-esc="b.staff_name"/></t>
+                                                        <t t-else=""><span style="color:var(--vu-hibiscus-red);font-style:italic">Unassigned</span></t>
+                                                    </td>
+                                                    <td><span t-att-class="getStatusChipClass(b.state)" t-esc="b.state_label"/></td>
+                                                </tr>
+                                            </t>
+                                        </tbody>
+                                    </table>
+                                </t>
+                            </div>
+
+                            <!-- Active Packages -->
+                            <div class="cp-card">
+                                <div class="cp-card-header">
+                                    <div class="cp-card-title"><i class="fa fa-cube"/> Active Packages</div>
+                                    <a class="cp-card-action" t-on-click="() => this.setTab('packages')">
+                                        Manage <i class="fa fa-pencil" style="font-size:10px"/>
+                                    </a>
+                                </div>
+                                <div class="cp-card-body">
+                                    <t t-if="state.packages.length === 0">
+                                        <div class="ops-empty-state" style="padding:20px">
+                                            <i class="fa fa-cube" style="font-size:28px"/>
+                                            <h4>No active packages</h4>
+                                        </div>
+                                    </t>
+                                    <t t-foreach="state.packages" t-as="pkg" t-key="pkg.id">
+                                        <div class="cp-package-card" t-on-click="() => this.openPackage(pkg.id)">
+                                            <div class="cp-pkg-header">
+                                                <div class="cp-pkg-name"><i class="fa fa-cube"/> <t t-esc="pkg.name"/></div>
+                                                <span class="cp-pkg-status cp-pkg-active">Active</span>
+                                            </div>
+                                            <div class="cp-pkg-progress">
+                                                <div class="cp-pkg-fill" t-attf-style="width:#{pkg.progress_pct}%"/>
+                                            </div>
+                                            <div class="cp-pkg-meta">
+                                                <span><t t-esc="pkg.used"/> of <t t-esc="pkg.total"/> visits used</span>
+                                                <t t-if="pkg.expiry"><span>Expires: <t t-esc="pkg.expiry"/></span></t>
+                                            </div>
+                                        </div>
+                                    </t>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- RIGHT COLUMN -->
+                        <div class="cp-col">
+                            <!-- Recent Payments -->
+                            <div class="cp-card">
+                                <div class="cp-card-header">
+                                    <div class="cp-card-title"><i class="fa fa-money"/> Recent Payments</div>
+                                    <a class="cp-card-action" t-on-click="() => this.setTab('payments')">
+                                        View All <i class="fa fa-arrow-right" style="font-size:10px"/>
+                                    </a>
+                                </div>
+                                <div class="cp-card-body">
+                                    <t t-if="state.payments.length === 0">
+                                        <div class="ops-empty-state" style="padding:20px">
+                                            <i class="fa fa-money" style="font-size:28px"/>
+                                            <h4>No payments recorded</h4>
+                                        </div>
+                                    </t>
+                                    <t t-foreach="state.payments.slice(0, 4)" t-as="pay" t-key="pay.id">
+                                        <div class="cp-payment-item" t-on-click="() => this.openInvoice(pay.id)">
+                                            <div t-att-class="getPayIconClass(pay)">
+                                                <i t-att-class="pay.is_paid ? 'fa fa-check' : 'fa fa-clock-o'"/>
+                                            </div>
+                                            <div class="cp-pay-info">
+                                                <div class="cp-pay-desc" t-esc="pay.description"/>
+                                                <div class="cp-pay-date" t-esc="pay.date"/>
+                                            </div>
+                                            <div t-att-class="getPayAmountClass(pay)" t-esc="formatCurrencyFull(pay.amount)"/>
+                                        </div>
+                                    </t>
+                                </div>
+                            </div>
+
+                            <!-- Activity Timeline -->
+                            <div class="cp-card">
+                                <div class="cp-card-header">
+                                    <div class="cp-card-title"><i class="fa fa-clock-o"/> Activity Timeline</div>
+                                </div>
+                                <div class="cp-card-body">
+                                    <t t-if="state.timeline.length === 0">
+                                        <div class="ops-empty-state" style="padding:20px">
+                                            <i class="fa fa-clock-o" style="font-size:28px"/>
+                                            <h4>No recent activity</h4>
+                                        </div>
+                                    </t>
+                                    <div class="cp-timeline">
+                                        <t t-foreach="state.timeline.slice(0, 6)" t-as="entry" t-key="entry.id">
+                                            <div class="cp-tl-entry">
+                                                <div class="cp-tl-dot"><i class="fa fa-circle" style="font-size:6px"/></div>
+                                                <div class="cp-tl-content">
+                                                    <div class="cp-tl-text">
+                                                        <strong t-esc="entry.subtype || 'Update'"/>
+                                                        <span t-if="entry.author"> — <t t-esc="entry.author"/></span>
+                                                    </div>
+                                                    <div class="cp-tl-time" t-esc="entry.date"/>
+                                                </div>
+                                            </div>
+                                        </t>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </t>
+
+                <!-- ==================== BOOKINGS TAB ==================== -->
+                <t t-if="state.activeTab === 'bookings'">
+                    <div class="cp-card">
+                        <div class="cp-card-header">
+                            <div class="cp-card-title"><i class="fa fa-calendar-check-o"/> All Bookings</div>
+                            <button class="ops-header-btn btn-primary" t-on-click="openCreateBooking" style="padding:5px 12px;font-size:11px">
+                                <i class="fa fa-plus"/> New Booking
+                            </button>
+                        </div>
+                        <t t-if="state.bookings.length === 0">
+                            <div class="ops-empty-state" style="padding:60px 20px">
+                                <i class="fa fa-calendar-o" style="font-size:48px"/>
+                                <h4>No bookings found</h4>
+                            </div>
+                        </t>
+                        <t t-else="">
+                            <table class="cp-mini-table">
+                                <thead><tr><th>Booking</th><th>Date</th><th>Service</th><th>Staff</th><th>Status</th></tr></thead>
+                                <tbody>
+                                    <t t-foreach="state.bookings" t-as="b" t-key="b.id">
+                                        <tr t-on-click="() => this.openBooking(b.id)">
+                                            <td style="font-weight:600;color:var(--vu-deep-blue);font-size:12px" t-esc="b.name"/>
+                                            <td>
+                                                <div style="font-weight:600" t-esc="b.date_label"/>
+                                                <div style="font-size:11px;color:var(--vu-text-secondary)" t-esc="b.time_label"/>
+                                            </td>
+                                            <td t-esc="b.service_type"/>
+                                            <td>
+                                                <t t-if="b.has_staff"><t t-esc="b.staff_name"/></t>
+                                                <t t-else=""><span style="color:var(--vu-hibiscus-red);font-style:italic">Unassigned</span></t>
+                                            </td>
+                                            <td><span t-att-class="getStatusChipClass(b.state)" t-esc="b.state_label"/></td>
+                                        </tr>
+                                    </t>
+                                </tbody>
+                            </table>
+                        </t>
+                    </div>
+                </t>
+
+                <!-- ==================== PACKAGES TAB ==================== -->
+                <t t-if="state.activeTab === 'packages'">
+                    <div class="cp-card">
+                        <div class="cp-card-header">
+                            <div class="cp-card-title"><i class="fa fa-cube"/> Service Packages</div>
+                        </div>
+                        <div class="cp-card-body">
+                            <t t-if="state.packages.length === 0">
+                                <div class="ops-empty-state" style="padding:60px 20px">
+                                    <i class="fa fa-cube" style="font-size:48px"/>
+                                    <h4>No packages found</h4>
+                                </div>
+                            </t>
+                            <t t-foreach="state.packages" t-as="pkg" t-key="pkg.id">
+                                <div class="cp-package-card" t-on-click="() => this.openPackage(pkg.id)">
+                                    <div class="cp-pkg-header">
+                                        <div class="cp-pkg-name"><i class="fa fa-cube"/> <t t-esc="pkg.name"/></div>
+                                        <span class="cp-pkg-status cp-pkg-active" t-esc="pkg.state"/>
+                                    </div>
+                                    <div class="cp-pkg-progress">
+                                        <div class="cp-pkg-fill" t-attf-style="width:#{pkg.progress_pct}%"/>
+                                    </div>
+                                    <div class="cp-pkg-meta">
+                                        <span><t t-esc="pkg.used"/> of <t t-esc="pkg.total"/> visits used (<t t-esc="pkg.remaining"/> remaining)</span>
+                                        <t t-if="pkg.expiry"><span>Expires: <t t-esc="pkg.expiry"/></span></t>
+                                    </div>
+                                </div>
+                            </t>
+                        </div>
+                    </div>
+                </t>
+
+                <!-- ==================== PAYMENTS TAB ==================== -->
+                <t t-if="state.activeTab === 'payments'">
+                    <div class="cp-card">
+                        <div class="cp-card-header">
+                            <div class="cp-card-title"><i class="fa fa-money"/> Payment History</div>
+                        </div>
+                        <div class="cp-card-body">
+                            <t t-if="state.payments.length === 0">
+                                <div class="ops-empty-state" style="padding:60px 20px">
+                                    <i class="fa fa-money" style="font-size:48px"/>
+                                    <h4>No payments recorded</h4>
+                                </div>
+                            </t>
+                            <t t-foreach="state.payments" t-as="pay" t-key="pay.id">
+                                <div class="cp-payment-item" t-on-click="() => this.openInvoice(pay.id)">
+                                    <div t-att-class="getPayIconClass(pay)">
+                                        <i t-att-class="pay.is_paid ? 'fa fa-check' : 'fa fa-clock-o'"/>
+                                    </div>
+                                    <div class="cp-pay-info">
+                                        <div class="cp-pay-desc" t-esc="pay.description"/>
+                                        <div class="cp-pay-date" t-esc="pay.date"/>
+                                    </div>
+                                    <div t-att-class="getPayAmountClass(pay)" t-esc="formatCurrencyFull(pay.amount)"/>
+                                </div>
+                            </t>
+                        </div>
+                    </div>
+                </t>
+
+                <!-- ==================== CLINICAL TAB ==================== -->
+                <t t-if="state.activeTab === 'clinical'">
+                    <div class="cp-card">
+                        <div class="cp-card-header">
+                            <div class="cp-card-title"><i class="fa fa-medkit"/> Clinical Information</div>
+                        </div>
+                        <div class="cp-card-body">
+                            <div class="ops-empty-state" style="padding:60px 20px">
+                                <i class="fa fa-medkit" style="font-size:48px"/>
+                                <h4>Clinical records</h4>
+                                <p>Clinical notes and records will appear here.</p>
+                            </div>
+                        </div>
+                    </div>
+                </t>
+
+                <!-- ==================== ACTIVITY TAB ==================== -->
+                <t t-if="state.activeTab === 'activity'">
+                    <div class="cp-card">
+                        <div class="cp-card-header">
+                            <div class="cp-card-title"><i class="fa fa-comments"/> Communication History</div>
+                        </div>
+                        <div class="cp-card-body">
+                            <t t-if="state.timeline.length === 0">
+                                <div class="ops-empty-state" style="padding:60px 20px">
+                                    <i class="fa fa-comments" style="font-size:48px"/>
+                                    <h4>No communication history</h4>
+                                </div>
+                            </t>
+                            <div class="cp-timeline">
+                                <t t-foreach="state.timeline" t-as="entry" t-key="entry.id">
+                                    <div class="cp-tl-entry">
+                                        <div class="cp-tl-dot"><i class="fa fa-circle" style="font-size:6px"/></div>
+                                        <div class="cp-tl-content">
+                                            <div class="cp-tl-text">
+                                                <strong t-esc="entry.subtype || 'Update'"/>
+                                                <span t-if="entry.author"> — <t t-esc="entry.author"/></span>
+                                            </div>
+                                            <div class="cp-tl-time" t-esc="entry.date"/>
+                                        </div>
+                                    </div>
+                                </t>
+                            </div>
+                        </div>
+                    </div>
+                </t>
+
+            </div>
+        </div>
+    </div>
+</t>
+
+</templates>

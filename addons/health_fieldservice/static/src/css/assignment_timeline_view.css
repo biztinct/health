@@ -1,5 +1,4 @@
-/* Assignment Timeline View Styles - DEBUG VERSION */
-/* Inspired by Monday.com, Asana Timeline, and Microsoft Project */
+/* Assignment Timeline View Styles */
 
 .o_assignment_timeline_view {
     display: flex;
@@ -7,13 +6,6 @@
     height: 100vh;
     background: #f8f9fa;
     overflow: hidden;
-}
-
-/* DEBUG: This should make timeline cards bright red if CSS is loading */
-.DEBUG_timeline_card_test {
-    background: red !important;
-    color: white !important;
-    border: 3px solid yellow !important;
 }
 
 /* Ultra-Compact Professional Timeline Controls */
@@ -503,15 +495,6 @@
     height: 16px !important;
     font-size: 9px;
     line-height: 1;
-}
-
-/* DEBUG: Force override for testing */
-.o_timeline_assignment.DEBUG_FORCE_MINIMAL {
-    height: 16px !important;
-    background: #ff0000 !important;
-    color: white !important;
-    font-size: 8px !important;
-    border: 2px solid yellow !important;
 }
 
 .o_timeline_assignment:hover {

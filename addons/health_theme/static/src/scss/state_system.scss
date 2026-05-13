@@ -204,3 +204,18 @@
     pointer-events: none;
     filter: grayscale(0.2);
 }
+
+// ---------------------------------------------------------------------------
+// In-Progress state: orange accent, prominent timer, active service mode
+// ---------------------------------------------------------------------------
+.o_form_view.vu-state--in_progress {
+    .vu-progress-rail .vu-step.active .vu-step-circle {
+        background: var(--vu-state-active);
+        box-shadow: 0 0 0 4px rgba(234, 88, 12, 0.15);
+    }
+
+    .vu-action-card--primary {
+        border-color: rgba(234, 88, 12, 0.3);
+        background: rgba(234, 88, 12, 0.04);
+    }
+}

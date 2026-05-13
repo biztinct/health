@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+<!-- Inject Roster nav item into all Operations Center sidebars.
+     Uses this.action.doAction() directly so no JS patching is needed. -->
+
+<t t-inherit="health_fieldservice.OpsCommandCenter" t-inherit-mode="extension">
+    <xpath expr="//a[contains(@class, 'ops-nav-item')][.//i[contains(@class, 'fa-users')]]" position="after">
+        <a class="ops-nav-item" t-on-click="() => this.action.doAction('health_roster.action_roster_planning', { clearBreadcrumbs: true })"><i class="fa fa-th"/> Roster</a>
+    </xpath>
+</t>
+
+<t t-inherit="health_fieldservice.OpsBookingQueue" t-inherit-mode="extension">
+    <xpath expr="//a[contains(@class, 'ops-nav-item')][.//i[contains(@class, 'fa-users')]]" position="after">
+        <a class="ops-nav-item" t-on-click="() => this.action.doAction('health_roster.action_roster_planning', { clearBreadcrumbs: true })"><i class="fa fa-th"/> Roster</a>
+    </xpath>
+</t>
+
+<t t-inherit="health_fieldservice.OpsCalendar" t-inherit-mode="extension">
+    <xpath expr="//a[contains(@class, 'ops-nav-item')][.//i[contains(@class, 'fa-users')]]" position="after">
+        <a class="ops-nav-item" t-on-click="() => this.action.doAction('health_roster.action_roster_planning', { clearBreadcrumbs: true })"><i class="fa fa-th"/> Roster</a>
+    </xpath>
+</t>
+
+<t t-inherit="health_fieldservice.OpsStaffRoster" t-inherit-mode="extension">
+    <xpath expr="//a[contains(@class, 'ops-nav-item')][.//i[contains(@class, 'fa-users')]]" position="after">
+        <a class="ops-nav-item" t-on-click="() => this.action.doAction('health_roster.action_roster_planning', { clearBreadcrumbs: true })"><i class="fa fa-th"/> Roster</a>
+    </xpath>
+</t>
+
+<t t-inherit="health_fieldservice.OpsBookingFormView" t-inherit-mode="extension">
+    <xpath expr="//a[contains(@class, 'ops-nav-item')][.//i[contains(@class, 'fa-users')]]" position="after">
+        <a class="ops-nav-item" t-on-click="() => this.action.doAction('health_roster.action_roster_planning', { clearBreadcrumbs: true })"><i class="fa fa-th"/> Roster</a>
+    </xpath>
+</t>
+
+<t t-inherit="health_fieldservice.OpsPaymentCollection" t-inherit-mode="extension">
+    <xpath expr="//a[contains(@class, 'ops-nav-item')][.//i[contains(@class, 'fa-users')]]" position="after">
+        <a class="ops-nav-item" t-on-click="() => this.action.doAction('health_roster.action_roster_planning', { clearBreadcrumbs: true })"><i class="fa fa-th"/> Roster</a>
+    </xpath>
+</t>
+
+<t t-inherit="health_fieldservice.OpsRecurringBooking" t-inherit-mode="extension">
+    <xpath expr="//a[contains(@class, 'ops-nav-item')][.//i[contains(@class, 'fa-users')]]" position="after">
+        <a class="ops-nav-item" t-on-click="() => this.action.doAction('health_roster.action_roster_planning', { clearBreadcrumbs: true })"><i class="fa fa-th"/> Roster</a>
+    </xpath>
+</t>
+
+<t t-inherit="health_fieldservice.OpsClientList" t-inherit-mode="extension">
+    <xpath expr="//a[contains(@class, 'ops-nav-item')][.//i[contains(@class, 'fa-users')]]" position="after">
+        <a class="ops-nav-item" t-on-click="() => this.action.doAction('health_roster.action_roster_planning', { clearBreadcrumbs: true })"><i class="fa fa-th"/> Roster</a>
+    </xpath>
+</t>
+
+<t t-inherit="health_fieldservice.OpsServiceInProgress" t-inherit-mode="extension">
+    <xpath expr="//a[contains(@class, 'ops-nav-item')][.//i[contains(@class, 'fa-users')]]" position="after">
+        <a class="ops-nav-item" t-on-click="() => this.action.doAction('health_roster.action_roster_planning', { clearBreadcrumbs: true })"><i class="fa fa-th"/> Roster</a>
+    </xpath>
+</t>
+
+<t t-inherit="health_fieldservice.OpsClientProfile" t-inherit-mode="extension">
+    <xpath expr="//a[contains(@class, 'ops-nav-item')][.//i[contains(@class, 'fa-users')]]" position="after">
+        <a class="ops-nav-item" t-on-click="() => this.action.doAction('health_roster.action_roster_planning', { clearBreadcrumbs: true })"><i class="fa fa-th"/> Roster</a>
+    </xpath>
+</t>
+
+<t t-inherit="health_fieldservice.OpsStaffAssignment" t-inherit-mode="extension">
+    <xpath expr="//a[contains(@class, 'ops-nav-item')][.//i[contains(@class, 'fa-users')]]" position="after">
+        <a class="ops-nav-item" t-on-click="() => this.action.doAction('health_roster.action_roster_planning', { clearBreadcrumbs: true })"><i class="fa fa-th"/> Roster</a>
+    </xpath>
+</t>
+
+</templates>

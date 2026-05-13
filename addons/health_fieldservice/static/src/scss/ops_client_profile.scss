@@ -1,0 +1,495 @@
+// ============================================================================
+// Client Profile — Screen-specific Styles
+// ============================================================================
+
+.ops-client-profile-page {
+    display: flex;
+    height: 100vh;
+    background: var(--vu-surface-muted);
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1050;
+}
+
+.cp-page-body {
+    padding: 20px 24px;
+    flex: 1;
+    overflow-y: auto;
+
+    &::-webkit-scrollbar { width: 6px; }
+    &::-webkit-scrollbar-track { background: transparent; }
+    &::-webkit-scrollbar-thumb { background: var(--vu-border-soft); border-radius: 3px; }
+}
+
+// ===== BREADCRUMB =====
+.cp-breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 14px;
+
+    a {
+        color: $vu-deep-blue;
+        text-decoration: none;
+        font-weight: 500;
+        cursor: pointer;
+        &:hover { text-decoration: underline; }
+    }
+}
+
+.cp-sep { color: $vu-text-secondary; }
+.cp-current { color: $vu-text-primary; font-weight: 600; }
+
+// ===== PROFILE HEADER =====
+.cp-profile-header {
+    background: var(--vu-surface-card);
+    border-radius: var(--vu-radius-lg);
+    box-shadow: var(--vu-shadow-sm);
+    border: 1px solid var(--vu-border-soft);
+    margin-bottom: 16px;
+    overflow: hidden;
+}
+
+.cp-banner {
+    height: 80px;
+    background: linear-gradient(135deg, $vu-deep-blue 0%, $vu-accent-blue 100%);
+}
+
+.cp-profile-main {
+    display: flex;
+    align-items: flex-end;
+    gap: 16px;
+    padding: 0 24px 16px;
+    margin-top: -30px;
+    position: relative;
+}
+
+.cp-avatar {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    background: $vu-deep-blue-lightest;
+    color: $vu-deep-blue;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    font-weight: 700;
+    border: 4px solid var(--vu-surface-card);
+    box-shadow: var(--vu-shadow-md);
+    flex-shrink: 0;
+}
+
+.cp-info {
+    flex: 1;
+    padding-bottom: 4px;
+}
+
+.cp-name {
+    font-size: 20px;
+    font-weight: 700;
+    font-family: $font-family-headings;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.cp-code {
+    font-size: 12px;
+    color: $vu-text-secondary;
+    font-weight: 400;
+    font-family: inherit;
+}
+
+.cp-tags {
+    display: flex;
+    gap: 6px;
+    margin-top: 4px;
+}
+
+.cp-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    padding: 3px 8px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 600;
+
+    &.cp-tag-vip { background: rgba($vu-hibiscus-orange, 0.12); color: $vu-hibiscus-orange; }
+    &.cp-tag-active { background: #DBF0DB; color: $vu-leaf-green; }
+    &.cp-tag-referral { background: $vu-deep-blue-lightest; color: $vu-deep-blue; }
+}
+
+.cp-contact {
+    font-size: 13px;
+    color: $vu-text-secondary;
+    margin-top: 4px;
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+
+    span {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+    }
+    i { font-size: 12px; color: $vu-deep-blue; }
+}
+
+.cp-actions {
+    display: flex;
+    gap: 6px;
+    padding-bottom: 4px;
+}
+
+.cp-action-btn {
+    width: 36px;
+    height: 36px;
+    border: 1px solid var(--vu-border-soft);
+    border-radius: var(--vu-radius-md);
+    background: var(--vu-surface-card);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: $vu-text-secondary;
+    transition: all 120ms;
+    font-size: 15px;
+
+    &:hover {
+        border-color: $vu-deep-blue;
+        color: $vu-deep-blue;
+        background: $vu-deep-blue-lightest;
+    }
+}
+
+// ===== STATS ROW =====
+.cp-stats-row {
+    display: flex;
+    gap: 0;
+    border-top: 1px solid var(--vu-border-soft);
+}
+
+.cp-stat {
+    flex: 1;
+    padding: 12px 20px;
+    text-align: center;
+    border-right: 1px solid var(--vu-border-soft);
+
+    &:last-child { border-right: none; }
+}
+
+.cp-stat-value {
+    font-size: 20px;
+    font-weight: 800;
+    font-family: $font-family-headings;
+    color: $vu-deep-blue;
+
+    &.cp-stat-green { color: $vu-leaf-green; }
+    &.cp-stat-orange { color: $vu-hibiscus-orange; }
+}
+
+.cp-stat-label {
+    font-size: 11px;
+    color: $vu-text-secondary;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    font-weight: 600;
+}
+
+// ===== TABS =====
+.cp-tabs {
+    display: flex;
+    gap: 0;
+    background: var(--vu-surface-card);
+    border-radius: var(--vu-radius-lg);
+    box-shadow: var(--vu-shadow-sm);
+    border: 1px solid var(--vu-border-soft);
+    margin-bottom: 16px;
+    overflow: hidden;
+}
+
+.cp-tab {
+    padding: 12px 20px;
+    font-size: 14px;
+    font-weight: 600;
+    color: $vu-text-secondary;
+    cursor: pointer;
+    border: none;
+    background: none;
+    border-bottom: 2px solid transparent;
+    transition: all 150ms;
+    font-family: inherit;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+
+    &:hover { color: $vu-text-primary; background: var(--vu-surface-muted); }
+
+    &.active {
+        color: $vu-deep-blue;
+        border-bottom-color: $vu-deep-blue;
+    }
+}
+
+.cp-tab-badge {
+    font-size: 11px;
+    font-weight: 700;
+    padding: 1px 6px;
+    border-radius: 8px;
+    background: var(--vu-surface-muted);
+    color: $vu-text-secondary;
+
+    .cp-tab.active & {
+        background: $vu-deep-blue;
+        color: white;
+    }
+}
+
+// ===== CONTENT GRID =====
+.cp-content-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+.cp-col {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+// ===== CARDS =====
+.cp-card {
+    background: var(--vu-surface-card);
+    border-radius: var(--vu-radius-lg);
+    box-shadow: var(--vu-shadow-sm);
+    border: 1px solid var(--vu-border-soft);
+    overflow: hidden;
+}
+
+.cp-card-header {
+    padding: 14px 20px;
+    border-bottom: 1px solid var(--vu-border-soft);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.cp-card-title {
+    font-size: 15px;
+    font-weight: 700;
+    font-family: $font-family-headings;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    i { color: $vu-deep-blue; font-size: 15px; }
+}
+
+.cp-card-action {
+    font-size: 13px;
+    color: $vu-deep-blue;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+
+    &:hover { text-decoration: underline; }
+}
+
+.cp-card-body { padding: 16px 20px; }
+
+// ===== MINI TABLE =====
+.cp-mini-table {
+    width: 100%;
+    border-collapse: collapse;
+
+    th {
+        padding: 8px 12px;
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.4px;
+        color: $vu-text-secondary;
+        background: var(--vu-surface-muted);
+        border-bottom: 1px solid var(--vu-border-soft);
+        text-align: left;
+    }
+
+    td {
+        padding: 8px 12px;
+        font-size: 13px;
+        border-bottom: 1px solid var(--vu-border-soft);
+        vertical-align: middle;
+    }
+
+    tr:last-child td { border-bottom: none; }
+
+    tr {
+        cursor: pointer;
+        transition: background 100ms;
+        &:hover { background: $vu-deep-blue-lightest; }
+    }
+}
+
+// ===== PACKAGE CARDS =====
+.cp-package-card {
+    border: 1px solid var(--vu-border-soft);
+    border-radius: var(--vu-radius-md);
+    padding: 14px;
+    margin-bottom: 10px;
+    transition: all 150ms;
+    cursor: pointer;
+
+    &:hover { border-color: $vu-deep-blue-light; box-shadow: var(--vu-shadow-sm); }
+    &:last-child { margin-bottom: 0; }
+}
+
+.cp-pkg-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+}
+
+.cp-pkg-name {
+    font-size: 14px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+
+    i { color: $vu-leaf-green; }
+}
+
+.cp-pkg-status {
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 8px;
+
+    &.cp-pkg-active { background: #DBF0DB; color: $vu-leaf-green; }
+    &.cp-pkg-expired { background: rgba($vu-text-secondary, 0.1); color: $vu-text-secondary; }
+}
+
+.cp-pkg-progress {
+    height: 6px;
+    background: var(--vu-surface-muted);
+    border-radius: 3px;
+    overflow: hidden;
+    margin-bottom: 6px;
+}
+
+.cp-pkg-fill {
+    height: 100%;
+    border-radius: 3px;
+    background: $vu-leaf-green;
+    transition: width 300ms;
+}
+
+.cp-pkg-meta {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: $vu-text-secondary;
+}
+
+// ===== PAYMENT ITEMS =====
+.cp-payment-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--vu-border-soft);
+    cursor: pointer;
+    transition: background 100ms;
+
+    &:last-child { border-bottom: none; }
+    &:hover { background: $vu-deep-blue-lightest; margin: 0 -20px; padding-left: 20px; padding-right: 20px; }
+}
+
+.cp-pay-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: var(--vu-radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    flex-shrink: 0;
+
+    &.paid { background: #DBF0DB; color: $vu-leaf-green; }
+    &.pending { background: #FFF3E0; color: $vu-hibiscus-orange; }
+    &.overdue { background: #FBE3E1; color: $vu-hibiscus-red; }
+}
+
+.cp-pay-info { flex: 1; }
+.cp-pay-desc { font-size: 13px; font-weight: 600; }
+.cp-pay-date { font-size: 12px; color: $vu-text-secondary; }
+
+.cp-pay-amount {
+    font-size: 14px;
+    font-weight: 700;
+    text-align: right;
+
+    &.paid { color: $vu-leaf-green; }
+    &.pending { color: $vu-hibiscus-orange; }
+}
+
+// ===== TIMELINE =====
+.cp-timeline {}
+
+.cp-tl-entry {
+    display: flex;
+    gap: 10px;
+    position: relative;
+    padding-bottom: 12px;
+
+    &:last-child { padding-bottom: 0; }
+
+    &:not(:last-child)::before {
+        content: '';
+        position: absolute;
+        left: 11px;
+        top: 24px;
+        bottom: 0;
+        width: 1px;
+        background: var(--vu-border-soft);
+    }
+}
+
+.cp-tl-dot {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 9px;
+    flex-shrink: 0;
+    z-index: 1;
+    background: $vu-deep-blue-lightest;
+    color: $vu-deep-blue;
+}
+
+.cp-tl-content {
+    flex: 1;
+    padding-top: 2px;
+}
+
+.cp-tl-text {
+    font-size: 13px;
+    strong { font-weight: 600; }
+}
+
+.cp-tl-time {
+    font-size: 11px;
+    color: $vu-text-secondary;
+}

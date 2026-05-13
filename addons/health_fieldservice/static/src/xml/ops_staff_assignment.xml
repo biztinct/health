@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+<t t-name="health_fieldservice.OpsStaffAssignment">
+    <div class="ops-staff-assign-page">
+
+        <!-- SIDEBAR -->
+        <aside class="ops-sidebar">
+            <div class="ops-sidebar-logo" t-on-click="navigateHome" style="cursor:pointer">
+                <div class="ops-logo-icon"><i class="fa fa-heartbeat"/></div>
+                <div>
+                    <div class="ops-logo-text">VIET UC</div>
+                    <div class="ops-logo-sub">Healthcare Platform</div>
+                </div>
+            </div>
+            <nav class="ops-sidebar-nav">
+                <div class="ops-nav-section-label">Main</div>
+                <a class="ops-nav-item" t-on-click="() => this.navigateTo('dashboard')"><i class="fa fa-th-large"/> Dashboard</a>
+                <a class="ops-nav-item active"><i class="fa fa-calendar-check-o"/> Bookings</a>
+                <a class="ops-nav-item" t-on-click="() => this.navigateTo('clients')"><i class="fa fa-address-book-o"/> Clients</a>
+                <a class="ops-nav-item" t-on-click="() => this.navigateTo('recurring')"><i class="fa fa-repeat"/> Recurring</a>
+                <a class="ops-nav-item" t-on-click="() => this.navigateTo('staff')"><i class="fa fa-users"/> Staff</a>
+                <a class="ops-nav-item" t-on-click="() => this.navigateTo('calendar')"><i class="fa fa-calendar"/> Calendar</a>
+                <div class="ops-nav-section-label">Reports</div>
+                <a class="ops-nav-item" t-on-click="() => this.navigateTo('workload')"><i class="fa fa-bar-chart"/> Workload</a>
+                <a class="ops-nav-item" t-on-click="() => this.navigateTo('analytics')"><i class="fa fa-line-chart"/> Analytics</a>
+                <div class="ops-nav-section-label">System</div>
+                <a class="ops-nav-item" t-on-click="navigateHome"><i class="fa fa-arrow-left"/> Back to Odoo</a>
+            </nav>
+            <div class="ops-sidebar-user">
+                <div class="ops-user-avatar">OM</div>
+                <div class="ops-user-info">
+                    <div class="ops-user-name">Operations</div>
+                    <div class="ops-user-role">Manager</div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- MAIN -->
+        <div class="ops-main-content">
+
+            <header class="ops-top-header">
+                <div class="ops-header-left">
+                    <div class="cp-breadcrumb">
+                        <a t-on-click="() => this.navigateTo('bookings')">Bookings</a>
+                        <span class="cp-sep"><i class="fa fa-chevron-right" style="font-size:10px"/></span>
+                        <a t-on-click="goBack" t-esc="state.booking.name or 'Booking'"/>
+                        <span class="cp-sep"><i class="fa fa-chevron-right" style="font-size:10px"/></span>
+                        <span class="cp-current">Assign Staff</span>
+                    </div>
+                </div>
+            </header>
+
+            <t t-if="state.isLoading">
+                <div class="sa-loading"><i class="fa fa-spinner fa-spin fa-2x"/><div>Loading staff suggestions...</div></div>
+            </t>
+
+            <t t-if="!state.isLoading">
+                <div class="sa-wizard-wrap">
+                    <div class="sa-wizard">
+
+                        <!-- HEADER -->
+                        <div class="sa-wizard-header">
+                            <div class="sa-wizard-title"><i class="fa fa-user-md"/> Assign Staff</div>
+                            <button class="sa-close-btn" t-on-click="goBack"><i class="fa fa-times"/></button>
+                        </div>
+
+                        <div class="sa-wizard-body">
+
+                            <!-- BOOKING CONTEXT -->
+                            <div class="sa-booking-ctx">
+                                <div class="sa-ctx-item">
+                                    <div class="sa-ctx-label">Booking</div>
+                                    <div class="sa-ctx-value" t-esc="state.booking.name"/>
+                                </div>
+                                <div class="sa-ctx-item">
+                                    <div class="sa-ctx-label">Client</div>
+                                    <div class="sa-ctx-value" t-esc="state.booking.patient_name"/>
+                                </div>
+                                <div class="sa-ctx-item">
+                                    <div class="sa-ctx-label">Service</div>
+                                    <div class="sa-ctx-value" t-esc="state.booking.service_type_label"/>
+                                </div>
+                                <div class="sa-ctx-item">
+                                    <div class="sa-ctx-label">Date &amp; Time</div>
+                                    <div class="sa-ctx-value"><t t-esc="state.booking.date_label"/> · <t t-esc="state.booking.time_range"/></div>
+                                </div>
+                                <div class="sa-ctx-item" t-if="state.booking.address">
+                                    <div class="sa-ctx-label">Location</div>
+                                    <div class="sa-ctx-value" t-esc="state.booking.address"/>
+                                </div>
+                                <div class="sa-ctx-item">
+                                    <div class="sa-ctx-label">Priority</div>
+                                    <div class="sa-ctx-value" t-esc="state.booking.priority_label"/>
+                                </div>
+                            </div>
+
+                            <!-- AI SUGGESTIONS -->
+                            <div class="sa-section-label"><i class="fa fa-magic"/> AI-Recommended Staff <span class="sa-count" t-esc="state.suggestions.length"/></div>
+                            <div class="sa-suggestions">
+                                <t t-foreach="state.suggestions" t-as="staff" t-key="staff.id">
+                                    <div t-attf-class="sa-staff-card #{isSelected(staff.id) ? 'selected' : ''}"
+                                         t-on-click="() => this.selectStaff(staff)">
+                                        <div class="sa-staff-top">
+                                            <div t-attf-class="sa-staff-avatar #{getAvatarColor(staff_index)}" t-esc="staff.initials"/>
+                                            <div>
+                                                <div class="sa-staff-name" t-esc="staff.name"/>
+                                                <div class="sa-staff-role" t-esc="staff.role"/>
+                                            </div>
+                                            <div t-attf-class="sa-staff-score #{getScoreClass(staff.score)}">
+                                                <div class="sa-score-value"><t t-esc="staff.score"/>%</div>
+                                                <div class="sa-score-label">Match Score</div>
+                                            </div>
+                                        </div>
+                                        <div class="sa-staff-details">
+                                            <div class="sa-detail-item"><i class="fa fa-calendar-check-o"/> <t t-esc="staff.today_bookings"/> bookings today</div>
+                                        </div>
+                                    </div>
+                                </t>
+                            </div>
+
+                            <!-- OTHER STAFF -->
+                            <t t-if="state.others.length > 0">
+                                <div class="sa-section-label"><i class="fa fa-users"/> Other Available Staff <span class="sa-count" t-esc="state.others.length"/></div>
+                                <div class="sa-other-staff">
+                                    <t t-foreach="state.others" t-as="staff" t-key="staff.id">
+                                        <div class="sa-mini-staff" t-on-click="() => this.selectStaff(staff)">
+                                            <div class="sa-mini-avatar" t-esc="staff.initials"/>
+                                            <div>
+                                                <div class="sa-mini-name" t-esc="staff.name"/>
+                                                <div class="sa-mini-detail" t-esc="staff.role"/>
+                                            </div>
+                                            <div t-attf-class="sa-mini-score #{getScoreClass(staff.score)}" t-esc="staff.score + '%'"/>
+                                        </div>
+                                    </t>
+                                </div>
+                            </t>
+
+                            <!-- SCHEDULE TIMELINE -->
+                            <t t-if="state.scheduleBlocks.length > 0">
+                                <div class="sa-section-label"><i class="fa fa-clock-o"/> Today's Schedule</div>
+                                <div class="sa-timeline-preview">
+                                    <t t-foreach="state.scheduleBlocks" t-as="sched" t-key="sched.staff_id">
+                                        <div class="sa-timeline-row">
+                                            <div class="sa-tl-name" t-esc="sched.staff_name.split(' ').pop()"/>
+                                            <div class="sa-tl-bar">
+                                                <t t-foreach="sched.blocks" t-as="block" t-key="block_index">
+                                                    <div class="sa-tl-block existing"
+                                                         t-att-style="getTimelineBlockStyle(block)"
+                                                         t-att-title="block.name"/>
+                                                </t>
+                                                <t t-if="isSelected(sched.staff_id) and state.proposedBlock">
+                                                    <div class="sa-tl-block proposed"
+                                                         t-att-style="getProposedBlockStyle()"
+                                                         title="Proposed">NEW</div>
+                                                </t>
+                                            </div>
+                                        </div>
+                                    </t>
+                                    <div class="sa-tl-hours">
+                                        <span>07</span><span>08</span><span>09</span><span>10</span><span>11</span><span>12</span><span>13</span><span>14</span><span>15</span><span>16</span><span>17</span><span>18</span>
+                                    </div>
+                                </div>
+
+                                <!-- CONFLICT CHECK -->
+                                <t t-if="hasConflict()">
+                                    <div class="sa-conflict-alert conflict">
+                                        <i class="fa fa-exclamation-triangle"/>
+                                        <div><strong>Conflict detected!</strong> The selected staff has an overlapping booking.</div>
+                                    </div>
+                                </t>
+                                <t t-if="!hasConflict() and state.selectedStaffId">
+                                    <div class="sa-conflict-alert ok">
+                                        <i class="fa fa-check-circle"/>
+                                        <div><strong>No conflicts detected.</strong> <t t-esc="state.selectedStaffName"/> is available for this time slot.</div>
+                                    </div>
+                                </t>
+                            </t>
+
+                            <!-- OPTIONS -->
+                            <div class="sa-assign-options">
+                                <div style="font-size:12px;font-weight:700;margin-bottom:10px">Assignment Options</div>
+                                <div class="sa-opt-row">
+                                    <label><input type="checkbox" t-att-checked="state.notifyStaff" t-on-change="onNotifyStaffChange"/> Send notification to staff</label>
+                                </div>
+                                <div class="sa-opt-row">
+                                    <label><input type="checkbox" t-att-checked="state.notifyClient" t-on-change="onNotifyClientChange"/> Send confirmation to client</label>
+                                </div>
+                                <div class="sa-opt-row">
+                                    <label>Assignment note:</label>
+                                    <input type="text" placeholder="Optional note for staff..."
+                                           style="flex:1;min-width:200px;padding:6px 10px;border:1px solid #E0E0E0;border-radius:4px;font-size:12px;font-family:inherit"
+                                           t-on-change="onNoteChange"/>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- FOOTER -->
+                        <div class="sa-wizard-footer">
+                            <button class="sa-footer-btn sa-btn-cancel" t-on-click="goBack"><i class="fa fa-arrow-left"/> Cancel</button>
+                            <div style="display:flex;align-items:center;gap:8px">
+                                <t t-if="state.selectedStaffId">
+                                    <span style="font-size:12px;color:#757575">Selected: <strong style="color:#212121" t-esc="state.selectedStaffName"/> (<t t-esc="state.selectedStaffScore"/>% match)</span>
+                                </t>
+                                <button class="sa-footer-btn sa-btn-assign" t-on-click="confirmAssignment"
+                                        t-att-disabled="state.isAssigning">
+                                    <t t-if="state.isAssigning"><i class="fa fa-spinner fa-spin"/> Assigning...</t>
+                                    <t t-else=""><i class="fa fa-user-plus"/> Confirm Assignment</t>
+                                </button>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </t>
+        </div>
+    </div>
+</t>
+
+</templates>

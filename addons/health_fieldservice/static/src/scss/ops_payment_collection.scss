@@ -1,0 +1,333 @@
+/* Payment Collection Wizard — OWL Component */
+
+.ops-payment-page {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    z-index: 1050;
+    display: flex;
+    background: #F5F5F5;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    font-size: 14px;
+    color: #212121;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* Loading */
+.pc-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 400px;
+    gap: 12px;
+    color: #757575;
+}
+
+/* Wizard wrapper — centered card */
+.pc-wizard-wrap {
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 40px 20px;
+    overflow-y: auto;
+    flex: 1;
+}
+
+.pc-wizard {
+    width: 100%;
+    max-width: 580px;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgba(33,33,33,.15);
+    border: 1px solid #E0E0E0;
+    overflow: hidden;
+}
+
+/* Wizard Header */
+.pc-wizard-header {
+    padding: 20px 24px;
+    border-bottom: 1px solid #E0E0E0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.pc-wizard-title {
+    font-size: 18px;
+    font-weight: 700;
+    font-family: 'Montserrat', 'Segoe UI', Arial, sans-serif;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    i { color: #43A047; }
+}
+
+.pc-close-btn {
+    width: 32px;
+    height: 32px;
+    border: 1px solid #E0E0E0;
+    border-radius: 8px;
+    background: transparent;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #757575;
+    font-size: 15px;
+    transition: all 120ms;
+
+    &:hover {
+        border-color: #E53935;
+        color: #E53935;
+    }
+}
+
+/* Wizard Body */
+.pc-wizard-body {
+    padding: 24px;
+}
+
+/* Context Card */
+.pc-context-card {
+    background: #F5F5F5;
+    border-radius: 8px;
+    padding: 14px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.pc-ctx-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #E4F4FD;
+    color: #1565C0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 15px;
+    font-weight: 700;
+    flex-shrink: 0;
+}
+
+.pc-ctx-info { flex: 1; }
+.pc-ctx-name { font-size: 14px; font-weight: 700; }
+.pc-ctx-detail { font-size: 12px; color: #757575; }
+
+/* Amount Display */
+.pc-amount-display {
+    text-align: center;
+    padding: 20px;
+    background: linear-gradient(135deg, #E4F4FD, #DBF0DB);
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+.pc-amount-label {
+    font-size: 12px;
+    color: #757575;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+    font-weight: 600;
+}
+
+.pc-amount-value {
+    font-size: 36px;
+    font-weight: 800;
+    font-family: 'Montserrat', 'Segoe UI', sans-serif;
+    color: #1565C0;
+    margin: 4px 0;
+}
+
+.pc-amount-breakdown {
+    font-size: 12px;
+    color: #424242;
+}
+
+/* Section Labels */
+.pc-section-label {
+    font-size: 13px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+
+    i { color: #1565C0; font-size: 13px; }
+}
+
+/* Method Options */
+.pc-method-options {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    margin-bottom: 20px;
+}
+
+.pc-method-btn {
+    border: 2px solid #E0E0E0;
+    border-radius: 8px;
+    padding: 14px 8px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 150ms;
+    background: transparent;
+
+    &:hover { border-color: #83C5FA; }
+
+    &.selected {
+        border-color: #1565C0;
+        background: #E4F4FD;
+    }
+
+    i {
+        display: block;
+        font-size: 20px;
+        color: #1565C0;
+        margin-bottom: 4px;
+    }
+}
+
+.pc-mb-label {
+    font-size: 12px;
+    font-weight: 700;
+}
+
+/* Form Elements */
+.pc-form-group { margin-bottom: 14px; }
+
+.pc-form-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: #757575;
+    text-transform: uppercase;
+    letter-spacing: .4px;
+    margin-bottom: 4px;
+}
+
+.pc-form-input {
+    width: 100%;
+    padding: 9px 12px;
+    border: 1px solid #E0E0E0;
+    border-radius: 8px;
+    font-size: 14px;
+    font-family: inherit;
+    transition: border-color 150ms;
+    background: #fff;
+
+    &:focus {
+        outline: none;
+        border-color: #1565C0;
+        box-shadow: 0 0 0 3px rgba(21,101,192,.1);
+    }
+}
+
+.pc-form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+}
+
+/* Cash Section */
+.pc-cash-section {
+    background: rgba(251,140,0,.06);
+    border: 1px solid rgba(251,140,0,.2);
+    border-radius: 8px;
+    padding: 14px;
+    margin-bottom: 16px;
+}
+
+.pc-cash-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: #FB8C00;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 8px;
+}
+
+.pc-cash-note {
+    font-size: 12px;
+    color: #757575;
+    margin-top: 8px;
+
+    i { color: #FB8C00; }
+}
+
+/* Bank Section */
+.pc-bank-section {
+    margin-bottom: 16px;
+}
+
+/* Receipt Options */
+.pc-receipt-options {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.pc-receipt-option {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    cursor: pointer;
+
+    input { accent-color: #1565C0; }
+}
+
+/* Wizard Footer */
+.pc-wizard-footer {
+    padding: 16px 24px;
+    border-top: 1px solid #E0E0E0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #F5F5F5;
+}
+
+.pc-footer-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 24px;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 150ms;
+    font-family: inherit;
+}
+
+.pc-btn-back {
+    background: transparent;
+    color: #424242;
+    border: 1px solid #E0E0E0;
+
+    &:hover {
+        border-color: #1565C0;
+        color: #1565C0;
+    }
+}
+
+.pc-btn-confirm {
+    background: #43A047;
+    color: white;
+    font-size: 15px;
+
+    &:hover {
+        background: #388E3C;
+        box-shadow: 0 2px 8px rgba(33,33,33,.12);
+    }
+
+    &:disabled {
+        opacity: 0.7;
+        cursor: not-allowed;
+    }
+}

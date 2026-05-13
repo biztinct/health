@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Audit Log — VAFHS Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+:root{--vu-deep-blue:#1565C0;--vu-deep-blue-darker:#1356A9;--vu-deep-blue-darkest:#0D356B;--vu-deep-blue-light:#83C5FA;--vu-deep-blue-lightest:#E4F4FD;--vu-accent-blue:#42A5F5;--vu-hibiscus-red:#E53935;--vu-hibiscus-orange:#FB8C00;--vu-leaf-green:#43A047;--text-primary:#212121;--text-secondary:#424242;--text-muted:#757575;--surface-app:#F5F5F5;--surface-card:#FFFFFF;--border-soft:#E0E0E0;--shadow-sm:0 1px 3px rgba(33,33,33,.08);--shadow-md:0 2px 8px rgba(33,33,33,.12);--shadow-lg:0 4px 16px rgba(33,33,33,.15);--radius-sm:4px;--radius-md:8px;--radius-lg:12px}
+*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Segoe UI',Arial,sans-serif;font-size:13px;color:var(--text-primary);background:var(--surface-app);line-height:1.5;-webkit-font-smoothing:antialiased}
+h1,h2,h3,h4{font-family:'Montserrat','Segoe UI',Arial,sans-serif;font-weight:600}
+.page-layout{display:grid;grid-template-columns:220px 1fr;min-height:100vh}
+.sidebar{background:var(--vu-deep-blue-darkest);color:white;padding:20px 0}
+.sidebar-brand{padding:0 20px 20px;font-family:'Montserrat';font-weight:800;font-size:16px;border-bottom:1px solid rgba(255,255,255,.1);margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.sidebar-brand i{color:var(--vu-deep-blue-light)}
+.nav-section{padding:0 12px;margin-bottom:16px}
+.nav-label{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:rgba(255,255,255,.4);padding:8px 8px 4px;font-weight:600}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:var(--radius-md);color:rgba(255,255,255,.7);font-size:13px;text-decoration:none;transition:all 150ms;cursor:pointer}
+.nav-item:hover{background:rgba(255,255,255,.08);color:white}
+.nav-item.active{background:rgba(255,255,255,.12);color:white;font-weight:600}
+.nav-item i{width:18px;text-align:center;font-size:13px}
+.main{overflow-y:auto}
+.topbar{background:var(--surface-card);border-bottom:1px solid var(--border-soft);padding:0 24px;height:52px;display:flex;align-items:center;justify-content:space-between}
+.page-title{font-family:'Montserrat';font-size:16px;font-weight:700;display:flex;align-items:center;gap:10px}
+.page-title i{color:var(--vu-deep-blue)}
+.topbar-actions{display:flex;gap:8px}
+.top-btn{display:flex;align-items:center;gap:6px;padding:7px 14px;border:1px solid var(--border-soft);border-radius:var(--radius-md);background:var(--surface-card);font-size:12px;font-weight:600;cursor:pointer;transition:all 150ms;color:var(--text-secondary);font-family:inherit}
+.top-btn:hover{border-color:var(--vu-deep-blue);color:var(--vu-deep-blue)}
+.content{padding:24px}
+
+/* FILTERS */
+.filter-bar{display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap;align-items:center}
+.filter-select{padding:7px 12px;border:1px solid var(--border-soft);border-radius:var(--radius-md);font-size:12px;font-family:inherit;background:var(--surface-card);cursor:pointer}
+.filter-select:focus{outline:none;border-color:var(--vu-deep-blue)}
+.search-input{padding:7px 12px 7px 32px;border:1px solid var(--border-soft);border-radius:var(--radius-md);font-size:12px;width:260px;background:var(--surface-app) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' fill='%23757575' viewBox='0 0 16 16'%3E%3Cpath d='M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0'/%3E%3C/svg%3E") 10px center no-repeat;font-family:inherit}
+.live-dot{width:8px;height:8px;border-radius:50%;background:var(--vu-leaf-green);animation:pulse 1.5s infinite;margin-left:auto}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.live-label{font-size:11px;color:var(--vu-leaf-green);font-weight:600}
+
+/* LOG TABLE */
+.log-table{width:100%;border-collapse:collapse;background:var(--surface-card);border-radius:var(--radius-lg);overflow:hidden;border:1px solid var(--border-soft)}
+.log-table th{text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.4px;color:var(--text-muted);font-weight:600;padding:10px 14px;background:var(--surface-app);border-bottom:1px solid var(--border-soft)}
+.log-table td{padding:10px 14px;border-bottom:1px solid var(--border-soft);font-size:12px;vertical-align:middle}
+.log-table tr:hover{background:rgba(21,101,192,.02)}
+.log-table tr:last-child td{border-bottom:none}
+
+/* ACTION TYPE BADGES */
+.action-badge{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:8px;font-size:10px;font-weight:700}
+.ab-create{background:#E8F5E9;color:var(--vu-leaf-green)}
+.ab-update{background:var(--vu-deep-blue-lightest);color:var(--vu-deep-blue)}
+.ab-delete{background:#FBE3E1;color:var(--vu-hibiscus-red)}
+.ab-login{background:#F3E8FF;color:#7c3aed}
+.ab-payment{background:#FFF3E0;color:var(--vu-hibiscus-orange)}
+.ab-assign{background:#E0F7FA;color:#00838F}
+.ab-status{background:rgba(158,158,158,.12);color:#616161}
+
+/* USER CELL */
+.user-cell{display:flex;align-items:center;gap:8px}
+.user-mini-avatar{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0}
+
+/* RECORD LINK */
+.record-link{color:var(--vu-deep-blue);text-decoration:none;font-weight:500}
+.record-link:hover{text-decoration:underline}
+
+/* DETAIL PANEL */
+.detail-cell{max-width:300px}
+.detail-changes{font-size:11px;color:var(--text-muted);margin-top:2px}
+.field-change{display:inline-flex;align-items:center;gap:4px}
+.old-val{text-decoration:line-through;color:var(--vu-hibiscus-red)}
+.new-val{color:var(--vu-leaf-green);font-weight:600}
+
+/* PAGINATION */
+.pagination{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:var(--surface-card);border:1px solid var(--border-soft);border-top:none;border-radius:0 0 var(--radius-lg) var(--radius-lg)}
+.page-info{font-size:12px;color:var(--text-muted)}
+.page-btns{display:flex;gap:4px}
+.page-btn{width:32px;height:32px;border:1px solid var(--border-soft);border-radius:var(--radius-sm);background:var(--surface-card);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;color:var(--text-muted)}
+.page-btn:hover{border-color:var(--vu-deep-blue);color:var(--vu-deep-blue)}
+.page-btn.active{background:var(--vu-deep-blue);color:white;border-color:var(--vu-deep-blue)}
+
+/* TIME */
+.time-cell{font-size:11px;color:var(--text-muted);white-space:nowrap}
+.time-cell .time-ago{display:block;font-size:10px;color:var(--text-muted)}
+</style>
+</head>
+<body>
+<div class="page-layout">
+  <aside class="sidebar">
+    <div class="sidebar-brand"><i class="fas fa-shield-halved"></i> VAFHS Admin</div>
+    <nav class="nav-section">
+      <div class="nav-label">Overview</div>
+      <a href="admin_dashboard.html" class="nav-item"><i class="fas fa-th-large"></i> Dashboard</a>
+      <div class="nav-label">Management</div>
+      <a href="admin_users.html" class="nav-item"><i class="fas fa-users-cog"></i> Users &amp; Roles</a>
+      <a href="admin_service_catalog.html" class="nav-item"><i class="fas fa-stethoscope"></i> Service Catalog</a>
+      <a href="admin_facility.html" class="nav-item"><i class="fas fa-hospital"></i> Facilities</a>
+      <a href="admin_staff_detail.html" class="nav-item"><i class="fas fa-user-nurse"></i> Staff HR</a>
+      <a href="admin_settings.html" class="nav-item"><i class="fas fa-cog"></i> Settings</a>
+      <div class="nav-label">Monitoring</div>
+      <a class="nav-item active"><i class="fas fa-clock-rotate-left"></i> Audit Log</a>
+      <a href="admin_reports.html" class="nav-item"><i class="fas fa-chart-bar"></i> Reports</a>
+    </nav>
+  </aside>
+
+  <div class="main">
+    <div class="topbar">
+      <div class="page-title"><i class="fas fa-clock-rotate-left"></i> Audit Log</div>
+      <div class="topbar-actions">
+        <button class="top-btn"><i class="fas fa-file-export"></i> Export CSV</button>
+      </div>
+    </div>
+
+    <div class="content">
+      <!-- FILTERS -->
+      <div class="filter-bar">
+        <input type="text" class="search-input" placeholder="Search actions, users, records...">
+        <select class="filter-select"><option>All Actions</option><option>Create</option><option>Update</option><option>Delete</option><option>Login</option><option>Payment</option><option>Assignment</option><option>Status Change</option></select>
+        <select class="filter-select"><option>All Users</option><option>Admin</option><option>Nguyen Thi Thanh</option><option>Hoang Thi Lan</option><option>Bui Thi Trang</option><option>Nguyen Thi Mai</option></select>
+        <select class="filter-select"><option>All Models</option><option>Booking (FSO)</option><option>Invoice</option><option>Payment</option><option>Client</option><option>Staff Assignment</option><option>User</option></select>
+        <select class="filter-select"><option>Today</option><option selected>Last 7 days</option><option>Last 30 days</option><option>Custom range</option></select>
+        <div class="live-dot"></div>
+        <span class="live-label">Live</span>
+      </div>
+
+      <!-- LOG TABLE -->
+      <table class="log-table">
+        <thead>
+          <tr>
+            <th style="width:140px">Timestamp</th>
+            <th style="width:140px">User</th>
+            <th style="width:90px">Action</th>
+            <th style="width:130px">Record</th>
+            <th>Details</th>
+            <th style="width:50px">IP</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="time-cell">May 12, 10:23 AM<span class="time-ago">2 min ago</span></td>
+            <td><div class="user-cell"><div class="user-mini-avatar" style="background:var(--vu-deep-blue-lightest);color:var(--vu-deep-blue)">TT</div>Nguyen Thi Thanh</div></td>
+            <td><span class="action-badge ab-assign"><i class="fas fa-user-check"></i> Assign</span></td>
+            <td><a href="ops_booking_detail.html" class="record-link">BK-2026-0847</a></td>
+            <td class="detail-cell">Assigned <strong>Nguyen Thi Mai</strong> to booking<div class="detail-changes">Staff: <span class="old-val">Unassigned</span> → <span class="new-val">Nguyen Thi Mai</span></div></td>
+            <td style="font-size:10px;color:var(--text-muted)">10.0.1.5</td>
+          </tr>
+          <tr>
+            <td class="time-cell">May 12, 10:18 AM<span class="time-ago">7 min ago</span></td>
+            <td><div class="user-cell"><div class="user-mini-avatar" style="background:rgba(67,160,71,.1);color:var(--vu-leaf-green)">BT</div>Bui Thi Trang</div></td>
+            <td><span class="action-badge ab-payment"><i class="fas fa-hand-holding-dollar"></i> Payment</span></td>
+            <td><a href="invoice_detail.html" class="record-link">INV-2026-0391</a></td>
+            <td class="detail-cell">Registered payment of <strong>1,800,000 &#8363;</strong><div class="detail-changes">Method: Bank Transfer &bull; Ref: VCB-20260512-4521</div></td>
+            <td style="font-size:10px;color:var(--text-muted)">10.0.1.8</td>
+          </tr>
+          <tr>
+            <td class="time-cell">May 12, 10:05 AM<span class="time-ago">20 min ago</span></td>
+            <td><div class="user-cell"><div class="user-mini-avatar" style="background:var(--vu-deep-blue-lightest);color:var(--vu-deep-blue)">HL</div>Hoang Thi Lan</div></td>
+            <td><span class="action-badge ab-create"><i class="fas fa-plus"></i> Create</span></td>
+            <td><a href="ops_booking_detail.html" class="record-link">BK-2026-0853</a></td>
+            <td class="detail-cell">Created new booking for <strong>Pham Minh Anh</strong><div class="detail-changes">Service: Home Visit — General Health &bull; May 14, 10:00</div></td>
+            <td style="font-size:10px;color:var(--text-muted)">10.0.1.12</td>
+          </tr>
+          <tr>
+            <td class="time-cell">May 12, 09:52 AM<span class="time-ago">33 min ago</span></td>
+            <td><div class="user-cell"><div class="user-mini-avatar" style="background:#E8F5E9;color:var(--vu-leaf-green)">NM</div>Nguyen Thi Mai</div></td>
+            <td><span class="action-badge ab-status"><i class="fas fa-arrow-right"></i> Status</span></td>
+            <td><a href="service_in_progress.html" class="record-link">BK-2026-0847</a></td>
+            <td class="detail-cell">Started service for <strong>Tran Van Duc</strong><div class="detail-changes">State: <span class="old-val">Assigned</span> → <span class="new-val">In Progress</span></div></td>
+            <td style="font-size:10px;color:var(--text-muted)">Mobile</td>
+          </tr>
+          <tr>
+            <td class="time-cell">May 12, 09:30 AM<span class="time-ago">55 min ago</span></td>
+            <td><div class="user-cell"><div class="user-mini-avatar" style="background:#F3E8FF;color:#7c3aed">LH</div>Le Thi Hoa</div></td>
+            <td><span class="action-badge ab-status"><i class="fas fa-check"></i> Status</span></td>
+            <td><a href="ops_booking_detail.html" class="record-link">BK-2026-0845</a></td>
+            <td class="detail-cell">Completed service for <strong>Le Thi Hoa (client)</strong><div class="detail-changes">State: <span class="old-val">In Progress</span> → <span class="new-val">Completed</span> &bull; Duration: 1h 45m</div></td>
+            <td style="font-size:10px;color:var(--text-muted)">Mobile</td>
+          </tr>
+          <tr>
+            <td class="time-cell">May 12, 09:15 AM<span class="time-ago">1h 10m ago</span></td>
+            <td><div class="user-cell"><div class="user-mini-avatar" style="background:var(--vu-deep-blue-lightest);color:var(--vu-deep-blue)">TT</div>Nguyen Thi Thanh</div></td>
+            <td><span class="action-badge ab-update"><i class="fas fa-pen"></i> Update</span></td>
+            <td><a href="ops_booking_detail.html" class="record-link">BK-2026-0848</a></td>
+            <td class="detail-cell">Rescheduled booking<div class="detail-changes">Date: <span class="old-val">May 12, 14:00</span> → <span class="new-val">May 13, 10:00</span></div></td>
+            <td style="font-size:10px;color:var(--text-muted)">10.0.1.5</td>
+          </tr>
+          <tr>
+            <td class="time-cell">May 12, 08:45 AM<span class="time-ago">1h 40m ago</span></td>
+            <td><div class="user-cell"><div class="user-mini-avatar" style="background:#E8F5E9;color:var(--vu-leaf-green)">NM</div>Nguyen Thi Mai</div></td>
+            <td><span class="action-badge ab-login"><i class="fas fa-sign-in-alt"></i> Login</span></td>
+            <td>—</td>
+            <td class="detail-cell">Logged in via PWA<div class="detail-changes">Device: iPhone 15 &bull; Browser: Safari &bull; Location: Ba Dinh, Hanoi</div></td>
+            <td style="font-size:10px;color:var(--text-muted)">Mobile</td>
+          </tr>
+          <tr>
+            <td class="time-cell">May 12, 08:30 AM<span class="time-ago">1h 55m ago</span></td>
+            <td><div class="user-cell"><div class="user-mini-avatar" style="background:rgba(229,57,53,.1);color:var(--vu-hibiscus-red)">AD</div>Admin</div></td>
+            <td><span class="action-badge ab-update"><i class="fas fa-pen"></i> Update</span></td>
+            <td><a href="admin_service_catalog.html" class="record-link">SVC — General Health</a></td>
+            <td class="detail-cell">Updated service pricing<div class="detail-changes">Base Price: <span class="old-val">2,300,000</span> → <span class="new-val">2,500,000</span></div></td>
+            <td style="font-size:10px;color:var(--text-muted)">10.0.1.2</td>
+          </tr>
+          <tr>
+            <td class="time-cell">May 12, 08:15 AM<span class="time-ago">2h 10m ago</span></td>
+            <td><div class="user-cell"><div class="user-mini-avatar" style="background:rgba(229,57,53,.1);color:var(--vu-hibiscus-red)">AD</div>Admin</div></td>
+            <td><span class="action-badge ab-create"><i class="fas fa-plus"></i> Create</span></td>
+            <td><a href="admin_users.html" class="record-link">User — Do Thi Lan</a></td>
+            <td class="detail-cell">Created new user account<div class="detail-changes">Role: Nurse &bull; Facility: Hanoi — Ba Dinh</div></td>
+            <td style="font-size:10px;color:var(--text-muted)">10.0.1.2</td>
+          </tr>
+          <tr>
+            <td class="time-cell">May 11, 17:30 PM<span class="time-ago">17h ago</span></td>
+            <td><div class="user-cell"><div class="user-mini-avatar" style="background:rgba(67,160,71,.1);color:var(--vu-leaf-green)">BT</div>Bui Thi Trang</div></td>
+            <td><span class="action-badge ab-delete"><i class="fas fa-trash"></i> Delete</span></td>
+            <td class="record-link" style="color:var(--text-muted)">INV-2026-0389 (Draft)</td>
+            <td class="detail-cell">Deleted draft invoice<div class="detail-changes">Client: Vu Thi Huong &bull; Amount: 800,000 &#8363;</div></td>
+            <td style="font-size:10px;color:var(--text-muted)">10.0.1.8</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="pagination">
+        <div class="page-info">Showing 1–10 of 1,247 events</div>
+        <div class="page-btns">
+          <button class="page-btn"><i class="fas fa-chevron-left"></i></button>
+          <button class="page-btn active">1</button>
+          <button class="page-btn">2</button>
+          <button class="page-btn">3</button>
+          <button class="page-btn">...</button>
+          <button class="page-btn">125</button>
+          <button class="page-btn"><i class="fas fa-chevron-right"></i></button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

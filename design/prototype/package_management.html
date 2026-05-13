@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Service Packages — VAFHS</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+:root{--vu-deep-blue:#1565C0;--vu-deep-blue-darker:#1356A9;--vu-deep-blue-darkest:#0D356B;--vu-deep-blue-light:#83C5FA;--vu-deep-blue-lightest:#E4F4FD;--vu-accent-blue:#42A5F5;--vu-hibiscus-red:#E53935;--vu-hibiscus-orange:#FB8C00;--vu-leaf-green:#43A047;--state-draft:#64748b;--state-confirmed:#2563eb;--state-assigned:#7c3aed;--state-active:#ea580c;--state-completed:#16a34a;--state-cancelled:#dc2626;--text-primary:#212121;--text-secondary:#424242;--text-muted:#757575;--surface-app:#F5F5F5;--surface-card:#FFFFFF;--border-soft:#E0E0E0;--border-strong:#BDBDBD;--shadow-sm:0 1px 3px rgba(33,33,33,.08);--shadow-md:0 2px 8px rgba(33,33,33,.12);--shadow-lg:0 4px 16px rgba(33,33,33,.15);--radius-sm:4px;--radius-md:8px;--radius-lg:12px}
+*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Segoe UI',Arial,sans-serif;font-size:13px;color:var(--text-primary);background:var(--surface-app);line-height:1.5;-webkit-font-smoothing:antialiased}h1,h2,h3,h4{font-family:'Montserrat','Segoe UI',Arial,sans-serif;font-weight:600}.app-wrapper{display:flex;min-height:100vh}
+.sidebar{width:220px;background:var(--vu-deep-blue-darkest);color:white;display:flex;flex-direction:column;flex-shrink:0;position:fixed;top:0;left:0;bottom:0;z-index:100}
+.sidebar-logo{padding:20px 16px;display:flex;align-items:center;gap:10px;border-bottom:1px solid rgba(255,255,255,.1);text-decoration:none;color:white}
+.logo-icon{width:36px;height:36px;background:var(--vu-hibiscus-red);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px}
+.logo-text{font-family:'Montserrat';font-weight:700;font-size:15px;letter-spacing:.5px}.logo-sub{font-size:10px;opacity:.6}
+.sidebar-nav{padding:12px 0;flex:1}
+.nav-section-label{padding:16px 16px 6px;font-size:10px;text-transform:uppercase;letter-spacing:1.2px;opacity:.4;font-weight:600}
+.nav-item{display:flex;align-items:center;gap:10px;padding:10px 16px;color:rgba(255,255,255,.7);text-decoration:none;font-size:13px;font-weight:500;transition:all 150ms;cursor:pointer;border-left:3px solid transparent}
+.nav-item:hover{background:rgba(255,255,255,.08);color:white}.nav-item.active{background:rgba(255,255,255,.12);color:white;border-left-color:var(--vu-accent-blue)}
+.nav-item i{width:20px;text-align:center;font-size:14px}
+.sidebar-user{padding:12px 16px;border-top:1px solid rgba(255,255,255,.1);display:flex;align-items:center;gap:10px}
+.user-avatar{width:32px;height:32px;border-radius:50%;background:var(--vu-accent-blue);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700}
+.user-info{flex:1}.user-name{font-size:12px;font-weight:600}.user-role{font-size:10px;opacity:.5}
+.main-content{flex:1;margin-left:220px;display:flex;flex-direction:column}
+.top-header{background:var(--surface-card);border-bottom:1px solid var(--border-soft);padding:12px 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;box-shadow:var(--shadow-sm)}
+.header-left{display:flex;align-items:center;gap:12px}
+.breadcrumb{display:flex;align-items:center;gap:6px;font-size:13px}.breadcrumb a{color:var(--vu-deep-blue);text-decoration:none;font-weight:500}.breadcrumb .sep{color:var(--text-muted)}.breadcrumb .current{color:var(--text-primary);font-weight:600}
+.header-right{display:flex;align-items:center;gap:10px}
+.header-btn{display:flex;align-items:center;gap:6px;padding:7px 14px;border:none;border-radius:var(--radius-md);font-size:12px;font-weight:600;cursor:pointer;transition:all 150ms;font-family:inherit}
+.btn-primary{background:var(--vu-deep-blue);color:white}.btn-primary:hover{background:var(--vu-deep-blue-darker)}
+.btn-outline{background:transparent;color:var(--text-secondary);border:1px solid var(--border-soft)}.btn-outline:hover{border-color:var(--vu-deep-blue);color:var(--vu-deep-blue);background:var(--vu-deep-blue-lightest)}
+.filter-select{padding:6px 12px;border:1px solid var(--border-soft);border-radius:var(--radius-md);font-size:12px;color:var(--text-secondary);background:var(--surface-card);cursor:pointer;font-family:inherit}
+.page-body{padding:20px 24px;flex:1}
+
+/* SUMMARY */
+.summary-bar{display:flex;gap:16px;margin-bottom:20px}
+.sum-card{background:var(--surface-card);border-radius:var(--radius-md);padding:14px 18px;box-shadow:var(--shadow-sm);border:1px solid var(--border-soft);flex:1;display:flex;align-items:center;gap:12px}
+.sum-icon{width:40px;height:40px;border-radius:var(--radius-md);display:flex;align-items:center;justify-content:center;font-size:18px}
+.sum-value{font-size:22px;font-weight:800;font-family:'Montserrat'}.sum-label{font-size:11px;color:var(--text-muted)}
+
+/* PACKAGE GRID */
+.pkg-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:16px}
+.pkg-card{background:var(--surface-card);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);border:1px solid var(--border-soft);overflow:hidden;transition:all 200ms;cursor:pointer}
+.pkg-card:hover{box-shadow:var(--shadow-md);transform:translateY(-2px)}
+.pkg-card-header{padding:16px 18px;display:flex;align-items:flex-start;justify-content:space-between}
+.pkg-name{font-size:15px;font-weight:700;font-family:'Montserrat';margin-bottom:2px}
+.pkg-client{font-size:12px;color:var(--text-muted);display:flex;align-items:center;gap:4px}
+.pkg-status{padding:4px 10px;border-radius:8px;font-size:10px;font-weight:700;text-transform:uppercase}
+.pkg-active{background:#DBF0DB;color:var(--vu-leaf-green)}.pkg-expired{background:rgba(100,116,139,.1);color:var(--state-draft)}.pkg-pending{background:rgba(251,140,0,.1);color:var(--vu-hibiscus-orange)}.pkg-consumed{background:rgba(37,99,235,.1);color:var(--state-confirmed)}
+
+.pkg-progress-section{padding:0 18px 12px}
+.pkg-progress{height:8px;background:var(--surface-app);border-radius:4px;overflow:hidden;margin-bottom:4px}
+.pkg-fill{height:100%;border-radius:4px;transition:width 300ms}
+.pkg-fill.green{background:var(--vu-leaf-green)}.pkg-fill.orange{background:var(--vu-hibiscus-orange)}.pkg-fill.red{background:var(--vu-hibiscus-red)}
+.pkg-progress-label{display:flex;justify-content:space-between;font-size:11px;color:var(--text-muted)}
+
+.pkg-card-stats{display:flex;gap:0;border-top:1px solid var(--border-soft)}
+.pkg-stat{flex:1;padding:10px;text-align:center;border-right:1px solid var(--border-soft);font-size:10px}
+.pkg-stat:last-child{border-right:none}
+.pkg-stat-value{font-size:14px;font-weight:700;font-family:'Montserrat'}
+.pkg-stat-label{color:var(--text-muted);text-transform:uppercase;letter-spacing:.3px;font-weight:600}
+
+.pkg-card-footer{padding:10px 18px;border-top:1px solid var(--border-soft);display:flex;gap:6px;background:var(--surface-app)}
+.pkg-action{flex:1;padding:6px;border:1px solid var(--border-soft);border-radius:var(--radius-sm);background:var(--surface-card);cursor:pointer;font-size:11px;font-weight:600;text-align:center;transition:all 120ms;font-family:inherit;color:var(--text-secondary)}
+.pkg-action:hover{border-color:var(--vu-deep-blue);color:var(--vu-deep-blue);background:var(--vu-deep-blue-lightest)}
+.pkg-action.primary{background:var(--vu-deep-blue);color:white;border-color:var(--vu-deep-blue)}
+.pkg-action.primary:hover{background:var(--vu-deep-blue-darker)}
+
+/* TABS */
+.tabs{display:flex;gap:0;background:var(--surface-card);border:1px solid var(--border-soft);border-radius:var(--radius-md);overflow:hidden;margin-bottom:16px}
+.tab{padding:10px 18px;font-size:12px;font-weight:600;cursor:pointer;border:none;background:transparent;color:var(--text-muted);transition:all 150ms;font-family:inherit;display:flex;align-items:center;gap:6px;border-right:1px solid var(--border-soft)}
+.tab:last-child{border-right:none}
+.tab:hover{background:var(--surface-app);color:var(--text-primary)}
+.tab.active{background:var(--vu-deep-blue-lightest);color:var(--vu-deep-blue)}
+.tab-count{font-size:10px;font-weight:700;padding:1px 6px;border-radius:8px;background:var(--surface-app);color:var(--text-muted)}
+.tab.active .tab-count{background:var(--vu-deep-blue);color:white}
+
+::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--border-soft);border-radius:3px}
+</style>
+</head>
+<body>
+<div class="app-wrapper">
+  <aside class="sidebar">
+    <a class="sidebar-logo" href="finance_dashboard.html"><div class="logo-icon"><i class="fas fa-heartbeat"></i></div><div><div class="logo-text">VIET UC</div><div class="logo-sub">Healthcare Platform</div></div></a>
+    <nav class="sidebar-nav">
+      <div class="nav-section-label">Main</div>
+      <a class="nav-item" href="finance_dashboard.html"><i class="fas fa-th-large"></i> Dashboard</a>
+      <a class="nav-item"><i class="fas fa-credit-card"></i> Payments</a>
+      <a class="nav-item" href="invoice_detail.html"><i class="fas fa-file-invoice"></i> Invoices</a>
+      <a class="nav-item active"><i class="fas fa-box"></i> Packages</a>
+      <a class="nav-item"><i class="fas fa-chart-bar"></i> AR Aging</a>
+      <a class="nav-item"><i class="fas fa-file-export"></i> VAT Export</a>
+      <div class="nav-section-label">Reports</div>
+      <a class="nav-item"><i class="fas fa-chart-pie"></i> Revenue</a>
+      <div class="nav-section-label">System</div>
+      <a class="nav-item"><i class="fas fa-cog"></i> Configuration</a>
+    </nav>
+    <div class="sidebar-user"><div class="user-avatar">BT</div><div class="user-info"><div class="user-name">Bui Thi Trang</div><div class="user-role">Finance Manager</div></div></div>
+  </aside>
+
+  <div class="main-content">
+    <header class="top-header">
+      <div class="header-left"><div class="breadcrumb"><a href="finance_dashboard.html">Finance</a><span class="sep"><i class="fas fa-chevron-right" style="font-size:10px"></i></span><span class="current">Service Packages</span></div></div>
+      <div class="header-right">
+        <select class="filter-select"><option>All Clients</option><option>Tran Van Duc</option><option>Pham Minh Anh</option></select>
+        <select class="filter-select"><option>All Types</option><option>Home Visit</option><option>Clinic Visit</option><option>Specialist</option></select>
+        <button class="header-btn btn-primary"><i class="fas fa-plus"></i> Sell Package</button>
+      </div>
+    </header>
+
+    <div class="page-body">
+      <div class="summary-bar">
+        <div class="sum-card"><div class="sum-icon" style="background:#DBF0DB;color:var(--vu-leaf-green)"><i class="fas fa-box-open"></i></div><div><div class="sum-value" style="color:var(--vu-leaf-green)">18</div><div class="sum-label">Active Packages</div></div></div>
+        <div class="sum-card"><div class="sum-icon" style="background:var(--vu-deep-blue-lightest);color:var(--vu-deep-blue)"><i class="fas fa-calendar-check"></i></div><div><div class="sum-value">42</div><div class="sum-label">Remaining Visits</div></div></div>
+        <div class="sum-card"><div class="sum-icon" style="background:#FFF3E0;color:var(--vu-hibiscus-orange)"><i class="fas fa-exclamation-triangle"></i></div><div><div class="sum-value" style="color:var(--vu-hibiscus-orange)">3</div><div class="sum-label">Expiring Soon</div></div></div>
+        <div class="sum-card"><div class="sum-icon" style="background:var(--vu-deep-blue-lightest);color:var(--vu-deep-blue)"><i class="fas fa-coins"></i></div><div><div class="sum-value">86M</div><div class="sum-label">Total Package Revenue</div></div></div>
+      </div>
+
+      <div class="tabs">
+        <button class="tab active">Active <span class="tab-count">18</span></button>
+        <button class="tab">Pending Payment <span class="tab-count">3</span></button>
+        <button class="tab">Fully Consumed <span class="tab-count">12</span></button>
+        <button class="tab">Expired <span class="tab-count">5</span></button>
+        <button class="tab">All <span class="tab-count">38</span></button>
+      </div>
+
+      <div class="pkg-grid">
+        <div class="pkg-card" onclick="window.location='client_profile.html'">
+          <div class="pkg-card-header">
+            <div><div class="pkg-name">General Health Home Visit — 10 Pack</div><div class="pkg-client"><i class="fas fa-user"></i> Tran Van Duc — CLT-0124</div></div>
+            <span class="pkg-status pkg-active">Active</span>
+          </div>
+          <div class="pkg-progress-section">
+            <div class="pkg-progress"><div class="pkg-fill green" style="width:70%"></div></div>
+            <div class="pkg-progress-label"><span>7 of 10 used</span><span>3 remaining</span></div>
+          </div>
+          <div class="pkg-card-stats">
+            <div class="pkg-stat"><div class="pkg-stat-value">20M</div><div class="pkg-stat-label">Price</div></div>
+            <div class="pkg-stat"><div class="pkg-stat-value" style="color:var(--vu-leaf-green)">Paid</div><div class="pkg-stat-label">Payment</div></div>
+            <div class="pkg-stat"><div class="pkg-stat-value">Aug 15</div><div class="pkg-stat-label">Expires</div></div>
+          </div>
+          <div class="pkg-card-footer">
+            <button class="pkg-action" onclick="event.stopPropagation();window.location='booking_wizard.html'"><i class="fas fa-calendar-plus"></i> Book</button>
+            <button class="pkg-action"><i class="fas fa-eye"></i> History</button>
+            <button class="pkg-action"><i class="fas fa-clock-rotate-left"></i> Extend</button>
+          </div>
+        </div>
+
+        <div class="pkg-card">
+          <div class="pkg-card-header">
+            <div><div class="pkg-name">Pediatric Care — 5 Pack</div><div class="pkg-client"><i class="fas fa-user"></i> Tran Van Duc — CLT-0124</div></div>
+            <span class="pkg-status pkg-active">Active</span>
+          </div>
+          <div class="pkg-progress-section">
+            <div class="pkg-progress"><div class="pkg-fill green" style="width:40%"></div></div>
+            <div class="pkg-progress-label"><span>2 of 5 used</span><span>3 remaining</span></div>
+          </div>
+          <div class="pkg-card-stats">
+            <div class="pkg-stat"><div class="pkg-stat-value">8.5M</div><div class="pkg-stat-label">Price</div></div>
+            <div class="pkg-stat"><div class="pkg-stat-value" style="color:var(--vu-leaf-green)">Paid</div><div class="pkg-stat-label">Payment</div></div>
+            <div class="pkg-stat"><div class="pkg-stat-value">Sep 30</div><div class="pkg-stat-label">Expires</div></div>
+          </div>
+          <div class="pkg-card-footer">
+            <button class="pkg-action" onclick="event.stopPropagation();window.location='booking_wizard.html'"><i class="fas fa-calendar-plus"></i> Book</button>
+            <button class="pkg-action"><i class="fas fa-eye"></i> History</button>
+            <button class="pkg-action"><i class="fas fa-clock-rotate-left"></i> Extend</button>
+          </div>
+        </div>
+
+        <div class="pkg-card">
+          <div class="pkg-card-header">
+            <div><div class="pkg-name">Home Visit — 10 Pack</div><div class="pkg-client"><i class="fas fa-user"></i> Nguyen Van Long — CLT-0201</div></div>
+            <span class="pkg-status pkg-pending">Payment Due</span>
+          </div>
+          <div class="pkg-progress-section">
+            <div class="pkg-progress"><div class="pkg-fill orange" style="width:0%"></div></div>
+            <div class="pkg-progress-label"><span>0 of 10 used</span><span>Awaiting payment</span></div>
+          </div>
+          <div class="pkg-card-stats">
+            <div class="pkg-stat"><div class="pkg-stat-value">15M</div><div class="pkg-stat-label">Price</div></div>
+            <div class="pkg-stat"><div class="pkg-stat-value" style="color:var(--vu-hibiscus-orange)">Due</div><div class="pkg-stat-label">Payment</div></div>
+            <div class="pkg-stat"><div class="pkg-stat-value">—</div><div class="pkg-stat-label">Expires</div></div>
+          </div>
+          <div class="pkg-card-footer">
+            <button class="pkg-action primary" onclick="event.stopPropagation();window.location='payment_collection.html'"><i class="fas fa-credit-card"></i> Collect Payment</button>
+            <button class="pkg-action"><i class="fas fa-xmark"></i> Cancel</button>
+          </div>
+        </div>
+
+        <div class="pkg-card">
+          <div class="pkg-card-header">
+            <div><div class="pkg-name">Elder Care — 8 Pack</div><div class="pkg-client"><i class="fas fa-user"></i> Pham Minh Anh — CLT-0089</div></div>
+            <span class="pkg-status pkg-active">Active</span>
+          </div>
+          <div class="pkg-progress-section">
+            <div class="pkg-progress"><div class="pkg-fill red" style="width:87.5%"></div></div>
+            <div class="pkg-progress-label"><span>7 of 8 used</span><span style="color:var(--vu-hibiscus-red);font-weight:600">1 remaining!</span></div>
+          </div>
+          <div class="pkg-card-stats">
+            <div class="pkg-stat"><div class="pkg-stat-value">18M</div><div class="pkg-stat-label">Price</div></div>
+            <div class="pkg-stat"><div class="pkg-stat-value" style="color:var(--vu-leaf-green)">Paid</div><div class="pkg-stat-label">Payment</div></div>
+            <div class="pkg-stat"><div class="pkg-stat-value" style="color:var(--vu-hibiscus-orange)">May 20</div><div class="pkg-stat-label">Expires</div></div>
+          </div>
+          <div class="pkg-card-footer">
+            <button class="pkg-action" onclick="event.stopPropagation();window.location='booking_wizard.html'"><i class="fas fa-calendar-plus"></i> Book Last</button>
+            <button class="pkg-action"><i class="fas fa-plus"></i> Renew</button>
+            <button class="pkg-action"><i class="fas fa-clock-rotate-left"></i> Extend</button>
+          </div>
+        </div>
+
+        <div class="pkg-card">
+          <div class="pkg-card-header">
+            <div><div class="pkg-name">Specialist Consultation — 3 Pack</div><div class="pkg-client"><i class="fas fa-user"></i> Vu Thi Huong — CLT-0178</div></div>
+            <span class="pkg-status pkg-consumed">Consumed</span>
+          </div>
+          <div class="pkg-progress-section">
+            <div class="pkg-progress"><div class="pkg-fill" style="width:100%;background:var(--state-confirmed)"></div></div>
+            <div class="pkg-progress-label"><span>3 of 3 used</span><span>Fully consumed</span></div>
+          </div>
+          <div class="pkg-card-stats">
+            <div class="pkg-stat"><div class="pkg-stat-value">4.5M</div><div class="pkg-stat-label">Price</div></div>
+            <div class="pkg-stat"><div class="pkg-stat-value" style="color:var(--vu-leaf-green)">Paid</div><div class="pkg-stat-label">Payment</div></div>
+            <div class="pkg-stat"><div class="pkg-stat-value">—</div><div class="pkg-stat-label">Completed</div></div>
+          </div>
+          <div class="pkg-card-footer">
+            <button class="pkg-action primary"><i class="fas fa-plus"></i> Sell Renewal</button>
+            <button class="pkg-action"><i class="fas fa-eye"></i> History</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+document.querySelectorAll('.tab').forEach(t=>t.addEventListener('click',function(){document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));this.classList.add('active')}));
+</script>
+</body>
+</html>

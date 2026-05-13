@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Payment Collection — VAFHS</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+:root{--vu-deep-blue:#1565C0;--vu-deep-blue-darker:#1356A9;--vu-deep-blue-darkest:#0D356B;--vu-deep-blue-light:#83C5FA;--vu-deep-blue-lightest:#E4F4FD;--vu-accent-blue:#42A5F5;--vu-hibiscus-red:#E53935;--vu-hibiscus-orange:#FB8C00;--vu-leaf-green:#43A047;--text-primary:#212121;--text-secondary:#424242;--text-muted:#757575;--surface-app:#F5F5F5;--surface-card:#FFFFFF;--border-soft:#E0E0E0;--shadow-sm:0 1px 3px rgba(33,33,33,.08);--shadow-md:0 2px 8px rgba(33,33,33,.12);--shadow-lg:0 4px 16px rgba(33,33,33,.15);--radius-sm:4px;--radius-md:8px;--radius-lg:12px}
+*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Segoe UI',Arial,sans-serif;font-size:13px;color:var(--text-primary);background:var(--surface-app);line-height:1.5;-webkit-font-smoothing:antialiased;display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px}
+h1,h2,h3,h4{font-family:'Montserrat','Segoe UI',Arial,sans-serif;font-weight:600}
+
+.wizard{width:100%;max-width:560px;background:var(--surface-card);border-radius:var(--radius-lg);box-shadow:var(--shadow-lg);border:1px solid var(--border-soft);overflow:hidden}
+.wizard-header{padding:20px 24px;border-bottom:1px solid var(--border-soft);display:flex;align-items:center;justify-content:space-between}
+.wizard-title{font-size:18px;font-weight:700;font-family:'Montserrat';display:flex;align-items:center;gap:10px}
+.wizard-title i{color:var(--vu-leaf-green)}
+.close-btn{width:32px;height:32px;border:1px solid var(--border-soft);border-radius:var(--radius-md);background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--text-muted);font-size:14px;transition:all 120ms}
+.close-btn:hover{border-color:var(--vu-hibiscus-red);color:var(--vu-hibiscus-red)}
+
+.wizard-body{padding:24px}
+
+/* BOOKING CONTEXT */
+.context-card{background:var(--surface-app);border-radius:var(--radius-md);padding:14px;margin-bottom:20px;display:flex;align-items:center;gap:12px}
+.ctx-avatar{width:40px;height:40px;border-radius:50%;background:var(--vu-deep-blue-lightest);color:var(--vu-deep-blue);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;flex-shrink:0}
+.ctx-info{flex:1}.ctx-name{font-size:13px;font-weight:700}.ctx-detail{font-size:11px;color:var(--text-muted)}
+
+/* AMOUNT */
+.amount-display{text-align:center;padding:20px;background:linear-gradient(135deg,var(--vu-deep-blue-lightest),#DBF0DB);border-radius:var(--radius-md);margin-bottom:20px}
+.amount-label{font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;font-weight:600}
+.amount-value{font-size:36px;font-weight:800;font-family:'Montserrat';color:var(--vu-deep-blue);margin:4px 0}
+.amount-breakdown{font-size:11px;color:var(--text-secondary)}
+
+/* METHOD SELECTION */
+.section-label{font-size:12px;font-weight:700;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.section-label i{color:var(--vu-deep-blue);font-size:12px}
+.method-options{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:20px}
+.method-btn{border:2px solid var(--border-soft);border-radius:var(--radius-md);padding:14px 8px;text-align:center;cursor:pointer;transition:all 150ms;background:transparent}
+.method-btn:hover{border-color:var(--vu-deep-blue-light)}
+.method-btn.selected{border-color:var(--vu-deep-blue);background:var(--vu-deep-blue-lightest)}
+.method-btn i{display:block;font-size:20px;color:var(--vu-deep-blue);margin-bottom:4px}
+.method-btn .mb-label{font-size:11px;font-weight:700}
+
+/* FORM */
+.form-group{margin-bottom:14px}
+.form-label{font-size:11px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.4px;margin-bottom:4px}
+.form-input{width:100%;padding:9px 12px;border:1px solid var(--border-soft);border-radius:var(--radius-md);font-size:13px;font-family:inherit;transition:border-color 150ms}
+.form-input:focus{outline:none;border-color:var(--vu-deep-blue);box-shadow:0 0 0 3px rgba(21,101,192,.1)}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+
+/* NURSE CASH SECTION */
+.cash-section{background:rgba(251,140,0,.06);border:1px solid rgba(251,140,0,.2);border-radius:var(--radius-md);padding:14px;margin-bottom:16px}
+.cash-title{font-size:12px;font-weight:700;color:var(--vu-hibiscus-orange);display:flex;align-items:center;gap:6px;margin-bottom:8px}
+.cash-note{font-size:11px;color:var(--text-muted);margin-top:6px}
+
+/* RECEIPT OPTIONS */
+.receipt-options{display:flex;gap:12px;margin-top:16px}
+.receipt-option{display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer}
+.receipt-option input{accent-color:var(--vu-deep-blue)}
+
+.wizard-footer{padding:16px 24px;border-top:1px solid var(--border-soft);display:flex;align-items:center;justify-content:space-between;background:var(--surface-app)}
+.footer-btn{display:flex;align-items:center;gap:6px;padding:10px 24px;border:none;border-radius:var(--radius-md);font-size:13px;font-weight:600;cursor:pointer;transition:all 150ms;font-family:inherit}
+.btn-back{background:transparent;color:var(--text-secondary);border:1px solid var(--border-soft)}.btn-back:hover{border-color:var(--vu-deep-blue);color:var(--vu-deep-blue)}
+.btn-confirm{background:var(--vu-leaf-green);color:white;font-size:14px}.btn-confirm:hover{background:#388E3C;box-shadow:var(--shadow-md)}
+</style>
+</head>
+<body>
+<div class="wizard">
+  <div class="wizard-header">
+    <div class="wizard-title"><i class="fas fa-hand-holding-dollar"></i> Collect Payment</div>
+    <button class="close-btn" onclick="history.back()"><i class="fas fa-xmark"></i></button>
+  </div>
+
+  <div class="wizard-body">
+    <!-- CONTEXT -->
+    <div class="context-card">
+      <div class="ctx-avatar">TD</div>
+      <div class="ctx-info">
+        <div class="ctx-name">Tran Van Duc</div>
+        <div class="ctx-detail">BK-2026-0847 &bull; Home Visit — General Health &bull; May 11, 2026</div>
+      </div>
+    </div>
+
+    <!-- AMOUNT -->
+    <div class="amount-display">
+      <div class="amount-label">Amount Due</div>
+      <div class="amount-value">2,850,000 &#8363;</div>
+      <div class="amount-breakdown">Service: 2,500,000 + Travel: 200,000 + Urgent: 300,000 - Discount: 150,000</div>
+    </div>
+
+    <!-- METHOD -->
+    <div class="section-label"><i class="fas fa-credit-card"></i> Payment Method</div>
+    <div class="method-options">
+      <div class="method-btn selected" onclick="selectMethod(this,'cash')"><i class="fas fa-money-bill-wave"></i><div class="mb-label">Cash</div></div>
+      <div class="method-btn" onclick="selectMethod(this,'bank')"><i class="fas fa-building-columns"></i><div class="mb-label">Bank Transfer</div></div>
+      <div class="method-btn" onclick="selectMethod(this,'qr')"><i class="fas fa-qrcode"></i><div class="mb-label">QR Pay</div></div>
+      <div class="method-btn" onclick="selectMethod(this,'card')"><i class="fas fa-credit-card"></i><div class="mb-label">Card</div></div>
+    </div>
+
+    <!-- CASH SPECIFIC -->
+    <div class="cash-section" id="cashSection">
+      <div class="cash-title"><i class="fas fa-info-circle"></i> Cash Collection Details</div>
+      <div class="form-row">
+        <div class="form-group" style="margin-bottom:0">
+          <div class="form-label">Collected By</div>
+          <select class="form-input"><option>Nguyen Thi Mai (Nurse)</option><option>Le Thi Hoa (Nurse)</option><option>Office — Direct</option></select>
+        </div>
+        <div class="form-group" style="margin-bottom:0">
+          <div class="form-label">Amount Received</div>
+          <input class="form-input" type="text" value="2,850,000">
+        </div>
+      </div>
+      <div class="cash-note"><i class="fas fa-exclamation-circle" style="color:var(--vu-hibiscus-orange)"></i> Cash collected by nurse must be handed over to Operations Manager within 24 hours.</div>
+    </div>
+
+    <!-- BANK SPECIFIC (hidden by default) -->
+    <div id="bankSection" style="display:none">
+      <div class="form-row">
+        <div class="form-group">
+          <div class="form-label">Bank Name</div>
+          <select class="form-input"><option>Vietcombank</option><option>BIDV</option><option>Techcombank</option><option>VPBank</option><option>Other</option></select>
+        </div>
+        <div class="form-group">
+          <div class="form-label">Transfer Date</div>
+          <input class="form-input" type="date" value="2026-05-12">
+        </div>
+      </div>
+      <div class="form-group">
+        <div class="form-label">Reference / Transaction ID</div>
+        <input class="form-input" type="text" placeholder="Enter bank transaction reference...">
+      </div>
+    </div>
+
+    <div class="form-group">
+      <div class="form-label">Notes</div>
+      <input class="form-input" type="text" placeholder="Optional payment notes...">
+    </div>
+
+    <!-- RECEIPT -->
+    <div class="section-label" style="margin-top:16px"><i class="fas fa-receipt"></i> Receipt Options</div>
+    <div class="receipt-options">
+      <label class="receipt-option"><input type="radio" name="receipt" checked> Retail Receipt (Phieu thu)</label>
+      <label class="receipt-option"><input type="radio" name="receipt"> VAT Invoice (Hoa don)</label>
+      <label class="receipt-option"><input type="radio" name="receipt"> No Receipt</label>
+    </div>
+  </div>
+
+  <div class="wizard-footer">
+    <button class="footer-btn btn-back" onclick="history.back()"><i class="fas fa-arrow-left"></i> Cancel</button>
+    <button class="footer-btn btn-confirm" onclick="alert('Payment recorded successfully!');window.location='finance_dashboard.html'"><i class="fas fa-check-circle"></i> Confirm Payment</button>
+  </div>
+</div>
+
+<script>
+function selectMethod(el, method) {
+  document.querySelectorAll('.method-btn').forEach(b => b.classList.remove('selected'));
+  el.classList.add('selected');
+  document.getElementById('cashSection').style.display = method === 'cash' ? 'block' : 'none';
+  document.getElementById('bankSection').style.display = (method === 'bank' || method === 'qr') ? 'block' : 'none';
+}
+</script>
+</body>
+</html>

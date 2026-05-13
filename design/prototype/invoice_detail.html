@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Invoice Detail — VAFHS</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+:root{--vu-deep-blue:#1565C0;--vu-deep-blue-darker:#1356A9;--vu-deep-blue-darkest:#0D356B;--vu-deep-blue-light:#83C5FA;--vu-deep-blue-lightest:#E4F4FD;--vu-accent-blue:#42A5F5;--vu-hibiscus-red:#E53935;--vu-hibiscus-orange:#FB8C00;--vu-leaf-green:#43A047;--text-primary:#212121;--text-secondary:#424242;--text-muted:#757575;--surface-app:#F5F5F5;--surface-card:#FFFFFF;--border-soft:#E0E0E0;--shadow-sm:0 1px 3px rgba(33,33,33,.08);--shadow-md:0 2px 8px rgba(33,33,33,.12);--shadow-lg:0 4px 16px rgba(33,33,33,.15);--radius-sm:4px;--radius-md:8px;--radius-lg:12px}
+*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Segoe UI',Arial,sans-serif;font-size:13px;color:var(--text-primary);background:var(--surface-app);line-height:1.5;-webkit-font-smoothing:antialiased}
+h1,h2,h3,h4{font-family:'Montserrat','Segoe UI',Arial,sans-serif;font-weight:600}
+
+/* LAYOUT */
+.page-layout{display:grid;grid-template-columns:220px 1fr;min-height:100vh}
+.sidebar{background:var(--vu-deep-blue-darkest);color:white;padding:20px 0}
+.sidebar-brand{padding:0 20px 20px;font-family:'Montserrat';font-weight:800;font-size:16px;border-bottom:1px solid rgba(255,255,255,.1);margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.sidebar-brand i{color:var(--vu-deep-blue-light)}
+.nav-section{padding:0 12px;margin-bottom:16px}
+.nav-label{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:rgba(255,255,255,.4);padding:8px 8px 4px;font-weight:600}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:var(--radius-md);color:rgba(255,255,255,.7);font-size:13px;text-decoration:none;transition:all 150ms;cursor:pointer}
+.nav-item:hover{background:rgba(255,255,255,.08);color:white}
+.nav-item.active{background:rgba(255,255,255,.12);color:white;font-weight:600}
+.nav-item i{width:18px;text-align:center;font-size:13px}
+
+.main{overflow-y:auto}
+.topbar{background:var(--surface-card);border-bottom:1px solid var(--border-soft);padding:0 24px;height:52px;display:flex;align-items:center;justify-content:space-between}
+.breadcrumb{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--text-muted)}
+.breadcrumb a{color:var(--vu-deep-blue);text-decoration:none;font-weight:500}
+.breadcrumb a:hover{text-decoration:underline}
+.topbar-actions{display:flex;align-items:center;gap:8px}
+.top-btn{display:flex;align-items:center;gap:6px;padding:7px 14px;border:1px solid var(--border-soft);border-radius:var(--radius-md);background:var(--surface-card);font-size:12px;font-weight:600;cursor:pointer;transition:all 150ms;color:var(--text-secondary);font-family:inherit}
+.top-btn:hover{border-color:var(--vu-deep-blue);color:var(--vu-deep-blue)}
+.top-btn.primary{background:var(--vu-deep-blue);color:white;border-color:var(--vu-deep-blue)}
+.top-btn.primary:hover{background:var(--vu-deep-blue-darker)}
+.top-btn.green{background:var(--vu-leaf-green);color:white;border-color:var(--vu-leaf-green)}
+.top-btn.green:hover{background:#388E3C}
+.top-btn.red{color:var(--vu-hibiscus-red);border-color:var(--vu-hibiscus-red)}
+.top-btn.red:hover{background:rgba(229,57,53,.06)}
+.top-btn.orange{background:var(--vu-hibiscus-orange);color:white;border-color:var(--vu-hibiscus-orange)}
+.top-btn.orange:hover{background:#EF6C00}
+
+.content{padding:24px;max-width:1100px}
+
+/* INVOICE HEADER */
+.inv-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:24px}
+.inv-title-group{display:flex;align-items:center;gap:16px}
+.inv-number{font-family:'Montserrat';font-size:22px;font-weight:800;color:var(--text-primary)}
+.inv-status{display:inline-flex;align-items:center;gap:6px;padding:5px 14px;border-radius:16px;font-size:12px;font-weight:700}
+.status-draft{background:rgba(158,158,158,.12);color:#757575}
+.status-posted{background:rgba(21,101,192,.1);color:var(--vu-deep-blue)}
+.status-paid{background:rgba(67,160,71,.12);color:var(--vu-leaf-green)}
+.status-overdue{background:rgba(229,57,53,.1);color:var(--vu-hibiscus-red)}
+.status-cancelled{background:rgba(158,158,158,.12);color:#9E9E9E}
+.inv-meta{text-align:right}
+.inv-meta div{font-size:12px;color:var(--text-muted);margin-bottom:2px}
+.inv-meta .inv-amount{font-family:'Montserrat';font-size:28px;font-weight:800;color:var(--vu-deep-blue)}
+
+/* CARDS */
+.card{background:var(--surface-card);border:1px solid var(--border-soft);border-radius:var(--radius-lg);overflow:hidden;margin-bottom:20px}
+.card-header{padding:14px 20px;border-bottom:1px solid var(--border-soft);display:flex;align-items:center;justify-content:space-between}
+.card-title{font-family:'Montserrat';font-size:14px;font-weight:700;display:flex;align-items:center;gap:8px}
+.card-title i{color:var(--vu-deep-blue)}
+.card-body{padding:20px}
+
+/* INFO GRID */
+.info-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.info-block{display:flex;flex-direction:column}
+.info-label{font-size:10px;text-transform:uppercase;letter-spacing:.4px;color:var(--text-muted);font-weight:600;margin-bottom:4px}
+.info-value{font-size:13px;font-weight:600}
+.info-value a{color:var(--vu-deep-blue);text-decoration:none}.info-value a:hover{text-decoration:underline}
+
+/* LINE ITEMS TABLE */
+.line-table{width:100%;border-collapse:collapse}
+.line-table th{text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.4px;color:var(--text-muted);font-weight:600;padding:10px 12px;border-bottom:2px solid var(--border-soft);background:var(--surface-app)}
+.line-table td{padding:12px;border-bottom:1px solid var(--border-soft);font-size:13px;vertical-align:middle}
+.line-table tr:hover{background:rgba(21,101,192,.02)}
+.line-table .num{text-align:right;font-family:'Montserrat';font-weight:600}
+.line-table .total-row td{border-top:2px solid var(--border-soft);font-weight:700;background:var(--surface-app)}
+.line-table .grand-total td{font-size:16px;color:var(--vu-deep-blue);border-top:2px solid var(--vu-deep-blue)}
+.line-desc{font-size:11px;color:var(--text-muted);margin-top:2px}
+.line-edit{display:flex;gap:4px;visibility:hidden}
+tr:hover .line-edit{visibility:visible}
+.line-edit button{border:none;background:transparent;cursor:pointer;color:var(--text-muted);font-size:12px;padding:2px 6px;border-radius:var(--radius-sm)}
+.line-edit button:hover{color:var(--vu-deep-blue);background:var(--vu-deep-blue-lightest)}
+
+/* PAYMENT INFO */
+.payment-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.payment-card{background:var(--surface-app);border-radius:var(--radius-md);padding:16px}
+.payment-card-title{font-size:12px;font-weight:700;margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.payment-card-title i{font-size:12px}
+.pay-row{display:flex;justify-content:space-between;padding:4px 0;font-size:12px}
+.pay-label{color:var(--text-muted)}.pay-value{font-weight:600}
+.pay-value.green{color:var(--vu-leaf-green)}.pay-value.red{color:var(--vu-hibiscus-red)}.pay-value.blue{color:var(--vu-deep-blue)}
+
+/* VAT / RED INVOICE */
+.vat-section{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.vat-card{background:var(--surface-app);border-radius:var(--radius-md);padding:16px}
+.vat-status{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.vat-badge{font-size:11px;padding:3px 10px;border-radius:10px;font-weight:600}
+.vat-row{display:flex;justify-content:space-between;padding:4px 0;font-size:12px}
+.misa-card{border:1px solid rgba(21,101,192,.2)}
+
+/* TIMELINE */
+.timeline{position:relative;padding-left:24px}
+.timeline::before{content:'';position:absolute;left:8px;top:0;bottom:0;width:2px;background:var(--border-soft)}
+.timeline-item{position:relative;padding-bottom:16px}
+.timeline-item:last-child{padding-bottom:0}
+.timeline-dot{position:absolute;left:-20px;top:2px;width:12px;height:12px;border-radius:50%;border:2px solid white;box-shadow:0 0 0 2px var(--border-soft)}
+.timeline-content{font-size:12px}
+.timeline-time{font-size:10px;color:var(--text-muted)}
+</style>
+</head>
+<body>
+<div class="page-layout">
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-brand"><i class="fas fa-heartbeat"></i> VAFHS</div>
+    <nav class="nav-section">
+      <div class="nav-label">Finance</div>
+      <a href="finance_dashboard.html" class="nav-item"><i class="fas fa-chart-pie"></i> Dashboard</a>
+      <a href="finance_dashboard.html" class="nav-item"><i class="fas fa-hand-holding-dollar"></i> Payments</a>
+      <a class="nav-item active"><i class="fas fa-file-invoice"></i> Invoices</a>
+      <a href="package_management.html" class="nav-item"><i class="fas fa-box-open"></i> Packages</a>
+      <a href="finance_dashboard.html" class="nav-item"><i class="fas fa-chart-line"></i> AR Aging</a>
+      <a class="nav-item"><i class="fas fa-file-export"></i> VAT Export</a>
+      <a class="nav-item"><i class="fas fa-chart-bar"></i> Reports</a>
+    </nav>
+    <nav class="nav-section">
+      <div class="nav-label">Quick Links</div>
+      <a href="ops_dashboard.html" class="nav-item"><i class="fas fa-headset"></i> Operations</a>
+      <a href="sales_dashboard.html" class="nav-item"><i class="fas fa-bullhorn"></i> Sales</a>
+      <a href="admin_dashboard.html" class="nav-item"><i class="fas fa-shield-halved"></i> Admin</a>
+    </nav>
+  </aside>
+
+  <div class="main">
+    <!-- TOP BAR -->
+    <div class="topbar">
+      <div class="breadcrumb">
+        <a href="finance_dashboard.html">Finance</a>
+        <i class="fas fa-chevron-right" style="font-size:10px"></i>
+        <a href="finance_dashboard.html">Invoices</a>
+        <i class="fas fa-chevron-right" style="font-size:10px"></i>
+        <span>INV-2026-0392</span>
+      </div>
+      <div class="topbar-actions">
+        <button class="top-btn"><i class="fas fa-print"></i> Print</button>
+        <button class="top-btn"><i class="fas fa-paper-plane"></i> Send</button>
+        <button class="top-btn"><i class="fas fa-copy"></i> Duplicate</button>
+        <button class="top-btn orange"><i class="fas fa-file-invoice"></i> Post Invoice</button>
+        <button class="top-btn green" onclick="window.location='payment_collection.html'"><i class="fas fa-hand-holding-dollar"></i> Register Payment</button>
+        <div style="position:relative;display:inline-block">
+          <button class="top-btn" onclick="document.getElementById('moreMenu').style.display=document.getElementById('moreMenu').style.display==='block'?'none':'block'"><i class="fas fa-ellipsis-v"></i></button>
+          <div id="moreMenu" style="display:none;position:absolute;right:0;top:36px;background:white;border:1px solid var(--border-soft);border-radius:var(--radius-md);box-shadow:var(--shadow-lg);min-width:200px;z-index:100">
+            <div style="padding:8px 4px">
+              <div class="nav-item" style="color:var(--text-secondary)"><i class="fas fa-file-pdf"></i> Export PDF</div>
+              <div class="nav-item" style="color:var(--text-secondary)"><i class="fas fa-file-excel"></i> Export Excel</div>
+              <div class="nav-item" style="color:var(--text-secondary)"><i class="fas fa-receipt"></i> Issue Red Invoice</div>
+              <div class="nav-item" style="color:var(--text-secondary)"><i class="fas fa-sync"></i> Sync to MISA</div>
+              <div class="nav-item" style="color:var(--text-secondary)"><i class="fas fa-credit-card"></i> Add Credit Note</div>
+              <div style="border-top:1px solid var(--border-soft);margin:4px 0"></div>
+              <div class="nav-item" style="color:var(--vu-hibiscus-red)"><i class="fas fa-ban"></i> Cancel Invoice</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="content">
+      <!-- INVOICE HEADER -->
+      <div class="inv-header">
+        <div>
+          <div class="inv-title-group">
+            <div class="inv-number">INV-2026-0392</div>
+            <div class="inv-status status-posted"><i class="fas fa-circle" style="font-size:6px"></i> Posted</div>
+          </div>
+          <div style="font-size:12px;color:var(--text-muted);margin-top:4px">
+            Home Visit — General Health &bull; <a href="ops_booking_detail.html" style="color:var(--vu-deep-blue)">BK-2026-0847</a>
+          </div>
+        </div>
+        <div class="inv-meta">
+          <div>Invoice Date: May 11, 2026</div>
+          <div>Due Date: <strong style="color:var(--vu-hibiscus-orange)">May 25, 2026</strong></div>
+          <div class="inv-amount">2,850,000 &#8363;</div>
+        </div>
+      </div>
+
+      <!-- CLIENT & SERVICE INFO -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title"><i class="fas fa-user"></i> Invoice Details</div>
+        </div>
+        <div class="card-body">
+          <div class="info-grid">
+            <div class="info-block">
+              <div class="info-label">Client</div>
+              <div class="info-value"><a href="client_profile.html">Tran Van Duc</a></div>
+              <div style="font-size:11px;color:var(--text-muted)">45 Lieu Giai, Ba Dinh, Hanoi</div>
+            </div>
+            <div class="info-block">
+              <div class="info-label">Tax ID</div>
+              <div class="info-value">0108567234</div>
+            </div>
+            <div class="info-block">
+              <div class="info-label">Payment Terms</div>
+              <div class="info-value">14 days</div>
+            </div>
+            <div class="info-block">
+              <div class="info-label">Service Provider</div>
+              <div class="info-value">Nguyen Thi Mai (Nurse)</div>
+            </div>
+            <div class="info-block">
+              <div class="info-label">Facility</div>
+              <div class="info-value">Hanoi — Ba Dinh</div>
+            </div>
+            <div class="info-block">
+              <div class="info-label">Currency</div>
+              <div class="info-value">VND (&#8363;)</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- LINE ITEMS -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title"><i class="fas fa-list"></i> Invoice Lines</div>
+          <button class="top-btn" style="font-size:11px"><i class="fas fa-plus"></i> Add Line</button>
+        </div>
+        <table class="line-table">
+          <thead>
+            <tr>
+              <th style="width:40px">#</th>
+              <th>Description</th>
+              <th style="width:70px">Qty</th>
+              <th style="width:100px">Unit Price</th>
+              <th style="width:60px">Tax</th>
+              <th style="width:50px">Disc.</th>
+              <th style="width:120px" class="num">Subtotal</th>
+              <th style="width:50px"></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>1</td>
+              <td>
+                <div>Home Visit — General Health Check</div>
+                <div class="line-desc">2-hour comprehensive health assessment at client's residence</div>
+              </td>
+              <td>1</td>
+              <td class="num">2,500,000</td>
+              <td>0%</td>
+              <td>0%</td>
+              <td class="num">2,500,000</td>
+              <td><div class="line-edit"><button title="Edit"><i class="fas fa-pen"></i></button><button title="Delete"><i class="fas fa-trash"></i></button></div></td>
+            </tr>
+            <tr>
+              <td>2</td>
+              <td>
+                <div>Travel Fee — Ba Dinh District</div>
+                <div class="line-desc">Round-trip transportation to client location</div>
+              </td>
+              <td>1</td>
+              <td class="num">200,000</td>
+              <td>0%</td>
+              <td>0%</td>
+              <td class="num">200,000</td>
+              <td><div class="line-edit"><button title="Edit"><i class="fas fa-pen"></i></button><button title="Delete"><i class="fas fa-trash"></i></button></div></td>
+            </tr>
+            <tr>
+              <td>3</td>
+              <td>
+                <div>Urgent Service Surcharge</div>
+                <div class="line-desc">Same-day booking priority surcharge</div>
+              </td>
+              <td>1</td>
+              <td class="num">300,000</td>
+              <td>0%</td>
+              <td>0%</td>
+              <td class="num">300,000</td>
+              <td><div class="line-edit"><button title="Edit"><i class="fas fa-pen"></i></button><button title="Delete"><i class="fas fa-trash"></i></button></div></td>
+            </tr>
+            <tr>
+              <td>4</td>
+              <td>
+                <div>Loyalty Discount — Returning Client</div>
+                <div class="line-desc">5% discount for returning client (10+ visits)</div>
+              </td>
+              <td>1</td>
+              <td class="num">-150,000</td>
+              <td>0%</td>
+              <td>0%</td>
+              <td class="num">-150,000</td>
+              <td><div class="line-edit"><button title="Edit"><i class="fas fa-pen"></i></button><button title="Delete"><i class="fas fa-trash"></i></button></div></td>
+            </tr>
+          </tbody>
+          <tfoot>
+            <tr class="total-row">
+              <td colspan="6" style="text-align:right">Subtotal</td>
+              <td class="num">2,850,000</td>
+              <td></td>
+            </tr>
+            <tr class="total-row">
+              <td colspan="6" style="text-align:right">Tax (0%)</td>
+              <td class="num">0</td>
+              <td></td>
+            </tr>
+            <tr class="total-row grand-total">
+              <td colspan="6" style="text-align:right">Total</td>
+              <td class="num">2,850,000 &#8363;</td>
+              <td></td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+
+      <!-- PAYMENT & VAT -->
+      <div class="payment-grid">
+        <!-- Payment Status -->
+        <div class="card" style="margin-bottom:0">
+          <div class="card-header">
+            <div class="card-title"><i class="fas fa-hand-holding-dollar"></i> Payment Status</div>
+          </div>
+          <div class="card-body">
+            <div class="pay-row"><span class="pay-label">Invoice Total</span><span class="pay-value blue">2,850,000 &#8363;</span></div>
+            <div class="pay-row"><span class="pay-label">Amount Paid</span><span class="pay-value green">0 &#8363;</span></div>
+            <div class="pay-row" style="border-top:1px solid var(--border-soft);padding-top:8px;margin-top:4px"><span class="pay-label" style="font-weight:700">Amount Due</span><span class="pay-value red" style="font-size:16px">2,850,000 &#8363;</span></div>
+            <div style="margin-top:12px">
+              <div class="pay-row"><span class="pay-label">Payment Type</span><span class="pay-value">Pay After Service</span></div>
+              <div class="pay-row"><span class="pay-label">Method</span><span class="pay-value">—</span></div>
+              <div class="pay-row"><span class="pay-label">Due Date</span><span class="pay-value" style="color:var(--vu-hibiscus-orange)">May 25, 2026</span></div>
+            </div>
+            <a href="payment_collection.html" style="display:block;text-align:center;padding:10px;margin-top:14px;background:var(--vu-leaf-green);color:white;border-radius:var(--radius-md);font-size:13px;font-weight:600;text-decoration:none"><i class="fas fa-hand-holding-dollar"></i> Collect Payment</a>
+          </div>
+        </div>
+
+        <!-- VAT / Red Invoice -->
+        <div class="card" style="margin-bottom:0">
+          <div class="card-header">
+            <div class="card-title"><i class="fas fa-file-invoice-dollar"></i> VAT / Red Invoice</div>
+          </div>
+          <div class="card-body">
+            <div class="vat-section" style="grid-template-columns:1fr">
+              <!-- Red Invoice Status -->
+              <div class="vat-card">
+                <div class="vat-status">
+                  <i class="fas fa-file-invoice" style="color:var(--vu-hibiscus-red)"></i>
+                  <span style="font-weight:700;font-size:13px">Red Invoice (Hoa Don Do)</span>
+                  <span class="vat-badge" style="background:rgba(158,158,158,.12);color:#757575;margin-left:auto">Not Issued</span>
+                </div>
+                <div class="vat-row"><span class="pay-label">Invoice Type</span><span class="pay-value">—</span></div>
+                <div class="vat-row"><span class="pay-label">Red Invoice No.</span><span class="pay-value">—</span></div>
+                <div class="vat-row"><span class="pay-label">Issue Date</span><span class="pay-value">—</span></div>
+                <button style="width:100%;margin-top:10px;padding:8px;border:1px solid var(--vu-hibiscus-red);border-radius:var(--radius-md);background:transparent;cursor:pointer;font-size:12px;color:var(--vu-hibiscus-red);font-weight:600"><i class="fas fa-file-invoice"></i> Issue Red Invoice</button>
+              </div>
+
+              <!-- MISA Sync -->
+              <div class="vat-card misa-card" style="margin-top:12px">
+                <div class="vat-status">
+                  <i class="fas fa-sync" style="color:var(--vu-deep-blue)"></i>
+                  <span style="font-weight:700;font-size:13px">MISA Accounting</span>
+                  <span class="vat-badge" style="background:rgba(251,140,0,.12);color:var(--vu-hibiscus-orange);margin-left:auto">Pending Sync</span>
+                </div>
+                <div class="vat-row"><span class="pay-label">MISA Invoice No.</span><span class="pay-value">—</span></div>
+                <div class="vat-row"><span class="pay-label">Last Sync</span><span class="pay-value">Never</span></div>
+                <div class="vat-row"><span class="pay-label">Sync Status</span><span class="pay-value" style="color:var(--vu-hibiscus-orange)">Not synced</span></div>
+                <button style="width:100%;margin-top:10px;padding:8px;border:1px solid var(--vu-deep-blue);border-radius:var(--radius-md);background:transparent;cursor:pointer;font-size:12px;color:var(--vu-deep-blue);font-weight:600"><i class="fas fa-sync"></i> Sync to MISA</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Related Records & Timeline -->
+      <div class="payment-grid" style="margin-top:20px">
+        <!-- Related Records -->
+        <div class="card" style="margin-bottom:0">
+          <div class="card-header">
+            <div class="card-title"><i class="fas fa-link"></i> Related Records</div>
+          </div>
+          <div class="card-body">
+            <div class="pay-row" style="padding:6px 0">
+              <span class="pay-label"><i class="fas fa-calendar-check" style="width:18px;color:var(--vu-deep-blue)"></i> Booking</span>
+              <span class="pay-value"><a href="ops_booking_detail.html" style="color:var(--vu-deep-blue);text-decoration:none">BK-2026-0847</a></span>
+            </div>
+            <div class="pay-row" style="padding:6px 0">
+              <span class="pay-label"><i class="fas fa-user" style="width:18px;color:var(--vu-deep-blue)"></i> Client</span>
+              <span class="pay-value"><a href="client_profile.html" style="color:var(--vu-deep-blue);text-decoration:none">Tran Van Duc</a></span>
+            </div>
+            <div class="pay-row" style="padding:6px 0">
+              <span class="pay-label"><i class="fas fa-box-open" style="width:18px;color:var(--vu-deep-blue)"></i> Package</span>
+              <span class="pay-value"><a href="package_management.html" style="color:var(--vu-deep-blue);text-decoration:none">Gold Care (Visit 4/12)</a></span>
+            </div>
+            <div class="pay-row" style="padding:6px 0">
+              <span class="pay-label"><i class="fas fa-file-alt" style="width:18px;color:var(--vu-deep-blue)"></i> Sale Order</span>
+              <span class="pay-value"><a href="#" style="color:var(--vu-deep-blue);text-decoration:none">SO-2026-0128</a></span>
+            </div>
+            <div class="pay-row" style="padding:6px 0">
+              <span class="pay-label"><i class="fas fa-user-md" style="width:18px;color:var(--vu-deep-blue)"></i> Referral</span>
+              <span class="pay-value">Dr. Le Van Hung (5%)</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Activity Timeline -->
+        <div class="card" style="margin-bottom:0">
+          <div class="card-header">
+            <div class="card-title"><i class="fas fa-clock-rotate-left"></i> Invoice Timeline</div>
+          </div>
+          <div class="card-body">
+            <div class="timeline">
+              <div class="timeline-item">
+                <div class="timeline-dot" style="background:var(--vu-deep-blue)"></div>
+                <div class="timeline-content">
+                  <div><strong>Invoice posted</strong> by Le Thi Loan</div>
+                  <div class="timeline-time">May 11, 2026 — 15:30</div>
+                </div>
+              </div>
+              <div class="timeline-item">
+                <div class="timeline-dot" style="background:var(--vu-leaf-green)"></div>
+                <div class="timeline-content">
+                  <div><strong>Invoice created</strong> from BK-2026-0847</div>
+                  <div class="timeline-time">May 11, 2026 — 14:45</div>
+                </div>
+              </div>
+              <div class="timeline-item">
+                <div class="timeline-dot" style="background:var(--vu-hibiscus-orange)"></div>
+                <div class="timeline-content">
+                  <div><strong>Email sent</strong> to tranduc@email.vn</div>
+                  <div class="timeline-time">May 11, 2026 — 15:32</div>
+                </div>
+              </div>
+              <div class="timeline-item">
+                <div class="timeline-dot" style="background:var(--vu-accent-blue)"></div>
+                <div class="timeline-content">
+                  <div><strong>Payment reminder</strong> scheduled for May 20</div>
+                  <div class="timeline-time">May 11, 2026 — 15:32</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Notes -->
+      <div class="card" style="margin-top:20px">
+        <div class="card-header">
+          <div class="card-title"><i class="fas fa-comment-dots"></i> Notes &amp; Communication</div>
+        </div>
+        <div class="card-body">
+          <div style="display:flex;gap:10px">
+            <input type="text" placeholder="Add a note or log an activity..." style="flex:1;padding:10px 14px;border:1px solid var(--border-soft);border-radius:var(--radius-md);font-size:13px;font-family:inherit">
+            <button class="top-btn primary"><i class="fas fa-paper-plane"></i> Add Note</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+document.addEventListener('click', function(e) {
+  if (!e.target.closest('#moreMenu') && !e.target.closest('.top-btn')) {
+    document.getElementById('moreMenu').style.display = 'none';
+  }
+});
+</script>
+</body>
+</html>

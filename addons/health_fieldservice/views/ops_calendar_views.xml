@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Operations Calendar Action -->
+    <record id="action_ops_calendar" model="ir.actions.client">
+        <field name="name">Operations Calendar</field>
+        <field name="tag">ops_calendar</field>
+        <field name="target">fullscreen</field>
+    </record>
+
+</odoo>

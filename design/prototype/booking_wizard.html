@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>New Booking — VAFHS</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+:root{--vu-deep-blue:#1565C0;--vu-deep-blue-darker:#1356A9;--vu-deep-blue-darkest:#0D356B;--vu-deep-blue-light:#83C5FA;--vu-deep-blue-lightest:#E4F4FD;--vu-accent-blue:#42A5F5;--vu-hibiscus-red:#E53935;--vu-hibiscus-orange:#FB8C00;--vu-leaf-green:#43A047;--state-draft:#64748b;--state-confirmed:#2563eb;--state-assigned:#7c3aed;--state-active:#ea580c;--state-completed:#16a34a;--state-cancelled:#dc2626;--text-primary:#212121;--text-secondary:#424242;--text-muted:#757575;--surface-app:#F5F5F5;--surface-card:#FFFFFF;--border-soft:#E0E0E0;--border-strong:#BDBDBD;--shadow-sm:0 1px 3px rgba(33,33,33,.08);--shadow-md:0 2px 8px rgba(33,33,33,.12);--shadow-lg:0 4px 16px rgba(33,33,33,.15);--radius-sm:4px;--radius-md:8px;--radius-lg:12px}
+*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Segoe UI',Arial,sans-serif;font-size:13px;color:var(--text-primary);background:var(--surface-app);line-height:1.5;-webkit-font-smoothing:antialiased;display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px}
+h1,h2,h3,h4{font-family:'Montserrat','Segoe UI',Arial,sans-serif;font-weight:600}
+
+/* WIZARD CONTAINER */
+.wizard{width:100%;max-width:720px;background:var(--surface-card);border-radius:var(--radius-lg);box-shadow:var(--shadow-lg);border:1px solid var(--border-soft);overflow:hidden}
+.wizard-header{padding:20px 28px;border-bottom:1px solid var(--border-soft);display:flex;align-items:center;justify-content:space-between}
+.wizard-title{font-size:18px;font-weight:700;font-family:'Montserrat';display:flex;align-items:center;gap:10px}
+.wizard-title i{color:var(--vu-deep-blue)}
+.close-btn{width:32px;height:32px;border:1px solid var(--border-soft);border-radius:var(--radius-md);background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--text-muted);transition:all 120ms;font-size:14px}
+.close-btn:hover{border-color:var(--vu-hibiscus-red);color:var(--vu-hibiscus-red);background:rgba(229,57,53,.05)}
+
+/* STEPPER */
+.stepper{display:flex;align-items:center;padding:16px 28px;background:var(--surface-app);border-bottom:1px solid var(--border-soft)}
+.step{display:flex;align-items:center;gap:8px;flex:1}
+.step:not(:last-child)::after{content:'';flex:1;height:2px;background:var(--border-soft);margin:0 12px}
+.step.completed:not(:last-child)::after{background:var(--vu-leaf-green)}
+.step.active:not(:last-child)::after{background:linear-gradient(90deg,var(--vu-deep-blue) 50%,var(--border-soft) 50%)}
+.step-num{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;border:2px solid var(--border-soft);background:var(--surface-card);color:var(--text-muted);flex-shrink:0}
+.step.completed .step-num{background:var(--vu-leaf-green);border-color:var(--vu-leaf-green);color:white}
+.step.active .step-num{background:var(--vu-deep-blue);border-color:var(--vu-deep-blue);color:white}
+.step-info{min-width:0}.step-name{font-size:12px;font-weight:600;color:var(--text-muted)}.step.active .step-name{color:var(--vu-deep-blue)}.step.completed .step-name{color:var(--vu-leaf-green)}
+.step-desc{font-size:10px;color:var(--text-muted)}
+
+/* BODY */
+.wizard-body{padding:24px 28px;min-height:380px}
+
+/* FORM */
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px 20px;margin-bottom:14px}
+.form-full{grid-column:1/-1}
+.form-group{display:flex;flex-direction:column}
+.form-label{font-size:11px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.4px;margin-bottom:4px}
+.form-label .required{color:var(--vu-hibiscus-red)}
+.form-input{padding:9px 12px;border:1px solid var(--border-soft);border-radius:var(--radius-md);font-size:13px;font-family:inherit;transition:border-color 150ms;background:var(--surface-card);color:var(--text-primary)}
+.form-input:focus{outline:none;border-color:var(--vu-deep-blue);box-shadow:0 0 0 3px rgba(21,101,192,.1)}
+.form-input::placeholder{color:var(--text-muted)}
+select.form-input{cursor:pointer;appearance:auto}
+textarea.form-input{resize:vertical;min-height:60px}
+
+/* CLIENT SEARCH */
+.client-search-wrap{position:relative}
+.client-results{position:absolute;top:100%;left:0;right:0;background:var(--surface-card);border:1px solid var(--border-soft);border-top:none;border-radius:0 0 var(--radius-md) var(--radius-md);box-shadow:var(--shadow-md);z-index:20;display:none}
+.client-results.show{display:block}
+.client-result{display:flex;align-items:center;gap:10px;padding:8px 12px;cursor:pointer;transition:background 100ms}
+.client-result:hover{background:var(--vu-deep-blue-lightest)}
+.cr-avatar{width:30px;height:30px;border-radius:50%;background:var(--vu-deep-blue-lightest);color:var(--vu-deep-blue);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0}
+.cr-info{flex:1}.cr-name{font-size:12px;font-weight:600}.cr-phone{font-size:11px;color:var(--text-muted)}
+.cr-new{padding:10px 12px;border-top:1px solid var(--border-soft);font-size:12px;color:var(--vu-deep-blue);font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px}
+.cr-new:hover{background:var(--vu-deep-blue-lightest)}
+
+/* SERVICE CARDS */
+.service-options{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.service-option{border:2px solid var(--border-soft);border-radius:var(--radius-md);padding:14px;cursor:pointer;transition:all 150ms;display:flex;align-items:center;gap:12px}
+.service-option:hover{border-color:var(--vu-deep-blue-light)}
+.service-option.selected{border-color:var(--vu-deep-blue);background:var(--vu-deep-blue-lightest)}
+.so-icon{width:40px;height:40px;border-radius:var(--radius-md);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.so-icon.hv{background:var(--vu-deep-blue-lightest);color:var(--vu-deep-blue)}.so-icon.cv{background:#F3E8FF;color:var(--state-assigned)}.so-icon.consult{background:rgba(66,165,245,.1);color:var(--vu-accent-blue)}.so-icon.fu{background:#DBF0DB;color:var(--vu-leaf-green)}
+.so-info{flex:1}.so-name{font-size:13px;font-weight:700}.so-desc{font-size:11px;color:var(--text-muted)}
+.so-price{font-size:12px;font-weight:700;font-family:'Montserrat';color:var(--vu-deep-blue)}
+.so-check{width:20px;height:20px;border-radius:50%;border:2px solid var(--border-soft);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all 150ms}
+.service-option.selected .so-check{border-color:var(--vu-deep-blue);background:var(--vu-deep-blue);color:white}
+
+/* TIME SLOTS */
+.time-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:12px}
+.time-slot{padding:10px;border:1px solid var(--border-soft);border-radius:var(--radius-md);text-align:center;cursor:pointer;transition:all 150ms}
+.time-slot:hover{border-color:var(--vu-deep-blue-light)}
+.time-slot.selected{border-color:var(--vu-deep-blue);background:var(--vu-deep-blue-lightest)}
+.time-slot.unavailable{opacity:.4;cursor:not-allowed;background:var(--surface-app)}
+.ts-time{font-size:14px;font-weight:700;font-family:'Montserrat'}
+.ts-avail{font-size:10px;color:var(--vu-leaf-green);font-weight:600}
+.ts-avail.limited{color:var(--vu-hibiscus-orange)}
+
+/* SUMMARY */
+.summary-card{background:var(--surface-app);border-radius:var(--radius-md);padding:16px;margin-bottom:14px}
+.summary-row{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border-soft)}
+.summary-row:last-child{border-bottom:none}
+.summary-label{font-size:12px;color:var(--text-secondary)}.summary-value{font-size:12px;font-weight:600}
+.summary-total{display:flex;justify-content:space-between;padding:10px 0;margin-top:4px;border-top:2px solid var(--text-primary)}
+.summary-total .summary-label{font-size:14px;font-weight:700;color:var(--text-primary)}
+.summary-total .summary-value{font-size:16px;font-weight:800;font-family:'Montserrat';color:var(--vu-deep-blue)}
+
+/* PAYMENT TYPE */
+.payment-options{display:flex;gap:8px;margin-top:12px}
+.pay-option{flex:1;border:2px solid var(--border-soft);border-radius:var(--radius-md);padding:12px;text-align:center;cursor:pointer;transition:all 150ms}
+.pay-option:hover{border-color:var(--vu-deep-blue-light)}
+.pay-option.selected{border-color:var(--vu-deep-blue);background:var(--vu-deep-blue-lightest)}
+.pay-option i{font-size:20px;display:block;margin-bottom:4px;color:var(--vu-deep-blue)}
+.pay-option .po-label{font-size:11px;font-weight:700}
+
+/* FOOTER */
+.wizard-footer{padding:16px 28px;border-top:1px solid var(--border-soft);display:flex;align-items:center;justify-content:space-between;background:var(--surface-app)}
+.footer-btn{display:flex;align-items:center;gap:6px;padding:9px 20px;border:none;border-radius:var(--radius-md);font-size:13px;font-weight:600;cursor:pointer;transition:all 150ms;font-family:inherit}
+.btn-back{background:transparent;color:var(--text-secondary);border:1px solid var(--border-soft)}.btn-back:hover{border-color:var(--vu-deep-blue);color:var(--vu-deep-blue)}
+.btn-next{background:var(--vu-deep-blue);color:white}.btn-next:hover{background:var(--vu-deep-blue-darker);box-shadow:var(--shadow-md)}
+.btn-confirm{background:var(--vu-leaf-green);color:white}.btn-confirm:hover{background:#388E3C;box-shadow:var(--shadow-md)}
+.footer-note{font-size:11px;color:var(--text-muted)}
+
+/* STEP VISIBILITY */
+.step-content{display:none}
+.step-content.active{display:block}
+</style>
+</head>
+<body>
+<div class="wizard">
+  <div class="wizard-header">
+    <div class="wizard-title"><i class="fas fa-calendar-plus"></i> New Booking</div>
+    <button class="close-btn" onclick="history.back()"><i class="fas fa-xmark"></i></button>
+  </div>
+
+  <!-- STEPPER -->
+  <div class="stepper">
+    <div class="step completed" id="step1-indicator">
+      <div class="step-num"><i class="fas fa-check" style="font-size:10px"></i></div>
+      <div class="step-info"><div class="step-name">Client</div><div class="step-desc">Select or create</div></div>
+    </div>
+    <div class="step active" id="step2-indicator">
+      <div class="step-num">2</div>
+      <div class="step-info"><div class="step-name">Service</div><div class="step-desc">Choose service type</div></div>
+    </div>
+    <div class="step" id="step3-indicator">
+      <div class="step-num">3</div>
+      <div class="step-info"><div class="step-name">Schedule</div><div class="step-desc">Date &amp; time</div></div>
+    </div>
+    <div class="step" id="step4-indicator">
+      <div class="step-num">4</div>
+      <div class="step-info"><div class="step-name">Confirm</div><div class="step-desc">Review &amp; book</div></div>
+    </div>
+  </div>
+
+  <!-- STEP 1: Client (shown as completed) -->
+  <div class="wizard-body">
+    <div class="step-content" id="step1">
+      <h3 style="margin-bottom:16px;font-size:15px">Select Client</h3>
+      <div class="form-group form-full client-search-wrap">
+        <div class="form-label">Search Client <span class="required">*</span></div>
+        <input class="form-input" type="text" placeholder="Type name, phone, or client code..." id="clientSearch" onfocus="document.getElementById('clientResults').classList.add('show')" onblur="setTimeout(()=>document.getElementById('clientResults').classList.remove('show'),200)">
+        <div class="client-results" id="clientResults">
+          <div class="client-result" onclick="selectClient('Tran Van Duc','0912 345 678')">
+            <div class="cr-avatar">TD</div>
+            <div class="cr-info"><div class="cr-name">Tran Van Duc</div><div class="cr-phone">0912 345 678 — VIP Client</div></div>
+          </div>
+          <div class="client-result" onclick="selectClient('Pham Minh Anh','0987 654 321')">
+            <div class="cr-avatar" style="background:#F3E8FF;color:var(--state-assigned)">PA</div>
+            <div class="cr-info"><div class="cr-name">Pham Minh Anh</div><div class="cr-phone">0987 654 321</div></div>
+          </div>
+          <div class="client-result" onclick="selectClient('Le Thi Hoa','0976 543 210')">
+            <div class="cr-avatar" style="background:#DBF0DB;color:var(--vu-leaf-green)">LH</div>
+            <div class="cr-info"><div class="cr-name">Le Thi Hoa</div><div class="cr-phone">0976 543 210</div></div>
+          </div>
+          <div class="cr-new"><i class="fas fa-user-plus"></i> Create New Client</div>
+        </div>
+      </div>
+      <div style="margin-top:16px;padding:14px;background:var(--vu-deep-blue-lightest);border-radius:var(--radius-md);display:flex;align-items:center;gap:12px" id="selectedClient">
+        <div style="width:40px;height:40px;border-radius:50%;background:var(--vu-deep-blue-lightest);color:var(--vu-deep-blue);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;border:2px solid var(--vu-deep-blue)">TD</div>
+        <div><div style="font-size:13px;font-weight:700">Tran Van Duc</div><div style="font-size:11px;color:var(--text-muted)">0912 345 678 — VIP Client — 3 active packages</div></div>
+        <div style="margin-left:auto;font-size:11px;color:var(--vu-leaf-green);font-weight:600"><i class="fas fa-check-circle"></i> Selected</div>
+      </div>
+    </div>
+
+    <!-- STEP 2: Service (active in demo) -->
+    <div class="step-content active" id="step2">
+      <h3 style="margin-bottom:4px;font-size:15px">Choose Service</h3>
+      <p style="font-size:12px;color:var(--text-muted);margin-bottom:16px">Booking for <strong>Tran Van Duc</strong></p>
+
+      <div class="form-group" style="margin-bottom:16px">
+        <div class="form-label">Use Existing Package?</div>
+        <select class="form-input">
+          <option>No — Pay per visit</option>
+          <option>General Health 10-Pack (3 remaining)</option>
+          <option>Pediatric Care 5-Pack (3 remaining)</option>
+          <option>Specialist Consultation 3-Pack (2 remaining)</option>
+        </select>
+      </div>
+
+      <div class="form-label" style="margin-bottom:8px">Service Type <span class="required">*</span></div>
+      <div class="service-options">
+        <div class="service-option selected" onclick="selectService(this)">
+          <div class="so-icon hv"><i class="fas fa-house-medical"></i></div>
+          <div class="so-info">
+            <div class="so-name">Home Visit</div>
+            <div class="so-desc">Staff travels to client's location</div>
+            <div class="so-price">From 2,000,000 &#8363;</div>
+          </div>
+          <div class="so-check"><i class="fas fa-check" style="font-size:10px"></i></div>
+        </div>
+        <div class="service-option" onclick="selectService(this)">
+          <div class="so-icon cv"><i class="fas fa-hospital"></i></div>
+          <div class="so-info">
+            <div class="so-name">Clinic Visit</div>
+            <div class="so-desc">Client visits our facility</div>
+            <div class="so-price">From 1,200,000 &#8363;</div>
+          </div>
+          <div class="so-check"></div>
+        </div>
+        <div class="service-option" onclick="selectService(this)">
+          <div class="so-icon consult"><i class="fas fa-video"></i></div>
+          <div class="so-info">
+            <div class="so-name">Consultation</div>
+            <div class="so-desc">Video or phone consultation</div>
+            <div class="so-price">From 500,000 &#8363;</div>
+          </div>
+          <div class="so-check"></div>
+        </div>
+        <div class="service-option" onclick="selectService(this)">
+          <div class="so-icon fu"><i class="fas fa-user-check"></i></div>
+          <div class="so-info">
+            <div class="so-name">Follow-up</div>
+            <div class="so-desc">Post-visit check-in</div>
+            <div class="so-price">From 800,000 &#8363;</div>
+          </div>
+          <div class="so-check"></div>
+        </div>
+      </div>
+
+      <div class="form-row" style="margin-top:16px">
+        <div class="form-group">
+          <div class="form-label">Service Sub-Type</div>
+          <select class="form-input">
+            <option>General Health Assessment</option>
+            <option>Pediatric Care</option>
+            <option>Elder Care</option>
+            <option>Post-Surgery Follow-up</option>
+            <option>Vaccination</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <div class="form-label">Priority</div>
+          <select class="form-input">
+            <option>Normal</option>
+            <option>Low</option>
+            <option>High</option>
+            <option>Urgent</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 3: Schedule -->
+    <div class="step-content" id="step3">
+      <h3 style="margin-bottom:4px;font-size:15px">Schedule Booking</h3>
+      <p style="font-size:12px;color:var(--text-muted);margin-bottom:16px">Home Visit — General Health for <strong>Tran Van Duc</strong></p>
+
+      <div class="form-row">
+        <div class="form-group">
+          <div class="form-label">Date <span class="required">*</span></div>
+          <input class="form-input" type="date" value="2026-05-13">
+        </div>
+        <div class="form-group">
+          <div class="form-label">Duration</div>
+          <select class="form-input">
+            <option>1 hour</option>
+            <option selected>2 hours</option>
+            <option>3 hours</option>
+            <option>Half day (4 hours)</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-label" style="margin-bottom:8px;margin-top:8px">Available Time Slots</div>
+      <div class="time-grid">
+        <div class="time-slot" onclick="selectTime(this)"><div class="ts-time">07:00</div><div class="ts-avail">3 staff available</div></div>
+        <div class="time-slot" onclick="selectTime(this)"><div class="ts-time">08:00</div><div class="ts-avail limited">1 staff available</div></div>
+        <div class="time-slot selected" onclick="selectTime(this)"><div class="ts-time">09:00</div><div class="ts-avail">2 staff available</div></div>
+        <div class="time-slot" onclick="selectTime(this)"><div class="ts-time">10:00</div><div class="ts-avail">3 staff available</div></div>
+        <div class="time-slot unavailable"><div class="ts-time">11:00</div><div class="ts-avail" style="color:var(--state-cancelled)">No staff</div></div>
+        <div class="time-slot unavailable"><div class="ts-time">12:00</div><div class="ts-avail" style="color:var(--text-muted)">Lunch break</div></div>
+        <div class="time-slot" onclick="selectTime(this)"><div class="ts-time">13:00</div><div class="ts-avail">4 staff available</div></div>
+        <div class="time-slot" onclick="selectTime(this)"><div class="ts-time">14:00</div><div class="ts-avail">2 staff available</div></div>
+      </div>
+
+      <div class="form-row" style="margin-top:16px">
+        <div class="form-group form-full">
+          <div class="form-label">Special Instructions</div>
+          <textarea class="form-input" placeholder="Access details, medical notes, preferences...">Building entrance B, use wheelchair ramp. Code: 4521#</textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 4: Confirm -->
+    <div class="step-content" id="step4">
+      <h3 style="margin-bottom:16px;font-size:15px">Review &amp; Confirm</h3>
+
+      <div class="summary-card">
+        <div class="summary-row"><span class="summary-label">Client</span><span class="summary-value">Tran Van Duc — 0912 345 678</span></div>
+        <div class="summary-row"><span class="summary-label">Service</span><span class="summary-value">Home Visit — General Health Assessment</span></div>
+        <div class="summary-row"><span class="summary-label">Date &amp; Time</span><span class="summary-value">May 13, 2026 &bull; 09:00 — 11:00</span></div>
+        <div class="summary-row"><span class="summary-label">Duration</span><span class="summary-value">2 hours</span></div>
+        <div class="summary-row"><span class="summary-label">Location</span><span class="summary-value">15 Phan Dinh Phung, Ba Dinh, Hanoi</span></div>
+        <div class="summary-row"><span class="summary-label">Priority</span><span class="summary-value">Normal</span></div>
+        <div class="summary-row"><span class="summary-label">Package</span><span class="summary-value">None — Pay per visit</span></div>
+      </div>
+
+      <div class="summary-card">
+        <div style="font-size:12px;font-weight:700;margin-bottom:8px">Pricing Breakdown</div>
+        <div class="summary-row"><span class="summary-label">Base Fee (Home Visit — 2hrs)</span><span class="summary-value">2,500,000 &#8363;</span></div>
+        <div class="summary-row"><span class="summary-label">Travel Surcharge (Ba Dinh)</span><span class="summary-value">200,000 &#8363;</span></div>
+        <div class="summary-total"><span class="summary-label">Total</span><span class="summary-value">2,700,000 &#8363;</span></div>
+      </div>
+
+      <div class="form-label" style="margin-bottom:8px">Payment Type <span class="required">*</span></div>
+      <div class="payment-options">
+        <div class="pay-option selected" onclick="selectPay(this)">
+          <i class="fas fa-clock"></i>
+          <div class="po-label">Pay After Service</div>
+        </div>
+        <div class="pay-option" onclick="selectPay(this)">
+          <i class="fas fa-credit-card"></i>
+          <div class="po-label">Pay Now</div>
+        </div>
+        <div class="pay-option" onclick="selectPay(this)">
+          <i class="fas fa-box"></i>
+          <div class="po-label">Use Package</div>
+        </div>
+      </div>
+
+      <div class="form-row" style="margin-top:14px">
+        <div class="form-group">
+          <div class="form-label">Send Confirmation</div>
+          <div style="display:flex;gap:10px;margin-top:4px">
+            <label style="display:flex;align-items:center;gap:4px;font-size:12px;cursor:pointer"><input type="checkbox" checked> SMS</label>
+            <label style="display:flex;align-items:center;gap:4px;font-size:12px;cursor:pointer"><input type="checkbox" checked> Email</label>
+            <label style="display:flex;align-items:center;gap:4px;font-size:12px;cursor:pointer"><input type="checkbox"> Zalo</label>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="wizard-footer">
+    <button class="footer-btn btn-back" onclick="prevStep()"><i class="fas fa-arrow-left"></i> Back</button>
+    <div class="footer-note">Step <span id="currentStep">2</span> of 4</div>
+    <button class="footer-btn btn-next" id="nextBtn" onclick="nextStep()">Next <i class="fas fa-arrow-right"></i></button>
+  </div>
+</div>
+
+<script>
+let current = 2;
+
+function selectService(el) {
+  document.querySelectorAll('.service-option').forEach(s => s.classList.remove('selected'));
+  el.classList.add('selected');
+}
+function selectTime(el) {
+  if (el.classList.contains('unavailable')) return;
+  document.querySelectorAll('.time-slot').forEach(s => s.classList.remove('selected'));
+  el.classList.add('selected');
+}
+function selectPay(el) {
+  document.querySelectorAll('.pay-option').forEach(p => p.classList.remove('selected'));
+  el.classList.add('selected');
+}
+function selectClient(name, phone) {
+  document.getElementById('clientSearch').value = name;
+}
+
+function showStep(n) {
+  document.querySelectorAll('.step-content').forEach(s => s.classList.remove('active'));
+  document.getElementById('step' + n).classList.add('active');
+  document.getElementById('currentStep').textContent = n;
+
+  for (let i = 1; i <= 4; i++) {
+    const ind = document.getElementById('step' + i + '-indicator');
+    ind.classList.remove('active', 'completed');
+    if (i < n) ind.classList.add('completed');
+    if (i === n) ind.classList.add('active');
+    const numEl = ind.querySelector('.step-num');
+    if (i < n) numEl.innerHTML = '<i class="fas fa-check" style="font-size:10px"></i>';
+    else numEl.textContent = i;
+  }
+
+  const nextBtn = document.getElementById('nextBtn');
+  if (n === 4) {
+    nextBtn.className = 'footer-btn btn-confirm';
+    nextBtn.innerHTML = '<i class="fas fa-check"></i> Confirm Booking';
+  } else {
+    nextBtn.className = 'footer-btn btn-next';
+    nextBtn.innerHTML = 'Next <i class="fas fa-arrow-right"></i>';
+  }
+}
+
+function nextStep() {
+  if (current < 4) { current++; showStep(current); }
+  else { alert('Booking confirmed! Redirecting to booking detail...'); window.location = 'ops_booking_detail.html'; }
+}
+function prevStep() {
+  if (current > 1) { current--; showStep(current); }
+}
+</script>
+</body>
+</html>

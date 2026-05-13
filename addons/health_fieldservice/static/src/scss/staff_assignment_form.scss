@@ -1,0 +1,401 @@
+// ============================================================================
+// Staff Assignment Wizard — Enhanced AI Suggestions Styling
+// ============================================================================
+
+.ai-staff-suggestions {
+    margin-bottom: 16px;
+}
+
+.ai-loading {
+    text-align: center;
+    padding: 24px;
+    color: $vu-text-secondary;
+    font-size: 14px;
+
+    .fa-spinner {
+        margin-right: 6px;
+        color: $vu-deep-blue;
+    }
+}
+
+.ai-section-label {
+    font-size: 13px;
+    font-weight: 700;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: $vu-text-primary;
+
+    .fa {
+        color: $vu-deep-blue;
+        font-size: 13px;
+    }
+}
+
+.ai-count {
+    background: $vu-deep-blue;
+    color: white;
+    font-size: 11px;
+    padding: 1px 7px;
+    border-radius: 8px;
+    margin-left: 4px;
+}
+
+// ===== STAFF SUGGESTION CARDS =====
+.ai-suggestions-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 16px;
+}
+
+.ai-staff-card {
+    border: 2px solid var(--vu-border-soft);
+    border-radius: var(--vu-radius-md);
+    padding: 16px;
+    cursor: pointer;
+    transition: all 180ms;
+    position: relative;
+
+    &:hover {
+        border-color: $vu-deep-blue-light;
+        box-shadow: var(--vu-shadow-md);
+    }
+
+    &.selected {
+        border-color: $vu-deep-blue;
+        background: rgba($vu-deep-blue, 0.03);
+
+        &::after {
+            content: '\f058';
+            font-family: 'FontAwesome';
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            font-size: 20px;
+            color: $vu-deep-blue;
+        }
+    }
+}
+
+.ai-staff-top {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 10px;
+}
+
+.ai-staff-avatar {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 15px;
+    font-weight: 700;
+    flex-shrink: 0;
+
+    &.green { background: #E8F5E9; color: $vu-leaf-green; }
+    &.yellow { background: #FFF8E1; color: $vu-hibiscus-orange; }
+    &.blue { background: $vu-deep-blue-lightest; color: $vu-deep-blue; }
+}
+
+.ai-staff-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.ai-staff-name {
+    font-size: 15px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.ai-staff-role {
+    font-size: 12px;
+    color: $vu-text-secondary;
+}
+
+.ai-status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+    flex-shrink: 0;
+
+    &.dot-available { background: $vu-leaf-green; }
+    &.dot-busy { background: $vu-hibiscus-orange; }
+    &.dot-off { background: $vu-hibiscus-red; }
+}
+
+.ai-staff-score {
+    text-align: center;
+    flex-shrink: 0;
+
+    &.score-high .ai-score-value { color: $vu-leaf-green; }
+    &.score-med .ai-score-value { color: $vu-hibiscus-orange; }
+    &.score-low .ai-score-value { color: $vu-hibiscus-red; }
+}
+
+.ai-score-value {
+    font-family: $font-family-headings;
+    font-size: 24px;
+    font-weight: 800;
+}
+
+.ai-score-label {
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: $vu-text-secondary;
+    font-weight: 600;
+}
+
+// ===== DETAILS =====
+.ai-staff-details {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 6px;
+}
+
+.ai-detail-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: $vu-text-secondary;
+
+    .fa {
+        width: 14px;
+        text-align: center;
+        font-size: 12px;
+        color: $vu-deep-blue;
+    }
+
+    &.good .fa { color: $vu-leaf-green; }
+    &.warn .fa { color: $vu-hibiscus-orange; }
+    &.bad .fa { color: $vu-hibiscus-red; }
+}
+
+// ===== SKILL TAGS =====
+.ai-skills-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-top: 8px;
+    margin-bottom: 4px;
+}
+
+.ai-skill-tag {
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+
+    &.skill-match { background: rgba($vu-leaf-green, 0.1); color: $vu-leaf-green; }
+    &.skill-partial { background: rgba($vu-hibiscus-orange, 0.1); color: $vu-hibiscus-orange; }
+    &.skill-missing { background: rgba($vu-hibiscus-red, 0.08); color: $vu-hibiscus-red; }
+}
+
+.ai-reason {
+    font-size: 11px;
+    color: $vu-text-secondary;
+    margin-top: 4px;
+    font-style: italic;
+}
+
+// ===== OTHER STAFF GRID =====
+.ai-other-staff {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.ai-mini-staff {
+    border: 1px solid var(--vu-border-soft);
+    border-radius: var(--vu-radius-md);
+    padding: 10px;
+    cursor: pointer;
+    transition: all 150ms;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    &:hover {
+        border-color: $vu-deep-blue-light;
+        box-shadow: var(--vu-shadow-sm);
+    }
+}
+
+.ai-mini-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 700;
+    flex-shrink: 0;
+
+    &.green { background: #E8F5E9; color: $vu-leaf-green; }
+    &.yellow { background: #FFF8E1; color: $vu-hibiscus-orange; }
+    &.blue { background: $vu-deep-blue-lightest; color: $vu-deep-blue; }
+}
+
+.ai-mini-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.ai-mini-name {
+    font-size: 13px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.ai-mini-detail {
+    font-size: 11px;
+    color: $vu-text-secondary;
+}
+
+.ai-mini-score {
+    font-family: $font-family-headings;
+    font-weight: 800;
+    font-size: 16px;
+    flex-shrink: 0;
+
+    &.score-high { color: $vu-leaf-green; }
+    &.score-med { color: $vu-hibiscus-orange; }
+    &.score-low { color: $vu-hibiscus-red; }
+}
+
+// ===== TIMELINE PREVIEW =====
+.ai-timeline-preview {
+    background: var(--vu-surface-muted);
+    border-radius: var(--vu-radius-md);
+    padding: 14px;
+}
+
+.ai-timeline-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 6px;
+
+    &:last-child { margin-bottom: 0; }
+}
+
+.ai-tl-name {
+    width: 36px;
+    font-size: 12px;
+    font-weight: 600;
+    text-align: right;
+    color: $vu-text-secondary;
+}
+
+.ai-tl-bar {
+    flex: 1;
+    height: 24px;
+    background: var(--vu-surface-card);
+    border-radius: 4px;
+    border: 1px solid var(--vu-border-soft);
+    position: relative;
+    overflow: hidden;
+}
+
+.tl-block {
+    position: absolute;
+    height: 100%;
+    border-radius: 3px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 9px;
+    font-weight: 600;
+    color: white;
+
+    &.existing {
+        background: $vu-deep-blue;
+        opacity: 0.7;
+    }
+
+    &.proposed {
+        background: $vu-leaf-green;
+        border: 2px dashed white;
+        animation: proposedPulse 2s infinite;
+    }
+
+    &.conflict {
+        background: $vu-hibiscus-red;
+    }
+}
+
+@keyframes proposedPulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+}
+
+.ai-tl-hours {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 4px;
+    margin-left: 44px;
+    font-size: 9px;
+    color: $vu-text-secondary;
+
+    span {
+        width: 20px;
+        text-align: center;
+    }
+}
+
+// ===== CONFLICT ALERT =====
+.ai-conflict-alert {
+    background: rgba($vu-hibiscus-red, 0.06);
+    border: 1px solid rgba($vu-hibiscus-red, 0.2);
+    border-radius: var(--vu-radius-md);
+    padding: 10px 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 12px;
+    font-size: 13px;
+
+    .fa {
+        color: $vu-hibiscus-red;
+        font-size: 15px;
+        flex-shrink: 0;
+    }
+
+    &.no-conflict {
+        background: rgba($vu-leaf-green, 0.06);
+        border-color: rgba($vu-leaf-green, 0.2);
+
+        .fa { color: $vu-leaf-green; }
+    }
+}
+
+// ===== EMPTY STATE =====
+.ai-empty {
+    text-align: center;
+    padding: 20px;
+    color: $vu-text-secondary;
+    font-size: 13px;
+
+    .fa {
+        margin-right: 6px;
+        color: $vu-deep-blue;
+    }
+}

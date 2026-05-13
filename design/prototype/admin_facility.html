@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Facility Management — VAFHS Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+:root{--vu-deep-blue:#1565C0;--vu-deep-blue-darker:#1356A9;--vu-deep-blue-darkest:#0D356B;--vu-deep-blue-light:#83C5FA;--vu-deep-blue-lightest:#E4F4FD;--vu-accent-blue:#42A5F5;--vu-hibiscus-red:#E53935;--vu-hibiscus-orange:#FB8C00;--vu-leaf-green:#43A047;--text-primary:#212121;--text-secondary:#424242;--text-muted:#757575;--surface-app:#F5F5F5;--surface-card:#FFFFFF;--border-soft:#E0E0E0;--shadow-sm:0 1px 3px rgba(33,33,33,.08);--shadow-md:0 2px 8px rgba(33,33,33,.12);--shadow-lg:0 4px 16px rgba(33,33,33,.15);--radius-sm:4px;--radius-md:8px;--radius-lg:12px}
+*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Segoe UI',Arial,sans-serif;font-size:13px;color:var(--text-primary);background:var(--surface-app);line-height:1.5;-webkit-font-smoothing:antialiased}
+h1,h2,h3,h4{font-family:'Montserrat','Segoe UI',Arial,sans-serif;font-weight:600}
+.page-layout{display:grid;grid-template-columns:220px 1fr;min-height:100vh}
+.sidebar{background:var(--vu-deep-blue-darkest);color:white;padding:20px 0}
+.sidebar-brand{padding:0 20px 20px;font-family:'Montserrat';font-weight:800;font-size:16px;border-bottom:1px solid rgba(255,255,255,.1);margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.sidebar-brand i{color:var(--vu-deep-blue-light)}
+.nav-section{padding:0 12px;margin-bottom:16px}
+.nav-label{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:rgba(255,255,255,.4);padding:8px 8px 4px;font-weight:600}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:var(--radius-md);color:rgba(255,255,255,.7);font-size:13px;text-decoration:none;transition:all 150ms;cursor:pointer}
+.nav-item:hover{background:rgba(255,255,255,.08);color:white}
+.nav-item.active{background:rgba(255,255,255,.12);color:white;font-weight:600}
+.nav-item i{width:18px;text-align:center;font-size:13px}
+.main{overflow-y:auto}
+.topbar{background:var(--surface-card);border-bottom:1px solid var(--border-soft);padding:0 24px;height:52px;display:flex;align-items:center;justify-content:space-between}
+.page-title{font-family:'Montserrat';font-size:16px;font-weight:700;display:flex;align-items:center;gap:10px}
+.page-title i{color:var(--vu-deep-blue)}
+.top-btn{display:flex;align-items:center;gap:6px;padding:7px 14px;border:1px solid var(--border-soft);border-radius:var(--radius-md);background:var(--surface-card);font-size:12px;font-weight:600;cursor:pointer;transition:all 150ms;color:var(--text-secondary);font-family:inherit;text-decoration:none}
+.top-btn:hover{border-color:var(--vu-deep-blue);color:var(--vu-deep-blue)}
+.top-btn.primary{background:var(--vu-deep-blue);color:white;border-color:var(--vu-deep-blue)}
+.content{padding:24px}
+
+/* FACILITY CARDS */
+.fac-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:20px;margin-bottom:24px}
+.fac-card{background:var(--surface-card);border:1px solid var(--border-soft);border-radius:var(--radius-lg);overflow:hidden;transition:all 200ms}
+.fac-card:hover{box-shadow:var(--shadow-md)}
+.fac-banner{height:6px}
+.fac-banner.active{background:linear-gradient(90deg,var(--vu-deep-blue),var(--vu-accent-blue))}
+.fac-banner.setup{background:linear-gradient(90deg,var(--vu-hibiscus-orange),#FFC107)}
+.fac-body{padding:20px}
+.fac-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:14px}
+.fac-icon{width:48px;height:48px;border-radius:var(--radius-md);display:flex;align-items:center;justify-content:center;font-size:20px}
+.fi-blue{background:var(--vu-deep-blue-lightest);color:var(--vu-deep-blue)}
+.fi-orange{background:#FFF3E0;color:var(--vu-hibiscus-orange)}
+.fac-name{font-family:'Montserrat';font-size:16px;font-weight:700;margin-bottom:2px}
+.fac-address{font-size:11px;color:var(--text-muted)}
+.fac-status{font-size:10px;padding:3px 10px;border-radius:10px;font-weight:700}
+.fs-active{background:#E8F5E9;color:var(--vu-leaf-green)}
+.fs-setup{background:#FFF3E0;color:var(--vu-hibiscus-orange)}
+
+.fac-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px}
+.fac-stat{text-align:center;padding:10px;background:var(--surface-app);border-radius:var(--radius-md)}
+.fac-stat-value{font-family:'Montserrat';font-size:18px;font-weight:800;color:var(--vu-deep-blue)}
+.fac-stat-label{font-size:10px;color:var(--text-muted);font-weight:600;text-transform:uppercase;letter-spacing:.3px}
+
+.fac-details{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+.fac-detail-row{display:flex;align-items:center;gap:8px;font-size:12px}
+.fac-detail-row i{width:16px;text-align:center;color:var(--vu-deep-blue);font-size:11px}
+.fac-detail-label{color:var(--text-muted)}
+.fac-detail-value{font-weight:600;margin-left:auto}
+
+/* CATCHMENT */
+.catchment-section{margin-top:12px;padding-top:12px;border-top:1px solid var(--border-soft)}
+.catchment-title{font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.4px;margin-bottom:8px}
+.catchment-tags{display:flex;flex-wrap:wrap;gap:4px}
+.catchment-tag{font-size:10px;padding:3px 8px;border-radius:8px;background:var(--vu-deep-blue-lightest);color:var(--vu-deep-blue);font-weight:600}
+
+.fac-actions{display:flex;gap:8px;margin-top:14px;padding-top:14px;border-top:1px solid var(--border-soft)}
+.fac-btn{flex:1;padding:8px;border:1px solid var(--border-soft);border-radius:var(--radius-md);background:transparent;cursor:pointer;font-size:11px;font-weight:600;color:var(--text-muted);transition:all 150ms;display:flex;align-items:center;justify-content:center;gap:4px}
+.fac-btn:hover{border-color:var(--vu-deep-blue);color:var(--vu-deep-blue)}
+
+/* EQUIPMENT SECTION */
+.section-title{font-family:'Montserrat';font-size:15px;font-weight:700;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.section-title i{color:var(--vu-deep-blue)}
+
+.equip-table{width:100%;border-collapse:collapse;background:var(--surface-card);border-radius:var(--radius-lg);overflow:hidden;border:1px solid var(--border-soft)}
+.equip-table th{text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.4px;color:var(--text-muted);font-weight:600;padding:10px 14px;background:var(--surface-app);border-bottom:1px solid var(--border-soft)}
+.equip-table td{padding:10px 14px;border-bottom:1px solid var(--border-soft);font-size:12px}
+.equip-table tr:last-child td{border-bottom:none}
+.eq-status{font-size:10px;padding:2px 8px;border-radius:8px;font-weight:600}
+.eq-available{background:#E8F5E9;color:var(--vu-leaf-green)}
+.eq-out{background:#FFF3E0;color:var(--vu-hibiscus-orange)}
+.eq-maintenance{background:#FBE3E1;color:var(--vu-hibiscus-red)}
+
+/* ADD FACILITY */
+.add-fac{background:var(--surface-card);border:2px dashed var(--border-soft);border-radius:var(--radius-lg);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px 20px;cursor:pointer;transition:all 200ms;gap:10px;color:var(--text-muted)}
+.add-fac:hover{border-color:var(--vu-deep-blue);color:var(--vu-deep-blue);background:rgba(21,101,192,.02)}
+.add-fac i{font-size:28px}
+.add-fac span{font-size:13px;font-weight:600}
+</style>
+</head>
+<body>
+<div class="page-layout">
+  <aside class="sidebar">
+    <div class="sidebar-brand"><i class="fas fa-shield-halved"></i> VAFHS Admin</div>
+    <nav class="nav-section">
+      <div class="nav-label">Overview</div>
+      <a href="admin_dashboard.html" class="nav-item"><i class="fas fa-th-large"></i> Dashboard</a>
+      <div class="nav-label">Management</div>
+      <a href="admin_users.html" class="nav-item"><i class="fas fa-users-cog"></i> Users &amp; Roles</a>
+      <a href="admin_service_catalog.html" class="nav-item"><i class="fas fa-stethoscope"></i> Service Catalog</a>
+      <a class="nav-item active"><i class="fas fa-hospital"></i> Facilities</a>
+      <a href="admin_staff_detail.html" class="nav-item"><i class="fas fa-user-nurse"></i> Staff HR</a>
+      <a href="admin_settings.html" class="nav-item"><i class="fas fa-cog"></i> Settings</a>
+      <div class="nav-label">Monitoring</div>
+      <a href="admin_audit_log.html" class="nav-item"><i class="fas fa-clock-rotate-left"></i> Audit Log</a>
+      <a href="admin_reports.html" class="nav-item"><i class="fas fa-chart-bar"></i> Reports</a>
+      <div class="nav-label">Quick Links</div>
+      <a href="ops_dashboard.html" class="nav-item"><i class="fas fa-headset"></i> Operations</a>
+      <a href="finance_dashboard.html" class="nav-item"><i class="fas fa-coins"></i> Finance</a>
+    </nav>
+  </aside>
+
+  <div class="main">
+    <div class="topbar">
+      <div class="page-title"><i class="fas fa-hospital"></i> Facility Management</div>
+      <div style="display:flex;gap:8px">
+        <button class="top-btn primary"><i class="fas fa-plus"></i> Add Facility</button>
+      </div>
+    </div>
+
+    <div class="content">
+      <!-- FACILITY CARDS -->
+      <div class="fac-grid">
+        <!-- Facility 1 -->
+        <div class="fac-card">
+          <div class="fac-banner active"></div>
+          <div class="fac-body">
+            <div class="fac-top">
+              <div style="display:flex;gap:12px;align-items:center">
+                <div class="fac-icon fi-blue"><i class="fas fa-hospital"></i></div>
+                <div>
+                  <div class="fac-name">Hanoi — Ba Dinh</div>
+                  <div class="fac-address">45 Lieu Giai, Ba Dinh District, Hanoi</div>
+                </div>
+              </div>
+              <span class="fac-status fs-active"><i class="fas fa-circle" style="font-size:6px"></i> Active</span>
+            </div>
+
+            <div class="fac-stats">
+              <div class="fac-stat"><div class="fac-stat-value">12</div><div class="fac-stat-label">Staff</div></div>
+              <div class="fac-stat"><div class="fac-stat-value">142</div><div class="fac-stat-label">Bookings/Mo</div></div>
+              <div class="fac-stat"><div class="fac-stat-value">156M</div><div class="fac-stat-label">Revenue/Mo</div></div>
+              <div class="fac-stat"><div class="fac-stat-value">89%</div><div class="fac-stat-label">Completion</div></div>
+            </div>
+
+            <div class="fac-details">
+              <div class="fac-detail-row"><i class="fas fa-phone"></i><span class="fac-detail-label">Phone</span><span class="fac-detail-value">024 3762 8888</span></div>
+              <div class="fac-detail-row"><i class="fas fa-clock"></i><span class="fac-detail-label">Hours</span><span class="fac-detail-value">07:00 — 18:00</span></div>
+              <div class="fac-detail-row"><i class="fas fa-user-tie"></i><span class="fac-detail-label">Manager</span><span class="fac-detail-value">Nguyen Thi Thanh</span></div>
+              <div class="fac-detail-row"><i class="fas fa-language"></i><span class="fac-detail-label">Languages</span><span class="fac-detail-value">VN, EN</span></div>
+            </div>
+
+            <div class="catchment-section">
+              <div class="catchment-title">Catchment Area — Service Coverage</div>
+              <div class="catchment-tags">
+                <span class="catchment-tag">Ba Dinh</span>
+                <span class="catchment-tag">Cau Giay</span>
+                <span class="catchment-tag">Dong Da</span>
+                <span class="catchment-tag">Hai Ba Trung</span>
+                <span class="catchment-tag">Hoan Kiem</span>
+                <span class="catchment-tag">Tay Ho</span>
+                <span class="catchment-tag">Thanh Xuan</span>
+              </div>
+            </div>
+
+            <div class="fac-actions">
+              <button class="fac-btn"><i class="fas fa-pen"></i> Edit</button>
+              <button class="fac-btn"><i class="fas fa-users"></i> Staff</button>
+              <button class="fac-btn"><i class="fas fa-toolbox"></i> Equipment</button>
+              <button class="fac-btn"><i class="fas fa-chart-bar"></i> Reports</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Facility 2 -->
+        <div class="fac-card">
+          <div class="fac-banner active"></div>
+          <div class="fac-body">
+            <div class="fac-top">
+              <div style="display:flex;gap:12px;align-items:center">
+                <div class="fac-icon fi-blue"><i class="fas fa-hospital"></i></div>
+                <div>
+                  <div class="fac-name">Hanoi — Tay Ho</div>
+                  <div class="fac-address">12 Xuan Dieu, Tay Ho District, Hanoi</div>
+                </div>
+              </div>
+              <span class="fac-status fs-active"><i class="fas fa-circle" style="font-size:6px"></i> Active</span>
+            </div>
+
+            <div class="fac-stats">
+              <div class="fac-stat"><div class="fac-stat-value">6</div><div class="fac-stat-label">Staff</div></div>
+              <div class="fac-stat"><div class="fac-stat-value">68</div><div class="fac-stat-label">Bookings/Mo</div></div>
+              <div class="fac-stat"><div class="fac-stat-value">78M</div><div class="fac-stat-label">Revenue/Mo</div></div>
+              <div class="fac-stat"><div class="fac-stat-value">92%</div><div class="fac-stat-label">Completion</div></div>
+            </div>
+
+            <div class="fac-details">
+              <div class="fac-detail-row"><i class="fas fa-phone"></i><span class="fac-detail-label">Phone</span><span class="fac-detail-value">024 3718 2222</span></div>
+              <div class="fac-detail-row"><i class="fas fa-clock"></i><span class="fac-detail-label">Hours</span><span class="fac-detail-value">08:00 — 17:00</span></div>
+              <div class="fac-detail-row"><i class="fas fa-user-tie"></i><span class="fac-detail-label">Manager</span><span class="fac-detail-value">Le Van Minh</span></div>
+              <div class="fac-detail-row"><i class="fas fa-language"></i><span class="fac-detail-label">Languages</span><span class="fac-detail-value">VN, EN, FR</span></div>
+            </div>
+
+            <div class="catchment-section">
+              <div class="catchment-title">Catchment Area — Service Coverage</div>
+              <div class="catchment-tags">
+                <span class="catchment-tag">Tay Ho</span>
+                <span class="catchment-tag">Long Bien</span>
+                <span class="catchment-tag">Bac Tu Liem</span>
+                <span class="catchment-tag">Hoang Mai</span>
+              </div>
+            </div>
+
+            <div class="fac-actions">
+              <button class="fac-btn"><i class="fas fa-pen"></i> Edit</button>
+              <button class="fac-btn"><i class="fas fa-users"></i> Staff</button>
+              <button class="fac-btn"><i class="fas fa-toolbox"></i> Equipment</button>
+              <button class="fac-btn"><i class="fas fa-chart-bar"></i> Reports</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Facility 3 - Setup -->
+        <div class="fac-card" style="opacity:.75">
+          <div class="fac-banner setup"></div>
+          <div class="fac-body">
+            <div class="fac-top">
+              <div style="display:flex;gap:12px;align-items:center">
+                <div class="fac-icon fi-orange"><i class="fas fa-hospital"></i></div>
+                <div>
+                  <div class="fac-name">Ho Chi Minh — District 7</div>
+                  <div class="fac-address">88 Nguyen Huu Tho, District 7, HCMC</div>
+                </div>
+              </div>
+              <span class="fac-status fs-setup"><i class="fas fa-circle" style="font-size:6px"></i> Setting Up</span>
+            </div>
+
+            <div class="fac-stats">
+              <div class="fac-stat"><div class="fac-stat-value">0</div><div class="fac-stat-label">Staff</div></div>
+              <div class="fac-stat"><div class="fac-stat-value">0</div><div class="fac-stat-label">Bookings/Mo</div></div>
+              <div class="fac-stat"><div class="fac-stat-value">—</div><div class="fac-stat-label">Revenue/Mo</div></div>
+              <div class="fac-stat"><div class="fac-stat-value">—</div><div class="fac-stat-label">Completion</div></div>
+            </div>
+
+            <div style="background:#FFF3E0;border-radius:var(--radius-md);padding:10px 14px;display:flex;align-items:center;gap:8px;font-size:12px;color:var(--vu-hibiscus-orange)">
+              <i class="fas fa-info-circle"></i>
+              <span>Facility setup in progress. 3 of 8 setup steps completed.</span>
+            </div>
+
+            <div class="fac-actions">
+              <button class="fac-btn" style="color:var(--vu-deep-blue);border-color:var(--vu-deep-blue)"><i class="fas fa-arrow-right"></i> Continue Setup</button>
+              <button class="fac-btn"><i class="fas fa-pen"></i> Edit</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Add -->
+        <div class="add-fac">
+          <i class="fas fa-plus-circle"></i>
+          <span>Add New Facility</span>
+          <span style="font-size:11px;font-weight:400;color:var(--text-muted)">Set up a new clinic or service area</span>
+        </div>
+      </div>
+
+      <!-- EQUIPMENT INVENTORY -->
+      <div class="section-title"><i class="fas fa-toolbox"></i> Equipment Inventory — All Facilities</div>
+      <table class="equip-table">
+        <thead>
+          <tr><th>Equipment</th><th>Serial No.</th><th>Facility</th><th>Assigned To</th><th>Status</th><th>Last Service</th><th>Next Service</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="font-weight:600"><i class="fas fa-heartbeat" style="color:var(--vu-deep-blue);margin-right:6px"></i> Blood Pressure Monitor</td>
+            <td style="font-family:monospace;font-size:11px">BPM-001</td>
+            <td>Hanoi — Ba Dinh</td>
+            <td>Nguyen Thi Mai</td>
+            <td><span class="eq-status eq-out">Checked Out</span></td>
+            <td>Apr 15, 2026</td>
+            <td>Jul 15, 2026</td>
+          </tr>
+          <tr>
+            <td style="font-weight:600"><i class="fas fa-lungs" style="color:var(--vu-deep-blue);margin-right:6px"></i> Pulse Oximeter</td>
+            <td style="font-family:monospace;font-size:11px">POX-003</td>
+            <td>Hanoi — Ba Dinh</td>
+            <td>—</td>
+            <td><span class="eq-status eq-available">Available</span></td>
+            <td>May 1, 2026</td>
+            <td>Aug 1, 2026</td>
+          </tr>
+          <tr>
+            <td style="font-weight:600"><i class="fas fa-weight-scale" style="color:var(--vu-deep-blue);margin-right:6px"></i> Portable Scale</td>
+            <td style="font-family:monospace;font-size:11px">SCL-002</td>
+            <td>Hanoi — Ba Dinh</td>
+            <td>Le Thi Hoa</td>
+            <td><span class="eq-status eq-out">Checked Out</span></td>
+            <td>Mar 20, 2026</td>
+            <td>Jun 20, 2026</td>
+          </tr>
+          <tr>
+            <td style="font-weight:600"><i class="fas fa-droplet" style="color:var(--vu-deep-blue);margin-right:6px"></i> Glucometer</td>
+            <td style="font-family:monospace;font-size:11px">GLU-004</td>
+            <td>Hanoi — Tay Ho</td>
+            <td>—</td>
+            <td><span class="eq-status eq-maintenance">Maintenance</span></td>
+            <td>May 8, 2026</td>
+            <td style="color:var(--vu-hibiscus-red);font-weight:600">Overdue</td>
+          </tr>
+          <tr>
+            <td style="font-weight:600"><i class="fas fa-thermometer-half" style="color:var(--vu-deep-blue);margin-right:6px"></i> Digital Thermometer</td>
+            <td style="font-family:monospace;font-size:11px">THM-005</td>
+            <td>Hanoi — Ba Dinh</td>
+            <td>Nguyen Thi Mai</td>
+            <td><span class="eq-status eq-out">Checked Out</span></td>
+            <td>Apr 30, 2026</td>
+            <td>Jul 30, 2026</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+</body>
+</html>

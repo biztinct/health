@@ -111,6 +111,8 @@
             'health_crm/static/src/components/time_picker/time_picker_widget.js',
             'health_crm/static/src/components/time_picker/time_picker_widget.xml',
             'health_crm/static/src/components/time_picker/time_picker_widget.scss',
+            'health_crm/static/src/scss/booking_wizard.scss',
+            'health_crm/static/src/scss/recurring_booking_wizard.scss',
         ],
     },
     # 'demo': [

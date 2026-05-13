@@ -35,8 +35,21 @@
                     </div>
 
                     <field name="current_step" invisible="1"/>
-                    <field name="client_id" invisible="1"/>
                     <field name="currency_id" invisible="1"/>
+
+                    <!-- Client Selection - always visible at top -->
+                    <div style="padding: 12px 16px; margin-bottom: 16px; background: #E4F4FD; border-radius: 8px; border: 1px solid #83C5FA;">
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <span class="fa fa-user" style="font-size: 16px; color: #1565C0;"/>
+                            <div style="flex: 1;">
+                                <field name="client_id" string="Client"
+                                       placeholder="Search client by name or phone..."
+                                       required="1"
+                                       options="{'no_create_edit': True}"
+                                       style="font-weight: 600;"/>
+                            </div>
+                        </div>
+                    </div>
 
                     <!-- STEP 1: Services -->
                     <div invisible="current_step != '1_services'">

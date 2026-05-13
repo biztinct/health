@@ -1,0 +1,308 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+<t t-name="health_fieldservice.OpsServiceInProgress">
+    <div class="ops-sip-page">
+
+        <!-- SIDEBAR -->
+        <aside class="ops-sidebar">
+            <div class="ops-sidebar-logo" t-on-click="navigateHome" style="cursor:pointer">
+                <div class="ops-logo-icon"><i class="fa fa-heartbeat"/></div>
+                <div>
+                    <div class="ops-logo-text">VIET UC</div>
+                    <div class="ops-logo-sub">Healthcare Platform</div>
+                </div>
+            </div>
+            <nav class="ops-sidebar-nav">
+                <div class="ops-nav-section-label">Main</div>
+                <a class="ops-nav-item" t-on-click="() => this.navigateTo('dashboard')"><i class="fa fa-th-large"/> Dashboard</a>
+                <a class="ops-nav-item active"><i class="fa fa-calendar-check-o"/> Bookings</a>
+                <a class="ops-nav-item" t-on-click="() => this.navigateTo('clients')"><i class="fa fa-address-book-o"/> Clients</a>
+                <a class="ops-nav-item" t-on-click="() => this.navigateTo('recurring')"><i class="fa fa-repeat"/> Recurring</a>
+                <a class="ops-nav-item" t-on-click="() => this.navigateTo('staff')"><i class="fa fa-users"/> Staff</a>
+                <a class="ops-nav-item" t-on-click="() => this.navigateTo('calendar')"><i class="fa fa-calendar"/> Calendar</a>
+                <div class="ops-nav-section-label">Reports</div>
+                <a class="ops-nav-item" t-on-click="() => this.navigateTo('workload')"><i class="fa fa-bar-chart"/> Workload</a>
+                <a class="ops-nav-item" t-on-click="() => this.navigateTo('analytics')"><i class="fa fa-line-chart"/> Analytics</a>
+                <div class="ops-nav-section-label">System</div>
+                <a class="ops-nav-item" t-on-click="navigateHome"><i class="fa fa-arrow-left"/> Back to Odoo</a>
+            </nav>
+            <div class="ops-sidebar-user">
+                <div class="ops-user-avatar">OM</div>
+                <div class="ops-user-info">
+                    <div class="ops-user-name">Operations</div>
+                    <div class="ops-user-role">Manager</div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- RIGHT AREA -->
+        <div class="sip-right-area">
+
+            <!-- ORANGE TOP BAR -->
+            <div class="sip-topbar">
+                <div class="sip-topbar-left">
+                    <i class="fa fa-stethoscope"/>
+                    <div class="sip-topbar-title">Active Service — <t t-esc="state.booking.name or ''"/></div>
+                </div>
+                <div class="sip-topbar-right">
+                    <button class="sip-topbar-btn" t-on-click="goBack"><i class="fa fa-arrow-left"/> Back to Booking</button>
+                </div>
+            </div>
+
+            <!-- TIMER BAR -->
+            <div class="sip-timer-bar">
+                <div class="sip-timer-display">
+                    <div>
+                        <div class="sip-timer-label">Elapsed Time</div>
+                        <div class="sip-timer-value" t-esc="state.timerDisplay"/>
+                    </div>
+                    <div class="sip-timer-status">
+                        <div class="sip-pulse-dot"/>
+                        In Progress
+                    </div>
+                </div>
+                <div class="sip-timer-meta">
+                    <div t-if="state.timer.start_display">Started: <t t-esc="state.timer.start_display"/></div>
+                    <div class="sip-est">Est. duration: <t t-esc="state.timer.est_duration_minutes"/> min</div>
+                    <div class="sip-est" t-if="state.timer.est_end">Expected end: <t t-esc="state.timer.est_end"/></div>
+                </div>
+            </div>
+
+            <!-- LOADING -->
+            <t t-if="state.isLoading">
+                <div class="sip-loading">
+                    <i class="fa fa-spinner fa-spin fa-2x"/>
+                    <div>Loading service data...</div>
+                </div>
+            </t>
+
+            <t t-if="!state.isLoading">
+                <!-- CONTENT GRID -->
+                <div class="sip-content">
+                    <div class="sip-main-panel">
+
+                        <!-- CONTEXT ROW -->
+                        <div class="sip-context-row">
+                            <div class="sip-ctx-card" t-on-click="openClientProfile" style="cursor:pointer">
+                                <div class="sip-ctx-avatar client" t-esc="state.patient.initials or '?'"/>
+                                <div class="sip-ctx-info">
+                                    <div class="sip-ctx-name" t-esc="state.patient.name or 'Unknown'"/>
+                                    <div class="sip-ctx-detail">
+                                        <t t-esc="state.patient.age_gender or ''"/>
+                                        <t t-if="state.booking.service_type_label"> · <t t-esc="state.booking.service_type_label"/></t>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="sip-ctx-card" t-if="state.staff">
+                                <div class="sip-ctx-avatar staff" t-esc="state.staff.initials or '?'"/>
+                                <div class="sip-ctx-info">
+                                    <div class="sip-ctx-name" t-esc="state.staff.name or ''"/>
+                                    <div class="sip-ctx-detail">
+                                        <t t-esc="state.staff.role or ''"/>
+                                        <t t-if="state.staff.phone"> · <t t-esc="state.staff.phone"/></t>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- ALERT BANNER -->
+                        <div class="sip-alert-banner" t-if="state.booking.special_requirements">
+                            <i class="fa fa-exclamation-circle"/>
+                            <div class="sip-alert-text"><strong>Client note:</strong> <t t-esc="state.booking.special_requirements"/></div>
+                        </div>
+
+                        <!-- CHECKLIST -->
+                        <div class="sip-section">
+                            <div class="sip-section-header">
+                                <div class="sip-section-title"><i class="fa fa-check-square-o"/> Service Checklist</div>
+                            </div>
+                            <div class="sip-checklist">
+                                <div class="sip-checklist-progress">
+                                    <div class="sip-progress-bar">
+                                        <div class="sip-progress-fill" t-attf-style="width:#{progressPercent}%"/>
+                                    </div>
+                                    <div class="sip-progress-label"><t t-esc="completedCount"/> of <t t-esc="totalChecklistCount"/> completed</div>
+                                </div>
+                                <t t-foreach="state.checklist" t-as="item" t-key="item.id">
+                                    <div t-attf-class="sip-checklist-item #{item.done ? 'done' : ''}"
+                                         t-on-click="() => this.toggleCheckItem(item_index)">
+                                        <div class="sip-check-box">
+                                            <t t-if="item.done"><i class="fa fa-check" style="font-size:10px"/></t>
+                                        </div>
+                                        <div class="sip-check-text" t-esc="item.name"/>
+                                        <t t-if="item.time"><div class="sip-check-time" t-esc="item.time"/></t>
+                                        <t t-if="item.required"><span class="sip-check-req">Required</span></t>
+                                    </div>
+                                </t>
+                            </div>
+                        </div>
+
+                        <!-- VITALS -->
+                        <div class="sip-section">
+                            <div class="sip-section-header">
+                                <div class="sip-section-title"><i class="fa fa-heartbeat"/> Vital Signs</div>
+                            </div>
+                            <div class="sip-vitals-grid">
+                                <div t-attf-class="sip-vital-card #{state.vitals.bp ? 'recorded' : ''}">
+                                    <div class="sip-vital-label">Blood Pressure</div>
+                                    <input class="sip-vital-input" type="text" placeholder="—"
+                                           t-att-value="state.vitals.bp"
+                                           t-on-input="(ev) => this.onVitalChange('bp', ev)"/>
+                                    <div class="sip-vital-unit">mmHg</div>
+                                </div>
+                                <div t-attf-class="sip-vital-card #{state.vitals.hr ? 'recorded' : ''}">
+                                    <div class="sip-vital-label">Heart Rate</div>
+                                    <input class="sip-vital-input" type="text" placeholder="—"
+                                           t-att-value="state.vitals.hr"
+                                           t-on-input="(ev) => this.onVitalChange('hr', ev)"/>
+                                    <div class="sip-vital-unit">bpm</div>
+                                </div>
+                                <div t-attf-class="sip-vital-card #{state.vitals.temp ? 'recorded' : ''}">
+                                    <div class="sip-vital-label">Temperature</div>
+                                    <input class="sip-vital-input" type="text" placeholder="—"
+                                           t-att-value="state.vitals.temp"
+                                           t-on-input="(ev) => this.onVitalChange('temp', ev)"/>
+                                    <div class="sip-vital-unit">°C</div>
+                                </div>
+                                <div t-attf-class="sip-vital-card #{state.vitals.spo2 ? 'recorded' : ''}">
+                                    <div class="sip-vital-label">SpO2</div>
+                                    <input class="sip-vital-input" type="text" placeholder="—"
+                                           t-att-value="state.vitals.spo2"
+                                           t-on-input="(ev) => this.onVitalChange('spo2', ev)"/>
+                                    <div class="sip-vital-unit">%</div>
+                                </div>
+                                <div t-attf-class="sip-vital-card #{state.vitals.weight ? 'recorded' : ''}">
+                                    <div class="sip-vital-label">Weight</div>
+                                    <input class="sip-vital-input" type="text" placeholder="—"
+                                           t-att-value="state.vitals.weight"
+                                           t-on-input="(ev) => this.onVitalChange('weight', ev)"/>
+                                    <div class="sip-vital-unit">kg</div>
+                                </div>
+                                <div t-attf-class="sip-vital-card #{state.vitals.glucose ? 'recorded' : ''}">
+                                    <div class="sip-vital-label">Blood Glucose</div>
+                                    <input class="sip-vital-input" type="text" placeholder="—"
+                                           t-att-value="state.vitals.glucose"
+                                           t-on-input="(ev) => this.onVitalChange('glucose', ev)"/>
+                                    <div class="sip-vital-unit">mmol/L</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- CLINICAL NOTES -->
+                        <div class="sip-section">
+                            <div class="sip-section-header">
+                                <div class="sip-section-title"><i class="fa fa-file-text-o"/> Clinical Notes</div>
+                            </div>
+                            <textarea class="sip-notes-area"
+                                      placeholder="Enter clinical observations, findings, and recommendations..."
+                                      t-on-input="onNotesChange"
+                                      t-att-value="state.clinicalNotes"/>
+                            <div class="sip-template-chips">
+                                <button class="sip-template-chip">General Assessment</button>
+                                <button class="sip-template-chip">Wound Care</button>
+                                <button class="sip-template-chip">Medication Review</button>
+                                <button class="sip-template-chip">Post-Surgery Follow-up</button>
+                                <button class="sip-template-chip">Pediatric Check</button>
+                            </div>
+                        </div>
+
+                        <!-- PHOTOS -->
+                        <div class="sip-section">
+                            <div class="sip-section-header">
+                                <div class="sip-section-title"><i class="fa fa-camera"/> Service Photos</div>
+                                <span style="font-size:11px;color:#757575">Before &amp; After documentation</span>
+                            </div>
+                            <div class="sip-photo-grid">
+                                <div class="sip-photo-slot"><i class="fa fa-camera"/><span>Before</span></div>
+                                <div class="sip-photo-slot"><i class="fa fa-camera"/><span>During</span></div>
+                                <div class="sip-photo-slot"><i class="fa fa-camera"/><span>After</span></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- SIDE PANEL -->
+                    <div class="sip-side-panel">
+
+                        <!-- BOOKING INFO -->
+                        <div class="sip-side-card">
+                            <div class="sip-side-card-title"><i class="fa fa-bookmark"/> Booking Details</div>
+                            <div class="sip-info-row">
+                                <span class="sip-info-label">Booking ID</span>
+                                <span class="sip-info-value"><a t-on-click="goBack" style="color:#1565C0;cursor:pointer" t-esc="state.booking.name"/></span>
+                            </div>
+                            <div class="sip-info-row">
+                                <span class="sip-info-label">Service Type</span>
+                                <span class="sip-info-value" t-esc="state.booking.service_type_label"/>
+                            </div>
+                            <div class="sip-info-row">
+                                <span class="sip-info-label">Priority</span>
+                                <span class="sip-info-value"><span t-attf-class="sip-badge sip-badge-#{state.booking.priority === '3' ? 'red' : state.booking.priority === '2' ? 'orange' : 'blue'}" t-esc="state.booking.priority_label"/></span>
+                            </div>
+                            <div class="sip-info-row">
+                                <span class="sip-info-label">Status</span>
+                                <span class="sip-info-value"><span class="sip-badge sip-badge-orange">In Progress</span></span>
+                            </div>
+                            <div class="sip-info-row" t-if="state.booking.address">
+                                <span class="sip-info-label">Location</span>
+                                <span class="sip-info-value" t-esc="state.booking.address"/>
+                            </div>
+                        </div>
+
+                        <!-- PAYMENT -->
+                        <div class="sip-side-card">
+                            <div class="sip-side-card-title"><i class="fa fa-money"/> Payment</div>
+                            <div class="sip-info-row" t-if="state.payment.base_price">
+                                <span class="sip-info-label">Service Fee</span>
+                                <span class="sip-info-value" t-esc="formatCurrency(state.payment.base_price)"/>
+                            </div>
+                            <div class="sip-info-row" t-if="state.payment.travel_charge">
+                                <span class="sip-info-label">Travel Fee</span>
+                                <span class="sip-info-value" t-esc="formatCurrency(state.payment.travel_charge)"/>
+                            </div>
+                            <div class="sip-info-row" t-if="state.payment.urgency_charge">
+                                <span class="sip-info-label">Urgent Surcharge</span>
+                                <span class="sip-info-value" t-esc="formatCurrency(state.payment.urgency_charge)"/>
+                            </div>
+                            <div class="sip-info-row" style="border-top:1px solid #E0E0E0;padding-top:8px;margin-top:4px">
+                                <span class="sip-info-label" style="font-weight:700">Total</span>
+                                <span class="sip-info-value" style="font-size:15px;color:#1565C0" t-esc="formatCurrency(state.payment.total_price)"/>
+                            </div>
+                            <button class="sip-collect-btn" t-on-click="collectPayment">
+                                <i class="fa fa-money"/> Collect Payment
+                            </button>
+                        </div>
+
+                        <!-- TIMELINE -->
+                        <div class="sip-side-card" t-if="state.timeline.length > 0">
+                            <div class="sip-side-card-title"><i class="fa fa-clock-o"/> Service Timeline</div>
+                            <t t-foreach="state.timeline" t-as="entry" t-key="entry_index">
+                                <div class="sip-history-item">
+                                    <div class="sip-history-dot"/>
+                                    <div class="sip-history-content">
+                                        <div class="sip-history-text" t-esc="entry.author"/>
+                                        <div class="sip-history-time" t-esc="entry.date"/>
+                                    </div>
+                                </div>
+                            </t>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ACTION FOOTER -->
+                <div class="sip-action-footer">
+                    <div class="sip-footer-left">
+                        <button class="sip-action-btn sip-btn-outline" t-on-click="saveDraft"><i class="fa fa-save"/> Save Draft</button>
+                    </div>
+                    <div class="sip-footer-right">
+                        <span style="font-size:11px;color:#757575"><t t-esc="completedCount"/> of <t t-esc="totalChecklistCount"/> items completed</span>
+                        <button class="sip-action-btn sip-btn-complete" t-on-click="completeService"><i class="fa fa-check-circle"/> Complete Service</button>
+                    </div>
+                </div>
+            </t>
+
+        </div>
+    </div>
+</t>
+
+</templates>

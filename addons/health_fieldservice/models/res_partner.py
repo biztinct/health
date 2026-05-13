@@ -124,6 +124,163 @@ class ResPartner(models.Model):
                 partner.total_assignments = 0
                 partner.last_assignment_date = False
     
+    @api.model
+    def get_client_profile_data(self, partner_id):
+        """Single RPC returning all client profile data for the OWL component."""
+        partner = self.browse(partner_id)
+        if not partner.exists():
+            return {}
+
+        # Basic info
+        initials = ''
+        name_parts = (partner.name or '').split()
+        if name_parts:
+            initials = ''.join(p[0] for p in name_parts if p)[:2].upper()
+
+        gender_map = {'male': 'M', 'female': 'F', 'other': 'O'}
+        age_gender = ''
+        if partner.age:
+            age_gender = f"{partner.age} years old"
+            if partner.gender and partner.gender in gender_map:
+                age_gender += f" ({gender_map[partner.gender]})"
+
+        profile = {
+            'id': partner.id,
+            'name': partner.name or '',
+            'initials': initials,
+            'patient_code': partner.patient_code or '',
+            'phone': partner.mobile or partner.phone or '',
+            'email': partner.email or '',
+            'address': partner.vietnamese_address if hasattr(partner, 'vietnamese_address') and partner.vietnamese_address else (partner.contact_address_complete or ''),
+            'age_gender': age_gender,
+            'patient_status': partner.patient_status or 'active',
+            'is_vip': bool(partner.patient_category_id and 'vip' in (partner.patient_category_id.name or '').lower()),
+            'is_referrer': partner.is_referrer,
+            'category_name': partner.patient_category_id.name if partner.patient_category_id else '',
+        }
+
+        # Stats
+        FSO = self.env['health.fieldservice.order']
+        fso_domain = [('patient_id', '=', partner.id)]
+        total_visits = FSO.search_count(fso_domain + [('state', 'in', ['completed', 'completed_pending_invoice'])])
+
+        Package = self.env['health.service.package']
+        active_packages = Package.search_count([('patient_id', '=', partner.id), ('state', '=', 'active')])
+
+        # Outstanding = unpaid invoices for this partner
+        outstanding = 0.0
+        total_spent = 0.0
+        try:
+            invoices = self.env['account.move'].search([
+                ('partner_id', '=', partner.id),
+                ('move_type', '=', 'out_invoice'),
+            ])
+            for inv in invoices:
+                if inv.payment_state in ('paid', 'in_payment'):
+                    total_spent += inv.amount_total
+                elif inv.state == 'posted':
+                    outstanding += inv.amount_residual
+                    total_spent += (inv.amount_total - inv.amount_residual)
+        except Exception:
+            pass
+
+        referral_count = 0
+        if partner.is_referrer:
+            referral_count = self.search_count([('primary_referrer_id', '=', partner.id)])
+
+        stats = {
+            'total_visits': total_visits,
+            'active_packages': active_packages,
+            'total_spent': total_spent,
+            'outstanding': outstanding,
+            'satisfaction': 0,
+            'referrals': referral_count,
+        }
+
+        # Recent bookings (last 10)
+        bookings = []
+        fsos = FSO.search(fso_domain, order='scheduled_datetime desc', limit=10)
+        for f in fsos:
+            dt = f.scheduled_datetime
+            bookings.append({
+                'id': f.id,
+                'name': f.name or '',
+                'date_label': dt.strftime('%b %d') if dt else '',
+                'time_label': dt.strftime('%H:%M') if dt else '',
+                'service_type': dict(f._fields['service_type'].selection).get(f.service_type, f.service_type or ''),
+                'staff_name': f.lead_staff_id.name if f.lead_staff_id else '',
+                'has_staff': f.has_staff_assigned,
+                'state': f.state or 'draft',
+                'state_label': dict(f._fields['state'].selection).get(f.state, f.state or ''),
+            })
+
+        # Active packages
+        packages = []
+        pkgs = Package.search([('patient_id', '=', partner.id), ('state', '=', 'active')], limit=5)
+        for p in pkgs:
+            pct = int((p.consumed_services / p.total_services * 100)) if p.total_services else 0
+            packages.append({
+                'id': p.id,
+                'name': p.name or '',
+                'total': p.total_services,
+                'used': p.consumed_services,
+                'remaining': p.remaining_services,
+                'progress_pct': pct,
+                'expiry': p.expiration_date.strftime('%b %d, %Y') if p.expiration_date else '',
+                'state': p.state,
+            })
+
+        # Recent payments
+        payments = []
+        try:
+            inv_lines = self.env['account.move'].search([
+                ('partner_id', '=', partner.id),
+                ('move_type', '=', 'out_invoice'),
+            ], order='invoice_date desc', limit=8)
+            for inv in inv_lines:
+                is_paid = inv.payment_state in ('paid', 'in_payment')
+                payments.append({
+                    'id': inv.id,
+                    'description': inv.name or '',
+                    'date': inv.invoice_date.strftime('%b %d, %Y') if inv.invoice_date else '',
+                    'amount': inv.amount_total,
+                    'is_paid': is_paid,
+                    'payment_state': inv.payment_state or 'not_paid',
+                })
+        except Exception:
+            pass
+
+        # Activity timeline (recent chatter messages)
+        timeline = []
+        try:
+            messages = self.env['mail.message'].search([
+                ('res_id', '=', partner.id),
+                ('model', '=', 'res.partner'),
+                ('message_type', 'in', ['comment', 'notification']),
+            ], order='date desc', limit=10)
+            for msg in messages:
+                timeline.append({
+                    'id': msg.id,
+                    'body': msg.body or '',
+                    'date': msg.date.strftime('%b %d, %H:%M') if msg.date else '',
+                    'author': msg.author_id.name if msg.author_id else '',
+                    'subtype': msg.subtype_id.name if msg.subtype_id else '',
+                })
+        except Exception:
+            pass
+
+        return {
+            'profile': profile,
+            'stats': stats,
+            'bookings': bookings,
+            'packages': packages,
+            'payments': payments,
+            'timeline': timeline,
+            'total_bookings': FSO.search_count(fso_domain),
+            'total_packages': Package.search_count([('patient_id', '=', partner.id)]),
+            'total_payments': len(payments),
+        }
+
     def action_create_fso(self):
         """Open quick booking wizard (2-step: Services + Booking) with client pre-filled"""
         if not self.is_patient:

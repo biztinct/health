@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lead Detail — VAFHS</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+:root{--vu-deep-blue:#1565C0;--vu-deep-blue-darker:#1356A9;--vu-deep-blue-darkest:#0D356B;--vu-deep-blue-light:#83C5FA;--vu-deep-blue-lightest:#E4F4FD;--vu-accent-blue:#42A5F5;--vu-hibiscus-red:#E53935;--vu-hibiscus-orange:#FB8C00;--vu-leaf-green:#43A047;--state-draft:#64748b;--state-confirmed:#2563eb;--state-assigned:#7c3aed;--state-active:#ea580c;--state-completed:#16a34a;--state-cancelled:#dc2626;--text-primary:#212121;--text-secondary:#424242;--text-muted:#757575;--surface-app:#F5F5F5;--surface-card:#FFFFFF;--border-soft:#E0E0E0;--border-strong:#BDBDBD;--shadow-sm:0 1px 3px rgba(33,33,33,.08);--shadow-md:0 2px 8px rgba(33,33,33,.12);--shadow-lg:0 4px 16px rgba(33,33,33,.15);--radius-sm:4px;--radius-md:8px;--radius-lg:12px}
+*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Segoe UI',Arial,sans-serif;font-size:13px;color:var(--text-primary);background:var(--surface-app);line-height:1.5;-webkit-font-smoothing:antialiased}h1,h2,h3,h4{font-family:'Montserrat','Segoe UI',Arial,sans-serif;font-weight:600}.app-wrapper{display:flex;min-height:100vh}
+
+.sidebar{width:220px;background:var(--vu-deep-blue-darkest);color:white;display:flex;flex-direction:column;flex-shrink:0;position:fixed;top:0;left:0;bottom:0;z-index:100}
+.sidebar-logo{padding:20px 16px;display:flex;align-items:center;gap:10px;border-bottom:1px solid rgba(255,255,255,.1);text-decoration:none;color:white}
+.logo-icon{width:36px;height:36px;background:var(--vu-hibiscus-red);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px}
+.logo-text{font-family:'Montserrat';font-weight:700;font-size:15px;letter-spacing:.5px}.logo-sub{font-size:10px;opacity:.6}
+.sidebar-nav{padding:12px 0;flex:1}
+.nav-section-label{padding:16px 16px 6px;font-size:10px;text-transform:uppercase;letter-spacing:1.2px;opacity:.4;font-weight:600}
+.nav-item{display:flex;align-items:center;gap:10px;padding:10px 16px;color:rgba(255,255,255,.7);text-decoration:none;font-size:13px;font-weight:500;transition:all 150ms;cursor:pointer;border-left:3px solid transparent}
+.nav-item:hover{background:rgba(255,255,255,.08);color:white}.nav-item.active{background:rgba(255,255,255,.12);color:white;border-left-color:var(--vu-accent-blue)}
+.nav-item i{width:20px;text-align:center;font-size:14px}.nav-item .badge-count{margin-left:auto;background:var(--vu-hibiscus-red);color:white;font-size:10px;font-weight:700;padding:2px 6px;border-radius:10px}
+.sidebar-user{padding:12px 16px;border-top:1px solid rgba(255,255,255,.1);display:flex;align-items:center;gap:10px}
+.user-avatar{width:32px;height:32px;border-radius:50%;background:var(--vu-accent-blue);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700}
+.user-info{flex:1}.user-name{font-size:12px;font-weight:600}.user-role{font-size:10px;opacity:.5}
+
+.main-content{flex:1;margin-left:220px;display:flex;flex-direction:column}
+.top-header{background:var(--surface-card);border-bottom:1px solid var(--border-soft);padding:12px 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;box-shadow:var(--shadow-sm)}
+.header-left{display:flex;align-items:center;gap:12px}
+.breadcrumb{display:flex;align-items:center;gap:6px;font-size:13px}
+.breadcrumb a{color:var(--vu-deep-blue);text-decoration:none;font-weight:500}.breadcrumb a:hover{text-decoration:underline}
+.breadcrumb .sep{color:var(--text-muted)}.breadcrumb .current{color:var(--text-primary);font-weight:600}
+.header-right{display:flex;align-items:center;gap:8px}
+.header-btn{display:flex;align-items:center;gap:6px;padding:7px 14px;border:none;border-radius:var(--radius-md);font-size:12px;font-weight:600;cursor:pointer;transition:all 150ms;font-family:inherit}
+.btn-primary{background:var(--vu-deep-blue);color:white}.btn-primary:hover{background:var(--vu-deep-blue-darker)}
+.btn-success{background:var(--vu-leaf-green);color:white}.btn-success:hover{background:#388E3C}
+.btn-outline{background:transparent;color:var(--text-secondary);border:1px solid var(--border-soft)}.btn-outline:hover{border-color:var(--vu-deep-blue);color:var(--vu-deep-blue);background:var(--vu-deep-blue-lightest)}
+.btn-danger{background:transparent;color:var(--state-cancelled);border:1px solid var(--state-cancelled)}.btn-danger:hover{background:var(--state-cancelled);color:white}
+.page-body{padding:20px 24px;flex:1}
+
+/* LEAD HEADER */
+.lead-header{background:var(--surface-card);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);border:1px solid var(--border-soft);padding:20px 24px;margin-bottom:16px}
+.lead-title-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.lead-title{font-size:20px;font-weight:700;font-family:'Montserrat';display:flex;align-items:center;gap:10px}
+.lead-source{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text-muted)}
+.lead-source i{color:var(--vu-accent-blue);font-size:14px}
+.lead-meta{display:flex;gap:28px;flex-wrap:wrap}
+.lead-meta-item{display:flex;align-items:center;gap:8px}
+.lead-meta-icon{width:32px;height:32px;border-radius:var(--radius-md);display:flex;align-items:center;justify-content:center;font-size:13px}
+.meta-label{font-size:11px;color:var(--text-muted)}.meta-value{font-size:13px;font-weight:600}
+
+/* STAGE BAR */
+.stage-bar{display:flex;gap:4px;margin-top:16px;padding-top:16px;border-top:1px solid var(--border-soft)}
+.stage{flex:1;padding:8px 12px;text-align:center;font-size:11px;font-weight:700;border-radius:var(--radius-md);cursor:pointer;transition:all 150ms;border:1px solid var(--border-soft);color:var(--text-muted);background:var(--surface-app)}
+.stage:hover{border-color:var(--vu-deep-blue-light)}
+.stage.completed{background:var(--vu-leaf-green);color:white;border-color:var(--vu-leaf-green)}
+.stage.active{background:var(--vu-deep-blue);color:white;border-color:var(--vu-deep-blue);box-shadow:0 0 0 3px rgba(21,101,192,.2)}
+.stage .stage-label{display:block;font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:.3px;opacity:.8;margin-bottom:2px}
+
+/* TWO COLUMN */
+.detail-grid{display:grid;grid-template-columns:1fr 360px;gap:16px}
+.card{background:var(--surface-card);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);border:1px solid var(--border-soft);overflow:hidden}
+.card-header{padding:14px 20px;border-bottom:1px solid var(--border-soft);display:flex;align-items:center;justify-content:space-between}
+.card-title{font-size:14px;font-weight:700;font-family:'Montserrat';display:flex;align-items:center;gap:8px}
+.card-title i{color:var(--vu-deep-blue);font-size:14px}
+.card-body{padding:16px 20px}
+.card-action{font-size:12px;color:var(--vu-deep-blue);font-weight:600;cursor:pointer;text-decoration:none;display:flex;align-items:center;gap:4px}
+
+.field-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px 20px}
+.field-item{}.field-label{font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.4px;font-weight:600;margin-bottom:2px}.field-value{font-size:13px;font-weight:500}.field-full{grid-column:1/-1}
+.field-value.editable{cursor:pointer;padding:2px 6px;margin:-2px -6px;border-radius:var(--radius-sm);transition:background 120ms}
+.field-value.editable:hover{background:var(--vu-deep-blue-lightest)}
+.field-value.editable::after{content:' \270E';font-size:10px;color:var(--text-muted);opacity:0;transition:opacity 120ms}.field-value.editable:hover::after{opacity:1}
+
+.status-chip{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:10px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.4px}
+.chip-new{background:rgba(100,116,139,.1);color:var(--state-draft)}.chip-qualified{background:rgba(37,99,235,.1);color:var(--state-confirmed)}.chip-won{background:rgba(22,163,74,.1);color:var(--state-completed)}.chip-lost{background:rgba(220,38,38,.1);color:var(--state-cancelled)}
+
+/* SCORE */
+.score-circle{width:64px;height:64px;border-radius:50%;border:4px solid var(--vu-leaf-green);display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:800;font-family:'Montserrat';color:var(--vu-leaf-green);margin:0 auto 8px}
+.score-label{text-align:center;font-size:11px;color:var(--text-muted)}
+
+/* ACTIVITY LOG */
+.log-item{display:flex;gap:10px;position:relative;padding-bottom:14px}
+.log-item:last-child{padding-bottom:0}
+.log-item:not(:last-child)::before{content:'';position:absolute;left:13px;top:26px;bottom:0;width:1px;background:var(--border-soft)}
+.log-dot{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;flex-shrink:0;z-index:1}
+.log-dot.call{background:#E4F4FD;color:var(--vu-deep-blue)}.log-dot.email{background:#FFF3E0;color:var(--vu-hibiscus-orange)}.log-dot.note{background:#F3E8FF;color:var(--state-assigned)}.log-dot.stage{background:#DBF0DB;color:var(--vu-leaf-green)}.log-dot.system{background:var(--surface-app);color:var(--text-muted)}
+.log-content{flex:1;padding-top:3px}.log-text{font-size:12px}.log-text strong{font-weight:600}.log-time{font-size:10px;color:var(--text-muted)}
+.log-comment{margin-top:4px;padding:8px 12px;background:var(--surface-app);border-radius:var(--radius-md);font-size:12px;color:var(--text-secondary);border-left:3px solid var(--vu-accent-blue)}
+
+.note-row{display:flex;gap:8px;align-items:flex-start;margin-top:12px;padding-top:12px;border-top:1px solid var(--border-soft)}
+.note-input{flex:1;padding:8px 12px;border:1px solid var(--border-soft);border-radius:var(--radius-md);font-size:12px;font-family:inherit;resize:none;min-height:36px;transition:border-color 150ms}
+.note-input:focus{outline:none;border-color:var(--vu-deep-blue);box-shadow:0 0 0 3px rgba(21,101,192,.1)}
+.note-send{width:36px;height:36px;border:none;background:var(--vu-deep-blue);color:white;border-radius:var(--radius-md);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:13px}
+.note-send:hover{background:var(--vu-deep-blue-darker)}
+
+/* INTEREST TAGS */
+.interest-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
+.interest-tag{padding:4px 10px;border-radius:16px;font-size:11px;font-weight:600;background:var(--vu-deep-blue-lightest);color:var(--vu-deep-blue);cursor:pointer;transition:all 150ms}
+.interest-tag:hover{background:var(--vu-deep-blue);color:white}
+
+/* REVENUE ESTIMATE */
+.revenue-bar{display:flex;justify-content:space-between;align-items:flex-end;margin-top:12px;padding-top:12px;border-top:1px solid var(--border-soft)}
+.rev-item{text-align:center}.rev-label{font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.3px;font-weight:600}.rev-value{font-size:18px;font-weight:800;font-family:'Montserrat'}
+
+::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--border-soft);border-radius:3px}
+</style>
+</head>
+<body>
+<div class="app-wrapper">
+  <aside class="sidebar">
+    <a class="sidebar-logo" href="sales_dashboard.html">
+      <div class="logo-icon"><i class="fas fa-heartbeat"></i></div>
+      <div><div class="logo-text">VIET UC</div><div class="logo-sub">Healthcare Platform</div></div>
+    </a>
+    <nav class="sidebar-nav">
+      <div class="nav-section-label">Main</div>
+      <a class="nav-item" href="sales_dashboard.html"><i class="fas fa-th-large"></i> Dashboard</a>
+      <a class="nav-item" href="client_profile.html"><i class="fas fa-users"></i> Clients</a>
+      <a class="nav-item active"><i class="fas fa-filter"></i> Leads <span class="badge-count">12</span></a>
+      <a class="nav-item" href="ops_booking_queue.html"><i class="fas fa-calendar-check"></i> Bookings</a>
+      <a class="nav-item"><i class="fas fa-tasks"></i> Activities <span class="badge-count">3</span></a>
+      <div class="nav-section-label">Reports</div>
+      <a class="nav-item"><i class="fas fa-chart-line"></i> Performance</a>
+      <div class="nav-section-label">System</div>
+      <a class="nav-item"><i class="fas fa-cog"></i> Configuration</a>
+    </nav>
+    <div class="sidebar-user">
+      <div class="user-avatar">NT</div>
+      <div class="user-info"><div class="user-name">Nguyen Thi Thanh</div><div class="user-role">Sales Executive</div></div>
+    </div>
+  </aside>
+
+  <div class="main-content">
+    <header class="top-header">
+      <div class="header-left">
+        <div class="breadcrumb">
+          <a href="sales_dashboard.html">Dashboard</a>
+          <span class="sep"><i class="fas fa-chevron-right" style="font-size:10px"></i></span>
+          <a href="#">Leads</a>
+          <span class="sep"><i class="fas fa-chevron-right" style="font-size:10px"></i></span>
+          <span class="current">LD-2026-1204</span>
+        </div>
+      </div>
+      <div class="header-right">
+        <button class="header-btn btn-outline"><i class="fas fa-phone"></i> Log Call</button>
+        <button class="header-btn btn-outline"><i class="fas fa-envelope"></i> Send Email</button>
+        <button class="header-btn btn-outline"><i class="fas fa-calendar-plus"></i> Schedule Activity</button>
+        <a href="booking_wizard.html" class="header-btn btn-success" style="text-decoration:none"><i class="fas fa-arrow-right"></i> Convert to Booking</a>
+        <button class="header-btn btn-danger"><i class="fas fa-xmark"></i> Lost</button>
+      </div>
+    </header>
+
+    <div class="page-body">
+      <!-- LEAD HEADER -->
+      <div class="lead-header">
+        <div class="lead-title-row">
+          <div>
+            <div class="lead-title">
+              Le Thi Hoa — Home Visit Inquiry
+              <span class="status-chip chip-qualified"><i class="fas fa-circle" style="font-size:5px"></i> Qualified</span>
+            </div>
+            <div class="lead-source">
+              <i class="fab fa-facebook"></i> Facebook Campaign — Spring Health Check
+              <span style="margin-left:12px;color:var(--text-muted)"><i class="fas fa-calendar" style="font-size:11px;color:var(--vu-deep-blue)"></i> Created May 8, 2026</span>
+            </div>
+          </div>
+        </div>
+        <div class="lead-meta">
+          <div class="lead-meta-item">
+            <div class="lead-meta-icon" style="background:var(--vu-deep-blue-lightest);color:var(--vu-deep-blue)"><i class="fas fa-user"></i></div>
+            <div><div class="meta-label">Contact</div><div class="meta-value">Le Thi Hoa &bull; 0976 543 210</div></div>
+          </div>
+          <div class="lead-meta-item">
+            <div class="lead-meta-icon" style="background:#FFF3E0;color:var(--vu-hibiscus-orange)"><i class="fas fa-dollar-sign"></i></div>
+            <div><div class="meta-label">Expected Revenue</div><div class="meta-value">5,200,000 &#8363;</div></div>
+          </div>
+          <div class="lead-meta-item">
+            <div class="lead-meta-icon" style="background:#F3E8FF;color:var(--state-assigned)"><i class="fas fa-percent"></i></div>
+            <div><div class="meta-label">Probability</div><div class="meta-value">75%</div></div>
+          </div>
+          <div class="lead-meta-item">
+            <div class="lead-meta-icon" style="background:#DBF0DB;color:var(--vu-leaf-green)"><i class="fas fa-user-tie"></i></div>
+            <div><div class="meta-label">Assigned To</div><div class="meta-value">Nguyen Thi Thanh</div></div>
+          </div>
+        </div>
+
+        <!-- STAGE BAR -->
+        <div class="stage-bar">
+          <div class="stage completed"><span class="stage-label">Stage 1</span>New</div>
+          <div class="stage active"><span class="stage-label">Stage 2</span>Qualified</div>
+          <div class="stage"><span class="stage-label">Stage 3</span>Proposal</div>
+          <div class="stage"><span class="stage-label">Stage 4</span>Negotiation</div>
+          <div class="stage"><span class="stage-label">Stage 5</span>Won</div>
+        </div>
+      </div>
+
+      <!-- TWO COLUMN -->
+      <div class="detail-grid">
+        <!-- LEFT -->
+        <div style="display:flex;flex-direction:column;gap:16px">
+          <!-- LEAD DETAILS -->
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title"><i class="fas fa-info-circle"></i> Lead Details</div>
+              <a class="card-action"><i class="fas fa-pen" style="font-size:10px"></i> Edit</a>
+            </div>
+            <div class="card-body">
+              <div class="field-grid">
+                <div class="field-item">
+                  <div class="field-label">Contact Name</div>
+                  <div class="field-value">Le Thi Hoa</div>
+                </div>
+                <div class="field-item">
+                  <div class="field-label">Phone</div>
+                  <div class="field-value">0976 543 210</div>
+                </div>
+                <div class="field-item">
+                  <div class="field-label">Email</div>
+                  <div class="field-value">lethihoa@email.com</div>
+                </div>
+                <div class="field-item">
+                  <div class="field-label">District</div>
+                  <div class="field-value editable">Hoan Kiem, Hanoi</div>
+                </div>
+                <div class="field-item">
+                  <div class="field-label">Lead Source</div>
+                  <div class="field-value"><i class="fab fa-facebook" style="color:var(--vu-accent-blue);font-size:12px"></i> Facebook — Spring Health Check</div>
+                </div>
+                <div class="field-item">
+                  <div class="field-label">Referrer</div>
+                  <div class="field-value editable">Tran Van Duc (Client)</div>
+                </div>
+                <div class="field-item">
+                  <div class="field-label">Commission</div>
+                  <div class="field-value">5% &bull; 260,000 &#8363; estimated</div>
+                </div>
+                <div class="field-item">
+                  <div class="field-label">Next Activity</div>
+                  <div class="field-value" style="color:var(--vu-hibiscus-red);font-weight:600">Call — Overdue (Yesterday)</div>
+                </div>
+                <div class="field-item field-full">
+                  <div class="field-label">Interested Services</div>
+                  <div class="interest-tags">
+                    <span class="interest-tag">Home Visit</span>
+                    <span class="interest-tag">General Health Check</span>
+                    <span class="interest-tag">Pediatric Care</span>
+                  </div>
+                </div>
+                <div class="field-item field-full">
+                  <div class="field-label">Notes</div>
+                  <div class="field-value">Client is interested in regular home visits for elderly parents. Also inquired about pediatric care for children (ages 3 and 5). Prefers morning appointments. Referred by existing VIP client Tran Van Duc.</div>
+                </div>
+              </div>
+              <div class="revenue-bar">
+                <div class="rev-item"><div class="rev-label">Expected Revenue</div><div class="rev-value" style="color:var(--vu-deep-blue)">5.2M &#8363;</div></div>
+                <div class="rev-item"><div class="rev-label">Probability</div><div class="rev-value" style="color:var(--vu-hibiscus-orange)">75%</div></div>
+                <div class="rev-item"><div class="rev-label">Weighted Value</div><div class="rev-value" style="color:var(--vu-leaf-green)">3.9M &#8363;</div></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- SIMILAR LEADS / EXISTING CLIENT CHECK -->
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title"><i class="fas fa-link"></i> Related Records</div>
+            </div>
+            <div class="card-body" style="padding:12px 20px">
+              <div style="display:flex;align-items:center;gap:10px;padding:10px;background:var(--surface-app);border-radius:var(--radius-md);margin-bottom:8px">
+                <div style="width:30px;height:30px;border-radius:50%;background:#FFF3E0;color:var(--vu-hibiscus-orange);display:flex;align-items:center;justify-content:center;font-size:12px"><i class="fas fa-exclamation"></i></div>
+                <div style="flex:1"><div style="font-size:12px;font-weight:600">Possible duplicate: Le Thi Hoa (0976 543 210)</div><div style="font-size:11px;color:var(--text-muted)">Existing contact found — created Jan 2026</div></div>
+                <button class="header-btn btn-outline" style="padding:4px 10px;font-size:11px">Link</button>
+              </div>
+              <div style="display:flex;align-items:center;gap:10px;padding:10px;background:var(--surface-app);border-radius:var(--radius-md)">
+                <div style="width:30px;height:30px;border-radius:50%;background:var(--vu-deep-blue-lightest);color:var(--vu-deep-blue);display:flex;align-items:center;justify-content:center;font-size:12px"><i class="fas fa-user"></i></div>
+                <div style="flex:1"><div style="font-size:12px;font-weight:600">Referrer: Tran Van Duc</div><div style="font-size:11px;color:var(--text-muted)">VIP Client — 12 visits, 3 active packages</div></div>
+                <a href="client_profile.html" class="header-btn btn-outline" style="padding:4px 10px;font-size:11px;text-decoration:none">View</a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- RIGHT -->
+        <div style="display:flex;flex-direction:column;gap:16px">
+          <!-- LEAD SCORE -->
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title"><i class="fas fa-chart-line"></i> Lead Score</div>
+            </div>
+            <div class="card-body" style="text-align:center;padding:20px">
+              <div class="score-circle">78</div>
+              <div class="score-label">High Quality Lead</div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px;text-align:left">
+                <div style="padding:8px;background:var(--surface-app);border-radius:var(--radius-md)">
+                  <div style="font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.3px;font-weight:600">Engagement</div>
+                  <div style="font-size:14px;font-weight:700;color:var(--vu-leaf-green)">High</div>
+                </div>
+                <div style="padding:8px;background:var(--surface-app);border-radius:var(--radius-md)">
+                  <div style="font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.3px;font-weight:600">Budget Fit</div>
+                  <div style="font-size:14px;font-weight:700;color:var(--vu-leaf-green)">Good</div>
+                </div>
+                <div style="padding:8px;background:var(--surface-app);border-radius:var(--radius-md)">
+                  <div style="font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.3px;font-weight:600">Response Time</div>
+                  <div style="font-size:14px;font-weight:700;color:var(--vu-accent-blue)">2 hours</div>
+                </div>
+                <div style="padding:8px;background:var(--surface-app);border-radius:var(--radius-md)">
+                  <div style="font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.3px;font-weight:600">Referral</div>
+                  <div style="font-size:14px;font-weight:700;color:var(--vu-leaf-green)">VIP Client</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ACTIVITY LOG -->
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title"><i class="fas fa-clock-rotate-left"></i> Activity Log</div>
+            </div>
+            <div class="card-body">
+              <div>
+                <div class="log-item">
+                  <div class="log-dot call"><i class="fas fa-phone"></i></div>
+                  <div class="log-content"><div class="log-text"><strong>Outbound call</strong> — Discussed home visit options</div><div class="log-time">May 9, 2026 &bull; 10:15</div><div class="log-comment">Client confirmed interest in general health and pediatric home visits. Prefers morning slots. Mentioned budget around 5M VND/month for regular visits.</div></div>
+                </div>
+                <div class="log-item">
+                  <div class="log-dot stage"><i class="fas fa-arrow-right"></i></div>
+                  <div class="log-content"><div class="log-text"><strong>Stage changed</strong> — New → Qualified</div><div class="log-time">May 9, 2026 &bull; 10:30</div></div>
+                </div>
+                <div class="log-item">
+                  <div class="log-dot email"><i class="fas fa-envelope"></i></div>
+                  <div class="log-content"><div class="log-text"><strong>Email sent</strong> — Service catalog &amp; pricing</div><div class="log-time">May 9, 2026 &bull; 11:00</div></div>
+                </div>
+                <div class="log-item">
+                  <div class="log-dot system"><i class="fas fa-robot"></i></div>
+                  <div class="log-content"><div class="log-text"><strong>Auto-assigned</strong> to Nguyen Thi Thanh</div><div class="log-time">May 8, 2026 &bull; 16:00</div></div>
+                </div>
+                <div class="log-item">
+                  <div class="log-dot note"><i class="fas fa-tag"></i></div>
+                  <div class="log-content"><div class="log-text"><strong>Lead created</strong> from Facebook campaign</div><div class="log-time">May 8, 2026 &bull; 15:42</div><div class="log-comment">Form submission: "I'm looking for professional home healthcare for my parents in Hoan Kiem district. Also need pediatric check-ups for my kids."</div></div>
+                </div>
+              </div>
+              <div class="note-row">
+                <textarea class="note-input" placeholder="Add a note..." rows="1"></textarea>
+                <button class="note-send"><i class="fas fa-paper-plane"></i></button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+<t t-name="health_fieldservice.OpsClientList">
+    <div class="ops-client-list-page">
+
+        <!-- SIDEBAR -->
+        <aside class="ops-sidebar">
+            <div class="ops-sidebar-logo" t-on-click="navigateHome" style="cursor:pointer">
+                <div class="ops-logo-icon"><i class="fa fa-heartbeat"/></div>
+                <div>
+                    <div class="ops-logo-text">VIET UC</div>
+                    <div class="ops-logo-sub">Healthcare Platform</div>
+                </div>
+            </div>
+            <nav class="ops-sidebar-nav">
+                <div class="ops-nav-section-label">Main</div>
+                <a class="ops-nav-item" t-on-click="() => this.navigateTo('dashboard')"><i class="fa fa-th-large"/> Dashboard</a>
+                <a class="ops-nav-item" t-on-click="() => this.navigateTo('bookings')"><i class="fa fa-calendar-check-o"/> Bookings</a>
+                <a class="ops-nav-item active"><i class="fa fa-address-book-o"/> Clients</a>
+                <a class="ops-nav-item" t-on-click="() => this.navigateTo('recurring')"><i class="fa fa-repeat"/> Recurring</a>
+                <a class="ops-nav-item" t-on-click="() => this.navigateTo('staff')"><i class="fa fa-users"/> Staff</a>
+                <a class="ops-nav-item" t-on-click="() => this.navigateTo('calendar')"><i class="fa fa-calendar"/> Calendar</a>
+                <div class="ops-nav-section-label">Reports</div>
+                <a class="ops-nav-item" t-on-click="() => this.navigateTo('workload')"><i class="fa fa-bar-chart"/> Workload</a>
+                <a class="ops-nav-item" t-on-click="() => this.navigateTo('analytics')"><i class="fa fa-line-chart"/> Analytics</a>
+                <div class="ops-nav-section-label">System</div>
+                <a class="ops-nav-item" t-on-click="navigateHome"><i class="fa fa-arrow-left"/> Back to Odoo</a>
+            </nav>
+            <div class="ops-sidebar-user">
+                <div class="ops-user-avatar" t-esc="currentUserInitials"/>
+                <div class="ops-user-info">
+                    <div class="ops-user-name" t-esc="currentUserName"/>
+                    <div class="ops-user-role">Operations Manager</div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT -->
+        <div class="ops-main-content">
+
+            <!-- HEADER -->
+            <header class="ops-top-header">
+                <div class="ops-header-left">
+                    <h1 class="ops-page-title">Clients</h1>
+                </div>
+                <div class="ops-header-right">
+                    <span class="ops-header-count" t-if="state.totalCount > 0">
+                        <t t-esc="state.totalCount"/> clients
+                    </span>
+                </div>
+            </header>
+
+            <!-- FILTER BAR -->
+            <div class="ops-filter-bar">
+                <div class="ops-search-wrapper">
+                    <i class="fa fa-search ops-search-icon"/>
+                    <input type="text" class="ops-search-input" placeholder="Search by name, ID, phone, or email..."
+                           t-att-value="state.searchQuery"
+                           t-on-input="onSearchInput"
+                           t-on-keydown="onSearchKeydown"/>
+                </div>
+                <select class="ops-filter-select" t-on-change="onFacilityChange">
+                    <option value="">All Facilities</option>
+                    <t t-foreach="state.facilities" t-as="f" t-key="f.id">
+                        <option t-att-value="f.id" t-esc="f.name"/>
+                    </t>
+                </select>
+            </div>
+
+            <!-- STATUS TABS -->
+            <div class="ops-queue-tabs">
+                <button t-attf-class="ops-queue-tab #{state.activeTab === 'all' ? 'active' : ''}" t-on-click="() => this.setTab('all')">All</button>
+                <button t-attf-class="ops-queue-tab #{state.activeTab === 'active' ? 'active' : ''}" t-on-click="() => this.setTab('active')">Active</button>
+                <button t-attf-class="ops-queue-tab #{state.activeTab === 'inactive' ? 'active' : ''}" t-on-click="() => this.setTab('inactive')">Inactive</button>
+                <button t-attf-class="ops-queue-tab #{state.activeTab === 'recent' ? 'active' : ''}" t-on-click="() => this.setTab('recent')">Recent Visits</button>
+            </div>
+
+            <!-- LOADING -->
+            <div t-if="state.isLoading" class="ops-loading">
+                <div class="spinner-border text-primary" role="status"/>
+                <span>Loading clients...</span>
+            </div>
+
+            <!-- TABLE -->
+            <div t-if="!state.isLoading" class="ops-queue-table-wrapper">
+                <t t-if="state.clients.length === 0">
+                    <div class="ops-empty-state" style="padding:80px 20px">
+                        <i class="fa fa-address-book-o" style="font-size:48px"/>
+                        <h4>No clients found</h4>
+                        <p>Try adjusting your filters or search query.</p>
+                    </div>
+                </t>
+                <t t-if="state.clients.length > 0">
+                    <table class="ops-queue-table">
+                        <thead>
+                            <tr>
+                                <th>Client</th>
+                                <th>Patient ID</th>
+                                <th>Phone</th>
+                                <th>Facility</th>
+                                <th>Province</th>
+                                <th>Status</th>
+                                <th>Last Visit</th>
+                                <th>Bookings</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <t t-foreach="state.clients" t-as="c" t-key="c.id">
+                                <tr class="ops-queue-row" t-on-click="() => this.viewClientProfile(c.id)">
+                                    <td>
+                                        <div class="ops-client-cell">
+                                            <div class="ops-client-avatar-sm" t-esc="getInitials(c.name)"/>
+                                            <div>
+                                                <div class="ops-queue-client-name" t-esc="c.name"/>
+                                                <div class="ops-client-email" t-if="c.email" t-esc="c.email"/>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="ops-queue-booking-id" t-esc="c.patient_code"/>
+                                    <td t-esc="c.mobile"/>
+                                    <td t-esc="getFacilityName(c)"/>
+                                    <td t-esc="getCatchmentName(c)"/>
+                                    <td>
+                                        <span t-attf-class="ops-status-chip #{getStatusChipClass(c.patient_status)}">
+                                            <t t-esc="getStatusLabel(c.patient_status)"/>
+                                        </span>
+                                    </td>
+                                    <td t-esc="formatLastVisit(c.last_visit_date)"/>
+                                    <td t-esc="c.total_assignments"/>
+                                    <td t-on-click.stop="">
+                                        <div class="ops-client-actions">
+                                            <button class="ops-action-btn-sm" title="View Profile"
+                                                    t-on-click.stop="() => this.viewClientProfile(c.id)">
+                                                <i class="fa fa-eye"/> View
+                                            </button>
+                                            <button class="ops-action-btn-sm" title="New Booking"
+                                                    t-on-click.stop="() => this.openQuickBooking(c.id)">
+                                                <i class="fa fa-plus"/> Book
+                                            </button>
+                                            <button class="ops-action-btn-sm" title="Recurring Booking"
+                                                    t-on-click.stop="() => this.openRecurringBooking(c.id)">
+                                                <i class="fa fa-repeat"/> Recurring
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </t>
+                        </tbody>
+                    </table>
+
+                    <!-- PAGINATION -->
+                    <div class="ops-pagination">
+                        <span class="ops-pagination-info">
+                            Showing <t t-esc="showingFrom"/>-<t t-esc="showingTo"/> of <t t-esc="state.totalCount"/>
+                        </span>
+                        <div class="ops-pagination-btns">
+                            <button class="ops-pagination-btn" t-att-disabled="state.page === 0" t-on-click="prevPage">
+                                <i class="fa fa-chevron-left"/>
+                            </button>
+                            <span class="ops-pagination-page">Page <t t-esc="state.page + 1"/> of <t t-esc="totalPages"/></span>
+                            <button class="ops-pagination-btn" t-att-disabled="state.page >= totalPages - 1" t-on-click="nextPage">
+                                <i class="fa fa-chevron-right"/>
+                            </button>
+                        </div>
+                    </div>
+                </t>
+            </div>
+
+        </div><!-- /ops-main-content -->
+    </div>
+</t>
+
+</templates>

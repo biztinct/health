@@ -1,0 +1,275 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+<t t-name="health_roster.RosterPlanning">
+    <div class="ops-roster-planning-page">
+
+        <!-- SIDEBAR -->
+        <aside class="ops-sidebar">
+            <div class="ops-sidebar-logo" t-on-click="navigateHome" style="cursor:pointer">
+                <div class="ops-logo-icon"><i class="fa fa-heartbeat"/></div>
+                <div>
+                    <div class="ops-logo-text">VIET UC</div>
+                    <div class="ops-logo-sub">Healthcare Platform</div>
+                </div>
+            </div>
+            <nav class="ops-sidebar-nav">
+                <div class="ops-nav-section-label">Main</div>
+                <a class="ops-nav-item" t-on-click="() => this.navigateTo('dashboard')"><i class="fa fa-th-large"/> Dashboard</a>
+                <a class="ops-nav-item" t-on-click="() => this.navigateTo('bookings')"><i class="fa fa-calendar-check-o"/> Bookings</a>
+                <a class="ops-nav-item" t-on-click="() => this.navigateTo('recurring')"><i class="fa fa-repeat"/> Recurring</a>
+                <a class="ops-nav-item" t-on-click="() => this.navigateTo('staff')"><i class="fa fa-users"/> Staff</a>
+                <a class="ops-nav-item active"><i class="fa fa-th"/> Roster</a>
+                <a class="ops-nav-item" t-on-click="() => this.navigateTo('calendar')"><i class="fa fa-calendar"/> Calendar</a>
+                <div class="ops-nav-section-label">Reports</div>
+                <a class="ops-nav-item" t-on-click="() => this.navigateTo('workload')"><i class="fa fa-bar-chart"/> Workload</a>
+                <a class="ops-nav-item" t-on-click="() => this.navigateTo('analytics')"><i class="fa fa-line-chart"/> Analytics</a>
+                <div class="ops-nav-section-label">System</div>
+                <a class="ops-nav-item" t-on-click="navigateHome"><i class="fa fa-arrow-left"/> Back to Odoo</a>
+            </nav>
+            <div class="ops-sidebar-user">
+                <div class="ops-user-avatar" t-esc="currentUserInitials"/>
+                <div class="ops-user-info">
+                    <div class="ops-user-name" t-esc="currentUserName"/>
+                    <div class="ops-user-role">Operations Manager</div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT -->
+        <div class="ops-main-content">
+
+            <header class="ops-top-header">
+                <div class="ops-header-left">
+                    <h1 class="ops-page-title">Roster</h1>
+                    <div class="rp-week-nav">
+                        <button class="rp-nav-btn" t-on-click="prevWeek"><i class="fa fa-chevron-left"/></button>
+                        <button class="rp-today-btn" t-on-click="goToday">Today</button>
+                        <span class="rp-week-label" t-esc="weekLabel"/>
+                        <button class="rp-nav-btn" t-on-click="nextWeek"><i class="fa fa-chevron-right"/></button>
+                    </div>
+                </div>
+                <div class="ops-header-right">
+                    <button class="ops-header-btn btn-outline" t-on-click="onRefresh" title="Refresh"><i class="fa fa-refresh"/></button>
+                </div>
+            </header>
+
+            <t t-if="state.isLoading">
+                <div class="ops-loading">
+                    <div class="spinner-border text-primary" role="status"/>
+                    <span>Loading roster...</span>
+                </div>
+            </t>
+
+            <t t-if="!state.isLoading">
+                <div class="rp-body">
+
+                    <!-- SUMMARY BAR -->
+                    <div class="rp-summary-bar">
+                        <div class="rp-stat">
+                            <span class="rp-stat-icon total"><i class="fa fa-users"/></span>
+                            <div><div class="rp-stat-value" t-esc="state.summary.total_staff"/><div class="rp-stat-label">Nurses</div></div>
+                        </div>
+                        <div class="rp-stat">
+                            <span class="rp-stat-icon available"><i class="fa fa-check-circle"/></span>
+                            <div><div class="rp-stat-value" t-esc="state.summary.available"/><div class="rp-stat-label">Available</div></div>
+                        </div>
+                        <div class="rp-stat">
+                            <span class="rp-stat-icon leave"><i class="fa fa-plane"/></span>
+                            <div><div class="rp-stat-value" t-esc="state.summary.on_leave"/><div class="rp-stat-label">On Leave</div></div>
+                        </div>
+                        <div class="rp-stat">
+                            <span class="rp-stat-icon assignments"><i class="fa fa-calendar-check-o"/></span>
+                            <div><div class="rp-stat-value" t-esc="state.summary.total_assignments"/><div class="rp-stat-label">Assignments</div></div>
+                        </div>
+                        <div class="rp-stat" t-if="state.summary.unassigned_bookings > 0">
+                            <span class="rp-stat-icon unassigned"><i class="fa fa-exclamation-circle"/></span>
+                            <div><div class="rp-stat-value" t-esc="state.summary.unassigned_bookings"/><div class="rp-stat-label">Unassigned</div></div>
+                        </div>
+                        <div class="rp-stat">
+                            <span class="rp-stat-icon utilization"><i class="fa fa-tachometer"/></span>
+                            <div><div class="rp-stat-value"><t t-esc="state.summary.avg_utilization"/>%</div><div class="rp-stat-label">Avg Utilization</div></div>
+                        </div>
+                        <div class="rp-stat" t-if="state.summary.conflicts > 0">
+                            <span class="rp-stat-icon conflicts"><i class="fa fa-warning"/></span>
+                            <div><div class="rp-stat-value" t-esc="state.summary.conflicts"/><div class="rp-stat-label">Conflicts</div></div>
+                        </div>
+                    </div>
+
+                    <!-- FILTER BAR -->
+                    <div class="rp-filter-bar">
+                        <div class="rp-search-wrapper">
+                            <i class="fa fa-search rp-search-icon"/>
+                            <input type="text" class="rp-search-input" placeholder="Search nurse..."
+                                   t-att-value="state.searchQuery" t-on-input="onSearchInput"/>
+                        </div>
+                        <select class="rp-filter-select" t-on-change="onFacilityChange">
+                            <option value="">All Facilities</option>
+                            <t t-foreach="state.filters.facilities" t-as="f" t-key="f.id">
+                                <option t-att-value="f.id"><t t-esc="f.name"/></option>
+                            </t>
+                        </select>
+                        <select class="rp-filter-select" t-on-change="onCatchmentChange">
+                            <option value="">All Catchments</option>
+                            <t t-foreach="state.filters.catchments" t-as="c" t-key="c.id">
+                                <option t-att-value="c.id"><t t-esc="c.name"/></option>
+                            </t>
+                        </select>
+                        <select class="rp-filter-select" t-on-change="onStatusChange">
+                            <option value="">All Status</option>
+                            <option value="available">Available</option>
+                            <option value="on_leave">On Leave</option>
+                        </select>
+                    </div>
+
+                    <!-- ROSTER GRID -->
+                    <div class="rp-grid-wrapper">
+                        <table class="rp-grid">
+                            <thead>
+                                <tr>
+                                    <th class="rp-staff-header">
+                                        <span>NURSE</span>
+                                        <span class="rp-staff-count"><t t-esc="state.staff.length"/> nurses</span>
+                                    </th>
+                                    <t t-foreach="state.days" t-as="day" t-key="day.date">
+                                        <th t-attf-class="rp-day-header #{day.is_today ? 'rp-today-col' : ''} #{day.is_weekend ? 'rp-weekend-col' : ''}">
+                                            <div class="rp-day-name" t-esc="day.label"/>
+                                            <div class="rp-day-date" t-esc="day.full_label"/>
+                                        </th>
+                                    </t>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- UNASSIGNED ROW -->
+                                <t t-if="getUnassignedCount() > 0">
+                                    <tr class="rp-unassigned-row">
+                                        <td class="rp-staff-cell rp-unassigned-label">
+                                            <div class="rp-staff-info">
+                                                <div class="rp-unassigned-avatar"><i class="fa fa-exclamation-triangle"/></div>
+                                                <div>
+                                                    <div class="rp-staff-name">Unassigned</div>
+                                                    <div class="rp-staff-meta"><t t-esc="getUnassignedCount()"/> bookings need staff</div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <t t-foreach="state.days" t-as="day" t-key="day.date">
+                                            <td t-attf-class="rp-cell rp-unassigned-cell #{day.is_today ? 'rp-today-col' : ''}">
+                                                <t t-foreach="getDayUnassigned(day.date)" t-as="u" t-key="u.id">
+                                                    <div t-attf-class="rp-card rp-card-unassigned rp-priority-#{getPriorityClass(u.priority)}"
+                                                         draggable="true"
+                                                         t-on-dragstart="(ev) => this.onDragStart(ev, u.id, u.booking_ref)"
+                                                         t-on-dragend="onDragEnd"
+                                                         t-on-click="() => this.openAssignmentWizard(u.id)">
+                                                        <div class="rp-card-ref" t-esc="u.booking_ref"/>
+                                                        <div class="rp-card-patient" t-esc="u.patient_name"/>
+                                                        <div class="rp-card-time">
+                                                            <t t-esc="u.start"/> - <t t-esc="u.end"/>
+                                                        </div>
+                                                        <div class="rp-card-type" t-esc="u.service_type"/>
+                                                    </div>
+                                                </t>
+                                            </td>
+                                        </t>
+                                    </tr>
+                                </t>
+
+                                <!-- STAFF ROWS -->
+                                <t t-foreach="state.staff" t-as="s" t-key="s.id">
+                                    <tr class="rp-staff-row">
+                                        <td class="rp-staff-cell">
+                                            <div class="rp-staff-info" t-on-click="() => this.openStaffProfile(s.id)">
+                                                <div class="rp-staff-avatar" t-att-style="'background:' + getStaffColor(s.color_index)">
+                                                    <t t-esc="s.initials"/>
+                                                </div>
+                                                <div class="rp-staff-details">
+                                                    <div class="rp-staff-name" t-esc="s.name"/>
+                                                    <div class="rp-staff-role" t-esc="s.role"/>
+                                                    <t t-if="s.facility">
+                                                        <div class="rp-staff-facility"><i class="fa fa-hospital-o"/> <t t-esc="s.facility"/></div>
+                                                    </t>
+                                                </div>
+                                            </div>
+                                            <div class="rp-utilization-row">
+                                                <div t-attf-class="rp-util-bar #{getUtilClass(s.load_pct)}">
+                                                    <div class="rp-util-fill" t-att-style="'width:' + Math.min(s.load_pct, 100) + '%'"/>
+                                                </div>
+                                                <span class="rp-util-text"><t t-esc="s.load_pct"/>%</span>
+                                            </div>
+                                            <div class="rp-staff-hours">
+                                                <t t-esc="s.total_hours"/>h / <t t-esc="s.assignment_count"/> assignments
+                                            </div>
+                                        </td>
+
+                                        <t t-foreach="state.days" t-as="day" t-key="day.date">
+                                            <td t-attf-class="rp-cell #{day.is_today ? 'rp-today-col' : ''} #{day.is_weekend ? 'rp-weekend-col' : ''} #{isOnLeave(s, day.date) ? 'rp-leave-cell' : ''}"
+                                                t-on-dragover="(ev) => this.onDragOver(ev, s.id)"
+                                                t-on-dragleave="onDragLeave"
+                                                t-on-drop="(ev) => this.onDrop(ev, s.id)">
+
+                                                <t t-if="isOnLeave(s, day.date)">
+                                                    <div class="rp-leave-badge">
+                                                        <i class="fa fa-plane"/> <t t-esc="getLeaveType(s, day.date)"/>
+                                                    </div>
+                                                </t>
+
+                                                <t t-foreach="getDayAssignments(s, day.date)" t-as="a" t-key="a.id">
+                                                    <div t-attf-class="rp-card rp-card-assignment #{a.has_conflict ? 'rp-conflict' : ''} rp-state-#{a.state}"
+                                                         t-att-style="getCardStyle(a)"
+                                                         t-on-click="(ev) => { ev.stopPropagation(); this.openAssignmentWizard(a.fso_id); }">
+                                                        <t t-if="a.has_conflict">
+                                                            <span class="rp-conflict-badge" title="Schedule conflict"><i class="fa fa-warning"/></span>
+                                                        </t>
+                                                        <div class="rp-card-ref" t-esc="a.booking_ref"/>
+                                                        <div class="rp-card-patient" t-esc="a.patient_name"/>
+                                                        <div class="rp-card-time">
+                                                            <t t-esc="a.start"/>
+                                                            <t t-if="a.end"> - <t t-esc="a.end"/></t>
+                                                        </div>
+                                                        <div class="rp-card-footer">
+                                                            <span t-attf-class="rp-state-badge rp-state-#{a.state}">
+                                                                <t t-esc="a.state"/>
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                </t>
+
+                                                <t t-if="!isOnLeave(s, day.date) and getDayAssignments(s, day.date).length === 0">
+                                                    <div class="rp-empty-slot"/>
+                                                </t>
+                                            </td>
+                                        </t>
+                                    </tr>
+                                </t>
+
+                                <t t-if="state.staff.length === 0">
+                                    <tr>
+                                        <td t-att-colspan="state.days.length + 1" class="rp-empty-state">
+                                            <i class="fa fa-users"/>
+                                            <h4>No nursing staff found</h4>
+                                            <p>Try adjusting your filters or check staff configuration.</p>
+                                        </td>
+                                    </tr>
+                                </t>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- LEGEND -->
+                    <div class="rp-legend">
+                        <span class="rp-legend-item"><span class="rp-legend-color" style="background:#1565C0"/> Home Visit</span>
+                        <span class="rp-legend-item"><span class="rp-legend-color" style="background:#7c3aed"/> Clinic Visit</span>
+                        <span class="rp-legend-item"><span class="rp-legend-color" style="background:#43A047"/> Follow-up</span>
+                        <span class="rp-legend-item"><span class="rp-legend-color" style="background:#E53935"/> Emergency</span>
+                        <span class="rp-legend-item"><span class="rp-legend-color" style="background:#00897B"/> Preventive</span>
+                        <span class="rp-legend-item"><span class="rp-legend-swatch rp-conflict-swatch"/> Conflict</span>
+                        <span class="rp-legend-item"><span class="rp-legend-swatch rp-leave-swatch"/> On Leave</span>
+                    </div>
+
+                </div>
+            </t>
+
+        </div>
+    </div>
+</t>
+
+</templates>

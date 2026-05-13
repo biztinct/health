@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="action_roster_planning" model="ir.actions.client">
+        <field name="name">Roster Planning</field>
+        <field name="tag">roster_planning</field>
+        <field name="target">fullscreen</field>
+    </record>
+
+    <menuitem id="menu_ops_roster_planning"
+              name="Roster"
+              parent="health_fieldservice.menu_ops_center_root"
+              action="action_roster_planning"
+              sequence="35"/>
+
+</odoo>

@@ -720,6 +720,114 @@ class HrEmployee(models.Model):
             }
         }
     
+    @api.model
+    def get_staff_roster_data(self, target_date):
+        """Returns staff roster with schedule blocks, stats, and skills for a given date."""
+        from datetime import datetime, timedelta
+        import pytz
+
+        tz = pytz.timezone(self.env.user.tz or 'Asia/Ho_Chi_Minh')
+        if isinstance(target_date, str):
+            target_date = fields.Date.from_string(target_date)
+
+        day_start = tz.localize(datetime.combine(target_date, datetime.min.time())).astimezone(pytz.utc).replace(tzinfo=None)
+        day_end = tz.localize(datetime.combine(target_date, datetime.max.time())).astimezone(pytz.utc).replace(tzinfo=None)
+
+        staff_members = self.search([
+            ('is_healthcare_staff', '=', True),
+            ('employment_status', '=', 'active'),
+        ], order='name asc')
+
+        Assignment = self.env['health.staff.assignment']
+
+        available_count = 0
+        busy_count = 0
+        off_count = 0
+        staff_data = []
+
+        for emp in staff_members:
+            today_assignments = Assignment.search([
+                ('staff_id', '=', emp.id),
+                ('planned_start_time', '>=', day_start),
+                ('planned_start_time', '<=', day_end),
+                ('state', 'not in', ['cancelled', 'template']),
+            ], order='planned_start_time asc')
+
+            active_now = today_assignments.filtered(lambda a: a.state == 'in_progress')
+            status = 'available'
+            if active_now:
+                status = 'busy'
+                busy_count += 1
+            elif hasattr(emp, 'assignment_status') and emp.assignment_status == 'off_duty':
+                status = 'off'
+                off_count += 1
+            else:
+                available_count += 1
+
+            schedule_blocks = []
+            for asgn in today_assignments:
+                start_h = 8.0
+                end_h = 9.0
+                if asgn.planned_start_time:
+                    local_s = pytz.utc.localize(asgn.planned_start_time).astimezone(tz)
+                    start_h = local_s.hour + local_s.minute / 60.0
+                if asgn.planned_end_time:
+                    local_e = pytz.utc.localize(asgn.planned_end_time).astimezone(tz)
+                    end_h = local_e.hour + local_e.minute / 60.0
+
+                fso = asgn.fso_id
+                schedule_blocks.append({
+                    'id': asgn.id,
+                    'fso_id': fso.id if fso else False,
+                    'patient_name': fso.patient_id.name if fso and fso.patient_id else '',
+                    'service_type': fso.service_type if fso else '',
+                    'start_hour': round(start_h, 2),
+                    'end_hour': round(end_h, 2),
+                    'state': asgn.state,
+                })
+
+            skills = []
+            if hasattr(emp, 'healthcare_skill_ids') and emp.healthcare_skill_ids:
+                skills = [{'id': s.id, 'name': s.name} for s in emp.healthcare_skill_ids[:6]]
+
+            completion_rate = emp.assignment_completion_rate if hasattr(emp, 'assignment_completion_rate') else 0
+            rating = emp.average_patient_rating if hasattr(emp, 'average_patient_rating') else 0
+
+            week_start_dt = day_start - timedelta(days=target_date.weekday())
+            week_end_dt = week_start_dt + timedelta(days=7)
+            week_count = Assignment.search_count([
+                ('staff_id', '=', emp.id),
+                ('planned_start_time', '>=', week_start_dt),
+                ('planned_start_time', '<=', week_end_dt),
+                ('state', 'not in', ['cancelled', 'template']),
+            ])
+
+            staff_data.append({
+                'id': emp.id,
+                'name': emp.name or '',
+                'role': emp.access_role_display or '',
+                'status': status,
+                'initials': ''.join([p[0].upper() for p in (emp.name or 'U').split()[:2]]),
+                'color_index': emp.color or 0,
+                'today_assignments': len(today_assignments),
+                'week_assignments': week_count,
+                'completion_rate': round(completion_rate, 1),
+                'rating': round(rating, 1),
+                'schedule_blocks': schedule_blocks,
+                'skills': skills,
+                'facility': emp.primary_facility_id.name if emp.primary_facility_id else '',
+            })
+
+        return {
+            'summary': {
+                'total': len(staff_members),
+                'available': available_count,
+                'busy': busy_count,
+                'off': off_count,
+            },
+            'staff': staff_data,
+        }
+
     @api.model_create_multi
     def create(self, vals_list):
         """Override create to set healthcare staff categories"""

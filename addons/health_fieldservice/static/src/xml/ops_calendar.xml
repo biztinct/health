@@ -1,0 +1,275 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+<t t-name="health_fieldservice.OpsCalendar">
+    <div class="ops-calendar-page">
+
+        <!-- SIDEBAR -->
+        <aside class="ops-sidebar">
+            <div class="ops-sidebar-logo" t-on-click="navigateHome" style="cursor:pointer">
+                <div class="ops-logo-icon"><i class="fa fa-heartbeat"/></div>
+                <div>
+                    <div class="ops-logo-text">VIET UC</div>
+                    <div class="ops-logo-sub">Healthcare Platform</div>
+                </div>
+            </div>
+            <nav class="ops-sidebar-nav">
+                <div class="ops-nav-section-label">Main</div>
+                <a class="ops-nav-item" t-on-click="() => this.navigateTo('dashboard')"><i class="fa fa-th-large"/> Dashboard</a>
+                <a class="ops-nav-item" t-on-click="() => this.navigateTo('bookings')">
+                    <i class="fa fa-calendar-check-o"/> Bookings
+                    <t t-if="state.needsStaffCount"><span class="ops-badge-count" t-esc="state.needsStaffCount"/></t>
+                </a>
+                <a class="ops-nav-item" t-on-click="() => this.navigateTo('clients')"><i class="fa fa-address-book-o"/> Clients</a>
+                <a class="ops-nav-item" t-on-click="() => this.navigateTo('recurring')"><i class="fa fa-repeat"/> Recurring</a>
+                <a class="ops-nav-item" t-on-click="() => this.navigateTo('staff')"><i class="fa fa-users"/> Staff</a>
+                <a class="ops-nav-item active"><i class="fa fa-calendar"/> Calendar</a>
+                <div class="ops-nav-section-label">Reports</div>
+                <a class="ops-nav-item" t-on-click="() => this.navigateTo('workload')"><i class="fa fa-bar-chart"/> Workload</a>
+                <a class="ops-nav-item" t-on-click="() => this.navigateTo('analytics')"><i class="fa fa-line-chart"/> Analytics</a>
+                <div class="ops-nav-section-label">System</div>
+                <a class="ops-nav-item" t-on-click="navigateHome"><i class="fa fa-arrow-left"/> Back to Odoo</a>
+            </nav>
+            <div class="ops-sidebar-user">
+                <div class="ops-user-avatar" t-esc="currentUserInitials"/>
+                <div class="ops-user-info">
+                    <div class="ops-user-name" t-esc="currentUserName"/>
+                    <div class="ops-user-role">Operations Manager</div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT -->
+        <div class="ops-main-content">
+
+            <!-- HEADER -->
+            <header class="ops-top-header">
+                <div class="ops-header-left">
+                    <div class="ops-date-nav">
+                        <button class="ops-date-nav-btn" t-on-click="prevPeriod"><i class="fa fa-chevron-left"/></button>
+                        <span class="ops-date-label" t-esc="dateRangeLabel"/>
+                        <button class="ops-date-nav-btn" t-on-click="nextPeriod"><i class="fa fa-chevron-right"/></button>
+                    </div>
+                    <button class="ops-date-today" t-on-click="goToday">Today</button>
+                </div>
+                <div class="ops-header-right">
+                    <select class="ops-filter-select" t-on-change="onStaffFilterChange">
+                        <option value="">All Staff</option>
+                        <t t-foreach="state.staffList" t-as="s" t-key="s.id">
+                            <option t-att-value="s.id" t-esc="s.name"/>
+                        </t>
+                    </select>
+                    <select class="ops-filter-select" t-on-change="onServiceFilterChange">
+                        <option value="">All Services</option>
+                        <option value="home_visit">Home Visit</option>
+                        <option value="clinic_visit">Clinic Visit</option>
+                        <option value="follow_up">Follow-up</option>
+                        <option value="consultation">Consultation</option>
+                        <option value="telemedicine">Telemedicine</option>
+                        <option value="emergency">Emergency</option>
+                    </select>
+                    <div class="cal-view-toggle">
+                        <button t-attf-class="cal-view-btn #{state.viewMode === 'day' ? 'active' : ''}"
+                                t-on-click="() => this.setViewMode('day')">Day</button>
+                        <button t-attf-class="cal-view-btn #{state.viewMode === 'week' ? 'active' : ''}"
+                                t-on-click="() => this.setViewMode('week')">Week</button>
+                        <button t-attf-class="cal-view-btn #{state.viewMode === 'month' ? 'active' : ''}"
+                                t-on-click="() => this.setViewMode('month')">Month</button>
+                    </div>
+                    <button class="ops-header-btn btn-primary" t-on-click="openCreateBooking">
+                        <i class="fa fa-plus"/> New Booking
+                    </button>
+                </div>
+            </header>
+
+            <!-- LOADING -->
+            <div t-if="state.isLoading" class="ops-loading">
+                <div class="spinner-border text-primary" role="status"/>
+                <span>Loading calendar...</span>
+            </div>
+
+            <!-- CALENDAR CONTENT -->
+            <div t-if="!state.isLoading" class="cal-page-body">
+
+                <!-- ==================== WEEK VIEW ==================== -->
+                <t t-if="state.viewMode === 'week'">
+                    <div class="cal-container">
+                        <!-- Day Headers -->
+                        <div class="cal-header-row">
+                            <div class="cal-corner"/>
+                            <t t-foreach="weekDays" t-as="day" t-key="day.dateISO">
+                                <div t-attf-class="cal-day-header #{day.isToday ? 'today' : ''} #{day.isWeekend ? 'weekend' : ''}">
+                                    <div class="cal-day-name" t-esc="day.dayName"/>
+                                    <div class="cal-day-num" t-esc="day.dayNum"/>
+                                </div>
+                            </t>
+                        </div>
+
+                        <!-- Time Grid -->
+                        <div class="cal-body">
+                            <!-- Time Column -->
+                            <div class="cal-time-col">
+                                <t t-foreach="hourSlots" t-as="slot" t-key="slot.hour">
+                                    <div class="cal-time-slot" t-esc="slot.label"/>
+                                </t>
+                            </div>
+
+                            <!-- Day Columns -->
+                            <t t-foreach="weekDays" t-as="day" t-key="day.dateISO">
+                                <div t-attf-class="cal-day-col #{day.isToday ? 'today-col' : ''} #{day.isWeekend ? 'weekend-col' : ''}">
+                                    <!-- Hour Lines -->
+                                    <t t-foreach="hourSlots" t-as="slot" t-key="slot.hour">
+                                        <div class="cal-hour-line"/>
+                                    </t>
+
+                                    <!-- Now Line -->
+                                    <t t-if="isTodayColumn(day.dateISO) and nowLineTop >= 0 and nowLineTop &lt;= 720">
+                                        <div class="cal-now-line" t-attf-style="top:#{nowLineTop}px"/>
+                                    </t>
+
+                                    <!-- Events -->
+                                    <t t-foreach="getEventsForDay(day.dateISO)" t-as="ev" t-key="ev.id">
+                                        <div t-att-class="getEventClass(ev)"
+                                             t-att-style="getEventStyle(ev)"
+                                             t-on-click.stop="() => this.openBooking(ev.id)"
+                                             t-att-title="ev.patient_name + ' — ' + getEventStaffLabel(ev)">
+                                            <div class="ev-time" t-esc="getEventTimeLabel(ev)"/>
+                                            <div class="ev-title" t-esc="ev.patient_name"/>
+                                            <div class="ev-staff" t-esc="getEventStaffLabel(ev)"/>
+                                        </div>
+                                    </t>
+                                </div>
+                            </t>
+                        </div>
+
+                        <!-- Legend -->
+                        <div class="cal-legend">
+                            <div class="cal-legend-item">
+                                <div class="cal-legend-dot" style="background:var(--vu-deep-blue)"/> Home Visit
+                            </div>
+                            <div class="cal-legend-item">
+                                <div class="cal-legend-dot" style="background:var(--vu-state-assigned)"/> Clinic Visit
+                            </div>
+                            <div class="cal-legend-item">
+                                <div class="cal-legend-dot" style="background:var(--vu-state-completed)"/> Follow-up
+                            </div>
+                            <div class="cal-legend-item">
+                                <div class="cal-legend-dot" style="background:var(--vu-accent-blue)"/> Consultation
+                            </div>
+                            <div class="cal-legend-item">
+                                <div class="cal-legend-dot" style="background:var(--vu-state-active)"/> Active Now
+                            </div>
+                            <div class="cal-legend-item">
+                                <div class="cal-legend-dot cal-legend-dot-unassigned"/> Unassigned
+                            </div>
+                        </div>
+                    </div>
+                </t>
+
+                <!-- ==================== DAY VIEW ==================== -->
+                <t t-if="state.viewMode === 'day'">
+                    <div class="cal-container">
+                        <div class="cal-header-row cal-header-row-day">
+                            <div class="cal-corner"/>
+                            <div t-attf-class="cal-day-header #{isDayToday ? 'today' : ''}" style="flex:1">
+                                <div class="cal-day-name" t-esc="dayLabel"/>
+                            </div>
+                        </div>
+                        <div class="cal-body cal-body-day">
+                            <div class="cal-time-col">
+                                <t t-foreach="hourSlots" t-as="slot" t-key="slot.hour">
+                                    <div class="cal-time-slot" t-esc="slot.label"/>
+                                </t>
+                            </div>
+                            <div t-attf-class="cal-day-col #{isDayToday ? 'today-col' : ''}" style="flex:1">
+                                <t t-foreach="hourSlots" t-as="slot" t-key="slot.hour">
+                                    <div class="cal-hour-line"/>
+                                </t>
+                                <t t-if="isDayToday and nowLineTop >= 0 and nowLineTop &lt;= 720">
+                                    <div class="cal-now-line" t-attf-style="top:#{nowLineTop}px"/>
+                                </t>
+                                <t t-foreach="dayEvents" t-as="ev" t-key="ev.id">
+                                    <div t-att-class="getEventClass(ev)"
+                                         t-att-style="getEventStyle(ev)"
+                                         t-on-click.stop="() => this.openBooking(ev.id)"
+                                         t-att-title="ev.patient_name + ' — ' + getEventStaffLabel(ev)">
+                                        <div class="ev-time" t-esc="getEventTimeLabel(ev)"/>
+                                        <div class="ev-title" t-esc="ev.patient_name"/>
+                                        <div class="ev-staff" t-esc="getEventStaffLabel(ev)"/>
+                                    </div>
+                                </t>
+                            </div>
+                        </div>
+                        <div class="cal-legend">
+                            <div class="cal-legend-item">
+                                <div class="cal-legend-dot" style="background:var(--vu-deep-blue)"/> Home Visit
+                            </div>
+                            <div class="cal-legend-item">
+                                <div class="cal-legend-dot" style="background:var(--vu-state-assigned)"/> Clinic Visit
+                            </div>
+                            <div class="cal-legend-item">
+                                <div class="cal-legend-dot" style="background:var(--vu-state-completed)"/> Follow-up
+                            </div>
+                            <div class="cal-legend-item">
+                                <div class="cal-legend-dot" style="background:var(--vu-accent-blue)"/> Consultation
+                            </div>
+                            <div class="cal-legend-item">
+                                <div class="cal-legend-dot" style="background:var(--vu-state-active)"/> Active Now
+                            </div>
+                            <div class="cal-legend-item">
+                                <div class="cal-legend-dot cal-legend-dot-unassigned"/> Unassigned
+                            </div>
+                        </div>
+                    </div>
+                </t>
+
+                <!-- ==================== MONTH VIEW ==================== -->
+                <t t-if="state.viewMode === 'month'">
+                    <div class="cal-container cal-container-month">
+                        <!-- Day name headers -->
+                        <div class="cal-month-header">
+                            <div class="cal-month-day-name">Mon</div>
+                            <div class="cal-month-day-name">Tue</div>
+                            <div class="cal-month-day-name">Wed</div>
+                            <div class="cal-month-day-name">Thu</div>
+                            <div class="cal-month-day-name">Fri</div>
+                            <div class="cal-month-day-name">Sat</div>
+                            <div class="cal-month-day-name">Sun</div>
+                        </div>
+                        <div class="cal-month-body">
+                            <t t-foreach="monthWeeks" t-as="week" t-key="week_index">
+                                <div class="cal-month-week">
+                                    <t t-foreach="week" t-as="day" t-key="day.dateISO">
+                                        <div t-attf-class="cal-month-cell #{day.isCurrentMonth ? '' : 'other-month'} #{day.isToday ? 'today' : ''}"
+                                             t-on-click="() => { this.state.currentDate = day.date; this.setViewMode('day'); }">
+                                            <div class="cal-month-day-num" t-esc="day.dayNum"/>
+                                            <t t-if="day.events.length > 0">
+                                                <div class="cal-month-events">
+                                                    <t t-foreach="day.events" t-as="ev" t-key="ev.id">
+                                                        <div t-attf-class="cal-month-ev-dot #{getEventClass(ev).replace('cal-event ', '')}"
+                                                             t-att-title="ev.patient_name"
+                                                             t-on-click.stop="() => this.openBooking(ev.id)">
+                                                            <span class="cal-month-ev-text" t-esc="ev.patient_name"/>
+                                                        </div>
+                                                    </t>
+                                                    <t t-if="day.eventCount > 3">
+                                                        <div class="cal-month-ev-more">
+                                                            +<t t-esc="day.eventCount - 3"/> more
+                                                        </div>
+                                                    </t>
+                                                </div>
+                                            </t>
+                                        </div>
+                                    </t>
+                                </div>
+                            </t>
+                        </div>
+                    </div>
+                </t>
+
+            </div>
+        </div>
+    </div>
+</t>
+
+</templates>

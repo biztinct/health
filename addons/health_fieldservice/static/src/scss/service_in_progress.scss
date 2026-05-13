@@ -1,0 +1,152 @@
+// ============================================================================
+// Active Service (In-Progress) — State-driven UI enhancements
+// Applied when FSO form has .vu-state--in_progress class
+// ============================================================================
+
+.o_form_view.vu-state--in_progress {
+
+    // Orange accent bar at top of form
+    .o_form_sheet {
+        border-top: 3px solid $vu-state-active;
+    }
+
+    // Prominent service timer
+    .vu-service-timer-wrapper {
+        background: rgba($vu-state-active, 0.06);
+        border: 1px solid rgba($vu-state-active, 0.2);
+        border-radius: var(--vu-radius-lg);
+        padding: 16px 20px;
+        margin-bottom: 16px;
+        text-align: center;
+
+        .service-timer-display {
+            font-size: 36px;
+            font-weight: 800;
+            font-family: $font-family-headings;
+            color: $vu-state-active;
+            letter-spacing: 2px;
+        }
+
+        .service-timer-label {
+            font-size: 13px;
+            color: $vu-text-secondary;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+    }
+
+    // Active service banner
+    .vu-active-service-banner {
+        background: $vu-state-active;
+        color: white;
+        padding: 8px 16px;
+        border-radius: var(--vu-radius-md);
+        font-size: 14px;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 12px;
+
+        .pulse-dot {
+            width: 8px;
+            height: 8px;
+            background: white;
+            border-radius: 50%;
+            animation: vu-pulse 1.5s infinite;
+        }
+    }
+
+    // Checklist section
+    .vu-checklist-section {
+        background: var(--vu-surface-card);
+        border: 1px solid var(--vu-border-soft);
+        border-radius: var(--vu-radius-md);
+        padding: 14px;
+        margin-bottom: 12px;
+
+        .checklist-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        .checklist-progress {
+            height: 4px;
+            background: var(--vu-surface-muted);
+            border-radius: 2px;
+            margin-bottom: 12px;
+            overflow: hidden;
+
+            .checklist-progress-bar {
+                height: 100%;
+                background: $vu-state-completed;
+                border-radius: 2px;
+                transition: width 300ms ease;
+            }
+        }
+
+        .checklist-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 0;
+            font-size: 13px;
+
+            &.completed {
+                text-decoration: line-through;
+                color: $vu-text-secondary;
+            }
+        }
+    }
+
+    // Vitals recording grid
+    .vu-vitals-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+        margin-bottom: 12px;
+
+        .vitals-input-card {
+            background: var(--vu-surface-card);
+            border: 1px solid var(--vu-border-soft);
+            border-radius: var(--vu-radius-md);
+            padding: 10px;
+            text-align: center;
+
+            &.recorded {
+                border-color: $vu-state-completed;
+                background: rgba($vu-state-completed, 0.04);
+            }
+
+            .vitals-label {
+                font-size: 11px;
+                font-weight: 600;
+                color: $vu-text-secondary;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+                margin-bottom: 4px;
+            }
+
+            .vitals-value {
+                font-size: 18px;
+                font-weight: 700;
+                font-family: $font-family-headings;
+            }
+
+            .vitals-unit {
+                font-size: 11px;
+                color: $vu-text-secondary;
+            }
+        }
+    }
+}
+
+@keyframes vu-pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+}

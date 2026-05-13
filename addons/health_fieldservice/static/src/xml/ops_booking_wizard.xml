@@ -1,0 +1,404 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+<t t-name="health_fieldservice.OpsBookingWizard">
+    <div class="bw-overlay">
+        <div class="bw-wizard">
+
+            <!-- HEADER -->
+            <div class="bw-header">
+                <div class="bw-title"><i class="fa fa-calendar-plus"/> New Booking</div>
+                <button class="bw-close-btn" t-on-click="closeWizard"><i class="fa fa-times"/></button>
+            </div>
+
+            <!-- STEPPER -->
+            <div class="bw-stepper">
+                <t t-foreach="stepInfo" t-as="s" t-key="s.num">
+                    <div t-att-class="getStepClass(s.num)">
+                        <div class="step-num">
+                            <t t-if="s.num &lt; state.step"><i class="fa fa-check" style="font-size:10px"/></t>
+                            <t t-else=""><t t-esc="s.num"/></t>
+                        </div>
+                        <div class="step-info">
+                            <div class="step-name"><t t-esc="s.name"/></div>
+                            <div class="step-desc"><t t-esc="s.desc"/></div>
+                        </div>
+                    </div>
+                </t>
+            </div>
+
+            <!-- BODY -->
+            <div class="bw-body">
+
+                <!-- ========== STEP 1: CLIENT ========== -->
+                <div t-if="state.step === 1" class="bw-step">
+                    <h3 class="bw-step-title">Select Client</h3>
+
+                    <div class="bw-form-group bw-client-search-wrap">
+                        <div class="bw-form-label">Search Client <span class="required">*</span></div>
+                        <input class="bw-form-input" type="text"
+                               placeholder="Type name, phone, or client code..."
+                               t-att-value="state.clientSearch"
+                               t-on-input="onClientSearchInput"
+                               t-on-focus="onClientSearchFocus"
+                               t-on-blur="onClientSearchBlur"/>
+                        <div t-att-class="'bw-client-results' + (state.showResults ? ' show' : '')">
+                            <t t-foreach="state.clientResults" t-as="client" t-key="client.id">
+                                <div class="bw-client-result" t-on-mousedown.prevent="() => this.selectClient(client)">
+                                    <div class="bw-cr-avatar"><t t-esc="getInitials(client.name)"/></div>
+                                    <div class="bw-cr-info">
+                                        <div class="bw-cr-name"><t t-esc="client.name"/></div>
+                                        <div class="bw-cr-phone">
+                                            <t t-if="client.mobile"><t t-esc="client.mobile"/></t>
+                                            <t t-if="client.patient_code"> — <t t-esc="client.patient_code"/></t>
+                                        </div>
+                                    </div>
+                                </div>
+                            </t>
+                        </div>
+                    </div>
+
+                    <!-- Selected client card -->
+                    <div t-if="state.selectedClient" class="bw-selected-client">
+                        <div class="bw-sc-avatar"><t t-esc="getInitials(state.selectedClient.name)"/></div>
+                        <div class="bw-sc-info">
+                            <div class="bw-sc-name"><t t-esc="state.selectedClient.name"/></div>
+                            <div class="bw-sc-detail">
+                                <t t-if="state.selectedClient.mobile"><t t-esc="state.selectedClient.mobile"/></t>
+                                <t t-if="state.selectedClient.patient_code"> — <t t-esc="state.selectedClient.patient_code"/></t>
+                            </div>
+                        </div>
+                        <div class="bw-sc-check"><i class="fa fa-check-circle"/> Selected</div>
+                        <button class="bw-sc-clear" t-on-click="clearClient"><i class="fa fa-times"/></button>
+                    </div>
+                </div>
+
+                <!-- ========== STEP 2: SERVICE ========== -->
+                <div t-if="state.step === 2" class="bw-step">
+                    <h3 class="bw-step-title">Choose Service</h3>
+                    <p class="bw-step-subtitle">Booking for <strong t-esc="state.selectedClient.name"/></p>
+
+                    <!-- Package selection -->
+                    <div t-if="state.packages.length > 0" class="bw-form-group" style="margin-bottom:16px">
+                        <div class="bw-form-label">Use Existing Package?</div>
+                        <select class="bw-form-input" t-on-change="onPackageChange">
+                            <option value="">No — Pay per visit</option>
+                            <t t-foreach="state.packages" t-as="pkg" t-key="pkg.id">
+                                <option t-att-value="pkg.id"><t t-esc="pkg.name"/> (<t t-esc="pkg.remaining_sessions"/> remaining)</option>
+                            </t>
+                        </select>
+                    </div>
+
+                    <!-- Service type cards -->
+                    <div class="bw-form-label" style="margin-bottom:8px">Service Type <span class="required">*</span></div>
+                    <div class="bw-service-options">
+                        <t t-foreach="serviceOptions" t-as="svc" t-key="svc.key">
+                            <div t-att-class="'bw-service-option' + (isServiceSelected(svc.key) ? ' selected' : '')"
+                                 t-on-click="() => this.selectService(svc.key)">
+                                <div t-att-class="'bw-so-icon ' + svc.iconClass"><i t-att-class="'fa ' + svc.icon"/></div>
+                                <div class="bw-so-info">
+                                    <div class="bw-so-name"><t t-esc="svc.name"/></div>
+                                    <div class="bw-so-desc"><t t-esc="svc.desc"/></div>
+                                    <div class="bw-so-price">From <t t-esc="svc.price"/> ₫</div>
+                                </div>
+                                <div class="bw-so-check">
+                                    <t t-if="isServiceSelected(svc.key)"><i class="fa fa-check" style="font-size:10px"/></t>
+                                </div>
+                            </div>
+                        </t>
+                    </div>
+
+                    <!-- Sub-type, Priority, Location, Category row -->
+                    <div class="bw-form-row" style="margin-top:16px">
+                        <div class="bw-form-group">
+                            <div class="bw-form-label">Category</div>
+                            <select class="bw-form-input" t-on-change="onCategoryChange" t-att-value="state.serviceCategory">
+                                <option value="">— Select —</option>
+                                <option value="medical">Medical Care</option>
+                                <option value="nursing">Nursing Care</option>
+                                <option value="therapy">Therapy</option>
+                                <option value="companion">Companion Care</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                        <div class="bw-form-group">
+                            <div class="bw-form-label">Sub-Type</div>
+                            <input class="bw-form-input" type="text" placeholder="e.g. General Health"
+                                   t-att-value="state.serviceSubcategory" t-on-input="onSubTypeChange"/>
+                        </div>
+                    </div>
+
+                    <div class="bw-form-row">
+                        <div class="bw-form-group">
+                            <div class="bw-form-label">Service Location</div>
+                            <select class="bw-form-input" t-on-change="onServiceLocationChange" t-att-value="state.serviceLocation">
+                                <option value="home">Patient Home</option>
+                                <option value="clinic">Clinic</option>
+                                <option value="hospital">Hospital</option>
+                                <option value="nursing_home">Nursing Home</option>
+                                <option value="office">Office</option>
+                                <option value="online">Online/Telemedicine</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                        <div class="bw-form-group">
+                            <div class="bw-form-label">Priority</div>
+                            <select class="bw-form-input" t-on-change="onPriorityChange" t-att-value="state.priority">
+                                <t t-foreach="priorityOptions" t-as="p" t-key="p.value">
+                                    <option t-att-value="p.value"><t t-esc="p.label"/></option>
+                                </t>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Service Notes -->
+                    <div class="bw-form-group" style="margin-top:4px">
+                        <div class="bw-form-label">Service Notes</div>
+                        <textarea class="bw-form-input" placeholder="Additional service requirements..."
+                                  t-att-value="state.serviceNotes" t-on-input="onServiceNotesChange"
+                                  style="min-height:50px"/>
+                    </div>
+
+                    <!-- Commission section (collapsible) -->
+                    <div class="bw-commission-section">
+                        <div class="bw-section-label"><i class="fa fa-handshake-o"/> Commission Details</div>
+                        <div class="bw-form-row">
+                            <div class="bw-form-group bw-client-search-wrap">
+                                <div class="bw-form-label">Commission Due To</div>
+                                <input class="bw-form-input" type="text" placeholder="Search contact..."
+                                       t-att-value="state.commissionSearch"
+                                       t-on-input="onCommissionSearchInput"
+                                       t-on-blur="onCommissionSearchBlur"/>
+                                <div t-att-class="'bw-client-results' + (state.showCommissionResults ? ' show' : '')">
+                                    <t t-foreach="state.commissionResults" t-as="partner" t-key="partner.id">
+                                        <div class="bw-client-result" t-on-mousedown.prevent="() => this.selectCommissionPartner(partner)">
+                                            <div class="bw-cr-avatar"><t t-esc="getInitials(partner.name)"/></div>
+                                            <div class="bw-cr-info"><div class="bw-cr-name"><t t-esc="partner.name"/></div></div>
+                                        </div>
+                                    </t>
+                                </div>
+                            </div>
+                            <div class="bw-form-group">
+                                <div class="bw-form-label">Service Fee (VND)</div>
+                                <input class="bw-form-input" type="number" placeholder="0"
+                                       t-att-value="state.serviceFeeVnd" t-on-input="onServiceFeeChange"/>
+                            </div>
+                        </div>
+                        <div class="bw-form-row">
+                            <div class="bw-form-group">
+                                <div class="bw-form-label">Commission %</div>
+                                <input class="bw-form-input" type="number" step="0.01" placeholder="0"
+                                       t-att-value="state.commissionPercentage" t-on-input="onCommissionPercentageChange"/>
+                            </div>
+                            <div class="bw-form-group">
+                                <div class="bw-form-label">Commission Duration</div>
+                                <select class="bw-form-input" t-on-change="onCommissionDurationChange" t-att-value="state.commissionDuration">
+                                    <t t-foreach="commissionDurationOptions" t-as="cd" t-key="cd.value">
+                                        <option t-att-value="cd.value"><t t-esc="cd.label"/></option>
+                                    </t>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ========== STEP 3: SCHEDULE ========== -->
+                <div t-if="state.step === 3" class="bw-step">
+                    <h3 class="bw-step-title">Schedule Booking</h3>
+                    <p class="bw-step-subtitle">
+                        <t t-esc="selectedServiceOption.name"/> for <strong t-esc="state.selectedClient.name"/>
+                    </p>
+
+                    <!-- Province + Facility -->
+                    <div class="bw-form-row">
+                        <div class="bw-form-group">
+                            <div class="bw-form-label">Catchment Province</div>
+                            <select class="bw-form-input" t-on-change="onProvinceChange">
+                                <option value="">— All —</option>
+                                <t t-foreach="state.catchmentProvinces" t-as="prov" t-key="prov.id">
+                                    <option t-att-value="prov.id" t-att-selected="state.catchmentProvinceId === prov.id"><t t-esc="prov.name"/></option>
+                                </t>
+                            </select>
+                        </div>
+                        <div class="bw-form-group">
+                            <div class="bw-form-label">Healthcare Facility <span class="required">*</span></div>
+                            <select class="bw-form-input" t-on-change="onFacilityChange">
+                                <option value="">— Select Facility —</option>
+                                <t t-foreach="filteredFacilities" t-as="fac" t-key="fac.id">
+                                    <option t-att-value="fac.id" t-att-selected="state.facilityId === fac.id"><t t-esc="fac.name"/></option>
+                                </t>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Date + Duration -->
+                    <div class="bw-form-row">
+                        <div class="bw-form-group">
+                            <div class="bw-form-label">Date <span class="required">*</span></div>
+                            <input class="bw-form-input" type="date" t-att-value="state.bookingDate" t-on-change="onDateChange"/>
+                        </div>
+                        <div class="bw-form-group">
+                            <div class="bw-form-label">Duration</div>
+                            <select class="bw-form-input" t-on-change="onDurationChange">
+                                <t t-foreach="durationOptions" t-as="dur" t-key="dur.value">
+                                    <option t-att-value="dur.value" t-att-selected="state.duration === dur.value"><t t-esc="dur.label"/></option>
+                                </t>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Time selection with tabs -->
+                    <div class="bw-form-label" style="margin-top:8px">
+                        Time <span class="required">*</span>
+                        <t t-if="state.selectedTime !== null">
+                            <span class="bw-selected-time-badge">
+                                <i class="fa fa-clock-o"/> <t t-esc="selectedTimeLabel"/>
+                            </span>
+                        </t>
+                    </div>
+
+                    <div class="bw-time-tabs">
+                        <button t-att-class="'bw-time-tab' + (state.timeTab === 'morning' ? ' active' : '')"
+                                t-on-click="() => this.setTimeTab('morning')">
+                            <i class="fa fa-sun-o"/> Morning
+                        </button>
+                        <button t-att-class="'bw-time-tab' + (state.timeTab === 'afternoon' ? ' active' : '')"
+                                t-on-click="() => this.setTimeTab('afternoon')">
+                            <i class="fa fa-cloud"/> Afternoon
+                        </button>
+                        <button t-att-class="'bw-time-tab' + (state.timeTab === 'evening' ? ' active' : '')"
+                                t-on-click="() => this.setTimeTab('evening')">
+                            <i class="fa fa-moon-o"/> Evening
+                        </button>
+                    </div>
+
+                    <div class="bw-time-grid">
+                        <t t-foreach="activeTimeSlots" t-as="slot" t-key="slot.value">
+                            <div t-att-class="getTimeSlotClass(slot)"
+                                 t-on-click="() => this.selectTimeSlot(slot)">
+                                <div class="bw-ts-time"><t t-esc="slot.label"/></div>
+                            </div>
+                        </t>
+                    </div>
+
+                    <!-- Special instructions -->
+                    <div class="bw-form-group" style="margin-top:16px">
+                        <div class="bw-form-label">Special Instructions</div>
+                        <textarea class="bw-form-input" placeholder="Access details, medical notes, preferences..."
+                                  t-att-value="state.specialInstructions" t-on-input="onInstructionsChange"
+                                  style="min-height:60px"/>
+                    </div>
+                </div>
+
+                <!-- ========== STEP 4: CONFIRM ========== -->
+                <div t-if="state.step === 4" class="bw-step">
+                    <h3 class="bw-step-title">Review &amp; Confirm</h3>
+
+                    <div class="bw-summary-card">
+                        <div class="bw-summary-row">
+                            <span class="bw-summary-label">Client</span>
+                            <span class="bw-summary-value">
+                                <t t-esc="state.selectedClient.name"/>
+                                <t t-if="state.selectedClient.mobile"> — <t t-esc="state.selectedClient.mobile"/></t>
+                            </span>
+                        </div>
+                        <div class="bw-summary-row">
+                            <span class="bw-summary-label">Service</span>
+                            <span class="bw-summary-value">
+                                <t t-esc="selectedServiceOption.name"/>
+                                <t t-if="state.serviceSubcategory"> — <t t-esc="state.serviceSubcategory"/></t>
+                            </span>
+                        </div>
+                        <div class="bw-summary-row">
+                            <span class="bw-summary-label">Date &amp; Time</span>
+                            <span class="bw-summary-value"><t t-esc="summaryDateTime"/></span>
+                        </div>
+                        <div class="bw-summary-row">
+                            <span class="bw-summary-label">Duration</span>
+                            <span class="bw-summary-value"><t t-esc="durationLabel"/></span>
+                        </div>
+                        <div class="bw-summary-row">
+                            <span class="bw-summary-label">Location</span>
+                            <span class="bw-summary-value"><t t-esc="serviceLocationLabel"/></span>
+                        </div>
+                        <div class="bw-summary-row">
+                            <span class="bw-summary-label">Facility</span>
+                            <span class="bw-summary-value"><t t-esc="selectedFacilityName"/></span>
+                        </div>
+                        <div class="bw-summary-row">
+                            <span class="bw-summary-label">Priority</span>
+                            <span class="bw-summary-value"><t t-esc="priorityLabel"/></span>
+                        </div>
+                        <div t-if="state.serviceFeeVnd" class="bw-summary-row">
+                            <span class="bw-summary-label">Service Fee</span>
+                            <span class="bw-summary-value"><t t-esc="formatCurrency(state.serviceFeeVnd)"/></span>
+                        </div>
+                        <div t-if="state.commissionDueToName" class="bw-summary-row">
+                            <span class="bw-summary-label">Commission To</span>
+                            <span class="bw-summary-value"><t t-esc="state.commissionDueToName"/> (<t t-esc="state.commissionPercentage"/>%)</span>
+                        </div>
+                    </div>
+
+                    <!-- Payment Type -->
+                    <div class="bw-form-label" style="margin-bottom:8px">Payment Type</div>
+                    <div class="bw-payment-options">
+                        <div t-att-class="'bw-pay-option' + (state.paymentType === 'pay_after' ? ' selected' : '')"
+                             t-on-click="() => this.selectPayment('pay_after')">
+                            <i class="fa fa-clock-o"/>
+                            <div class="bw-po-label">Pay After Service</div>
+                        </div>
+                        <div t-att-class="'bw-pay-option' + (state.paymentType === 'pay_now' ? ' selected' : '')"
+                             t-on-click="() => this.selectPayment('pay_now')">
+                            <i class="fa fa-credit-card"/>
+                            <div class="bw-po-label">Pay Now</div>
+                        </div>
+                        <div t-att-class="'bw-pay-option' + (state.paymentType === 'use_package' ? ' selected' : '')"
+                             t-on-click="() => this.selectPayment('use_package')">
+                            <i class="fa fa-archive"/>
+                            <div class="bw-po-label">Use Package</div>
+                        </div>
+                    </div>
+
+                    <!-- Confirmation notifications -->
+                    <div class="bw-form-row" style="margin-top:14px">
+                        <div class="bw-form-group">
+                            <div class="bw-form-label">Send Confirmation</div>
+                            <div class="bw-confirm-checks">
+                                <label class="bw-check-label">
+                                    <input type="checkbox" t-att-checked="state.sendSms" t-on-change="toggleSms"/> SMS
+                                </label>
+                                <label class="bw-check-label">
+                                    <input type="checkbox" t-att-checked="state.sendEmail" t-on-change="toggleEmail"/> Email
+                                </label>
+                                <label class="bw-check-label">
+                                    <input type="checkbox" t-att-checked="state.sendZalo" t-on-change="toggleZalo"/> Zalo
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- FOOTER -->
+            <div class="bw-footer">
+                <button t-if="state.step > 1" class="bw-footer-btn bw-btn-back" t-on-click="prevStep">
+                    <i class="fa fa-arrow-left"/> Back
+                </button>
+                <div t-if="state.step === 1" style="flex:1"/>
+                <div class="bw-footer-note">Step <t t-esc="state.step"/> of 4</div>
+                <button t-if="state.step &lt; 4" class="bw-footer-btn bw-btn-next" t-on-click="nextStep"
+                        t-att-disabled="!canGoNext()">
+                    Next <i class="fa fa-arrow-right"/>
+                </button>
+                <button t-if="state.step === 4" class="bw-footer-btn bw-btn-confirm" t-on-click="nextStep"
+                        t-att-disabled="state.isSubmitting">
+                    <i class="fa fa-check"/> Confirm Booking
+                </button>
+            </div>
+
+        </div>
+    </div>
+</t>
+
+</templates>

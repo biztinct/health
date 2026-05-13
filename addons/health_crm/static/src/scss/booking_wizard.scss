@@ -1,0 +1,343 @@
+// ============================================================================
+// Booking Wizard — Card-based service selection, time slots, step indicator
+// Matches prototype: booking_wizard.html
+// ============================================================================
+
+// ===== SERVICE OPTION CARDS =====
+.o_dialog .o_form_view .booking-service-options {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 14px;
+}
+
+.booking-service-card {
+    border: 2px solid var(--vu-border-soft, #E0E0E0);
+    border-radius: var(--vu-radius-md, 8px);
+    padding: 14px;
+    cursor: pointer;
+    transition: all 150ms;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    &:hover {
+        border-color: $vu-deep-blue-light;
+        box-shadow: var(--vu-shadow-sm);
+    }
+
+    &.selected {
+        border-color: $vu-deep-blue;
+        background: $vu-deep-blue-lightest;
+
+        .bsc-check {
+            border-color: $vu-deep-blue;
+            background: $vu-deep-blue;
+            color: white;
+        }
+    }
+}
+
+.bsc-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: var(--vu-radius-md, 8px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+
+    &.hv { background: $vu-deep-blue-lightest; color: $vu-deep-blue; }
+    &.cv { background: #F3E8FF; color: #7c3aed; }
+    &.consult { background: rgba($vu-accent-blue, 0.1); color: $vu-accent-blue; }
+    &.fu { background: #DBF0DB; color: $vu-leaf-green; }
+    &.em { background: rgba($vu-hibiscus-red, 0.1); color: $vu-hibiscus-red; }
+    &.tele { background: rgba(0, 137, 123, 0.1); color: #00897B; }
+}
+
+.bsc-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.bsc-name {
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.bsc-desc {
+    font-size: 11px;
+    color: $vu-text-secondary;
+}
+
+.bsc-price {
+    font-size: 12px;
+    font-weight: 700;
+    font-family: $font-family-headings;
+    color: $vu-deep-blue;
+    margin-top: 2px;
+}
+
+.bsc-check {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 2px solid var(--vu-border-soft, #E0E0E0);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: all 150ms;
+    font-size: 10px;
+}
+
+// ===== TIME SLOT GRID =====
+.booking-time-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    margin-top: 12px;
+    margin-bottom: 14px;
+}
+
+.booking-time-slot {
+    padding: 10px;
+    border: 1px solid var(--vu-border-soft, #E0E0E0);
+    border-radius: var(--vu-radius-md, 8px);
+    text-align: center;
+    cursor: pointer;
+    transition: all 150ms;
+
+    &:hover {
+        border-color: $vu-deep-blue-light;
+    }
+
+    &.selected {
+        border-color: $vu-deep-blue;
+        background: $vu-deep-blue-lightest;
+    }
+
+    &.unavailable {
+        opacity: 0.4;
+        cursor: not-allowed;
+        background: var(--vu-surface-muted, #F5F5F5);
+    }
+
+    .ts-time {
+        font-size: 14px;
+        font-weight: 700;
+        font-family: $font-family-headings;
+    }
+
+    .ts-avail {
+        font-size: 10px;
+        color: $vu-leaf-green;
+        font-weight: 600;
+
+        &.limited { color: $vu-hibiscus-orange; }
+        &.none { color: $vu-hibiscus-red; }
+    }
+}
+
+// ===== SUMMARY CARD =====
+.booking-summary-card {
+    background: var(--vu-surface-muted, #F5F5F5);
+    border-radius: var(--vu-radius-md, 8px);
+    padding: 16px;
+    margin-bottom: 14px;
+
+    .summary-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 6px 0;
+        border-bottom: 1px solid var(--vu-border-soft, #E0E0E0);
+
+        &:last-child { border-bottom: none; }
+
+        .summary-label {
+            font-size: 12px;
+            color: $vu-text-secondary;
+        }
+
+        .summary-value {
+            font-size: 12px;
+            font-weight: 600;
+        }
+    }
+
+    .summary-total {
+        display: flex;
+        justify-content: space-between;
+        padding: 10px 0;
+        margin-top: 4px;
+        border-top: 2px solid $vu-text-primary;
+
+        .summary-label {
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        .summary-value {
+            font-size: 16px;
+            font-weight: 800;
+            font-family: $font-family-headings;
+            color: $vu-deep-blue;
+        }
+    }
+}
+
+// ===== PAYMENT TYPE OPTIONS =====
+.booking-payment-options {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+}
+
+.booking-pay-option {
+    flex: 1;
+    border: 2px solid var(--vu-border-soft, #E0E0E0);
+    border-radius: var(--vu-radius-md, 8px);
+    padding: 12px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 150ms;
+
+    &:hover { border-color: $vu-deep-blue-light; }
+
+    &.selected {
+        border-color: $vu-deep-blue;
+        background: $vu-deep-blue-lightest;
+    }
+
+    i {
+        font-size: 20px;
+        display: block;
+        margin-bottom: 4px;
+        color: $vu-deep-blue;
+    }
+
+    .po-label {
+        font-size: 11px;
+        font-weight: 700;
+    }
+}
+
+// ===== CLIENT SEARCH RESULTS =====
+.booking-client-results {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: var(--vu-surface-card, white);
+    border: 1px solid var(--vu-border-soft, #E0E0E0);
+    border-top: none;
+    border-radius: 0 0 var(--vu-radius-md, 8px) var(--vu-radius-md, 8px);
+    box-shadow: var(--vu-shadow-md);
+    z-index: 20;
+}
+
+.booking-client-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 12px;
+    cursor: pointer;
+    transition: background 100ms;
+
+    &:hover { background: $vu-deep-blue-lightest; }
+
+    .cr-avatar {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        background: $vu-deep-blue-lightest;
+        color: $vu-deep-blue;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 10px;
+        font-weight: 700;
+        flex-shrink: 0;
+    }
+
+    .cr-name {
+        font-size: 12px;
+        font-weight: 600;
+    }
+
+    .cr-phone {
+        font-size: 11px;
+        color: $vu-text-secondary;
+    }
+}
+
+// ===== STEP PROGRESS BAR (enhanced) =====
+.booking-stepper {
+    display: flex;
+    align-items: center;
+    padding: 16px;
+    background: var(--vu-surface-muted, #F5F5F5);
+    border-bottom: 1px solid var(--vu-border-soft, #E0E0E0);
+    margin-bottom: 16px;
+    border-radius: var(--vu-radius-md, 8px);
+
+    .bw-step {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex: 1;
+
+        &:not(:last-child)::after {
+            content: '';
+            flex: 1;
+            height: 2px;
+            background: var(--vu-border-soft, #E0E0E0);
+            margin: 0 12px;
+        }
+
+        &.completed:not(:last-child)::after {
+            background: $vu-leaf-green;
+        }
+
+        &.active:not(:last-child)::after {
+            background: linear-gradient(90deg, $vu-deep-blue 50%, var(--vu-border-soft, #E0E0E0) 50%);
+        }
+    }
+
+    .bw-step-num {
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 11px;
+        font-weight: 700;
+        border: 2px solid var(--vu-border-soft, #E0E0E0);
+        background: var(--vu-surface-card, white);
+        color: $vu-text-secondary;
+        flex-shrink: 0;
+    }
+
+    .bw-step.completed .bw-step-num {
+        background: $vu-leaf-green;
+        border-color: $vu-leaf-green;
+        color: white;
+    }
+
+    .bw-step.active .bw-step-num {
+        background: $vu-deep-blue;
+        border-color: $vu-deep-blue;
+        color: white;
+    }
+
+    .bw-step-name {
+        font-size: 12px;
+        font-weight: 600;
+        color: $vu-text-secondary;
+    }
+
+    .bw-step.active .bw-step-name { color: $vu-deep-blue; }
+    .bw-step.completed .bw-step-name { color: $vu-leaf-green; }
+}

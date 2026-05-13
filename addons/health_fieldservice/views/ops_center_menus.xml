@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ===== CLIENT ACTIONS ===== -->
+
+    <record id="action_ops_command_center" model="ir.actions.client">
+        <field name="name">Operations Command Center</field>
+        <field name="tag">ops_command_center</field>
+        <field name="target">fullscreen</field>
+    </record>
+
+    <record id="action_ops_booking_queue" model="ir.actions.client">
+        <field name="name">Booking Queue</field>
+        <field name="tag">ops_booking_queue</field>
+        <field name="target">fullscreen</field>
+    </record>
+
+    <record id="action_ops_client_list" model="ir.actions.client">
+        <field name="name">Client List</field>
+        <field name="tag">ops_client_list</field>
+        <field name="target">fullscreen</field>
+    </record>
+
+    <record id="action_ops_staff_roster" model="ir.actions.client">
+        <field name="name">Staff Roster</field>
+        <field name="tag">ops_staff_roster</field>
+        <field name="target">fullscreen</field>
+    </record>
+
+<record id="action_ops_booking_wizard" model="ir.actions.client">
+        <field name="name">New Booking</field>
+        <field name="tag">ops_booking_wizard</field>
+        <field name="target">fullscreen</field>
+    </record>
+
+    <record id="action_ops_client_profile" model="ir.actions.client">
+        <field name="name">Client Profile</field>
+        <field name="tag">ops_client_profile</field>
+        <field name="target">fullscreen</field>
+    </record>
+
+    <record id="action_ops_booking_detail" model="ir.actions.client">
+        <field name="name">Booking Detail</field>
+        <field name="tag">ops_booking_detail</field>
+        <field name="target">fullscreen</field>
+    </record>
+
+    <record id="action_ops_booking_form" model="ir.actions.act_window">
+        <field name="name">Booking Detail</field>
+        <field name="res_model">health.fieldservice.order</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="view_health_fso_form_ops"/>
+        <field name="target">fullscreen</field>
+    </record>
+
+    <record id="action_ops_payment_collection" model="ir.actions.client">
+        <field name="name">Collect Payment</field>
+        <field name="tag">ops_payment_collection</field>
+        <field name="target">fullscreen</field>
+    </record>
+
+    <record id="action_ops_recurring_booking" model="ir.actions.client">
+        <field name="name">Recurring Booking</field>
+        <field name="tag">ops_recurring_booking</field>
+        <field name="target">fullscreen</field>
+    </record>
+
+    <record id="action_ops_service_in_progress" model="ir.actions.client">
+        <field name="name">Service In Progress</field>
+        <field name="tag">ops_service_in_progress</field>
+        <field name="target">fullscreen</field>
+    </record>
+
+    <record id="action_ops_staff_assignment" model="ir.actions.client">
+        <field name="name">Assign Staff</field>
+        <field name="tag">ops_staff_assignment</field>
+        <field name="target">fullscreen</field>
+    </record>
+
+    <!-- ===== ROOT MENU: Operations Center ===== -->
+
+    <menuitem id="menu_ops_center_root"
+              name="Operations Center"
+              groups="health_base.group_healthcare_operations_manager"
+              web_icon="health_fieldservice,static/description/icon.png"
+              sequence="12"/>
+
+    <!-- Sub-menus -->
+
+    <menuitem id="menu_ops_dashboard"
+              name="Dashboard"
+              parent="menu_ops_center_root"
+              action="action_ops_command_center"
+              sequence="10"/>
+
+    <menuitem id="menu_ops_bookings"
+              name="Bookings"
+              parent="menu_ops_center_root"
+              action="action_ops_booking_queue"
+              sequence="20"/>
+
+    <menuitem id="menu_ops_clients"
+              name="Clients"
+              parent="menu_ops_center_root"
+              action="action_ops_client_list"
+              sequence="25"/>
+
+    <menuitem id="menu_ops_calendar"
+              name="Calendar"
+              parent="menu_ops_center_root"
+              action="action_ops_calendar"
+              sequence="30"/>
+
+<menuitem id="menu_ops_staff_roster"
+              name="Staff Roster"
+              parent="menu_ops_center_root"
+              action="action_ops_staff_roster"
+              sequence="40"/>
+
+    <menuitem id="menu_ops_staff_workload"
+              name="Staff Workload"
+              parent="menu_ops_center_root"
+              action="action_staff_workload_dashboard"
+              sequence="50"/>
+
+</odoo>

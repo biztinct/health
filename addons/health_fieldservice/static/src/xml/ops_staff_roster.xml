@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+<t t-name="health_fieldservice.OpsStaffRoster">
+    <div class="ops-staff-roster-page">
+
+        <!-- SIDEBAR -->
+        <aside class="ops-sidebar">
+            <div class="ops-sidebar-logo" t-on-click="navigateHome" style="cursor:pointer">
+                <div class="ops-logo-icon"><i class="fa fa-heartbeat"/></div>
+                <div>
+                    <div class="ops-logo-text">VIET UC</div>
+                    <div class="ops-logo-sub">Healthcare Platform</div>
+                </div>
+            </div>
+            <nav class="ops-sidebar-nav">
+                <div class="ops-nav-section-label">Main</div>
+                <a class="ops-nav-item" t-on-click="() => this.navigateTo('dashboard')"><i class="fa fa-th-large"/> Dashboard</a>
+                <a class="ops-nav-item" t-on-click="() => this.navigateTo('bookings')">
+                    <i class="fa fa-calendar-check-o"/> Bookings
+                    <t t-if="state.needsStaffCount"><span class="ops-badge-count" t-esc="state.needsStaffCount"/></t>
+                </a>
+                <a class="ops-nav-item" t-on-click="() => this.navigateTo('clients')"><i class="fa fa-address-book-o"/> Clients</a>
+                <a class="ops-nav-item" t-on-click="() => this.navigateTo('recurring')"><i class="fa fa-repeat"/> Recurring</a>
+                <a class="ops-nav-item active"><i class="fa fa-users"/> Staff</a>
+                <a class="ops-nav-item" t-on-click="() => this.navigateTo('calendar')"><i class="fa fa-calendar"/> Calendar</a>
+                <div class="ops-nav-section-label">Reports</div>
+                <a class="ops-nav-item" t-on-click="() => this.navigateTo('workload')"><i class="fa fa-bar-chart"/> Workload</a>
+                <a class="ops-nav-item" t-on-click="() => this.navigateTo('analytics')"><i class="fa fa-line-chart"/> Analytics</a>
+                <div class="ops-nav-section-label">System</div>
+                <a class="ops-nav-item" t-on-click="navigateHome"><i class="fa fa-arrow-left"/> Back to Odoo</a>
+            </nav>
+            <div class="ops-sidebar-user">
+                <div class="ops-user-avatar" t-esc="currentUserInitials"/>
+                <div class="ops-user-info">
+                    <div class="ops-user-name" t-esc="currentUserName"/>
+                    <div class="ops-user-role">Operations Manager</div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT -->
+        <div class="ops-main-content">
+
+            <!-- HEADER -->
+            <header class="ops-top-header">
+                <div class="ops-header-left">
+                    <h1 class="ops-page-title">Staff Roster</h1>
+                    <div class="ops-date-nav">
+                        <button class="ops-date-nav-btn" t-on-click="prevDay"><i class="fa fa-chevron-left"/></button>
+                        <span class="ops-date-label" t-esc="state.dateLabel"/>
+                        <button class="ops-date-nav-btn" t-on-click="nextDay"><i class="fa fa-chevron-right"/></button>
+                    </div>
+                    <button class="ops-date-today" t-on-click="goToday">Today</button>
+                </div>
+                <div class="ops-header-right">
+                    <button class="ops-header-btn btn-outline" t-on-click="onRefresh"><i class="fa fa-refresh"/></button>
+                </div>
+            </header>
+
+            <!-- LOADING -->
+            <div t-if="state.isLoading" class="ops-loading">
+                <div class="spinner-border text-primary" role="status"/>
+                <span>Loading roster...</span>
+            </div>
+
+            <div t-if="!state.isLoading" class="ops-roster-body">
+
+                <!-- SUMMARY BAR -->
+                <div class="ops-roster-summary">
+                    <div class="ops-roster-summary-card">
+                        <div class="summary-value" t-esc="state.summary.total"/>
+                        <div class="summary-label">Total Staff</div>
+                    </div>
+                    <div class="ops-roster-summary-card available">
+                        <div class="summary-dot available"/>
+                        <div class="summary-value" t-esc="state.summary.available"/>
+                        <div class="summary-label">Available</div>
+                    </div>
+                    <div class="ops-roster-summary-card busy">
+                        <div class="summary-dot busy"/>
+                        <div class="summary-value" t-esc="state.summary.busy"/>
+                        <div class="summary-label">In Service</div>
+                    </div>
+                    <div class="ops-roster-summary-card off">
+                        <div class="summary-dot off"/>
+                        <div class="summary-value" t-esc="state.summary.off"/>
+                        <div class="summary-label">Off Duty</div>
+                    </div>
+                </div>
+
+                <!-- FILTER BAR -->
+                <div class="ops-filter-bar">
+                    <div class="ops-search-wrapper">
+                        <i class="fa fa-search ops-search-icon"/>
+                        <input type="text" class="ops-search-input" placeholder="Search staff..."
+                               t-att-value="state.searchQuery" t-on-input="onSearchInput"/>
+                    </div>
+                    <select class="ops-filter-select" t-on-change="onStatusChange">
+                        <option value="">All Status</option>
+                        <option value="available">Available</option>
+                        <option value="busy">In Service</option>
+                        <option value="off">Off Duty</option>
+                    </select>
+                </div>
+
+                <!-- STAFF GRID -->
+                <div class="ops-roster-grid">
+                    <t t-if="filteredStaff.length === 0">
+                        <div class="ops-empty-state" style="grid-column:1/-1; padding:80px 20px">
+                            <i class="fa fa-users" style="font-size:48px"/>
+                            <h4>No staff found</h4>
+                            <p>Try adjusting your filters.</p>
+                        </div>
+                    </t>
+                    <t t-foreach="filteredStaff" t-as="s" t-key="s.id">
+                        <div class="ops-roster-card" t-on-click="() => this.openStaffProfile(s.id)">
+                            <!-- Card Header -->
+                            <div class="roster-card-header">
+                                <div class="ops-staff-avatar" t-att-style="'background:' + getStaffColor(s.color_index)">
+                                    <t t-esc="s.initials"/>
+                                    <span t-attf-class="ops-status-dot #{s.status}"/>
+                                </div>
+                                <div class="roster-card-info">
+                                    <div class="ops-staff-name" t-esc="s.name"/>
+                                    <div class="roster-card-role" t-esc="s.role"/>
+                                    <div t-attf-class="ops-staff-status-text #{s.status}" t-esc="getStatusLabel(s.status)"/>
+                                </div>
+                            </div>
+
+                            <!-- Stats -->
+                            <div class="roster-card-stats">
+                                <div class="roster-stat">
+                                    <div class="roster-stat-value" t-esc="s.today_assignments"/>
+                                    <div class="roster-stat-label">Today</div>
+                                </div>
+                                <div class="roster-stat">
+                                    <div class="roster-stat-value" t-esc="s.week_assignments"/>
+                                    <div class="roster-stat-label">This Week</div>
+                                </div>
+                                <div class="roster-stat">
+                                    <div class="roster-stat-value"><t t-esc="s.completion_rate"/>%</div>
+                                    <div class="roster-stat-label">Completion</div>
+                                </div>
+                                <div class="roster-stat">
+                                    <div class="roster-stat-value">
+                                        <t t-if="s.rating > 0"><t t-esc="s.rating"/> <i class="fa fa-star" style="color:#FB8C00; font-size:10px"/></t>
+                                        <t t-else="">—</t>
+                                    </div>
+                                    <div class="roster-stat-label">Rating</div>
+                                </div>
+                            </div>
+
+                            <!-- Mini Schedule -->
+                            <div class="roster-card-schedule">
+                                <div class="schedule-label">Today's Schedule</div>
+                                <div class="schedule-bar">
+                                    <t t-foreach="s.schedule_blocks" t-as="block" t-key="block.id">
+                                        <div class="schedule-block" t-att-style="getScheduleBlockStyle(block)"
+                                             t-att-title="block.patient_name"/>
+                                    </t>
+                                </div>
+                                <div class="schedule-hours">
+                                    <span>7AM</span><span>10AM</span><span>1PM</span><span>4PM</span><span>7PM</span>
+                                </div>
+                            </div>
+
+                            <!-- Skills -->
+                            <t t-if="s.skills.length > 0">
+                                <div class="roster-card-skills">
+                                    <t t-foreach="s.skills" t-as="skill" t-key="skill.id">
+                                        <span class="skill-tag" t-esc="skill.name"/>
+                                    </t>
+                                </div>
+                            </t>
+
+                            <!-- Facility -->
+                            <t t-if="s.facility">
+                                <div class="roster-card-facility">
+                                    <i class="fa fa-hospital-o"/> <t t-esc="s.facility"/>
+                                </div>
+                            </t>
+                        </div>
+                    </t>
+                </div>
+
+            </div>
+        </div><!-- /ops-main-content -->
+    </div>
+</t>
+
+</templates>

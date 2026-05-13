@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Recurring Booking — VAFHS</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+:root{--vu-deep-blue:#1565C0;--vu-deep-blue-darker:#1356A9;--vu-deep-blue-darkest:#0D356B;--vu-deep-blue-light:#83C5FA;--vu-deep-blue-lightest:#E4F4FD;--vu-accent-blue:#42A5F5;--vu-hibiscus-red:#E53935;--vu-hibiscus-orange:#FB8C00;--vu-leaf-green:#43A047;--state-draft:#64748b;--state-confirmed:#2563eb;--state-assigned:#7c3aed;--state-active:#ea580c;--state-completed:#16a34a;--state-cancelled:#dc2626;--text-primary:#212121;--text-secondary:#424242;--text-muted:#757575;--surface-app:#F5F5F5;--surface-card:#FFFFFF;--border-soft:#E0E0E0;--border-strong:#BDBDBD;--shadow-sm:0 1px 3px rgba(33,33,33,.08);--shadow-md:0 2px 8px rgba(33,33,33,.12);--shadow-lg:0 4px 16px rgba(33,33,33,.15);--radius-sm:4px;--radius-md:8px;--radius-lg:12px}
+*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Segoe UI',Arial,sans-serif;font-size:13px;color:var(--text-primary);background:var(--surface-app);line-height:1.5;-webkit-font-smoothing:antialiased;display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px}
+h1,h2,h3,h4{font-family:'Montserrat','Segoe UI',Arial,sans-serif;font-weight:600}
+
+.wizard{width:100%;max-width:780px;background:var(--surface-card);border-radius:var(--radius-lg);box-shadow:var(--shadow-lg);border:1px solid var(--border-soft);overflow:hidden}
+.wizard-header{padding:20px 28px;border-bottom:1px solid var(--border-soft);display:flex;align-items:center;justify-content:space-between}
+.wizard-title{font-size:18px;font-weight:700;font-family:'Montserrat';display:flex;align-items:center;gap:10px}
+.wizard-title i{color:var(--vu-deep-blue)}
+.wizard-subtitle{font-size:12px;color:var(--text-muted);margin-top:2px}
+.close-btn{width:32px;height:32px;border:1px solid var(--border-soft);border-radius:var(--radius-md);background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--text-muted);transition:all 120ms;font-size:14px}
+.close-btn:hover{border-color:var(--vu-hibiscus-red);color:var(--vu-hibiscus-red)}
+
+.wizard-body{padding:24px 28px}
+
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px 20px;margin-bottom:14px}
+.form-3col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px 20px;margin-bottom:14px}
+.form-full{grid-column:1/-1}
+.form-group{display:flex;flex-direction:column}
+.form-label{font-size:11px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.4px;margin-bottom:4px}
+.form-label .req{color:var(--vu-hibiscus-red)}
+.form-input{padding:9px 12px;border:1px solid var(--border-soft);border-radius:var(--radius-md);font-size:13px;font-family:inherit;transition:border-color 150ms;background:var(--surface-card)}
+.form-input:focus{outline:none;border-color:var(--vu-deep-blue);box-shadow:0 0 0 3px rgba(21,101,192,.1)}
+select.form-input{cursor:pointer}
+
+.section-title{font-size:14px;font-weight:700;font-family:'Montserrat';margin-bottom:12px;display:flex;align-items:center;gap:8px;padding-top:12px;border-top:1px solid var(--border-soft);margin-top:16px}
+.section-title:first-child{border-top:none;margin-top:0;padding-top:0}
+.section-title i{color:var(--vu-deep-blue)}
+
+/* RECURRENCE PATTERN */
+.pattern-options{display:flex;gap:8px;margin-bottom:14px}
+.pattern-btn{flex:1;padding:10px;border:2px solid var(--border-soft);border-radius:var(--radius-md);text-align:center;cursor:pointer;transition:all 150ms;font-family:inherit;background:transparent}
+.pattern-btn:hover{border-color:var(--vu-deep-blue-light)}
+.pattern-btn.selected{border-color:var(--vu-deep-blue);background:var(--vu-deep-blue-lightest)}
+.pattern-btn i{display:block;font-size:18px;color:var(--vu-deep-blue);margin-bottom:4px}
+.pattern-btn .pb-label{font-size:11px;font-weight:700}
+.pattern-btn .pb-desc{font-size:10px;color:var(--text-muted)}
+
+/* DAY SELECTOR */
+.day-selector{display:flex;gap:6px;margin-bottom:14px}
+.day-btn{width:38px;height:38px;border:1px solid var(--border-soft);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;cursor:pointer;transition:all 150ms;background:transparent;color:var(--text-secondary);font-family:inherit}
+.day-btn:hover{border-color:var(--vu-deep-blue-light)}
+.day-btn.selected{background:var(--vu-deep-blue);color:white;border-color:var(--vu-deep-blue)}
+
+/* PREVIEW CALENDAR */
+.preview-card{background:var(--surface-app);border-radius:var(--radius-md);padding:14px;margin-top:12px}
+.preview-title{font-size:12px;font-weight:700;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.preview-title i{color:var(--vu-leaf-green)}
+.preview-list{max-height:200px;overflow-y:auto}
+.preview-item{display:flex;align-items:center;gap:10px;padding:6px 8px;border-radius:var(--radius-sm);margin-bottom:2px;font-size:12px}
+.preview-item:hover{background:rgba(255,255,255,.6)}
+.preview-num{width:22px;height:22px;border-radius:50%;background:var(--vu-deep-blue);color:white;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;flex-shrink:0}
+.preview-date{flex:1;font-weight:600}
+.preview-day{color:var(--text-muted);font-size:11px;min-width:40px}
+.preview-status{font-size:10px;font-weight:600}
+.preview-status.ok{color:var(--vu-leaf-green)}
+.preview-status.conflict{color:var(--vu-hibiscus-red)}
+
+/* PACKAGE LINK */
+.package-banner{background:linear-gradient(135deg,var(--vu-deep-blue-lightest),#DBF0DB);border:1px solid var(--vu-deep-blue-light);border-radius:var(--radius-md);padding:14px;display:flex;align-items:center;gap:12px;margin-top:16px;cursor:pointer;transition:all 150ms}
+.package-banner:hover{box-shadow:var(--shadow-sm)}
+.pkg-icon{width:40px;height:40px;border-radius:var(--radius-md);background:var(--vu-deep-blue);color:white;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.pkg-info{flex:1}
+.pkg-title{font-size:13px;font-weight:700}
+.pkg-desc{font-size:11px;color:var(--text-muted)}
+.pkg-save{font-size:12px;font-weight:700;color:var(--vu-leaf-green);background:#DBF0DB;padding:4px 10px;border-radius:var(--radius-md)}
+
+/* SUMMARY */
+.summary-box{background:var(--surface-app);border-radius:var(--radius-md);padding:14px;margin-top:12px}
+.summary-row{display:flex;justify-content:space-between;padding:4px 0;font-size:12px}
+.summary-row .label{color:var(--text-muted)}.summary-row .value{font-weight:600}
+.summary-total{display:flex;justify-content:space-between;padding:8px 0;margin-top:4px;border-top:2px solid var(--text-primary);font-size:14px;font-weight:700}
+.summary-total .value{font-family:'Montserrat';color:var(--vu-deep-blue)}
+
+.wizard-footer{padding:16px 28px;border-top:1px solid var(--border-soft);display:flex;align-items:center;justify-content:space-between;background:var(--surface-app)}
+.footer-btn{display:flex;align-items:center;gap:6px;padding:9px 20px;border:none;border-radius:var(--radius-md);font-size:13px;font-weight:600;cursor:pointer;transition:all 150ms;font-family:inherit}
+.btn-back{background:transparent;color:var(--text-secondary);border:1px solid var(--border-soft)}.btn-back:hover{border-color:var(--vu-deep-blue);color:var(--vu-deep-blue)}
+.btn-create{background:var(--vu-leaf-green);color:white}.btn-create:hover{background:#388E3C;box-shadow:var(--shadow-md)}
+</style>
+</head>
+<body>
+<div class="wizard">
+  <div class="wizard-header">
+    <div>
+      <div class="wizard-title"><i class="fas fa-repeat"></i> Recurring Booking</div>
+      <div class="wizard-subtitle">Create multiple bookings on a regular schedule for <strong>Tran Van Duc</strong></div>
+    </div>
+    <button class="close-btn" onclick="history.back()"><i class="fas fa-xmark"></i></button>
+  </div>
+
+  <div class="wizard-body">
+    <!-- SERVICE -->
+    <div class="section-title"><i class="fas fa-stethoscope"></i> Service</div>
+    <div class="form-row">
+      <div class="form-group">
+        <div class="form-label">Service Type <span class="req">*</span></div>
+        <select class="form-input"><option>Home Visit — General Health Assessment</option><option>Home Visit — Pediatric Care</option><option>Clinic Visit — Consultation</option><option>Follow-up</option></select>
+      </div>
+      <div class="form-group">
+        <div class="form-label">Duration</div>
+        <select class="form-input"><option>1 hour</option><option selected>2 hours</option><option>3 hours</option></select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <div class="form-label">Preferred Time</div>
+        <select class="form-input"><option>09:00</option><option>10:00</option><option>14:00</option><option>15:00</option></select>
+      </div>
+      <div class="form-group">
+        <div class="form-label">Facility</div>
+        <select class="form-input"><option>Viet Uc — Hanoi</option><option>Viet Uc — HCMC</option></select>
+      </div>
+    </div>
+
+    <!-- RECURRENCE -->
+    <div class="section-title"><i class="fas fa-calendar-days"></i> Recurrence Pattern</div>
+    <div class="pattern-options">
+      <div class="pattern-btn" onclick="selectPattern(this)"><i class="fas fa-calendar-day"></i><div class="pb-label">Daily</div><div class="pb-desc">Every X days</div></div>
+      <div class="pattern-btn selected" onclick="selectPattern(this)"><i class="fas fa-calendar-week"></i><div class="pb-label">Weekly</div><div class="pb-desc">Same days each week</div></div>
+      <div class="pattern-btn" onclick="selectPattern(this)"><i class="fas fa-calendar-alt"></i><div class="pb-label">Bi-Weekly</div><div class="pb-desc">Every 2 weeks</div></div>
+      <div class="pattern-btn" onclick="selectPattern(this)"><i class="fas fa-calendar"></i><div class="pb-label">Monthly</div><div class="pb-desc">Same date each month</div></div>
+    </div>
+
+    <div class="form-label" style="margin-bottom:6px">Repeat on days <span class="req">*</span></div>
+    <div class="day-selector">
+      <button class="day-btn selected" onclick="toggleDay(this)">Mon</button>
+      <button class="day-btn" onclick="toggleDay(this)">Tue</button>
+      <button class="day-btn" onclick="toggleDay(this)">Wed</button>
+      <button class="day-btn selected" onclick="toggleDay(this)">Thu</button>
+      <button class="day-btn" onclick="toggleDay(this)">Fri</button>
+      <button class="day-btn" onclick="toggleDay(this)">Sat</button>
+      <button class="day-btn" onclick="toggleDay(this)">Sun</button>
+    </div>
+
+    <div class="form-3col">
+      <div class="form-group">
+        <div class="form-label">Start Date <span class="req">*</span></div>
+        <input class="form-input" type="date" value="2026-05-18">
+      </div>
+      <div class="form-group">
+        <div class="form-label">End Type</div>
+        <select class="form-input"><option>After X occurrences</option><option>Until date</option><option>No end date</option></select>
+      </div>
+      <div class="form-group">
+        <div class="form-label">Occurrences</div>
+        <input class="form-input" type="number" value="8" min="1" max="52">
+      </div>
+    </div>
+
+    <!-- PREVIEW -->
+    <div class="preview-card">
+      <div class="preview-title"><i class="fas fa-eye"></i> Booking Preview — 8 bookings will be created</div>
+      <div class="preview-list">
+        <div class="preview-item"><div class="preview-num">1</div><div class="preview-date">Mon, May 18, 2026</div><div class="preview-day">09:00</div><div class="preview-status ok"><i class="fas fa-check-circle"></i> Available</div></div>
+        <div class="preview-item"><div class="preview-num">2</div><div class="preview-date">Thu, May 21, 2026</div><div class="preview-day">09:00</div><div class="preview-status ok"><i class="fas fa-check-circle"></i> Available</div></div>
+        <div class="preview-item"><div class="preview-num">3</div><div class="preview-date">Mon, May 25, 2026</div><div class="preview-day">09:00</div><div class="preview-status ok"><i class="fas fa-check-circle"></i> Available</div></div>
+        <div class="preview-item"><div class="preview-num">4</div><div class="preview-date">Thu, May 28, 2026</div><div class="preview-day">09:00</div><div class="preview-status conflict"><i class="fas fa-exclamation-triangle"></i> Holiday — adjusted to Fri 29</div></div>
+        <div class="preview-item"><div class="preview-num">5</div><div class="preview-date">Mon, Jun 1, 2026</div><div class="preview-day">09:00</div><div class="preview-status ok"><i class="fas fa-check-circle"></i> Available</div></div>
+        <div class="preview-item"><div class="preview-num">6</div><div class="preview-date">Thu, Jun 4, 2026</div><div class="preview-day">09:00</div><div class="preview-status ok"><i class="fas fa-check-circle"></i> Available</div></div>
+        <div class="preview-item"><div class="preview-num">7</div><div class="preview-date">Mon, Jun 8, 2026</div><div class="preview-day">09:00</div><div class="preview-status ok"><i class="fas fa-check-circle"></i> Available</div></div>
+        <div class="preview-item"><div class="preview-num">8</div><div class="preview-date">Thu, Jun 11, 2026</div><div class="preview-day">09:00</div><div class="preview-status ok"><i class="fas fa-check-circle"></i> Available</div></div>
+      </div>
+    </div>
+
+    <!-- PACKAGE SUGGESTION -->
+    <a class="package-banner" href="package_management.html">
+      <div class="pkg-icon"><i class="fas fa-box-open"></i></div>
+      <div class="pkg-info">
+        <div class="pkg-title">Save with a Package!</div>
+        <div class="pkg-desc">Buy a 10-visit General Health package for 20,000,000 VND instead of 25,000,000 VND (per-visit)</div>
+      </div>
+      <div class="pkg-save">Save 20%</div>
+    </a>
+
+    <!-- SUMMARY -->
+    <div class="summary-box">
+      <div class="summary-row"><span class="label">Service</span><span class="value">Home Visit — General Health (2hrs)</span></div>
+      <div class="summary-row"><span class="label">Pattern</span><span class="value">Weekly — Mon &amp; Thu</span></div>
+      <div class="summary-row"><span class="label">Bookings</span><span class="value">8 bookings (May 18 — Jun 11)</span></div>
+      <div class="summary-row"><span class="label">Per visit</span><span class="value">2,700,000 &#8363;</span></div>
+      <div class="summary-total"><span class="label">Total (8 visits)</span><span class="value">21,600,000 &#8363;</span></div>
+    </div>
+  </div>
+
+  <div class="wizard-footer">
+    <button class="footer-btn btn-back" onclick="history.back()"><i class="fas fa-arrow-left"></i> Back</button>
+    <div style="font-size:11px;color:var(--text-muted)">8 bookings will be created</div>
+    <button class="footer-btn btn-create" onclick="alert('8 recurring bookings created!');window.location='ops_booking_queue.html'"><i class="fas fa-check"></i> Create 8 Bookings</button>
+  </div>
+</div>
+
+<script>
+function selectPattern(el){document.querySelectorAll('.pattern-btn').forEach(b=>b.classList.remove('selected'));el.classList.add('selected')}
+function toggleDay(el){el.classList.toggle('selected')}
+</script>
+</body>
+</html>

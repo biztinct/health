@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+<t t-name="health_fieldservice.OpsBookingFormView">
+    <div t-att-class="className" t-ref="root">
+
+        <!-- OPS SIDEBAR -->
+        <aside class="ops-sidebar">
+            <div class="ops-sidebar-logo" t-on-click="navigateHome" style="cursor:pointer">
+                <div class="ops-logo-icon"><i class="fa fa-heartbeat"/></div>
+                <div>
+                    <div class="ops-logo-text">VIET UC</div>
+                    <div class="ops-logo-sub">Healthcare Platform</div>
+                </div>
+            </div>
+            <nav class="ops-sidebar-nav">
+                <div class="ops-nav-section-label">Main</div>
+                <a class="ops-nav-item" t-on-click="() => this.navigateTo('dashboard')"><i class="fa fa-th-large"/> Dashboard</a>
+                <a class="ops-nav-item active" t-on-click="() => this.navigateTo('bookings')">
+                    <i class="fa fa-calendar-check-o"/> Bookings
+                </a>
+                <a class="ops-nav-item" t-on-click="() => this.navigateTo('clients')"><i class="fa fa-address-book-o"/> Clients</a>
+                <a class="ops-nav-item" t-on-click="() => this.navigateTo('recurring')"><i class="fa fa-repeat"/> Recurring</a>
+                <a class="ops-nav-item" t-on-click="() => this.navigateTo('staff')"><i class="fa fa-users"/> Staff</a>
+                <a class="ops-nav-item" t-on-click="() => this.navigateTo('calendar')"><i class="fa fa-calendar"/> Calendar</a>
+                <div class="ops-nav-section-label">Reports</div>
+                <a class="ops-nav-item" t-on-click="() => this.navigateTo('workload')"><i class="fa fa-bar-chart"/> Workload</a>
+                <a class="ops-nav-item" t-on-click="() => this.navigateTo('analytics')"><i class="fa fa-line-chart"/> Analytics</a>
+                <div class="ops-nav-section-label">System</div>
+                <a class="ops-nav-item" t-on-click="navigateHome"><i class="fa fa-arrow-left"/> Back to Odoo</a>
+            </nav>
+            <div class="ops-sidebar-user">
+                <div class="ops-user-avatar" t-esc="currentUserInitials"/>
+                <div class="ops-user-info">
+                    <div class="ops-user-name" t-esc="currentUserName"/>
+                    <div class="ops-user-role">Operations Manager</div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT AREA -->
+        <div class="ops-form-main-area">
+
+            <!-- OPS TOP HEADER -->
+            <header class="ops-top-header">
+                <div class="ops-header-left">
+                    <div class="bd-breadcrumb">
+                        <a t-on-click="() => this.navigateTo('dashboard')">Dashboard</a>
+                        <span class="bd-sep"><i class="fa fa-chevron-right" style="font-size:9px"/></span>
+                        <a t-on-click="goToBookings">Booking Queue</a>
+                        <span class="bd-sep"><i class="fa fa-chevron-right" style="font-size:9px"/></span>
+                        <span class="bd-current" t-esc="model.root.data.display_name or 'Booking'"/>
+                    </div>
+                </div>
+                <div class="ops-header-right">
+                    <t t-if="canEdit">
+                        <FormStatusIndicator model="model" discard.bind="discard" save.bind="saveButtonClicked"/>
+                    </t>
+                </div>
+            </header>
+
+            <!-- FORM VIEW CONTAINER -->
+            <div class="o_form_view_container">
+                <Layout className="model.useSampleModel ? 'o_view_sample_data' : ''" display="display">
+                    <t t-set-slot="control-panel-create-button"/>
+
+                    <t t-set-slot="layout-buttons">
+                        <t t-if="env.inDialog">
+                            <t t-if="footerArchInfo">
+                                <t t-component="props.Renderer" record="model.root" Compiler="props.Compiler" archInfo="footerArchInfo">
+                                    <t t-set-slot="default_buttons">
+                                        <t t-call="{{ props.buttonTemplate }}"/>
+                                    </t>
+                                </t>
+                            </t>
+                            <t t-else="">
+                                <t t-call="{{ props.buttonTemplate }}"/>
+                            </t>
+                        </t>
+                    </t>
+
+                    <t t-set-slot="layout-actions">
+                        <t t-if="!env.isSmall and buttonBoxTemplate">
+                            <t t-call="{{ buttonBoxTemplate }}" t-call-context="{ __comp__: Object.assign(Object.create(this), { this, props: { ...this.props, record: this.model.root } }) }"/>
+                        </t>
+                    </t>
+
+                    <t t-set-slot="control-panel-additional-actions">
+                        <CogMenu t-props="this.cogMenuProps"/>
+                        <t t-if="env.isSmall and buttonBoxTemplate">
+                            <t t-call="{{ buttonBoxTemplate }}" t-call-context="{ __comp__: Object.assign(Object.create(this), { this, props: { ...this.props, record: this.model.root } }) }"/>
+                        </t>
+                    </t>
+
+                    <t t-set-slot="control-panel-status-indicator"/>
+
+                    <t t-component="props.Renderer" record="model.root" Compiler="props.Compiler" readonly="props.readonly" archInfo="archInfo" translateAlert="translateAlert" onNotebookPageChange.bind="onNotebookPageChange" activeNotebookPages="props.state and props.state.activeNotebookPages"/>
+                </Layout>
+            </div>
+        </div>
+    </div>
+</t>
+
+</templates>

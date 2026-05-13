@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Client Profile — Tran Van Duc — VAFHS</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+:root{--vu-deep-blue:#1565C0;--vu-deep-blue-darker:#1356A9;--vu-deep-blue-darkest:#0D356B;--vu-deep-blue-light:#83C5FA;--vu-deep-blue-lightest:#E4F4FD;--vu-accent-blue:#42A5F5;--vu-hibiscus-red:#E53935;--vu-hibiscus-orange:#FB8C00;--vu-leaf-green:#43A047;--state-draft:#64748b;--state-confirmed:#2563eb;--state-assigned:#7c3aed;--state-active:#ea580c;--state-completed:#16a34a;--state-cancelled:#dc2626;--text-primary:#212121;--text-secondary:#424242;--text-muted:#757575;--surface-app:#F5F5F5;--surface-card:#FFFFFF;--border-soft:#E0E0E0;--border-strong:#BDBDBD;--shadow-sm:0 1px 3px rgba(33,33,33,.08);--shadow-md:0 2px 8px rgba(33,33,33,.12);--shadow-lg:0 4px 16px rgba(33,33,33,.15);--radius-sm:4px;--radius-md:8px;--radius-lg:12px}
+*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Segoe UI',Arial,sans-serif;font-size:13px;color:var(--text-primary);background:var(--surface-app);line-height:1.5;-webkit-font-smoothing:antialiased}h1,h2,h3,h4{font-family:'Montserrat','Segoe UI',Arial,sans-serif;font-weight:600}.app-wrapper{display:flex;min-height:100vh}
+
+.sidebar{width:220px;background:var(--vu-deep-blue-darkest);color:white;display:flex;flex-direction:column;flex-shrink:0;position:fixed;top:0;left:0;bottom:0;z-index:100}
+.sidebar-logo{padding:20px 16px;display:flex;align-items:center;gap:10px;border-bottom:1px solid rgba(255,255,255,.1);text-decoration:none;color:white}
+.logo-icon{width:36px;height:36px;background:var(--vu-hibiscus-red);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px}
+.logo-text{font-family:'Montserrat';font-weight:700;font-size:15px;letter-spacing:.5px}.logo-sub{font-size:10px;opacity:.6}
+.sidebar-nav{padding:12px 0;flex:1}
+.nav-section-label{padding:16px 16px 6px;font-size:10px;text-transform:uppercase;letter-spacing:1.2px;opacity:.4;font-weight:600}
+.nav-item{display:flex;align-items:center;gap:10px;padding:10px 16px;color:rgba(255,255,255,.7);text-decoration:none;font-size:13px;font-weight:500;transition:all 150ms;cursor:pointer;border-left:3px solid transparent}
+.nav-item:hover{background:rgba(255,255,255,.08);color:white}.nav-item.active{background:rgba(255,255,255,.12);color:white;border-left-color:var(--vu-accent-blue)}
+.nav-item i{width:20px;text-align:center;font-size:14px}.nav-item .badge-count{margin-left:auto;background:var(--vu-hibiscus-red);color:white;font-size:10px;font-weight:700;padding:2px 6px;border-radius:10px}
+.sidebar-user{padding:12px 16px;border-top:1px solid rgba(255,255,255,.1);display:flex;align-items:center;gap:10px}
+.user-avatar{width:32px;height:32px;border-radius:50%;background:var(--vu-accent-blue);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700}
+.user-info{flex:1}.user-name{font-size:12px;font-weight:600}.user-role{font-size:10px;opacity:.5}
+
+.main-content{flex:1;margin-left:220px;display:flex;flex-direction:column}
+.top-header{background:var(--surface-card);border-bottom:1px solid var(--border-soft);padding:12px 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;box-shadow:var(--shadow-sm)}
+.header-left{display:flex;align-items:center;gap:12px}
+.breadcrumb{display:flex;align-items:center;gap:6px;font-size:13px}
+.breadcrumb a{color:var(--vu-deep-blue);text-decoration:none;font-weight:500}.breadcrumb a:hover{text-decoration:underline}
+.breadcrumb .sep{color:var(--text-muted)}.breadcrumb .current{color:var(--text-primary);font-weight:600}
+.header-right{display:flex;align-items:center;gap:8px}
+.header-btn{display:flex;align-items:center;gap:6px;padding:7px 14px;border:none;border-radius:var(--radius-md);font-size:12px;font-weight:600;cursor:pointer;transition:all 150ms;font-family:inherit}
+.btn-primary{background:var(--vu-deep-blue);color:white}.btn-primary:hover{background:var(--vu-deep-blue-darker)}
+.btn-outline{background:transparent;color:var(--text-secondary);border:1px solid var(--border-soft)}.btn-outline:hover{border-color:var(--vu-deep-blue);color:var(--vu-deep-blue);background:var(--vu-deep-blue-lightest)}
+.page-body{padding:20px 24px;flex:1}
+
+/* PROFILE HEADER */
+.profile-header{background:var(--surface-card);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);border:1px solid var(--border-soft);margin-bottom:16px;overflow:hidden}
+.profile-banner{height:80px;background:linear-gradient(135deg,var(--vu-deep-blue) 0%,var(--vu-accent-blue) 100%);position:relative}
+.profile-main{display:flex;align-items:flex-end;gap:16px;padding:0 24px 16px;margin-top:-30px;position:relative}
+.profile-avatar{width:72px;height:72px;border-radius:50%;background:var(--vu-deep-blue-lightest);color:var(--vu-deep-blue);display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:700;border:4px solid var(--surface-card);box-shadow:var(--shadow-md);flex-shrink:0}
+.profile-info{flex:1;padding-bottom:4px}
+.profile-name{font-size:20px;font-weight:700;font-family:'Montserrat';display:flex;align-items:center;gap:8px}
+.profile-tags{display:flex;gap:6px;margin-top:4px}
+.ptag{display:inline-flex;align-items:center;gap:3px;padding:3px 8px;border-radius:6px;font-size:10px;font-weight:600}
+.ptag-vip{background:rgba(251,140,0,.12);color:var(--vu-hibiscus-orange)}.ptag-active{background:#DBF0DB;color:var(--vu-leaf-green)}.ptag-referral{background:var(--vu-deep-blue-lightest);color:var(--vu-deep-blue)}
+.profile-contact{font-size:12px;color:var(--text-muted);margin-top:4px;display:flex;gap:16px;flex-wrap:wrap}
+.profile-contact span{display:flex;align-items:center;gap:4px}
+.profile-contact i{font-size:11px;color:var(--vu-deep-blue)}
+.profile-actions{display:flex;gap:6px;padding-bottom:4px}
+.profile-action-btn{width:36px;height:36px;border:1px solid var(--border-soft);border-radius:var(--radius-md);background:var(--surface-card);cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--text-muted);transition:all 120ms;font-size:14px}
+.profile-action-btn:hover{border-color:var(--vu-deep-blue);color:var(--vu-deep-blue);background:var(--vu-deep-blue-lightest)}
+
+/* STATS ROW */
+.stats-row{display:flex;gap:0;border-top:1px solid var(--border-soft)}
+.stat-item{flex:1;padding:12px 20px;text-align:center;border-right:1px solid var(--border-soft)}
+.stat-item:last-child{border-right:none}
+.stat-value{font-size:20px;font-weight:800;font-family:'Montserrat';color:var(--vu-deep-blue)}
+.stat-label{font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.4px;font-weight:600}
+
+/* TABS */
+.profile-tabs{display:flex;gap:0;background:var(--surface-card);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);border:1px solid var(--border-soft);margin-bottom:16px;overflow:hidden}
+.profile-tab{padding:12px 20px;font-size:13px;font-weight:600;color:var(--text-muted);cursor:pointer;border:none;background:none;border-bottom:2px solid transparent;transition:all 150ms;font-family:inherit;display:flex;align-items:center;gap:6px}
+.profile-tab:hover{color:var(--text-primary);background:var(--surface-app)}
+.profile-tab.active{color:var(--vu-deep-blue);border-bottom-color:var(--vu-deep-blue)}
+.profile-tab .tab-badge{font-size:10px;font-weight:700;padding:1px 6px;border-radius:8px;background:var(--surface-app);color:var(--text-muted)}
+.profile-tab.active .tab-badge{background:var(--vu-deep-blue);color:white}
+
+/* CONTENT GRID */
+.content-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.card{background:var(--surface-card);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);border:1px solid var(--border-soft);overflow:hidden}
+.card-header{padding:14px 20px;border-bottom:1px solid var(--border-soft);display:flex;align-items:center;justify-content:space-between}
+.card-title{font-size:14px;font-weight:700;font-family:'Montserrat';display:flex;align-items:center;gap:8px}
+.card-title i{color:var(--vu-deep-blue);font-size:14px}
+.card-body{padding:16px 20px}
+.card-action{font-size:12px;color:var(--vu-deep-blue);font-weight:600;cursor:pointer;text-decoration:none;display:flex;align-items:center;gap:4px}
+.card-action:hover{text-decoration:underline}
+
+.field-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px 20px}
+.field-item{}
+.field-label{font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.4px;font-weight:600;margin-bottom:2px}
+.field-value{font-size:13px;font-weight:500}
+.field-full{grid-column:1/-1}
+
+/* BOOKING TABLE */
+.mini-table{width:100%;border-collapse:collapse}
+.mini-table th{padding:8px 12px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:var(--text-muted);background:var(--surface-app);border-bottom:1px solid var(--border-soft);text-align:left}
+.mini-table td{padding:8px 12px;font-size:12px;border-bottom:1px solid var(--border-soft);vertical-align:middle}
+.mini-table tr:last-child td{border-bottom:none}
+.mini-table tr{cursor:pointer;transition:background 100ms}
+.mini-table tr:hover{background:var(--vu-deep-blue-lightest)}
+
+.status-chip{display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:10px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.4px}
+.chip-completed{background:rgba(22,163,74,.1);color:var(--state-completed)}.chip-confirmed{background:rgba(37,99,235,.1);color:var(--state-confirmed)}.chip-active{background:rgba(234,88,12,.1);color:var(--state-active)}.chip-draft{background:rgba(100,116,139,.1);color:var(--state-draft)}.chip-cancelled{background:rgba(220,38,38,.1);color:var(--state-cancelled)}
+
+/* PACKAGE CARDS */
+.package-card{border:1px solid var(--border-soft);border-radius:var(--radius-md);padding:14px;margin-bottom:10px;transition:all 150ms}
+.package-card:hover{border-color:var(--vu-deep-blue-light);box-shadow:var(--shadow-sm)}
+.package-card:last-child{margin-bottom:0}
+.package-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.package-name{font-size:13px;font-weight:700;display:flex;align-items:center;gap:6px}
+.package-name i{color:var(--vu-leaf-green)}
+.package-status{font-size:10px;font-weight:700;padding:3px 8px;border-radius:8px}
+.pkg-active{background:#DBF0DB;color:var(--vu-leaf-green)}.pkg-expired{background:rgba(100,116,139,.1);color:var(--state-draft)}
+.package-progress{height:6px;background:var(--surface-app);border-radius:3px;overflow:hidden;margin-bottom:6px}
+.package-fill{height:100%;border-radius:3px;background:var(--vu-leaf-green);transition:width 300ms}
+.package-meta{display:flex;justify-content:space-between;font-size:11px;color:var(--text-muted)}
+
+/* PAYMENT ROWS */
+.payment-item{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border-soft)}
+.payment-item:last-child{border-bottom:none}
+.pay-icon{width:32px;height:32px;border-radius:var(--radius-md);display:flex;align-items:center;justify-content:center;font-size:13px}
+.pay-icon.paid{background:#DBF0DB;color:var(--vu-leaf-green)}.pay-icon.pending{background:#FFF3E0;color:var(--vu-hibiscus-orange)}.pay-icon.overdue{background:#FBE3E1;color:var(--vu-hibiscus-red)}
+.pay-info{flex:1}.pay-desc{font-size:12px;font-weight:600}.pay-date{font-size:11px;color:var(--text-muted)}
+.pay-amount{font-size:13px;font-weight:700;text-align:right}
+.pay-amount.paid{color:var(--vu-leaf-green)}.pay-amount.pending{color:var(--vu-hibiscus-orange)}
+
+/* TIMELINE */
+.timeline-mini{}.timeline-entry{display:flex;gap:10px;position:relative;padding-bottom:12px}
+.timeline-entry:last-child{padding-bottom:0}
+.timeline-entry:not(:last-child)::before{content:'';position:absolute;left:11px;top:24px;bottom:0;width:1px;background:var(--border-soft)}
+.tl-dot{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;flex-shrink:0;z-index:1}
+.tl-dot.booking{background:var(--vu-deep-blue-lightest);color:var(--vu-deep-blue)}.tl-dot.payment{background:#DBF0DB;color:var(--vu-leaf-green)}.tl-dot.note{background:#FFF3E0;color:var(--vu-hibiscus-orange)}.tl-dot.comm{background:#F3E8FF;color:var(--state-assigned)}
+.tl-content{flex:1;padding-top:2px}
+.tl-text{font-size:12px}.tl-text strong{font-weight:600}
+.tl-time{font-size:10px;color:var(--text-muted)}
+
+::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--border-soft);border-radius:3px}
+</style>
+</head>
+<body>
+<div class="app-wrapper">
+  <aside class="sidebar">
+    <a class="sidebar-logo" href="sales_dashboard.html">
+      <div class="logo-icon"><i class="fas fa-heartbeat"></i></div>
+      <div><div class="logo-text">VIET UC</div><div class="logo-sub">Healthcare Platform</div></div>
+    </a>
+    <nav class="sidebar-nav">
+      <div class="nav-section-label">Main</div>
+      <a class="nav-item" href="sales_dashboard.html"><i class="fas fa-th-large"></i> Dashboard</a>
+      <a class="nav-item active"><i class="fas fa-users"></i> Clients</a>
+      <a class="nav-item" href="lead_detail.html"><i class="fas fa-filter"></i> Leads <span class="badge-count">12</span></a>
+      <a class="nav-item"><i class="fas fa-calendar-check"></i> Bookings</a>
+      <a class="nav-item"><i class="fas fa-tasks"></i> Activities <span class="badge-count">3</span></a>
+      <div class="nav-section-label">Reports</div>
+      <a class="nav-item"><i class="fas fa-chart-line"></i> Performance</a>
+      <div class="nav-section-label">System</div>
+      <a class="nav-item"><i class="fas fa-cog"></i> Configuration</a>
+    </nav>
+    <div class="sidebar-user">
+      <div class="user-avatar">NT</div>
+      <div class="user-info"><div class="user-name">Nguyen Thi Thanh</div><div class="user-role">Sales Executive</div></div>
+    </div>
+  </aside>
+
+  <div class="main-content">
+    <header class="top-header">
+      <div class="header-left">
+        <div class="breadcrumb">
+          <a href="sales_dashboard.html">Dashboard</a>
+          <span class="sep"><i class="fas fa-chevron-right" style="font-size:10px"></i></span>
+          <a href="#">Clients</a>
+          <span class="sep"><i class="fas fa-chevron-right" style="font-size:10px"></i></span>
+          <span class="current">Tran Van Duc</span>
+        </div>
+      </div>
+      <div class="header-right">
+        <button class="header-btn btn-outline"><i class="fas fa-edit"></i> Edit</button>
+        <button class="header-btn btn-primary" onclick="window.location='booking_wizard.html'"><i class="fas fa-plus"></i> New Booking</button>
+      </div>
+    </header>
+
+    <div class="page-body">
+      <!-- PROFILE HEADER -->
+      <div class="profile-header">
+        <div class="profile-banner"></div>
+        <div class="profile-main">
+          <div class="profile-avatar">TD</div>
+          <div class="profile-info">
+            <div class="profile-name">Tran Van Duc <span style="font-size:11px;color:var(--text-muted);font-weight:400;font-family:'Segoe UI'">CLT-2026-0124</span></div>
+            <div class="profile-tags">
+              <span class="ptag ptag-vip"><i class="fas fa-star" style="font-size:9px"></i> VIP Client</span>
+              <span class="ptag ptag-active"><i class="fas fa-circle" style="font-size:6px"></i> Active</span>
+              <span class="ptag ptag-referral"><i class="fas fa-share-nodes" style="font-size:9px"></i> Referral Source</span>
+            </div>
+            <div class="profile-contact">
+              <span><i class="fas fa-phone"></i> 0912 345 678</span>
+              <span><i class="fas fa-envelope"></i> tranvanduc@email.com</span>
+              <span><i class="fas fa-map-marker-alt"></i> 15 Phan Dinh Phung, Ba Dinh, Hanoi</span>
+              <span><i class="fas fa-cake-candles"></i> 45 years old (M)</span>
+            </div>
+          </div>
+          <div class="profile-actions">
+            <button class="profile-action-btn" title="Call"><i class="fas fa-phone"></i></button>
+            <button class="profile-action-btn" title="Message"><i class="fas fa-comment-dots"></i></button>
+            <button class="profile-action-btn" title="Email"><i class="fas fa-envelope"></i></button>
+            <button class="profile-action-btn" title="Zalo"><i class="fas fa-message"></i></button>
+          </div>
+        </div>
+        <div class="stats-row">
+          <div class="stat-item"><div class="stat-value">12</div><div class="stat-label">Total Visits</div></div>
+          <div class="stat-item"><div class="stat-value">3</div><div class="stat-label">Active Packages</div></div>
+          <div class="stat-item"><div class="stat-value" style="color:var(--vu-leaf-green)">28.5M</div><div class="stat-label">Total Spent (VND)</div></div>
+          <div class="stat-item"><div class="stat-value" style="color:var(--vu-hibiscus-orange)">2.5M</div><div class="stat-label">Outstanding (VND)</div></div>
+          <div class="stat-item"><div class="stat-value">4.8</div><div class="stat-label">Satisfaction</div></div>
+          <div class="stat-item"><div class="stat-value">2</div><div class="stat-label">Referrals Made</div></div>
+        </div>
+      </div>
+
+      <!-- TABS -->
+      <div class="profile-tabs">
+        <button class="profile-tab active"><i class="fas fa-th-large" style="font-size:12px"></i> Overview</button>
+        <button class="profile-tab"><i class="fas fa-calendar-check" style="font-size:12px"></i> Bookings <span class="tab-badge">12</span></button>
+        <button class="profile-tab"><i class="fas fa-box" style="font-size:12px"></i> Packages <span class="tab-badge">3</span></button>
+        <button class="profile-tab"><i class="fas fa-file-invoice-dollar" style="font-size:12px"></i> Payments <span class="tab-badge">8</span></button>
+        <button class="profile-tab"><i class="fas fa-notes-medical" style="font-size:12px"></i> Clinical</button>
+        <button class="profile-tab"><i class="fas fa-comments" style="font-size:12px"></i> Communication</button>
+      </div>
+
+      <!-- CONTENT -->
+      <div class="content-grid">
+        <!-- LEFT: Bookings & Packages -->
+        <div style="display:flex;flex-direction:column;gap:16px">
+          <!-- RECENT BOOKINGS -->
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title"><i class="fas fa-calendar-check"></i> Recent Bookings</div>
+              <a class="card-action">View All 12 <i class="fas fa-arrow-right" style="font-size:10px"></i></a>
+            </div>
+            <table class="mini-table">
+              <thead><tr><th>Date</th><th>Service</th><th>Staff</th><th>Status</th></tr></thead>
+              <tbody>
+                <tr onclick="window.location='ops_booking_detail.html'">
+                  <td><div style="font-weight:600">May 11</div><div style="font-size:11px;color:var(--text-muted)">09:00</div></td>
+                  <td>Home Visit — General Health</td>
+                  <td style="color:var(--vu-hibiscus-red);font-style:italic">Unassigned</td>
+                  <td><span class="status-chip chip-draft">New</span></td>
+                </tr>
+                <tr>
+                  <td><div style="font-weight:600">May 8</div><div style="font-size:11px;color:var(--text-muted)">14:00</div></td>
+                  <td>Home Visit — Follow-up</td>
+                  <td>Nguyen Thi Mai</td>
+                  <td><span class="status-chip chip-completed">Completed</span></td>
+                </tr>
+                <tr>
+                  <td><div style="font-weight:600">May 3</div><div style="font-size:11px;color:var(--text-muted)">10:00</div></td>
+                  <td>Clinic Visit — Consultation</td>
+                  <td>Dr. Nguyen Van Thanh</td>
+                  <td><span class="status-chip chip-completed">Completed</span></td>
+                </tr>
+                <tr>
+                  <td><div style="font-weight:600">Apr 28</div><div style="font-size:11px;color:var(--text-muted)">09:00</div></td>
+                  <td>Home Visit — General Health</td>
+                  <td>Le Thi Hoa</td>
+                  <td><span class="status-chip chip-completed">Completed</span></td>
+                </tr>
+                <tr>
+                  <td><div style="font-weight:600">Apr 20</div><div style="font-size:11px;color:var(--text-muted)">15:00</div></td>
+                  <td>Home Visit — Pediatric</td>
+                  <td>Tran Minh Linh</td>
+                  <td><span class="status-chip chip-completed">Completed</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- ACTIVE PACKAGES -->
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title"><i class="fas fa-box"></i> Active Packages</div>
+              <a href="package_management.html" class="card-action" style="color:var(--vu-deep-blue);text-decoration:none">Manage <i class="fas fa-pen" style="font-size:10px"></i></a>
+            </div>
+            <div class="card-body">
+              <div class="package-card">
+                <div class="package-header">
+                  <div class="package-name"><i class="fas fa-box-open"></i> General Health Home Visit — 10 Pack</div>
+                  <span class="package-status pkg-active">Active</span>
+                </div>
+                <div class="package-progress"><div class="package-fill" style="width:70%"></div></div>
+                <div class="package-meta">
+                  <span>7 of 10 visits used</span>
+                  <span>Expires: Aug 15, 2026</span>
+                </div>
+              </div>
+              <div class="package-card">
+                <div class="package-header">
+                  <div class="package-name"><i class="fas fa-box-open"></i> Pediatric Care — 5 Pack</div>
+                  <span class="package-status pkg-active">Active</span>
+                </div>
+                <div class="package-progress"><div class="package-fill" style="width:40%"></div></div>
+                <div class="package-meta">
+                  <span>2 of 5 visits used</span>
+                  <span>Expires: Sep 30, 2026</span>
+                </div>
+              </div>
+              <div class="package-card">
+                <div class="package-header">
+                  <div class="package-name"><i class="fas fa-box-open"></i> Specialist Consultation — 3 Pack</div>
+                  <span class="package-status pkg-active">Active</span>
+                </div>
+                <div class="package-progress"><div class="package-fill" style="width:33%"></div></div>
+                <div class="package-meta">
+                  <span>1 of 3 visits used</span>
+                  <span>Expires: Jul 22, 2026</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- RIGHT: Payments & Activity -->
+        <div style="display:flex;flex-direction:column;gap:16px">
+          <!-- PAYMENT HISTORY -->
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title"><i class="fas fa-file-invoice-dollar"></i> Recent Payments</div>
+              <a class="card-action">View All <i class="fas fa-arrow-right" style="font-size:10px"></i></a>
+            </div>
+            <div class="card-body">
+              <div class="payment-item">
+                <div class="pay-icon pending"><i class="fas fa-clock"></i></div>
+                <div class="pay-info"><div class="pay-desc">Home Visit — May 11</div><div class="pay-date">Due after service</div></div>
+                <div class="pay-amount pending">2,850,000 &#8363;</div>
+              </div>
+              <div class="payment-item">
+                <div class="pay-icon paid"><i class="fas fa-check"></i></div>
+                <div class="pay-info"><div class="pay-desc">Home Visit — May 8</div><div class="pay-date">Paid May 8 &bull; Bank Transfer</div></div>
+                <div class="pay-amount paid">2,300,000 &#8363;</div>
+              </div>
+              <div class="payment-item">
+                <div class="pay-icon paid"><i class="fas fa-check"></i></div>
+                <div class="pay-info"><div class="pay-desc">Clinic Visit — May 3</div><div class="pay-date">Paid May 3 &bull; Cash</div></div>
+                <div class="pay-amount paid">1,500,000 &#8363;</div>
+              </div>
+              <div class="payment-item">
+                <div class="pay-icon paid"><i class="fas fa-check"></i></div>
+                <div class="pay-info"><div class="pay-desc">Package: General Health 10-Pack</div><div class="pay-date">Paid Apr 10 &bull; Bank Transfer</div></div>
+                <div class="pay-amount paid">18,000,000 &#8363;</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ACTIVITY TIMELINE -->
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title"><i class="fas fa-clock-rotate-left"></i> Activity Timeline</div>
+            </div>
+            <div class="card-body">
+              <div class="timeline-mini">
+                <div class="timeline-entry">
+                  <div class="tl-dot booking"><i class="fas fa-plus"></i></div>
+                  <div class="tl-content"><div class="tl-text"><strong>Booking created</strong> — Home Visit May 11</div><div class="tl-time">May 10, 14:22</div></div>
+                </div>
+                <div class="timeline-entry">
+                  <div class="tl-dot comm"><i class="fas fa-phone"></i></div>
+                  <div class="tl-content"><div class="tl-text"><strong>Phone call</strong> — Confirmed appointment, discussed access</div><div class="tl-time">May 10, 14:35</div></div>
+                </div>
+                <div class="timeline-entry">
+                  <div class="tl-dot payment"><i class="fas fa-credit-card"></i></div>
+                  <div class="tl-content"><div class="tl-text"><strong>Payment received</strong> — 2,300,000 VND for May 8 visit</div><div class="tl-time">May 8, 11:15</div></div>
+                </div>
+                <div class="timeline-entry">
+                  <div class="tl-dot booking"><i class="fas fa-check"></i></div>
+                  <div class="tl-content"><div class="tl-text"><strong>Visit completed</strong> — Home Visit, staff: Nguyen Thi Mai</div><div class="tl-time">May 8, 10:45</div></div>
+                </div>
+                <div class="timeline-entry">
+                  <div class="tl-dot note"><i class="fas fa-star"></i></div>
+                  <div class="tl-content"><div class="tl-text"><strong>Satisfaction score</strong> — 5/5, "Excellent service as always"</div><div class="tl-time">May 8, 12:00</div></div>
+                </div>
+                <div class="timeline-entry">
+                  <div class="tl-dot comm"><i class="fas fa-envelope"></i></div>
+                  <div class="tl-content"><div class="tl-text"><strong>Email sent</strong> — <a href="invoice_detail.html" style="color:var(--vu-deep-blue)">Invoice #INV-2026-0892</a></div><div class="tl-time">May 8, 11:20</div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+document.querySelectorAll('.profile-tab').forEach(tab => {
+  tab.addEventListener('click', function() {
+    document.querySelectorAll('.profile-tab').forEach(t => t.classList.remove('active'));
+    this.classList.add('active');
+  });
+});
+</script>
+</body>
+</html>

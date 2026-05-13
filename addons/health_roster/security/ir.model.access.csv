@@ -1,0 +1,4 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_health_roster_grid_ops,health.roster.grid.ops,model_health_roster_grid,health_base.group_healthcare_operations_manager,1,1,1,1
+access_health_roster_grid_head_nurse,health.roster.grid.head_nurse,model_health_roster_grid,health_base.group_healthcare_head_nurse,1,1,1,1
+access_health_roster_grid_owner,health.roster.grid.owner,model_health_roster_grid,health_base.group_healthcare_owner,1,1,1,1

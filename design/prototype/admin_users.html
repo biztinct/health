@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>User Management — VAFHS Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+:root{--vu-deep-blue:#1565C0;--vu-deep-blue-darker:#1356A9;--vu-deep-blue-darkest:#0D356B;--vu-deep-blue-light:#83C5FA;--vu-deep-blue-lightest:#E4F4FD;--vu-accent-blue:#42A5F5;--vu-hibiscus-red:#E53935;--vu-hibiscus-orange:#FB8C00;--vu-leaf-green:#43A047;--text-primary:#212121;--text-secondary:#424242;--text-muted:#757575;--surface-app:#F5F5F5;--surface-card:#FFFFFF;--border-soft:#E0E0E0;--shadow-sm:0 1px 3px rgba(33,33,33,.08);--shadow-md:0 2px 8px rgba(33,33,33,.12);--shadow-lg:0 4px 16px rgba(33,33,33,.15);--radius-sm:4px;--radius-md:8px;--radius-lg:12px}
+*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Segoe UI',Arial,sans-serif;font-size:13px;color:var(--text-primary);background:var(--surface-app);line-height:1.5;-webkit-font-smoothing:antialiased}
+h1,h2,h3,h4{font-family:'Montserrat','Segoe UI',Arial,sans-serif;font-weight:600}
+.page-layout{display:grid;grid-template-columns:220px 1fr;min-height:100vh}
+.sidebar{background:var(--vu-deep-blue-darkest);color:white;padding:20px 0}
+.sidebar-brand{padding:0 20px 20px;font-family:'Montserrat';font-weight:800;font-size:16px;border-bottom:1px solid rgba(255,255,255,.1);margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.sidebar-brand i{color:var(--vu-deep-blue-light)}
+.nav-section{padding:0 12px;margin-bottom:16px}
+.nav-label{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:rgba(255,255,255,.4);padding:8px 8px 4px;font-weight:600}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:var(--radius-md);color:rgba(255,255,255,.7);font-size:13px;text-decoration:none;transition:all 150ms;cursor:pointer}
+.nav-item:hover{background:rgba(255,255,255,.08);color:white}
+.nav-item.active{background:rgba(255,255,255,.12);color:white;font-weight:600}
+.nav-item i{width:18px;text-align:center;font-size:13px}
+.nav-badge{margin-left:auto;background:var(--vu-hibiscus-red);color:white;font-size:10px;font-weight:700;padding:1px 6px;border-radius:8px}
+
+.main{overflow-y:auto}
+.topbar{background:var(--surface-card);border-bottom:1px solid var(--border-soft);padding:0 24px;height:52px;display:flex;align-items:center;justify-content:space-between}
+.page-title{font-family:'Montserrat';font-size:16px;font-weight:700;display:flex;align-items:center;gap:10px}
+.page-title i{color:var(--vu-deep-blue)}
+.topbar-actions{display:flex;align-items:center;gap:8px}
+.top-btn{display:flex;align-items:center;gap:6px;padding:7px 14px;border:1px solid var(--border-soft);border-radius:var(--radius-md);background:var(--surface-card);font-size:12px;font-weight:600;cursor:pointer;transition:all 150ms;color:var(--text-secondary);font-family:inherit;text-decoration:none}
+.top-btn:hover{border-color:var(--vu-deep-blue);color:var(--vu-deep-blue)}
+.top-btn.primary{background:var(--vu-deep-blue);color:white;border-color:var(--vu-deep-blue)}
+.top-btn.primary:hover{background:var(--vu-deep-blue-darker)}
+.search-input{padding:7px 12px 7px 32px;border:1px solid var(--border-soft);border-radius:var(--radius-md);font-size:12px;width:260px;background:var(--surface-app) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' fill='%23757575' viewBox='0 0 16 16'%3E%3Cpath d='M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0'/%3E%3C/svg%3E") 10px center no-repeat;font-family:inherit}
+.search-input:focus{outline:none;border-color:var(--vu-deep-blue);box-shadow:0 0 0 3px rgba(21,101,192,.08)}
+
+.content{padding:24px}
+
+/* STATS */
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px}
+.stat-card{background:var(--surface-card);border:1px solid var(--border-soft);border-radius:var(--radius-md);padding:16px;display:flex;align-items:center;gap:14px}
+.stat-icon{width:42px;height:42px;border-radius:var(--radius-md);display:flex;align-items:center;justify-content:center;font-size:18px}
+.si-blue{background:var(--vu-deep-blue-lightest);color:var(--vu-deep-blue)}
+.si-green{background:#E8F5E9;color:var(--vu-leaf-green)}
+.si-orange{background:#FFF3E0;color:var(--vu-hibiscus-orange)}
+.si-red{background:#FBE3E1;color:var(--vu-hibiscus-red)}
+.stat-value{font-family:'Montserrat';font-size:22px;font-weight:800}
+.stat-label{font-size:11px;color:var(--text-muted)}
+
+/* TABS */
+.tab-bar{display:flex;gap:0;border-bottom:2px solid var(--border-soft);margin-bottom:20px}
+.tab{padding:10px 20px;font-size:13px;font-weight:600;color:var(--text-muted);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;transition:all 150ms;display:flex;align-items:center;gap:6px}
+.tab:hover{color:var(--text-primary)}
+.tab.active{color:var(--vu-deep-blue);border-bottom-color:var(--vu-deep-blue)}
+.tab .count{font-size:10px;background:var(--surface-app);padding:1px 7px;border-radius:8px}
+.tab.active .count{background:var(--vu-deep-blue-lightest);color:var(--vu-deep-blue)}
+
+/* TABLE */
+.data-table{width:100%;border-collapse:collapse;background:var(--surface-card);border-radius:var(--radius-lg);overflow:hidden;border:1px solid var(--border-soft)}
+.data-table th{text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.4px;color:var(--text-muted);font-weight:600;padding:12px 16px;background:var(--surface-app);border-bottom:1px solid var(--border-soft)}
+.data-table td{padding:12px 16px;border-bottom:1px solid var(--border-soft);font-size:13px;vertical-align:middle}
+.data-table tr:hover{background:rgba(21,101,192,.02)}
+.data-table tr:last-child td{border-bottom:none}
+
+/* USER ROW */
+.user-cell{display:flex;align-items:center;gap:10px}
+.user-avatar{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0}
+.user-name{font-weight:600;font-size:13px}
+.user-email{font-size:11px;color:var(--text-muted)}
+
+/* ROLE BADGE */
+.role-badge{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:12px;font-size:10px;font-weight:700}
+.role-admin{background:rgba(229,57,53,.1);color:var(--vu-hibiscus-red)}
+.role-ops{background:rgba(251,140,0,.1);color:var(--vu-hibiscus-orange)}
+.role-sales{background:var(--vu-deep-blue-lightest);color:var(--vu-deep-blue)}
+.role-finance{background:rgba(67,160,71,.1);color:var(--vu-leaf-green)}
+.role-nurse{background:#F3E8FF;color:#7c3aed}
+.role-doctor{background:#E0F7FA;color:#00838F}
+
+/* STATUS */
+.status-dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:4px}
+.dot-active{background:var(--vu-leaf-green)}
+.dot-inactive{background:var(--text-muted)}
+.dot-suspended{background:var(--vu-hibiscus-red)}
+
+/* ACTION BTNS */
+.row-actions{display:flex;gap:4px;visibility:hidden}
+tr:hover .row-actions{visibility:visible}
+.row-btn{border:none;background:transparent;cursor:pointer;color:var(--text-muted);font-size:12px;padding:4px 8px;border-radius:var(--radius-sm);transition:all 120ms}
+.row-btn:hover{color:var(--vu-deep-blue);background:var(--vu-deep-blue-lightest)}
+.row-btn.danger:hover{color:var(--vu-hibiscus-red);background:rgba(229,57,53,.06)}
+
+/* LAST LOGIN */
+.last-login{font-size:11px;color:var(--text-muted)}
+.login-recent{color:var(--vu-leaf-green);font-weight:600}
+
+/* MODAL OVERLAY */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.4);display:none;align-items:center;justify-content:center;z-index:200}
+.modal-overlay.show{display:flex}
+.modal{width:560px;background:var(--surface-card);border-radius:var(--radius-lg);box-shadow:0 8px 40px rgba(0,0,0,.25);overflow:hidden}
+.modal-header{padding:18px 24px;border-bottom:1px solid var(--border-soft);display:flex;align-items:center;justify-content:space-between}
+.modal-title{font-family:'Montserrat';font-size:16px;font-weight:700;display:flex;align-items:center;gap:8px}
+.modal-title i{color:var(--vu-deep-blue)}
+.close-btn{width:32px;height:32px;border:1px solid var(--border-soft);border-radius:var(--radius-md);background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--text-muted);font-size:14px}
+.close-btn:hover{border-color:var(--vu-hibiscus-red);color:var(--vu-hibiscus-red)}
+.modal-body{padding:24px}
+.modal-footer{padding:14px 24px;border-top:1px solid var(--border-soft);display:flex;justify-content:flex-end;gap:8px;background:var(--surface-app)}
+
+/* FORM */
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+.form-group{margin-bottom:14px}
+.form-label{font-size:11px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.4px;margin-bottom:4px}
+.form-input{width:100%;padding:9px 12px;border:1px solid var(--border-soft);border-radius:var(--radius-md);font-size:13px;font-family:inherit;transition:border-color 150ms}
+.form-input:focus{outline:none;border-color:var(--vu-deep-blue);box-shadow:0 0 0 3px rgba(21,101,192,.08)}
+
+/* ROLE CHECKBOXES */
+.role-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.role-check{display:flex;align-items:center;gap:8px;padding:8px 12px;border:1px solid var(--border-soft);border-radius:var(--radius-md);cursor:pointer;transition:all 150ms;font-size:12px;font-weight:500}
+.role-check:hover{border-color:var(--vu-deep-blue-light)}
+.role-check input{accent-color:var(--vu-deep-blue)}
+.role-check.checked{border-color:var(--vu-deep-blue);background:rgba(21,101,192,.04)}
+.role-check i{width:16px;text-align:center;color:var(--vu-deep-blue)}
+
+/* PAGINATION */
+.pagination{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:var(--surface-card);border:1px solid var(--border-soft);border-top:none;border-radius:0 0 var(--radius-lg) var(--radius-lg)}
+.page-info{font-size:12px;color:var(--text-muted)}
+.page-btns{display:flex;gap:4px}
+.page-btn{width:32px;height:32px;border:1px solid var(--border-soft);border-radius:var(--radius-sm);background:var(--surface-card);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;color:var(--text-muted);transition:all 120ms}
+.page-btn:hover{border-color:var(--vu-deep-blue);color:var(--vu-deep-blue)}
+.page-btn.active{background:var(--vu-deep-blue);color:white;border-color:var(--vu-deep-blue)}
+</style>
+</head>
+<body>
+<div class="page-layout">
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-brand"><i class="fas fa-shield-halved"></i> VAFHS Admin</div>
+    <nav class="nav-section">
+      <div class="nav-label">Overview</div>
+      <a href="admin_dashboard.html" class="nav-item"><i class="fas fa-th-large"></i> Dashboard</a>
+      <div class="nav-label">Management</div>
+      <a class="nav-item active"><i class="fas fa-users-cog"></i> Users &amp; Roles</a>
+      <a href="admin_service_catalog.html" class="nav-item"><i class="fas fa-stethoscope"></i> Service Catalog</a>
+      <a href="admin_facility.html" class="nav-item"><i class="fas fa-hospital"></i> Facilities</a>
+      <a href="admin_staff_detail.html" class="nav-item"><i class="fas fa-user-nurse"></i> Staff HR</a>
+      <a href="admin_settings.html" class="nav-item"><i class="fas fa-cog"></i> Settings</a>
+      <div class="nav-label">Monitoring</div>
+      <a href="admin_audit_log.html" class="nav-item"><i class="fas fa-clock-rotate-left"></i> Audit Log</a>
+      <a href="admin_reports.html" class="nav-item"><i class="fas fa-chart-bar"></i> Reports</a>
+      <div class="nav-label">Quick Links</div>
+      <a href="ops_dashboard.html" class="nav-item"><i class="fas fa-headset"></i> Operations</a>
+      <a href="sales_dashboard.html" class="nav-item"><i class="fas fa-bullhorn"></i> Sales</a>
+      <a href="finance_dashboard.html" class="nav-item"><i class="fas fa-coins"></i> Finance</a>
+    </nav>
+  </aside>
+
+  <div class="main">
+    <div class="topbar">
+      <div class="page-title"><i class="fas fa-users-cog"></i> User Management</div>
+      <div class="topbar-actions">
+        <input type="text" class="search-input" placeholder="Search users by name, email, role...">
+        <button class="top-btn"><i class="fas fa-file-export"></i> Export</button>
+        <button class="top-btn primary" onclick="document.getElementById('createModal').classList.add('show')"><i class="fas fa-user-plus"></i> Create User</button>
+      </div>
+    </div>
+
+    <div class="content">
+      <!-- STATS -->
+      <div class="stats-row">
+        <div class="stat-card"><div class="stat-icon si-blue"><i class="fas fa-users"></i></div><div><div class="stat-value">24</div><div class="stat-label">Total Users</div></div></div>
+        <div class="stat-card"><div class="stat-icon si-green"><i class="fas fa-circle-check"></i></div><div><div class="stat-value">21</div><div class="stat-label">Active</div></div></div>
+        <div class="stat-card"><div class="stat-icon si-orange"><i class="fas fa-user-clock"></i></div><div><div class="stat-value">5</div><div class="stat-label">Logged in Today</div></div></div>
+        <div class="stat-card"><div class="stat-icon si-red"><i class="fas fa-user-slash"></i></div><div><div class="stat-value">3</div><div class="stat-label">Inactive / Suspended</div></div></div>
+      </div>
+
+      <!-- TABS -->
+      <div class="tab-bar">
+        <div class="tab active">All Users <span class="count">24</span></div>
+        <div class="tab">Admin <span class="count">2</span></div>
+        <div class="tab">Operations <span class="count">3</span></div>
+        <div class="tab">Sales <span class="count">4</span></div>
+        <div class="tab">Finance <span class="count">3</span></div>
+        <div class="tab">Clinical Staff <span class="count">10</span></div>
+        <div class="tab">Inactive <span class="count">3</span></div>
+      </div>
+
+      <!-- TABLE -->
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th style="width:30px"><input type="checkbox"></th>
+            <th>User</th>
+            <th>Role(s)</th>
+            <th>Facility</th>
+            <th>Status</th>
+            <th>Last Login</th>
+            <th style="width:100px">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><input type="checkbox"></td>
+            <td><div class="user-cell"><div class="user-avatar" style="background:rgba(229,57,53,.1);color:var(--vu-hibiscus-red)">AD</div><div><div class="user-name">Admin User</div><div class="user-email">admin@vafhs.vn</div></div></div></td>
+            <td><span class="role-badge role-admin"><i class="fas fa-shield-halved" style="font-size:8px"></i> System Admin</span></td>
+            <td>All</td>
+            <td><span class="status-dot dot-active"></span> Active</td>
+            <td><span class="last-login login-recent">2 min ago</span></td>
+            <td><div class="row-actions" style="visibility:visible"><button class="row-btn" title="Edit"><i class="fas fa-pen"></i></button><button class="row-btn" title="Permissions"><i class="fas fa-key"></i></button><button class="row-btn" title="Login as"><i class="fas fa-sign-in-alt"></i></button></div></td>
+          </tr>
+          <tr>
+            <td><input type="checkbox"></td>
+            <td><div class="user-cell"><div class="user-avatar" style="background:var(--vu-deep-blue-lightest);color:var(--vu-deep-blue)">TT</div><div><div class="user-name">Nguyen Thi Thanh</div><div class="user-email">thanh.nguyen@vafhs.vn</div></div></div></td>
+            <td><span class="role-badge role-ops"><i class="fas fa-headset" style="font-size:8px"></i> Ops Manager</span></td>
+            <td>Hanoi — Ba Dinh</td>
+            <td><span class="status-dot dot-active"></span> Active</td>
+            <td><span class="last-login login-recent">15 min ago</span></td>
+            <td><div class="row-actions"><button class="row-btn" title="Edit"><i class="fas fa-pen"></i></button><button class="row-btn" title="Permissions"><i class="fas fa-key"></i></button><button class="row-btn danger" title="Deactivate"><i class="fas fa-user-slash"></i></button></div></td>
+          </tr>
+          <tr>
+            <td><input type="checkbox"></td>
+            <td><div class="user-cell"><div class="user-avatar" style="background:var(--vu-deep-blue-lightest);color:var(--vu-deep-blue)">HL</div><div><div class="user-name">Hoang Thi Lan</div><div class="user-email">lan.hoang@vafhs.vn</div></div></div></td>
+            <td><span class="role-badge role-sales"><i class="fas fa-bullhorn" style="font-size:8px"></i> Sales</span></td>
+            <td>Hanoi — Ba Dinh</td>
+            <td><span class="status-dot dot-active"></span> Active</td>
+            <td><span class="last-login">May 11, 16:30</span></td>
+            <td><div class="row-actions"><button class="row-btn" title="Edit"><i class="fas fa-pen"></i></button><button class="row-btn" title="Permissions"><i class="fas fa-key"></i></button><button class="row-btn danger" title="Deactivate"><i class="fas fa-user-slash"></i></button></div></td>
+          </tr>
+          <tr>
+            <td><input type="checkbox"></td>
+            <td><div class="user-cell"><div class="user-avatar" style="background:rgba(67,160,71,.1);color:var(--vu-leaf-green)">BT</div><div><div class="user-name">Bui Thi Trang</div><div class="user-email">trang.bui@vafhs.vn</div></div></div></td>
+            <td><span class="role-badge role-finance"><i class="fas fa-coins" style="font-size:8px"></i> Finance</span></td>
+            <td>Hanoi — Ba Dinh</td>
+            <td><span class="status-dot dot-active"></span> Active</td>
+            <td><span class="last-login login-recent">1 hour ago</span></td>
+            <td><div class="row-actions"><button class="row-btn" title="Edit"><i class="fas fa-pen"></i></button><button class="row-btn" title="Permissions"><i class="fas fa-key"></i></button><button class="row-btn danger" title="Deactivate"><i class="fas fa-user-slash"></i></button></div></td>
+          </tr>
+          <tr>
+            <td><input type="checkbox"></td>
+            <td><div class="user-cell"><div class="user-avatar" style="background:#E8F5E9;color:var(--vu-leaf-green)">NM</div><div><div class="user-name">Nguyen Thi Mai</div><div class="user-email">mai.nguyen@vafhs.vn</div></div></div></td>
+            <td><span class="role-badge role-nurse"><i class="fas fa-user-nurse" style="font-size:8px"></i> Head Nurse</span></td>
+            <td>Hanoi — Ba Dinh</td>
+            <td><span class="status-dot dot-active"></span> Active</td>
+            <td><span class="last-login">May 12, 08:45</span></td>
+            <td><div class="row-actions"><button class="row-btn" title="Edit"><i class="fas fa-pen"></i></button><button class="row-btn" title="Permissions"><i class="fas fa-key"></i></button><button class="row-btn danger" title="Deactivate"><i class="fas fa-user-slash"></i></button></div></td>
+          </tr>
+          <tr>
+            <td><input type="checkbox"></td>
+            <td><div class="user-cell"><div class="user-avatar" style="background:#F3E8FF;color:#7c3aed">LH</div><div><div class="user-name">Le Thi Hoa</div><div class="user-email">hoa.le@vafhs.vn</div></div></div></td>
+            <td><span class="role-badge role-nurse"><i class="fas fa-user-nurse" style="font-size:8px"></i> Nurse</span></td>
+            <td>Hanoi — Ba Dinh</td>
+            <td><span class="status-dot dot-active"></span> Active</td>
+            <td><span class="last-login">May 12, 07:30</span></td>
+            <td><div class="row-actions"><button class="row-btn" title="Edit"><i class="fas fa-pen"></i></button><button class="row-btn" title="Permissions"><i class="fas fa-key"></i></button><button class="row-btn danger" title="Deactivate"><i class="fas fa-user-slash"></i></button></div></td>
+          </tr>
+          <tr>
+            <td><input type="checkbox"></td>
+            <td><div class="user-cell"><div class="user-avatar" style="background:#E0F7FA;color:#00838F">DT</div><div><div class="user-name">Dr. Nguyen Van Thanh</div><div class="user-email">thanh.dr@vafhs.vn</div></div></div></td>
+            <td><span class="role-badge role-doctor"><i class="fas fa-user-doctor" style="font-size:8px"></i> Doctor</span></td>
+            <td>Hanoi — Tay Ho</td>
+            <td><span class="status-dot dot-active"></span> Active</td>
+            <td><span class="last-login">May 11, 17:00</span></td>
+            <td><div class="row-actions"><button class="row-btn" title="Edit"><i class="fas fa-pen"></i></button><button class="row-btn" title="Permissions"><i class="fas fa-key"></i></button><button class="row-btn danger" title="Deactivate"><i class="fas fa-user-slash"></i></button></div></td>
+          </tr>
+          <tr style="opacity:.55">
+            <td><input type="checkbox"></td>
+            <td><div class="user-cell"><div class="user-avatar" style="background:var(--surface-app);color:var(--text-muted)">PV</div><div><div class="user-name">Pham Van Hung</div><div class="user-email">hung.pham@vafhs.vn</div></div></div></td>
+            <td><span class="role-badge" style="background:var(--surface-app);color:var(--text-muted)">Nurse Aide</span></td>
+            <td>Hanoi — Ba Dinh</td>
+            <td><span class="status-dot dot-inactive"></span> Inactive</td>
+            <td><span class="last-login">Apr 28, 2026</span></td>
+            <td><div class="row-actions"><button class="row-btn" title="Reactivate"><i class="fas fa-user-check"></i></button><button class="row-btn danger" title="Delete"><i class="fas fa-trash"></i></button></div></td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="pagination">
+        <div class="page-info">Showing 1–8 of 24 users</div>
+        <div class="page-btns">
+          <button class="page-btn"><i class="fas fa-chevron-left"></i></button>
+          <button class="page-btn active">1</button>
+          <button class="page-btn">2</button>
+          <button class="page-btn">3</button>
+          <button class="page-btn"><i class="fas fa-chevron-right"></i></button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CREATE USER MODAL -->
+<div class="modal-overlay" id="createModal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title"><i class="fas fa-user-plus"></i> Create New User</div>
+      <button class="close-btn" onclick="document.getElementById('createModal').classList.remove('show')"><i class="fas fa-xmark"></i></button>
+    </div>
+    <div class="modal-body">
+      <div class="form-row">
+        <div class="form-group" style="margin:0"><div class="form-label">First Name *</div><input class="form-input" type="text" placeholder="Enter first name"></div>
+        <div class="form-group" style="margin:0"><div class="form-label">Last Name *</div><input class="form-input" type="text" placeholder="Enter last name"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group" style="margin:0"><div class="form-label">Email *</div><input class="form-input" type="email" placeholder="user@vafhs.vn"></div>
+        <div class="form-group" style="margin:0"><div class="form-label">Phone</div><input class="form-input" type="tel" placeholder="0912 345 678"></div>
+      </div>
+      <div class="form-group">
+        <div class="form-label">Facility</div>
+        <select class="form-input"><option>Hanoi — Ba Dinh</option><option>Hanoi — Tay Ho</option><option>Ho Chi Minh — District 7</option><option>All Facilities</option></select>
+      </div>
+      <div class="form-group">
+        <div class="form-label">Role(s) *</div>
+        <div class="role-grid">
+          <label class="role-check"><input type="checkbox"><i class="fas fa-shield-halved"></i> System Admin</label>
+          <label class="role-check"><input type="checkbox"><i class="fas fa-headset"></i> Operations Manager</label>
+          <label class="role-check"><input type="checkbox"><i class="fas fa-bullhorn"></i> Sales / CRM</label>
+          <label class="role-check"><input type="checkbox"><i class="fas fa-coins"></i> Finance</label>
+          <label class="role-check"><input type="checkbox"><i class="fas fa-user-nurse"></i> Nurse</label>
+          <label class="role-check"><input type="checkbox"><i class="fas fa-user-nurse"></i> Head Nurse</label>
+          <label class="role-check"><input type="checkbox"><i class="fas fa-user-doctor"></i> Doctor</label>
+          <label class="role-check"><input type="checkbox"><i class="fas fa-phone"></i> Receptionist</label>
+        </div>
+      </div>
+      <div class="form-group">
+        <div class="form-label">Password Setup</div>
+        <div style="display:flex;gap:12px">
+          <label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer"><input type="radio" name="pw" checked style="accent-color:var(--vu-deep-blue)"> Send invitation email</label>
+          <label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer"><input type="radio" name="pw" style="accent-color:var(--vu-deep-blue)"> Set password manually</label>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="top-btn" onclick="document.getElementById('createModal').classList.remove('show')">Cancel</button>
+      <button class="top-btn primary" onclick="document.getElementById('createModal').classList.remove('show')"><i class="fas fa-user-plus"></i> Create User</button>
+    </div>
+  </div>
+</div>
+</body>
+</html>

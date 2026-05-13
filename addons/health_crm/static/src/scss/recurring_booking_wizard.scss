@@ -1,0 +1,232 @@
+// ============================================================================
+// Recurring Booking Wizard — Pattern selector, day buttons, preview list
+// Matches prototype: recurring_booking_wizard.html
+// ============================================================================
+
+// ===== RECURRENCE PATTERN BUTTONS =====
+.recurrence-pattern-options {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 14px;
+}
+
+.recurrence-pattern-btn {
+    flex: 1;
+    padding: 10px;
+    border: 2px solid var(--vu-border-soft, #E0E0E0);
+    border-radius: var(--vu-radius-md, 8px);
+    text-align: center;
+    cursor: pointer;
+    transition: all 150ms;
+    background: transparent;
+
+    &:hover { border-color: $vu-deep-blue-light; }
+
+    &.selected {
+        border-color: $vu-deep-blue;
+        background: $vu-deep-blue-lightest;
+    }
+
+    i {
+        display: block;
+        font-size: 18px;
+        color: $vu-deep-blue;
+        margin-bottom: 4px;
+    }
+
+    .rpb-label {
+        font-size: 11px;
+        font-weight: 700;
+    }
+
+    .rpb-desc {
+        font-size: 10px;
+        color: $vu-text-secondary;
+    }
+}
+
+// ===== DAY SELECTOR CIRCLES =====
+.recurrence-day-selector {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 14px;
+}
+
+.recurrence-day-btn {
+    width: 38px;
+    height: 38px;
+    border: 1px solid var(--vu-border-soft, #E0E0E0);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 150ms;
+    background: transparent;
+    color: $vu-text-secondary;
+
+    &:hover { border-color: $vu-deep-blue-light; }
+
+    &.selected {
+        background: $vu-deep-blue;
+        color: white;
+        border-color: $vu-deep-blue;
+    }
+}
+
+// ===== PREVIEW DATES LIST =====
+.recurrence-preview {
+    background: var(--vu-surface-muted, #F5F5F5);
+    border-radius: var(--vu-radius-md, 8px);
+    padding: 14px;
+    margin-top: 12px;
+}
+
+.recurrence-preview-title {
+    font-size: 12px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+
+    i { color: $vu-leaf-green; }
+}
+
+.recurrence-preview-list {
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.recurrence-preview-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 8px;
+    border-radius: var(--vu-radius-sm, 4px);
+    margin-bottom: 2px;
+    font-size: 12px;
+
+    &:hover { background: rgba(255, 255, 255, 0.6); }
+}
+
+.rpi-num {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: $vu-deep-blue;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 9px;
+    font-weight: 700;
+    flex-shrink: 0;
+}
+
+.rpi-date {
+    flex: 1;
+    font-weight: 600;
+}
+
+.rpi-day {
+    color: $vu-text-secondary;
+    font-size: 11px;
+    min-width: 40px;
+}
+
+.rpi-status {
+    font-size: 10px;
+    font-weight: 600;
+
+    &.ok { color: $vu-leaf-green; }
+    &.conflict { color: $vu-hibiscus-red; }
+}
+
+// ===== PACKAGE SUGGESTION BANNER =====
+.recurrence-package-banner {
+    background: linear-gradient(135deg, $vu-deep-blue-lightest, #DBF0DB);
+    border: 1px solid $vu-deep-blue-light;
+    border-radius: var(--vu-radius-md, 8px);
+    padding: 14px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 16px;
+    cursor: pointer;
+    transition: all 150ms;
+
+    &:hover { box-shadow: var(--vu-shadow-sm); }
+}
+
+.rpb-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: var(--vu-radius-md, 8px);
+    background: $vu-deep-blue;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+}
+
+.rpb-info {
+    flex: 1;
+}
+
+.rpb-title {
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.rpb-desc {
+    font-size: 11px;
+    color: $vu-text-secondary;
+}
+
+.rpb-save {
+    font-size: 12px;
+    font-weight: 700;
+    color: $vu-leaf-green;
+    background: #DBF0DB;
+    padding: 4px 10px;
+    border-radius: var(--vu-radius-md, 8px);
+    flex-shrink: 0;
+}
+
+// ===== SUMMARY BOX =====
+.recurrence-summary {
+    background: var(--vu-surface-muted, #F5F5F5);
+    border-radius: var(--vu-radius-md, 8px);
+    padding: 14px;
+    margin-top: 12px;
+
+    .rs-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 4px 0;
+        font-size: 12px;
+
+        .rs-label { color: $vu-text-secondary; }
+        .rs-value { font-weight: 600; }
+    }
+
+    .rs-total {
+        display: flex;
+        justify-content: space-between;
+        padding: 8px 0;
+        margin-top: 4px;
+        border-top: 2px solid $vu-text-primary;
+        font-size: 14px;
+        font-weight: 700;
+
+        .rs-value {
+            font-family: $font-family-headings;
+            color: $vu-deep-blue;
+        }
+    }
+}

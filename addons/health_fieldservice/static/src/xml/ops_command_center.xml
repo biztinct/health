@@ -1,0 +1,343 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+<t t-name="health_fieldservice.OpsCommandCenter">
+    <div class="ops-command-center">
+
+        <!-- SIDEBAR -->
+        <aside class="ops-sidebar">
+            <div class="ops-sidebar-logo" t-on-click="navigateHome" style="cursor:pointer">
+                <div class="ops-logo-icon"><i class="fa fa-heartbeat"/></div>
+                <div>
+                    <div class="ops-logo-text">VIET UC</div>
+                    <div class="ops-logo-sub">Healthcare Platform</div>
+                </div>
+            </div>
+            <nav class="ops-sidebar-nav">
+                <div class="ops-nav-section-label">Main</div>
+                <a class="ops-nav-item active"><i class="fa fa-th-large"/> Dashboard</a>
+                <a class="ops-nav-item" t-on-click="() => this.navigateTo('bookings')">
+                    <i class="fa fa-calendar-check-o"/> Bookings
+                    <t t-if="needsStaffCount"><span class="ops-badge-count" t-esc="needsStaffCount"/></t>
+                </a>
+                <a class="ops-nav-item" t-on-click="() => this.navigateTo('clients')"><i class="fa fa-address-book-o"/> Clients</a>
+                <a class="ops-nav-item" t-on-click="() => this.navigateTo('recurring')"><i class="fa fa-repeat"/> Recurring</a>
+                <a class="ops-nav-item" t-on-click="() => this.navigateTo('staff')"><i class="fa fa-users"/> Staff</a>
+                <a class="ops-nav-item" t-on-click="() => this.navigateTo('calendar')"><i class="fa fa-calendar"/> Calendar</a>
+                <div class="ops-nav-section-label">Reports</div>
+                <a class="ops-nav-item" t-on-click="() => this.navigateTo('workload')"><i class="fa fa-bar-chart"/> Workload</a>
+                <a class="ops-nav-item" t-on-click="() => this.navigateTo('analytics')"><i class="fa fa-line-chart"/> Analytics</a>
+                <div class="ops-nav-section-label">System</div>
+                <a class="ops-nav-item" t-on-click="navigateHome"><i class="fa fa-arrow-left"/> Back to Odoo</a>
+            </nav>
+            <div class="ops-sidebar-user">
+                <div class="ops-user-avatar" t-esc="currentUserInitials"/>
+                <div class="ops-user-info">
+                    <div class="ops-user-name" t-esc="currentUserName"/>
+                    <div class="ops-user-role">Operations Manager</div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT -->
+        <div class="ops-main-content">
+
+            <!-- HEADER -->
+            <header class="ops-top-header">
+                <div class="ops-header-left">
+                    <h1 class="ops-page-title">Operations Center</h1>
+                    <div class="ops-date-nav">
+                        <button class="ops-date-nav-btn" t-on-click="prevDay"><i class="fa fa-chevron-left"/></button>
+                        <span class="ops-date-label" t-esc="state.dateLabel"/>
+                        <button class="ops-date-nav-btn" t-on-click="nextDay"><i class="fa fa-chevron-right"/></button>
+                    </div>
+                    <button class="ops-date-today" t-on-click="goToday">Today</button>
+                </div>
+                <div class="ops-header-right">
+                    <select class="ops-filter-select" t-on-change="onFacilityChange">
+                        <option value="">All Facilities</option>
+                        <t t-foreach="state.facilities" t-as="fac" t-key="fac.id">
+                            <option t-att-value="fac.id" t-esc="fac.name"/>
+                        </t>
+                    </select>
+                    <button class="ops-header-btn btn-primary" t-on-click="openCreateBooking">
+                        <i class="fa fa-plus"/> Create Booking
+                    </button>
+                    <button class="ops-header-btn btn-outline" t-on-click="onRefresh">
+                        <i class="fa fa-refresh"/>
+                    </button>
+                </div>
+            </header>
+
+            <!-- LOADING -->
+            <div t-if="state.isLoading" class="ops-loading">
+                <div class="spinner-border text-primary" role="status"/>
+                <span>Loading dashboard...</span>
+            </div>
+
+            <!-- DASHBOARD BODY -->
+            <div t-if="!state.isLoading" class="ops-dashboard-body">
+
+            <!-- KPI ROW -->
+            <div class="ops-kpi-row">
+                <div class="ops-kpi-card kpi-total">
+                    <div class="ops-kpi-header">
+                        <div class="ops-kpi-icon"><i class="fa fa-calendar"/></div>
+                    </div>
+                    <div class="ops-kpi-value" t-esc="state.kpis.total_today || 0"/>
+                    <div class="ops-kpi-label">Total Today</div>
+                </div>
+                <div class="ops-kpi-card kpi-needs-staff">
+                    <div class="ops-kpi-header">
+                        <div class="ops-kpi-icon"><i class="fa fa-user-plus"/></div>
+                    </div>
+                    <div class="ops-kpi-value" t-esc="state.kpis.needs_assignment || 0"/>
+                    <div class="ops-kpi-label">Needs Assignment</div>
+                    <div class="ops-kpi-sublabel">
+                        <t t-esc="state.kpis.urgent_needs || 0"/> urgent · <t t-esc="state.kpis.normal_needs || 0"/> normal
+                    </div>
+                </div>
+                <div class="ops-kpi-card kpi-active">
+                    <div class="ops-kpi-header">
+                        <div class="ops-kpi-icon"><i class="fa fa-spinner"/></div>
+                        <span class="ops-live-dot"/>
+                    </div>
+                    <div class="ops-kpi-value" t-esc="state.kpis.active_now || 0"/>
+                    <div class="ops-kpi-label">Active Now</div>
+                </div>
+                <div class="ops-kpi-card kpi-done">
+                    <div class="ops-kpi-header">
+                        <div class="ops-kpi-icon"><i class="fa fa-check-circle"/></div>
+                    </div>
+                    <div class="ops-kpi-value" t-esc="state.kpis.completed_today || 0"/>
+                    <div class="ops-kpi-label">Completed Today</div>
+                </div>
+                <div class="ops-kpi-card kpi-revenue">
+                    <div class="ops-kpi-header">
+                        <div class="ops-kpi-icon"><i class="fa fa-money"/></div>
+                    </div>
+                    <div class="ops-kpi-value" t-esc="formatCurrency(state.kpis.revenue_today || 0)"/>
+                    <div class="ops-kpi-label">Revenue Today</div>
+                </div>
+            </div>
+
+            <!-- MAIN GRID -->
+            <div class="ops-main-grid">
+
+                <!-- BOOKING QUEUE PANEL -->
+                <div class="ops-panel">
+                    <div class="ops-panel-header">
+                        <div class="ops-panel-title"><i class="fa fa-list"/> Booking Queue</div>
+                        <div class="ops-panel-tabs">
+                            <button t-attf-class="ops-panel-tab #{state.activeTab === 'needs_staff' ? 'active' : ''}" t-on-click="() => this.setTab('needs_staff')">
+                                Needs Staff <t t-if="needsStaffCount"><span class="ops-tab-badge" t-esc="needsStaffCount"/></t>
+                            </button>
+                            <button t-attf-class="ops-panel-tab #{state.activeTab === 'all' ? 'active' : ''}" t-on-click="() => this.setTab('all')">All Today</button>
+                            <button t-attf-class="ops-panel-tab #{state.activeTab === 'issues' ? 'active' : ''}" t-on-click="() => this.setTab('issues')">Issues</button>
+                        </div>
+                    </div>
+                    <div class="ops-panel-body">
+                        <t t-if="filteredBookings.length === 0">
+                            <div class="ops-empty-state">
+                                <i class="fa fa-check-circle"/>
+                                <h4>All clear!</h4>
+                                <p>No bookings in this category.</p>
+                            </div>
+                        </t>
+                        <t t-foreach="filteredBookings" t-as="booking" t-key="booking.id">
+                            <div t-att-class="getBookingCardClass(booking)" t-on-click="() => this.openBooking(booking.id)">
+                                <!-- Card Top -->
+                                <div class="ops-booking-card-top">
+                                    <div>
+                                        <span class="ops-booking-time" t-esc="booking.scheduled_time"/>
+                                        <span class="ops-booking-id" t-esc="booking.name"/>
+                                        <t t-if="isUrgent(booking)">
+                                            <span class="ops-priority-urgent"><i class="fa fa-bolt"/> URGENT</span>
+                                        </t>
+                                    </div>
+                                    <div style="display:flex; align-items:center; gap:6px;">
+                                        <span t-attf-class="ops-status-chip #{getStateChipClass(booking.state)}">
+                                            <i class="fa fa-circle" style="font-size:6px"/> <t t-esc="getStateLabel(booking.state)"/>
+                                        </span>
+                                        <div class="position-relative">
+                                            <button class="ops-more-btn" t-on-click.stop="(ev) => this.toggleActionsMenu(booking.id, ev)">
+                                                <i class="fa fa-ellipsis-v"/>
+                                            </button>
+                                            <div t-attf-class="ops-actions-menu #{state.openMenuId === booking.id ? 'show' : ''}">
+                                                <div class="ops-actions-menu-item" t-on-click.stop="() => this.openBooking(booking.id)"><i class="fa fa-eye"/> View Details</div>
+                                                <div class="ops-actions-menu-item" t-on-click.stop="() => this.openAssignStaff(booking.id)"><i class="fa fa-user-plus"/> Assign Staff</div>
+                                                <div class="ops-actions-menu-item" t-on-click.stop="() => this.openStartService(booking.id)"><i class="fa fa-play"/> Start Service</div>
+                                                <div class="ops-actions-menu-item" t-on-click.stop="() => this.openCollectPayment(booking.id)"><i class="fa fa-money"/> Collect Payment</div>
+                                                <div class="ops-actions-divider"/>
+                                                <div class="ops-actions-menu-item danger" t-on-click.stop="() => this.cancelBooking(booking.id)"><i class="fa fa-times"/> Cancel</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Client -->
+                                <div class="ops-booking-client"><i class="fa fa-user"/> <t t-esc="booking.patient_name"/></div>
+                                <!-- Details -->
+                                <div class="ops-booking-details">
+                                    <div class="ops-booking-detail">
+                                        <i t-attf-class="fa #{getServiceIcon(booking.service_type)}"/>
+                                        <span class="detail-value" t-esc="getServiceLabel(booking.service_type)"/>
+                                    </div>
+                                    <div class="ops-booking-detail">
+                                        <i class="fa fa-clock-o"/>
+                                        <span class="detail-value" t-esc="formatDuration(booking.scheduled_duration)"/>
+                                    </div>
+                                    <t t-if="booking.catchment_name">
+                                        <div class="ops-booking-detail">
+                                            <i class="fa fa-map-marker"/>
+                                            <span class="detail-value" t-esc="booking.catchment_name"/>
+                                        </div>
+                                    </t>
+                                </div>
+                                <!-- Assign inline (for unassigned) -->
+                                <t t-if="!booking.has_staff_assigned and ['draft', 'confirmed'].includes(booking.state)">
+                                    <div class="ops-assign-inline" t-on-click.stop="">
+                                        <span class="ops-assign-label">Assign:</span>
+                                        <div class="ops-staff-dropdown-wrapper">
+                                            <div t-attf-class="ops-staff-dropdown-trigger #{state.openDropdownId === booking.id ? 'open' : ''}"
+                                                 t-on-click.stop="() => this.toggleStaffDropdown(booking.id)">
+                                                <span>Select staff...</span>
+                                                <i class="fa fa-chevron-down" style="font-size:10px"/>
+                                            </div>
+                                            <div t-attf-class="ops-staff-dropdown-menu #{state.openDropdownId === booking.id ? 'show' : ''}">
+                                                <t t-foreach="availableStaff" t-as="staff" t-key="staff.id">
+                                                    <div class="ops-staff-option" t-on-click.stop="() => this.selectStaff(booking.id, staff.id)">
+                                                        <div class="ops-staff-option-avatar" t-att-style="'background:' + getStaffColor(staff.color_index)">
+                                                            <t t-esc="staff.initials"/>
+                                                            <span t-attf-class="ops-staff-option-dot dot-#{staff.status}"/>
+                                                        </div>
+                                                        <div>
+                                                            <div class="ops-staff-option-name" t-esc="staff.name"/>
+                                                            <div class="ops-staff-option-meta">
+                                                                <t t-esc="staff.today_assignments"/> today
+                                                                <t t-if="staff.next_available"> · Free at <t t-esc="staff.next_available"/></t>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </t>
+                                                <t t-if="availableStaff.length === 0">
+                                                    <div class="p-2 text-muted text-center" style="font-size:11px">No available staff</div>
+                                                </t>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </t>
+                                <!-- Assigned staff display -->
+                                <t t-if="booking.has_staff_assigned and booking.lead_staff_name">
+                                    <div class="ops-assigned-staff">
+                                        <div class="ops-staff-avatar-sm" style="background:#1565C0">
+                                            <t t-esc="booking.lead_staff_name.split(' ').map(p => p[0]).join('').substring(0,2).toUpperCase()"/>
+                                        </div>
+                                        <div>
+                                            <div class="ops-assigned-staff-name" t-esc="booking.lead_staff_name"/>
+                                        </div>
+                                    </div>
+                                </t>
+                            </div>
+                        </t>
+                    </div>
+                    <div class="ops-panel-footer">
+                        <button class="ops-footer-link" t-on-click="openBookingQueue">View All Bookings <i class="fa fa-arrow-right"/></button>
+                        <button class="ops-footer-btn" t-on-click="openCreateBooking"><i class="fa fa-plus"/> Create Booking</button>
+                    </div>
+                </div>
+
+                <!-- STAFF ROSTER PANEL -->
+                <div class="ops-panel">
+                    <div class="ops-panel-header">
+                        <div class="ops-panel-title"><i class="fa fa-users"/> Staff Roster</div>
+                    </div>
+                    <div class="ops-panel-body">
+                        <t t-if="state.staff.length === 0">
+                            <div class="ops-empty-state">
+                                <i class="fa fa-users"/>
+                                <h4>No staff found</h4>
+                            </div>
+                        </t>
+                        <t t-foreach="state.staff" t-as="staff" t-key="staff.id">
+                            <div class="ops-staff-card" t-on-click="() => this.openStaffProfile(staff.id)">
+                                <div class="ops-staff-avatar" t-att-style="'background:' + getStaffColor(staff.color_index)">
+                                    <t t-esc="staff.initials"/>
+                                    <span t-attf-class="ops-status-dot #{staff.status}"/>
+                                </div>
+                                <div class="ops-staff-info">
+                                    <div class="ops-staff-name" t-esc="staff.name"/>
+                                    <div t-attf-class="ops-staff-status-text #{staff.status}">
+                                        <t t-if="staff.status === 'available'">Available</t>
+                                        <t t-elif="staff.status === 'busy'">In Service</t>
+                                        <t t-else="">Off Duty</t>
+                                        <t t-if="staff.next_available"> · Until <t t-esc="staff.next_available"/></t>
+                                    </div>
+                                    <div class="ops-staff-meta" t-esc="staff.role"/>
+                                </div>
+                                <div class="text-center">
+                                    <div class="ops-bookings-badge" t-esc="staff.today_assignments"/>
+                                    <div style="font-size:9px; color:var(--vu-text-secondary); margin-top:1px">today</div>
+                                </div>
+                            </div>
+                        </t>
+                    </div>
+                    <div class="ops-panel-footer">
+                        <button class="ops-footer-link" t-on-click="openStaffRoster">View Full Roster <i class="fa fa-arrow-right"/></button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TIMELINE -->
+            <div class="ops-timeline-panel">
+                <div class="ops-timeline-header">
+                    <div class="ops-timeline-title"><i class="fa fa-clock-o"/> Today's Timeline</div>
+                    <div class="ops-timeline-legend">
+                        <span class="ops-legend-item"><span class="ops-legend-swatch" style="background:#1565C0"/> Home Visit</span>
+                        <span class="ops-legend-item"><span class="ops-legend-swatch" style="background:#7c3aed"/> Clinic</span>
+                        <span class="ops-legend-item"><span class="ops-legend-swatch" style="background:#42A5F5"/> Consult</span>
+                        <span class="ops-legend-item"><span class="ops-legend-swatch" style="background:#43A047"/> Follow-up</span>
+                    </div>
+                </div>
+                <div class="ops-timeline-body">
+                    <!-- Header row -->
+                    <div class="ops-tl-row ops-tl-header-row">
+                        <div class="ops-tl-staff-col">Staff</div>
+                        <div class="ops-tl-time-area">
+                            <t t-foreach="timeSlots" t-as="slot" t-key="slot.hour">
+                                <div t-attf-class="ops-tl-hour-label #{isCurrentHour(slot.hour) ? 'current-hour' : ''}" t-esc="slot.label"/>
+                            </t>
+                        </div>
+                    </div>
+                    <!-- Staff rows -->
+                    <t t-foreach="timelineStaff" t-as="staff" t-key="staff.id">
+                        <div class="ops-tl-row">
+                            <div class="ops-tl-staff-col">
+                                <div class="ops-timeline-staff-avatar" t-att-style="'background:' + getStaffColor(staff.color_index)">
+                                    <t t-esc="staff.initials"/>
+                                </div>
+                                <div class="ops-timeline-staff-name" t-esc="staff.name"/>
+                            </div>
+                            <div class="ops-tl-time-area ops-tl-track">
+                                <t t-foreach="timeSlots" t-as="slot" t-key="slot.hour">
+                                    <div t-attf-class="ops-tl-gridline #{isCurrentHour(slot.hour) ? 'current-hour' : ''}"/>
+                                </t>
+                                <t t-foreach="getBlocksForStaff(staff.id)" t-as="block" t-key="block.id">
+                                    <div t-att-class="getBlockClass(block)"
+                                         t-att-style="getBlockStyle(block)"
+                                         t-att-title="block.patient_name">
+                                        <t t-esc="getBlockLabel(block)"/>
+                                    </div>
+                                </t>
+                            </div>
+                        </div>
+                    </t>
+                </div>
+            </div>
+
+        </div>
+
+        </div><!-- /ops-main-content -->
+    </div>
+</t>
+
+</templates>

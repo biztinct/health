@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Booking Detail — BK-2026-0847 — VAFHS Operations</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+:root {
+  --vu-deep-blue: #1565C0; --vu-deep-blue-darker: #1356A9; --vu-deep-blue-darkest: #0D356B;
+  --vu-deep-blue-light: #83C5FA; --vu-deep-blue-lightest: #E4F4FD; --vu-accent-blue: #42A5F5;
+  --vu-hibiscus-red: #E53935; --vu-hibiscus-orange: #FB8C00; --vu-leaf-green: #43A047;
+  --state-draft: #64748b; --state-confirmed: #2563eb; --state-assigned: #7c3aed;
+  --state-active: #ea580c; --state-completed: #16a34a; --state-cancelled: #dc2626;
+  --text-primary: #212121; --text-secondary: #424242; --text-muted: #757575;
+  --surface-app: #F5F5F5; --surface-card: #FFFFFF; --border-soft: #E0E0E0; --border-strong: #BDBDBD;
+  --shadow-sm: 0 1px 3px rgba(33,33,33,.08); --shadow-md: 0 2px 8px rgba(33,33,33,.12);
+  --shadow-lg: 0 4px 16px rgba(33,33,33,.15);
+  --radius-sm: 4px; --radius-md: 8px; --radius-lg: 12px;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'Segoe UI',Arial,sans-serif; font-size:13px; color:var(--text-primary); background:var(--surface-app); line-height:1.5; -webkit-font-smoothing:antialiased; }
+h1,h2,h3,h4 { font-family:'Montserrat','Segoe UI',Arial,sans-serif; font-weight:600; }
+.app-wrapper { display:flex; min-height:100vh; }
+
+/* SIDEBAR */
+.sidebar { width:220px; background:var(--vu-deep-blue-darkest); color:white; display:flex; flex-direction:column; flex-shrink:0; position:fixed; top:0; left:0; bottom:0; z-index:100; }
+.sidebar-logo { padding:20px 16px; display:flex; align-items:center; gap:10px; border-bottom:1px solid rgba(255,255,255,.1); text-decoration:none; color:white; }
+.logo-icon { width:36px; height:36px; background:var(--vu-hibiscus-red); border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:18px; }
+.logo-text { font-family:'Montserrat'; font-weight:700; font-size:15px; letter-spacing:.5px; }
+.logo-sub { font-size:10px; opacity:.6; }
+.sidebar-nav { padding:12px 0; flex:1; }
+.nav-section-label { padding:16px 16px 6px; font-size:10px; text-transform:uppercase; letter-spacing:1.2px; opacity:.4; font-weight:600; }
+.nav-item { display:flex; align-items:center; gap:10px; padding:10px 16px; color:rgba(255,255,255,.7); text-decoration:none; font-size:13px; font-weight:500; transition:all 150ms; cursor:pointer; border-left:3px solid transparent; }
+.nav-item:hover { background:rgba(255,255,255,.08); color:white; }
+.nav-item.active { background:rgba(255,255,255,.12); color:white; border-left-color:var(--vu-accent-blue); }
+.nav-item i { width:20px; text-align:center; font-size:14px; }
+.nav-item .badge-count { margin-left:auto; background:var(--vu-hibiscus-red); color:white; font-size:10px; font-weight:700; padding:2px 6px; border-radius:10px; }
+.sidebar-user { padding:12px 16px; border-top:1px solid rgba(255,255,255,.1); display:flex; align-items:center; gap:10px; }
+.user-avatar { width:32px; height:32px; border-radius:50%; background:var(--vu-accent-blue); display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:700; }
+.user-info { flex:1; }
+.user-name { font-size:12px; font-weight:600; }
+.user-role { font-size:10px; opacity:.5; }
+
+/* MAIN */
+.main-content { flex:1; margin-left:220px; display:flex; flex-direction:column; }
+
+/* HEADER */
+.top-header { background:var(--surface-card); border-bottom:1px solid var(--border-soft); padding:12px 24px; display:flex; align-items:center; justify-content:space-between; position:sticky; top:0; z-index:50; box-shadow:var(--shadow-sm); }
+.header-left { display:flex; align-items:center; gap:12px; }
+.breadcrumb { display:flex; align-items:center; gap:6px; font-size:13px; }
+.breadcrumb a { color:var(--vu-deep-blue); text-decoration:none; font-weight:500; }
+.breadcrumb a:hover { text-decoration:underline; }
+.breadcrumb .sep { color:var(--text-muted); }
+.breadcrumb .current { color:var(--text-primary); font-weight:600; }
+.header-right { display:flex; align-items:center; gap:8px; }
+.header-btn { display:flex; align-items:center; gap:6px; padding:7px 14px; border:none; border-radius:var(--radius-md); font-size:12px; font-weight:600; cursor:pointer; transition:all 150ms; font-family:inherit; }
+.btn-primary { background:var(--vu-deep-blue); color:white; }
+.btn-primary:hover { background:var(--vu-deep-blue-darker); }
+.btn-success { background:var(--vu-leaf-green); color:white; }
+.btn-success:hover { background:#388E3C; }
+.btn-warning { background:var(--vu-hibiscus-orange); color:white; }
+.btn-warning:hover { background:#F57C00; }
+.btn-danger { background:transparent; color:var(--state-cancelled); border:1px solid var(--state-cancelled); }
+.btn-danger:hover { background:var(--state-cancelled); color:white; }
+.btn-outline { background:transparent; color:var(--text-secondary); border:1px solid var(--border-soft); }
+.btn-outline:hover { border-color:var(--vu-deep-blue); color:var(--vu-deep-blue); background:var(--vu-deep-blue-lightest); }
+
+/* PAGE BODY */
+.page-body { padding:20px 24px; flex:1; }
+
+/* BOOKING HEADER CARD */
+.booking-header { background:var(--surface-card); border-radius:var(--radius-lg); box-shadow:var(--shadow-sm); border:1px solid var(--border-soft); padding:20px 24px; margin-bottom:16px; }
+.booking-header-top { display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:16px; }
+.booking-title-row { display:flex; align-items:center; gap:12px; }
+.booking-id { font-size:20px; font-weight:700; font-family:'Montserrat'; color:var(--text-primary); }
+.status-chip { display:inline-flex; align-items:center; gap:4px; padding:4px 10px; border-radius:10px; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.4px; }
+.chip-draft { background:rgba(100,116,139,.1); color:var(--state-draft); }
+.chip-confirmed { background:rgba(37,99,235,.1); color:var(--state-confirmed); }
+.chip-assigned { background:rgba(124,58,237,.1); color:var(--state-assigned); }
+.chip-active { background:rgba(234,88,12,.1); color:var(--state-active); }
+.chip-completed { background:rgba(22,163,74,.1); color:var(--state-completed); }
+.chip-cancelled { background:rgba(220,38,38,.1); color:var(--state-cancelled); }
+.priority-badge { display:inline-flex; align-items:center; gap:4px; padding:4px 10px; border-radius:10px; font-size:11px; font-weight:700; }
+.priority-urgent { background:rgba(229,57,53,.1); color:var(--vu-hibiscus-red); }
+.priority-high { background:rgba(251,140,0,.1); color:var(--vu-hibiscus-orange); }
+.priority-normal { background:rgba(66,165,245,.1); color:var(--vu-accent-blue); }
+.priority-low { background:rgba(67,160,71,.1); color:var(--vu-leaf-green); }
+.booking-meta-row { display:flex; gap:32px; flex-wrap:wrap; }
+.meta-item { display:flex; align-items:center; gap:8px; }
+.meta-icon { width:32px; height:32px; border-radius:var(--radius-md); display:flex; align-items:center; justify-content:center; font-size:13px; }
+.meta-label { font-size:11px; color:var(--text-muted); }
+.meta-value { font-size:13px; font-weight:600; }
+
+/* STATUS BAR (workflow steps) */
+.status-bar { display:flex; align-items:center; gap:0; margin-top:16px; padding-top:16px; border-top:1px solid var(--border-soft); }
+.status-step { flex:1; display:flex; align-items:center; gap:8px; position:relative; }
+.status-step:not(:last-child)::after { content:''; position:absolute; right:0; top:50%; width:calc(100% - 28px); height:2px; background:var(--border-soft); transform:translateX(50%); z-index:0; }
+.status-step.completed:not(:last-child)::after { background:var(--vu-leaf-green); }
+.status-step.active:not(:last-child)::after { background:linear-gradient(90deg, var(--vu-leaf-green) 50%, var(--border-soft) 50%); }
+.step-dot { width:24px; height:24px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:700; z-index:1; flex-shrink:0; border:2px solid var(--border-soft); background:var(--surface-card); color:var(--text-muted); }
+.status-step.completed .step-dot { background:var(--vu-leaf-green); border-color:var(--vu-leaf-green); color:white; }
+.status-step.active .step-dot { background:var(--vu-deep-blue); border-color:var(--vu-deep-blue); color:white; animation:pulse-dot 2s infinite; }
+@keyframes pulse-dot { 0%,100%{box-shadow:0 0 0 0 rgba(21,101,192,.3)} 50%{box-shadow:0 0 0 6px rgba(21,101,192,0)} }
+.step-label { font-size:11px; font-weight:600; color:var(--text-muted); }
+.status-step.completed .step-label { color:var(--vu-leaf-green); }
+.status-step.active .step-label { color:var(--vu-deep-blue); }
+
+/* TWO-COLUMN LAYOUT */
+.detail-grid { display:grid; grid-template-columns:1fr 360px; gap:16px; }
+
+/* CARDS */
+.detail-card { background:var(--surface-card); border-radius:var(--radius-lg); box-shadow:var(--shadow-sm); border:1px solid var(--border-soft); overflow:hidden; }
+.card-header { padding:14px 20px; border-bottom:1px solid var(--border-soft); display:flex; align-items:center; justify-content:space-between; }
+.card-title { font-size:14px; font-weight:700; font-family:'Montserrat'; display:flex; align-items:center; gap:8px; }
+.card-title i { color:var(--vu-deep-blue); font-size:14px; }
+.card-body { padding:16px 20px; }
+.card-action-link { font-size:12px; color:var(--vu-deep-blue); font-weight:600; cursor:pointer; text-decoration:none; display:flex; align-items:center; gap:4px; }
+.card-action-link:hover { text-decoration:underline; }
+
+/* FIELD ROWS */
+.field-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px 24px; }
+.field-item { }
+.field-label { font-size:11px; color:var(--text-muted); text-transform:uppercase; letter-spacing:.4px; font-weight:600; margin-bottom:2px; }
+.field-value { font-size:13px; font-weight:500; }
+.field-value.editable { cursor:pointer; padding:2px 6px; margin:-2px -6px; border-radius:var(--radius-sm); transition:background 120ms; }
+.field-value.editable:hover { background:var(--vu-deep-blue-lightest); }
+.field-value.editable::after { content:' \270E'; font-size:10px; color:var(--text-muted); opacity:0; transition:opacity 120ms; }
+.field-value.editable:hover::after { opacity:1; }
+.field-full { grid-column:1/-1; }
+
+/* CLIENT CARD */
+.client-profile { display:flex; align-items:center; gap:14px; padding:16px 20px; }
+.client-avatar-lg { width:48px; height:48px; border-radius:50%; background:var(--vu-deep-blue-lightest); color:var(--vu-deep-blue); display:flex; align-items:center; justify-content:center; font-size:16px; font-weight:700; flex-shrink:0; }
+.client-details { flex:1; }
+.client-name-lg { font-size:15px; font-weight:700; }
+.client-sub { font-size:12px; color:var(--text-muted); }
+.client-actions { display:flex; gap:6px; }
+.client-action-btn { width:32px; height:32px; border:1px solid var(--border-soft); border-radius:var(--radius-md); background:transparent; cursor:pointer; display:flex; align-items:center; justify-content:center; color:var(--text-muted); transition:all 120ms; font-size:13px; }
+.client-action-btn:hover { border-color:var(--vu-deep-blue); color:var(--vu-deep-blue); background:var(--vu-deep-blue-lightest); }
+.client-stats { display:flex; gap:0; border-top:1px solid var(--border-soft); }
+.client-stat { flex:1; padding:10px 16px; text-align:center; border-right:1px solid var(--border-soft); }
+.client-stat:last-child { border-right:none; }
+.client-stat-value { font-size:15px; font-weight:700; color:var(--vu-deep-blue); }
+.client-stat-label { font-size:10px; color:var(--text-muted); text-transform:uppercase; letter-spacing:.4px; font-weight:600; }
+
+/* STAFF ASSIGNMENT CARD */
+.staff-assignment-card { }
+.staff-assigned { display:flex; align-items:center; gap:12px; padding:4px 0; }
+.staff-avatar-md { width:40px; height:40px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:14px; font-weight:700; color:white; flex-shrink:0; position:relative; }
+.staff-status-dot { position:absolute; bottom:0; right:0; width:12px; height:12px; border-radius:50%; border:2px solid white; }
+.staff-status-dot.available { background:var(--vu-leaf-green); }
+.staff-status-dot.busy { background:var(--vu-hibiscus-orange); }
+.staff-status-dot.off { background:var(--state-cancelled); }
+.staff-info { flex:1; }
+.staff-name-md { font-size:13px; font-weight:600; }
+.staff-role-md { font-size:11px; color:var(--text-muted); }
+.staff-meta { display:flex; gap:12px; margin-top:10px; }
+.staff-meta-item { display:flex; align-items:center; gap:4px; font-size:11px; color:var(--text-muted); }
+.staff-meta-item i { font-size:10px; color:var(--vu-deep-blue); }
+
+/* Unassigned state */
+.unassigned-panel { text-align:center; padding:20px 16px; }
+.unassigned-icon { width:48px; height:48px; border-radius:50%; background:rgba(229,57,53,.08); color:var(--vu-hibiscus-red); display:flex; align-items:center; justify-content:center; font-size:20px; margin:0 auto 10px; }
+.unassigned-text { font-size:13px; color:var(--text-muted); margin-bottom:12px; }
+.assign-btn { display:inline-flex; align-items:center; gap:6px; padding:8px 20px; background:var(--vu-deep-blue); color:white; border:none; border-radius:var(--radius-md); font-size:12px; font-weight:600; cursor:pointer; transition:all 150ms; font-family:inherit; }
+.assign-btn:hover { background:var(--vu-deep-blue-darker); box-shadow:var(--shadow-md); }
+.suggested-staff { margin-top:16px; border-top:1px solid var(--border-soft); padding-top:12px; }
+.suggested-label { font-size:11px; color:var(--text-muted); text-transform:uppercase; letter-spacing:.4px; font-weight:600; margin-bottom:8px; }
+.suggested-item { display:flex; align-items:center; gap:10px; padding:8px 10px; border-radius:var(--radius-md); cursor:pointer; transition:background 120ms; }
+.suggested-item:hover { background:var(--vu-deep-blue-lightest); }
+.suggested-avatar { width:30px; height:30px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:700; color:white; flex-shrink:0; position:relative; }
+.suggested-info { flex:1; }
+.suggested-name { font-size:12px; font-weight:600; }
+.suggested-detail { font-size:10px; color:var(--text-muted); }
+.suggested-score { font-size:11px; font-weight:700; color:var(--vu-leaf-green); }
+.match-bar { width:40px; height:4px; border-radius:2px; background:var(--border-soft); overflow:hidden; margin-top:2px; }
+.match-fill { height:100%; border-radius:2px; background:var(--vu-leaf-green); }
+
+/* LOCATION CARD */
+.location-map-placeholder { width:100%; height:140px; background:var(--surface-app); border-radius:var(--radius-md); display:flex; align-items:center; justify-content:center; color:var(--text-muted); font-size:12px; margin-bottom:12px; border:1px dashed var(--border-soft); position:relative; overflow:hidden; }
+.map-fake { width:100%; height:100%; background:linear-gradient(135deg, #E4F4FD 0%, #DBF0DB 50%, #E4F4FD 100%); position:absolute; top:0; left:0; opacity:.5; }
+.map-pin { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); z-index:1; font-size:24px; color:var(--vu-hibiscus-red); filter:drop-shadow(0 2px 4px rgba(0,0,0,.2)); }
+
+/* ACTIVITY TIMELINE */
+.timeline { padding:0; }
+.timeline-item { display:flex; gap:12px; position:relative; padding-bottom:16px; }
+.timeline-item:last-child { padding-bottom:0; }
+.timeline-item:not(:last-child)::before { content:''; position:absolute; left:15px; top:28px; bottom:0; width:1px; background:var(--border-soft); }
+.timeline-dot { width:30px; height:30px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:11px; flex-shrink:0; z-index:1; }
+.timeline-dot.created { background:rgba(100,116,139,.1); color:var(--state-draft); }
+.timeline-dot.confirmed { background:rgba(37,99,235,.1); color:var(--state-confirmed); }
+.timeline-dot.assigned { background:rgba(124,58,237,.1); color:var(--state-assigned); }
+.timeline-dot.note { background:rgba(66,165,245,.1); color:var(--vu-accent-blue); }
+.timeline-dot.system { background:var(--surface-app); color:var(--text-muted); }
+.timeline-content { flex:1; padding-top:4px; }
+.timeline-text { font-size:12px; }
+.timeline-text strong { font-weight:600; }
+.timeline-time { font-size:11px; color:var(--text-muted); margin-top:1px; }
+.timeline-comment { margin-top:6px; padding:8px 12px; background:var(--surface-app); border-radius:var(--radius-md); font-size:12px; color:var(--text-secondary); border-left:3px solid var(--vu-accent-blue); }
+
+/* PAYMENT SUMMARY */
+.payment-row { display:flex; align-items:center; justify-content:space-between; padding:8px 0; border-bottom:1px solid var(--border-soft); }
+.payment-row:last-child { border-bottom:none; }
+.payment-label { font-size:12px; color:var(--text-secondary); }
+.payment-value { font-size:13px; font-weight:600; }
+.payment-total { font-size:15px; font-weight:700; color:var(--vu-deep-blue); }
+.payment-status-tag { display:inline-flex; align-items:center; gap:4px; padding:3px 8px; border-radius:8px; font-size:10px; font-weight:700; }
+.tag-pending { background:rgba(251,140,0,.1); color:var(--vu-hibiscus-orange); }
+.tag-paid { background:rgba(67,160,71,.1); color:var(--vu-leaf-green); }
+.tag-overdue { background:rgba(229,57,53,.1); color:var(--vu-hibiscus-red); }
+
+/* TABS inside card */
+.card-tabs { display:flex; gap:0; border-bottom:1px solid var(--border-soft); }
+.card-tab { padding:10px 16px; font-size:12px; font-weight:600; color:var(--text-muted); cursor:pointer; border-bottom:2px solid transparent; transition:all 150ms; background:none; border-top:none; border-left:none; border-right:none; font-family:inherit; }
+.card-tab:hover { color:var(--text-primary); }
+.card-tab.active { color:var(--vu-deep-blue); border-bottom-color:var(--vu-deep-blue); }
+
+/* NOTE INPUT */
+.note-input-row { display:flex; gap:8px; align-items:flex-start; margin-top:12px; padding-top:12px; border-top:1px solid var(--border-soft); }
+.note-input { flex:1; padding:8px 12px; border:1px solid var(--border-soft); border-radius:var(--radius-md); font-size:12px; font-family:inherit; resize:none; min-height:36px; transition:border-color 150ms; }
+.note-input:focus { outline:none; border-color:var(--vu-deep-blue); box-shadow:0 0 0 3px rgba(21,101,192,.1); }
+.note-send { width:36px; height:36px; border:none; background:var(--vu-deep-blue); color:white; border-radius:var(--radius-md); cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:13px; transition:background 150ms; }
+.note-send:hover { background:var(--vu-deep-blue-darker); }
+
+/* NAVIGATION ARROWS */
+.nav-arrows { display:flex; gap:4px; }
+.nav-arrow { width:30px; height:30px; border:1px solid var(--border-soft); border-radius:var(--radius-sm); background:var(--surface-card); cursor:pointer; display:flex; align-items:center; justify-content:center; color:var(--text-muted); transition:all 120ms; font-size:11px; }
+.nav-arrow:hover { border-color:var(--vu-deep-blue); color:var(--vu-deep-blue); background:var(--vu-deep-blue-lightest); }
+
+/* TAGS */
+.tag-row { display:flex; gap:6px; flex-wrap:wrap; }
+.tag { display:inline-flex; align-items:center; gap:3px; padding:3px 8px; border-radius:6px; font-size:10px; font-weight:600; }
+.tag-service { background:var(--vu-deep-blue-lightest); color:var(--vu-deep-blue); }
+.tag-package { background:#DBF0DB; color:var(--vu-leaf-green); }
+.tag-vip { background:rgba(251,140,0,.12); color:var(--vu-hibiscus-orange); }
+.tag-new-client { background:rgba(124,58,237,.1); color:var(--state-assigned); }
+
+/* MORE MENU */
+.more-menu-wrap { position:relative; }
+.more-btn { width:34px; height:34px; border:1px solid var(--border-soft); border-radius:var(--radius-md); background:var(--surface-card); cursor:pointer; display:flex; align-items:center; justify-content:center; color:var(--text-secondary); transition:all 120ms; }
+.more-btn:hover { border-color:var(--vu-deep-blue); color:var(--vu-deep-blue); background:var(--vu-deep-blue-lightest); }
+.more-dropdown { position:absolute; top:40px; right:0; background:var(--surface-card); border:1px solid var(--border-soft); border-radius:var(--radius-md); box-shadow:var(--shadow-lg); min-width:200px; z-index:200; display:none; }
+.more-dropdown.show { display:block; }
+.more-option { display:flex; align-items:center; gap:8px; padding:9px 14px; font-size:12px; color:var(--text-secondary); cursor:pointer; transition:background 100ms; }
+.more-option:first-child { border-radius:var(--radius-md) var(--radius-md) 0 0; }
+.more-option:last-child { border-radius:0 0 var(--radius-md) var(--radius-md); }
+.more-option:hover { background:var(--vu-deep-blue-lightest); color:var(--vu-deep-blue); }
+.more-option i { width:16px; text-align:center; font-size:12px; }
+.more-divider { border-top:1px solid var(--border-soft); margin:4px 0; }
+.more-option.danger { color:var(--state-cancelled); }
+.more-option.danger:hover { background:rgba(220,38,38,.06); }
+
+/* Service details mini-timeline */
+.service-timeline { padding:0; list-style:none; }
+.service-step { display:flex; align-items:center; gap:10px; padding:6px 0; }
+.step-icon { width:24px; height:24px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:10px; }
+.step-icon.done { background:var(--vu-leaf-green); color:white; }
+.step-icon.current { background:var(--vu-deep-blue); color:white; }
+.step-icon.pending { background:var(--surface-app); color:var(--text-muted); border:1px solid var(--border-soft); }
+.step-text { font-size:12px; }
+.step-text.done { color:var(--vu-leaf-green); text-decoration:line-through; }
+.step-text.current { color:var(--vu-deep-blue); font-weight:600; }
+.step-text.pending { color:var(--text-muted); }
+
+/* Scrollbar */
+::-webkit-scrollbar { width:6px; } ::-webkit-scrollbar-track { background:transparent; } ::-webkit-scrollbar-thumb { background:var(--border-soft); border-radius:3px; }
+</style>
+</head>
+<body>
+<div class="app-wrapper">
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <a class="sidebar-logo" href="ops_dashboard.html">
+      <div class="logo-icon"><i class="fas fa-heartbeat"></i></div>
+      <div><div class="logo-text">VIET UC</div><div class="logo-sub">Healthcare Platform</div></div>
+    </a>
+    <nav class="sidebar-nav">
+      <div class="nav-section-label">Main</div>
+      <a class="nav-item" href="ops_dashboard.html"><i class="fas fa-th-large"></i> Dashboard</a>
+      <a class="nav-item active" href="ops_booking_queue.html"><i class="fas fa-calendar-check"></i> Bookings <span class="badge-count">4</span></a>
+      <a class="nav-item"><i class="fas fa-users"></i> Staff</a>
+      <a class="nav-item"><i class="fas fa-calendar-alt"></i> Calendar</a>
+      <a class="nav-item"><i class="fas fa-clipboard-list"></i> Roster</a>
+      <div class="nav-section-label">Reports</div>
+      <a class="nav-item"><i class="fas fa-chart-bar"></i> Analytics</a>
+      <a class="nav-item"><i class="fas fa-file-alt"></i> MOH Reports</a>
+      <div class="nav-section-label">System</div>
+      <a class="nav-item"><i class="fas fa-cog"></i> Configuration</a>
+    </nav>
+    <div class="sidebar-user">
+      <div class="user-avatar">TL</div>
+      <div class="user-info"><div class="user-name">Tran Thi Lan</div><div class="user-role">Operations Manager</div></div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="main-content">
+    <header class="top-header">
+      <div class="header-left">
+        <div class="breadcrumb">
+          <a href="ops_dashboard.html">Dashboard</a>
+          <span class="sep"><i class="fas fa-chevron-right" style="font-size:10px"></i></span>
+          <a href="ops_booking_queue.html">Booking Queue</a>
+          <span class="sep"><i class="fas fa-chevron-right" style="font-size:10px"></i></span>
+          <span class="current">BK-2026-0847</span>
+        </div>
+        <div class="nav-arrows">
+          <button class="nav-arrow" title="Previous booking"><i class="fas fa-chevron-left"></i></button>
+          <button class="nav-arrow" title="Next booking"><i class="fas fa-chevron-right"></i></button>
+        </div>
+      </div>
+      <div class="header-right">
+        <button class="header-btn btn-outline"><i class="fas fa-print"></i> Print</button>
+        <button class="header-btn btn-outline"><i class="fas fa-copy"></i> Duplicate</button>
+        <a href="staff_assignment_wizard.html" class="header-btn btn-warning" style="text-decoration:none"><i class="fas fa-user-plus"></i> Assign Staff</a>
+        <a href="service_in_progress.html" class="header-btn btn-success" style="text-decoration:none"><i class="fas fa-play-circle"></i> Start Service</a>
+        <div class="more-menu-wrap">
+          <button class="more-btn" onclick="toggleMore()" title="More actions"><i class="fas fa-ellipsis-v"></i></button>
+          <div class="more-dropdown" id="moreMenu">
+            <div class="more-option"><i class="fas fa-edit"></i> Edit Booking</div>
+            <div class="more-option"><i class="fas fa-calendar-alt"></i> Reschedule</div>
+            <div class="more-option"><i class="fas fa-copy"></i> Duplicate</div>
+            <a href="recurring_booking_wizard.html" class="more-option" style="text-decoration:none;color:inherit"><i class="fas fa-repeat"></i> Create Recurring</a>
+            <a href="invoice_detail.html" class="more-option" style="text-decoration:none;color:inherit"><i class="fas fa-file-invoice"></i> Create Invoice</a>
+            <div class="more-option"><i class="fas fa-envelope"></i> Send Confirmation</div>
+            <div class="more-divider"></div>
+            <div class="more-option danger"><i class="fas fa-xmark"></i> Cancel Booking</div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="page-body">
+      <!-- BOOKING HEADER CARD -->
+      <div class="booking-header">
+        <div class="booking-header-top">
+          <div>
+            <div class="booking-title-row">
+              <span class="booking-id">BK-2026-0847</span>
+              <span class="status-chip chip-draft"><i class="fas fa-circle" style="font-size:5px"></i> New</span>
+              <span class="priority-badge priority-urgent"><i class="fas fa-arrow-up"></i> Urgent</span>
+            </div>
+            <div class="tag-row" style="margin-top:8px">
+              <span class="tag tag-service"><i class="fas fa-house-medical" style="font-size:9px"></i> Home Visit</span>
+              <span class="tag tag-vip"><i class="fas fa-star" style="font-size:9px"></i> VIP Client</span>
+              <span class="tag tag-new-client"><i class="fas fa-user-plus" style="font-size:9px"></i> First Visit</span>
+            </div>
+          </div>
+          <div style="text-align:right">
+            <div style="font-size:11px;color:var(--text-muted)">Created</div>
+            <div style="font-size:13px;font-weight:600">May 10, 2026 at 14:22</div>
+            <div style="font-size:11px;color:var(--text-muted);margin-top:2px">by Nguyen Thi Thanh (Sales)</div>
+          </div>
+        </div>
+        <div class="booking-meta-row">
+          <div class="meta-item">
+            <div class="meta-icon" style="background:var(--vu-deep-blue-lightest);color:var(--vu-deep-blue)"><i class="fas fa-calendar"></i></div>
+            <div>
+              <div class="meta-label">Scheduled</div>
+              <div class="meta-value">May 11, 2026 &bull; 09:00 — 11:00</div>
+            </div>
+          </div>
+          <div class="meta-item">
+            <div class="meta-icon" style="background:rgba(124,58,237,.1);color:var(--state-assigned)"><i class="fas fa-stethoscope"></i></div>
+            <div>
+              <div class="meta-label">Service Type</div>
+              <div class="meta-value">General Health Assessment — Home Visit</div>
+            </div>
+          </div>
+          <div class="meta-item">
+            <div class="meta-icon" style="background:rgba(251,140,0,.1);color:var(--vu-hibiscus-orange)"><i class="fas fa-clock"></i></div>
+            <div>
+              <div class="meta-label">Duration</div>
+              <div class="meta-value">2 hours</div>
+            </div>
+          </div>
+          <div class="meta-item">
+            <div class="meta-icon" style="background:rgba(67,160,71,.1);color:var(--vu-leaf-green)"><i class="fas fa-building"></i></div>
+            <div>
+              <div class="meta-label">Facility</div>
+              <div class="meta-value">Viet Uc — Hanoi</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- STATUS BAR -->
+        <div class="status-bar">
+          <div class="status-step completed">
+            <div class="step-dot"><i class="fas fa-check" style="font-size:9px"></i></div>
+            <span class="step-label">Created</span>
+          </div>
+          <div class="status-step active">
+            <div class="step-dot"><i class="fas fa-circle" style="font-size:6px"></i></div>
+            <span class="step-label">Confirmed</span>
+          </div>
+          <div class="status-step">
+            <div class="step-dot">3</div>
+            <span class="step-label">Staff Assigned</span>
+          </div>
+          <div class="status-step">
+            <div class="step-dot">4</div>
+            <span class="step-label">In Progress</span>
+          </div>
+          <div class="status-step">
+            <div class="step-dot">5</div>
+            <span class="step-label">Completed</span>
+          </div>
+          <div class="status-step">
+            <div class="step-dot">6</div>
+            <span class="step-label">Invoiced</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- TWO-COLUMN LAYOUT -->
+      <div class="detail-grid">
+
+        <!-- LEFT COLUMN -->
+        <div style="display:flex;flex-direction:column;gap:16px">
+
+          <!-- CLIENT INFORMATION -->
+          <div class="detail-card">
+            <div class="card-header">
+              <div class="card-title"><i class="fas fa-user"></i> Client Information</div>
+              <a class="card-action-link" href="#">View Full Profile <i class="fas fa-external-link-alt" style="font-size:10px"></i></a>
+            </div>
+            <div class="client-profile">
+              <div class="client-avatar-lg">TD</div>
+              <div class="client-details">
+                <div class="client-name-lg">Tran Van Duc</div>
+                <div class="client-sub"><i class="fas fa-phone" style="font-size:10px"></i> 0912 345 678 &nbsp;&bull;&nbsp; <i class="fas fa-envelope" style="font-size:10px"></i> tranvanduc@email.com</div>
+                <div class="client-sub"><i class="fas fa-map-marker-alt" style="font-size:10px"></i> 15 Phan Dinh Phung, Ba Dinh, Hanoi</div>
+              </div>
+              <div class="client-actions">
+                <button class="client-action-btn" title="Call"><i class="fas fa-phone"></i></button>
+                <button class="client-action-btn" title="Message"><i class="fas fa-comment-dots"></i></button>
+                <button class="client-action-btn" title="Email"><i class="fas fa-envelope"></i></button>
+              </div>
+            </div>
+            <div class="client-stats">
+              <div class="client-stat">
+                <div class="client-stat-value">12</div>
+                <div class="client-stat-label">Total Visits</div>
+              </div>
+              <div class="client-stat">
+                <div class="client-stat-value">3</div>
+                <div class="client-stat-label">Active Packages</div>
+              </div>
+              <div class="client-stat">
+                <div class="client-stat-value" style="color:var(--vu-hibiscus-orange)">1</div>
+                <div class="client-stat-label">Pending Payment</div>
+              </div>
+              <div class="client-stat">
+                <div class="client-stat-value">4.8</div>
+                <div class="client-stat-label">Satisfaction</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- SERVICE DETAILS -->
+          <div class="detail-card">
+            <div class="card-header">
+              <div class="card-title"><i class="fas fa-clipboard-list"></i> Service Details</div>
+              <a class="card-action-link">Edit <i class="fas fa-pen" style="font-size:10px"></i></a>
+            </div>
+            <div class="card-body">
+              <div class="field-grid">
+                <div class="field-item">
+                  <div class="field-label">Service Type</div>
+                  <div class="field-value">General Health Assessment</div>
+                </div>
+                <div class="field-item">
+                  <div class="field-label">Service Category</div>
+                  <div class="field-value">Home Visit</div>
+                </div>
+                <div class="field-item">
+                  <div class="field-label">Scheduled Date</div>
+                  <div class="field-value editable">May 11, 2026</div>
+                </div>
+                <div class="field-item">
+                  <div class="field-label">Time Slot</div>
+                  <div class="field-value editable">09:00 — 11:00</div>
+                </div>
+                <div class="field-item">
+                  <div class="field-label">Duration</div>
+                  <div class="field-value">2 hours</div>
+                </div>
+                <div class="field-item">
+                  <div class="field-label">Facility</div>
+                  <div class="field-value">Viet Uc — Hanoi</div>
+                </div>
+                <div class="field-item">
+                  <div class="field-label">Package</div>
+                  <div class="field-value">None (Pay Per Visit)</div>
+                </div>
+                <div class="field-item">
+                  <div class="field-label">Referral Source</div>
+                  <div class="field-value">Facebook Campaign</div>
+                </div>
+                <div class="field-item field-full">
+                  <div class="field-label">Special Instructions</div>
+                  <div class="field-value">Patient requires wheelchair access. Building has elevator — use entrance B. Blood pressure medication sensitivity noted.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- LOCATION -->
+          <div class="detail-card">
+            <div class="card-header">
+              <div class="card-title"><i class="fas fa-map-marker-alt"></i> Service Location</div>
+              <a class="card-action-link">Get Directions <i class="fas fa-directions" style="font-size:10px"></i></a>
+            </div>
+            <div class="card-body">
+              <div class="location-map-placeholder">
+                <div class="map-fake"></div>
+                <div class="map-pin"><i class="fas fa-map-marker-alt"></i></div>
+              </div>
+              <div class="field-grid">
+                <div class="field-item field-full">
+                  <div class="field-label">Address</div>
+                  <div class="field-value">15 Phan Dinh Phung, Ba Dinh District, Hanoi</div>
+                </div>
+                <div class="field-item">
+                  <div class="field-label">Ward</div>
+                  <div class="field-value">Quan Thanh Ward</div>
+                </div>
+                <div class="field-item">
+                  <div class="field-label">District</div>
+                  <div class="field-value">Ba Dinh District</div>
+                </div>
+                <div class="field-item field-full">
+                  <div class="field-label">Access Notes</div>
+                  <div class="field-value">Apartment 12A, Floor 3. Use Entrance B (wheelchair ramp). Code: 4521#</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- RIGHT COLUMN -->
+        <div style="display:flex;flex-direction:column;gap:16px">
+
+          <!-- STAFF ASSIGNMENT -->
+          <div class="detail-card">
+            <div class="card-header">
+              <div class="card-title"><i class="fas fa-user-nurse"></i> Staff Assignment</div>
+            </div>
+            <div class="card-body">
+              <div class="unassigned-panel">
+                <div class="unassigned-icon"><i class="fas fa-user-plus"></i></div>
+                <div class="unassigned-text">No staff assigned to this booking yet</div>
+                <a href="staff_assignment_wizard.html" class="assign-btn" style="text-decoration:none"><i class="fas fa-user-plus"></i> Assign Staff Now</a>
+              </div>
+              <div class="suggested-staff">
+                <div class="suggested-label">Suggested Staff (by availability &amp; proximity)</div>
+                <div class="suggested-item">
+                  <div class="suggested-avatar" style="background:var(--vu-leaf-green)">
+                    NM
+                    <span class="staff-status-dot available" style="width:10px;height:10px;position:absolute;bottom:-1px;right:-1px"></span>
+                  </div>
+                  <div class="suggested-info">
+                    <div class="suggested-name">Nguyen Thi Mai</div>
+                    <div class="suggested-detail">Available &bull; 2 bookings today &bull; 3.2km away</div>
+                  </div>
+                  <div style="text-align:right">
+                    <div class="suggested-score">95%</div>
+                    <div class="match-bar"><div class="match-fill" style="width:95%"></div></div>
+                  </div>
+                </div>
+                <div class="suggested-item">
+                  <div class="suggested-avatar" style="background:var(--vu-accent-blue)">
+                    TL
+                    <span class="staff-status-dot available" style="width:10px;height:10px;position:absolute;bottom:-1px;right:-1px"></span>
+                  </div>
+                  <div class="suggested-info">
+                    <div class="suggested-name">Tran Minh Linh</div>
+                    <div class="suggested-detail">Available &bull; 1 booking today &bull; 5.8km away</div>
+                  </div>
+                  <div style="text-align:right">
+                    <div class="suggested-score">82%</div>
+                    <div class="match-bar"><div class="match-fill" style="width:82%"></div></div>
+                  </div>
+                </div>
+                <div class="suggested-item">
+                  <div class="suggested-avatar" style="background:var(--vu-hibiscus-orange)">
+                    PH
+                    <span class="staff-status-dot busy" style="width:10px;height:10px;position:absolute;bottom:-1px;right:-1px"></span>
+                  </div>
+                  <div class="suggested-info">
+                    <div class="suggested-name">Pham Thu Hang</div>
+                    <div class="suggested-detail">Busy until 08:30 &bull; 3 bookings today &bull; 1.5km away</div>
+                  </div>
+                  <div style="text-align:right">
+                    <div class="suggested-score">71%</div>
+                    <div class="match-bar"><div class="match-fill" style="width:71%"></div></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- PAYMENT SUMMARY -->
+          <div class="detail-card">
+            <div class="card-header">
+              <div class="card-title"><i class="fas fa-file-invoice-dollar"></i> Payment Summary</div>
+              <span class="payment-status-tag tag-pending"><i class="fas fa-clock" style="font-size:8px"></i> Pending</span>
+            </div>
+            <div class="card-body">
+              <div class="payment-row">
+                <span class="payment-label">Service Fee (Home Visit — 2hrs)</span>
+                <span class="payment-value">2,500,000 &#8363;</span>
+              </div>
+              <div class="payment-row">
+                <span class="payment-label">Travel Surcharge (Ba Dinh)</span>
+                <span class="payment-value">200,000 &#8363;</span>
+              </div>
+              <div class="payment-row">
+                <span class="payment-label">Urgent Priority Fee</span>
+                <span class="payment-value">300,000 &#8363;</span>
+              </div>
+              <div class="payment-row">
+                <span class="payment-label" style="font-weight:600;color:var(--text-primary)">Discount</span>
+                <span class="payment-value" style="color:var(--vu-leaf-green)">-150,000 &#8363;</span>
+              </div>
+              <div class="payment-row" style="border-bottom:none;padding-top:10px;margin-top:4px;border-top:2px solid var(--text-primary)">
+                <span class="payment-label" style="font-size:14px;font-weight:700;color:var(--text-primary)">Total</span>
+                <span class="payment-total">2,850,000 &#8363;</span>
+              </div>
+              <div style="margin-top:12px;display:flex;gap:8px">
+                <div style="flex:1;padding:8px 10px;background:var(--surface-app);border-radius:var(--radius-md)">
+                  <div style="font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.4px;font-weight:600">Payment Type</div>
+                  <div style="font-size:12px;font-weight:600;margin-top:2px">Pay After Service</div>
+                </div>
+                <div style="flex:1;padding:8px 10px;background:var(--surface-app);border-radius:var(--radius-md)">
+                  <div style="font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.4px;font-weight:600">Preferred Method</div>
+                  <div style="font-size:12px;font-weight:600;margin-top:2px">Bank Transfer</div>
+                </div>
+              </div>
+              <div style="margin-top:10px;display:flex;gap:8px">
+                <a href="payment_collection.html" style="flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:9px;background:var(--vu-leaf-green);color:white;border-radius:var(--radius-md);font-size:12px;font-weight:600;text-decoration:none"><i class="fas fa-hand-holding-dollar"></i> Collect Payment</a>
+                <a href="invoice_detail.html" style="flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:9px;border:1px solid var(--border-soft);border-radius:var(--radius-md);font-size:12px;font-weight:600;text-decoration:none;color:var(--text-secondary)"><i class="fas fa-file-invoice"></i> View Invoice</a>
+              </div>
+            </div>
+          </div>
+
+          <!-- SERVICE CHECKLIST -->
+          <div class="detail-card">
+            <div class="card-header">
+              <div class="card-title"><i class="fas fa-tasks"></i> Service Checklist</div>
+              <span style="font-size:11px;color:var(--text-muted)">1 of 5 completed</span>
+            </div>
+            <div class="card-body">
+              <ul class="service-timeline">
+                <li class="service-step">
+                  <div class="step-icon done"><i class="fas fa-check" style="font-size:9px"></i></div>
+                  <span class="step-text done">Booking created &amp; confirmed</span>
+                </li>
+                <li class="service-step">
+                  <div class="step-icon current"><i class="fas fa-circle" style="font-size:6px"></i></div>
+                  <span class="step-text current">Assign healthcare staff</span>
+                </li>
+                <li class="service-step">
+                  <div class="step-icon pending">3</div>
+                  <span class="step-text pending">Pre-visit preparation</span>
+                </li>
+                <li class="service-step">
+                  <div class="step-icon pending">4</div>
+                  <span class="step-text pending">Service delivery &amp; clinical notes</span>
+                </li>
+                <li class="service-step">
+                  <div class="step-icon pending">5</div>
+                  <span class="step-text pending">Payment collection &amp; invoice</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- ACTIVITY TIMELINE -->
+          <div class="detail-card">
+            <div class="card-tabs">
+              <button class="card-tab active">Activity</button>
+              <button class="card-tab">Notes</button>
+              <button class="card-tab">Communication</button>
+            </div>
+            <div class="card-body">
+              <div class="timeline">
+                <div class="timeline-item">
+                  <div class="timeline-dot confirmed"><i class="fas fa-check"></i></div>
+                  <div class="timeline-content">
+                    <div class="timeline-text"><strong>Booking confirmed</strong> by Nguyen Thi Thanh</div>
+                    <div class="timeline-time">May 10, 2026 &bull; 14:35</div>
+                    <div class="timeline-comment">Client confirmed via phone call. Prefers morning slots. Noted wheelchair access requirement.</div>
+                  </div>
+                </div>
+                <div class="timeline-item">
+                  <div class="timeline-dot created"><i class="fas fa-plus"></i></div>
+                  <div class="timeline-content">
+                    <div class="timeline-text"><strong>Booking created</strong> by Nguyen Thi Thanh</div>
+                    <div class="timeline-time">May 10, 2026 &bull; 14:22</div>
+                  </div>
+                </div>
+                <div class="timeline-item">
+                  <div class="timeline-dot note"><i class="fas fa-tag"></i></div>
+                  <div class="timeline-content">
+                    <div class="timeline-text"><strong>Lead converted</strong> from CRM lead #LD-2026-1204</div>
+                    <div class="timeline-time">May 10, 2026 &bull; 14:20</div>
+                    <div class="timeline-comment">Lead source: Facebook Campaign — Spring Health Check. First interaction on May 8.</div>
+                  </div>
+                </div>
+                <div class="timeline-item">
+                  <div class="timeline-dot system"><i class="fas fa-robot"></i></div>
+                  <div class="timeline-content">
+                    <div class="timeline-text"><strong>Auto-confirmation SMS</strong> sent to client</div>
+                    <div class="timeline-time">May 10, 2026 &bull; 14:36</div>
+                  </div>
+                </div>
+              </div>
+              <div class="note-input-row">
+                <textarea class="note-input" placeholder="Add a note or comment..." rows="1"></textarea>
+                <button class="note-send" title="Post note"><i class="fas fa-paper-plane"></i></button>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function toggleMore() {
+  document.getElementById('moreMenu').classList.toggle('show');
+}
+document.addEventListener('click', function(e) {
+  if (!e.target.closest('.more-menu-wrap')) {
+    document.getElementById('moreMenu').classList.remove('show');
+  }
+});
+
+document.querySelectorAll('.card-tab').forEach(tab => {
+  tab.addEventListener('click', function() {
+    this.closest('.card-tabs').querySelectorAll('.card-tab').forEach(t => t.classList.remove('active'));
+    this.classList.add('active');
+  });
+});
+
+document.querySelectorAll('.suggested-item').forEach(item => {
+  item.addEventListener('click', function() {
+    document.querySelectorAll('.suggested-item').forEach(i => i.style.background = '');
+    this.style.background = 'var(--vu-deep-blue-lightest)';
+    this.style.borderRadius = 'var(--radius-md)';
+  });
+});
+</script>
+</body>
+</html>

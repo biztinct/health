@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Staff Assignment — VAFHS</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+:root{--vu-deep-blue:#1565C0;--vu-deep-blue-darker:#1356A9;--vu-deep-blue-darkest:#0D356B;--vu-deep-blue-light:#83C5FA;--vu-deep-blue-lightest:#E4F4FD;--vu-accent-blue:#42A5F5;--vu-hibiscus-red:#E53935;--vu-hibiscus-orange:#FB8C00;--vu-leaf-green:#43A047;--text-primary:#212121;--text-secondary:#424242;--text-muted:#757575;--surface-app:#F5F5F5;--surface-card:#FFFFFF;--border-soft:#E0E0E0;--shadow-sm:0 1px 3px rgba(33,33,33,.08);--shadow-md:0 2px 8px rgba(33,33,33,.12);--shadow-lg:0 4px 16px rgba(33,33,33,.15);--radius-sm:4px;--radius-md:8px;--radius-lg:12px}
+*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Segoe UI',Arial,sans-serif;font-size:13px;color:var(--text-primary);background:rgba(0,0,0,.4);line-height:1.5;-webkit-font-smoothing:antialiased;display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px}
+h1,h2,h3,h4{font-family:'Montserrat','Segoe UI',Arial,sans-serif;font-weight:600}
+
+/* MODAL */
+.modal{width:100%;max-width:780px;background:var(--surface-card);border-radius:var(--radius-lg);box-shadow:0 8px 40px rgba(0,0,0,.3);overflow:hidden;max-height:90vh;display:flex;flex-direction:column}
+.modal-header{padding:18px 24px;border-bottom:1px solid var(--border-soft);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.modal-title{font-family:'Montserrat';font-size:16px;font-weight:700;display:flex;align-items:center;gap:10px}
+.modal-title i{color:var(--vu-deep-blue)}
+.close-btn{width:32px;height:32px;border:1px solid var(--border-soft);border-radius:var(--radius-md);background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--text-muted);font-size:14px;transition:all 120ms}
+.close-btn:hover{border-color:var(--vu-hibiscus-red);color:var(--vu-hibiscus-red)}
+
+.modal-body{padding:20px 24px;overflow-y:auto;flex:1}
+.modal-footer{padding:14px 24px;border-top:1px solid var(--border-soft);display:flex;align-items:center;justify-content:space-between;background:var(--surface-app);flex-shrink:0}
+
+/* BOOKING CONTEXT */
+.booking-ctx{background:var(--surface-app);border-radius:var(--radius-md);padding:14px;margin-bottom:18px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+.ctx-item{display:flex;flex-direction:column}
+.ctx-label{font-size:10px;text-transform:uppercase;letter-spacing:.4px;color:var(--text-muted);font-weight:600;margin-bottom:2px}
+.ctx-value{font-size:13px;font-weight:600}
+.ctx-value a{color:var(--vu-deep-blue);text-decoration:none}
+
+/* REQUIREMENTS */
+.req-bar{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:18px}
+.req-chip{display:flex;align-items:center;gap:4px;padding:4px 10px;border-radius:12px;font-size:11px;font-weight:600;background:var(--vu-deep-blue-lightest);color:var(--vu-deep-blue)}
+.req-chip.warn{background:rgba(251,140,0,.1);color:var(--vu-hibiscus-orange)}
+.req-chip i{font-size:10px}
+
+/* SECTION LABEL */
+.section-label{font-size:12px;font-weight:700;margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.section-label i{color:var(--vu-deep-blue);font-size:12px}
+.section-label .count{background:var(--vu-deep-blue);color:white;font-size:10px;padding:1px 7px;border-radius:8px;margin-left:4px}
+
+/* AI SUGGESTIONS */
+.suggestions{display:flex;flex-direction:column;gap:10px;margin-bottom:20px}
+.staff-card{border:2px solid var(--border-soft);border-radius:var(--radius-md);padding:16px;cursor:pointer;transition:all 180ms;position:relative}
+.staff-card:hover{border-color:var(--vu-deep-blue-light);box-shadow:var(--shadow-md)}
+.staff-card.selected{border-color:var(--vu-deep-blue);background:rgba(21,101,192,.03)}
+.staff-card.selected::after{content:'\f058';font-family:'Font Awesome 6 Free';font-weight:900;position:absolute;top:12px;right:12px;font-size:20px;color:var(--vu-deep-blue)}
+
+.staff-top{display:flex;align-items:center;gap:12px;margin-bottom:10px}
+.staff-avatar{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;flex-shrink:0}
+.staff-avatar.green{background:#E8F5E9;color:var(--vu-leaf-green)}
+.staff-avatar.yellow{background:#FFF8E1;color:var(--vu-hibiscus-orange)}
+.staff-avatar.blue{background:var(--vu-deep-blue-lightest);color:var(--vu-deep-blue)}
+.staff-name{font-size:14px;font-weight:700}
+.staff-role{font-size:11px;color:var(--text-muted)}
+.staff-score{margin-left:auto;text-align:center}
+.score-value{font-family:'Montserrat';font-size:24px;font-weight:800}
+.score-label{font-size:9px;text-transform:uppercase;letter-spacing:.5px;color:var(--text-muted);font-weight:600}
+.score-high .score-value{color:var(--vu-leaf-green)}
+.score-med .score-value{color:var(--vu-hibiscus-orange)}
+.score-low .score-value{color:var(--vu-hibiscus-red)}
+
+.staff-details{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+.detail-item{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text-secondary)}
+.detail-item i{width:14px;text-align:center;color:var(--vu-deep-blue);font-size:11px}
+.detail-item.warn i{color:var(--vu-hibiscus-orange)}
+.detail-item.good i{color:var(--vu-leaf-green)}
+
+/* SKILLS MATCH */
+.skills-bar{display:flex;flex-wrap:wrap;gap:4px;margin-top:8px}
+.skill-tag{font-size:10px;padding:2px 8px;border-radius:10px;font-weight:600}
+.skill-match{background:rgba(67,160,71,.1);color:var(--vu-leaf-green)}
+.skill-partial{background:rgba(251,140,0,.1);color:var(--vu-hibiscus-orange)}
+.skill-missing{background:rgba(229,57,53,.08);color:var(--vu-hibiscus-red)}
+
+/* TIMELINE PREVIEW */
+.timeline-preview{background:var(--surface-app);border-radius:var(--radius-md);padding:14px;margin-top:12px}
+.timeline-row{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.timeline-row:last-child{margin-bottom:0}
+.tl-name{width:80px;font-size:11px;font-weight:600;text-align:right}
+.tl-bar{flex:1;height:24px;background:var(--surface-card);border-radius:4px;border:1px solid var(--border-soft);position:relative;overflow:hidden}
+.tl-block{position:absolute;height:100%;border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:600;color:white}
+.tl-block.existing{background:var(--vu-deep-blue);opacity:.7}
+.tl-block.proposed{background:var(--vu-leaf-green);border:2px dashed white;animation:proposedPulse 2s infinite}
+@keyframes proposedPulse{0%,100%{opacity:1}50%{opacity:.7}}
+.tl-block.conflict{background:var(--vu-hibiscus-red)}
+.tl-hours{display:flex;justify-content:space-between;margin-top:4px;margin-left:88px;font-size:9px;color:var(--text-muted)}
+.tl-hours span{width:30px;text-align:center}
+
+/* CONFLICT ALERT */
+.conflict-alert{background:rgba(229,57,53,.06);border:1px solid rgba(229,57,53,.2);border-radius:var(--radius-md);padding:10px 14px;display:flex;align-items:center;gap:10px;margin-top:12px;font-size:12px}
+.conflict-alert i{color:var(--vu-hibiscus-red);font-size:14px}
+.no-conflict{background:rgba(67,160,71,.06);border:1px solid rgba(67,160,71,.2)}
+.no-conflict i{color:var(--vu-leaf-green)}
+
+/* OTHER STAFF */
+.other-staff{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:18px}
+.mini-staff{border:1px solid var(--border-soft);border-radius:var(--radius-md);padding:10px;cursor:pointer;transition:all 150ms;display:flex;align-items:center;gap:10px}
+.mini-staff:hover{border-color:var(--vu-deep-blue-light)}
+.mini-avatar{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0}
+.mini-name{font-size:12px;font-weight:600}
+.mini-detail{font-size:10px;color:var(--text-muted)}
+.mini-score{margin-left:auto;font-family:'Montserrat';font-weight:800;font-size:16px}
+
+/* ASSIGNMENT OPTIONS */
+.assign-options{background:var(--surface-app);border-radius:var(--radius-md);padding:14px;margin-top:16px}
+.opt-row{display:flex;align-items:center;gap:12px;margin-bottom:10px}
+.opt-row:last-child{margin-bottom:0}
+.opt-row label{font-size:12px;display:flex;align-items:center;gap:8px;cursor:pointer}
+.opt-row input[type="checkbox"]{accent-color:var(--vu-deep-blue)}
+.opt-row select,.opt-row input[type="text"]{padding:6px 10px;border:1px solid var(--border-soft);border-radius:var(--radius-sm);font-size:12px;font-family:inherit}
+
+/* BUTTONS */
+.btn{display:flex;align-items:center;gap:6px;padding:10px 22px;border:none;border-radius:var(--radius-md);font-size:13px;font-weight:600;cursor:pointer;transition:all 150ms;font-family:inherit}
+.btn-cancel{background:transparent;color:var(--text-secondary);border:1px solid var(--border-soft)}.btn-cancel:hover{border-color:var(--vu-deep-blue);color:var(--vu-deep-blue)}
+.btn-assign{background:var(--vu-deep-blue);color:white;font-size:14px}.btn-assign:hover{background:var(--vu-deep-blue-darker);box-shadow:var(--shadow-md)}
+.btn-secondary{background:transparent;color:var(--vu-deep-blue);border:1px solid var(--vu-deep-blue);font-size:12px;padding:6px 14px}.btn-secondary:hover{background:var(--vu-deep-blue-lightest)}
+
+/* STATUS DOT */
+.status-dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:4px}
+.dot-available{background:var(--vu-leaf-green)}
+.dot-busy{background:var(--vu-hibiscus-orange)}
+.dot-off{background:var(--vu-hibiscus-red)}
+</style>
+</head>
+<body>
+<div class="modal">
+  <div class="modal-header">
+    <div class="modal-title"><i class="fas fa-user-nurse"></i> Assign Staff</div>
+    <button class="close-btn" onclick="window.location='ops_booking_detail.html'"><i class="fas fa-xmark"></i></button>
+  </div>
+
+  <div class="modal-body">
+    <!-- Booking Context -->
+    <div class="booking-ctx">
+      <div class="ctx-item">
+        <div class="ctx-label">Booking</div>
+        <div class="ctx-value"><a href="ops_booking_detail.html">BK-2026-0847</a></div>
+      </div>
+      <div class="ctx-item">
+        <div class="ctx-label">Client</div>
+        <div class="ctx-value"><a href="client_profile.html">Tran Van Duc</a></div>
+      </div>
+      <div class="ctx-item">
+        <div class="ctx-label">Service</div>
+        <div class="ctx-value">Home Visit — General Health</div>
+      </div>
+      <div class="ctx-item">
+        <div class="ctx-label">Date &amp; Time</div>
+        <div class="ctx-value">May 12, 2026 &bull; 09:00 — 11:00</div>
+      </div>
+      <div class="ctx-item">
+        <div class="ctx-label">Location</div>
+        <div class="ctx-value">45 Lieu Giai, Ba Dinh, Hanoi</div>
+      </div>
+      <div class="ctx-item">
+        <div class="ctx-label">Priority</div>
+        <div class="ctx-value" style="color:var(--vu-hibiscus-orange)"><i class="fas fa-bolt" style="font-size:11px"></i> Urgent</div>
+      </div>
+    </div>
+
+    <!-- Requirements -->
+    <div class="req-bar">
+      <div class="req-chip"><i class="fas fa-certificate"></i> RN License Required</div>
+      <div class="req-chip"><i class="fas fa-heart-pulse"></i> Geriatric Experience</div>
+      <div class="req-chip"><i class="fas fa-language"></i> Vietnamese</div>
+      <div class="req-chip warn"><i class="fas fa-clock"></i> Urgent — Same Day</div>
+      <div class="req-chip"><i class="fas fa-map-pin"></i> Ba Dinh District</div>
+    </div>
+
+    <!-- AI Suggested Staff -->
+    <div class="section-label"><i class="fas fa-wand-magic-sparkles"></i> AI-Recommended Staff <span class="count">3</span></div>
+    <div class="suggestions">
+      <!-- Staff 1 - Best match -->
+      <div class="staff-card selected" onclick="selectStaff(this)">
+        <div class="staff-top">
+          <div class="staff-avatar green">NM</div>
+          <div>
+            <div class="staff-name"><span class="status-dot dot-available"></span> Nguyen Thi Mai</div>
+            <div class="staff-role">Senior Nurse &bull; RN &bull; 8 years exp.</div>
+          </div>
+          <div class="staff-score score-high">
+            <div class="score-value">95%</div>
+            <div class="score-label">Match Score</div>
+          </div>
+        </div>
+        <div class="staff-details">
+          <div class="detail-item good"><i class="fas fa-check-circle"></i> Available 09:00-12:00</div>
+          <div class="detail-item good"><i class="fas fa-map-marker-alt"></i> 2.3 km from location</div>
+          <div class="detail-item good"><i class="fas fa-star"></i> 4.9 rating (128 visits)</div>
+          <div class="detail-item good"><i class="fas fa-user-check"></i> Seen this client 3x before</div>
+          <div class="detail-item good"><i class="fas fa-calendar-check"></i> 2 bookings today</div>
+          <div class="detail-item"><i class="fas fa-percentage"></i> 78% utilization this week</div>
+        </div>
+        <div class="skills-bar">
+          <span class="skill-tag skill-match"><i class="fas fa-check" style="font-size:8px"></i> RN License</span>
+          <span class="skill-tag skill-match"><i class="fas fa-check" style="font-size:8px"></i> Geriatric Care</span>
+          <span class="skill-tag skill-match"><i class="fas fa-check" style="font-size:8px"></i> Home Visit</span>
+          <span class="skill-tag skill-match"><i class="fas fa-check" style="font-size:8px"></i> Vital Signs</span>
+          <span class="skill-tag skill-match"><i class="fas fa-check" style="font-size:8px"></i> Wound Care</span>
+        </div>
+      </div>
+
+      <!-- Staff 2 - Good match -->
+      <div class="staff-card" onclick="selectStaff(this)">
+        <div class="staff-top">
+          <div class="staff-avatar blue">LH</div>
+          <div>
+            <div class="staff-name"><span class="status-dot dot-available"></span> Le Thi Hoa</div>
+            <div class="staff-role">Nurse &bull; RN &bull; 5 years exp.</div>
+          </div>
+          <div class="staff-score score-med">
+            <div class="score-value">82%</div>
+            <div class="score-label">Match Score</div>
+          </div>
+        </div>
+        <div class="staff-details">
+          <div class="detail-item good"><i class="fas fa-check-circle"></i> Available 08:00-14:00</div>
+          <div class="detail-item warn"><i class="fas fa-map-marker-alt"></i> 5.8 km from location</div>
+          <div class="detail-item good"><i class="fas fa-star"></i> 4.7 rating (94 visits)</div>
+          <div class="detail-item"><i class="fas fa-user-check"></i> Never seen this client</div>
+          <div class="detail-item good"><i class="fas fa-calendar-check"></i> 1 booking today</div>
+          <div class="detail-item"><i class="fas fa-percentage"></i> 62% utilization this week</div>
+        </div>
+        <div class="skills-bar">
+          <span class="skill-tag skill-match"><i class="fas fa-check" style="font-size:8px"></i> RN License</span>
+          <span class="skill-tag skill-partial"><i class="fas fa-minus" style="font-size:8px"></i> Limited Geriatric</span>
+          <span class="skill-tag skill-match"><i class="fas fa-check" style="font-size:8px"></i> Home Visit</span>
+          <span class="skill-tag skill-match"><i class="fas fa-check" style="font-size:8px"></i> Vital Signs</span>
+        </div>
+      </div>
+
+      <!-- Staff 3 - Partial match -->
+      <div class="staff-card" onclick="selectStaff(this)">
+        <div class="staff-top">
+          <div class="staff-avatar yellow">TL</div>
+          <div>
+            <div class="staff-name"><span class="status-dot dot-busy"></span> Tran Minh Linh</div>
+            <div class="staff-role">Nurse &bull; RN &bull; 3 years exp.</div>
+          </div>
+          <div class="staff-score score-low">
+            <div class="score-value">71%</div>
+            <div class="score-label">Match Score</div>
+          </div>
+        </div>
+        <div class="staff-details">
+          <div class="detail-item warn"><i class="fas fa-clock"></i> Available after 10:30</div>
+          <div class="detail-item good"><i class="fas fa-map-marker-alt"></i> 1.1 km from location</div>
+          <div class="detail-item"><i class="fas fa-star"></i> 4.5 rating (45 visits)</div>
+          <div class="detail-item"><i class="fas fa-user-check"></i> Never seen this client</div>
+          <div class="detail-item warn"><i class="fas fa-calendar-check"></i> 4 bookings today</div>
+          <div class="detail-item warn"><i class="fas fa-percentage"></i> 92% utilization this week</div>
+        </div>
+        <div class="skills-bar">
+          <span class="skill-tag skill-match"><i class="fas fa-check" style="font-size:8px"></i> RN License</span>
+          <span class="skill-tag skill-missing"><i class="fas fa-times" style="font-size:8px"></i> No Geriatric</span>
+          <span class="skill-tag skill-match"><i class="fas fa-check" style="font-size:8px"></i> Home Visit</span>
+          <span class="skill-tag skill-match"><i class="fas fa-check" style="font-size:8px"></i> Vital Signs</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Other Available Staff -->
+    <div class="section-label"><i class="fas fa-users"></i> Other Available Staff <span class="count">4</span></div>
+    <div class="other-staff">
+      <div class="mini-staff" onclick="selectOther(this)">
+        <div class="mini-avatar" style="background:#E8F5E9;color:var(--vu-leaf-green)">PH</div>
+        <div><div class="mini-name"><span class="status-dot dot-available"></span> Pham Van Hung</div><div class="mini-detail">Nurse Aide &bull; 2 yrs</div></div>
+        <div class="mini-score" style="color:var(--vu-hibiscus-red)">58%</div>
+      </div>
+      <div class="mini-staff" onclick="selectOther(this)">
+        <div class="mini-avatar" style="background:#FFF8E1;color:var(--vu-hibiscus-orange)">NT</div>
+        <div><div class="mini-name"><span class="status-dot dot-busy"></span> Nguyen Van Thanh</div><div class="mini-detail">Senior Nurse &bull; 10 yrs</div></div>
+        <div class="mini-score" style="color:var(--vu-hibiscus-orange)">65%</div>
+      </div>
+      <div class="mini-staff" onclick="selectOther(this)">
+        <div class="mini-avatar" style="background:var(--vu-deep-blue-lightest);color:var(--vu-deep-blue)">DL</div>
+        <div><div class="mini-name"><span class="status-dot dot-available"></span> Do Thi Lan</div><div class="mini-detail">Nurse &bull; 4 yrs</div></div>
+        <div class="mini-score" style="color:var(--vu-hibiscus-orange)">63%</div>
+      </div>
+      <div class="mini-staff" onclick="selectOther(this)">
+        <div class="mini-avatar" style="background:rgba(229,57,53,.1);color:var(--vu-hibiscus-red)">VN</div>
+        <div><div class="mini-name"><span class="status-dot dot-off"></span> Vu Thi Ngoc</div><div class="mini-detail">Nurse &bull; 6 yrs &bull; OFF</div></div>
+        <div class="mini-score" style="color:var(--text-muted)">—</div>
+      </div>
+    </div>
+
+    <!-- Schedule Preview -->
+    <div class="section-label"><i class="fas fa-calendar-day"></i> Today's Schedule — Nguyen Thi Mai</div>
+    <div class="timeline-preview">
+      <div class="timeline-row">
+        <div class="tl-name">Mai</div>
+        <div class="tl-bar">
+          <div class="tl-block proposed" style="left:18.18%;width:18.18%" title="BK-0847 (Proposed) 09:00-11:00">09-11 NEW</div>
+          <div class="tl-block existing" style="left:63.63%;width:13.63%" title="BK-0821 14:00-15:30">14-15:30</div>
+        </div>
+      </div>
+      <div class="timeline-row">
+        <div class="tl-name">Hoa</div>
+        <div class="tl-bar">
+          <div class="tl-block existing" style="left:9.09%;width:18.18%" title="BK-0839 08:00-10:00">08-10</div>
+          <div class="tl-block existing" style="left:45.45%;width:13.63%" title="BK-0840 12:00-13:30">12-13:30</div>
+        </div>
+      </div>
+      <div class="timeline-row">
+        <div class="tl-name">Linh</div>
+        <div class="tl-bar">
+          <div class="tl-block existing" style="left:9.09%;width:22.72%" title="BK-0835 08:00-10:30">08-10:30</div>
+          <div class="tl-block existing" style="left:36.36%;width:13.63%" title="BK-0836 11:00-12:30">11-12:30</div>
+          <div class="tl-block existing" style="left:54.54%;width:13.63%" title="BK-0837 13:00-14:30">13-14:30</div>
+          <div class="tl-block existing" style="left:72.72%;width:13.63%" title="BK-0838 15:00-16:30">15-16:30</div>
+        </div>
+      </div>
+      <div class="tl-hours">
+        <span>07</span><span>08</span><span>09</span><span>10</span><span>11</span><span>12</span><span>13</span><span>14</span><span>15</span><span>16</span><span>17</span><span>18</span>
+      </div>
+    </div>
+
+    <div class="no-conflict conflict-alert" style="margin-top:12px">
+      <i class="fas fa-check-circle"></i>
+      <div><strong>No conflicts detected.</strong> Nguyen Thi Mai is available from 09:00 to 11:00 with no overlapping bookings.</div>
+    </div>
+
+    <!-- Assignment Options -->
+    <div class="assign-options" style="margin-top:16px">
+      <div style="font-size:12px;font-weight:700;margin-bottom:10px">Assignment Options</div>
+      <div class="opt-row">
+        <label><input type="checkbox" checked> Send SMS notification to staff</label>
+      </div>
+      <div class="opt-row">
+        <label><input type="checkbox" checked> Send confirmation to client</label>
+      </div>
+      <div class="opt-row">
+        <label><input type="checkbox"> Auto-assign for recurring visits</label>
+      </div>
+      <div class="opt-row">
+        <label>Travel time estimate:</label>
+        <input type="text" value="25 min" style="width:80px">
+      </div>
+      <div class="opt-row">
+        <label>Assignment note:</label>
+        <input type="text" placeholder="Optional note for staff..." style="flex:1;min-width:200px">
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-footer">
+    <button class="btn btn-cancel" onclick="window.location='ops_booking_detail.html'"><i class="fas fa-arrow-left"></i> Cancel</button>
+    <div style="display:flex;align-items:center;gap:8px">
+      <span style="font-size:12px;color:var(--text-muted)">Selected: <strong style="color:var(--text-primary)">Nguyen Thi Mai</strong> (95% match)</span>
+      <button class="btn btn-assign" onclick="alert('Staff assigned successfully!');window.location='ops_booking_detail.html'"><i class="fas fa-user-check"></i> Confirm Assignment</button>
+    </div>
+  </div>
+</div>
+
+<script>
+function selectStaff(el) {
+  document.querySelectorAll('.staff-card').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+  const name = el.querySelector('.staff-name').textContent.trim();
+  const score = el.querySelector('.score-value').textContent;
+  document.querySelector('.modal-footer span strong').textContent = name;
+  document.querySelector('.modal-footer span').innerHTML = 'Selected: <strong style="color:var(--text-primary)">' + name + '</strong> (' + score + ' match)';
+}
+function selectOther(el) {
+  document.querySelectorAll('.staff-card').forEach(c => c.classList.remove('selected'));
+  const name = el.querySelector('.mini-name').textContent.trim();
+  const score = el.querySelector('.mini-score').textContent;
+  document.querySelector('.modal-footer span').innerHTML = 'Selected: <strong style="color:var(--text-primary)">' + name + '</strong> (' + score + ' match)';
+}
+</script>
+</body>
+</html>

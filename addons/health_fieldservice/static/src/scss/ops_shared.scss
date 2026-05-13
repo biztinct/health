@@ -1,0 +1,935 @@
+// ============================================================================
+// Operations Center — Shared Component Styles
+// Extracted from HTML prototypes, references primary_variables.scss tokens
+// ============================================================================
+
+// ===== KPI CARDS =====
+.ops-kpi-row {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 16px;
+    margin-bottom: 20px;
+}
+.ops-kpi-card {
+    background: var(--vu-surface-card);
+    border-radius: var(--vu-radius-lg);
+    padding: 16px 18px;
+    box-shadow: var(--vu-shadow-sm);
+    border: 1px solid var(--vu-border-soft);
+    display: flex;
+    flex-direction: column;
+    transition: all 200ms;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+
+    &:hover {
+        box-shadow: var(--vu-shadow-md);
+        transform: translateY(-1px);
+    }
+
+    &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+    }
+
+    &.kpi-total::before { background: $vu-deep-blue; }
+    &.kpi-needs-staff::before { background: $vu-hibiscus-red; }
+    &.kpi-active::before { background: $vu-state-active; }
+    &.kpi-done::before { background: $vu-state-completed; }
+    &.kpi-revenue::before { background: $vu-leaf-green; }
+}
+
+.ops-kpi-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+}
+
+.ops-kpi-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: var(--vu-radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+
+    .kpi-total & { background: $vu-deep-blue-lightest; color: $vu-deep-blue; }
+    .kpi-needs-staff & { background: $vu-hibiscus-red-lightest; color: $vu-hibiscus-red; }
+    .kpi-active & { background: $vu-hibiscus-orange-lightest; color: $vu-state-active; }
+    .kpi-done & { background: $vu-leaf-green-lightest; color: $vu-state-completed; }
+    .kpi-revenue & { background: $vu-leaf-green-lightest; color: $vu-leaf-green; }
+}
+
+.ops-kpi-trend {
+    font-size: 12px;
+    font-weight: 600;
+    padding: 2px 6px;
+    border-radius: 10px;
+    &.up { background: $vu-leaf-green-lightest; color: $vu-success; }
+    &.down { background: $vu-hibiscus-red-lightest; color: $vu-danger; }
+}
+
+.ops-kpi-value {
+    font-size: 28px;
+    font-weight: 800;
+    font-family: $font-family-headings;
+    line-height: 1.1;
+    margin-bottom: 2px;
+}
+
+.ops-kpi-label {
+    font-size: 13px;
+    color: $vu-text-secondary;
+    font-weight: 500;
+}
+
+.ops-kpi-sublabel {
+    font-size: 12px;
+    color: $vu-text-secondary;
+    margin-top: 4px;
+}
+
+// ===== STATUS CHIPS =====
+.ops-status-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+
+    &.chip-draft { background: var(--vu-state-draft-bg); color: $vu-state-draft; }
+    &.chip-confirmed { background: var(--vu-state-confirmed-bg); color: $vu-state-confirmed; }
+    &.chip-assigned { background: var(--vu-state-assigned-bg); color: $vu-state-assigned; }
+    &.chip-active { background: var(--vu-state-active-bg); color: $vu-state-active; }
+    &.chip-completed { background: var(--vu-state-completed-bg); color: $vu-state-completed; }
+    &.chip-cancelled { background: var(--vu-state-cancelled-bg); color: $vu-state-cancelled; }
+    &.chip-in_progress { background: var(--vu-state-active-bg); color: $vu-state-active; }
+    &.chip-completed_pending_invoice { background: var(--vu-state-completed-bg); color: $vu-state-completed; }
+}
+
+.ops-priority-urgent {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    padding: 2px 6px;
+    border-radius: 10px;
+    font-size: 11px;
+    font-weight: 700;
+    background: $vu-hibiscus-red-lightest;
+    color: $vu-hibiscus-red;
+    margin-left: 6px;
+}
+
+// ===== PANEL =====
+.ops-panel {
+    background: var(--vu-surface-card);
+    border-radius: var(--vu-radius-lg);
+    box-shadow: var(--vu-shadow-sm);
+    border: 1px solid var(--vu-border-soft);
+    overflow: hidden;
+}
+
+.ops-panel-header {
+    padding: 14px 18px;
+    border-bottom: 1px solid var(--vu-border-soft);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.ops-panel-title {
+    font-size: 15px;
+    font-weight: 700;
+    font-family: $font-family-headings;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    i { color: $vu-deep-blue; }
+}
+
+.ops-panel-tabs {
+    display: flex;
+    gap: 2px;
+    background: var(--vu-surface-muted);
+    border-radius: var(--vu-radius-md);
+    padding: 2px;
+}
+
+.ops-panel-tab {
+    padding: 5px 12px;
+    font-size: 12px;
+    font-weight: 600;
+    border: none;
+    background: transparent;
+    border-radius: 6px;
+    cursor: pointer;
+    color: $vu-text-secondary;
+    transition: all 150ms;
+    font-family: inherit;
+    white-space: nowrap;
+
+    &.active {
+        background: var(--vu-surface-card);
+        color: $vu-deep-blue;
+        box-shadow: var(--vu-shadow-sm);
+    }
+    &:hover:not(.active) { color: $vu-text-primary; }
+}
+
+.ops-tab-badge {
+    display: inline-block;
+    background: $vu-hibiscus-red;
+    color: white;
+    font-size: 11px;
+    padding: 1px 5px;
+    border-radius: 8px;
+    margin-left: 4px;
+    font-weight: 700;
+}
+
+.ops-panel-body {
+    padding: 12px;
+    max-height: 480px;
+    overflow-y: auto;
+
+    &::-webkit-scrollbar { width: 4px; }
+    &::-webkit-scrollbar-thumb { background: var(--vu-border-soft); border-radius: 4px; }
+}
+
+.ops-panel-footer {
+    padding: 10px 18px;
+    border-top: 1px solid var(--vu-border-soft);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--vu-surface-muted);
+}
+
+// ===== BOOKING CARD =====
+.ops-booking-card {
+    background: var(--vu-surface-card);
+    border: 1px solid var(--vu-border-soft);
+    border-radius: var(--vu-radius-md);
+    padding: 12px 14px;
+    margin-bottom: 8px;
+    transition: all 200ms;
+    cursor: pointer;
+    position: relative;
+
+    &:hover { border-color: $vu-deep-blue-light; box-shadow: var(--vu-shadow-md); }
+    &:last-child { margin-bottom: 0; }
+    &.urgent { border-left: 3px solid $vu-hibiscus-red; }
+    &.needs-staff { border-left: 3px solid $vu-state-active; }
+    &.assigned { border-left: 3px solid $vu-state-assigned; }
+    &.in-progress { border-left: 3px solid $vu-state-active; background: #FFFAF5; }
+}
+
+.ops-booking-card-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 8px;
+}
+
+.ops-booking-time {
+    font-size: 15px;
+    font-weight: 700;
+    font-family: $font-family-headings;
+}
+
+.ops-booking-id {
+    font-size: 12px;
+    color: $vu-text-secondary;
+    font-weight: 500;
+    margin-left: 8px;
+}
+
+.ops-booking-client {
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+
+    i { font-size: 13px; color: $vu-deep-blue; }
+}
+
+.ops-booking-details {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 8px;
+}
+
+.ops-booking-detail {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 12px;
+    color: $vu-text-secondary;
+
+    i { font-size: 12px; width: 14px; text-align: center; }
+    .detail-value { color: $vu-text-secondary; font-weight: 500; }
+}
+
+// ===== STAFF DROPDOWN =====
+.ops-staff-dropdown-wrapper {
+    position: relative;
+    flex: 1;
+}
+
+.ops-staff-dropdown-trigger {
+    width: 100%;
+    padding: 6px 10px;
+    border: 1px solid var(--vu-border-soft);
+    border-radius: var(--vu-radius-sm);
+    font-size: 13px;
+    font-family: inherit;
+    color: $vu-text-secondary;
+    background: white;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: all 120ms;
+
+    &:hover { border-color: $vu-deep-blue; }
+    &.open {
+        border-color: $vu-deep-blue;
+        box-shadow: 0 0 0 2px rgba($vu-deep-blue, 0.15);
+    }
+}
+
+.ops-staff-dropdown-menu {
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    right: 0;
+    background: var(--vu-surface-card);
+    border: 1px solid var(--vu-border-soft);
+    border-radius: var(--vu-radius-md);
+    box-shadow: var(--vu-shadow-lg);
+    z-index: 20;
+    display: none;
+    overflow: hidden;
+
+    &.show { display: block; }
+}
+
+.ops-staff-option {
+    padding: 8px 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    transition: background 100ms;
+    font-size: 13px;
+
+    &:hover { background: $vu-deep-blue-lightest; }
+}
+
+.ops-staff-option-avatar {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 700;
+    color: white;
+    flex-shrink: 0;
+    position: relative;
+}
+
+.ops-staff-option-dot {
+    position: absolute;
+    bottom: -1px;
+    right: -1px;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    border: 2px solid var(--vu-surface-card);
+
+    &.dot-available { background: $vu-state-completed; }
+    &.dot-busy { background: $vu-state-active; }
+    &.dot-off { background: $vu-state-cancelled; }
+}
+
+.ops-staff-option-name { font-weight: 600; color: $vu-text-primary; }
+.ops-staff-option-meta { font-size: 12px; color: $vu-text-secondary; }
+
+// ===== ASSIGN INLINE =====
+.ops-assign-inline {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px solid var(--vu-border-soft);
+}
+
+.ops-assign-label {
+    font-size: 12px;
+    color: $vu-text-secondary;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.ops-assign-btn {
+    padding: 5px 10px;
+    border: none;
+    border-radius: var(--vu-radius-sm);
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 120ms;
+    font-family: inherit;
+
+    &.confirm {
+        background: $vu-deep-blue;
+        color: white;
+        &:hover { background: $vu-deep-blue-darker; }
+    }
+}
+
+// ===== STAFF ROSTER CARD =====
+.ops-staff-card {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    border-radius: var(--vu-radius-md);
+    margin-bottom: 6px;
+    transition: all 150ms;
+    cursor: pointer;
+    border: 1px solid transparent;
+
+    &:hover {
+        background: var(--vu-surface-muted);
+        border-color: var(--vu-border-soft);
+    }
+}
+
+.ops-staff-avatar {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 15px;
+    color: white;
+    position: relative;
+    flex-shrink: 0;
+}
+
+.ops-status-dot {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    border: 2px solid var(--vu-surface-card);
+
+    &.available { background: $vu-state-completed; }
+    &.busy { background: $vu-state-active; }
+    &.off { background: $vu-state-cancelled; }
+}
+
+.ops-staff-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.ops-staff-name {
+    font-size: 14px;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.ops-staff-status-text {
+    font-size: 12px;
+    font-weight: 500;
+    &.available { color: $vu-state-completed; }
+    &.busy { color: $vu-state-active; }
+    &.off { color: $vu-state-cancelled; }
+}
+
+.ops-staff-meta {
+    font-size: 12px;
+    color: $vu-text-secondary;
+}
+
+.ops-bookings-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    font-size: 12px;
+    font-weight: 700;
+    background: $vu-deep-blue-lightest;
+    color: $vu-deep-blue;
+}
+
+// ===== ACTIONS MENU =====
+.ops-more-btn {
+    width: 28px;
+    height: 28px;
+    border: 1px solid var(--vu-border-soft);
+    border-radius: var(--vu-radius-sm);
+    background: transparent;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: $vu-text-secondary;
+    transition: all 120ms;
+    font-size: 15px;
+
+    &:hover {
+        border-color: $vu-deep-blue;
+        color: $vu-deep-blue;
+        background: $vu-deep-blue-lightest;
+    }
+}
+
+.ops-actions-menu {
+    position: absolute;
+    top: calc(100% + 4px);
+    right: 0;
+    width: 180px;
+    background: var(--vu-surface-card);
+    border: 1px solid var(--vu-border-soft);
+    border-radius: var(--vu-radius-md);
+    box-shadow: var(--vu-shadow-lg);
+    z-index: 30;
+    display: none;
+    overflow: hidden;
+
+    &.show { display: block; }
+}
+
+.ops-actions-menu-item {
+    padding: 8px 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: $vu-text-secondary;
+    cursor: pointer;
+    transition: background 100ms;
+
+    &:hover { background: $vu-deep-blue-lightest; color: $vu-deep-blue; }
+    i { width: 16px; text-align: center; font-size: 13px; }
+    &.danger { color: $vu-state-cancelled; }
+    &.danger:hover { background: $vu-hibiscus-red-lightest; color: $vu-state-cancelled; }
+}
+
+.ops-actions-divider {
+    height: 1px;
+    background: var(--vu-border-soft);
+    margin: 2px 0;
+}
+
+// ===== HEADER =====
+.ops-top-header {
+    background: var(--vu-surface-card);
+    border-bottom: 1px solid var(--vu-border-soft);
+    padding: 12px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    box-shadow: var(--vu-shadow-sm);
+}
+
+.ops-header-left {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.ops-page-title {
+    font-size: 18px;
+    font-weight: 700;
+    font-family: $font-family-headings;
+}
+
+.ops-date-nav {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--vu-surface-muted);
+    border: 1px solid var(--vu-border-soft);
+    border-radius: var(--vu-radius-md);
+    padding: 4px;
+}
+
+.ops-date-nav-btn {
+    width: 28px;
+    height: 28px;
+    border: none;
+    background: transparent;
+    border-radius: var(--vu-radius-sm);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: $vu-text-secondary;
+    transition: all 120ms;
+
+    &:hover { background: $vu-deep-blue-lightest; color: $vu-deep-blue; }
+}
+
+.ops-date-label {
+    font-weight: 600;
+    font-size: 14px;
+    min-width: 160px;
+    text-align: center;
+}
+
+.ops-date-today {
+    font-size: 12px;
+    color: $vu-deep-blue;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: var(--vu-radius-sm);
+    transition: background 120ms;
+    border: none;
+    background: transparent;
+
+    &:hover { background: $vu-deep-blue-lightest; }
+}
+
+.ops-header-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.ops-filter-select {
+    padding: 6px 12px;
+    border: 1px solid var(--vu-border-soft);
+    border-radius: var(--vu-radius-md);
+    font-size: 13px;
+    color: $vu-text-secondary;
+    background: var(--vu-surface-card);
+    cursor: pointer;
+    font-family: inherit;
+
+    &:focus {
+        outline: none;
+        border-color: $vu-deep-blue;
+        box-shadow: 0 0 0 3px rgba($vu-deep-blue, 0.15);
+    }
+}
+
+.ops-header-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 14px;
+    border: none;
+    border-radius: var(--vu-radius-md);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 150ms;
+    font-family: inherit;
+    text-decoration: none;
+
+    &.btn-primary {
+        background: $vu-deep-blue;
+        color: white;
+        &:hover { background: $vu-deep-blue-darker; box-shadow: var(--vu-shadow-md); }
+    }
+    &.btn-outline {
+        background: transparent;
+        border: 1px solid var(--vu-border-soft);
+        color: $vu-text-secondary;
+        &:hover { border-color: $vu-deep-blue; color: $vu-deep-blue; }
+    }
+}
+
+// ===== FOOTER LINKS =====
+.ops-footer-link {
+    font-size: 13px;
+    font-weight: 600;
+    color: $vu-deep-blue;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    cursor: pointer;
+    transition: color 120ms;
+    border: none;
+    background: transparent;
+
+    &:hover { color: $vu-deep-blue-darker; }
+}
+
+.ops-footer-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border: 1px dashed var(--vu-border-soft);
+    border-radius: var(--vu-radius-md);
+    background: transparent;
+    font-size: 13px;
+    color: $vu-text-secondary;
+    cursor: pointer;
+    transition: all 150ms;
+    font-family: inherit;
+
+    &:hover { border-color: $vu-deep-blue; color: $vu-deep-blue; background: $vu-deep-blue-lightest; }
+}
+
+// ===== LIVE DOT =====
+.ops-live-dot {
+    width: 6px;
+    height: 6px;
+    background: $vu-state-completed;
+    border-radius: 50%;
+    display: inline-block;
+    margin-right: 4px;
+    animation: ops-blink 1.5s infinite;
+}
+@keyframes ops-blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+// ===== LOADING =====
+.ops-loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 20px;
+    color: $vu-text-secondary;
+    font-size: 15px;
+    gap: 12px;
+
+    .spinner-border {
+        width: 24px;
+        height: 24px;
+        border-width: 2px;
+    }
+}
+
+// ===== EMPTY STATE =====
+.ops-empty-state {
+    text-align: center;
+    padding: 40px 20px;
+    color: $vu-text-secondary;
+
+    i { font-size: 32px; color: var(--vu-border-soft); margin-bottom: 12px; }
+    h4 { font-size: 15px; font-weight: 600; margin-bottom: 4px; }
+    p { font-size: 13px; }
+}
+
+// ===== ASSIGNED STAFF DISPLAY =====
+.ops-assigned-staff {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px solid var(--vu-border-soft);
+}
+
+.ops-staff-avatar-sm {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 700;
+    color: white;
+}
+
+.ops-assigned-staff-name { font-size: 13px; font-weight: 600; }
+.ops-assigned-staff-role { font-size: 11px; color: $vu-text-secondary; }
+
+.ops-booking-actions-row {
+    display: flex;
+    gap: 4px;
+    margin-left: auto;
+}
+
+.ops-action-btn-sm {
+    padding: 3px 8px;
+    border: 1px solid var(--vu-border-soft);
+    border-radius: var(--vu-radius-sm);
+    background: transparent;
+    font-size: 11px;
+    cursor: pointer;
+    color: $vu-text-secondary;
+    transition: all 120ms;
+    font-family: inherit;
+
+    &:hover {
+        border-color: $vu-deep-blue;
+        color: $vu-deep-blue;
+        background: $vu-deep-blue-lightest;
+    }
+}
+
+// ===== SIDEBAR =====
+.ops-sidebar {
+    width: 220px;
+    background: #0D356B;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+}
+
+.ops-sidebar-logo {
+    padding: 20px 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-bottom: 1px solid rgba(white, 0.1);
+}
+
+.ops-logo-icon {
+    width: 36px;
+    height: 36px;
+    background: $vu-hibiscus-red;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+}
+
+.ops-logo-text {
+    font-family: $font-family-headings;
+    font-weight: 700;
+    font-size: 15px;
+    letter-spacing: 0.5px;
+}
+
+.ops-logo-sub {
+    font-size: 11px;
+    opacity: 0.6;
+}
+
+.ops-sidebar-nav {
+    padding: 12px 0;
+    flex: 1;
+    overflow-y: auto;
+}
+
+.ops-nav-section-label {
+    padding: 16px 16px 6px;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    opacity: 0.4;
+    font-weight: 600;
+}
+
+.ops-nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 16px;
+    color: rgba(white, 0.7);
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 150ms;
+    cursor: pointer;
+    border-left: 3px solid transparent;
+
+    &:hover {
+        background: rgba(white, 0.08);
+        color: white;
+    }
+
+    &.active {
+        background: rgba(white, 0.12);
+        color: white;
+        border-left-color: $vu-accent-blue;
+    }
+
+    i {
+        width: 20px;
+        text-align: center;
+        font-size: 15px;
+    }
+}
+
+.ops-badge-count {
+    margin-left: auto;
+    background: $vu-hibiscus-red;
+    color: white;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 6px;
+    border-radius: 10px;
+    min-width: 18px;
+    text-align: center;
+}
+
+.ops-sidebar-user {
+    padding: 12px 16px;
+    border-top: 1px solid rgba(white, 0.1);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.ops-user-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: $vu-accent-blue;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.ops-user-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.ops-user-name {
+    font-size: 13px;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.ops-user-role {
+    font-size: 11px;
+    opacity: 0.5;
+}

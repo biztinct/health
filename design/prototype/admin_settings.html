@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>System Settings — VAFHS Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+:root{--vu-deep-blue:#1565C0;--vu-deep-blue-darker:#1356A9;--vu-deep-blue-darkest:#0D356B;--vu-deep-blue-light:#83C5FA;--vu-deep-blue-lightest:#E4F4FD;--vu-accent-blue:#42A5F5;--vu-hibiscus-red:#E53935;--vu-hibiscus-orange:#FB8C00;--vu-leaf-green:#43A047;--text-primary:#212121;--text-secondary:#424242;--text-muted:#757575;--surface-app:#F5F5F5;--surface-card:#FFFFFF;--border-soft:#E0E0E0;--shadow-sm:0 1px 3px rgba(33,33,33,.08);--shadow-md:0 2px 8px rgba(33,33,33,.12);--shadow-lg:0 4px 16px rgba(33,33,33,.15);--radius-sm:4px;--radius-md:8px;--radius-lg:12px}
+*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Segoe UI',Arial,sans-serif;font-size:13px;color:var(--text-primary);background:var(--surface-app);line-height:1.5;-webkit-font-smoothing:antialiased}
+h1,h2,h3,h4{font-family:'Montserrat','Segoe UI',Arial,sans-serif;font-weight:600}
+.page-layout{display:grid;grid-template-columns:220px 1fr;min-height:100vh}
+.sidebar{background:var(--vu-deep-blue-darkest);color:white;padding:20px 0}
+.sidebar-brand{padding:0 20px 20px;font-family:'Montserrat';font-weight:800;font-size:16px;border-bottom:1px solid rgba(255,255,255,.1);margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.sidebar-brand i{color:var(--vu-deep-blue-light)}
+.nav-section{padding:0 12px;margin-bottom:16px}
+.nav-label{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:rgba(255,255,255,.4);padding:8px 8px 4px;font-weight:600}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:var(--radius-md);color:rgba(255,255,255,.7);font-size:13px;text-decoration:none;transition:all 150ms;cursor:pointer}
+.nav-item:hover{background:rgba(255,255,255,.08);color:white}
+.nav-item.active{background:rgba(255,255,255,.12);color:white;font-weight:600}
+.nav-item i{width:18px;text-align:center;font-size:13px}
+.main{overflow-y:auto}
+.topbar{background:var(--surface-card);border-bottom:1px solid var(--border-soft);padding:0 24px;height:52px;display:flex;align-items:center;justify-content:space-between}
+.page-title{font-family:'Montserrat';font-size:16px;font-weight:700;display:flex;align-items:center;gap:10px}
+.page-title i{color:var(--vu-deep-blue)}
+.top-btn{display:flex;align-items:center;gap:6px;padding:7px 14px;border:1px solid var(--border-soft);border-radius:var(--radius-md);background:var(--surface-card);font-size:12px;font-weight:600;cursor:pointer;transition:all 150ms;color:var(--text-secondary);font-family:inherit}
+.top-btn:hover{border-color:var(--vu-deep-blue);color:var(--vu-deep-blue)}
+.top-btn.primary{background:var(--vu-deep-blue);color:white;border-color:var(--vu-deep-blue)}
+.content{padding:24px;max-width:900px}
+
+/* SETTINGS SECTIONS */
+.settings-section{margin-bottom:24px}
+.section-title{font-family:'Montserrat';font-size:15px;font-weight:700;margin-bottom:14px;display:flex;align-items:center;gap:8px;padding-bottom:8px;border-bottom:1px solid var(--border-soft)}
+.section-title i{color:var(--vu-deep-blue);font-size:16px}
+
+.setting-card{background:var(--surface-card);border:1px solid var(--border-soft);border-radius:var(--radius-lg);overflow:hidden;margin-bottom:12px}
+.setting-row{display:flex;align-items:center;padding:16px 20px;border-bottom:1px solid var(--border-soft);gap:16px}
+.setting-row:last-child{border-bottom:none}
+.setting-icon{width:40px;height:40px;border-radius:var(--radius-md);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.si-blue{background:var(--vu-deep-blue-lightest);color:var(--vu-deep-blue)}
+.si-green{background:#E8F5E9;color:var(--vu-leaf-green)}
+.si-orange{background:#FFF3E0;color:var(--vu-hibiscus-orange)}
+.si-red{background:#FBE3E1;color:var(--vu-hibiscus-red)}
+.si-purple{background:#F3E8FF;color:#7c3aed}
+.setting-info{flex:1}
+.setting-name{font-size:13px;font-weight:700}
+.setting-desc{font-size:11px;color:var(--text-muted);margin-top:2px}
+.setting-control{flex-shrink:0}
+
+/* TOGGLE */
+.toggle{position:relative;width:44px;height:24px;cursor:pointer}
+.toggle input{display:none}
+.toggle-track{position:absolute;inset:0;background:var(--border-soft);border-radius:12px;transition:background 200ms}
+.toggle input:checked+.toggle-track{background:var(--vu-leaf-green)}
+.toggle-thumb{position:absolute;top:2px;left:2px;width:20px;height:20px;background:white;border-radius:50%;box-shadow:0 1px 3px rgba(0,0,0,.2);transition:transform 200ms}
+.toggle input:checked~.toggle-thumb{transform:translateX(20px)}
+
+/* SELECT/INPUT */
+.setting-select{padding:7px 12px;border:1px solid var(--border-soft);border-radius:var(--radius-md);font-size:12px;font-family:inherit;min-width:160px}
+.setting-select:focus{outline:none;border-color:var(--vu-deep-blue)}
+.setting-input{padding:7px 12px;border:1px solid var(--border-soft);border-radius:var(--radius-md);font-size:12px;font-family:inherit;width:160px}
+.setting-input:focus{outline:none;border-color:var(--vu-deep-blue)}
+
+/* INTEGRATION STATUS */
+.integ-status{display:flex;align-items:center;gap:6px;font-size:11px;font-weight:600;padding:4px 10px;border-radius:8px}
+.is-connected{background:#E8F5E9;color:var(--vu-leaf-green)}
+.is-disconnected{background:#FBE3E1;color:var(--vu-hibiscus-red)}
+.is-pending{background:#FFF3E0;color:var(--vu-hibiscus-orange)}
+
+/* BUTTONS */
+.setting-btn{padding:6px 14px;border:1px solid var(--border-soft);border-radius:var(--radius-md);background:transparent;cursor:pointer;font-size:11px;font-weight:600;color:var(--text-muted);transition:all 150ms;font-family:inherit}
+.setting-btn:hover{border-color:var(--vu-deep-blue);color:var(--vu-deep-blue)}
+.setting-btn.connected{border-color:var(--vu-leaf-green);color:var(--vu-leaf-green)}
+
+/* SAVE BAR */
+.save-bar{position:fixed;bottom:0;left:220px;right:0;background:var(--surface-card);border-top:1px solid var(--border-soft);padding:12px 24px;display:flex;align-items:center;justify-content:flex-end;gap:10px;box-shadow:0 -2px 8px rgba(0,0,0,.08);z-index:100}
+.save-bar .unsaved{font-size:12px;color:var(--vu-hibiscus-orange);display:flex;align-items:center;gap:6px;margin-right:auto}
+</style>
+</head>
+<body>
+<div class="page-layout">
+  <aside class="sidebar">
+    <div class="sidebar-brand"><i class="fas fa-shield-halved"></i> VAFHS Admin</div>
+    <nav class="nav-section">
+      <div class="nav-label">Overview</div>
+      <a href="admin_dashboard.html" class="nav-item"><i class="fas fa-th-large"></i> Dashboard</a>
+      <div class="nav-label">Management</div>
+      <a href="admin_users.html" class="nav-item"><i class="fas fa-users-cog"></i> Users &amp; Roles</a>
+      <a href="admin_service_catalog.html" class="nav-item"><i class="fas fa-stethoscope"></i> Service Catalog</a>
+      <a href="admin_facility.html" class="nav-item"><i class="fas fa-hospital"></i> Facilities</a>
+      <a href="admin_staff_detail.html" class="nav-item"><i class="fas fa-user-nurse"></i> Staff HR</a>
+      <a class="nav-item active"><i class="fas fa-cog"></i> Settings</a>
+      <div class="nav-label">Monitoring</div>
+      <a href="admin_audit_log.html" class="nav-item"><i class="fas fa-clock-rotate-left"></i> Audit Log</a>
+      <a href="admin_reports.html" class="nav-item"><i class="fas fa-chart-bar"></i> Reports</a>
+    </nav>
+  </aside>
+
+  <div class="main">
+    <div class="topbar">
+      <div class="page-title"><i class="fas fa-cog"></i> System Settings</div>
+      <button class="top-btn primary"><i class="fas fa-save"></i> Save Changes</button>
+    </div>
+
+    <div class="content" style="padding-bottom:80px">
+      <!-- GENERAL -->
+      <div class="settings-section">
+        <div class="section-title"><i class="fas fa-building"></i> General</div>
+        <div class="setting-card">
+          <div class="setting-row">
+            <div class="setting-icon si-blue"><i class="fas fa-globe"></i></div>
+            <div class="setting-info"><div class="setting-name">Company Name</div><div class="setting-desc">Legal entity name displayed on invoices and official documents</div></div>
+            <div class="setting-control"><input class="setting-input" value="Vietnam-Australia Family Health Service" style="width:280px"></div>
+          </div>
+          <div class="setting-row">
+            <div class="setting-icon si-blue"><i class="fas fa-coins"></i></div>
+            <div class="setting-info"><div class="setting-name">Default Currency</div><div class="setting-desc">Primary currency for all pricing and invoicing</div></div>
+            <div class="setting-control"><select class="setting-select"><option selected>VND (&#8363;)</option><option>USD ($)</option><option>AUD (A$)</option></select></div>
+          </div>
+          <div class="setting-row">
+            <div class="setting-icon si-blue"><i class="fas fa-language"></i></div>
+            <div class="setting-info"><div class="setting-name">Default Language</div><div class="setting-desc">System default language for new users</div></div>
+            <div class="setting-control"><select class="setting-select"><option selected>Vietnamese</option><option>English</option></select></div>
+          </div>
+          <div class="setting-row">
+            <div class="setting-icon si-blue"><i class="fas fa-clock"></i></div>
+            <div class="setting-info"><div class="setting-name">Timezone</div><div class="setting-desc">Default timezone for scheduling and timestamps</div></div>
+            <div class="setting-control"><select class="setting-select"><option selected>Asia/Ho_Chi_Minh (UTC+7)</option></select></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- BOOKING -->
+      <div class="settings-section">
+        <div class="section-title"><i class="fas fa-calendar-check"></i> Booking &amp; Scheduling</div>
+        <div class="setting-card">
+          <div class="setting-row">
+            <div class="setting-icon si-green"><i class="fas fa-user-check"></i></div>
+            <div class="setting-info"><div class="setting-name">Auto-assign Staff</div><div class="setting-desc">Automatically suggest and assign best-matched staff when creating bookings</div></div>
+            <div class="setting-control"><label class="toggle"><input type="checkbox" checked><div class="toggle-track"></div><div class="toggle-thumb"></div></label></div>
+          </div>
+          <div class="setting-row">
+            <div class="setting-icon si-green"><i class="fas fa-bell"></i></div>
+            <div class="setting-info"><div class="setting-name">Client Confirmation SMS</div><div class="setting-desc">Send SMS confirmation to client when booking is created or updated</div></div>
+            <div class="setting-control"><label class="toggle"><input type="checkbox" checked><div class="toggle-track"></div><div class="toggle-thumb"></div></label></div>
+          </div>
+          <div class="setting-row">
+            <div class="setting-icon si-green"><i class="fas fa-clock"></i></div>
+            <div class="setting-info"><div class="setting-name">Booking Lead Time</div><div class="setting-desc">Minimum hours required between booking creation and service time</div></div>
+            <div class="setting-control"><select class="setting-select"><option>No minimum</option><option selected>2 hours</option><option>4 hours</option><option>24 hours</option></select></div>
+          </div>
+          <div class="setting-row">
+            <div class="setting-icon si-green"><i class="fas fa-ban"></i></div>
+            <div class="setting-info"><div class="setting-name">Cancellation Window</div><div class="setting-desc">Hours before service when client can cancel without penalty</div></div>
+            <div class="setting-control"><input class="setting-input" value="24" style="width:80px"> <span style="font-size:11px;color:var(--text-muted);margin-left:4px">hours</span></div>
+          </div>
+          <div class="setting-row">
+            <div class="setting-icon si-green"><i class="fas fa-rotate"></i></div>
+            <div class="setting-info"><div class="setting-name">Recurring Booking Limit</div><div class="setting-desc">Maximum number of occurrences for a recurring booking series</div></div>
+            <div class="setting-control"><input class="setting-input" value="52" style="width:80px"> <span style="font-size:11px;color:var(--text-muted);margin-left:4px">occurrences</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PAYMENT -->
+      <div class="settings-section">
+        <div class="section-title"><i class="fas fa-credit-card"></i> Payment &amp; Invoicing</div>
+        <div class="setting-card">
+          <div class="setting-row">
+            <div class="setting-icon si-orange"><i class="fas fa-file-invoice"></i></div>
+            <div class="setting-info"><div class="setting-name">Auto-create Invoice</div><div class="setting-desc">Automatically generate invoice when service is marked as completed</div></div>
+            <div class="setting-control"><label class="toggle"><input type="checkbox" checked><div class="toggle-track"></div><div class="toggle-thumb"></div></label></div>
+          </div>
+          <div class="setting-row">
+            <div class="setting-icon si-orange"><i class="fas fa-clock"></i></div>
+            <div class="setting-info"><div class="setting-name">Default Payment Terms</div><div class="setting-desc">Standard payment due date after invoice creation</div></div>
+            <div class="setting-control"><select class="setting-select"><option>Due immediately</option><option selected>14 days</option><option>30 days</option></select></div>
+          </div>
+          <div class="setting-row">
+            <div class="setting-icon si-orange"><i class="fas fa-hand-holding-dollar"></i></div>
+            <div class="setting-info"><div class="setting-name">Cash Handover Deadline</div><div class="setting-desc">Hours within which nurse-collected cash must be handed to Operations Manager</div></div>
+            <div class="setting-control"><input class="setting-input" value="24" style="width:80px"> <span style="font-size:11px;color:var(--text-muted);margin-left:4px">hours</span></div>
+          </div>
+          <div class="setting-row">
+            <div class="setting-icon si-orange"><i class="fas fa-bell"></i></div>
+            <div class="setting-info"><div class="setting-name">Payment Reminder</div><div class="setting-desc">Auto-send payment reminders for overdue invoices</div></div>
+            <div class="setting-control"><label class="toggle"><input type="checkbox" checked><div class="toggle-track"></div><div class="toggle-thumb"></div></label></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- NOTIFICATIONS -->
+      <div class="settings-section">
+        <div class="section-title"><i class="fas fa-bell"></i> Notifications</div>
+        <div class="setting-card">
+          <div class="setting-row">
+            <div class="setting-icon si-purple"><i class="fas fa-comment-sms"></i></div>
+            <div class="setting-info"><div class="setting-name">SMS Provider</div><div class="setting-desc">SMS gateway for client and staff notifications</div></div>
+            <div class="setting-control"><select class="setting-select"><option selected>Zalo ZNS</option><option>Twilio</option><option>SpeedSMS</option></select></div>
+          </div>
+          <div class="setting-row">
+            <div class="setting-icon si-purple"><i class="fas fa-envelope"></i></div>
+            <div class="setting-info"><div class="setting-name">Email Notifications</div><div class="setting-desc">Send email notifications for bookings, invoices, and reminders</div></div>
+            <div class="setting-control"><label class="toggle"><input type="checkbox" checked><div class="toggle-track"></div><div class="toggle-thumb"></div></label></div>
+          </div>
+          <div class="setting-row">
+            <div class="setting-icon si-purple"><i class="fas fa-mobile-screen"></i></div>
+            <div class="setting-info"><div class="setting-name">PWA Push Notifications</div><div class="setting-desc">Push notifications to staff mobile app for new assignments and alerts</div></div>
+            <div class="setting-control"><label class="toggle"><input type="checkbox" checked><div class="toggle-track"></div><div class="toggle-thumb"></div></label></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- INTEGRATIONS -->
+      <div class="settings-section">
+        <div class="section-title"><i class="fas fa-plug"></i> Integrations</div>
+        <div class="setting-card">
+          <div class="setting-row">
+            <div class="setting-icon si-red"><i class="fas fa-file-invoice-dollar"></i></div>
+            <div class="setting-info">
+              <div class="setting-name">Red Invoice (Hoa Don Do)</div>
+              <div class="setting-desc">Electronic VAT invoice submission to Vietnamese Tax Authorities</div>
+            </div>
+            <div class="setting-control" style="display:flex;align-items:center;gap:8px">
+              <span class="integ-status is-connected"><i class="fas fa-check-circle"></i> Connected</span>
+              <button class="setting-btn connected">Configure</button>
+            </div>
+          </div>
+          <div class="setting-row">
+            <div class="setting-icon si-blue"><i class="fas fa-calculator"></i></div>
+            <div class="setting-info">
+              <div class="setting-name">MISA Accounting</div>
+              <div class="setting-desc">Two-way sync with MISA accounting software for journal entries and reports</div>
+            </div>
+            <div class="setting-control" style="display:flex;align-items:center;gap:8px">
+              <span class="integ-status is-connected"><i class="fas fa-check-circle"></i> Connected</span>
+              <button class="setting-btn connected">Configure</button>
+            </div>
+          </div>
+          <div class="setting-row">
+            <div class="setting-icon si-blue"><i class="fas fa-comment-dots"></i></div>
+            <div class="setting-info">
+              <div class="setting-name">Zalo OA</div>
+              <div class="setting-desc">Zalo Official Account integration for client messaging and notifications</div>
+            </div>
+            <div class="setting-control" style="display:flex;align-items:center;gap:8px">
+              <span class="integ-status is-pending"><i class="fas fa-clock"></i> Pending Setup</span>
+              <button class="setting-btn">Connect</button>
+            </div>
+          </div>
+          <div class="setting-row">
+            <div class="setting-icon si-blue"><i class="fas fa-map-marked-alt"></i></div>
+            <div class="setting-info">
+              <div class="setting-name">Google Maps API</div>
+              <div class="setting-desc">Route optimization and travel time estimation for home visits</div>
+            </div>
+            <div class="setting-control" style="display:flex;align-items:center;gap:8px">
+              <span class="integ-status is-connected"><i class="fas fa-check-circle"></i> Connected</span>
+              <button class="setting-btn connected">Configure</button>
+            </div>
+          </div>
+          <div class="setting-row">
+            <div class="setting-icon si-orange"><i class="fas fa-hospital"></i></div>
+            <div class="setting-info">
+              <div class="setting-name">Ministry of Health API</div>
+              <div class="setting-desc">Clinical records and prescription submission (JSON/XML API)</div>
+            </div>
+            <div class="setting-control" style="display:flex;align-items:center;gap:8px">
+              <span class="integ-status is-disconnected"><i class="fas fa-times-circle"></i> Not Connected</span>
+              <button class="setting-btn">Connect</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- AI & AUTOMATION -->
+      <div class="settings-section">
+        <div class="section-title"><i class="fas fa-wand-magic-sparkles"></i> AI &amp; Automation</div>
+        <div class="setting-card">
+          <div class="setting-row">
+            <div class="setting-icon si-blue"><i class="fas fa-brain"></i></div>
+            <div class="setting-info"><div class="setting-name">AI Staff Assignment</div><div class="setting-desc">Use machine learning to suggest optimal staff assignments based on skills, proximity, and history</div></div>
+            <div class="setting-control"><label class="toggle"><input type="checkbox" checked><div class="toggle-track"></div><div class="toggle-thumb"></div></label></div>
+          </div>
+          <div class="setting-row">
+            <div class="setting-icon si-blue"><i class="fas fa-chart-simple"></i></div>
+            <div class="setting-info"><div class="setting-name">Advanced Pricing Engine</div><div class="setting-desc">Enable rule-based pricing with surcharges, discounts, and time-based multipliers</div></div>
+            <div class="setting-control"><label class="toggle"><input type="checkbox" checked><div class="toggle-track"></div><div class="toggle-thumb"></div></label></div>
+          </div>
+          <div class="setting-row">
+            <div class="setting-icon si-blue"><i class="fas fa-robot"></i></div>
+            <div class="setting-info"><div class="setting-name">Duplicate Lead Detection</div><div class="setting-desc">Automatically detect and flag potential duplicate leads based on phone, email, name matching</div></div>
+            <div class="setting-control"><label class="toggle"><input type="checkbox" checked><div class="toggle-track"></div><div class="toggle-thumb"></div></label></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SAVE BAR -->
+    <div class="save-bar">
+      <div class="unsaved"><i class="fas fa-exclamation-circle"></i> You have unsaved changes</div>
+      <button class="top-btn">Discard</button>
+      <button class="top-btn primary"><i class="fas fa-save"></i> Save Changes</button>
+    </div>
+  </div>
+</div>
+</body>
+</html>

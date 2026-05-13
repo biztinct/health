@@ -1,0 +1,220 @@
+// ============================================================================
+// Operations Command Center — Dashboard-specific Styles
+// ============================================================================
+
+.ops-command-center {
+    display: flex;
+    height: 100vh;
+    background: var(--vu-surface-muted);
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1050;
+}
+
+.ops-main-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    min-width: 0;
+}
+
+.ops-dashboard-body {
+    padding: 20px 24px;
+    flex: 1;
+    overflow-y: auto;
+
+    &::-webkit-scrollbar { width: 6px; }
+    &::-webkit-scrollbar-track { background: transparent; }
+    &::-webkit-scrollbar-thumb { background: var(--vu-border-soft); border-radius: 3px; }
+    &::-webkit-scrollbar-thumb:hover { background: var(--vu-border-strong); }
+}
+
+// Main Grid: booking queue + staff roster
+.ops-main-grid {
+    display: grid;
+    grid-template-columns: 1fr 340px;
+    gap: 16px;
+    margin-bottom: 20px;
+}
+
+// ===== TIMELINE =====
+.ops-timeline-panel {
+    background: var(--vu-surface-card);
+    border-radius: var(--vu-radius-lg);
+    box-shadow: var(--vu-shadow-sm);
+    border: 1px solid var(--vu-border-soft);
+    overflow: hidden;
+}
+
+.ops-timeline-header {
+    padding: 14px 18px;
+    border-bottom: 1px solid var(--vu-border-soft);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.ops-timeline-title {
+    font-size: 15px;
+    font-weight: 700;
+    font-family: $font-family-headings;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    i { color: $vu-deep-blue; }
+}
+
+.ops-timeline-legend {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 12px;
+}
+
+.ops-legend-item {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.ops-legend-swatch {
+    width: 12px;
+    height: 12px;
+    border-radius: 3px;
+    display: inline-block;
+}
+
+.ops-timeline-body {
+    padding: 0;
+    overflow-x: auto;
+    min-width: 0;
+}
+
+// Flex-based timeline rows
+.ops-tl-row {
+    display: flex;
+    min-width: 900px;
+}
+
+.ops-tl-header-row {
+    background: var(--vu-surface-muted);
+}
+
+.ops-tl-staff-col {
+    width: 140px;
+    flex-shrink: 0;
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--vu-border-soft);
+    border-right: 1px solid var(--vu-border-soft);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--vu-surface-card);
+
+    .ops-tl-header-row & {
+        background: var(--vu-surface-muted);
+        font-size: 11px;
+        color: $vu-text-secondary;
+        font-weight: 600;
+    }
+}
+
+.ops-tl-time-area {
+    flex: 1;
+    display: flex;
+    min-width: 0;
+}
+
+.ops-tl-hour-label {
+    flex: 1;
+    padding: 8px 2px;
+    border-bottom: 1px solid var(--vu-border-soft);
+    border-right: 1px solid rgba($vu-card-border, 0.5);
+    font-size: 11px;
+    color: $vu-text-secondary;
+    text-align: center;
+    font-weight: 500;
+
+    &.current-hour {
+        color: $vu-deep-blue;
+        font-weight: 700;
+        background: $vu-deep-blue-lightest;
+    }
+}
+
+.ops-tl-track {
+    position: relative;
+    min-height: 44px;
+    background: var(--vu-surface-card);
+}
+
+.ops-tl-gridline {
+    flex: 1;
+    border-bottom: 1px solid var(--vu-border-soft);
+    border-right: 1px solid rgba($vu-card-border, 0.3);
+    min-height: 44px;
+
+    &.current-hour { background: rgba($vu-deep-blue, 0.03); }
+}
+
+.ops-timeline-staff-avatar {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 700;
+    color: white;
+    flex-shrink: 0;
+}
+
+.ops-timeline-staff-name {
+    font-size: 13px;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.ops-timeline-block {
+    position: absolute;
+    top: 4px;
+    bottom: 4px;
+    border-radius: 6px;
+    padding: 3px 8px;
+    font-size: 11px;
+    font-weight: 600;
+    color: white;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    cursor: pointer;
+    transition: all 150ms;
+    z-index: 2;
+    overflow: hidden;
+    white-space: nowrap;
+
+    &:hover { transform: scaleY(1.15); box-shadow: var(--vu-shadow-md); z-index: 5; }
+
+    &.block-home-visit { background: $vu-deep-blue; }
+    &.block-clinic-visit { background: $vu-state-assigned; }
+    &.block-consultation { background: $vu-accent-blue; }
+    &.block-follow-up { background: $vu-leaf-green; }
+    &.block-emergency { background: $vu-hibiscus-red; }
+
+    &.timeline-block-active {
+        animation: ops-pulse-active 2s infinite;
+    }
+}
+
+@keyframes ops-pulse-active {
+    0%, 100% { box-shadow: 0 0 0 0 rgba($vu-state-active, 0.4); }
+    50% { box-shadow: 0 0 0 4px rgba($vu-state-active, 0); }
+}

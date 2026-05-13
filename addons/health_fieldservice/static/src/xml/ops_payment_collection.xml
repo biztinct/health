@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+<t t-name="health_fieldservice.OpsPaymentCollection">
+    <div class="ops-payment-page">
+
+        <!-- SIDEBAR -->
+        <aside class="ops-sidebar">
+            <div class="ops-sidebar-logo" t-on-click="navigateHome" style="cursor:pointer">
+                <div class="ops-logo-icon"><i class="fa fa-heartbeat"/></div>
+                <div>
+                    <div class="ops-logo-text">VIET UC</div>
+                    <div class="ops-logo-sub">Healthcare Platform</div>
+                </div>
+            </div>
+            <nav class="ops-sidebar-nav">
+                <div class="ops-nav-section-label">Main</div>
+                <a class="ops-nav-item" t-on-click="() => this.navigateTo('dashboard')"><i class="fa fa-th-large"/> Dashboard</a>
+                <a class="ops-nav-item active"><i class="fa fa-calendar-check-o"/> Bookings</a>
+                <a class="ops-nav-item" t-on-click="() => this.navigateTo('clients')"><i class="fa fa-address-book-o"/> Clients</a>
+                <a class="ops-nav-item" t-on-click="() => this.navigateTo('recurring')"><i class="fa fa-repeat"/> Recurring</a>
+                <a class="ops-nav-item" t-on-click="() => this.navigateTo('staff')"><i class="fa fa-users"/> Staff</a>
+                <a class="ops-nav-item" t-on-click="() => this.navigateTo('calendar')"><i class="fa fa-calendar"/> Calendar</a>
+                <div class="ops-nav-section-label">Reports</div>
+                <a class="ops-nav-item" t-on-click="() => this.navigateTo('workload')"><i class="fa fa-bar-chart"/> Workload</a>
+                <a class="ops-nav-item" t-on-click="() => this.navigateTo('analytics')"><i class="fa fa-line-chart"/> Analytics</a>
+                <div class="ops-nav-section-label">System</div>
+                <a class="ops-nav-item" t-on-click="navigateHome"><i class="fa fa-arrow-left"/> Back to Odoo</a>
+            </nav>
+            <div class="ops-sidebar-user">
+                <div class="ops-user-avatar">OM</div>
+                <div class="ops-user-info">
+                    <div class="ops-user-name">Operations</div>
+                    <div class="ops-user-role">Manager</div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- MAIN -->
+        <div class="ops-main-content">
+
+            <!-- HEADER -->
+            <header class="ops-top-header">
+                <div class="ops-header-left">
+                    <div class="cp-breadcrumb">
+                        <a t-on-click="() => this.navigateTo('dashboard')">Dashboard</a>
+                        <span class="cp-sep"><i class="fa fa-chevron-right" style="font-size:10px"/></span>
+                        <a t-on-click="() => this.navigateTo('bookings')">Bookings</a>
+                        <span class="cp-sep"><i class="fa fa-chevron-right" style="font-size:10px"/></span>
+                        <a t-on-click="goBack" t-esc="state.booking.name or 'Booking'"/>
+                        <span class="cp-sep"><i class="fa fa-chevron-right" style="font-size:10px"/></span>
+                        <span class="cp-current">Collect Payment</span>
+                    </div>
+                </div>
+            </header>
+
+            <!-- LOADING -->
+            <t t-if="state.isLoading">
+                <div class="pc-loading">
+                    <i class="fa fa-spinner fa-spin fa-2x"/>
+                    <div>Loading payment details...</div>
+                </div>
+            </t>
+
+            <!-- WIZARD CARD -->
+            <t t-if="!state.isLoading">
+                <div class="pc-wizard-wrap">
+                    <div class="pc-wizard">
+
+                        <!-- WIZARD HEADER -->
+                        <div class="pc-wizard-header">
+                            <div class="pc-wizard-title">
+                                <i class="fa fa-money"/> Collect Payment
+                            </div>
+                            <button class="pc-close-btn" t-on-click="goBack"><i class="fa fa-times"/></button>
+                        </div>
+
+                        <!-- WIZARD BODY -->
+                        <div class="pc-wizard-body">
+
+                            <!-- CONTEXT CARD -->
+                            <div class="pc-context-card">
+                                <div class="pc-ctx-avatar" t-esc="state.patient.initials or '?'"/>
+                                <div class="pc-ctx-info">
+                                    <div class="pc-ctx-name" t-esc="state.patient.name or 'Unknown Client'"/>
+                                    <div class="pc-ctx-detail">
+                                        <t t-esc="state.booking.name or ''"/>
+                                        <t t-if="state.booking.service_type_label"> · <t t-esc="state.booking.service_type_label"/></t>
+                                        <t t-if="state.booking.date_label"> · <t t-esc="state.booking.date_label"/></t>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- AMOUNT DISPLAY -->
+                            <div class="pc-amount-display">
+                                <div class="pc-amount-label">Amount Due</div>
+                                <div class="pc-amount-value" t-esc="formatCurrency(state.amount.due)"/>
+                                <div class="pc-amount-breakdown" t-if="state.amount.breakdown" t-esc="state.amount.breakdown"/>
+                            </div>
+
+                            <!-- PAYMENT METHOD -->
+                            <div class="pc-section-label"><i class="fa fa-credit-card"/> Payment Method</div>
+                            <div class="pc-method-options">
+                                <div t-attf-class="pc-method-btn #{state.paymentMethod === 'cash' ? 'selected' : ''}"
+                                     t-on-click="() => this.selectMethod('cash')">
+                                    <i class="fa fa-money"/>
+                                    <div class="pc-mb-label">Cash</div>
+                                </div>
+                                <div t-attf-class="pc-method-btn #{state.paymentMethod === 'bank_transfer' ? 'selected' : ''}"
+                                     t-on-click="() => this.selectMethod('bank_transfer')">
+                                    <i class="fa fa-bank"/>
+                                    <div class="pc-mb-label">Bank Transfer</div>
+                                </div>
+                                <div t-attf-class="pc-method-btn #{state.paymentMethod === 'qr_code' ? 'selected' : ''}"
+                                     t-on-click="() => this.selectMethod('qr_code')">
+                                    <i class="fa fa-qrcode"/>
+                                    <div class="pc-mb-label">QR Pay</div>
+                                </div>
+                                <div t-attf-class="pc-method-btn #{state.paymentMethod === 'credit_card' ? 'selected' : ''}"
+                                     t-on-click="() => this.selectMethod('credit_card')">
+                                    <i class="fa fa-credit-card"/>
+                                    <div class="pc-mb-label">Card</div>
+                                </div>
+                            </div>
+
+                            <!-- CASH SECTION -->
+                            <t t-if="state.paymentMethod === 'cash'">
+                                <div class="pc-cash-section">
+                                    <div class="pc-cash-title"><i class="fa fa-info-circle"/> Cash Collection Details</div>
+                                    <div class="pc-form-row">
+                                        <div class="pc-form-group">
+                                            <div class="pc-form-label">Collected By</div>
+                                            <select class="pc-form-input" t-on-change="onCollectorChange">
+                                                <option value="">— Select —</option>
+                                                <t t-foreach="state.staffOptions" t-as="staff" t-key="staff.id">
+                                                    <option t-att-value="staff.id" t-esc="staff.name"/>
+                                                </t>
+                                            </select>
+                                        </div>
+                                        <div class="pc-form-group">
+                                            <div class="pc-form-label">Amount Received</div>
+                                            <input class="pc-form-input" type="text"
+                                                   t-att-value="formattedAmount"
+                                                   t-on-change="onAmountChange"/>
+                                        </div>
+                                    </div>
+                                    <div class="pc-cash-note">
+                                        <i class="fa fa-exclamation-circle"/> Cash collected by nurse must be handed over to Operations Manager within 24 hours.
+                                    </div>
+                                </div>
+                            </t>
+
+                            <!-- BANK / QR SECTION -->
+                            <t t-if="state.paymentMethod === 'bank_transfer' or state.paymentMethod === 'qr_code'">
+                                <div class="pc-bank-section">
+                                    <div class="pc-form-row">
+                                        <div class="pc-form-group">
+                                            <div class="pc-form-label">Bank Name</div>
+                                            <select class="pc-form-input" t-on-change="onBankNameChange">
+                                                <option value="Vietcombank">Vietcombank</option>
+                                                <option value="BIDV">BIDV</option>
+                                                <option value="Techcombank">Techcombank</option>
+                                                <option value="VPBank">VPBank</option>
+                                                <option value="Other">Other</option>
+                                            </select>
+                                        </div>
+                                        <div class="pc-form-group">
+                                            <div class="pc-form-label">Transfer Date</div>
+                                            <input class="pc-form-input" type="date"
+                                                   t-att-value="state.transferDate"
+                                                   t-on-change="onTransferDateChange"/>
+                                        </div>
+                                    </div>
+                                    <div class="pc-form-group">
+                                        <div class="pc-form-label">Reference / Transaction ID</div>
+                                        <input class="pc-form-input" type="text"
+                                               placeholder="Enter bank transaction reference..."
+                                               t-on-change="onTransferRefChange"/>
+                                    </div>
+                                </div>
+                            </t>
+
+                            <!-- CARD SECTION -->
+                            <t t-if="state.paymentMethod === 'credit_card'">
+                                <div class="pc-bank-section">
+                                    <div class="pc-form-group">
+                                        <div class="pc-form-label">Card Transaction Reference</div>
+                                        <input class="pc-form-input" type="text"
+                                               placeholder="Enter card transaction reference..."
+                                               t-on-change="onTransferRefChange"/>
+                                    </div>
+                                </div>
+                            </t>
+
+                            <!-- NOTES -->
+                            <div class="pc-form-group">
+                                <div class="pc-form-label">Notes</div>
+                                <input class="pc-form-input" type="text"
+                                       placeholder="Optional payment notes..."
+                                       t-on-change="onNotesChange"/>
+                            </div>
+
+                            <!-- RECEIPT OPTIONS -->
+                            <div class="pc-section-label" style="margin-top:16px"><i class="fa fa-file-text-o"/> Receipt Options</div>
+                            <div class="pc-receipt-options">
+                                <label class="pc-receipt-option">
+                                    <input type="radio" name="receipt" value="retail"
+                                           t-att-checked="state.receiptType === 'retail'"
+                                           t-on-change="onReceiptChange"/>
+                                    Retail Receipt (Phiếu thu)
+                                </label>
+                                <label class="pc-receipt-option">
+                                    <input type="radio" name="receipt" value="vat"
+                                           t-att-checked="state.receiptType === 'vat'"
+                                           t-on-change="onReceiptChange"/>
+                                    VAT Invoice (Hóa đơn)
+                                </label>
+                                <label class="pc-receipt-option">
+                                    <input type="radio" name="receipt" value="none"
+                                           t-att-checked="state.receiptType === 'none'"
+                                           t-on-change="onReceiptChange"/>
+                                    No Receipt
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- WIZARD FOOTER -->
+                        <div class="pc-wizard-footer">
+                            <button class="pc-footer-btn pc-btn-back" t-on-click="goBack">
+                                <i class="fa fa-arrow-left"/> Cancel
+                            </button>
+                            <button class="pc-footer-btn pc-btn-confirm" t-on-click="confirmPayment"
+                                    t-att-disabled="state.isProcessing">
+                                <t t-if="state.isProcessing"><i class="fa fa-spinner fa-spin"/> Processing...</t>
+                                <t t-else=""><i class="fa fa-check-circle"/> Confirm Payment</t>
+                            </button>
+                        </div>
+
+                    </div>
+                </div>
+            </t>
+
+        </div>
+    </div>
+</t>
+
+</templates>

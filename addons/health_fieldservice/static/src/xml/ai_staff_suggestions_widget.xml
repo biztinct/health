@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="health_fieldservice.AiStaffSuggestionsWidget">
+        <div class="ai-staff-suggestions">
+            <!-- Loading -->
+            <t t-if="state.loading">
+                <div class="ai-loading">
+                    <i class="fa fa-spinner fa-spin"/> Loading AI recommendations...
+                </div>
+            </t>
+
+            <t t-else="">
+                <!-- Top Suggestions -->
+                <t t-if="state.suggestions.length">
+                    <div class="ai-section-label">
+                        <i class="fa fa-magic"/> AI-Recommended Staff
+                        <span class="ai-count"><t t-esc="state.suggestions.length"/></span>
+                    </div>
+
+                    <div class="ai-suggestions-list">
+                        <t t-foreach="state.suggestions" t-as="staff" t-key="staff.staff_id">
+                            <div t-attf-class="ai-staff-card {{ isSelected(staff.staff_id) ? 'selected' : '' }}"
+                                 t-on-click="() => this.selectStaff(staff.staff_id)">
+                                <!-- Header row -->
+                                <div class="ai-staff-top">
+                                    <div t-attf-class="ai-staff-avatar {{ getAvatarClass(staff_index) }}">
+                                        <t t-esc="staff.initials"/>
+                                    </div>
+                                    <div class="ai-staff-info">
+                                        <div class="ai-staff-name">
+                                            <span t-attf-class="ai-status-dot {{ getStatusDotClass(staff.status) }}"/>
+                                            <t t-esc="staff.staff_name"/>
+                                        </div>
+                                        <div class="ai-staff-role"><t t-esc="staff.role"/></div>
+                                    </div>
+                                    <div t-attf-class="ai-staff-score {{ getScoreClass(staff.total_score) }}">
+                                        <div class="ai-score-value"><t t-esc="staff.total_score"/>%</div>
+                                        <div class="ai-score-label">Match</div>
+                                    </div>
+                                </div>
+
+                                <!-- Details -->
+                                <div class="ai-staff-details">
+                                    <div t-attf-class="ai-detail-item {{ staff.availability_score >= 85 ? 'good' : (staff.availability_score > 0 ? 'warn' : 'bad') }}">
+                                        <i t-attf-class="fa {{ staff.availability_score > 0 ? 'fa-check-circle' : 'fa-times-circle' }}"/>
+                                        <t t-if="staff.availability_score >= 85">Available</t>
+                                        <t t-elif="staff.availability_score > 0">Partially available</t>
+                                        <t t-else="">Time conflict</t>
+                                    </div>
+                                    <div class="ai-detail-item">
+                                        <i class="fa fa-calendar-check-o"/>
+                                        <t t-esc="staff.today_assignments"/> today
+                                    </div>
+                                    <div t-attf-class="ai-detail-item {{ staff.workload_score >= 80 ? 'good' : 'warn' }}">
+                                        <i class="fa fa-bar-chart"/>
+                                        <t t-esc="staff.week_assignments"/> this week
+                                    </div>
+                                </div>
+
+                                <!-- Skill tags -->
+                                <t t-if="staff.skill_tags and staff.skill_tags.length">
+                                    <div class="ai-skills-bar">
+                                        <t t-foreach="staff.skill_tags" t-as="tag" t-key="tag.name">
+                                            <span t-attf-class="ai-skill-tag {{ getSkillClass(tag.status) }}">
+                                                <i t-attf-class="fa {{ getSkillIcon(tag.status) }}" style="font-size:8px"/>
+                                                <t t-esc="tag.name"/>
+                                            </span>
+                                        </t>
+                                    </div>
+                                </t>
+
+                                <!-- Reason -->
+                                <div class="ai-reason"><t t-esc="staff.reason"/></div>
+                            </div>
+                        </t>
+                    </div>
+                </t>
+
+                <!-- Other Staff -->
+                <t t-if="state.otherStaff.length">
+                    <div class="ai-section-label" style="margin-top:16px">
+                        <i class="fa fa-users"/> Other Available Staff
+                        <span class="ai-count"><t t-esc="state.otherStaff.length"/></span>
+                    </div>
+                    <div class="ai-other-staff">
+                        <t t-foreach="state.otherStaff" t-as="staff" t-key="staff.staff_id">
+                            <div class="ai-mini-staff" t-on-click="() => this.selectStaff(staff.staff_id)">
+                                <div t-attf-class="ai-mini-avatar {{ getAvatarClass(staff_index + 3) }}">
+                                    <t t-esc="staff.initials"/>
+                                </div>
+                                <div class="ai-mini-info">
+                                    <div class="ai-mini-name">
+                                        <span t-attf-class="ai-status-dot {{ getStatusDotClass(staff.status) }}"/>
+                                        <t t-esc="staff.staff_name"/>
+                                    </div>
+                                    <div class="ai-mini-detail"><t t-esc="staff.role"/></div>
+                                </div>
+                                <div t-attf-class="ai-mini-score {{ getScoreClass(staff.total_score) }}">
+                                    <t t-esc="staff.total_score"/>%
+                                </div>
+                            </div>
+                        </t>
+                    </div>
+                </t>
+
+                <!-- Timeline Preview for selected staff -->
+                <t t-if="selectedStaff">
+                    <div class="ai-section-label" style="margin-top:16px">
+                        <i class="fa fa-calendar"/> Today's Schedule —
+                        <t t-esc="selectedStaff.staff_name"/>
+                    </div>
+                    <div class="ai-timeline-preview">
+                        <div class="ai-timeline-row">
+                            <div class="ai-tl-name"><t t-esc="selectedStaff.initials"/></div>
+                            <div class="ai-tl-bar">
+                                <t t-foreach="selectedStaff.schedule_blocks" t-as="block" t-key="block_index">
+                                    <div t-attf-class="{{ getBlockClass(block) }}"
+                                         t-att-style="getBlockStyle(block)"
+                                         t-att-title="getBlockLabel(block)">
+                                        <t t-esc="getBlockLabel(block)"/>
+                                    </div>
+                                </t>
+                            </div>
+                        </div>
+                        <div class="ai-tl-hours">
+                            <t t-foreach="timelineHours" t-as="h" t-key="h">
+                                <span><t t-esc="h"/></span>
+                            </t>
+                        </div>
+                    </div>
+
+                    <div t-attf-class="ai-conflict-alert {{ selectedStaff.has_conflict ? '' : 'no-conflict' }}">
+                        <i t-attf-class="fa {{ selectedStaff.has_conflict ? 'fa-exclamation-triangle' : 'fa-check-circle' }}"/>
+                        <div>
+                            <t t-if="selectedStaff.has_conflict">
+                                <strong>Schedule conflict detected.</strong> This staff has overlapping bookings.
+                            </t>
+                            <t t-else="">
+                                <strong>No conflicts detected.</strong>
+                                <t t-esc="selectedStaff.staff_name"/> is available for this booking.
+                            </t>
+                        </div>
+                    </div>
+                </t>
+
+                <!-- Empty -->
+                <t t-if="!state.suggestions.length and !state.otherStaff.length">
+                    <div class="ai-empty">
+                        <i class="fa fa-info-circle"/>
+                        No AI suggestions available. Please select staff manually below.
+                    </div>
+                </t>
+            </t>
+        </div>
+    </t>
+</templates>

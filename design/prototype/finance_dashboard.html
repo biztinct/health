@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Finance Hub — VAFHS</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+:root{--vu-deep-blue:#1565C0;--vu-deep-blue-darker:#1356A9;--vu-deep-blue-darkest:#0D356B;--vu-deep-blue-light:#83C5FA;--vu-deep-blue-lightest:#E4F4FD;--vu-accent-blue:#42A5F5;--vu-hibiscus-red:#E53935;--vu-hibiscus-orange:#FB8C00;--vu-leaf-green:#43A047;--state-draft:#64748b;--state-confirmed:#2563eb;--state-assigned:#7c3aed;--state-active:#ea580c;--state-completed:#16a34a;--state-cancelled:#dc2626;--text-primary:#212121;--text-secondary:#424242;--text-muted:#757575;--surface-app:#F5F5F5;--surface-card:#FFFFFF;--border-soft:#E0E0E0;--border-strong:#BDBDBD;--shadow-sm:0 1px 3px rgba(33,33,33,.08);--shadow-md:0 2px 8px rgba(33,33,33,.12);--shadow-lg:0 4px 16px rgba(33,33,33,.15);--radius-sm:4px;--radius-md:8px;--radius-lg:12px}
+*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Segoe UI',Arial,sans-serif;font-size:13px;color:var(--text-primary);background:var(--surface-app);line-height:1.5;-webkit-font-smoothing:antialiased}h1,h2,h3,h4{font-family:'Montserrat','Segoe UI',Arial,sans-serif;font-weight:600}.app-wrapper{display:flex;min-height:100vh}
+
+.sidebar{width:220px;background:var(--vu-deep-blue-darkest);color:white;display:flex;flex-direction:column;flex-shrink:0;position:fixed;top:0;left:0;bottom:0;z-index:100}
+.sidebar-logo{padding:20px 16px;display:flex;align-items:center;gap:10px;border-bottom:1px solid rgba(255,255,255,.1);text-decoration:none;color:white}
+.logo-icon{width:36px;height:36px;background:var(--vu-hibiscus-red);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px}
+.logo-text{font-family:'Montserrat';font-weight:700;font-size:15px;letter-spacing:.5px}.logo-sub{font-size:10px;opacity:.6}
+.sidebar-nav{padding:12px 0;flex:1}
+.nav-section-label{padding:16px 16px 6px;font-size:10px;text-transform:uppercase;letter-spacing:1.2px;opacity:.4;font-weight:600}
+.nav-item{display:flex;align-items:center;gap:10px;padding:10px 16px;color:rgba(255,255,255,.7);text-decoration:none;font-size:13px;font-weight:500;transition:all 150ms;cursor:pointer;border-left:3px solid transparent}
+.nav-item:hover{background:rgba(255,255,255,.08);color:white}.nav-item.active{background:rgba(255,255,255,.12);color:white;border-left-color:var(--vu-accent-blue)}
+.nav-item i{width:20px;text-align:center;font-size:14px}.nav-item .badge-count{margin-left:auto;background:var(--vu-hibiscus-red);color:white;font-size:10px;font-weight:700;padding:2px 6px;border-radius:10px}
+.sidebar-user{padding:12px 16px;border-top:1px solid rgba(255,255,255,.1);display:flex;align-items:center;gap:10px}
+.user-avatar{width:32px;height:32px;border-radius:50%;background:var(--vu-accent-blue);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700}
+.user-info{flex:1}.user-name{font-size:12px;font-weight:600}.user-role{font-size:10px;opacity:.5}
+
+.main-content{flex:1;margin-left:220px;display:flex;flex-direction:column}
+.top-header{background:var(--surface-card);border-bottom:1px solid var(--border-soft);padding:12px 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;box-shadow:var(--shadow-sm)}
+.header-left{display:flex;align-items:center;gap:16px}
+.page-title{font-size:18px;font-weight:700;font-family:'Montserrat'}
+.header-right{display:flex;align-items:center;gap:10px}
+.header-btn{display:flex;align-items:center;gap:6px;padding:7px 14px;border:none;border-radius:var(--radius-md);font-size:12px;font-weight:600;cursor:pointer;transition:all 150ms;font-family:inherit}
+.btn-primary{background:var(--vu-deep-blue);color:white}.btn-primary:hover{background:var(--vu-deep-blue-darker)}
+.btn-outline{background:transparent;color:var(--text-secondary);border:1px solid var(--border-soft)}.btn-outline:hover{border-color:var(--vu-deep-blue);color:var(--vu-deep-blue);background:var(--vu-deep-blue-lightest)}
+.filter-select{padding:6px 12px;border:1px solid var(--border-soft);border-radius:var(--radius-md);font-size:12px;color:var(--text-secondary);background:var(--surface-card);cursor:pointer;font-family:inherit}
+.dashboard-body{padding:20px 24px;flex:1}
+
+/* KPI */
+.kpi-row{display:grid;grid-template-columns:repeat(5,1fr);gap:16px;margin-bottom:20px}
+.kpi-card{background:var(--surface-card);border-radius:var(--radius-lg);padding:16px 18px;box-shadow:var(--shadow-sm);border:1px solid var(--border-soft);position:relative;overflow:hidden;transition:all 200ms;cursor:pointer}
+.kpi-card:hover{box-shadow:var(--shadow-md);transform:translateY(-1px)}
+.kpi-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+.k1::before{background:var(--vu-leaf-green)}.k2::before{background:var(--vu-hibiscus-orange)}.k3::before{background:var(--vu-deep-blue)}.k4::before{background:var(--state-assigned)}.k5::before{background:var(--vu-hibiscus-red)}
+.kpi-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.kpi-icon{width:36px;height:36px;border-radius:var(--radius-md);display:flex;align-items:center;justify-content:center;font-size:16px}
+.k1 .kpi-icon{background:#DBF0DB;color:var(--vu-leaf-green)}.k2 .kpi-icon{background:#FFF3E0;color:var(--vu-hibiscus-orange)}.k3 .kpi-icon{background:var(--vu-deep-blue-lightest);color:var(--vu-deep-blue)}.k4 .kpi-icon{background:#F3E8FF;color:var(--state-assigned)}.k5 .kpi-icon{background:#FBE3E1;color:var(--vu-hibiscus-red)}
+.kpi-trend{font-size:11px;font-weight:600;padding:2px 6px;border-radius:10px}
+.kpi-trend.up{background:#DBF0DB;color:#176B47}.kpi-trend.down{background:#FBE3E1;color:#C0332A}
+.kpi-value{font-size:24px;font-weight:800;font-family:'Montserrat';line-height:1.1;margin-bottom:2px}
+.kpi-label{font-size:12px;color:var(--text-muted);font-weight:500}
+.kpi-sublabel{font-size:10px;color:var(--text-muted);margin-top:4px}
+
+/* GRID */
+.main-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+.full-width{grid-column:1/-1}
+.panel{background:var(--surface-card);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);border:1px solid var(--border-soft);overflow:hidden}
+.panel-header{padding:14px 18px;border-bottom:1px solid var(--border-soft);display:flex;align-items:center;justify-content:space-between}
+.panel-title{font-size:14px;font-weight:700;font-family:'Montserrat';display:flex;align-items:center;gap:8px}
+.panel-title i{color:var(--vu-deep-blue);font-size:14px}
+.panel-tabs{display:flex;gap:2px;background:var(--surface-app);border-radius:var(--radius-md);padding:2px}
+.panel-tab{padding:5px 12px;font-size:11px;font-weight:600;border:none;background:transparent;border-radius:6px;cursor:pointer;color:var(--text-muted);transition:all 150ms;font-family:inherit}
+.panel-tab.active{background:var(--surface-card);color:var(--vu-deep-blue);box-shadow:var(--shadow-sm)}
+.panel-body{padding:12px 16px}
+
+/* PAYMENT TABLE */
+.pay-table{width:100%;border-collapse:collapse}
+.pay-table thead th{padding:8px 12px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:var(--text-muted);background:var(--surface-app);border-bottom:1px solid var(--border-soft);text-align:left}
+.pay-table tbody td{padding:10px 12px;font-size:12px;border-bottom:1px solid var(--border-soft);vertical-align:middle}
+.pay-table tbody tr:last-child td{border-bottom:none}
+.pay-table tbody tr{cursor:pointer;transition:background 100ms}
+.pay-table tbody tr:hover{background:var(--vu-deep-blue-lightest)}
+
+.cell-client{display:flex;align-items:center;gap:8px}
+.cl-avatar{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0}
+.cell-amount{font-weight:700;text-align:right;font-family:'Montserrat'}
+.method-chip{display:inline-flex;align-items:center;gap:3px;padding:3px 8px;border-radius:6px;font-size:10px;font-weight:700}
+.method-cash{background:#FFF3E0;color:var(--vu-hibiscus-orange)}.method-bank{background:var(--vu-deep-blue-lightest);color:var(--vu-deep-blue)}.method-qr{background:#F3E8FF;color:var(--state-assigned)}.method-card{background:#DBF0DB;color:var(--vu-leaf-green)}
+.status-chip{display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:10px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.4px}
+.chip-pending{background:rgba(251,140,0,.1);color:var(--vu-hibiscus-orange)}.chip-paid{background:rgba(67,160,71,.1);color:var(--vu-leaf-green)}.chip-overdue{background:rgba(229,57,53,.1);color:var(--vu-hibiscus-red)}
+.action-btn{padding:4px 10px;border:1px solid var(--border-soft);border-radius:var(--radius-sm);background:transparent;cursor:pointer;font-size:11px;font-weight:600;color:var(--vu-deep-blue);transition:all 120ms;font-family:inherit}
+.action-btn:hover{background:var(--vu-deep-blue);color:white;border-color:var(--vu-deep-blue)}
+.action-btn.confirm{color:var(--vu-leaf-green);border-color:var(--vu-leaf-green)}.action-btn.confirm:hover{background:var(--vu-leaf-green);color:white}
+
+/* AR AGING */
+.aging-bars{display:flex;flex-direction:column;gap:10px}
+.aging-row{display:flex;align-items:center;gap:12px}
+.aging-label{width:60px;font-size:12px;font-weight:600;text-align:right}
+.aging-bar-wrap{flex:1;height:20px;background:var(--surface-app);border-radius:4px;overflow:hidden;position:relative}
+.aging-bar{height:100%;border-radius:4px;transition:width 500ms ease}
+.aging-amount{width:80px;font-size:12px;font-weight:700;font-family:'Montserrat';text-align:right}
+
+/* TRANSACTION FEED */
+.tx-item{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border-soft)}
+.tx-item:last-child{border-bottom:none}
+.tx-icon{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px}
+.tx-icon.paid{background:#DBF0DB;color:var(--vu-leaf-green)}.tx-icon.pending{background:#FFF3E0;color:var(--vu-hibiscus-orange)}.tx-icon.pkg{background:var(--vu-deep-blue-lightest);color:var(--vu-deep-blue)}
+.tx-info{flex:1}.tx-desc{font-size:12px;font-weight:600}.tx-time{font-size:10px;color:var(--text-muted)}
+.tx-amount{font-size:13px;font-weight:700;font-family:'Montserrat'}
+.tx-amount.credit{color:var(--vu-leaf-green)}.tx-amount.debit{color:var(--vu-hibiscus-red)}
+
+/* CASH HANDOVER */
+.handover-card{border:1px solid var(--border-soft);border-radius:var(--radius-md);padding:12px;margin-bottom:8px;display:flex;align-items:center;gap:12px;transition:all 150ms}
+.handover-card:hover{border-color:var(--vu-deep-blue-light);box-shadow:var(--shadow-sm)}
+.handover-avatar{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:white;flex-shrink:0}
+.handover-info{flex:1}.handover-name{font-size:12px;font-weight:600}.handover-detail{font-size:11px;color:var(--text-muted)}
+.handover-amount{font-size:14px;font-weight:700;font-family:'Montserrat';color:var(--vu-hibiscus-orange)}
+
+::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--border-soft);border-radius:3px}
+</style>
+</head>
+<body>
+<div class="app-wrapper">
+  <aside class="sidebar">
+    <a class="sidebar-logo" href="finance_dashboard.html">
+      <div class="logo-icon"><i class="fas fa-heartbeat"></i></div>
+      <div><div class="logo-text">VIET UC</div><div class="logo-sub">Healthcare Platform</div></div>
+    </a>
+    <nav class="sidebar-nav">
+      <div class="nav-section-label">Main</div>
+      <a class="nav-item active"><i class="fas fa-th-large"></i> Dashboard</a>
+      <a class="nav-item"><i class="fas fa-credit-card"></i> Payments <span class="badge-count">8</span></a>
+      <a href="invoice_detail.html" class="nav-item"><i class="fas fa-file-invoice"></i> Invoices</a>
+      <a class="nav-item" href="package_management.html"><i class="fas fa-box"></i> Packages</a>
+      <a class="nav-item"><i class="fas fa-chart-bar"></i> AR Aging</a>
+      <a class="nav-item"><i class="fas fa-file-export"></i> VAT Export</a>
+      <div class="nav-section-label">Reports</div>
+      <a class="nav-item"><i class="fas fa-chart-pie"></i> Revenue</a>
+      <a class="nav-item"><i class="fas fa-receipt"></i> Cash Flow</a>
+      <div class="nav-section-label">Quick Links</div>
+      <a class="nav-item" href="ops_dashboard.html"><i class="fas fa-headset"></i> Operations</a>
+      <a class="nav-item" href="sales_dashboard.html"><i class="fas fa-bullhorn"></i> Sales</a>
+      <a class="nav-item" href="admin_dashboard.html"><i class="fas fa-shield-halved"></i> Admin</a>
+      <div class="nav-section-label">System</div>
+      <a class="nav-item"><i class="fas fa-cog"></i> Configuration</a>
+    </nav>
+    <div class="sidebar-user">
+      <div class="user-avatar">BT</div>
+      <div class="user-info"><div class="user-name">Bui Thi Trang</div><div class="user-role">Finance Manager</div></div>
+    </div>
+  </aside>
+
+  <div class="main-content">
+    <header class="top-header">
+      <div class="header-left">
+        <div class="page-title">Finance Hub</div>
+      </div>
+      <div class="header-right">
+        <select class="filter-select">
+          <option>This Month — May 2026</option>
+          <option>Last Month</option>
+          <option>This Quarter</option>
+          <option>This Year</option>
+        </select>
+        <select class="filter-select">
+          <option>All Facilities</option>
+          <option>Viet Uc — Hanoi</option>
+          <option>Viet Uc — HCMC</option>
+        </select>
+        <button class="header-btn btn-outline"><i class="fas fa-download"></i> Export</button>
+        <button class="header-btn btn-primary"><i class="fas fa-plus"></i> Record Payment</button>
+      </div>
+    </header>
+
+    <div class="dashboard-body">
+      <!-- KPIs -->
+      <div class="kpi-row">
+        <div class="kpi-card k1">
+          <div class="kpi-header"><div class="kpi-icon"><i class="fas fa-coins"></i></div><span class="kpi-trend up"><i class="fas fa-arrow-up" style="font-size:9px"></i> 12%</span></div>
+          <div class="kpi-value">45.2M</div>
+          <div class="kpi-label">Total Received (VND)</div>
+          <div class="kpi-sublabel">This month</div>
+        </div>
+        <div class="kpi-card k2">
+          <div class="kpi-header"><div class="kpi-icon"><i class="fas fa-hourglass-half"></i></div></div>
+          <div class="kpi-value">12.8M</div>
+          <div class="kpi-label">Pay Now — Pending</div>
+          <div class="kpi-sublabel">8 transactions</div>
+        </div>
+        <div class="kpi-card k3">
+          <div class="kpi-header"><div class="kpi-icon"><i class="fas fa-calendar-day"></i></div></div>
+          <div class="kpi-value">8.5M</div>
+          <div class="kpi-label">Pay Later — Outstanding</div>
+          <div class="kpi-sublabel">15 invoices</div>
+        </div>
+        <div class="kpi-card k4">
+          <div class="kpi-header"><div class="kpi-icon"><i class="fas fa-wallet"></i></div><span class="kpi-trend up"><i class="fas fa-arrow-up" style="font-size:9px"></i> 3</span></div>
+          <div class="kpi-value">3.2M</div>
+          <div class="kpi-label">Advance Balance</div>
+          <div class="kpi-sublabel">6 clients with credit</div>
+        </div>
+        <div class="kpi-card k5">
+          <div class="kpi-header"><div class="kpi-icon"><i class="fas fa-exclamation-triangle"></i></div></div>
+          <div class="kpi-value" style="color:var(--vu-hibiscus-red)">12</div>
+          <div class="kpi-label">Overdue Clients</div>
+          <div class="kpi-sublabel">Total: 4.8M VND</div>
+        </div>
+      </div>
+
+      <!-- PAYMENT QUEUE -->
+      <div class="panel full-width" style="margin-bottom:16px">
+        <div class="panel-header">
+          <div class="panel-title"><i class="fas fa-credit-card"></i> Payment Queue</div>
+          <div class="panel-tabs">
+            <button class="panel-tab active">Pending (8)</button>
+            <button class="panel-tab">Overdue (12)</button>
+            <button class="panel-tab">Cash Handover (3)</button>
+            <button class="panel-tab">All</button>
+          </div>
+        </div>
+        <table class="pay-table">
+          <thead>
+            <tr><th>Client</th><th>Service</th><th>Amount</th><th>Method</th><th>Due Date</th><th>Status</th><th>Action</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><div class="cell-client"><div class="cl-avatar" style="background:var(--vu-deep-blue-lightest);color:var(--vu-deep-blue)">TD</div><div><div style="font-weight:600"><a href="client_profile.html" style="color:inherit;text-decoration:none">Tran Van Duc</a></div><div style="font-size:11px;color:var(--text-muted)">CLT-0124</div></div></div></td>
+              <td>Home Visit — General Health</td>
+              <td class="cell-amount">2,850,000 &#8363;</td>
+              <td><span class="method-chip method-cash"><i class="fas fa-money-bill" style="font-size:9px"></i> Cash</span></td>
+              <td>May 11, 2026</td>
+              <td><span class="status-chip chip-pending"><i class="fas fa-clock" style="font-size:7px"></i> Pending</span></td>
+              <td><a href="payment_collection.html" class="action-btn" style="text-decoration:none">Collect</a></td>
+            </tr>
+            <tr>
+              <td><div class="cell-client"><div class="cl-avatar" style="background:#F3E8FF;color:var(--state-assigned)">PA</div><div><div style="font-weight:600">Pham Minh Anh</div><div style="font-size:11px;color:var(--text-muted)">CLT-0089</div></div></div></td>
+              <td>Clinic Visit — Consultation</td>
+              <td class="cell-amount">1,800,000 &#8363;</td>
+              <td><span class="method-chip method-bank"><i class="fas fa-building-columns" style="font-size:9px"></i> Bank</span></td>
+              <td>May 12, 2026</td>
+              <td><span class="status-chip chip-pending"><i class="fas fa-clock" style="font-size:7px"></i> Pending</span></td>
+              <td><a href="payment_collection.html" class="action-btn confirm" style="text-decoration:none">Confirm</a></td>
+            </tr>
+            <tr>
+              <td><div class="cell-client"><div class="cl-avatar" style="background:#DBF0DB;color:var(--vu-leaf-green)">LH</div><div><div style="font-weight:600">Le Thi Hoa</div><div style="font-size:11px;color:var(--text-muted)">CLT-0156</div></div></div></td>
+              <td>Home Visit — Follow-up</td>
+              <td class="cell-amount">800,000 &#8363;</td>
+              <td><span class="method-chip method-qr"><i class="fas fa-qrcode" style="font-size:9px"></i> QR Pay</span></td>
+              <td>May 10, 2026</td>
+              <td><span class="status-chip chip-pending"><i class="fas fa-clock" style="font-size:7px"></i> Pending</span></td>
+              <td><a href="payment_collection.html" class="action-btn confirm" style="text-decoration:none">Confirm</a></td>
+            </tr>
+            <tr>
+              <td><div class="cell-client"><div class="cl-avatar" style="background:#FFF3E0;color:var(--vu-hibiscus-orange)">NL</div><div><div style="font-weight:600">Nguyen Van Long</div><div style="font-size:11px;color:var(--text-muted)">CLT-0201</div></div></div></td>
+              <td>Package — General Health 10-Pack (3 remaining)</td>
+              <td class="cell-amount">15,000,000 &#8363;</td>
+              <td><span class="method-chip method-bank"><i class="fas fa-building-columns" style="font-size:9px"></i> Bank</span></td>
+              <td>May 8, 2026</td>
+              <td><span class="status-chip chip-overdue"><i class="fas fa-exclamation" style="font-size:7px"></i> Overdue</span></td>
+              <td><a href="payment_collection.html" class="action-btn" style="text-decoration:none">Collect</a></td>
+            </tr>
+            <tr>
+              <td><div class="cell-client"><div class="cl-avatar" style="background:#FBE3E1;color:var(--vu-hibiscus-red)">VH</div><div><div style="font-weight:600">Vu Thi Huong</div><div style="font-size:11px;color:var(--text-muted)">CLT-0178</div></div></div></td>
+              <td>Home Visit — Pediatric</td>
+              <td class="cell-amount">2,200,000 &#8363;</td>
+              <td><span class="method-chip method-cash"><i class="fas fa-money-bill" style="font-size:9px"></i> Cash</span></td>
+              <td>May 5, 2026</td>
+              <td><span class="status-chip chip-overdue"><i class="fas fa-exclamation" style="font-size:7px"></i> Overdue</span></td>
+              <td><a href="payment_collection.html" class="action-btn" style="text-decoration:none">Collect</a></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- BOTTOM GRID -->
+      <div class="main-grid">
+        <!-- AR AGING -->
+        <div class="panel">
+          <div class="panel-header">
+            <div class="panel-title"><i class="fas fa-chart-bar"></i> AR Aging Summary</div>
+          </div>
+          <div class="panel-body" style="padding:18px 20px">
+            <div class="aging-bars">
+              <div class="aging-row">
+                <div class="aging-label">0-30d</div>
+                <div class="aging-bar-wrap"><div class="aging-bar" style="width:70%;background:var(--vu-leaf-green)"></div></div>
+                <div class="aging-amount" style="color:var(--vu-leaf-green)">8.5M</div>
+              </div>
+              <div class="aging-row">
+                <div class="aging-label">31-60d</div>
+                <div class="aging-bar-wrap"><div class="aging-bar" style="width:45%;background:var(--vu-hibiscus-orange)"></div></div>
+                <div class="aging-amount" style="color:var(--vu-hibiscus-orange)">4.2M</div>
+              </div>
+              <div class="aging-row">
+                <div class="aging-label">61-90d</div>
+                <div class="aging-bar-wrap"><div class="aging-bar" style="width:22%;background:var(--state-active)"></div></div>
+                <div class="aging-amount" style="color:var(--state-active)">1.8M</div>
+              </div>
+              <div class="aging-row">
+                <div class="aging-label">90d+</div>
+                <div class="aging-bar-wrap"><div class="aging-bar" style="width:12%;background:var(--vu-hibiscus-red)"></div></div>
+                <div class="aging-amount" style="color:var(--vu-hibiscus-red)">900K</div>
+              </div>
+            </div>
+            <div style="margin-top:16px;padding-top:12px;border-top:1px solid var(--border-soft);display:flex;justify-content:space-between;align-items:center">
+              <div><span style="font-size:12px;color:var(--text-muted)">Total Outstanding:</span> <strong style="font-size:16px;font-family:'Montserrat'">15.4M &#8363;</strong></div>
+              <button class="header-btn btn-outline" style="padding:5px 10px;font-size:11px"><i class="fas fa-file-alt"></i> Full Report</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- RECENT TRANSACTIONS -->
+        <div class="panel">
+          <div class="panel-header">
+            <div class="panel-title"><i class="fas fa-clock-rotate-left"></i> Recent Transactions</div>
+            <span style="font-size:11px;color:var(--text-muted)">Today</span>
+          </div>
+          <div class="panel-body">
+            <div class="tx-item">
+              <div class="tx-icon paid"><i class="fas fa-check"></i></div>
+              <div class="tx-info"><div class="tx-desc">Hoang Minh Tuan — Home Visit</div><div class="tx-time">10:30 &bull; Cash &bull; Collected by Nguyen Thi Mai</div></div>
+              <div class="tx-amount credit">+2,300,000 &#8363;</div>
+            </div>
+            <div class="tx-item">
+              <div class="tx-icon paid"><i class="fas fa-check"></i></div>
+              <div class="tx-info"><div class="tx-desc">Dang Thi Loan — Follow-up Visit</div><div class="tx-time">09:45 &bull; QR Pay &bull; Auto-confirmed</div></div>
+              <div class="tx-amount credit">+800,000 &#8363;</div>
+            </div>
+            <div class="tx-item">
+              <div class="tx-icon pending"><i class="fas fa-clock"></i></div>
+              <div class="tx-info"><div class="tx-desc">Pham Minh Anh — Bank Transfer</div><div class="tx-time">09:15 &bull; Awaiting confirmation</div></div>
+              <div class="tx-amount" style="color:var(--vu-hibiscus-orange)">1,800,000 &#8363;</div>
+            </div>
+            <div class="tx-item">
+              <div class="tx-icon pkg"><i class="fas fa-box"></i></div>
+              <div class="tx-info"><div class="tx-desc">Package sold — Pediatric 5-Pack</div><div class="tx-time">09:00 &bull; Bank Transfer &bull; Vu Thi Huong</div></div>
+              <div class="tx-amount credit">+8,500,000 &#8363;</div>
+            </div>
+            <div class="tx-item">
+              <div class="tx-icon paid"><i class="fas fa-check"></i></div>
+              <div class="tx-info"><div class="tx-desc">Nguyen Hoang Phuc — Clinic Visit</div><div class="tx-time">Yesterday 16:30 &bull; Cash</div></div>
+              <div class="tx-amount credit">+1,500,000 &#8363;</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- CASH HANDOVER -->
+        <div class="panel">
+          <div class="panel-header">
+            <div class="panel-title"><i class="fas fa-hand-holding-dollar"></i> Cash Handover — Pending</div>
+            <span style="font-size:11px;color:var(--text-muted)">3 staff</span>
+          </div>
+          <div class="panel-body">
+            <div class="handover-card">
+              <div class="handover-avatar" style="background:var(--vu-deep-blue)">MA</div>
+              <div class="handover-info">
+                <div class="handover-name">Nguyen Thi Mai</div>
+                <div class="handover-detail">2 cash collections today &bull; Last: 10:30</div>
+              </div>
+              <div class="handover-amount">4,600,000 &#8363;</div>
+              <button class="action-btn confirm" style="margin-left:8px">Receive</button>
+            </div>
+            <div class="handover-card">
+              <div class="handover-avatar" style="background:var(--state-assigned)">HO</div>
+              <div class="handover-info">
+                <div class="handover-name">Le Thi Hoa</div>
+                <div class="handover-detail">1 cash collection &bull; Last: 09:00</div>
+              </div>
+              <div class="handover-amount">2,300,000 &#8363;</div>
+              <button class="action-btn confirm" style="margin-left:8px">Receive</button>
+            </div>
+            <div class="handover-card">
+              <div class="handover-avatar" style="background:var(--vu-hibiscus-orange)">TH</div>
+              <div class="handover-info">
+                <div class="handover-name">Pham Thu Hang</div>
+                <div class="handover-detail">1 cash collection &bull; Yesterday</div>
+              </div>
+              <div class="handover-amount">1,800,000 &#8363;</div>
+              <button class="action-btn confirm" style="margin-left:8px">Receive</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- REVENUE SPLIT -->
+        <div class="panel">
+          <div class="panel-header">
+            <div class="panel-title"><i class="fas fa-chart-pie"></i> Revenue Breakdown — May</div>
+          </div>
+          <div class="panel-body" style="padding:16px 20px">
+            <div style="display:flex;flex-direction:column;gap:8px">
+              <div style="display:flex;align-items:center;gap:10px">
+                <div style="width:14px;height:14px;border-radius:3px;background:var(--vu-deep-blue)"></div>
+                <div style="flex:1;font-size:12px;font-weight:500">Home Visit</div>
+                <div style="flex:2;height:8px;background:var(--surface-app);border-radius:4px;overflow:hidden"><div style="height:100%;width:55%;background:var(--vu-deep-blue);border-radius:4px"></div></div>
+                <div style="font-size:12px;font-weight:700;font-family:'Montserrat';min-width:60px;text-align:right">24.8M</div>
+              </div>
+              <div style="display:flex;align-items:center;gap:10px">
+                <div style="width:14px;height:14px;border-radius:3px;background:var(--state-assigned)"></div>
+                <div style="flex:1;font-size:12px;font-weight:500">Clinic Visit</div>
+                <div style="flex:2;height:8px;background:var(--surface-app);border-radius:4px;overflow:hidden"><div style="height:100%;width:25%;background:var(--state-assigned);border-radius:4px"></div></div>
+                <div style="font-size:12px;font-weight:700;font-family:'Montserrat';min-width:60px;text-align:right">11.3M</div>
+              </div>
+              <div style="display:flex;align-items:center;gap:10px">
+                <div style="width:14px;height:14px;border-radius:3px;background:var(--vu-leaf-green)"></div>
+                <div style="flex:1;font-size:12px;font-weight:500">Packages</div>
+                <div style="flex:2;height:8px;background:var(--surface-app);border-radius:4px;overflow:hidden"><div style="height:100%;width:15%;background:var(--vu-leaf-green);border-radius:4px"></div></div>
+                <div style="font-size:12px;font-weight:700;font-family:'Montserrat';min-width:60px;text-align:right">6.8M</div>
+              </div>
+              <div style="display:flex;align-items:center;gap:10px">
+                <div style="width:14px;height:14px;border-radius:3px;background:var(--vu-hibiscus-orange)"></div>
+                <div style="flex:1;font-size:12px;font-weight:500">Consultation</div>
+                <div style="flex:2;height:8px;background:var(--surface-app);border-radius:4px;overflow:hidden"><div style="height:100%;width:5%;background:var(--vu-hibiscus-orange);border-radius:4px"></div></div>
+                <div style="font-size:12px;font-weight:700;font-family:'Montserrat';min-width:60px;text-align:right">2.3M</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+document.querySelectorAll('.panel-tab').forEach(tab => {
+  tab.addEventListener('click', function() {
+    this.closest('.panel-tabs').querySelectorAll('.panel-tab').forEach(t => t.classList.remove('active'));
+    this.classList.add('active');
+  });
+});
+</script>
+</body>
+</html>

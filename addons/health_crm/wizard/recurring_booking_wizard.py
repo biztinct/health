@@ -3,6 +3,7 @@
 from odoo import models, fields, api, _
 from odoo.exceptions import ValidationError
 from datetime import datetime, timedelta
+import json
 import pytz
 
 
@@ -95,6 +96,43 @@ class RecurringBookingWizard(models.TransientModel):
     booking_summary = fields.Char(
         'Summary', compute='_compute_booking_count',
     )
+    preview_dates_json = fields.Text(
+        'Preview Dates', compute='_compute_preview_dates',
+    )
+
+    @api.depends('day_mon', 'day_tue', 'day_wed', 'day_thu', 'day_fri',
+                 'day_sat', 'day_sun', 'date_start', 'date_end', 'booking_time',
+                 'booking_duration', 'client_id')
+    def _compute_preview_dates(self):
+        day_names = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+        for wiz in self:
+            dates = wiz._get_booking_dates()
+            if not dates:
+                wiz.preview_dates_json = '[]'
+                continue
+            existing_fsos = {}
+            if wiz.client_id:
+                fsos = self.env['health.fieldservice.order'].search([
+                    ('patient_id', '=', wiz.client_id.id),
+                    ('scheduled_datetime', '>=', dates[0]),
+                    ('scheduled_datetime', '<=', datetime.combine(dates[-1], datetime.max.time())),
+                    ('state', 'not in', ['cancelled']),
+                ])
+                for fso in fsos:
+                    if fso.scheduled_datetime:
+                        d = fso.scheduled_datetime.date()
+                        existing_fsos.setdefault(d, []).append(fso.name or '')
+            preview = []
+            for i, d in enumerate(dates[:20]):
+                conflict_bookings = existing_fsos.get(d, [])
+                preview.append({
+                    'num': i + 1,
+                    'date': d.strftime('%b %d, %Y'),
+                    'day': day_names[d.weekday()],
+                    'conflict': bool(conflict_bookings),
+                    'conflict_names': conflict_bookings[:2],
+                })
+            wiz.preview_dates_json = json.dumps(preview)
 
     @api.onchange('service_type')
     def _onchange_service_type(self):

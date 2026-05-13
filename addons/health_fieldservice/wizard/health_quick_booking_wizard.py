@@ -21,7 +21,6 @@ class HealthQuickBookingWizard(models.TransientModel):
     client_id = fields.Many2one(
         'res.partner', string='Client',
         domain="[('is_patient', '=', True)]",
-        required=True, readonly=True,
     )
 
     currency_id = fields.Many2one(
@@ -146,6 +145,8 @@ class HealthQuickBookingWizard(models.TransientModel):
 
     def action_create_booking(self):
         self.ensure_one()
+        if not self.client_id:
+            raise ValidationError(_('Please select a Client.'))
         client = self.client_id
 
         if not self.facility_id:

@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Staff HR Profile — VAFHS Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+:root{--vu-deep-blue:#1565C0;--vu-deep-blue-darker:#1356A9;--vu-deep-blue-darkest:#0D356B;--vu-deep-blue-light:#83C5FA;--vu-deep-blue-lightest:#E4F4FD;--vu-accent-blue:#42A5F5;--vu-hibiscus-red:#E53935;--vu-hibiscus-orange:#FB8C00;--vu-leaf-green:#43A047;--text-primary:#212121;--text-secondary:#424242;--text-muted:#757575;--surface-app:#F5F5F5;--surface-card:#FFFFFF;--border-soft:#E0E0E0;--shadow-sm:0 1px 3px rgba(33,33,33,.08);--shadow-md:0 2px 8px rgba(33,33,33,.12);--shadow-lg:0 4px 16px rgba(33,33,33,.15);--radius-sm:4px;--radius-md:8px;--radius-lg:12px}
+*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Segoe UI',Arial,sans-serif;font-size:13px;color:var(--text-primary);background:var(--surface-app);line-height:1.5;-webkit-font-smoothing:antialiased}
+h1,h2,h3,h4{font-family:'Montserrat','Segoe UI',Arial,sans-serif;font-weight:600}
+.page-layout{display:grid;grid-template-columns:220px 1fr;min-height:100vh}
+.sidebar{background:var(--vu-deep-blue-darkest);color:white;padding:20px 0}
+.sidebar-brand{padding:0 20px 20px;font-family:'Montserrat';font-weight:800;font-size:16px;border-bottom:1px solid rgba(255,255,255,.1);margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.sidebar-brand i{color:var(--vu-deep-blue-light)}
+.nav-section{padding:0 12px;margin-bottom:16px}
+.nav-label{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:rgba(255,255,255,.4);padding:8px 8px 4px;font-weight:600}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:var(--radius-md);color:rgba(255,255,255,.7);font-size:13px;text-decoration:none;transition:all 150ms;cursor:pointer}
+.nav-item:hover{background:rgba(255,255,255,.08);color:white}
+.nav-item.active{background:rgba(255,255,255,.12);color:white;font-weight:600}
+.nav-item i{width:18px;text-align:center;font-size:13px}
+.main{overflow-y:auto}
+.topbar{background:var(--surface-card);border-bottom:1px solid var(--border-soft);padding:0 24px;height:52px;display:flex;align-items:center;justify-content:space-between}
+.breadcrumb{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--text-muted)}
+.breadcrumb a{color:var(--vu-deep-blue);text-decoration:none;font-weight:500}
+.topbar-actions{display:flex;gap:8px}
+.top-btn{display:flex;align-items:center;gap:6px;padding:7px 14px;border:1px solid var(--border-soft);border-radius:var(--radius-md);background:var(--surface-card);font-size:12px;font-weight:600;cursor:pointer;transition:all 150ms;color:var(--text-secondary);font-family:inherit;text-decoration:none}
+.top-btn:hover{border-color:var(--vu-deep-blue);color:var(--vu-deep-blue)}
+.top-btn.primary{background:var(--vu-deep-blue);color:white;border-color:var(--vu-deep-blue)}
+.content{padding:24px;max-width:1100px}
+
+/* PROFILE HEADER */
+.profile-header{background:var(--surface-card);border:1px solid var(--border-soft);border-radius:var(--radius-lg);padding:24px;margin-bottom:20px;display:flex;align-items:center;gap:20px}
+.profile-avatar{width:80px;height:80px;border-radius:50%;background:#E8F5E9;color:var(--vu-leaf-green);display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:700;font-family:'Montserrat';flex-shrink:0}
+.profile-info{flex:1}
+.profile-name{font-family:'Montserrat';font-size:22px;font-weight:800}
+.profile-role{font-size:13px;color:var(--text-muted);margin-top:2px}
+.profile-tags{display:flex;gap:6px;margin-top:8px}
+.ptag{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:8px;font-size:10px;font-weight:600}
+.ptag-green{background:#E8F5E9;color:var(--vu-leaf-green)}
+.ptag-blue{background:var(--vu-deep-blue-lightest);color:var(--vu-deep-blue)}
+.ptag-purple{background:#F3E8FF;color:#7c3aed}
+.profile-stats{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
+.pstat{text-align:center;padding:10px;background:var(--surface-app);border-radius:var(--radius-md)}
+.pstat-value{font-family:'Montserrat';font-size:18px;font-weight:800;color:var(--vu-deep-blue)}
+.pstat-label{font-size:9px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.3px;font-weight:600}
+
+/* TABS */
+.tab-bar{display:flex;gap:0;border-bottom:2px solid var(--border-soft);margin-bottom:20px}
+.tab{padding:10px 18px;font-size:13px;font-weight:600;color:var(--text-muted);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;transition:all 150ms}
+.tab:hover{color:var(--text-primary)}
+.tab.active{color:var(--vu-deep-blue);border-bottom-color:var(--vu-deep-blue)}
+
+/* CARDS */
+.card-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.card{background:var(--surface-card);border:1px solid var(--border-soft);border-radius:var(--radius-lg);overflow:hidden}
+.card-header{padding:14px 18px;border-bottom:1px solid var(--border-soft);display:flex;align-items:center;justify-content:space-between}
+.card-title{font-family:'Montserrat';font-size:13px;font-weight:700;display:flex;align-items:center;gap:6px}
+.card-title i{color:var(--vu-deep-blue);font-size:13px}
+.card-body{padding:18px}
+.info-row{display:flex;justify-content:space-between;padding:5px 0;font-size:12px}
+.info-label{color:var(--text-muted)}.info-value{font-weight:600}
+.info-value a{color:var(--vu-deep-blue);text-decoration:none}
+
+/* CERTIFICATIONS */
+.cert-list{display:flex;flex-direction:column;gap:8px}
+.cert-item{display:flex;align-items:center;gap:10px;padding:10px;background:var(--surface-app);border-radius:var(--radius-md)}
+.cert-icon{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+.ci-green{background:#E8F5E9;color:var(--vu-leaf-green)}
+.ci-orange{background:#FFF3E0;color:var(--vu-hibiscus-orange)}
+.ci-red{background:#FBE3E1;color:var(--vu-hibiscus-red)}
+.cert-info{flex:1}
+.cert-name{font-size:12px;font-weight:600}
+.cert-detail{font-size:10px;color:var(--text-muted)}
+.cert-status{font-size:10px;font-weight:600;padding:2px 8px;border-radius:8px}
+.cs-valid{background:#E8F5E9;color:var(--vu-leaf-green)}
+.cs-expiring{background:#FFF3E0;color:var(--vu-hibiscus-orange)}
+.cs-expired{background:#FBE3E1;color:var(--vu-hibiscus-red)}
+
+/* SKILLS */
+.skill-grid{display:flex;flex-wrap:wrap;gap:6px}
+.skill-chip{padding:5px 12px;border-radius:14px;font-size:11px;font-weight:600;background:var(--surface-app);color:var(--text-secondary)}
+.skill-chip.primary{background:var(--vu-deep-blue-lightest);color:var(--vu-deep-blue)}
+
+/* SCHEDULE PREFS */
+.sched-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;text-align:center}
+.sched-day{font-size:10px;font-weight:700;color:var(--text-muted);padding:4px}
+.sched-slot{padding:6px;border-radius:var(--radius-sm);font-size:10px;font-weight:600}
+.slot-avail{background:#E8F5E9;color:var(--vu-leaf-green)}
+.slot-pref{background:var(--vu-deep-blue-lightest);color:var(--vu-deep-blue)}
+.slot-off{background:var(--surface-app);color:var(--text-muted)}
+
+/* PERFORMANCE */
+.perf-bar{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.perf-label{width:120px;font-size:12px;color:var(--text-muted)}
+.perf-track{flex:1;height:8px;background:var(--surface-app);border-radius:4px;overflow:hidden}
+.perf-fill{height:100%;border-radius:4px}
+.perf-value{width:40px;font-size:12px;font-weight:700;text-align:right;font-family:'Montserrat'}
+</style>
+</head>
+<body>
+<div class="page-layout">
+  <aside class="sidebar">
+    <div class="sidebar-brand"><i class="fas fa-shield-halved"></i> VAFHS Admin</div>
+    <nav class="nav-section">
+      <div class="nav-label">Overview</div>
+      <a href="admin_dashboard.html" class="nav-item"><i class="fas fa-th-large"></i> Dashboard</a>
+      <div class="nav-label">Management</div>
+      <a href="admin_users.html" class="nav-item"><i class="fas fa-users-cog"></i> Users &amp; Roles</a>
+      <a href="admin_service_catalog.html" class="nav-item"><i class="fas fa-stethoscope"></i> Service Catalog</a>
+      <a href="admin_facility.html" class="nav-item"><i class="fas fa-hospital"></i> Facilities</a>
+      <a class="nav-item active"><i class="fas fa-user-nurse"></i> Staff HR</a>
+      <a href="admin_settings.html" class="nav-item"><i class="fas fa-cog"></i> Settings</a>
+      <div class="nav-label">Monitoring</div>
+      <a href="admin_audit_log.html" class="nav-item"><i class="fas fa-clock-rotate-left"></i> Audit Log</a>
+      <a href="admin_reports.html" class="nav-item"><i class="fas fa-chart-bar"></i> Reports</a>
+      <div class="nav-label">Quick Links</div>
+      <a href="staff_roster.html" class="nav-item"><i class="fas fa-calendar-day"></i> Staff Roster</a>
+      <a href="ops_dashboard.html" class="nav-item"><i class="fas fa-headset"></i> Operations</a>
+    </nav>
+  </aside>
+
+  <div class="main">
+    <div class="topbar">
+      <div class="breadcrumb">
+        <a href="admin_dashboard.html">Admin</a>
+        <i class="fas fa-chevron-right" style="font-size:10px"></i>
+        <a href="admin_staff_detail.html">Staff HR</a>
+        <i class="fas fa-chevron-right" style="font-size:10px"></i>
+        <span style="color:var(--text-primary);font-weight:600">Nguyen Thi Mai</span>
+      </div>
+      <div class="topbar-actions">
+        <button class="top-btn"><i class="fas fa-print"></i> Print</button>
+        <button class="top-btn primary"><i class="fas fa-pen"></i> Edit Profile</button>
+      </div>
+    </div>
+
+    <div class="content">
+      <!-- PROFILE HEADER -->
+      <div class="profile-header">
+        <div class="profile-avatar">NM</div>
+        <div class="profile-info">
+          <div class="profile-name">Nguyen Thi Mai</div>
+          <div class="profile-role">Senior Nurse &bull; Employee ID: EMP-0012 &bull; Hanoi — Ba Dinh</div>
+          <div class="profile-tags">
+            <span class="ptag ptag-green"><i class="fas fa-circle" style="font-size:6px"></i> Active</span>
+            <span class="ptag ptag-blue"><i class="fas fa-certificate"></i> RN Licensed</span>
+            <span class="ptag ptag-purple"><i class="fas fa-star"></i> Top Performer</span>
+          </div>
+        </div>
+        <div class="profile-stats">
+          <div class="pstat"><div class="pstat-value">128</div><div class="pstat-label">Total Visits</div></div>
+          <div class="pstat"><div class="pstat-value">4.9</div><div class="pstat-label">Rating</div></div>
+          <div class="pstat"><div class="pstat-value">78%</div><div class="pstat-label">Utilization</div></div>
+          <div class="pstat"><div class="pstat-value">8</div><div class="pstat-label">Years Exp.</div></div>
+          <div class="pstat"><div class="pstat-value">0</div><div class="pstat-label">Complaints</div></div>
+        </div>
+      </div>
+
+      <!-- TABS -->
+      <div class="tab-bar">
+        <div class="tab active">Overview</div>
+        <div class="tab">Schedule</div>
+        <div class="tab">Performance</div>
+        <div class="tab">Certifications</div>
+        <div class="tab">Equipment</div>
+        <div class="tab">History</div>
+      </div>
+
+      <div class="card-grid">
+        <!-- Personal Info -->
+        <div class="card">
+          <div class="card-header"><div class="card-title"><i class="fas fa-user"></i> Personal Information</div></div>
+          <div class="card-body">
+            <div class="info-row"><span class="info-label">Full Name</span><span class="info-value">Nguyen Thi Mai</span></div>
+            <div class="info-row"><span class="info-label">Date of Birth</span><span class="info-value">March 15, 1990</span></div>
+            <div class="info-row"><span class="info-label">Gender</span><span class="info-value">Female</span></div>
+            <div class="info-row"><span class="info-label">Phone</span><span class="info-value">0912 345 678</span></div>
+            <div class="info-row"><span class="info-label">Email</span><span class="info-value">mai.nguyen@vafhs.vn</span></div>
+            <div class="info-row"><span class="info-label">Address</span><span class="info-value">28 Kim Ma, Ba Dinh, Hanoi</span></div>
+            <div class="info-row"><span class="info-label">Emergency Contact</span><span class="info-value">Nguyen Van Tuan (Spouse) — 0987 654 321</span></div>
+          </div>
+        </div>
+
+        <!-- Employment -->
+        <div class="card">
+          <div class="card-header"><div class="card-title"><i class="fas fa-briefcase"></i> Employment Details</div></div>
+          <div class="card-body">
+            <div class="info-row"><span class="info-label">Position</span><span class="info-value">Senior Nurse</span></div>
+            <div class="info-row"><span class="info-label">Department</span><span class="info-value">Home Care Services</span></div>
+            <div class="info-row"><span class="info-label">Facility</span><span class="info-value"><a href="admin_facility.html">Hanoi — Ba Dinh</a></span></div>
+            <div class="info-row"><span class="info-label">Hire Date</span><span class="info-value">Jan 15, 2018</span></div>
+            <div class="info-row"><span class="info-label">Employment Type</span><span class="info-value">Full-time</span></div>
+            <div class="info-row"><span class="info-label">Contract Expiry</span><span class="info-value">Dec 31, 2026</span></div>
+            <div class="info-row"><span class="info-label">Reports To</span><span class="info-value">Dr. Nguyen Van Thanh (Medical Director)</span></div>
+          </div>
+        </div>
+
+        <!-- Certifications -->
+        <div class="card">
+          <div class="card-header"><div class="card-title"><i class="fas fa-certificate"></i> Certifications &amp; Licenses</div><button class="top-btn" style="padding:4px 10px;font-size:10px"><i class="fas fa-plus"></i> Add</button></div>
+          <div class="card-body">
+            <div class="cert-list">
+              <div class="cert-item">
+                <div class="cert-icon ci-green"><i class="fas fa-id-badge"></i></div>
+                <div class="cert-info">
+                  <div class="cert-name">Registered Nurse License (RN)</div>
+                  <div class="cert-detail">Ministry of Health &bull; License #RN-2018-04521 &bull; Exp: Dec 2027</div>
+                </div>
+                <span class="cert-status cs-valid">Valid</span>
+              </div>
+              <div class="cert-item">
+                <div class="cert-icon ci-green"><i class="fas fa-heart-pulse"></i></div>
+                <div class="cert-info">
+                  <div class="cert-name">Basic Life Support (BLS)</div>
+                  <div class="cert-detail">AHA Certified &bull; Exp: Aug 2026</div>
+                </div>
+                <span class="cert-status cs-valid">Valid</span>
+              </div>
+              <div class="cert-item">
+                <div class="cert-icon ci-orange"><i class="fas fa-user-nurse"></i></div>
+                <div class="cert-info">
+                  <div class="cert-name">Geriatric Care Specialist</div>
+                  <div class="cert-detail">VN Nursing Association &bull; Exp: Jul 2026</div>
+                </div>
+                <span class="cert-status cs-expiring">Expiring Soon</span>
+              </div>
+              <div class="cert-item">
+                <div class="cert-icon ci-green"><i class="fas fa-bandage"></i></div>
+                <div class="cert-info">
+                  <div class="cert-name">Wound Care Management</div>
+                  <div class="cert-detail">VAFHS Internal Training &bull; Exp: Nov 2026</div>
+                </div>
+                <span class="cert-status cs-valid">Valid</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Skills & Qualifications -->
+        <div class="card">
+          <div class="card-header"><div class="card-title"><i class="fas fa-graduation-cap"></i> Skills &amp; Qualifications</div></div>
+          <div class="card-body">
+            <div style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.4px;margin-bottom:8px">Clinical Skills</div>
+            <div class="skill-grid" style="margin-bottom:14px">
+              <span class="skill-chip primary">General Health Assessment</span>
+              <span class="skill-chip primary">Geriatric Care</span>
+              <span class="skill-chip primary">Wound Care</span>
+              <span class="skill-chip primary">Vital Signs Monitoring</span>
+              <span class="skill-chip primary">Medication Administration</span>
+              <span class="skill-chip primary">Patient Education</span>
+              <span class="skill-chip">IV Therapy</span>
+              <span class="skill-chip">Pediatric Basic</span>
+            </div>
+            <div style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.4px;margin-bottom:8px">Languages</div>
+            <div class="skill-grid" style="margin-bottom:14px">
+              <span class="skill-chip primary">Vietnamese (Native)</span>
+              <span class="skill-chip">English (Conversational)</span>
+            </div>
+            <div style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.4px;margin-bottom:8px">Service Types Qualified</div>
+            <div class="skill-grid">
+              <span class="skill-chip primary">Home Visit — General Health</span>
+              <span class="skill-chip primary">Home Visit — Wound Care</span>
+              <span class="skill-chip primary">Follow-up Visit</span>
+              <span class="skill-chip">Post-Surgery (Supervised)</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Schedule Preferences -->
+        <div class="card">
+          <div class="card-header"><div class="card-title"><i class="fas fa-calendar-alt"></i> Weekly Schedule Preferences</div></div>
+          <div class="card-body">
+            <div class="sched-grid">
+              <div class="sched-day">Mon</div><div class="sched-day">Tue</div><div class="sched-day">Wed</div><div class="sched-day">Thu</div><div class="sched-day">Fri</div><div class="sched-day">Sat</div><div class="sched-day">Sun</div>
+              <div class="sched-slot slot-pref">07-12</div><div class="sched-slot slot-avail">07-18</div><div class="sched-slot slot-avail">07-18</div><div class="sched-slot slot-pref">07-12</div><div class="sched-slot slot-avail">07-18</div><div class="sched-slot slot-avail">08-14</div><div class="sched-slot slot-off">OFF</div>
+            </div>
+            <div style="display:flex;gap:12px;margin-top:10px;font-size:10px;color:var(--text-muted)">
+              <span><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:var(--vu-deep-blue-lightest);margin-right:4px;vertical-align:middle"></span> Preferred</span>
+              <span><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:#E8F5E9;margin-right:4px;vertical-align:middle"></span> Available</span>
+              <span><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:var(--surface-app);margin-right:4px;vertical-align:middle"></span> Off</span>
+            </div>
+            <div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--border-soft)">
+              <div class="info-row"><span class="info-label">Max bookings/day</span><span class="info-value">4</span></div>
+              <div class="info-row"><span class="info-label">Max bookings/week</span><span class="info-value">18</span></div>
+              <div class="info-row"><span class="info-label">Travel radius</span><span class="info-value">15 km</span></div>
+              <div class="info-row"><span class="info-label">Break between bookings</span><span class="info-value">30 min</span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Performance -->
+        <div class="card">
+          <div class="card-header"><div class="card-title"><i class="fas fa-chart-line"></i> Performance Metrics (Last 90 Days)</div></div>
+          <div class="card-body">
+            <div class="perf-bar">
+              <span class="perf-label">Client Satisfaction</span>
+              <div class="perf-track"><div class="perf-fill" style="width:98%;background:var(--vu-leaf-green)"></div></div>
+              <span class="perf-value" style="color:var(--vu-leaf-green)">4.9</span>
+            </div>
+            <div class="perf-bar">
+              <span class="perf-label">Punctuality</span>
+              <div class="perf-track"><div class="perf-fill" style="width:95%;background:var(--vu-leaf-green)"></div></div>
+              <span class="perf-value" style="color:var(--vu-leaf-green)">95%</span>
+            </div>
+            <div class="perf-bar">
+              <span class="perf-label">Completion Rate</span>
+              <div class="perf-track"><div class="perf-fill" style="width:100%;background:var(--vu-leaf-green)"></div></div>
+              <span class="perf-value" style="color:var(--vu-leaf-green)">100%</span>
+            </div>
+            <div class="perf-bar">
+              <span class="perf-label">Notes Completeness</span>
+              <div class="perf-track"><div class="perf-fill" style="width:88%;background:var(--vu-deep-blue)"></div></div>
+              <span class="perf-value" style="color:var(--vu-deep-blue)">88%</span>
+            </div>
+            <div class="perf-bar">
+              <span class="perf-label">Utilization</span>
+              <div class="perf-track"><div class="perf-fill" style="width:78%;background:var(--vu-deep-blue)"></div></div>
+              <span class="perf-value" style="color:var(--vu-deep-blue)">78%</span>
+            </div>
+            <div class="perf-bar">
+              <span class="perf-label">Cash Handover</span>
+              <div class="perf-track"><div class="perf-fill" style="width:100%;background:var(--vu-leaf-green)"></div></div>
+              <span class="perf-value" style="color:var(--vu-leaf-green)">100%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

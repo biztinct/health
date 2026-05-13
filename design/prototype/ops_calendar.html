@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Calendar — VAFHS Operations</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+:root{--vu-deep-blue:#1565C0;--vu-deep-blue-darker:#1356A9;--vu-deep-blue-darkest:#0D356B;--vu-deep-blue-light:#83C5FA;--vu-deep-blue-lightest:#E4F4FD;--vu-accent-blue:#42A5F5;--vu-hibiscus-red:#E53935;--vu-hibiscus-orange:#FB8C00;--vu-leaf-green:#43A047;--state-draft:#64748b;--state-confirmed:#2563eb;--state-assigned:#7c3aed;--state-active:#ea580c;--state-completed:#16a34a;--state-cancelled:#dc2626;--text-primary:#212121;--text-secondary:#424242;--text-muted:#757575;--surface-app:#F5F5F5;--surface-card:#FFFFFF;--border-soft:#E0E0E0;--border-strong:#BDBDBD;--shadow-sm:0 1px 3px rgba(33,33,33,.08);--shadow-md:0 2px 8px rgba(33,33,33,.12);--shadow-lg:0 4px 16px rgba(33,33,33,.15);--radius-sm:4px;--radius-md:8px;--radius-lg:12px}
+*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Segoe UI',Arial,sans-serif;font-size:13px;color:var(--text-primary);background:var(--surface-app);line-height:1.5;-webkit-font-smoothing:antialiased}h1,h2,h3,h4{font-family:'Montserrat','Segoe UI',Arial,sans-serif;font-weight:600}.app-wrapper{display:flex;min-height:100vh}
+
+.sidebar{width:220px;background:var(--vu-deep-blue-darkest);color:white;display:flex;flex-direction:column;flex-shrink:0;position:fixed;top:0;left:0;bottom:0;z-index:100}
+.sidebar-logo{padding:20px 16px;display:flex;align-items:center;gap:10px;border-bottom:1px solid rgba(255,255,255,.1);text-decoration:none;color:white}
+.logo-icon{width:36px;height:36px;background:var(--vu-hibiscus-red);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px}
+.logo-text{font-family:'Montserrat';font-weight:700;font-size:15px;letter-spacing:.5px}.logo-sub{font-size:10px;opacity:.6}
+.sidebar-nav{padding:12px 0;flex:1}
+.nav-section-label{padding:16px 16px 6px;font-size:10px;text-transform:uppercase;letter-spacing:1.2px;opacity:.4;font-weight:600}
+.nav-item{display:flex;align-items:center;gap:10px;padding:10px 16px;color:rgba(255,255,255,.7);text-decoration:none;font-size:13px;font-weight:500;transition:all 150ms;cursor:pointer;border-left:3px solid transparent}
+.nav-item:hover{background:rgba(255,255,255,.08);color:white}.nav-item.active{background:rgba(255,255,255,.12);color:white;border-left-color:var(--vu-accent-blue)}
+.nav-item i{width:20px;text-align:center;font-size:14px}.nav-item .badge-count{margin-left:auto;background:var(--vu-hibiscus-red);color:white;font-size:10px;font-weight:700;padding:2px 6px;border-radius:10px}
+.sidebar-user{padding:12px 16px;border-top:1px solid rgba(255,255,255,.1);display:flex;align-items:center;gap:10px}
+.user-avatar{width:32px;height:32px;border-radius:50%;background:var(--vu-accent-blue);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700}
+.user-info{flex:1}.user-name{font-size:12px;font-weight:600}.user-role{font-size:10px;opacity:.5}
+
+.main-content{flex:1;margin-left:220px;display:flex;flex-direction:column}
+.top-header{background:var(--surface-card);border-bottom:1px solid var(--border-soft);padding:12px 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;box-shadow:var(--shadow-sm)}
+.header-left{display:flex;align-items:center;gap:16px}
+.date-nav{display:flex;align-items:center;gap:8px;background:var(--surface-app);border:1px solid var(--border-soft);border-radius:var(--radius-md);padding:4px}
+.date-nav-btn{width:28px;height:28px;border:none;background:transparent;border-radius:var(--radius-sm);cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--text-secondary);transition:all 120ms}
+.date-nav-btn:hover{background:var(--vu-deep-blue-lightest);color:var(--vu-deep-blue)}
+.date-label{font-weight:600;font-size:14px;min-width:180px;text-align:center;font-family:'Montserrat'}
+.today-btn{font-size:11px;color:var(--vu-deep-blue);font-weight:600;cursor:pointer;padding:4px 10px;border-radius:var(--radius-sm);transition:background 120ms;border:1px solid var(--vu-deep-blue);background:transparent}
+.today-btn:hover{background:var(--vu-deep-blue-lightest)}
+.header-right{display:flex;align-items:center;gap:10px}
+.view-toggle{display:flex;gap:0;background:var(--surface-app);border:1px solid var(--border-soft);border-radius:var(--radius-md);overflow:hidden}
+.view-btn{padding:6px 14px;font-size:11px;font-weight:600;border:none;background:transparent;cursor:pointer;color:var(--text-muted);transition:all 150ms;font-family:inherit}
+.view-btn.active{background:var(--vu-deep-blue);color:white}
+.view-btn:hover:not(.active){color:var(--text-primary)}
+.header-btn{display:flex;align-items:center;gap:6px;padding:7px 14px;border:none;border-radius:var(--radius-md);font-size:12px;font-weight:600;cursor:pointer;transition:all 150ms;font-family:inherit}
+.btn-primary{background:var(--vu-deep-blue);color:white}.btn-primary:hover{background:var(--vu-deep-blue-darker)}
+.btn-outline{background:transparent;color:var(--text-secondary);border:1px solid var(--border-soft)}.btn-outline:hover{border-color:var(--vu-deep-blue);color:var(--vu-deep-blue);background:var(--vu-deep-blue-lightest)}
+.filter-select{padding:6px 12px;border:1px solid var(--border-soft);border-radius:var(--radius-md);font-size:12px;color:var(--text-secondary);background:var(--surface-card);cursor:pointer;font-family:inherit}
+.page-body{padding:0;flex:1;display:flex;flex-direction:column}
+
+/* CALENDAR GRID */
+.cal-container{flex:1;display:flex;flex-direction:column;background:var(--surface-card);border:1px solid var(--border-soft);margin:12px;border-radius:var(--radius-lg);overflow:hidden;box-shadow:var(--shadow-sm)}
+.cal-header-row{display:grid;grid-template-columns:60px repeat(7,1fr);border-bottom:1px solid var(--border-soft)}
+.cal-corner{background:var(--surface-app);border-right:1px solid var(--border-soft);padding:8px}
+.cal-day-header{padding:10px 8px;text-align:center;border-right:1px solid var(--border-soft);background:var(--surface-app)}
+.cal-day-header:last-child{border-right:none}
+.cal-day-name{font-size:10px;text-transform:uppercase;letter-spacing:.5px;color:var(--text-muted);font-weight:600}
+.cal-day-num{font-size:18px;font-weight:700;font-family:'Montserrat';margin-top:2px}
+.cal-day-header.today{background:var(--vu-deep-blue-lightest)}
+.cal-day-header.today .cal-day-num{color:var(--vu-deep-blue)}
+.cal-day-header.today .cal-day-name{color:var(--vu-deep-blue)}
+
+.cal-body{flex:1;display:grid;grid-template-columns:60px repeat(7,1fr);overflow-y:auto}
+.cal-time-col{display:flex;flex-direction:column;border-right:1px solid var(--border-soft);background:var(--surface-app)}
+.cal-time-slot{height:60px;padding:4px 8px;font-size:10px;color:var(--text-muted);font-weight:600;text-align:right;border-bottom:1px solid var(--border-soft)}
+.cal-day-col{border-right:1px solid var(--border-soft);position:relative}
+.cal-day-col:last-child{border-right:none}
+.cal-hour-line{height:60px;border-bottom:1px solid var(--border-soft)}
+.cal-half-line{height:30px;border-bottom:1px dashed rgba(224,224,224,.5)}
+
+/* EVENTS */
+.cal-event{position:absolute;left:3px;right:3px;border-radius:var(--radius-sm);padding:4px 6px;font-size:10px;cursor:pointer;overflow:hidden;transition:all 150ms;z-index:1;border-left:3px solid}
+.cal-event:hover{box-shadow:var(--shadow-md);transform:scale(1.02);z-index:10}
+.cal-event .ev-time{font-weight:700;font-size:9px;opacity:.8}
+.cal-event .ev-title{font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cal-event .ev-staff{font-size:9px;opacity:.7;margin-top:1px}
+.ev-hv{background:rgba(21,101,192,.1);color:var(--vu-deep-blue);border-color:var(--vu-deep-blue)}
+.ev-cv{background:rgba(124,58,237,.1);color:var(--state-assigned);border-color:var(--state-assigned)}
+.ev-fu{background:rgba(67,160,71,.1);color:var(--vu-leaf-green);border-color:var(--vu-leaf-green)}
+.ev-consult{background:rgba(66,165,245,.1);color:var(--vu-accent-blue);border-color:var(--vu-accent-blue)}
+.ev-unassigned{background:rgba(229,57,53,.08);color:var(--vu-hibiscus-red);border-color:var(--vu-hibiscus-red);border-style:dashed}
+.ev-active{animation:ev-pulse 2s infinite;border-color:var(--state-active);background:rgba(234,88,12,.1);color:var(--state-active)}
+@keyframes ev-pulse{0%,100%{box-shadow:0 0 0 0 rgba(234,88,12,.2)}50%{box-shadow:0 0 0 4px rgba(234,88,12,0)}}
+
+/* NOW LINE */
+.now-line{position:absolute;left:0;right:0;height:2px;background:var(--vu-hibiscus-red);z-index:5;pointer-events:none}
+.now-line::before{content:'';position:absolute;left:-4px;top:-3px;width:8px;height:8px;border-radius:50%;background:var(--vu-hibiscus-red)}
+
+/* LEGEND */
+.cal-legend{display:flex;gap:16px;padding:8px 16px;border-top:1px solid var(--border-soft);background:var(--surface-app)}
+.legend-item{display:flex;align-items:center;gap:4px;font-size:10px;color:var(--text-muted);font-weight:500}
+.legend-dot{width:10px;height:10px;border-radius:2px}
+
+::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--border-soft);border-radius:3px}
+</style>
+</head>
+<body>
+<div class="app-wrapper">
+  <aside class="sidebar">
+    <a class="sidebar-logo" href="ops_dashboard.html">
+      <div class="logo-icon"><i class="fas fa-heartbeat"></i></div>
+      <div><div class="logo-text">VIET UC</div><div class="logo-sub">Healthcare Platform</div></div>
+    </a>
+    <nav class="sidebar-nav">
+      <div class="nav-section-label">Main</div>
+      <a class="nav-item" href="ops_dashboard.html"><i class="fas fa-th-large"></i> Dashboard</a>
+      <a class="nav-item" href="ops_booking_queue.html"><i class="fas fa-calendar-check"></i> Bookings <span class="badge-count">4</span></a>
+      <a class="nav-item" href="staff_roster.html"><i class="fas fa-users"></i> Staff</a>
+      <a class="nav-item active"><i class="fas fa-calendar-alt"></i> Calendar</a>
+      <a class="nav-item"><i class="fas fa-clipboard-list"></i> Roster</a>
+      <div class="nav-section-label">Reports</div>
+      <a class="nav-item"><i class="fas fa-chart-bar"></i> Analytics</a>
+      <div class="nav-section-label">System</div>
+      <a class="nav-item"><i class="fas fa-cog"></i> Configuration</a>
+    </nav>
+    <div class="sidebar-user">
+      <div class="user-avatar">TL</div>
+      <div class="user-info"><div class="user-name">Tran Thi Lan</div><div class="user-role">Operations Manager</div></div>
+    </div>
+  </aside>
+
+  <div class="main-content">
+    <header class="top-header">
+      <div class="header-left">
+        <div class="date-nav">
+          <button class="date-nav-btn"><i class="fas fa-chevron-left"></i></button>
+          <span class="date-label">May 11 — 17, 2026</span>
+          <button class="date-nav-btn"><i class="fas fa-chevron-right"></i></button>
+        </div>
+        <button class="today-btn">Today</button>
+      </div>
+      <div class="header-right">
+        <select class="filter-select"><option>All Staff</option><option>Nguyen Thi Mai</option><option>Le Thi Hoa</option><option>Tran Minh Linh</option></select>
+        <select class="filter-select"><option>All Services</option><option>Home Visit</option><option>Clinic Visit</option><option>Follow-up</option></select>
+        <div class="view-toggle">
+          <button class="view-btn">Day</button>
+          <button class="view-btn active">Week</button>
+          <button class="view-btn">Month</button>
+        </div>
+        <button class="header-btn btn-primary" onclick="window.location='booking_wizard.html'"><i class="fas fa-plus"></i> New Booking</button>
+      </div>
+    </header>
+
+    <div class="page-body">
+      <div class="cal-container">
+        <!-- HEADER ROW -->
+        <div class="cal-header-row">
+          <div class="cal-corner"></div>
+          <div class="cal-day-header"><div class="cal-day-name">Mon</div><div class="cal-day-num">11</div></div>
+          <div class="cal-day-header today"><div class="cal-day-name">Tue</div><div class="cal-day-num">12</div></div>
+          <div class="cal-day-header"><div class="cal-day-name">Wed</div><div class="cal-day-num">13</div></div>
+          <div class="cal-day-header"><div class="cal-day-name">Thu</div><div class="cal-day-num">14</div></div>
+          <div class="cal-day-header"><div class="cal-day-name">Fri</div><div class="cal-day-num">15</div></div>
+          <div class="cal-day-header"><div class="cal-day-name">Sat</div><div class="cal-day-num">16</div></div>
+          <div class="cal-day-header"><div class="cal-day-name">Sun</div><div class="cal-day-num">17</div></div>
+        </div>
+
+        <!-- BODY -->
+        <div class="cal-body">
+          <!-- TIME COLUMN -->
+          <div class="cal-time-col">
+            <div class="cal-time-slot">07:00</div>
+            <div class="cal-time-slot">08:00</div>
+            <div class="cal-time-slot">09:00</div>
+            <div class="cal-time-slot">10:00</div>
+            <div class="cal-time-slot">11:00</div>
+            <div class="cal-time-slot">12:00</div>
+            <div class="cal-time-slot">13:00</div>
+            <div class="cal-time-slot">14:00</div>
+            <div class="cal-time-slot">15:00</div>
+            <div class="cal-time-slot">16:00</div>
+            <div class="cal-time-slot">17:00</div>
+            <div class="cal-time-slot">18:00</div>
+          </div>
+
+          <!-- MON 11 -->
+          <div class="cal-day-col">
+            <div class="cal-hour-line"></div><div class="cal-hour-line"></div><div class="cal-hour-line"></div><div class="cal-hour-line"></div><div class="cal-hour-line"></div><div class="cal-hour-line"></div><div class="cal-hour-line"></div><div class="cal-hour-line"></div><div class="cal-hour-line"></div><div class="cal-hour-line"></div><div class="cal-hour-line"></div><div class="cal-hour-line"></div>
+            <div class="cal-event ev-unassigned" style="top:120px;height:120px" onclick="window.location='ops_booking_detail.html'" title="BK-0847 Tran Van Duc — UNASSIGNED">
+              <div class="ev-time">09:00-11:00</div>
+              <div class="ev-title">Tran Van Duc</div>
+              <div class="ev-staff">Unassigned!</div>
+            </div>
+            <div class="cal-event ev-cv" style="top:210px;height:90px" title="BK-0848 Pham Minh Anh — Le Thi Hoa">
+              <div class="ev-time">10:30-12:00</div>
+              <div class="ev-title">Pham Minh Anh</div>
+              <div class="ev-staff">Le Thi Hoa</div>
+            </div>
+            <div class="cal-event ev-hv" style="top:360px;height:120px" title="BK-0850 Nguyen Van Long — Nguyen Thi Mai">
+              <div class="ev-time">13:00-15:00</div>
+              <div class="ev-title">Nguyen Van Long</div>
+              <div class="ev-staff">Nguyen Thi Mai</div>
+            </div>
+            <div class="cal-event ev-unassigned" style="top:480px;height:90px" title="BK-0852 Vu Thi Huong — UNASSIGNED">
+              <div class="ev-time">15:00-16:30</div>
+              <div class="ev-title">Vu Thi Huong</div>
+              <div class="ev-staff">Unassigned!</div>
+            </div>
+          </div>
+
+          <!-- TUE 12 (today) -->
+          <div class="cal-day-col" style="background:rgba(228,244,253,.3)">
+            <div class="cal-hour-line"></div><div class="cal-hour-line"></div><div class="cal-hour-line"></div><div class="cal-hour-line"></div><div class="cal-hour-line"></div><div class="cal-hour-line"></div><div class="cal-hour-line"></div><div class="cal-hour-line"></div><div class="cal-hour-line"></div><div class="cal-hour-line"></div><div class="cal-hour-line"></div><div class="cal-hour-line"></div>
+            <div class="now-line" style="top:180px"></div>
+            <div class="cal-event ev-hv" style="top:0;height:120px" title="Hoang Minh Tuan — Nguyen Thi Mai">
+              <div class="ev-time">07:00-09:00</div>
+              <div class="ev-title">Hoang Minh Tuan</div>
+              <div class="ev-staff">Nguyen Thi Mai</div>
+            </div>
+            <div class="cal-event ev-active" style="top:60px;height:210px" title="Nguyen Hoang Phuc — Le Thi Hoa (Active)">
+              <div class="ev-time">08:00-11:30</div>
+              <div class="ev-title">Nguyen Hoang Phuc</div>
+              <div class="ev-staff">Le Thi Hoa (Active)</div>
+            </div>
+            <div class="cal-event ev-fu" style="top:60px;height:120px" title="Dang Thi Loan — Do Thi Hanh" style="left:52%">
+              <div class="ev-time">08:00-10:00</div>
+              <div class="ev-title">Dang Thi Loan</div>
+              <div class="ev-staff">Do Thi Hanh</div>
+            </div>
+            <div class="cal-event ev-hv" style="top:360px;height:120px" title="Le Thi Hoa booking — Tran Minh Linh">
+              <div class="ev-time">13:00-15:00</div>
+              <div class="ev-title">Vo Van Khanh</div>
+              <div class="ev-staff">Tran Minh Linh</div>
+            </div>
+            <div class="cal-event ev-hv" style="top:420px;height:120px" title="Mai — 14:00 Home Visit">
+              <div class="ev-time">14:00-16:00</div>
+              <div class="ev-title">Tran Van Duc</div>
+              <div class="ev-staff">Nguyen Thi Mai</div>
+            </div>
+          </div>
+
+          <!-- WED 13 -->
+          <div class="cal-day-col">
+            <div class="cal-hour-line"></div><div class="cal-hour-line"></div><div class="cal-hour-line"></div><div class="cal-hour-line"></div><div class="cal-hour-line"></div><div class="cal-hour-line"></div><div class="cal-hour-line"></div><div class="cal-hour-line"></div><div class="cal-hour-line"></div><div class="cal-hour-line"></div><div class="cal-hour-line"></div><div class="cal-hour-line"></div>
+            <div class="cal-event ev-hv" style="top:60px;height:120px">
+              <div class="ev-time">08:00-10:00</div>
+              <div class="ev-title">Pham Minh Anh</div>
+              <div class="ev-staff">Pham Thu Hang</div>
+            </div>
+            <div class="cal-event ev-consult" style="top:180px;height:60px">
+              <div class="ev-time">10:00-11:00</div>
+              <div class="ev-title">Le Anh Tuan</div>
+              <div class="ev-staff">Dr. Nguyen</div>
+            </div>
+            <div class="cal-event ev-unassigned" style="top:300px;height:120px">
+              <div class="ev-time">12:00-14:00</div>
+              <div class="ev-title">New Client</div>
+              <div class="ev-staff">Unassigned!</div>
+            </div>
+            <div class="cal-event ev-hv" style="top:480px;height:120px">
+              <div class="ev-time">15:00-17:00</div>
+              <div class="ev-title">Nguyen Van Long</div>
+              <div class="ev-staff">Nguyen Thi Mai</div>
+            </div>
+          </div>
+
+          <!-- THU 14 -->
+          <div class="cal-day-col">
+            <div class="cal-hour-line"></div><div class="cal-hour-line"></div><div class="cal-hour-line"></div><div class="cal-hour-line"></div><div class="cal-hour-line"></div><div class="cal-hour-line"></div><div class="cal-hour-line"></div><div class="cal-hour-line"></div><div class="cal-hour-line"></div><div class="cal-hour-line"></div><div class="cal-hour-line"></div><div class="cal-hour-line"></div>
+            <div class="cal-event ev-hv" style="top:0;height:120px">
+              <div class="ev-time">07:00-09:00</div>
+              <div class="ev-title">Hoang Minh Tuan</div>
+              <div class="ev-staff">Le Thi Hoa</div>
+            </div>
+            <div class="cal-event ev-cv" style="top:120px;height:90px">
+              <div class="ev-time">09:00-10:30</div>
+              <div class="ev-title">Vu Thi Huong</div>
+              <div class="ev-staff">Dr. Nguyen</div>
+            </div>
+            <div class="cal-event ev-fu" style="top:360px;height:60px">
+              <div class="ev-time">13:00-14:00</div>
+              <div class="ev-title">Dang Thi Loan</div>
+              <div class="ev-staff">Do Thi Hanh</div>
+            </div>
+          </div>
+
+          <!-- FRI 15 -->
+          <div class="cal-day-col">
+            <div class="cal-hour-line"></div><div class="cal-hour-line"></div><div class="cal-hour-line"></div><div class="cal-hour-line"></div><div class="cal-hour-line"></div><div class="cal-hour-line"></div><div class="cal-hour-line"></div><div class="cal-hour-line"></div><div class="cal-hour-line"></div><div class="cal-hour-line"></div><div class="cal-hour-line"></div><div class="cal-hour-line"></div>
+            <div class="cal-event ev-hv" style="top:60px;height:180px">
+              <div class="ev-time">08:00-11:00</div>
+              <div class="ev-title">Tran Van Duc</div>
+              <div class="ev-staff">Nguyen Thi Mai</div>
+            </div>
+            <div class="cal-event ev-hv" style="top:360px;height:120px">
+              <div class="ev-time">13:00-15:00</div>
+              <div class="ev-title">Pham Minh Anh</div>
+              <div class="ev-staff">Tran Minh Linh</div>
+            </div>
+            <div class="cal-event ev-consult" style="top:480px;height:60px">
+              <div class="ev-time">15:00-16:00</div>
+              <div class="ev-title">New Consultation</div>
+              <div class="ev-staff">Dr. Nguyen</div>
+            </div>
+          </div>
+
+          <!-- SAT 16 -->
+          <div class="cal-day-col" style="background:rgba(0,0,0,.02)">
+            <div class="cal-hour-line"></div><div class="cal-hour-line"></div><div class="cal-hour-line"></div><div class="cal-hour-line"></div><div class="cal-hour-line"></div><div class="cal-hour-line"></div><div class="cal-hour-line"></div><div class="cal-hour-line"></div><div class="cal-hour-line"></div><div class="cal-hour-line"></div><div class="cal-hour-line"></div><div class="cal-hour-line"></div>
+            <div class="cal-event ev-hv" style="top:120px;height:120px">
+              <div class="ev-time">09:00-11:00</div>
+              <div class="ev-title">Weekend Home Visit</div>
+              <div class="ev-staff">Do Thi Hanh</div>
+            </div>
+          </div>
+
+          <!-- SUN 17 -->
+          <div class="cal-day-col" style="background:rgba(0,0,0,.02)">
+            <div class="cal-hour-line"></div><div class="cal-hour-line"></div><div class="cal-hour-line"></div><div class="cal-hour-line"></div><div class="cal-hour-line"></div><div class="cal-hour-line"></div><div class="cal-hour-line"></div><div class="cal-hour-line"></div><div class="cal-hour-line"></div><div class="cal-hour-line"></div><div class="cal-hour-line"></div><div class="cal-hour-line"></div>
+          </div>
+        </div>
+
+        <!-- LEGEND -->
+        <div class="cal-legend">
+          <div class="legend-item"><div class="legend-dot" style="background:var(--vu-deep-blue)"></div> Home Visit</div>
+          <div class="legend-item"><div class="legend-dot" style="background:var(--state-assigned)"></div> Clinic Visit</div>
+          <div class="legend-item"><div class="legend-dot" style="background:var(--vu-leaf-green)"></div> Follow-up</div>
+          <div class="legend-item"><div class="legend-dot" style="background:var(--vu-accent-blue)"></div> Consultation</div>
+          <div class="legend-item"><div class="legend-dot" style="background:var(--state-active)"></div> Active Now</div>
+          <div class="legend-item"><div class="legend-dot" style="background:var(--vu-hibiscus-red);border:1px dashed var(--vu-hibiscus-red)"></div> Unassigned</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>
