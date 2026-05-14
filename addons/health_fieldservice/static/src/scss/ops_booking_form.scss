@@ -15,22 +15,13 @@
 
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Phase 1: Before mount — render in document flow so FormRenderer gets dims
+// Layout — render inside Odoo's action container with global sidebar
 // ─────────────────────────────────────────────────────────────────────────────
 .ops-booking-form-page {
     display: flex !important;
     flex-direction: row !important;
     background: var(--vu-surface-muted, #f8f9fa);
-}
-
-// Phase 2: After mount — break out of Odoo's layout chain
-.ops-booking-form-page.ops-mounted {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    z-index: 1050;
+    height: 100%;
 }
 
 .ops-booking-form-page {
@@ -666,33 +657,64 @@
     }
 
     // ─────────────────────────────────────────────────────────────────────
-    // NOTEBOOK TABS — Clean tab styling
+    // NOTEBOOK TABS — Card-contained bar matching client profile style
     // ─────────────────────────────────────────────────────────────────────
     .o_notebook {
         .nav-tabs {
-            border-bottom: 2px solid #e2e8f0;
+            background: var(--vu-surface-card, #fff);
+            border-radius: 10px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+            border: 1px solid var(--vu-border-soft, #e2e8f0);
+            overflow: hidden;
             gap: 0;
+            margin-bottom: 0;
+
+            .nav-item {
+                margin-bottom: 0;
+            }
 
             .nav-link {
-                font-size: 0.8125rem;
+                font-size: 14px;
                 font-weight: 600;
                 color: #64748b;
-                padding: 10px 16px;
+                padding: 12px 20px;
                 border: none;
                 border-bottom: 2px solid transparent;
-                margin-bottom: -2px;
-                transition: color 0.15s, border-color 0.15s;
+                border-radius: 0;
+                margin-bottom: 0;
+                transition: all 150ms;
+                display: inline-flex;
+                align-items: center;
+                gap: 6px;
+
+                &::before {
+                    font-family: FontAwesome;
+                    font-size: 14px;
+                    font-weight: 400;
+                    opacity: 0.6;
+                }
 
                 &:hover {
                     color: #1e293b;
-                    border-bottom-color: #94a3b8;
+                    background: var(--vu-surface-muted, #f8f9fa);
                 }
 
                 &.active {
-                    color: var(--vu-brand-primary, #2563eb);
-                    border-bottom-color: var(--vu-brand-primary, #2563eb);
+                    color: var(--vu-brand-primary, #1565C0);
+                    border-bottom-color: var(--vu-brand-primary, #1565C0);
                     background: transparent;
+
+                    &::before { opacity: 1; }
                 }
+
+                &[name="overview"]::before { content: "\f0e8"; }
+                &[name="clinical_notes"]::before { content: "\f0f0"; }
+                &[name="planning"]::before { content: "\f073"; }
+                &[name="execution"]::before { content: "\f0ae"; }
+                &[name="tracking"]::before { content: "\f041"; }
+                &[name="cancellation"]::before { content: "\f05e"; }
+                &[name="completion"]::before { content: "\f058"; }
+                &[name="communication"]::before { content: "\f0e0"; }
             }
         }
 

@@ -1,7 +1,7 @@
 /** @odoo-module **/
 
 import { registry } from "@web/core/registry";
-import { Component, useState, onWillStart, onMounted } from "@odoo/owl";
+import { Component, useState, onWillStart } from "@odoo/owl";
 import { useService } from "@web/core/utils/hooks";
 import { _t } from "@web/core/l10n/translation";
 
@@ -47,7 +47,6 @@ class OpsCommandCenter extends Component {
     static template = "health_fieldservice.OpsCommandCenter";
 
     setup() {
-        console.log("[OpsCC] setup() START");
         this.orm = useService("orm");
         this.action = useService("action");
         this.notification = useService("notification");
@@ -70,29 +69,9 @@ class OpsCommandCenter extends Component {
 
         this.timeSlots = this.generateTimeSlots(7, 18);
 
-        const sessionName = (window.odoo && window.odoo.session_info && window.odoo.session_info.name) || '';
-        this.currentUserName = sessionName || 'Operations Manager';
-        this.currentUserInitials = this.currentUserName.split(' ').filter(p => p).map(p => p[0]).join('').substring(0, 2).toUpperCase() || 'OM';
-
         onWillStart(async () => {
-            console.log("[OpsCC] onWillStart — loading data...");
             await this.loadFacilities();
             await this.loadDashboardData();
-            console.log("[OpsCC] onWillStart — data loaded OK");
-        });
-
-        onMounted(() => {
-            const el = this.el || (this.__owl__ && this.__owl__.bdom && this.__owl__.bdom.el);
-            console.log("[OpsCC] onMounted — root el:", el);
-            const sidebar = el ? el.querySelector('.ops-sidebar') : null;
-            console.log("[OpsCC] onMounted — sidebar el:", sidebar);
-            if (sidebar) {
-                const style = window.getComputedStyle(sidebar);
-                console.log("[OpsCC] sidebar computed: display=", style.display, "visibility=", style.visibility, "width=", style.width, "height=", style.height);
-            } else {
-                console.warn("[OpsCC] NO .ops-sidebar found in DOM!");
-                console.log("[OpsCC] root el innerHTML (first 500):", el ? el.innerHTML.substring(0, 500) : 'NO EL');
-            }
         });
     }
 
@@ -426,27 +405,6 @@ class OpsCommandCenter extends Component {
         this.notification.add(_t("Dashboard refreshed"), { type: "success" });
     }
 
-    // ===== SIDEBAR NAVIGATION =====
-
-    navigateTo(page) {
-        const actions = {
-            dashboard: 'health_fieldservice.action_ops_command_center',
-            bookings: 'health_fieldservice.action_ops_booking_queue',
-            clients: 'health_fieldservice.action_ops_client_list',
-            recurring: 'health_fieldservice.action_ops_recurring_booking',
-            staff: 'health_fieldservice.action_ops_staff_roster',
-            calendar: 'health_fieldservice.action_ops_calendar',
-            workload: 'health_fieldservice.action_staff_workload_dashboard',
-            analytics: 'health_fieldservice.action_staff_workload_dashboard',
-        };
-        if (actions[page]) {
-            this.action.doAction(actions[page], { clearBreadcrumbs: true });
-        }
-    }
-
-    navigateHome() {
-        window.location.href = '/web';
-    }
 }
 
 registry.category("actions").add("ops_command_center", OpsCommandCenter);

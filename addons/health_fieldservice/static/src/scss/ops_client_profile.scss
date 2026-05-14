@@ -4,14 +4,8 @@
 
 .ops-client-profile-page {
     display: flex;
-    height: 100vh;
+    height: 100%;
     background: var(--vu-surface-muted);
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    z-index: 1050;
 }
 
 .cp-page-body {
@@ -45,17 +39,17 @@
 
 // ===== PROFILE HEADER =====
 .cp-profile-header {
-    background: var(--vu-surface-card);
+    background: linear-gradient(135deg, $vu-deep-blue 0%, $vu-accent-blue 100%);
     border-radius: var(--vu-radius-lg);
     box-shadow: var(--vu-shadow-sm);
-    border: 1px solid var(--vu-border-soft);
+    border: none;
     margin-bottom: 16px;
     overflow: hidden;
+    color: white;
 }
 
 .cp-banner {
-    height: 80px;
-    background: linear-gradient(135deg, $vu-deep-blue 0%, $vu-accent-blue 100%);
+    height: 40px;
 }
 
 .cp-profile-main {
@@ -95,11 +89,12 @@
     display: flex;
     align-items: center;
     gap: 8px;
+    color: white;
 }
 
 .cp-code {
     font-size: 12px;
-    color: $vu-text-secondary;
+    color: rgba(white, 0.7);
     font-weight: 400;
     font-family: inherit;
 }
@@ -126,7 +121,7 @@
 
 .cp-contact {
     font-size: 13px;
-    color: $vu-text-secondary;
+    color: rgba(white, 0.8);
     margin-top: 4px;
     display: flex;
     gap: 16px;
@@ -149,21 +144,20 @@
 .cp-action-btn {
     width: 36px;
     height: 36px;
-    border: 1px solid var(--vu-border-soft);
+    border: 1px solid rgba(white, 0.3);
     border-radius: var(--vu-radius-md);
-    background: var(--vu-surface-card);
+    background: rgba(white, 0.1);
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: $vu-text-secondary;
+    color: white;
     transition: all 120ms;
     font-size: 15px;
 
     &:hover {
-        border-color: $vu-deep-blue;
-        color: $vu-deep-blue;
-        background: $vu-deep-blue-lightest;
+        background: rgba(white, 0.2);
+        border-color: rgba(white, 0.5);
     }
 }
 
@@ -171,14 +165,14 @@
 .cp-stats-row {
     display: flex;
     gap: 0;
-    border-top: 1px solid var(--vu-border-soft);
+    border-top: 1px solid rgba(white, 0.15);
 }
 
 .cp-stat {
     flex: 1;
     padding: 12px 20px;
     text-align: center;
-    border-right: 1px solid var(--vu-border-soft);
+    border-right: 1px solid rgba(white, 0.15);
 
     &:last-child { border-right: none; }
 }
@@ -187,15 +181,15 @@
     font-size: 20px;
     font-weight: 800;
     font-family: $font-family-headings;
-    color: $vu-deep-blue;
+    color: white;
 
-    &.cp-stat-green { color: $vu-leaf-green; }
-    &.cp-stat-orange { color: $vu-hibiscus-orange; }
+    &.cp-stat-green { color: #81C784; }
+    &.cp-stat-orange { color: #FFB74D; }
 }
 
 .cp-stat-label {
     font-size: 11px;
-    color: $vu-text-secondary;
+    color: rgba(white, 0.6);
     text-transform: uppercase;
     letter-spacing: 0.4px;
     font-weight: 600;

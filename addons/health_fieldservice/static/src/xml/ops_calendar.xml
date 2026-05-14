@@ -3,42 +3,6 @@
 
 <t t-name="health_fieldservice.OpsCalendar">
     <div class="ops-calendar-page">
-
-        <!-- SIDEBAR -->
-        <aside class="ops-sidebar">
-            <div class="ops-sidebar-logo" t-on-click="navigateHome" style="cursor:pointer">
-                <div class="ops-logo-icon"><i class="fa fa-heartbeat"/></div>
-                <div>
-                    <div class="ops-logo-text">VIET UC</div>
-                    <div class="ops-logo-sub">Healthcare Platform</div>
-                </div>
-            </div>
-            <nav class="ops-sidebar-nav">
-                <div class="ops-nav-section-label">Main</div>
-                <a class="ops-nav-item" t-on-click="() => this.navigateTo('dashboard')"><i class="fa fa-th-large"/> Dashboard</a>
-                <a class="ops-nav-item" t-on-click="() => this.navigateTo('bookings')">
-                    <i class="fa fa-calendar-check-o"/> Bookings
-                    <t t-if="state.needsStaffCount"><span class="ops-badge-count" t-esc="state.needsStaffCount"/></t>
-                </a>
-                <a class="ops-nav-item" t-on-click="() => this.navigateTo('clients')"><i class="fa fa-address-book-o"/> Clients</a>
-                <a class="ops-nav-item" t-on-click="() => this.navigateTo('recurring')"><i class="fa fa-repeat"/> Recurring</a>
-                <a class="ops-nav-item" t-on-click="() => this.navigateTo('staff')"><i class="fa fa-users"/> Staff</a>
-                <a class="ops-nav-item active"><i class="fa fa-calendar"/> Calendar</a>
-                <div class="ops-nav-section-label">Reports</div>
-                <a class="ops-nav-item" t-on-click="() => this.navigateTo('workload')"><i class="fa fa-bar-chart"/> Workload</a>
-                <a class="ops-nav-item" t-on-click="() => this.navigateTo('analytics')"><i class="fa fa-line-chart"/> Analytics</a>
-                <div class="ops-nav-section-label">System</div>
-                <a class="ops-nav-item" t-on-click="navigateHome"><i class="fa fa-arrow-left"/> Back to Odoo</a>
-            </nav>
-            <div class="ops-sidebar-user">
-                <div class="ops-user-avatar" t-esc="currentUserInitials"/>
-                <div class="ops-user-info">
-                    <div class="ops-user-name" t-esc="currentUserName"/>
-                    <div class="ops-user-role">Operations Manager</div>
-                </div>
-            </div>
-        </aside>
-
         <!-- MAIN CONTENT -->
         <div class="ops-main-content">
 

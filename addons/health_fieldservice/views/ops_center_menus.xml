@@ -6,43 +6,43 @@
     <record id="action_ops_command_center" model="ir.actions.client">
         <field name="name">Operations Command Center</field>
         <field name="tag">ops_command_center</field>
-        <field name="target">fullscreen</field>
+        <field name="target">current</field>
     </record>
 
     <record id="action_ops_booking_queue" model="ir.actions.client">
         <field name="name">Booking Queue</field>
         <field name="tag">ops_booking_queue</field>
-        <field name="target">fullscreen</field>
+        <field name="target">current</field>
     </record>
 
     <record id="action_ops_client_list" model="ir.actions.client">
         <field name="name">Client List</field>
         <field name="tag">ops_client_list</field>
-        <field name="target">fullscreen</field>
+        <field name="target">current</field>
     </record>
 
     <record id="action_ops_staff_roster" model="ir.actions.client">
         <field name="name">Staff Roster</field>
         <field name="tag">ops_staff_roster</field>
-        <field name="target">fullscreen</field>
+        <field name="target">current</field>
     </record>
 
 <record id="action_ops_booking_wizard" model="ir.actions.client">
         <field name="name">New Booking</field>
         <field name="tag">ops_booking_wizard</field>
-        <field name="target">fullscreen</field>
+        <field name="target">current</field>
     </record>
 
     <record id="action_ops_client_profile" model="ir.actions.client">
         <field name="name">Client Profile</field>
         <field name="tag">ops_client_profile</field>
-        <field name="target">fullscreen</field>
+        <field name="target">current</field>
     </record>
 
     <record id="action_ops_booking_detail" model="ir.actions.client">
         <field name="name">Booking Detail</field>
         <field name="tag">ops_booking_detail</field>
-        <field name="target">fullscreen</field>
+        <field name="target">current</field>
     </record>
 
     <record id="action_ops_booking_form" model="ir.actions.act_window">
@@ -50,31 +50,31 @@
         <field name="res_model">health.fieldservice.order</field>
         <field name="view_mode">form</field>
         <field name="view_id" ref="view_health_fso_form_ops"/>
-        <field name="target">fullscreen</field>
+        <field name="target">current</field>
     </record>
 
     <record id="action_ops_payment_collection" model="ir.actions.client">
         <field name="name">Collect Payment</field>
         <field name="tag">ops_payment_collection</field>
-        <field name="target">fullscreen</field>
+        <field name="target">current</field>
     </record>
 
     <record id="action_ops_recurring_booking" model="ir.actions.client">
         <field name="name">Recurring Booking</field>
         <field name="tag">ops_recurring_booking</field>
-        <field name="target">fullscreen</field>
+        <field name="target">current</field>
     </record>
 
     <record id="action_ops_service_in_progress" model="ir.actions.client">
         <field name="name">Service In Progress</field>
         <field name="tag">ops_service_in_progress</field>
-        <field name="target">fullscreen</field>
+        <field name="target">current</field>
     </record>
 
     <record id="action_ops_staff_assignment" model="ir.actions.client">
         <field name="name">Assign Staff</field>
         <field name="tag">ops_staff_assignment</field>
-        <field name="target">fullscreen</field>
+        <field name="target">current</field>
     </record>
 
     <!-- ===== ROOT MENU: Operations Center ===== -->

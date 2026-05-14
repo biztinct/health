@@ -34,9 +34,6 @@ class OpsBookingQueue extends Component {
         this.action = useService("action");
         this.notification = useService("notification");
 
-        const sessionName = (window.odoo && window.odoo.session_info && window.odoo.session_info.name) || '';
-        this.currentUserName = sessionName || 'Operations Manager';
-        this.currentUserInitials = this.currentUserName.split(' ').filter(p => p).map(p => p[0]).join('').substring(0, 2).toUpperCase() || 'OM';
 
         const today = new Date();
         this.state = useState({
@@ -302,27 +299,6 @@ class OpsBookingQueue extends Component {
         this.action.doAction('health_fieldservice.action_ops_booking_wizard', { clearBreadcrumbs: true });
     }
 
-    // ===== SIDEBAR NAVIGATION =====
-
-    navigateTo(page) {
-        const actions = {
-            dashboard: 'health_fieldservice.action_ops_command_center',
-            bookings: 'health_fieldservice.action_ops_booking_queue',
-            clients: 'health_fieldservice.action_ops_client_list',
-            recurring: 'health_fieldservice.action_ops_recurring_booking',
-            staff: 'health_fieldservice.action_ops_staff_roster',
-            calendar: 'health_fieldservice.action_ops_calendar',
-            workload: 'health_fieldservice.action_staff_workload_dashboard',
-            analytics: 'health_fieldservice.action_staff_workload_dashboard',
-        };
-        if (actions[page]) {
-            this.action.doAction(actions[page], { clearBreadcrumbs: true });
-        }
-    }
-
-    navigateHome() {
-        window.location.href = '/web';
-    }
 }
 
 registry.category("actions").add("ops_booking_queue", OpsBookingQueue);

@@ -240,23 +240,6 @@ class OpsRecurringBooking extends Component {
     }
 
     // Sidebar
-    navigateTo(page) {
-        const actions = {
-            dashboard: 'health_fieldservice.action_ops_command_center',
-            bookings: 'health_fieldservice.action_ops_booking_queue',
-            clients: 'health_fieldservice.action_ops_client_list',
-            staff: 'health_fieldservice.action_ops_staff_roster',
-            calendar: 'health_fieldservice.action_ops_calendar',
-            workload: 'health_fieldservice.action_staff_workload_dashboard',
-        };
-        if (actions[page]) {
-            this.action.doAction(actions[page], { clearBreadcrumbs: true });
-        }
-    }
-
-    navigateHome() {
-        window.location.href = '/web';
-    }
 }
 
 registry.category("actions").add("ops_recurring_booking", OpsRecurringBooking);

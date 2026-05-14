@@ -11,10 +11,6 @@ export class OpsBookingFormController extends FormController {
     setup() {
         super.setup(...arguments);
 
-        const sessionName = (window.odoo && window.odoo.session_info && window.odoo.session_info.name) || '';
-        this.currentUserName = sessionName || 'Operations Manager';
-        this.currentUserInitials = this.currentUserName
-            .split(' ').filter(p => p).map(p => p[0]).join('').substring(0, 2).toUpperCase() || 'OM';
 
         this.rootRef = useRef("root");
 
@@ -49,25 +45,6 @@ export class OpsBookingFormController extends FormController {
         return result;
     }
 
-    navigateTo(page) {
-        const actions = {
-            dashboard: 'health_fieldservice.action_ops_command_center',
-            bookings: 'health_fieldservice.action_ops_booking_queue',
-            clients: 'health_fieldservice.action_ops_client_list',
-            recurring: 'health_fieldservice.action_ops_recurring_booking',
-            staff: 'health_fieldservice.action_ops_staff_roster',
-            calendar: 'health_fieldservice.action_ops_calendar',
-            workload: 'health_fieldservice.action_staff_workload_dashboard',
-            analytics: 'health_fieldservice.action_staff_workload_dashboard',
-        };
-        if (actions[page]) {
-            this.actionService.doAction(actions[page], { clearBreadcrumbs: true });
-        }
-    }
-
-    navigateHome() {
-        window.location.href = '/web';
-    }
 
     goToBookings() {
         this.actionService.doAction('health_fieldservice.action_ops_booking_queue',

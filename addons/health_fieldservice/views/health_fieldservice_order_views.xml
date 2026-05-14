@@ -1090,6 +1090,13 @@
                          ======================================================== -->
                     <widget name="vu_progress_rail"/>
 
+                    <!-- ================================================
+                         TABS — Full width with Overview as default
+                         ================================================ -->
+                    <notebook>
+                        <!-- TAB: Overview (default) -->
+                        <page string="Overview" name="overview">
+
                     <!-- ========================================================
                          THREE-COLUMN LAYOUT
                          Col 1: Client Information + Service Details
@@ -1105,7 +1112,7 @@
                             <div class="vu-client-card">
                                 <div class="vu-client-card__header">
                                     <div class="vu-client-card__title">
-                                        <i class="fa fa-user-circle"/> Client Information
+                                        <span class="vu-section__icon" data-icon="user"/> Client Information
                                     </div>
                                     <button name="action_open_client_form" type="object"
                                             class="vu-client-card__link"
@@ -1501,10 +1508,8 @@
                         <span invisible="invoice_submitted"> Quote/Invoice required.</span>
                     </div>
 
-                    <!-- ================================================
-                         CONSOLIDATED TABS — Full width
-                         ================================================ -->
-                    <notebook>
+                        </page><!-- /Overview -->
+
                         <!-- TAB: Clinical -->
                         <page string="Clinical" name="clinical_notes">
                             <div class="alert alert-warning mb-2" role="alert"
