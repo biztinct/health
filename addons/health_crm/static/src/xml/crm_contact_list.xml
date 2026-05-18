@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="health_crm.CrmContactListView" t-inherit="web.ListView" t-inherit-mode="primary">
+        <xpath expr="//t[@t-component='props.Renderer']" position="before">
+            <!-- Status filter tabs -->
+            <div class="crm-cl-tabs">
+                <t t-foreach="statusTabs" t-as="tab" t-key="tab.id">
+                    <button t-attf-class="crm-cl-tab #{tabState.activeTab === tab.id ? 'active' : ''}"
+                            t-on-click="() => this.setTab(tab.id)">
+                        <i t-attf-class="fa #{tab.icon}"/>
+                        <t t-esc="tab.label"/>
+                        <span t-if="tab.count" class="crm-cl-badge" t-esc="tab.count"/>
+                    </button>
+                </t>
+                <div class="crm-cl-tabs-spacer"/>
+                <button class="crm-cl-new-btn" t-on-click="openNewContact">
+                    <i class="fa fa-plus"/> New Contact
+                </button>
+            </div>
+            <!-- Date quick-filter buttons -->
+            <div class="crm-cl-date-filters">
+                <t t-foreach="dateTabs" t-as="dt" t-key="dt.id">
+                    <button t-attf-class="crm-cl-date-btn #{tabState.dateFilter === dt.id ? 'active' : ''}"
+                            t-on-click="() => this.setDateFilter(dt.id)">
+                        <t t-esc="dt.label"/>
+                    </button>
+                </t>
+            </div>
+        </xpath>
+    </t>
+
+</templates>

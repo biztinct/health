@@ -1,6 +1,6 @@
 {
     'name': 'VAFHS Healthcare CRM Integration',
-    'version': '19.0.1.1.0',
+    'version': '19.0.1.5.0',
     'category': 'Healthcare/CRM',
     'summary': 'Healthcare CRM integration inheriting from standard Odoo CRM',
     'description': """
@@ -85,6 +85,10 @@
         
         # Menus - MUST load after wizard views
         'views/health_crm_menus.xml',
+
+        # CRM Center
+        'views/crm_center_views.xml',
+        'views/crm_center_menus.xml',
     ],
     'assets': {
         'web.assets_backend': [
@@ -101,10 +105,7 @@
             'health_crm/static/src/js/relationship_graph_widget.js',
             'health_crm/static/src/xml/relationship_graph_widget.xml',
             'health_crm/static/src/scss/relationship_graph_widget.scss',
-            # Relationship hierarchy widget (Org chart style)
-            'health_crm/static/src/components/relationship_hierarchy/relationship_hierarchy.js',
-            'health_crm/static/src/components/relationship_hierarchy/relationship_hierarchy.xml',
-            'health_crm/static/src/components/relationship_hierarchy/relationship_hierarchy.scss',
+            # Relationship hierarchy widget — now in health_base (removed from here to avoid duplicate registration)
             # Healthcare lead form redirect - redirects to hub-spoke dashboard
             'health_crm/static/src/js/healthcare_lead_form_redirect.js',
             # Time Picker Widget (premium booking time selector)
@@ -113,6 +114,27 @@
             'health_crm/static/src/components/time_picker/time_picker_widget.scss',
             'health_crm/static/src/scss/booking_wizard.scss',
             'health_crm/static/src/scss/recurring_booking_wizard.scss',
+            # CRM Center
+            'health_crm/static/src/scss/crm_shared.scss',
+            'health_crm/static/src/scss/crm_sidebar.scss',
+            'health_crm/static/src/scss/crm_dashboard.scss',
+            'health_crm/static/src/js/crm_sidebar.js',
+            'health_crm/static/src/xml/crm_sidebar.xml',
+            'health_crm/static/src/js/crm_dashboard.js',
+            'health_crm/static/src/xml/crm_dashboard.xml',
+            'health_crm/static/src/js/crm_contact_list.js',
+            'health_crm/static/src/xml/crm_contact_list.xml',
+            'health_crm/static/src/scss/crm_contact_list.scss',
+            'health_crm/static/src/js/crm_contact_form.js',
+            'health_crm/static/src/xml/crm_contact_form.xml',
+            'health_crm/static/src/scss/crm_contact_form.scss',
+            'health_crm/static/src/js/crm_new_contact.js',
+            'health_crm/static/src/xml/crm_new_contact.xml',
+            'health_crm/static/src/scss/crm_new_contact.scss',
+            'health_crm/static/src/scss/crm_calendar.scss',
+            'health_crm/static/src/js/crm_activity_list.js',
+            'health_crm/static/src/xml/crm_activity_list.xml',
+            'health_crm/static/src/scss/crm_activity_list.scss',
         ],
     },
     # 'demo': [

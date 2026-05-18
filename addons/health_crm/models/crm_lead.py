@@ -2091,7 +2091,7 @@ class HealthLead(models.Model):
         Used by the Activity button in the Recent Client Follow-up list.
         """
         self.ensure_one()
-        
+
         return {
             'type': 'ir.actions.act_window',
             'name': _('Schedule Activity for: %s') % self.name,
@@ -2106,4 +2106,175 @@ class HealthLead(models.Model):
                 'default_res_ids': [self.id],
                 'dialog_size': 'medium',
             },
+        }
+
+    # =========================================================================
+    # CRM CENTER — CONTACT HEADER
+    # =========================================================================
+
+    def get_contact_header_data(self, lead_id=None):
+        if lead_id:
+            lead = self.env['crm.lead'].browse(lead_id)
+        else:
+            lead = self
+        lead.ensure_one()
+
+        name = lead.name or ''
+        initials = ''.join(
+            p[0] for p in name.split() if p
+        )[:2].upper() or '??'
+
+        channel = ''
+        if lead.mode_of_contact:
+            channel = dict(
+                self._fields['mode_of_contact'].selection or []
+            ).get(lead.mode_of_contact, '')
+
+        return {
+            'id': lead.id,
+            'name': name,
+            'initials': initials,
+            'code': lead.unique_contact_code or '',
+            'phone': lead.phone or '',
+            'email': lead.email_from or '',
+            'contact_status': lead.contact_status or 'active',
+            'channel': channel,
+            'province': lead.catchment_province_id.name if lead.catchment_province_id else '',
+        }
+
+    # =========================================================================
+    # CRM CENTER DASHBOARD
+    # =========================================================================
+
+    @api.model
+    def get_crm_dashboard_data(self):
+        today = fields.Date.context_today(self)
+        now = fields.Datetime.now()
+
+        month_start = today.replace(day=1)
+        week_start = today - __import__('datetime').timedelta(days=today.weekday())
+
+        Lead = self.env['crm.lead']
+
+        contacts_today = Lead.search_count([
+            ('create_date', '>=', fields.Datetime.to_string(
+                __import__('datetime').datetime.combine(today, __import__('datetime').time.min)
+            )),
+        ])
+
+        pending_followups = Lead.search_count([
+            ('contact_status', '=', 'lead'),
+            '|',
+            ('next_follow_up_date', '<=', fields.Datetime.to_string(now)),
+            ('next_follow_up_date', '=', False),
+        ])
+
+        active_leads = Lead.search_count([
+            ('contact_status', '=', 'lead'),
+        ])
+
+        bookings_this_week = Lead.search_count([
+            ('contact_status', '=', 'booking'),
+            ('create_date', '>=', fields.Datetime.to_string(
+                __import__('datetime').datetime.combine(week_start, __import__('datetime').time.min)
+            )),
+        ])
+
+        month_total = Lead.search_count([
+            ('create_date', '>=', fields.Datetime.to_string(
+                __import__('datetime').datetime.combine(month_start, __import__('datetime').time.min)
+            )),
+        ])
+        month_bookings = Lead.search_count([
+            ('contact_status', '=', 'booking'),
+            ('create_date', '>=', fields.Datetime.to_string(
+                __import__('datetime').datetime.combine(month_start, __import__('datetime').time.min)
+            )),
+        ])
+        month_spam = Lead.search_count([
+            ('contact_status', '=', 'spam'),
+            ('create_date', '>=', fields.Datetime.to_string(
+                __import__('datetime').datetime.combine(month_start, __import__('datetime').time.min)
+            )),
+        ])
+
+        conversion_rate = (month_bookings / month_total * 100) if month_total else 0
+        spam_rate = (month_spam / month_total * 100) if month_total else 0
+
+        # Status breakdown for this month
+        status_breakdown = []
+        for status_val, _label in self._fields['contact_status'].selection:
+            count = Lead.search_count([
+                ('contact_status', '=', status_val),
+                ('create_date', '>=', fields.Datetime.to_string(
+                    __import__('datetime').datetime.combine(month_start, __import__('datetime').time.min)
+                )),
+            ])
+            status_breakdown.append({
+                'status': status_val,
+                'count': count,
+                'percent': (count / month_total * 100) if month_total else 0,
+            })
+
+        # Recent contacts
+        recent = Lead.search([], order='create_date desc', limit=10)
+        recent_contacts = []
+        for lead in recent:
+            time_diff = now - lead.create_date
+            if time_diff.days > 0:
+                time_ago = f"{time_diff.days}d ago"
+            else:
+                hours = time_diff.seconds // 3600
+                if hours > 0:
+                    time_ago = f"{hours}h ago"
+                else:
+                    mins = time_diff.seconds // 60
+                    time_ago = f"{max(mins, 1)}m ago"
+
+            recent_contacts.append({
+                'id': lead.id,
+                'name': lead.name or '',
+                'code': lead.unique_contact_code or '',
+                'phone': lead.phone or '',
+                'contact_status': lead.contact_status or 'active',
+                'province': lead.catchment_province_id.name if lead.catchment_province_id else '',
+                'channel': dict(self._fields['vietnamese_channel'].selection or []).get(
+                    lead.vietnamese_channel, ''
+                ) if lead.vietnamese_channel else '',
+                'time_ago': time_ago,
+            })
+
+        return {
+            'kpis': {
+                'contacts_today': contacts_today,
+                'pending_followups': pending_followups,
+                'active_leads': active_leads,
+                'bookings_this_week': bookings_this_week,
+                'conversion_rate': conversion_rate,
+                'spam_rate': spam_rate,
+            },
+            'recent_contacts': recent_contacts,
+            'status_breakdown': status_breakdown,
+        }
+
+    @api.model
+    def action_create_from_crm_wizard(self, vals):
+        lead_vals = {
+            'name': vals.get('name', ''),
+            'phone': vals.get('phone') or False,
+            'email_from': vals.get('email_from') or False,
+            'mode_of_contact': vals.get('mode_of_contact') or False,
+            'catchment_province_id': vals.get('catchment_province_id') or False,
+            'contact_relationship_type': vals.get('contact_relationship_type') or False,
+            'client_name': vals.get('client_name') or False,
+            'service_interest': vals.get('service_interest') or False,
+            'clinical_priority': vals.get('clinical_priority', 'routine'),
+            'reason_for_contact_id': vals.get('reason_for_contact_id') or False,
+            'contact_status': 'active',
+            'type': 'opportunity',
+        }
+        lead = self.create(lead_vals)
+        return {
+            'res_id': lead.id,
+            'res_model': 'crm.lead',
         }

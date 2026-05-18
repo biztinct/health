@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+<t t-name="health_crm.CrmContactFormView">
+    <div t-att-class="className" t-ref="root">
+        <div class="crm-form-main-area">
+
+            <!-- CRM TOP HEADER -->
+            <header class="crm-form-header">
+                <div class="crm-form-header-left">
+                    <div class="crm-breadcrumb">
+                        <a t-on-click="goToDashboard">Dashboard</a>
+                        <span class="crm-bc-sep"><i class="fa fa-chevron-right" style="font-size:9px"/></span>
+                        <a t-on-click="goToContacts">Contacts</a>
+                        <span class="crm-bc-sep"><i class="fa fa-chevron-right" style="font-size:9px"/></span>
+                        <span class="crm-bc-current" t-esc="model.root.data.display_name or 'Contact'"/>
+                    </div>
+                </div>
+                <div class="crm-form-header-right">
+                    <t t-if="canEdit">
+                        <FormStatusIndicator model="model" discard.bind="discard" save.bind="saveButtonClicked"/>
+                    </t>
+                </div>
+            </header>
+
+            <!-- CONTACT PROFILE HEADER -->
+            <t t-if="headerState.isLoaded">
+                <div class="crm-profile-header">
+                    <div class="crm-ph-identity">
+                        <div class="crm-ph-avatar" t-esc="headerState.header.initials || '??'"/>
+                        <div class="crm-ph-details">
+                            <div class="crm-ph-name-row">
+                                <span class="crm-ph-code" t-esc="headerState.header.code"/>
+                                <span class="crm-ph-name" t-esc="headerState.header.name"/>
+                                <span t-attf-class="crm-ph-status-badge #{getStatusClass(headerState.header.contact_status)}">
+                                    <t t-esc="getStatusLabel(headerState.header.contact_status)"/>
+                                </span>
+                            </div>
+                            <div class="crm-ph-meta">
+                                <t t-if="headerState.header.phone">
+                                    <span><i class="fa fa-phone"/> <t t-esc="headerState.header.phone"/></span>
+                                </t>
+                                <t t-if="headerState.header.email">
+                                    <span><i class="fa fa-envelope-o"/> <t t-esc="headerState.header.email"/></span>
+                                </t>
+                                <t t-if="headerState.header.channel">
+                                    <span><i class="fa fa-hashtag"/> <t t-esc="headerState.header.channel"/></span>
+                                </t>
+                                <t t-if="headerState.header.province">
+                                    <span><i class="fa fa-map-marker"/> <t t-esc="headerState.header.province"/></span>
+                                </t>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="crm-ph-actions">
+                        <button class="crm-ph-action-btn primary" t-on-click="actionBook" title="Create Booking">
+                            <i class="fa fa-calendar-plus-o"/> Book
+                        </button>
+                        <button class="crm-ph-action-btn secondary" t-on-click="actionLogLead" title="Log as Lead">
+                            <i class="fa fa-bullseye"/> Log Lead
+                        </button>
+                        <button class="crm-ph-action-btn secondary" t-on-click="actionEscalate" title="Escalate">
+                            <i class="fa fa-arrow-up"/> Escalate
+                        </button>
+                        <button class="crm-ph-action-btn danger" t-on-click="actionMarkSpam" title="Mark as Spam">
+                            <i class="fa fa-ban"/> Spam
+                        </button>
+                    </div>
+                </div>
+            </t>
+
+            <!-- FORM VIEW CONTAINER -->
+            <div class="o_form_view_container">
+                <Layout className="model.useSampleModel ? 'o_view_sample_data' : ''" display="display">
+                    <t t-set-slot="control-panel-create-button"/>
+
+                    <t t-set-slot="layout-buttons">
+                        <t t-if="env.inDialog">
+                            <t t-if="footerArchInfo">
+                                <t t-component="props.Renderer" record="model.root" Compiler="props.Compiler" archInfo="footerArchInfo">
+                                    <t t-set-slot="default_buttons">
+                                        <t t-call="{{ props.buttonTemplate }}"/>
+                                    </t>
+                                </t>
+                            </t>
+                            <t t-else="">
+                                <t t-call="{{ props.buttonTemplate }}"/>
+                            </t>
+                        </t>
+                    </t>
+
+                    <t t-set-slot="layout-actions">
+                        <t t-if="!env.isSmall and buttonBoxTemplate">
+                            <t t-call="{{ buttonBoxTemplate }}" t-call-context="{ __comp__: Object.assign(Object.create(this), { this, props: { ...this.props, record: this.model.root } }) }"/>
+                        </t>
+                    </t>
+
+                    <t t-set-slot="control-panel-additional-actions">
+                        <CogMenu t-props="this.cogMenuProps"/>
+                        <t t-if="env.isSmall and buttonBoxTemplate">
+                            <t t-call="{{ buttonBoxTemplate }}" t-call-context="{ __comp__: Object.assign(Object.create(this), { this, props: { ...this.props, record: this.model.root } }) }"/>
+                        </t>
+                    </t>
+
+                    <t t-set-slot="control-panel-status-indicator"/>
+
+                    <t t-component="props.Renderer" record="model.root" Compiler="props.Compiler" readonly="props.readonly" archInfo="archInfo" translateAlert="translateAlert" onNotebookPageChange.bind="onNotebookPageChange" activeNotebookPages="props.state and props.state.activeNotebookPages"/>
+                </Layout>
+            </div>
+        </div>
+    </div>
+</t>
+
+</templates>

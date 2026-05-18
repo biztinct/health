@@ -1,0 +1,92 @@
+// CRM Activity List — Type tabs + date filters
+
+.crm-al-tabs {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    padding: 0 24px;
+    background: #fff;
+    border-bottom: 2px solid #E8EAF0;
+}
+
+.crm-al-tab {
+    padding: 10px 18px;
+    font-size: 13px;
+    font-weight: 600;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    color: #78909C;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -2px;
+    transition: all 150ms;
+    font-family: inherit;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+
+    .fa { font-size: 13px; }
+
+    &:hover { color: #1A237E; }
+    &.active {
+        color: #1A237E;
+        border-bottom-color: #1A237E;
+    }
+}
+
+.crm-al-tabs-spacer {
+    flex: 1;
+}
+
+.crm-al-board-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 16px;
+    font-size: 12px;
+    font-weight: 600;
+    border-radius: 8px;
+    border: 1.5px solid #1A237E;
+    background: #fff;
+    color: #1A237E;
+    cursor: pointer;
+    transition: all 150ms;
+    font-family: inherit;
+
+    &:hover {
+        background: #1A237E;
+        color: #fff;
+    }
+}
+
+.crm-al-date-filters {
+    display: flex;
+    gap: 6px;
+    padding: 8px 24px;
+    background: #F8F9FC;
+    border-bottom: 1px solid #E8EAF0;
+}
+
+.crm-al-date-btn {
+    padding: 5px 14px;
+    font-size: 12px;
+    font-weight: 600;
+    border-radius: 50px;
+    border: 1px solid #E0E0E0;
+    background: #fff;
+    color: #78909C;
+    cursor: pointer;
+    transition: all 150ms;
+    font-family: inherit;
+
+    &:hover {
+        color: #1A237E;
+        border-color: #1A237E;
+    }
+
+    &.active {
+        background: #1A237E;
+        color: #fff;
+        border-color: #1A237E;
+    }
+}

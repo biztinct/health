@@ -1,0 +1,103 @@
+// CRM Contact List View — Status tabs + date filters
+
+// Status Tab Bar
+.crm-cl-tabs {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    padding: 0 24px;
+    background: #fff;
+    border-bottom: 2px solid #E8EAF0;
+}
+
+.crm-cl-tab {
+    padding: 10px 18px;
+    font-size: 13px;
+    font-weight: 600;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    color: #78909C;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -2px;
+    transition: all 150ms;
+    font-family: inherit;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+
+    .fa { font-size: 13px; }
+
+    &:hover { color: #1A237E; }
+    &.active {
+        color: #1A237E;
+        border-bottom-color: #1A237E;
+    }
+}
+
+.crm-cl-badge {
+    font-size: 10px;
+    font-weight: 700;
+    padding: 1px 6px;
+    border-radius: 8px;
+    background: #FF6F00;
+    color: #fff;
+    min-width: 18px;
+    text-align: center;
+    line-height: 1.5;
+}
+
+.crm-cl-tabs-spacer {
+    flex: 1;
+}
+
+.crm-cl-new-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 16px;
+    font-size: 12px;
+    font-weight: 600;
+    border-radius: 8px;
+    border: none;
+    background: #1A237E;
+    color: #fff;
+    cursor: pointer;
+    transition: all 150ms;
+    font-family: inherit;
+
+    &:hover { background: #283593; }
+}
+
+// Date Filter Row
+.crm-cl-date-filters {
+    display: flex;
+    gap: 6px;
+    padding: 8px 24px;
+    background: #F8F9FC;
+    border-bottom: 1px solid #E8EAF0;
+}
+
+.crm-cl-date-btn {
+    padding: 5px 14px;
+    font-size: 12px;
+    font-weight: 600;
+    border-radius: 50px;
+    border: 1px solid #E0E0E0;
+    background: #fff;
+    color: #78909C;
+    cursor: pointer;
+    transition: all 150ms;
+    font-family: inherit;
+
+    &:hover {
+        color: #1A237E;
+        border-color: #1A237E;
+    }
+
+    &.active {
+        background: #1A237E;
+        color: #fff;
+        border-color: #1A237E;
+    }
+}

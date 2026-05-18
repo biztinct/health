@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="health_crm.CrmActivityListView" t-inherit="web.ListView" t-inherit-mode="primary">
+        <xpath expr="//t[@t-component='props.Renderer']" position="before">
+            <!-- Activity type tabs -->
+            <div class="crm-al-tabs">
+                <t t-foreach="typeTabs" t-as="tab" t-key="tab.id">
+                    <button t-attf-class="crm-al-tab #{tabState.activeType === tab.id ? 'active' : ''}"
+                            t-on-click="() => this.setTypeTab(tab.id)">
+                        <i t-attf-class="fa #{tab.icon}"/>
+                        <t t-esc="tab.label"/>
+                    </button>
+                </t>
+                <div class="crm-al-tabs-spacer"/>
+                <button class="crm-al-board-btn" t-on-click="switchToActivityView"
+                        title="Activity Board View">
+                    <i class="fa fa-th-large"/> Board
+                </button>
+            </div>
+            <!-- Date quick-filter pills -->
+            <div class="crm-al-date-filters">
+                <t t-foreach="dateTabs" t-as="dt" t-key="dt.id">
+                    <button t-attf-class="crm-al-date-btn #{tabState.dateFilter === dt.id ? 'active' : ''}"
+                            t-on-click="() => this.setDateFilter(dt.id)">
+                        <t t-esc="dt.label"/>
+                    </button>
+                </t>
+            </div>
+        </xpath>
+    </t>
+
+</templates>

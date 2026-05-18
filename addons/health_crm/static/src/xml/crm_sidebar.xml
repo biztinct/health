@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+<t t-name="health_crm.CrmSidebar">
+    <aside class="ops-global-sidebar crm-sidebar">
+        <div class="ops-sidebar-logo" t-on-click="navigateHome" style="cursor:pointer">
+            <div class="ops-logo-icon crm-logo-icon"><i class="fa fa-comments"/></div>
+            <div>
+                <div class="ops-logo-text">VIET UC</div>
+                <div class="ops-logo-sub">CRM Center</div>
+            </div>
+        </div>
+        <nav class="ops-sidebar-nav">
+            <div class="ops-nav-section-label">Main</div>
+            <a t-attf-class="ops-nav-item #{isActive('dashboard') ? 'active' : ''}"
+               t-on-click="() => this.navigateTo('dashboard')"><i class="fa fa-th-large"/> Dashboard</a>
+            <a t-attf-class="ops-nav-item #{isActive('new_contact') ? 'active' : ''}"
+               t-on-click="() => this.navigateTo('new_contact')"><i class="fa fa-plus-circle"/> New Contact</a>
+            <a t-attf-class="ops-nav-item #{isActive('contacts') ? 'active' : ''}"
+               t-on-click="() => this.navigateTo('contacts')"><i class="fa fa-phone"/> Contacts</a>
+            <a t-attf-class="ops-nav-item #{isActive('clients') ? 'active' : ''}"
+               t-on-click="() => this.navigateTo('clients')"><i class="fa fa-address-book-o"/> Clients</a>
+            <a t-attf-class="ops-nav-item #{isActive('calendar') ? 'active' : ''}"
+               t-on-click="() => this.navigateTo('calendar')"><i class="fa fa-calendar"/> Calendar</a>
+            <div class="ops-nav-section-label">Reports</div>
+            <a t-attf-class="ops-nav-item #{isActive('activities') ? 'active' : ''}"
+               t-on-click="() => this.navigateTo('activities')"><i class="fa fa-tasks"/> Activities</a>
+            <div class="ops-nav-section-label">System</div>
+            <a t-attf-class="ops-nav-item #{isActive('settings') ? 'active' : ''}"
+               t-on-click="() => this.navigateTo('settings')"><i class="fa fa-cog"/> Settings</a>
+            <a class="ops-nav-item" t-on-click="navigateHome"><i class="fa fa-arrow-left"/> Back to Odoo</a>
+        </nav>
+        <div class="ops-sidebar-user">
+            <div class="ops-user-avatar" t-esc="currentUserInitials"/>
+            <div class="ops-user-info">
+                <div class="ops-user-name" t-esc="currentUserName"/>
+                <div class="ops-user-role">CRM Agent</div>
+            </div>
+        </div>
+    </aside>
+</t>
+
+</templates>

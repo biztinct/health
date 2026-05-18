@@ -29,18 +29,30 @@ export class SidebarHost extends Component {
         const model = action.res_model;
         const xmlId = action.xml_id;
 
+        // Pass 1: exact matches (tags + xmlIds) take priority
         for (const [key, config] of sidebarRegistry.getEntries()) {
             if ((tag && config.actionTags?.has(tag)) ||
-                (model && config.windowModels?.has(model)) ||
                 (xmlId && config.actionXmlIds?.has(xmlId))) {
-                this.state.ActiveSidebar = config.Component;
-                this.state.registryKey = key;
-                document.body.classList.add("has-custom-sidebar");
+                this._setSidebar(config.Component, key);
+                return;
+            }
+        }
+
+        // Pass 2: broad model match
+        for (const [key, config] of sidebarRegistry.getEntries()) {
+            if (model && config.windowModels?.has(model)) {
+                this._setSidebar(config.Component, key);
                 return;
             }
         }
 
         this._clearSidebar();
+    }
+
+    _setSidebar(Component, key) {
+        this.state.ActiveSidebar = Component;
+        this.state.registryKey = key;
+        document.body.classList.add("has-custom-sidebar");
     }
 
     _clearSidebar() {

@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+<t t-name="health_crm.CrmNewContact">
+    <div class="nc-overlay">
+        <div class="nc-wizard">
+
+            <!-- HEADER -->
+            <div class="nc-header">
+                <div class="nc-title"><i class="fa fa-plus-circle"/> New Contact</div>
+                <button class="nc-close-btn" t-on-click="closeWizard"><i class="fa fa-times"/></button>
+            </div>
+
+            <!-- STEPPER -->
+            <div class="nc-stepper">
+                <t t-foreach="stepInfo" t-as="s" t-key="s.num">
+                    <div t-att-class="getStepClass(s.num)">
+                        <div class="nc-step-num">
+                            <t t-if="s.num &lt; state.step"><i class="fa fa-check" style="font-size:10px"/></t>
+                            <t t-else=""><t t-esc="s.num"/></t>
+                        </div>
+                        <div class="nc-step-info">
+                            <div class="nc-step-name"><t t-esc="s.name"/></div>
+                            <div class="nc-step-desc"><t t-esc="s.desc"/></div>
+                        </div>
+                    </div>
+                </t>
+            </div>
+
+            <!-- BODY -->
+            <div class="nc-body">
+
+                <!-- STEP 1: Contact Information -->
+                <div t-if="state.step === 1" class="nc-step-content">
+                    <h3 class="nc-step-title">Contact Information</h3>
+
+                    <!-- Duplicate Warning -->
+                    <div t-if="state.duplicateWarning" class="nc-duplicate-alert">
+                        <i class="fa fa-exclamation-triangle"/>
+                        <span t-esc="state.duplicateWarning"/>
+                        <button class="nc-dup-link" t-on-click="openDuplicate">Open existing</button>
+                    </div>
+
+                    <!-- Name -->
+                    <div class="nc-field">
+                        <label class="nc-label">Contact Name <span class="nc-required">*</span></label>
+                        <input class="nc-input" type="text" placeholder="Full name"
+                               t-att-value="state.name"
+                               t-on-input="(ev) => this.state.name = ev.target.value"/>
+                    </div>
+
+                    <!-- Phone + Email row -->
+                    <div class="nc-row">
+                        <div class="nc-field">
+                            <label class="nc-label">Phone</label>
+                            <input class="nc-input" type="tel" placeholder="Phone number"
+                                   t-att-value="state.phone"
+                                   t-on-input="onPhoneInput"/>
+                        </div>
+                        <div class="nc-field">
+                            <label class="nc-label">Email</label>
+                            <input class="nc-input" type="email" placeholder="Email address"
+                                   t-att-value="state.email"
+                                   t-on-input="(ev) => this.state.email = ev.target.value"/>
+                        </div>
+                    </div>
+
+                    <!-- Mode of Contact -->
+                    <div class="nc-field">
+                        <label class="nc-label">Mode of Contact</label>
+                        <div class="nc-radio-row">
+                            <t t-foreach="modeOptions" t-as="opt" t-key="opt.key">
+                                <button t-attf-class="nc-radio-btn #{state.modeOfContact === opt.key ? 'active' : ''}"
+                                        t-on-click="() => this.setMode(opt.key)">
+                                    <i t-attf-class="fa #{opt.icon}"/> <t t-esc="opt.label"/>
+                                </button>
+                            </t>
+                        </div>
+                    </div>
+
+                    <!-- Catchment Province -->
+                    <div class="nc-field">
+                        <label class="nc-label">Catchment Province</label>
+                        <select class="nc-select" t-on-change="onProvinceChange">
+                            <option value="">Select province...</option>
+                            <t t-foreach="state.provinces" t-as="prov" t-key="prov.id">
+                                <option t-att-value="prov.id"
+                                        t-att-selected="state.catchmentProvinceId === prov.id"
+                                        t-esc="prov.name"/>
+                            </t>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- STEP 2: Relationship & Service -->
+                <div t-if="state.step === 2" class="nc-step-content">
+                    <h3 class="nc-step-title">Relationship &amp; Service Interest</h3>
+
+                    <!-- Relationship Type -->
+                    <div class="nc-field">
+                        <label class="nc-label">I am the:</label>
+                        <div class="nc-radio-row nc-wrap">
+                            <t t-foreach="relationshipOptions" t-as="opt" t-key="opt.key">
+                                <button t-attf-class="nc-radio-btn #{state.relationshipType === opt.key ? 'active' : ''}"
+                                        t-on-click="() => this.setRelationship(opt.key)">
+                                    <t t-esc="opt.label"/>
+                                </button>
+                            </t>
+                        </div>
+                    </div>
+
+                    <!-- Client Name (if not self) -->
+                    <div t-if="state.relationshipType !== 'client'" class="nc-field">
+                        <label class="nc-label">Client Name</label>
+                        <input class="nc-input" type="text" placeholder="Name of the client"
+                               t-att-value="state.clientName"
+                               t-on-input="(ev) => this.state.clientName = ev.target.value"/>
+                    </div>
+
+                    <!-- Service Interest -->
+                    <div class="nc-field">
+                        <label class="nc-label">Service Interest</label>
+                        <div class="nc-service-grid">
+                            <t t-foreach="serviceOptions" t-as="svc" t-key="svc.key">
+                                <button t-attf-class="nc-service-card #{state.serviceInterest === svc.key ? 'active' : ''}"
+                                        t-on-click="() => this.setService(svc.key)">
+                                    <i t-attf-class="fa #{svc.icon}"/>
+                                    <span t-esc="svc.label"/>
+                                </button>
+                            </t>
+                        </div>
+                    </div>
+
+                    <!-- Priority + Reason row -->
+                    <div class="nc-row">
+                        <div class="nc-field">
+                            <label class="nc-label">Clinical Priority</label>
+                            <div class="nc-radio-row">
+                                <t t-foreach="priorityOptions" t-as="pri" t-key="pri.key">
+                                    <button t-attf-class="nc-radio-btn #{state.clinicalPriority === pri.key ? 'active' : ''}"
+                                            t-on-click="() => this.setPriority(pri.key)">
+                                        <t t-esc="pri.label"/>
+                                    </button>
+                                </t>
+                            </div>
+                        </div>
+                        <div class="nc-field">
+                            <label class="nc-label">Contact Reason</label>
+                            <select class="nc-select" t-on-change="onReasonChange">
+                                <option value="">Select reason...</option>
+                                <t t-foreach="state.contactReasons" t-as="reason" t-key="reason.id">
+                                    <option t-att-value="reason.id" t-esc="reason.name"/>
+                                </t>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- FOOTER -->
+            <div class="nc-footer">
+                <button t-if="state.step > 1" class="nc-btn nc-btn-secondary" t-on-click="prevStep">
+                    <i class="fa fa-arrow-left"/> Back
+                </button>
+                <div class="nc-footer-spacer"/>
+                <button class="nc-btn nc-btn-ghost" t-on-click="closeWizard">Cancel</button>
+                <t t-if="state.step &lt; 2">
+                    <button class="nc-btn nc-btn-primary" t-on-click="nextStep"
+                            t-att-disabled="!canGoNext()">
+                        Next <i class="fa fa-arrow-right"/>
+                    </button>
+                </t>
+                <t t-else="">
+                    <button class="nc-btn nc-btn-primary" t-on-click="submit"
+                            t-att-disabled="state.isSubmitting">
+                        <t t-if="state.isSubmitting"><i class="fa fa-spinner fa-spin"/> Creating...</t>
+                        <t t-else=""><i class="fa fa-check"/> Create Contact</t>
+                    </button>
+                </t>
+            </div>
+
+        </div>
+    </div>
+</t>
+
+</templates>

@@ -1,0 +1,435 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ===== CRM CONTACT LIST VIEW ===== -->
+    <record id="view_crm_contact_list_crm_center" model="ir.ui.view">
+        <field name="name">crm.lead.list.crm.center</field>
+        <field name="model">crm.lead</field>
+        <field name="priority">50</field>
+        <field name="arch" type="xml">
+            <list string="Contacts" js_class="crm_contact_list_view"
+                  default_order="create_date desc"
+                  decoration-muted="contact_status == 'spam'"
+                  decoration-danger="contact_status == 'lost_booking'"
+                  decoration-success="contact_status == 'booking'">
+                <field name="unique_contact_code" string="Code" optional="show"/>
+                <field name="name" string="Contact"/>
+                <field name="phone" string="Phone" widget="phone"/>
+                <field name="catchment_province_id" string="Area" optional="show"/>
+                <field name="contact_status" string="Status"
+                       widget="badge"
+                       decoration-info="contact_status == 'active'"
+                       decoration-success="contact_status == 'booking'"
+                       decoration-warning="contact_status == 'lead'"
+                       decoration-danger="contact_status in ('lost_booking', 'spam')"/>
+                <field name="contact_outcome" string="Outcome"
+                       widget="badge" optional="show"/>
+                <field name="contact_datetime" string="Date" widget="datetime"/>
+                <field name="mode_of_contact" string="Channel" optional="show"/>
+                <field name="user_id" string="Agent" widget="many2one_avatar_user" optional="show"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ===== CRM CONTACT FORM VIEW ===== -->
+    <record id="view_crm_contact_form_crm_center" model="ir.ui.view">
+        <field name="name">crm.lead.form.crm.center</field>
+        <field name="model">crm.lead</field>
+        <field name="priority">50</field>
+        <field name="arch" type="xml">
+            <form string="Contact" js_class="crm_contact_form_view">
+                <sheet>
+                    <!-- Contact Info Tab (Essential) -->
+                    <group string="Contact Information">
+                        <group>
+                            <field name="name" string="Contact Name" required="1"/>
+                            <field name="phone" widget="phone"/>
+                            <field name="email_from" widget="email" string="Email"/>
+                            <field name="mode_of_contact"/>
+                            <field name="contact_datetime"/>
+                        </group>
+                        <group>
+                            <field name="catchment_province_id"/>
+                            <field name="contact_relationship_type"/>
+                            <field name="contact_status" readonly="1"/>
+                            <field name="contact_outcome"/>
+                        </group>
+                    </group>
+
+                    <notebook>
+                        <!-- Client Details Tab -->
+                        <page string="Client Details" name="client_details">
+                            <group>
+                                <group>
+                                    <field name="client_name"/>
+                                    <field name="patient_id"/>
+                                    <field name="service_interest"/>
+                                    <field name="clinical_priority"/>
+                                </group>
+                                <group>
+                                    <field name="reason_for_contact_id"/>
+                                    <field name="lead_reason_id"/>
+                                    <field name="contacting_on_behalf"/>
+                                    <field name="service_requirements" widget="text"/>
+                                </group>
+                            </group>
+                        </page>
+
+                        <!-- Booking Tab -->
+                        <page string="Booking" name="booking">
+                            <group>
+                                <group>
+                                    <field name="booking_status"/>
+                                    <field name="last_booking_date"/>
+                                </group>
+                                <group>
+                                    <field name="booking_within_30_days"/>
+                                    <field name="booking_lost_reason"
+                                           invisible="booking_status != 'cancelled'"/>
+                                </group>
+                            </group>
+                        </page>
+
+                        <!-- Follow-up Tab -->
+                        <page string="Follow-up" name="followup">
+                            <group>
+                                <group>
+                                    <field name="next_follow_up_date"/>
+                                    <field name="follow_up_notes" widget="text"/>
+                                </group>
+                                <group>
+                                    <field name="follow_up_count"/>
+                                    <field name="lead_followup_required"/>
+                                    <field name="health_contact_outcome"/>
+                                </group>
+                            </group>
+                        </page>
+
+                        <!-- Escalation Tab -->
+                        <page string="Escalation" name="escalation">
+                            <group>
+                                <group>
+                                    <field name="escalated_to"/>
+                                    <field name="escalation_datetime"/>
+                                    <field name="escalation_notes" widget="text"/>
+                                </group>
+                                <group>
+                                    <field name="referred_to_duty_doctor"/>
+                                    <field name="referral_datetime"
+                                           invisible="not referred_to_duty_doctor"/>
+                                    <field name="referral_notes" widget="text"
+                                           invisible="not referred_to_duty_doctor"/>
+                                </group>
+                            </group>
+                        </page>
+
+                        <!-- Address Tab -->
+                        <page string="Address" name="address">
+                            <group>
+                                <group>
+                                    <field name="province_code"/>
+                                    <field name="house_number"/>
+                                    <field name="alley_number"/>
+                                    <field name="sub_alley_number"/>
+                                </group>
+                                <group>
+                                    <field name="ward_commune"/>
+                                    <field name="named_area"/>
+                                    <field name="full_vietnamese_address" readonly="1"/>
+                                </group>
+                            </group>
+                        </page>
+
+                        <!-- Relationships Tab -->
+                        <page string="Relationships" name="relationships">
+                            <group>
+                                <group>
+                                    <field name="primary_caregiver_id"/>
+                                    <field name="primary_payer_id"/>
+                                    <field name="referrer_id"/>
+                                </group>
+                                <group>
+                                    <field name="emergency_contact_id"/>
+                                    <field name="client_representative_id"/>
+                                    <field name="duplicate_lead_count"/>
+                                </group>
+                            </group>
+                        </page>
+
+                        <!-- More Details Tab -->
+                        <page string="More Details" name="more_details">
+                            <group>
+                                <group string="Channel Details">
+                                    <field name="vietnamese_channel"/>
+                                    <field name="preferred_language"/>
+                                    <field name="distance_from_clinic"/>
+                                    <field name="contact_tag_ids" widget="many2many_tags"/>
+                                </group>
+                                <group string="Tracking">
+                                    <field name="healthcare_lead_source"/>
+                                    <field name="contact_source"/>
+                                    <field name="contact_type"/>
+                                    <field name="unique_contact_code" readonly="1"/>
+                                    <field name="day_open"/>
+                                </group>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- ===== CRM CONTACT SEARCH VIEW ===== -->
+    <record id="view_crm_contact_search_crm_center" model="ir.ui.view">
+        <field name="name">crm.lead.search.crm.center</field>
+        <field name="model">crm.lead</field>
+        <field name="priority">50</field>
+        <field name="arch" type="xml">
+            <search string="Search Contacts">
+                <field name="name" string="Contact"/>
+                <field name="phone"/>
+                <field name="email_from" string="Email"/>
+                <field name="unique_contact_code" string="Code"/>
+                <field name="catchment_province_id" string="Area"/>
+                <field name="user_id" string="Agent"/>
+                <separator/>
+                <filter name="status_active" string="Active" domain="[('contact_status', '=', 'active')]"/>
+                <filter name="status_lead" string="Leads" domain="[('contact_status', '=', 'lead')]"/>
+                <filter name="status_booking" string="Bookings" domain="[('contact_status', '=', 'booking')]"/>
+                <filter name="status_lost" string="Lost" domain="[('contact_status', '=', 'lost_booking')]"/>
+                <filter name="status_spam" string="Spam" domain="[('contact_status', '=', 'spam')]"/>
+                <separator/>
+                <filter name="today" string="Today" domain="[('create_date', '&gt;=', (context_today()).strftime('%%Y-%%m-%%d'))]"/>
+                <filter name="overdue" string="Overdue Follow-ups" domain="[('next_follow_up_date', '&lt;', context_today().strftime('%%Y-%%m-%%d')), ('contact_status', '=', 'lead')]"/>
+                <filter name="group_by_status" string="Status" context="{'group_by': 'contact_status'}"/>
+                <filter name="group_by_area" string="Area" context="{'group_by': 'catchment_province_id'}"/>
+                <filter name="group_by_channel" string="Channel" context="{'group_by': 'mode_of_contact'}"/>
+                <filter name="group_by_agent" string="Agent" context="{'group_by': 'user_id'}"/>
+                <filter name="group_by_date" string="Date" context="{'group_by': 'create_date:day'}"/>
+            </search>
+        </field>
+    </record>
+
+    <!-- ===== Update action_crm_contact_list_native to use CRM Center views ===== -->
+    <record id="action_crm_contact_list_native" model="ir.actions.act_window">
+        <field name="name">Contacts</field>
+        <field name="res_model">crm.lead</field>
+        <field name="view_mode">list,form</field>
+        <field name="view_ids" eval="[(5, 0, 0),
+            (0, 0, {'view_mode': 'list', 'view_id': ref('view_crm_contact_list_crm_center')}),
+            (0, 0, {'view_mode': 'form', 'view_id': ref('view_crm_contact_form_crm_center')})]"/>
+        <field name="search_view_id" ref="view_crm_contact_search_crm_center"/>
+        <field name="domain">[]</field>
+        <field name="context">{}</field>
+        <field name="target">current</field>
+    </record>
+
+    <!-- ===== Update action_crm_contact_form_native to use CRM Center form ===== -->
+    <record id="action_crm_contact_form_native" model="ir.actions.act_window">
+        <field name="name">Contact Detail</field>
+        <field name="res_model">crm.lead</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="view_crm_contact_form_crm_center"/>
+        <field name="target">current</field>
+    </record>
+
+    <!-- ===== Client List (res.partner) ===== -->
+    <record id="action_crm_client_list" model="ir.actions.act_window">
+        <field name="name">Clients</field>
+        <field name="res_model">res.partner</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('is_patient', '=', True)]</field>
+        <field name="context">{}</field>
+        <field name="target">current</field>
+    </record>
+
+    <!-- ===== FOLLOW-UP CALENDAR VIEW ===== -->
+    <record id="view_crm_followup_calendar_crm_center" model="ir.ui.view">
+        <field name="name">crm.lead.calendar.crm.center</field>
+        <field name="model">crm.lead</field>
+        <field name="priority">50</field>
+        <field name="arch" type="xml">
+            <calendar string="Follow-up Calendar"
+                      date_start="calendar_date"
+                      date_stop="calendar_date_end"
+                      color="calendar_color"
+                      mode="month"
+                      event_open_popup="1"
+                      quick_create="0">
+                <field name="calendar_display_name"/>
+                <field name="phone" widget="phone"/>
+                <field name="contact_status" widget="badge"
+                       decoration-info="contact_status == 'active'"
+                       decoration-success="contact_status == 'booking'"
+                       decoration-warning="contact_status == 'lead'"
+                       decoration-danger="contact_status in ('lost_booking', 'spam')"/>
+                <field name="clinical_priority"/>
+                <field name="user_id" widget="many2one_avatar_user"/>
+            </calendar>
+        </field>
+    </record>
+
+    <!-- Calendar list fallback view -->
+    <record id="view_crm_followup_list_crm_center" model="ir.ui.view">
+        <field name="name">crm.lead.list.calendar.crm.center</field>
+        <field name="model">crm.lead</field>
+        <field name="priority">50</field>
+        <field name="arch" type="xml">
+            <list string="Follow-ups" default_order="calendar_date asc"
+                  decoration-danger="calendar_color == 1"
+                  decoration-warning="calendar_color == 2"
+                  decoration-info="calendar_color == 4"
+                  decoration-success="calendar_color == 5">
+                <field name="unique_contact_code" string="Code" optional="show"/>
+                <field name="calendar_display_name" string="Activity"/>
+                <field name="phone" string="Phone" widget="phone"/>
+                <field name="calendar_date" string="Date" widget="datetime"/>
+                <field name="contact_status" string="Status" widget="badge"
+                       decoration-info="contact_status == 'active'"
+                       decoration-success="contact_status == 'booking'"
+                       decoration-warning="contact_status == 'lead'"
+                       decoration-danger="contact_status in ('lost_booking', 'spam')"/>
+                <field name="clinical_priority" string="Priority" optional="show"/>
+                <field name="user_id" string="Agent" widget="many2one_avatar_user" optional="show"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Calendar search view -->
+    <record id="view_crm_followup_search_crm_center" model="ir.ui.view">
+        <field name="name">crm.lead.search.calendar.crm.center</field>
+        <field name="model">crm.lead</field>
+        <field name="priority">50</field>
+        <field name="arch" type="xml">
+            <search string="Search Follow-ups">
+                <field name="name" string="Contact"/>
+                <field name="phone"/>
+                <field name="user_id" string="Agent"/>
+                <field name="catchment_province_id" string="Area"/>
+                <separator/>
+                <filter name="overdue" string="Overdue"
+                        domain="[('calendar_date', '&lt;', context_today().strftime('%%Y-%%m-%%d'))]"/>
+                <filter name="today" string="Today"
+                        domain="[('calendar_date', '&gt;=', context_today().strftime('%%Y-%%m-%%d')),
+                                 ('calendar_date', '&lt;', (context_today() + datetime.timedelta(days=1)).strftime('%%Y-%%m-%%d'))]"/>
+                <filter name="this_week" string="This Week"
+                        domain="[('calendar_date', '&gt;=', (context_today() - datetime.timedelta(days=context_today().weekday())).strftime('%%Y-%%m-%%d')),
+                                 ('calendar_date', '&lt;', (context_today() - datetime.timedelta(days=context_today().weekday()) + datetime.timedelta(days=7)).strftime('%%Y-%%m-%%d'))]"/>
+                <separator/>
+                <filter name="status_active" string="Active" domain="[('contact_status', '=', 'active')]"/>
+                <filter name="status_lead" string="Leads" domain="[('contact_status', '=', 'lead')]"/>
+                <filter name="status_booking" string="Bookings" domain="[('contact_status', '=', 'booking')]"/>
+                <separator/>
+                <filter name="group_by_status" string="Status" context="{'group_by': 'contact_status'}"/>
+                <filter name="group_by_agent" string="Agent" context="{'group_by': 'user_id'}"/>
+                <filter name="group_by_priority" string="Priority" context="{'group_by': 'clinical_priority'}"/>
+            </search>
+        </field>
+    </record>
+
+    <!-- ===== Follow-up Calendar Action ===== -->
+    <record id="action_crm_followup_calendar" model="ir.actions.act_window">
+        <field name="name">Follow-up Calendar</field>
+        <field name="res_model">crm.lead</field>
+        <field name="view_mode">calendar,list,form</field>
+        <field name="view_ids" eval="[(5, 0, 0),
+            (0, 0, {'view_mode': 'calendar', 'view_id': ref('view_crm_followup_calendar_crm_center')}),
+            (0, 0, {'view_mode': 'list', 'view_id': ref('view_crm_followup_list_crm_center')}),
+            (0, 0, {'view_mode': 'form', 'view_id': ref('view_crm_contact_form_crm_center')})]"/>
+        <field name="search_view_id" ref="view_crm_followup_search_crm_center"/>
+        <field name="domain">[('calendar_date', '!=', False)]</field>
+        <field name="context">{}</field>
+        <field name="target">current</field>
+    </record>
+
+    <!-- ===== ACTIVITY LIST VIEW ===== -->
+    <record id="view_crm_activity_list_crm_center" model="ir.ui.view">
+        <field name="name">crm.lead.list.activity.crm.center</field>
+        <field name="model">crm.lead</field>
+        <field name="priority">50</field>
+        <field name="arch" type="xml">
+            <list string="Activities" js_class="crm_activity_list_view"
+                  default_order="calendar_date asc"
+                  decoration-danger="calendar_color == 1"
+                  decoration-warning="calendar_color == 2">
+                <field name="calendar_color" column_invisible="1"/>
+                <field name="unique_contact_code" string="Code" optional="show"/>
+                <field name="name" string="Contact"/>
+                <field name="phone" string="Phone" widget="phone"/>
+                <field name="activity_ids" widget="list_activity"/>
+                <field name="calendar_date" string="Due Date" widget="datetime"/>
+                <field name="contact_status" string="Status" widget="badge"
+                       decoration-info="contact_status == 'active'"
+                       decoration-success="contact_status == 'booking'"
+                       decoration-warning="contact_status == 'lead'"
+                       decoration-danger="contact_status in ('lost_booking', 'spam')"/>
+                <field name="catchment_province_id" string="Area" optional="show"/>
+                <field name="user_id" string="Assigned" widget="many2one_avatar_user"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Activity search view -->
+    <record id="view_crm_activity_search_crm_center" model="ir.ui.view">
+        <field name="name">crm.lead.search.activity.crm.center</field>
+        <field name="model">crm.lead</field>
+        <field name="priority">50</field>
+        <field name="arch" type="xml">
+            <search string="Search Activities">
+                <field name="name" string="Contact"/>
+                <field name="phone"/>
+                <field name="user_id" string="Assigned To"/>
+                <separator/>
+                <!-- Activity Type Filters (based on nearest activity shown in display) -->
+                <filter name="type_call" string="Call"
+                        domain="[('calendar_display_name', 'ilike', 'Call')]"/>
+                <filter name="type_meeting" string="Meeting"
+                        domain="[('calendar_display_name', 'ilike', 'Meeting')]"/>
+                <filter name="type_todo" string="To-Do"
+                        domain="[('calendar_display_name', 'ilike', 'To-Do'), '!', ('activity_ids.summary', 'ilike', 'Escalated')]"/>
+                <filter name="type_email" string="Email"
+                        domain="[('calendar_display_name', 'ilike', 'Email')]"/>
+                <filter name="type_escalation" string="Escalated"
+                        domain="[('activity_ids.summary', 'ilike', 'Escalated')]"/>
+                <separator/>
+                <!-- Date Filters -->
+                <filter name="overdue" string="Overdue"
+                        domain="[('calendar_date', '&lt;', context_today().strftime('%%Y-%%m-%%d'))]"/>
+                <filter name="today" string="Due Today"
+                        domain="[('calendar_date', '&gt;=', context_today().strftime('%%Y-%%m-%%d')),
+                                 ('calendar_date', '&lt;', (context_today() + datetime.timedelta(days=1)).strftime('%%Y-%%m-%%d'))]"/>
+                <filter name="this_week" string="This Week"
+                        domain="[('calendar_date', '&gt;=', (context_today() - datetime.timedelta(days=context_today().weekday())).strftime('%%Y-%%m-%%d')),
+                                 ('calendar_date', '&lt;', (context_today() - datetime.timedelta(days=context_today().weekday()) + datetime.timedelta(days=7)).strftime('%%Y-%%m-%%d'))]"/>
+                <filter name="this_month" string="This Month"
+                        domain="[('calendar_date', '&gt;=', context_today().strftime('%%Y-%%m-01')),
+                                 ('calendar_date', '&lt;', (context_today() + datetime.timedelta(days=31)).strftime('%%Y-%%m-01'))]"/>
+                <separator/>
+                <filter name="my_activities" string="My Activities" domain="[('user_id', '=', uid)]"/>
+                <separator/>
+                <!-- Group By -->
+                <filter name="group_by_agent" string="Assigned To" context="{'group_by': 'user_id'}"/>
+                <filter name="group_by_due" string="Due Date" context="{'group_by': 'calendar_date:day'}"/>
+                <filter name="group_by_status" string="Status" context="{'group_by': 'contact_status'}"/>
+                <filter name="group_by_area" string="Area" context="{'group_by': 'catchment_province_id'}"/>
+            </search>
+        </field>
+    </record>
+
+    <!-- ===== Activity List Action (includes activity view) ===== -->
+    <record id="action_crm_activity_list" model="ir.actions.act_window">
+        <field name="name">Activities</field>
+        <field name="res_model">crm.lead</field>
+        <field name="view_mode">list,activity,form</field>
+        <field name="view_ids" eval="[(5, 0, 0),
+            (0, 0, {'view_mode': 'list', 'view_id': ref('view_crm_activity_list_crm_center')}),
+            (0, 0, {'view_mode': 'activity', 'view_id': ref('crm.crm_lead_view_activity')}),
+            (0, 0, {'view_mode': 'form', 'view_id': ref('view_crm_contact_form_crm_center')})]"/>
+        <field name="search_view_id" ref="view_crm_activity_search_crm_center"/>
+        <field name="domain">[('activity_ids', '!=', False)]</field>
+        <field name="context">{'search_default_my_activities': 1}</field>
+        <field name="target">current</field>
+    </record>
+
+</odoo>

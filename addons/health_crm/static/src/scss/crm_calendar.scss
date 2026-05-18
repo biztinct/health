@@ -1,0 +1,83 @@
+// CRM Follow-up Calendar — fill viewport height
+.o_action.o_view_controller.o_calendar_view {
+    height: 100% !important;
+    display: flex;
+    flex-direction: column;
+
+    .o_calendar_renderer {
+        flex: 1 1 0;
+        min-height: 0;
+        overflow: hidden;
+
+        .fc {
+            height: 100% !important;
+        }
+    }
+}
+
+.o_calendar_renderer {
+    // Color legend overrides for CRM calendar entries
+    // Color 1 = Red (overdue)
+    .o_calendar_color_1 {
+        --calendar-event-bg: #FFEBEE;
+        --calendar-event-border: #EF5350;
+        --calendar-event-text: #C62828;
+    }
+
+    // Color 2 = Orange (due today)
+    .o_calendar_color_2 {
+        --calendar-event-bg: #FFF3E0;
+        --calendar-event-border: #FF9800;
+        --calendar-event-text: #E65100;
+    }
+
+    // Color 3 = Yellow (lead needs attention)
+    .o_calendar_color_3 {
+        --calendar-event-bg: #FFFDE7;
+        --calendar-event-border: #FDD835;
+        --calendar-event-text: #F57F17;
+    }
+
+    // Color 4 = Blue (future activities)
+    .o_calendar_color_4 {
+        --calendar-event-bg: #E3F2FD;
+        --calendar-event-border: #42A5F5;
+        --calendar-event-text: #1565C0;
+    }
+
+    // Color 5 = Green (booking)
+    .o_calendar_color_5 {
+        --calendar-event-bg: #E8F5E9;
+        --calendar-event-border: #66BB6A;
+        --calendar-event-text: #2E7D32;
+    }
+
+    // Color 6 = Grey (lost/spam)
+    .o_calendar_color_6 {
+        --calendar-event-bg: #ECEFF1;
+        --calendar-event-border: #90A4AE;
+        --calendar-event-text: #546E7A;
+    }
+}
+
+// Calendar event card styling
+.o_calendar_renderer .fc-event {
+    border-radius: 6px !important;
+    border-left-width: 3px !important;
+    font-size: 12px;
+    padding: 2px 6px;
+}
+
+// Popup detail styling
+.o_cw_popover {
+    .o_cw_popover_fields_secondary {
+        .o_field_widget.o_field_badge .badge {
+            font-size: 11px;
+        }
+
+        .o_field_widget.o_field_phone a {
+            color: #1A237E;
+            font-weight: 500;
+        }
+    }
+}

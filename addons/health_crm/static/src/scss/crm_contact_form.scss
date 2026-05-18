@@ -1,0 +1,250 @@
+// CRM Contact Form — OWL header + native form with progressive disclosure
+
+.crm-contact-form-page {
+    .o-mail-Form-chatter,
+    .o-mail-ChatterContainer {
+        display: none !important;
+    }
+}
+
+.crm-contact-form-page {
+    display: flex !important;
+    flex-direction: row !important;
+    background: #F5F6FA;
+    height: 100%;
+
+    .crm-form-main-area {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        overflow: auto;
+        min-width: 0;
+    }
+
+    .o_control_panel { display: none !important; }
+
+    .o_form_view_container {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        min-height: 0;
+        width: 100%;
+    }
+
+    .o_content {
+        flex: 1;
+        overflow: auto;
+        min-height: 0;
+        width: 100%;
+    }
+
+    .o_form_sheet_bg {
+        background: #F5F6FA;
+        max-width: 100% !important;
+        margin-right: 0 !important;
+    }
+
+    .o_form_sheet {
+        max-width: 100%;
+        padding: 16px 24px;
+    }
+
+    // Top Header
+    .crm-form-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 10px 24px;
+        background: #fff;
+        border-bottom: 1px solid #E8EAF0;
+        min-height: 48px;
+        flex-shrink: 0;
+    }
+
+    .crm-form-header-left {
+        display: flex;
+        align-items: center;
+    }
+
+    .crm-form-header-right {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+
+        .o_form_status_indicator {
+            .o_form_status_indicator_buttons {
+                display: flex;
+                gap: 8px;
+            }
+        }
+    }
+
+    .crm-breadcrumb {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 14px;
+
+        a {
+            color: #1A237E;
+            text-decoration: none;
+            font-weight: 500;
+            cursor: pointer;
+            &:hover { text-decoration: underline; }
+        }
+    }
+
+    .crm-bc-sep {
+        color: #B0BEC5;
+    }
+
+    .crm-bc-current {
+        color: #546E7A;
+        font-weight: 600;
+    }
+}
+
+// Profile Header
+.crm-profile-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 24px;
+    background: #fff;
+    border-bottom: 1px solid #E8EAF0;
+}
+
+.crm-ph-identity {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex: 1;
+}
+
+.crm-ph-avatar {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    background: #1A237E;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    font-weight: 700;
+    flex-shrink: 0;
+}
+
+.crm-ph-details {
+    flex: 1;
+}
+
+.crm-ph-name-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 6px;
+}
+
+.crm-ph-code {
+    font-size: 12px;
+    font-weight: 700;
+    color: #1A237E;
+    font-family: monospace;
+    background: #E8EAF6;
+    padding: 2px 8px;
+    border-radius: 4px;
+}
+
+.crm-ph-name {
+    font-size: 18px;
+    font-weight: 700;
+    color: #263238;
+}
+
+.crm-ph-status-badge {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 20px;
+}
+
+.crm-hdr-status-active { background: #E3F2FD; color: #1565C0; }
+.crm-hdr-status-booking { background: #E8F5E9; color: #2E7D32; }
+.crm-hdr-status-lead { background: #FFF8E1; color: #F57F17; }
+.crm-hdr-status-lost_booking { background: #FFEBEE; color: #C62828; }
+.crm-hdr-status-spam { background: #FAFAFA; color: #757575; }
+
+.crm-ph-meta {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+
+    span {
+        font-size: 12px;
+        color: #78909C;
+
+        i { margin-right: 4px; font-size: 11px; }
+    }
+}
+
+// Action Buttons
+.crm-ph-actions {
+    display: flex;
+    gap: 8px;
+    flex-shrink: 0;
+}
+
+.crm-ph-action-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    font-size: 12px;
+    font-weight: 600;
+    border-radius: 8px;
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: all 150ms;
+    font-family: inherit;
+
+    &.primary {
+        background: #1A237E;
+        color: #fff;
+        &:hover { background: #283593; }
+    }
+
+    &.secondary {
+        background: #fff;
+        color: #546E7A;
+        border-color: #E0E0E0;
+        &:hover { background: #F5F5F5; color: #263238; }
+    }
+
+    &.danger {
+        background: #fff;
+        color: #C62828;
+        border-color: #FFCDD2;
+        &:hover { background: #FFEBEE; }
+    }
+}
+
+// Progressive disclosure toggle
+.crm-more-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 0;
+    font-size: 12px;
+    font-weight: 600;
+    color: #1A237E;
+    background: none;
+    border: none;
+    cursor: pointer;
+    margin-top: 8px;
+
+    &:hover { color: #3949AB; }
+
+    i { font-size: 10px; transition: transform 200ms; }
+    &.open i { transform: rotate(180deg); }
+}
