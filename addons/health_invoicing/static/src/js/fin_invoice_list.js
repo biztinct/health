@@ -1,0 +1,155 @@
+/** @odoo-module **/
+
+import { ListController } from "@web/views/list/list_controller";
+import { listView } from "@web/views/list/list_view";
+import { registry } from "@web/core/registry";
+import { useService } from "@web/core/utils/hooks";
+import { useState } from "@odoo/owl";
+
+export class FinInvoiceListController extends ListController {
+    static template = "health_invoicing.FinInvoiceListView";
+
+    setup() {
+        super.setup(...arguments);
+        this.actionService = useService("action");
+        this.tabState = useState({
+            activeTab: "all",
+            dateFilter: "all_dates",
+        });
+        this._tabFilterGroupId = null;
+        this._dateFilterGroupId = null;
+    }
+
+    get statusTabs() {
+        return [
+            { id: "all", label: "All", icon: "fa-list" },
+            { id: "draft", label: "Draft", icon: "fa-pencil" },
+            { id: "posted", label: "Posted", icon: "fa-check" },
+            { id: "paid", label: "Paid", icon: "fa-check-circle" },
+            { id: "partial", label: "Partial", icon: "fa-adjust" },
+            { id: "overdue", label: "Overdue", icon: "fa-exclamation-triangle" },
+            { id: "cancelled", label: "Cancelled", icon: "fa-ban" },
+        ];
+    }
+
+    get dateTabs() {
+        return [
+            { id: "all_dates", label: "All Dates" },
+            { id: "today", label: "Today" },
+            { id: "this_week", label: "This Week" },
+            { id: "this_month", label: "This Month" },
+        ];
+    }
+
+    _getStatusDomain(tabId) {
+        const today = new Date();
+        const fmt = (d) => d.toISOString().substring(0, 10);
+        switch (tabId) {
+            case "draft":
+                return [["state", "=", "draft"]];
+            case "posted":
+                return [["state", "=", "posted"], ["payment_state", "=", "not_paid"]];
+            case "paid":
+                return [["payment_state", "=", "paid"]];
+            case "partial":
+                return [["payment_state", "=", "partial"]];
+            case "overdue":
+                return [["state", "=", "posted"], ["payment_state", "in", ["not_paid", "partial"]], ["invoice_date_due", "<", fmt(today)]];
+            case "cancelled":
+                return [["state", "=", "cancel"]];
+            default:
+                return [];
+        }
+    }
+
+    _getDateDomain(dateId) {
+        const now = new Date();
+        const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        const todayEnd = new Date(todayStart);
+        todayEnd.setDate(todayEnd.getDate() + 1);
+        const fmt = (d) => d.toISOString().substring(0, 10);
+
+        switch (dateId) {
+            case "today":
+                return [
+                    ["invoice_date", ">=", fmt(todayStart)],
+                    ["invoice_date", "<", fmt(todayEnd)],
+                ];
+            case "this_week": {
+                const weekStart = new Date(todayStart);
+                weekStart.setDate(weekStart.getDate() - weekStart.getDay() + 1);
+                const weekEnd = new Date(weekStart);
+                weekEnd.setDate(weekEnd.getDate() + 7);
+                return [
+                    ["invoice_date", ">=", fmt(weekStart)],
+                    ["invoice_date", "<", fmt(weekEnd)],
+                ];
+            }
+            case "this_month": {
+                const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+                const monthEnd = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+                return [
+                    ["invoice_date", ">=", fmt(monthStart)],
+                    ["invoice_date", "<", fmt(monthEnd)],
+                ];
+            }
+            default:
+                return [];
+        }
+    }
+
+    async setTab(tabId) {
+        if (this.tabState.activeTab === tabId) return;
+        this.tabState.activeTab = tabId;
+
+        if (this._tabFilterGroupId !== null) {
+            this.env.searchModel.deactivateGroup(this._tabFilterGroupId);
+            this._tabFilterGroupId = null;
+        }
+
+        const domain = this._getStatusDomain(tabId);
+        if (domain.length) {
+            const description = this.statusTabs.find((t) => t.id === tabId)?.label || tabId;
+            const preFilter = { description, domain };
+            this.env.searchModel.createNewFilters([preFilter]);
+            this._tabFilterGroupId = preFilter.groupId;
+        }
+    }
+
+    async setDateFilter(dateId) {
+        if (this.tabState.dateFilter === dateId) return;
+        this.tabState.dateFilter = dateId;
+
+        if (this._dateFilterGroupId !== null) {
+            this.env.searchModel.deactivateGroup(this._dateFilterGroupId);
+            this._dateFilterGroupId = null;
+        }
+
+        if (dateId !== "all_dates") {
+            const domain = this._getDateDomain(dateId);
+            const description = this.dateTabs.find((t) => t.id === dateId)?.label || dateId;
+            const preFilter = { description, domain };
+            this.env.searchModel.createNewFilters([preFilter]);
+            this._dateFilterGroupId = preFilter.groupId;
+        }
+    }
+
+    openNewInvoice() {
+        this.actionService.doAction({
+            type: "ir.actions.act_window",
+            name: "New Invoice",
+            res_model: "account.move",
+            view_mode: "form",
+            views: [[false, "form"]],
+            target: "current",
+            context: { default_move_type: "out_invoice" },
+        });
+    }
+}
+
+export const finInvoiceListView = {
+    ...listView,
+    Controller: FinInvoiceListController,
+};
+
+registry.category("views").add("fin_invoice_list_view", finInvoiceListView);

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+<t t-name="health_invoicing.FinARManagement">
+    <div class="fin-dashboard">
+        <div class="fin-main-content">
+            <header class="fin-top-header">
+                <div class="fin-header-left">
+                    <h1 class="fin-page-title">AR Management</h1>
+                    <span class="fin-page-subtitle">Payment collection, cash transfers &amp; credit notes</span>
+                </div>
+            </header>
+
+            <div class="fin-ar-cards">
+                <div class="fin-ar-card" t-on-click="openPaymentCollection">
+                    <div class="fin-ar-card-icon card-payment"><i class="fa fa-money"/></div>
+                    <div class="fin-ar-card-body">
+                        <h3>Account Payment</h3>
+                        <p>Record cash or bank transfer payments against invoices</p>
+                    </div>
+                    <div class="fin-ar-card-arrow"><i class="fa fa-chevron-right"/></div>
+                </div>
+
+                <div class="fin-ar-card" t-on-click="openCashCollections">
+                    <div class="fin-ar-card-icon card-cash"><i class="fa fa-truck"/></div>
+                    <div class="fin-ar-card-body">
+                        <h3>Cash In Transit Transfers</h3>
+                        <p>Nurse cash pending delivery to Head Office</p>
+                    </div>
+                    <div class="fin-ar-card-arrow"><i class="fa fa-chevron-right"/></div>
+                </div>
+
+                <div class="fin-ar-card" t-on-click="openCreditNote">
+                    <div class="fin-ar-card-icon card-refund"><i class="fa fa-undo"/></div>
+                    <div class="fin-ar-card-body">
+                        <h3>Refund / Credit</h3>
+                        <p>Issue credit notes and process refunds</p>
+                    </div>
+                    <div class="fin-ar-card-arrow"><i class="fa fa-chevron-right"/></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</t>
+
+</templates>

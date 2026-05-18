@@ -1,0 +1,108 @@
+// Finance Invoice Form — OWL header
+.fin-invoice-form-page {
+    .o_form_view { overflow: visible; }
+}
+
+.fin-invoice-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 28px;
+    background: white;
+    border-bottom: 1px solid #E8EAF0;
+    gap: 24px;
+}
+
+.fin-inv-hdr-left {
+    flex: 1;
+    min-width: 0;
+}
+
+.fin-inv-hdr-title-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 6px;
+}
+
+.fin-inv-back {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    border: 1px solid #E0E0E0;
+    background: white;
+    color: #546E7A;
+    cursor: pointer;
+    transition: all 150ms;
+
+    &:hover {
+        background: #E0F2F1;
+        border-color: #B2DFDB;
+        color: $fin-primary;
+    }
+}
+
+.fin-inv-hdr-number {
+    font-size: 20px;
+    font-weight: 700;
+    color: $fin-primary;
+    margin: 0;
+}
+
+.fin-inv-hdr-badge {
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 12px;
+    border-radius: 20px;
+    white-space: nowrap;
+}
+
+.fin-pay-not_paid { background: #FFEBEE; color: #C62828; }
+.fin-pay-in_payment { background: #FFF8E1; color: #F57F17; }
+.fin-pay-paid { background: #E8F5E9; color: #2E7D32; }
+.fin-pay-partial { background: #FFF3E0; color: #E65100; }
+.fin-pay-reversed { background: #FAFAFA; color: #757575; }
+
+.fin-inv-hdr-meta {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.fin-inv-meta-item {
+    font-size: 12px;
+    color: #78909C;
+
+    i { margin-right: 4px; font-size: 11px; }
+}
+
+.fin-inv-hdr-amounts {
+    display: flex;
+    gap: 24px;
+    flex-shrink: 0;
+}
+
+.fin-inv-amount-block {
+    text-align: center;
+    min-width: 80px;
+}
+
+.fin-inv-amount-val {
+    font-size: 20px;
+    font-weight: 700;
+    color: $fin-primary;
+    line-height: 1.2;
+}
+
+.fin-inv-amount-lbl {
+    font-size: 11px;
+    color: #78909C;
+    font-weight: 500;
+    margin-top: 2px;
+}
+
+.amt-due .fin-inv-amount-val { color: #C62828; }
+.amt-paid .fin-inv-amount-val { color: #2E7D32; }

@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+<t t-name="health_invoicing.FinDashboard">
+    <div class="fin-dashboard">
+        <div class="fin-main-content">
+
+            <!-- HEADER -->
+            <header class="fin-top-header">
+                <div class="fin-header-left">
+                    <h1 class="fin-page-title">Finance Center</h1>
+                    <span class="fin-page-subtitle">Billing, Payments &amp; Accounts Receivable</span>
+                </div>
+                <div class="fin-header-right">
+                    <button class="fin-header-btn btn-primary" t-on-click="openNewInvoice">
+                        <i class="fa fa-plus"/> New Invoice
+                    </button>
+                    <button class="fin-header-btn btn-outline" t-on-click="onRefresh">
+                        <i class="fa fa-refresh"/>
+                    </button>
+                </div>
+            </header>
+
+            <!-- LOADING -->
+            <div t-if="state.isLoading" class="fin-loading">
+                <div class="spinner-border text-primary" role="status"/>
+                <span>Loading dashboard...</span>
+            </div>
+
+            <!-- DASHBOARD BODY -->
+            <div t-if="!state.isLoading" class="fin-dashboard-body">
+
+                <!-- KPI ROW -->
+                <div class="fin-kpi-row">
+                    <div class="fin-kpi-card kpi-revenue">
+                        <div class="fin-kpi-icon"><i class="fa fa-line-chart"/></div>
+                        <div class="fin-kpi-value" t-esc="formatCurrency(state.kpis.revenue_this_month)"/>
+                        <div class="fin-kpi-label">Revenue This Month</div>
+                        <div class="fin-kpi-sublabel">Posted invoices</div>
+                    </div>
+                    <div class="fin-kpi-card kpi-outstanding">
+                        <div class="fin-kpi-icon"><i class="fa fa-clock-o"/></div>
+                        <div class="fin-kpi-value" t-esc="formatCurrency(state.kpis.outstanding_ar)"/>
+                        <div class="fin-kpi-label">Outstanding AR</div>
+                        <div class="fin-kpi-sublabel">Total residual</div>
+                    </div>
+                    <div class="fin-kpi-card kpi-overdue">
+                        <div class="fin-kpi-icon"><i class="fa fa-exclamation-triangle"/></div>
+                        <div class="fin-kpi-value" t-esc="formatCurrency(state.kpis.overdue_amount)"/>
+                        <div class="fin-kpi-label">Overdue Amount</div>
+                        <div class="fin-kpi-sublabel">Past due date</div>
+                    </div>
+                    <div class="fin-kpi-card kpi-cash">
+                        <div class="fin-kpi-icon"><i class="fa fa-money"/></div>
+                        <div class="fin-kpi-value" t-esc="formatCurrency(state.kpis.cash_collected_today)"/>
+                        <div class="fin-kpi-label">Cash Collected Today</div>
+                    </div>
+                    <div class="fin-kpi-card kpi-packages">
+                        <div class="fin-kpi-icon"><i class="fa fa-cube"/></div>
+                        <div class="fin-kpi-value" t-esc="state.kpis.active_packages || 0"/>
+                        <div class="fin-kpi-label">Active Packages</div>
+                        <div class="fin-kpi-sublabel" t-if="state.kpis.packages_remaining_value">
+                            <t t-esc="formatCurrency(state.kpis.packages_remaining_value)"/> remaining
+                        </div>
+                    </div>
+                    <div class="fin-kpi-card kpi-pending">
+                        <div class="fin-kpi-icon"><i class="fa fa-truck"/></div>
+                        <div class="fin-kpi-value" t-esc="state.kpis.pending_delivery || 0"/>
+                        <div class="fin-kpi-label">Pending Delivery</div>
+                        <div class="fin-kpi-sublabel">Nurse cash in transit</div>
+                    </div>
+                </div>
+
+                <!-- MAIN GRID -->
+                <div class="fin-main-grid">
+
+                    <!-- RECENT PAYMENTS PANEL -->
+                    <div class="fin-panel">
+                        <div class="fin-panel-header">
+                            <div class="fin-panel-title"><i class="fa fa-money"/> Recent Payments</div>
+                        </div>
+                        <div class="fin-panel-body">
+                            <t t-if="state.recentPayments.length === 0">
+                                <div class="fin-empty-state">
+                                    <i class="fa fa-inbox"/>
+                                    <h4>No recent payments</h4>
+                                    <p>Payment transactions will appear here.</p>
+                                </div>
+                            </t>
+                            <t t-foreach="state.recentPayments" t-as="pmt" t-key="pmt.id">
+                                <div class="fin-payment-card" t-on-click="() => this.openPayment(pmt.id)">
+                                    <div class="fin-payment-card-top">
+                                        <div>
+                                            <span class="fin-payment-ref" t-esc="pmt.reference"/>
+                                            <span class="fin-payment-patient" t-esc="pmt.patient_name"/>
+                                        </div>
+                                        <span t-attf-class="fin-status-badge #{getPaymentStatusClass(pmt.status)}">
+                                            <t t-esc="getPaymentStatusLabel(pmt.status)"/>
+                                        </span>
+                                    </div>
+                                    <div class="fin-payment-card-details">
+                                        <span class="fin-payment-amount">
+                                            <i class="fa fa-money"/> <t t-esc="formatCurrency(pmt.amount)"/>
+                                        </span>
+                                        <t t-if="pmt.method">
+                                            <span class="fin-payment-detail"><i class="fa fa-credit-card"/> <t t-esc="pmt.method"/></span>
+                                        </t>
+                                        <span class="fin-payment-detail"><i class="fa fa-clock-o"/> <t t-esc="pmt.time_ago"/></span>
+                                    </div>
+                                </div>
+                            </t>
+                        </div>
+                        <div class="fin-panel-footer">
+                            <button class="fin-footer-link" t-on-click="openPayments">View All Payments <i class="fa fa-arrow-right"/></button>
+                        </div>
+                    </div>
+
+                    <!-- QUICK ACTIONS + INVOICE BREAKDOWN -->
+                    <div class="fin-side-panels">
+                        <!-- Quick Actions -->
+                        <div class="fin-panel fin-quick-actions">
+                            <div class="fin-panel-header">
+                                <div class="fin-panel-title"><i class="fa fa-bolt"/> Quick Actions</div>
+                            </div>
+                            <div class="fin-panel-body">
+                                <button class="fin-action-tile" t-on-click="openNewInvoice">
+                                    <i class="fa fa-plus-circle"/>
+                                    <span>New Invoice</span>
+                                </button>
+                                <button class="fin-action-tile" t-on-click="openPayments">
+                                    <i class="fa fa-money"/>
+                                    <span>Payments</span>
+                                </button>
+                                <button class="fin-action-tile" t-on-click="openARDashboard">
+                                    <i class="fa fa-bar-chart"/>
+                                    <span>AR Dashboard</span>
+                                </button>
+                                <button class="fin-action-tile" t-on-click="openVATLog">
+                                    <i class="fa fa-book"/>
+                                    <span>VAT Log</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Invoice Breakdown -->
+                        <div class="fin-panel fin-invoice-breakdown">
+                            <div class="fin-panel-header">
+                                <div class="fin-panel-title"><i class="fa fa-pie-chart"/> Invoice Status</div>
+                                <span class="fin-panel-subtitle">This month</span>
+                            </div>
+                            <div class="fin-panel-body">
+                                <t t-foreach="state.invoiceBreakdown" t-as="item" t-key="item.status">
+                                    <div class="fin-status-row">
+                                        <div class="fin-status-bar-label">
+                                            <span class="fin-status-dot" t-att-style="'background:' + getInvoiceStatusColor(item.status)"/>
+                                            <span t-esc="item.label"/>
+                                        </div>
+                                        <div class="fin-status-bar-track">
+                                            <div class="fin-status-bar-fill"
+                                                 t-att-style="'width:' + (item.percent || 0) + '%; background:' + getInvoiceStatusColor(item.status)"/>
+                                        </div>
+                                        <span class="fin-status-bar-count" t-esc="item.count"/>
+                                    </div>
+                                </t>
+                            </div>
+                        </div>
+                    </div>
+
+                </div><!-- /fin-main-grid -->
+
+            </div><!-- /fin-dashboard-body -->
+
+        </div><!-- /fin-main-content -->
+    </div>
+</t>
+
+</templates>

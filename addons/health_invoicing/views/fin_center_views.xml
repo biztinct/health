@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- =============================================== -->
+    <!--  FINANCE CENTER — Invoice List (for fin sidebar) -->
+    <!-- =============================================== -->
+
+    <record id="view_fin_invoice_list" model="ir.ui.view">
+        <field name="name">fin.invoice.list</field>
+        <field name="model">account.move</field>
+        <field name="arch" type="xml">
+            <list string="Invoices" js_class="fin_invoice_list_view" decoration-danger="payment_state == 'not_paid' and invoice_date_due and invoice_date_due &lt; current_date" decoration-muted="state == 'cancel'">
+                <field name="name" string="Number"/>
+                <field name="partner_id" string="Patient"/>
+                <field name="invoice_date" string="Date"/>
+                <field name="healthcare_service_type" string="Service Type" optional="show"/>
+                <field name="amount_total" string="Total" sum="Total"/>
+                <field name="amount_residual" string="Amount Due" sum="Due"/>
+                <field name="payment_state" string="Payment" widget="badge"
+                       decoration-success="payment_state == 'paid'"
+                       decoration-warning="payment_state == 'partial'"
+                       decoration-danger="payment_state == 'not_paid'"
+                       decoration-info="payment_state == 'in_payment'"/>
+                <field name="state" column_invisible="True"/>
+                <field name="invoice_date_due" column_invisible="True"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_fin_invoice_search" model="ir.ui.view">
+        <field name="name">fin.invoice.search</field>
+        <field name="model">account.move</field>
+        <field name="arch" type="xml">
+            <search string="Invoices">
+                <field name="name" string="Number"/>
+                <field name="partner_id" string="Patient"/>
+                <field name="healthcare_service_type"/>
+                <filter name="draft" string="Draft" domain="[('state', '=', 'draft')]"/>
+                <filter name="posted" string="Posted" domain="[('state', '=', 'posted'), ('payment_state', '=', 'not_paid')]"/>
+                <filter name="paid" string="Paid" domain="[('payment_state', '=', 'paid')]"/>
+                <filter name="partial" string="Partial" domain="[('payment_state', '=', 'partial')]"/>
+                <filter name="overdue" string="Overdue" domain="[('state', '=', 'posted'), ('payment_state', 'in', ['not_paid', 'partial']), ('invoice_date_due', '&lt;', context_today().strftime('%Y-%m-%d'))]"/>
+                <filter name="cancelled" string="Cancelled" domain="[('state', '=', 'cancel')]"/>
+                <filter name="group_state" string="Status" context="{'group_by': 'state'}"/>
+                <filter name="group_payment" string="Payment Status" context="{'group_by': 'payment_state'}"/>
+                <filter name="group_partner" string="Patient" context="{'group_by': 'partner_id'}"/>
+            </search>
+        </field>
+    </record>
+
+    <!-- =============================================== -->
+    <!--  FINANCE CENTER — Invoice Form (OWL header)     -->
+    <!-- =============================================== -->
+
+    <record id="view_fin_invoice_form" model="ir.ui.view">
+        <field name="name">fin.invoice.form</field>
+        <field name="model">account.move</field>
+        <field name="inherit_id" ref="account.view_move_form"/>
+        <field name="mode">primary</field>
+        <field name="arch" type="xml">
+            <xpath expr="//form" position="attributes">
+                <attribute name="js_class">fin_invoice_form_view</attribute>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Update invoice action to include form view -->
+    <record id="action_fin_invoice_list" model="ir.actions.act_window">
+        <field name="name">Invoices</field>
+        <field name="res_model">account.move</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('move_type', '=', 'out_invoice')]</field>
+        <field name="context">{'default_move_type': 'out_invoice'}</field>
+        <field name="search_view_id" ref="view_fin_invoice_search"/>
+        <field name="view_ids" eval="[(5, 0, 0),
+            (0, 0, {'view_mode': 'list', 'view_id': ref('view_fin_invoice_list')}),
+            (0, 0, {'view_mode': 'form', 'view_id': ref('view_fin_invoice_form')})]"/>
+    </record>
+
+    <!-- =============================================== -->
+    <!--  FINANCE CENTER — Service Packages              -->
+    <!-- =============================================== -->
+
+    <record id="view_fin_package_list" model="ir.ui.view">
+        <field name="name">fin.package.list</field>
+        <field name="model">health.service.package</field>
+        <field name="inherit_id" ref="view_health_service_package_list"/>
+        <field name="mode">primary</field>
+        <field name="arch" type="xml">
+            <xpath expr="//list" position="attributes">
+                <attribute name="js_class">fin_package_list_view</attribute>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="action_fin_package_list" model="ir.actions.act_window">
+        <field name="name">Service Packages</field>
+        <field name="res_model">health.service.package</field>
+        <field name="view_mode">list,form</field>
+        <field name="view_ids" eval="[(5, 0, 0),
+            (0, 0, {'view_mode': 'list', 'view_id': ref('view_fin_package_list')})]"/>
+        <field name="search_view_id" ref="view_health_service_package_search"/>
+    </record>
+
+    <!-- =============================================== -->
+    <!--  FINANCE CENTER — AR Dashboard                  -->
+    <!-- =============================================== -->
+
+    <record id="action_fin_ar_dashboard" model="ir.actions.act_window">
+        <field name="name">Accounts Receivable</field>
+        <field name="res_model">account.move.line</field>
+        <field name="view_mode">list,pivot,graph</field>
+        <field name="domain">[('account_id.account_type', '=', 'asset_receivable'), ('parent_state', '=', 'posted'), ('amount_residual', '!=', 0)]</field>
+        <field name="view_ids" eval="[(5, 0, 0),
+            (0, 0, {'view_mode': 'list', 'view_id': ref('view_healthcare_ar_payments_tree')}),
+            (0, 0, {'view_mode': 'pivot', 'view_id': ref('view_healthcare_ar_payments_pivot')}),
+            (0, 0, {'view_mode': 'graph', 'view_id': ref('view_healthcare_ar_payments_graph')})]"/>
+        <field name="search_view_id" ref="view_healthcare_ar_payments_filter"/>
+    </record>
+
+    <!-- =============================================== -->
+    <!--  FINANCE CENTER — Payment Transactions          -->
+    <!-- =============================================== -->
+
+    <record id="view_fin_payment_list" model="ir.ui.view">
+        <field name="name">fin.payment.list</field>
+        <field name="model">health.payment.transaction</field>
+        <field name="inherit_id" ref="view_health_payment_transaction_list"/>
+        <field name="mode">primary</field>
+        <field name="arch" type="xml">
+            <xpath expr="//list" position="attributes">
+                <attribute name="js_class">fin_payment_list_view</attribute>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="action_fin_payment_list" model="ir.actions.act_window">
+        <field name="name">Payment Transactions</field>
+        <field name="res_model">health.payment.transaction</field>
+        <field name="view_mode">list,form</field>
+        <field name="view_ids" eval="[(5, 0, 0),
+            (0, 0, {'view_mode': 'list', 'view_id': ref('view_fin_payment_list')})]"/>
+        <field name="search_view_id" ref="view_health_payment_transaction_search"/>
+    </record>
+
+    <!-- =============================================== -->
+    <!--  FINANCE CENTER — Cash Collections              -->
+    <!-- =============================================== -->
+
+    <record id="action_fin_cash_collections" model="ir.actions.act_window">
+        <field name="name">Cash Collections</field>
+        <field name="res_model">health.payment.transaction</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('status', '=', 'pending_delivery')]</field>
+        <field name="view_ids" eval="[(5, 0, 0),
+            (0, 0, {'view_mode': 'list', 'view_id': ref('view_health_payment_transaction_list')})]"/>
+    </record>
+
+    <!-- =============================================== -->
+    <!--  FINANCE CENTER — Overdue Clients               -->
+    <!-- =============================================== -->
+
+    <record id="view_fin_overdue_list" model="ir.ui.view">
+        <field name="name">fin.overdue.list</field>
+        <field name="model">account.move</field>
+        <field name="arch" type="xml">
+            <list string="Overdue Clients"
+                  decoration-danger="payment_state == 'not_paid'"
+                  decoration-warning="payment_state == 'partial'">
+                <field name="partner_id" string="Patient"/>
+                <field name="name" string="Invoice"/>
+                <field name="invoice_date_due" string="Due Date"/>
+                <field name="amount_total" string="Total"/>
+                <field name="amount_residual" string="Outstanding" sum="Total Outstanding"/>
+                <field name="payment_state" string="Status" widget="badge"
+                       decoration-danger="payment_state == 'not_paid'"
+                       decoration-warning="payment_state == 'partial'"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_fin_overdue" model="ir.actions.act_window">
+        <field name="name">Overdue Clients</field>
+        <field name="res_model">account.move</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('move_type', '=', 'out_invoice'), ('state', '=', 'posted'), ('payment_state', 'in', ['not_paid', 'partial']), ('invoice_date_due', '&lt;', context_today().strftime('%Y-%m-%d'))]</field>
+        <field name="view_ids" eval="[(5, 0, 0),
+            (0, 0, {'view_mode': 'list', 'view_id': ref('view_fin_overdue_list')})]"/>
+    </record>
+
+    <!-- =============================================== -->
+    <!--  FINANCE CENTER — VAT Invoices Log              -->
+    <!-- =============================================== -->
+
+    <record id="action_fin_vat_log" model="ir.actions.act_window">
+        <field name="name">VAT Invoices Log</field>
+        <field name="res_model">account.move</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('move_type', '=', 'out_invoice'), ('state', '=', 'posted')]</field>
+        <field name="view_ids" eval="[(5, 0, 0),
+            (0, 0, {'view_mode': 'list', 'view_id': ref('view_healthcare_vat_invoice_log_list')})]"/>
+        <field name="search_view_id" ref="view_healthcare_vat_invoice_log_search"/>
+    </record>
+
+    <!-- =============================================== -->
+    <!--  FINANCE CENTER — AR Transaction Log            -->
+    <!-- =============================================== -->
+
+    <record id="action_fin_ar_transactions" model="ir.actions.act_window">
+        <field name="name">AR Transaction Log</field>
+        <field name="res_model">health.ar.transaction.log</field>
+        <field name="view_mode">list,form</field>
+        <field name="view_ids" eval="[(5, 0, 0),
+            (0, 0, {'view_mode': 'list', 'view_id': ref('view_healthcare_ar_transaction_log_list')})]"/>
+        <field name="search_view_id" ref="view_healthcare_ar_transaction_log_search"/>
+    </record>
+
+</odoo>

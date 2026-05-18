@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ===== CLIENT ACTIONS (OWL Components) ===== -->
+
+    <record id="action_fin_dashboard" model="ir.actions.client">
+        <field name="name">Finance Dashboard</field>
+        <field name="tag">fin_dashboard</field>
+        <field name="target">current</field>
+    </record>
+
+    <record id="action_fin_ar_management" model="ir.actions.client">
+        <field name="name">AR Management</field>
+        <field name="tag">fin_ar_management</field>
+        <field name="target">current</field>
+    </record>
+
+    <record id="action_fin_settings" model="ir.actions.client">
+        <field name="name">Finance Settings</field>
+        <field name="tag">fin_settings</field>
+        <field name="target">current</field>
+    </record>
+
+    <!-- NOTE: act_window actions are defined in fin_center_views.xml -->
+
+    <!-- ===== ROOT MENU: Finance Center ===== -->
+
+    <menuitem id="menu_fin_center_root"
+              name="Finance Center"
+              groups="health_invoicing.group_health_invoicing_user"
+              web_icon="health_invoicing,static/description/icon.png"
+              sequence="13"/>
+
+    <!-- Sub-menus -->
+
+    <menuitem id="menu_fin_dashboard"
+              name="Dashboard"
+              parent="menu_fin_center_root"
+              action="action_fin_dashboard"
+              sequence="10"/>
+
+    <menuitem id="menu_fin_invoices"
+              name="Invoices"
+              parent="menu_fin_center_root"
+              action="action_fin_invoice_list"
+              sequence="20"/>
+
+    <menuitem id="menu_fin_packages"
+              name="Service Packages"
+              parent="menu_fin_center_root"
+              action="action_fin_package_list"
+              sequence="30"/>
+
+    <menuitem id="menu_fin_ar_dashboard"
+              name="AR Dashboard"
+              parent="menu_fin_center_root"
+              action="action_fin_ar_dashboard"
+              sequence="40"/>
+
+    <menuitem id="menu_fin_ar_management"
+              name="AR Management"
+              parent="menu_fin_center_root"
+              action="action_fin_ar_management"
+              sequence="50"/>
+
+    <menuitem id="menu_fin_payments"
+              name="Payments"
+              parent="menu_fin_center_root"
+              action="action_fin_payment_list"
+              sequence="60"/>
+
+    <menuitem id="menu_fin_overdue"
+              name="Overdue Clients"
+              parent="menu_fin_center_root"
+              action="action_fin_overdue"
+              sequence="70"/>
+
+    <menuitem id="menu_fin_vat_log"
+              name="VAT Log"
+              parent="menu_fin_center_root"
+              action="action_fin_vat_log"
+              sequence="80"/>
+
+    <menuitem id="menu_fin_ar_transactions"
+              name="AR Transactions"
+              parent="menu_fin_center_root"
+              action="action_fin_ar_transactions"
+              sequence="85"/>
+
+    <menuitem id="menu_fin_settings"
+              name="Settings"
+              parent="menu_fin_center_root"
+              action="action_fin_settings"
+              sequence="90"/>
+
+</odoo>

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="health_invoicing.FinInvoiceFormView" t-inherit="web.FormView" t-inherit-mode="primary">
+        <xpath expr="//t[@t-component='props.Renderer']" position="before">
+            <div t-if="headerState.isLoaded" class="fin-invoice-header">
+                <div class="fin-inv-hdr-left">
+                    <div class="fin-inv-hdr-title-row">
+                        <button class="fin-inv-back" t-on-click="goToInvoices">
+                            <i class="fa fa-arrow-left"/>
+                        </button>
+                        <h2 class="fin-inv-hdr-number" t-esc="headerState.header.name || 'Draft'"/>
+                        <span t-attf-class="fin-inv-hdr-badge #{getPaymentClass(headerState.header.payment_state)}">
+                            <t t-esc="getPaymentLabel(headerState.header.payment_state)"/>
+                        </span>
+                    </div>
+                    <div class="fin-inv-hdr-meta">
+                        <t t-if="headerState.header.partner_name">
+                            <span class="fin-inv-meta-item"><i class="fa fa-user"/> <t t-esc="headerState.header.partner_name"/></span>
+                        </t>
+                        <t t-if="headerState.header.partner_phone">
+                            <span class="fin-inv-meta-item"><i class="fa fa-phone"/> <t t-esc="headerState.header.partner_phone"/></span>
+                        </t>
+                        <t t-if="headerState.header.service_type">
+                            <span class="fin-inv-meta-item"><i class="fa fa-medkit"/> <t t-esc="headerState.header.service_type"/></span>
+                        </t>
+                        <t t-if="headerState.header.invoice_date">
+                            <span class="fin-inv-meta-item"><i class="fa fa-calendar"/> <t t-esc="headerState.header.invoice_date"/></span>
+                        </t>
+                    </div>
+                </div>
+                <div class="fin-inv-hdr-amounts">
+                    <div class="fin-inv-amount-block">
+                        <div class="fin-inv-amount-val" t-esc="formatCurrency(headerState.header.amount_total)"/>
+                        <div class="fin-inv-amount-lbl">Total</div>
+                    </div>
+                    <div class="fin-inv-amount-block amt-due">
+                        <div class="fin-inv-amount-val" t-esc="formatCurrency(headerState.header.amount_residual)"/>
+                        <div class="fin-inv-amount-lbl">Amount Due</div>
+                    </div>
+                    <div class="fin-inv-amount-block amt-paid">
+                        <div class="fin-inv-amount-val" t-esc="formatCurrency((headerState.header.amount_total || 0) - (headerState.header.amount_residual || 0))"/>
+                        <div class="fin-inv-amount-lbl">Paid</div>
+                    </div>
+                </div>
+            </div>
+        </xpath>
+    </t>
+
+</templates>

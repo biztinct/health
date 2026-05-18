@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="health_invoicing.FinPackageListView" t-inherit="web.ListView" t-inherit-mode="primary">
+        <xpath expr="//t[@t-component='props.Renderer']" position="before">
+            <div class="fin-cl-tabs">
+                <t t-foreach="statusTabs" t-as="tab" t-key="tab.id">
+                    <button t-attf-class="fin-cl-tab #{tabState.activeTab === tab.id ? 'active' : ''}"
+                            t-on-click="() => this.setTab(tab.id)">
+                        <i t-attf-class="fa #{tab.icon}"/>
+                        <t t-esc="tab.label"/>
+                    </button>
+                </t>
+            </div>
+        </xpath>
+    </t>
+
+</templates>

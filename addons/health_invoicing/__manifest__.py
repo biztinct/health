@@ -1,6 +1,6 @@
 {
     'name': 'VAFHS Healthcare Invoicing Integration',
-    'version': '19.0.1.0.28',
+    'version': '19.0.1.1.0',
     'category': 'Healthcare/Accounting',
     'summary': 'Healthcare invoicing integration inheriting from standard Odoo accounting',
     'description': """
@@ -116,7 +116,39 @@
         
         # Menus
         'views/health_invoicing_menus.xml',
+
+        # Finance Center
+        'views/fin_center_views.xml',
+        'views/fin_center_menus.xml',
     ],
+    'assets': {
+        'web.assets_backend': [
+            # Finance Center — shared must load first
+            'health_invoicing/static/src/scss/fin_shared.scss',
+            'health_invoicing/static/src/scss/fin_sidebar.scss',
+            'health_invoicing/static/src/scss/fin_dashboard.scss',
+            'health_invoicing/static/src/scss/fin_invoice_list.scss',
+            'health_invoicing/static/src/scss/fin_invoice_form.scss',
+            'health_invoicing/static/src/scss/fin_ar_management.scss',
+            'health_invoicing/static/src/scss/fin_settings.scss',
+            'health_invoicing/static/src/js/fin_sidebar.js',
+            'health_invoicing/static/src/xml/fin_sidebar.xml',
+            'health_invoicing/static/src/js/fin_dashboard.js',
+            'health_invoicing/static/src/xml/fin_dashboard.xml',
+            'health_invoicing/static/src/js/fin_invoice_list.js',
+            'health_invoicing/static/src/xml/fin_invoice_list.xml',
+            'health_invoicing/static/src/js/fin_invoice_form.js',
+            'health_invoicing/static/src/xml/fin_invoice_form.xml',
+            'health_invoicing/static/src/js/fin_payment_list.js',
+            'health_invoicing/static/src/xml/fin_payment_list.xml',
+            'health_invoicing/static/src/js/fin_package_list.js',
+            'health_invoicing/static/src/xml/fin_package_list.xml',
+            'health_invoicing/static/src/js/fin_ar_management.js',
+            'health_invoicing/static/src/xml/fin_ar_management.xml',
+            'health_invoicing/static/src/js/fin_settings.js',
+            'health_invoicing/static/src/xml/fin_settings.xml',
+        ],
+    },
     'demo': [
     ],
     'installable': True,

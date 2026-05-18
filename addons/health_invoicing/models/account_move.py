@@ -1043,6 +1043,154 @@ class HealthcareInvoice(models.Model):
 
         return warnings
 
+    @api.model
+    def get_finance_dashboard_data(self):
+        """Return KPIs, recent payments, and invoice breakdown for Finance Dashboard."""
+        today = fields.Date.today()
+        month_start = today.replace(day=1)
+
+        # Revenue this month (posted customer invoices)
+        posted_invoices = self.search([
+            ('move_type', '=', 'out_invoice'),
+            ('state', '=', 'posted'),
+            ('invoice_date', '>=', month_start),
+            ('invoice_date', '<=', today),
+        ])
+        revenue_this_month = sum(posted_invoices.mapped('amount_total'))
+
+        # Outstanding AR (all open customer invoices)
+        open_invoices = self.search([
+            ('move_type', '=', 'out_invoice'),
+            ('state', '=', 'posted'),
+            ('payment_state', 'in', ['not_paid', 'partial']),
+        ])
+        outstanding_ar = sum(open_invoices.mapped('amount_residual'))
+
+        # Overdue amount
+        overdue_invoices = open_invoices.filtered(
+            lambda inv: inv.invoice_date_due and inv.invoice_date_due < today
+        )
+        overdue_amount = sum(overdue_invoices.mapped('amount_residual'))
+
+        # Cash collected today
+        cash_today = 0
+        PaymentTx = self.env.get('health.payment.transaction')
+        if PaymentTx is not None:
+            today_payments = PaymentTx.search([
+                ('transaction_date', '>=', fields.Datetime.to_string(
+                    datetime.combine(today, datetime.min.time())
+                )),
+                ('status', 'in', ['collected', 'delivered', 'reconciled']),
+            ])
+            cash_today = sum(today_payments.mapped('amount'))
+
+        # Active packages
+        active_packages = 0
+        packages_remaining_value = 0
+        PackageModel = self.env.get('health.service.package')
+        if PackageModel is not None:
+            pkgs = PackageModel.search([('state', '=', 'active')])
+            active_packages = len(pkgs)
+            for pkg in pkgs:
+                packages_remaining_value += pkg.remaining_services * pkg.price_per_service
+
+        # Pending delivery (nurse cash in transit)
+        pending_delivery = 0
+        if PaymentTx is not None:
+            pending_delivery = PaymentTx.search_count([
+                ('status', '=', 'pending_delivery'),
+            ])
+
+        # Recent payments (last 10)
+        recent_payments = []
+        if PaymentTx is not None:
+            recent_txs = PaymentTx.search([], order='create_date desc', limit=10)
+            for tx in recent_txs:
+                time_ago = self._format_time_ago(tx.create_date)
+                recent_payments.append({
+                    'id': tx.id,
+                    'reference': tx.name or '',
+                    'patient_name': tx.patient_id.name if tx.patient_id else '',
+                    'amount': tx.amount,
+                    'method': tx.payment_method or '',
+                    'status': tx.status or '',
+                    'time_ago': time_ago,
+                })
+
+        # Invoice status breakdown (this month)
+        all_month = self.search([
+            ('move_type', '=', 'out_invoice'),
+            ('invoice_date', '>=', month_start),
+            ('invoice_date', '<=', today),
+        ])
+        total_count = len(all_month) or 1
+        breakdown = []
+        status_map = [
+            ('draft', 'Draft', lambda inv: inv.state == 'draft'),
+            ('posted', 'Posted', lambda inv: inv.state == 'posted' and inv.payment_state == 'not_paid'),
+            ('paid', 'Paid', lambda inv: inv.payment_state == 'paid'),
+            ('partial', 'Partial', lambda inv: inv.payment_state == 'partial'),
+            ('overdue', 'Overdue', lambda inv: inv.state == 'posted' and inv.payment_state in ('not_paid', 'partial') and inv.invoice_date_due and inv.invoice_date_due < today),
+            ('cancelled', 'Cancelled', lambda inv: inv.state == 'cancel'),
+        ]
+        for status, label, filter_fn in status_map:
+            count = len(all_month.filtered(filter_fn))
+            breakdown.append({
+                'status': status,
+                'label': label,
+                'count': count,
+                'percent': round(count / total_count * 100, 1),
+            })
+
+        return {
+            'kpis': {
+                'revenue_this_month': revenue_this_month,
+                'outstanding_ar': outstanding_ar,
+                'overdue_amount': overdue_amount,
+                'cash_collected_today': cash_today,
+                'active_packages': active_packages,
+                'packages_remaining_value': packages_remaining_value,
+                'pending_delivery': pending_delivery,
+            },
+            'recent_payments': recent_payments,
+            'invoice_breakdown': breakdown,
+        }
+
+    def _format_time_ago(self, dt):
+        if not dt:
+            return ''
+        now = fields.Datetime.now()
+        delta = now - dt
+        minutes = int(delta.total_seconds() / 60)
+        if minutes < 1:
+            return 'Just now'
+        if minutes < 60:
+            return f'{minutes}m ago'
+        hours = minutes // 60
+        if hours < 24:
+            return f'{hours}h ago'
+        days = hours // 24
+        if days < 30:
+            return f'{days}d ago'
+        return dt.strftime('%b %d')
+
+    def get_invoice_header_data(self):
+        """Return header data for the Finance Invoice Form OWL header."""
+        self.ensure_one()
+        service_type_labels = dict(self._fields['healthcare_service_type'].selection or [])
+        return {
+            'name': self.name or '',
+            'state': self.state,
+            'payment_state': self.payment_state,
+            'partner_name': self.partner_id.name if self.partner_id else '',
+            'partner_phone': self.partner_id.phone if self.partner_id else '',
+            'partner_email': self.partner_id.email if self.partner_id else '',
+            'service_type': service_type_labels.get(self.healthcare_service_type, ''),
+            'invoice_date': self.invoice_date.strftime('%d %b %Y') if self.invoice_date else '',
+            'amount_total': self.amount_total,
+            'amount_residual': self.amount_residual,
+        }
+
 
 class HealthcareInvoiceLine(models.Model):
     """Healthcare-specific invoice line extensions"""
