@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <templates xml:space="preserve">
 
-    <!-- Calendar Popover Footer — Edit + Delete only (no Dashboard) -->
     <t t-name="health_fieldservice.FSO_CalendarPopover.footer">
         <t t-if="isEventEditable">
             <a href="#" class="btn btn-primary o_cw_popover_edit" t-on-click="onEditEvent">Edit</a>
         </t>
-        <t t-if="isEventDeletable">
-            <a href="#" class="btn btn-secondary o_cw_popover_delete" t-on-click="onDeleteEvent">Delete</a>
+        <t t-if="isBookingCancellable">
+            <a href="#" class="btn btn-outline-danger o_cw_popover_cancel" t-on-click="onCancelEvent">
+                <i class="fa fa-times"/> Cancel Booking
+            </a>
         </t>
     </t>
 

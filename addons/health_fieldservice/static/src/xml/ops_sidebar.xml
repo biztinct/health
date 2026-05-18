@@ -2,7 +2,7 @@
 <templates xml:space="preserve">
 
 <t t-name="health_fieldservice.OpsSidebar">
-    <aside t-if="state.opsMode" class="ops-global-sidebar">
+    <aside class="ops-global-sidebar">
         <div class="ops-sidebar-logo" t-on-click="navigateHome" style="cursor:pointer">
             <div class="ops-logo-icon"><i class="fa fa-heartbeat"/></div>
             <div>
@@ -18,8 +18,6 @@
                t-on-click="() => this.navigateTo('bookings')"><i class="fa fa-calendar-check-o"/> Bookings</a>
             <a t-attf-class="ops-nav-item #{isActive('clients') ? 'active' : ''}"
                t-on-click="() => this.navigateTo('clients')"><i class="fa fa-address-book-o"/> Clients</a>
-            <a t-attf-class="ops-nav-item #{isActive('recurring') ? 'active' : ''}"
-               t-on-click="() => this.navigateTo('recurring')"><i class="fa fa-repeat"/> Recurring</a>
             <a t-attf-class="ops-nav-item #{isActive('staff') ? 'active' : ''}"
                t-on-click="() => this.navigateTo('staff')"><i class="fa fa-users"/> Staff</a>
             <a t-attf-class="ops-nav-item #{isActive('roster') ? 'active' : ''}"

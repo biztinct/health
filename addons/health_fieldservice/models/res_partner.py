@@ -6,7 +6,12 @@ class ResPartner(models.Model):
     """Extend res.partner with assignment-related patient data"""
     _inherit = 'res.partner'
 
-    last_visit_date = fields.Datetime('Last Visit', readonly=True)
+    last_visit_date = fields.Datetime('Last Visit', compute='_compute_last_visit_date')
+
+    booking_ids = fields.One2many(
+        'health.fieldservice.order', 'patient_id',
+        string='Bookings',
+    )
 
     # Assignment preferences for patients
     preferred_staff_id = fields.Many2one(
@@ -38,14 +43,25 @@ class ResPartner(models.Model):
         compute='_compute_timeline_html'
     )
 
+    def _compute_last_visit_date(self):
+        for partner in self:
+            if partner.is_patient:
+                last_fso = self.env['health.fieldservice.order'].search([
+                    ('patient_id', '=', partner.id),
+                    ('state', 'in', ['completed', 'completed_pending_invoice']),
+                    ('actual_end_datetime', '!=', False),
+                ], order='actual_end_datetime desc', limit=1)
+                partner.last_visit_date = last_fso.actual_end_datetime if last_fso else False
+            else:
+                partner.last_visit_date = False
+
     @api.depends('name')
     def _compute_timeline_html(self):
-        """Generate HTML timeline of upcoming appointments and key events"""
+        """Generate HTML timeline of upcoming + recent completed bookings"""
         for partner in self:
             if hasattr(partner, 'is_patient') and partner.is_patient:
                 timeline_events = []
 
-                # Get upcoming FSOs (scheduled bookings)
                 upcoming_fsos = self.env['health.fieldservice.order'].search([
                     ('patient_id', '=', partner.id),
                     ('state', 'in', ['draft', 'assigned', 'confirmed', 'in_progress']),
@@ -53,52 +69,44 @@ class ResPartner(models.Model):
                 ], order='scheduled_datetime ASC', limit=10)
 
                 for fso in upcoming_fsos:
-                    date_str = fso.scheduled_datetime.strftime('%d %b %Y at %H:%M') if fso.scheduled_datetime else 'TBD'
-                    status_color = 'primary' if fso.state == 'confirmed' else 'secondary'
-                    # Map state to display name
+                    date_str = fso.scheduled_datetime.strftime('%d %b %Y, %H:%M') if fso.scheduled_datetime else 'TBD'
                     state_display = dict(fso._fields['state'].selection).get(fso.state, fso.state)
+                    staff = fso.lead_staff_id.name if fso.lead_staff_id else 'Unassigned'
                     timeline_events.append({
-                        'type': 'appointment',
+                        'type': 'upcoming',
                         'date': date_str,
-                        'title': f'📅 {fso.name}',
-                        'description': f'Service: {fso.service_type} | Staff: {fso.lead_staff_id.name if fso.lead_staff_id else "Not assigned"} | Status: {state_display}',
-                        'color': status_color
+                        'title': fso.name,
+                        'staff': staff,
+                        'state': state_display,
+                        'service': dict(fso._fields['service_type'].selection).get(fso.service_type, fso.service_type or ''),
                     })
 
-                # Get completed services (past FSOs) for recent activity
                 completed_fsos = self.env['health.fieldservice.order'].search([
                     ('patient_id', '=', partner.id),
-                    ('state', '=', 'completed'),
-                    ('actual_end_datetime', '!=', False)
-                ], order='actual_end_datetime DESC', limit=5)
+                    ('state', 'in', ['completed', 'completed_pending_invoice']),
+                ], order='actual_end_datetime DESC, scheduled_datetime DESC', limit=8)
 
                 for fso in completed_fsos:
-                    date_str = fso.actual_end_datetime.strftime('%d %b %Y') if fso.actual_end_datetime else 'TBD'
+                    date_str = (fso.actual_end_datetime or fso.scheduled_datetime or fso.create_date).strftime('%d %b %Y')
                     timeline_events.append({
                         'type': 'completed',
                         'date': date_str,
-                        'title': f'✓ {fso.name}',
-                        'description': f'Service completed: {fso.service_type}',
-                        'color': 'success'
+                        'title': fso.name,
+                        'staff': fso.lead_staff_id.name if fso.lead_staff_id else '',
+                        'state': 'Completed',
+                        'service': dict(fso._fields['service_type'].selection).get(fso.service_type, fso.service_type or ''),
                     })
 
-                # Generate HTML timeline
                 if timeline_events:
-                    html = '<div style="padding: 10px; background: #f8f9fa; border-radius: 5px;"><ul style="list-style: none; padding: 0;">'
+                    html = '<ul>'
                     for event in timeline_events:
-                        icon = '📅' if event['type'] == 'appointment' else '✓'
-                        color_class = f'badge-{event["color"]}'
-                        html += f'''
-                        <li style="margin-bottom: 15px; padding-left: 20px; border-left: 3px solid #ddd;">
-                            <strong>{event['title']}</strong><br/>
-                            <small style="color: #666;">{event['date']}</small><br/>
-                            <small>{event['description']}</small>
-                        </li>
-                        '''
-                    html += '</ul></div>'
+                        icon = '<i class="fa fa-calendar text-primary"></i>' if event['type'] == 'upcoming' else '<i class="fa fa-check-circle text-success"></i>'
+                        html += f'<li>{icon} <strong>{event["title"]}</strong> — {event["service"]}<br/>'
+                        html += f'<small>{event["date"]} &middot; {event["staff"]} &middot; {event["state"]}</small></li>'
+                    html += '</ul>'
                     partner.timeline_html = html
                 else:
-                    partner.timeline_html = '<p style="color: #999; text-align: center; padding: 20px;">No upcoming appointments scheduled</p>'
+                    partner.timeline_html = '<p class="text-muted text-center p-4">No booking history yet</p>'
             else:
                 partner.timeline_html = False
 
@@ -162,7 +170,7 @@ class ResPartner(models.Model):
         # Stats
         FSO = self.env['health.fieldservice.order']
         fso_domain = [('patient_id', '=', partner.id)]
-        total_visits = FSO.search_count(fso_domain + [('state', 'in', ['completed', 'completed_pending_invoice'])])
+        total_visits = FSO.search_count(fso_domain)
 
         Package = self.env['health.service.package']
         active_packages = Package.search_count([('patient_id', '=', partner.id), ('state', '=', 'active')])
@@ -298,29 +306,76 @@ class ResPartner(models.Model):
         }
     
     def action_view_fso_orders(self):
-        """View all Bookings for this patient"""
+        """View all Bookings for this patient using Ops Booking List"""
         if not self.is_patient:
             raise UserError(_('Only patients can have Bookings.'))
-        
-        fso_orders = self.env['health.fieldservice.order'].search([
-            ('patient_id', '=', self.id)
+
+        action = self.env['ir.actions.act_window']._for_xml_id(
+            'health_fieldservice.action_ops_booking_list_native'
+        )
+        action['domain'] = [('patient_id', '=', self.id)]
+        action['context'] = {
+            'default_patient_id': self.id,
+            'default_customer_id': self.id,
+        }
+        action['name'] = _('Bookings - %s', self.name)
+        return action
+
+    def action_open_recurring_booking(self):
+        if not self.is_patient:
+            raise UserError(_('Only patients can have bookings created.'))
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'ops_recurring_booking',
+            'name': _('Recurring Booking'),
+            'target': 'current',
+            'context': {
+                'active_id': self.id,
+                'default_patient_id': self.id,
+            },
+        }
+
+    def action_collect_cash(self):
+        if not self.is_patient:
+            raise UserError(_('Only patients have payment transactions.'))
+        transactions = self.env['health.payment.transaction'].search([
+            ('patient_id', '=', self.id),
+            ('status', '=', 'pending_delivery'),
         ])
-        
-        action = {
+        if not transactions:
+            raise UserError(_('No cash pending delivery for this client.'))
+        return {
             'type': 'ir.actions.act_window',
-            'name': _('Bookings'),
-            'res_model': 'health.fieldservice.order',
+            'name': _('Cash Pending Delivery'),
+            'res_model': 'health.payment.transaction',
             'view_mode': 'list,form',
             'target': 'current',
-            'domain': [('patient_id', '=', self.id)],
-            'context': {
-                'default_patient_id': self.id,
-                'default_customer_id': self.id,
-            }
+            'domain': [('patient_id', '=', self.id), ('status', '=', 'pending_delivery')],
         }
-        
-        if len(fso_orders) == 1:
-            action['view_mode'] = 'form'
-            action['res_id'] = fso_orders.id
-        
-        return action
+
+    def action_register_client_payment(self):
+        if not self.is_patient:
+            raise UserError(_('Only patients have invoices.'))
+        invoices = self.env['account.move'].search([
+            ('partner_id', '=', self.id),
+            ('move_type', '=', 'out_invoice'),
+            ('state', '=', 'posted'),
+            ('payment_state', 'in', ('not_paid', 'partial')),
+        ])
+        if not invoices:
+            raise UserError(_('No outstanding invoices for this client.'))
+        if len(invoices) == 1:
+            return invoices.action_register_payment()
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _('Outstanding Invoices'),
+            'res_model': 'account.move',
+            'view_mode': 'list,form',
+            'target': 'current',
+            'domain': [
+                ('partner_id', '=', self.id),
+                ('move_type', '=', 'out_invoice'),
+                ('state', '=', 'posted'),
+                ('payment_state', 'in', ('not_paid', 'partial')),
+            ],
+        }

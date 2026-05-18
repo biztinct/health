@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ===== OPS BOOKING LIST VIEW ===== -->
+    <record id="view_health_fso_list_ops" model="ir.ui.view">
+        <field name="name">health.fieldservice.order.list.ops</field>
+        <field name="model">health.fieldservice.order</field>
+        <field name="priority">50</field>
+        <field name="arch" type="xml">
+            <list js_class="ops_booking_list_view"
+                  default_order="scheduled_datetime desc"
+                  class="ops-bq-list">
+                <field name="display_name" string="Booking"/>
+                <field name="patient_id" string="Client"/>
+                <field name="patient_phone" string="Phone" widget="phone" optional="show"/>
+                <field name="service_type" string="Service"/>
+                <field name="scheduled_datetime" string="Scheduled"/>
+                <field name="scheduled_duration" string="Duration" optional="hide"/>
+                <field name="assigned_staff_ids" widget="many2many_tags"
+                       options="{'color_field': 'color'}" string="Staff"/>
+                <field name="state" string="Status" widget="badge"
+                       decoration-success="state in ('completed', 'completed_pending_invoice')"
+                       decoration-info="state == 'assigned'"
+                       decoration-warning="state == 'in_progress'"
+                       decoration-danger="state == 'cancelled'"/>
+                <field name="priority" string="Priority"
+                       decoration-danger="priority >= '3'" optional="show"/>
+                <field name="has_staff_assigned" column_invisible="1"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ===== OPS BOOKING LIST ACTION ===== -->
+    <record id="action_ops_booking_list_native" model="ir.actions.act_window">
+        <field name="name">Booking Queue</field>
+        <field name="res_model">health.fieldservice.order</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[]</field>
+        <field name="search_view_id" ref="view_health_fieldservice_order_search"/>
+        <field name="view_ids" eval="[(5, 0, 0),
+            (0, 0, {'view_mode': 'list', 'view_id': ref('view_health_fso_list_ops')}),
+            (0, 0, {'view_mode': 'form', 'view_id': ref('view_health_fso_form_ops')})]"/>
+    </record>
+
+</odoo>

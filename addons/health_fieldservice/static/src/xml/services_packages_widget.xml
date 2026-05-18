@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="health_fieldservice.ServicesPackagesWidget">
+        <div t-att-class="state.data.has_quote or state.data.has_packages ? 'vu-svc-card' : 'vu-svc-card vu-svc-card--empty-wrap'">
+
+            <!-- ── Services with data ── -->
+            <div class="vu-svc-section vu-svc-section--quote" t-if="state.data.has_quote and state.data.service_count > 0">
+                <div class="vu-svc-header">
+                    <div class="vu-svc-header__left">
+                        <div class="vu-svc-header__icon vu-svc-header__icon--blue">
+                            <i class="fa fa-file-text-o"/>
+                        </div>
+                        <span class="vu-svc-header__title">Services</span>
+                    </div>
+                    <span class="vu-svc-header__count">
+                        <t t-esc="state.data.service_count"/> items
+                    </span>
+                </div>
+                <div class="vu-svc-list">
+                    <t t-foreach="state.data.services" t-as="svc" t-key="svc_index">
+                        <div class="vu-svc-item">
+                            <div class="vu-svc-item__dot"/>
+                            <span class="vu-svc-item__name" t-esc="svc.name"/>
+                            <span class="vu-svc-item__qty"><t t-esc="'× ' + svc.qty"/></span>
+                            <span class="vu-svc-item__price" t-esc="formatAmount(svc.price)"/>
+                        </div>
+                    </t>
+                </div>
+                <div class="vu-svc-total">
+                    <span>Total</span>
+                    <span class="vu-svc-total__amount" t-esc="formatAmount(state.data.total_amount)"/>
+                </div>
+            </div>
+
+            <!-- ── Empty services ── -->
+            <div class="vu-svc-section vu-svc-section--quote" t-if="!state.data.has_quote and !state.loading">
+                <div class="vu-svc-header">
+                    <div class="vu-svc-header__left">
+                        <div class="vu-svc-header__icon vu-svc-header__icon--blue">
+                            <i class="fa fa-file-text-o"/>
+                        </div>
+                        <span class="vu-svc-header__title">Services</span>
+                    </div>
+                </div>
+                <div class="vu-svc-empty">
+                    <div class="vu-svc-empty__icon"><i class="fa fa-file-o"/></div>
+                    <div class="vu-svc-empty__text">No services added yet</div>
+                    <button class="vu-svc-empty__btn" t-on-click="onCreateQuote">
+                        <i class="fa fa-plus"/> Create Quote
+                    </button>
+                </div>
+            </div>
+
+            <!-- ── Packages ── -->
+            <t t-if="state.data.has_packages and state.data.packages.length > 0">
+                <div class="vu-svc-divider"/>
+                <div class="vu-svc-section vu-svc-section--packages">
+                    <div class="vu-svc-header">
+                        <div class="vu-svc-header__left">
+                            <div class="vu-svc-header__icon vu-svc-header__icon--green">
+                                <i class="fa fa-cube"/>
+                            </div>
+                            <span class="vu-svc-header__title">Prepaid Packages</span>
+                        </div>
+                    </div>
+                    <div class="vu-svc-pkg-list">
+                        <t t-foreach="state.data.packages" t-as="pkg" t-key="pkg_index">
+                            <div class="vu-svc-pkg">
+                                <div class="vu-svc-pkg__top">
+                                    <span class="vu-svc-pkg__name" t-esc="pkg.name"/>
+                                    <span t-att-class="'vu-svc-pkg__badge vu-svc-pkg__badge--' + pkg.state" t-esc="pkg.state"/>
+                                </div>
+                                <div class="vu-svc-pkg__progress">
+                                    <div class="vu-svc-pkg__bar">
+                                        <div t-att-class="'vu-svc-pkg__fill vu-svc-pkg__fill--' + pkg.color"
+                                             t-att-style="'width:' + pkg.pct + '%'"/>
+                                    </div>
+                                    <div class="vu-svc-pkg__stats">
+                                        <span class="vu-svc-pkg__used" t-esc="pkg.consumed"/>
+                                        <span class="vu-svc-pkg__sep">/</span>
+                                        <span class="vu-svc-pkg__total-num" t-esc="pkg.total"/>
+                                        <span t-att-class="'vu-svc-pkg__remaining vu-svc-pkg__remaining--' + pkg.remaining_class">
+                                            <t t-esc="pkg.remaining"/> left
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+                    </div>
+                </div>
+            </t>
+        </div>
+    </t>
+</templates>

@@ -660,14 +660,19 @@
     // NOTEBOOK TABS — Card-contained bar matching client profile style
     // ─────────────────────────────────────────────────────────────────────
     .o_notebook {
-        .nav-tabs {
+        .o_notebook_headers {
             background: var(--vu-surface-card, #fff);
             border-radius: 10px;
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
             border: 1px solid var(--vu-border-soft, #e2e8f0);
+            margin-bottom: 16px;
             overflow: hidden;
+        }
+
+        .nav-tabs {
+            border-bottom: none;
             gap: 0;
-            margin-bottom: 0;
+            margin: 0;
 
             .nav-item {
                 margin-bottom: 0;
@@ -719,7 +724,7 @@
         }
 
         .tab-content {
-            padding-top: 16px;
+            padding-top: 0;
         }
     }
 
@@ -1070,5 +1075,146 @@
                 border-bottom: none;
             }
         }
+    }
+}
+
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Services & Packages Widget
+// ─────────────────────────────────────────────────────────────────────────────
+.vu-svc-card {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 4px 12px rgba(0,0,0,0.04);
+    border: 1px solid #e2e8f0;
+    overflow: hidden;
+    margin-bottom: 16px;
+}
+
+.vu-svc-divider { height: 1px; background: #e2e8f0; }
+
+// Section header
+.vu-svc-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 20px 10px;
+
+    &__left { display: flex; align-items: center; gap: 8px; }
+
+    &__icon {
+        width: 28px; height: 28px; border-radius: 8px;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 13px;
+    }
+    &__icon--blue { background: #eff6ff; color: #1565C0; }
+    &__icon--green { background: #ecfdf5; color: #059669; }
+
+    &__title {
+        font-size: 13px; font-weight: 700; color: #1e293b;
+        text-transform: uppercase; letter-spacing: 0.3px;
+    }
+    &__count {
+        font-size: 11px; font-weight: 600; color: #64748b;
+        background: #f1f5f9; padding: 2px 8px; border-radius: 10px;
+    }
+}
+
+// Services section
+.vu-svc-section--quote { background: linear-gradient(180deg, #f8faff 0%, #fff 100%); }
+.vu-svc-section--packages { background: linear-gradient(180deg, #f0fdf8 0%, #fff 100%); }
+
+.vu-svc-list { padding: 0 20px; }
+.vu-svc-item {
+    display: flex; align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid #f1f5f9;
+    &:last-child { border-bottom: none; }
+
+    &__dot {
+        width: 6px; height: 6px; border-radius: 50%;
+        background: #1565C0; flex-shrink: 0; margin-right: 12px;
+    }
+    &__name {
+        flex: 1; font-size: 13px; font-weight: 500; color: #334155;
+        overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    }
+    &__qty {
+        font-size: 11px; font-weight: 600; color: #64748b;
+        background: #f1f5f9; padding: 2px 8px; border-radius: 4px;
+        margin: 0 12px; white-space: nowrap;
+    }
+    &__price {
+        font-size: 13px; font-weight: 600; color: #1e293b; white-space: nowrap;
+    }
+}
+
+.vu-svc-total {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 12px 20px; border-top: 2px solid #e2e8f0; background: #f8fafc;
+    font-size: 13px; font-weight: 700; color: #334155;
+
+    &__amount { font-size: 15px; font-weight: 700; color: #1565C0; }
+}
+
+// Packages
+.vu-svc-pkg-list { padding: 0 20px 16px; }
+.vu-svc-pkg {
+    padding: 12px 0;
+    border-bottom: 1px solid #f0fdf4;
+    &:last-child { border-bottom: none; }
+
+    &__top {
+        display: flex; align-items: center; justify-content: space-between;
+        margin-bottom: 8px;
+    }
+    &__name { font-size: 13px; font-weight: 600; color: #1e293b; }
+    &__badge {
+        font-size: 10px; font-weight: 700; text-transform: uppercase;
+        letter-spacing: 0.5px; padding: 2px 8px; border-radius: 4px;
+    }
+    &__badge--active { background: #dcfce7; color: #15803d; }
+    &__badge--exhausted { background: #fee2e2; color: #dc2626; }
+    &__badge--expired { background: #fef3c7; color: #92400e; }
+    &__badge--cancelled { background: #f1f5f9; color: #64748b; }
+
+    &__progress { display: flex; align-items: center; gap: 12px; }
+    &__bar {
+        flex: 1; height: 6px; background: #e2e8f0;
+        border-radius: 3px; overflow: hidden;
+    }
+    &__fill {
+        height: 100%; border-radius: 3px; transition: width 0.3s ease;
+    }
+    &__fill--green { background: linear-gradient(90deg, #22c55e, #16a34a); }
+    &__fill--amber { background: linear-gradient(90deg, #f59e0b, #d97706); }
+    &__fill--red { background: linear-gradient(90deg, #ef4444, #dc2626); }
+
+    &__stats { display: flex; align-items: center; gap: 4px; font-size: 12px; white-space: nowrap; }
+    &__used { font-weight: 700; color: #334155; }
+    &__sep { color: #94a3b8; }
+    &__total-num { color: #64748b; font-weight: 500; }
+    &__remaining {
+        font-size: 11px; font-weight: 600; padding: 1px 6px;
+        border-radius: 4px; margin-left: 4px;
+    }
+    &__remaining--plenty { background: #dcfce7; color: #15803d; }
+    &__remaining--low { background: #fef3c7; color: #92400e; }
+    &__remaining--zero { background: #fee2e2; color: #dc2626; }
+}
+
+// Empty state
+.vu-svc-empty {
+    padding: 24px 20px; text-align: center;
+
+    &__icon { font-size: 24px; color: #cbd5e1; margin-bottom: 8px; }
+    &__text { font-size: 12px; color: #94a3b8; font-weight: 500; }
+    &__btn {
+        display: inline-flex; align-items: center; gap: 6px;
+        margin-top: 10px; padding: 6px 14px; border-radius: 6px;
+        border: 1px solid #e2e8f0; background: #fff;
+        color: #1565C0; font-size: 12px; font-weight: 600;
+        cursor: pointer; transition: all 150ms;
+        &:hover { background: #eff6ff; border-color: #93c5fd; }
     }
 }

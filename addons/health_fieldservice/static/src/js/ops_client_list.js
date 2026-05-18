@@ -204,10 +204,12 @@ class OpsClientList extends Component {
 
     viewClientProfile(clientId) {
         this.action.doAction({
-            type: 'ir.actions.client',
-            tag: 'ops_client_profile',
-            target: 'fullscreen',
-            context: { active_id: clientId },
+            type: 'ir.actions.act_window',
+            res_model: 'res.partner',
+            res_id: clientId,
+            views: [[false, 'form']],
+            target: 'current',
+            context: { form_view_ref: 'health_fieldservice.view_health_patient_form_ops' },
         }, { clearBreadcrumbs: true });
     }
 

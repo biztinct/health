@@ -26,6 +26,7 @@
         "web.assets_backend": [
             "web_timeline/static/src/views/timeline/timeline_view.scss",
             "web_timeline/static/src/views/timeline/timeline_canvas.scss",
+            "web_timeline/static/src/views/timeline/timeline_labels.scss",
             "web_timeline/static/src/views/timeline/timeline_arch_parser.esm.js",
             "web_timeline/static/src/views/timeline/timeline_view.esm.js",
             "web_timeline/static/src/views/timeline/timeline_renderer.esm.js",

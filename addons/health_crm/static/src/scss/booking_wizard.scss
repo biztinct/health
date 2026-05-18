@@ -341,3 +341,243 @@
     .bw-step.active .bw-step-name { color: $vu-deep-blue; }
     .bw-step.completed .bw-step-name { color: $vu-leaf-green; }
 }
+
+// ============================================================================
+// Quick Booking Wizard (native Odoo form) — Polished styling
+// ============================================================================
+
+// Dialog-level overrides for this wizard
+.o_dialog:has(.qbw-form) {
+    .modal-body { padding: 0 !important; }
+    .o_form_sheet_bg { padding: 0 !important; }
+    .o_form_sheet {
+        padding: 0 !important;
+        max-width: none !important;
+        margin: 0 !important;
+    }
+}
+
+.o_dialog .qbw-form {
+
+    // ── Stepper bar ──
+    .qbw-stepper {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 14px 32px;
+        background: linear-gradient(135deg, #0D356B 0%, #1565C0 100%);
+        gap: 0;
+    }
+
+    .qbw-step {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-shrink: 0;
+    }
+
+    .qbw-step__num {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 13px;
+        font-weight: 800;
+        background: rgba(255,255,255,0.12);
+        color: rgba(255,255,255,0.4);
+        flex-shrink: 0;
+        transition: all 200ms;
+
+        &--active {
+            background: #fff;
+            color: #1565C0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+
+        &--done {
+            background: $vu-leaf-green;
+            color: #fff;
+            box-shadow: 0 2px 8px rgba($vu-leaf-green, 0.4);
+        }
+    }
+
+    .qbw-step__label {
+        font-size: 14px;
+        font-weight: 700;
+        color: rgba(255,255,255,0.4);
+        white-space: nowrap;
+        font-family: $font-family-headings;
+
+        &--active { color: #fff; }
+        &--done { color: $vu-leaf-green-light; }
+    }
+
+    .qbw-step__line {
+        width: 120px;
+        height: 3px;
+        background: rgba(255,255,255,0.15);
+        margin: 0 20px;
+        border-radius: 2px;
+        position: relative;
+        flex-shrink: 0;
+    }
+
+    .qbw-step__line-fill {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(90deg, $vu-leaf-green, lighten($vu-leaf-green, 12%));
+        border-radius: 2px;
+    }
+
+    // ── Client bar ──
+    .qbw-client-bar {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        padding: 14px 20px;
+        margin: 20px 24px 0;
+        background: $vu-deep-blue-lightest;
+        border-radius: 10px;
+        border: 1px solid rgba($vu-deep-blue, 0.15);
+    }
+
+    .qbw-client-bar__icon {
+        font-size: 24px;
+        color: $vu-deep-blue;
+        flex-shrink: 0;
+    }
+
+    .qbw-client-bar__field {
+        flex: 1;
+
+        input, .o_input {
+            font-size: 15px !important;
+            font-weight: 700 !important;
+            color: $vu-text-primary !important;
+        }
+
+        // Dropdown display value
+        .o_field_widget, .o_field_many2one_selection {
+            font-size: 15px !important;
+            font-weight: 700 !important;
+        }
+
+        a.o_form_uri, span.o_field_char {
+            font-size: 15px !important;
+            font-weight: 700 !important;
+        }
+    }
+
+    // ── Content area (steps) ──
+    .qbw-stepper ~ *:not(.qbw-client-bar) {
+        margin-left: 24px;
+        margin-right: 24px;
+    }
+
+    // ── Section header ──
+    .qbw-section-header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin: 20px 24px 16px;
+        padding-bottom: 12px;
+        border-bottom: 2px solid $vu-deep-blue-lightest;
+    }
+
+    .qbw-section-header__icon {
+        font-size: 17px;
+        color: $vu-deep-blue;
+        width: 36px;
+        height: 36px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background: $vu-deep-blue-lightest;
+        border-radius: 8px;
+        flex-shrink: 0;
+
+        &::before {
+            line-height: 1;
+        }
+    }
+
+    .qbw-section-header__text {
+        font-size: 18px;
+        font-weight: 700;
+        font-family: $font-family-headings;
+        color: $vu-text-primary;
+    }
+
+    // ── Group containers (cards) ──
+    .o_group {
+        padding: 0 24px;
+
+        > .o_inner_group {
+            border: 1px solid var(--vu-border-soft, #E0E0E0);
+            border-radius: 10px;
+            padding: 16px 18px;
+            background: #fff;
+            border-left: 3px solid $vu-deep-blue-lightest;
+        }
+    }
+
+    // Group header (SERVICE SELECTION, etc.)
+    .o_group .o_inner_group > .o_group_header {
+        font-size: 11px !important;
+        font-weight: 700 !important;
+        text-transform: uppercase;
+        letter-spacing: 0.6px;
+        color: $vu-text-secondary !important;
+        padding: 0 0 8px;
+        margin-bottom: 4px;
+        border-bottom: 1px solid var(--vu-border-soft, #E0E0E0);
+    }
+
+    // Field label styling
+    .o_inner_group .o_td_label .o_form_label {
+        font-size: 12.5px;
+        color: $vu-text-secondary;
+        font-weight: 600;
+    }
+
+    // ── Notes section (step 2) ──
+    .qbw-notes-section {
+        margin: 16px 24px 20px;
+        border: 1px solid var(--vu-border-soft, #E0E0E0);
+        border-radius: 10px;
+        overflow: hidden;
+        border-left: 3px solid $vu-deep-blue-lightest;
+    }
+
+    .qbw-notes-label {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 16px;
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: $vu-text-secondary;
+        background: var(--vu-surface-muted, #F8FAFC);
+        border-bottom: 1px solid var(--vu-border-soft, #E0E0E0);
+    }
+
+    .qbw-notes-label__icon {
+        color: $vu-deep-blue;
+        font-size: 13px;
+    }
+
+    .qbw-notes-field {
+        .o_field_widget {
+            padding: 10px 16px;
+        }
+        textarea {
+            border: none !important;
+            box-shadow: none !important;
+            min-height: 60px;
+        }
+    }
+}

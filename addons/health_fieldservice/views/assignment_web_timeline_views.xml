@@ -18,6 +18,7 @@
                       mode="month"
                       stack="true"
                       domain="[('state', '!=', 'template')]"
+                      colors="#cbd5e1:state == 'draft';#93c5fd:state == 'assigned';#7dd3fc:state == 'confirmed';#86efac:state == 'in_progress';#5eead4:state == 'completed';#fca5a5:state == 'cancelled';#fcd34d:state == 'deferred'"
                       context="{'default_fso_id': context.get('default_fso_id'), 'default_assignment_date': context.get('default_assignment_date'), 'date': context.get('date'), 'initial_date': context.get('initial_date')}">
                 
                 <!-- Timeline Fields - fso_id listed first to ensure context works -->

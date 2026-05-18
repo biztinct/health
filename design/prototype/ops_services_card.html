@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Services & Packages Card — Prototype</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+    font-family: 'Inter', -apple-system, sans-serif;
+    background: #f1f5f9;
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+    align-items: center;
+}
+h2 { color: #334155; font-size: 14px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+.label { color: #94a3b8; font-size: 11px; margin-bottom: 16px; }
+
+/* ── Card Container ── */
+.services-card {
+    width: 480px;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 4px 12px rgba(0,0,0,0.04);
+    border: 1px solid #e2e8f0;
+    overflow: hidden;
+}
+
+/* ── Section Header ── */
+.section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 20px 10px;
+}
+.section-header__left {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.section-header__icon {
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+}
+.section-header__icon--services {
+    background: #eff6ff;
+    color: #1565C0;
+}
+.section-header__icon--packages {
+    background: #ecfdf5;
+    color: #059669;
+}
+.section-header__title {
+    font-size: 13px;
+    font-weight: 700;
+    color: #1e293b;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+.section-header__count {
+    font-size: 11px;
+    font-weight: 600;
+    color: #64748b;
+    background: #f1f5f9;
+    padding: 2px 8px;
+    border-radius: 10px;
+}
+
+/* ── Services Section ── */
+.services-section {
+    background: linear-gradient(180deg, #f8faff 0%, #ffffff 100%);
+}
+.service-list { padding: 0 20px; }
+
+.service-item {
+    display: flex;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid #f1f5f9;
+}
+.service-item:last-child { border-bottom: none; }
+
+.service-item__dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #1565C0;
+    flex-shrink: 0;
+    margin-right: 12px;
+}
+.service-item__name {
+    flex: 1;
+    font-size: 13px;
+    font-weight: 500;
+    color: #334155;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.service-item__qty {
+    font-size: 11px;
+    font-weight: 600;
+    color: #64748b;
+    background: #f1f5f9;
+    padding: 2px 8px;
+    border-radius: 4px;
+    margin: 0 12px;
+    white-space: nowrap;
+}
+.service-item__price {
+    font-size: 13px;
+    font-weight: 600;
+    color: #1e293b;
+    white-space: nowrap;
+}
+
+/* Total Row */
+.services-total {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 20px;
+    margin: 0;
+    border-top: 2px solid #e2e8f0;
+    background: #f8fafc;
+}
+.services-total__label {
+    font-size: 13px;
+    font-weight: 700;
+    color: #334155;
+}
+.services-total__amount {
+    font-size: 15px;
+    font-weight: 700;
+    color: #1565C0;
+}
+
+/* ── Divider ── */
+.card-divider {
+    height: 1px;
+    background: #e2e8f0;
+}
+
+/* ── Packages Section ── */
+.packages-section {
+    background: linear-gradient(180deg, #f0fdf8 0%, #ffffff 100%);
+}
+.package-list { padding: 0 20px 16px; }
+
+.package-item {
+    padding: 12px 0;
+    border-bottom: 1px solid #f0fdf4;
+}
+.package-item:last-child { border-bottom: none; }
+
+.package-item__top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+}
+.package-item__name {
+    font-size: 13px;
+    font-weight: 600;
+    color: #1e293b;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.package-item__badge {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 2px 8px;
+    border-radius: 4px;
+}
+.package-item__badge--active {
+    background: #dcfce7;
+    color: #15803d;
+}
+.package-item__badge--exhausted {
+    background: #fee2e2;
+    color: #dc2626;
+}
+
+/* Progress Bar */
+.package-progress {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+.package-progress__bar {
+    flex: 1;
+    height: 6px;
+    background: #e2e8f0;
+    border-radius: 3px;
+    overflow: hidden;
+}
+.package-progress__fill {
+    height: 100%;
+    border-radius: 3px;
+    transition: width 0.3s ease;
+}
+.package-progress__fill--green {
+    background: linear-gradient(90deg, #22c55e, #16a34a);
+}
+.package-progress__fill--amber {
+    background: linear-gradient(90deg, #f59e0b, #d97706);
+}
+.package-progress__fill--red {
+    background: linear-gradient(90deg, #ef4444, #dc2626);
+}
+
+.package-progress__stats {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 12px;
+    white-space: nowrap;
+}
+.package-progress__used {
+    font-weight: 700;
+    color: #334155;
+}
+.package-progress__sep {
+    color: #94a3b8;
+}
+.package-progress__total {
+    color: #64748b;
+    font-weight: 500;
+}
+.package-progress__remaining {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 1px 6px;
+    border-radius: 4px;
+    margin-left: 4px;
+}
+.package-progress__remaining--plenty {
+    background: #dcfce7;
+    color: #15803d;
+}
+.package-progress__remaining--low {
+    background: #fef3c7;
+    color: #92400e;
+}
+.package-progress__remaining--zero {
+    background: #fee2e2;
+    color: #dc2626;
+}
+
+/* ── Empty State ── */
+.empty-state {
+    padding: 24px 20px;
+    text-align: center;
+}
+.empty-state__icon {
+    font-size: 24px;
+    color: #cbd5e1;
+    margin-bottom: 8px;
+}
+.empty-state__text {
+    font-size: 12px;
+    color: #94a3b8;
+    font-weight: 500;
+}
+.empty-state__action {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 10px;
+    padding: 6px 14px;
+    border-radius: 6px;
+    border: 1px solid #e2e8f0;
+    background: #fff;
+    color: #1565C0;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 150ms;
+}
+.empty-state__action:hover {
+    background: #eff6ff;
+    border-color: #93c5fd;
+}
+
+/* ── Scenarios ── */
+.scenario { text-align: center; }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- SCENARIO 1: Both Services and Packages present        -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="scenario">
+    <h2>Scenario 1: Services + Prepaid Package</h2>
+    <div class="label">Booking has quote lines and an active prepaid package</div>
+</div>
+
+<div class="services-card">
+    <!-- Services -->
+    <div class="services-section">
+        <div class="section-header">
+            <div class="section-header__left">
+                <div class="section-header__icon section-header__icon--services">
+                    <i class="fa-solid fa-receipt"></i>
+                </div>
+                <span class="section-header__title">Services</span>
+            </div>
+            <span class="section-header__count">2 items</span>
+        </div>
+        <div class="service-list">
+            <div class="service-item">
+                <div class="service-item__dot"></div>
+                <span class="service-item__name">Abdominal Ultrasound</span>
+                <span class="service-item__qty">× 1</span>
+                <span class="service-item__price">1,500,000 đ</span>
+            </div>
+            <div class="service-item">
+                <div class="service-item__dot"></div>
+                <span class="service-item__name">Medical Examination</span>
+                <span class="service-item__qty">× 1</span>
+                <span class="service-item__price">200,000 đ</span>
+            </div>
+        </div>
+        <div class="services-total">
+            <span class="services-total__label">Total</span>
+            <span class="services-total__amount">1,700,000 đ</span>
+        </div>
+    </div>
+
+    <div class="card-divider"></div>
+
+    <!-- Packages -->
+    <div class="packages-section">
+        <div class="section-header">
+            <div class="section-header__left">
+                <div class="section-header__icon section-header__icon--packages">
+                    <i class="fa-solid fa-cube"></i>
+                </div>
+                <span class="section-header__title">Prepaid Packages</span>
+            </div>
+        </div>
+        <div class="package-list">
+            <div class="package-item">
+                <div class="package-item__top">
+                    <span class="package-item__name">
+                        Physiotherapy 10-Session Pack
+                    </span>
+                    <span class="package-item__badge package-item__badge--active">Active</span>
+                </div>
+                <div class="package-progress">
+                    <div class="package-progress__bar">
+                        <div class="package-progress__fill package-progress__fill--green" style="width: 14.3%"></div>
+                    </div>
+                    <div class="package-progress__stats">
+                        <span class="package-progress__used">1</span>
+                        <span class="package-progress__sep">/</span>
+                        <span class="package-progress__total">7</span>
+                        <span class="package-progress__remaining package-progress__remaining--plenty">6 left</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- SCENARIO 2: Services only, no packages                -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="scenario">
+    <h2>Scenario 2: Services Only (No Packages)</h2>
+    <div class="label">Booking has quote but no prepaid packages — packages section hidden</div>
+</div>
+
+<div class="services-card">
+    <div class="services-section">
+        <div class="section-header">
+            <div class="section-header__left">
+                <div class="section-header__icon section-header__icon--services">
+                    <i class="fa-solid fa-receipt"></i>
+                </div>
+                <span class="section-header__title">Services</span>
+            </div>
+            <span class="section-header__count">3 items</span>
+        </div>
+        <div class="service-list">
+            <div class="service-item">
+                <div class="service-item__dot"></div>
+                <span class="service-item__name">ECG + Reading Results</span>
+                <span class="service-item__qty">× 1</span>
+                <span class="service-item__price">300,000 đ</span>
+            </div>
+            <div class="service-item">
+                <div class="service-item__dot"></div>
+                <span class="service-item__name">Blood Test Panel</span>
+                <span class="service-item__qty">× 1</span>
+                <span class="service-item__price">450,000 đ</span>
+            </div>
+            <div class="service-item">
+                <div class="service-item__dot"></div>
+                <span class="service-item__name">Home Visit Consultation Fee</span>
+                <span class="service-item__qty">× 1</span>
+                <span class="service-item__price">150,000 đ</span>
+            </div>
+        </div>
+        <div class="services-total">
+            <span class="services-total__label">Total</span>
+            <span class="services-total__amount">900,000 đ</span>
+        </div>
+    </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- SCENARIO 3: Multiple packages with different states    -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="scenario">
+    <h2>Scenario 3: Multiple Packages (Various States)</h2>
+    <div class="label">Low remaining, nearly exhausted, and active packages</div>
+</div>
+
+<div class="services-card">
+    <div class="services-section">
+        <div class="section-header">
+            <div class="section-header__left">
+                <div class="section-header__icon section-header__icon--services">
+                    <i class="fa-solid fa-receipt"></i>
+                </div>
+                <span class="section-header__title">Services</span>
+            </div>
+            <span class="section-header__count">1 item</span>
+        </div>
+        <div class="service-list">
+            <div class="service-item">
+                <div class="service-item__dot"></div>
+                <span class="service-item__name">Physiotherapy Session</span>
+                <span class="service-item__qty">× 1</span>
+                <span class="service-item__price">500,000 đ</span>
+            </div>
+        </div>
+        <div class="services-total">
+            <span class="services-total__label">Total</span>
+            <span class="services-total__amount">500,000 đ</span>
+        </div>
+    </div>
+
+    <div class="card-divider"></div>
+
+    <div class="packages-section">
+        <div class="section-header">
+            <div class="section-header__left">
+                <div class="section-header__icon section-header__icon--packages">
+                    <i class="fa-solid fa-cube"></i>
+                </div>
+                <span class="section-header__title">Prepaid Packages</span>
+            </div>
+        </div>
+        <div class="package-list">
+            <div class="package-item">
+                <div class="package-item__top">
+                    <span class="package-item__name">Physiotherapy 10-Session</span>
+                    <span class="package-item__badge package-item__badge--active">Active</span>
+                </div>
+                <div class="package-progress">
+                    <div class="package-progress__bar">
+                        <div class="package-progress__fill package-progress__fill--amber" style="width: 80%"></div>
+                    </div>
+                    <div class="package-progress__stats">
+                        <span class="package-progress__used">8</span>
+                        <span class="package-progress__sep">/</span>
+                        <span class="package-progress__total">10</span>
+                        <span class="package-progress__remaining package-progress__remaining--low">2 left</span>
+                    </div>
+                </div>
+            </div>
+            <div class="package-item">
+                <div class="package-item__top">
+                    <span class="package-item__name">Nursing Care 5-Visit</span>
+                    <span class="package-item__badge package-item__badge--exhausted">Exhausted</span>
+                </div>
+                <div class="package-progress">
+                    <div class="package-progress__bar">
+                        <div class="package-progress__fill package-progress__fill--red" style="width: 100%"></div>
+                    </div>
+                    <div class="package-progress__stats">
+                        <span class="package-progress__used">5</span>
+                        <span class="package-progress__sep">/</span>
+                        <span class="package-progress__total">5</span>
+                        <span class="package-progress__remaining package-progress__remaining--zero">0 left</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- SCENARIO 4: No services yet (empty state)              -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="scenario">
+    <h2>Scenario 4: No Services Yet (Empty State)</h2>
+    <div class="label">No quote created — show prompt to add services</div>
+</div>
+
+<div class="services-card">
+    <div class="services-section">
+        <div class="section-header">
+            <div class="section-header__left">
+                <div class="section-header__icon section-header__icon--services">
+                    <i class="fa-solid fa-receipt"></i>
+                </div>
+                <span class="section-header__title">Services</span>
+            </div>
+        </div>
+        <div class="empty-state">
+            <div class="empty-state__icon">
+                <i class="fa-regular fa-file-lines"></i>
+            </div>
+            <div class="empty-state__text">No services added to this booking yet</div>
+            <button class="empty-state__action">
+                <i class="fa-solid fa-plus"></i> Create Quote
+            </button>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

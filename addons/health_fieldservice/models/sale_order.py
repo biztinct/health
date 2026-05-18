@@ -145,15 +145,11 @@ class SaleOrder(models.Model):
 
         if fso:
             return {
-                'type': 'ir.actions.act_window',
-                'name': f'Field Service Order - {fso.name}',
-                'res_model': 'health.fieldservice.order',
-                'res_id': fso.id,
-                'view_mode': 'form',
-                'target': 'main',
-                'context': {
-                    'from_quote_save': True,
-                }
+                'type': 'ir.actions.client',
+                'tag': 'ops_booking_detail',
+                'name': fso.display_name or fso.name,
+                'target': 'current',
+                'context': {'active_id': fso.id},
             }
         else:
             return {

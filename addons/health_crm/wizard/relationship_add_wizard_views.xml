@@ -24,7 +24,9 @@
                     </group>
 
                     <group string="Select Representative" class="o_relationship_wizard_group">
-                        <field name="representative_id" string="Name" options="{'no_create_edit': False}" placeholder="Search or create new partner..."/>
+                        <field name="representative_id" string="Name"
+                               options="{'no_create_edit': False, 'no_open': True}"
+                               placeholder="Search or create new partner..."/>
                         <field name="relationship_type"/>
                         <field name="is_primary"/>
                     </group>

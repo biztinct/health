@@ -3,7 +3,6 @@
 
 <t t-name="health_fieldservice.OpsRecurringBooking">
     <div class="ops-recurring-page">
-        <!-- MAIN -->
         <div class="ops-main-content">
 
             <header class="ops-top-header">
@@ -25,7 +24,7 @@
                 </div>
             </t>
 
-            <t t-if="!state.isLoading">
+            <t t-if="!state.isLoading and !state.showConfirmation">
                 <div class="rb-wizard-wrap">
                     <div class="rb-wizard">
 
@@ -45,7 +44,7 @@
                         <div class="rb-wizard-body">
 
                             <!-- SERVICE SECTION -->
-                            <div class="rb-section-title"><i class="fa fa-stethoscope"/> Service</div>
+                            <div class="rb-section-title rb-section-first"><i class="fa fa-stethoscope"/> Service</div>
                             <div class="rb-form-row">
                                 <div class="rb-form-group">
                                     <div class="rb-form-label">Service Type <span class="rb-req">*</span></div>
@@ -83,7 +82,7 @@
                                     </select>
                                 </div>
                                 <div class="rb-form-group">
-                                    <div class="rb-form-label">Facility</div>
+                                    <div class="rb-form-label">Facility <span class="rb-req">*</span></div>
                                     <select class="rb-form-input" t-on-change="onFacilityChange">
                                         <t t-foreach="state.facilities" t-as="f" t-key="f.id">
                                             <option t-att-value="f.id"
@@ -92,6 +91,120 @@
                                         </t>
                                     </select>
                                 </div>
+                            </div>
+
+                            <!-- STAFF ASSIGNMENT (Mandatory, Before Services) -->
+                            <div class="rb-section-title"><i class="fa fa-user-md"/> Staff Assignment</div>
+                            <div class="rb-form-row">
+                                <div class="rb-form-group">
+                                    <div class="rb-form-label">Lead Staff <span class="rb-req">*</span></div>
+                                    <select class="rb-form-input" t-on-change="onStaffChange">
+                                        <option value="">— Select staff —</option>
+                                        <t t-foreach="state.staffList" t-as="staff" t-key="staff.id">
+                                            <option t-att-value="staff.id"
+                                                    t-att-selected="staff.id === state.staffId"
+                                                    t-esc="staff.name + (staff.job_title ? ' — ' + staff.job_title : '') + (staff.is_preferred ? ' ★ Preferred' : '')"/>
+                                        </t>
+                                    </select>
+                                </div>
+                                <div class="rb-form-group">
+                                    <div class="rb-form-label">Doctor <span class="rb-optional">(optional)</span></div>
+                                    <select class="rb-form-input" t-on-change="onDoctorChange">
+                                        <option value="">— No doctor —</option>
+                                        <t t-foreach="state.doctorList" t-as="doc" t-key="doc.id">
+                                            <option t-att-value="doc.id"
+                                                    t-att-selected="doc.id === state.doctorId"
+                                                    t-esc="doc.name + (doc.specialization ? ' — ' + doc.specialization : '')"/>
+                                        </t>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="rb-preferred-badge" t-if="state.staffId and state.staffId === state.preferredStaffId">
+                                <i class="fa fa-star"/> Client's preferred staff
+                            </div>
+                            <div class="rb-preferred-hint" t-if="state.preferredStaffId and state.staffId and state.staffId !== state.preferredStaffId">
+                                <i class="fa fa-info-circle"/> This client has a preferred staff member
+                            </div>
+
+                            <!-- SERVICES &amp; BILLING (Product Catalog) -->
+                            <div class="rb-section-title"><i class="fa fa-shopping-cart"/> Services &amp; Billing</div>
+
+                            <!-- Product Add Dropdown -->
+                            <div class="rb-product-add-row">
+                                <div class="rb-product-search-wrap">
+                                    <i class="fa fa-search rb-search-icon"/>
+                                    <input class="rb-form-input rb-product-search"
+                                           type="text"
+                                           placeholder="Search products..."
+                                           t-att-value="state.productSearch"
+                                           t-on-input="onProductSearchChange"/>
+                                </div>
+                                <select class="rb-form-input rb-product-select" t-on-change="onAddProductSelect">
+                                    <option value="">+ Add service/product</option>
+                                    <t t-foreach="filteredProducts" t-as="prod" t-key="prod.id">
+                                        <option t-att-value="prod.id"
+                                                t-esc="prod.name + ' — ' + formatCurrency(prod.price)"/>
+                                    </t>
+                                </select>
+                            </div>
+
+                            <!-- Selected Products Table -->
+                            <t t-if="hasProducts">
+                                <div class="rb-products-table">
+                                    <div class="rb-pt-header">
+                                        <div class="rb-pt-col rb-pt-name">Product</div>
+                                        <div class="rb-pt-col rb-pt-price">Unit Price</div>
+                                        <div class="rb-pt-col rb-pt-qty">Qty</div>
+                                        <div class="rb-pt-col rb-pt-subtotal">Subtotal</div>
+                                        <div class="rb-pt-col rb-pt-action"></div>
+                                    </div>
+                                    <t t-foreach="state.selectedProducts" t-as="item" t-key="item_index">
+                                        <div class="rb-pt-row">
+                                            <div class="rb-pt-col rb-pt-name" t-esc="item.name"/>
+                                            <div class="rb-pt-col rb-pt-price" t-esc="formatCurrency(item.price)"/>
+                                            <div class="rb-pt-col rb-pt-qty">
+                                                <input type="number" class="rb-qty-input" min="1" max="99"
+                                                       t-att-value="item.qty"
+                                                       t-on-change="(ev) => this.updateProductQty(item_index, ev)"/>
+                                            </div>
+                                            <div class="rb-pt-col rb-pt-subtotal" t-esc="formatCurrency(item.price * item.qty)"/>
+                                            <div class="rb-pt-col rb-pt-action">
+                                                <button class="rb-remove-btn" t-on-click="() => this.removeProduct(item_index)">
+                                                    <i class="fa fa-times"/>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </t>
+                                    <div class="rb-pt-footer">
+                                        <div class="rb-pt-total-label">Total per booking</div>
+                                        <div class="rb-pt-total-value" t-esc="formatCurrency(productTotal)"/>
+                                    </div>
+                                </div>
+                            </t>
+                            <t t-if="!hasProducts">
+                                <div class="rb-no-products">
+                                    <i class="fa fa-info-circle"/> Add products/services above to create quotes for each booking
+                                </div>
+                            </t>
+
+                            <!-- Package -->
+                            <t t-if="state.packages.length > 0">
+                                <div class="rb-form-group" style="margin-top:12px">
+                                    <div class="rb-form-label">Prepaid Package</div>
+                                    <select class="rb-form-input" t-on-change="onPackageChange">
+                                        <option value="">— No package —</option>
+                                        <t t-foreach="state.packages" t-as="pkg" t-key="pkg.id">
+                                            <option t-att-value="pkg.id"
+                                                    t-att-selected="pkg.id === state.packageId"
+                                                    t-esc="pkg.name + ' — ' + pkg.remaining_services + '/' + pkg.total_services + ' remaining'"/>
+                                        </t>
+                                    </select>
+                                </div>
+                            </t>
+                            <div class="rb-pkg-warning" t-if="packageWarning">
+                                <i class="fa fa-exclamation-triangle"/>
+                                Package has <t t-esc="selectedPackage.remaining_services"/> services remaining
+                                but <t t-esc="state.preview.length"/> bookings will be created
                             </div>
 
                             <!-- RECURRENCE PATTERN -->
@@ -123,7 +236,7 @@
                                 </div>
                             </div>
 
-                            <!-- DAY SELECTOR (for weekly/biweekly) -->
+                            <!-- DAY SELECTOR -->
                             <t t-if="state.pattern === 'weekly' or state.pattern === 'biweekly'">
                                 <div class="rb-form-label" style="margin-bottom:6px">Repeat on days <span class="rb-req">*</span></div>
                                 <div class="rb-day-selector">
@@ -185,21 +298,12 @@
                                 </div>
                             </t>
 
-                            <!-- PACKAGE SUGGESTION -->
-                            <div class="rb-package-banner">
-                                <div class="rb-pkg-icon"><i class="fa fa-gift"/></div>
-                                <div class="rb-pkg-info">
-                                    <div class="rb-pkg-title">Save with a Package!</div>
-                                    <div class="rb-pkg-desc">Buy a multi-visit package for discounted rates</div>
-                                </div>
-                                <div class="rb-pkg-save">Save 20%</div>
-                            </div>
-
                             <!-- NOTES -->
                             <div class="rb-form-group" style="margin-top:14px">
                                 <div class="rb-form-label">Notes</div>
                                 <input class="rb-form-input" type="text"
                                        placeholder="Optional notes for all bookings..."
+                                       t-att-value="state.notes"
                                        t-on-change="onNotesChange"/>
                             </div>
 
@@ -208,6 +312,22 @@
                                 <div class="rb-summary-row">
                                     <span class="rb-sum-label">Service</span>
                                     <span class="rb-sum-value"><t t-esc="serviceLabel"/> (<t t-esc="state.durationHours"/>h)</span>
+                                </div>
+                                <div class="rb-summary-row" t-if="hasProducts">
+                                    <span class="rb-sum-label">Products</span>
+                                    <span class="rb-sum-value rb-sum-ok"><i class="fa fa-check-circle"/> <t t-esc="state.selectedProducts.length"/> selected</span>
+                                </div>
+                                <div class="rb-summary-row" t-if="selectedPackage">
+                                    <span class="rb-sum-label">Package</span>
+                                    <span class="rb-sum-value" t-esc="selectedPackage.name"/>
+                                </div>
+                                <div class="rb-summary-row" t-if="selectedStaffName">
+                                    <span class="rb-sum-label">Staff</span>
+                                    <span class="rb-sum-value" t-esc="selectedStaffName"/>
+                                </div>
+                                <div class="rb-summary-row" t-if="selectedDoctorName">
+                                    <span class="rb-sum-label">Doctor</span>
+                                    <span class="rb-sum-value" t-esc="selectedDoctorName"/>
                                 </div>
                                 <div class="rb-summary-row">
                                     <span class="rb-sum-label">Pattern</span>
@@ -233,12 +353,92 @@
                                 <t t-esc="state.preview.length"/> bookings will be created
                             </div>
                             <button class="rb-footer-btn rb-btn-create" t-on-click="createBookings"
-                                    t-att-disabled="state.isCreating">
+                                    t-att-disabled="state.isCreating or state.preview.length === 0">
                                 <t t-if="state.isCreating"><i class="fa fa-spinner fa-spin"/> Creating...</t>
                                 <t t-else=""><i class="fa fa-check"/> Create <t t-esc="state.preview.length"/> Bookings</t>
                             </button>
                         </div>
 
+                    </div>
+                </div>
+            </t>
+
+            <!-- CONFIRMATION MODAL -->
+            <t t-if="state.showConfirmation and state.creationResult">
+                <div class="rb-modal-overlay">
+                    <div class="rb-modal-card">
+                        <div class="rb-modal-header">
+                            <div class="rb-modal-icon"><i class="fa fa-check-circle"/></div>
+                            <div class="rb-modal-title">
+                                <t t-esc="state.creationResult.count"/> Bookings Created
+                            </div>
+                            <div class="rb-modal-subtitle">Review and confirm or discard</div>
+                        </div>
+
+                        <div class="rb-modal-body">
+                            <!-- Schedule Info -->
+                            <div class="rb-modal-info-grid">
+                                <div class="rb-modal-info-item">
+                                    <span class="rb-mi-label">Schedule</span>
+                                    <span class="rb-mi-value" t-esc="previewSummary"/>
+                                </div>
+                                <div class="rb-modal-info-item">
+                                    <span class="rb-mi-label">Period</span>
+                                    <span class="rb-mi-value" t-esc="dateRange"/>
+                                </div>
+                                <div class="rb-modal-info-item">
+                                    <span class="rb-mi-label">Staff</span>
+                                    <span class="rb-mi-value" t-esc="selectedStaffName"/>
+                                </div>
+                                <div class="rb-modal-info-item" t-if="selectedDoctorName">
+                                    <span class="rb-mi-label">Doctor</span>
+                                    <span class="rb-mi-value" t-esc="selectedDoctorName"/>
+                                </div>
+                            </div>
+
+                            <!-- Quote Summary Table -->
+                            <t t-if="state.creationResult.quote_summary">
+                                <div class="rb-modal-quote">
+                                    <div class="rb-mq-title">Quote Summary</div>
+                                    <div class="rb-mq-table">
+                                        <div class="rb-mq-header">
+                                            <div class="rb-mq-col rb-mq-name">Service</div>
+                                            <div class="rb-mq-col rb-mq-qty">Qty</div>
+                                            <div class="rb-mq-col rb-mq-price">Unit Price</div>
+                                            <div class="rb-mq-col rb-mq-sub">Subtotal</div>
+                                        </div>
+                                        <t t-foreach="state.creationResult.quote_summary.lines" t-as="line" t-key="line_index">
+                                            <div class="rb-mq-row">
+                                                <div class="rb-mq-col rb-mq-name" t-esc="line.name"/>
+                                                <div class="rb-mq-col rb-mq-qty" t-esc="line.qty"/>
+                                                <div class="rb-mq-col rb-mq-price" t-esc="formatCurrency(line.unit_price)"/>
+                                                <div class="rb-mq-col rb-mq-sub" t-esc="formatCurrency(line.subtotal)"/>
+                                            </div>
+                                        </t>
+                                        <div class="rb-mq-footer">
+                                            <div class="rb-mq-footer-row">
+                                                <span>Per booking</span>
+                                                <span t-esc="formatCurrency(state.creationResult.quote_summary.total_per_booking)"/>
+                                            </div>
+                                            <div class="rb-mq-footer-row rb-mq-grand">
+                                                <span>x <t t-esc="state.creationResult.count"/> bookings</span>
+                                                <span t-esc="formatCurrency(state.creationResult.quote_summary.total_all)"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </t>
+                        </div>
+
+                        <!-- Modal Actions -->
+                        <div class="rb-modal-actions">
+                            <button class="rb-modal-btn rb-modal-delete" t-on-click="deleteBookings">
+                                <i class="fa fa-trash"/> Delete All
+                            </button>
+                            <button class="rb-modal-btn rb-modal-confirm" t-on-click="confirmBookings">
+                                <i class="fa fa-check"/> Confirm All
+                            </button>
+                        </div>
                     </div>
                 </div>
             </t>

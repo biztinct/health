@@ -1,0 +1,624 @@
+// =============================================================================
+// Ops Client Profile Form — Unified editable view
+// OWL header (avatar, stats) + native Odoo form with ops styling
+// =============================================================================
+
+.ops-client-profile-form-page {
+    .o-mail-Form-chatter,
+    .o-mail-ChatterContainer {
+        display: none !important;
+    }
+}
+
+.ops-client-profile-form-page {
+    display: flex !important;
+    flex-direction: row !important;
+    background: var(--vu-surface-muted, #f8f9fa);
+    height: 100%;
+
+    .ops-form-main-area {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        overflow: auto;
+        min-width: 0;
+    }
+
+    .o_control_panel {
+        display: none !important;
+    }
+
+    .o_form_view_container {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        min-height: 0;
+        width: 100%;
+    }
+
+    .o_content {
+        flex: 1;
+        overflow: auto;
+        min-height: 0;
+        width: 100%;
+    }
+
+    .o_form_sheet_bg {
+        background: var(--vu-surface-muted, #f8f9fa);
+        max-width: 100% !important;
+        margin-right: 0 !important;
+    }
+
+    .o_form_sheet {
+        max-width: 100%;
+        padding: 16px 24px;
+    }
+
+    // Header
+    .ops-top-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 10px 24px;
+        background: #fff;
+        border-bottom: 1px solid #e2e8f0;
+        min-height: 52px;
+        flex-shrink: 0;
+    }
+
+    .ops-header-left {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+    }
+
+    .ops-header-right {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+
+        .ops-header-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 7px 16px;
+            font-size: 13px;
+            font-weight: 600;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            transition: all 150ms;
+
+            &.btn-primary {
+                background: $vu-deep-blue;
+                color: #fff;
+                &:hover { background: darken($vu-deep-blue, 8%); }
+            }
+        }
+
+        .o_form_status_indicator {
+            .o_form_status_indicator_buttons {
+                display: flex;
+                gap: 8px;
+            }
+        }
+    }
+
+    // Breadcrumb
+    .bd-breadcrumb {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 14px;
+
+        a {
+            color: $vu-deep-blue;
+            text-decoration: none;
+            font-weight: 500;
+            cursor: pointer;
+            &:hover { text-decoration: underline; }
+        }
+    }
+
+    .bd-sep {
+        color: $vu-text-secondary;
+        font-size: 10px;
+    }
+
+    .bd-current {
+        color: $vu-text-primary;
+        font-weight: 600;
+    }
+
+    // ===== PROFILE HEADER (avatar + stats) =====
+    .ph-header {
+        border-radius: var(--vu-radius-lg, 12px);
+        overflow: hidden;
+        box-shadow: var(--vu-shadow-md, 0 4px 12px rgba(0,0,0,0.08));
+        margin: 16px 24px 0;
+    }
+
+    .ph-identity {
+        background: #fff;
+        padding: 20px 24px;
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        border-left: 4px solid $vu-deep-blue;
+    }
+
+    .ph-avatar {
+        width: 64px;
+        height: 64px;
+        border-radius: 50%;
+        background: $vu-deep-blue;
+        color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 22px;
+        font-weight: 800;
+        font-family: $font-family-headings;
+        flex-shrink: 0;
+        box-shadow: 0 2px 8px rgba(21, 101, 192, 0.3);
+    }
+
+    .ph-details { flex: 1; min-width: 0; }
+
+    .ph-name-row {
+        display: flex;
+        align-items: baseline;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    .ph-name {
+        font-size: 20px;
+        font-weight: 700;
+        font-family: $font-family-headings;
+        color: $vu-text-primary;
+        line-height: 1.2;
+    }
+
+    .ph-code {
+        font-size: 12px;
+        color: $vu-text-secondary;
+        font-weight: 400;
+        opacity: 0.7;
+        position: relative;
+        padding-left: 10px;
+
+        &::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 2px;
+            bottom: 2px;
+            width: 1px;
+            background: var(--vu-border-soft, #E0E0E0);
+        }
+    }
+
+    .ph-tags {
+        display: flex;
+        gap: 6px;
+        margin-top: 6px;
+    }
+
+    .ph-tag {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        padding: 3px 10px;
+        border-radius: 50px;
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.02em;
+
+        &.active { background: $vu-leaf-green-lightest; color: $vu-leaf-green; }
+        &.regular { background: $vu-deep-blue-lightest; color: $vu-deep-blue; }
+        &.vip { background: $vu-hibiscus-orange-lightest; color: $vu-hibiscus-orange; }
+    }
+
+    .ph-contact {
+        display: flex;
+        gap: 16px;
+        margin-top: 6px;
+        font-size: 13px;
+        color: $vu-text-secondary;
+        flex-wrap: wrap;
+
+        span {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        i {
+            font-size: 12px;
+            color: $vu-deep-blue;
+            width: 14px;
+            text-align: center;
+        }
+    }
+
+    .ph-actions {
+        display: flex;
+        gap: 8px;
+        flex-shrink: 0;
+    }
+
+    .ph-action-btn {
+        width: 38px;
+        height: 38px;
+        border: none;
+        border-radius: 50%;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 15px;
+        transition: all 150ms ease;
+
+        &.secondary {
+            background: $vu-deep-blue-lightest;
+            color: $vu-deep-blue;
+            &:hover {
+                background: $vu-deep-blue;
+                color: #fff;
+                box-shadow: 0 2px 8px rgba(21, 101, 192, 0.35);
+            }
+        }
+        &.primary {
+            background: $vu-deep-blue;
+            color: #fff;
+            &:hover {
+                background: darken($vu-deep-blue, 10%);
+                box-shadow: 0 2px 8px rgba(21, 101, 192, 0.4);
+            }
+        }
+    }
+
+    .ph-stats {
+        background: $vu-deep-blue-darkest;
+        display: flex;
+        border-top: none;
+    }
+
+    .ph-stat {
+        flex: 1;
+        padding: 14px 16px;
+        text-align: center;
+        border-right: 1px solid rgba(#fff, 0.1);
+        transition: background 150ms;
+        cursor: default;
+
+        &:last-child { border-right: none; }
+        &:hover { background: rgba(#fff, 0.05); }
+    }
+
+    .ph-stat-value {
+        font-size: 26px;
+        font-weight: 900;
+        font-family: $font-family-headings;
+        color: #fff;
+        line-height: 1.2;
+
+        &.positive { color: $vu-leaf-green-light; }
+        &.attention { color: $vu-hibiscus-orange-light; }
+    }
+
+    .ph-stat-label {
+        font-size: 11px;
+        color: rgba(#fff, 0.85);
+        text-transform: uppercase;
+        letter-spacing: 0.8px;
+        font-weight: 700;
+        margin-top: 4px;
+    }
+
+    // ===== Title area =====
+    .oe_title h1 {
+        font-size: 20px;
+        font-weight: 700;
+        font-family: $font-family-headings;
+        margin-bottom: 12px;
+    }
+
+    .patient-badges {
+        display: flex;
+        gap: 6px;
+        .badge {
+            font-size: 11px;
+            font-weight: 600;
+            padding: 4px 10px;
+        }
+    }
+
+    // ===== Notebook tabs =====
+    .o_notebook {
+        .nav-tabs {
+            border-bottom: 2px solid var(--vu-border-soft, #e2e8f0);
+            gap: 0;
+            flex-wrap: wrap;
+
+            .nav-item .nav-link {
+                padding: 10px 18px;
+                font-size: 13px;
+                font-weight: 600;
+                color: $vu-text-secondary;
+                border: none;
+                border-bottom: 2px solid transparent;
+                margin-bottom: -2px;
+                border-radius: 0;
+                transition: all 150ms;
+
+                &:hover {
+                    color: $vu-deep-blue;
+                    background: transparent;
+                }
+
+                &.active {
+                    color: $vu-deep-blue;
+                    border-bottom-color: $vu-deep-blue;
+                    background: transparent;
+                }
+            }
+        }
+
+        .tab-content {
+            padding-top: 16px;
+        }
+    }
+
+    // ===== VU Section cards =====
+    .vu-section {
+        padding: 0;
+    }
+
+    .vu-section-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+        margin-bottom: 16px;
+    }
+
+    .vu-detail-card {
+        background: #fff;
+        border: 1px solid var(--vu-border-soft, #e2e8f0);
+        border-radius: 10px;
+        padding: 16px 20px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+    }
+
+    .vu-card__title {
+        font-size: 14px;
+        font-weight: 700;
+        font-family: $font-family-headings;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 12px;
+        color: $vu-text-primary;
+
+        .vu-section__icon {
+            color: $vu-deep-blue;
+            font-size: 16px;
+        }
+    }
+
+    // ===== Form field adjustments =====
+    .o_group {
+        .o_field_widget {
+            font-size: 13px;
+        }
+
+        label.o_form_label {
+            font-size: 12px;
+            font-weight: 600;
+            color: $vu-text-secondary;
+        }
+    }
+
+    // Status bar hidden
+    .o_statusbar_status {
+        display: none !important;
+    }
+
+    header.o_form_header {
+        display: none !important;
+    }
+
+    // ===== BOOKINGS & JOURNEY TAB =====
+
+    .bj-journey-stats {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 14px;
+        margin-bottom: 20px;
+    }
+
+    .bj-jstat {
+        background: #fff;
+        border: 1px solid var(--vu-border-soft, #e2e8f0);
+        border-radius: 10px;
+        padding: 14px 16px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        transition: all 150ms;
+
+        &:hover {
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+            border-color: $vu-deep-blue;
+        }
+
+        > i {
+            font-size: 20px;
+            color: $vu-deep-blue;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+            background: $vu-deep-blue-lightest;
+            flex-shrink: 0;
+        }
+    }
+
+    .bj-jstat-info {
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
+    }
+
+    .bj-jstat-val {
+        font-size: 15px;
+        font-weight: 700;
+        color: $vu-text-primary;
+        font-family: $font-family-headings;
+        line-height: 1.3;
+
+        .o_field_widget {
+            display: inline;
+            font-size: inherit;
+            font-weight: inherit;
+        }
+    }
+
+    .bj-jstat-lbl {
+        font-size: 11px;
+        color: $vu-text-secondary;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+    }
+
+    .bj-bookings-section,
+    .bj-journey-section {
+        background: #fff;
+        border: 1px solid var(--vu-border-soft, #e2e8f0);
+        border-radius: 12px;
+        padding: 18px 20px;
+        margin-bottom: 16px;
+    }
+
+    .bj-section-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 14px;
+
+        h3 {
+            font-size: 15px;
+            font-weight: 700;
+            font-family: $font-family-headings;
+            color: $vu-text-primary;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+
+            i {
+                color: $vu-deep-blue;
+                font-size: 16px;
+            }
+        }
+    }
+
+    // Bookings list embedded styling
+    .bj-bookings-section {
+        .o_list_view {
+            border: none;
+
+            .o_list_table {
+                border-collapse: separate;
+                border-spacing: 0 4px;
+
+                thead th {
+                    font-size: 11px;
+                    font-weight: 700;
+                    text-transform: uppercase;
+                    letter-spacing: 0.5px;
+                    color: $vu-text-secondary;
+                    background: transparent;
+                    border: none;
+                    padding: 8px 12px;
+                }
+
+                tbody tr {
+                    background: var(--vu-surface-muted, #f8f9fa);
+                    border-radius: 8px;
+                    cursor: pointer;
+                    transition: all 150ms;
+
+                    &:hover {
+                        background: $vu-deep-blue-lightest;
+                        box-shadow: 0 1px 4px rgba(21, 101, 192, 0.1);
+                    }
+
+                    td {
+                        border: none;
+                        padding: 10px 12px;
+                        font-size: 13px;
+                        vertical-align: middle;
+
+                        &:first-child {
+                            border-radius: 8px 0 0 8px;
+                            font-weight: 600;
+                            color: $vu-deep-blue;
+                        }
+                        &:last-child {
+                            border-radius: 0 8px 8px 0;
+                        }
+                    }
+                }
+
+                // Remove default selection checkbox column
+                .o_list_record_selector {
+                    display: none;
+                }
+            }
+        }
+    }
+
+    // Journey timeline widget
+    .bj-timeline-widget {
+        .o_field_widget {
+            width: 100%;
+        }
+    }
+
+    .bj-journey-section {
+        ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        li {
+            position: relative;
+            padding: 12px 16px 12px 24px;
+            margin-bottom: 8px;
+            border-left: 3px solid $vu-deep-blue-lightest;
+            border-radius: 0 8px 8px 0;
+            background: var(--vu-surface-muted, #f8f9fa);
+            transition: all 150ms;
+
+            &:hover {
+                background: $vu-deep-blue-lightest;
+                border-left-color: $vu-deep-blue;
+            }
+
+            strong {
+                font-size: 13px;
+                color: $vu-text-primary;
+            }
+
+            small {
+                font-size: 12px;
+                color: $vu-text-secondary;
+            }
+        }
+    }
+}

@@ -53,17 +53,6 @@ class RecurringBookingWizard(models.TransientModel):
 
     service_notes = fields.Text('Service Notes')
 
-    commission_due_to = fields.Many2one('res.partner', string='Commission Due To')
-    commission_percentage = fields.Float('Commission %', digits=(5, 2))
-    commission_duration = fields.Selection([
-        ('one_time', 'One Time'),
-        ('30_days', '30 Days'),
-    ], string='Commission Duration', default='one_time')
-
-    currency_id = fields.Many2one(
-        'res.currency', default=lambda self: self.env.company.currency_id,
-    )
-
     # ── Step 2: Recurrence Pattern ──
 
     day_mon = fields.Boolean('Mon')
@@ -279,9 +268,6 @@ class RecurringBookingWizard(models.TransientModel):
                 'scheduled_datetime': utc_dt,
                 'scheduled_duration': int(self.booking_duration * 60),
                 'intake_notes': self.booking_notes,
-                'commission_due_to': self.commission_due_to.id if self.commission_due_to else False,
-                'commission_percentage': self.commission_percentage,
-                'commission_duration': self.commission_duration,
             }
             created |= FSO.create(vals)
 

@@ -163,30 +163,21 @@
                             </div>
                         </page>
 
-                        <page string="Tracking and Timeline" name="tracking">
+                        <page string="Tracking" name="tracking">
                             <div class="vu-section">
-                                <div class="vu-section__title">
-                                    <span class="vu-section__icon" data-icon="timeline"/>
-                                    <div>
-                                        <span>Tracking and Timeline</span>
-                                        <small class="text-muted d-block">Actual timestamps and quality metrics</small>
-                                    </div>
-                                </div>
                                 <div class="vu-section-grid">
                                     <div class="vu-card">
                                         <div class="vu-card__title">
                                             <span class="vu-section__icon" data-icon="timeline"/>
-                                            <span>Actual Timeline</span>
+                                            <span>Service Timeline</span>
                                         </div>
-                                        <group>
-                                            <field name="actual_departure_time" readonly="1"/>
-                                            <field name="actual_arrival_time" readonly="1"/>
-                                            <field name="actual_completion_time" readonly="1"/>
-                                            <field name="real_time_status" widget="badge"/>
+                                        <group col="4">
+                                            <field name="real_time_status" widget="badge" string="Status"/>
+                                            <field name="actual_departure_time" readonly="1" string="Departed"/>
+                                            <field name="actual_arrival_time" readonly="1" string="Arrived"/>
+                                            <field name="actual_completion_time" readonly="1" string="Completed"/>
                                         </group>
                                     </div>
-                                    
-                                    <!-- Quality Assessment removed per UX review -->
                                 </div>
                             </div>
                         </page>

@@ -1,0 +1,434 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ===== OPS CLIENT PROFILE FORM VIEW ===== -->
+    <record id="view_health_patient_form_ops" model="ir.ui.view">
+        <field name="name">res.partner.form.ops.client.profile</field>
+        <field name="model">res.partner</field>
+        <field name="priority">50</field>
+        <field name="arch" type="xml">
+            <form string="Client Profile" js_class="ops_client_profile_form"
+                  class="ops-client-profile-form">
+
+                <field name="active" invisible="1"/>
+                <field name="patient_status" invisible="1"/>
+                <field name="is_patient" invisible="1"/>
+                <field name="source_type" invisible="1"/>
+
+                <sheet>
+                    <field name="name" invisible="1"/>
+                    <field name="patient_code_display" invisible="1"/>
+                    <field name="age_display" invisible="1"/>
+
+                    <!-- Allergies Alert -->
+                    <div class="alert alert-danger" role="alert" invisible="not allergies">
+                        <strong><i class="fa fa-exclamation-triangle"/> ALLERGIES:</strong>
+                        <field name="allergies" readonly="1"/>
+                    </div>
+
+                    <notebook>
+                        <!-- ===== 1. PROFILE OVERVIEW ===== -->
+                        <page string="Profile Overview" name="profile_overview">
+                            <div class="vu-section">
+                                <div class="vu-section-grid">
+                                    <div class="vu-detail-card">
+                                        <div class="vu-card__title">
+                                            <span class="vu-section__icon" data-icon="id-card"/>
+                                            <span>Personal Information</span>
+                                        </div>
+                                        <group col="2">
+                                            <field name="title"/>
+                                            <field name="first_name"/>
+                                            <field name="last_name"/>
+                                            <field name="middle_name"/>
+                                            <field name="vietnamese_name" placeholder="Tên tiếng Việt"/>
+                                            <field name="phone" widget="phone" required="1"/>
+                                            <field name="mobile" widget="phone" invisible="1"/>
+                                            <field name="email" widget="email"/>
+                                            <field name="birth_date"/>
+                                            <field name="deceased"/>
+                                            <field name="gender"/>
+                                        </group>
+                                    </div>
+
+                                    <div class="vu-detail-card">
+                                        <div class="vu-card__title">
+                                            <span class="vu-section__icon" data-icon="users-group"/>
+                                            <span>Other Information</span>
+                                        </div>
+                                        <group col="2">
+                                            <field name="patient_category_id"/>
+                                            <field name="catchment_province_id" required="1"/>
+                                            <field name="primary_facility_id"
+                                                   domain="[('catchment_province_id', '=', catchment_province_id)]"/>
+                                            <field name="intake_referring_doctor_id"
+                                                   string="Referring Doctor"
+                                                   options="{'no_create': True}"/>
+                                            <field name="source_type"/>
+                                            <field name="national_id"/>
+                                            <field name="profession" string="Occupation"/>
+                                            <field name="ethnicity"/>
+                                            <field name="commission_due_to" string="Commission Duration"/>
+                                        </group>
+                                    </div>
+                                </div>
+                            </div>
+                        </page>
+
+                        <!-- ===== 2. BOOKINGS & JOURNEY ===== -->
+                        <page string="Bookings" name="bookings_journey">
+                            <div class="vu-section">
+                                <!-- Journey Stats Strip -->
+                                <div class="bj-journey-stats">
+                                    <div class="bj-jstat">
+                                        <i class="fa fa-calendar-check-o"/>
+                                        <div class="bj-jstat-info">
+                                            <span class="bj-jstat-val"><field name="visit_count" nolabel="1" class="d-inline"/></span>
+                                            <span class="bj-jstat-lbl">Total Bookings</span>
+                                        </div>
+                                    </div>
+                                    <div class="bj-jstat">
+                                        <i class="fa fa-clock-o"/>
+                                        <div class="bj-jstat-info">
+                                            <span class="bj-jstat-val"><field name="last_visit_date" nolabel="1" widget="date" class="d-inline"/></span>
+                                            <span class="bj-jstat-lbl">Last Visit</span>
+                                        </div>
+                                    </div>
+                                    <div class="bj-jstat">
+                                        <i class="fa fa-calendar"/>
+                                        <div class="bj-jstat-info">
+                                            <span class="bj-jstat-val"><field name="next_visit_date" nolabel="1" widget="date" class="d-inline"/></span>
+                                            <span class="bj-jstat-lbl">Next Scheduled</span>
+                                        </div>
+                                    </div>
+                                    <div class="bj-jstat">
+                                        <i class="fa fa-user-md"/>
+                                        <div class="bj-jstat-info">
+                                            <span class="bj-jstat-val"><field name="registration_date" nolabel="1" widget="date" class="d-inline"/></span>
+                                            <span class="bj-jstat-lbl">Client Since</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Bookings List -->
+                                <div class="bj-bookings-section">
+                                    <div class="bj-section-header">
+                                        <h3><i class="fa fa-list-alt"/> All Bookings</h3>
+                                        <button name="action_view_fso_orders" type="object"
+                                                class="btn btn-sm btn-outline-primary">
+                                            <i class="fa fa-external-link"/> Open Full List
+                                        </button>
+                                    </div>
+                                    <field name="booking_ids" mode="list" readonly="1">
+                                        <list decoration-success="state in ('completed','completed_pending_invoice')"
+                                              decoration-info="state == 'confirmed'"
+                                              decoration-warning="state == 'in_progress'"
+                                              decoration-muted="state == 'cancelled'"
+                                              default_order="scheduled_datetime desc"
+                                              open_form_view="True">
+                                            <field name="name" string="Booking #"/>
+                                            <field name="scheduled_datetime" string="Scheduled" widget="datetime"/>
+                                            <field name="service_type" string="Service"/>
+                                            <field name="lead_staff_id" string="Staff" widget="many2one_avatar"/>
+                                            <field name="estimated_duration" string="Duration" widget="float_time"/>
+                                            <field name="state" string="Status" widget="badge"
+                                                   decoration-success="state in ('completed','completed_pending_invoice')"
+                                                   decoration-info="state == 'confirmed'"
+                                                   decoration-warning="state in ('in_progress','assigned')"
+                                                   decoration-danger="state == 'cancelled'"/>
+                                        </list>
+                                    </field>
+                                </div>
+
+                                <field name="timeline_html" invisible="1"/>
+                            </div>
+                        </page>
+
+                        <!-- ===== 3. ADDRESS INFORMATION ===== -->
+                        <page string="Address Information" name="address_info">
+                            <div class="vu-section">
+                                <div class="vu-section-grid">
+                                    <div class="vu-detail-card">
+                                        <div class="vu-card__title">
+                                            <span class="vu-section__icon" data-icon="file-text"/>
+                                            <span>Address Details</span>
+                                        </div>
+                                        <group col="2">
+                                            <label for="vietnamese_address" string="Home Address"/>
+                                            <div class="o_row align-items-start">
+                                                <field name="vietnamese_address" nolabel="1" readonly="1"
+                                                       widget="text" class="flex-grow-1"/>
+                                                <button name="action_edit_vietnamese_address"
+                                                        type="object"
+                                                        class="btn btn-link p-0 fa fa-pencil text-muted"
+                                                        title="Edit address"/>
+                                            </div>
+                                            <field name="address_search" invisible="1"/>
+                                            <field name="partner_latitude" invisible="1"/>
+                                            <field name="partner_longitude" invisible="1"/>
+                                            <field name="date_localization" invisible="1"/>
+                                        </group>
+                                        <div class="mt-2">
+                                            <button name="action_geocode_address_photon"
+                                                    type="object"
+                                                    class="btn btn-secondary btn-sm"
+                                                    icon="fa-map-marker"
+                                                    string="Geocode Address"/>
+                                        </div>
+                                    </div>
+                                    <div class="vu-detail-card">
+                                        <div class="vu-card__title">
+                                            <span class="vu-section__icon" data-icon="map-pin"/>
+                                            <span>Map Location</span>
+                                        </div>
+                                        <field name="geo_coordinates_display" widget="address_map" nolabel="1"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </page>
+
+                        <!-- ===== 3. INTAKE NOTES ===== -->
+                        <page string="Intake Notes" name="intake_notes">
+                            <div class="vu-section">
+                                <div class="vu-section-grid">
+                                    <div class="vu-detail-card">
+                                        <div class="vu-card__title">
+                                            <span class="vu-section__icon" data-icon="file-text"/>
+                                            <span>Assessment Information</span>
+                                        </div>
+                                        <group col="1">
+                                            <field name="intake_diagnosis"
+                                                   placeholder="Medical diagnosis and assessment findings"
+                                                   nolabel="1"/>
+                                        </group>
+                                    </div>
+                                    <div class="vu-detail-card">
+                                        <div class="vu-card__title">
+                                            <span class="vu-section__icon" data-icon="heart-pulse"/>
+                                            <span>Care Planning</span>
+                                        </div>
+                                        <group col="2">
+                                            <field name="intake_referring_doctor_id"
+                                                   placeholder="Select referring doctor"
+                                                   options="{'no_create': True}"/>
+                                            <field name="intake_goal_of_care"
+                                                   placeholder="Primary goal or objective of care"/>
+                                            <field name="intake_required_equipment"
+                                                   placeholder="Equipment or supplies required"/>
+                                        </group>
+                                    </div>
+                                </div>
+                                <div class="vu-detail-card">
+                                    <div class="vu-card__title">
+                                        <span class="vu-section__icon" data-icon="file-text"/>
+                                        <span>Additional Notes</span>
+                                    </div>
+                                    <group>
+                                        <field name="intake_notes"
+                                               placeholder="Additional intake assessment notes"
+                                               nolabel="1"/>
+                                    </group>
+                                </div>
+                            </div>
+                        </page>
+
+                        <!-- ===== 4. INSURANCE & BILLING ===== -->
+                        <page string="Insurance &amp; Billing" name="insurance_billing">
+                            <div class="vu-section">
+                                <div class="vu-section-grid">
+                                    <div class="vu-detail-card">
+                                        <div class="vu-card__title">
+                                            <span class="vu-section__icon" data-icon="shield-check"/>
+                                            <span>Insurance Details</span>
+                                        </div>
+                                        <group col="2">
+                                            <field name="insurance_provider"/>
+                                            <field name="insurance_number"/>
+                                            <field name="insurance_expiry"/>
+                                        </group>
+                                        <div class="alert alert-warning"
+                                             invisible="not insurance_expiry or insurance_expiry &gt; context_today()"
+                                             role="alert">
+                                            <i class="fa fa-exclamation-triangle"/> Insurance has expired
+                                        </div>
+                                    </div>
+                                    <div class="vu-detail-card">
+                                        <div class="vu-card__title">
+                                            <span class="vu-section__icon" data-icon="credit-card"/>
+                                            <span>Payment Preferences</span>
+                                        </div>
+                                        <group col="1">
+                                            <field name="payment_method" required="1"/>
+                                        </group>
+                                    </div>
+                                </div>
+                            </div>
+                        </page>
+
+
+                        <!-- ===== 6. ACTIVE PACKAGES ===== -->
+                        <page string="Active Packages" name="active_packages">
+                            <div class="vu-section">
+                                <div class="vu-detail-card">
+                                    <div class="vu-card__title">
+                                        <span class="vu-section__icon" data-icon="gift"/>
+                                        <span>Packages</span>
+                                    </div>
+                                    <p class="text-muted">
+                                        Active packages are shown on the client profile overview.
+                                    </p>
+                                </div>
+                            </div>
+                        </page>
+
+                        <!-- ===== 7. HEALTHCARE RELATIONSHIPS ===== -->
+                        <page string="Healthcare Relationships" name="healthcare_relationships">
+                            <div class="vu-section">
+                                <div class="vu-detail-card">
+                                    <div class="vu-card__title">
+                                        <span class="vu-section__icon" data-icon="users-group"/>
+                                        <span>Relationship Network</span>
+                                    </div>
+                                    <widget name="relationship_hierarchy"/>
+                                </div>
+                            </div>
+                        </page>
+
+
+                        <!-- ===== 9. CLINICAL NOTES ===== -->
+                        <page string="Clinical Notes" name="clinical_notes">
+                            <div class="vu-section">
+                                <div class="vu-section-grid">
+                                    <div class="vu-detail-card">
+                                        <div class="vu-card__title">
+                                            <span class="vu-section__icon" data-icon="heart-pulse"/>
+                                            <span>Medical Profile</span>
+                                        </div>
+                                        <group col="2">
+                                            <field name="blood_group"/>
+                                            <field name="deceased"/>
+                                        </group>
+                                        <separator string="Known Allergies"/>
+                                        <field name="allergies" nolabel="1"
+                                               placeholder="List any known allergies (drug, food, environmental)..."
+                                               widget="text"/>
+                                    </div>
+                                    <div class="vu-detail-card">
+                                        <div class="vu-card__title">
+                                            <span class="vu-section__icon" data-icon="file-text"/>
+                                            <span>Diagnosis &amp; Care Plan</span>
+                                        </div>
+                                        <group col="1">
+                                            <field name="intake_diagnosis"
+                                                   placeholder="Medical diagnosis and assessment findings..."
+                                                   widget="text" nolabel="1"/>
+                                        </group>
+                                        <separator string="Goal of Care"/>
+                                        <field name="intake_goal_of_care" nolabel="1"
+                                               placeholder="Primary care objectives..."
+                                               widget="text"/>
+                                        <separator string="Required Equipment"/>
+                                        <field name="intake_required_equipment" nolabel="1"
+                                               placeholder="Specialized equipment or supplies..."
+                                               widget="text"/>
+                                    </div>
+                                </div>
+                                <div class="vu-detail-card">
+                                    <div class="vu-card__title">
+                                        <span class="vu-section__icon" data-icon="file-text"/>
+                                        <span>Medical History</span>
+                                    </div>
+                                    <field name="medical_history" nolabel="1"
+                                           placeholder="Past medical history, surgeries, chronic conditions, previous treatments..."
+                                           widget="text"/>
+                                </div>
+                                <div class="vu-detail-card">
+                                    <div class="vu-card__title">
+                                        <span class="vu-section__icon" data-icon="file-text"/>
+                                        <span>Intake Notes</span>
+                                    </div>
+                                    <field name="intake_notes" nolabel="1"
+                                           placeholder="Additional notes from intake assessment..."
+                                           widget="text"/>
+                                </div>
+                            </div>
+                        </page>
+
+                        <!-- ===== 10. FINANCIAL SUMMARY ===== -->
+                        <page string="Financial Summary" name="financial_summary">
+                            <div class="vu-section">
+                                <!-- Financial Stats Strip -->
+                                <div class="bj-journey-stats">
+                                    <div class="bj-jstat">
+                                        <i class="fa fa-money"/>
+                                        <div class="bj-jstat-info">
+                                            <span class="bj-jstat-val"><field name="total_invoiced" nolabel="1" class="d-inline" widget="monetary"/></span>
+                                            <span class="bj-jstat-lbl">Total Invoiced</span>
+                                        </div>
+                                    </div>
+                                    <div class="bj-jstat">
+                                        <i class="fa fa-check-circle text-success"/>
+                                        <div class="bj-jstat-info">
+                                            <span class="bj-jstat-val"><field name="credit" nolabel="1" class="d-inline" widget="monetary"/></span>
+                                            <span class="bj-jstat-lbl">Total Paid</span>
+                                        </div>
+                                    </div>
+                                    <div class="bj-jstat">
+                                        <i class="fa fa-exclamation-circle text-danger"/>
+                                        <div class="bj-jstat-info">
+                                            <span class="bj-jstat-val"><field name="debit" nolabel="1" class="d-inline" widget="monetary"/></span>
+                                            <span class="bj-jstat-lbl">Outstanding</span>
+                                        </div>
+                                    </div>
+                                    <div class="bj-jstat">
+                                        <i class="fa fa-credit-card"/>
+                                        <div class="bj-jstat-info">
+                                            <span class="bj-jstat-val"><field name="payment_method" nolabel="1" class="d-inline"/></span>
+                                            <span class="bj-jstat-lbl">Payment Method</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Invoices List -->
+                                <div class="bj-bookings-section">
+                                    <div class="bj-section-header">
+                                        <h3><i class="fa fa-file-text-o"/> Invoices</h3>
+                                    </div>
+                                    <field name="invoice_ids" mode="list" readonly="1"
+                                           domain="[('move_type', '=', 'out_invoice')]">
+                                        <list decoration-success="payment_state in ('paid','in_payment')"
+                                              decoration-danger="payment_state == 'not_paid' and state == 'posted'"
+                                              decoration-warning="payment_state == 'partial'"
+                                              decoration-muted="state == 'cancel'"
+                                              default_order="invoice_date desc">
+                                            <field name="name" string="Invoice #"/>
+                                            <field name="invoice_date" string="Date"/>
+                                            <field name="amount_total" string="Amount"/>
+                                            <field name="amount_residual" string="Due"/>
+                                            <field name="payment_state" string="Payment" widget="badge"
+                                                   decoration-success="payment_state in ('paid','in_payment')"
+                                                   decoration-danger="payment_state == 'not_paid'"
+                                                   decoration-warning="payment_state == 'partial'"/>
+                                            <field name="state" column_invisible="1"/>
+                                        </list>
+                                    </field>
+                                </div>
+                            </div>
+                        </page>
+
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- ===== OPS CLIENT PROFILE FORM ACTION ===== -->
+    <record id="action_ops_client_profile_form" model="ir.actions.act_window">
+        <field name="name">Edit Client</field>
+        <field name="res_model">res.partner</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="view_health_patient_form_ops"/>
+        <field name="target">current</field>
+    </record>
+
+</odoo>

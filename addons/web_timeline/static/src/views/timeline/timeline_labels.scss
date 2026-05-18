@@ -1,0 +1,117 @@
+// =============================================================================
+// Timeline — Clean rows + modern label styling
+// =============================================================================
+
+// ── Row backgrounds: force neutral white everywhere ──
+.oe_timeline_view .vis-timeline {
+
+    // Label panel — kill ALL background colors including nested group levels
+    .vis-labelset .vis-label,
+    .vis-labelset .vis-label.vis-nested-group,
+    .vis-labelset .vis-label.vis-nested-group.vis-group-level-0,
+    .vis-labelset .vis-label.vis-nested-group.vis-group-level-1,
+    .vis-labelset .vis-label.vis-nested-group.vis-group-level-2 {
+        background: #fff !important;
+        background-color: #fff !important;
+        border-bottom: 1px solid #e2e8f0 !important;
+    }
+
+    .vis-labelset .vis-label:nth-child(even) {
+        background: #f8fafc !important;
+        background-color: #f8fafc !important;
+    }
+
+    // Timeline rows — match label alternating
+    .vis-foreground .vis-group {
+        background: #fff !important;
+        background-color: #fff !important;
+        border-bottom: 1px solid #e2e8f0 !important;
+
+        &:nth-child(even) {
+            background: #f8fafc !important;
+            background-color: #f8fafc !important;
+        }
+    }
+}
+
+// ── Staff label: avatar + name ──
+.hf-tl-label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 4px 0;
+}
+
+.hf-tl-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #1565C0 0%, #1e88e5 100%);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+    flex-shrink: 0;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+// Rotate avatar colors per staff row
+.vis-labelset .vis-label:nth-child(8n+2) .hf-tl-avatar { background: linear-gradient(135deg, #1565C0 0%, #1e88e5 100%); }
+.vis-labelset .vis-label:nth-child(8n+3) .hf-tl-avatar { background: linear-gradient(135deg, #6A1B9A 0%, #9C27B0 100%); }
+.vis-labelset .vis-label:nth-child(8n+4) .hf-tl-avatar { background: linear-gradient(135deg, #2E7D32 0%, #43A047 100%); }
+.vis-labelset .vis-label:nth-child(8n+5) .hf-tl-avatar { background: linear-gradient(135deg, #C62828 0%, #E53935 100%); }
+.vis-labelset .vis-label:nth-child(8n+6) .hf-tl-avatar { background: linear-gradient(135deg, #00695C 0%, #00897B 100%); }
+.vis-labelset .vis-label:nth-child(8n+7) .hf-tl-avatar { background: linear-gradient(135deg, #AD1457 0%, #D81B60 100%); }
+.vis-labelset .vis-label:nth-child(8n+8) .hf-tl-avatar { background: linear-gradient(135deg, #E65100 0%, #F4511E 100%); }
+.vis-labelset .vis-label:nth-child(8n+9) .hf-tl-avatar { background: linear-gradient(135deg, #283593 0%, #3949AB 100%); }
+
+.hf-tl-avatar--unassigned {
+    background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%);
+    box-shadow: 0 1px 3px rgba(245, 158, 11, 0.3);
+}
+
+.hf-tl-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: #1e293b;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.hf-tl-label--unassigned .hf-tl-name {
+    color: #92400e;
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 11px;
+    letter-spacing: 0.5px;
+}
+
+// ── Timeline items: white card with status left-border only ──
+.oe_timeline_view .vis-timeline .vis-item {
+    background-color: #fff !important;
+    border-radius: 6px !important;
+    border-style: solid !important;
+    border-width: 1px !important;
+    border-left-width: 3px !important;
+    border-top-color: #e2e8f0 !important;
+    border-right-color: #e2e8f0 !important;
+    border-bottom-color: #e2e8f0 !important;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+    transition: box-shadow 150ms;
+
+    &:hover {
+        background-color: #f8fafc !important;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08) !important;
+    }
+}
+
+.oe_timeline_view .vis-timeline .vis-item.vis-selected {
+    border-top-color: #93c5fd !important;
+    border-right-color: #93c5fd !important;
+    border-bottom-color: #93c5fd !important;
+    box-shadow: 0 0 0 2px rgba(21, 101, 192, 0.15) !important;
+}

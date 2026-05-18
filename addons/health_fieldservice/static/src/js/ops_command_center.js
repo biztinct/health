@@ -329,7 +329,7 @@ class OpsCommandCenter extends Component {
     }
 
     openBookingQueue() {
-        this.action.doAction('health_fieldservice.action_ops_booking_queue', { clearBreadcrumbs: true });
+        this.action.doAction('health_fieldservice.action_ops_booking_list_native', { clearBreadcrumbs: true });
     }
 
     openStaffRoster() {

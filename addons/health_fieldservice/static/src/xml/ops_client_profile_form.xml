@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+<t t-name="health_fieldservice.OpsClientProfileFormView">
+    <div t-att-class="className" t-ref="root">
+        <div class="ops-form-main-area">
+
+            <!-- OPS TOP HEADER -->
+            <header class="ops-top-header">
+                <div class="ops-header-left">
+                    <div class="bd-breadcrumb">
+                        <a t-on-click="() => this.navigateTo('dashboard')">Dashboard</a>
+                        <span class="bd-sep"><i class="fa fa-chevron-right" style="font-size:9px"/></span>
+                        <a t-on-click="goToClients">Clients</a>
+                        <span class="bd-sep"><i class="fa fa-chevron-right" style="font-size:9px"/></span>
+                        <span class="bd-current" t-esc="model.root.data.display_name or 'Client'"/>
+                    </div>
+                </div>
+                <div class="ops-header-right">
+                    <button class="ops-header-btn btn-primary" t-on-click="openCreateBooking">
+                        <i class="fa fa-plus"/> New Booking
+                    </button>
+                    <t t-if="canEdit">
+                        <FormStatusIndicator model="model" discard.bind="discard" save.bind="saveButtonClicked"/>
+                    </t>
+                </div>
+            </header>
+
+            <!-- PROFILE HEADER (avatar + stats) -->
+            <t t-if="profileState.isLoaded">
+                <div class="ph-header">
+                    <!-- Zone 1: White Identity -->
+                    <div class="ph-identity">
+                        <div class="ph-avatar" t-esc="profileState.profile.initials || '??'"/>
+                        <div class="ph-details">
+                            <div class="ph-name-row">
+                                <span class="ph-name" t-esc="profileState.profile.name || model.root.data.display_name"/>
+                                <span class="ph-code" t-esc="profileState.profile.patient_code"/>
+                            </div>
+                            <div class="ph-tags">
+                                <t t-if="profileState.profile.patient_status === 'active'">
+                                    <span class="ph-tag active"><i class="fa fa-circle" style="font-size:5px"/> Active</span>
+                                </t>
+                                <t t-if="profileState.profile.patient_status === 'inactive'">
+                                    <span class="ph-tag regular"><i class="fa fa-pause-circle" style="font-size:9px"/> Inactive</span>
+                                </t>
+                                <t t-if="profileState.profile.category_name and !profileState.profile.is_vip">
+                                    <span class="ph-tag regular"><i class="fa fa-user" style="font-size:9px"/> <t t-esc="profileState.profile.category_name"/></span>
+                                </t>
+                                <t t-if="profileState.profile.is_vip">
+                                    <span class="ph-tag vip"><i class="fa fa-star" style="font-size:9px"/> VIP</span>
+                                </t>
+                                <t t-if="profileState.profile.is_referrer">
+                                    <span class="ph-tag regular"><i class="fa fa-share-alt" style="font-size:9px"/> Referrer</span>
+                                </t>
+                            </div>
+                            <div class="ph-contact">
+                                <t t-if="profileState.profile.phone"><span><i class="fa fa-phone"/> <t t-esc="profileState.profile.phone"/></span></t>
+                                <t t-if="profileState.profile.address"><span><i class="fa fa-map-marker"/> <t t-esc="profileState.profile.address"/></span></t>
+                                <t t-if="profileState.profile.email"><span><i class="fa fa-envelope-o"/> <t t-esc="profileState.profile.email"/></span></t>
+                                <t t-if="profileState.profile.age_gender"><span><i class="fa fa-user-o"/> <t t-esc="profileState.profile.age_gender"/></span></t>
+                            </div>
+                        </div>
+                        <div class="ph-actions">
+                            <button class="ph-action-btn primary" title="Call"><i class="fa fa-phone"/></button>
+                            <button class="ph-action-btn secondary" title="Message"><i class="fa fa-comment"/></button>
+                            <button class="ph-action-btn secondary" title="Email"><i class="fa fa-envelope"/></button>
+                            <button class="ph-action-btn secondary" title="More"><i class="fa fa-ellipsis-h"/></button>
+                        </div>
+                    </div>
+                    <!-- Zone 2: Navy Stats Strip -->
+                    <div class="ph-stats">
+                        <div class="ph-stat">
+                            <div class="ph-stat-value" t-esc="profileState.stats.total_visits || 0"/>
+                            <div class="ph-stat-label">Total Bookings</div>
+                        </div>
+                        <div class="ph-stat">
+                            <div class="ph-stat-value" t-esc="profileState.stats.active_packages || 0"/>
+                            <div class="ph-stat-label">Active Packages</div>
+                        </div>
+                        <div class="ph-stat">
+                            <div class="ph-stat-value" t-esc="formatCurrency(profileState.stats.total_spent)"/>
+                            <div class="ph-stat-label">Total Spent</div>
+                        </div>
+                        <div class="ph-stat">
+                            <div class="ph-stat-value attention" t-esc="formatCurrency(profileState.stats.outstanding)"/>
+                            <div class="ph-stat-label">Outstanding</div>
+                        </div>
+                        <div class="ph-stat">
+                            <div class="ph-stat-value positive" t-esc="profileState.stats.satisfaction || '—'"/>
+                            <div class="ph-stat-label">Satisfaction</div>
+                        </div>
+                        <div class="ph-stat">
+                            <div class="ph-stat-value" t-esc="profileState.stats.referrals || 0"/>
+                            <div class="ph-stat-label">Referrals Made</div>
+                        </div>
+                    </div>
+                </div>
+            </t>
+
+            <!-- FORM VIEW CONTAINER -->
+            <div class="o_form_view_container">
+                <Layout className="model.useSampleModel ? 'o_view_sample_data' : ''" display="display">
+                    <t t-set-slot="control-panel-create-button"/>
+
+                    <t t-set-slot="layout-buttons">
+                        <t t-if="env.inDialog">
+                            <t t-if="footerArchInfo">
+                                <t t-component="props.Renderer" record="model.root" Compiler="props.Compiler" archInfo="footerArchInfo">
+                                    <t t-set-slot="default_buttons">
+                                        <t t-call="{{ props.buttonTemplate }}"/>
+                                    </t>
+                                </t>
+                            </t>
+                            <t t-else="">
+                                <t t-call="{{ props.buttonTemplate }}"/>
+                            </t>
+                        </t>
+                    </t>
+
+                    <t t-set-slot="layout-actions">
+                        <t t-if="!env.isSmall and buttonBoxTemplate">
+                            <t t-call="{{ buttonBoxTemplate }}" t-call-context="{ __comp__: Object.assign(Object.create(this), { this, props: { ...this.props, record: this.model.root } }) }"/>
+                        </t>
+                    </t>
+
+                    <t t-set-slot="control-panel-additional-actions">
+                        <CogMenu t-props="this.cogMenuProps"/>
+                        <t t-if="env.isSmall and buttonBoxTemplate">
+                            <t t-call="{{ buttonBoxTemplate }}" t-call-context="{ __comp__: Object.assign(Object.create(this), { this, props: { ...this.props, record: this.model.root } }) }"/>
+                        </t>
+                    </t>
+
+                    <t t-set-slot="control-panel-status-indicator"/>
+
+                    <t t-component="props.Renderer" record="model.root" Compiler="props.Compiler" readonly="props.readonly" archInfo="archInfo" translateAlert="translateAlert" onNotebookPageChange.bind="onNotebookPageChange" activeNotebookPages="props.state and props.state.activeNotebookPages"/>
+                </Layout>
+            </div>
+        </div>
+    </div>
+</t>
+
+</templates>

@@ -47,7 +47,7 @@ export class OpsBookingFormController extends FormController {
 
 
     goToBookings() {
-        this.actionService.doAction('health_fieldservice.action_ops_booking_queue',
+        this.actionService.doAction('health_fieldservice.action_ops_booking_list_native',
             { clearBreadcrumbs: true });
     }
 

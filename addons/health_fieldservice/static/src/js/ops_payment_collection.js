@@ -122,7 +122,7 @@ class OpsPaymentCollection extends Component {
                 context: { form_view_ref: 'health_fieldservice.view_health_fso_form_ops' },
             }, { clearBreadcrumbs: true });
         } else {
-            this.action.doAction('health_fieldservice.action_ops_booking_queue', { clearBreadcrumbs: true });
+            this.action.doAction('health_fieldservice.action_ops_booking_list_native', { clearBreadcrumbs: true });
         }
     }
 

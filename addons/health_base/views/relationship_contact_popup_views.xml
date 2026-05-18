@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_relationship_contact_popup" model="ir.ui.view">
+        <field name="name">res.partner.relationship.popup.minimal</field>
+        <field name="model">res.partner</field>
+        <field name="priority">99</field>
+        <field name="arch" type="xml">
+            <form string="Contact">
+                <sheet>
+                    <group>
+                        <field name="name" placeholder="Full name" required="1"/>
+                        <field name="phone" widget="phone" placeholder="Phone number"/>
+                        <field name="email" widget="email" placeholder="Email address"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+</odoo>

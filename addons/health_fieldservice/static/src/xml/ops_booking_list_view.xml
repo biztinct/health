@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="health_fieldservice.OpsBookingListView" t-inherit="web.ListView" t-inherit-mode="primary">
+        <xpath expr="//t[@t-component='props.Renderer']" position="before">
+            <!-- Status filter tabs -->
+            <div class="ops-bq-tabs">
+                <t t-foreach="statusTabs" t-as="tab" t-key="tab.id">
+                    <button t-attf-class="ops-bq-tab #{tabState.activeTab === tab.id ? 'active' : ''}"
+                            t-on-click="() => this.setTab(tab.id)">
+                        <i t-attf-class="fa #{tab.icon}"/>
+                        <t t-esc="tab.label"/>
+                        <span t-if="tab.count" class="ops-bq-badge" t-esc="tab.count"/>
+                    </button>
+                </t>
+            </div>
+            <!-- Date quick-filter buttons -->
+            <div class="ops-bq-date-filters">
+                <t t-foreach="dateTabs" t-as="dt" t-key="dt.id">
+                    <button t-attf-class="ops-bq-date-btn #{tabState.dateFilter === dt.id ? 'active' : ''}"
+                            t-on-click="() => this.setDateFilter(dt.id)">
+                        <t t-esc="dt.label"/>
+                    </button>
+                </t>
+            </div>
+        </xpath>
+    </t>
+
+</templates>

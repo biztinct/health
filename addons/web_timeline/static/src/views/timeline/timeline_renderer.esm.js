@@ -349,12 +349,35 @@ export class TimelineRenderer extends Component {
      * @private
      * @returns {Array}
      */
+    _buildGroupLabel(name) {
+        const initials = (name || "?")
+            .split(/\s+/)
+            .filter(Boolean)
+            .slice(0, 2)
+            .map((w) => w[0].toUpperCase())
+            .join("");
+        return (
+            `<div class="hf-tl-label">` +
+            `<div class="hf-tl-avatar">${initials}</div>` +
+            `<span class="hf-tl-name">${name}</span>` +
+            `</div>`
+        );
+    }
+
     async split_groups(records) {
         if (this.model.last_group_bys.length === 0) {
             return records;
         }
         const groups = [];
-        groups.push({id: -1, content: _t("<b>UNASSIGNED</b>"), order: -1});
+        groups.push({
+            id: -1,
+            content:
+                `<div class="hf-tl-label hf-tl-label--unassigned">` +
+                `<div class="hf-tl-avatar hf-tl-avatar--unassigned">?</div>` +
+                `<span class="hf-tl-name">${_t("UNASSIGNED")}</span>` +
+                `</div>`,
+            order: -1,
+        });
         var seq = 1;
         for (const evt of records) {
             const grouped_field = this.model.last_group_bys[0];
@@ -376,6 +399,7 @@ export class TimelineRenderer extends Component {
                     for (const vals of list_values) {
                         const is_inside = groups.some((gr) => gr.id === vals.id);
                         if (!is_inside) {
+                            vals.content = this._buildGroupLabel(vals.content);
                             vals.order = seq;
                             seq += 1;
                             groups.push(vals);
@@ -384,7 +408,7 @@ export class TimelineRenderer extends Component {
                 } else {
                     groups.push({
                         id: group_name[0],
-                        content: group_name[1],
+                        content: this._buildGroupLabel(group_name[1]),
                         order: seq,
                     });
                     seq += 1;

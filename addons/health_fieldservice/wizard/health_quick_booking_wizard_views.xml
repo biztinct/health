@@ -5,58 +5,49 @@
         <field name="name">health.quick.booking.wizard.form</field>
         <field name="model">health.quick.booking.wizard</field>
         <field name="arch" type="xml">
-            <form string="Create Booking">
+            <form string="Create Booking" class="qbw-form">
                 <sheet>
                     <!-- Step Progress -->
-                    <div style="margin-bottom: 20px; padding: 15px; background: linear-gradient(135deg, #0D47A1 0%, #1565C0 100%); border-radius: 8px;">
-                        <div style="display: flex; justify-content: space-between; align-items: center; color: white;">
-                            <div style="text-align: center; flex: 1;">
-                                <span style="background: white; color: #1565C0; padding: 8px 16px; border-radius: 20px; font-weight: bold;"
-                                      invisible="current_step != '1_services'">
-                                    1. Services
-                                </span>
-                                <span style="background: rgba(255,255,255,0.3); color: white; padding: 8px 16px; border-radius: 20px;"
-                                      invisible="current_step == '1_services'">
-                                    1. Services
-                                </span>
-                            </div>
-                            <div style="width: 50px; height: 2px; background: rgba(255,255,255,0.3);"/>
-                            <div style="text-align: center; flex: 1;">
-                                <span style="background: white; color: #1565C0; padding: 8px 16px; border-radius: 20px; font-weight: bold;"
-                                      invisible="current_step != '2_booking'">
-                                    2. Booking
-                                </span>
-                                <span style="background: rgba(255,255,255,0.3); color: white; padding: 8px 16px; border-radius: 20px;"
-                                      invisible="current_step == '2_booking'">
-                                    2. Booking
-                                </span>
-                            </div>
+                    <div class="qbw-stepper">
+                        <div class="qbw-step" invisible="current_step != '1_services'">
+                            <div class="qbw-step__num qbw-step__num--active">1</div>
+                            <span class="qbw-step__label qbw-step__label--active">Services</span>
+                        </div>
+                        <div class="qbw-step" invisible="current_step == '1_services'">
+                            <div class="qbw-step__num qbw-step__num--done"><i class="fa fa-check"/></div>
+                            <span class="qbw-step__label qbw-step__label--done">Services</span>
+                        </div>
+                        <div class="qbw-step__line">
+                            <div class="qbw-step__line-fill" invisible="current_step == '1_services'"/>
+                        </div>
+                        <div class="qbw-step" invisible="current_step == '2_booking'">
+                            <div class="qbw-step__num">2</div>
+                            <span class="qbw-step__label">Booking</span>
+                        </div>
+                        <div class="qbw-step" invisible="current_step != '2_booking'">
+                            <div class="qbw-step__num qbw-step__num--active">2</div>
+                            <span class="qbw-step__label qbw-step__label--active">Booking</span>
                         </div>
                     </div>
 
                     <field name="current_step" invisible="1"/>
-                    <field name="currency_id" invisible="1"/>
 
-                    <!-- Client Selection - always visible at top -->
-                    <div style="padding: 12px 16px; margin-bottom: 16px; background: #E4F4FD; border-radius: 8px; border: 1px solid #83C5FA;">
-                        <div style="display: flex; align-items: center; gap: 10px;">
-                            <span class="fa fa-user" style="font-size: 16px; color: #1565C0;"/>
-                            <div style="flex: 1;">
-                                <field name="client_id" string="Client"
-                                       placeholder="Search client by name or phone..."
-                                       required="1"
-                                       options="{'no_create_edit': True}"
-                                       style="font-weight: 600;"/>
-                            </div>
-                        </div>
+                    <!-- Client Selection -->
+                    <div class="qbw-client-bar">
+                        <span class="fa fa-user-circle qbw-client-bar__icon"/>
+                        <field name="client_id" string="Client"
+                               placeholder="Search client by name or phone..."
+                               required="1"
+                               options="{'no_create_edit': True}"
+                               class="qbw-client-bar__field"/>
                     </div>
 
                     <!-- STEP 1: Services -->
                     <div invisible="current_step != '1_services'">
-                        <h2 style="margin-bottom: 20px;">
-                            <span class="fa fa-stethoscope" style="margin-right: 10px; color: #1565C0;"/>
-                            Service Requirements
-                        </h2>
+                        <div class="qbw-section-header">
+                            <span class="qbw-section-header__icon fa fa-stethoscope"/>
+                            <span class="qbw-section-header__text">Service Requirements</span>
+                        </div>
 
                         <group>
                             <group string="SERVICE SELECTION">
@@ -69,27 +60,14 @@
                                 <field name="service_notes" nolabel="1" placeholder="Additional service requirements..."/>
                             </group>
                         </group>
-
-                        <separator string="COMMISSION DETAILS"/>
-
-                        <group>
-                            <group>
-                                <field name="commission_due_to" string="Commission Due To"/>
-                                <field name="commission_percentage" string="Commission %"/>
-                                <field name="commission_duration" string="Duration"/>
-                            </group>
-                            <group>
-                                <field name="service_fee_vnd" string="Service Fee (VND)"/>
-                            </group>
-                        </group>
                     </div>
 
                     <!-- STEP 2: Booking -->
                     <div invisible="current_step != '2_booking'">
-                        <h2 style="margin-bottom: 20px;">
-                            <span class="fa fa-calendar" style="margin-right: 10px; color: #1565C0;"/>
-                            Booking Details
-                        </h2>
+                        <div class="qbw-section-header">
+                            <span class="qbw-section-header__icon fa fa-calendar"/>
+                            <span class="qbw-section-header__text">Booking Details</span>
+                        </div>
 
                         <group>
                             <group string="LOCATION &amp; FACILITY">
@@ -103,10 +81,15 @@
                             </group>
                         </group>
 
-                        <group>
+                        <div class="qbw-notes-section">
+                            <div class="qbw-notes-label">
+                                <span class="fa fa-pencil-square-o qbw-notes-label__icon"/>
+                                Special Instructions
+                            </div>
                             <field name="booking_notes" nolabel="1"
-                                   placeholder="Any special instructions or notes..."/>
-                        </group>
+                                   placeholder="Any special instructions or notes..."
+                                   class="qbw-notes-field"/>
+                        </div>
                     </div>
 
                 </sheet>

@@ -147,10 +147,6 @@
     padding: 8px 14px;
 }
 
-/* Alternate row backgrounds for readability */
-.o_timeline_view .vis-foreground .vis-group:nth-child(even) {
-    background: rgba(248, 250, 252, 0.6);
-}
 
 /* ============================================================================
    VIEW MODES — Responsive density

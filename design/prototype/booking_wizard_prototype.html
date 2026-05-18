@@ -1,0 +1,1092 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Booking Wizard — Prototype</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* ===== Brand Tokens ===== */
+:root {
+    --vu-deep-blue: #1565C0;
+    --vu-deep-blue-darkest: #0D356B;
+    --vu-deep-blue-darker: #1356A9;
+    --vu-deep-blue-light: #83C5FA;
+    --vu-deep-blue-lightest: #E4F4FD;
+    --vu-accent-blue: #42A5F5;
+    --vu-leaf-green: #43A047;
+    --vu-leaf-green-light: #7BC685;
+    --vu-leaf-green-lightest: #DBF0DB;
+    --vu-hibiscus-red: #E53935;
+    --vu-hibiscus-orange: #FB8C00;
+    --vu-hibiscus-orange-light: #FCB24D;
+    --vu-hibiscus-orange-lightest: #FEE8C9;
+    --vu-text-primary: #212121;
+    --vu-text-secondary: #424242;
+    --vu-text-muted: #757575;
+    --vu-white: #FFFFFF;
+    --vu-gray-light: #F5F5F5;
+    --vu-gray-lighter: #FAFAFA;
+    --vu-border-soft: #E0E0E0;
+    --vu-border-focus: #1565C0;
+    --vu-shadow-sm: 0 1px 3px rgba(33,33,33,0.1);
+    --vu-shadow-md: 0 2px 8px rgba(33,33,33,0.12);
+    --vu-shadow-lg: 0 8px 32px rgba(33,33,33,0.18);
+    --vu-radius-sm: 4px;
+    --vu-radius-md: 8px;
+    --vu-radius-lg: 12px;
+    --font-headings: 'Montserrat', 'Segoe UI', Arial, sans-serif;
+    --font-body: 'Segoe UI', Arial, sans-serif;
+
+    --vu-state-assigned: #7c3aed;
+    --vu-state-completed: #16a34a;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    font-family: var(--font-body);
+    background: #E8EEF4;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 40px 20px;
+    gap: 80px;
+    color: var(--vu-text-primary);
+}
+
+/* ===== LABEL ===== */
+.proto-label {
+    font-family: var(--font-headings);
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--vu-text-secondary);
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 520px;
+}
+.proto-label::before {
+    content: '';
+    width: 20px;
+    height: 2px;
+    background: var(--vu-deep-blue);
+}
+
+/* ===== WIZARD CONTAINER ===== */
+.wizard {
+    width: 520px;
+    background: var(--vu-white);
+    border-radius: 16px;
+    box-shadow: var(--vu-shadow-lg);
+    overflow: hidden;
+    position: relative;
+}
+
+/* ===== HEADER ===== */
+.wz-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 24px;
+    border-bottom: 1px solid var(--vu-border-soft);
+}
+
+.wz-title {
+    font-family: var(--font-headings);
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--vu-text-primary);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.wz-title i {
+    color: var(--vu-deep-blue);
+    font-size: 15px;
+}
+
+.wz-close {
+    width: 32px;
+    height: 32px;
+    border: none;
+    background: var(--vu-gray-light);
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--vu-text-muted);
+    font-size: 14px;
+    transition: all 120ms;
+}
+.wz-close:hover {
+    background: var(--vu-border-soft);
+    color: var(--vu-text-primary);
+}
+
+/* ===== STEPPER ===== */
+.wz-stepper {
+    display: flex;
+    padding: 16px 24px;
+    gap: 0;
+    background: var(--vu-gray-lighter);
+    border-bottom: 1px solid var(--vu-border-soft);
+}
+
+.wz-step {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex: 1;
+    position: relative;
+}
+.wz-step:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: 50%;
+    width: 40px;
+    height: 2px;
+    background: var(--vu-border-soft);
+    transform: translateY(-50%);
+}
+.wz-step.completed:not(:last-child)::after {
+    background: var(--vu-leaf-green);
+}
+
+.wz-step-num {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 700;
+    font-family: var(--font-headings);
+    flex-shrink: 0;
+    transition: all 200ms;
+}
+
+.wz-step.upcoming .wz-step-num {
+    background: var(--vu-gray-light);
+    color: var(--vu-text-muted);
+    border: 2px solid var(--vu-border-soft);
+}
+.wz-step.active .wz-step-num {
+    background: var(--vu-deep-blue);
+    color: white;
+    border: 2px solid var(--vu-deep-blue);
+    box-shadow: 0 0 0 4px rgba(21, 101, 192, 0.12);
+}
+.wz-step.completed .wz-step-num {
+    background: var(--vu-leaf-green);
+    color: white;
+    border: 2px solid var(--vu-leaf-green);
+}
+
+.wz-step-text {
+    display: flex;
+    flex-direction: column;
+}
+.wz-step-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--vu-text-muted);
+}
+.wz-step.active .wz-step-name { color: var(--vu-deep-blue); font-weight: 700; }
+.wz-step.completed .wz-step-name { color: var(--vu-leaf-green); }
+
+.wz-step-desc {
+    font-size: 11px;
+    color: var(--vu-text-muted);
+}
+.wz-step.active .wz-step-desc { color: var(--vu-text-secondary); }
+
+/* ===== CLIENT BAR ===== */
+.wz-client-bar {
+    margin: 16px 20px 0;
+    padding: 10px 14px;
+    background: var(--vu-deep-blue-lightest);
+    border: 1px solid rgba(21, 101, 192, 0.15);
+    border-radius: var(--vu-radius-md);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.wz-client-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--vu-deep-blue);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 700;
+    font-family: var(--font-headings);
+    flex-shrink: 0;
+}
+
+.wz-client-info { flex: 1; }
+.wz-client-name {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--vu-text-primary);
+}
+.wz-client-meta {
+    font-size: 11px;
+    color: var(--vu-text-secondary);
+}
+
+.wz-client-badge {
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 50px;
+    background: var(--vu-leaf-green-lightest);
+    color: var(--vu-leaf-green);
+}
+
+.wz-client-change {
+    font-size: 12px;
+    color: var(--vu-deep-blue);
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    background: none;
+    padding: 4px 8px;
+    border-radius: var(--vu-radius-sm);
+    transition: all 120ms;
+}
+.wz-client-change:hover { background: rgba(21, 101, 192, 0.08); }
+
+/* ===== BODY ===== */
+.wz-body {
+    padding: 20px;
+}
+
+/* ===== SECTION LABEL ===== */
+.wz-section {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 14px;
+    margin-top: 4px;
+}
+.wz-section-icon {
+    width: 28px;
+    height: 28px;
+    border-radius: var(--vu-radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    flex-shrink: 0;
+}
+.wz-section-icon.blue { background: var(--vu-deep-blue-lightest); color: var(--vu-deep-blue); }
+.wz-section-icon.green { background: var(--vu-leaf-green-lightest); color: var(--vu-leaf-green); }
+.wz-section-icon.orange { background: var(--vu-hibiscus-orange-lightest); color: var(--vu-hibiscus-orange); }
+.wz-section-icon.purple { background: #EDE9FE; color: #7c3aed; }
+
+.wz-section-text {
+    font-family: var(--font-headings);
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--vu-text-primary);
+}
+
+/* ===== FORM ELEMENTS ===== */
+.wz-form-row {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.wz-form-group {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.wz-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--vu-text-secondary);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+.wz-label .req {
+    color: var(--vu-hibiscus-red);
+    font-size: 11px;
+}
+
+.wz-input, .wz-select, .wz-textarea {
+    width: 100%;
+    padding: 9px 12px;
+    border: 1.5px solid var(--vu-border-soft);
+    border-radius: var(--vu-radius-md);
+    font-size: 13px;
+    font-family: var(--font-body);
+    color: var(--vu-text-primary);
+    background: var(--vu-white);
+    transition: all 150ms;
+    outline: none;
+}
+.wz-input:focus, .wz-select:focus, .wz-textarea:focus {
+    border-color: var(--vu-deep-blue);
+    box-shadow: 0 0 0 3px rgba(21, 101, 192, 0.08);
+}
+.wz-input::placeholder, .wz-textarea::placeholder {
+    color: var(--vu-text-muted);
+    font-style: italic;
+}
+.wz-select {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M3 4.5l3 3 3-3' fill='none' stroke='%23757575' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    padding-right: 28px;
+    cursor: pointer;
+}
+.wz-textarea {
+    resize: vertical;
+    min-height: 60px;
+    line-height: 1.5;
+}
+
+/* ===== SERVICE TYPE CARDS ===== */
+.wz-service-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 16px;
+}
+
+.wz-service-card {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    border: 1.5px solid var(--vu-border-soft);
+    border-radius: var(--vu-radius-md);
+    cursor: pointer;
+    transition: all 150ms;
+    background: var(--vu-white);
+}
+.wz-service-card:hover {
+    border-color: var(--vu-deep-blue-light);
+    background: var(--vu-deep-blue-lightest);
+}
+.wz-service-card.selected {
+    border-color: var(--vu-deep-blue);
+    background: var(--vu-deep-blue-lightest);
+    box-shadow: 0 0 0 3px rgba(21, 101, 192, 0.08);
+}
+
+.wz-sc-icon {
+    width: 34px;
+    height: 34px;
+    border-radius: var(--vu-radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    flex-shrink: 0;
+}
+.wz-sc-icon.home { background: #E8F5E9; color: #2E7D32; }
+.wz-sc-icon.clinic { background: var(--vu-deep-blue-lightest); color: var(--vu-deep-blue); }
+.wz-sc-icon.consult { background: #EDE9FE; color: #7c3aed; }
+.wz-sc-icon.tele { background: #FFF3E0; color: var(--vu-hibiscus-orange); }
+.wz-sc-icon.emergency { background: #FBE3E1; color: var(--vu-hibiscus-red); }
+.wz-sc-icon.followup { background: #E0F7FA; color: #00838F; }
+
+.wz-sc-name {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--vu-text-primary);
+}
+.wz-sc-desc {
+    font-size: 10px;
+    color: var(--vu-text-muted);
+}
+
+.wz-sc-check {
+    margin-left: auto;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    border: 2px solid var(--vu-border-soft);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: all 150ms;
+}
+.wz-service-card.selected .wz-sc-check {
+    background: var(--vu-deep-blue);
+    border-color: var(--vu-deep-blue);
+    color: white;
+    font-size: 9px;
+}
+
+/* ===== DIVIDER ===== */
+.wz-divider {
+    height: 1px;
+    background: var(--vu-border-soft);
+    margin: 16px 0;
+}
+
+/* ===== COLLAPSIBLE ===== */
+.wz-collapsible-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 0;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--vu-text-secondary);
+    transition: color 120ms;
+}
+.wz-collapsible-header:hover { color: var(--vu-deep-blue); }
+.wz-collapsible-header i.fa-chevron-down { font-size: 10px; margin-left: auto; transition: transform 200ms; }
+.wz-collapsible-header.open i.fa-chevron-down { transform: rotate(180deg); }
+
+.wz-collapsible-body {
+    overflow: hidden;
+    max-height: 0;
+    transition: max-height 300ms ease, padding 200ms;
+    padding-top: 0;
+}
+.wz-collapsible-body.open {
+    max-height: 300px;
+    padding-top: 8px;
+}
+
+/* ===== TIME SLOT GRID ===== */
+.wz-time-tabs {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 10px;
+    background: var(--vu-gray-light);
+    border-radius: var(--vu-radius-md);
+    padding: 3px;
+}
+.wz-time-tab {
+    flex: 1;
+    padding: 7px 10px;
+    font-size: 12px;
+    font-weight: 600;
+    border: none;
+    background: none;
+    border-radius: 6px;
+    cursor: pointer;
+    color: var(--vu-text-muted);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    transition: all 150ms;
+    font-family: var(--font-body);
+}
+.wz-time-tab:hover { color: var(--vu-text-primary); }
+.wz-time-tab.active {
+    background: var(--vu-white);
+    color: var(--vu-deep-blue);
+    box-shadow: var(--vu-shadow-sm);
+}
+
+.wz-time-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 6px;
+    margin-bottom: 14px;
+}
+.wz-time-slot {
+    padding: 8px 6px;
+    text-align: center;
+    font-size: 12px;
+    font-weight: 600;
+    border: 1.5px solid var(--vu-border-soft);
+    border-radius: var(--vu-radius-md);
+    cursor: pointer;
+    transition: all 150ms;
+    color: var(--vu-text-secondary);
+    background: var(--vu-white);
+}
+.wz-time-slot:hover {
+    border-color: var(--vu-deep-blue-light);
+    background: var(--vu-deep-blue-lightest);
+    color: var(--vu-deep-blue);
+}
+.wz-time-slot.selected {
+    border-color: var(--vu-deep-blue);
+    background: var(--vu-deep-blue);
+    color: white;
+    box-shadow: 0 2px 6px rgba(21, 101, 192, 0.25);
+}
+.wz-time-slot.unavailable {
+    opacity: 0.35;
+    pointer-events: none;
+    text-decoration: line-through;
+}
+
+/* ===== SUMMARY CARD ===== */
+.wz-summary {
+    background: var(--vu-gray-lighter);
+    border: 1px solid var(--vu-border-soft);
+    border-radius: var(--vu-radius-md);
+    overflow: hidden;
+    margin-bottom: 16px;
+}
+.wz-summary-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 9px 14px;
+    border-bottom: 1px solid var(--vu-border-soft);
+    font-size: 13px;
+}
+.wz-summary-row:last-child { border-bottom: none; }
+.wz-summary-label { color: var(--vu-text-muted); font-weight: 500; }
+.wz-summary-value { color: var(--vu-text-primary); font-weight: 600; text-align: right; }
+.wz-summary-value.highlight { color: var(--vu-deep-blue); }
+
+/* ===== FOOTER ===== */
+.wz-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 20px;
+    border-top: 1px solid var(--vu-border-soft);
+    background: var(--vu-gray-lighter);
+}
+
+.wz-footer-note {
+    font-size: 12px;
+    color: var(--vu-text-muted);
+    font-weight: 500;
+}
+
+.wz-footer-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.wz-btn {
+    padding: 9px 20px;
+    border-radius: var(--vu-radius-md);
+    font-size: 13px;
+    font-weight: 600;
+    font-family: var(--font-body);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 150ms;
+    border: none;
+}
+
+.wz-btn-secondary {
+    background: var(--vu-white);
+    color: var(--vu-text-secondary);
+    border: 1.5px solid var(--vu-border-soft);
+}
+.wz-btn-secondary:hover {
+    background: var(--vu-gray-light);
+    border-color: var(--vu-text-muted);
+}
+
+.wz-btn-primary {
+    background: var(--vu-deep-blue);
+    color: white;
+}
+.wz-btn-primary:hover {
+    background: var(--vu-deep-blue-darker);
+    box-shadow: 0 2px 8px rgba(21, 101, 192, 0.3);
+}
+
+.wz-btn-confirm {
+    background: var(--vu-leaf-green);
+    color: white;
+}
+.wz-btn-confirm:hover {
+    background: #3A8A41;
+    box-shadow: 0 2px 8px rgba(67, 160, 71, 0.3);
+}
+
+/* ===== NOTES AREA ===== */
+.wz-notes-hint {
+    font-size: 11px;
+    color: var(--vu-text-muted);
+    margin-top: 2px;
+    font-style: italic;
+}
+
+/* ===== INLINE BADGE ===== */
+.wz-selected-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 8px;
+    border-radius: 50px;
+    font-size: 11px;
+    font-weight: 700;
+    background: var(--vu-deep-blue-lightest);
+    color: var(--vu-deep-blue);
+    margin-left: 8px;
+}
+</style>
+</head>
+<body>
+
+<!-- ============================================================ -->
+<!-- STEP 1: SERVICES                                             -->
+<!-- ============================================================ -->
+<div>
+    <div class="proto-label">Step 1 — Service Requirements</div>
+    <div class="wizard">
+
+        <!-- Header -->
+        <div class="wz-header">
+            <div class="wz-title"><i class="fa fa-calendar-plus-o"/> New Booking</div>
+            <button class="wz-close"><i class="fa fa-times"/></button>
+        </div>
+
+        <!-- Stepper -->
+        <div class="wz-stepper">
+            <div class="wz-step active">
+                <div class="wz-step-num">1</div>
+                <div class="wz-step-text">
+                    <div class="wz-step-name">Services</div>
+                    <div class="wz-step-desc">What care is needed</div>
+                </div>
+            </div>
+            <div class="wz-step upcoming">
+                <div class="wz-step-num">2</div>
+                <div class="wz-step-text">
+                    <div class="wz-step-name">Booking</div>
+                    <div class="wz-step-desc">When &amp; where</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Client bar -->
+        <div class="wz-client-bar">
+            <div class="wz-client-avatar">AA</div>
+            <div class="wz-client-info">
+                <div class="wz-client-name">AshApr17B</div>
+                <div class="wz-client-meta">+84 901 234 567 — PAT-2024-0847</div>
+            </div>
+            <div class="wz-client-badge">Active</div>
+            <button class="wz-client-change">Change</button>
+        </div>
+
+        <!-- Body -->
+        <div class="wz-body">
+
+            <!-- Service Type Selection -->
+            <div class="wz-section">
+                <div class="wz-section-icon blue"><i class="fa fa-stethoscope"/></div>
+                <div class="wz-section-text">Service Type</div>
+            </div>
+
+            <div class="wz-service-grid">
+                <div class="wz-service-card selected">
+                    <div class="wz-sc-icon home"><i class="fa fa-home"/></div>
+                    <div>
+                        <div class="wz-sc-name">Home Visit</div>
+                        <div class="wz-sc-desc">In-home care</div>
+                    </div>
+                    <div class="wz-sc-check"><i class="fa fa-check"/></div>
+                </div>
+                <div class="wz-service-card">
+                    <div class="wz-sc-icon clinic"><i class="fa fa-hospital-o"/></div>
+                    <div>
+                        <div class="wz-sc-name">Clinic Visit</div>
+                        <div class="wz-sc-desc">At facility</div>
+                    </div>
+                    <div class="wz-sc-check"></div>
+                </div>
+                <div class="wz-service-card">
+                    <div class="wz-sc-icon consult"><i class="fa fa-user-md"/></div>
+                    <div>
+                        <div class="wz-sc-name">Consultation</div>
+                        <div class="wz-sc-desc">Doctor review</div>
+                    </div>
+                    <div class="wz-sc-check"></div>
+                </div>
+                <div class="wz-service-card">
+                    <div class="wz-sc-icon tele"><i class="fa fa-video-camera"/></div>
+                    <div>
+                        <div class="wz-sc-name">Telemedicine</div>
+                        <div class="wz-sc-desc">Online session</div>
+                    </div>
+                    <div class="wz-sc-check"></div>
+                </div>
+                <div class="wz-service-card">
+                    <div class="wz-sc-icon emergency"><i class="fa fa-ambulance"/></div>
+                    <div>
+                        <div class="wz-sc-name">Emergency</div>
+                        <div class="wz-sc-desc">Urgent care</div>
+                    </div>
+                    <div class="wz-sc-check"></div>
+                </div>
+                <div class="wz-service-card">
+                    <div class="wz-sc-icon followup"><i class="fa fa-refresh"/></div>
+                    <div>
+                        <div class="wz-sc-name">Follow-up</div>
+                        <div class="wz-sc-desc">Repeat visit</div>
+                    </div>
+                    <div class="wz-sc-check"></div>
+                </div>
+            </div>
+
+            <!-- Category + Location row -->
+            <div class="wz-form-row">
+                <div class="wz-form-group">
+                    <div class="wz-label">Category</div>
+                    <select class="wz-select">
+                        <option>Nursing Care</option>
+                        <option>Medical Care</option>
+                        <option>Therapy</option>
+                        <option>Companion Care</option>
+                        <option>Other</option>
+                    </select>
+                </div>
+                <div class="wz-form-group">
+                    <div class="wz-label">Sub-Category</div>
+                    <input class="wz-input" type="text" placeholder="e.g. General Health Check">
+                </div>
+            </div>
+
+            <div class="wz-form-row">
+                <div class="wz-form-group">
+                    <div class="wz-label">Service Location</div>
+                    <select class="wz-select">
+                        <option>Patient Home</option>
+                        <option>Clinic</option>
+                        <option>Hospital</option>
+                        <option>Nursing Home</option>
+                        <option>Online/Telemedicine</option>
+                    </select>
+                </div>
+                <div class="wz-form-group">
+                    <div class="wz-label">Service Notes</div>
+                    <input class="wz-input" type="text" placeholder="Additional requirements...">
+                </div>
+            </div>
+
+            <!-- Commission — Collapsible -->
+            <div class="wz-divider"></div>
+
+            <div class="wz-collapsible-header open" onclick="this.classList.toggle('open'); this.nextElementSibling.classList.toggle('open');">
+                <div class="wz-section-icon orange" style="width:22px; height:22px; font-size:10px;"><i class="fa fa-handshake-o"/></div>
+                <span>Commission Details</span>
+                <span style="font-size:11px; color:var(--vu-text-muted); font-weight:400; margin-left:4px;">(optional)</span>
+                <i class="fa fa-chevron-down"/>
+            </div>
+            <div class="wz-collapsible-body open">
+                <div class="wz-form-row">
+                    <div class="wz-form-group">
+                        <div class="wz-label">Commission Due To</div>
+                        <input class="wz-input" type="text" placeholder="Search contact...">
+                    </div>
+                    <div class="wz-form-group">
+                        <div class="wz-label">Service Fee (VND)</div>
+                        <input class="wz-input" type="text" placeholder="0 ₫">
+                    </div>
+                </div>
+                <div class="wz-form-row">
+                    <div class="wz-form-group">
+                        <div class="wz-label">Commission %</div>
+                        <input class="wz-input" type="text" placeholder="0.00">
+                    </div>
+                    <div class="wz-form-group">
+                        <div class="wz-label">Duration</div>
+                        <select class="wz-select">
+                            <option>One Time</option>
+                            <option>30 Days</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Footer -->
+        <div class="wz-footer">
+            <div class="wz-footer-note">Step 1 of 2</div>
+            <div class="wz-footer-actions">
+                <button class="wz-btn wz-btn-secondary">Cancel</button>
+                <button class="wz-btn wz-btn-primary">Next <i class="fa fa-arrow-right"/></button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+<!-- ============================================================ -->
+<!-- STEP 2: BOOKING DETAILS                                      -->
+<!-- ============================================================ -->
+<div>
+    <div class="proto-label">Step 2 — Booking Details</div>
+    <div class="wizard">
+
+        <!-- Header -->
+        <div class="wz-header">
+            <div class="wz-title"><i class="fa fa-calendar-plus-o"/> New Booking</div>
+            <button class="wz-close"><i class="fa fa-times"/></button>
+        </div>
+
+        <!-- Stepper -->
+        <div class="wz-stepper">
+            <div class="wz-step completed">
+                <div class="wz-step-num"><i class="fa fa-check" style="font-size:11px"/></div>
+                <div class="wz-step-text">
+                    <div class="wz-step-name">Services</div>
+                    <div class="wz-step-desc">Home Visit — Nursing</div>
+                </div>
+            </div>
+            <div class="wz-step active">
+                <div class="wz-step-num">2</div>
+                <div class="wz-step-text">
+                    <div class="wz-step-name">Booking</div>
+                    <div class="wz-step-desc">When &amp; where</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Client bar -->
+        <div class="wz-client-bar">
+            <div class="wz-client-avatar">AA</div>
+            <div class="wz-client-info">
+                <div class="wz-client-name">AshApr17B</div>
+                <div class="wz-client-meta">+84 901 234 567 — PAT-2024-0847</div>
+            </div>
+            <div class="wz-client-badge">Active</div>
+            <span class="wz-selected-badge"><i class="fa fa-home" style="font-size:10px"/> Home Visit</span>
+        </div>
+
+        <!-- Body -->
+        <div class="wz-body">
+
+            <!-- Location & Facility -->
+            <div class="wz-section">
+                <div class="wz-section-icon green"><i class="fa fa-map-marker"/></div>
+                <div class="wz-section-text">Location &amp; Facility</div>
+            </div>
+
+            <div class="wz-form-row">
+                <div class="wz-form-group">
+                    <div class="wz-label">Catchment Province</div>
+                    <select class="wz-select">
+                        <option>— Select Province —</option>
+                        <option selected>TP. H&#x1ED3; Ch&#xED; Minh</option>
+                        <option>H&#xE0; N&#x1ED9;i</option>
+                        <option>&#x110;&#xE0; N&#x1EB5;ng</option>
+                    </select>
+                </div>
+                <div class="wz-form-group">
+                    <div class="wz-label">Healthcare Facility <span class="req">*</span></div>
+                    <select class="wz-select">
+                        <option>— Select Facility —</option>
+                        <option selected>Vi&#x1EC7;t &#xDA;c Qu&#x1EAD;n 7</option>
+                        <option>Vi&#x1EC7;t &#xDA;c Qu&#x1EAD;n 2</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="wz-divider"></div>
+
+            <!-- Schedule -->
+            <div class="wz-section">
+                <div class="wz-section-icon purple"><i class="fa fa-calendar"/></div>
+                <div class="wz-section-text">Schedule</div>
+            </div>
+
+            <div class="wz-form-row">
+                <div class="wz-form-group">
+                    <div class="wz-label">Date <span class="req">*</span></div>
+                    <input class="wz-input" type="date" value="2026-05-17">
+                </div>
+                <div class="wz-form-group">
+                    <div class="wz-label">Duration</div>
+                    <select class="wz-select">
+                        <option>30 minutes</option>
+                        <option selected>1 hour</option>
+                        <option>1.5 hours</option>
+                        <option>2 hours</option>
+                        <option>3 hours</option>
+                        <option>4 hours</option>
+                        <option>Full day (8h)</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Time picker tabs -->
+            <div class="wz-label" style="margin-bottom:6px">
+                Time <span class="req">*</span>
+                <span class="wz-selected-badge"><i class="fa fa-clock-o" style="font-size:10px"/> 09:00 AM</span>
+            </div>
+
+            <div class="wz-time-tabs">
+                <button class="wz-time-tab active"><i class="fa fa-sun-o"/> Morning</button>
+                <button class="wz-time-tab"><i class="fa fa-cloud"/> Afternoon</button>
+                <button class="wz-time-tab"><i class="fa fa-moon-o"/> Evening</button>
+            </div>
+
+            <div class="wz-time-grid">
+                <div class="wz-time-slot">06:00</div>
+                <div class="wz-time-slot">06:30</div>
+                <div class="wz-time-slot">07:00</div>
+                <div class="wz-time-slot">07:30</div>
+                <div class="wz-time-slot">08:00</div>
+                <div class="wz-time-slot">08:30</div>
+                <div class="wz-time-slot selected">09:00</div>
+                <div class="wz-time-slot">09:30</div>
+                <div class="wz-time-slot">10:00</div>
+                <div class="wz-time-slot">10:30</div>
+                <div class="wz-time-slot">11:00</div>
+                <div class="wz-time-slot unavailable">11:30</div>
+            </div>
+
+            <!-- Notes -->
+            <div class="wz-form-group">
+                <div class="wz-label">Special Instructions</div>
+                <textarea class="wz-textarea" placeholder="Access details, medical notes, preferences..."></textarea>
+                <div class="wz-notes-hint">Visible to assigned staff before the visit</div>
+            </div>
+
+        </div>
+
+        <!-- Footer -->
+        <div class="wz-footer">
+            <div class="wz-footer-note">Step 2 of 2</div>
+            <div class="wz-footer-actions">
+                <button class="wz-btn wz-btn-secondary"><i class="fa fa-arrow-left"/> Back</button>
+                <button class="wz-btn wz-btn-confirm"><i class="fa fa-check-circle"/> Create Booking</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+<!-- ============================================================ -->
+<!-- BONUS: CONFIRMATION SUMMARY (what flashes after creation)    -->
+<!-- ============================================================ -->
+<div>
+    <div class="proto-label">Bonus — Review Before Submit (optional step 3)</div>
+    <div class="wizard">
+
+        <!-- Header -->
+        <div class="wz-header">
+            <div class="wz-title"><i class="fa fa-calendar-plus-o"/> New Booking</div>
+            <button class="wz-close"><i class="fa fa-times"/></button>
+        </div>
+
+        <!-- Stepper -->
+        <div class="wz-stepper">
+            <div class="wz-step completed">
+                <div class="wz-step-num"><i class="fa fa-check" style="font-size:11px"/></div>
+                <div class="wz-step-text">
+                    <div class="wz-step-name">Services</div>
+                    <div class="wz-step-desc">Home Visit — Nursing</div>
+                </div>
+            </div>
+            <div class="wz-step completed">
+                <div class="wz-step-num"><i class="fa fa-check" style="font-size:11px"/></div>
+                <div class="wz-step-text">
+                    <div class="wz-step-name">Booking</div>
+                    <div class="wz-step-desc">May 17 at 09:00</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Body -->
+        <div class="wz-body">
+
+            <div class="wz-section">
+                <div class="wz-section-icon blue"><i class="fa fa-clipboard"/></div>
+                <div class="wz-section-text">Review &amp; Confirm</div>
+            </div>
+
+            <div class="wz-summary">
+                <div class="wz-summary-row">
+                    <span class="wz-summary-label">Client</span>
+                    <span class="wz-summary-value">AshApr17B — +84 901 234 567</span>
+                </div>
+                <div class="wz-summary-row">
+                    <span class="wz-summary-label">Service</span>
+                    <span class="wz-summary-value highlight">Home Visit — Nursing Care</span>
+                </div>
+                <div class="wz-summary-row">
+                    <span class="wz-summary-label">Date &amp; Time</span>
+                    <span class="wz-summary-value">Saturday, May 17, 2026 at 09:00 AM</span>
+                </div>
+                <div class="wz-summary-row">
+                    <span class="wz-summary-label">Duration</span>
+                    <span class="wz-summary-value">1 hour</span>
+                </div>
+                <div class="wz-summary-row">
+                    <span class="wz-summary-label">Location</span>
+                    <span class="wz-summary-value">Patient Home</span>
+                </div>
+                <div class="wz-summary-row">
+                    <span class="wz-summary-label">Facility</span>
+                    <span class="wz-summary-value">Vi&#x1EC7;t &#xDA;c Qu&#x1EAD;n 7</span>
+                </div>
+                <div class="wz-summary-row">
+                    <span class="wz-summary-label">Province</span>
+                    <span class="wz-summary-value">TP. H&#x1ED3; Ch&#xED; Minh</span>
+                </div>
+                <div class="wz-summary-row" style="background: rgba(67,160,71,0.04);">
+                    <span class="wz-summary-label">Service Fee</span>
+                    <span class="wz-summary-value" style="color: var(--vu-leaf-green); font-weight: 700;">500,000 ₫</span>
+                </div>
+            </div>
+
+            <!-- Send confirmation -->
+            <div style="display:flex; gap:16px; align-items:center; margin-top:4px;">
+                <span style="font-size:12px; font-weight:600; color:var(--vu-text-secondary);">Send Confirmation:</span>
+                <label style="font-size:12px; display:flex; align-items:center; gap:4px; cursor:pointer; color:var(--vu-text-secondary);">
+                    <input type="checkbox" checked> SMS
+                </label>
+                <label style="font-size:12px; display:flex; align-items:center; gap:4px; cursor:pointer; color:var(--vu-text-secondary);">
+                    <input type="checkbox"> Email
+                </label>
+                <label style="font-size:12px; display:flex; align-items:center; gap:4px; cursor:pointer; color:var(--vu-text-secondary);">
+                    <input type="checkbox" checked> Zalo
+                </label>
+            </div>
+
+        </div>
+
+        <!-- Footer -->
+        <div class="wz-footer">
+            <div class="wz-footer-note">Review your booking details</div>
+            <div class="wz-footer-actions">
+                <button class="wz-btn wz-btn-secondary"><i class="fa fa-arrow-left"/> Back</button>
+                <button class="wz-btn wz-btn-confirm"><i class="fa fa-check-circle"/> Confirm Booking</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<div style="height:40px"></div>
+
+</body>
+</html>

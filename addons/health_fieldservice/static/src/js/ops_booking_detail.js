@@ -17,7 +17,7 @@ class OpsBookingDetail extends Component {
                 res_model: 'health.fieldservice.order',
                 res_id: bookingId,
                 views: [[false, 'form']],
-                target: 'fullscreen',
+                target: 'current',
                 context: { form_view_ref: 'health_fieldservice.view_health_fso_form_ops' },
             }, { clearBreadcrumbs: true });
         }

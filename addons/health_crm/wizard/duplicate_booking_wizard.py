@@ -69,12 +69,13 @@ class DuplicateBookingWizard(models.TransientModel):
         if src.sale_order_id:
             new_fso.action_create_and_open_quote()
 
+        view = self.env.ref('health_fieldservice.view_health_fso_form_ops', raise_if_not_found=False)
         return {
             'type': 'ir.actions.act_window',
             'name': new_fso.display_name or _('Booking'),
             'res_model': 'health.fieldservice.order',
             'res_id': new_fso.id,
             'view_mode': 'form',
-            'views': [[False, 'form']],
+            'views': [[view.id if view else False, 'form']],
             'target': 'current',
         }

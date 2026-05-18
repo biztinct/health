@@ -1104,7 +1104,63 @@ class HealthFieldServiceOrderUnified(models.Model):
         string='Quote Status',
         readonly=True
     )
-    
+
+    quote_line_ids = fields.One2many(
+        related='sale_order_id.order_line',
+        string='Quote Lines',
+        readonly=True,
+    )
+
+    def get_services_packages_display_data(self):
+        self.ensure_one()
+        currency = self.currency_id
+        result = {
+            'has_quote': bool(self.sale_order_id),
+            'has_packages': False,
+            'services': [],
+            'service_count': 0,
+            'total_amount': 0,
+            'currency_symbol': currency.symbol or 'đ',
+            'currency_position': currency.position or 'after',
+            'packages': [],
+        }
+
+        if self.sale_order_id:
+            for line in self.sale_order_id.order_line.filtered(lambda l: not l.display_type):
+                result['services'].append({
+                    'name': line.product_id.name or line.name or '',
+                    'qty': line.product_uom_qty,
+                    'price': line.price_subtotal,
+                })
+            result['service_count'] = len(result['services'])
+            result['total_amount'] = self.sale_order_id.amount_total
+
+        if hasattr(self, 'package_ids') and self.package_ids:
+            result['has_packages'] = True
+            for pkg in self.package_ids:
+                total = pkg.total_services or 1
+                consumed = pkg.consumed_services or 0
+                remaining = pkg.remaining_services
+                pct = min(100, (consumed / total) * 100) if total > 0 else 100
+                if remaining == 0:
+                    color, rem_cls = 'red', 'zero'
+                elif remaining <= 2:
+                    color, rem_cls = 'amber', 'low'
+                else:
+                    color, rem_cls = 'green', 'plenty'
+                result['packages'].append({
+                    'name': pkg.name or 'Package',
+                    'total': total,
+                    'consumed': consumed,
+                    'remaining': remaining,
+                    'state': pkg.state or 'active',
+                    'pct': round(pct, 1),
+                    'color': color,
+                    'remaining_class': rem_cls,
+                })
+
+        return result
+
     # Auto-generated invoice (Client Requirement: "Draft invoices are created when a booking is assigned")
     invoice_id = fields.Many2one(
         'account.move',
@@ -4290,6 +4346,7 @@ class HealthFieldServiceOrderUnified(models.Model):
             pass
 
         patient = {}
+        preferred_staff_id = False
         if patient_id:
             p = self.env['res.partner'].browse(patient_id)
             if p.exists():
@@ -4302,11 +4359,99 @@ class HealthFieldServiceOrderUnified(models.Model):
                     'name': p.name or '',
                     'initials': initials,
                 }
+                if hasattr(p, 'preferred_staff_id') and p.preferred_staff_id:
+                    preferred_staff_id = p.preferred_staff_id.id
+
+        staff_list = []
+        try:
+            employees = self.env['hr.employee'].search([
+                ('is_healthcare_staff', '=', True),
+                ('employment_status', '=', 'active'),
+                ('is_doctor_role', '=', False),
+            ], order='name', limit=100)
+            for emp in employees:
+                emp_initials = ''
+                if emp.name:
+                    parts = emp.name.split()
+                    emp_initials = ''.join(x[0] for x in parts if x)[:2].upper()
+                staff_list.append({
+                    'id': emp.id,
+                    'name': emp.name or '',
+                    'job_title': emp.job_title or '',
+                    'initials': emp_initials,
+                    'is_preferred': emp.id == preferred_staff_id,
+                })
+            if preferred_staff_id:
+                staff_list.sort(key=lambda s: (not s['is_preferred'], s['name']))
+        except Exception:
+            pass
+
+        packages = []
+        try:
+            PkgModel = self.env.get('health.service.package')
+            if PkgModel is not None and patient_id:
+                pkgs = self.env['health.service.package'].search([
+                    ('patient_id', '=', patient_id),
+                    ('state', '=', 'active'),
+                    ('remaining_services', '>', 0),
+                ])
+                for pkg in pkgs:
+                    packages.append({
+                        'id': pkg.id,
+                        'name': pkg.name or '',
+                        'service_type': pkg.service_type or '',
+                        'total_services': pkg.total_services or 0,
+                        'remaining_services': pkg.remaining_services or 0,
+                        'expiration_date': pkg.expiration_date.strftime('%Y-%m-%d') if pkg.expiration_date else '',
+                    })
+        except Exception:
+            pass
+
+        doctor_list = []
+        try:
+            doctors = self.env['hr.employee'].search([
+                ('is_healthcare_staff', '=', True),
+                ('is_doctor_role', '=', True),
+                ('employment_status', '=', 'active'),
+            ], order='name', limit=100)
+            for doc in doctors:
+                doctor_list.append({
+                    'id': doc.id,
+                    'name': doc.name or '',
+                    'specialization': doc.job_title or '',
+                })
+        except Exception:
+            pass
+
+        products = []
+        try:
+            service_products = self.env['product.product'].search([
+                ('type', '=', 'service'),
+                ('sale_ok', '=', True),
+            ], order='name', limit=200)
+            for prod in service_products:
+                categ_name = ''
+                if prod.categ_id:
+                    categ_name = prod.categ_id.name or ''
+                products.append({
+                    'id': prod.id,
+                    'name': prod.name or '',
+                    'price': prod.list_price or 0,
+                    'default_code': prod.default_code or '',
+                    'categ_name': categ_name,
+                })
+        except Exception:
+            pass
 
         return {
             'service_types': service_types,
             'facilities': facilities,
             'patient': patient,
+            'staff_list': staff_list,
+            'packages': packages,
+            'preferred_staff_id': preferred_staff_id,
+            'doctor_list': doctor_list,
+            'products': products,
         }
 
     @api.model
@@ -4390,8 +4535,10 @@ class HealthFieldServiceOrderUnified(models.Model):
         return preview
 
     @api.model
-    def action_create_recurring_from_owl(self, patient_id, service_type, duration_hours, time_hour, facility_id, pattern, selected_days, start_date, occurrences, notes=''):
-        """Create recurring FSO bookings from the OWL wizard."""
+    def action_create_recurring_from_owl(self, patient_id, service_type, duration_hours, time_hour, facility_id, pattern, selected_days, start_date, occurrences, notes='', product_lines=None, staff_id=False, doctor_id=False, package_id=False):
+        """Create recurring FSO bookings from the OWL wizard.
+        Creates DRAFT bookings with quotes (if product_lines provided).
+        Staff/doctor assignment and confirmation happen in finalize_recurring_bookings."""
         if not patient_id or not service_type or not facility_id:
             return {'success': False, 'error': 'Missing required fields.'}
 
@@ -4417,7 +4564,6 @@ class HealthFieldServiceOrderUnified(models.Model):
         hours = int(time_hour)
         minutes = int(round((time_hour - hours) * 60))
 
-        day_names = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
         interval = 2 if pattern == 'biweekly' else 1
         dates = []
         current = start_dt
@@ -4462,11 +4608,141 @@ class HealthFieldServiceOrderUnified(models.Model):
             fso = self.create(vals)
             created_ids.append(fso.id)
 
+        fso_records = self.browse(created_ids)
+        quote_summary = {}
+
+        if product_lines and len(product_lines) > 0:
+            patient = self.env['res.partner'].browse(patient_id)
+            pricelist = patient.property_product_pricelist if hasattr(patient, 'property_product_pricelist') else False
+            summary_lines = []
+
+            for fso_rec in fso_records:
+                quote_vals = {
+                    'partner_id': patient_id,
+                    'origin': fso_rec.name or '',
+                }
+                if pricelist:
+                    quote_vals['pricelist_id'] = pricelist.id
+                quote = self.env['sale.order'].create(quote_vals)
+
+                for pl in product_lines:
+                    product = self.env['product.product'].browse(pl.get('product_id'))
+                    if not product.exists():
+                        continue
+                    qty = pl.get('qty', 1)
+                    price_unit = product.list_price or 0
+                    if pricelist:
+                        try:
+                            price_unit = pricelist._get_product_price(product, qty) or price_unit
+                        except Exception:
+                            pass
+
+                    self.env['sale.order.line'].create({
+                        'order_id': quote.id,
+                        'product_id': product.id,
+                        'name': product.name or '',
+                        'product_uom_qty': qty,
+                        'price_unit': price_unit,
+                    })
+
+                fso_rec.sale_order_id = quote.id
+
+            first_quote = fso_records[:1].sale_order_id
+            if first_quote:
+                for line in first_quote.order_line:
+                    summary_lines.append({
+                        'name': line.product_id.name or line.name or '',
+                        'qty': line.product_uom_qty,
+                        'unit_price': line.price_unit,
+                        'subtotal': line.price_subtotal,
+                    })
+                quote_summary = {
+                    'lines': summary_lines,
+                    'total_per_booking': first_quote.amount_total,
+                    'total_all': first_quote.amount_total * len(created_ids),
+                }
+
         return {
             'success': True,
             'count': len(created_ids),
             'ids': created_ids,
+            'quote_summary': quote_summary,
         }
+
+    @api.model
+    def finalize_recurring_bookings(self, fso_ids, staff_id=False, doctor_id=False, package_id=False):
+        """Confirm recurring bookings, assign staff/doctor/package.
+        Creates assignments in draft state so booking stays confirmed
+        until the nurse confirms the assignment."""
+        if not fso_ids:
+            return {'success': False}
+
+        fso_records = self.browse(fso_ids)
+
+        for fso_rec in fso_records:
+            if package_id and hasattr(fso_rec, 'package_ids'):
+                try:
+                    fso_rec.write({'package_ids': [(4, package_id)]})
+                except Exception:
+                    pass
+
+            if doctor_id:
+                try:
+                    fso_rec.write({'primary_doctor_id': doctor_id})
+                except Exception:
+                    pass
+
+            try:
+                fso_rec.action_confirm_booking()
+            except Exception:
+                pass
+
+            if staff_id:
+                try:
+                    existing = self.env['health.staff.assignment'].search([
+                        ('fso_id', '=', fso_rec.id),
+                        ('staff_id', '=', staff_id),
+                        ('state', 'not in', ['cancelled', 'template']),
+                    ], limit=1)
+                    if not existing:
+                        self.env['health.staff.assignment'].create({
+                            'fso_id': fso_rec.id,
+                            'staff_id': staff_id,
+                            'assignment_role': 'lead',
+                            'state': 'draft',
+                        })
+                except Exception:
+                    pass
+
+        return {'success': True}
+
+    @api.model
+    def cancel_recurring_bookings(self, fso_ids):
+        """Delete FSOs, their quotes, and staff assignments created by recurring wizard."""
+        if not fso_ids:
+            return {'success': False}
+
+        fso_records = self.browse(fso_ids).exists()
+        for fso in fso_records:
+            if fso.sale_order_id:
+                try:
+                    fso.sale_order_id.action_cancel()
+                    fso.sale_order_id.unlink()
+                except Exception:
+                    try:
+                        fso.sale_order_id.unlink()
+                    except Exception:
+                        pass
+            try:
+                self.env['health.staff.assignment'].search([('fso_id', '=', fso.id)]).unlink()
+            except Exception:
+                pass
+        try:
+            fso_records.unlink()
+        except Exception:
+            return {'success': False, 'error': 'Failed to delete bookings.'}
+
+        return {'success': True}
 
     def get_service_in_progress_data(self):
         """Single RPC returning all data for the Service In-Progress OWL component."""

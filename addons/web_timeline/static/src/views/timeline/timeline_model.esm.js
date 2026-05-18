@@ -105,6 +105,12 @@ export class TimelineModel extends Model {
             content = this._render_timeline_item(record);
         }
 
+        let itemStyle = "";
+        if (colorToApply) {
+            itemStyle =
+                `background-color: ${colorToApply};` +
+                `border-color: ${colorToApply};`;
+        }
         const timeline_item = {
             start: date_start.toJSDate(),
             content: content,
@@ -112,7 +118,7 @@ export class TimelineModel extends Model {
             order: record.order,
             group: group,
             evt: record,
-            style: `background-color: ${colorToApply};`,
+            style: itemStyle,
         };
         // Only specify range end when there actually is one.
         // ➔ Instantaneous events / those with inverted dates are displayed as points.

@@ -65,14 +65,6 @@ class HealthQuickBookingWizard(models.TransientModel):
 
     service_notes = fields.Text('Service Notes')
 
-    commission_due_to = fields.Many2one('res.partner', string='Commission Due To')
-    commission_percentage = fields.Float('Commission %', digits=(5, 2))
-    commission_duration = fields.Selection([
-        ('one_time', 'One Time'),
-        ('30_days', '30 Days'),
-    ], string='Duration', default='one_time')
-    service_fee_vnd = fields.Monetary('Service Fee (VND)', currency_field='currency_id')
-
     # === Booking Details ===
 
     booking_date = fields.Date('Booking Date', default=fields.Date.today)
@@ -163,22 +155,16 @@ class HealthQuickBookingWizard(models.TransientModel):
             'booking_timezone': self.facility_id.timezone if self.facility_id else (
                 self.catchment_province_id.timezone if self.catchment_province_id else 'Asia/Ho_Chi_Minh'
             ),
-            'commission_due_to': self.commission_due_to.id if self.commission_due_to else False,
-            'commission_percentage': self.commission_percentage,
-            'commission_duration': self.commission_duration,
-            'service_fee_vnd': self.service_fee_vnd,
         }
 
         booking = self.env['health.fieldservice.order'].create(booking_vals)
 
         return {
-            'type': 'ir.actions.act_window',
+            'type': 'ir.actions.client',
+            'tag': 'ops_booking_detail',
             'name': booking.display_name or booking.name or _('Booking'),
-            'res_model': 'health.fieldservice.order',
-            'res_id': booking.id,
-            'view_mode': 'form',
-            'views': [[False, 'form']],
             'target': 'current',
+            'context': {'active_id': booking.id},
         }
 
     def _get_scheduled_datetime(self):

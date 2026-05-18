@@ -33,6 +33,24 @@ class OpsRecurringBooking extends Component {
             startDate: this._getNextMonday(),
             occurrences: 8,
             notes: '',
+
+            // Staff & Doctor
+            staffList: [],
+            staffId: false,
+            preferredStaffId: false,
+            doctorList: [],
+            doctorId: false,
+
+            // Products & Packages
+            products: [],
+            selectedProducts: [],
+            productSearch: '',
+            packageId: false,
+            packages: [],
+
+            // Confirmation modal
+            showConfirmation: false,
+            creationResult: null,
         });
 
         onWillStart(async () => {
@@ -60,6 +78,11 @@ class OpsRecurringBooking extends Component {
             this.state.serviceTypes = data.service_types || [];
             this.state.facilities = data.facilities || [];
             this.state.patient = data.patient || {};
+            this.state.staffList = data.staff_list || [];
+            this.state.packages = data.packages || [];
+            this.state.preferredStaffId = data.preferred_staff_id || false;
+            this.state.doctorList = data.doctor_list || [];
+            this.state.products = data.products || [];
             if (data.facilities.length > 0 && !this.state.facilityId) {
                 this.state.facilityId = data.facilities[0].id;
             }
@@ -97,8 +120,8 @@ class OpsRecurringBooking extends Component {
     }
 
     formatCurrency(amount) {
-        if (!amount) return '0 ₫';
-        return Math.round(amount).toLocaleString('vi-VN') + ' ₫';
+        if (!amount) return '0 d';
+        return Math.round(amount).toLocaleString('vi-VN') + ' d';
     }
 
     get conflictCount() {
@@ -131,7 +154,6 @@ class OpsRecurringBooking extends Component {
         this.refreshPreview();
     }
 
-    // Day toggling
     toggleDay(dayIndex) {
         const idx = this.state.selectedDays.indexOf(dayIndex);
         if (idx >= 0) {
@@ -148,52 +170,133 @@ class OpsRecurringBooking extends Component {
     }
 
     // Form handlers
-    onServiceTypeChange(ev) {
-        this.state.serviceType = ev.target.value;
+    onServiceTypeChange(ev) { this.state.serviceType = ev.target.value; }
+    onDurationChange(ev) { this.state.durationHours = parseFloat(ev.target.value) || 1; }
+    onTimeChange(ev) { this.state.timeHour = parseInt(ev.target.value) || 9; this.refreshPreview(); }
+    onFacilityChange(ev) { this.state.facilityId = parseInt(ev.target.value) || false; }
+    onStartDateChange(ev) { this.state.startDate = ev.target.value; this.refreshPreview(); }
+    onOccurrencesChange(ev) { this.state.occurrences = parseInt(ev.target.value) || 1; this.refreshPreview(); }
+    onNotesChange(ev) { this.state.notes = ev.target.value; }
+    onStaffChange(ev) { this.state.staffId = parseInt(ev.target.value) || false; }
+    onDoctorChange(ev) { this.state.doctorId = parseInt(ev.target.value) || false; }
+    onPackageChange(ev) { this.state.packageId = parseInt(ev.target.value) || false; }
+    onProductSearchChange(ev) { this.state.productSearch = ev.target.value; }
+
+    // Product catalog
+    get filteredProducts() {
+        const q = (this.state.productSearch || '').toLowerCase();
+        if (!q) return this.state.products;
+        return this.state.products.filter(p =>
+            (p.name || '').toLowerCase().includes(q) ||
+            (p.default_code || '').toLowerCase().includes(q) ||
+            (p.categ_name || '').toLowerCase().includes(q)
+        );
     }
 
-    onDurationChange(ev) {
-        this.state.durationHours = parseFloat(ev.target.value) || 1;
+    get hasProducts() {
+        return this.state.selectedProducts.length > 0;
     }
 
-    onTimeChange(ev) {
-        this.state.timeHour = parseInt(ev.target.value) || 9;
-        this.refreshPreview();
+    get productTotal() {
+        return this.state.selectedProducts.reduce((sum, p) => sum + (p.price * p.qty), 0);
     }
 
-    onFacilityChange(ev) {
-        this.state.facilityId = parseInt(ev.target.value) || false;
+    get hasServiceOrPackage() {
+        return this.hasProducts || this.state.packageId;
     }
 
-    onStartDateChange(ev) {
-        this.state.startDate = ev.target.value;
-        this.refreshPreview();
+    addProduct(productId) {
+        const id = parseInt(productId);
+        if (!id) return;
+        const existing = this.state.selectedProducts.find(p => p.product_id === id);
+        if (existing) {
+            existing.qty += 1;
+            return;
+        }
+        const product = this.state.products.find(p => p.id === id);
+        if (product) {
+            this.state.selectedProducts.push({
+                product_id: product.id,
+                name: product.name,
+                price: product.price,
+                qty: 1,
+            });
+        }
     }
 
-    onOccurrencesChange(ev) {
-        this.state.occurrences = parseInt(ev.target.value) || 1;
-        this.refreshPreview();
+    removeProduct(index) {
+        this.state.selectedProducts.splice(index, 1);
     }
 
-    onNotesChange(ev) {
-        this.state.notes = ev.target.value;
+    updateProductQty(index, ev) {
+        const qty = parseInt(ev.target.value) || 1;
+        if (this.state.selectedProducts[index]) {
+            this.state.selectedProducts[index].qty = Math.max(1, qty);
+        }
+    }
+
+    onAddProductSelect(ev) {
+        this.addProduct(ev.target.value);
+        ev.target.value = '';
+    }
+
+    get selectedStaffName() {
+        const s = this.state.staffList.find(x => x.id === this.state.staffId);
+        return s ? s.name : '';
+    }
+
+    get selectedDoctorName() {
+        const d = this.state.doctorList.find(x => x.id === this.state.doctorId);
+        return d ? d.name : '';
+    }
+
+    get selectedPackage() {
+        return this.state.packages.find(p => p.id === this.state.packageId) || null;
+    }
+
+    get packageWarning() {
+        const pkg = this.selectedPackage;
+        if (!pkg) return false;
+        return this.state.preview.length > pkg.remaining_services;
+    }
+
+    navigateTo(page) {
+        const actions = {
+            dashboard: 'health_fieldservice.action_ops_command_center',
+            bookings: 'health_fieldservice.action_ops_booking_list_native',
+        };
+        const actionId = actions[page];
+        if (actionId) {
+            this.action.doAction(actionId, { clearBreadcrumbs: true });
+        }
     }
 
     goBack() {
         if (this.patientId) {
             this.action.doAction({
-                type: 'ir.actions.client',
-                tag: 'ops_client_profile',
-                name: this.state.patient.name || 'Client',
-                context: { active_id: this.patientId },
+                type: 'ir.actions.act_window',
+                res_model: 'res.partner',
+                res_id: this.patientId,
+                views: [[false, 'form']],
+                target: 'current',
+                context: { form_view_ref: 'health_fieldservice.view_health_patient_form_ops' },
             }, { clearBreadcrumbs: true });
         } else {
-            this.action.doAction('health_fieldservice.action_ops_booking_queue', { clearBreadcrumbs: true });
+            this.action.doAction('health_fieldservice.action_ops_booking_list_native', { clearBreadcrumbs: true });
         }
     }
 
     async createBookings() {
         if (this.state.isCreating) return;
+
+        if (!this.state.staffId) {
+            this.notification.add(_t("Please select a lead staff"), { type: "warning" });
+            return;
+        }
+        if (!this.hasServiceOrPackage) {
+            this.notification.add(_t("Please select products or a package"), { type: "warning" });
+            return;
+        }
         if (!this.state.selectedDays.length) {
             this.notification.add(_t("Please select at least one day"), { type: "warning" });
             return;
@@ -205,6 +308,11 @@ class OpsRecurringBooking extends Component {
 
         this.state.isCreating = true;
         try {
+            const productLines = this.state.selectedProducts.map(p => ({
+                product_id: p.product_id,
+                qty: p.qty,
+            }));
+
             const result = await this.orm.call(
                 "health.fieldservice.order",
                 "action_create_recurring_from_owl",
@@ -220,15 +328,16 @@ class OpsRecurringBooking extends Component {
                     start_date: this.state.startDate,
                     occurrences: this.state.occurrences,
                     notes: this.state.notes,
+                    product_lines: productLines.length > 0 ? productLines : null,
+                    staff_id: this.state.staffId || false,
+                    doctor_id: this.state.doctorId || false,
+                    package_id: this.state.packageId || false,
                 }
             );
 
             if (result.success) {
-                this.notification.add(
-                    _t("%s recurring bookings created!", result.count),
-                    { type: "success" }
-                );
-                this.action.doAction('health_fieldservice.action_ops_booking_queue', { clearBreadcrumbs: true });
+                this.state.creationResult = result;
+                this.state.showConfirmation = true;
             } else {
                 this.notification.add(result.error || _t("Failed to create bookings"), { type: "danger" });
             }
@@ -239,7 +348,52 @@ class OpsRecurringBooking extends Component {
         this.state.isCreating = false;
     }
 
-    // Sidebar
+    async confirmBookings() {
+        const result = this.state.creationResult;
+        if (!result || !result.ids) return;
+
+        try {
+            await this.orm.call(
+                "health.fieldservice.order",
+                "finalize_recurring_bookings",
+                [],
+                {
+                    fso_ids: result.ids,
+                    staff_id: this.state.staffId || false,
+                    doctor_id: this.state.doctorId || false,
+                    package_id: this.state.packageId || false,
+                }
+            );
+            this.notification.add(
+                _t("%s bookings confirmed and staff assigned!", result.count),
+                { type: "success" }
+            );
+            this.action.doAction('health_fieldservice.action_ops_booking_list_native', { clearBreadcrumbs: true });
+        } catch (e) {
+            console.error('Confirm error:', e);
+            this.notification.add(_t("Error confirming bookings"), { type: "danger" });
+        }
+    }
+
+    async deleteBookings() {
+        const result = this.state.creationResult;
+        if (!result || !result.ids) return;
+
+        try {
+            await this.orm.call(
+                "health.fieldservice.order",
+                "cancel_recurring_bookings",
+                [],
+                { fso_ids: result.ids }
+            );
+            this.notification.add(_t("All bookings deleted"), { type: "warning" });
+            this.state.showConfirmation = false;
+            this.state.creationResult = null;
+        } catch (e) {
+            console.error('Delete error:', e);
+            this.notification.add(_t("Error deleting bookings"), { type: "danger" });
+        }
+    }
 }
 
 registry.category("actions").add("ops_recurring_booking", OpsRecurringBooking);

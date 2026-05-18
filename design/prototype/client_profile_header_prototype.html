@@ -1,0 +1,1006 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Client Profile Header — Prototype</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&family=Segoe+UI:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+/* ===== Brand Tokens (from primary_variables.scss) ===== */
+:root {
+    --vu-deep-blue: #1565C0;
+    --vu-deep-blue-darkest: #0D356B;
+    --vu-deep-blue-darker: #1356A9;
+    --vu-deep-blue-light: #83C5FA;
+    --vu-deep-blue-lightest: #E4F4FD;
+    --vu-accent-blue: #42A5F5;
+    --vu-leaf-green: #43A047;
+    --vu-leaf-green-light: #7BC685;
+    --vu-leaf-green-lightest: #DBF0DB;
+    --vu-hibiscus-red: #E53935;
+    --vu-hibiscus-orange: #FB8C00;
+    --vu-hibiscus-orange-light: #FCB24D;
+    --vu-hibiscus-orange-lightest: #FEE8C9;
+    --vu-text-primary: #212121;
+    --vu-text-secondary: #424242;
+    --vu-white: #FFFFFF;
+    --vu-gray-light: #F5F5F5;
+    --vu-gray-lighter: #FAFAFA;
+    --vu-border-soft: #E0E0E0;
+    --vu-shadow-sm: 0 1px 3px rgba(33,33,33,0.1);
+    --vu-shadow-md: 0 2px 8px rgba(33,33,33,0.12);
+    --vu-radius-lg: 12px;
+    --vu-radius-md: 8px;
+    --font-headings: 'Montserrat', 'Segoe UI', Arial, sans-serif;
+    --font-body: 'Segoe UI', Arial, sans-serif;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    font-family: var(--font-body);
+    background: var(--vu-gray-light);
+    padding: 40px;
+    color: var(--vu-text-primary);
+}
+
+.prototype-label {
+    font-family: var(--font-headings);
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--vu-text-secondary);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.prototype-label::before {
+    content: '';
+    width: 20px;
+    height: 2px;
+    background: var(--vu-deep-blue);
+}
+
+.section-gap { margin-top: 60px; }
+
+/* ===== CURRENT HEADER (for comparison) ===== */
+.current-header {
+    background: linear-gradient(135deg, #1565C0 0%, #42A5F5 100%);
+    border-radius: var(--vu-radius-lg);
+    box-shadow: var(--vu-shadow-sm);
+    overflow: hidden;
+    color: white;
+    max-width: 900px;
+}
+
+.current-banner { height: 40px; }
+
+.current-profile-main {
+    display: flex;
+    align-items: flex-end;
+    gap: 16px;
+    padding: 0 24px 16px;
+    margin-top: -30px;
+}
+
+.current-avatar {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    background: var(--vu-deep-blue-lightest);
+    color: var(--vu-deep-blue);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    font-weight: 700;
+    font-family: var(--font-headings);
+    border: 4px solid white;
+    box-shadow: var(--vu-shadow-md);
+    flex-shrink: 0;
+}
+
+.current-info { flex: 1; padding-bottom: 4px; }
+
+.current-name {
+    font-size: 20px;
+    font-weight: 700;
+    font-family: var(--font-headings);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.current-code {
+    font-size: 12px;
+    color: rgba(255,255,255,0.7);
+    font-weight: 400;
+}
+
+.current-tags { display: flex; gap: 6px; margin-top: 4px; }
+
+.current-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    padding: 3px 8px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 600;
+}
+.current-tag.active { background: #DBF0DB; color: var(--vu-leaf-green); }
+.current-tag.regular { background: var(--vu-deep-blue-lightest); color: var(--vu-deep-blue); }
+
+.current-contact {
+    font-size: 13px;
+    color: rgba(255,255,255,0.8);
+    margin-top: 4px;
+    display: flex;
+    gap: 16px;
+}
+.current-contact span { display: flex; align-items: center; gap: 4px; }
+.current-contact i { font-size: 12px; color: var(--vu-deep-blue); }
+
+.current-actions { display: flex; gap: 6px; padding-bottom: 4px; }
+
+.current-action-btn {
+    width: 36px;
+    height: 36px;
+    border: 1px solid rgba(255,255,255,0.3);
+    border-radius: var(--vu-radius-md);
+    background: rgba(255,255,255,0.1);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 15px;
+}
+
+.current-stats-row {
+    display: flex;
+    border-top: 1px solid rgba(255,255,255,0.15);
+}
+
+.current-stat {
+    flex: 1;
+    padding: 12px 20px;
+    text-align: center;
+    border-right: 1px solid rgba(255,255,255,0.15);
+}
+.current-stat:last-child { border-right: none; }
+
+.current-stat-value {
+    font-size: 20px;
+    font-weight: 800;
+    font-family: var(--font-headings);
+    color: white;
+}
+.current-stat-value.green { color: #81C784; }
+.current-stat-value.orange { color: #FFB74D; }
+
+.current-stat-label {
+    font-size: 11px;
+    color: rgba(255,255,255,0.6);
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    font-weight: 600;
+}
+
+/* ===== PROPOSED HEADER ===== */
+.proposed-header {
+    max-width: 900px;
+    border-radius: var(--vu-radius-lg);
+    overflow: hidden;
+    box-shadow: var(--vu-shadow-md);
+}
+
+/* -- Zone 1: Identity -- */
+.ph-identity {
+    background: var(--vu-white);
+    padding: 20px 24px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    border-left: 4px solid var(--vu-deep-blue);
+    position: relative;
+}
+
+.ph-avatar {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: var(--vu-deep-blue);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    font-weight: 800;
+    font-family: var(--font-headings);
+    flex-shrink: 0;
+    box-shadow: 0 2px 8px rgba(21, 101, 192, 0.3);
+}
+
+.ph-details { flex: 1; min-width: 0; }
+
+.ph-name-row {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.ph-name {
+    font-size: 20px;
+    font-weight: 700;
+    font-family: var(--font-headings);
+    color: var(--vu-text-primary);
+    line-height: 1.2;
+}
+
+.ph-code {
+    font-size: 12px;
+    color: var(--vu-text-secondary);
+    font-weight: 400;
+    opacity: 0.7;
+    position: relative;
+    padding-left: 10px;
+}
+.ph-code::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 2px;
+    bottom: 2px;
+    width: 1px;
+    background: var(--vu-border-soft);
+}
+
+.ph-tags {
+    display: flex;
+    gap: 6px;
+    margin-top: 6px;
+}
+
+.ph-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 10px;
+    border-radius: 50px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+}
+.ph-tag.active {
+    background: var(--vu-leaf-green-lightest);
+    color: var(--vu-leaf-green);
+}
+.ph-tag.regular {
+    background: var(--vu-deep-blue-lightest);
+    color: var(--vu-deep-blue);
+}
+.ph-tag.vip {
+    background: var(--vu-hibiscus-orange-lightest);
+    color: var(--vu-hibiscus-orange);
+}
+
+.ph-contact {
+    display: flex;
+    gap: 16px;
+    margin-top: 6px;
+    font-size: 13px;
+    color: var(--vu-text-secondary);
+    flex-wrap: wrap;
+}
+.ph-contact span {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+.ph-contact i {
+    font-size: 12px;
+    color: var(--vu-deep-blue);
+    width: 14px;
+    text-align: center;
+}
+
+.ph-actions {
+    display: flex;
+    gap: 8px;
+    flex-shrink: 0;
+}
+
+.ph-action-btn {
+    width: 38px;
+    height: 38px;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 15px;
+    transition: all 150ms ease;
+}
+.ph-action-btn.secondary {
+    background: var(--vu-deep-blue-lightest);
+    color: var(--vu-deep-blue);
+}
+.ph-action-btn.secondary:hover {
+    background: var(--vu-deep-blue);
+    color: white;
+    box-shadow: 0 2px 8px rgba(21, 101, 192, 0.35);
+}
+.ph-action-btn.primary {
+    background: var(--vu-deep-blue);
+    color: white;
+}
+.ph-action-btn.primary:hover {
+    background: var(--vu-deep-blue-darker);
+    box-shadow: 0 2px 8px rgba(21, 101, 192, 0.4);
+}
+
+/* -- Zone 2: Stats Strip -- */
+.ph-stats {
+    background: var(--vu-deep-blue-darkest);
+    display: flex;
+    border-top: none;
+}
+
+.ph-stat {
+    flex: 1;
+    padding: 14px 16px;
+    text-align: center;
+    border-right: 1px solid rgba(255,255,255,0.1);
+    transition: background 150ms;
+    cursor: default;
+}
+.ph-stat:last-child { border-right: none; }
+.ph-stat:hover { background: rgba(255,255,255,0.05); }
+
+.ph-stat-value {
+    font-size: 20px;
+    font-weight: 800;
+    font-family: var(--font-headings);
+    color: white;
+    line-height: 1.2;
+}
+.ph-stat-value.positive { color: var(--vu-leaf-green-light); }
+.ph-stat-value.attention { color: var(--vu-hibiscus-orange-light); }
+
+.ph-stat-label {
+    font-size: 10px;
+    color: rgba(255,255,255,0.5);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 600;
+    margin-top: 2px;
+}
+
+/* ===== OPTION B: Soft Gradient ===== */
+.proposed-header-b {
+    max-width: 900px;
+    border-radius: var(--vu-radius-lg);
+    overflow: hidden;
+    box-shadow: var(--vu-shadow-md);
+}
+
+.phb-identity {
+    background: linear-gradient(135deg, #0D356B 0%, #1565C0 60%, #1E88E5 100%);
+    padding: 24px 28px 20px;
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    position: relative;
+}
+.phb-identity::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,0.15), rgba(255,255,255,0));
+}
+
+.phb-avatar {
+    width: 68px;
+    height: 68px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.15);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 2px solid rgba(255,255,255,0.3);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    font-weight: 800;
+    font-family: var(--font-headings);
+    flex-shrink: 0;
+}
+
+.phb-details { flex: 1; min-width: 0; }
+
+.phb-name-row {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+}
+
+.phb-name {
+    font-size: 21px;
+    font-weight: 700;
+    font-family: var(--font-headings);
+    color: white;
+    line-height: 1.2;
+}
+
+.phb-code {
+    font-size: 12px;
+    color: rgba(255,255,255,0.5);
+    font-weight: 400;
+}
+
+.phb-tags {
+    display: flex;
+    gap: 6px;
+    margin-top: 8px;
+}
+
+.phb-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 10px;
+    border-radius: 50px;
+    font-size: 11px;
+    font-weight: 700;
+}
+.phb-tag.active {
+    background: rgba(67, 160, 71, 0.2);
+    color: #81C784;
+    border: 1px solid rgba(67, 160, 71, 0.3);
+}
+.phb-tag.regular {
+    background: rgba(255,255,255,0.1);
+    color: rgba(255,255,255,0.85);
+    border: 1px solid rgba(255,255,255,0.2);
+}
+.phb-tag.vip {
+    background: rgba(251, 140, 0, 0.2);
+    color: #FCB24D;
+    border: 1px solid rgba(251, 140, 0, 0.3);
+}
+
+.phb-contact {
+    display: flex;
+    gap: 16px;
+    margin-top: 8px;
+    font-size: 13px;
+    color: rgba(255,255,255,0.65);
+}
+.phb-contact span {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+.phb-contact i {
+    font-size: 12px;
+    color: rgba(255,255,255,0.45);
+}
+
+.phb-actions {
+    display: flex;
+    gap: 8px;
+    flex-shrink: 0;
+}
+
+.phb-action-btn {
+    width: 38px;
+    height: 38px;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 15px;
+    transition: all 150ms;
+}
+.phb-action-btn.secondary {
+    background: rgba(255,255,255,0.12);
+    color: rgba(255,255,255,0.85);
+    border: 1px solid rgba(255,255,255,0.15);
+}
+.phb-action-btn.secondary:hover {
+    background: rgba(255,255,255,0.25);
+    color: white;
+}
+.phb-action-btn.primary {
+    background: white;
+    color: var(--vu-deep-blue);
+}
+.phb-action-btn.primary:hover {
+    background: var(--vu-deep-blue-lightest);
+    box-shadow: 0 2px 12px rgba(255,255,255,0.2);
+}
+
+.phb-stats {
+    background: white;
+    display: flex;
+    border-top: none;
+}
+
+.phb-stat {
+    flex: 1;
+    padding: 14px 16px;
+    text-align: center;
+    border-right: 1px solid var(--vu-border-soft);
+    transition: background 150ms;
+    cursor: default;
+}
+.phb-stat:last-child { border-right: none; }
+.phb-stat:hover { background: var(--vu-gray-lighter); }
+
+.phb-stat-value {
+    font-size: 20px;
+    font-weight: 800;
+    font-family: var(--font-headings);
+    color: var(--vu-text-primary);
+    line-height: 1.2;
+}
+.phb-stat-value.positive { color: var(--vu-leaf-green); }
+.phb-stat-value.attention { color: var(--vu-hibiscus-orange); }
+
+.phb-stat-label {
+    font-size: 10px;
+    color: var(--vu-text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 600;
+    margin-top: 2px;
+    opacity: 0.7;
+}
+
+/* ===== OPTION C: Split Card ===== */
+.proposed-header-c {
+    max-width: 900px;
+    border-radius: var(--vu-radius-lg);
+    overflow: hidden;
+    box-shadow: var(--vu-shadow-md);
+    background: var(--vu-white);
+}
+
+.phc-top {
+    display: flex;
+    align-items: stretch;
+}
+
+.phc-avatar-panel {
+    width: 120px;
+    background: linear-gradient(180deg, var(--vu-deep-blue) 0%, var(--vu-deep-blue-darkest) 100%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px 16px;
+    gap: 8px;
+}
+
+.phc-avatar {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.15);
+    border: 2px solid rgba(255,255,255,0.35);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    font-weight: 800;
+    font-family: var(--font-headings);
+}
+
+.phc-avatar-label {
+    font-size: 10px;
+    color: rgba(255,255,255,0.5);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 600;
+}
+
+.phc-details-panel {
+    flex: 1;
+    padding: 20px 24px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.phc-name-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.phc-name-group {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+}
+
+.phc-name {
+    font-size: 20px;
+    font-weight: 700;
+    font-family: var(--font-headings);
+    color: var(--vu-text-primary);
+}
+
+.phc-code {
+    font-size: 12px;
+    color: var(--vu-text-secondary);
+    opacity: 0.6;
+}
+
+.phc-actions {
+    display: flex;
+    gap: 6px;
+}
+
+.phc-action-btn {
+    width: 34px;
+    height: 34px;
+    border: 1px solid var(--vu-border-soft);
+    border-radius: 50%;
+    background: var(--vu-white);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    color: var(--vu-text-secondary);
+    transition: all 150ms;
+}
+.phc-action-btn:hover {
+    border-color: var(--vu-deep-blue);
+    color: var(--vu-deep-blue);
+    background: var(--vu-deep-blue-lightest);
+}
+.phc-action-btn.primary {
+    background: var(--vu-deep-blue);
+    border-color: var(--vu-deep-blue);
+    color: white;
+}
+.phc-action-btn.primary:hover {
+    background: var(--vu-deep-blue-darker);
+}
+
+.phc-meta-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 8px;
+    flex-wrap: wrap;
+}
+
+.phc-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 10px;
+    border-radius: 50px;
+    font-size: 11px;
+    font-weight: 700;
+}
+.phc-tag.active { background: var(--vu-leaf-green-lightest); color: var(--vu-leaf-green); }
+.phc-tag.regular { background: var(--vu-deep-blue-lightest); color: var(--vu-deep-blue); }
+.phc-tag.vip { background: var(--vu-hibiscus-orange-lightest); color: var(--vu-hibiscus-orange); }
+
+.phc-divider {
+    width: 1px;
+    height: 14px;
+    background: var(--vu-border-soft);
+    margin: 0 4px;
+}
+
+.phc-contact-inline {
+    display: flex;
+    gap: 14px;
+    font-size: 12px;
+    color: var(--vu-text-secondary);
+}
+.phc-contact-inline span {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+.phc-contact-inline i {
+    font-size: 11px;
+    color: var(--vu-deep-blue);
+    opacity: 0.6;
+}
+
+.phc-stats {
+    display: flex;
+    background: var(--vu-gray-lighter);
+    border-top: 1px solid var(--vu-border-soft);
+}
+
+.phc-stat {
+    flex: 1;
+    padding: 12px 16px;
+    text-align: center;
+    border-right: 1px solid var(--vu-border-soft);
+    transition: background 150ms;
+}
+.phc-stat:last-child { border-right: none; }
+.phc-stat:hover { background: var(--vu-deep-blue-lightest); }
+
+.phc-stat-value {
+    font-size: 18px;
+    font-weight: 800;
+    font-family: var(--font-headings);
+    color: var(--vu-text-primary);
+}
+.phc-stat-value.positive { color: var(--vu-leaf-green); }
+.phc-stat-value.attention { color: var(--vu-hibiscus-orange); }
+
+.phc-stat-label {
+    font-size: 10px;
+    color: var(--vu-text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    font-weight: 600;
+    margin-top: 2px;
+    opacity: 0.65;
+}
+</style>
+</head>
+<body>
+
+<!-- ===== CURRENT DESIGN ===== -->
+<div class="prototype-label">Current Design</div>
+
+<div class="current-header">
+    <div class="current-banner"></div>
+    <div class="current-profile-main">
+        <div class="current-avatar">NT</div>
+        <div class="current-info">
+            <div class="current-name">
+                Nguy&#7877;n Th&#7883; Mai Anh
+                <span class="current-code">PAT-2024-0847</span>
+            </div>
+            <div class="current-tags">
+                <span class="current-tag active"><i class="fa fa-circle" style="font-size:6px"></i> Active</span>
+                <span class="current-tag regular"><i class="fa fa-user" style="font-size:9px"></i> Regular Patient</span>
+            </div>
+            <div class="current-contact">
+                <span><i class="fa fa-phone"></i> +84 901 234 567</span>
+                <span><i class="fa fa-map-marker"></i> Qu&#7853;n 7, TP.HCM</span>
+            </div>
+        </div>
+        <div class="current-actions">
+            <button class="current-action-btn"><i class="fa fa-phone"></i></button>
+            <button class="current-action-btn"><i class="fa fa-comment"></i></button>
+            <button class="current-action-btn"><i class="fa fa-envelope"></i></button>
+        </div>
+    </div>
+    <div class="current-stats-row">
+        <div class="current-stat">
+            <div class="current-stat-value">24</div>
+            <div class="current-stat-label">Total Visits</div>
+        </div>
+        <div class="current-stat">
+            <div class="current-stat-value">2</div>
+            <div class="current-stat-label">Active Packages</div>
+        </div>
+        <div class="current-stat">
+            <div class="current-stat-value">48.5M</div>
+            <div class="current-stat-label">Total Spent</div>
+        </div>
+        <div class="current-stat">
+            <div class="current-stat-value orange">3.2M</div>
+            <div class="current-stat-label">Outstanding</div>
+        </div>
+        <div class="current-stat">
+            <div class="current-stat-value green">4.8</div>
+            <div class="current-stat-label">Satisfaction</div>
+        </div>
+        <div class="current-stat">
+            <div class="current-stat-value">3</div>
+            <div class="current-stat-label">Referrals Made</div>
+        </div>
+    </div>
+</div>
+
+<!-- ===== OPTION A: Elevated Card (White + Navy Stats) ===== -->
+<div class="section-gap"></div>
+<div class="prototype-label">Option A &mdash; Elevated Card (White identity + Navy stats)</div>
+
+<div class="proposed-header">
+    <div class="ph-identity">
+        <div class="ph-avatar">NT</div>
+        <div class="ph-details">
+            <div class="ph-name-row">
+                <span class="ph-name">Nguy&#7877;n Th&#7883; Mai Anh</span>
+                <span class="ph-code">PAT-2024-0847</span>
+            </div>
+            <div class="ph-tags">
+                <span class="ph-tag active"><i class="fa fa-circle" style="font-size:5px"></i> Active</span>
+                <span class="ph-tag regular"><i class="fa fa-user" style="font-size:9px"></i> Regular Patient</span>
+                <span class="ph-tag vip"><i class="fa fa-star" style="font-size:9px"></i> VIP</span>
+            </div>
+            <div class="ph-contact">
+                <span><i class="fa fa-phone"></i> +84 901 234 567</span>
+                <span><i class="fa fa-map-marker"></i> Qu&#7853;n 7, TP.HCM</span>
+                <span><i class="fa fa-envelope-o"></i> mai.anh@email.com</span>
+            </div>
+        </div>
+        <div class="ph-actions">
+            <button class="ph-action-btn primary"><i class="fa fa-phone"></i></button>
+            <button class="ph-action-btn secondary"><i class="fa fa-comment"></i></button>
+            <button class="ph-action-btn secondary"><i class="fa fa-envelope"></i></button>
+            <button class="ph-action-btn secondary"><i class="fa fa-ellipsis-h"></i></button>
+        </div>
+    </div>
+    <div class="ph-stats">
+        <div class="ph-stat">
+            <div class="ph-stat-value">24</div>
+            <div class="ph-stat-label">Total Visits</div>
+        </div>
+        <div class="ph-stat">
+            <div class="ph-stat-value">2</div>
+            <div class="ph-stat-label">Active Packages</div>
+        </div>
+        <div class="ph-stat">
+            <div class="ph-stat-value">48.5M</div>
+            <div class="ph-stat-label">Total Spent</div>
+        </div>
+        <div class="ph-stat">
+            <div class="ph-stat-value attention">3.2M</div>
+            <div class="ph-stat-label">Outstanding</div>
+        </div>
+        <div class="ph-stat">
+            <div class="ph-stat-value positive">4.8</div>
+            <div class="ph-stat-label">Satisfaction</div>
+        </div>
+        <div class="ph-stat">
+            <div class="ph-stat-value">3</div>
+            <div class="ph-stat-label">Referrals Made</div>
+        </div>
+    </div>
+</div>
+
+<!-- ===== OPTION B: Soft Gradient (Dark-to-Blue header + White stats) ===== -->
+<div class="section-gap"></div>
+<div class="prototype-label">Option B &mdash; Rich Gradient (Deep navy header + White stats)</div>
+
+<div class="proposed-header-b">
+    <div class="phb-identity">
+        <div class="phb-avatar">NT</div>
+        <div class="phb-details">
+            <div class="phb-name-row">
+                <span class="phb-name">Nguy&#7877;n Th&#7883; Mai Anh</span>
+                <span class="phb-code">PAT-2024-0847</span>
+            </div>
+            <div class="phb-tags">
+                <span class="phb-tag active"><i class="fa fa-circle" style="font-size:5px"></i> Active</span>
+                <span class="phb-tag regular"><i class="fa fa-user" style="font-size:9px"></i> Regular Patient</span>
+                <span class="phb-tag vip"><i class="fa fa-star" style="font-size:9px"></i> VIP</span>
+            </div>
+            <div class="phb-contact">
+                <span><i class="fa fa-phone"></i> +84 901 234 567</span>
+                <span><i class="fa fa-map-marker"></i> Qu&#7853;n 7, TP.HCM</span>
+                <span><i class="fa fa-envelope-o"></i> mai.anh@email.com</span>
+            </div>
+        </div>
+        <div class="phb-actions">
+            <button class="phb-action-btn primary"><i class="fa fa-phone"></i></button>
+            <button class="phb-action-btn secondary"><i class="fa fa-comment"></i></button>
+            <button class="phb-action-btn secondary"><i class="fa fa-envelope"></i></button>
+            <button class="phb-action-btn secondary"><i class="fa fa-ellipsis-h"></i></button>
+        </div>
+    </div>
+    <div class="phb-stats">
+        <div class="phb-stat">
+            <div class="phb-stat-value">24</div>
+            <div class="phb-stat-label">Total Visits</div>
+        </div>
+        <div class="phb-stat">
+            <div class="phb-stat-value">2</div>
+            <div class="phb-stat-label">Active Packages</div>
+        </div>
+        <div class="phb-stat">
+            <div class="phb-stat-value">48.5M</div>
+            <div class="phb-stat-label">Total Spent</div>
+        </div>
+        <div class="phb-stat">
+            <div class="phb-stat-value attention">3.2M</div>
+            <div class="phb-stat-label">Outstanding</div>
+        </div>
+        <div class="phb-stat">
+            <div class="phb-stat-value positive">4.8</div>
+            <div class="phb-stat-label">Satisfaction</div>
+        </div>
+        <div class="phb-stat">
+            <div class="phb-stat-value">3</div>
+            <div class="phb-stat-label">Referrals Made</div>
+        </div>
+    </div>
+</div>
+
+<!-- ===== OPTION C: Split Card (Avatar panel + Details) ===== -->
+<div class="section-gap"></div>
+<div class="prototype-label">Option C &mdash; Split Card (Avatar panel + Details + Muted stats)</div>
+
+<div class="proposed-header-c">
+    <div class="phc-top">
+        <div class="phc-avatar-panel">
+            <div class="phc-avatar">NT</div>
+            <div class="phc-avatar-label">Patient</div>
+        </div>
+        <div class="phc-details-panel">
+            <div class="phc-name-row">
+                <div class="phc-name-group">
+                    <span class="phc-name">Nguy&#7877;n Th&#7883; Mai Anh</span>
+                    <span class="phc-code">PAT-2024-0847</span>
+                </div>
+                <div class="phc-actions">
+                    <button class="phc-action-btn primary"><i class="fa fa-phone"></i></button>
+                    <button class="phc-action-btn"><i class="fa fa-comment"></i></button>
+                    <button class="phc-action-btn"><i class="fa fa-envelope"></i></button>
+                    <button class="phc-action-btn"><i class="fa fa-ellipsis-h"></i></button>
+                </div>
+            </div>
+            <div class="phc-meta-row">
+                <span class="phc-tag active"><i class="fa fa-circle" style="font-size:5px"></i> Active</span>
+                <span class="phc-tag regular"><i class="fa fa-user" style="font-size:9px"></i> Regular Patient</span>
+                <span class="phc-tag vip"><i class="fa fa-star" style="font-size:9px"></i> VIP</span>
+                <span class="phc-divider"></span>
+                <div class="phc-contact-inline">
+                    <span><i class="fa fa-phone"></i> +84 901 234 567</span>
+                    <span><i class="fa fa-map-marker"></i> Qu&#7853;n 7, TP.HCM</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="phc-stats">
+        <div class="phc-stat">
+            <div class="phc-stat-value">24</div>
+            <div class="phc-stat-label">Total Visits</div>
+        </div>
+        <div class="phc-stat">
+            <div class="phc-stat-value">2</div>
+            <div class="phc-stat-label">Active Packages</div>
+        </div>
+        <div class="phc-stat">
+            <div class="phc-stat-value">48.5M</div>
+            <div class="phc-stat-label">Total Spent</div>
+        </div>
+        <div class="phc-stat">
+            <div class="phc-stat-value attention">3.2M</div>
+            <div class="phc-stat-label">Outstanding</div>
+        </div>
+        <div class="phc-stat">
+            <div class="phc-stat-value positive">4.8</div>
+            <div class="phc-stat-label">Satisfaction</div>
+        </div>
+        <div class="phc-stat">
+            <div class="phc-stat-value">3</div>
+            <div class="phc-stat-label">Referrals Made</div>
+        </div>
+    </div>
+</div>
+
+<div style="height: 60px;"></div>
+
+</body>
+</html>

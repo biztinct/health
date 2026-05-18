@@ -33,7 +33,6 @@
                     <!-- Hidden fields -->
                     <field name="current_step" invisible="1"/>
                     <field name="client_id" invisible="1"/>
-                    <field name="currency_id" invisible="1"/>
 
                     <!-- STEP 1: Service Requirements -->
                     <div invisible="current_step != '1_services'">
@@ -56,14 +55,6 @@
                             <field name="service_notes" nolabel="1" placeholder="Additional service requirements..." colspan="2"/>
                         </group>
 
-                        <separator string="Commission Details"/>
-                        <group col="1">
-                            <group>
-                                <field name="commission_due_to"/>
-                                <field name="commission_percentage"/>
-                                <field name="commission_duration"/>
-                            </group>
-                        </group>
                     </div>
 
                     <!-- STEP 2: Recurrence & Location -->

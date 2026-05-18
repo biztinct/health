@@ -96,13 +96,13 @@
     <menuitem id="menu_ops_bookings"
               name="Bookings"
               parent="menu_ops_center_root"
-              action="action_ops_booking_queue"
+              action="action_ops_booking_list_native"
               sequence="20"/>
 
     <menuitem id="menu_ops_clients"
               name="Clients"
               parent="menu_ops_center_root"
-              action="action_ops_client_list"
+              action="action_ops_client_list_native"
               sequence="25"/>
 
     <menuitem id="menu_ops_calendar"
