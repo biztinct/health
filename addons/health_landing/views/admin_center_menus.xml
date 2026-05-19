@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- =============================================== -->
+    <!--  ADMIN CENTER — Client Actions                  -->
+    <!-- =============================================== -->
+
+    <record id="action_admin_dashboard" model="ir.actions.client">
+        <field name="name">Admin Dashboard</field>
+        <field name="tag">admin_dashboard</field>
+    </record>
+
+    <record id="action_admin_settings" model="ir.actions.client">
+        <field name="name">Admin Settings</field>
+        <field name="tag">admin_settings</field>
+    </record>
+
+    <!-- =============================================== -->
+    <!--  ADMIN CENTER — Root Menu                       -->
+    <!-- =============================================== -->
+
+    <menuitem id="menu_admin_center_root"
+              name="Admin Center"
+              action="action_admin_dashboard"
+              sequence="14"
+              groups="health_base.group_healthcare_admin"/>
+
+    <!-- =============================================== -->
+    <!--  ADMIN CENTER — Sub-menus                       -->
+    <!--  (sidebar navigates; menus ensure action xmlIds -->
+    <!--   are resolvable by doAction)                   -->
+    <!-- =============================================== -->
+
+    <menuitem id="menu_admin_dashboard"
+              name="Dashboard"
+              parent="menu_admin_center_root"
+              action="action_admin_dashboard"
+              sequence="1"/>
+
+    <menuitem id="menu_admin_users"
+              name="Users &amp; Roles"
+              parent="menu_admin_center_root"
+              action="action_admin_users"
+              sequence="2"/>
+
+    <menuitem id="menu_admin_master_data"
+              name="Master Data"
+              parent="menu_admin_center_root"
+              action="action_admin_facilities"
+              sequence="3"/>
+
+    <menuitem id="menu_admin_pricing"
+              name="Pricing"
+              parent="menu_admin_center_root"
+              action="action_admin_pricelists"
+              sequence="4"/>
+
+    <menuitem id="menu_admin_staff"
+              name="Healthcare Staff"
+              parent="menu_admin_center_root"
+              action="action_admin_staff"
+              sequence="5"/>
+
+    <menuitem id="menu_admin_equipment"
+              name="Equipment"
+              parent="menu_admin_center_root"
+              action="action_admin_equipment"
+              sequence="6"/>
+
+    <menuitem id="menu_admin_holidays"
+              name="Public Holidays"
+              parent="menu_admin_center_root"
+              action="action_admin_holidays"
+              sequence="7"/>
+
+    <menuitem id="menu_admin_audit"
+              name="Audit Log"
+              parent="menu_admin_center_root"
+              action="action_admin_audit"
+              sequence="8"/>
+
+    <menuitem id="menu_admin_field_req"
+              name="Field Requirements"
+              parent="menu_admin_center_root"
+              action="action_admin_field_req"
+              sequence="9"/>
+
+    <menuitem id="menu_admin_settings"
+              name="Settings"
+              parent="menu_admin_center_root"
+              action="action_admin_settings"
+              sequence="10"/>
+
+</odoo>

@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="health_landing.AdminSidebar">
+        <div class="ops-global-sidebar admin-sidebar">
+            <!-- Logo -->
+            <div class="ops-sidebar-logo">
+                <div class="ops-logo-icon">
+                    <i class="fa fa-cogs"/>
+                </div>
+                <div>
+                    <div class="ops-logo-text">Admin Center</div>
+                    <div class="ops-logo-sub">System Management</div>
+                </div>
+            </div>
+
+            <!-- Navigation -->
+            <nav class="ops-sidebar-nav">
+                <!-- MAIN -->
+                <div class="ops-nav-section-label">Main</div>
+                <a t-attf-class="ops-nav-item #{state.activePage === 'dashboard' ? 'active' : ''}"
+                   t-on-click="() => this.navigateTo('dashboard')">
+                    <i class="fa fa-tachometer"/> Dashboard
+                </a>
+                <a t-attf-class="ops-nav-item #{state.activePage === 'users' ? 'active' : ''}"
+                   t-on-click="() => this.navigateTo('users')">
+                    <i class="fa fa-users"/> Users &amp; Roles
+                </a>
+
+                <!-- MASTER DATA -->
+                <div class="ops-nav-section-label">Master Data</div>
+                <a t-attf-class="ops-nav-item #{state.activePage === 'master_data' ? 'active' : ''}"
+                   t-on-click="() => this.navigateTo('master_data')">
+                    <i class="fa fa-database"/> Master Data
+                </a>
+
+                <!-- PRICING & PRODUCTS -->
+                <div class="ops-nav-section-label">Pricing &amp; Products</div>
+                <a t-attf-class="ops-nav-item #{state.activePage === 'pricing' ? 'active' : ''}"
+                   t-on-click="() => this.navigateTo('pricing')">
+                    <i class="fa fa-tags"/> Pricing
+                </a>
+
+                <!-- RESOURCES -->
+                <div class="ops-nav-section-label">Resources</div>
+                <a t-attf-class="ops-nav-item #{state.activePage === 'staff' ? 'active' : ''}"
+                   t-on-click="() => this.navigateTo('staff')">
+                    <i class="fa fa-user-md"/> Healthcare Staff
+                </a>
+                <a t-attf-class="ops-nav-item #{state.activePage === 'equipment' ? 'active' : ''}"
+                   t-on-click="() => this.navigateTo('equipment')">
+                    <i class="fa fa-briefcase"/> Equipment
+                </a>
+                <a t-attf-class="ops-nav-item #{state.activePage === 'holidays' ? 'active' : ''}"
+                   t-on-click="() => this.navigateTo('holidays')">
+                    <i class="fa fa-calendar-times-o"/> Public Holidays
+                </a>
+
+                <!-- SYSTEM -->
+                <div class="ops-nav-section-label">System</div>
+                <a t-attf-class="ops-nav-item #{state.activePage === 'audit' ? 'active' : ''}"
+                   t-on-click="() => this.navigateTo('audit')">
+                    <i class="fa fa-history"/> Audit Log
+                </a>
+                <a t-attf-class="ops-nav-item #{state.activePage === 'field_req' ? 'active' : ''}"
+                   t-on-click="() => this.navigateTo('field_req')">
+                    <i class="fa fa-asterisk"/> Field Requirements
+                </a>
+                <a t-attf-class="ops-nav-item #{state.activePage === 'settings' ? 'active' : ''}"
+                   t-on-click="() => this.navigateTo('settings')">
+                    <i class="fa fa-sliders"/> Settings
+                </a>
+                <a class="ops-nav-item" t-on-click="navigateHome">
+                    <i class="fa fa-arrow-left"/> Back to Hub
+                </a>
+            </nav>
+
+            <!-- User -->
+            <div class="ops-sidebar-user">
+                <div class="ops-user-avatar"><t t-esc="currentUserInitials"/></div>
+                <div>
+                    <div class="ops-user-name"><t t-esc="currentUserName"/></div>
+                    <div class="ops-user-role">Administrator</div>
+                </div>
+            </div>
+        </div>
+    </t>
+
+</templates>

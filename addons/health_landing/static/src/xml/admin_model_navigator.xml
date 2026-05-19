@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="health_landing.AdminModelNavigatorView" t-inherit="web.ListView" t-inherit-mode="primary">
+        <xpath expr="//t[@t-component='props.Renderer']" position="before">
+            <div t-if="hasNavigationTabs" class="admin-nav-tabs">
+                <t t-foreach="navigationTabs" t-as="tab" t-key="tab.id">
+                    <button t-attf-class="admin-nav-tab #{activeTabId === tab.id ? 'active' : ''}"
+                            t-on-click="() => this.switchTab(tab.id)">
+                        <i t-attf-class="fa #{tab.icon}"/>
+                        <t t-esc="tab.label"/>
+                    </button>
+                </t>
+            </div>
+        </xpath>
+    </t>
+
+</templates>

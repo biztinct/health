@@ -1,0 +1,448 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- =============================================== -->
+    <!--  ADMIN CENTER — People (Users, Roles, Role Mgmt)-->
+    <!-- =============================================== -->
+
+    <record id="view_admin_users_list" model="ir.ui.view">
+        <field name="name">admin.users.list</field>
+        <field name="model">res.users</field>
+        <field name="inherit_id" ref="health_user_admin.view_health_users_list"/>
+        <field name="mode">primary</field>
+        <field name="arch" type="xml">
+            <xpath expr="//list" position="attributes">
+                <attribute name="js_class">admin_model_navigator_view</attribute>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="action_admin_users" model="ir.actions.act_window">
+        <field name="name">Users</field>
+        <field name="res_model">res.users</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('share', '=', False)]</field>
+        <field name="context">{'active_test': False, 'open_create_wizard': True}</field>
+        <field name="view_ids" eval="[(5, 0, 0),
+            (0, 0, {'view_mode': 'list', 'view_id': ref('view_admin_users_list')}),
+            (0, 0, {'view_mode': 'form', 'view_id': ref('health_user_admin.view_health_users_form')})]"/>
+        <field name="search_view_id" ref="health_user_admin.view_health_users_search"/>
+    </record>
+
+    <record id="action_admin_roles" model="ir.actions.act_window">
+        <field name="name">Access Roles</field>
+        <field name="res_model">access.role</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <record id="action_admin_role_mgmt" model="ir.actions.act_window">
+        <field name="name">Role Management</field>
+        <field name="res_model">role.management</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- =============================================== -->
+    <!--  ADMIN CENTER — Master Data (10 models)         -->
+    <!-- =============================================== -->
+
+    <!-- Facilities -->
+    <record id="view_admin_facility_list" model="ir.ui.view">
+        <field name="name">admin.facility.list</field>
+        <field name="model">health.facility</field>
+        <field name="inherit_id" ref="health_base.view_health_facility_list"/>
+        <field name="mode">primary</field>
+        <field name="arch" type="xml">
+            <xpath expr="//list" position="attributes">
+                <attribute name="js_class">admin_model_navigator_view</attribute>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="action_admin_facilities" model="ir.actions.act_window">
+        <field name="name">Healthcare Facilities</field>
+        <field name="res_model">health.facility</field>
+        <field name="view_mode">list,form</field>
+        <field name="view_ids" eval="[(5, 0, 0),
+            (0, 0, {'view_mode': 'list', 'view_id': ref('view_admin_facility_list')})]"/>
+    </record>
+
+    <!-- Catchment Provinces -->
+    <record id="view_admin_catchment_list" model="ir.ui.view">
+        <field name="name">admin.catchment.list</field>
+        <field name="model">health.catchment.province</field>
+        <field name="inherit_id" ref="health_base.view_health_catchment_province_tree"/>
+        <field name="mode">primary</field>
+        <field name="arch" type="xml">
+            <xpath expr="//list" position="attributes">
+                <attribute name="js_class">admin_model_navigator_view</attribute>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="action_admin_catchments" model="ir.actions.act_window">
+        <field name="name">Catchment Provinces</field>
+        <field name="res_model">health.catchment.province</field>
+        <field name="view_mode">list,form</field>
+        <field name="view_ids" eval="[(5, 0, 0),
+            (0, 0, {'view_mode': 'list', 'view_id': ref('view_admin_catchment_list')})]"/>
+    </record>
+
+    <!-- Service Types -->
+    <record id="view_admin_service_type_list" model="ir.ui.view">
+        <field name="name">admin.service.type.list</field>
+        <field name="model">health.service.type</field>
+        <field name="inherit_id" ref="health_base.view_health_service_type_list"/>
+        <field name="mode">primary</field>
+        <field name="arch" type="xml">
+            <xpath expr="//list" position="attributes">
+                <attribute name="js_class">admin_model_navigator_view</attribute>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="action_admin_service_types" model="ir.actions.act_window">
+        <field name="name">Service Types</field>
+        <field name="res_model">health.service.type</field>
+        <field name="view_mode">list,form</field>
+        <field name="view_ids" eval="[(5, 0, 0),
+            (0, 0, {'view_mode': 'list', 'view_id': ref('view_admin_service_type_list')})]"/>
+    </record>
+
+    <!-- Symptoms -->
+    <record id="view_admin_symptom_list" model="ir.ui.view">
+        <field name="name">admin.symptom.list</field>
+        <field name="model">health.symptom</field>
+        <field name="inherit_id" ref="health_base.view_health_symptom_list"/>
+        <field name="mode">primary</field>
+        <field name="arch" type="xml">
+            <xpath expr="//list" position="attributes">
+                <attribute name="js_class">admin_model_navigator_view</attribute>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="action_admin_symptoms" model="ir.actions.act_window">
+        <field name="name">Symptoms</field>
+        <field name="res_model">health.symptom</field>
+        <field name="view_mode">list,form</field>
+        <field name="view_ids" eval="[(5, 0, 0),
+            (0, 0, {'view_mode': 'list', 'view_id': ref('view_admin_symptom_list')})]"/>
+    </record>
+
+    <!-- Referral Sources -->
+    <record id="view_admin_referral_source_list" model="ir.ui.view">
+        <field name="name">admin.referral.source.list</field>
+        <field name="model">health.referral.source</field>
+        <field name="inherit_id" ref="health_base.view_health_referral_source_list"/>
+        <field name="mode">primary</field>
+        <field name="arch" type="xml">
+            <xpath expr="//list" position="attributes">
+                <attribute name="js_class">admin_model_navigator_view</attribute>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="action_admin_referral_sources" model="ir.actions.act_window">
+        <field name="name">Referral Sources</field>
+        <field name="res_model">health.referral.source</field>
+        <field name="view_mode">list,form</field>
+        <field name="view_ids" eval="[(5, 0, 0),
+            (0, 0, {'view_mode': 'list', 'view_id': ref('view_admin_referral_source_list')})]"/>
+    </record>
+
+    <!-- Insurance Providers -->
+    <record id="view_admin_insurance_list" model="ir.ui.view">
+        <field name="name">admin.insurance.list</field>
+        <field name="model">health.insurance.provider</field>
+        <field name="inherit_id" ref="health_base.view_health_insurance_provider_list"/>
+        <field name="mode">primary</field>
+        <field name="arch" type="xml">
+            <xpath expr="//list" position="attributes">
+                <attribute name="js_class">admin_model_navigator_view</attribute>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="action_admin_insurance" model="ir.actions.act_window">
+        <field name="name">Insurance Providers</field>
+        <field name="res_model">health.insurance.provider</field>
+        <field name="view_mode">list,form</field>
+        <field name="view_ids" eval="[(5, 0, 0),
+            (0, 0, {'view_mode': 'list', 'view_id': ref('view_admin_insurance_list')})]"/>
+    </record>
+
+    <!-- Urgency Levels -->
+    <record id="view_admin_urgency_list" model="ir.ui.view">
+        <field name="name">admin.urgency.list</field>
+        <field name="model">health.urgency.level</field>
+        <field name="inherit_id" ref="health_base.view_health_urgency_level_list"/>
+        <field name="mode">primary</field>
+        <field name="arch" type="xml">
+            <xpath expr="//list" position="attributes">
+                <attribute name="js_class">admin_model_navigator_view</attribute>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="action_admin_urgency" model="ir.actions.act_window">
+        <field name="name">Urgency Levels</field>
+        <field name="res_model">health.urgency.level</field>
+        <field name="view_mode">list,form</field>
+        <field name="view_ids" eval="[(5, 0, 0),
+            (0, 0, {'view_mode': 'list', 'view_id': ref('view_admin_urgency_list')})]"/>
+    </record>
+
+    <!-- Patient Categories -->
+    <record id="view_admin_category_list" model="ir.ui.view">
+        <field name="name">admin.category.list</field>
+        <field name="model">health.patient.category</field>
+        <field name="inherit_id" ref="health_base.view_health_patient_category_tree"/>
+        <field name="mode">primary</field>
+        <field name="arch" type="xml">
+            <xpath expr="//list" position="attributes">
+                <attribute name="js_class">admin_model_navigator_view</attribute>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="action_admin_categories" model="ir.actions.act_window">
+        <field name="name">Patient Categories</field>
+        <field name="res_model">health.patient.category</field>
+        <field name="view_mode">list,form</field>
+        <field name="view_ids" eval="[(5, 0, 0),
+            (0, 0, {'view_mode': 'list', 'view_id': ref('view_admin_category_list')})]"/>
+    </record>
+
+    <!-- Medical Specialties -->
+    <record id="view_admin_specialty_list" model="ir.ui.view">
+        <field name="name">admin.specialty.list</field>
+        <field name="model">health.medical.specialty</field>
+        <field name="inherit_id" ref="health_base.view_health_medical_specialty_list"/>
+        <field name="mode">primary</field>
+        <field name="arch" type="xml">
+            <xpath expr="//list" position="attributes">
+                <attribute name="js_class">admin_model_navigator_view</attribute>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="action_admin_specialties" model="ir.actions.act_window">
+        <field name="name">Medical Specialties</field>
+        <field name="res_model">health.medical.specialty</field>
+        <field name="view_mode">list,form</field>
+        <field name="view_ids" eval="[(5, 0, 0),
+            (0, 0, {'view_mode': 'list', 'view_id': ref('view_admin_specialty_list')})]"/>
+    </record>
+
+    <!-- Vietnamese Districts -->
+    <record id="view_admin_district_list" model="ir.ui.view">
+        <field name="name">admin.district.list</field>
+        <field name="model">health.vietnamese.district</field>
+        <field name="inherit_id" ref="health_base.view_health_vietnamese_district_list"/>
+        <field name="mode">primary</field>
+        <field name="arch" type="xml">
+            <xpath expr="//list" position="attributes">
+                <attribute name="js_class">admin_model_navigator_view</attribute>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="action_admin_districts" model="ir.actions.act_window">
+        <field name="name">Vietnamese Districts</field>
+        <field name="res_model">health.vietnamese.district</field>
+        <field name="view_mode">list,form</field>
+        <field name="view_ids" eval="[(5, 0, 0),
+            (0, 0, {'view_mode': 'list', 'view_id': ref('view_admin_district_list')})]"/>
+    </record>
+
+    <!-- =============================================== -->
+    <!--  ADMIN CENTER — Pricing (4 tabs)                -->
+    <!-- =============================================== -->
+
+    <record id="view_admin_pricelist_list" model="ir.ui.view">
+        <field name="name">admin.pricing.engine.list</field>
+        <field name="model">advanced.pricing.engine</field>
+        <field name="arch" type="xml">
+            <list string="Pricing Engines" js_class="admin_model_navigator_view">
+                <field name="name"/>
+                <field name="active" widget="boolean_toggle"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_admin_pricelists" model="ir.actions.act_window">
+        <field name="name">Pricing Engines</field>
+        <field name="res_model">advanced.pricing.engine</field>
+        <field name="view_mode">list,form</field>
+        <field name="view_ids" eval="[(5, 0, 0),
+            (0, 0, {'view_mode': 'list', 'view_id': ref('view_admin_pricelist_list')})]"/>
+    </record>
+
+    <record id="view_admin_pricing_rule_list" model="ir.ui.view">
+        <field name="name">admin.pricing.rule.list</field>
+        <field name="model">advanced.pricing.rule</field>
+        <field name="inherit_id" ref="advanced_pricing.view_pricing_rule_list"/>
+        <field name="mode">primary</field>
+        <field name="arch" type="xml">
+            <xpath expr="//list" position="attributes">
+                <attribute name="js_class">admin_model_navigator_view</attribute>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="action_admin_pricing_rules" model="ir.actions.act_window">
+        <field name="name">Pricing Rules</field>
+        <field name="res_model">advanced.pricing.rule</field>
+        <field name="view_mode">list,form</field>
+        <field name="view_ids" eval="[(5, 0, 0),
+            (0, 0, {'view_mode': 'list', 'view_id': ref('view_admin_pricing_rule_list')})]"/>
+        <field name="search_view_id" ref="advanced_pricing.view_pricing_rule_search"/>
+    </record>
+
+    <record id="view_admin_quick_edit_list" model="ir.ui.view">
+        <field name="name">admin.pricing.rule.quick.edit</field>
+        <field name="model">advanced.pricing.rule</field>
+        <field name="inherit_id" ref="advanced_pricing.view_pricing_rule_list_quick_edit"/>
+        <field name="mode">primary</field>
+        <field name="arch" type="xml">
+            <xpath expr="//list" position="attributes">
+                <attribute name="js_class">admin_model_navigator_view</attribute>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="action_admin_quick_edit_rules" model="ir.actions.act_window">
+        <field name="name">Quick Edit Rules</field>
+        <field name="res_model">advanced.pricing.rule</field>
+        <field name="view_mode">list</field>
+        <field name="view_ids" eval="[(5, 0, 0),
+            (0, 0, {'view_mode': 'list', 'view_id': ref('view_admin_quick_edit_list')})]"/>
+        <field name="search_view_id" ref="advanced_pricing.view_pricing_rule_search"/>
+    </record>
+
+    <record id="view_admin_package_list" model="ir.ui.view">
+        <field name="name">admin.package.product.list</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="health_invoicing.view_product_template_list_healthcare"/>
+        <field name="mode">primary</field>
+        <field name="arch" type="xml">
+            <xpath expr="//list" position="attributes">
+                <attribute name="js_class">admin_model_navigator_view</attribute>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="action_admin_packages" model="ir.actions.act_window">
+        <field name="name">Package Products</field>
+        <field name="res_model">product.template</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('type', '=', 'healthcare_package')]</field>
+        <field name="context">{'default_type': 'healthcare_package', 'default_detailed_type': 'service', 'show_healthcare_columns': True}</field>
+        <field name="view_ids" eval="[(5, 0, 0),
+            (0, 0, {'view_mode': 'list', 'view_id': ref('view_admin_package_list')})]"/>
+    </record>
+
+    <!-- =============================================== -->
+    <!--  ADMIN CENTER — Staff (3 tabs)                  -->
+    <!-- =============================================== -->
+
+    <record id="view_admin_staff_list" model="ir.ui.view">
+        <field name="name">admin.staff.list</field>
+        <field name="model">hr.employee</field>
+        <field name="inherit_id" ref="health_fieldservice.view_healthcare_staff_list"/>
+        <field name="mode">primary</field>
+        <field name="arch" type="xml">
+            <xpath expr="//list" position="attributes">
+                <attribute name="js_class">admin_model_navigator_view</attribute>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="action_admin_staff" model="ir.actions.act_window">
+        <field name="name">Healthcare Staff</field>
+        <field name="res_model">hr.employee</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('is_healthcare_staff', '=', True)]</field>
+        <field name="context">{'default_is_healthcare_staff': True, 'search_default_active_staff': 1}</field>
+        <field name="view_ids" eval="[(5, 0, 0),
+            (0, 0, {'view_mode': 'list', 'view_id': ref('view_admin_staff_list')})]"/>
+    </record>
+
+    <record id="view_admin_skill_list" model="ir.ui.view">
+        <field name="name">admin.skill.list</field>
+        <field name="model">health.staff.skill</field>
+        <field name="inherit_id" ref="health_fieldservice.view_health_staff_skill_list"/>
+        <field name="mode">primary</field>
+        <field name="arch" type="xml">
+            <xpath expr="//list" position="attributes">
+                <attribute name="js_class">admin_model_navigator_view</attribute>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="action_admin_skills" model="ir.actions.act_window">
+        <field name="name">Staff Skills</field>
+        <field name="res_model">health.staff.skill</field>
+        <field name="view_mode">list,form</field>
+        <field name="view_ids" eval="[(5, 0, 0),
+            (0, 0, {'view_mode': 'list', 'view_id': ref('view_admin_skill_list')})]"/>
+    </record>
+
+    <record id="view_admin_area_list" model="ir.ui.view">
+        <field name="name">admin.area.list</field>
+        <field name="model">health.service.area</field>
+        <field name="inherit_id" ref="health_fieldservice.view_health_service_area_list"/>
+        <field name="mode">primary</field>
+        <field name="arch" type="xml">
+            <xpath expr="//list" position="attributes">
+                <attribute name="js_class">admin_model_navigator_view</attribute>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="action_admin_areas" model="ir.actions.act_window">
+        <field name="name">Service Areas</field>
+        <field name="res_model">health.service.area</field>
+        <field name="view_mode">list,form</field>
+        <field name="view_ids" eval="[(5, 0, 0),
+            (0, 0, {'view_mode': 'list', 'view_id': ref('view_admin_area_list')})]"/>
+    </record>
+
+    <!-- =============================================== -->
+    <!--  ADMIN CENTER — Standalone Lists                -->
+    <!-- =============================================== -->
+
+    <!-- Equipment -->
+    <record id="action_admin_equipment" model="ir.actions.act_window">
+        <field name="name">Portable Equipment</field>
+        <field name="res_model">health.portable.equipment</field>
+        <field name="view_mode">list,form</field>
+        <field name="view_ids" eval="[(5, 0, 0),
+            (0, 0, {'view_mode': 'list', 'view_id': ref('health_fieldservice.view_health_portable_equipment_list')})]"/>
+    </record>
+
+    <!-- Public Holidays -->
+    <record id="action_admin_holidays" model="ir.actions.act_window">
+        <field name="name">Public Holidays</field>
+        <field name="res_model">resource.calendar.leaves</field>
+        <field name="view_mode">list,form</field>
+        <field name="view_ids" eval="[(5, 0, 0),
+            (0, 0, {'view_mode': 'list', 'view_id': ref('health_base.view_healthcare_public_holiday_list')})]"/>
+    </record>
+
+    <!-- Audit Log -->
+    <record id="action_admin_audit" model="ir.actions.act_window">
+        <field name="name">Audit Log</field>
+        <field name="res_model">health.audit.log.view</field>
+        <field name="view_mode">list</field>
+        <field name="view_ids" eval="[(5, 0, 0),
+            (0, 0, {'view_mode': 'list', 'view_id': ref('health_base.view_health_audit_log_list')})]"/>
+    </record>
+
+    <!-- Field Requirements (reuse existing client action tag) -->
+    <record id="action_admin_field_req" model="ir.actions.client">
+        <field name="name">Field Requirements</field>
+        <field name="tag">field_requirements_dashboard</field>
+    </record>
+
+</odoo>

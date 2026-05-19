@@ -1,0 +1,212 @@
+// Admin Center — inline shared variables (Odoo forbids @import)
+
+.admin-dashboard {
+    padding: 24px 32px;
+    max-width: 1400px;
+    background: #FAFAFA;
+    min-height: 100%;
+}
+
+.admin-dash-header {
+    margin-bottom: 24px;
+}
+
+.admin-dash-title {
+    font-size: 22px;
+    font-weight: 700;
+    color: #37474F;
+    margin: 0;
+}
+
+.admin-dash-subtitle {
+    font-size: 13px;
+    color: #78909C;
+    margin: 4px 0 0;
+}
+
+.admin-dash-loading {
+    display: flex;
+    justify-content: center;
+    padding: 80px 0;
+    color: #90A4AE;
+}
+
+// KPI Cards
+.admin-kpi-row {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.admin-kpi-card {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+    cursor: pointer;
+    transition: box-shadow 0.2s, transform 0.2s;
+    text-align: center;
+
+    &:hover {
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+        transform: translateY(-2px);
+    }
+}
+
+.admin-kpi-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 12px;
+    font-size: 20px;
+}
+
+.admin-kpi-value {
+    font-size: 28px;
+    font-weight: 700;
+    color: #37474F;
+    line-height: 1.2;
+}
+
+.admin-kpi-label {
+    font-size: 12px;
+    color: #78909C;
+    margin-top: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+// Two-column layout
+.admin-dash-columns {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+}
+
+.admin-dash-panel {
+    background: white;
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.admin-panel-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: #37474F;
+    margin: 0 0 16px;
+}
+
+// Quick Actions
+.admin-quick-actions {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+}
+
+.admin-quick-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 16px 12px;
+    background: #F5F5F5;
+    border: 1px solid #E0E0E0;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.15s;
+    font-size: 12px;
+    color: #37474F;
+    font-weight: 500;
+
+    i {
+        font-size: 20px;
+        color: #FFC107;
+    }
+
+    &:hover {
+        background: #37474F;
+        color: white;
+        border-color: #37474F;
+
+        i { color: #FFD54F; }
+    }
+}
+
+// Audit Feed
+.admin-audit-feed {
+    max-height: 340px;
+    overflow-y: auto;
+}
+
+.admin-audit-empty {
+    text-align: center;
+    padding: 40px 0;
+    color: #B0BEC5;
+    font-size: 13px;
+}
+
+.admin-audit-item {
+    display: flex;
+    gap: 12px;
+    padding: 10px 0;
+    border-bottom: 1px solid #F5F5F5;
+
+    &:last-child { border-bottom: none; }
+}
+
+.admin-audit-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    background: #ECEFF1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #37474F-light;
+    font-size: 13px;
+    flex-shrink: 0;
+}
+
+.admin-audit-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.admin-audit-title {
+    font-size: 13px;
+    color: #37474F;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.admin-audit-meta {
+    display: flex;
+    gap: 8px;
+    margin-top: 2px;
+    font-size: 11px;
+    color: #90A4AE;
+}
+
+.admin-audit-user {
+    font-weight: 500;
+}
+
+// Responsive
+@media (max-width: 1200px) {
+    .admin-kpi-row {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .admin-dashboard { padding: 16px; }
+    .admin-kpi-row { grid-template-columns: repeat(2, 1fr); }
+    .admin-dash-columns { grid-template-columns: 1fr; }
+    .admin-quick-actions { grid-template-columns: repeat(2, 1fr); }
+}

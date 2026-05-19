@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="health_landing.AdminSettings">
+        <div class="admin-settings">
+            <div class="admin-settings-header">
+                <h2 class="admin-settings-title">Admin Settings</h2>
+                <p class="admin-settings-subtitle">System configuration and management</p>
+            </div>
+
+            <div class="admin-settings-grid">
+                <div class="admin-settings-tile" t-on-click="openGeneralSettings">
+                    <div class="admin-tile-icon" style="background: #E3F2FD; color: #1565C0;">
+                        <i class="fa fa-cog"/>
+                    </div>
+                    <div class="admin-tile-label">General Settings</div>
+                    <div class="admin-tile-desc">Odoo system-wide configuration</div>
+                    <i class="fa fa-chevron-right admin-tile-arrow"/>
+                </div>
+
+                <div class="admin-settings-tile" t-on-click="openCompanyProfile">
+                    <div class="admin-tile-icon" style="background: #E8F5E9; color: #2E7D32;">
+                        <i class="fa fa-building-o"/>
+                    </div>
+                    <div class="admin-tile-label">Company Profile</div>
+                    <div class="admin-tile-desc">Organization details and branding</div>
+                    <i class="fa fa-chevron-right admin-tile-arrow"/>
+                </div>
+
+                <div class="admin-settings-tile" t-on-click="openUserDefaults">
+                    <div class="admin-tile-icon" style="background: #F3E5F5; color: #6A1B9A;">
+                        <i class="fa fa-key"/>
+                    </div>
+                    <div class="admin-tile-label">Access Roles</div>
+                    <div class="admin-tile-desc">Default role and permission setup</div>
+                    <i class="fa fa-chevron-right admin-tile-arrow"/>
+                </div>
+
+                <div class="admin-settings-tile" t-on-click="openPricingConfig">
+                    <div class="admin-tile-icon" style="background: #FFF3E0; color: #E65100;">
+                        <i class="fa fa-tags"/>
+                    </div>
+                    <div class="admin-tile-label">Pricing Engines</div>
+                    <div class="admin-tile-desc">Pricing engine configuration</div>
+                    <i class="fa fa-chevron-right admin-tile-arrow"/>
+                </div>
+
+                <div class="admin-settings-tile" t-on-click="openFieldRequirements">
+                    <div class="admin-tile-icon" style="background: #ECEFF1; color: #37474F;">
+                        <i class="fa fa-asterisk"/>
+                    </div>
+                    <div class="admin-tile-label">Field Requirements</div>
+                    <div class="admin-tile-desc">Mandatory field configuration per model</div>
+                    <i class="fa fa-chevron-right admin-tile-arrow"/>
+                </div>
+            </div>
+        </div>
+    </t>
+
+</templates>

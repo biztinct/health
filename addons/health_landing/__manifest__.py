@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Healthcare Landing Dashboard',
-    'version': '19.0.1.0.1',
+    'version': '19.0.1.1.0',
     'category': 'Healthcare',
     'summary': 'Modern landing dashboard with icon-driven navigation for VAFHS Healthcare System',
     'description': """
@@ -42,6 +42,9 @@ Design inspired by modern SaaS applications with emphasis on usability and visua
         'health_crm',
         'health_fieldservice',
         'health_invoicing',
+        'health_user_admin',
+        'advanced_pricing',
+        'health_field_requirements',
     ],
     'data': [
         'security/ir.model.access.csv',
@@ -55,9 +58,27 @@ Design inspired by modern SaaS applications with emphasis on usability and visua
         'views/fso_dashboard_wizard_views.xml',
         'views/fso_dashboard_button.xml',
         'views/fso_new_wizards_views.xml',
+
+        # Admin Center
+        'views/admin_center_views.xml',
+        'views/admin_center_menus.xml',
     ],
     'assets': {
         'web.assets_backend': [
+            # Admin Center
+            'health_landing/static/src/scss/admin_sidebar.scss',
+            'health_landing/static/src/scss/admin_dashboard.scss',
+            'health_landing/static/src/scss/admin_navigator.scss',
+            'health_landing/static/src/scss/admin_settings.scss',
+            'health_landing/static/src/js/admin_sidebar.js',
+            'health_landing/static/src/xml/admin_sidebar.xml',
+            'health_landing/static/src/js/admin_dashboard.js',
+            'health_landing/static/src/xml/admin_dashboard.xml',
+            'health_landing/static/src/js/admin_model_navigator.js',
+            'health_landing/static/src/xml/admin_model_navigator.xml',
+            'health_landing/static/src/js/admin_settings.js',
+            'health_landing/static/src/xml/admin_settings.xml',
+            # Landing dashboard
             'health_landing/static/src/css/landing_dashboard.css',
             'health_landing/static/src/css/viet_uc_landing.css',
             'health_landing/static/src/css/hub_spoke_widget.css',

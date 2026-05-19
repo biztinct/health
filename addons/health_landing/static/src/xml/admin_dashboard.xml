@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="health_landing.AdminDashboard">
+        <div class="admin-dashboard">
+            <!-- Header -->
+            <div class="admin-dash-header">
+                <h2 class="admin-dash-title">Admin Dashboard</h2>
+                <p class="admin-dash-subtitle">System overview and quick actions</p>
+            </div>
+
+            <!-- Loading -->
+            <div t-if="state.isLoading" class="admin-dash-loading">
+                <i class="fa fa-spinner fa-spin fa-2x"/>
+            </div>
+
+            <t t-else="">
+                <!-- KPI Cards -->
+                <div class="admin-kpi-row">
+                    <div class="admin-kpi-card" t-on-click="() => this.navigateToAction('health_landing.action_admin_users')">
+                        <div class="admin-kpi-icon" style="background: #E3F2FD; color: #1565C0;">
+                            <i class="fa fa-users"/>
+                        </div>
+                        <div class="admin-kpi-value"><t t-esc="state.kpis.active_users || 0"/></div>
+                        <div class="admin-kpi-label">Active Users</div>
+                    </div>
+                    <div class="admin-kpi-card" t-on-click="openMasterData">
+                        <div class="admin-kpi-icon" style="background: #E8F5E9; color: #2E7D32;">
+                            <i class="fa fa-building"/>
+                        </div>
+                        <div class="admin-kpi-value"><t t-esc="state.kpis.active_facilities || 0"/></div>
+                        <div class="admin-kpi-label">Active Facilities</div>
+                    </div>
+                    <div class="admin-kpi-card" t-on-click="openMasterData">
+                        <div class="admin-kpi-icon" style="background: #FFF3E0; color: #E65100;">
+                            <i class="fa fa-list-ul"/>
+                        </div>
+                        <div class="admin-kpi-value"><t t-esc="state.kpis.service_types || 0"/></div>
+                        <div class="admin-kpi-label">Service Types</div>
+                    </div>
+                    <div class="admin-kpi-card" t-on-click="openPricingRules">
+                        <div class="admin-kpi-icon" style="background: #F3E5F5; color: #6A1B9A;">
+                            <i class="fa fa-tags"/>
+                        </div>
+                        <div class="admin-kpi-value"><t t-esc="state.kpis.pricing_rules || 0"/></div>
+                        <div class="admin-kpi-label">Pricing Rules</div>
+                    </div>
+                    <div class="admin-kpi-card" t-on-click="() => this.actionService.doAction('health_landing.action_admin_equipment', { clearBreadcrumbs: true })">
+                        <div class="admin-kpi-icon" style="background: #EFEBE9; color: #4E342E;">
+                            <i class="fa fa-briefcase"/>
+                        </div>
+                        <div class="admin-kpi-value"><t t-esc="state.kpis.equipment_items || 0"/></div>
+                        <div class="admin-kpi-label">Equipment Items</div>
+                    </div>
+                    <div class="admin-kpi-card" t-on-click="openAuditLog">
+                        <div class="admin-kpi-icon" style="background: #ECEFF1; color: #37474F;">
+                            <i class="fa fa-history"/>
+                        </div>
+                        <div class="admin-kpi-value"><t t-esc="state.kpis.audit_today || 0"/></div>
+                        <div class="admin-kpi-label">Audit Events Today</div>
+                    </div>
+                </div>
+
+                <!-- Two-column layout: Quick Actions + Recent Activity -->
+                <div class="admin-dash-columns">
+                    <!-- Quick Actions -->
+                    <div class="admin-dash-panel">
+                        <h3 class="admin-panel-title">Quick Actions</h3>
+                        <div class="admin-quick-actions">
+                            <button class="admin-quick-btn" t-on-click="openAddUser">
+                                <i class="fa fa-user-plus"/>
+                                <span>Add User</span>
+                            </button>
+                            <button class="admin-quick-btn" t-on-click="openAddFacility">
+                                <i class="fa fa-plus-circle"/>
+                                <span>Add Facility</span>
+                            </button>
+                            <button class="admin-quick-btn" t-on-click="openPricingRules">
+                                <i class="fa fa-tags"/>
+                                <span>Pricing Rules</span>
+                            </button>
+                            <button class="admin-quick-btn" t-on-click="openAuditLog">
+                                <i class="fa fa-history"/>
+                                <span>Audit Log</span>
+                            </button>
+                            <button class="admin-quick-btn" t-on-click="openMasterData">
+                                <i class="fa fa-database"/>
+                                <span>Master Data</span>
+                            </button>
+                            <button class="admin-quick-btn" t-on-click="openStaff">
+                                <i class="fa fa-user-md"/>
+                                <span>Healthcare Staff</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Recent Audit Activity -->
+                    <div class="admin-dash-panel">
+                        <h3 class="admin-panel-title">Recent Activity</h3>
+                        <div class="admin-audit-feed">
+                            <t t-if="state.recentAudit.length === 0">
+                                <div class="admin-audit-empty">No recent audit events</div>
+                            </t>
+                            <t t-foreach="state.recentAudit" t-as="entry" t-key="entry.id">
+                                <div class="admin-audit-item">
+                                    <div class="admin-audit-icon">
+                                        <i t-attf-class="fa #{entry.icon || 'fa-pencil'}"/>
+                                    </div>
+                                    <div class="admin-audit-content">
+                                        <div class="admin-audit-title"><t t-esc="entry.description"/></div>
+                                        <div class="admin-audit-meta">
+                                            <span class="admin-audit-user"><t t-esc="entry.user_name"/></span>
+                                            <span class="admin-audit-time"><t t-esc="entry.time_ago"/></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </t>
+                        </div>
+                    </div>
+                </div>
+            </t>
+        </div>
+    </t>
+
+</templates>
