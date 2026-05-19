@@ -1,0 +1,95 @@
+// CRM Activity View — Filter Toolbar
+
+.crm-activity-toolbar {
+    padding: 8px 16px;
+    background: white;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.crm-activity-filters {
+    display: flex;
+    gap: 24px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.crm-filter-group {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.crm-filter-label {
+    font-size: 11px;
+    font-weight: 700;
+    color: #78909C;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-right: 4px;
+}
+
+.crm-filter-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 5px 12px;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    background: white;
+    font-size: 12px;
+    font-weight: 600;
+    color: #546E7A;
+    cursor: pointer;
+    transition: all 150ms;
+    white-space: nowrap;
+
+    .fa { font-size: 11px; }
+
+    &:hover {
+        background: #f1f5f9;
+        color: #1A237E;
+        border-color: #1A237E;
+    }
+
+    &.active {
+        background: #1A237E;
+        color: white;
+        border-color: #1A237E;
+    }
+}
+
+.crm-calendar-btn {
+    padding: 5px 10px;
+
+    .fa { font-size: 13px; }
+
+    &.active {
+        background: #FF6F00;
+        border-color: #FF6F00;
+    }
+
+    &:hover {
+        background: #FF6F00;
+        color: white;
+        border-color: #FF6F00;
+    }
+}
+
+.crm-date-picker-wrap {
+    position: relative;
+    display: inline-flex;
+}
+
+.crm-date-input {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    z-index: 100;
+    margin-top: 4px;
+    padding: 6px 10px;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    font-size: 13px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+    background: white;
+}

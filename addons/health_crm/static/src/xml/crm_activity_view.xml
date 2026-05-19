@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+<t t-name="health_crm.CrmActivityView">
+    <div t-att-class="props.className + (ui.isSmall ? ' o_action_delegate_scroll': '')">
+        <Layout display="props.display">
+            <t t-set-slot="control-panel-additional-actions">
+                <CogMenu/>
+            </t>
+            <t t-set-slot="layout-actions">
+                <SearchBar/>
+            </t>
+            <div class="crm-activity-toolbar">
+                <div class="crm-activity-filters">
+                    <div class="crm-filter-group">
+                        <span class="crm-filter-label">Type:</span>
+                        <t t-foreach="typeFilters" t-as="f" t-key="f.id">
+                            <button t-attf-class="crm-filter-btn #{filterState.activeType === f.id ? 'active' : ''}"
+                                    t-on-click="() => this.setTypeFilter(f.id)">
+                                <i t-attf-class="fa #{f.icon}"/>
+                                <t t-esc="f.label"/>
+                            </button>
+                        </t>
+                    </div>
+                    <div class="crm-filter-group">
+                        <span class="crm-filter-label">Date:</span>
+                        <t t-foreach="dateFilters" t-as="f" t-key="f.id">
+                            <button t-attf-class="crm-filter-btn #{filterState.activeDateFilter === f.id ? 'active' : ''}"
+                                    t-on-click="() => this.setDateFilter(f.id)">
+                                <t t-esc="f.label"/>
+                            </button>
+                        </t>
+                        <div class="crm-date-picker-wrap">
+                            <button t-attf-class="crm-filter-btn crm-calendar-btn #{filterState.activeDateFilter === 'custom' ? 'active' : ''}"
+                                    t-on-click="toggleDatePicker">
+                                <i class="fa fa-calendar"/>
+                            </button>
+                            <input t-if="filterState.showDatePicker"
+                                   type="date" class="crm-date-input"
+                                   t-on-change="onDateSelected"/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <t t-component="props.Renderer" t-props="rendererProps" />
+        </Layout>
+    </div>
+</t>
+
+</templates>

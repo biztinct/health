@@ -2147,77 +2147,154 @@ class HealthLead(models.Model):
     # =========================================================================
 
     @api.model
-    def get_crm_dashboard_data(self):
+    def get_crm_dashboard_data(self, period='month'):
+        from datetime import datetime as dt, timedelta, time as dt_time
+
         today = fields.Date.context_today(self)
         now = fields.Datetime.now()
-
-        month_start = today.replace(day=1)
-        week_start = today - __import__('datetime').timedelta(days=today.weekday())
-
         Lead = self.env['crm.lead']
 
-        contacts_today = Lead.search_count([
-            ('create_date', '>=', fields.Datetime.to_string(
-                __import__('datetime').datetime.combine(today, __import__('datetime').time.min)
-            )),
-        ])
+        week_start = today - timedelta(days=today.weekday())
+        month_start = today.replace(day=1)
 
+        if period == 'today':
+            period_start = today
+        elif period == 'week':
+            period_start = week_start
+        else:
+            period_start = month_start
+
+        period_start_dt = fields.Datetime.to_string(dt.combine(period_start, dt_time.min))
+        today_start_dt = fields.Datetime.to_string(dt.combine(today, dt_time.min))
+        week_start_dt = fields.Datetime.to_string(dt.combine(week_start, dt_time.min))
+
+        # --- KPIs ---
+        contacts_today = Lead.search_count([('create_date', '>=', today_start_dt)])
         pending_followups = Lead.search_count([
             ('contact_status', '=', 'lead'),
-            '|',
-            ('next_follow_up_date', '<=', fields.Datetime.to_string(now)),
+            '|', ('next_follow_up_date', '<=', fields.Datetime.to_string(now)),
             ('next_follow_up_date', '=', False),
         ])
-
-        active_leads = Lead.search_count([
-            ('contact_status', '=', 'lead'),
-        ])
-
+        active_leads = Lead.search_count([('contact_status', '=', 'lead')])
         bookings_this_week = Lead.search_count([
             ('contact_status', '=', 'booking'),
-            ('create_date', '>=', fields.Datetime.to_string(
-                __import__('datetime').datetime.combine(week_start, __import__('datetime').time.min)
-            )),
+            ('create_date', '>=', week_start_dt),
         ])
 
-        month_total = Lead.search_count([
-            ('create_date', '>=', fields.Datetime.to_string(
-                __import__('datetime').datetime.combine(month_start, __import__('datetime').time.min)
-            )),
-        ])
-        month_bookings = Lead.search_count([
+        period_total = Lead.search_count([('create_date', '>=', period_start_dt)])
+        period_bookings = Lead.search_count([
             ('contact_status', '=', 'booking'),
-            ('create_date', '>=', fields.Datetime.to_string(
-                __import__('datetime').datetime.combine(month_start, __import__('datetime').time.min)
-            )),
+            ('create_date', '>=', period_start_dt),
         ])
-        month_spam = Lead.search_count([
+        period_spam = Lead.search_count([
             ('contact_status', '=', 'spam'),
-            ('create_date', '>=', fields.Datetime.to_string(
-                __import__('datetime').datetime.combine(month_start, __import__('datetime').time.min)
-            )),
+            ('create_date', '>=', period_start_dt),
+        ])
+        conversion_rate = (period_bookings / period_total * 100) if period_total else 0
+        spam_rate = (period_spam / period_total * 100) if period_total else 0
+
+        kpis = {
+            'contacts_today': contacts_today,
+            'pending_followups': pending_followups,
+            'active_leads': active_leads,
+            'bookings_this_week': bookings_this_week,
+            'conversion_rate': round(conversion_rate, 1),
+            'spam_rate': round(spam_rate, 1),
+        }
+
+        # --- Trends (vs previous equivalent period) ---
+        period_days = (today - period_start).days + 1
+        prev_end = period_start - timedelta(days=1)
+        prev_start = prev_end - timedelta(days=period_days - 1)
+        prev_start_dt = fields.Datetime.to_string(dt.combine(prev_start, dt_time.min))
+        prev_end_dt = fields.Datetime.to_string(dt.combine(prev_end + timedelta(days=1), dt_time.min))
+
+        prev_contacts = Lead.search_count([
+            ('create_date', '>=', prev_start_dt), ('create_date', '<', prev_end_dt),
+        ])
+        prev_leads = Lead.search_count([
+            ('contact_status', '=', 'lead'),
+            ('create_date', '>=', prev_start_dt), ('create_date', '<', prev_end_dt),
+        ])
+        prev_bookings = Lead.search_count([
+            ('contact_status', '=', 'booking'),
+            ('create_date', '>=', prev_start_dt), ('create_date', '<', prev_end_dt),
         ])
 
-        conversion_rate = (month_bookings / month_total * 100) if month_total else 0
-        spam_rate = (month_spam / month_total * 100) if month_total else 0
+        def trend_pct(current, previous):
+            if not previous:
+                return 100.0 if current else 0.0
+            return round((current - previous) / previous * 100, 1)
 
-        # Status breakdown for this month
+        trends = {
+            'contacts_today': trend_pct(contacts_today, prev_contacts // max(period_days, 1)),
+            'pending_followups': 0,
+            'active_leads': trend_pct(active_leads, prev_leads),
+            'bookings_this_week': trend_pct(bookings_this_week, prev_bookings),
+            'conversion_rate': 0,
+            'spam_rate': 0,
+        }
+
+        # --- Sparklines (last 7 days) ---
+        sparklines = {k: [] for k in kpis}
+        for i in range(6, -1, -1):
+            d = today - timedelta(days=i)
+            d_start = fields.Datetime.to_string(dt.combine(d, dt_time.min))
+            d_end = fields.Datetime.to_string(dt.combine(d + timedelta(days=1), dt_time.min))
+            day_domain = [('create_date', '>=', d_start), ('create_date', '<', d_end)]
+
+            day_total = Lead.search_count(day_domain)
+            sparklines['contacts_today'].append(day_total)
+            sparklines['pending_followups'].append(Lead.search_count(
+                day_domain + [('contact_status', '=', 'lead')]
+            ))
+            sparklines['active_leads'].append(Lead.search_count(
+                day_domain + [('contact_status', '=', 'lead')]
+            ))
+            sparklines['bookings_this_week'].append(Lead.search_count(
+                day_domain + [('contact_status', '=', 'booking')]
+            ))
+            day_bookings = Lead.search_count(day_domain + [('contact_status', '=', 'booking')])
+            sparklines['conversion_rate'].append(
+                round(day_bookings / day_total * 100, 1) if day_total else 0
+            )
+            day_spam = Lead.search_count(day_domain + [('contact_status', '=', 'spam')])
+            sparklines['spam_rate'].append(
+                round(day_spam / day_total * 100, 1) if day_total else 0
+            )
+
+        # --- Status breakdown ---
         status_breakdown = []
         for status_val, _label in self._fields['contact_status'].selection:
             count = Lead.search_count([
                 ('contact_status', '=', status_val),
-                ('create_date', '>=', fields.Datetime.to_string(
-                    __import__('datetime').datetime.combine(month_start, __import__('datetime').time.min)
-                )),
+                ('create_date', '>=', period_start_dt),
             ])
             status_breakdown.append({
                 'status': status_val,
+                'label': str(_label),
                 'count': count,
-                'percent': (count / month_total * 100) if month_total else 0,
+                'percent': round(count / period_total * 100, 1) if period_total else 0,
             })
 
-        # Recent contacts
-        recent = Lead.search([], order='create_date desc', limit=10)
+        # --- Channel breakdown ---
+        channel_breakdown = []
+        channel_selections = self._fields['vietnamese_channel'].selection or []
+        for ch_val, ch_label in channel_selections:
+            count = Lead.search_count([
+                ('vietnamese_channel', '=', ch_val),
+                ('create_date', '>=', period_start_dt),
+            ])
+            if count > 0:
+                channel_breakdown.append({
+                    'channel': ch_val,
+                    'label': str(ch_label),
+                    'count': count,
+                })
+        channel_breakdown.sort(key=lambda x: x['count'], reverse=True)
+
+        # --- Recent contacts ---
+        recent = Lead.search([], order='create_date desc', limit=5)
         recent_contacts = []
         for lead in recent:
             time_diff = now - lead.create_date
@@ -2238,23 +2315,61 @@ class HealthLead(models.Model):
                 'phone': lead.phone or '',
                 'contact_status': lead.contact_status or 'active',
                 'province': lead.catchment_province_id.name if lead.catchment_province_id else '',
-                'channel': dict(self._fields['vietnamese_channel'].selection or []).get(
-                    lead.vietnamese_channel, ''
-                ) if lead.vietnamese_channel else '',
+                'channel': dict(channel_selections).get(lead.vietnamese_channel, '') if lead.vietnamese_channel else '',
                 'time_ago': time_ago,
             })
 
+        # --- Upcoming bookings ---
+        upcoming = Lead.search([
+            ('contact_status', '=', 'booking'),
+        ], order='create_date desc', limit=5)
+        upcoming_bookings = []
+        for lead in upcoming:
+            time_diff = now - lead.create_date
+            if time_diff.days > 0:
+                time_ago = f"{time_diff.days}d ago"
+            else:
+                hours = time_diff.seconds // 3600
+                if hours > 0:
+                    time_ago = f"{hours}h ago"
+                else:
+                    mins = time_diff.seconds // 60
+                    time_ago = f"{max(mins, 1)}m ago"
+
+            upcoming_bookings.append({
+                'id': lead.id,
+                'name': lead.name or '',
+                'code': lead.unique_contact_code or '',
+                'contact_status': 'booking',
+                'province': lead.catchment_province_id.name if lead.catchment_province_id else '',
+                'channel': dict(channel_selections).get(lead.vietnamese_channel, '') if lead.vietnamese_channel else '',
+                'time_ago': time_ago,
+            })
+
+        # --- Monthly summary (always current month regardless of period) ---
+        month_start_dt_str = fields.Datetime.to_string(dt.combine(month_start, dt_time.min))
+        monthly_summary = {
+            'new_contacts': Lead.search_count([('create_date', '>=', month_start_dt_str)]),
+            'converted': Lead.search_count([
+                ('contact_status', '=', 'booking'),
+                ('create_date', '>=', month_start_dt_str),
+            ]),
+            'lost': Lead.search_count([
+                ('contact_status', '=', 'lost_booking'),
+                ('create_date', '>=', month_start_dt_str),
+            ]),
+            'active_pipeline': active_leads,
+        }
+
         return {
-            'kpis': {
-                'contacts_today': contacts_today,
-                'pending_followups': pending_followups,
-                'active_leads': active_leads,
-                'bookings_this_week': bookings_this_week,
-                'conversion_rate': conversion_rate,
-                'spam_rate': spam_rate,
-            },
-            'recent_contacts': recent_contacts,
+            'kpis': kpis,
+            'trends': trends,
+            'sparklines': sparklines,
             'status_breakdown': status_breakdown,
+            'channel_breakdown': channel_breakdown,
+            'recent_contacts': recent_contacts,
+            'upcoming_bookings': upcoming_bookings,
+            'monthly_summary': monthly_summary,
         }
 
     @api.model

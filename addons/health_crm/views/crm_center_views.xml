@@ -234,14 +234,48 @@
         <field name="target">current</field>
     </record>
 
-    <!-- ===== Client List (res.partner) ===== -->
+    <!-- ===== CRM Client List View (enhanced, matches Ops style) ===== -->
+    <record id="view_crm_client_list_enhanced" model="ir.ui.view">
+        <field name="name">res.partner.list.crm.clients</field>
+        <field name="model">res.partner</field>
+        <field name="priority">50</field>
+        <field name="arch" type="xml">
+            <list js_class="ops_client_list_view"
+                  default_order="name asc"
+                  class="ops-cl-list">
+                <field name="name" string="Client"/>
+                <field name="patient_code" string="Patient ID" optional="show"/>
+                <field name="mobile" string="Phone" optional="show"/>
+                <field name="email" string="Email" optional="hide"/>
+                <field name="primary_facility_id" string="Facility" optional="hide"/>
+                <field name="last_visit_date" string="Last Visit" optional="show"/>
+                <button name="action_create_fso" type="object"
+                        string="Book" icon="fa-plus"
+                        class="ops-cl-btn ops-cl-btn--book"/>
+                <button name="action_open_recurring_booking" type="object"
+                        string="Recurring" icon="fa-repeat"
+                        class="ops-cl-btn ops-cl-btn--recurring"/>
+                <button name="action_collect_cash" type="object"
+                        string="Collect" icon="fa-money"
+                        class="ops-cl-btn ops-cl-btn--collect"/>
+                <button name="action_register_client_payment" type="object"
+                        string="Payment" icon="fa-credit-card"
+                        class="ops-cl-btn ops-cl-btn--payment"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ===== Client List Action ===== -->
     <record id="action_crm_client_list" model="ir.actions.act_window">
         <field name="name">Clients</field>
         <field name="res_model">res.partner</field>
         <field name="view_mode">list,form</field>
         <field name="domain">[('is_patient', '=', True)]</field>
         <field name="context">{}</field>
-        <field name="target">current</field>
+        <field name="search_view_id" ref="health_base.view_health_patient_search"/>
+        <field name="view_ids" eval="[(5, 0, 0),
+            (0, 0, {'view_mode': 'list', 'view_id': ref('view_crm_client_list_enhanced')}),
+            (0, 0, {'view_mode': 'form'})]"/>
     </record>
 
     <!-- ===== FOLLOW-UP CALENDAR VIEW ===== -->
@@ -259,13 +293,16 @@
                       quick_create="0">
                 <field name="calendar_display_name"/>
                 <field name="phone" widget="phone"/>
-                <field name="contact_status" widget="badge"
+                <field name="contact_status" filters="1" widget="badge"
                        decoration-info="contact_status == 'active'"
                        decoration-success="contact_status == 'booking'"
                        decoration-warning="contact_status == 'lead'"
                        decoration-danger="contact_status in ('lost_booking', 'spam')"/>
                 <field name="clinical_priority"/>
-                <field name="user_id" widget="many2one_avatar_user"/>
+                <field name="user_id" string="Agent" widget="many2one_avatar_user"
+                       avatar_field="avatar_128" filters="1"/>
+                <field name="catchment_province_id" string="Area" filters="1"/>
+                <field name="activity_type_id" invisible="1"/>
             </calendar>
         </field>
     </record>
@@ -321,6 +358,11 @@
                 <filter name="status_lead" string="Leads" domain="[('contact_status', '=', 'lead')]"/>
                 <filter name="status_booking" string="Bookings" domain="[('contact_status', '=', 'booking')]"/>
                 <separator/>
+                <filter name="type_call" string="Calls" domain="[('calendar_display_name', 'ilike', 'Call')]"/>
+                <filter name="type_meeting" string="Meetings" domain="[('calendar_display_name', 'ilike', 'Meeting')]"/>
+                <filter name="type_todo" string="To-Do" domain="[('calendar_display_name', 'ilike', 'To-Do')]"/>
+                <filter name="type_email" string="Emails" domain="[('calendar_display_name', 'ilike', 'Email')]"/>
+                <separator/>
                 <filter name="group_by_status" string="Status" context="{'group_by': 'contact_status'}"/>
                 <filter name="group_by_agent" string="Agent" context="{'group_by': 'user_id'}"/>
                 <filter name="group_by_priority" string="Priority" context="{'group_by': 'clinical_priority'}"/>
@@ -341,6 +383,29 @@
         <field name="domain">[('calendar_date', '!=', False)]</field>
         <field name="context">{}</field>
         <field name="target">current</field>
+    </record>
+
+    <!-- ===== CRM ACTIVITY VIEW (with filter toolbar) ===== -->
+    <record id="view_crm_activity_crm_center" model="ir.ui.view">
+        <field name="name">crm.lead.activity.crm.center</field>
+        <field name="model">crm.lead</field>
+        <field name="priority">50</field>
+        <field name="arch" type="xml">
+            <activity string="Activities" js_class="crm_activity_view">
+                <field name="name"/>
+                <field name="contact_status"/>
+                <templates>
+                    <div t-name="activity-box">
+                        <field name="name" display="full" class="o_text_block"/>
+                        <field name="contact_status" widget="badge"
+                               decoration-info="contact_status == 'active'"
+                               decoration-success="contact_status == 'booking'"
+                               decoration-warning="contact_status == 'lead'"
+                               decoration-danger="contact_status in ('lost_booking', 'spam')"/>
+                    </div>
+                </templates>
+            </activity>
+        </field>
     </record>
 
     <!-- ===== ACTIVITY LIST VIEW ===== -->
@@ -421,14 +486,105 @@
     <record id="action_crm_activity_list" model="ir.actions.act_window">
         <field name="name">Activities</field>
         <field name="res_model">crm.lead</field>
-        <field name="view_mode">list,activity,form</field>
+        <field name="view_mode">activity,list,form</field>
         <field name="view_ids" eval="[(5, 0, 0),
+            (0, 0, {'view_mode': 'activity', 'view_id': ref('view_crm_activity_crm_center')}),
             (0, 0, {'view_mode': 'list', 'view_id': ref('view_crm_activity_list_crm_center')}),
-            (0, 0, {'view_mode': 'activity', 'view_id': ref('crm.crm_lead_view_activity')}),
             (0, 0, {'view_mode': 'form', 'view_id': ref('view_crm_contact_form_crm_center')})]"/>
         <field name="search_view_id" ref="view_crm_activity_search_crm_center"/>
         <field name="domain">[('activity_ids', '!=', False)]</field>
         <field name="context">{'search_default_my_activities': 1}</field>
+        <field name="target">current</field>
+    </record>
+
+    <!-- ===== BOOKINGS CALENDAR ===== -->
+
+    <record id="view_crm_bookings_calendar" model="ir.ui.view">
+        <field name="name">crm.lead.calendar.bookings</field>
+        <field name="model">crm.lead</field>
+        <field name="priority">50</field>
+        <field name="arch" type="xml">
+            <calendar string="Bookings Calendar"
+                      date_start="calendar_date"
+                      date_stop="calendar_date_end"
+                      color="calendar_color"
+                      mode="month"
+                      event_open_popup="1"
+                      quick_create="0">
+                <field name="calendar_display_name"/>
+                <field name="phone" widget="phone"/>
+                <field name="contact_status" widget="badge"
+                       decoration-success="contact_status == 'booking'"/>
+                <field name="clinical_priority"/>
+                <field name="user_id" string="Agent" widget="many2one_avatar_user"
+                       avatar_field="avatar_128" filters="1"/>
+                <field name="catchment_province_id" string="Area" filters="1"/>
+            </calendar>
+        </field>
+    </record>
+
+    <record id="view_crm_bookings_list" model="ir.ui.view">
+        <field name="name">crm.lead.list.bookings</field>
+        <field name="model">crm.lead</field>
+        <field name="priority">50</field>
+        <field name="arch" type="xml">
+            <list string="Bookings" default_order="create_date desc"
+                  decoration-success="contact_status == 'booking'">
+                <field name="unique_contact_code" string="Code" optional="show"/>
+                <field name="name" string="Contact"/>
+                <field name="phone" string="Phone" widget="phone"/>
+                <field name="catchment_province_id" string="Area" optional="show"/>
+                <field name="create_date" string="Created" widget="datetime"/>
+                <field name="contact_status" string="Status" widget="badge"
+                       decoration-success="contact_status == 'booking'"/>
+                <field name="user_id" string="Agent" widget="many2one_avatar_user" optional="show"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_crm_bookings_search" model="ir.ui.view">
+        <field name="name">crm.lead.search.bookings</field>
+        <field name="model">crm.lead</field>
+        <field name="priority">50</field>
+        <field name="arch" type="xml">
+            <search string="Search Bookings">
+                <field name="name" string="Contact"/>
+                <field name="phone"/>
+                <field name="user_id" string="Agent"/>
+                <field name="catchment_province_id" string="Area"/>
+                <separator/>
+                <filter name="today" string="Today"
+                        domain="[('calendar_date', '&gt;=', context_today().strftime('%%Y-%%m-%%d')),
+                                 ('calendar_date', '&lt;', (context_today() + datetime.timedelta(days=1)).strftime('%%Y-%%m-%%d'))]"/>
+                <filter name="this_week" string="This Week"
+                        domain="[('calendar_date', '&gt;=', (context_today() - datetime.timedelta(days=context_today().weekday())).strftime('%%Y-%%m-%%d')),
+                                 ('calendar_date', '&lt;', (context_today() - datetime.timedelta(days=context_today().weekday()) + datetime.timedelta(days=7)).strftime('%%Y-%%m-%%d'))]"/>
+                <filter name="this_month" string="This Month"
+                        domain="[('calendar_date', '&gt;=', context_today().strftime('%%Y-%%m-01'))]"/>
+                <separator/>
+                <filter name="catchment_hcm" string="Ho Chi Minh City"
+                        domain="[('catchment_province_id.name', '=', 'Ho Chi Minh City')]"/>
+                <filter name="catchment_hanoi" string="Hanoi"
+                        domain="[('catchment_province_id.name', '=', 'Hanoi')]"/>
+                <separator/>
+                <filter name="group_by_agent" string="Agent" context="{'group_by': 'user_id'}"/>
+                <filter name="group_by_area" string="Area" context="{'group_by': 'catchment_province_id'}"/>
+                <filter name="group_by_date" string="Date" context="{'group_by': 'calendar_date:day'}"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_crm_bookings_calendar" model="ir.actions.act_window">
+        <field name="name">Bookings</field>
+        <field name="res_model">crm.lead</field>
+        <field name="view_mode">calendar,list,form</field>
+        <field name="view_ids" eval="[(5, 0, 0),
+            (0, 0, {'view_mode': 'calendar', 'view_id': ref('view_crm_bookings_calendar')}),
+            (0, 0, {'view_mode': 'list', 'view_id': ref('view_crm_bookings_list')}),
+            (0, 0, {'view_mode': 'form', 'view_id': ref('view_crm_contact_form_crm_center')})]"/>
+        <field name="search_view_id" ref="view_crm_bookings_search"/>
+        <field name="domain">[('contact_status', '=', 'booking')]</field>
+        <field name="context">{}</field>
         <field name="target">current</field>
     </record>
 

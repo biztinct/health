@@ -2,173 +2,227 @@
 <templates xml:space="preserve">
 
 <t t-name="health_crm.CrmDashboard">
-    <div class="crm-dashboard">
-        <div class="crm-main-content">
+    <div class="cd-dashboard crm-dashboard">
 
-            <!-- HEADER -->
-            <header class="crm-top-header">
-                <div class="crm-header-left">
-                    <h1 class="crm-page-title">CRM Center</h1>
-                    <span class="crm-page-subtitle">Sales &amp; Contact Management</span>
+        <!-- HEADER -->
+        <header class="cd-header">
+            <div class="cd-header-left">
+                <h1 class="cd-title">CRM Center</h1>
+                <span class="cd-subtitle">Sales &amp; Contact Management</span>
+            </div>
+            <div class="cd-header-right">
+                <div class="cd-period-toggle">
+                    <button t-attf-class="cd-period-btn #{state.period === 'today' ? 'active' : ''}"
+                            t-on-click="() => this.onPeriodChange('today')">Today</button>
+                    <button t-attf-class="cd-period-btn #{state.period === 'week' ? 'active' : ''}"
+                            t-on-click="() => this.onPeriodChange('week')">This Week</button>
+                    <button t-attf-class="cd-period-btn #{state.period === 'month' ? 'active' : ''}"
+                            t-on-click="() => this.onPeriodChange('month')">This Month</button>
                 </div>
-                <div class="crm-header-right">
-                    <button class="crm-header-btn btn-primary" t-on-click="openNewContact">
-                        <i class="fa fa-plus"/> New Contact
-                    </button>
-                    <button class="crm-header-btn btn-outline" t-on-click="onRefresh">
-                        <i class="fa fa-refresh"/>
-                    </button>
-                </div>
-            </header>
+                <button class="cd-refresh-btn" t-on-click="onRefresh">
+                    <i class="fa fa-refresh"/>
+                </button>
+            </div>
+        </header>
 
-            <!-- LOADING -->
-            <div t-if="state.isLoading" class="crm-loading">
-                <div class="spinner-border text-primary" role="status"/>
-                <span>Loading dashboard...</span>
+        <!-- LOADING -->
+        <div t-if="state.isLoading" class="cd-loading">
+            <div class="spinner-border text-primary" role="status"/>
+            <span>Loading dashboard...</span>
+        </div>
+
+        <!-- DASHBOARD BODY -->
+        <div t-if="!state.isLoading" class="cd-body">
+
+            <!-- ZONE 1: KPI STRIP -->
+            <div class="cd-kpi-strip">
+                <t t-foreach="kpiCards" t-as="kpi" t-key="kpi.key">
+                    <div class="cd-kpi-card" t-att-data-kpi-key="kpi.key"
+                         t-on-click="() => this.onKpiClick(kpi.key)">
+                        <div class="cd-kpi-icon">
+                            <i t-attf-class="fa #{kpi.icon}"/>
+                        </div>
+                        <div class="cd-kpi-body">
+                            <div class="cd-kpi-value">
+                                <t t-esc="formatKpiValue(kpi.key, kpi.format)"/>
+                            </div>
+                            <div class="cd-kpi-label"><t t-esc="kpi.label"/></div>
+                        </div>
+                        <div class="cd-kpi-right">
+                            <div t-attf-class="cd-kpi-trend #{getTrendClass(kpi.key)}">
+                                <i t-attf-class="fa #{getTrendIcon(kpi.key)}"/>
+                                <span t-esc="getTrendValue(kpi.key)"/>
+                            </div>
+                            <canvas t-ref="'spark_' + kpi.key" class="cd-kpi-sparkline"/>
+                        </div>
+                    </div>
+                </t>
             </div>
 
-            <!-- DASHBOARD BODY -->
-            <div t-if="!state.isLoading" class="crm-dashboard-body">
+            <!-- SUMMARY STRIP -->
+            <div class="cd-summary-strip">
+                <div class="cd-summary-stat">
+                    <div class="cd-summary-icon" style="background: #1A237E;">
+                        <i class="fa fa-users"/>
+                    </div>
+                    <div class="cd-summary-body">
+                        <div class="cd-summary-value" t-esc="state.monthlySummary.new_contacts || 0"/>
+                        <div class="cd-summary-label">New This Month</div>
+                    </div>
+                </div>
+                <div class="cd-summary-stat">
+                    <div class="cd-summary-icon" style="background: #2E7D32;">
+                        <i class="fa fa-check-circle"/>
+                    </div>
+                    <div class="cd-summary-body">
+                        <div class="cd-summary-value" t-esc="state.monthlySummary.converted || 0"/>
+                        <div class="cd-summary-label">Converted</div>
+                    </div>
+                </div>
+                <div class="cd-summary-stat">
+                    <div class="cd-summary-icon" style="background: #C62828;">
+                        <i class="fa fa-times-circle"/>
+                    </div>
+                    <div class="cd-summary-body">
+                        <div class="cd-summary-value" t-esc="state.monthlySummary.lost || 0"/>
+                        <div class="cd-summary-label">Lost</div>
+                    </div>
+                </div>
+                <div class="cd-summary-stat">
+                    <div class="cd-summary-icon" style="background: #FF6F00;">
+                        <i class="fa fa-bullseye"/>
+                    </div>
+                    <div class="cd-summary-body">
+                        <div class="cd-summary-value" t-esc="state.monthlySummary.active_pipeline || 0"/>
+                        <div class="cd-summary-label">Active Pipeline</div>
+                    </div>
+                </div>
+            </div>
 
-                <!-- KPI ROW -->
-                <div class="crm-kpi-row">
-                    <div class="crm-kpi-card kpi-contacts">
-                        <div class="crm-kpi-icon"><i class="fa fa-phone"/></div>
-                        <div class="crm-kpi-value" t-esc="state.kpis.contacts_today || 0"/>
-                        <div class="crm-kpi-label">Contacts Today</div>
+            <!-- ZONE 2: CHARTS -->
+            <div class="cd-zone2">
+                <div class="cd-chart-panel">
+                    <div class="cd-chart-header">
+                        <span>Contact Pipeline</span>
                     </div>
-                    <div class="crm-kpi-card kpi-followups">
-                        <div class="crm-kpi-icon"><i class="fa fa-clock-o"/></div>
-                        <div class="crm-kpi-value" t-esc="state.kpis.pending_followups || 0"/>
-                        <div class="crm-kpi-label">Pending Follow-ups</div>
+                    <div class="cd-chart-body">
+                        <canvas t-ref="donutCanvas" class="cd-chart-canvas"/>
                     </div>
-                    <div class="crm-kpi-card kpi-leads">
-                        <div class="crm-kpi-icon"><i class="fa fa-bullseye"/></div>
-                        <div class="crm-kpi-value" t-esc="state.kpis.active_leads || 0"/>
-                        <div class="crm-kpi-label">Active Leads</div>
+                </div>
+                <div class="cd-chart-panel">
+                    <div class="cd-chart-header">
+                        <span>Source Channels</span>
                     </div>
-                    <div class="crm-kpi-card kpi-bookings">
-                        <div class="crm-kpi-icon"><i class="fa fa-calendar-check-o"/></div>
-                        <div class="crm-kpi-value" t-esc="state.kpis.bookings_this_week || 0"/>
-                        <div class="crm-kpi-label">Bookings This Week</div>
+                    <div class="cd-chart-body">
+                        <canvas t-ref="barCanvas" class="cd-chart-canvas"/>
                     </div>
-                    <div class="crm-kpi-card kpi-conversion">
-                        <div class="crm-kpi-icon"><i class="fa fa-line-chart"/></div>
-                        <div class="crm-kpi-value" t-esc="formatPercent(state.kpis.conversion_rate)"/>
-                        <div class="crm-kpi-label">Conversion Rate</div>
-                        <div class="crm-kpi-sublabel">This month</div>
+                </div>
+            </div>
+
+            <!-- ZONE 3: FEEDS + STATUS (3-Column) -->
+            <div class="cd-zone3">
+
+                <!-- Column 1: Recent Contacts -->
+                <div class="cd-feed-panel">
+                    <div class="cd-panel-header">
+                        <div style="display:flex;align-items:center;">
+                            <div class="cd-panel-icon"><i class="fa fa-clock-o"/></div>
+                            <span>Recent Contacts</span>
+                        </div>
+                        <button class="cd-panel-header-link" t-on-click="openContacts">
+                            View All <i class="fa fa-arrow-right"/>
+                        </button>
                     </div>
-                    <div class="crm-kpi-card kpi-spam">
-                        <div class="crm-kpi-icon"><i class="fa fa-ban"/></div>
-                        <div class="crm-kpi-value" t-esc="formatPercent(state.kpis.spam_rate)"/>
-                        <div class="crm-kpi-label">Spam Rate</div>
-                        <div class="crm-kpi-sublabel">This month</div>
+                    <div class="cd-feed">
+                        <t t-if="state.recentContacts.length === 0">
+                            <div class="cd-feed-empty">
+                                <i class="fa fa-inbox"/>
+                                No recent contacts
+                            </div>
+                        </t>
+                        <t t-foreach="state.recentContacts" t-as="item" t-key="item.id">
+                            <div class="cd-feed-item" t-on-click="() => this.onFeedItemClick(item.id)">
+                                <div class="cd-feed-accent"/>
+                                <div class="cd-feed-dot pulse"
+                                     t-att-style="'background:' + getStatusColor(item.contact_status)"/>
+                                <div class="cd-feed-content">
+                                    <div class="cd-feed-title">
+                                        <t t-if="item.code"><span style="font-family:monospace;font-size:11px;margin-right:6px;opacity:0.6"><t t-esc="item.code"/></span></t>
+                                        <t t-esc="item.name"/>
+                                    </div>
+                                    <div class="cd-feed-subtitle">
+                                        <t t-esc="getStatusLabel(item.contact_status)"/>
+                                        <t t-if="item.channel"> · <t t-esc="item.channel"/></t>
+                                        <t t-if="item.province"> · <t t-esc="item.province"/></t>
+                                    </div>
+                                </div>
+                                <div class="cd-feed-time" t-esc="item.time_ago"/>
+                            </div>
+                        </t>
                     </div>
                 </div>
 
-                <!-- MAIN GRID -->
-                <div class="crm-main-grid">
-
-                    <!-- RECENT CONTACTS PANEL -->
-                    <div class="crm-panel">
-                        <div class="crm-panel-header">
-                            <div class="crm-panel-title"><i class="fa fa-clock-o"/> Recent Contacts</div>
+                <!-- Column 2: Upcoming Bookings -->
+                <div class="cd-feed-panel">
+                    <div class="cd-panel-header">
+                        <div style="display:flex;align-items:center;">
+                            <div class="cd-panel-icon"><i class="fa fa-calendar-check-o"/></div>
+                            <span>Upcoming Bookings</span>
                         </div>
-                        <div class="crm-panel-body">
-                            <t t-if="state.recentContacts.length === 0">
-                                <div class="crm-empty-state">
-                                    <i class="fa fa-inbox"/>
-                                    <h4>No contacts yet</h4>
-                                    <p>Create your first contact to get started.</p>
-                                </div>
-                            </t>
-                            <t t-foreach="state.recentContacts" t-as="contact" t-key="contact.id">
-                                <div class="crm-contact-card" t-on-click="() => this.openContact(contact.id)">
-                                    <div class="crm-contact-card-top">
-                                        <div>
-                                            <span class="crm-contact-code" t-esc="contact.code"/>
-                                            <span class="crm-contact-name" t-esc="contact.name"/>
-                                        </div>
-                                        <span t-attf-class="crm-status-badge #{getStatusClass(contact.contact_status)}">
-                                            <t t-esc="getStatusLabel(contact.contact_status)"/>
-                                        </span>
+                        <button class="cd-panel-header-link" t-on-click="openBookings">
+                            View All <i class="fa fa-arrow-right"/>
+                        </button>
+                    </div>
+                    <div class="cd-feed">
+                        <t t-if="state.upcomingBookings.length === 0">
+                            <div class="cd-feed-empty">
+                                <i class="fa fa-calendar-o"/>
+                                No upcoming bookings
+                            </div>
+                        </t>
+                        <t t-foreach="state.upcomingBookings" t-as="item" t-key="item.id">
+                            <div class="cd-feed-item" t-on-click="() => this.onFeedItemClick(item.id)">
+                                <div class="cd-feed-accent"/>
+                                <div class="cd-feed-dot" style="background: #2E7D32;"/>
+                                <div class="cd-feed-content">
+                                    <div class="cd-feed-title">
+                                        <t t-if="item.code"><span style="font-family:monospace;font-size:11px;margin-right:6px;opacity:0.6"><t t-esc="item.code"/></span></t>
+                                        <t t-esc="item.name"/>
                                     </div>
-                                    <div class="crm-contact-card-details">
-                                        <t t-if="contact.phone">
-                                            <span class="crm-contact-detail"><i class="fa fa-phone"/> <t t-esc="contact.phone"/></span>
-                                        </t>
-                                        <t t-if="contact.province">
-                                            <span class="crm-contact-detail"><i class="fa fa-map-marker"/> <t t-esc="contact.province"/></span>
-                                        </t>
-                                        <t t-if="contact.channel">
-                                            <span class="crm-contact-detail"><i class="fa fa-hashtag"/> <t t-esc="contact.channel"/></span>
-                                        </t>
-                                        <span class="crm-contact-detail"><i class="fa fa-clock-o"/> <t t-esc="contact.time_ago"/></span>
+                                    <div class="cd-feed-subtitle">
+                                        <t t-if="item.channel"><t t-esc="item.channel"/></t>
+                                        <t t-if="item.province"> · <t t-esc="item.province"/></t>
                                     </div>
                                 </div>
-                            </t>
-                        </div>
-                        <div class="crm-panel-footer">
-                            <button class="crm-footer-link" t-on-click="openContacts">View All Contacts <i class="fa fa-arrow-right"/></button>
-                        </div>
+                                <div class="cd-feed-time" t-esc="item.time_ago"/>
+                            </div>
+                        </t>
                     </div>
+                </div>
 
-                    <!-- QUICK ACTIONS + STATUS BREAKDOWN -->
-                    <div class="crm-side-panels">
-                        <!-- Quick Actions -->
-                        <div class="crm-panel crm-quick-actions">
-                            <div class="crm-panel-header">
-                                <div class="crm-panel-title"><i class="fa fa-bolt"/> Quick Actions</div>
+                <!-- Column 3: Contact Status Breakdown -->
+                <div class="cd-stats-card">
+                    <div class="cd-stats-title">Contact Status</div>
+                    <t t-foreach="state.statusBreakdown" t-as="item" t-key="item.status">
+                        <t t-if="item.count > 0">
+                            <div class="cd-stats-row">
+                                <div class="cd-stats-dot"
+                                     t-att-style="'background:' + getStatusColor(item.status)"/>
+                                <span class="cd-stats-label" t-esc="item.label || item.status"/>
+                                <div class="cd-stats-bar">
+                                    <div class="cd-stats-bar-fill"
+                                         t-att-style="'width:' + (item.percent || 0) + '%;background:' + getStatusColor(item.status)"/>
+                                </div>
+                                <span class="cd-stats-count" t-esc="item.count"/>
                             </div>
-                            <div class="crm-panel-body">
-                                <button class="crm-action-tile" t-on-click="openNewContact">
-                                    <i class="fa fa-plus-circle"/>
-                                    <span>New Contact</span>
-                                </button>
-                                <button class="crm-action-tile" t-on-click="openContacts">
-                                    <i class="fa fa-list"/>
-                                    <span>All Contacts</span>
-                                </button>
-                                <button class="crm-action-tile" t-on-click="openCalendar">
-                                    <i class="fa fa-calendar"/>
-                                    <span>Calendar</span>
-                                </button>
-                                <button class="crm-action-tile" t-on-click="openActivities">
-                                    <i class="fa fa-tasks"/>
-                                    <span>Activities</span>
-                                </button>
-                            </div>
-                        </div>
+                        </t>
+                    </t>
+                </div>
 
-                        <!-- Status Breakdown -->
-                        <div class="crm-panel crm-status-breakdown">
-                            <div class="crm-panel-header">
-                                <div class="crm-panel-title"><i class="fa fa-pie-chart"/> Contact Status</div>
-                                <span class="crm-panel-subtitle">This month</span>
-                            </div>
-                            <div class="crm-panel-body">
-                                <t t-foreach="state.statusBreakdown" t-as="item" t-key="item.status">
-                                    <div class="crm-status-row">
-                                        <div class="crm-status-bar-label">
-                                            <span class="crm-status-dot" t-att-style="'background:' + getStatusColor(item.status)"/>
-                                            <span t-esc="getStatusLabel(item.status)"/>
-                                        </div>
-                                        <div class="crm-status-bar-track">
-                                            <div class="crm-status-bar-fill"
-                                                 t-att-style="'width:' + (item.percent || 0) + '%; background:' + getStatusColor(item.status)"/>
-                                        </div>
-                                        <span class="crm-status-bar-count" t-esc="item.count"/>
-                                    </div>
-                                </t>
-                            </div>
-                        </div>
-                    </div>
+            </div>
 
-                </div><!-- /crm-main-grid -->
+        </div>
 
-            </div><!-- /crm-dashboard-body -->
-
-        </div><!-- /crm-main-content -->
     </div>
 </t>
 

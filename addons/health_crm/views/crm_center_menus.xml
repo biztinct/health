@@ -63,8 +63,14 @@
               action="action_crm_client_list"
               sequence="25"/>
 
+    <menuitem id="menu_crm_bookings"
+              name="Bookings"
+              parent="menu_crm_center_root"
+              action="action_crm_bookings_calendar"
+              sequence="27"/>
+
     <menuitem id="menu_crm_calendar"
-              name="Calendar"
+              name="Follow-up Calendar"
               parent="menu_crm_center_root"
               action="action_crm_followup_calendar"
               sequence="30"/>

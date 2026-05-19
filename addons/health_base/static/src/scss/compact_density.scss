@@ -1,0 +1,525 @@
+// ============================================================================
+// COMPACT DENSITY LAYER
+// Enterprise-grade UI density for laptop/desktop screens.
+// Targets Odoo native classes + our custom health_* components.
+// Inspired by Salesforce Compact, Material Design density -2, Linear/Notion.
+// ============================================================================
+
+// ---------------------------------------------------------------------------
+// 1. GLOBAL TYPOGRAPHY — 13px base, tighter line-height
+// ---------------------------------------------------------------------------
+.o_web_client {
+    font-size: 13px;
+    line-height: 1.45;
+}
+
+// ---------------------------------------------------------------------------
+// 2. FORM VIEWS — compact inputs, labels, spacing
+// ---------------------------------------------------------------------------
+.o_form_view {
+    --fieldWidget-margin-bottom: 2px;
+
+    .o_form_sheet {
+        --formView-sheet-padding-y: 12px;
+        --formView-sheet-padding-x: 16px;
+        --formView-sheet-padding-y-md: 12px;
+        --formView-sheet-padding-y-lg: 14px;
+        --formView-sheet-padding-x-lg: 16px;
+        --formView-sheet-padding-y-xxl: 14px;
+        --formView-sheet-padding-x-xxl: 16px;
+    }
+
+    .o_inner_group {
+        --inner-group-row-gap: 2px;
+        gap: var(--inner-group-row-gap) 12px;
+        margin-bottom: 4px;
+    }
+
+    .o_form_label {
+        font-size: 11.5px;
+        margin-bottom: 1px;
+    }
+
+    .o_group .o_form_label {
+        font-size: 11.5px;
+    }
+
+    .o_horizontal_separator {
+        font-size: 13px;
+        padding-bottom: 4px;
+        margin-top: 6px;
+        margin-bottom: 4px;
+    }
+
+    .o_notebook > .nav.nav-tabs {
+        .nav-item .nav-link {
+            font-size: 12px;
+            padding: 6px 12px;
+        }
+    }
+
+    .o_group .o_wrap_label .o_form_label {
+        font-size: 12px;
+    }
+
+    .oe_title {
+        .o_field_widget input,
+        .o_field_widget textarea {
+            font-size: 20px;
+        }
+    }
+
+    .o_form_statusbar {
+        min-height: auto;
+        padding-top: 4px;
+        padding-bottom: 4px;
+
+        .o_statusbar_status .o_arrow_button {
+            font-size: 12px;
+            padding-top: 4px;
+            padding-bottom: 4px;
+        }
+    }
+}
+
+// ---------------------------------------------------------------------------
+// 3. FORM CONTROLS — 32px inputs
+// ---------------------------------------------------------------------------
+.o_web_client {
+    .o_field_widget input.o_input,
+    .o_field_widget .o_input,
+    .o_field_widget select.o_input,
+    .o_field_widget textarea.o_input {
+        font-size: 13px;
+        padding: 3px 6px;
+        min-height: 30px;
+    }
+
+    .form-control,
+    .form-select {
+        font-size: 13px;
+        padding: 3px 8px;
+        min-height: 30px;
+    }
+
+    .form-control-sm {
+        font-size: 12px;
+        padding: 2px 6px;
+        min-height: 26px;
+    }
+}
+
+// ---------------------------------------------------------------------------
+// 4. LIST VIEWS — 36px rows, tight cells
+// ---------------------------------------------------------------------------
+.o_list_renderer {
+    .o_list_table {
+        font-size: 13px;
+
+        thead th {
+            font-size: 11.5px;
+            padding-top: 6px;
+            padding-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            font-weight: 600;
+        }
+
+        tbody td {
+            padding-top: 5px;
+            padding-bottom: 5px;
+        }
+
+        tfoot td {
+            padding-top: 4px;
+            padding-bottom: 4px;
+            font-size: 12px;
+        }
+    }
+
+    .o_list_view & .o_list_table {
+        thead th {
+            padding-top: 6px;
+            padding-bottom: 6px;
+        }
+    }
+}
+
+// ---------------------------------------------------------------------------
+// 5. KANBAN VIEWS — tighter cards
+// ---------------------------------------------------------------------------
+.o_kanban_view {
+    --KanbanRenderer-horizontal-padding: 8px;
+    --KanbanRenderer-vertical-padding: 4px;
+
+    .o_kanban_record {
+        padding: 8px 10px;
+        font-size: 13px;
+        margin-bottom: 4px;
+    }
+
+    .o_kanban_header {
+        font-size: 13px;
+        padding: 6px 8px;
+    }
+}
+
+// ---------------------------------------------------------------------------
+// 6. CONTROL PANEL & BREADCRUMBS — smaller search bar + nav
+// ---------------------------------------------------------------------------
+.o_control_panel {
+    padding: 4px 8px;
+    min-height: auto;
+
+    .breadcrumb {
+        font-size: 13px;
+        margin-bottom: 0;
+    }
+
+    .breadcrumb-item + .breadcrumb-item::before {
+        font-size: 11px;
+    }
+
+    .o_cp_searchview {
+        .o_searchview_input {
+            font-size: 13px;
+            padding: 2px 4px;
+        }
+    }
+}
+
+.o_control_panel_main {
+    gap: 4px;
+}
+
+// ---------------------------------------------------------------------------
+// 7. BUTTONS — compact padding
+// ---------------------------------------------------------------------------
+.o_web_client {
+    .btn {
+        font-size: 13px;
+        padding: 4px 12px;
+    }
+
+    .btn-sm {
+        font-size: 12px;
+        padding: 2px 8px;
+    }
+
+    .btn-lg {
+        font-size: 14px;
+        padding: 6px 16px;
+    }
+
+    .o_form_view .o_form_statusbar .o_statusbar_buttons > .btn {
+        font-size: 13px;
+        padding: 4px 12px;
+    }
+}
+
+// ---------------------------------------------------------------------------
+// 8. MODALS & DIALOGS — less chrome
+// ---------------------------------------------------------------------------
+.o_dialog .modal-content {
+    .modal-header {
+        padding: 10px 16px;
+
+        .modal-title {
+            font-size: 15px;
+        }
+    }
+
+    .modal-body {
+        padding: 12px 16px;
+    }
+
+    .modal-footer {
+        padding: 8px 16px;
+    }
+}
+
+// Wizard-style dialogs (our custom OWL wizards)
+.o_dialog .modal-content .o_form_view {
+    .o_form_sheet {
+        --formView-sheet-padding-y: 10px;
+        --formView-sheet-padding-x: 12px;
+    }
+}
+
+// ---------------------------------------------------------------------------
+// 9. NAV TABS — compact tab bar
+// ---------------------------------------------------------------------------
+.o_web_client {
+    .nav-tabs .nav-link {
+        font-size: 13px;
+        padding: 6px 14px;
+    }
+}
+
+// ---------------------------------------------------------------------------
+// 10. CHATTER — compact messages
+// ---------------------------------------------------------------------------
+.o_web_client {
+    .o-mail-Thread .o-mail-Message {
+        padding: 6px 8px;
+        font-size: 13px;
+    }
+
+    .o-mail-Chatter {
+        font-size: 13px;
+    }
+
+    .o-mail-Chatter-topbar {
+        padding: 4px 0;
+        gap: 4px;
+    }
+}
+
+// ---------------------------------------------------------------------------
+// 11. SIDEBAR (our custom center sidebars)
+// ---------------------------------------------------------------------------
+.ops-sidebar,
+.crm-sidebar {
+    font-size: 13px;
+
+    .ops-nav-item,
+    .crm-nav-item {
+        padding: 7px 16px;
+        font-size: 12.5px;
+    }
+
+    .ops-sidebar-section-label,
+    .crm-sidebar-section-label {
+        font-size: 10px;
+    }
+}
+
+// ---------------------------------------------------------------------------
+// 12. DASHBOARD CARDS (our cd-* system) — slight tightening
+// ---------------------------------------------------------------------------
+.cd-dashboard {
+    .cd-header {
+        padding: 14px 24px;
+    }
+
+    .cd-kpi-strip {
+        gap: 10px;
+        margin-bottom: 14px;
+    }
+
+    .cd-kpi-card {
+        padding: 10px 12px;
+        min-height: 76px;
+    }
+
+    .cd-kpi-value {
+        font-size: 20px;
+    }
+
+    .cd-kpi-label {
+        font-size: 10px;
+    }
+
+    .cd-zone2 {
+        gap: 14px;
+        margin-bottom: 14px;
+    }
+
+    .cd-chart-panel {
+        padding: 12px 14px;
+    }
+
+    .cd-zone3 {
+        gap: 14px;
+    }
+
+    .cd-feed-panel,
+    .cd-actions-card {
+        padding: 12px 14px;
+    }
+
+    .cd-feed-item {
+        padding: 7px 10px;
+    }
+}
+
+// ---------------------------------------------------------------------------
+// 13. OUR CUSTOM WIZARDS (new contact, booking, etc.)
+// ---------------------------------------------------------------------------
+.nc-wizard,
+.booking-wizard,
+.recurring-booking-wizard {
+    font-size: 13px;
+
+    label {
+        font-size: 11.5px;
+    }
+
+    input.form-control,
+    select.form-select,
+    textarea.form-control {
+        font-size: 13px;
+        padding: 4px 8px;
+        min-height: 32px;
+    }
+}
+
+// ---------------------------------------------------------------------------
+// 14. OPS CLIENT PROFILE — tighter header + sections
+// ---------------------------------------------------------------------------
+.ops-client-profile {
+    .ops-profile-header {
+        padding: 14px 20px;
+    }
+
+    .ops-stats-grid {
+        gap: 0;
+    }
+
+    .ops-stat-card {
+        padding: 10px 12px;
+    }
+
+    .ops-stat-value {
+        font-size: 20px;
+    }
+
+    .ops-stat-label {
+        font-size: 10px;
+    }
+
+    .ops-profile-section-title {
+        font-size: 13px;
+        padding: 8px 12px;
+    }
+}
+
+// ---------------------------------------------------------------------------
+// 15. ACTIVITY VIEW — compact toolbar
+// ---------------------------------------------------------------------------
+.crm-activity-toolbar {
+    padding: 6px 12px;
+
+    .crm-filter-btn {
+        padding: 4px 10px;
+        font-size: 11.5px;
+    }
+}
+
+// ---------------------------------------------------------------------------
+// 16. OPS BOOKING QUEUE / LIST — tighter rows
+// ---------------------------------------------------------------------------
+.ops-client-list-view {
+    .ops-tab-bar .ops-tab {
+        font-size: 12.5px;
+        padding: 6px 14px;
+    }
+}
+
+// ---------------------------------------------------------------------------
+// 17. CALENDAR VIEW — compact header
+// ---------------------------------------------------------------------------
+.o_calendar_view {
+    .o_calendar_header {
+        padding: 4px 8px;
+    }
+
+    .fc .fc-toolbar {
+        font-size: 13px;
+    }
+}
+
+// ---------------------------------------------------------------------------
+// 18. SEARCH PANEL (left sidebar filters)
+// ---------------------------------------------------------------------------
+.o_search_panel {
+    font-size: 13px;
+
+    .o_search_panel_section_header {
+        font-size: 11.5px;
+        padding: 6px 12px;
+    }
+
+    .o_search_panel_label {
+        padding: 3px 12px;
+    }
+
+    .o_search_panel_category_value,
+    .o_search_panel_filter_value {
+        font-size: 12.5px;
+    }
+}
+
+// ---------------------------------------------------------------------------
+// 19. PAGER — smaller
+// ---------------------------------------------------------------------------
+.o_pager {
+    font-size: 12px;
+    gap: 2px;
+
+    .o_pager_value {
+        font-size: 12px;
+    }
+}
+
+// ---------------------------------------------------------------------------
+// 20. BADGES & TAGS — tighter
+// ---------------------------------------------------------------------------
+.o_web_client {
+    .badge {
+        font-size: 11px;
+        padding: 2px 6px;
+    }
+
+    .o_tag {
+        font-size: 12px;
+        padding: 1px 6px;
+    }
+}
+
+// ---------------------------------------------------------------------------
+// RESPONSIVE: Revert to comfortable density on small touch devices
+// ---------------------------------------------------------------------------
+@media (max-width: 768px) and (pointer: coarse) {
+    .o_web_client {
+        font-size: 14px;
+    }
+
+    .o_list_renderer .o_list_table {
+        font-size: 14px;
+
+        thead th {
+            font-size: 12px;
+            padding-top: 8px;
+            padding-bottom: 8px;
+        }
+
+        tbody td {
+            padding-top: 8px;
+            padding-bottom: 8px;
+        }
+    }
+
+    .o_form_view {
+        .o_form_label {
+            font-size: 13px;
+        }
+
+        .o_inner_group {
+            --inner-group-row-gap: 6px;
+        }
+    }
+
+    .o_web_client {
+        .form-control,
+        .form-select {
+            font-size: 16px;
+            min-height: 40px;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            font-size: 14px;
+        }
+    }
+}

@@ -214,6 +214,7 @@ class CrmNewContact extends Component {
                 res_id: this.state.duplicateLeadId,
                 views: [[false, "form"]],
                 target: "current",
+                context: { form_view_ref: "health_crm.view_crm_contact_form_crm_center" },
             });
         }
     }
@@ -262,6 +263,7 @@ class CrmNewContact extends Component {
                     res_id: result.res_id,
                     views: [[false, "form"]],
                     target: "current",
+                    context: { form_view_ref: "health_crm.view_crm_contact_form_crm_center" },
                 }, { clearBreadcrumbs: true });
             } else {
                 this.action.doAction(

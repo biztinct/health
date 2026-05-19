@@ -104,12 +104,9 @@ export class CrmContactFormController extends FormController {
     // Actions
     actionBook() {
         const resId = this.model.root.resId;
-        this.actionService.doAction({
-            type: "ir.actions.client",
-            tag: "crm_booking_wizard",
-            name: _t("Create Booking"),
-            context: { active_id: resId },
-        }, { clearBreadcrumbs: true });
+        this.orm.call("crm.lead", "action_convert_to_booking", [[resId]]).then((action) => {
+            if (action) this.actionService.doAction(action);
+        });
     }
 
     actionLogLead() {

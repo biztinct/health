@@ -20,8 +20,10 @@
                t-on-click="() => this.navigateTo('contacts')"><i class="fa fa-phone"/> Contacts</a>
             <a t-attf-class="ops-nav-item #{isActive('clients') ? 'active' : ''}"
                t-on-click="() => this.navigateTo('clients')"><i class="fa fa-address-book-o"/> Clients</a>
+            <a t-attf-class="ops-nav-item #{isActive('bookings') ? 'active' : ''}"
+               t-on-click="() => this.navigateTo('bookings')"><i class="fa fa-calendar-check-o"/> Bookings</a>
             <a t-attf-class="ops-nav-item #{isActive('calendar') ? 'active' : ''}"
-               t-on-click="() => this.navigateTo('calendar')"><i class="fa fa-calendar"/> Calendar</a>
+               t-on-click="() => this.navigateTo('calendar')"><i class="fa fa-calendar"/> Follow-up Calendar</a>
             <div class="ops-nav-section-label">Reports</div>
             <a t-attf-class="ops-nav-item #{isActive('activities') ? 'active' : ''}"
                t-on-click="() => this.navigateTo('activities')"><i class="fa fa-tasks"/> Activities</a>

@@ -15,6 +15,7 @@ const XMLID_TO_PAGE = {
     "health_crm.action_crm_contact_list_native": "contacts",
     "health_crm.action_crm_contact_form_native": "contacts",
     "health_crm.action_crm_client_list": "clients",
+    "health_crm.action_crm_bookings_calendar": "bookings",
     "health_crm.action_crm_followup_calendar": "calendar",
     "health_crm.action_crm_activity_list": "activities",
 };
@@ -24,6 +25,7 @@ const NAV_ACTIONS = {
     new_contact: "health_crm.action_crm_new_contact",
     contacts: "health_crm.action_crm_contact_list_native",
     clients: "health_crm.action_crm_client_list",
+    bookings: "health_crm.action_crm_bookings_calendar",
     calendar: "health_crm.action_crm_followup_calendar",
     activities: "health_crm.action_crm_activity_list",
     settings: "health_crm.action_crm_settings",
@@ -75,6 +77,11 @@ export class CrmSidebar extends Component {
             this.state.activePage = viewType === "calendar" ? "calendar" : "contacts";
             return;
         }
+
+        if (action.type === "ir.actions.act_window" && action.res_model === "res.partner") {
+            this.state.activePage = "clients";
+            return;
+        }
     }
 
     navigateTo(page) {
@@ -96,7 +103,7 @@ export class CrmSidebar extends Component {
 
 sidebarRegistry.add("crm_center", {
     actionTags: new Set(Object.keys(TAG_TO_PAGE)),
-    windowModels: new Set(["crm.lead"]),
+    windowModels: new Set(["crm.lead", "res.partner"]),
     actionXmlIds: new Set(Object.keys(XMLID_TO_PAGE)),
     Component: CrmSidebar,
 });

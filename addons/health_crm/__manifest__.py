@@ -135,6 +135,9 @@
             'health_crm/static/src/js/crm_activity_list.js',
             'health_crm/static/src/xml/crm_activity_list.xml',
             'health_crm/static/src/scss/crm_activity_list.scss',
+            'health_crm/static/src/js/crm_activity_view.js',
+            'health_crm/static/src/xml/crm_activity_view.xml',
+            'health_crm/static/src/scss/crm_activity_view.scss',
         ],
     },
     # 'demo': [
