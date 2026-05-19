@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+<t t-name="health_fieldservice.ProductCatalogDialog">
+    <div class="pcd-overlay" t-on-click="onClose">
+        <div class="pcd-dialog" t-on-click.stop="">
+            <!-- Header -->
+            <div class="pcd-header">
+                <div class="pcd-header-left">
+                    <i class="fa fa-shopping-cart"/> Add Services
+                </div>
+                <div class="pcd-header-right">
+                    <div class="pcd-search-wrap">
+                        <i class="fa fa-search pcd-search-icon"/>
+                        <input type="text" class="pcd-search-input"
+                               placeholder="Search..."
+                               t-att-value="state.search"
+                               t-on-input="onSearchInput"/>
+                    </div>
+                    <button class="pcd-close-btn" t-on-click="onClose">
+                        <i class="fa fa-times"/>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Body -->
+            <div class="pcd-body">
+                <!-- Sidebar -->
+                <div class="pcd-sidebar">
+                    <div class="pcd-sidebar-section">CATEGORIES</div>
+                    <a t-attf-class="pcd-cat-item #{!state.activeCategoryId ? 'active' : ''}"
+                       t-on-click="() => this.setCategory(false)">
+                        <span>All</span>
+                        <span class="pcd-cat-count" t-esc="props.products.length"/>
+                    </a>
+                    <t t-foreach="props.categories" t-as="cat" t-key="cat.id">
+                        <a t-attf-class="pcd-cat-item #{state.activeCategoryId === cat.id ? 'active' : ''}"
+                           t-on-click="() => this.setCategory(cat.id)">
+                            <span t-esc="cat.name"/>
+                            <span class="pcd-cat-count" t-esc="cat.product_count"/>
+                        </a>
+                    </t>
+                </div>
+
+                <!-- Grid -->
+                <div class="pcd-main">
+                    <div class="pcd-grid">
+                        <t t-foreach="filteredProducts" t-as="prod" t-key="prod.id">
+                            <div t-attf-class="pcd-card #{isSelected(prod.id) ? 'selected' : ''}">
+                                <div class="pcd-card-body">
+                                    <div class="pcd-card-name" t-esc="prod.name"/>
+                                    <div class="pcd-card-meta">
+                                        <span class="pcd-card-price" t-esc="formatPrice(prod.price)"/>
+                                        <span class="pcd-card-code" t-if="prod.default_code" t-esc="prod.default_code"/>
+                                    </div>
+                                </div>
+                                <div class="pcd-card-footer">
+                                    <t t-if="!isSelected(prod.id)">
+                                        <button class="pcd-add-btn" t-on-click="() => this.addProduct(prod)">
+                                            <i class="fa fa-shopping-cart"/> Add
+                                        </button>
+                                    </t>
+                                    <t t-else="">
+                                        <div class="pcd-qty-row">
+                                            <button class="pcd-qty-btn" t-on-click="() => this.decreaseQty(prod.id)">
+                                                <i class="fa fa-minus"/>
+                                            </button>
+                                            <span class="pcd-qty-value" t-esc="getQty(prod.id)"/>
+                                            <button class="pcd-qty-btn" t-on-click="() => this.increaseQty(prod.id)">
+                                                <i class="fa fa-plus"/>
+                                            </button>
+                                            <button class="pcd-remove-btn" t-on-click="() => this.removeProduct(prod.id)">
+                                                <i class="fa fa-trash-o"/>
+                                            </button>
+                                        </div>
+                                    </t>
+                                </div>
+                            </div>
+                        </t>
+                    </div>
+                    <div class="pcd-empty" t-if="filteredProducts.length === 0">
+                        <i class="fa fa-search"/> No products found
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div class="pcd-footer">
+                <div class="pcd-footer-summary" t-if="selectedCount > 0">
+                    <span t-esc="selectedCount"/> item(s) — <span t-esc="formatPrice(selectedTotal)"/>
+                </div>
+                <button class="pcd-done-btn" t-on-click="onDone">
+                    <i class="fa fa-check"/> Done
+                    <t t-if="selectedCount > 0"> — <t t-esc="selectedCount"/> selected</t>
+                </button>
+            </div>
+        </div>
+    </div>
+</t>
+
+</templates>

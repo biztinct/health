@@ -124,8 +124,11 @@
                                               decoration-info="state == 'confirmed'"
                                               decoration-warning="state == 'in_progress'"
                                               decoration-muted="state == 'cancelled'"
-                                              default_order="scheduled_datetime desc"
-                                              open_form_view="True">
+                                              default_order="scheduled_datetime desc">
+                                            <button name="action_open_ops_booking_detail" type="object"
+                                                    string="" icon="fa-external-link"
+                                                    class="btn btn-link p-0 text-primary"
+                                                    title="Open Booking"/>
                                             <field name="name" string="Booking #"/>
                                             <field name="scheduled_datetime" string="Scheduled" widget="datetime"/>
                                             <field name="service_type" string="Service"/>

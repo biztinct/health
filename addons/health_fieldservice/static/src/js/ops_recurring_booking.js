@@ -4,14 +4,18 @@ import { registry } from "@web/core/registry";
 import { Component, useState, onWillStart } from "@odoo/owl";
 import { useService } from "@web/core/utils/hooks";
 import { _t } from "@web/core/l10n/translation";
+import { ProductCatalogDialog } from "./product_catalog_dialog";
 
 class OpsRecurringBooking extends Component {
     static template = "health_fieldservice.OpsRecurringBooking";
+
+    static components = { ProductCatalogDialog };
 
     setup() {
         this.orm = useService("orm");
         this.action = useService("action");
         this.notification = useService("notification");
+        this.dialogService = useService("dialog");
 
         const context = this.props.action && this.props.action.context || {};
         this.patientId = context.active_id || context.default_patient_id || false;
@@ -44,9 +48,15 @@ class OpsRecurringBooking extends Component {
             // Products & Packages
             products: [],
             selectedProducts: [],
-            productSearch: '',
+            productCategories: [],
             packageId: false,
             packages: [],
+
+            // Assigned staff
+            assignedStaffIds: [],
+
+            // Validation
+            validationErrors: [],
 
             // Confirmation modal
             showConfirmation: false,
@@ -83,6 +93,7 @@ class OpsRecurringBooking extends Component {
             this.state.preferredStaffId = data.preferred_staff_id || false;
             this.state.doctorList = data.doctor_list || [];
             this.state.products = data.products || [];
+            this.state.productCategories = data.product_categories || [];
             if (data.facilities.length > 0 && !this.state.facilityId) {
                 this.state.facilityId = data.facilities[0].id;
             }
@@ -179,18 +190,42 @@ class OpsRecurringBooking extends Component {
     onNotesChange(ev) { this.state.notes = ev.target.value; }
     onStaffChange(ev) { this.state.staffId = parseInt(ev.target.value) || false; }
     onDoctorChange(ev) { this.state.doctorId = parseInt(ev.target.value) || false; }
-    onPackageChange(ev) { this.state.packageId = parseInt(ev.target.value) || false; }
-    onProductSearchChange(ev) { this.state.productSearch = ev.target.value; }
 
-    // Product catalog
-    get filteredProducts() {
-        const q = (this.state.productSearch || '').toLowerCase();
-        if (!q) return this.state.products;
-        return this.state.products.filter(p =>
-            (p.name || '').toLowerCase().includes(q) ||
-            (p.default_code || '').toLowerCase().includes(q) ||
-            (p.categ_name || '').toLowerCase().includes(q)
-        );
+    isStaffAssigned(staffId) {
+        return this.state.assignedStaffIds.includes(staffId);
+    }
+
+    toggleAssignedStaff(staffId) {
+        const idx = this.state.assignedStaffIds.indexOf(staffId);
+        if (idx >= 0) {
+            this.state.assignedStaffIds.splice(idx, 1);
+            if (this.state.staffId === staffId) {
+                this.state.staffId = this.state.assignedStaffIds.length > 0
+                    ? this.state.assignedStaffIds[0]
+                    : false;
+            }
+        } else {
+            this.state.assignedStaffIds.push(staffId);
+            if (!this.state.staffId) {
+                this.state.staffId = staffId;
+            }
+        }
+    }
+
+    get assignedStaffOptions() {
+        if (this.state.assignedStaffIds.length === 0) return this.state.staffList;
+        return this.state.staffList.filter(s => this.state.assignedStaffIds.includes(s.id));
+    }
+    onPackageChange(ev) { this.state.packageId = parseInt(ev.target.value) || false; }
+    openServiceCatalog() {
+        this.dialogService.add(ProductCatalogDialog, {
+            products: this.state.products,
+            categories: this.state.productCategories,
+            selected: this.state.selectedProducts.map(p => ({ ...p })),
+            onDone: (selections) => {
+                this.state.selectedProducts.splice(0, this.state.selectedProducts.length, ...selections);
+            },
+        });
     }
 
     get hasProducts() {
@@ -237,8 +272,9 @@ class OpsRecurringBooking extends Component {
 
     onAddProductSelect(ev) {
         this.addProduct(ev.target.value);
-        ev.target.value = '';
+        ev.target.value = "";
     }
+
 
     get selectedStaffName() {
         const s = this.state.staffList.find(x => x.id === this.state.staffId);
@@ -289,22 +325,20 @@ class OpsRecurringBooking extends Component {
     async createBookings() {
         if (this.state.isCreating) return;
 
-        if (!this.state.staffId) {
-            this.notification.add(_t("Please select a lead staff"), { type: "warning" });
+        const missing = [];
+        if (!this.state.facilityId) missing.push('Facility');
+        if (!this.hasServiceOrPackage) missing.push('Services or Package (add via Quote section)');
+        if (!this.state.selectedDays.length && this.state.pattern !== 'daily' && this.state.pattern !== 'monthly') {
+            missing.push('Repeat on days (select at least one day)');
+        }
+        if (!this.state.startDate) missing.push('Start Date');
+        if (!this.state.preview.length) missing.push('No bookings to create (check schedule settings)');
+
+        if (missing.length > 0) {
+            this.state.validationErrors = missing;
             return;
         }
-        if (!this.hasServiceOrPackage) {
-            this.notification.add(_t("Please select products or a package"), { type: "warning" });
-            return;
-        }
-        if (!this.state.selectedDays.length) {
-            this.notification.add(_t("Please select at least one day"), { type: "warning" });
-            return;
-        }
-        if (!this.state.facilityId) {
-            this.notification.add(_t("Please select a facility"), { type: "warning" });
-            return;
-        }
+        this.state.validationErrors = [];
 
         this.state.isCreating = true;
         try {
@@ -332,6 +366,7 @@ class OpsRecurringBooking extends Component {
                     staff_id: this.state.staffId || false,
                     doctor_id: this.state.doctorId || false,
                     package_id: this.state.packageId || false,
+                    assigned_staff_ids: this.state.assignedStaffIds.length > 0 ? this.state.assignedStaffIds : null,
                 }
             );
 
@@ -348,31 +383,20 @@ class OpsRecurringBooking extends Component {
         this.state.isCreating = false;
     }
 
-    async confirmBookings() {
-        const result = this.state.creationResult;
-        if (!result || !result.ids) return;
+    dismissValidation() {
+        this.state.validationErrors = [];
+    }
 
-        try {
-            await this.orm.call(
-                "health.fieldservice.order",
-                "finalize_recurring_bookings",
-                [],
-                {
-                    fso_ids: result.ids,
-                    staff_id: this.state.staffId || false,
-                    doctor_id: this.state.doctorId || false,
-                    package_id: this.state.packageId || false,
-                }
-            );
-            this.notification.add(
-                _t("%s bookings confirmed and staff assigned!", result.count),
-                { type: "success" }
-            );
-            this.action.doAction('health_fieldservice.action_ops_booking_list_native', { clearBreadcrumbs: true });
-        } catch (e) {
-            console.error('Confirm error:', e);
-            this.notification.add(_t("Error confirming bookings"), { type: "danger" });
-        }
+    viewBookings() {
+        const ids = this.state.creationResult?.ids || [];
+        this.action.doAction({
+            type: 'ir.actions.act_window',
+            name: _t('Recurring Bookings Created'),
+            res_model: 'health.fieldservice.order',
+            views: [[false, 'list'], [false, 'form']],
+            domain: [['id', 'in', ids]],
+            target: 'current',
+        }, { clearBreadcrumbs: true });
     }
 
     async deleteBookings() {

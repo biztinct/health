@@ -2798,6 +2798,15 @@ class HealthFieldServiceOrderUnified(models.Model):
             },
         }
     
+    def action_open_ops_booking_detail(self):
+        """Open the OPS booking detail view for this booking."""
+        self.ensure_one()
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'ops_booking_detail',
+            'context': {'active_id': self.id},
+        }
+
     def action_open_reschedule_calendar(self):
         """
         Open calendar view to reschedule this booking.
@@ -4424,24 +4433,47 @@ class HealthFieldServiceOrderUnified(models.Model):
             pass
 
         products = []
+        categ_ids = set()
         try:
             service_products = self.env['product.product'].search([
                 ('type', '=', 'service'),
                 ('sale_ok', '=', True),
-            ], order='name', limit=200)
+            ], order='categ_id, name', limit=200)
             for prod in service_products:
                 categ_name = ''
+                categ_id = False
+                parent_categ_name = ''
                 if prod.categ_id:
+                    categ_id = prod.categ_id.id
                     categ_name = prod.categ_id.name or ''
+                    categ_ids.add(categ_id)
+                    if prod.categ_id.parent_id:
+                        parent_categ_name = prod.categ_id.parent_id.name or ''
                 products.append({
                     'id': prod.id,
                     'name': prod.name or '',
                     'price': prod.list_price or 0,
                     'default_code': prod.default_code or '',
                     'categ_name': categ_name,
+                    'categ_id': categ_id,
+                    'parent_categ_name': parent_categ_name,
                 })
         except Exception:
             pass
+
+        product_categories = []
+        if categ_ids:
+            try:
+                for cat in self.env['product.category'].browse(list(categ_ids)):
+                    product_categories.append({
+                        'id': cat.id,
+                        'name': cat.name or '',
+                        'parent_name': cat.parent_id.name if cat.parent_id else '',
+                        'product_count': sum(1 for p in products if p['categ_id'] == cat.id),
+                    })
+                product_categories.sort(key=lambda c: c['name'])
+            except Exception:
+                pass
 
         return {
             'service_types': service_types,
@@ -4452,6 +4484,7 @@ class HealthFieldServiceOrderUnified(models.Model):
             'preferred_staff_id': preferred_staff_id,
             'doctor_list': doctor_list,
             'products': products,
+            'product_categories': product_categories,
         }
 
     @api.model
@@ -4535,10 +4568,9 @@ class HealthFieldServiceOrderUnified(models.Model):
         return preview
 
     @api.model
-    def action_create_recurring_from_owl(self, patient_id, service_type, duration_hours, time_hour, facility_id, pattern, selected_days, start_date, occurrences, notes='', product_lines=None, staff_id=False, doctor_id=False, package_id=False):
+    def action_create_recurring_from_owl(self, patient_id, service_type, duration_hours, time_hour, facility_id, pattern, selected_days, start_date, occurrences, notes='', product_lines=None, staff_id=False, doctor_id=False, package_id=False, assigned_staff_ids=None):
         """Create recurring FSO bookings from the OWL wizard.
-        Creates DRAFT bookings with quotes (if product_lines provided).
-        Staff/doctor assignment and confirmation happen in finalize_recurring_bookings."""
+        Creates bookings with quotes, confirms them, and assigns staff — all in one step."""
         if not patient_id or not service_type or not facility_id:
             return {'success': False, 'error': 'Missing required fields.'}
 
@@ -4661,6 +4693,46 @@ class HealthFieldServiceOrderUnified(models.Model):
                     'total_per_booking': first_quote.amount_total,
                     'total_all': first_quote.amount_total * len(created_ids),
                 }
+
+        # Confirm bookings, assign doctor/package/staff
+        for fso_rec in fso_records:
+            if package_id and hasattr(fso_rec, 'package_ids'):
+                try:
+                    fso_rec.write({'package_ids': [(4, package_id)]})
+                except Exception:
+                    pass
+            if doctor_id:
+                try:
+                    fso_rec.write({'primary_doctor_id': doctor_id})
+                except Exception:
+                    pass
+
+            try:
+                fso_rec.action_confirm_booking()
+            except Exception:
+                pass
+
+            # Create staff assignments
+            staff_to_assign = assigned_staff_ids or []
+            if staff_id and staff_id not in staff_to_assign:
+                staff_to_assign = [staff_id] + list(staff_to_assign)
+            for sid in staff_to_assign:
+                try:
+                    role = 'lead' if sid == staff_id else 'support'
+                    existing = self.env['health.staff.assignment'].search([
+                        ('fso_id', '=', fso_rec.id),
+                        ('staff_id', '=', sid),
+                        ('state', 'not in', ['cancelled', 'template']),
+                    ], limit=1)
+                    if not existing:
+                        self.env['health.staff.assignment'].create({
+                            'fso_id': fso_rec.id,
+                            'staff_id': sid,
+                            'assignment_role': role,
+                            'state': 'draft',
+                        })
+                except Exception:
+                    pass
 
         return {
             'success': True,

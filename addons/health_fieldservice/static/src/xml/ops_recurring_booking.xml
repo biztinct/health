@@ -40,6 +40,21 @@
                             <button class="rb-close-btn" t-on-click="goBack"><i class="fa fa-times"/></button>
                         </div>
 
+                        <!-- VALIDATION ERRORS -->
+                        <t t-if="state.validationErrors.length > 0">
+                            <div class="rb-validation-popup">
+                                <div class="rb-vp-header">
+                                    <i class="fa fa-exclamation-triangle"/> Required fields missing
+                                    <button class="rb-vp-close" t-on-click="dismissValidation"><i class="fa fa-times"/></button>
+                                </div>
+                                <ul class="rb-vp-list">
+                                    <t t-foreach="state.validationErrors" t-as="err" t-key="err_index">
+                                        <li><i class="fa fa-circle"/> <t t-esc="err"/></li>
+                                    </t>
+                                </ul>
+                            </div>
+                        </t>
+
                         <!-- BODY -->
                         <div class="rb-wizard-body">
 
@@ -93,60 +108,13 @@
                                 </div>
                             </div>
 
-                            <!-- STAFF ASSIGNMENT (Mandatory, Before Services) -->
-                            <div class="rb-section-title"><i class="fa fa-user-md"/> Staff Assignment</div>
-                            <div class="rb-form-row">
-                                <div class="rb-form-group">
-                                    <div class="rb-form-label">Lead Staff <span class="rb-req">*</span></div>
-                                    <select class="rb-form-input" t-on-change="onStaffChange">
-                                        <option value="">— Select staff —</option>
-                                        <t t-foreach="state.staffList" t-as="staff" t-key="staff.id">
-                                            <option t-att-value="staff.id"
-                                                    t-att-selected="staff.id === state.staffId"
-                                                    t-esc="staff.name + (staff.job_title ? ' — ' + staff.job_title : '') + (staff.is_preferred ? ' ★ Preferred' : '')"/>
-                                        </t>
-                                    </select>
-                                </div>
-                                <div class="rb-form-group">
-                                    <div class="rb-form-label">Doctor <span class="rb-optional">(optional)</span></div>
-                                    <select class="rb-form-input" t-on-change="onDoctorChange">
-                                        <option value="">— No doctor —</option>
-                                        <t t-foreach="state.doctorList" t-as="doc" t-key="doc.id">
-                                            <option t-att-value="doc.id"
-                                                    t-att-selected="doc.id === state.doctorId"
-                                                    t-esc="doc.name + (doc.specialization ? ' — ' + doc.specialization : '')"/>
-                                        </t>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="rb-preferred-badge" t-if="state.staffId and state.staffId === state.preferredStaffId">
-                                <i class="fa fa-star"/> Client's preferred staff
-                            </div>
-                            <div class="rb-preferred-hint" t-if="state.preferredStaffId and state.staffId and state.staffId !== state.preferredStaffId">
-                                <i class="fa fa-info-circle"/> This client has a preferred staff member
-                            </div>
+                            <!-- QUOTE (Product Catalog) -->
+                            <div class="rb-section-title"><i class="fa fa-file-text-o"/> Quote</div>
 
-                            <!-- SERVICES &amp; BILLING (Product Catalog) -->
-                            <div class="rb-section-title"><i class="fa fa-shopping-cart"/> Services &amp; Billing</div>
-
-                            <!-- Product Add Dropdown -->
-                            <div class="rb-product-add-row">
-                                <div class="rb-product-search-wrap">
-                                    <i class="fa fa-search rb-search-icon"/>
-                                    <input class="rb-form-input rb-product-search"
-                                           type="text"
-                                           placeholder="Search products..."
-                                           t-att-value="state.productSearch"
-                                           t-on-input="onProductSearchChange"/>
-                                </div>
-                                <select class="rb-form-input rb-product-select" t-on-change="onAddProductSelect">
-                                    <option value="">+ Add service/product</option>
-                                    <t t-foreach="filteredProducts" t-as="prod" t-key="prod.id">
-                                        <option t-att-value="prod.id"
-                                                t-esc="prod.name + ' — ' + formatCurrency(prod.price)"/>
-                                    </t>
-                                </select>
-                            </div>
+                            <button class="btn btn-outline-primary rb-add-services-btn"
+                                    t-on-click="openServiceCatalog">
+                                <i class="fa fa-plus-circle"/> Add Services
+                            </button>
 
                             <!-- Selected Products Table -->
                             <t t-if="hasProducts">
@@ -183,7 +151,7 @@
                             </t>
                             <t t-if="!hasProducts">
                                 <div class="rb-no-products">
-                                    <i class="fa fa-info-circle"/> Add products/services above to create quotes for each booking
+                                    <i class="fa fa-info-circle"/> Click "Add Services" to select products for each booking
                                 </div>
                             </t>
 
@@ -207,8 +175,8 @@
                                 but <t t-esc="state.preview.length"/> bookings will be created
                             </div>
 
-                            <!-- RECURRENCE PATTERN -->
-                            <div class="rb-section-title"><i class="fa fa-calendar"/> Recurrence Pattern</div>
+                            <!-- BOOKING SCHEDULE -->
+                            <div class="rb-section-title"><i class="fa fa-calendar"/> Booking Schedule</div>
                             <div class="rb-pattern-options">
                                 <div t-attf-class="rb-pattern-btn #{state.pattern === 'daily' ? 'selected' : ''}"
                                      t-on-click="() => this.selectPattern('daily')">
@@ -307,6 +275,53 @@
                                        t-on-change="onNotesChange"/>
                             </div>
 
+                            <!-- STAFF ASSIGNMENT -->
+                            <div class="rb-section-title"><i class="fa fa-user-md"/> Staff Assignment</div>
+
+                            <!-- Assigned Staff (multi-select chips) -->
+                            <div class="rb-form-group">
+                                <div class="rb-form-label">Assigned Staff <span class="rb-optional">(optional)</span></div>
+                                <div class="rb-staff-chips">
+                                    <t t-foreach="state.staffList" t-as="staff" t-key="staff.id">
+                                        <button t-attf-class="rb-staff-chip #{isStaffAssigned(staff.id) ? 'selected' : ''}"
+                                                t-on-click="() => this.toggleAssignedStaff(staff.id)">
+                                            <span class="rb-chip-initials" t-esc="staff.initials"/>
+                                            <span t-esc="staff.name"/>
+                                            <t t-if="staff.is_preferred"><i class="fa fa-star rb-chip-star"/></t>
+                                            <i t-if="isStaffAssigned(staff.id)" class="fa fa-check rb-chip-check"/>
+                                        </button>
+                                    </t>
+                                </div>
+                            </div>
+
+                            <div class="rb-form-row">
+                                <div class="rb-form-group">
+                                    <div class="rb-form-label">Lead Staff <span class="rb-optional">(optional)</span></div>
+                                    <select class="rb-form-input" t-on-change="onStaffChange">
+                                        <option value="">— No lead staff —</option>
+                                        <t t-foreach="assignedStaffOptions" t-as="staff" t-key="staff.id">
+                                            <option t-att-value="staff.id"
+                                                    t-att-selected="staff.id === state.staffId"
+                                                    t-esc="staff.name + (staff.job_title ? ' — ' + staff.job_title : '')"/>
+                                        </t>
+                                    </select>
+                                </div>
+                                <div class="rb-form-group">
+                                    <div class="rb-form-label">Doctor <span class="rb-optional">(optional)</span></div>
+                                    <select class="rb-form-input" t-on-change="onDoctorChange">
+                                        <option value="">— No doctor —</option>
+                                        <t t-foreach="state.doctorList" t-as="doc" t-key="doc.id">
+                                            <option t-att-value="doc.id"
+                                                    t-att-selected="doc.id === state.doctorId"
+                                                    t-esc="doc.name + (doc.specialization ? ' — ' + doc.specialization : '')"/>
+                                        </t>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="rb-preferred-badge" t-if="state.staffId and state.staffId === state.preferredStaffId">
+                                <i class="fa fa-star"/> Client's preferred staff
+                            </div>
+
                             <!-- SUMMARY -->
                             <div class="rb-summary-box">
                                 <div class="rb-summary-row">
@@ -370,9 +385,9 @@
                         <div class="rb-modal-header">
                             <div class="rb-modal-icon"><i class="fa fa-check-circle"/></div>
                             <div class="rb-modal-title">
-                                <t t-esc="state.creationResult.count"/> Bookings Created
+                                <t t-esc="state.creationResult.count"/> Bookings Confirmed
                             </div>
-                            <div class="rb-modal-subtitle">Review and confirm or discard</div>
+                            <div class="rb-modal-subtitle">All bookings created with quotes and staff assigned</div>
                         </div>
 
                         <div class="rb-modal-body">
@@ -433,10 +448,10 @@
                         <!-- Modal Actions -->
                         <div class="rb-modal-actions">
                             <button class="rb-modal-btn rb-modal-delete" t-on-click="deleteBookings">
-                                <i class="fa fa-trash"/> Delete All
+                                <i class="fa fa-undo"/> Undo &amp; Delete All
                             </button>
-                            <button class="rb-modal-btn rb-modal-confirm" t-on-click="confirmBookings">
-                                <i class="fa fa-check"/> Confirm All
+                            <button class="rb-modal-btn rb-modal-confirm" t-on-click="viewBookings">
+                                <i class="fa fa-list"/> View Bookings
                             </button>
                         </div>
                     </div>
