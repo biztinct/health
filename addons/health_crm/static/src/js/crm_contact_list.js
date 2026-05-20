@@ -159,6 +159,7 @@ export class CrmContactListController extends ListController {
     }
 
     _applyInitialDateFilter() {
+        if (this.env.searchModel.query && this.env.searchModel.query.length > 0) return;
         const domain = this._getDateDomain("today");
         const preFilter = { description: "Today", domain };
         this.env.searchModel.createNewFilters([preFilter]);

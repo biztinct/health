@@ -28,6 +28,17 @@ export class SidebarHost extends Component {
         const tag = action.tag;
         const model = action.res_model;
         const xmlId = action.xml_id;
+        const centerPin = action.context?.active_center;
+
+        // Pass 0: explicit center pin from action context (highest priority)
+        if (centerPin) {
+            for (const [key, config] of sidebarRegistry.getEntries()) {
+                if (key === centerPin) {
+                    this._setSidebar(config.Component, key);
+                    return;
+                }
+            }
+        }
 
         // Pass 1: exact matches (tags + xmlIds) take priority
         for (const [key, config] of sidebarRegistry.getEntries()) {

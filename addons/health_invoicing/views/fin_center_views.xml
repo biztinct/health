@@ -70,7 +70,7 @@
         <field name="res_model">account.move</field>
         <field name="view_mode">list,form</field>
         <field name="domain">[('move_type', '=', 'out_invoice')]</field>
-        <field name="context">{'default_move_type': 'out_invoice'}</field>
+        <field name="context">{'default_move_type': 'out_invoice', 'active_center': 'finance_center'}</field>
         <field name="search_view_id" ref="view_fin_invoice_search"/>
         <field name="view_ids" eval="[(5, 0, 0),
             (0, 0, {'view_mode': 'list', 'view_id': ref('view_fin_invoice_list')}),
@@ -97,6 +97,7 @@
         <field name="name">Service Packages</field>
         <field name="res_model">health.service.package</field>
         <field name="view_mode">list,form</field>
+        <field name="context">{'active_center': 'finance_center'}</field>
         <field name="view_ids" eval="[(5, 0, 0),
             (0, 0, {'view_mode': 'list', 'view_id': ref('view_fin_package_list')})]"/>
         <field name="search_view_id" ref="view_health_service_package_search"/>
@@ -110,6 +111,7 @@
         <field name="name">Accounts Receivable</field>
         <field name="res_model">account.move.line</field>
         <field name="view_mode">list,pivot,graph</field>
+        <field name="context">{'active_center': 'finance_center'}</field>
         <field name="domain">[('account_id.account_type', '=', 'asset_receivable'), ('parent_state', '=', 'posted'), ('amount_residual', '!=', 0)]</field>
         <field name="view_ids" eval="[(5, 0, 0),
             (0, 0, {'view_mode': 'list', 'view_id': ref('view_healthcare_ar_payments_tree')}),
@@ -138,6 +140,7 @@
         <field name="name">Payment Transactions</field>
         <field name="res_model">health.payment.transaction</field>
         <field name="view_mode">list,form</field>
+        <field name="context">{'active_center': 'finance_center'}</field>
         <field name="view_ids" eval="[(5, 0, 0),
             (0, 0, {'view_mode': 'list', 'view_id': ref('view_fin_payment_list')})]"/>
         <field name="search_view_id" ref="view_health_payment_transaction_search"/>
@@ -151,6 +154,7 @@
         <field name="name">Cash Collections</field>
         <field name="res_model">health.payment.transaction</field>
         <field name="view_mode">list,form</field>
+        <field name="context">{'active_center': 'finance_center'}</field>
         <field name="domain">[('status', '=', 'pending_delivery')]</field>
         <field name="view_ids" eval="[(5, 0, 0),
             (0, 0, {'view_mode': 'list', 'view_id': ref('view_health_payment_transaction_list')})]"/>
@@ -183,6 +187,7 @@
         <field name="name">Overdue Clients</field>
         <field name="res_model">account.move</field>
         <field name="view_mode">list,form</field>
+        <field name="context">{'active_center': 'finance_center'}</field>
         <field name="domain">[('move_type', '=', 'out_invoice'), ('state', '=', 'posted'), ('payment_state', 'in', ['not_paid', 'partial']), ('invoice_date_due', '&lt;', context_today().strftime('%Y-%m-%d'))]</field>
         <field name="view_ids" eval="[(5, 0, 0),
             (0, 0, {'view_mode': 'list', 'view_id': ref('view_fin_overdue_list')})]"/>
@@ -196,6 +201,7 @@
         <field name="name">VAT Invoices Log</field>
         <field name="res_model">account.move</field>
         <field name="view_mode">list,form</field>
+        <field name="context">{'active_center': 'finance_center'}</field>
         <field name="domain">[('move_type', '=', 'out_invoice'), ('state', '=', 'posted')]</field>
         <field name="view_ids" eval="[(5, 0, 0),
             (0, 0, {'view_mode': 'list', 'view_id': ref('view_healthcare_vat_invoice_log_list')})]"/>
@@ -210,6 +216,7 @@
         <field name="name">AR Transaction Log</field>
         <field name="res_model">health.ar.transaction.log</field>
         <field name="view_mode">list,form</field>
+        <field name="context">{'active_center': 'finance_center'}</field>
         <field name="view_ids" eval="[(5, 0, 0),
             (0, 0, {'view_mode': 'list', 'view_id': ref('view_healthcare_ar_transaction_log_list')})]"/>
         <field name="search_view_id" ref="view_healthcare_ar_transaction_log_search"/>

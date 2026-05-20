@@ -9,6 +9,7 @@
         <field name="arch" type="xml">
             <list string="Contacts" js_class="crm_contact_list_view"
                   default_order="create_date desc"
+                  class="crm-cl-list"
                   decoration-muted="contact_status == 'spam'"
                   decoration-danger="contact_status == 'lost_booking'"
                   decoration-success="contact_status == 'booking'">
@@ -27,6 +28,18 @@
                 <field name="contact_datetime" string="Date" widget="datetime"/>
                 <field name="mode_of_contact" string="Channel" optional="show"/>
                 <field name="user_id" string="Agent" widget="many2one_avatar_user" optional="show"/>
+                <button name="action_convert_to_booking" type="object"
+                        string="Book" icon="fa-calendar-plus-o"
+                        class="crm-cl-btn crm-cl-btn--book"/>
+                <button name="action_log_as_lead" type="object"
+                        string="Log Lead" icon="fa-bullseye"
+                        class="crm-cl-btn crm-cl-btn--lead"/>
+                <button name="action_escalate_contact" type="object"
+                        string="Escalate" icon="fa-arrow-up"
+                        class="crm-cl-btn crm-cl-btn--escalate"/>
+                <button name="action_mark_spam" type="object"
+                        string="Spam" icon="fa-ban"
+                        class="crm-cl-btn crm-cl-btn--spam"/>
             </list>
         </field>
     </record>
@@ -221,7 +234,7 @@
             (0, 0, {'view_mode': 'form', 'view_id': ref('view_crm_contact_form_crm_center')})]"/>
         <field name="search_view_id" ref="view_crm_contact_search_crm_center"/>
         <field name="domain">[]</field>
-        <field name="context">{'create': False}</field>
+        <field name="context">{'create': False, 'active_center': 'crm_center'}</field>
         <field name="target">current</field>
     </record>
 
@@ -271,7 +284,7 @@
         <field name="res_model">res.partner</field>
         <field name="view_mode">list,form</field>
         <field name="domain">[('is_patient', '=', True)]</field>
-        <field name="context">{}</field>
+        <field name="context">{'active_center': 'crm_center'}</field>
         <field name="search_view_id" ref="health_base.view_health_patient_search"/>
         <field name="view_ids" eval="[(5, 0, 0),
             (0, 0, {'view_mode': 'list', 'view_id': ref('view_crm_client_list_enhanced')}),
@@ -381,7 +394,7 @@
             (0, 0, {'view_mode': 'form', 'view_id': ref('view_crm_contact_form_crm_center')})]"/>
         <field name="search_view_id" ref="view_crm_followup_search_crm_center"/>
         <field name="domain">[('calendar_date', '!=', False)]</field>
-        <field name="context">{}</field>
+        <field name="context">{'active_center': 'crm_center'}</field>
         <field name="target">current</field>
     </record>
 
@@ -493,7 +506,7 @@
             (0, 0, {'view_mode': 'form', 'view_id': ref('view_crm_contact_form_crm_center')})]"/>
         <field name="search_view_id" ref="view_crm_activity_search_crm_center"/>
         <field name="domain">[('activity_ids', '!=', False)]</field>
-        <field name="context">{'search_default_my_activities': 1}</field>
+        <field name="context">{'search_default_my_activities': 1, 'active_center': 'crm_center'}</field>
         <field name="target">current</field>
     </record>
 
@@ -584,7 +597,7 @@
             (0, 0, {'view_mode': 'form', 'view_id': ref('view_crm_contact_form_crm_center')})]"/>
         <field name="search_view_id" ref="view_crm_bookings_search"/>
         <field name="domain">[('contact_status', '=', 'booking')]</field>
-        <field name="context">{}</field>
+        <field name="context">{'active_center': 'crm_center'}</field>
         <field name="target">current</field>
     </record>
 

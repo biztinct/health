@@ -1581,6 +1581,39 @@ class HealthLead(models.Model):
             'tag': 'health_flow_dashboard',
         }
 
+    def action_mark_spam(self):
+        """Mark contact as spam from list view — stays on the list."""
+        self.ensure_one()
+        if self.contact_status in ('active', 'lead'):
+            self.write({
+                'contact_status': 'spam',
+                'contact_outcome': 'rejected',
+                'is_spam_caller': True,
+            })
+            if self.phone:
+                other_leads = self.search([
+                    ('phone', '=', self.phone),
+                    ('id', '!=', self.id),
+                    ('is_spam_caller', '=', False),
+                ])
+                if other_leads:
+                    other_leads.write({'is_spam_caller': True})
+            self.env.cr.commit()
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'display_notification',
+            'params': {
+                'title': _('Marked as Spam'),
+                'message': _('%s marked as spam.', self.name),
+                'type': 'warning',
+                'sticky': False,
+                'next': {
+                    'type': 'ir.actions.client',
+                    'tag': 'soft_reload',
+                },
+            }
+        }
+
     def action_log_as_lead(self):
         """
         LOG LEAD button - Mark this contact as a Lead for follow-up.

@@ -110,7 +110,7 @@ export class OpsSidebar extends Component {
 
 sidebarRegistry.add("ops_center", {
     actionTags: new Set(Object.keys(TAG_TO_PAGE)),
-    windowModels: new Set(["health.fieldservice.order", "health.staff.assignment", "res.partner"]),
+    windowModels: new Set(["health.fieldservice.order", "health.staff.assignment"]),
     actionXmlIds: new Set([
         "health_fieldservice.action_ops_client_list_native",
         "health_fieldservice.action_ops_booking_list_native",

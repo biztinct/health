@@ -7,24 +7,28 @@
         <field name="name">CRM Dashboard</field>
         <field name="tag">crm_dashboard</field>
         <field name="target">current</field>
+        <field name="context">{'active_center': 'crm_center'}</field>
     </record>
 
     <record id="action_crm_new_contact" model="ir.actions.client">
         <field name="name">New Contact</field>
         <field name="tag">crm_new_contact</field>
         <field name="target">current</field>
+        <field name="context">{'active_center': 'crm_center'}</field>
     </record>
 
     <record id="action_crm_settings" model="ir.actions.client">
         <field name="name">CRM Settings</field>
         <field name="tag">crm_settings</field>
         <field name="target">current</field>
+        <field name="context">{'active_center': 'crm_center'}</field>
     </record>
 
     <record id="action_crm_booking_wizard" model="ir.actions.client">
         <field name="name">CRM Booking</field>
         <field name="tag">crm_booking_wizard</field>
         <field name="target">current</field>
+        <field name="context">{'active_center': 'crm_center'}</field>
     </record>
 
     <!-- NOTE: act_window actions are defined in crm_center_views.xml (with view bindings) -->

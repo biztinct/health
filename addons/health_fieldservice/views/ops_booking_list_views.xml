@@ -36,6 +36,7 @@
         <field name="res_model">health.fieldservice.order</field>
         <field name="view_mode">calendar,list,form</field>
         <field name="domain">[]</field>
+        <field name="context">{'active_center': 'ops_center'}</field>
         <field name="search_view_id" ref="view_health_fieldservice_order_search"/>
         <field name="view_ids" eval="[(5, 0, 0),
             (0, 0, {'view_mode': 'calendar', 'view_id': ref('view_health_fieldservice_order_calendar')}),
