@@ -11,6 +11,7 @@ const TAG_TO_PAGE = {
     ops_booking_detail: "bookings",
     ops_client_list: "clients",
     ops_client_profile: "clients",
+    ops_quick_booking: "bookings",
     ops_recurring_booking: "recurring",
     ops_staff_roster: "staff",
     ops_roster_planning: "roster",

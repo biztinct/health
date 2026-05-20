@@ -34,10 +34,11 @@
     <record id="action_ops_booking_list_native" model="ir.actions.act_window">
         <field name="name">Booking Queue</field>
         <field name="res_model">health.fieldservice.order</field>
-        <field name="view_mode">list,form</field>
+        <field name="view_mode">calendar,list,form</field>
         <field name="domain">[]</field>
         <field name="search_view_id" ref="view_health_fieldservice_order_search"/>
         <field name="view_ids" eval="[(5, 0, 0),
+            (0, 0, {'view_mode': 'calendar', 'view_id': ref('view_health_fieldservice_order_calendar')}),
             (0, 0, {'view_mode': 'list', 'view_id': ref('view_health_fso_list_ops')}),
             (0, 0, {'view_mode': 'form', 'view_id': ref('view_health_fso_form_ops')})]"/>
     </record>

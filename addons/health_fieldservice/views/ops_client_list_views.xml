@@ -29,12 +29,24 @@
                 <button name="action_open_recurring_booking" type="object"
                         string="Recurring" icon="fa-repeat"
                         class="ops-cl-btn ops-cl-btn--recurring"/>
+                <field name="has_pending_collection" column_invisible="True"/>
+                <field name="has_outstanding_invoice" column_invisible="True"/>
                 <button name="action_collect_cash" type="object"
                         string="Collect" icon="fa-money"
-                        class="ops-cl-btn ops-cl-btn--collect"/>
+                        class="ops-cl-btn ops-cl-btn--collect"
+                        invisible="not has_pending_collection"/>
+                <button name="action_collect_cash" type="object"
+                        string="Collect" icon="fa-money"
+                        class="ops-cl-btn ops-cl-btn--muted"
+                        invisible="has_pending_collection"/>
                 <button name="action_register_client_payment" type="object"
                         string="Payment" icon="fa-credit-card"
-                        class="ops-cl-btn ops-cl-btn--payment"/>
+                        class="ops-cl-btn ops-cl-btn--payment"
+                        invisible="not has_outstanding_invoice"/>
+                <button name="action_register_client_payment" type="object"
+                        string="Payment" icon="fa-credit-card"
+                        class="ops-cl-btn ops-cl-btn--muted"
+                        invisible="has_outstanding_invoice"/>
             </list>
         </field>
     </record>

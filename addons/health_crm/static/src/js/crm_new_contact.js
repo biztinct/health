@@ -604,29 +604,19 @@ class CrmNewContact extends Component {
     async _actionBooking(leadId) {
         try {
             const lead = await this.orm.read("crm.lead", [leadId], [
-                "name", "phone", "email_from", "partner_id",
-                "client_name", "contact_relationship_type",
+                "name", "partner_id",
             ]);
             const l = lead[0];
-            const ctx = {
-                default_lead_id: leadId,
-                default_client_name: l.contact_relationship_type !== 'client' && l.client_name
-                    ? l.client_name : l.name,
-                default_client_phone: l.phone || '',
-                default_client_email: l.email_from || '',
-            };
-            if (l.partner_id) {
-                ctx.default_client_id = l.partner_id[0];
-                ctx.default_is_new_client = false;
-            }
+            const partnerId = l.partner_id ? l.partner_id[0] : false;
             this.action.doAction({
-                type: "ir.actions.act_window",
+                type: "ir.actions.client",
+                tag: "ops_quick_booking",
                 name: _t("Quick Booking"),
-                res_model: "health.quick.booking.wizard",
-                view_mode: "form",
-                views: [[false, "form"]],
-                target: "new",
-                context: ctx,
+                target: "current",
+                context: {
+                    default_patient_id: partnerId,
+                    default_lead_id: leadId,
+                },
             });
         } catch (e) {
             console.error("Failed to open booking:", e);

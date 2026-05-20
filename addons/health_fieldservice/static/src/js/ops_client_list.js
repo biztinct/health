@@ -215,13 +215,11 @@ class OpsClientList extends Component {
 
     openQuickBooking(clientId) {
         this.action.doAction({
-            type: 'ir.actions.act_window',
-            name: _t('Create Booking'),
-            res_model: 'health.quick.booking.wizard',
-            view_mode: 'form',
-            views: [[false, 'form']],
-            target: 'new',
-            context: { default_client_id: clientId },
+            type: 'ir.actions.client',
+            tag: 'ops_quick_booking',
+            name: _t('Quick Booking'),
+            target: 'current',
+            context: { active_id: clientId, default_patient_id: clientId },
         });
     }
 

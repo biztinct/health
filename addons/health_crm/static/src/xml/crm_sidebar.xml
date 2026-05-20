@@ -14,8 +14,6 @@
             <div class="ops-nav-section-label">Main</div>
             <a t-attf-class="ops-nav-item #{isActive('dashboard') ? 'active' : ''}"
                t-on-click="() => this.navigateTo('dashboard')"><i class="fa fa-th-large"/> Dashboard</a>
-            <a t-attf-class="ops-nav-item #{isActive('new_contact') ? 'active' : ''}"
-               t-on-click="() => this.navigateTo('new_contact')"><i class="fa fa-plus-circle"/> New Contact</a>
             <a t-attf-class="ops-nav-item #{isActive('contacts') ? 'active' : ''}"
                t-on-click="() => this.navigateTo('contacts')"><i class="fa fa-phone"/> Contacts</a>
             <a t-attf-class="ops-nav-item #{isActive('clients') ? 'active' : ''}"

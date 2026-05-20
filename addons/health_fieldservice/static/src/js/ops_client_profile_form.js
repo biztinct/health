@@ -97,16 +97,7 @@ export class OpsClientProfileFormController extends FormController {
     }
 
     openCreateBooking() {
-        const resId = this.model.root.resId;
-        this.actionService.doAction({
-            type: 'ir.actions.act_window',
-            name: _t('Create Booking'),
-            res_model: 'health.quick.booking.wizard',
-            view_mode: 'form',
-            views: [[false, 'form']],
-            target: 'new',
-            context: { default_client_id: resId },
-        });
+        this.doPartnerAction('action_open_quick_booking_owl');
     }
 
     async doPartnerAction(methodName) {

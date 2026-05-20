@@ -1451,70 +1451,19 @@ class HealthLead(models.Model):
     )
 
     def action_convert_to_booking(self):
-        """
-        BOOKING button - Opens multi-step booking wizard.
-        Step 1: Client Details
-        Step 2: Service Requirements
-        Step 3: Booking Details
-        Step 4: Assign Booking (optional)
-        """
+        """BOOKING button - Opens OWL Quick Booking wizard."""
         self.ensure_one()
-        
-        # Determine correct client name based on relationship type
-        # If caller is caregiver/other and client_name is set, use that
-        # Otherwise use the lead name (caller is the client)
-        if self.contact_relationship_type != 'client' and self.client_name:
-            client_name = self.client_name
-        else:
-            client_name = self.name
-        
-        # Open the booking wizard with context from this lead
-        # IMPORTANT: When partner_id exists, the contact (caller) and client (patient)
-        # are different people. Use partner data for client fields, NOT lead data
-        # (lead.phone/email_from belong to the CONTACT, not the CLIENT)
-        if self.partner_id:
-            # Partner linked - use partner's (client's) data
-            client_phone = self.partner_id.phone or self.partner_id.mobile or ''
-            client_email = self.partner_id.email or ''
-            client_address = self.partner_id.street or ''
-        elif self.contact_relationship_type == 'client':
-            # Caller IS the client - lead.phone IS the client's phone
-            client_phone = self.phone or ''
-            client_email = self.email_from or ''
-            client_address = self.street_address or ''
-        else:
-            # Caller is NOT the client (caregiver, payer, etc.)
-            # Do NOT use lead.phone - it belongs to the caller, not the client
-            # Try to find client by client_name in res.partner
-            client_phone = ''
-            client_email = ''
-            client_address = ''
-            if self.client_name:
-                client_partner = self.env['res.partner'].search([
-                    ('is_patient', '=', True),
-                    ('name', 'ilike', self.client_name),
-                ], limit=1)
-                if client_partner:
-                    client_phone = client_partner.phone or client_partner.mobile or ''
-                    client_email = client_partner.email or ''
-                    client_address = client_partner.street or ''
-        
+        patient_id = self.partner_id.id if self.partner_id else False
         return {
-            'type': 'ir.actions.act_window',
-            'name': _('Create Booking'),
-            'res_model': 'health.booking.wizard',
-            'view_mode': 'form',
-            'views': [[False, 'form']],
-            'target': 'new',
+            'type': 'ir.actions.client',
+            'tag': 'ops_quick_booking',
+            'name': _('Quick Booking'),
+            'target': 'current',
             'context': {
+                'active_id': patient_id,
+                'default_patient_id': patient_id,
                 'default_lead_id': self.id,
-                'default_client_name': client_name,
-                'default_client_phone': client_phone,
-                'default_client_email': client_email,
-                'default_client_address': client_address,
-                'default_client_id': self.partner_id.id if self.partner_id else False,
-                'default_is_new_client': not bool(self.partner_id),
-            }
+            },
         }
 
     def action_convert_to_client(self):

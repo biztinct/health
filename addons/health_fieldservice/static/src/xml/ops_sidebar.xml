@@ -22,8 +22,6 @@
                t-on-click="() => this.navigateTo('staff')"><i class="fa fa-users"/> Staff</a>
             <a t-attf-class="ops-nav-item #{isActive('roster') ? 'active' : ''}"
                t-on-click="() => this.navigateTo('roster')"><i class="fa fa-th"/> Roster</a>
-            <a t-attf-class="ops-nav-item #{isActive('calendar') ? 'active' : ''}"
-               t-on-click="() => this.navigateTo('calendar')"><i class="fa fa-calendar"/> Calendar</a>
             <div class="ops-nav-section-label">Reports</div>
             <a t-attf-class="ops-nav-item #{isActive('workload') ? 'active' : ''}"
                t-on-click="() => this.navigateTo('workload')"><i class="fa fa-bar-chart"/> Workload</a>

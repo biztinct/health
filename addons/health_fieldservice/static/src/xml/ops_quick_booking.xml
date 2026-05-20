@@ -1,0 +1,443 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+<t t-name="health_fieldservice.OpsQuickBooking">
+    <div class="ops-quick-booking-page">
+        <div class="ops-main-content">
+
+            <header class="ops-top-header">
+                <div class="ops-header-left">
+                    <div class="cp-breadcrumb">
+                        <a t-on-click="() => this.navigateTo('dashboard')">Dashboard</a>
+                        <span class="cp-sep"><i class="fa fa-chevron-right" style="font-size:10px"/></span>
+                        <a t-on-click="goBack">Clients</a>
+                        <span class="cp-sep"><i class="fa fa-chevron-right" style="font-size:10px"/></span>
+                        <span class="cp-current">Quick Booking</span>
+                    </div>
+                </div>
+            </header>
+
+            <t t-if="state.isLoading">
+                <div class="qb-loading">
+                    <i class="fa fa-spinner fa-spin fa-2x"/>
+                    <div>Loading...</div>
+                </div>
+            </t>
+
+            <t t-if="!state.isLoading and !state.showConfirmation">
+                <div class="qb-wizard-wrap">
+                    <div class="qb-wizard">
+
+                        <!-- HEADER -->
+                        <div class="qb-wizard-header">
+                            <div>
+                                <div class="qb-wizard-title"><i class="fa fa-calendar-plus-o"/> Quick Booking</div>
+                                <div class="qb-wizard-subtitle">
+                                    Create a single service booking
+                                    <t t-if="state.patient.name"> for <strong t-esc="state.patient.name"/></t>
+                                </div>
+                            </div>
+                            <button class="qb-close-btn" t-on-click="goBack"><i class="fa fa-times"/></button>
+                        </div>
+
+                        <!-- VALIDATION ERRORS -->
+                        <t t-if="state.validationErrors.length > 0">
+                            <div class="qb-validation-popup">
+                                <div class="qb-vp-header">
+                                    <i class="fa fa-exclamation-triangle"/> Required fields missing
+                                    <button class="qb-vp-close" t-on-click="dismissValidation"><i class="fa fa-times"/></button>
+                                </div>
+                                <ul class="qb-vp-list">
+                                    <t t-foreach="state.validationErrors" t-as="err" t-key="err_index">
+                                        <li><i class="fa fa-circle"/> <t t-esc="err"/></li>
+                                    </t>
+                                </ul>
+                            </div>
+                        </t>
+
+                        <!-- BODY -->
+                        <div class="qb-wizard-body">
+
+                            <!-- SERVICE SECTION -->
+                            <div class="qb-section-title qb-section-first"><i class="fa fa-stethoscope"/> Service</div>
+                            <div class="qb-form-row">
+                                <div class="qb-form-group">
+                                    <div class="qb-form-label">Service Type <span class="qb-req">*</span></div>
+                                    <select class="qb-form-input" t-on-change="onServiceTypeChange">
+                                        <t t-foreach="state.serviceTypes" t-as="st" t-key="st.key">
+                                            <option t-att-value="st.key"
+                                                    t-att-selected="st.key === state.serviceType"
+                                                    t-esc="st.label"/>
+                                        </t>
+                                    </select>
+                                </div>
+                                <div class="qb-form-group">
+                                    <div class="qb-form-label">Duration</div>
+                                    <select class="qb-form-input" t-on-change="onDurationChange">
+                                        <option value="1">1 hour</option>
+                                        <option value="2" selected="">2 hours</option>
+                                        <option value="3">3 hours</option>
+                                        <option value="4">4 hours</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="qb-form-row">
+                                <div class="qb-form-group">
+                                    <div class="qb-form-label">Facility <span class="qb-req">*</span></div>
+                                    <select class="qb-form-input" t-on-change="onFacilityChange">
+                                        <t t-foreach="state.facilities" t-as="f" t-key="f.id">
+                                            <option t-att-value="f.id"
+                                                    t-att-selected="f.id === state.facilityId"
+                                                    t-esc="f.name"/>
+                                        </t>
+                                    </select>
+                                </div>
+                                <div class="qb-form-group qb-location-badge-wrap">
+                                    <div class="qb-form-label">Location</div>
+                                    <div t-attf-class="qb-location-badge qb-location-badge--#{serviceLocation.cls}">
+                                        <i t-attf-class="fa #{serviceLocation.icon}"/>
+                                        <span t-esc="serviceLocation.label"/>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- QUOTE SECTION -->
+                            <div class="qb-section-title"><i class="fa fa-file-text-o"/> Quote</div>
+                            <button class="btn btn-outline-primary qb-add-services-btn"
+                                    t-on-click="openServiceCatalog">
+                                <i class="fa fa-plus-circle"/> Add Services
+                            </button>
+
+                            <t t-if="hasProducts">
+                                <div class="qb-products-table">
+                                    <div class="qb-pt-header">
+                                        <div class="qb-pt-col qb-pt-name">Product</div>
+                                        <div class="qb-pt-col qb-pt-price">Unit Price</div>
+                                        <div class="qb-pt-col qb-pt-qty">Qty</div>
+                                        <div class="qb-pt-col qb-pt-subtotal">Subtotal</div>
+                                        <div class="qb-pt-col qb-pt-action"/>
+                                    </div>
+                                    <t t-foreach="state.selectedProducts" t-as="item" t-key="item_index">
+                                        <div class="qb-pt-row">
+                                            <div class="qb-pt-col qb-pt-name" t-esc="item.name"/>
+                                            <div class="qb-pt-col qb-pt-price" t-esc="formatCurrency(item.price)"/>
+                                            <div class="qb-pt-col qb-pt-qty">
+                                                <input type="number" class="qb-qty-input" min="1" max="99"
+                                                       t-att-value="item.qty"
+                                                       t-on-change="(ev) => this.updateProductQty(item_index, ev)"/>
+                                            </div>
+                                            <div class="qb-pt-col qb-pt-subtotal" t-esc="formatCurrency(item.price * item.qty)"/>
+                                            <div class="qb-pt-col qb-pt-action">
+                                                <button class="qb-remove-btn" t-on-click="() => this.removeProduct(item_index)">
+                                                    <i class="fa fa-times"/>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </t>
+                                    <div class="qb-pt-footer">
+                                        <div class="qb-pt-total-label">Total</div>
+                                        <div class="qb-pt-total-value" t-esc="formatCurrency(productTotal)"/>
+                                    </div>
+                                </div>
+                            </t>
+                            <t t-if="!hasProducts">
+                                <div class="qb-no-products">
+                                    <i class="fa fa-info-circle"/> Click "Add Services" to select products for this booking
+                                </div>
+                            </t>
+
+                            <t t-if="state.packages.length > 0">
+                                <div class="qb-form-group" style="margin-top:12px">
+                                    <div class="qb-form-label">Prepaid Package</div>
+                                    <select class="qb-form-input" t-on-change="onPackageChange">
+                                        <option value="">-- No package --</option>
+                                        <t t-foreach="state.packages" t-as="pkg" t-key="pkg.id">
+                                            <option t-att-value="pkg.id"
+                                                    t-att-selected="pkg.id === state.packageId"
+                                                    t-esc="pkg.name + ' — ' + pkg.remaining_services + '/' + pkg.total_services + ' remaining'"/>
+                                        </t>
+                                    </select>
+                                </div>
+                            </t>
+
+                            <!-- DATE &amp; TIME SECTION -->
+                            <div class="qb-section-title"><i class="fa fa-calendar"/> Date &amp; Time</div>
+                            <div class="qb-datetime-section">
+                                <!-- Mini Calendar -->
+                                <div class="qb-mini-cal">
+                                    <div class="qb-cal-header">
+                                        <button class="qb-cal-nav" t-on-click="prevMonth"><i class="fa fa-chevron-left"/></button>
+                                        <div class="qb-cal-title" t-esc="calendarTitle"/>
+                                        <button class="qb-cal-nav" t-on-click="nextMonth"><i class="fa fa-chevron-right"/></button>
+                                    </div>
+                                    <div class="qb-cal-grid">
+                                        <t t-foreach="dayNames" t-as="dn" t-key="dn">
+                                            <div class="qb-cal-weekday" t-esc="dn"/>
+                                        </t>
+                                        <t t-foreach="calendarDays" t-as="day" t-key="day_index">
+                                            <div t-if="day.empty" class="qb-cal-day qb-cal-day--empty"/>
+                                            <div t-elif="day.disabled"
+                                                 class="qb-cal-day qb-cal-day--disabled"
+                                                 t-esc="day.num"/>
+                                            <div t-else=""
+                                                 t-attf-class="qb-cal-day #{day.selected ? 'qb-cal-day--selected' : ''} #{day.today ? 'qb-cal-day--today' : ''}"
+                                                 t-on-click="() => this.selectDate(day)"
+                                                 t-esc="day.num"/>
+                                        </t>
+                                    </div>
+                                </div>
+
+                                <!-- Time Picker -->
+                                <div class="qb-time-picker">
+                                    <div class="qb-form-label">Time of Day</div>
+                                    <div class="qb-tod-cards">
+                                        <t t-foreach="timePeriods" t-as="tp" t-key="tp.key">
+                                            <button t-attf-class="qb-tod-card #{state.timeOfDay === tp.key ? 'qb-tod-card--active' : ''}"
+                                                    t-on-click="() => this.selectTimeOfDay(tp.key)">
+                                                <i t-attf-class="fa #{tp.icon}"/>
+                                                <div class="qb-tod-label" t-esc="tp.label"/>
+                                                <div class="qb-tod-range" t-esc="tp.range"/>
+                                            </button>
+                                        </t>
+                                    </div>
+
+                                    <div class="qb-form-label" style="margin-top:14px">Available Slots</div>
+                                    <t t-if="state.slotsLoading">
+                                        <div class="qb-slots-loading"><i class="fa fa-spinner fa-spin"/> Checking availability...</div>
+                                    </t>
+                                    <t t-elif="filteredSlots.length === 0">
+                                        <div class="qb-slots-empty">Select a date to see available slots</div>
+                                    </t>
+                                    <t t-else="">
+                                        <div class="qb-slot-grid">
+                                            <t t-foreach="filteredSlots" t-as="slot" t-key="slot.time">
+                                                <button t-att-class="getSlotClass(slot)"
+                                                        t-on-click="() => this.selectSlot(slot)"
+                                                        t-att-disabled="slot.patient_conflict"
+                                                        t-att-title="slot.conflicts.length > 0 ? slot.conflicts.map(c => c.type === 'patient' ? 'Patient has booking ' + c.booking : c.name + ' busy (' + c.booking + ')').join(', ') : ''">
+                                                    <span t-esc="slot.time"/>
+                                                    <i t-if="slot.patient_conflict" class="fa fa-lock qb-slot-icon"/>
+                                                    <i t-elif="!slot.available" class="fa fa-exclamation-triangle qb-slot-icon"/>
+                                                </button>
+                                            </t>
+                                        </div>
+                                    </t>
+
+                                    <!-- Fine-tune time editor -->
+                                    <t t-if="state.selectedSlot">
+                                        <div class="qb-time-finetune">
+                                            <div class="qb-tf-label">
+                                                <i class="fa fa-clock-o"/> Fine-tune Time
+                                            </div>
+                                            <div class="qb-tf-control">
+                                                <div class="qb-tf-spinner">
+                                                    <button class="qb-tf-btn" t-on-click="() => this.adjustHour(1)"><i class="fa fa-chevron-up"/></button>
+                                                    <input class="qb-tf-input" type="text" readonly=""
+                                                           t-att-value="finetuneHour"/>
+                                                    <button class="qb-tf-btn" t-on-click="() => this.adjustHour(-1)"><i class="fa fa-chevron-down"/></button>
+                                                </div>
+                                                <span class="qb-tf-colon">:</span>
+                                                <div class="qb-tf-spinner">
+                                                    <button class="qb-tf-btn" t-on-click="() => this.adjustMinute(5)"><i class="fa fa-chevron-up"/></button>
+                                                    <input class="qb-tf-input" type="text" readonly=""
+                                                           t-att-value="finetuneMinute"/>
+                                                    <button class="qb-tf-btn" t-on-click="() => this.adjustMinute(-5)"><i class="fa fa-chevron-down"/></button>
+                                                </div>
+                                                <span class="qb-tf-display" t-esc="finetuneDisplay"/>
+                                            </div>
+                                        </div>
+                                    </t>
+                                </div>
+                            </div>
+
+                            <!-- NOTES -->
+                            <div class="qb-form-group" style="margin-top:14px">
+                                <div class="qb-form-label">Notes</div>
+                                <input class="qb-form-input" type="text"
+                                       placeholder="Optional notes for this booking..."
+                                       t-att-value="state.notes"
+                                       t-on-change="onNotesChange"/>
+                            </div>
+
+                            <!-- STAFF ASSIGNMENT -->
+                            <div class="qb-section-title"><i class="fa fa-user-md"/> Staff Assignment</div>
+                            <div class="qb-form-group">
+                                <div class="qb-form-label">Assigned Staff <span class="qb-optional">(optional)</span></div>
+                                <div class="qb-staff-chips">
+                                    <t t-foreach="state.staffList" t-as="staff" t-key="staff.id">
+                                        <button t-attf-class="qb-staff-chip #{isStaffAssigned(staff.id) ? 'selected' : ''}"
+                                                t-on-click="() => this.toggleAssignedStaff(staff.id)">
+                                            <span class="qb-chip-initials" t-esc="staff.initials"/>
+                                            <span t-esc="staff.name"/>
+                                            <t t-if="staff.is_preferred"><i class="fa fa-star qb-chip-star"/></t>
+                                            <i t-if="isStaffAssigned(staff.id)" class="fa fa-check qb-chip-check"/>
+                                        </button>
+                                    </t>
+                                </div>
+                            </div>
+                            <div class="qb-form-row">
+                                <div class="qb-form-group">
+                                    <div class="qb-form-label">Lead Staff <span class="qb-optional">(optional)</span></div>
+                                    <select class="qb-form-input" t-on-change="onStaffChange">
+                                        <option value="">-- No lead staff --</option>
+                                        <t t-foreach="assignedStaffOptions" t-as="staff" t-key="staff.id">
+                                            <option t-att-value="staff.id"
+                                                    t-att-selected="staff.id === state.staffId"
+                                                    t-esc="staff.name + (staff.job_title ? ' — ' + staff.job_title : '')"/>
+                                        </t>
+                                    </select>
+                                </div>
+                                <div class="qb-form-group">
+                                    <div class="qb-form-label">Doctor <span class="qb-optional">(optional)</span></div>
+                                    <select class="qb-form-input" t-on-change="onDoctorChange">
+                                        <option value="">-- No doctor --</option>
+                                        <t t-foreach="state.doctorList" t-as="doc" t-key="doc.id">
+                                            <option t-att-value="doc.id"
+                                                    t-att-selected="doc.id === state.doctorId"
+                                                    t-esc="doc.name + (doc.specialization ? ' — ' + doc.specialization : '')"/>
+                                        </t>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="qb-preferred-badge" t-if="state.staffId and state.staffId === state.preferredStaffId">
+                                <i class="fa fa-star"/> Client's preferred staff
+                            </div>
+
+                            <!-- SUMMARY -->
+                            <div class="qb-summary-box">
+                                <div class="qb-summary-row">
+                                    <span class="qb-sum-label">Service</span>
+                                    <span class="qb-sum-value"><t t-esc="serviceLabel"/> (<t t-esc="state.durationHours"/>h)</span>
+                                </div>
+                                <div class="qb-summary-row">
+                                    <span class="qb-sum-label">Date &amp; Time</span>
+                                    <span class="qb-sum-value" t-esc="summaryDateTime"/>
+                                </div>
+                                <div class="qb-summary-row">
+                                    <span class="qb-sum-label">Location</span>
+                                    <span class="qb-sum-value"><i t-attf-class="fa #{serviceLocation.icon}"/> <t t-esc="serviceLocation.label"/></span>
+                                </div>
+                                <div class="qb-summary-row">
+                                    <span class="qb-sum-label">Facility</span>
+                                    <span class="qb-sum-value" t-esc="facilityName"/>
+                                </div>
+                                <div class="qb-summary-row" t-if="hasProducts">
+                                    <span class="qb-sum-label">Products</span>
+                                    <span class="qb-sum-value qb-sum-ok"><i class="fa fa-check-circle"/> <t t-esc="state.selectedProducts.length"/> selected</span>
+                                </div>
+                                <div class="qb-summary-row" t-if="selectedStaffName">
+                                    <span class="qb-sum-label">Staff</span>
+                                    <span class="qb-sum-value" t-esc="selectedStaffName"/>
+                                </div>
+                                <div class="qb-summary-row" t-if="selectedDoctorName">
+                                    <span class="qb-sum-label">Doctor</span>
+                                    <span class="qb-sum-value" t-esc="selectedDoctorName"/>
+                                </div>
+                                <div class="qb-summary-row" t-if="selectedPackage">
+                                    <span class="qb-sum-label">Package</span>
+                                    <span class="qb-sum-value" t-esc="selectedPackage.name"/>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- FOOTER -->
+                        <div class="qb-wizard-footer">
+                            <div class="qb-footer-spacer"/>
+                            <button class="qb-footer-btn qb-btn-create" t-on-click="createBooking"
+                                    t-att-disabled="state.isCreating">
+                                <t t-if="state.isCreating"><i class="fa fa-spinner fa-spin"/> Creating...</t>
+                                <t t-else=""><i class="fa fa-check"/> Create Booking</t>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </t>
+
+            <!-- CONFIRMATION MODAL -->
+            <t t-if="state.showConfirmation and state.creationResult">
+                <div class="qb-modal-overlay">
+                    <div class="qb-modal-card">
+                        <div class="qb-modal-header">
+                            <div class="qb-modal-icon"><i class="fa fa-check-circle"/></div>
+                            <div class="qb-modal-title">Booking Confirmed</div>
+                            <div class="qb-modal-subtitle">
+                                <strong t-esc="state.creationResult.booking_name"/>
+                                <span> — </span>
+                                <t t-esc="state.creationResult.service_label"/>
+                            </div>
+                            <div class="qb-modal-subdetail">
+                                <t t-esc="state.creationResult.patient_name"/>
+                                <span> • </span>
+                                <t t-esc="state.creationResult.date_display"/>
+                            </div>
+                        </div>
+
+                        <div class="qb-modal-body">
+                            <div class="qb-modal-info-grid">
+                                <div class="qb-modal-info-item">
+                                    <span class="qb-mi-label">Service</span>
+                                    <span class="qb-mi-value"><t t-esc="state.creationResult.service_label"/> (<t t-esc="state.durationHours"/>h)</span>
+                                </div>
+                                <div class="qb-modal-info-item">
+                                    <span class="qb-mi-label">Date &amp; Time</span>
+                                    <span class="qb-mi-value" t-esc="state.creationResult.date_display"/>
+                                </div>
+                                <div class="qb-modal-info-item">
+                                    <span class="qb-mi-label">Facility</span>
+                                    <span class="qb-mi-value" t-esc="state.creationResult.facility_name"/>
+                                </div>
+                                <div class="qb-modal-info-item" t-if="state.creationResult.staff_name">
+                                    <span class="qb-mi-label">Staff</span>
+                                    <span class="qb-mi-value" t-esc="state.creationResult.staff_name"/>
+                                </div>
+                            </div>
+
+                            <t t-if="state.creationResult.quote_summary and state.creationResult.quote_summary.lines">
+                                <div class="qb-modal-quote">
+                                    <div class="qb-mq-title">Quote Summary</div>
+                                    <div class="qb-mq-table">
+                                        <div class="qb-mq-header">
+                                            <div class="qb-mq-col qb-mq-name">Service</div>
+                                            <div class="qb-mq-col qb-mq-qty">Qty</div>
+                                            <div class="qb-mq-col qb-mq-price">Unit Price</div>
+                                            <div class="qb-mq-col qb-mq-sub">Subtotal</div>
+                                        </div>
+                                        <t t-foreach="state.creationResult.quote_summary.lines" t-as="line" t-key="line_index">
+                                            <div class="qb-mq-row">
+                                                <div class="qb-mq-col qb-mq-name" t-esc="line.name"/>
+                                                <div class="qb-mq-col qb-mq-qty" t-esc="line.qty"/>
+                                                <div class="qb-mq-col qb-mq-price" t-esc="formatCurrency(line.unit_price)"/>
+                                                <div class="qb-mq-col qb-mq-sub" t-esc="formatCurrency(line.subtotal)"/>
+                                            </div>
+                                        </t>
+                                        <div class="qb-mq-footer">
+                                            <div class="qb-mq-footer-row qb-mq-grand">
+                                                <span>Total</span>
+                                                <span t-esc="formatCurrency(state.creationResult.quote_summary.total_per_booking)"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </t>
+                        </div>
+
+                        <div class="qb-modal-actions">
+                            <button class="qb-modal-btn qb-modal-delete" t-on-click="deleteBooking">
+                                <i class="fa fa-undo"/> Undo &amp; Delete
+                            </button>
+                            <button class="qb-modal-btn qb-modal-another" t-on-click="createAnother">
+                                <i class="fa fa-plus"/> Create Another
+                            </button>
+                            <button class="qb-modal-btn qb-modal-confirm" t-on-click="viewBooking">
+                                <i class="fa fa-external-link"/> View Booking
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </t>
+
+        </div>
+    </div>
+</t>
+
+</templates>

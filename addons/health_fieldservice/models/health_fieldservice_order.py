@@ -3428,21 +3428,17 @@ class HealthFieldServiceOrderUnified(models.Model):
         }
 
     def action_open_new_booking_wizard(self):
-        """Open the booking wizard pre-filled with this booking's client"""
+        """Open the OWL Quick Booking wizard pre-filled with this booking's client"""
         self.ensure_one()
+        patient_id = self.patient_id.id if self.patient_id else False
         return {
-            'type': 'ir.actions.act_window',
-            'name': _('New Booking'),
-            'res_model': 'health.booking.wizard',
-            'view_mode': 'form',
-            'target': 'new',
+            'type': 'ir.actions.client',
+            'tag': 'ops_quick_booking',
+            'name': _('Quick Booking'),
+            'target': 'current',
             'context': {
-                'default_client_id': self.patient_id.id if self.patient_id else False,
-                'default_client_name': self.patient_id.name if self.patient_id else '',
-                'default_client_phone': self.patient_phone or '',
-                'default_is_new_client': False,
-                'default_skip_client_step': True,
-                'default_current_step': '2_services',
+                'active_id': patient_id,
+                'default_patient_id': patient_id,
             },
         }
 
@@ -4824,6 +4820,296 @@ class HealthFieldServiceOrderUnified(models.Model):
             return {'success': False, 'error': 'Failed to delete bookings.'}
 
         return {'success': True}
+
+    # =====================================================================
+    # QUICK BOOKING OWL WIZARD
+    # =====================================================================
+
+    @api.model
+    def get_quick_booking_options(self, patient_id=False):
+        """Return option lists for the quick booking OWL wizard.
+        Reuses recurring booking logic."""
+        return self.get_recurring_booking_options(patient_id=patient_id)
+
+    @api.model
+    def check_slot_availability(self, patient_id, date_str, facility_id, staff_ids=None):
+        """Check 30-min slot availability for a given date.
+        Returns slots with conflict info for staff and patient."""
+        from datetime import datetime as dt_cls, timedelta
+        import pytz
+
+        if not date_str:
+            return {'slots': []}
+
+        try:
+            check_date = dt_cls.strptime(date_str, '%Y-%m-%d').date()
+        except (ValueError, TypeError):
+            return {'slots': []}
+
+        tz_name = 'Asia/Ho_Chi_Minh'
+        if facility_id:
+            facility = self.env['health.facility'].browse(facility_id)
+            if facility.exists() and hasattr(facility, 'timezone') and facility.timezone:
+                tz_name = facility.timezone
+        tz = pytz.timezone(tz_name)
+
+        day_start_local = tz.localize(dt_cls.combine(check_date, dt_cls.min.time()))
+        day_end_local = day_start_local + timedelta(days=1)
+        day_start_utc = day_start_local.astimezone(pytz.UTC).replace(tzinfo=None)
+        day_end_utc = day_end_local.astimezone(pytz.UTC).replace(tzinfo=None)
+
+        patient_bookings = []
+        if patient_id:
+            patient_bookings = self.search([
+                ('patient_id', '=', patient_id),
+                ('scheduled_datetime', '>=', day_start_utc),
+                ('scheduled_datetime', '<', day_end_utc),
+                ('state', 'not in', ['cancelled', 'rejected']),
+            ])
+
+        staff_bookings = {}
+        if staff_ids:
+            assignments = self.env['health.staff.assignment'].search([
+                ('staff_id', 'in', staff_ids),
+                ('state', 'not in', ['cancelled', 'template']),
+                ('fso_id.scheduled_datetime', '>=', day_start_utc),
+                ('fso_id.scheduled_datetime', '<', day_end_utc),
+                ('fso_id.state', 'not in', ['cancelled', 'rejected']),
+            ])
+            for a in assignments:
+                fso = a.fso_id
+                if not fso or not fso.scheduled_datetime:
+                    continue
+                sid = a.staff_id.id
+                if sid not in staff_bookings:
+                    staff_bookings[sid] = []
+                utc_dt = pytz.UTC.localize(fso.scheduled_datetime)
+                local_dt = utc_dt.astimezone(tz)
+                duration = fso.scheduled_duration or 60
+                staff_bookings[sid].append({
+                    'start': local_dt.hour + local_dt.minute / 60.0,
+                    'end': local_dt.hour + local_dt.minute / 60.0 + duration / 60.0,
+                    'name': a.staff_id.name or '',
+                    'booking': fso.name or '',
+                })
+
+        patient_ranges = []
+        for bk in patient_bookings:
+            if not bk.scheduled_datetime:
+                continue
+            utc_dt = pytz.UTC.localize(bk.scheduled_datetime)
+            local_dt = utc_dt.astimezone(tz)
+            duration = bk.scheduled_duration or 60
+            start_h = local_dt.hour + local_dt.minute / 60.0
+            patient_ranges.append({
+                'start': start_h,
+                'end': start_h + duration / 60.0,
+                'booking': bk.name or '',
+            })
+
+        slots = []
+        for h in range(7, 21):
+            for m in (0, 30):
+                hour_f = h + m / 60.0
+                time_str = f'{h:02d}:{m:02d}'
+
+                conflicts = []
+                patient_conflict = False
+
+                for pr in patient_ranges:
+                    if pr['start'] <= hour_f < pr['end']:
+                        patient_conflict = True
+                        conflicts.append({
+                            'type': 'patient',
+                            'booking': pr['booking'],
+                        })
+                        break
+
+                if staff_ids:
+                    for sid in staff_ids:
+                        for sb in staff_bookings.get(sid, []):
+                            if sb['start'] <= hour_f < sb['end']:
+                                conflicts.append({
+                                    'type': 'staff',
+                                    'name': sb['name'],
+                                    'booking': sb['booking'],
+                                })
+                                break
+
+                slots.append({
+                    'time': time_str,
+                    'hour': hour_f,
+                    'available': len(conflicts) == 0,
+                    'patient_conflict': patient_conflict,
+                    'conflicts': conflicts,
+                })
+
+        return {'slots': slots}
+
+    @api.model
+    def action_create_from_quick_booking_owl(self, vals):
+        """Create a single FSO booking from the quick booking OWL wizard."""
+        import pytz
+
+        patient_id = vals.get('patient_id')
+        service_type = vals.get('service_type', 'home_visit')
+        duration_hours = vals.get('duration_hours', 2)
+        time_hour = vals.get('time_hour', 9.0)
+        date_str = vals.get('date')
+        facility_id = vals.get('facility_id')
+        notes = vals.get('notes', '')
+        product_lines = vals.get('product_lines') or []
+        staff_id = vals.get('staff_id') or False
+        doctor_id = vals.get('doctor_id') or False
+        package_id = vals.get('package_id') or False
+        assigned_staff_ids = vals.get('assigned_staff_ids') or []
+
+        if not patient_id or not facility_id or not date_str:
+            return {'success': False, 'error': 'Missing required fields (patient, facility, date).'}
+
+        try:
+            from datetime import datetime as dt_cls
+            check_date = dt_cls.strptime(date_str, '%Y-%m-%d').date()
+        except (ValueError, TypeError):
+            return {'success': False, 'error': 'Invalid date format.'}
+
+        facility = self.env['health.facility'].browse(facility_id)
+        tz_name = 'Asia/Ho_Chi_Minh'
+        if facility.exists() and hasattr(facility, 'timezone') and facility.timezone:
+            tz_name = facility.timezone
+        tz = pytz.timezone(tz_name)
+
+        hours = int(time_hour)
+        minutes = int(round((time_hour - hours) * 60))
+        from datetime import datetime as dt_cls2
+        local_dt = dt_cls2.combine(check_date, dt_cls2.min.time()).replace(hour=hours, minute=minutes)
+        local_dt = tz.localize(local_dt)
+        utc_dt = local_dt.astimezone(pytz.UTC).replace(tzinfo=None)
+
+        location_map = {
+            'home_visit': 'home', 'clinic_visit': 'clinic', 'consultation': 'clinic',
+            'telemedicine': 'online', 'emergency': 'home', 'follow_up': 'home',
+            'preventive': 'clinic', 'rehabilitation': 'clinic', 'vaccination': 'clinic',
+            'diagnostic': 'clinic',
+        }
+
+        fso_vals = {
+            'patient_id': patient_id,
+            'service_type': service_type,
+            'facility_id': facility_id,
+            'scheduled_datetime': utc_dt,
+            'scheduled_duration': int(duration_hours * 60),
+            'intake_notes': notes or '',
+            'service_location': location_map.get(service_type, 'home'),
+        }
+        fso = self.create(fso_vals)
+
+        quote_summary = {}
+        if product_lines and len(product_lines) > 0:
+            patient = self.env['res.partner'].browse(patient_id)
+            pricelist = patient.property_product_pricelist if hasattr(patient, 'property_product_pricelist') else False
+
+            so_vals = {
+                'partner_id': patient_id,
+                'origin': fso.name or '',
+                'order_line': [],
+            }
+            if pricelist:
+                so_vals['pricelist_id'] = pricelist.id
+
+            summary_lines = []
+            for pl in product_lines:
+                product = self.env['product.product'].browse(pl['product_id'])
+                if not product.exists():
+                    continue
+                qty = pl.get('qty', 1)
+                price = product.list_price or 0
+                if pricelist:
+                    try:
+                        price = pricelist._get_product_price(product, qty)
+                    except Exception:
+                        pass
+                so_vals['order_line'].append((0, 0, {
+                    'product_id': product.id,
+                    'product_uom_qty': qty,
+                    'price_unit': price,
+                }))
+                summary_lines.append({
+                    'name': product.name or '',
+                    'qty': qty,
+                    'unit_price': price,
+                    'subtotal': price * qty,
+                })
+
+            if so_vals['order_line']:
+                so = self.env['sale.order'].create(so_vals)
+                fso.write({'sale_order_id': so.id})
+                quote_summary = {
+                    'lines': summary_lines,
+                    'total_per_booking': so.amount_total,
+                    'total_all': so.amount_total,
+                }
+
+        if package_id and hasattr(fso, 'package_ids'):
+            try:
+                fso.write({'package_ids': [(4, package_id)]})
+            except Exception:
+                pass
+        if doctor_id:
+            try:
+                fso.write({'primary_doctor_id': doctor_id})
+            except Exception:
+                pass
+
+        try:
+            fso.action_confirm_booking()
+        except Exception:
+            pass
+
+        all_staff = list(assigned_staff_ids)
+        if staff_id and staff_id not in all_staff:
+            all_staff = [staff_id] + all_staff
+        for sid in all_staff:
+            try:
+                role = 'lead' if sid == staff_id else 'support'
+                existing = self.env['health.staff.assignment'].search([
+                    ('fso_id', '=', fso.id),
+                    ('staff_id', '=', sid),
+                    ('state', 'not in', ['cancelled', 'template']),
+                ], limit=1)
+                if not existing:
+                    self.env['health.staff.assignment'].create({
+                        'fso_id': fso.id,
+                        'staff_id': sid,
+                        'assignment_role': role,
+                        'state': 'draft',
+                    })
+            except Exception:
+                pass
+
+        service_type_dict = dict(self._fields['service_type'].selection)
+        service_label = service_type_dict.get(service_type, service_type or '')
+        staff_name = ''
+        if staff_id:
+            try:
+                emp = self.env['hr.employee'].browse(staff_id)
+                staff_name = emp.name or ''
+            except Exception:
+                pass
+
+        date_display = local_dt.strftime('%d %b %Y, %H:%M')
+
+        return {
+            'success': True,
+            'booking_id': fso.id,
+            'booking_name': fso.name or '',
+            'patient_name': fso.patient_id.name or '',
+            'service_label': service_label,
+            'date_display': date_display,
+            'facility_name': facility.name or '',
+            'staff_name': staff_name,
+            'quote_summary': quote_summary,
+        }
 
     def get_service_in_progress_data(self):
         """Single RPC returning all data for the Service In-Progress OWL component."""

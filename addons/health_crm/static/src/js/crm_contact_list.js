@@ -4,7 +4,7 @@ import { ListController } from "@web/views/list/list_controller";
 import { listView } from "@web/views/list/list_view";
 import { registry } from "@web/core/registry";
 import { useService } from "@web/core/utils/hooks";
-import { useState, onWillStart } from "@odoo/owl";
+import { useState, onWillStart, onMounted } from "@odoo/owl";
 
 export class CrmContactListController extends ListController {
     static template = "health_crm.CrmContactListView";
@@ -15,14 +15,22 @@ export class CrmContactListController extends ListController {
         this.orm = useService("orm");
         this.tabState = useState({
             activeTab: "all",
-            dateFilter: "all_dates",
+            dateFilter: "today",
             followupCount: 0,
         });
         this._tabFilterGroupId = null;
         this._dateFilterGroupId = null;
+        this._initialFilterApplied = false;
 
         onWillStart(async () => {
             await this._loadFollowupCount();
+        });
+
+        onMounted(() => {
+            if (!this._initialFilterApplied) {
+                this._initialFilterApplied = true;
+                this._applyInitialDateFilter();
+            }
         });
     }
 
@@ -148,6 +156,13 @@ export class CrmContactListController extends ListController {
             this.env.searchModel.createNewFilters([preFilter]);
             this._dateFilterGroupId = preFilter.groupId;
         }
+    }
+
+    _applyInitialDateFilter() {
+        const domain = this._getDateDomain("today");
+        const preFilter = { description: "Today", domain };
+        this.env.searchModel.createNewFilters([preFilter]);
+        this._dateFilterGroupId = preFilter.groupId;
     }
 
     openNewContact() {

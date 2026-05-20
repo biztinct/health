@@ -37,6 +37,30 @@ class ResPartner(models.Model):
         compute='_compute_assignment_stats'
     )
 
+    has_pending_collection = fields.Boolean(
+        compute='_compute_collection_payment_flags', store=False,
+    )
+    has_outstanding_invoice = fields.Boolean(
+        compute='_compute_collection_payment_flags', store=False,
+    )
+
+    def _compute_collection_payment_flags(self):
+        for partner in self:
+            if partner.is_patient:
+                partner.has_pending_collection = bool(self.env['health.payment.transaction'].search_count([
+                    ('patient_id', '=', partner.id),
+                    ('status', '=', 'pending_delivery'),
+                ], limit=1))
+                partner.has_outstanding_invoice = bool(self.env['account.move'].search_count([
+                    ('partner_id', '=', partner.id),
+                    ('move_type', '=', 'out_invoice'),
+                    ('state', '=', 'posted'),
+                    ('payment_state', 'in', ('not_paid', 'partial')),
+                ], limit=1))
+            else:
+                partner.has_pending_collection = False
+                partner.has_outstanding_invoice = False
+
     # Client timeline
     timeline_html = fields.Html(
         'Client Timeline',
@@ -342,18 +366,18 @@ class ResPartner(models.Model):
         }
 
     def action_create_fso(self):
-        """Open quick booking wizard (2-step: Services + Booking) with client pre-filled"""
+        """Open OWL Quick Booking wizard with client pre-filled"""
         if not self.is_patient:
             raise UserError(_('Only patients can have Bookings created.'))
 
         return {
-            'type': 'ir.actions.act_window',
-            'name': _('Create Booking'),
-            'res_model': 'health.quick.booking.wizard',
-            'view_mode': 'form',
-            'target': 'new',
+            'type': 'ir.actions.client',
+            'tag': 'ops_quick_booking',
+            'name': _('Quick Booking'),
+            'target': 'current',
             'context': {
-                'default_client_id': self.id,
+                'active_id': self.id,
+                'default_patient_id': self.id,
             }
         }
     
@@ -380,6 +404,20 @@ class ResPartner(models.Model):
             'type': 'ir.actions.client',
             'tag': 'ops_recurring_booking',
             'name': _('Recurring Booking'),
+            'target': 'current',
+            'context': {
+                'active_id': self.id,
+                'default_patient_id': self.id,
+            },
+        }
+
+    def action_open_quick_booking_owl(self):
+        if not self.is_patient:
+            raise UserError(_('Only patients can have bookings created.'))
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'ops_quick_booking',
+            'name': _('Quick Booking'),
             'target': 'current',
             'context': {
                 'active_id': self.id,

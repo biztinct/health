@@ -161,6 +161,18 @@
             color: #fff !important;
         }
     }
+
+    &--muted {
+        background: rgba(#9E9E9E, 0.06) !important;
+        color: #BDBDBD !important;
+        border-color: rgba(#9E9E9E, 0.12) !important;
+        cursor: default;
+
+        &:hover {
+            background: rgba(#9E9E9E, 0.10) !important;
+            color: #9E9E9E !important;
+        }
+    }
 }
 
 // ===== RESPONSIVE: Hide columns + icon-only buttons on laptops =====
