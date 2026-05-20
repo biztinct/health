@@ -7,7 +7,12 @@
 
             <!-- HEADER -->
             <div class="nc-header">
-                <div class="nc-title"><i class="fa fa-plus-circle"/> New Contact</div>
+                <div class="nc-header-left">
+                    <div class="nc-title"><i class="fa fa-plus-circle"/> New Contact</div>
+                    <t t-if="state.contactDatetime">
+                        <span class="nc-datetime"><i class="fa fa-clock-o"/> <t t-esc="state.contactDatetime"/></span>
+                    </t>
+                </div>
                 <button class="nc-close-btn" t-on-click="closeWizard"><i class="fa fa-times"/></button>
             </div>
 
@@ -30,24 +35,121 @@
             <!-- BODY -->
             <div class="nc-body">
 
-                <!-- STEP 1: Contact Information -->
+                <!-- ============================================ -->
+                <!-- STEP 1: Contact Information                  -->
+                <!-- ============================================ -->
                 <div t-if="state.step === 1" class="nc-step-content">
                     <h3 class="nc-step-title">Contact Information</h3>
 
-                    <!-- Duplicate Warning -->
-                    <div t-if="state.duplicateWarning" class="nc-duplicate-alert">
+                    <!-- SPAM WARNING -->
+                    <div t-if="state.isSpam" class="nc-spam-alert">
                         <i class="fa fa-exclamation-triangle"/>
-                        <span t-esc="state.duplicateWarning"/>
-                        <button class="nc-dup-link" t-on-click="openDuplicate">Open existing</button>
+                        <div class="nc-spam-alert-body">
+                            <strong>SPAM CALLER DETECTED</strong>
+                            <span>This phone number was previously marked as spam. Previous contact: <t t-esc="state.spamLeadName"/></span>
+                        </div>
                     </div>
 
-                    <!-- Name -->
+                    <!-- Name with search -->
                     <div class="nc-field">
                         <label class="nc-label">Contact Name <span class="nc-required">*</span></label>
-                        <input class="nc-input" type="text" placeholder="Full name"
-                               t-att-value="state.name"
-                               t-on-input="(ev) => this.state.name = ev.target.value"/>
+                        <div class="nc-input-group">
+                            <input class="nc-input" type="text" placeholder="Full name"
+                                   t-att-value="state.name"
+                                   t-on-input="(ev) => this.state.name = ev.target.value"
+                                   t-on-keydown="onNameKeydown"/>
+                            <button class="nc-search-btn" t-on-click="searchByName"
+                                    t-att-disabled="state.name.trim().length &lt; 2"
+                                    title="Search existing contacts">
+                                <i t-attf-class="fa #{state.nameSearchLoading ? 'fa-spinner fa-spin' : 'fa-search'}"/>
+                            </button>
+                        </div>
                     </div>
+
+                    <!-- Name Search Results Panel -->
+                    <t t-if="state.showNameSearch">
+                        <div class="nc-search-results">
+                            <t t-if="state.nameSearchLoading">
+                                <div class="nc-search-loading"><i class="fa fa-spinner fa-spin"/> Searching...</div>
+                            </t>
+                            <t t-elif="!nameSearchHasResults">
+                                <div class="nc-search-empty">
+                                    <i class="fa fa-info-circle"/> No matching contacts found.
+                                    <button class="nc-search-continue" t-on-click="closeNameSearch">Continue as New</button>
+                                </div>
+                            </t>
+                            <t t-else="">
+                                <!-- Clients -->
+                                <t t-if="state.nameSearchResults.clients.length > 0">
+                                    <div class="nc-search-section nc-search-section--clients">
+                                        <div class="nc-search-section-title"><i class="fa fa-user"/> Clients (<t t-esc="state.nameSearchResults.clients.length"/>)</div>
+                                        <t t-foreach="state.nameSearchResults.clients" t-as="r" t-key="r.id">
+                                            <div class="nc-search-row" t-on-click="() => this.selectNameSearchResult('client', r)">
+                                                <div class="nc-search-row-main">
+                                                    <span class="nc-search-row-name" t-esc="r.name"/>
+                                                    <span class="nc-search-row-code" t-esc="r.code"/>
+                                                </div>
+                                                <div class="nc-search-row-meta">
+                                                    <t t-if="r.phone"><span><i class="fa fa-phone"/> <t t-esc="r.phone"/></span></t>
+                                                    <t t-if="r.email"><span><i class="fa fa-envelope"/> <t t-esc="r.email"/></span></t>
+                                                </div>
+                                                <t t-if="r.associated_lead_count > 0">
+                                                    <div class="nc-search-row-assoc">
+                                                        <i class="fa fa-link"/> <t t-esc="r.associated_lead_count"/> linked contact(s)
+                                                    </div>
+                                                </t>
+                                            </div>
+                                        </t>
+                                    </div>
+                                </t>
+                                <!-- Leads -->
+                                <t t-if="state.nameSearchResults.leads.length > 0">
+                                    <div class="nc-search-section nc-search-section--leads">
+                                        <div class="nc-search-section-title"><i class="fa fa-bullseye"/> Leads (<t t-esc="state.nameSearchResults.leads.length"/>)</div>
+                                        <t t-foreach="state.nameSearchResults.leads" t-as="r" t-key="r.id">
+                                            <div class="nc-search-row" t-on-click="() => this.selectNameSearchResult('lead', r)">
+                                                <div class="nc-search-row-main">
+                                                    <span class="nc-search-row-name" t-esc="r.name"/>
+                                                    <span class="nc-search-row-code" t-esc="r.code"/>
+                                                </div>
+                                                <div class="nc-search-row-meta">
+                                                    <t t-if="r.phone"><span><i class="fa fa-phone"/> <t t-esc="r.phone"/></span></t>
+                                                    <t t-if="r.associated_client">
+                                                        <span class="nc-search-row-assoc"><i class="fa fa-user"/> Client: <t t-esc="r.associated_client.name"/></span>
+                                                    </t>
+                                                </div>
+                                            </div>
+                                        </t>
+                                    </div>
+                                </t>
+                                <!-- Contacts -->
+                                <t t-if="state.nameSearchResults.contacts.length > 0">
+                                    <div class="nc-search-section nc-search-section--contacts">
+                                        <div class="nc-search-section-title"><i class="fa fa-address-book"/> Contacts (<t t-esc="state.nameSearchResults.contacts.length"/>)</div>
+                                        <t t-foreach="state.nameSearchResults.contacts" t-as="r" t-key="r.id">
+                                            <div class="nc-search-row" t-on-click="() => this.selectNameSearchResult('contact', r)">
+                                                <div class="nc-search-row-main">
+                                                    <span class="nc-search-row-name" t-esc="r.name"/>
+                                                    <span class="nc-search-row-code" t-esc="r.code"/>
+                                                </div>
+                                                <div class="nc-search-row-meta">
+                                                    <t t-if="r.phone"><span><i class="fa fa-phone"/> <t t-esc="r.phone"/></span></t>
+                                                    <t t-if="r.associated_client">
+                                                        <span class="nc-search-row-assoc"><i class="fa fa-user"/> Client: <t t-esc="r.associated_client.name"/></span>
+                                                    </t>
+                                                </div>
+                                            </div>
+                                        </t>
+                                    </div>
+                                </t>
+                                <div class="nc-search-footer">
+                                    <button class="nc-search-continue" t-on-click="closeNameSearch">
+                                        <i class="fa fa-plus"/> Continue as New
+                                    </button>
+                                </div>
+                            </t>
+                        </div>
+                    </t>
 
                     <!-- Phone + Email row -->
                     <div class="nc-row">
@@ -61,8 +163,64 @@
                             <label class="nc-label">Email</label>
                             <input class="nc-input" type="email" placeholder="Email address"
                                    t-att-value="state.email"
-                                   t-on-input="(ev) => this.state.email = ev.target.value"/>
+                                   t-on-input="onEmailInput"/>
                         </div>
+                    </div>
+
+                    <!-- Duplicate Results (search-results panel style) -->
+                    <t t-if="state.showDuplicateResults">
+                        <div class="nc-search-results">
+                            <!-- Clients (partners) -->
+                            <t t-if="state.duplicatePartners.length > 0">
+                                <div class="nc-search-section nc-search-section--clients">
+                                    <div class="nc-search-section-title"><i class="fa fa-user"/> Clients (<t t-esc="state.duplicatePartners.length"/>)</div>
+                                    <t t-foreach="state.duplicatePartners" t-as="r" t-key="r.id">
+                                        <div class="nc-search-row" t-on-click="() => this.selectDuplicatePartner(r)">
+                                            <div class="nc-search-row-main">
+                                                <span class="nc-search-row-name" t-esc="r.name"/>
+                                                <span class="nc-search-row-code" t-esc="r.code"/>
+                                            </div>
+                                            <div class="nc-search-row-meta">
+                                                <t t-if="r.phone"><span><i class="fa fa-phone"/> <t t-esc="r.phone"/></span></t>
+                                                <t t-if="r.email"><span><i class="fa fa-envelope"/> <t t-esc="r.email"/></span></t>
+                                            </div>
+                                        </div>
+                                    </t>
+                                </div>
+                            </t>
+                            <!-- Leads -->
+                            <t t-if="state.duplicateLeads.length > 0">
+                                <div class="nc-search-section nc-search-section--leads">
+                                    <div class="nc-search-section-title"><i class="fa fa-bullseye"/> Contacts (<t t-esc="state.duplicateLeads.length"/>)</div>
+                                    <t t-foreach="state.duplicateLeads" t-as="r" t-key="r.id">
+                                        <div class="nc-search-row" t-on-click="() => this.selectDuplicateLead(r)">
+                                            <div class="nc-search-row-main">
+                                                <span class="nc-search-row-name" t-esc="r.name"/>
+                                                <span class="nc-search-row-code" t-esc="r.code"/>
+                                            </div>
+                                            <div class="nc-search-row-meta">
+                                                <t t-if="r.phone"><span><i class="fa fa-phone"/> <t t-esc="r.phone"/></span></t>
+                                                <t t-if="r.email"><span><i class="fa fa-envelope"/> <t t-esc="r.email"/></span></t>
+                                                <t t-if="r.status"><span class="nc-search-row-status" t-esc="r.status"/></t>
+                                            </div>
+                                        </div>
+                                    </t>
+                                </div>
+                            </t>
+                            <div class="nc-search-footer">
+                                <button class="nc-search-continue" t-on-click="closeDuplicateResults">
+                                    <i class="fa fa-plus"/> Continue as New
+                                </button>
+                            </div>
+                        </div>
+                    </t>
+
+                    <!-- Zalo -->
+                    <div class="nc-field">
+                        <label class="nc-label">Zalo Number</label>
+                        <input class="nc-input" type="tel" placeholder="Zalo number (auto-filled from phone)"
+                               t-att-value="state.zaloNumber"
+                               t-on-input="(ev) => this.state.zaloNumber = ev.target.value"/>
                     </div>
 
                     <!-- Mode of Contact -->
@@ -92,7 +250,9 @@
                     </div>
                 </div>
 
-                <!-- STEP 2: Relationship & Service -->
+                <!-- ============================================ -->
+                <!-- STEP 2: Relationship &amp; Service           -->
+                <!-- ============================================ -->
                 <div t-if="state.step === 2" class="nc-step-content">
                     <h3 class="nc-step-title">Relationship &amp; Service Interest</h3>
 
@@ -112,10 +272,55 @@
                     <!-- Client Name (if not self) -->
                     <div t-if="state.relationshipType !== 'client'" class="nc-field">
                         <label class="nc-label">Client Name</label>
-                        <input class="nc-input" type="text" placeholder="Name of the client"
-                               t-att-value="state.clientName"
-                               t-on-input="(ev) => this.state.clientName = ev.target.value"/>
+                        <div class="nc-input-group">
+                            <input class="nc-input" type="text" placeholder="Name of the client"
+                                   t-att-value="state.clientName"
+                                   t-on-input="(ev) => this.state.clientName = ev.target.value"
+                                   t-on-keydown="onClientNameKeydown"/>
+                            <button class="nc-search-btn" t-on-click="searchClientByName"
+                                    t-att-disabled="state.clientName.trim().length &lt; 2"
+                                    title="Search existing clients">
+                                <i t-attf-class="fa #{state.clientSearchLoading ? 'fa-spinner fa-spin' : 'fa-search'}"/>
+                            </button>
+                        </div>
+                        <t t-if="state.selectedClientId">
+                            <div class="nc-selected-client">
+                                <i class="fa fa-check-circle"/> Linked to existing client
+                            </div>
+                        </t>
                     </div>
+
+                    <!-- Client Search Results -->
+                    <t t-if="state.showClientSearch">
+                        <div class="nc-search-results nc-search-results--compact">
+                            <t t-if="state.clientSearchLoading">
+                                <div class="nc-search-loading"><i class="fa fa-spinner fa-spin"/> Searching...</div>
+                            </t>
+                            <t t-elif="state.clientSearchResults.length === 0">
+                                <div class="nc-search-empty">
+                                    <i class="fa fa-info-circle"/> No matching clients found.
+                                    <button class="nc-search-continue" t-on-click="closeClientSearch">Close</button>
+                                </div>
+                            </t>
+                            <t t-else="">
+                                <t t-foreach="state.clientSearchResults" t-as="c" t-key="c.id">
+                                    <div class="nc-search-row" t-on-click="() => this.selectClient(c)">
+                                        <div class="nc-search-row-main">
+                                            <span class="nc-search-row-name" t-esc="c.name"/>
+                                            <span class="nc-search-row-code" t-esc="c.code"/>
+                                        </div>
+                                        <div class="nc-search-row-meta">
+                                            <t t-if="c.phone"><span><i class="fa fa-phone"/> <t t-esc="c.phone"/></span></t>
+                                            <t t-if="c.email"><span><i class="fa fa-envelope"/> <t t-esc="c.email"/></span></t>
+                                        </div>
+                                    </div>
+                                </t>
+                                <div class="nc-search-footer">
+                                    <button class="nc-search-continue" t-on-click="closeClientSearch">Close</button>
+                                </div>
+                            </t>
+                        </div>
+                    </t>
 
                     <!-- Service Interest -->
                     <div class="nc-field">
@@ -156,22 +361,145 @@
                     </div>
                 </div>
 
+                <!-- ============================================ -->
+                <!-- STEP 3: What's Next? (Hybrid Action Selector)-->
+                <!-- ============================================ -->
+                <div t-if="state.step === 3" class="nc-step-content">
+                    <!-- Success Banner -->
+                    <div class="nc-success-banner">
+                        <div class="nc-success-icon">
+                            <i t-attf-class="fa #{state.isExistingContact ? 'fa-user-circle' : 'fa-check-circle'}"/>
+                        </div>
+                        <div class="nc-success-text">
+                            <h3 t-if="state.isExistingContact">Existing Contact Selected</h3>
+                            <h3 t-else="">Contact Created!</h3>
+                            <p>
+                                <strong t-esc="state.createdLeadName"/>
+                                <t t-if="state.createdLeadCode">
+                                    <span class="nc-success-code">(<t t-esc="state.createdLeadCode"/>)</span>
+                                </t>
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="nc-action-prompt">What would you like to do next?</div>
+
+                    <!-- Action Grid -->
+                    <div class="nc-action-grid">
+                        <t t-foreach="step3Actions" t-as="act" t-key="act.key">
+                            <button t-att-class="getActionCardClass(act)"
+                                    t-on-click="() => this.onStep3Action(act.key)"
+                                    t-att-disabled="isActionCompleted(act.key)">
+                                <i t-attf-class="fa #{act.icon} nc-action-card-icon"/>
+                                <span class="nc-action-card-label" t-esc="act.label"/>
+                                <t t-if="isActionCompleted(act.key)">
+                                    <i class="fa fa-check nc-action-card-done"/>
+                                </t>
+                            </button>
+                        </t>
+                    </div>
+
+                    <!-- Inline Panels -->
+                    <t t-if="state.activeInlineAction === 'activity'">
+                        <div class="nc-inline-panel">
+                            <div class="nc-inline-panel-title"><i class="fa fa-tasks"/> Log Activity</div>
+                            <div class="nc-field nc-field--compact">
+                                <label class="nc-label">Type</label>
+                                <div class="nc-radio-row">
+                                    <t t-foreach="activityTypeOptions" t-as="at" t-key="at.key">
+                                        <button t-attf-class="nc-radio-btn #{state.activityTypeKey === at.key ? 'active' : ''}"
+                                                t-on-click="() => this.setActivityType(at.key)">
+                                            <i t-attf-class="fa #{at.icon}"/> <t t-esc="at.label"/>
+                                        </button>
+                                    </t>
+                                </div>
+                            </div>
+                            <div class="nc-inline-row">
+                                <div class="nc-field nc-field--compact" style="flex:2">
+                                    <label class="nc-label">Summary</label>
+                                    <input class="nc-input" type="text" placeholder="Brief description..."
+                                           t-att-value="state.activitySummary"
+                                           t-on-input="(ev) => this.state.activitySummary = ev.target.value"/>
+                                </div>
+                                <div class="nc-field nc-field--compact" style="flex:1">
+                                    <label class="nc-label">Due Date</label>
+                                    <input class="nc-input" type="date"
+                                           t-att-value="state.activityDeadline"
+                                           t-on-input="(ev) => this.state.activityDeadline = ev.target.value"/>
+                                </div>
+                            </div>
+                            <div class="nc-inline-actions">
+                                <button class="nc-btn nc-btn-ghost nc-btn-sm" t-on-click="() => this.state.activeInlineAction = null">Cancel</button>
+                                <button class="nc-btn nc-btn-primary nc-btn-sm" t-on-click="submitActivity"
+                                        t-att-disabled="state.inlineSubmitting">
+                                    <t t-if="state.inlineSubmitting"><i class="fa fa-spinner fa-spin"/></t>
+                                    <t t-else="">Schedule</t>
+                                </button>
+                            </div>
+                        </div>
+                    </t>
+
+                    <t t-if="state.activeInlineAction === 'notes'">
+                        <div class="nc-inline-panel">
+                            <div class="nc-inline-panel-title"><i class="fa fa-sticky-note"/> Add Internal Note</div>
+                            <div class="nc-field nc-field--compact">
+                                <textarea class="nc-input nc-textarea" placeholder="Write your note here..."
+                                          t-att-value="state.noteBody"
+                                          t-on-input="(ev) => this.state.noteBody = ev.target.value"
+                                          rows="3"/>
+                            </div>
+                            <div class="nc-inline-actions">
+                                <button class="nc-btn nc-btn-ghost nc-btn-sm" t-on-click="() => this.state.activeInlineAction = null">Cancel</button>
+                                <button class="nc-btn nc-btn-primary nc-btn-sm" t-on-click="submitNote"
+                                        t-att-disabled="state.inlineSubmitting">
+                                    <t t-if="state.inlineSubmitting"><i class="fa fa-spinner fa-spin"/></t>
+                                    <t t-else="">Save Note</t>
+                                </button>
+                            </div>
+                        </div>
+                    </t>
+
+                    <t t-if="state.activeInlineAction === 'spam'">
+                        <div class="nc-inline-panel nc-inline-panel--danger">
+                            <div class="nc-inline-panel-title"><i class="fa fa-ban"/> Mark as Spam</div>
+                            <p class="nc-inline-panel-desc">Are you sure you want to mark this contact as spam? This will set the contact status to "Spam" and outcome to "Rejected".</p>
+                            <div class="nc-inline-actions">
+                                <button class="nc-btn nc-btn-ghost nc-btn-sm" t-on-click="() => this.state.activeInlineAction = null">Cancel</button>
+                                <button class="nc-btn nc-btn-danger nc-btn-sm" t-on-click="confirmSpam"
+                                        t-att-disabled="state.inlineSubmitting">
+                                    <t t-if="state.inlineSubmitting"><i class="fa fa-spinner fa-spin"/></t>
+                                    <t t-else="">Confirm Spam</t>
+                                </button>
+                            </div>
+                        </div>
+                    </t>
+                </div>
+
             </div>
 
             <!-- FOOTER -->
             <div class="nc-footer">
-                <button t-if="state.step > 1" class="nc-btn nc-btn-secondary" t-on-click="prevStep">
-                    <i class="fa fa-arrow-left"/> Back
-                </button>
+                <t t-if="state.step === 1">
+                    <button class="nc-btn nc-btn-junk" t-on-click="markAsJunk" title="Mark as junk/spam contact">
+                        <i class="fa fa-ban"/> Mark Junk
+                    </button>
+                </t>
+                <t t-if="state.step === 2">
+                    <button class="nc-btn nc-btn-secondary" t-on-click="prevStep">
+                        <i class="fa fa-arrow-left"/> Back
+                    </button>
+                </t>
                 <div class="nc-footer-spacer"/>
-                <button class="nc-btn nc-btn-ghost" t-on-click="closeWizard">Cancel</button>
-                <t t-if="state.step &lt; 2">
+                <t t-if="state.step &lt; 3">
+                    <button class="nc-btn nc-btn-ghost" t-on-click="closeWizard">Cancel</button>
+                </t>
+                <t t-if="state.step === 1">
                     <button class="nc-btn nc-btn-primary" t-on-click="nextStep"
                             t-att-disabled="!canGoNext()">
                         Next <i class="fa fa-arrow-right"/>
                     </button>
                 </t>
-                <t t-else="">
+                <t t-if="state.step === 2">
                     <button class="nc-btn nc-btn-primary" t-on-click="submit"
                             t-att-disabled="state.isSubmitting">
                         <t t-if="state.isSubmitting"><i class="fa fa-spinner fa-spin"/> Creating...</t>

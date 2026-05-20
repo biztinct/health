@@ -749,16 +749,17 @@ class ResPartner(models.Model):
     def action_view_appointments(self):
         """Action to view patient FSO bookings"""
         if not self.is_patient:
-            return
-        
+            return False
+
         return {
             'type': 'ir.actions.act_window',
             'name': f'Service Bookings - {self.name}',
             'res_model': 'health.fieldservice.order',
             'view_mode': 'list,form,calendar',
-            'target': 'current',
+            'views': [[False, 'list'], [False, 'form'], [False, 'calendar']],
+            'target': 'new',
             'domain': [('patient_id', '=', self.id)],
-            'context': {'default_patient_id': self.id}
+            'context': {'default_patient_id': self.id},
         }
     
     def action_create_appointment(self):

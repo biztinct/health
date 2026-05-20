@@ -2388,8 +2388,284 @@ class HealthLead(models.Model):
             'contact_status': 'active',
             'type': 'opportunity',
         }
+        if vals.get('contact_datetime'):
+            lead_vals['contact_datetime'] = vals['contact_datetime']
+        else:
+            lead_vals['contact_datetime'] = fields.Datetime.now()
+
+        selected_client_id = vals.get('selected_client_id')
+        if selected_client_id:
+            lead_vals['partner_id'] = selected_client_id
+
         lead = self.create(lead_vals)
+
+        zalo_number = vals.get('zalo_number')
+        if zalo_number and lead.partner_id and hasattr(lead.partner_id, 'zalo_user_id'):
+            if not lead.partner_id.zalo_user_id:
+                lead.partner_id.zalo_user_id = zalo_number
+
         return {
             'res_id': lead.id,
             'res_model': 'crm.lead',
+            'name': lead.name,
+            'code': lead.unique_contact_code or '',
         }
+
+    # =========================================================================
+    # NEW CONTACT WIZARD — RPC METHODS
+    # =========================================================================
+
+    @api.model
+    def check_contact_duplicates(self, vals):
+        """Check for duplicate contacts by phone and/or email across leads and partners.
+        Also checks for known spam callers."""
+        import re
+        phone = vals.get('phone', '')
+        email = vals.get('email', '')
+
+        phone_normalized = re.sub(r'[^\d]', '', phone) if phone else ''
+
+        lead_matches = []
+        partner_matches = []
+        is_spam = False
+        spam_lead_name = False
+
+        # Search crm.lead by phone OR email
+        lead_domain = []
+        if phone_normalized:
+            lead_domain.append(('phone', 'ilike', phone_normalized[-9:]))
+        if email:
+            if lead_domain:
+                lead_domain = ['|'] + lead_domain + [('email_from', '=ilike', email)]
+            else:
+                lead_domain = [('email_from', '=ilike', email)]
+
+        if lead_domain:
+            leads = self.search(lead_domain, limit=10)
+            for lead in leads:
+                lead_matches.append({
+                    'id': lead.id,
+                    'name': lead.name,
+                    'code': lead.unique_contact_code or '',
+                    'phone': lead.phone or '',
+                    'email': lead.email_from or '',
+                    'status': lead.contact_status or '',
+                })
+
+        # Search res.partner by phone OR email
+        partner_domain = []
+        if phone_normalized:
+            partner_domain.append(('phone', 'ilike', phone_normalized[-9:]))
+        if email:
+            if partner_domain:
+                partner_domain = ['|'] + partner_domain + [('email', '=ilike', email)]
+            else:
+                partner_domain = [('email', '=ilike', email)]
+
+        if partner_domain:
+            partners = self.env['res.partner'].search(partner_domain, limit=10)
+            for p in partners:
+                partner_matches.append({
+                    'id': p.id,
+                    'name': p.name,
+                    'code': p.patient_code or '',
+                    'phone': p.phone or '',
+                    'email': p.email or '',
+                    'patient_status': p.patient_status if hasattr(p, 'patient_status') else '',
+                })
+
+        # Spam check
+        if phone_normalized:
+            spam_lead = self.search([
+                ('phone', 'ilike', phone_normalized[-9:]),
+                ('contact_status', '=', 'spam'),
+            ], limit=1)
+            if spam_lead:
+                is_spam = True
+                spam_lead_name = spam_lead.name
+
+        return {
+            'lead_matches': lead_matches,
+            'partner_matches': partner_matches,
+            'is_spam': is_spam,
+            'spam_lead_name': spam_lead_name,
+        }
+
+    @api.model
+    def search_contacts_for_wizard(self, search_term):
+        """Search contacts, leads, and clients by name with bidirectional associations."""
+        if not search_term or len(search_term) < 2:
+            return {'contacts': [], 'leads': [], 'clients': []}
+
+        # Step 1: Search clients (res.partner with is_patient=True)
+        matching_partners = self.env['res.partner'].search([
+            ('is_patient', '=', True),
+            '|', '|',
+            ('name', 'ilike', search_term),
+            ('phone', 'ilike', search_term),
+            ('email', 'ilike', search_term),
+        ], limit=15)
+
+        all_client_ids = set(matching_partners.ids)
+
+        # Step 2: Search leads
+        matching_leads = self.search([
+            '|', '|',
+            ('name', 'ilike', search_term),
+            ('phone', 'ilike', search_term),
+            ('email_from', 'ilike', search_term),
+        ], limit=30)
+
+        directly_matching_lead_ids = set(matching_leads.ids)
+        associated_lead_ids = set()
+
+        # Step 3: Find associated leads for matching clients
+        if matching_partners:
+            assoc_leads = self.search([
+                ('patient_id', 'in', matching_partners.ids),
+            ], limit=30)
+            associated_lead_ids.update(assoc_leads.ids)
+
+        all_lead_ids = directly_matching_lead_ids | associated_lead_ids
+
+        # Step 4: Find associated clients for matching leads
+        for lead in matching_leads:
+            if lead.patient_id and lead.patient_id.id not in all_client_ids:
+                all_client_ids.add(lead.patient_id.id)
+
+        # Step 5: Build clients list
+        all_partners = self.env['res.partner'].browse(list(all_client_ids))
+        clients_list = []
+        for p in all_partners:
+            assoc_leads_for_client = self.search([
+                ('patient_id', '=', p.id)
+            ], limit=5)
+            clients_list.append({
+                'id': p.id,
+                'name': p.name,
+                'phone': p.phone or '',
+                'email': p.email or '',
+                'code': p.patient_code or '',
+                'associated_lead_count': len(assoc_leads_for_client),
+                'associated_leads': [
+                    {'id': l.id, 'name': l.name, 'code': l.unique_contact_code or ''}
+                    for l in assoc_leads_for_client
+                ],
+            })
+
+        # Step 6: Build leads/contacts lists
+        all_leads = self.browse(list(all_lead_ids))
+        contacts_list = []
+        leads_list = []
+
+        for lead in all_leads:
+            associated_client = None
+            if lead.patient_id:
+                associated_client = {
+                    'id': lead.patient_id.id,
+                    'name': lead.patient_id.name,
+                    'code': lead.patient_id.patient_code or '',
+                    'phone': lead.patient_id.phone or lead.patient_id.mobile or '',
+                }
+
+            record = {
+                'id': lead.id,
+                'name': lead.name,
+                'phone': lead.phone or '',
+                'email': lead.email_from or '',
+                'code': lead.unique_contact_code or '',
+                'status': lead.contact_status,
+                'associated_client': associated_client,
+                'relationship_type': lead.contact_relationship_type or '',
+                'client_name': lead.client_name or '',
+            }
+
+            if lead.id in associated_lead_ids:
+                leads_list.append(record)
+            elif lead.contact_status == 'lead':
+                leads_list.append(record)
+            elif lead.contact_status in ['active', False, '']:
+                contacts_list.append(record)
+
+        return {
+            'contacts': contacts_list[:10],
+            'leads': leads_list[:10],
+            'clients': clients_list,
+        }
+
+    @api.model
+    def search_clients_for_wizard(self, search_term):
+        """Search for existing clients (res.partner with is_patient=True) by name/phone/email."""
+        if not search_term or len(search_term) < 2:
+            return []
+
+        partners = self.env['res.partner'].search([
+            ('is_patient', '=', True),
+            '|', '|',
+            ('name', 'ilike', search_term),
+            ('phone', 'ilike', search_term),
+            ('email', 'ilike', search_term),
+        ], limit=15)
+
+        return [{
+            'id': p.id,
+            'name': p.name,
+            'phone': p.phone or '',
+            'email': p.email or '',
+            'code': p.patient_code or '',
+        } for p in partners]
+
+    @api.model
+    def action_create_spam_from_wizard(self, vals):
+        """Create a lead marked as spam/junk from the new contact wizard."""
+        lead_vals = {
+            'name': vals.get('name', 'Unknown'),
+            'phone': vals.get('phone') or False,
+            'email_from': vals.get('email_from') or False,
+            'catchment_province_id': vals.get('catchment_province_id') or False,
+            'mode_of_contact': vals.get('mode_of_contact') or False,
+            'contact_datetime': fields.Datetime.now(),
+            'contact_status': 'spam',
+            'contact_outcome': 'rejected',
+            'type': 'opportunity',
+        }
+        self.create(lead_vals)
+        return True
+
+    def action_mark_contact_spam(self):
+        """Mark this contact as spam."""
+        self.ensure_one()
+        self.write({
+            'contact_status': 'spam',
+            'contact_outcome': 'rejected',
+        })
+        return True
+
+    def wizard_log_activity(self, activity_type_id, summary, date_deadline):
+        """Create a mail.activity on this lead from the wizard inline panel."""
+        self.ensure_one()
+        vals = {
+            'res_id': self.id,
+            'res_model_id': self.env['ir.model']._get('crm.lead').id,
+            'summary': summary or _('Follow-up'),
+            'date_deadline': date_deadline or fields.Date.today(),
+            'user_id': self.env.uid,
+        }
+        if activity_type_id:
+            vals['activity_type_id'] = activity_type_id
+        else:
+            todo_type = self.env.ref('mail.mail_activity_data_todo', raise_if_not_found=False)
+            if todo_type:
+                vals['activity_type_id'] = todo_type.id
+        self.env['mail.activity'].create(vals)
+        return True
+
+    def wizard_post_note(self, note_body):
+        """Post an internal note on this lead from the wizard inline panel."""
+        self.ensure_one()
+        self.message_post(
+            body=note_body,
+            message_type='comment',
+            subtype_xmlid='mail.mt_note',
+        )
+        return True
