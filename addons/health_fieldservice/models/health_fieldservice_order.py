@@ -970,11 +970,12 @@ class HealthFieldServiceOrderUnified(models.Model):
     # COMMISSION & SERVICE FEE FIELDS (Contact-First Flow Requirements)
     # =========================================================================
     
-    # Service fee for casual/part-time healthcare providers
-    service_fee_vnd = fields.Float(
-        'Service Fee (VND)',
-        help='Negotiated fee for casual healthcare provider (amount OM negotiated to pay)',
-        tracking=True
+    service_fee_vnd = fields.Monetary(
+        'Service Fee',
+        compute='_compute_service_fee_vnd',
+        store=True,
+        help='Total service amount from the linked quote',
+        tracking=True,
     )
     
     # Commission tracking fields
@@ -998,15 +999,19 @@ class HealthFieldServiceOrderUnified(models.Model):
         'Commission Amount',
         compute='_compute_commission_amount',
         store=True,
-        help='Calculated commission amount based on percentage'
+        help='Calculated commission amount: commission % of service fee',
     )
-    
-    @api.depends('total_price', 'commission_percentage')
-    def _compute_commission_amount(self):
-        """Calculate commission amount from percentage of total price"""
+
+    @api.depends('sale_order_id', 'sale_order_id.amount_total')
+    def _compute_service_fee_vnd(self):
         for record in self:
-            if record.total_price and record.commission_percentage:
-                record.commission_amount = record.total_price * (record.commission_percentage / 100)
+            record.service_fee_vnd = record.sale_order_id.amount_total if record.sale_order_id else 0.0
+
+    @api.depends('service_fee_vnd', 'commission_percentage')
+    def _compute_commission_amount(self):
+        for record in self:
+            if record.service_fee_vnd and record.commission_percentage:
+                record.commission_amount = record.service_fee_vnd * (record.commission_percentage / 100)
             else:
                 record.commission_amount = 0.0
     
@@ -3404,17 +3409,21 @@ class HealthFieldServiceOrderUnified(models.Model):
         }
 
     def action_open_client_form(self):
-        """Open the client/patient form view"""
+        """Open the client/patient form view (OPS profile)"""
         self.ensure_one()
         if not self.patient_id:
             raise UserError(_('No client is linked to this booking.'))
+        try:
+            view_id = self.env.ref('health_fieldservice.view_health_patient_form_ops').id
+        except Exception:
+            view_id = self.env.ref('health_base.view_health_patient_form').id
         return {
             'type': 'ir.actions.act_window',
             'name': self.patient_id.name,
             'res_model': 'res.partner',
             'res_id': self.patient_id.id,
             'view_mode': 'form',
-            'view_id': self.env.ref('health_base.view_health_patient_form').id,
+            'view_id': view_id,
             'target': 'current',
         }
 

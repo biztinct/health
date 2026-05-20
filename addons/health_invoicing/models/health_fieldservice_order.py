@@ -663,3 +663,79 @@ class HealthFieldserviceOrder(models.Model):
                 'default_patient_id': self.patient_id.id,
             },
         }
+
+    # ── OWL Package Dialog RPC methods ──
+
+    def get_package_dialog_data(self):
+        """Return data for the OWL package selection dialog."""
+        self.ensure_one()
+        existing = []
+        packages = self.env['health.service.package'].search([
+            ('patient_id', '=', self.patient_id.id),
+            ('state', '=', 'active'),
+        ])
+        current_ids = self.package_ids.ids
+        for pkg in packages:
+            existing.append({
+                'id': pkg.id,
+                'name': pkg.name,
+                'service_type': pkg.service_type or '',
+                'service_type_label': dict(pkg._fields['service_type'].selection).get(pkg.service_type, ''),
+                'total_services': pkg.total_services,
+                'consumed_services': pkg.consumed_services,
+                'remaining_services': pkg.remaining_services,
+                'selectable': pkg.remaining_services > 0,
+                'selected': pkg.id in current_ids,
+            })
+
+        products = []
+        package_products = self.env['product.template'].search([
+            ('is_healthcare_package', '=', True),
+        ])
+        for pt in package_products:
+            products.append({
+                'id': pt.id,
+                'name': pt.name,
+                'service_count': pt.healthcare_service_count,
+                'price': pt.list_price,
+                'price_per_service': pt.healthcare_price_per_visit,
+                'package_type': pt.healthcare_package_type or '',
+                'package_type_label': dict(pt._fields['healthcare_package_type'].selection).get(pt.healthcare_package_type, ''),
+            })
+
+        return {
+            'patient_name': self.patient_id.name or '',
+            'booking_name': self.name or '',
+            'existing_packages': existing,
+            'available_products': products,
+        }
+
+    def action_assign_packages_owl(self, package_ids):
+        """Assign selected packages from OWL dialog."""
+        self.ensure_one()
+        self.write({'package_ids': [(6, 0, package_ids)]})
+        return True
+
+    def action_purchase_package_owl(self, product_template_id):
+        """Open purchase wizard from OWL dialog."""
+        self.ensure_one()
+        return {
+            'name': _('Purchase Package'),
+            'type': 'ir.actions.act_window',
+            'res_model': 'health.prepaid.package.wizard',
+            'view_mode': 'form',
+            'views': [[False, 'form']],
+            'target': 'new',
+            'context': {
+                'default_patient_id': self.patient_id.id,
+                'default_package_product_id': product_template_id,
+                'default_source_fso_id': self.id,
+                'default_currency_id': self.env.company.currency_id.id,
+            },
+        }
+
+    def action_remove_packages_owl(self):
+        """Remove all package assignments from OWL dialog."""
+        self.ensure_one()
+        self.write({'package_ids': [(5, 0, 0)]})
+        return True

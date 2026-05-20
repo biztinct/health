@@ -5,6 +5,7 @@
     <record id="view_health_fieldservice_order_form" model="ir.ui.view">
         <field name="name">health.fieldservice.order.form</field>
         <field name="model">health.fieldservice.order</field>
+        <field name="priority">99</field>
         <field name="arch" type="xml">
             <form string="Booking">
                 <!-- ============================================================
@@ -757,6 +758,7 @@
     <record id="view_health_fieldservice_order_list" model="ir.ui.view">
         <field name="name">health.fieldservice.order.list</field>
         <field name="model">health.fieldservice.order</field>
+        <field name="priority">99</field>
         <field name="arch" type="xml">
             <list string="Bookings" default_order="create_date desc">
                 <field name="display_name" string="Booking"/>
@@ -923,7 +925,7 @@
         <field name="model">health.fieldservice.order</field>
         <field name="inherit_id" eval="False"/>
         <field name="mode">primary</field>
-        <field name="priority">30</field>
+        <field name="priority">10</field>
         <field name="arch" type="xml">
             <form string="Booking" js_class="ops_booking_form">
                 <header>
@@ -945,6 +947,9 @@
                             string="Cancel Booking" icon="fa-times"
                             invisible="state in ('completed', 'completed_pending_invoice', 'cancelled', 'closed')"
                             confirm="Are you sure you want to cancel this booking?"/>
+                    <button name="action_open_new_booking_wizard" type="object"
+                            string="Create Booking" icon="fa-plus"
+                            class="btn-primary"/>
                     <button name="action_ai_assign_staff" type="object"
                             string="AI Assign Staff" class="oe_highlight"
                             icon="fa-magic" invisible="True"/>
@@ -1121,7 +1126,7 @@
                                     </button>
                                 </div>
                                 <div class="vu-client-card__body">
-                                    <div class="vu-client-card__avatar">
+                                    <div class="vu-client-card__avatar vu-avatar-only">
                                         <field name="patient_id" widget="many2one_avatar" readonly="1"
                                                options="{'no_open': True}" class="vu-client-avatar-widget"/>
                                     </div>
@@ -1166,12 +1171,29 @@
                                 </div>
                                 <group>
                                     <field name="service_type"/>
+                                    <field name="patient_national_id" string="National ID" readonly="1"/>
                                     <field name="category_of_service_id" string="Service Category"/>
                                     <field name="scheduled_datetime" readonly="has_staff_assigned"/>
                                     <field name="scheduled_duration" widget="integer"/>
                                     <field name="service_location"/>
                                     <field name="booking_timezone" readonly="1"/>
                                     <field name="team_id"/>
+                                </group>
+                            </div>
+
+                            <!-- Commission &amp; Fees Card -->
+                            <div class="vu-detail-card" name="commission_fees_card">
+                                <span class="vu-detail-card__edit-trigger"><i class="fa fa-pencil"/></span>
+                                <div class="vu-card__title">
+                                    <span class="vu-section__icon" data-icon="dollar-sign"/>
+                                    <span>Commission &amp; Fees</span>
+                                </div>
+                                <group>
+                                    <field name="service_fee_vnd" string="Service Fee" readonly="1"/>
+                                    <field name="commission_due_to"/>
+                                    <field name="commission_percentage"/>
+                                    <field name="commission_duration"/>
+                                    <field name="commission_amount" readonly="1"/>
                                 </group>
                             </div>
                         </div>
@@ -1201,7 +1223,7 @@
                             <widget name="vu_services_packages"/>
 
                             <!-- Location Details Card -->
-                            <div class="vu-detail-card">
+                            <div class="vu-detail-card" name="location_details_card">
                                 <span class="vu-detail-card__edit-trigger"><i class="fa fa-pencil"/></span>
                                 <div class="vu-card__title">
                                     <span class="vu-section__icon" data-icon="map-pin"/>
@@ -1215,21 +1237,6 @@
                                 </group>
                             </div>
 
-                            <!-- Commission &amp; Fees Card -->
-                            <div class="vu-detail-card">
-                                <span class="vu-detail-card__edit-trigger"><i class="fa fa-pencil"/></span>
-                                <div class="vu-card__title">
-                                    <span class="vu-section__icon" data-icon="dollar-sign"/>
-                                    <span>Commission &amp; Fees</span>
-                                </div>
-                                <group>
-                                    <field name="service_fee_vnd" string="Service Fee"/>
-                                    <field name="commission_due_to"/>
-                                    <field name="commission_percentage"/>
-                                    <field name="commission_duration"/>
-                                    <field name="commission_amount" readonly="1"/>
-                                </group>
-                            </div>
                         </div>
 
                         <!-- COLUMN 3 — Actions Sidebar -->
@@ -1377,11 +1384,6 @@
                             <div class="vu-action-separator"/>
                             <div class="vu-action-section-label">Quick Actions</div>
 
-                            <button name="action_open_fso_dashboard" type="object"
-                                    class="vu-action-item">
-                                <i class="fa fa-th-large"/> Dashboard
-                            </button>
-
                             <button name="action_open_client_form" type="object"
                                     class="vu-action-item"
                                     invisible="not patient_id">
@@ -1405,34 +1407,15 @@
                                 <i class="fa fa-calendar-check-o"/> Staff Timeline
                             </button>
 
-                            <!-- ════════════════════════════════════
-                                 MORE ACTIONS (secondary)
-                                 ════════════════════════════════════ -->
-                            <div class="vu-action-separator"/>
-                            <div class="vu-action-section-label">More</div>
-
-                            <button name="action_open_duplicate_booking_wizard" type="object"
-                                    class="vu-action-item"
-                                    invisible="state in ('cancelled', 'closed')">
-                                <i class="fa fa-copy"/> Duplicate Booking
-                            </button>
-
-                            <button name="action_open_new_booking_wizard" type="object"
-                                    class="vu-action-item">
-                                <i class="fa fa-plus-square"/> New Booking
-                            </button>
+                            <!-- Staff Overview (side sheet) -->
+                            <widget name="vu_staff_sheet"
+                                    invisible="state in ('draft', 'completed', 'completed_pending_invoice', 'cancelled', 'closed')"/>
 
                             <button name="action_create_and_open_quote" type="object"
                                     class="vu-action-item"
                                     invisible="sale_order_id or state not in ('draft', 'confirmed')"
                                     groups="health_base.group_healthcare_operations_manager">
                                 <i class="fa fa-file-text-o"/> Create Quote
-                            </button>
-
-                            <button name="action_open_reschedule_calendar" type="object"
-                                    class="vu-action-item"
-                                    invisible="state in ('completed', 'completed_pending_invoice', 'cancelled', 'closed')">
-                                <i class="fa fa-clock-o"/> Reschedule
                             </button>
 
                             <button name="action_view_assignments" type="object"
@@ -1446,15 +1429,6 @@
                                     class="vu-action-item"
                                     invisible="not crm_lead_id">
                                 <i class="fa fa-line-chart"/> Lead Dashboard
-                            </button>
-
-                            <div class="vu-action-separator"
-                                 invisible="state in ('completed', 'completed_pending_invoice', 'cancelled', 'closed')"/>
-
-                            <button name="action_cancel_booking" type="object"
-                                    class="vu-action-item vu-action-item--danger"
-                                    invisible="state in ('completed', 'completed_pending_invoice', 'cancelled', 'closed')">
-                                <i class="fa fa-times-circle"/> Cancel Booking
                             </button>
                         </div>
 
@@ -1606,7 +1580,7 @@
                                         <field name="actual_duration" readonly="1" string="Duration (Hours)" class="vu-field--computed"/>
                                     </group>
                                 </div>
-                                <div class="vu-detail-card">
+                                <div class="vu-detail-card" name="quote_invoice_card">
                                     <span class="vu-detail-card__edit-trigger"><i class="fa fa-pencil"/></span>
                                     <div class="vu-card__title">
                                         <span class="vu-section__icon" data-icon="credit-card"/>
@@ -1623,7 +1597,7 @@
                                     </group>
                                 </div>
                             </div>
-                            <div class="vu-detail-card mt-3" invisible="state == 'draft'">
+                            <div class="vu-detail-card mt-3" name="staff_assignments_card" invisible="state == 'draft'">
                                 <div class="vu-card__title">
                                     <span class="vu-section__icon" data-icon="users-group"/>
                                     <span>Staff Assignments</span>

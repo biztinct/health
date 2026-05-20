@@ -194,4 +194,113 @@
         </field>
     </record>
 
+    <!-- ================================================================
+         OPS Client Profile — Invoicing Integration
+         Inherits view_health_patient_form_ops (standalone OPS client form)
+         ================================================================ -->
+    <record id="view_health_patient_form_ops_invoicing" model="ir.ui.view">
+        <field name="name">OPS Client Profile - Invoicing</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="health_fieldservice.view_health_patient_form_ops"/>
+        <field name="arch" type="xml">
+
+            <!-- Active Packages tab: replace placeholder with kanban + gauges -->
+            <xpath expr="//page[@name='active_packages']//p[contains(@class,'text-muted')]" position="replace">
+                <group string="Active Service Packages" name="ops_active_packages"
+                       invisible="not is_patient or active_packages_count == 0"
+                       groups="health_invoicing.group_health_invoicing_user">
+                    <field name="active_service_packages" nolabel="1">
+                        <kanban create="false" edit="false" delete="false">
+                            <field name="name"/>
+                            <field name="service_type"/>
+                            <field name="total_services"/>
+                            <field name="consumed_services"/>
+                            <field name="remaining_services"/>
+                            <templates>
+                                <t t-name="card" class="text-center">
+                                    <field class="fw-bold fs-4 text-primary" name="name"/>
+                                    <div class="mt-2">
+                                        <span class="badge badge-info">
+                                            <field name="service_type"/>
+                                        </span>
+                                    </div>
+                                    <div class="pt-3 fs-1 fw-bolder">
+                                        <field name="consumed_services" widget="gauge"
+                                               options="{'max_field': 'total_services', 'style': 'width:160px; height: 120px;'}"/>
+                                    </div>
+                                    <p class="mt-2">
+                                        <small class="text-muted">
+                                            <field name="consumed_services"/> / <field name="total_services"/> used
+                                            <br/>
+                                            <field name="remaining_services"/> remaining
+                                        </small>
+                                    </p>
+                                </t>
+                            </templates>
+                        </kanban>
+                    </field>
+                </group>
+                <div class="alert alert-secondary" role="alert"
+                     invisible="is_patient and active_packages_count > 0">
+                    <i class="fa fa-info-circle"/> No active packages for this client.
+                </div>
+            </xpath>
+
+            <!-- Financial Summary tab: add Package Summary + Recent Payments -->
+            <xpath expr="//page[@name='financial_summary']//div[@class='bj-bookings-section']" position="after">
+
+                <!-- Package Summary -->
+                <div class="bj-journey-stats mt-3"
+                     invisible="active_packages_count == 0">
+                    <div class="bj-jstat">
+                        <i class="fa fa-gift"/>
+                        <div class="bj-jstat-info">
+                            <span class="bj-jstat-val"><field name="active_packages_count" nolabel="1" class="d-inline"/></span>
+                            <span class="bj-jstat-lbl">Active Packages</span>
+                        </div>
+                    </div>
+                    <div class="bj-jstat">
+                        <i class="fa fa-money text-success"/>
+                        <div class="bj-jstat-info">
+                            <span class="bj-jstat-val"><field name="total_prepaid_value" nolabel="1" class="d-inline" widget="monetary"/></span>
+                            <span class="bj-jstat-lbl">Total Prepaid</span>
+                        </div>
+                    </div>
+                    <div class="bj-jstat">
+                        <i class="fa fa-check-circle text-info"/>
+                        <div class="bj-jstat-info">
+                            <span class="bj-jstat-val"><field name="remaining_prepaid_value" nolabel="1" class="d-inline" widget="monetary"/></span>
+                            <span class="bj-jstat-lbl">Remaining Value</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Payment Transactions -->
+                <div class="bj-bookings-section mt-3"
+                     groups="health_invoicing.group_health_invoicing_user">
+                    <div class="bj-section-header">
+                        <h3><i class="fa fa-credit-card"/> Recent Payments</h3>
+                    </div>
+                    <field name="recent_payment_ids" nolabel="1" readonly="1">
+                        <list limit="5">
+                            <field name="transaction_date"/>
+                            <field name="display_name"/>
+                            <field name="amount" widget="monetary"/>
+                            <field name="payment_method"/>
+                            <field name="status" widget="badge"
+                                   decoration-success="status == 'reconciled'"
+                                   decoration-warning="status in ('pending_delivery', 'collected')"
+                                   decoration-danger="status == 'failed'"/>
+                        </list>
+                    </field>
+                </div>
+
+                <!-- Hidden dependency fields -->
+                <field name="currency_id" invisible="1"/>
+                <field name="active_packages_count" invisible="1"/>
+            </xpath>
+
+        </field>
+    </record>
+
 </odoo>

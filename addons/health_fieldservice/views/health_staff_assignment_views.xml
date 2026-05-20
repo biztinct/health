@@ -19,7 +19,7 @@
                             type="object"
                             string="Confirm Assignment"
                             class="oe_highlight"
-                            invisible="state != 'assigned'"/>
+                            invisible="1"/>
 
                     <!-- Start button hidden -->
                     <button name="action_start_assignment"
@@ -183,6 +183,15 @@
                         </page>
                     </notebook>
                 </sheet>
+
+                <footer invisible="state != 'assigned'">
+                    <button string="Save" class="btn-primary" special="save"/>
+                    <button name="action_confirm_assignment"
+                            type="object"
+                            string="Staff Confirmed"
+                            class="btn-secondary"/>
+                    <button string="Discard" class="btn-secondary" special="cancel"/>
+                </footer>
 
                 <!-- Odoo 19 Standard Chatter -->
                 <chatter reload_on_follower="True"/>

@@ -9,7 +9,7 @@
     <record id="view_health_patient_form" model="ir.ui.view">
         <field name="name">res.partner.patient.form</field>
         <field name="model">res.partner</field>
-        <field name="priority">0</field>
+        <field name="priority">99</field>
         <field name="arch" type="xml">
             <form string="Client Record" class="o_form_patient_record">
                 <field name="active" invisible="1"/>
@@ -526,6 +526,7 @@
     <record id="view_health_patient_tree" model="ir.ui.view">
         <field name="name">res.partner.patient.list</field>
         <field name="model">res.partner</field>
+        <field name="priority">99</field>
         <field name="arch" type="xml">
             <list string="Client Registry" decoration-muted="patient_status=='inactive'"
                   decoration-success="patient_category_id and 'VIP' in patient_category_id.name"

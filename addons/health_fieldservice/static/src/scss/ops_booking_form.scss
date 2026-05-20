@@ -419,9 +419,21 @@
     .vu-client-card {
         background: var(--vu-surface-card, #fff);
         border: 1px solid var(--vu-border-soft, #e2e8f0);
-        border-radius: 10px;
-        padding: 20px;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+        border-radius: 12px;
+        padding: 20px 24px;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+        position: relative;
+        overflow: hidden;
+
+        &::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #1e40af 0%, #3b82f6 50%, #60a5fa 100%);
+        }
     }
 
     .vu-client-card__header {
@@ -479,29 +491,38 @@
     .vu-client-card__avatar {
         flex-shrink: 0;
 
+        &.vu-avatar-only .vu-client-avatar-widget {
+            // Hide the Many2One text — keep only the avatar image
+            .o_m2o_avatar ~ * {
+                display: none !important;
+            }
+        }
+
         .vu-client-avatar-widget {
             .o_m2o_avatar {
-                width: 48px;
-                height: 48px;
+                width: 56px;
+                height: 56px;
 
                 > img {
-                    width: 48px;
-                    height: 48px;
-                    border-radius: 50%;
+                    width: 56px;
+                    height: 56px;
+                    border-radius: 14px;
                     object-fit: cover;
+                    box-shadow: 0 2px 8px rgba(30, 64, 175, 0.15);
                 }
 
                 .o_m2o_avatar_empty {
-                    width: 48px;
-                    height: 48px;
-                    border-radius: 50%;
-                    background: #1e40af;
+                    width: 56px;
+                    height: 56px;
+                    border-radius: 14px;
+                    background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
                     color: #fff;
                     display: flex;
                     align-items: center;
                     justify-content: center;
-                    font-size: 1.125rem;
-                    font-weight: 600;
+                    font-size: 1.25rem;
+                    font-weight: 700;
+                    box-shadow: 0 2px 8px rgba(30, 64, 175, 0.18);
                 }
             }
         }
@@ -513,14 +534,21 @@
     }
 
     .vu-client-card__name {
-        font-size: 1.0625rem;
-        font-weight: 600;
+        font-size: 1.125rem;
+        font-weight: 700;
         color: #0f172a;
-        margin-bottom: 6px;
+        margin-bottom: 8px;
+        letter-spacing: -0.01em;
 
         .o_field_widget {
             font-size: inherit !important;
             font-weight: inherit !important;
+        }
+
+        a {
+            color: #1e40af;
+            text-decoration: none;
+            &:hover { color: #1d4ed8; text-decoration: underline; }
         }
     }
 
@@ -573,13 +601,18 @@
 
     .vu-client-card__meta {
         display: flex;
-        gap: 16px;
+        gap: 10px;
         flex-wrap: wrap;
+        margin-top: 4px;
     }
 
     .vu-client-card__meta-item {
         font-size: 0.75rem;
-        color: #94a3b8;
+        color: #64748b;
+        background: #f1f5f9;
+        padding: 2px 10px;
+        border-radius: 100px;
+        font-weight: 500;
 
         .o_field_widget {
             font-size: inherit !important;
@@ -889,6 +922,27 @@
             &:hover {
                 background: #fee2e2;
                 border-color: #dc2626;
+            }
+        }
+
+        .btn-primary,
+        .btn-primary.btn {
+            background: transparent !important;
+            border: 1px solid #1565C0 !important;
+            color: #1565C0 !important;
+
+            .fa, .oi, i {
+                color: #1565C0 !important;
+            }
+
+            &:hover {
+                background: #1565C0 !important;
+                color: #fff !important;
+                border-color: #1565C0 !important;
+
+                .fa, .oi, i {
+                    color: #fff !important;
+                }
             }
         }
     }

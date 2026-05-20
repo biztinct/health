@@ -17,9 +17,6 @@
                     </div>
                 </div>
                 <div class="ops-header-right">
-                    <button class="ops-header-btn btn-primary" t-on-click="openCreateBooking">
-                        <i class="fa fa-plus"/> New Booking
-                    </button>
                     <t t-if="canEdit">
                         <FormStatusIndicator model="model" discard.bind="discard" save.bind="saveButtonClicked"/>
                     </t>
@@ -62,10 +59,9 @@
                             </div>
                         </div>
                         <div class="ph-actions">
-                            <button class="ph-action-btn primary" title="Call"><i class="fa fa-phone"/></button>
-                            <button class="ph-action-btn secondary" title="Message"><i class="fa fa-comment"/></button>
-                            <button class="ph-action-btn secondary" title="Email"><i class="fa fa-envelope"/></button>
-                            <button class="ph-action-btn secondary" title="More"><i class="fa fa-ellipsis-h"/></button>
+                            <button class="ph-action-btn primary" title="Call" t-on-click="onCallClient"><i class="fa fa-phone"/></button>
+                            <button class="ph-action-btn secondary" title="SMS" t-on-click="onSmsClient"><i class="fa fa-comment"/></button>
+                            <button class="ph-action-btn secondary" title="Email" t-on-click="onEmailClient"><i class="fa fa-envelope"/></button>
                         </div>
                     </div>
                     <!-- Zone 2: Navy Stats Strip -->
@@ -97,6 +93,9 @@
                     </div>
                 </div>
             </t>
+
+            <!-- FORM + SIDEBAR CONTAINER -->
+            <div class="ops-content-with-sidebar">
 
             <!-- FORM VIEW CONTAINER -->
             <div class="o_form_view_container">
@@ -135,6 +134,52 @@
 
                     <t t-component="props.Renderer" record="model.root" Compiler="props.Compiler" readonly="props.readonly" archInfo="archInfo" translateAlert="translateAlert" onNotebookPageChange.bind="onNotebookPageChange" activeNotebookPages="props.state and props.state.activeNotebookPages"/>
                 </Layout>
+            </div>
+
+            <!-- SIDEBAR PANEL -->
+            <aside class="ops-cp-sidebar">
+                <div class="ops-cp-sidebar__card ops-cp-sidebar__card--primary">
+                    <div class="ops-cp-sidebar__card-title">
+                        <i class="fa fa-calendar-plus-o"/> Create Booking
+                    </div>
+                    <div class="ops-cp-sidebar__card-subtitle">
+                        Schedule a new service visit for this client.
+                    </div>
+                    <button class="ops-cp-sidebar__btn ops-cp-sidebar__btn--primary" t-on-click="openCreateBooking">
+                        <i class="fa fa-plus"/> New Booking
+                    </button>
+                </div>
+
+                <div class="ops-cp-sidebar__section-title">
+                    <i class="fa fa-th-list"/> Quick Actions
+                </div>
+
+                <button class="ops-cp-sidebar__action" t-on-click="() => this.doPartnerAction('action_view_appointments')">
+                    <i class="fa fa-calendar"/> View Bookings
+                </button>
+                <button class="ops-cp-sidebar__action" t-on-click="() => this.doPartnerAction('action_open_recurring_booking')">
+                    <i class="fa fa-repeat"/> Create Recurring Booking
+                </button>
+
+                <div class="ops-cp-sidebar__separator"/>
+
+                <button class="ops-cp-sidebar__action" t-on-click="() => this.doPartnerAction('action_create_prepaid_package')">
+                    <i class="fa fa-gift"/> Quick Package Purchase
+                </button>
+                <button class="ops-cp-sidebar__action" t-on-click="() => this.doPartnerAction('action_create_standard_invoice')">
+                    <i class="fa fa-file-text"/> Create Invoice
+                </button>
+                <button class="ops-cp-sidebar__action" t-on-click="() => this.doPartnerAction('action_view_invoices')">
+                    <i class="fa fa-list-alt"/> View Invoices
+                </button>
+                <button class="ops-cp-sidebar__action" t-on-click="() => this.doPartnerAction('action_view_service_packages')">
+                    <i class="fa fa-gift"/> Purchased Packages
+                </button>
+                <button class="ops-cp-sidebar__action" t-on-click="() => this.doPartnerAction('action_view_payment_transactions')">
+                    <i class="fa fa-credit-card"/> View Payments
+                </button>
+            </aside>
+
             </div>
         </div>
     </div>

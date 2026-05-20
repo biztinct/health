@@ -5,7 +5,7 @@
     <record id="view_health_patient_form_ops" model="ir.ui.view">
         <field name="name">res.partner.form.ops.client.profile</field>
         <field name="model">res.partner</field>
-        <field name="priority">50</field>
+        <field name="priority">0</field>
         <field name="arch" type="xml">
             <form string="Client Profile" js_class="ops_client_profile_form"
                   class="ops-client-profile-form">
@@ -65,6 +65,10 @@
                                                    string="Referring Doctor"
                                                    options="{'no_create': True}"/>
                                             <field name="source_type"/>
+                                            <field name="source_details" placeholder="Specific source details"
+                                                   invisible="not source_type"/>
+                                            <field name="referral_source"
+                                                   invisible="source_type != 'referral'"/>
                                             <field name="national_id"/>
                                             <field name="profession" string="Occupation"/>
                                             <field name="ethnicity"/>
@@ -110,8 +114,11 @@
                                     </div>
                                 </div>
 
-                                <!-- Bookings List -->
-                                <div class="bj-bookings-section">
+                                <!-- Booking Timeline Widget -->
+                                <widget name="vu_booking_timeline"/>
+
+                                <!-- Bookings List (collapsible) -->
+                                <div class="bj-bookings-section mt-3">
                                     <div class="bj-section-header">
                                         <h3><i class="fa fa-list-alt"/> All Bookings</h3>
                                         <button name="action_view_fso_orders" type="object"

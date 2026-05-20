@@ -108,6 +108,43 @@ export class OpsClientProfileFormController extends FormController {
             context: { default_client_id: resId },
         });
     }
+
+    async doPartnerAction(methodName) {
+        const resId = this.model.root.resId;
+        if (!resId) return;
+        try {
+            const action = await this.orm.call("res.partner", methodName, [resId]);
+            if (action) {
+                this.actionService.doAction(action);
+            }
+        } catch (e) {
+            this.notification.add(
+                _t("Action not available. The required module may not be installed."),
+                { type: "warning" }
+            );
+        }
+    }
+
+    onCallClient() {
+        const phone = this.profileState.profile.phone;
+        if (phone) {
+            window.open(`tel:${phone}`, '_self');
+        }
+    }
+
+    onSmsClient() {
+        const phone = this.profileState.profile.phone;
+        if (phone) {
+            window.open(`sms:${phone}`, '_self');
+        }
+    }
+
+    onEmailClient() {
+        const email = this.profileState.profile.email;
+        if (email) {
+            window.open(`mailto:${email}`, '_self');
+        }
+    }
 }
 
 registry.category("views").add("ops_client_profile_form", {

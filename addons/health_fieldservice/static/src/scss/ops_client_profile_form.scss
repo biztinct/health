@@ -622,3 +622,128 @@
         }
     }
 }
+
+// ─────────────────────────────────────────────────────────────────────
+// CONTENT + SIDEBAR LAYOUT
+// ─────────────────────────────────────────────────────────────────────
+.ops-client-profile-form-page {
+    .ops-content-with-sidebar {
+        display: flex;
+        flex: 1;
+        min-height: 0;
+        overflow: hidden;
+
+        > .o_form_view_container {
+            flex: 1;
+            min-width: 0;
+        }
+    }
+
+    .ops-cp-sidebar {
+        width: 260px;
+        flex-shrink: 0;
+        background: #fff;
+        border-left: 1px solid #e2e8f0;
+        padding: 20px 16px;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+
+    .ops-cp-sidebar__card {
+        border-radius: 10px;
+        padding: 16px;
+        margin-bottom: 12px;
+
+        &--primary {
+            background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+            border: 1px solid #bfdbfe;
+        }
+    }
+
+    .ops-cp-sidebar__card-title {
+        font-size: 0.9375rem;
+        font-weight: 700;
+        color: #1e40af;
+        margin-bottom: 6px;
+
+        .fa { margin-right: 6px; }
+    }
+
+    .ops-cp-sidebar__card-subtitle {
+        font-size: 0.8125rem;
+        color: #475569;
+        margin-bottom: 12px;
+        line-height: 1.4;
+    }
+
+    .ops-cp-sidebar__btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 8px 16px;
+        border-radius: 8px;
+        font-size: 0.8125rem;
+        font-weight: 600;
+        cursor: pointer;
+        border: none;
+        transition: all 0.15s;
+
+        &--primary {
+            background: #1565C0;
+            color: #fff;
+            &:hover { background: #0d47a1; }
+        }
+    }
+
+    .ops-cp-sidebar__section-title {
+        font-size: 0.75rem;
+        font-weight: 700;
+        color: #64748b;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        padding: 8px 10px 6px;
+
+        .fa { margin-right: 4px; font-size: 0.7rem; }
+    }
+
+    .ops-cp-sidebar__action {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 9px 10px;
+        border: none;
+        background: none;
+        border-radius: 8px;
+        font-size: 0.8125rem;
+        font-weight: 500;
+        color: #334155;
+        cursor: pointer;
+        text-align: left;
+        width: 100%;
+        transition: all 0.12s;
+
+        &:hover {
+            background: #f1f5f9;
+            color: #1565C0;
+        }
+
+        .fa {
+            width: 18px;
+            text-align: center;
+            color: #64748b;
+            font-size: 0.875rem;
+        }
+
+        &:hover .fa {
+            color: #1565C0;
+        }
+    }
+
+    .ops-cp-sidebar__separator {
+        height: 1px;
+        background: #e2e8f0;
+        margin: 6px 10px;
+    }
+}

@@ -1,0 +1,424 @@
+/* Package Wizard Dialog — OWL Component */
+
+.pw-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, .45);
+    z-index: 1060;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(2px);
+}
+
+.pw-dialog {
+    width: 96%;
+    max-width: 680px;
+    max-height: 90vh;
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, .25);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    animation: pwSlideIn 200ms ease-out;
+}
+
+@keyframes pwSlideIn {
+    from { opacity: 0; transform: translateY(20px) scale(.97); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* ── Header ── */
+
+.pw-header {
+    padding: 20px 24px;
+    border-bottom: 1px solid #E8EAF0;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    background: linear-gradient(135deg, #F0F4FF 0%, #FAFBFF 100%);
+}
+
+.pw-title {
+    font-size: 18px;
+    font-weight: 700;
+    font-family: 'Montserrat', 'Segoe UI', sans-serif;
+    color: #1A237E;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    i { color: #3F51B5; }
+}
+
+.pw-subtitle {
+    font-size: 13px;
+    color: #616161;
+    margin-top: 3px;
+}
+
+.pw-booking-ref {
+    color: #9E9E9E;
+    font-weight: 400;
+}
+
+.pw-close-btn {
+    width: 32px;
+    height: 32px;
+    border: 1px solid #E0E0E0;
+    border-radius: 8px;
+    background: #fff;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #757575;
+    font-size: 14px;
+    flex-shrink: 0;
+    transition: all 120ms;
+    &:hover { border-color: #E53935; color: #E53935; background: #FFEBEE; }
+}
+
+/* ── Loading ── */
+
+.pw-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 250px;
+    gap: 12px;
+    color: #9E9E9E;
+}
+
+/* ── Body ── */
+
+.pw-body {
+    overflow-y: auto;
+    padding: 20px 24px;
+    flex: 1;
+}
+
+/* ── Sections ── */
+
+.pw-section {
+    margin-bottom: 8px;
+}
+
+.pw-section-label {
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .6px;
+    color: #546E7A;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.pw-section-icon {
+    width: 26px;
+    height: 26px;
+    border-radius: 6px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    &.pw-section-icon--existing {
+        background: #E8F5E9;
+        color: #2E7D32;
+    }
+    &.pw-section-icon--purchase {
+        background: #E3F2FD;
+        color: #1565C0;
+    }
+}
+
+.pw-section-count {
+    background: #ECEFF1;
+    color: #546E7A;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 1px 8px;
+    border-radius: 10px;
+    margin-left: 2px;
+}
+
+.pw-section-action {
+    margin-top: 14px;
+    display: flex;
+    justify-content: flex-end;
+}
+
+/* ── Divider ── */
+
+.pw-divider {
+    display: flex;
+    align-items: center;
+    margin: 20px 0;
+    gap: 12px;
+    &::before, &::after {
+        content: "";
+        flex: 1;
+        height: 1px;
+        background: #E0E0E0;
+    }
+    span {
+        font-size: 12px;
+        color: #BDBDBD;
+        text-transform: uppercase;
+        letter-spacing: .5px;
+        white-space: nowrap;
+    }
+}
+
+/* ── Card Grid ── */
+
+.pw-card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 12px;
+}
+
+/* ── Card ── */
+
+.pw-card {
+    position: relative;
+    border: 2px solid #E8EAF0;
+    border-radius: 12px;
+    padding: 16px;
+    cursor: pointer;
+    transition: all 180ms ease;
+    background: #FAFBFF;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 6px;
+
+    &:hover {
+        border-color: #90CAF9;
+        background: #F5F9FF;
+        box-shadow: 0 4px 12px rgba(21, 101, 192, .1);
+        transform: translateY(-2px);
+    }
+
+    &.pw-card--selected {
+        border-color: #1565C0;
+        background: #E8F0FE;
+        box-shadow: 0 4px 14px rgba(21, 101, 192, .18);
+
+        .pw-card-check { color: #1565C0; }
+        .pw-card-icon { background: #1565C0; color: #fff; }
+        .pw-card-icon--product { background: #2E7D32; }
+    }
+
+    &.pw-card--disabled {
+        opacity: .5;
+        cursor: not-allowed;
+        &:hover {
+            border-color: #E8EAF0;
+            background: #FAFBFF;
+            box-shadow: none;
+            transform: none;
+        }
+    }
+}
+
+.pw-card-check {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 18px;
+    color: #CFD8DC;
+    transition: color 120ms;
+}
+
+/* ── Donut Ring Gauge ── */
+
+.pw-donut-wrap {
+    position: relative;
+    width: 90px;
+    height: 90px;
+    margin-bottom: 6px;
+}
+
+.pw-donut-svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+.pw-donut-fg {
+    transition: stroke-dashoffset 600ms cubic-bezier(.4, 0, .2, 1),
+                stroke 300ms ease;
+}
+
+.pw-donut-center {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+}
+
+.pw-donut-number {
+    font-size: 26px;
+    font-weight: 800;
+    color: #212121;
+    line-height: 1;
+    font-family: 'Montserrat', 'Segoe UI', sans-serif;
+}
+
+.pw-donut-label {
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .8px;
+    color: #9E9E9E;
+    margin-top: 1px;
+}
+
+.pw-card--selected .pw-donut-number { color: #1565C0; }
+
+.pw-card-icon {
+    &.pw-card-icon--product {
+        width: 44px;
+        height: 44px;
+        border-radius: 12px;
+        background: #E8F5E9;
+        color: #2E7D32;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 18px;
+        margin-bottom: 4px;
+        transition: all 180ms;
+    }
+}
+
+.pw-card-name {
+    font-size: 14px;
+    font-weight: 700;
+    color: #212121;
+    line-height: 1.3;
+}
+
+.pw-card-type {
+    font-size: 11px;
+    color: #9E9E9E;
+    text-transform: uppercase;
+    letter-spacing: .4px;
+}
+
+/* ── Compact usage line ── */
+
+.pw-usage-line {
+    margin-top: 6px;
+    font-size: 12px;
+    color: #78909C;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.pw-usage-dot { color: #CFD8DC; }
+.pw-usage-total { font-weight: 600; color: #546E7A; }
+.pw-usage-used { color: #90A4AE; }
+
+/* ── Badge ── */
+
+.pw-card-badge {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    font-size: 10px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 10px;
+    &.pw-card-badge--depleted {
+        background: #FFEBEE;
+        color: #C62828;
+    }
+}
+
+/* ── Price block (purchase cards) ── */
+
+.pw-card-price-block {
+    margin-top: 8px;
+    width: 100%;
+    padding-top: 8px;
+    border-top: 1px solid #ECEFF1;
+    text-align: center;
+}
+
+.pw-price-main {
+    font-size: 18px;
+    font-weight: 700;
+    color: #1B5E20;
+}
+
+.pw-price-detail {
+    font-size: 11px;
+    color: #9E9E9E;
+    margin-top: 2px;
+}
+
+/* ── Footer ── */
+
+.pw-footer {
+    padding: 14px 24px;
+    border-top: 1px solid #E8EAF0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #FAFBFF;
+}
+
+/* ── Buttons ── */
+
+.pw-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 20px;
+    border: none;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 150ms;
+
+    &:disabled {
+        opacity: .45;
+        cursor: not-allowed;
+    }
+
+    &.pw-btn--primary {
+        background: #1565C0;
+        color: #fff;
+        &:hover:not(:disabled) { background: #0D47A1; }
+    }
+
+    &.pw-btn--success {
+        background: #2E7D32;
+        color: #fff;
+        &:hover:not(:disabled) { background: #1B5E20; }
+    }
+
+    &.pw-btn--danger-outline {
+        background: transparent;
+        color: #C62828;
+        border: 1px solid #FFCDD2;
+        &:hover { background: #FFEBEE; border-color: #EF9A9A; }
+    }
+
+    &.pw-btn--ghost {
+        background: transparent;
+        color: #757575;
+        &:hover { background: #F5F5F5; color: #424242; }
+    }
+}

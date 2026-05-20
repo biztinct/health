@@ -201,4 +201,139 @@
         </field>
     </record>
 
+    <!-- ================================================================
+         OPS Form — Payment & Package Integration
+         Inherits view_health_fso_form_ops (the standalone OPS booking form)
+         ================================================================ -->
+    <record id="view_health_fso_form_ops_invoicing" model="ir.ui.view">
+        <field name="name">FSO OPS Form - Payment Integration</field>
+        <field name="model">health.fieldservice.order</field>
+        <field name="inherit_id" ref="health_fieldservice.view_health_fso_form_ops"/>
+        <field name="arch" type="xml">
+
+            <!-- A. Hidden dependency fields -->
+            <xpath expr="//field[@name='currency_id']" position="after">
+                <field name="is_invoiced" invisible="1"/>
+                <field name="is_invoice_paid" invisible="1"/>
+                <field name="total_paid_amount" invisible="1"/>
+                <field name="outstanding_amount" invisible="1"/>
+                <field name="payment_transaction_count" invisible="1"/>
+                <field name="is_package_service" invisible="1"/>
+                <field name="package_ids" invisible="1"/>
+            </xpath>
+
+            <!-- B. Header buttons -->
+            <xpath expr="//header/button[@name='action_check_and_open_quote_if_needed']" position="after">
+                <button type="object" name="action_prepay_quote"
+                        string="Pay Quote" class="btn-info" icon="fa-credit-card"
+                        invisible="state in ('draft', 'completed', 'completed_pending_invoice', 'cancelled', 'closed') or not sale_order_id or is_invoice_paid"
+                        groups="health_invoicing.group_health_invoicing_user"/>
+                <button type="object" name="action_complete_service_with_payment"
+                        string="Complete Service &amp; Collect Payment"
+                        class="btn-success" icon="fa-money"
+                        invisible="state != 'in_progress' or is_invoiced"
+                        groups="health_invoicing.group_health_invoicing_user"/>
+            </xpath>
+
+            <!-- Draft cards: package-aware visibility -->
+            <xpath expr="//div[@name='draft_create_quote_card']" position="attributes">
+                <attribute name="invisible">state != 'draft' or sale_order_id or package_ids</attribute>
+            </xpath>
+            <xpath expr="//div[@name='draft_create_quote_card']//button[@name='action_create_and_open_quote']" position="after">
+                <button name="action_open_service_package_wizard" type="object"
+                        class="vu-action-btn vu-action-btn--secondary"
+                        groups="health_invoicing.group_health_invoicing_user">
+                    <i class="fa fa-cube"/> Prepaid Package
+                </button>
+            </xpath>
+            <xpath expr="//div[@name='draft_confirm_client_card']" position="attributes">
+                <attribute name="invisible">state != 'draft' or (not sale_order_id and not package_ids)</attribute>
+            </xpath>
+            <xpath expr="//div[@name='draft_confirm_client_card']//div[contains(@class,'vu-action-card__subtitle')]" position="replace">
+                <div class="vu-action-card__subtitle">
+                    Quote or package assigned. Contact the client to confirm this booking, then click Confirm.
+                </div>
+            </xpath>
+            <xpath expr="//div[@name='draft_confirm_client_card']//button[@name='action_confirm_booking']" position="before">
+                <button name="action_create_and_open_quote" type="object"
+                        class="vu-action-btn vu-action-btn--secondary"
+                        invisible="sale_order_id"
+                        groups="health_base.group_healthcare_operations_manager">
+                    <i class="fa fa-file-text-o"/> Create Quote
+                </button>
+            </xpath>
+
+            <!-- D. Payment Summary card — Overview Column 2 -->
+            <xpath expr="//div[@name='location_details_card']" position="after">
+                <div class="vu-detail-card" name="payment_summary_card"
+                     invisible="not is_invoiced and total_paid_amount == 0">
+                    <div class="vu-card__title">
+                        <span class="vu-section__icon" data-icon="credit-card"/>
+                        <span>Payment Summary</span>
+                    </div>
+                    <group>
+                        <field name="is_invoiced" readonly="1"/>
+                        <field name="total_paid_amount" readonly="1" widget="monetary"/>
+                        <field name="outstanding_amount" readonly="1" widget="monetary"/>
+                        <field name="insurance_claim_id" options="{'no_create': False}"
+                               groups="health_invoicing.group_insurance_claims"/>
+                    </group>
+                </div>
+            </xpath>
+
+            <!-- E. Extra invoice fields in Quote &amp; Invoice card -->
+            <xpath expr="//div[@name='quote_invoice_card']//field[@name='invoice_state']" position="after">
+                <field name="is_invoiced" readonly="1"
+                       groups="health_invoicing.group_health_invoicing_user"/>
+                <field name="total_paid_amount" readonly="1" widget="monetary"
+                       groups="health_invoicing.group_health_invoicing_user"/>
+                <field name="outstanding_amount" readonly="1" widget="monetary"
+                       invisible="outstanding_amount == 0 or not is_invoiced"
+                       groups="health_invoicing.group_health_invoicing_user"/>
+            </xpath>
+
+            <!-- F. Payment Transactions card — Execution tab -->
+            <xpath expr="//div[@name='staff_assignments_card']" position="after">
+                <div class="vu-detail-card mt-3" name="payment_transactions_card"
+                     invisible="payment_transaction_count == 0">
+                    <div class="vu-card__title">
+                        <span class="vu-section__icon" data-icon="credit-card"/>
+                        <span>Payment Transactions</span>
+                    </div>
+                    <field name="payment_transaction_ids" nolabel="1" readonly="1">
+                        <list>
+                            <field name="transaction_date"/>
+                            <field name="display_name"/>
+                            <field name="amount" widget="monetary"/>
+                            <field name="payment_method"/>
+                            <field name="transaction_type"/>
+                            <field name="status" widget="badge"
+                                   decoration-success="status == 'reconciled'"
+                                   decoration-warning="status in ('pending_delivery', 'collected')"
+                                   decoration-danger="status == 'failed'"/>
+                            <field name="collected_by_id"/>
+                        </list>
+                    </field>
+                </div>
+            </xpath>
+
+            <!-- G. Sidebar Quick Actions -->
+            <xpath expr="//button[@name='action_view_all_invoices']" position="after">
+                <button type="object" name="action_open_service_package_wizard"
+                        class="vu-action-item"
+                        invisible="state in ('completed', 'completed_pending_invoice', 'cancelled', 'closed')"
+                        groups="health_invoicing.group_health_invoicing_user">
+                    <i class="fa fa-cube"/> Select Prepaid Package
+                </button>
+                <button type="object" name="action_view_payment_transactions"
+                        class="vu-action-item"
+                        invisible="payment_transaction_count == 0"
+                        groups="health_invoicing.group_health_invoicing_user">
+                    <i class="fa fa-credit-card"/> View Payments
+                </button>
+            </xpath>
+
+        </field>
+    </record>
+
 </odoo>

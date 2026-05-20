@@ -289,6 +289,58 @@ class ResPartner(models.Model):
             'total_payments': len(payments),
         }
 
+    def get_booking_timeline_data(self):
+        self.ensure_one()
+        FSO = self.env['health.fieldservice.order']
+        bookings_raw = FSO.search(
+            [('patient_id', '=', self.id)],
+            order='scheduled_datetime desc',
+            limit=50,
+        )
+
+        SERVICE_ICONS = {
+            'home_visit': 'fa-home',
+            'clinic_visit': 'fa-hospital-o',
+            'telemedicine': 'fa-video-camera',
+            'emergency': 'fa-ambulance',
+            'follow_up': 'fa-refresh',
+        }
+
+        bookings = []
+        calendar_dots = {}
+        for b in bookings_raw:
+            dt = b.scheduled_datetime
+            if not dt:
+                continue
+            date_str = dt.strftime('%Y-%m-%d')
+            month_key = dt.strftime('%Y-%m')
+            day_key = str(dt.day)
+
+            bookings.append({
+                'id': b.id,
+                'name': b.name or '',
+                'date': date_str,
+                'date_display': dt.strftime('%b %d, %Y'),
+                'time': dt.strftime('%I:%M %p'),
+                'service_type': b.service_type or '',
+                'service_label': dict(b._fields['service_type'].selection).get(b.service_type, ''),
+                'service_icon': SERVICE_ICONS.get(b.service_type, 'fa-calendar'),
+                'duration': b.estimated_duration or b.scheduled_duration or 0,
+                'state': b.state or '',
+                'state_label': dict(b._fields['state'].selection).get(b.state, ''),
+                'staff_name': b.lead_staff_id.name if b.lead_staff_id else None,
+                'staff_initials': (b.lead_staff_id.name or '')[:1].upper() if b.lead_staff_id else None,
+            })
+
+            calendar_dots.setdefault(month_key, {})
+            calendar_dots[month_key].setdefault(day_key, [])
+            calendar_dots[month_key][day_key].append(b.state or 'draft')
+
+        return {
+            'bookings': bookings,
+            'calendar_dots': calendar_dots,
+        }
+
     def action_create_fso(self):
         """Open quick booking wizard (2-step: Services + Booking) with client pre-filled"""
         if not self.is_patient:

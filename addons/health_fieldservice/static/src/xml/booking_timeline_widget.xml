@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+<t t-name="health_fieldservice.BookingTimelineWidget">
+    <div class="bt-container">
+        <t t-if="state.loading">
+            <div class="bt-loading">
+                <i class="fa fa-spinner fa-spin"/> Loading timeline...
+            </div>
+        </t>
+        <t t-elif="state.bookings.length === 0">
+            <div class="bt-empty">
+                <i class="fa fa-calendar-o"/>
+                <p>No bookings yet for this client.</p>
+            </div>
+        </t>
+        <t t-else="">
+            <div class="bt-dual-panel">
+
+                <!-- LEFT: Centered Vertical Timeline -->
+                <div class="bt-timeline-panel">
+                    <div class="bt-timeline">
+
+                        <t t-foreach="groupedBookings" t-as="group" t-key="group.date">
+
+                            <!-- Standalone today divider (no bookings on today) -->
+                            <t t-if="group.isTodayMarker">
+                                <div class="bt-today-divider">
+                                    <div class="bt-today-line"/>
+                                    <span class="bt-badge-today">Today</span>
+                                </div>
+                            </t>
+
+                            <!-- Regular date group with bookings -->
+                            <t t-else="">
+                                <div class="bt-date-group" t-att-data-timeline-date="group.date"
+                                     t-attf-class="bt-date-group #{state.highlightDate === group.date ? 'bt-highlighted' : ''} #{isFuture(group.date) ? 'bt-future' : 'bt-past'}">
+                                    <!-- Date marker (centered on spine) -->
+                                    <div class="bt-date-marker">
+                                        <div class="bt-date-dot"/>
+                                        <span class="bt-date-label" t-esc="group.display"/>
+                                        <t t-if="isToday(group.date)">
+                                            <span class="bt-badge-today">Today</span>
+                                        </t>
+                                    </div>
+
+                                    <!-- Today indicator line when bookings exist on today -->
+                                    <t t-if="isToday(group.date)">
+                                        <div class="bt-today-line"/>
+                                    </t>
+
+                                    <!-- Booking cards alternating left/right -->
+                                    <t t-foreach="group.bookings" t-as="bk" t-key="bk.id">
+                                        <div t-attf-class="bt-card bt-card--#{bk.side}"
+                                             t-attf-style="border-color: #{stateColor(bk.state, 'border')}; box-shadow: 0 2px 8px #{stateColor(bk.state, 'border')}33"
+                                             t-on-click="() => this.openBooking(bk.id)">
+                                            <div class="bt-card-header">
+                                                <span class="bt-card-icon"
+                                                      t-attf-style="background: #{stateColor(bk.state, 'bg')}; color: #{stateColor(bk.state, 'text')}">
+                                                    <i t-attf-class="fa #{bk.service_icon}"/>
+                                                </span>
+                                                <div class="bt-card-title-row">
+                                                    <span class="bt-card-name" t-esc="bk.name"/>
+                                                    <span class="bt-card-service" t-esc="bk.service_label"/>
+                                                </div>
+                                                <span class="bt-card-badge"
+                                                      t-attf-style="background: #{stateColor(bk.state, 'bg')}; color: #{stateColor(bk.state, 'text')}">
+                                                    <t t-esc="bk.state_label"/>
+                                                </span>
+                                            </div>
+                                            <div class="bt-card-meta">
+                                                <span><i class="fa fa-clock-o"/> <t t-esc="bk.time"/></span>
+                                                <t t-if="bk.duration">
+                                                    <span><i class="fa fa-hourglass-half"/> <t t-esc="formatDuration(bk.duration)"/></span>
+                                                </t>
+                                                <t t-if="bk.staff_name">
+                                                    <span><i class="fa fa-user-md"/> <t t-esc="bk.staff_name"/></span>
+                                                </t>
+                                            </div>
+                                            <div class="bt-card-arm"
+                                                 t-attf-style="background: #{stateColor(bk.state, 'border')}"/>
+                                        </div>
+                                    </t>
+                                </div>
+                            </t>
+                        </t>
+
+                        <!-- First visit marker -->
+                        <div class="bt-end-marker">
+                            <span class="bt-end-label">First Visit</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- RIGHT: Mini Calendar -->
+                <div class="bt-calendar-panel">
+                    <div class="bt-cal">
+                        <div class="bt-cal-header">
+                            <button class="bt-cal-nav" t-on-click="prevMonth">
+                                <i class="fa fa-chevron-left"/>
+                            </button>
+                            <span class="bt-cal-month" t-esc="calMonthLabel"/>
+                            <button class="bt-cal-nav" t-on-click="nextMonth">
+                                <i class="fa fa-chevron-right"/>
+                            </button>
+                        </div>
+
+                        <div class="bt-cal-grid">
+                            <t t-foreach="calWeekdays" t-as="wd" t-key="wd">
+                                <div class="bt-cal-weekday" t-esc="wd"/>
+                            </t>
+                            <t t-foreach="calDays" t-as="cell" t-key="cell_index">
+                                <t t-if="cell.empty">
+                                    <div class="bt-cal-day bt-cal-day--empty"/>
+                                </t>
+                                <t t-else="">
+                                    <div t-attf-class="bt-cal-day #{cell.isToday ? 'bt-cal-day--today' : ''} #{cell.hasDots ? 'bt-cal-day--has-booking' : ''} #{cell.isHighlighted ? 'bt-cal-day--highlighted' : ''}"
+                                         t-attf-style="#{cell.hasDots ? 'border-color: ' + stateColor(cell.dots[0], 'dot') : ''}"
+                                         t-on-click="() => cell.hasDots and this.onCalDayClick(cell.dateStr)">
+                                        <span class="bt-cal-day-num" t-esc="cell.day"/>
+                                    </div>
+                                </t>
+                            </t>
+                        </div>
+
+                        <div class="bt-cal-legend">
+                            <span><span class="bt-cal-legend-swatch" style="border-color:#2563eb"/> Confirmed</span>
+                            <span><span class="bt-cal-legend-swatch" style="border-color:#f97316"/> In Progress</span>
+                            <span><span class="bt-cal-legend-swatch" style="border-color:#22c55e"/> Completed</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </div>
+</t>
+
+</templates>

@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+<t t-name="health_invoicing.PackageWizardDialog">
+    <div class="pw-overlay" t-on-click.stop="onClose">
+        <div class="pw-dialog" t-on-click.stop="">
+
+            <!-- Header -->
+            <div class="pw-header">
+                <div>
+                    <div class="pw-title"><i class="fa fa-cube"/> Service Packages</div>
+                    <div class="pw-subtitle">
+                        Select or purchase a package for
+                        <strong t-esc="state.patientName"/>
+                        <span class="pw-booking-ref">
+                            · <t t-esc="state.bookingName"/>
+                        </span>
+                    </div>
+                </div>
+                <button class="pw-close-btn" t-on-click="onClose">
+                    <i class="fa fa-times"/>
+                </button>
+            </div>
+
+            <!-- Loading -->
+            <t t-if="state.isLoading">
+                <div class="pw-loading">
+                    <i class="fa fa-spinner fa-spin fa-2x"/>
+                    <div>Loading packages...</div>
+                </div>
+            </t>
+
+            <t t-if="!state.isLoading">
+                <div class="pw-body">
+
+                    <!-- SECTION 1: Existing Packages -->
+                    <t t-if="hasExisting">
+                        <div class="pw-section">
+                            <div class="pw-section-label">
+                                <span class="pw-section-icon pw-section-icon--existing">
+                                    <i class="fa fa-check-circle"/>
+                                </span>
+                                Your Packages
+                                <span class="pw-section-count" t-esc="state.existingPackages.length"/>
+                            </div>
+                            <div class="pw-card-grid">
+                                <t t-foreach="state.existingPackages" t-as="pkg" t-key="pkg.id">
+                                    <div t-att-class="'pw-card pw-card--existing'
+                                        + (isPackageSelected(pkg.id) ? ' pw-card--selected' : '')
+                                        + (!pkg.selectable ? ' pw-card--disabled' : '')"
+                                         t-on-click="() => this.togglePackage(pkg.id)">
+
+                                        <!-- Selection indicator -->
+                                        <div class="pw-card-check">
+                                            <t t-if="isPackageSelected(pkg.id)">
+                                                <i class="fa fa-check-circle"/>
+                                            </t>
+                                            <t t-else="">
+                                                <i class="fa fa-circle-o"/>
+                                            </t>
+                                        </div>
+
+                                        <!-- Donut ring gauge -->
+                                        <div class="pw-donut-wrap">
+                                            <svg class="pw-donut-svg" viewBox="0 0 100 100">
+                                                <circle class="pw-donut-bg" cx="50" cy="50" r="42"
+                                                        fill="none" stroke="#ECEFF1" stroke-width="7"/>
+                                                <circle class="pw-donut-fg" cx="50" cy="50" r="42"
+                                                        fill="none"
+                                                        t-att-stroke="donutColor(pkg)"
+                                                        stroke-width="7"
+                                                        stroke-linecap="round"
+                                                        t-att-stroke-dasharray="donutCircumference()"
+                                                        t-att-stroke-dashoffset="donutOffset(pkg)"
+                                                        transform="rotate(-90 50 50)"/>
+                                            </svg>
+                                            <div class="pw-donut-center">
+                                                <span class="pw-donut-number" t-esc="pkg.remaining_services"/>
+                                                <span class="pw-donut-label">left</span>
+                                            </div>
+                                        </div>
+
+                                        <div class="pw-card-name" t-esc="pkg.name"/>
+                                        <div class="pw-card-type" t-esc="pkg.service_type_label"/>
+
+                                        <!-- Compact usage line -->
+                                        <div class="pw-usage-line">
+                                            <span class="pw-usage-total">
+                                                <t t-esc="pkg.total_services"/> total
+                                            </span>
+                                            <span class="pw-usage-dot">·</span>
+                                            <span class="pw-usage-used">
+                                                <t t-esc="pkg.consumed_services"/> used
+                                            </span>
+                                        </div>
+
+                                        <t t-if="!pkg.selectable">
+                                            <div class="pw-card-badge pw-card-badge--depleted">
+                                                <i class="fa fa-ban"/> Depleted
+                                            </div>
+                                        </t>
+                                    </div>
+                                </t>
+                            </div>
+
+                            <!-- Confirm existing button -->
+                            <div class="pw-section-action">
+                                <button class="pw-btn pw-btn--primary"
+                                        t-att-disabled="selectedCount === 0"
+                                        t-on-click="onConfirmExisting">
+                                    <i class="fa fa-check"/>
+                                    Assign Selected
+                                    <t t-if="selectedCount > 0">
+                                        (<t t-esc="selectedCount"/>)
+                                    </t>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="pw-divider">
+                            <span>or purchase a new package</span>
+                        </div>
+                    </t>
+
+                    <!-- SECTION 2: Purchase New -->
+                    <div class="pw-section">
+                        <div class="pw-section-label">
+                            <span class="pw-section-icon pw-section-icon--purchase">
+                                <i class="fa fa-shopping-cart"/>
+                            </span>
+                            Purchase New Package
+                        </div>
+                        <div class="pw-card-grid">
+                            <t t-foreach="state.availableProducts" t-as="prod" t-key="prod.id">
+                                <div t-att-class="'pw-card pw-card--product'
+                                    + (isProductSelected(prod.id) ? ' pw-card--selected' : '')"
+                                     t-on-click="() => this.selectProduct(prod.id)">
+
+                                    <div class="pw-card-check">
+                                        <t t-if="isProductSelected(prod.id)">
+                                            <i class="fa fa-check-circle"/>
+                                        </t>
+                                        <t t-else="">
+                                            <i class="fa fa-circle-o"/>
+                                        </t>
+                                    </div>
+
+                                    <div class="pw-card-icon pw-card-icon--product">
+                                        <i class="fa fa-shopping-bag"/>
+                                    </div>
+                                    <div class="pw-card-name" t-esc="prod.name"/>
+                                    <div class="pw-card-type" t-esc="prod.package_type_label"/>
+
+                                    <div class="pw-card-price-block">
+                                        <div class="pw-price-main" t-esc="formatCurrency(prod.price)"/>
+                                        <div class="pw-price-detail">
+                                            <span t-esc="prod.service_count"/> services
+                                            · <t t-esc="formatCurrency(prod.price_per_service)"/>/ea
+                                        </div>
+                                    </div>
+                                </div>
+                            </t>
+                        </div>
+
+                        <div class="pw-section-action" t-if="state.availableProducts.length > 0">
+                            <button class="pw-btn pw-btn--success"
+                                    t-att-disabled="!state.selectedProductId"
+                                    t-on-click="onPurchase">
+                                <i class="fa fa-shopping-cart"/> Purchase &amp; Assign
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Footer -->
+                <div class="pw-footer">
+                    <button class="pw-btn pw-btn--ghost" t-on-click="onClose">
+                        Cancel
+                    </button>
+                </div>
+            </t>
+        </div>
+    </div>
+</t>
+
+</templates>
