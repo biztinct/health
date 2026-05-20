@@ -40,6 +40,7 @@ class OpsQuickBooking extends Component {
         const context = this.props.action && this.props.action.context || {};
         this.patientId = context.active_id || context.default_patient_id || false;
         this.leadId = context.default_lead_id || false;
+        this.activeCenter = context.active_center || false;
 
         this.timePeriods = TIME_PERIODS;
         this.dayNames = DAY_NAMES;
@@ -481,6 +482,7 @@ class OpsQuickBooking extends Component {
                 "action_create_from_quick_booking_owl",
                 [{
                     patient_id: this.patientId || false,
+                    lead_id: this.leadId || false,
                     service_type: this.state.serviceType,
                     duration_hours: this.state.durationHours,
                     time_hour: this.finetuneHourDecimal,
@@ -515,12 +517,14 @@ class OpsQuickBooking extends Component {
     viewBooking() {
         const bookingId = this.state.creationResult?.booking_id;
         if (!bookingId) return;
+        const ctx = { active_id: bookingId };
+        if (this.activeCenter) ctx.active_center = this.activeCenter;
         this.action.doAction({
             type: 'ir.actions.client',
             tag: 'ops_booking_detail',
             name: this.state.creationResult.booking_name || _t('Booking'),
             target: 'current',
-            context: { active_id: bookingId },
+            context: ctx,
         }, { clearBreadcrumbs: true });
     }
 

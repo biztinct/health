@@ -1451,18 +1451,27 @@ class HealthLead(models.Model):
     )
 
     def action_convert_to_booking(self):
-        """BOOKING button - Opens OWL Quick Booking wizard."""
+        """BOOKING button - Opens OWL Quick Booking wizard.
+        Auto-creates patient record from lead data if none exists."""
         self.ensure_one()
-        patient_id = self.partner_id.id if self.partner_id else False
+        patient = self.patient_id
+        if not patient:
+            if self.contact_relationship_type not in ('client', False, '') and not self.client_name:
+                raise UserError(_('Please set the Client Name before creating a booking for a non-client contact.'))
+            self._process_contact_relationship()
+            patient = self.patient_id
+        if not patient:
+            raise UserError(_('Could not create a client record. Please check the contact details.'))
         return {
             'type': 'ir.actions.client',
             'tag': 'ops_quick_booking',
             'name': _('Quick Booking'),
             'target': 'current',
             'context': {
-                'active_id': patient_id,
-                'default_patient_id': patient_id,
+                'active_id': patient.id,
+                'default_patient_id': patient.id,
                 'default_lead_id': self.id,
+                'active_center': 'crm_center',
             },
         }
 
@@ -1615,44 +1624,30 @@ class HealthLead(models.Model):
         }
 
     def action_log_as_lead(self):
-        """
-        LOG LEAD button - Mark this contact as a Lead for follow-up.
-        Updates contact_status and opens activity scheduling.
-        """
+        """Log Activity button — mark contact as Lead and open activity wizard."""
         self.ensure_one()
-        
-        # Write the status change
-        write_vals = {
+        self.write({
             'contact_status': 'lead',
             'contact_outcome': 'pending_follow_up',
             'health_contact_outcome': 'pending_follow_up',
-        }
-        
-        self.write(write_vals)
-        
-        # Invalidate cache to ensure fresh read
+        })
         self.invalidate_recordset(['contact_status', 'contact_outcome', 'health_contact_outcome'])
-        
-        # Force commit the transaction to persist the status change immediately
-        # This prevents rollback when user closes the activity popup
         self.env.cr.commit()
-        
-        # Return client action to show notification and soft reload
-        # Using 'ir.actions.client' with 'tag': 'soft_reload' refreshes the view
-        # without losing the committed database changes
+
         return {
-            'type': 'ir.actions.client',
-            'tag': 'display_notification',
-            'params': {
-                'title': _('Success'),
-                'message': _('Contact marked as Lead. Status updated to Lead.'),
-                'type': 'success',
-                'sticky': False,
-                'next': {
-                    'type': 'ir.actions.client',
-                    'tag': 'soft_reload',
-                },
-            }
+            'type': 'ir.actions.act_window',
+            'name': _('Log Activity for: %s') % self.name,
+            'res_model': 'mail.activity.schedule',
+            'view_mode': 'form',
+            'target': 'new',
+            'context': {
+                'active_model': 'crm.lead',
+                'active_id': self.id,
+                'active_ids': [self.id],
+                'default_res_model': 'crm.lead',
+                'default_res_ids': [self.id],
+                'dialog_size': 'medium',
+            },
         }
 
     def action_log_note(self):

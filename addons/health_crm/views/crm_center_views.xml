@@ -32,7 +32,7 @@
                         string="Book" icon="fa-calendar-plus-o"
                         class="crm-cl-btn crm-cl-btn--book"/>
                 <button name="action_log_as_lead" type="object"
-                        string="Log Lead" icon="fa-bullseye"
+                        string="Log Activity" icon="fa-bullseye"
                         class="crm-cl-btn crm-cl-btn--lead"/>
                 <button name="action_escalate_contact" type="object"
                         string="Escalate" icon="fa-arrow-up"

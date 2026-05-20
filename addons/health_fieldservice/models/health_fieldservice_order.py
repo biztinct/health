@@ -4371,6 +4371,7 @@ class HealthFieldServiceOrderUnified(models.Model):
                 patient = {
                     'id': p.id,
                     'name': p.name or '',
+                    'code': p.patient_code or '',
                     'initials': initials,
                 }
                 if hasattr(p, 'preferred_staff_id') and p.preferred_staff_id:
@@ -4963,6 +4964,7 @@ class HealthFieldServiceOrderUnified(models.Model):
         doctor_id = vals.get('doctor_id') or False
         package_id = vals.get('package_id') or False
         assigned_staff_ids = vals.get('assigned_staff_ids') or []
+        lead_id = vals.get('lead_id') or False
 
         if not patient_id or not facility_id or not date_str:
             return {'success': False, 'error': 'Missing required fields (patient, facility, date).'}
@@ -5002,6 +5004,8 @@ class HealthFieldServiceOrderUnified(models.Model):
             'intake_notes': notes or '',
             'service_location': location_map.get(service_type, 'home'),
         }
+        if lead_id:
+            fso_vals['crm_lead_id'] = lead_id
         fso = self.create(fso_vals)
 
         quote_summary = {}
@@ -5098,6 +5102,11 @@ class HealthFieldServiceOrderUnified(models.Model):
                 pass
 
         date_display = local_dt.strftime('%d %b %Y, %H:%M')
+
+        if lead_id:
+            lead = self.env['crm.lead'].browse(lead_id)
+            if lead.exists():
+                lead.write({'contact_outcome': 'service_booked'})
 
         return {
             'success': True,

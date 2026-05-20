@@ -35,6 +35,7 @@
                                 <div class="qb-wizard-subtitle">
                                     Create a single service booking
                                     <t t-if="state.patient.name"> for <strong t-esc="state.patient.name"/></t>
+                                    <t t-if="state.patient.code"> — <span class="qb-patient-code" t-esc="state.patient.code"/></t>
                                 </div>
                             </div>
                             <button class="qb-close-btn" t-on-click="goBack"><i class="fa fa-times"/></button>
